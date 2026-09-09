@@ -40,20 +40,20 @@ mid-change.
 
 ## Create one
 
-Worktrees live under `.Codex/worktrees/` (gitignored). Branch names are
+Worktrees live under `.codex/worktrees/` (gitignored). Branch names are
 `<type>/<slug>` — `feature/`, `fix/`, `experiment/`, `research/`, `docs/`,
 `bootstrap/`. Run from the main checkout, not from inside another worktree:
 
 ```powershell
 git fetch origin
-git worktree add .Codex/worktrees/<slug> -b <type>/<slug> origin/main
+git worktree add .codex/worktrees/<slug> -b <type>/<slug> origin/main
 ```
 
 Then open a Codex session pointed at that directory.
 
 ```powershell
 git worktree list                                   # what is in flight
-git worktree remove .Codex/worktrees/<slug>        # refuses if dirty
+git worktree remove .codex/worktrees/<slug>        # refuses if dirty
 git branch -d <type>/<slug>                         # after merge
 ```
 
