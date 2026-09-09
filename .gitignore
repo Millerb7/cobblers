@@ -34,6 +34,9 @@ eula.txt
 **/config/fancymenu/legacy_checklist.txt
 tmp/
 downloads/
+experiments/*/runtime/
+experiments/*/runs/*
+!experiments/*/runs/.gitkeep
 *.tmp
 *.part
 

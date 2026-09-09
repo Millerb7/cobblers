@@ -1,0 +1,99 @@
+{
+  "schema": "cobblers.experiment-pack/1",
+  "experiment": "EXP-000",
+  "reference": {
+    "pack": "COBBLEVERSE",
+    "version": "1.7.42",
+    "manifest": "../../modpack/manifest/base-cobbleverse-1.7.42.json",
+    "immutable": true
+  },
+  "target": {
+    "minecraft": "1.21.1",
+    "loader": "fabric",
+    "loader_version": "0.19.5",
+    "installer_version": "1.1.2",
+    "java": 21,
+    "cobblemon": "1.8.0",
+    "overlay": "../../modpack/manifest/overlay.json"
+  },
+  "assembled_server": {
+    "runtime_path": "runtime/server",
+    "tracked": false,
+    "jars": 101,
+    "unchanged_base_jars": 89,
+    "replacement_jars": 12,
+    "removed_enabled_jars": 2,
+    "server_excluded_mod_ids": 34,
+    "datapack_zips": 10,
+    "status": "BOOTED",
+    "boot_capture": "runs/20260909-001735",
+    "mod_set_hash": "D1483348BC2D"
+  },
+  "assembled_client": {
+    "runtime_path": "runtime/client",
+    "tracked": false,
+    "jars": 135,
+    "resourcepack_zips": 47,
+    "datapack_zips": 10,
+    "shaderpack_zips": 1,
+    "status": "PLANNED_NOT_LAUNCHED"
+  },
+  "stages": [
+    {
+      "id": 0,
+      "name": "known-working baseline",
+      "changes": [],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 1,
+      "name": "Cobblemon cold swap",
+      "changes": ["cobblemon"],
+      "expected": "loader names the base jars whose declared ranges reject 1.8",
+      "status": "NOT RUN"
+    },
+    {
+      "id": 2,
+      "name": "loader blockers",
+      "changes": ["cobblemon", "tmcraft", "capture_xp", "tim_core", "remove better_pokedex_scanner"],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 3,
+      "name": "trainer and battle core",
+      "changes": ["rctapi", "rctmod", "mega_showdown", "zamega"],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 4,
+      "name": "supported gameplay addon updates",
+      "changes": ["cobbreeding", "obc", "playerxp", "cobblenav", "fightorflight"],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 5,
+      "name": "complete preserved Cobbleverse server set",
+      "changes": ["all overlay replacements and preserved unknown integrations"],
+      "status": "FAILED: PLAYERXP CLIENT API ON DEDICATED SERVER"
+    },
+    {
+      "id": 6,
+      "name": "server without PlayerXP",
+      "changes": ["server-exclude playerxp"],
+      "status": "FAILED: RAID DENS REMOVED COBBLEMON API"
+    },
+    {
+      "id": 7,
+      "name": "server without PlayerXP or Raid Dens",
+      "changes": ["server-exclude playerxp", "remove cobblemonraiddens"],
+      "status": "BOOTED",
+      "run": "runs/20260909-001735",
+      "mod_set_hash": "D1483348BC2D"
+    }
+  ],
+  "human_gate": {
+    "file": "runtime/server/eula.txt",
+    "status": "ACCEPTED_BY_HUMAN",
+    "instruction": "A human must read https://aka.ms/MinecraftEULA and accept it directly if they agree. Repository tooling never accepts it."
+  }
+}

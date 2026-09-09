@@ -1,0 +1,515 @@
+[
+ {
+  "id": "opsunElf",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.1.1+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.1.1+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-09-07T17:03:18.382802Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "YgmyyFcs",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.1.1+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/opsunElf/playerxp-fabric-1.1.1%2B1.21.1.jar",
+    "primary": true,
+    "size": 16789,
+    "hashes": {
+     "sha512": "6cac056f8dbe94117fb428826f5d421d2438c6f3b644ddf5182b70476b378004ac48a4119d6f950507a6a4c38d100d22a8c275fad0f47d7f3402bc0cee50e6f2",
+     "sha1": "814611655a2723a7adcaff3f8f2ef1c337249961"
+    }
+   }
+  ]
+ },
+ {
+  "id": "aAbiKef2",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.1.0+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.1.0+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-08-28T02:53:47.315102Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.1.0+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/aAbiKef2/playerxp-fabric-1.1.0%2B1.21.1.jar",
+    "primary": true,
+    "size": 16790,
+    "hashes": {
+     "sha512": "90154c7482ac2210ff43a022cef8cb4e2c5a63513c643c7229fc6e97023c2c94c91c328bc0071228c47f940703361c2a9bd08af86b50fc5fc59d8390cf635298",
+     "sha1": "342cc8d97ce037451ee931ca65d78b9dc0493ab2"
+    }
+   }
+  ]
+ },
+ {
+  "id": "f6114Tas",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.9+1.21.1",
+  "name": "1.0.9+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-04-06T17:47:33.040972Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.9+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/f6114Tas/playerxp-fabric-1.0.9%2B1.21.1.jar",
+    "primary": true,
+    "size": 10818,
+    "hashes": {
+     "sha1": "34804e9a9d39dc741dbf4952ddab0223e92820cd",
+     "sha512": "9e310afa737eab745c7f52f5cb3a6ac238638062f71500f47fbf154558e22d5f1ef49034f755eac5a1faf3f78e82a9f1917285ae3bb5eca469022b05ffd7e364"
+    }
+   }
+  ]
+ },
+ {
+  "id": "NpiKXenh",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.8+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.0.8+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-03-08T02:34:47.948259Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.8+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/NpiKXenh/playerxp-fabric-1.0.8%2B1.21.1.jar",
+    "primary": true,
+    "size": 9964,
+    "hashes": {
+     "sha512": "16d7517ea8e62d2ed511d7def0b57ecf0fee5564e5db8753a9d6d46799825ea4309c8626d7aaaf92d9beeb789cb61eacdeebbaa94d75688f8496214456463b98",
+     "sha1": "8920b2a410f48d93d8d093478d110f62c22fdb2b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "FTvqvRQh",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.7+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.0.7+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-03-03T19:24:25.672133Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.7+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/FTvqvRQh/playerxp-fabric-1.0.7%2B1.21.1.jar",
+    "primary": true,
+    "size": 9944,
+    "hashes": {
+     "sha1": "34531cfdc41525335c03ea5b0bb7fc84d1f7eb78",
+     "sha512": "99b9d196667376759daa1954b65c49fbc1a7fc9f1b6834f3eae7117a3b8109525772582726bd4a94c56929c7436357e53c9d11738d1881f90ae8e2d7e31b0473"
+    }
+   }
+  ]
+ },
+ {
+  "id": "Y4BBtjem",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.6+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.0.6+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-02-25T23:39:37.969074Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.6+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/Y4BBtjem/playerxp-fabric-1.0.6%2B1.21.1.jar",
+    "primary": true,
+    "size": 9928,
+    "hashes": {
+     "sha1": "b32c9e88d3884926bba2cdb97bcc93e001a6829e",
+     "sha512": "e2b008c4107020570595b000bb8b72cf0c2ea7f74a6b764a89d8970461f0b2c4e90a5f131ff96629d3cb476e5faf7a2e5abe36d03321fecac356e171a75596ec"
+    }
+   }
+  ]
+ },
+ {
+  "id": "tS4FWPtM",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.5+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.0.5+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-01-29T00:00:50.745880Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "Ygf8KJFC",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "m6zu1K31",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.5+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/tS4FWPtM/playerxp-fabric-1.0.5%2B1.21.1.jar",
+    "primary": true,
+    "size": 10081,
+    "hashes": {
+     "sha512": "ec08d9407a00d30139305ec3416c508e50eaaafabc3e428780a4a3cc4531f0a1f1100f1076a1536e3b4716e5b18e3ddb3e105d62ea2392b73939b50eb1de1a6c",
+     "sha1": "9bd4b7628354469851ba888c2b94ddd74b91aae7"
+    }
+   }
+  ]
+ },
+ {
+  "id": "yqriae8l",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.4+1.21.1",
+  "name": "PlayerXP 1.0.4+1.21.1",
+  "version_type": "release",
+  "date_published": "2025-12-26T01:31:26.325455Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.4+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/yqriae8l/playerxp-fabric-1.0.4%2B1.21.1.jar",
+    "primary": true,
+    "size": 7533,
+    "hashes": {
+     "sha512": "09fbdeebf3c4be6f445a056bb31ddb3be5d4b992993788ea6919ee61ab2c736c372405c8d995c978f2b4b19f0a569b870448eefd0551730ea1483da8c6f0dd4a",
+     "sha1": "3d4c9ec76cec18588338304e8c66ad0d066bb379"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ScHlgAnG",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.3+1.21.1",
+  "name": "1.0.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2025-11-22T04:19:54.422698Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/ScHlgAnG/playerxp-fabric-1.0.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 6953,
+    "hashes": {
+     "sha1": "6701e5f5ae86a98683d376dcac005e9f1705d784",
+     "sha512": "17ae1c97e48a6eae8ece4d5e58804f46fb68e9de9af1c1c8df634b88474c90cc81947c9ea92409bdccdd4dfe84905fd381522a9ec28b446dab14feac9d4d54bc"
+    }
+   }
+  ]
+ },
+ {
+  "id": "OeMyQLRc",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.2+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.0.2+1.21.1",
+  "version_type": "release",
+  "date_published": "2025-08-26T10:47:42.730652Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.2+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/OeMyQLRc/playerxp-fabric-1.0.2%2B1.21.1.jar",
+    "primary": true,
+    "size": 6684,
+    "hashes": {
+     "sha512": "c25774a397968f03983a38743075465acdcf0c186d97c470d04ace529594f33063c4ff4bd28de1574bfdb62f4cfa89ebd3210684f921058b59c1ecde4776c0c3",
+     "sha1": "ff5671864bdd29a256d9a31c7e9ad05b2f8271fc"
+    }
+   }
+  ]
+ },
+ {
+  "id": "TxQfxada",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.1+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.0.1+1.21.1",
+  "version_type": "release",
+  "date_published": "2025-08-19T16:56:57.527503Z",
+  "game_versions": [
+   "1.21.1",
+   "1.21.2",
+   "1.21.3",
+   "1.21.4",
+   "1.21.5",
+   "1.21.6",
+   "1.21.7",
+   "1.21.8"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.1+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/TxQfxada/playerxp-fabric-1.0.1%2B1.21.1.jar",
+    "primary": true,
+    "size": 6685,
+    "hashes": {
+     "sha512": "68af19b397a156638aef287a68f4e7c00ce6ece5335803e8be5edd4dfbe5dab2dcdedfa96d7d18d1d0668ce811d5fa1ad546c3bc45febf4a71f40982ef14758c",
+     "sha1": "2c0b715a98d50096333d87e8faf6f99d81f3a43a"
+    }
+   }
+  ]
+ },
+ {
+  "id": "8rp3J3Dr",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.1+1.20.1",
+  "name": "Cobblemon: PlayerXP 1.0.1+1.20.1",
+  "version_type": "release",
+  "date_published": "2025-08-19T06:05:22.147549Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.1+1.20.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/8rp3J3Dr/playerxp-fabric-1.0.1%2B1.20.1.jar",
+    "primary": true,
+    "size": 6682,
+    "hashes": {
+     "sha512": "6f2d454506bbe9e4d592bf3256c6f6857e632befecc7999984909dc73e8bc69366162ad655912bfee37a0807c605b2fc67e1dc1d0bd5917e236ef4f6be856d26",
+     "sha1": "9ed3e8e0c40c2e12bff37624ea654a5daedd0799"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ix7FXU0o",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.0+1.20.1",
+  "name": "Cobblemon: PlayerXP 1.0.0+1.20.1",
+  "version_type": "release",
+  "date_published": "2025-04-27T20:23:36.846607Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.0+1.20.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/ix7FXU0o/playerxp-fabric-1.0.0%2B1.20.1.jar",
+    "primary": true,
+    "size": 6564,
+    "hashes": {
+     "sha1": "678bd6f48c2bcf5efb96d03a1cb98529c4d0f189",
+     "sha512": "46add18df052b70d840065f35dabde3625d5982cdc90d48759714b7f4e92e484b17c63448f57229de554c9d3c2a209030caa7576793851f40755adb051cfa1df"
+    }
+   }
+  ]
+ },
+ {
+  "id": "K0j3J0EE",
+  "project_id": "zlrbPCvu",
+  "version_number": "1.0.0+1.21.1",
+  "name": "Cobblemon: PlayerXP 1.0.0+1.21.1 (Fabric)",
+  "version_type": "release",
+  "date_published": "2025-04-27T11:42:16.331295Z",
+  "game_versions": [
+   "1.21.1",
+   "1.21.2",
+   "1.21.3",
+   "1.21.4",
+   "1.21.5"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "playerxp-fabric-1.0.0+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/K0j3J0EE/playerxp-fabric-1.0.0%2B1.21.1.jar",
+    "primary": true,
+    "size": 6563,
+    "hashes": {
+     "sha1": "ab1aa7d8c63ae0c8baf52ba03245a00ebdbc2ba0",
+     "sha512": "31e6ea665bc2a61bed78ca4e0ba659ea18db089addd28eec6343c12472b337887e16aa266750aa9bf396c8f0045935a2fe495e651326409e657748a3c7dfe180"
+    }
+   }
+  ]
+ }
+]

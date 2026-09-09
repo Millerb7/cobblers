@@ -1,0 +1,263 @@
+[
+ {
+  "id": "l7Gi3yRs",
+  "project_id": "tDRRddpZ",
+  "version_number": "1.5.0-fabric",
+  "name": "Only Bottle Caps 1.5.0-fabric",
+  "version_type": "release",
+  "date_published": "2026-09-06T13:34:17.834291Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "YgmyyFcs",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "euSlaAtA",
+    "project_id": "LN9BxssP",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Only Bottle Caps-1.5.0-fabric.jar",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/l7Gi3yRs/Only%20Bottle%20Caps-1.5.0-fabric.jar",
+    "primary": true,
+    "size": 250957,
+    "hashes": {
+     "sha512": "21ed02be9983aa96c2e0e05ec75d9facc989963ac8b95940b60ce4f562560da26fe48cbb72f674eafc6644657844246306e8514e40bc7453ef78606d29b517d7",
+     "sha1": "50e3a86132bbbb07f23fcfd9016d9b31fa8f8535"
+    }
+   }
+  ]
+ },
+ {
+  "id": "xkaDeFly",
+  "project_id": "tDRRddpZ",
+  "version_number": "1.4.0",
+  "name": "Only Bottle Caps 1.4.0",
+  "version_type": "release",
+  "date_published": "2026-08-25T13:41:34.082172Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "Ygf8KJFC",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "euSlaAtA",
+    "project_id": "LN9BxssP",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Only Bottle Caps-1.4.0.jar",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/xkaDeFly/Only%20Bottle%20Caps-1.4.0.jar",
+    "primary": true,
+    "size": 250921,
+    "hashes": {
+     "sha512": "2913705de5ac9dd17def117cd199422a5960f77057d6ca41e61d007830742dc220f35aae21c80c23c53dbad76166dedbb88164a8b59b0b9370fe90618cd334c7",
+     "sha1": "b4bcc62a37568608cd69556a80d8ab448244ec22"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9QilYtN2",
+  "project_id": "tDRRddpZ",
+  "version_number": "1.3.0",
+  "name": "Only Bottle Caps 1.3.0",
+  "version_type": "release",
+  "date_published": "2025-11-23T15:18:09.026844Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "euSlaAtA",
+    "project_id": "LN9BxssP",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "Ygf8KJFC",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Only Bottle Caps-1.3.0.jar",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/9QilYtN2/Only%20Bottle%20Caps-1.3.0.jar",
+    "primary": true,
+    "size": 250451,
+    "hashes": {
+     "sha512": "2af1de10a2f5be03de32276c37dce1549057614ddfd7069df2bad8e459627d2a1ca5c07cc7a764fc1010579ec44cba680c12bd1e33c2e29d43c2f4c6bfce6740",
+     "sha1": "23ef87de0db4ec6914b67ad96d72c204874dc613"
+    }
+   }
+  ]
+ },
+ {
+  "id": "EziHEwdk",
+  "project_id": "tDRRddpZ",
+  "version_number": "1.2.0",
+  "name": "Only Bottle Caps 1.2.0",
+  "version_type": "release",
+  "date_published": "2025-07-27T14:09:02.021613Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "euSlaAtA",
+    "project_id": "LN9BxssP",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "v77SHSXW",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Only Bottle Caps-1.2.0.jar",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/EziHEwdk/Only%20Bottle%20Caps-1.2.0.jar",
+    "primary": true,
+    "size": 250578,
+    "hashes": {
+     "sha512": "cf6ee8a6fa7d1f330c8875ba5e620568aefcf32fceffc4e8220b5d67d32864a0049b27949d9148134ff0fc6ca9912fddbc6a753eaca7966887ba25473c576634",
+     "sha1": "af3febb7945d687788bc1cff77952598e13341eb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "FUaolHDI",
+  "project_id": "tDRRddpZ",
+  "version_number": "1.1.0",
+  "name": "Only Bottle Caps 1.1.0",
+  "version_type": "release",
+  "date_published": "2025-07-15T12:22:30.221776Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "v77SHSXW",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "euSlaAtA",
+    "project_id": "LN9BxssP",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Only Bottle Caps-1.1.0.jar",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/FUaolHDI/Only%20Bottle%20Caps-1.1.0.jar",
+    "primary": true,
+    "size": 248989,
+    "hashes": {
+     "sha512": "a63b86cb5e322442c4c685d1641be3832cb5c4ab990c37a1fd13e4826e04e99aade9c3298650baf6a81593c024d6de06e37dd0422e76251a4c08b1ad8114ada3",
+     "sha1": "59805237e213cf78421bcabb44da4cbd3387a77d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "Dv2ptHYb",
+  "project_id": "tDRRddpZ",
+  "version_number": "1.0.1",
+  "name": "Only Bottle Caps 1.0.1",
+  "version_type": "release",
+  "date_published": "2025-07-10T23:20:03.716154Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "Only Bottle Caps-1.0.1.jar",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/Dv2ptHYb/Only%20Bottle%20Caps-1.0.1.jar",
+    "primary": true,
+    "size": 47914,
+    "hashes": {
+     "sha512": "a4c37971bd6683c854b94ed7e3b4e069bc38b069f538c64038facaac978dbc26fb2fa578abf42f2c6f0c57ef9fe08e09a34351db250f2965258a96d83d55f929",
+     "sha1": "4bc2e9f838ce568b8e0e2fd2043b981a339d10ca"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ecJplf4j",
+  "project_id": "tDRRddpZ",
+  "version_number": "1.0.0",
+  "name": "Only Bottle Caps 1.0.0",
+  "version_type": "release",
+  "date_published": "2025-07-03T11:19:48.050164Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "v77SHSXW",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Only Bottle Caps-1.0.0.jar",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/ecJplf4j/Only%20Bottle%20Caps-1.0.0.jar",
+    "primary": true,
+    "size": 47911,
+    "hashes": {
+     "sha1": "565fbb048be069495103f14afa877c06525f145d",
+     "sha512": "9000471619364b6382a536aca14c58cc6d268178276b1d00a3e9abb5bc9c57fee99c7a7db2eacbae0b1cde6cdf038ebde210b2390e753279f202d9f54b6ef04e"
+    }
+   }
+  ]
+ }
+]

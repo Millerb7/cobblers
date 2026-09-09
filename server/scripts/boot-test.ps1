@@ -18,6 +18,10 @@
 .PARAMETER TimeoutSec  Give up waiting for "Done (" after this many seconds (default 600).
 .PARAMETER RunsDir     Where to store run captures (default: the EXP-000 runs folder).
 .PARAMETER Label       Free text stored in verdict.txt (e.g. "cobblemon-1.8.0 first boot").
+.PARAMETER AllowEulaPrompt
+  Permit an initialization launch when eula.txt is missing or false. The server
+  may create eula.txt and exit at its EULA notice; this script never changes its
+  value. Use only to prove initialization reaches EULA handling.
 .PARAMETER WhatIf      Run pre-flight only, print the launch command, do not start Java.
 
 .EXAMPLE
@@ -31,7 +35,8 @@ param(
     [int]$XmxMB = 6144,
     [int]$TimeoutSec = 600,
     [string]$RunsDir,
-    [string]$Label = ''
+    [string]$Label = '',
+    [switch]$AllowEulaPrompt
 )
 $ErrorActionPreference = 'Stop'
 $Repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
@@ -64,13 +69,23 @@ Write-Host "mods:      $modCount jars"
 $eulaPath = Join-Path $ServerDir 'eula.txt'
 $eulaPattern = 'eula' + '\s*=\s*' + 'true'
 if (-not (Test-Path -LiteralPath $eulaPath)) {
-    Refuse "eula.txt not found in $ServerDir. Start the server once by hand (it writes the file), read https://aka.ms/MinecraftEULA, and accept it yourself if you agree. This script will not write it."
+    if (-not $AllowEulaPrompt) {
+        Refuse "eula.txt not found in $ServerDir. Start the server once by hand (it writes the file), read https://aka.ms/MinecraftEULA, and accept it yourself if you agree. This script will not write it."
+    }
+    Write-Host "eula:      absent; initialization launch allowed (the script will not accept it)"
 }
-$eulaLines = Get-Content -LiteralPath $eulaPath | Where-Object { $_ -notmatch '^\s*#' }
-if (-not ($eulaLines -match $eulaPattern)) {
-    Refuse "eula.txt does not accept the EULA. Read https://aka.ms/MinecraftEULA and, if you agree, edit $eulaPath yourself. This script will not write it."
+else {
+    $eulaLines = Get-Content -LiteralPath $eulaPath | Where-Object { $_ -notmatch '^\s*#' }
+    if (-not ($eulaLines -match $eulaPattern)) {
+        if (-not $AllowEulaPrompt) {
+            Refuse "eula.txt does not accept the EULA. Read https://aka.ms/MinecraftEULA and, if you agree, edit $eulaPath yourself. This script will not write it."
+        }
+        Write-Host "eula:      not accepted; initialization launch allowed (the script will not change it)"
+    }
+    else {
+        Write-Host "eula:      accepted by a human in $eulaPath"
+    }
 }
-Write-Host "eula:      accepted by a human in $eulaPath"
 
 $xms = [math]::Max(1024, [int]($XmxMB / 2))
 $jvmArgs = @("-Xms${xms}M", "-Xmx${XmxMB}M", '-jar', $launcher.Name, '-nogui')
@@ -120,7 +135,12 @@ if (-not $proc.HasExited) {
     try { $proc.StandardInput.WriteLine('stop'); $proc.StandardInput.Flush() } catch {}
     if (-not $proc.WaitForExit(90000)) { try { $proc.Kill() } catch {} ; $detail += ' (killed after stop timeout)' }
 }
-$stdoutTask.Result + "`n--- stderr ---`n" + $stderrTask.Result | Set-Content -LiteralPath $stdoutPath
+$combinedOutput = $stdoutTask.Result + "`n--- stderr ---`n" + $stderrTask.Result
+$combinedOutput | Set-Content -LiteralPath $stdoutPath
+if ($verdict -eq 'EXITED' -and $combinedOutput -match '(?i)agree to the EULA|eula\.txt') {
+    $verdict = 'EULA-REQUIRED'
+    $detail = 'initialization reached Minecraft EULA handling; EULA remains unaccepted'
+}
 
 # ---- capture ---------------------------------------------------------------
 if (Test-Path -LiteralPath $logPath) { Copy-Item -LiteralPath $logPath -Destination (Join-Path $runDir 'latest.log') }
