@@ -375,6 +375,9 @@ def build_plan(base: dict, overlay: dict | None, side: str | None = None, kind: 
         )
     if side:
         plan = [e for e in plan if e["side"] in ("both", side)]
+    if side == "server" and overlay:
+        excluded = set(overlay.get("server_exclude", []))
+        plan = [e for e in plan if e.get("mod_id") not in excluded]
     return plan
 
 
@@ -439,6 +442,8 @@ def cmd_verify(a: argparse.Namespace) -> int:
 # ---------------------------------------------------------------- download
 def cmd_download(a: argparse.Namespace) -> int:
     plan = active(load_plan(a))
+    if a.replacements_only:
+        plan = [e for e in plan if e["status"] in ("replace", "add")]
     target = Path(a.target)
     todo, no_url = [], []
     for e in plan:
@@ -521,6 +526,11 @@ def main(argv=None) -> int:
     common(d)
     d.add_argument("--target", required=True, help="directory to download into")
     d.add_argument("--yes", action="store_true", help="actually download (otherwise only print the plan)")
+    d.add_argument(
+        "--replacements-only",
+        action="store_true",
+        help="download only overlay replace/add entries (use local base-pack files for everything else)",
+    )
     d.set_defaults(fn=cmd_download)
 
     a = p.parse_args(argv)

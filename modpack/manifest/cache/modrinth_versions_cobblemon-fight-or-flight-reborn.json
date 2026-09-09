@@ -1,0 +1,1086 @@
+[
+ {
+  "id": "CHXL2ka3",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.11.0",
+  "name": "Cobblemon Fight or Flight Reborn 0.11.0",
+  "version_type": "release",
+  "date_published": "2026-09-08T12:45:12.738364Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.11.0.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/CHXL2ka3/fightorflight-fabric-0.11.0.jar",
+    "primary": true,
+    "size": 1446545,
+    "hashes": {
+     "sha1": "d3031a632dc5e4300ce273051ddfe0c2ad64859c",
+     "sha512": "e4963bfc2b805ff3dff389f673ce719e89835c6b290cc081d2a56befafcafa17b67e42088754ce223094d01731191fcabfcb2c4bd74800646ddf3dfbd7e51b2a"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.11.0-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/CHXL2ka3/fightorflight-fabric-0.11.0-sources.jar",
+    "primary": false,
+    "size": 273369,
+    "hashes": {
+     "sha512": "3d951dd253be203606cdfb66d7c286bcafc36006c5e278c90101c9aa14a7e6de705d1b873846a94c4ff5a18854de3a25289e6431ae41eebb0a064f9fab9daa1d",
+     "sha1": "f11b77674023d1e1419d1a240ff5b8dafb80dd0b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "aLKGVSng",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.9",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.9",
+  "version_type": "release",
+  "date_published": "2026-07-10T07:53:57.367843Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.9.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/aLKGVSng/fightorflight-fabric-0.10.9.jar",
+    "primary": true,
+    "size": 1424525,
+    "hashes": {
+     "sha512": "6a2070bfe01711c122952c0e1023c5fbdc3f53568e4e91ac307bd145c5b57c1311c64b78e92990dc991ecb9af3398150b0f4c8a031b3beaf89364414aff94fab",
+     "sha1": "9928e06e1ebe166980480b073cea542eed753d73"
+    }
+   }
+  ]
+ },
+ {
+  "id": "3bB8nd7J",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.8",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.8",
+  "version_type": "release",
+  "date_published": "2026-06-24T12:41:04.107148Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.8.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/3bB8nd7J/fightorflight-fabric-0.10.8.jar",
+    "primary": true,
+    "size": 1424545,
+    "hashes": {
+     "sha512": "8225f6b4e674555c5bdbb5d313cb08be2eebdbbd9dadb7897f19ef76a82629d28d7ff469321c89e9dd6b42fa35449f3b9124106dd34060481067a1d1113ade18",
+     "sha1": "4eb26d120aeca4debddc58925483beb3986858c1"
+    }
+   }
+  ]
+ },
+ {
+  "id": "glCpkfTv",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.7",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.7",
+  "version_type": "release",
+  "date_published": "2026-02-16T14:13:20.030701Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.7.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/glCpkfTv/fightorflight-fabric-0.10.7.jar",
+    "primary": true,
+    "size": 1415149,
+    "hashes": {
+     "sha1": "a3169ed363d2483efd527fdd49455c9e05ac693f",
+     "sha512": "23befa6dedd95f0f0ebcb716fbe661cd7b25dff838e23e193eece57b1f3a49d96a13b9c8777c881ddfcd9f6a7568d668e2c40a507053499f85a1fc510b233cbd"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.10.7-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/glCpkfTv/fightorflight-fabric-0.10.7-sources.jar",
+    "primary": false,
+    "size": 255451,
+    "hashes": {
+     "sha1": "e9391310d8fc7ae6543fd8929f1900346e675d14",
+     "sha512": "5149e4967ba4b9bdaf8b2e9c699f4f71eab3c69982d8abb8e06ebc4fe08393ac17c24d56d8ddb55988e97fa88eb0d0e4ebdbe0087c7ef65af528956dddc7e661"
+    }
+   }
+  ]
+ },
+ {
+  "id": "GMCU6H2q",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.6",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.6",
+  "version_type": "release",
+  "date_published": "2026-01-30T08:25:22.066347Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.6.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/GMCU6H2q/fightorflight-fabric-0.10.6.jar",
+    "primary": true,
+    "size": 1403909,
+    "hashes": {
+     "sha512": "28de618811db7bd9dcc58de0b69b463c4bbcc51b10da2f50b79ad259c62ae6c783027cd2ba4a82bdffef0bce69e2def17aaeea820d9d7533c3f508168847fc9a",
+     "sha1": "f22d59b4c2a48269f7eb374ee696292945d28997"
+    }
+   }
+  ]
+ },
+ {
+  "id": "PxdX0DAs",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.5",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.5",
+  "version_type": "release",
+  "date_published": "2026-01-04T09:57:14.232807Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.5.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/PxdX0DAs/fightorflight-fabric-0.10.5.jar",
+    "primary": true,
+    "size": 1403435,
+    "hashes": {
+     "sha1": "9968891fec40d7cf96034cd5e38dcdc05500486e",
+     "sha512": "a121d2dfd2248100f58d375b9c2a3c9398f3adfd03dc3ad55606ca10022267d12a944dd1c65205f8ba386c8cb3674ea0f0d87ca0763b6031704e3a3badd03511"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.10.5-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/PxdX0DAs/fightorflight-fabric-0.10.5-sources.jar",
+    "primary": false,
+    "size": 249513,
+    "hashes": {
+     "sha512": "e42a5225f830cfb003225bfed063186635180535082801a5cf55d01e739dddfd94432fbb2e502767caa071589267c3bcbbf121ecde3292061cb9d733d4b8e097",
+     "sha1": "86a12ff34d7245752d86f4f9ddc79f4a9fc3bad9"
+    }
+   }
+  ]
+ },
+ {
+  "id": "VVdTdl9h",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.4",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.4",
+  "version_type": "release",
+  "date_published": "2026-01-02T03:23:46.785017Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.4.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/VVdTdl9h/fightorflight-fabric-0.10.4.jar",
+    "primary": true,
+    "size": 1399782,
+    "hashes": {
+     "sha512": "11641de3edc3158f78182781773d1bc588c498f43c1263eb227b02fb7026322a3f8094213b7639a796476d4acf17cbbb4c9ef08dd5bfaf42cec3c737dc9a7135",
+     "sha1": "45ff70c3fc128e278224da2ed9fd4946b3849e63"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.10.4-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/VVdTdl9h/fightorflight-fabric-0.10.4-sources.jar",
+    "primary": false,
+    "size": 247436,
+    "hashes": {
+     "sha1": "9e407038d50f175f4174844be44c089c51095127",
+     "sha512": "e91ed56c4c1fdf4b7819b83f9a77fd259f8540e6468f4d7670fbc77a8b9b8dcd4d4d6186204bb1a404af58914378005008cba185f5a107f6b999cf5718baff24"
+    }
+   }
+  ]
+ },
+ {
+  "id": "dqn9P04w",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.3",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.3",
+  "version_type": "release",
+  "date_published": "2025-12-17T03:20:36.245152Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.3.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/dqn9P04w/fightorflight-fabric-0.10.3.jar",
+    "primary": true,
+    "size": 1397311,
+    "hashes": {
+     "sha512": "7f009850aedf7ca9b4e448936087a41fed3cfd7ddd56f51ecdfac96680a62eef13231ed260afc78518f52f286582586871a9eea09c53a52845c19c3037b5d590",
+     "sha1": "429205deaf5d69332c45d4a7c072672f0ef93a7a"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.10.3-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/dqn9P04w/fightorflight-fabric-0.10.3-sources.jar",
+    "primary": false,
+    "size": 246278,
+    "hashes": {
+     "sha1": "a4c6551036b673f3eae634dfbfbaf171ed35ded6",
+     "sha512": "0414493aa191984d41523b2d4acd447387b8e52d49c46080ef33998fe581728f94298aa64c68709be4d932ce5da750981f63bbc0efbccdfce2de34aff8b55380"
+    }
+   }
+  ]
+ },
+ {
+  "id": "13no59Y6",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.2",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.2",
+  "version_type": "release",
+  "date_published": "2025-12-11T08:42:10.950173Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.2.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/13no59Y6/fightorflight-fabric-0.10.2.jar",
+    "primary": true,
+    "size": 1391968,
+    "hashes": {
+     "sha512": "0c350acfc0fe31bb148b4d0168ae85ea5e4e1ddd51720443f7b6f71f1f372110b031f76d7b1054bd9d474ecbda50ee3eedfb11606bd338dd7d8bca03ad09e568",
+     "sha1": "9eacd0b0c7419736cfd71f483425bee1b16ea174"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.10.2-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/13no59Y6/fightorflight-fabric-0.10.2-sources.jar",
+    "primary": false,
+    "size": 243924,
+    "hashes": {
+     "sha1": "f704532387a4ac2f02a8d7cf9ee3b65ac4f3c1d1",
+     "sha512": "1d4df0dea9b8e637a02906d6fc5b2215c2b22ce40736536d47775f3e46fd4139b0ad8410964b91458e22fda440215ddb32d5909d4f7c015045f0c72493b7c476"
+    }
+   }
+  ]
+ },
+ {
+  "id": "XdGCbTW2",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.1",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.1",
+  "version_type": "release",
+  "date_published": "2025-12-08T09:48:08.507050Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.1.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/XdGCbTW2/fightorflight-fabric-0.10.1.jar",
+    "primary": true,
+    "size": 1387968,
+    "hashes": {
+     "sha1": "2cd6286fdf3cd52d4b8ef7809e71d92443665c26",
+     "sha512": "5d1d46232c81313e3ab8ad9ae79d48e19090a88f692073660f718da9a26c3e75cf1dd1ea00700b2622fae1b573c23c790b17cbc6fb7e117fcfef5c653b6bcd4e"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.10.1-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/XdGCbTW2/fightorflight-fabric-0.10.1-sources.jar",
+    "primary": false,
+    "size": 241956,
+    "hashes": {
+     "sha1": "ad5d101f0e0943d98354dc96aea444442d3dc10b",
+     "sha512": "9991757fd3b131d8fe56d3a20bf52975a84c9e30bafa539722222b8b7c98ae4930d43c68906666821b0f324507da83fd3474c99420318a91fde42a058d55a3fc"
+    }
+   }
+  ]
+ },
+ {
+  "id": "chRlSouw",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.10.0",
+  "name": "Cobblemon Fight or Flight Reborn 0.10.0",
+  "version_type": "release",
+  "date_published": "2025-12-08T03:00:48.031247Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.10.0.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/chRlSouw/fightorflight-fabric-0.10.0.jar",
+    "primary": true,
+    "size": 1387878,
+    "hashes": {
+     "sha512": "d798305d7993dd7f93334c34bc6ebb0da77b59646464bc078cc59cb18910c1a68fa8d6e1babe0d2d18955c2d04fdedec7673e319e4f62831276c3f549a1e6bda",
+     "sha1": "f80dbd1812d5ddcdd5b521c8583a6fb13fcf0345"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.10.0-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/chRlSouw/fightorflight-fabric-0.10.0-sources.jar",
+    "primary": false,
+    "size": 241903,
+    "hashes": {
+     "sha512": "99792a556137b5599a6ce7517ef20624245bd44ca2a44040bc103e0675f19def7dc0c3b474308d27b46bbc09c962e809641a31caa2ef6e316f739e58deca64ee",
+     "sha1": "cf3697beb428e7f82836d658cfecc146648f6d96"
+    }
+   }
+  ]
+ },
+ {
+  "id": "6McAEN1y",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.9.0",
+  "name": "Cobblemon Fight or Flight Reborn 0.9.0",
+  "version_type": "release",
+  "date_published": "2025-11-24T10:24:54.796177Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.9.0.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/6McAEN1y/fightorflight-fabric-0.9.0.jar",
+    "primary": true,
+    "size": 1361305,
+    "hashes": {
+     "sha1": "79a268568c95937de52d3241b678fb55767c476d",
+     "sha512": "580efa8e5f16c45d7969dd507bf51b74974f3a9facbd6e235d413dd4ae287865e14b3e14274ebd674b7e2bf35be7d851151550f338b2d9342a424b51fb369d6b"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.9.0-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/6McAEN1y/fightorflight-fabric-0.9.0-sources.jar",
+    "primary": false,
+    "size": 225182,
+    "hashes": {
+     "sha512": "a6d238a543e6ad188f8f816ea25bbe81febd47b3053fa3ddf41f6d0e5585651fb6efc8c0101af1dc7376453cebb9436aa3ff7d46baf470e435f5344398b58aed",
+     "sha1": "fa98492a8619b8002f1a8cea5a862188fe726ca7"
+    }
+   }
+  ]
+ },
+ {
+  "id": "TBDytFsV",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.8.4",
+  "name": "Cobblemon Fight or Flight Reborn 0.8.4",
+  "version_type": "release",
+  "date_published": "2025-10-10T04:55:36.305227Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.8.4.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/TBDytFsV/fightorflight-fabric-0.8.4.jar",
+    "primary": true,
+    "size": 1322627,
+    "hashes": {
+     "sha512": "f2296dadaf5c6c7097570c11b41d9852f10b7f7f1b054d0d3c11ecc9332ee0c71a2b836c24be43ee1a1e68cf07b567e91658ea2eab5777045ebe4fdf734c7843",
+     "sha1": "85ba32db1bd0308d84dd1777be8322c0a7de06ad"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.8.4-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/TBDytFsV/fightorflight-fabric-0.8.4-sources.jar",
+    "primary": false,
+    "size": 199221,
+    "hashes": {
+     "sha1": "2a5c2fa6bb8d91bc2ab8af1e7c4031b57ee5fe57",
+     "sha512": "44f60da4fe1d4235d9d6544b2dbe84a431a6188d7f42573532fed1c72ecd268f1dc6ba012446f4420d2977b637d9d07594e13444494ea88bb043a77c3c440622"
+    }
+   }
+  ]
+ },
+ {
+  "id": "MIF2Smpa",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.6.2",
+  "name": "Cobblemon Fight or Flight Reborn 0.6.2",
+  "version_type": "release",
+  "date_published": "2025-10-07T02:19:21.308384Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.6.2.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/MIF2Smpa/fightorflight-fabric-0.6.2.jar",
+    "primary": true,
+    "size": 1183454,
+    "hashes": {
+     "sha1": "fbd423f44f254b4c6873d23a8bd730bcc8826572",
+     "sha512": "754b3dd947a14afd36c9be38daf6c1b4a264f41af1d1e11453bfbe72498b35da86cdcb7a892c9082111c970d26d52a9c92093fc294dc929a6b809ac7c491857f"
+    }
+   },
+   {
+    "filename": "fightorflight-fabric-0.6.2-sources.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/MIF2Smpa/fightorflight-fabric-0.6.2-sources.jar",
+    "primary": false,
+    "size": 102939,
+    "hashes": {
+     "sha1": "0866f0bd6f898bdc8a62913e46ad0bd36643186e",
+     "sha512": "85cb5532527539a892b8b91fb1e46916ec8006915c95c7dc0bfc9e46c7685bc9a3e9ba207e040187c77f0d8bbd6ca4c1abdffb62e013ca2bf0233e4ac50f56d3"
+    }
+   }
+  ]
+ },
+ {
+  "id": "C7IeFZst",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.8.3",
+  "name": "Cobblemon Fight or Flight Reborn 0.8.3",
+  "version_type": "release",
+  "date_published": "2025-08-13T06:09:51.396103Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.8.3.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/C7IeFZst/fightorflight-fabric-0.8.3.jar",
+    "primary": true,
+    "size": 1319533,
+    "hashes": {
+     "sha1": "2c88542877807c48f8247f78a1105459ad6ae071",
+     "sha512": "44e74ffe16ee87691a3084cf39dde3205d8498dfb5487ddbea9b164870748066f9df8307bff1114887a0f28ddf2346b6122af859dbfa473ee9e10c486e19bd77"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9ydY2fij",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.8.2",
+  "name": "Cobblemon Fight or Flight Reborn 0.8.2",
+  "version_type": "release",
+  "date_published": "2025-07-13T00:32:52.633547Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.8.2.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/9ydY2fij/fightorflight-fabric-0.8.2.jar",
+    "primary": true,
+    "size": 1292065,
+    "hashes": {
+     "sha1": "638d086e8b605934c087cbe75be420a8cba0d97a",
+     "sha512": "e3ce7710662f0d9c662de4c65b60ae8283a6cbdf580297deb54e89515324bc13674f3415ef4aa33b91d59fe78c441c928bd36c695b695157a0bc0f76dc1afaec"
+    }
+   }
+  ]
+ },
+ {
+  "id": "WOOVacnh",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.8.1",
+  "name": "Cobblemon Fight or Flight Reborn 0.8.1",
+  "version_type": "release",
+  "date_published": "2025-06-08T01:59:13.104174Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.8.1.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/WOOVacnh/fightorflight-fabric-0.8.1.jar",
+    "primary": true,
+    "size": 1290514,
+    "hashes": {
+     "sha1": "964441896a3c8ed1c588f18fb75774ba87ead643",
+     "sha512": "f392a8f864cce125cd4396e706ff2a9e079599556c3a93a333baf5e3c412a51a10c0faef7880ece6344bbd72d9919d7b876abac1d0532463cb6aafaf3453cdcb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "gVHpFDPp",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.8.0",
+  "name": "Cobblemon Fight or Flight Reborn 0.8.0",
+  "version_type": "release",
+  "date_published": "2025-06-01T12:11:05.393203Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.8.0.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/gVHpFDPp/fightorflight-fabric-0.8.0.jar",
+    "primary": true,
+    "size": 1288619,
+    "hashes": {
+     "sha1": "ef6acc216a9e6d396740d38e24205724595bb259",
+     "sha512": "f83767350215683502241dfab1ad20d166bf36a556509bffcb7675750c77fa8435410237b0235eda7cc5d4f771460572ff91f2ec9ece1148af1640cbef468ed8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "SResvls5",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.7.9",
+  "name": "Cobblemon Fight or Flight Reborn 0.7.9",
+  "version_type": "release",
+  "date_published": "2025-05-05T08:55:19.604394Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.7.9.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/SResvls5/fightorflight-fabric-0.7.9.jar",
+    "primary": true,
+    "size": 1283710,
+    "hashes": {
+     "sha512": "e27e4ce8f0f5be567db65f463297621b2ed5a6c1975028454739fe960179125e1a31e1c42e1f4c9dfe50810f56e73e26764eac1dc4716509360bbfc59aa36b29",
+     "sha1": "77b6cd9ca7bd1384bc673ad38f78cea8b9fc512a"
+    }
+   }
+  ]
+ },
+ {
+  "id": "EbvAYMKj",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.7.8",
+  "name": "Cobblemon Fight or Flight Reborn 0.7.8",
+  "version_type": "release",
+  "date_published": "2025-04-19T10:56:11.877344Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.7.8.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/EbvAYMKj/fightorflight-fabric-0.7.8.jar",
+    "primary": true,
+    "size": 1278679,
+    "hashes": {
+     "sha512": "22d02f3c7ffd17e3ab3d83ad59becdd4d1b1c2b13c1ee4f6560fab343274eb28b8e82aa1064d544fb18a75d7b20277459b21da83243802ddee1550ee3c1b4995",
+     "sha1": "9809562eb1c102e23a68925e401c51f3d2840153"
+    }
+   }
+  ]
+ },
+ {
+  "id": "icxVQjGm",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.7.7",
+  "name": "Cobblemon Fight or Flight Reborn 0.7.7",
+  "version_type": "release",
+  "date_published": "2025-04-05T11:40:54.370942Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.7.7.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/icxVQjGm/fightorflight-fabric-0.7.7.jar",
+    "primary": true,
+    "size": 1272082,
+    "hashes": {
+     "sha1": "44ca080f2f6622bed6a041c193a1a4aab717af32",
+     "sha512": "1f96a781038433a1f92021a2ceb32b8e7d60099b755599bb533be139bb8d1bae5bd74b178585365d3202c1229cab45be834cfbda371ad5956dd719482b323744"
+    }
+   }
+  ]
+ },
+ {
+  "id": "6iHSHw0e",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.7.6",
+  "name": "Cobblemon Fight or Flight Reborn 0.7.6",
+  "version_type": "release",
+  "date_published": "2025-03-08T05:15:02.944459Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.7.6.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/6iHSHw0e/fightorflight-fabric-0.7.6.jar",
+    "primary": true,
+    "size": 1254353,
+    "hashes": {
+     "sha1": "c20662fdc45cedd073ecce234d535a2a3aee3375",
+     "sha512": "10422222d8537148cb7b811ec76d0256b17706e8209f11859d24c63106bb30c413d626133fe77a18b15e90c2be50d121492a49213579cbea34a5bb4c1e00db32"
+    }
+   }
+  ]
+ },
+ {
+  "id": "iKMlVGNG",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.7.5",
+  "name": "Cobblemon Fight or Flight Reborn 0.7.5",
+  "version_type": "release",
+  "date_published": "2025-03-05T08:48:30.380934Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.7.5.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/iKMlVGNG/fightorflight-fabric-0.7.5.jar",
+    "primary": true,
+    "size": 1254094,
+    "hashes": {
+     "sha512": "4f4023ee3e16c4397ba4345aab9489de132ea771960aec44b20762ad61d15ad02d6d830a31b9f541237d1edb58e418df713a804efe7a466d396422f4687c7f58",
+     "sha1": "551601192ae2a8f042e5c2ae15abe2c7550ac0e8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "wvVbdpeV",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.7.4",
+  "name": "Cobblemon Fight or Flight Reborn 0.7.4",
+  "version_type": "release",
+  "date_published": "2025-01-28T01:13:22.235398Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.7.4.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/wvVbdpeV/fightorflight-fabric-0.7.4.jar",
+    "primary": true,
+    "size": 1211747,
+    "hashes": {
+     "sha512": "2b6aa9af37febdf3fb47a830276f9f0395f3ca98ee2a7903db6ef03d361a164817e62dc6f97fb4b6100a4a3efb842dd140f934415c2bc6ea573a569af1354e6a",
+     "sha1": "dcaacbea025e5482ee17ead52de0001cf3709443"
+    }
+   }
+  ]
+ },
+ {
+  "id": "iJWCqARy",
+  "project_id": "cTdIg5HZ",
+  "version_number": "0.7.3",
+  "name": "Cobblemon Fight or Flight Reborn 0.7.3",
+  "version_type": "release",
+  "date_published": "2025-01-24T06:29:09.395058Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "fightorflight-fabric-0.7.3.jar",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/iJWCqARy/fightorflight-fabric-0.7.3.jar",
+    "primary": true,
+    "size": 1210329,
+    "hashes": {
+     "sha1": "42323cc76b8b20c1937517a8827ad5d0363c0a3a",
+     "sha512": "518569cb78e3aec3f388f2d1161c58393f57949010380fc153e81bd3dbf1c72f590e6113a784da50a81f71cc1f16ff1e1291331d504e64874c55e77d50713e77"
+    }
+   }
+  ]
+ }
+]
