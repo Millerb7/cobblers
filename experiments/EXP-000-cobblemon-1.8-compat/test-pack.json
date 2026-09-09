@@ -1,0 +1,83 @@
+{
+  "schema": "cobblers.experiment-pack/1",
+  "experiment": "EXP-000",
+  "reference": {
+    "pack": "COBBLEVERSE",
+    "version": "1.7.42",
+    "manifest": "../../modpack/manifest/base-cobbleverse-1.7.42.json",
+    "immutable": true
+  },
+  "target": {
+    "minecraft": "1.21.1",
+    "loader": "fabric",
+    "loader_version": "0.19.5",
+    "installer_version": "1.1.2",
+    "java": 21,
+    "cobblemon": "1.8.0",
+    "overlay": "../../modpack/manifest/overlay.json"
+  },
+  "assembled_server": {
+    "runtime_path": "runtime/server",
+    "tracked": false,
+    "jars": 103,
+    "unchanged_base_jars": 90,
+    "replacement_jars": 13,
+    "removed_enabled_jars": 1,
+    "server_excluded_client_mod_ids": 33,
+    "datapack_zips": 10,
+    "status": "ASSEMBLED_HASH_VERIFIED_EULA_BLOCKED"
+  },
+  "assembled_client": {
+    "runtime_path": "runtime/client",
+    "tracked": false,
+    "jars": 136,
+    "resourcepack_zips": 47,
+    "datapack_zips": 10,
+    "shaderpack_zips": 1,
+    "status": "ASSEMBLED_HASH_VERIFIED_NOT_LAUNCHED"
+  },
+  "stages": [
+    {
+      "id": 0,
+      "name": "known-working baseline",
+      "changes": [],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 1,
+      "name": "Cobblemon cold swap",
+      "changes": ["cobblemon"],
+      "expected": "loader names the base jars whose declared ranges reject 1.8",
+      "status": "NOT RUN"
+    },
+    {
+      "id": 2,
+      "name": "loader blockers",
+      "changes": ["cobblemon", "tmcraft", "capture_xp", "tim_core", "remove better_pokedex_scanner"],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 3,
+      "name": "trainer and battle core",
+      "changes": ["rctapi", "rctmod", "mega_showdown", "zamega"],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 4,
+      "name": "supported gameplay addon updates",
+      "changes": ["cobbreeding", "obc", "playerxp", "cobblenav", "fightorflight"],
+      "status": "NOT RUN"
+    },
+    {
+      "id": 5,
+      "name": "complete preserved Cobbleverse server set",
+      "changes": ["all overlay replacements and preserved unknown integrations"],
+      "status": "PREFLIGHT PASSED THROUGH EULA CHECK; NOT LAUNCHED"
+    }
+  ],
+  "human_gate": {
+    "file": "runtime/server/eula.txt",
+    "status": "MISSING",
+    "instruction": "A human must read https://aka.ms/MinecraftEULA and accept it directly if they agree. Repository tooling never accepts it."
+  }
+}

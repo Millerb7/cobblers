@@ -8,7 +8,7 @@ later script) can reproduce the server exactly.
 | Component | Version | Source | Status |
 |-----------|---------|--------|--------|
 | Minecraft (server) | 1.21.1 | fetched by the Fabric installer | fixed by the pack |
-| Fabric Loader | **>= 0.18.4** (required by Cobbleverse 1.7.42) | Fabric installer, `-loader <version>` | **to be pinned at first boot test** - record the exact version in `experiments/EXP-000-cobblemon-1.8-compat/results.md` and here |
+| Fabric Loader | **0.19.5** (base requires >= 0.18.4) | Fabric installer, `-loader 0.19.5` | pinned for EXP-000 from Fabric Meta on 2026-09-08; assembled, boot pending EULA |
 | Fabric API | 0.116.14+1.21.1 (base pack) | part of the mods set (manifest) | Cobblemon 1.8.0 requires Fabric API (Modrinth `P7dR8mSH`); the base version is assumed sufficient until boot test says otherwise |
 | Fabric Language Kotlin | 1.13.13+kotlin.2.4.10 | mods set | as base |
 | Architectury | 13.0.8 | mods set | as base |
@@ -19,7 +19,7 @@ later script) can reproduce the server exactly.
 
 1. **Install the launcher** (human action; downloads a jar):
    get the Fabric installer from fabricmc.net and run
-   `java -jar fabric-installer.jar server -mcversion 1.21.1 -loader <LOADER_VERSION> -downloadMinecraft -dir <serverdir>`.
+   `java -jar fabric-installer-1.1.2.jar server -mcversion 1.21.1 -loader 0.19.5 -downloadMinecraft -dir <serverdir>`.
    It writes `fabric-server-launch.jar` (or `fabric-server-mc.1.21.1-loader.<v>-launcher.<i>.jar`),
    `server.jar`, and `libraries/`. All are gitignored.
 2. **Mods**: `pwsh server/scripts/assemble-server.ps1 -TargetDir <serverdir>/mods -Apply`.
@@ -46,6 +46,6 @@ later script) can reproduce the server exactly.
 
 ## Open items
 
-- Pin the loader version after the first successful boot.
+- Re-evaluate loader 0.19.5 only when a boot failure identifies the loader itself or a future pack rebase requires it.
 - Decide the host (this dev machine vs. a VPS) and whether `playit.gg` / port forwarding is used.
 - Backup routine for `world/` (outside git).

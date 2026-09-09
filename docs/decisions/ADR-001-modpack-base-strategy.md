@@ -5,7 +5,9 @@
 - **Evidence:** `base-pack/inventory/mod_inventory.json` (fabric.mod.json of all
   138 jars), `docs/research/notes/cobbleverse-pack-content-audit.md`, Modrinth API
   queries on 2026-09-08 (Cobblemon 1.8.0, RCT 0.19.0-beta, Mega Showdown 1.0.2+1.8,
-  TMCraft 1.4.19+1.8.0, Capture XP 1.8.0-fabric-1.3.0, Tim Core 1.8.0-fabric-1.32.0)
+  TMCraft 1.4.19+1.8.0, Capture XP 1.8.0-fabric-1.3.0, Tim Core
+  1.8.0-fabric-1.32.0, and the other version IDs pinned in
+  `modpack/manifest/overlay.json`)
 
 ## Context
 
@@ -36,10 +38,11 @@ Facts that shaped the decision:
 2. **We build an overlay, not a fork.** `modpack/manifest/overlay.json` records every
    replacement, removal, and addition with a reason. The effective pack is computed
    from base plus overlay.
-3. **Target is Cobblemon 1.8.x on Minecraft 1.21.1 Fabric.** The first overlay
-   replaces Cobblemon, TMCraft, Capture XP, Tim Core, RCT, and Mega Showdown with
-   their 1.8 builds, removes Better Pokedex Scanner and the disabled duplicate
-   Particular jar, and flags 24 mods for functional testing.
+3. **Target is Cobblemon 1.8.x on Minecraft 1.21.1 Fabric.** The current overlay
+   has 13 replacements: Cobblemon, TMCraft, Capture XP, Tim Core, RCT/API, Mega
+   Showdown, ZAMegas, Cobbreeding, Only Bottle Caps, PlayerXP, CobbleNav, and
+   Fight or Flight. It removes Better Pokédex Scanner and the disabled duplicate
+   Particular jar, and flags 27 retained addons/libraries for functional testing.
 4. **Cobbleverse's story content is not our story.** We inherit its models, blocks,
    trainer system, badge items, raids, and quality-of-life. We replace its spawn
    pools, trainer placement, series and level-cap configuration, advancements, and

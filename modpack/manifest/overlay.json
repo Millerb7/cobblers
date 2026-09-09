@@ -150,13 +150,13 @@
     "dependencies": [
      {
       "version_id": null,
-      "project_id": "MdwFAVRL",
+      "project_id": "CBfM2yw7",
       "file_name": null,
       "dependency_type": "required"
      },
      {
       "version_id": null,
-      "project_id": "CBfM2yw7",
+      "project_id": "MdwFAVRL",
       "file_name": null,
       "dependency_type": "required"
      },
@@ -190,13 +190,13 @@
     "dependencies": [
      {
       "version_id": null,
-      "project_id": "MdwFAVRL",
+      "project_id": "lhGA9TYQ",
       "file_name": null,
       "dependency_type": "required"
      },
      {
       "version_id": null,
-      "project_id": "lhGA9TYQ",
+      "project_id": "MdwFAVRL",
       "file_name": null,
       "dependency_type": "required"
      }
@@ -224,19 +224,7 @@
     "dependencies": [
      {
       "version_id": null,
-      "project_id": "MdwFAVRL",
-      "file_name": null,
-      "dependency_type": "required"
-     },
-     {
-      "version_id": null,
       "project_id": "jtmvUHXj",
-      "file_name": null,
-      "dependency_type": "required"
-     },
-     {
-      "version_id": null,
-      "project_id": "P7dR8mSH",
       "file_name": null,
       "dependency_type": "required"
      },
@@ -251,13 +239,277 @@
       "project_id": "ccKDOlHs",
       "file_name": null,
       "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
      }
     ]
    },
    "sha512": "7e3161f49da37a3763de9c9671f5a04fb1a45b83898cde498361edaa5d7637a2d7024c98b859d1582b11dfe213da48e30d2b5e4775a191405d2492908992bc79",
    "sha1": "50b2012b5207706fd93d42dfad73f94aa294c7a2",
    "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "Mega Showdown 1.0.2 for Cobblemon 1.8 (2026-09-08). Note the version scheme reset (1.8.4 -> 1.0.2); check its new required dependencies against the base pack."
+   "reason": "Mega Showdown 1.0.2 for Cobblemon 1.8 (2026-09-08). Note the version scheme reset (1.8.4 -> 1.0.2); its required dependencies are present in the base pack."
+  },
+  {
+   "mod_id": "cobbreeding",
+   "from_version": "2.2.2",
+   "to_version": "2.3.0",
+   "modrinth": {
+    "slug": "cobbreeding",
+    "project_id": "ItmVb4zY",
+    "version_id": "dED6lApR",
+    "version_number": "2.3.0",
+    "date_published": "2026-09-07T12:11:10.995717Z",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/dED6lApR/Cobbreeding-fabric-2.3.0.jar",
+    "filename": "Cobbreeding-fabric-2.3.0.jar",
+    "size": 475711,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "lhGA9TYQ",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "mOgUt4GM",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "9s6osm5g",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "reason": "Release 2.3.0 explicitly updates Cobbreeding for Cobblemon 1.8.",
+   "to_file": "Cobbreeding-fabric-2.3.0.jar",
+   "sha512": "07d4fda28ed71a1b8249d4a01328dc7765c74d0450b28defbac64bc73a76eb269281421fcb4c0b9d62b30969a4a5cf60b4a990e15ebd5fe7d8b7670b4e67998f",
+   "sha1": "8bf8f20f8c5939395a9fbfda4f8e368b2889ea30",
+   "verification": "verified via Modrinth API 2026-09-08"
+  },
+  {
+   "mod_id": "obc",
+   "from_version": "1.3.0",
+   "to_version": "1.5.0-fabric",
+   "modrinth": {
+    "slug": "only-bottle-caps",
+    "project_id": "tDRRddpZ",
+    "version_id": "l7Gi3yRs",
+    "version_number": "1.5.0-fabric",
+    "date_published": "2026-09-06T13:34:17.834291Z",
+    "url": "https://cdn.modrinth.com/data/tDRRddpZ/versions/l7Gi3yRs/Only%20Bottle%20Caps-1.5.0-fabric.jar",
+    "filename": "Only Bottle Caps-1.5.0-fabric.jar",
+    "size": 250957,
+    "dependencies": [
+     {
+      "version_id": "YgmyyFcs",
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": "euSlaAtA",
+      "project_id": "LN9BxssP",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "reason": "Release 1.5.0-fabric explicitly targets Cobblemon 1.8 and is not backward-compatible.",
+   "to_file": "Only Bottle Caps-1.5.0-fabric.jar",
+   "sha512": "21ed02be9983aa96c2e0e05ec75d9facc989963ac8b95940b60ce4f562560da26fe48cbb72f674eafc6644657844246306e8514e40bc7453ef78606d29b517d7",
+   "sha1": "50e3a86132bbbb07f23fcfd9016d9b31fa8f8535",
+   "verification": "verified via Modrinth API 2026-09-08"
+  },
+  {
+   "mod_id": "playerxp",
+   "from_version": "1.0.9+1.21.1",
+   "to_version": "1.1.1+1.21.1",
+   "modrinth": {
+    "slug": "cobblemon-playerxp",
+    "project_id": "zlrbPCvu",
+    "version_id": "opsunElf",
+    "version_number": "1.1.1+1.21.1",
+    "date_published": "2026-09-07T17:03:18.382802Z",
+    "url": "https://cdn.modrinth.com/data/zlrbPCvu/versions/opsunElf/playerxp-fabric-1.1.1%2B1.21.1.jar",
+    "filename": "playerxp-fabric-1.1.1+1.21.1.jar",
+    "size": 16789,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": "YgmyyFcs",
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "reason": "Release 1.1.1 explicitly updates PlayerXP for Cobblemon 1.8.",
+   "to_file": "playerxp-fabric-1.1.1+1.21.1.jar",
+   "sha512": "6cac056f8dbe94117fb428826f5d421d2438c6f3b644ddf5182b70476b378004ac48a4119d6f950507a6a4c38d100d22a8c275fad0f47d7f3402bc0cee50e6f2",
+   "sha1": "814611655a2723a7adcaff3f8f2ef1c337249961",
+   "verification": "verified via Modrinth API 2026-09-08"
+  },
+  {
+   "mod_id": "cobblenav",
+   "from_version": "2.3.3",
+   "to_version": "2.4.1",
+   "modrinth": {
+    "slug": "cobblemon-pokenav",
+    "project_id": "bI8Nt3uA",
+    "version_id": "BV5KiAcY",
+    "version_number": "2.4.1",
+    "date_published": "2026-09-08T12:56:55.972891Z",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/BV5KiAcY/cobblenav-fabric-2.4.1.jar",
+    "filename": "cobblenav-fabric-2.4.1.jar",
+    "size": 1142193,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "mOgUt4GM",
+      "file_name": null,
+      "dependency_type": "optional"
+     },
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "reason": "CobbleNav 2.4.x explicitly updates for Cobblemon 1.8.",
+   "to_file": "cobblenav-fabric-2.4.1.jar",
+   "sha512": "59a36ea6f2f21bd6668f128b359cb0c448711502195559d69ccb77e50dcf2ac2535cfacee332722f5a63a5b15a493cf3f525a46b9e7c264fdb445737dfdf9d36",
+   "sha1": "933b8e5a23f3847a64c87f1a5cb55d5790cce193",
+   "verification": "verified via Modrinth API 2026-09-08"
+  },
+  {
+   "mod_id": "zamega",
+   "from_version": "1.7.3",
+   "to_version": "1.7.7+1.8",
+   "modrinth": {
+    "slug": "navas-zamega",
+    "project_id": "2V1Y86sc",
+    "version_id": "jlpvkxRM",
+    "version_number": "1.7.7+1.8",
+    "date_published": "2026-09-06T08:33:49.408358Z",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/jlpvkxRM/zamega-fabric-1.7.7%2B1.8.jar",
+    "filename": "zamega-fabric-1.7.7+1.8.jar",
+    "size": 1082897,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "lhGA9TYQ",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "ccKDOlHs",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "jtmvUHXj",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "SszvX85I",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "reason": "The base jar requires Mega Showdown's 1.7-era version range; release 1.7.7+1.8 targets the reset Mega Showdown 1.0.x line.",
+   "to_file": "zamega-fabric-1.7.7+1.8.jar",
+   "sha512": "720d792d4b7224c956b72e3f480b225cc002126d593b28c49263f8c94cce593a77230e81854d9b695387d4bcba5ccf6b38aa055638ae174c2715abe0ab3e35c2",
+   "sha1": "01ee9cf94c7af2c6a772f08d5db6f1a8efa4ff18",
+   "verification": "verified via Modrinth API 2026-09-08"
+  },
+  {
+   "mod_id": "fightorflight",
+   "from_version": "0.10.9",
+   "to_version": "0.11.0",
+   "modrinth": {
+    "slug": "cobblemon-fight-or-flight-reborn",
+    "project_id": "cTdIg5HZ",
+    "version_id": "CHXL2ka3",
+    "version_number": "0.11.0",
+    "date_published": "2026-09-08T12:45:12.738364Z",
+    "url": "https://cdn.modrinth.com/data/cTdIg5HZ/versions/CHXL2ka3/fightorflight-fabric-0.11.0.jar",
+    "filename": "fightorflight-fabric-0.11.0.jar",
+    "size": 1446545,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "lhGA9TYQ",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "reason": "Maintained Reborn release reports normal operation on Cobblemon 1.8; preserve provisionally and verify aggression, fleeing, battle start, and XP behavior.",
+   "to_file": "fightorflight-fabric-0.11.0.jar",
+   "sha512": "e4963bfc2b805ff3dff389f673ce719e89835c6b290cc081d2a56befafcafa17b67e42088754ce223094d01731191fcabfcb2c4bd74800646ddf3dfbd7e51b2a",
+   "sha1": "d3031a632dc5e4300ce273051ddfe0c2ad64859c",
+   "verification": "verified via Modrinth API 2026-09-08"
   }
  ],
  "remove": [
@@ -310,6 +562,22 @@
  ],
  "server_exclude_note": "mod ids whose every jar declares environment 'client' in fabric.mod.json (33 ids, 34 client jars). Never install these on the dedicated server. Ids shared by a client jar and a non-client jar are listed in server_exclude_ambiguous instead.",
  "needs_functional_test": [
+  {
+   "mod_id": "tmcraft",
+   "reason": "1.8-targeted replacement must be tested for table recipes, machine interaction, and teaching a move"
+  },
+  {
+   "mod_id": "capture_xp",
+   "reason": "1.8-targeted replacement must be tested through a successful capture and XP award"
+  },
+  {
+   "mod_id": "tim_core",
+   "reason": "1.8-targeted library is exercised through Capture XP and must remain paired with it"
+  },
+  {
+   "mod_id": "mega_showdown",
+   "reason": "Cobblemon 1.8 replacement is metadata-compatible, but Mega Evolution and its worldgen/persistent blocks require functional testing"
+  },
   {
    "mod_id": "cobblenav",
    "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"

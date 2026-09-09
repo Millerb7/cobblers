@@ -16,7 +16,7 @@ follows.
 | --- | --- |
 | Repository structure, docs, agent system | done (this commit) |
 | Base pack inventory and compatibility matrix | done, see `docs/research/` |
-| EXP-000 boot test of Cobbleverse on Cobblemon 1.8 | **not run yet**, next step |
+| EXP-000 boot test of Cobbleverse on Cobblemon 1.8 | target assembled and verified; **blocked at human EULA gate** |
 | EXP-001 to EXP-007 capability experiments | backlog only |
 | Route 1, gyms, dungeons, story | not started, gated on EXP-000 |
 
@@ -48,13 +48,13 @@ shrinks or disappears and the campaign overlay moves across unchanged.
 | Component | Base (Cobbleverse 1.7.42) | Target |
 | --- | --- | --- |
 | Minecraft | 1.21.1 | 1.21.1 |
-| Loader | Fabric (>= 0.18.4 required by the pack) | Fabric |
+| Loader | Fabric (>= 0.18.4 required by the pack) | Fabric 0.19.5 |
 | Cobblemon | 1.7.3 | **1.8.x** (1.8.0 released 2026-09-06) |
 | Java | 21 | 21 |
 
 The Minecraft version does not change. The migration risk is Cobblemon addon
-compatibility, not Minecraft compatibility. Four mods hard-pin Cobblemon 1.7.3 and
-three of them already have 1.8 builds; details in
+compatibility, not Minecraft compatibility. The current overlay applies 13
+versioned replacements and removes Better Pokédex Scanner; details in
 [docs/research/COBBLEVERSE_COMPATIBILITY.md](docs/research/COBBLEVERSE_COMPATIBILITY.md).
 
 ## Repository layout
@@ -83,6 +83,7 @@ three of them already have 1.8 builds; details in
    minus removals plus replacements from `modpack/manifest/overlay.json`.
 2. `server/scripts/assemble-server.ps1` copies the server-side jars into a server
    directory from a local source of jars (jars are never committed).
+   `tools/assemble_client.py` creates the corresponding disposable client instance.
 3. A human accepts the Minecraft EULA in that directory. Scripts never do this.
 4. `server/scripts/boot-test.ps1` boots the server, captures logs and crash reports
    into `experiments/EXP-000-cobblemon-1.8-compat/runs/`, and prints a verdict.

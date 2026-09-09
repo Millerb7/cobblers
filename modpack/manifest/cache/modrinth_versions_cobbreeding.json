@@ -1,0 +1,1210 @@
+[
+ {
+  "id": "dED6lApR",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.3.0",
+  "name": "Cobbreeding 2.3.0 [Cobblemon 1.8]",
+  "version_type": "release",
+  "date_published": "2026-09-07T12:11:10.995717Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.3.0.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/dED6lApR/Cobbreeding-fabric-2.3.0.jar",
+    "primary": true,
+    "size": 475711,
+    "hashes": {
+     "sha512": "07d4fda28ed71a1b8249d4a01328dc7765c74d0450b28defbac64bc73a76eb269281421fcb4c0b9d62b30969a4a5cf60b4a990e15ebd5fe7d8b7670b4e67998f",
+     "sha1": "8bf8f20f8c5939395a9fbfda4f8e368b2889ea30"
+    }
+   }
+  ]
+ },
+ {
+  "id": "RNbPHodv",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.2.2",
+  "name": "Cobbreeding 2.2.2 [Cobblemon 1.7]",
+  "version_type": "release",
+  "date_published": "2026-07-06T15:43:01.668220Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.2.2.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/RNbPHodv/Cobbreeding-fabric-2.2.2.jar",
+    "primary": true,
+    "size": 475560,
+    "hashes": {
+     "sha512": "e05cf3854f8b5ce08dff3f2207816e9c559b4cca23f1a699212451b0b7e0292e284bb25a21c5a3b859921862c4ae63223be47f6b27ea0e473a3c39fbe7f926fe",
+     "sha1": "0bd4a004af1de1d0929dfd295db044c365351153"
+    }
+   }
+  ]
+ },
+ {
+  "id": "MvTDHePw",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.2.1",
+  "name": "Cobbreeding 2.2.1 [Cobblemon 1.7]",
+  "version_type": "release",
+  "date_published": "2026-02-04T18:52:25.432617Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.2.1.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/MvTDHePw/Cobbreeding-fabric-2.2.1.jar",
+    "primary": true,
+    "size": 475204,
+    "hashes": {
+     "sha1": "fbcb0768068fac96e121384a71c6c835ecb13337",
+     "sha512": "3c3197550b75a5106d35a3a87510389c0aca51b74546015c7e0e98b75031ac1d76e61e934b1955fe5bb2e074ff2d2ed5ddf97354f8f09abfd4344c9d77da7f5b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "DcOPx56X",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.2.0",
+  "name": "Cobbreeding 2.2.0 [Cobblemon 1.7]",
+  "version_type": "release",
+  "date_published": "2026-02-02T21:30:49.383074Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.2.0.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/DcOPx56X/Cobbreeding-fabric-2.2.0.jar",
+    "primary": true,
+    "size": 474198,
+    "hashes": {
+     "sha1": "c6ac6614e3d833665634e9e4dfedc71293cfa757",
+     "sha512": "87a1853695fe3330afae4216b89c660a7dd5f663ad8dc646bbd5eb77763ec9288f77300448f3061443767d59ccb7e02a788e07370ddeeb2999a7cf9884632cf0"
+    }
+   }
+  ]
+ },
+ {
+  "id": "txiMM5yA",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.1.1",
+  "name": "Cobbreeding 2.1.1 [Cobblemon 1.7]",
+  "version_type": "release",
+  "date_published": "2025-11-29T10:34:08.715579Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.1.1.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/txiMM5yA/Cobbreeding-fabric-2.1.1.jar",
+    "primary": true,
+    "size": 304580,
+    "hashes": {
+     "sha1": "97477d7ff6fe48489e3d0b2b8775a25940f30c6f",
+     "sha512": "10dcac2cc364ff723659d0893da72b69a5dc1c0e1437cd6d79309b7021ef989546d81cc38fd224e3511fb483d96070178a635868cbfe807995360741a1110ff2"
+    }
+   }
+  ]
+ },
+ {
+  "id": "5AwDmdFq",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.1.0",
+  "name": "Cobbreeding 2.1.0 [Cobblemon 1.7]",
+  "version_type": "release",
+  "date_published": "2025-11-21T23:51:36.533165Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.1.0.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/5AwDmdFq/Cobbreeding-fabric-2.1.0.jar",
+    "primary": true,
+    "size": 304130,
+    "hashes": {
+     "sha512": "373ca3ffc5207270f28653ba00b70f5e4cc5bb59d73679808384bfcafd3273b545ae5b2c695d9177fec2dd71b5917cb1245cd759cb23571b317ed6184549fff5",
+     "sha1": "09e7c125cbf28820f1c524e2f4020b883098aa5e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "W94inIEX",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.0.3",
+  "name": "Cobbreeding 2.0.3 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-10-24T16:48:47.729511Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.0.3.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/W94inIEX/Cobbreeding-fabric-2.0.3.jar",
+    "primary": true,
+    "size": 303275,
+    "hashes": {
+     "sha512": "fe2656f5a355243f58286836f60a95e7c3d489b5e906c495f9e41e06b946280065beb6f7ae9d59a333217095e099f00b8eb2cdfcdbb3b9143a85743019dfb9ad",
+     "sha1": "ba9f32b8ab3f470631c58444db51d855ad28a4dc"
+    }
+   }
+  ]
+ },
+ {
+  "id": "muXv5V1S",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.0.2",
+  "name": "Cobbreeding 2.0.2 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-10-22T12:10:17.700999Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.0.2.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/muXv5V1S/Cobbreeding-fabric-2.0.2.jar",
+    "primary": true,
+    "size": 299416,
+    "hashes": {
+     "sha512": "19d1ec5345ffa436f7e7c782e039b1d76e08e9ecb25a501141fa13665f100eec94366fc3c88a16295b04ca625322d0a6794819a8926161a5bd27e84c5ff1a949",
+     "sha1": "058a1e1214a4485d28399addce20971edc68807a"
+    }
+   }
+  ]
+ },
+ {
+  "id": "A0HNfz90",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.0.1",
+  "name": "Cobbreeding 2.0.1 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-10-21T22:49:21.327035Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.0.1.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/A0HNfz90/Cobbreeding-fabric-2.0.1.jar",
+    "primary": true,
+    "size": 299260,
+    "hashes": {
+     "sha1": "c2a217c674c4578702f678a888e4b45bdbe0417b",
+     "sha512": "f11e54a9977640b2384a1cb32fa082d21ab5ec2f7b0467c666ed4c602ed3a090d54f98ba931c873c978cc9688220cf6bb57f704966fa303b2154d1677ebc5349"
+    }
+   }
+  ]
+ },
+ {
+  "id": "kYfBlmTY",
+  "project_id": "ItmVb4zY",
+  "version_number": "2.0.0",
+  "name": "Cobbreeding 2.0.0 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-10-21T11:22:52.387314Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "9s6osm5g",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-2.0.0.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/kYfBlmTY/Cobbreeding-fabric-2.0.0.jar",
+    "primary": true,
+    "size": 299064,
+    "hashes": {
+     "sha512": "c236df935a8165dd3161ecd86fef85b04f57e0acc89d9cca9bd242a735f6ca59fa14c8497ca3f2fbe48d8cc72054947160566783bdd0e62da5becea04a10d7eb",
+     "sha1": "ea6667a23747166cd0d4a5e2eebbada89cea4f14"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ar2cejBV",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.9.1",
+  "name": "Cobbreeding 1.9.1 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-06-29T13:19:12.821974Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.9.1.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/ar2cejBV/Cobbreeding-fabric-1.9.1.jar",
+    "primary": true,
+    "size": 246151,
+    "hashes": {
+     "sha1": "4f58ffa6966452c09d3604b413fc69cc3e46f265",
+     "sha512": "d18a98f519ed0a9d4e02b2fe71faf13cd51e77fbaa9470206f73a305c29ade08a149133559dce1238196ddbd4348117092aaba59c824500c91e2b33d4aab2407"
+    }
+   }
+  ]
+ },
+ {
+  "id": "WWub8t6L",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.9.0",
+  "name": "Cobbreeding 1.9.0 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-04-08T20:54:34.633029Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.9.0.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/WWub8t6L/Cobbreeding-fabric-1.9.0.jar",
+    "primary": true,
+    "size": 246973,
+    "hashes": {
+     "sha512": "3bd5b5f91cd28c85847469a698efab350df5506c853a86adde81d0483f59b21721b1bef1c7b28ad69fcfc7c2f0b2d70ad4c2a75bc0b276d67491f9d08d18e90c",
+     "sha1": "8c79f18167f8dc37ba55022633d8b07b2a001af0"
+    }
+   }
+  ]
+ },
+ {
+  "id": "uu1av5Aq",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.10",
+  "name": "Cobbreeding 1.8.10 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-03-23T22:32:57.056972Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.10.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/uu1av5Aq/Cobbreeding-fabric-1.8.10.jar",
+    "primary": true,
+    "size": 264099,
+    "hashes": {
+     "sha512": "18ebacc7368d574d73b69c46e87f0c0399d3d85b0cd6b4498c52f7f6432320c51c441345c2ca262660917b3655c0959d359b586c9ad49d3d603f1174ddf89f7e",
+     "sha1": "28b87cc918401addf47b890feee871316b6ec09c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "a4uC7KKB",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.9",
+  "name": "Cobbreeding 1.8.9 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-03-02T11:17:52.791503Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.9.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/a4uC7KKB/Cobbreeding-fabric-1.8.9.jar",
+    "primary": true,
+    "size": 264035,
+    "hashes": {
+     "sha512": "5829dfcc3b60d34d90b8130c94b3bb3a0adff0fa2bf0e5bd89b1f24f4da4acdbb1e7b07b50030b700712062aa0af14a13bd85c029ccfa3352f900c6dcb8a176a",
+     "sha1": "7e8025255570202ace23e0f25a7ead916da178cd"
+    }
+   }
+  ]
+ },
+ {
+  "id": "QJNIiatG",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.8",
+  "name": "Cobbreeding 1.8.8 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-02-09T14:16:56.437515Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.8.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/QJNIiatG/Cobbreeding-fabric-1.8.8.jar",
+    "primary": true,
+    "size": 264742,
+    "hashes": {
+     "sha1": "cab2af2513a619242304ad9e6a17b9c9da46eb93",
+     "sha512": "3b4e74b9bd814519f402483c5c42a4aab89cd011745389d09a8258dd5ca096b60787d7d10d4e8aa77e524e62489fcb3fff71f0e10457fc8888ca2fa2b0723ea6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ois8Rl5S",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.7",
+  "name": "Cobbreeding 1.8.7 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-02-02T16:40:41.900872Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.7.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/ois8Rl5S/Cobbreeding-fabric-1.8.7.jar",
+    "primary": true,
+    "size": 249946,
+    "hashes": {
+     "sha512": "4e98e97314730b31e1dfaade3f19b05b512b41c7f04ccdfdcb224fee506f093713e61d002107ca68998703d8c94a163e484ebb0cc847084744229d6c25dffe08",
+     "sha1": "eaaffc9fa1e4d5d4c9b20328823014dfd47b8ae0"
+    }
+   }
+  ]
+ },
+ {
+  "id": "4ufKT4m0",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.6",
+  "name": "Cobbreeding 1.8.6 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-01-31T19:56:59.425009Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.6.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/4ufKT4m0/Cobbreeding-fabric-1.8.6.jar",
+    "primary": true,
+    "size": 119305,
+    "hashes": {
+     "sha512": "712c7f3e265ef874dddb900541542a08b4f7705ab0bc95f41236aa66d445e8a8387b239570fe1bb4ca9646e0df872ebea47c753ab7d700a954c2bc4578cc7850",
+     "sha1": "4e94f9867c56a2270fa4c142e18cb6f5b467fdc3"
+    }
+   }
+  ]
+ },
+ {
+  "id": "mRJilObI",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.5",
+  "name": "Cobbreeding 1.8.5 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-01-29T23:14:33.345325Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.5.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/mRJilObI/Cobbreeding-fabric-1.8.5.jar",
+    "primary": true,
+    "size": 118977,
+    "hashes": {
+     "sha1": "d044104f34c13f033b68d69a27243158bcfe56a3",
+     "sha512": "e5b12ffb7dc9d1f841aa7ff21e04edf1890821967955f60755b50937e047ecb82fcbf169496f4b56a7f5e86b3c4c79e30fdbbc35cc6dc0741741c66e27ce7b2c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "MdRHi44r",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.4",
+  "name": "Cobbreeding 1.8.4 [Cobblemon 1.6.1]",
+  "version_type": "release",
+  "date_published": "2025-01-26T10:39:48.803997Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.4.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/MdRHi44r/Cobbreeding-fabric-1.8.4.jar",
+    "primary": true,
+    "size": 116775,
+    "hashes": {
+     "sha1": "621b7c5645b3b2a1f6143869c1ff2a6e90440343",
+     "sha512": "d7954a89a6a5d6e02a0036a413b1dc4ace9448ef17aaf3c9821b75d7ff7bf34883902e483f3e5e652edfd46010587dd1fdd5ee4d71d6b3fb6b76ce0f08d01d40"
+    }
+   }
+  ]
+ },
+ {
+  "id": "gCblnARj",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.3",
+  "name": "Cobbreeding 1.8.3",
+  "version_type": "release",
+  "date_published": "2025-01-19T19:35:10.801358Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.3.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/gCblnARj/Cobbreeding-fabric-1.8.3.jar",
+    "primary": true,
+    "size": 116501,
+    "hashes": {
+     "sha1": "11c1a393a5e58300583dbed66b3dd0f75c9bdfad",
+     "sha512": "44d0a816f8adaa7724d7bebf5f04456f0837641b6468e09a3cefa6554fa467d03951010bc46c66ddab8fdd7ddf6e5009eed7a87e06d1fdbe8289ccea5f76bccb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "k7o4DJVD",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.2",
+  "name": "Cobbreeding 1.8.2",
+  "version_type": "release",
+  "date_published": "2025-01-19T11:29:45.269289Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.2.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/k7o4DJVD/Cobbreeding-fabric-1.8.2.jar",
+    "primary": true,
+    "size": 116244,
+    "hashes": {
+     "sha1": "a0e16a33568fb447be3db569c962027a92212b90",
+     "sha512": "25608fa71ec1a4952a25d1f757cb4eed773db69a76d27cc92939b89098952e6c91e2a856d84b662c68da0e3a52ca202121cd16dc3d982532b0b21c063c25a548"
+    }
+   }
+  ]
+ },
+ {
+  "id": "YNq22ngB",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.1",
+  "name": "Cobbreeding 1.8.1",
+  "version_type": "release",
+  "date_published": "2025-01-19T01:08:12.798498Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.1.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/YNq22ngB/Cobbreeding-fabric-1.8.1.jar",
+    "primary": true,
+    "size": 116154,
+    "hashes": {
+     "sha1": "7fb37e845befd1e66be59bf0b53c5eaf3d64f064",
+     "sha512": "33bd7f601bdfc3602cb6b03c20ac02fc8ba9bbcf6fcb5da4810156d6023774b7cfef89e6127bca82cba608bc5a1d020a67b948d8dbdfb4e87015920199db6c2e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "706Uycsj",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.8.0-alpha",
+  "name": "Cobbreeding 1.8.0-alpha",
+  "version_type": "alpha",
+  "date_published": "2025-01-12T00:48:39.315409Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.8.0-alpha.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/706Uycsj/Cobbreeding-fabric-1.8.0-alpha.jar",
+    "primary": true,
+    "size": 113507,
+    "hashes": {
+     "sha512": "45cc5281aeef069a89afc0dd162fbba4fee31d1016b7617e8e37f66e78fcd1056072409e7a5f9a79da4d5bc5875920422df895d1c043adf99d58494e67e11fd3",
+     "sha1": "bf5fe447f64266bf1e52e1f1b67e6ef3ef879f18"
+    }
+   }
+  ]
+ },
+ {
+  "id": "8urJiCDL",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.7.4",
+  "name": "Cobbreeding 1.7.4",
+  "version_type": "release",
+  "date_published": "2024-12-08T13:12:59.097822Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.7.4.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/8urJiCDL/Cobbreeding-fabric-1.7.4.jar",
+    "primary": true,
+    "size": 90830,
+    "hashes": {
+     "sha512": "904d64e7ba7a59ca9a0f975192dfa21d712e4cfaff4212e0051faa47ac94c905c8971e1e10d96a2eaa2d77c9d7bfb1f6b9d31b77c152f409e1d153056d28f4ab",
+     "sha1": "a62fcf7541ee81ffa6938b905f249ce2cf8c13db"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ZGAd7Oyp",
+  "project_id": "ItmVb4zY",
+  "version_number": "1.7.3",
+  "name": "Cobbreeding 1.7.3",
+  "version_type": "release",
+  "date_published": "2024-11-10T17:20:06.796146Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobbreeding-fabric-1.7.3.jar",
+    "url": "https://cdn.modrinth.com/data/ItmVb4zY/versions/ZGAd7Oyp/Cobbreeding-fabric-1.7.3.jar",
+    "primary": true,
+    "size": 90551,
+    "hashes": {
+     "sha512": "fac084b2533c1f577b8b2636b5b05b9ec7c56604da2dc0cdb952a0e66055ef03168cd9188fded272413258ebfae2194aea916b24a96e4de882f3059e095f2df8",
+     "sha1": "29f17cb05eb05b1345ebb4074b5c846bda99cdfb"
+    }
+   }
+  ]
+ }
+]
