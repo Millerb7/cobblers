@@ -1,0 +1,119 @@
+# =====================================================================
+# Minecraft client / server runtime state — never commit
+# =====================================================================
+logs/
+crash-reports/
+backups/
+saves/
+server/world/
+server/world_*/
+server/world-*/
+**/screenshots/
+**/servers.dat
+!base-pack/cobbleverse/config/defaultoptions/servers.dat
+**/options.txt
+!**/config/defaultoptions/options.txt
+!**/config/fancymenu/options.txt
+usercache.json
+usernamecache.json
+banned-ips.json
+banned-players.json
+# ops/whitelist contain player UUIDs: ignore live copies, track *.example.json
+ops.json
+whitelist.json
+session.lock
+*.lock
+# Minecraft EULA is a human decision. Never auto-accept, never commit.
+eula.txt
+.fabric/
+.cache/
+.mixin.out/
+**/config/euphoria_patcher/.data.json
+**/config/fancymenu/user_variables.db
+**/config/fancymenu/listener_instances.txt
+**/config/fancymenu/legacy_checklist.txt
+tmp/
+downloads/
+*.tmp
+*.part
+
+# =====================================================================
+# Large redistributable binaries are NOT tracked in git.
+# They are described by manifests (name / version / sha256 / source URL)
+# under base-pack/inventory/ and modpack/manifest/, plus a download script
+# under tools/. See base-pack/README.md and docs/architecture/.
+# Datapacks (small, authored) ARE tracked. Structure files, schematics and
+# campaign JSON ARE tracked.
+# =====================================================================
+base-pack/cobbleverse/mods/*.jar
+base-pack/cobbleverse/mods/*.jar.disabled
+base-pack/cobbleverse/resourcepacks/*.zip
+base-pack/cobbleverse/shaderpacks/**
+!base-pack/cobbleverse/shaderpacks/*.txt
+# Lumyverse-authored datapacks and menu art carry "redistribution strictly
+# prohibited" terms. They stay in the local snapshot only; hashes are in
+# base-pack/inventory/pack_hashes.csv and their contents are described in
+# docs/research/notes/. Our OWN datapacks under modpack/datapacks and
+# campaign/ ARE tracked.
+base-pack/cobbleverse/datapacks/*.zip
+base-pack/cobbleverse/datapacks/extra/*.zip
+base-pack/cobbleverse/config/fancymenu/assets/
+base-pack/cobbleverse/config/fancymenu/slideshows/
+base-pack/cobbleverse/config/customsplashscreen/*.png
+modpack/mods/*.jar
+modpack/mods/*.jar.disabled
+modpack/resourcepacks/*.zip
+modpack/shaderpacks/**
+!modpack/shaderpacks/*.txt
+server/mods/*.jar
+server/libraries/
+server/versions/
+server/*.jar
+*.mrpack
+
+# =====================================================================
+# Secrets
+# =====================================================================
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# =====================================================================
+# Tooling / IDE / OS
+# =====================================================================
+.idea/
+.vs/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+*.iml
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+build/
+.gradle/
+out/
+.claude/settings.local.json
+.claude/worktrees/
+
+# Original local Cobbleverse installation (kept on disk for inspection).
+COBBLEVERSE/mods/**/*.jar
+COBBLEVERSE/mods/**/*.jar.disabled
+COBBLEVERSE/resourcepacks/**/*.zip
+COBBLEVERSE/shaderpacks/**
+!COBBLEVERSE/shaderpacks/*.txt
+# Match the existing upstream-only licensing exclusions in base-pack/.
+COBBLEVERSE/datapacks/**/*.zip
+COBBLEVERSE/config/fancymenu/assets/
+COBBLEVERSE/config/fancymenu/slideshows/
+COBBLEVERSE/config/customsplashscreen/*.png
+!COBBLEVERSE/config/defaultoptions/servers.dat
+.codex/worktrees/
