@@ -1,0 +1,852 @@
+[
+ {
+  "id": "5BfmZHcz",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.8.0-fabric-1.32.0",
+  "name": "Cobblemon Tim Core 1.8.0-fabric-1.32.0",
+  "version_type": "release",
+  "date_published": "2026-09-08T00:38:52.984716Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.8.0-1.32.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/5BfmZHcz/timcore-fabric-1.8.0-1.32.0.jar",
+    "primary": true,
+    "size": 300493,
+    "hashes": {
+     "sha1": "83d245f77508313f404ba0745cfb22d6ca80d158",
+     "sha512": "5d9da889fec83fbca74d009e00342fd45589604eee53cf0ba8d3a6c3011d93effef1feb97b801d4008588590057412bf69256297e9357ff42fc9097ad0ec1cb5"
+    }
+   }
+  ]
+ },
+ {
+  "id": "g5MKQfLZ",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.3-fabric-1.32.0",
+  "name": "Cobblemon Tim Core 1.7.3-fabric-1.32.0",
+  "version_type": "release",
+  "date_published": "2026-04-17T04:13:06.169592Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.3-1.32.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/g5MKQfLZ/timcore-fabric-1.7.3-1.32.0.jar",
+    "primary": true,
+    "size": 304444,
+    "hashes": {
+     "sha1": "3a791c747a4beb4debf691c168f6e6b84efacd15",
+     "sha512": "5c127832e7a8dd190ac32681864e0e88ea4331c92232a9843cac395f2622aea3fa7bab324d2be18dab5a191265f71a9492dd62b164adbaa84a5f5c24a260d1d2"
+    }
+   }
+  ]
+ },
+ {
+  "id": "yPG8odLw",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.3-fabric-1.31.0",
+  "name": "Cobblemon Tim Core 1.7.3-fabric-1.31.0",
+  "version_type": "release",
+  "date_published": "2026-02-02T17:57:31.666427Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.3-1.31.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/yPG8odLw/timcore-fabric-1.7.3-1.31.0.jar",
+    "primary": true,
+    "size": 297587,
+    "hashes": {
+     "sha1": "509129949a45f95b1150b4da4a222f7beed3de6b",
+     "sha512": "612c0f14539b8ba6184f16557b374754c0650ce3014d3506d27eff012d9ef84a181081bca847588f8127f77ce82b02aa6d3fa2ee55829ac2b9047b5d89e0d012"
+    }
+   }
+  ]
+ },
+ {
+  "id": "wmJvRZzY",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.2-fabric-1.31.0",
+  "name": "Cobblemon Tim Core 1.7.2-fabric-1.31.0",
+  "version_type": "release",
+  "date_published": "2026-01-28T00:24:40.786176Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.2-1.31.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/wmJvRZzY/timcore-fabric-1.7.2-1.31.0.jar",
+    "primary": true,
+    "size": 297560,
+    "hashes": {
+     "sha1": "e1003ce1e2cdc65080733f291ed86592e13c9a0b",
+     "sha512": "73339ac8d80a6d2d28bd754d06c325b862540b9a25fb7afdc16240fbde6cd2f640bfa56f22e8113beef120b4ed11c868a98249c3d13c58073531982aa650a122"
+    }
+   }
+  ]
+ },
+ {
+  "id": "HlyoDkTS",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.2-fabric-1.30.0",
+  "name": "Cobblemon Tim Core 1.7.2-fabric-1.30.0",
+  "version_type": "release",
+  "date_published": "2026-01-26T22:04:31.490166Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.2-1.30.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/HlyoDkTS/timcore-fabric-1.7.2-1.30.0.jar",
+    "primary": true,
+    "size": 287575,
+    "hashes": {
+     "sha512": "f109a49819e24063a956c7d092fb304a8d3322669dc07c6699b23f21895318102f06417a1b3d6ddbc819ae75082e076ab4d9a22fbf3e1f7c3bea4305f4ef77dc",
+     "sha1": "51925328848c9791e702c437d703f019d6a74f5a"
+    }
+   }
+  ]
+ },
+ {
+  "id": "jjZNtgMT",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.2-fabric-1.29.1",
+  "name": "Cobblemon Tim Core 1.7.2-fabric-1.29.1",
+  "version_type": "release",
+  "date_published": "2026-01-25T18:28:14.714231Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.2-1.29.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/jjZNtgMT/timcore-fabric-1.7.2-1.29.1.jar",
+    "primary": true,
+    "size": 280355,
+    "hashes": {
+     "sha1": "03b70ed3e66d50b9094f7e87afb1cebec76fefd4",
+     "sha512": "b2958957af13ff10b3c6b3faabbbf1df15e3298ee65640775efcbf7a4531e0db1328e9da3d6e6d79522e40de6fc1403a8462e67444a43a6dd96b2ae43c336156"
+    }
+   }
+  ]
+ },
+ {
+  "id": "fU9heMnn",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.29.1",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.29.1",
+  "version_type": "release",
+  "date_published": "2026-01-22T03:36:51.642652Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.29.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/fU9heMnn/timcore-fabric-1.7.1-1.29.1.jar",
+    "primary": true,
+    "size": 280350,
+    "hashes": {
+     "sha512": "8763ed1c332018d7e4f8cd077b6770f54555275a078913dfed00025bbde63021e7fa373ab5d2e98da749f51e77c84dba156b51350dc94b857f81c03bdfd658a0",
+     "sha1": "27082d11aed98257f3af09fd76a0b5e0575a8665"
+    }
+   }
+  ]
+ },
+ {
+  "id": "w4QsEH5G",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.29.0",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.29.0",
+  "version_type": "release",
+  "date_published": "2026-01-20T21:57:38.783452Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.29.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/w4QsEH5G/timcore-fabric-1.7.1-1.29.0.jar",
+    "primary": true,
+    "size": 280349,
+    "hashes": {
+     "sha512": "fde893a9a8b38354225b85ed1b5497a413bc3ebe9479f47ddffb86189b33c6266ac5dcf33a9c624ff8494798e0ff6d00fde2f9e82276c83d54b98acd39618d89",
+     "sha1": "caddbdc81c1a320a0cd3c507b25e7a5e100f4bc5"
+    }
+   }
+  ]
+ },
+ {
+  "id": "IeuGQckn",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.28.1",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.28.1",
+  "version_type": "release",
+  "date_published": "2026-01-16T16:30:25.774380Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.28.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/IeuGQckn/timcore-fabric-1.7.1-1.28.1.jar",
+    "primary": true,
+    "size": 272383,
+    "hashes": {
+     "sha512": "4e6512a6284d9d303911de4bd80ee2456cb27936f2e0c6643a8f664606c0820e09acca8cbcf5f1a2eed1be6004250ace940e5c7b7b59e01a3b915e7de5bdc430",
+     "sha1": "62db6679b1e793d4bbb2b9e4b5b308ffe9551781"
+    }
+   }
+  ]
+ },
+ {
+  "id": "TwyCU9oT",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.28.0",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.28.0",
+  "version_type": "release",
+  "date_published": "2026-01-16T02:48:20.083300Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.28.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/TwyCU9oT/timcore-fabric-1.7.1-1.28.0.jar",
+    "primary": true,
+    "size": 272029,
+    "hashes": {
+     "sha512": "ae3885fae831dc1dc8bc659add5c622cb2515e3d12427ff418f35ce87e9adce1086a4867971f8a2062234a43cd77592a90adf915a4c87a179c41b384d44b2c27",
+     "sha1": "4d6cdca6e9ebe82ba5d04359601fe24517c70941"
+    }
+   }
+  ]
+ },
+ {
+  "id": "pEobo5wQ",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.27.1",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.27.1",
+  "version_type": "release",
+  "date_published": "2025-12-29T18:07:43.937019Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.27.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/pEobo5wQ/timcore-fabric-1.7.1-1.27.1.jar",
+    "primary": true,
+    "size": 207900,
+    "hashes": {
+     "sha1": "e3c427b8bbb9f1fa634c05465db456bc34818b5d",
+     "sha512": "3b47bc40d46ebb141ed07bac467b11c05b3d3024d0e8711aa8b630dcd8188529f069aab1485c293cb4b4c1473681e018b9f9987dba691cb76945f4f875e8fc7e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "wzwxkniO",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.27.0",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.27.0",
+  "version_type": "release",
+  "date_published": "2025-12-11T17:03:03.007935Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.27.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/wzwxkniO/timcore-fabric-1.7.1-1.27.0.jar",
+    "primary": true,
+    "size": 207417,
+    "hashes": {
+     "sha1": "7951c0987545eee0c4d423800296df94d370eb48",
+     "sha512": "2501b5a1f9b108cafe7e48d69f23b9678376bdca914278ba9dc2d2c04d3386c22537d9cbd21da15e3db63846d71ab1496bb3f5874b935a8f450e5b94060e01f6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "L0tmL2nF",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.26.1",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.26.1",
+  "version_type": "release",
+  "date_published": "2025-12-01T01:49:36.093257Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.26.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/L0tmL2nF/timcore-fabric-1.7.1-1.26.1.jar",
+    "primary": true,
+    "size": 200133,
+    "hashes": {
+     "sha512": "32e2770e4e493f3adb031d6f49fca36f6378963b7a1fc6ec21a00ea11fbd9baeeb0fc8385023f555691329631f8a9a1bd4f427c20bd584e1ebd873d9e1386965",
+     "sha1": "9e71eb06667e3e2768a92f50386f9ffca13b99a8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "a8DbBR4p",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.1-fabric-1.26.0",
+  "name": "Cobblemon Tim Core 1.7.1-fabric-1.26.0",
+  "version_type": "release",
+  "date_published": "2025-11-30T03:58:48.706666Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.1-1.26.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/a8DbBR4p/timcore-fabric-1.7.1-1.26.0.jar",
+    "primary": true,
+    "size": 202081,
+    "hashes": {
+     "sha1": "7cf3416cd5e640947b1329dcf9629d8d0c94c964",
+     "sha512": "f85067210234da47ffa85e4e68c5943907c1541bdef7615a03031e9e46459e690b7983a528d4fca44e121637025c599f5c795e6950c62669a2900ff28873f50e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "qLO5I8pX",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.26.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.26.0",
+  "version_type": "release",
+  "date_published": "2025-11-26T01:57:25.412779Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.26.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/qLO5I8pX/timcore-fabric-1.7.0-1.26.0.jar",
+    "primary": true,
+    "size": 202084,
+    "hashes": {
+     "sha512": "56fc748b84d27ddc5967bcfe939c1482d4b2c3b7c1e04a3dc62a9de384c64a367a45cacee2662472350d7c8dfd833b027ce508f29688b2dbc841142840c48440",
+     "sha1": "d6ef833e73cb35aa5258dfebc61db4282b8854a8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "OvCKFWuX",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.25.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.25.0",
+  "version_type": "release",
+  "date_published": "2025-11-25T01:52:01.514351Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.25.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/OvCKFWuX/timcore-fabric-1.7.0-1.25.0.jar",
+    "primary": true,
+    "size": 200035,
+    "hashes": {
+     "sha512": "513e944be709393645f2aaa0ca8974a46353fc597228e4ac1b94f39227005153aa6804f6df652ee908ef27a1efb220aa256d23de9d88abdebba659f434f27c54",
+     "sha1": "fbe68c3ead9a761ce43eca8496310d7925e93f36"
+    }
+   }
+  ]
+ },
+ {
+  "id": "HATGqvZ5",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.24.1",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.24.1",
+  "version_type": "release",
+  "date_published": "2025-11-24T22:46:30.905397Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.24.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/HATGqvZ5/timcore-fabric-1.7.0-1.24.1.jar",
+    "primary": true,
+    "size": 198170,
+    "hashes": {
+     "sha1": "bb36377f0b17d7fc166282fbc2e8967fe4fff260",
+     "sha512": "21250c66da6a1077c155a6f8b99a028b472ccec47f6760335766cf3cfa3ff63c0e0f6673e1f223315340c35305a3560f48c5e263f3df9826c8b75016af839672"
+    }
+   }
+  ]
+ },
+ {
+  "id": "eDtQieYM",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.24.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.24.0",
+  "version_type": "release",
+  "date_published": "2025-11-24T21:16:49.177511Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.24.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/eDtQieYM/timcore-fabric-1.7.0-1.24.0.jar",
+    "primary": true,
+    "size": 198174,
+    "hashes": {
+     "sha512": "a00ad5922c180d4bdac3aff99a01be7b840a92f1daf42018021aac2bc43e6bc0af26d4f1d098cae00aee1314fa02880125c678cc3f489218fda8fd4460bfc623",
+     "sha1": "1d65d4b3426e530fca04cdf13108863898cb33d0"
+    }
+   }
+  ]
+ },
+ {
+  "id": "59kDg125",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.23.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.23.0",
+  "version_type": "release",
+  "date_published": "2025-11-24T17:17:48.972981Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.23.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/59kDg125/timcore-fabric-1.7.0-1.23.0.jar",
+    "primary": true,
+    "size": 195138,
+    "hashes": {
+     "sha512": "26aa171094dd03fcee3d8a6e653b226b9b7b14d91af8d88cca203b0fb7a89ae6d84b1d6e93c347b47402476bb5baf4d9f2dcaa62844cc7d516f918978c484120",
+     "sha1": "434c604a6b849c7fdd68e974f71c01404d92828d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "7lvDKIUY",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.22.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.22.0",
+  "version_type": "release",
+  "date_published": "2025-11-24T15:53:43.495184Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.22.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/7lvDKIUY/timcore-fabric-1.7.0-1.22.0.jar",
+    "primary": true,
+    "size": 193058,
+    "hashes": {
+     "sha1": "ad898af8d975bab52d1254cea132303913494ae5",
+     "sha512": "51e4ffec0b1764d9ebdf3209f3556e7671bb78379225767da1fbeeb3f8db88a2562a31f3be8cdafe24f220629523244e8c73843f6194fbb4e3dbba723fbde3df"
+    }
+   }
+  ]
+ },
+ {
+  "id": "J6tormmf",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.21.1",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.21.1",
+  "version_type": "release",
+  "date_published": "2025-11-24T02:08:55.249616Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/J6tormmf/timcore-fabric-1.7.0-1.21.1.jar",
+    "primary": true,
+    "size": 190781,
+    "hashes": {
+     "sha1": "679000ce2031a5207146f469a4f00b80c5e0f5e6",
+     "sha512": "d163394457f1008c83175cef0fd628213d0431cdd9547fd460c2c8a1b90fa7ddc717837631140cddad2b7bf31eb9b62b648b5e1cd768cc7b35b426c207b2cd53"
+    }
+   }
+  ]
+ },
+ {
+  "id": "djxL7gik",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.21.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.21.0",
+  "version_type": "release",
+  "date_published": "2025-11-23T15:54:02.865317Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.21.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/djxL7gik/timcore-fabric-1.7.0-1.21.0.jar",
+    "primary": true,
+    "size": 190395,
+    "hashes": {
+     "sha1": "bc9d2e8bb2a2656cfd2462ab9dedb1d7b0998b2c",
+     "sha512": "7c95382466368129c37141e3c1458840cd7d1b983109872f322d41d2e8e0c7715cf5aa3d0050888c356654f616a36a2fd784e52b397fbdab9bb26c2c13f37e08"
+    }
+   }
+  ]
+ },
+ {
+  "id": "iXNfsG0o",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.20.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.20.0",
+  "version_type": "release",
+  "date_published": "2025-11-23T03:14:56.536068Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.20.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/iXNfsG0o/timcore-fabric-1.7.0-1.20.0.jar",
+    "primary": true,
+    "size": 187199,
+    "hashes": {
+     "sha1": "8dab714067a034ea966e0807ca4ce563bd3b49e6",
+     "sha512": "cad0cc10ca66da55e615a03e0e202b2bfc5cfee11ae1dbebd82b7e124940a2bdb1c6a511cc990525cdefa8a50e2aa9cdc33c5a320c75e369489ba03ca11be391"
+    }
+   }
+  ]
+ },
+ {
+  "id": "tqT3bRCY",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.7.0-fabric-1.19.0",
+  "name": "Cobblemon Tim Core 1.7.0-fabric-1.19.0",
+  "version_type": "release",
+  "date_published": "2025-11-22T03:00:16.764091Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.7.0-1.19.0.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/tqT3bRCY/timcore-fabric-1.7.0-1.19.0.jar",
+    "primary": true,
+    "size": 187143,
+    "hashes": {
+     "sha1": "2acb3045f48f3224138e99dba6426e128e1b290f",
+     "sha512": "208a51f66f8db90462f72d0a557d18be10503f67255f8681bf28d0c2e7a8b22ee95130dd6cab7829bd9b71284e1ae37ba7334bed64eae293563e8ae432698f16"
+    }
+   }
+  ]
+ },
+ {
+  "id": "DRRmbxrO",
+  "project_id": "lVP9aUaY",
+  "version_number": "1.6.1-fabric-1.18.1",
+  "name": "Cobblemon Tim Core 1.6.1-fabric-1.18.1",
+  "version_type": "release",
+  "date_published": "2025-11-08T23:55:00.047249Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "timcore-fabric-1.6.1-1.18.1.jar",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/DRRmbxrO/timcore-fabric-1.6.1-1.18.1.jar",
+    "primary": true,
+    "size": 222545,
+    "hashes": {
+     "sha512": "8c29c0734b22d441090f4350c3ace56dc3ef31cb0cedd4324b20c672e806004ec22d42c7c7319a1e7f05c3000815d084c292c8b93ce6a74861d5b580ad2bf165",
+     "sha1": "3404c546c2af87f776063eb81f941764560987b8"
+    }
+   }
+  ]
+ }
+]

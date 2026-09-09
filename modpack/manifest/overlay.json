@@ -1,0 +1,418 @@
+{
+ "schema": "cobblers.overlay/1",
+ "base_manifest": "base-cobbleverse-1.7.42.json",
+ "target": {
+  "minecraft": "1.21.1",
+  "loader": "fabric",
+  "loader_min": "0.18.4",
+  "java": 21,
+  "cobblemon": "1.8.0"
+ },
+ "notes": [
+  "Facts verified against the Modrinth API on 2026-09-08 unless an entry says 'unverified'.",
+  "'file' on a remove entry pins the removal to one jar (two jars in the base share mod id 'particular').",
+  "Run `python tools/pack_manifest.py resolve-overlay` to refresh version ids / URLs / hashes from Modrinth.",
+  "Nothing here has been boot-tested yet; see experiments/EXP-000-cobblemon-1.8-compat/."
+ ],
+ "replace": [
+  {
+   "mod_id": "cobblemon",
+   "from_version": "1.7.3+1.21.1",
+   "to_version": "1.8.0",
+   "to_file": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+   "modrinth": {
+    "slug": "cobblemon",
+    "project_id": "MdwFAVRL",
+    "version_id": "YgmyyFcs",
+    "version_number": "1.8.0",
+    "date_published": "2026-09-06T01:30:57.678267Z",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/YgmyyFcs/Cobblemon-fabric-1.8.0%2B1.21.1.jar",
+    "filename": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+    "size": 162358118,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "6537ff48feb8888d5c9f124eeecd721162bf05ca8e30270753d8f58f08af4e5fbb8d06d2bfb6c9e6514524152709e46c8e7ed9ff38fa2cf759d0b43898d25883",
+   "sha1": "ed0bbc67467189161b3bb9e1b8451afd8d073fa8",
+   "verification": "verified via Modrinth API 2026-09-08",
+   "reason": "Target Cobblemon version for the campaign (1.8.0 Fabric, published 2026-09-06). Requires Fabric API (P7dR8mSH)."
+  },
+  {
+   "mod_id": "tmcraft",
+   "from_version": "1.4.18+1.7.3",
+   "to_version": "1.4.19+1.8.0",
+   "to_file": "tmcraft-1.4.19+1.8.0.jar",
+   "modrinth": {
+    "slug": "tmcraft",
+    "project_id": "HU6mkUZs",
+    "version_id": "ixxKJV1J",
+    "version_number": "1.4.19+1.8.0",
+    "date_published": "2026-09-06T10:32:28.486554Z",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/ixxKJV1J/tmcraft-1.4.19%2B1.8.0.jar",
+    "filename": "tmcraft-1.4.19+1.8.0.jar",
+    "size": 6505564,
+    "dependencies": [
+     {
+      "version_id": "YgmyyFcs",
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "e279cb5233fcc7d617e15ac2a520615b10014eb0c5f1e99f24bc74a27178b6d136c7aa5938a7923362cee60b6530ac6f619c3848328642db0c2edc1cf2db95ff",
+   "sha1": "6938cbe1ba999358146f7935c9b0678cd2829ec3",
+   "verification": "verified via Modrinth API 2026-09-08",
+   "reason": "fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.4.19+1.8.0 build exists (2026-09-06)."
+  },
+  {
+   "mod_id": "capture_xp",
+   "from_version": "1.7.3-fabric-1.3.0",
+   "to_version": "1.8.0-fabric-1.3.0",
+   "to_file": "capturexp-fabric-1.8.0-1.3.0.jar",
+   "modrinth": {
+    "slug": "cobblemon-capture-xp",
+    "project_id": "LBl4Qguc",
+    "version_id": "6INfd9ls",
+    "version_number": "1.8.0-fabric-1.3.0",
+    "date_published": "2026-09-08T14:54:10.356664Z",
+    "url": "https://cdn.modrinth.com/data/LBl4Qguc/versions/6INfd9ls/capturexp-fabric-1.8.0-1.3.0.jar",
+    "filename": "capturexp-fabric-1.8.0-1.3.0.jar",
+    "size": 23380,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "lVP9aUaY",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "3b3b2d43f9b6b8949fd7cfb19354aae5face1451e976ccb308b8028e88638a0a17822d9028d5e4acccbf5dc6019910dafe375d3b93ebf6376f32749dafeb59eb",
+   "sha1": "2c2cc3e3839b47494fe550af9856b2b5859ff848",
+   "verification": "verified via Modrinth API 2026-09-08",
+   "reason": "fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.8.0 build exists (2026-09-08). Also requires Tim Core (lVP9aUaY)."
+  },
+  {
+   "mod_id": "tim_core",
+   "from_version": "1.7.3-fabric-1.32.0",
+   "to_version": "1.8.0-fabric-1.32.0",
+   "to_file": "timcore-fabric-1.8.0-1.32.0.jar",
+   "modrinth": {
+    "slug": "cobblemon-tim-core",
+    "project_id": "lVP9aUaY",
+    "version_id": "5BfmZHcz",
+    "version_number": "1.8.0-fabric-1.32.0",
+    "date_published": "2026-09-08T00:38:52.984716Z",
+    "url": "https://cdn.modrinth.com/data/lVP9aUaY/versions/5BfmZHcz/timcore-fabric-1.8.0-1.32.0.jar",
+    "filename": "timcore-fabric-1.8.0-1.32.0.jar",
+    "size": 300493,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "5d9da889fec83fbca74d009e00342fd45589604eee53cf0ba8d3a6c3011d93effef1feb97b801d4008588590057412bf69256297e9357ff42fc9097ad0ec1cb5",
+   "sha1": "83d245f77508313f404ba0745cfb22d6ca80d158",
+   "verification": "verified via Modrinth API 2026-09-08",
+   "reason": "fabric.mod.json hard-pins cobblemon 1.7.3+1.21.1; 1.8.0 build exists (2026-09-08). Library for Capture XP."
+  },
+  {
+   "mod_id": "rctmod",
+   "from_version": "0.18.1-beta",
+   "to_version": "0.19.0-beta",
+   "to_file": "rctmod-fabric-1.21.1-0.19.0-beta.jar",
+   "modrinth": {
+    "slug": "rctmod",
+    "project_id": "lRwTUnD7",
+    "version_id": "jdUENp3C",
+    "version_number": "0.19.0-beta",
+    "date_published": "2026-09-07T02:22:12.569863Z",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/jdUENp3C/rctmod-fabric-1.21.1-0.19.0-beta.jar",
+    "filename": "rctmod-fabric-1.21.1-0.19.0-beta.jar",
+    "size": 6783347,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "CBfM2yw7",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "ohNO6lps",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "036153b8c9c01960b07dca5718d7e9ea91c60ff09293b70b43f177a7a98af8d3df283397e0212f4a6fb9dcde70ecbc75206397bfcf5e7363cb3f8545f85f7ae5",
+   "sha1": "120887e0ed4e7a9a4db92a3e2029b3a122e6bfd2",
+   "verification": "verified via Modrinth API 2026-09-08",
+   "reason": "Radical Cobblemon Trainers 0.19.0-beta (2026-09-07) raises the minimum Cobblemon to 1.8. Loads on 1.8 only with this update."
+  },
+  {
+   "mod_id": "rctapi",
+   "from_version": "0.15.2-beta",
+   "to_version": "0.16.0-beta",
+   "to_file": "rctapi-fabric-1.21.1-0.16.0-beta.jar",
+   "modrinth": {
+    "slug": "rctapi",
+    "project_id": "CBfM2yw7",
+    "version_id": "poXTxoNY",
+    "version_number": "0.16.0-beta",
+    "date_published": "2026-09-06T23:05:33.321353Z",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/poXTxoNY/rctapi-fabric-1.21.1-0.16.0-beta.jar",
+    "filename": "rctapi-fabric-1.21.1-0.16.0-beta.jar",
+    "size": 257750,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "lhGA9TYQ",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "71dc2caeea39d5b76889e35cab882a00b5be49b98ccba3ad6f09eb6308e9851b4917c118ba0e5265831f891478dc33e777ecee3db5600c1b6ecf3923be6e94ba",
+   "sha1": "0f4b58e94373344cb3a61674488a6f537ec14e31",
+   "verification": "verified via Modrinth API 2026-09-08",
+   "reason": "Paired RCT API release published 2026-09-06 alongside rctmod 0.19.0-beta; assumed required by rctmod 0.19.0 (verify at boot: rctmod's fabric.mod.json rctapi constraint)."
+  },
+  {
+   "mod_id": "mega_showdown",
+   "from_version": "1.8.4+1.7.3+1.21.1",
+   "to_version": "1.0.2+1.8+1.21.1-release",
+   "to_file": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+   "modrinth": {
+    "slug": "cobblemon-mega-showdown",
+    "project_id": "SszvX85I",
+    "version_id": "TACsHsKC",
+    "version_number": "1.0.2+1.8+1.21.1-release",
+    "date_published": "2026-09-08T17:35:00.849229Z",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/TACsHsKC/mega_showdown-fabric-1.0.2%2B1.8%2B1.21.1-release.jar",
+    "filename": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+    "size": 19970594,
+    "dependencies": [
+     {
+      "version_id": null,
+      "project_id": "MdwFAVRL",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "jtmvUHXj",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "P7dR8mSH",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "lhGA9TYQ",
+      "file_name": null,
+      "dependency_type": "required"
+     },
+     {
+      "version_id": null,
+      "project_id": "ccKDOlHs",
+      "file_name": null,
+      "dependency_type": "required"
+     }
+    ]
+   },
+   "sha512": "7e3161f49da37a3763de9c9671f5a04fb1a45b83898cde498361edaa5d7637a2d7024c98b859d1582b11dfe213da48e30d2b5e4775a191405d2492908992bc79",
+   "sha1": "50b2012b5207706fd93d42dfad73f94aa294c7a2",
+   "verification": "verified via Modrinth API 2026-09-08",
+   "reason": "Mega Showdown 1.0.2 for Cobblemon 1.8 (2026-09-08). Note the version scheme reset (1.8.4 -> 1.0.2); check its new required dependencies against the base pack."
+  }
+ ],
+ "remove": [
+  {
+   "mod_id": "better_pokedex_scanner",
+   "file": "better-pokedex-scanner-1.0.0.jar",
+   "reason": "Depends on cobblemon >=1.7.3 <1.8.0 and has no 1.8 build (single release 1.0.0, 2026-04-15). Client-side QoL; safe to drop."
+  },
+  {
+   "mod_id": "particular",
+   "file": "particular-1.1.2+1.21.jar.disabled",
+   "reason": "Already .disabled in the base pack; duplicate mod id with Particular Reforged 1.5.5 (particular-1.21.1-Fabric-1.5.5.jar). Drop the file entirely."
+  }
+ ],
+ "add": [],
+ "server_exclude": [
+  "advancementplaques",
+  "badoptimizations",
+  "betterbeds",
+  "betterf1",
+  "betterf3",
+  "betterthirdperson",
+  "brb",
+  "catchindicator",
+  "catchrate-display",
+  "continuity",
+  "controlling",
+  "customsplashscreen",
+  "entity_model_features",
+  "entity_texture_features",
+  "euphoria_patcher",
+  "immediatelyfast",
+  "infinite-music",
+  "iris",
+  "lumyrei",
+  "modmenu",
+  "moreculling",
+  "mousetweaks",
+  "musicnotification",
+  "paginatedadvancements",
+  "particle_core",
+  "particlerain",
+  "reeses-sodium-options",
+  "resourcepackoverrides",
+  "searchables",
+  "sodium",
+  "soundsbegone",
+  "tooltipfix",
+  "zoomify"
+ ],
+ "server_exclude_note": "mod ids whose every jar declares environment 'client' in fabric.mod.json (33 ids, 34 client jars). Never install these on the dedicated server. Ids shared by a client jar and a non-client jar are listed in server_exclude_ambiguous instead.",
+ "needs_functional_test": [
+  {
+   "mod_id": "cobblenav",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "cobblemonraiddens",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "fightorflight",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "cobblemon-battle-extras",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "rctapi",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "cobbledollars",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "cobbreeding",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "more_cobblemon_tweaks",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "cobblecuisine",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "catchrate-display",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "lumymon",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "cobblefurnies",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "legendarymonuments",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "rctmod",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "cobblemonbattlepositions",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "obc",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "lumyrei",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "safepastures",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "pasture-loot",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "playerxp",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "zamega",
+   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+  },
+  {
+   "mod_id": "catchindicator",
+   "reason": "integrates with Cobblemon but declares no cobblemon dependency; behaviour under 1.8 unverified"
+  },
+  {
+   "mod_id": "cobblemon-additions",
+   "reason": "integrates with Cobblemon but declares no cobblemon dependency; WORLD-CRITICAL, behaviour under 1.8 unverified"
+  }
+ ],
+ "server_exclude_ambiguous": [
+  {
+   "mod_id": "particular",
+   "client_files": [
+    "particular-1.1.2+1.21.jar.disabled"
+   ],
+   "server_files": [
+    "particular-1.21.1-Fabric-1.5.5.jar"
+   ],
+   "note": "Particular Reforged 1.5.5 declares environment '*' so it stays in the server plan; the client-only original is .disabled and removed above. Verify at boot whether the server actually needs Reforged."
+  }
+ ]
+}
