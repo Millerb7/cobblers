@@ -62,7 +62,10 @@ edited in place — it is overridden from the overlay or campaign layer.
 | Path | What belongs here |
 |---|---|
 | `AGENTS.md`, `README.md`, `.gitignore`, `.gitattributes` | Root identity and repository policy |
-| `.Codex/` | Assistant configuration (agents, rules, skills); see `.Codex/README.md` |
+| `.codex/config.toml`, `.codex/agents/` | Codex multi-agent defaults and project custom agents |
+| `.agents/skills/` | Codex project skills |
+| `.claude/` | Coexisting Claude Code agents, rules, skills, and settings |
+| `docs/agent-system/CODEX_AGENTS.md` | Agent inventory, migration map, and model routing |
 | `docs/vision/GAME_VISION.md` | The game we are making; design source of truth |
 | `docs/research/` | `COBBLEVERSE_COMPATIBILITY.md`, `CAPABILITY_MATRIX.md`, `EXPERIMENT_BACKLOG.md` — verified vs assumed facts, with sources |
 | `docs/architecture/TECHNICAL_ARCHITECTURE.md` | Technical source of truth for layers and boundaries |
@@ -70,7 +73,7 @@ edited in place — it is overridden from the overlay or campaign layer.
 | `docs/decisions/` | ADRs: `README.md`, `TEMPLATE.md`, `ADR-001-modpack-base-strategy.md`, … |
 | `base-pack/` | Cobbleverse reference snapshot (`cobbleverse/`) and its inventory (`inventory/`); never edited |
 | `modpack/manifest/`, `mods/`, `config/`, `resourcepacks/`, `datapacks/`, `overrides/` | Our overlay = the players' client pack |
-| `server/config/`, `scripts/`, `launch/`, `README.md` | Dedicated server; `server/scripts/boot-test.ps1` and `assemble-server.ps1` are planned entry points |
+| `server/config/`, `scripts/`, `launch/`, `README.md` | Dedicated server; `server/scripts/boot-test.ps1` and `assemble-server.ps1` are the controlled entry points |
 | `campaign/progression`, `encounters`, `trainers`, `bosses`, `gyms`, `gauntlets`, `quests`, `rewards`, `dungeons`, `villain`, `dialogue` | Authored campaign content and data |
 | `world/source`, `schematics`, `structures`, `templates` | World assets and specs; not the live save |
 | `experiments/` | `README.md` template plus `EXP-NNN-<slug>/README.md` per proof (`EXP-000-cobblemon-1.8-compat` first) |
@@ -105,28 +108,46 @@ edited in place — it is overridden from the overlay or campaign layer.
 
 ## Delegation
 
-Do the work directly when it is a few tool calls. Delegate only when the task
-is large, independently scoped, and the result compresses into a summary.
-One subagent, not several, when one can finish the job. Never spawn an agent
-to check, confirm or rephrase another agent's output — verify with files, logs
-and running Minecraft instead. Agents do not spawn their own agent teams.
+Delegate when independent work materially improves speed, context isolation,
+or quality. Use 2–4 concurrent workers for normal complex tasks; use more only
+when ownership boundaries are obvious. Do work directly when it is a few tool
+calls. Do not spawn agents merely to appear agentic, duplicate the same
+research, or ask one agent to rephrase another.
+
+Route by difficulty and cost:
+
+- **Luna medium:** repository search, inventory, metadata extraction, obvious
+  reference tracing, and repetitive classification.
+- **Terra medium/high:** the default serious worker for audits, research,
+  bounded implementation, datapacks, tests, QA, and configuration.
+- **Sol high:** architecture, multiplayer state, cross-system implementation,
+  game balance, difficult integration, and runtime debugging.
+- **Astra high:** exceptional review after Sol remains unresolved, disagreement
+  on a major irreversible choice, or an explicit maximum-quality request.
+
+Sol and Astra agents consume concise discovery summaries rather than scanning
+the entire repository or reading huge logs. Every subagent returns status,
+failures, relevant excerpts, file references, and the next step.
 
 | Need | Agent | Writes |
 |---|---|---|
 | Find where something lives (cheap) | `repo-scout` | nothing (read-only) |
-| Mod/jar metadata, 1.8 compatibility status, EXP-000 | `dependency-auditor` | `docs/research/COBBLEVERSE_COMPATIBILITY.md`, `base-pack/inventory/`, `experiments/EXP-000-*` |
-| What Cobblemon/addons actually support, with sources | `cobblemon-researcher` | `docs/research/` only |
+| Mod/jar metadata and 1.8 compatibility evidence | `dependency-auditor` | nothing (read-only; proposes updates) |
+| What Cobblemon/addons actually support, with sources | `cobblemon-researcher` | nothing (read-only; returns a research note) |
 | Campaign architecture, data models, datapack-vs-script-vs-mod boundaries, ADR proposals | `content-architect` | `docs/decisions/`, `docs/mechanics/` |
 | Datapacks, functions, advancements, loot, spawn configs | `datapack-content-dev` | `modpack/datapacks/`, `campaign/` |
 | Server-side logic, progression/puzzle/gauntlet state | `minecraft-systems-dev` | `server/config/`, `modpack/config/`, `modpack/datapacks/`, `campaign/` |
 | Dungeon specs, structures, schematics, templates | `world-content-dev` | `world/` |
-| Encounter tables, level caps, boss/gym/gauntlet teams, rewards | `trainer-balance-designer` | `campaign/` |
+| Encounter tables, level caps, boss/gym/gauntlet teams, rewards | `trainer-balance-designer` | nothing (read-only; proposes designs) |
 | Validation tooling and tests | `test-author` | `tools/`, `tests/` |
 | Review an experiment against its success criteria | `qa-reviewer` | nothing (read-only; reports) |
 | Server/client boot failure triage | `build-doctor` | nothing (proposes fixes; reads logs) |
+| Rare high-impact second opinion after Sol-level work | `architecture-reviewer` | nothing (read-only; Astra escalation) |
 
-Read-only agents (`repo-scout`, `qa-reviewer`, `build-doctor`) do not need a
-worktree; worktrees exist to keep concurrent writers apart. **Content
+Read-only agents do not need a worktree; worktrees exist to keep concurrent
+writers apart. Use worktrees only for substantial parallel implementation with
+clean file ownership, not for search, audits, documentation lookup, reviews,
+tiny fixes, or one-file edits. **Content
 implementation and its test/review use different agents:** whoever wrote a
 datapack does not write its validator or grade its experiment. Implementation
 does not grade its own work.
@@ -157,5 +178,6 @@ on the user's behalf.
 - `base-pack/cobbleverse/` holds hundreds of config files and datapack zips.
   Grep there deliberately with a narrow path, never by default; prefer
   `repo-scout` or `base-pack/inventory/` when locating a mod or config.
-- Path-scoped rules in `.Codex/rules/` load automatically; long procedures
-  live in `.Codex/skills/`. Do not restate either here.
+- Claude Code's path-scoped rules remain in `.claude/rules/`. Codex workflows
+  live in `.agents/skills/`; custom-agent configuration lives in
+  `.codex/agents/`. Keep both systems working.
