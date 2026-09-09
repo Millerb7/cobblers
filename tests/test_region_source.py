@@ -39,3 +39,26 @@ def test_river_bed_is_below_water_level():
     wet_heights = [y for y, is_river in zip(height.getdata(), river.getdata()) if is_river]
     assert wet_heights
     assert max(wet_heights) < config["world"]["sea_level"]
+
+
+def test_town_function_loads_and_releases_edited_chunks(tmp_path):
+    subprocess.run([sys.executable, str(ROOT / "tools/generate_region.py"), "--output", str(tmp_path)], check=True)
+    commands = (tmp_path / "place-town.mcfunction").read_text(encoding="utf-8").splitlines()
+    active = False
+    placed = []
+    for command in commands:
+        if command.startswith("forceload add "):
+            assert not active
+            _, _, x1, z1, x2, z2 = command.split()
+            chunks = (abs(int(x2) // 16 - int(x1) // 16) + 1) * (abs(int(z2) // 16 - int(z1) // 16) + 1)
+            assert chunks <= 256
+            active = True
+        elif command.startswith("forceload remove "):
+            assert active
+            active = False
+        elif command.startswith(("setblock ", "fill ", "place template ")):
+            assert active, command
+            if command.startswith("place template "):
+                placed.append(command)
+    assert not active
+    assert len(placed) == 8
