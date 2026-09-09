@@ -4,7 +4,7 @@
   "required_versions": {
     "minecraft": "1.21.1",
     "cobblemon": "1.8.0",
-    "worldpainter": ">=2.27.1 (export adapter untested)",
+    "worldpainter": ">=2.27.1",
     "python": ">=3.10"
   },
   "world": {

@@ -53,15 +53,14 @@ biome data.
 
 ## WorldPainter adapter
 
-WorldPainter is not installed in the inspected environment. Install or extract
-the official 64-bit portable WorldPainter package, then run from the repository
-root:
+The pipeline was exercised with WorldPainter 2.27.1 installed at
+`C:\Program Files\WorldPainter`. Run from the repository root:
 
 ```powershell
 $region = Get-Content world/source/region.json -Raw | ConvertFrom-Json
 $scalePercent = $region.world.blocks_per_pixel * 100
-wpscript world/source/worldpainter/build-exp-009.js $scalePercent
-wpscript world/source/worldpainter/build-exp-009.js $scalePercent export
+& 'C:\Program Files\WorldPainter\wpscript.exe' world/source/worldpainter/build-exp-009.js $scalePercent
+& 'C:\Program Files\WorldPainter\wpscript.exe' world/source/worldpainter/build-exp-009.js $scalePercent export
 ```
 
 The first command creates an editable `.world`; the second also exports a
@@ -71,5 +70,7 @@ verify the biome IDs, Deciduous layer, water fill, border/export settings, and
 spawn point in the installed WorldPainter version. Road and event masks become
 WorldPainter annotations; `place-town.mcfunction` then grades lots, clears
 building envelopes, lays the main dirt path and plaza, and places templates.
-The script is source-ready
-but unexecuted until `wpscript` exists.
+The tested export is written under the experiment's ignored `runtime/export/`
+directory. The generated placement function force-loads each bounded edit
+window before changing it and releases it afterward, which is required because
+the prototype town is outside the imported world's spawn chunks.
