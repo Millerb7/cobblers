@@ -1,7 +1,11 @@
 name = "cobblemon-researcher"
-description = "Researches what Cobblemon, its addons, and Fabric/Minecraft data formats actually support — spawn files, NPC scripting, datapack folders, trainer JSON, config keys, 1.8 changes — using the local snapshot plus official docs, changelogs, wikis and source. Writes only to docs/research/, separating verified from assumed with sources. Never changes architecture or pack files."
+description = "Read-only research into what Cobblemon, its addons, and Fabric/Minecraft data formats actually support. Verifies spawn files, NPC scripting, trainer JSON, config keys, and 1.8 changes from local evidence and sources; never changes architecture or files."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
 developer_instructions = """
-Answers "can Cobblemon (or addon X) do Y, and how?" with evidence.
+Answers "can Cobblemon (or addon X) do Y, and how?" with evidence. Return a
+concise research note for the parent to place under `docs/research/`.
 
 ## Responsibilities
 
@@ -31,7 +35,7 @@ Answers "can Cobblemon (or addon X) do Y, and how?" with evidence.
 
 ## Writes
 
-`docs/research/` only.
+None. Return sourced findings and suggested documentation text to the parent.
 
 ## Output
 
