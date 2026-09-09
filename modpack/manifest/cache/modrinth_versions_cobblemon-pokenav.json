@@ -1,0 +1,1158 @@
+[
+ {
+  "id": "BV5KiAcY",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.4.1",
+  "name": "2.4.1",
+  "version_type": "release",
+  "date_published": "2026-09-08T12:56:55.972891Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "mOgUt4GM",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.4.1.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/BV5KiAcY/cobblenav-fabric-2.4.1.jar",
+    "primary": true,
+    "size": 1142193,
+    "hashes": {
+     "sha1": "933b8e5a23f3847a64c87f1a5cb55d5790cce193",
+     "sha512": "59a36ea6f2f21bd6668f128b359cb0c448711502195559d69ccb77e50dcf2ac2535cfacee332722f5a63a5b15a493cf3f525a46b9e7c264fdb445737dfdf9d36"
+    }
+   },
+   {
+    "filename": "cobblenav-fabric-2.4.1-dev-shadow.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/BV5KiAcY/cobblenav-fabric-2.4.1-dev-shadow.jar",
+    "primary": false,
+    "size": 1111071,
+    "hashes": {
+     "sha512": "fb15f9ac1224068799c79b468a8026a93169a3a61a8cefbd198bfa3b3b3f8c32104e2cfe5ae73054faa2fd6936af98248f26081f7f7e1bfd96ab05b065038896",
+     "sha1": "bf460412e1feafa9e5cd0ca2b847301c22e45257"
+    }
+   },
+   {
+    "filename": "cobblenav-fabric-2.4.1-sources.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/BV5KiAcY/cobblenav-fabric-2.4.1-sources.jar",
+    "primary": false,
+    "size": 5343,
+    "hashes": {
+     "sha512": "2a015346c41ab2dd2e9e7f6b9cc4e24b62615fe5a3185e562e7dc670a2066c0d6a2613719e63a3ea245806c8a440e44c81547cde2fd673c032c5a10a71531660",
+     "sha1": "5a6b621a15043981a10b93173791cf519158ef5b"
+    }
+   },
+   {
+    "filename": "cobblenav-neoforge-2.4.1-dev-shadow.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/BV5KiAcY/cobblenav-neoforge-2.4.1-dev-shadow.jar",
+    "primary": false,
+    "size": 1111281,
+    "hashes": {
+     "sha512": "556b1b7283f36835aeeef7c80e40fc58349cdbc814e7825d42768f363bef821951c598a3c8790819c7779c6e1fe7495d477f6302db18f2fca6615054aede31d0",
+     "sha1": "cea746624f7a16913a44c6bbda3a5a9ced64368f"
+    }
+   },
+   {
+    "filename": "cobblenav-neoforge-2.4.1-sources.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/BV5KiAcY/cobblenav-neoforge-2.4.1-sources.jar",
+    "primary": false,
+    "size": 5633,
+    "hashes": {
+     "sha1": "1463461b097fe09f4ddb534631c19d6c2a25a21a",
+     "sha512": "7583a14261ba9609c6cf4db0c2eb9ec408f585b49dbfcc47211f6b528d4f7c69bff544ce7ba2bd477fcee5d1849d7a20d5a273c491793a46ead6d47327046a2e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "vkMjI01o",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.4.0",
+  "name": "2.4.0",
+  "version_type": "release",
+  "date_published": "2026-09-06T15:47:43.852687Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.4.0.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/vkMjI01o/cobblenav-fabric-2.4.0.jar",
+    "primary": true,
+    "size": 1092554,
+    "hashes": {
+     "sha512": "f6397dbb7109192158526d30238a43a9a6ae3471dac349c830272aff6b1d1ac7bf3b28abacf0a3abae028078d500348e021b33ab9e82106b54bf1a83a1db034c",
+     "sha1": "19f028fc5432747a6de36a0ba467ef058b0b2447"
+    }
+   },
+   {
+    "filename": "cobblenav-fabric-2.4.0-dev-shadow.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/vkMjI01o/cobblenav-fabric-2.4.0-dev-shadow.jar",
+    "primary": false,
+    "size": 1062449,
+    "hashes": {
+     "sha1": "9802bd38600f3f0c7b49a5dd84f6b8be9ebe7492",
+     "sha512": "a3e19b93db3f2c1267ad7a630c77c6c3111e0697fd65ea257bb328d5ddb115c6ae82a5b99fa1d00109504e44d34e4aae485790a28ac346ab065c2189d6a4561f"
+    }
+   },
+   {
+    "filename": "cobblenav-fabric-2.4.0-sources.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/vkMjI01o/cobblenav-fabric-2.4.0-sources.jar",
+    "primary": false,
+    "size": 4682,
+    "hashes": {
+     "sha1": "7a89e2334575d13d63c8e397a749df0eb8eedd3e",
+     "sha512": "b6639ad29527641b31b340357960294bb8efc514975701065c5e52c393e3640040e6252fc0dd5eb63d84387df2c9f684940a169569ea2a3d660f893d3d4eb44d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "cGFERrtC",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.3.3",
+  "name": "Cobblenav 2.3.3",
+  "version_type": "release",
+  "date_published": "2026-04-17T16:14:18.931695Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.3.3.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/cGFERrtC/cobblenav-fabric-2.3.3.jar",
+    "primary": true,
+    "size": 1090821,
+    "hashes": {
+     "sha512": "0d2efd2f8beebf8b9ed7f628ac6343792ec50945c5a1d9de06a5b2c2a9255a9897f4bfb7ea5f14765977400708efb4b511cfb1c8bf4e967100e54e88d98c720e",
+     "sha1": "63681a16bc562089329533686fcc60e7bb7cd63d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "aubxWN5L",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.3.2",
+  "name": "Cobblenav 2.3.2",
+  "version_type": "release",
+  "date_published": "2026-04-01T17:51:05.055292Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.3.2.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/aubxWN5L/cobblenav-fabric-2.3.2.jar",
+    "primary": true,
+    "size": 1078068,
+    "hashes": {
+     "sha512": "077ea0aafb19b7d8eb11a245f1bb0d3525ae3ff910cd81685d4fe53b160f125d47a4ac630591614567732e50c748d5ec8f0bdaeafcf3cb1e939688669ddeb6e4",
+     "sha1": "3eb6bfded50765c7b853cc91cda4fc45a21fe80f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "G8HMIPBB",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.3.1-april-fools",
+  "name": "Cobblenav 2.3.1-april-fools",
+  "version_type": "alpha",
+  "date_published": "2026-03-31T20:41:57.551134Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.3.1.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/G8HMIPBB/cobblenav-fabric-2.3.1.jar",
+    "primary": true,
+    "size": 1077853,
+    "hashes": {
+     "sha512": "28fffe299c74642772eeb369a283d572ea37f8e6caffb00898ecff91da2ff798851816cebe7d4263897fb5dafdf7730a876cfc6a7d40a1c43a11c4f7b52d80d7",
+     "sha1": "950c8c50b90fab0d4b9121eb977ca805d970bee0"
+    }
+   }
+  ]
+ },
+ {
+  "id": "7RRrVBdw",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.3.0",
+  "name": "Cobblenav 2.3.0",
+  "version_type": "release",
+  "date_published": "2026-03-29T14:32:14.633071Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.3.0.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/7RRrVBdw/cobblenav-fabric-2.3.0.jar",
+    "primary": true,
+    "size": 1077361,
+    "hashes": {
+     "sha1": "58138024a99756a4bbf0e015a3439925037f90b5",
+     "sha512": "967432607d4139ba80d4f069995426441d60ee390a61ebeaefd896c18e4122d51e12569f2a0c784774af932d7b5284c0f6bdf6228bff893808d7269630fed3cb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "VjtSuwwW",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.2.5",
+  "name": "Cobblenav 2.2.5",
+  "version_type": "release",
+  "date_published": "2025-11-22T08:06:25.453404Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.2.5.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/VjtSuwwW/cobblenav-fabric-2.2.5.jar",
+    "primary": true,
+    "size": 780131,
+    "hashes": {
+     "sha1": "c99fa8de40a178ce57d6ca92cadec268308f3b25",
+     "sha512": "1679a4bd6769b05c68f2d0257eaf663ec505beeb2505461fd4ce29eba844993bdc5452e2cb07ad4d8cd98cb7460015196723a272baf3039641fb205ad1eedfeb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "vEBDyfIr",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.2.4",
+  "name": "Cobblenav 2.2.4",
+  "version_type": "release",
+  "date_published": "2025-10-06T17:59:30.633477Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.2.4.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/vEBDyfIr/cobblenav-fabric-2.2.4.jar",
+    "primary": true,
+    "size": 784834,
+    "hashes": {
+     "sha1": "47ce85479e216994d363a6b70274979cc2785593",
+     "sha512": "67e5323bc2c017c5923aa1b39d1733c253a810640158be3ce4c7804e2c31526659911ca71158d7b9c04b985b5d6b4841b5eb99fc732839fd826fcfcb8715a07b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "aB3cwrFJ",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.2.3",
+  "name": "Cobblenav 2.2.3",
+  "version_type": "release",
+  "date_published": "2025-06-21T18:00:29.716889Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.2.3.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/aB3cwrFJ/cobblenav-fabric-2.2.3.jar",
+    "primary": true,
+    "size": 780292,
+    "hashes": {
+     "sha512": "58a5872cf2d2c529cb472cf473d055c2ec407c5ebbc9a5e3e355dc3b6b5dfad2791b8e550a6868a11fd7f8df122264fe3af7ad3635f83ad2f24b61d1a063dc14",
+     "sha1": "3d320112ea38f291e8068ec217579d0d3c3d6a47"
+    }
+   }
+  ]
+ },
+ {
+  "id": "iV0GTZBr",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.2.2",
+  "name": "Cobblenav 2.2.2",
+  "version_type": "release",
+  "date_published": "2025-06-01T18:35:23.721337Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.2.2.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/iV0GTZBr/cobblenav-fabric-2.2.2.jar",
+    "primary": true,
+    "size": 707696,
+    "hashes": {
+     "sha512": "d4139c4cae0c029097a468a376f8fa107e696b1d5dbd36e915b07bdf657e73eca01ca2d75f9a14d04f47c5ef9b4f103272b6b506b2f6e85e374a385367e58d09",
+     "sha1": "fdb4c720fe196f84976d0a87ab8c8753cbb00304"
+    }
+   }
+  ]
+ },
+ {
+  "id": "3AiDvwz3",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.2.1",
+  "name": "Cobblenav 2.2.1",
+  "version_type": "release",
+  "date_published": "2025-06-01T10:56:42.009752Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.2.1.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/3AiDvwz3/cobblenav-fabric-2.2.1.jar",
+    "primary": true,
+    "size": 707547,
+    "hashes": {
+     "sha512": "0f691eddaa0bb96e6615984a9928947523c2e4ac82f5c19f257143ca1d954c79bff8a7fadf9c7310f471400476b59a4b94a476247ba1aab1a5ddacc4b6254b76",
+     "sha1": "d3e38395f245afe43bca84a2b20bb1a7eadbbb49"
+    }
+   }
+  ]
+ },
+ {
+  "id": "YthAe9vK",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.2.0",
+  "name": "Cobblenav 2.2.0",
+  "version_type": "release",
+  "date_published": "2025-04-10T20:15:44.503695Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.2.0.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/YthAe9vK/cobblenav-fabric-2.2.0.jar",
+    "primary": true,
+    "size": 673201,
+    "hashes": {
+     "sha1": "4c49018b837d79c213e2e08b755c62356e35ee62",
+     "sha512": "e15213476916ab731a1439faaa32fd1685447323e7d2ad1cec27308bf2d416863fb1509d7ff4eed337185ba8ed8b9a2c19b55543d2341c6ecada9e1c9d7d3234"
+    }
+   }
+  ]
+ },
+ {
+  "id": "PXVwKz4c",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.1.0",
+  "name": "Cobblenav 2.1.0",
+  "version_type": "release",
+  "date_published": "2025-02-23T17:26:40.748561Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.1.0.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/PXVwKz4c/cobblenav-fabric-2.1.0.jar",
+    "primary": true,
+    "size": 552861,
+    "hashes": {
+     "sha1": "a430878f97537f942dee347428bbedda83cd3301",
+     "sha512": "1ad58c447204f47ee2d4ac0a4870e20f3d0c16b115efaf9a41ecc121377357a70efe5b981d49c42c8e2e0338d1050686eb6a573e26285d05dc70b966a7d7429e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9EgPeA1b",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.0.2",
+  "name": "Cobblenav 2.0.2",
+  "version_type": "alpha",
+  "date_published": "2025-01-21T22:20:56.443515Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.0.2.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/9EgPeA1b/cobblenav-fabric-2.0.2.jar",
+    "primary": true,
+    "size": 481461,
+    "hashes": {
+     "sha512": "813c53df2363087b3dae68d2bf81cad7568bfa14ff9620201ad9b25f7bdf7f7bc7984d9335a879b7ef580c229febf79b4cbe8bdfba9d3df3dbd2fd58df4abed5",
+     "sha1": "7311e3c5e0eaff733531719c264d17e9c3c54865"
+    }
+   }
+  ]
+ },
+ {
+  "id": "GMDp2S7p",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.0.1",
+  "name": "Cobblenav 2.0.1",
+  "version_type": "alpha",
+  "date_published": "2025-01-20T22:51:30.141660Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.0.1.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/GMDp2S7p/cobblenav-fabric-2.0.1.jar",
+    "primary": true,
+    "size": 482294,
+    "hashes": {
+     "sha1": "13a9d88a7c7f138556d956eb2481c56894e03410",
+     "sha512": "ebbf4dcff6947935d5cf98759766d919cb3dc4df3792bf63ee95bc10c81aa46d96915fd0b7bdffbc3d40f332d1b0b8e3155c5cf621a796f1e246ffdbd99e8430"
+    }
+   }
+  ]
+ },
+ {
+  "id": "6hBPbNk2",
+  "project_id": "bI8Nt3uA",
+  "version_number": "2.0.0",
+  "name": "Cobblenav 2.0.0",
+  "version_type": "alpha",
+  "date_published": "2025-01-09T12:24:39.498732Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "cobblenav-fabric-2.0.0.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/6hBPbNk2/cobblenav-fabric-2.0.0.jar",
+    "primary": true,
+    "size": 442738,
+    "hashes": {
+     "sha512": "b0a752e0eecc9d57a02be893ebb18621a15ee8b2205e7261ab68f924f890185bf85f2208e8e6e824ca8aa66c65de1c3a1ee4d1cfa13d5afd8693db72eed2e3ff",
+     "sha1": "d3086c2e2dd0f2baa931ca080d1d6e0d0f66c6a6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "uADN8MDB",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.3.5",
+  "name": "Cobblenav 1.3.5",
+  "version_type": "release",
+  "date_published": "2024-07-10T19:31:28.888397Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "rj8uLYP4",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.3.5.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/uADN8MDB/Cobblenav-1.3.5.jar",
+    "primary": true,
+    "size": 329397,
+    "hashes": {
+     "sha1": "a95d7d6e509a7f37d00896553adccf4cc54f3352",
+     "sha512": "662f40a8307bb438f8847a115bd59f41812ac1cb825b7bdf6e653fdf311aa9c4f24bd68f8222f846a16ac652c06f556a80b09e680c69a327c9bf25e2f16083f6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "WEF2tY6G",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.3.4",
+  "name": "Cobblenav 1.3.4",
+  "version_type": "release",
+  "date_published": "2024-06-14T19:00:11.610094Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "rj8uLYP4",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "fKNwbN70",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.3.4.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/WEF2tY6G/Cobblenav-1.3.4.jar",
+    "primary": true,
+    "size": 325204,
+    "hashes": {
+     "sha1": "06d307ff17fcf544e245b444c236aecfa39ce72a",
+     "sha512": "61f8ee627aa6a4b7efbd2e9edaa264530973fe1f9f45866651de2fe02cde1a0a114307229905b2e8e117330c8e60544479823c8e7fd6857eae05630092dfa643"
+    }
+   }
+  ]
+ },
+ {
+  "id": "opVBw9h9",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.3.3",
+  "name": "Cobblenav 1.3.3",
+  "version_type": "release",
+  "date_published": "2024-06-09T09:55:00.990671Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "rj8uLYP4",
+    "file_name": null,
+    "dependency_type": "optional"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.3.3.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/opVBw9h9/Cobblenav-1.3.3.jar",
+    "primary": true,
+    "size": 315437,
+    "hashes": {
+     "sha1": "b2d4bdbe50a82f864a18ef13c2b27e5542bc7176",
+     "sha512": "e83a349b4843e2817266afc7fa397a1419d7054a3a0ccdbe57e563c2ce614e753b6680f517464b61833776ffd773be7ddeca6397e7669af733283ab2020c116b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9zaEbyFa",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.3.2",
+  "name": "Cobblenav 1.3.2",
+  "version_type": "beta",
+  "date_published": "2024-06-05T06:46:17.992178Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "rj8uLYP4",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.3.2.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/9zaEbyFa/Cobblenav-1.3.2.jar",
+    "primary": true,
+    "size": 307620,
+    "hashes": {
+     "sha512": "c8a43358a28c23c88ec7badde6a0cf689eb6fd19e852dd967923f9484a4bf008ea200dabc2d8f1d09988645dd1210cf3454992694ad42dfabd24f1f465e18434",
+     "sha1": "914f3a53e33be3d4739dbd3d4a541c2e366684bd"
+    }
+   }
+  ]
+ },
+ {
+  "id": "l2I9NaM9",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.3.1",
+  "name": "Cobblenav 1.3.1",
+  "version_type": "beta",
+  "date_published": "2024-06-01T21:22:58.441560Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "rj8uLYP4",
+    "file_name": null,
+    "dependency_type": "optional"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.3.1.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/l2I9NaM9/Cobblenav-1.3.1.jar",
+    "primary": true,
+    "size": 297392,
+    "hashes": {
+     "sha1": "61012d4cd6a76fd393c810cfa914d8a14d86bd16",
+     "sha512": "959238d8c38e2b25dca9c165ab2c1f67c8335aa1af0e5f80db4e43549b527373d2d45e824125630b8c91b52b57ac24ed6266d229c1fa0cef789011eba394e2ae"
+    }
+   }
+  ]
+ },
+ {
+  "id": "Ri6hyaiZ",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.3.0",
+  "name": "Cobblenav 1.3.0",
+  "version_type": "beta",
+  "date_published": "2024-05-31T13:42:41.590457Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "rj8uLYP4",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.3.0.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/Ri6hyaiZ/Cobblenav-1.3.0.jar",
+    "primary": true,
+    "size": 295601,
+    "hashes": {
+     "sha512": "0ff46db329a5abdaad472f96ac09e18c66a471a973eac86ea38f5dee3683c0e6da40ccbb69135604577e20d9cd666f92e045a96402c7d7168b4c5849627b00f7",
+     "sha1": "50755fbc6f465f5dfe1917027fd5e28cbd0c8082"
+    }
+   }
+  ]
+ },
+ {
+  "id": "PZOCLmmO",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.2.5",
+  "name": "Cobblenav 1.2.5",
+  "version_type": "release",
+  "date_published": "2024-05-18T00:24:42.030851Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.2.5.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/PZOCLmmO/Cobblenav-1.2.5.jar",
+    "primary": true,
+    "size": 217022,
+    "hashes": {
+     "sha512": "3d5eed49ba0690c9af37068a600f2ea2e43d4115fc9fbd51d0bf56f91af5b30c0ffd23bed4bf3b41d6d8a5ca5dd3868ce026eaa77e3ee08c6576c66902a3280a",
+     "sha1": "e14145f393cc8c93758633e9d5219b552c07e97e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "O13Wx9bV",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.2.4",
+  "name": "Cobblenav 1.2.4",
+  "version_type": "release",
+  "date_published": "2024-05-17T07:57:42.910605Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "1QV9wNCJ",
+    "file_name": null,
+    "dependency_type": "optional"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.2.4.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/O13Wx9bV/Cobblenav-1.2.4.jar",
+    "primary": true,
+    "size": 217104,
+    "hashes": {
+     "sha512": "474e9d5d90c90b26b9ae3330a6d9c68e1c01b4ee6ac5a8fa2815215f00d2fe4e27f2e7f2e28afff2be87fdc23a5812c1556f0f2e5f3657a71d4199712049ea1c",
+     "sha1": "ac2d5e3685b6028a892eb20bdb0a74c47bcf125f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "HUwg9XCb",
+  "project_id": "bI8Nt3uA",
+  "version_number": "1.2.3",
+  "name": "Cobblenav 1.2.3",
+  "version_type": "release",
+  "date_published": "2024-04-23T15:46:40.148737Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblenav-1.2.3.jar",
+    "url": "https://cdn.modrinth.com/data/bI8Nt3uA/versions/HUwg9XCb/Cobblenav-1.2.3.jar",
+    "primary": true,
+    "size": 203511,
+    "hashes": {
+     "sha1": "5e26fa0b3e7ae453733c48a9aa5026b5129ccbf8",
+     "sha512": "78c35d46e91e5e48c3e6054a2d7a4d498d440815e74fbc3e8232c018901fb96ffae2d271e5909c368947543b162e974ca4c505c7480ce50cc05413fcb82b0c90"
+    }
+   }
+  ]
+ }
+]

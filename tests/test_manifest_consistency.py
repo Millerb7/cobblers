@@ -79,3 +79,25 @@ def test_plan_server_side_has_no_client_mods(repo_root, python, overlay):
     assert not leaked, leaked
     assert {e["status"] for e in plan} >= {"base", "replace", "remove"}
     assert any(e["filename"] == "Cobblemon-fabric-1.8.0+1.21.1.jar" for e in active)
+
+
+def test_replacement_only_download_matches_overlay(repo_root, python, tmp_path, overlay):
+    r = subprocess.run(
+        [
+            python,
+            "tools/pack_manifest.py",
+            "download",
+            "--side",
+            "server",
+            "--replacements-only",
+            "--target",
+            str(tmp_path / "downloads"),
+        ],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert f"{len(overlay['replace'])} files downloadable from Modrinth" in r.stdout
+    assert "DRY RUN. Nothing downloaded." in r.stdout
+    assert not (tmp_path / "downloads").exists()

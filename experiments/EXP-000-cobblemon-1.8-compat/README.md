@@ -1,68 +1,120 @@
-# EXP-000: Cobbleverse base on Cobblemon 1.8
+# EXP-000: Cobbleverse → Cobblemon 1.8 compatibility
 
 ## Objective
-Determine whether the Cobbleverse 1.7.42 mod set, with our overlay
-(`modpack/manifest/overlay.json`), boots and plays on Cobblemon 1.8.0 (Fabric,
-MC 1.21.1). "Yes" means the campaign can target 1.8 and keep the Cobbleverse
-feel; "no" means we either pin to 1.7.3 or shrink the mod set.
+
+Determine whether the Cobbleverse 1.7.42 experience can be preserved on Cobblemon 1.8.0, Minecraft 1.21.1 Fabric, without editing the reference pack in place. Establish the mod, config, datapack, and world-critical baseline that later campaign experiments can trust.
 
 ## Success criteria
-- Dedicated server reaches `Done (` with the overlay mod set and no mod-resolution errors.
-- A client built from the same manifest (plus client-only mods) connects.
-- Smoke tests below all pass at least once in multiplayer (two clients).
+
+- The dedicated server reaches `Done (` with the complete overlay and no mod-resolution errors.
+- A client made from the same manifest connects without registry or mod mismatch errors.
+- The two-player smoke checklist below passes.
+- World-critical dependencies are frozen from fresh-world evidence.
+- Every removal or replacement has a recorded reason and source.
 
 ## Dependencies
-- Java 21, Fabric loader >= 0.18.4 for MC 1.21.1 (pin the exact version in results).
-- `modpack/manifest/base-cobbleverse-1.7.42.json` + `overlay.json` (7 replacements, 2 removals, 34 server-excluded).
-- Local copy of the base jars; the 1.8 replacement jars from Modrinth (`tools/pack_manifest.py download`).
-- `server/scripts/assemble-server.ps1`, `server/scripts/boot-test.ps1`.
+
+- Java 21; this machine has Temurin 21.0.9.
+- Minecraft 1.21.1, Fabric installer 1.1.2, Fabric Loader 0.19.5.
+- `modpack/manifest/base-cobbleverse-1.7.42.json` and `modpack/manifest/overlay.json`.
+- The local immutable reference files under `base-pack/cobbleverse/`.
+- `tools/pack_manifest.py`, `server/scripts/assemble-server.ps1`, and `server/scripts/boot-test.ps1`.
 
 ## Implementation
-Nothing is built; this is a compatibility probe. The overlay is the artifact
-under test. Every boot attempt is captured in `runs/<timestamp>/` by
-`boot-test.ps1` (latest.log, crash reports, mods.txt, verdict.txt).
 
-## Test instructions (boot-test procedure)
-1. **Known-working baseline.** Assemble a server from the base manifest only
-   (`assemble-server.ps1 ... ` with `--no-overlay` behaviour: temporarily run
-   `python tools/pack_manifest.py plan --side server --no-overlay --json` or use
-   the Cobbleverse install directly). Boot it. It must reach `Done (`. Record the
-   loader version. This is row 0 in `results.md`.
-2. **Upgrade only Cobblemon.** Swap `Cobblemon-fabric-1.7.3+1.21.1.jar` for
-   `Cobblemon-fabric-1.8.0+1.21.1.jar`. Boot. Expected: mod resolution failure
-   naming tmcraft, capture_xp, tim_core, better_pokedex_scanner (hard pins) and
-   possibly rctmod. Record the exact list - it validates or corrects the overlay.
-3. **Apply the overlay.** `assemble-server.ps1 -ExtraDir <1.8 jars> -TargetDir <srv>/mods -Apply -Clean`.
-   Boot with `boot-test.ps1`. Record failures; for each: update / remove /
-   replace via `overlay.json` (never by hand-editing the server), re-assemble, boot again.
-4. **Repeat** until `Done (`. Every attempt is a row in `results.md`.
-5. **Client.** Build a client instance from `plan` (all sides), connect.
-6. **Smoke tests** (two players where marked):
-   - server boots, client connects, no "missing registry" / "mismatched mods" kick
-   - `/pokespawn <species>` spawns; wild Pokemon spawn naturally in a few biomes
-   - battle a wild Pokemon to a finish; catch one; the capture-XP mod grants XP
-   - an RCT trainer spawns near a player and a battle can be started and finished (both players)
-   - Mega evolution via Mega Showdown works in a trainer battle
-   - TM machine (TMCraft) crafts/teaches a move
-   - PC opens, deposits and withdraws; Poke Center PC datapack structure exists
-   - Cobblenav opens; raid den (cobblemonraiddens) can be found; breeding (Cobbreeding) starts an egg
-   - a second client sees the first player's Pokemon and battle
-7. Write the decision in `README.md > Decision` and `docs/decisions/`.
+`test-pack.json` records the exact target and controlled stages. The disposable runtime is `runtime/server/` and is gitignored. It currently contains:
+
+- the Fabric 1.21.1 server launcher with loader 0.19.5;
+- 103 hash-verified server jars: 90 unchanged base jars and 13 Modrinth-pinned replacements;
+- the reference config plus the repository overlay config;
+- all 10 reference datapack zips;
+- `server.properties` copied from the repository example.
+
+The matching disposable client at `runtime/client/` contains 136 hash-verified jars, 47 resource packs, 10 datapacks, and one shader pack. It is ready to import into a Minecraft launcher, but no GUI launch has been performed.
+
+The reference pack was read and hashed only. No jar, config, datapack, save, or launcher file under `base-pack/cobbleverse/` was modified.
+
+## Controlled test sequence
+
+| Stage | Mod set | Purpose | Current result |
+| --- | --- | --- | --- |
+| 0 | unmodified 1.7.42 server set | prove the local baseline | not run; EULA gate |
+| 1 | replace Cobblemon only | capture exact hard-pin errors | not run; EULA gate |
+| 2 | add TMCraft, Capture XP, Tim Core updates; remove Better Pokédex Scanner | clear declared 1.7.3 blockers | not run; EULA gate |
+| 3 | update RCT/API, Mega Showdown, ZAMegas | isolate trainer and battle core | not run; EULA gate |
+| 4 | update Cobbreeding, Only Bottle Caps, PlayerXP, CobbleNav, Fight or Flight | use identified 1.8-era gameplay releases | not run; EULA gate |
+| 5 | complete overlay with preserved unknown addons | determine actual stable server set | assembled and hash-verified; launch blocked by EULA |
+
+After each failed boot, change only the implicated overlay entry, reassemble, and record the exact error. Do not edit the runtime mod folder as the source of truth.
+
+## Commands used
+
+```powershell
+python tools/pack_manifest.py verify base-pack/cobbleverse/mods --side server --no-overlay
+python tools/pack_manifest.py download --side server --replacements-only --target experiments/EXP-000-cobblemon-1.8-compat/runtime/replacements --yes
+pwsh server/scripts/assemble-server.ps1 -ExtraDir experiments/EXP-000-cobblemon-1.8-compat/runtime/replacements -TargetDir experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods -Apply -Clean
+python tools/assemble_client.py --replacements-dir experiments/EXP-000-cobblemon-1.8-compat/runtime/replacements --target experiments/EXP-000-cobblemon-1.8-compat/runtime/client --apply --clean
+pwsh server/scripts/boot-test.ps1 -ServerDir experiments/EXP-000-cobblemon-1.8-compat/runtime/server -WhatIf
+```
+
+The Fabric installer command was:
+
+```powershell
+java -jar fabric-installer-1.1.2.jar server -mcversion 1.21.1 -loader 0.19.5 -downloadMinecraft -dir runtime/server
+```
+
+## Functional smoke tests
+
+Run on a fresh disposable world after the server boots. Use two clients for rows marked `2`.
+
+| Check | Players | What constitutes a pass |
+| --- | ---: | --- |
+| server startup | 0 | reaches `Done (` without loader, registry, datapack, or mixin failure |
+| client connection | 1 | joins without missing registry or mismatched-mod kick |
+| Cobblemon basics | 1 | starter flow or party works, `/pokespawn` works, natural spawns appear |
+| wild battle and capture | 1 | battle completes, capture succeeds, Capture XP grants XP |
+| RCT trainer | 2 | trainer spawns; either player can start and finish the intended battle flow |
+| Mega Showdown + ZAMegas | 1 | Mega Evolution works in a trainer battle and resources/forms load |
+| TMCraft | 1 | table/machine exists and teaches a move |
+| PC and PokéCenter | 1 | PC deposit/withdraw works and PokéCenter structure assets load |
+| CobbleNav | 1 | UI opens and expected data populates |
+| Raid Dens | 2 | den generates and a multiplayer raid can start and finish |
+| Cobbreeding | 2 | pasture breeding starts, persists, and produces an egg without duplication |
+| visibility/synchronization | 2 | each client sees the other player's Pokémon and battle state correctly |
+| reconnect/restart | 2 | party, trainer, den, breeding, and world block state remain consistent |
+
+Record observations in `results.md`; do not infer a pass from an absent error.
 
 ## Results
-See `results.md`. No boot attempt has been made yet.
+
+- Baseline inventory: 138 jar records, 137 enabled and one disabled.
+- Immutable baseline server verification: 104 matching jars, zero missing, zero hash mismatches; 34 expected non-server extras.
+- Target overlay: 13 replacements, one enabled removal, one disabled-file removal, 33 client-only mod IDs excluded from the server.
+- Target assembly verification: 103 matching jars, zero missing, zero hash mismatches, zero extras, zero unverified.
+- Client assembly verification: 136 matching jars, zero missing, zero hash mismatches, zero extras, zero unverified.
+- Preflight: Java 21.0.9, Fabric launcher present, and 103 jars present. It stopped at the missing `eula.txt` check. Minecraft was not launched.
+- Client and gameplay results: not tested.
+
+See `docs/research/COBBLEVERSE_COMPATIBILITY.md` and `docs/research/WORLD_CRITICAL_DEPENDENCIES.md` for the full audit.
 
 ## Limitations
-- Boot success is not gameplay success; the 23 `needs_functional_test` mods
-  must be exercised (step 6), not just loaded.
-- World-gen mods (Terralith, LegendaryMonuments, CobbleFurnies) changing
-  between versions could break an existing world; test on a fresh world first.
-- Client-only mods are not covered by the server boot at all.
+
+- The Minecraft EULA requires a human decision; repository tooling does not create or accept `eula.txt`.
+- Loader metadata and hashes do not prove mixin, API, data, or gameplay compatibility.
+- Server boot cannot validate client-only mods, resource packs, rendering, UI, or client/server registry agreement.
+- Functional testing requires a client, and several checks require two players.
+- World-critical compatibility requires fresh-world generation and save/restart checks.
 
 ## Decision
-Pending.
+
+**INCOMPLETE — NOT READY FOR EXP-001.** The target pack is assembled and reproducible, but the server has not booted and no client or functional smoke test has run. Do not begin Route 1 or serious map construction.
+
+The next action is for a human to read the Minecraft EULA and, if they agree, accept it in `runtime/server/eula.txt`. Then execute stages 0–5, update `results.md`, and run the smoke checklist. ADR-001 remains Proposed until at least the complete-overlay server boot and client connection pass.
 
 ## Follow-up
-- Pin the Fabric loader version in `server/launch/README.md`.
-- Turn the smoke-test list into a checklist datapack or a script once the
-  campaign tooling exists.
+
+1. Human EULA acceptance in the disposable runtime.
+2. Run and capture the staged server boots.
+3. Build the client target pack and connect.
+4. Complete the two-player functional checklist.
+5. Freeze or replace world-critical dependencies from fresh-world evidence.

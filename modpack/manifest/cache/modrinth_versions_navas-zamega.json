@@ -1,0 +1,1417 @@
+[
+ {
+  "id": "jlpvkxRM",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.7+1.8",
+  "name": "zamega 1.7.7+1.8",
+  "version_type": "release",
+  "date_published": "2026-09-06T08:33:49.408358Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.7+1.8.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/jlpvkxRM/zamega-fabric-1.7.7%2B1.8.jar",
+    "primary": true,
+    "size": 1082897,
+    "hashes": {
+     "sha512": "720d792d4b7224c956b72e3f480b225cc002126d593b28c49263f8c94cce593a77230e81854d9b695387d4bcba5ccf6b38aa055638ae174c2715abe0ab3e35c2",
+     "sha1": "01ee9cf94c7af2c6a772f08d5db6f1a8efa4ff18"
+    }
+   }
+  ]
+ },
+ {
+  "id": "IAfKpgL8",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.6+1.8",
+  "name": "zamega 1.7.6+1.8",
+  "version_type": "release",
+  "date_published": "2026-09-06T08:24:30.306516Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.6+1.8.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/IAfKpgL8/zamega-fabric-1.7.6%2B1.8.jar",
+    "primary": true,
+    "size": 1082896,
+    "hashes": {
+     "sha1": "56c07acf649216fdfc32e805ad57982fb112d974",
+     "sha512": "976aed0ffd0e3bac5d95c9df4e1948a86169ba055101bcf50e361269eb12500b521467dc81242bada2fe144a935e77dc34e275569db684f45f988599a56a442c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "EiJO9FoL",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.6",
+  "name": "zamega 1.7.6",
+  "version_type": "release",
+  "date_published": "2026-08-15T09:49:33.498187Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.6.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/EiJO9FoL/zamega-fabric-1.7.6.jar",
+    "primary": true,
+    "size": 1082887,
+    "hashes": {
+     "sha512": "809e406d6c39194639bbf4dab700a7b864f32681d7185b32a09934e26987a74be1503d83345893783cc810967e686f5dbe485d8f94ffa9f28d774eafb152020d",
+     "sha1": "2ebe7aea45113c1ace9b524a34f760c2ea3518c8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "a8P4YDI4",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.5-hotfix",
+  "name": "zamega 1.7.5-hotfix",
+  "version_type": "release",
+  "date_published": "2026-07-24T08:21:57.105423Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.5-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/a8P4YDI4/zamega-fabric-1.7.5-hotfix.jar",
+    "primary": true,
+    "size": 849762,
+    "hashes": {
+     "sha512": "8432d39cc21666cf6b3246498fb2878769bcbea3d2b6986c9858780c31d9b26a1b5f87cf6e4d48439552fd63a74a74f4d388ba6545fffb640a812a0d33c40fd8",
+     "sha1": "6342128d61fffcd0456922f8d100e85b042b0712"
+    }
+   }
+  ]
+ },
+ {
+  "id": "RHpzoxn8",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.5",
+  "name": "zamega 1.7.5",
+  "version_type": "release",
+  "date_published": "2026-07-24T06:40:24.422405Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.5.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/RHpzoxn8/zamega-fabric-1.7.5.jar",
+    "primary": true,
+    "size": 849732,
+    "hashes": {
+     "sha1": "211b5d5dd0feceec9e34d9f4aee1bada799c67d5",
+     "sha512": "0f0d6d70465933666393f266d1afc8554f092c0055975136a29c13adfe53089c469bf0021f6943250d071a5d3bc4a24bd1c26d93fc0a1b9208e047d7e2a0a465"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9DB6eyaV",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.4-hotfix-hotfix",
+  "name": "zamega 1.7.4-hotfix-hotfix",
+  "version_type": "release",
+  "date_published": "2026-07-22T08:14:12.989482Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.4-hotfix-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/9DB6eyaV/zamega-fabric-1.7.4-hotfix-hotfix.jar",
+    "primary": true,
+    "size": 849844,
+    "hashes": {
+     "sha512": "610d5550c729fa4ef8c875edb69ad6f442664ca2e89b369ed33a090c4f33f054ce691ab0437c04471ce6b11dfefa33ac8ae86c33ccd8708cfb539343e0990d67",
+     "sha1": "e37e9a6b0bd56ce16f83d7eebf9f4dd5d3a93fca"
+    }
+   }
+  ]
+ },
+ {
+  "id": "D1PshJ3G",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.4-hotfix",
+  "name": "zamega 1.7.4-hotfix",
+  "version_type": "release",
+  "date_published": "2026-07-22T07:57:26.296376Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.4-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/D1PshJ3G/zamega-fabric-1.7.4-hotfix.jar",
+    "primary": true,
+    "size": 849804,
+    "hashes": {
+     "sha512": "1d88ae9d3e289b9b409a5135b776fc117caa8f3a83c0cd711d022deb86f711993564b97c81aec391d3a7908cbb742b14a342ef69f70fed0e54ee8140b6b2a277",
+     "sha1": "5ab428b32b70ee8e610256608dbeba1515ae5dd4"
+    }
+   }
+  ]
+ },
+ {
+  "id": "vLJTALXl",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.4",
+  "name": "zamega 1.7.4",
+  "version_type": "release",
+  "date_published": "2026-07-22T07:23:15.294476Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.4.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/vLJTALXl/zamega-fabric-1.7.4.jar",
+    "primary": true,
+    "size": 863915,
+    "hashes": {
+     "sha1": "2fe0a94292a1fb4977da635149386ef74d71d308",
+     "sha512": "9f154d987f033b80944148f4d8e643575268d4cf09fea163ddc8c935b26d5b3e196561eeafa7fb8d5295177ec806b475cf51a2123232bf3273cdde2be0e5ec1b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "x5u68zHH",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.3",
+  "name": "zamega 1.7.3",
+  "version_type": "release",
+  "date_published": "2026-04-21T14:55:51.914706Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.3.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/x5u68zHH/zamega-fabric-1.7.3.jar",
+    "primary": true,
+    "size": 2387420,
+    "hashes": {
+     "sha512": "811fcd7b8ad97ab2d0544a0e9ca03eb9d328a68df44286c702a6f8f43340904c8cddb2efbc108143cd75aa2f8778c0ea08f35410c028aad09d42aa73fbcd7a87",
+     "sha1": "cefe9c25fc69f5c5da95a89225f7740377b3e58c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "MhWqtTtM",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.2",
+  "name": "zamega 1.7.2",
+  "version_type": "release",
+  "date_published": "2026-04-08T04:27:34.020787Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.2.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/MhWqtTtM/zamega-fabric-1.7.2.jar",
+    "primary": true,
+    "size": 2375771,
+    "hashes": {
+     "sha512": "86b8902c77e21ab6429204a3215058e2b631a5f7caba3ee5ba443712bb8887f7b104e418cc26643b44f15a0aa9f03cda9fce0c5d50cd430de462999c3fea5d4c",
+     "sha1": "e5c112a6562c2b2867b4ad33b36d669be32bc778"
+    }
+   }
+  ]
+ },
+ {
+  "id": "7TZjxPLU",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7.1",
+  "name": "zamega 1.7.1",
+  "version_type": "release",
+  "date_published": "2026-04-03T14:58:44.547734Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.1.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/7TZjxPLU/zamega-fabric-1.7.1.jar",
+    "primary": true,
+    "size": 2374842,
+    "hashes": {
+     "sha1": "3fd918993209f6489b2bc2ff5654dff14181bb9c",
+     "sha512": "c2f167ca04d5732c45b0929aa43e16aa4de97c161ea614ce3131494ec1f607d54e7ec6115d69b7d37911b7cb1a3997b62bc8427d2e1704473b83947fd033ad64"
+    }
+   }
+  ]
+ },
+ {
+  "id": "OVKb6wLO",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.7",
+  "name": "zamega 1.7",
+  "version_type": "release",
+  "date_published": "2026-04-03T07:34:54.781747Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.7.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/OVKb6wLO/zamega-fabric-1.7.jar",
+    "primary": true,
+    "size": 2376639,
+    "hashes": {
+     "sha1": "2b4afd62a7dd7d906b333307cc9aae8cb2e575a0",
+     "sha512": "e306b8683e3b809cda554b88aaad96fe1e9a53a2681b593000de7eb4acad88bc56fe318d403ca1886dc8eac83cd777b54366589c7e969fff031a9e4e250d88a2"
+    }
+   }
+  ]
+ },
+ {
+  "id": "vAdP53D6",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.6.1",
+  "name": "zamega 1.6.1",
+  "version_type": "release",
+  "date_published": "2026-03-04T06:52:51.760582Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.6.1.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/vAdP53D6/zamega-fabric-1.6.1.jar",
+    "primary": true,
+    "size": 2369042,
+    "hashes": {
+     "sha1": "3a2ab9db634dcc07596019188fb212b22db1d29a",
+     "sha512": "dbc7317e0e7e17d0509874739ff9bda1f1a98559b1af34d9f8154b42452874314c6a55c75b56bb36bb8ea1a77674a1787d45a83bb1d8d017b7729129e9e737fb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "827QVn6E",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.6",
+  "name": "zamega 1.6",
+  "version_type": "release",
+  "date_published": "2026-03-02T07:28:41.229305Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.6.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/827QVn6E/zamega-fabric-1.6.jar",
+    "primary": true,
+    "size": 2368041,
+    "hashes": {
+     "sha512": "a27c92aa88cf94a4460c0bdd6bfa17956b709acc972ac1fd96710a0a14b90d3e6c2fd275cfdf9c701d5381c9a129fbbcf42cba6c7df9d89bf944d30e7756e1d6",
+     "sha1": "19c35ddeadd6e4a64c92df2ac4e32b16c63ef8b8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "JIVeayDA",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.6",
+  "name": "zamega 1.6",
+  "version_type": "release",
+  "date_published": "2026-03-02T07:27:44.558043Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.6.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/JIVeayDA/zamega-fabric-1.6.jar",
+    "primary": true,
+    "size": 2368041,
+    "hashes": {
+     "sha1": "19c35ddeadd6e4a64c92df2ac4e32b16c63ef8b8",
+     "sha512": "a27c92aa88cf94a4460c0bdd6bfa17956b709acc972ac1fd96710a0a14b90d3e6c2fd275cfdf9c701d5381c9a129fbbcf42cba6c7df9d89bf944d30e7756e1d6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "vVdlKcht",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.5.4",
+  "name": "zamega 1.5.4",
+  "version_type": "release",
+  "date_published": "2026-02-10T08:27:09.245717Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.5.4.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/vVdlKcht/zamega-fabric-1.5.4.jar",
+    "primary": true,
+    "size": 2390310,
+    "hashes": {
+     "sha512": "876b9159205fb62427372d8aafcaf050c17a47b47a4b89b49a8a9d36ebaba0a3e803c6a33553be4687bde6015fc60e0f8e4f9fa66b3c240ad38d8bc83baf4a02",
+     "sha1": "0a76dd7fd89db316eebdc4dfb878887292028abb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "NUyYSL3n",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.5.3",
+  "name": "zamega 1.5.3",
+  "version_type": "release",
+  "date_published": "2026-02-03T15:48:01.514843Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.5.3.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/NUyYSL3n/zamega-fabric-1.5.3.jar",
+    "primary": true,
+    "size": 2390094,
+    "hashes": {
+     "sha512": "c796764ecf37854407de49435ffadd5f6cba3e068e96ca34a54095d1f6f9444a55608d2805086a4769a67021c50fba482df040c943c6a326af4840ce426adb5e",
+     "sha1": "0ed67cacd2d01074bc11670662b3d02270e27981"
+    }
+   }
+  ]
+ },
+ {
+  "id": "oDsxL6JJ",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.5.2",
+  "name": "zamega 1.5.2",
+  "version_type": "release",
+  "date_published": "2026-02-03T08:01:30.188827Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/oDsxL6JJ/zamega-fabric-1.5.2.jar",
+    "primary": true,
+    "size": 2390095,
+    "hashes": {
+     "sha512": "a4e1b32c33a9a00efc7542d336bd9935cce2ee87df74f97f526f38dd5098facdacf826bae73d93991ef3e2a49d3ecd3cb8d7c86a1c0b1e73ba0c5edd8cdf60a9",
+     "sha1": "c42c3ac4bdbf63b534ea7ef04f5f6bde82964958"
+    }
+   }
+  ]
+ },
+ {
+  "id": "cyQDVGQh",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.5.1",
+  "name": "zamega 1.5.1",
+  "version_type": "release",
+  "date_published": "2026-02-02T17:13:57.249998Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.5.1.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/cyQDVGQh/zamega-fabric-1.5.1.jar",
+    "primary": true,
+    "size": 2428067,
+    "hashes": {
+     "sha512": "c9a9cbdae172aba11b4a1becaec92b5d61db119c6b12d734c2f1ca7ca7a70feebe96c701d801364c1e18270c85885c35a97bc71e802e671474bd95971da8b535",
+     "sha1": "4f3808c0aff4db9107de983118439bf783cacab1"
+    }
+   }
+  ]
+ },
+ {
+  "id": "EQHnBT4Q",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.5",
+  "name": "zamega 1.5",
+  "version_type": "release",
+  "date_published": "2026-02-02T13:35:58.213692Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "SszvX85I",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.5.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/EQHnBT4Q/zamega-fabric-1.5.jar",
+    "primary": true,
+    "size": 2434736,
+    "hashes": {
+     "sha512": "dfa876b381a61de0daaf3319c5ad4f5f61dc1502c99a357ffe0a8d371b9633ce09a5d1a837e42bac8fb245b5a2c06a070b86651e29c9837de028d9e9276a51fa",
+     "sha1": "5f926ac6356bfe00ab6aa2562e3e86b55542de48"
+    }
+   }
+  ]
+ },
+ {
+  "id": "gAR2jRP3",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.4.8",
+  "name": "1.4.8",
+  "version_type": "beta",
+  "date_published": "2026-02-01T03:54:12.658914Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.4.8-beta.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/gAR2jRP3/zamega-fabric-1.4.8-beta.jar",
+    "primary": true,
+    "size": 2486272,
+    "hashes": {
+     "sha1": "811e2cb3ce9826152f4f35783172d68398db7d86",
+     "sha512": "8ae3dcca3df9f45cb56bfcacee1c61096c93dea8843c98b9655eccf9c40b1f583e0ed5ee60a5d7c289b544433116a0883ac7fc33611c676f470b97876ab2ffcd"
+    }
+   }
+  ]
+ },
+ {
+  "id": "8bNGaeNc",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.4.7",
+  "name": "1.4.7",
+  "version_type": "release",
+  "date_published": "2026-01-20T02:27:02.977693Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.4.7.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/8bNGaeNc/zamega-fabric-1.4.7.jar",
+    "primary": true,
+    "size": 2481920,
+    "hashes": {
+     "sha1": "4d8835d0446f82c9d9bbb9fca1da305cfeee9de5",
+     "sha512": "60e6a21abc39542c398210b38e95e6a4efd7136e46cd792d1b3d081492e01c09ea2468128c7472e801a6283e4c60e353fd88a0dff62af51adc25b86cb5efd288"
+    }
+   }
+  ]
+ },
+ {
+  "id": "bLNXntMA",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.4.6",
+  "name": "1.4.6",
+  "version_type": "release",
+  "date_published": "2026-01-12T09:51:40.983994Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.4.6.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/bLNXntMA/zamega-fabric-1.4.6.jar",
+    "primary": true,
+    "size": 2458693,
+    "hashes": {
+     "sha512": "fc35cb7faa17f3bacfe74440100201f4a19186960d2ca8b738466bf41db017484254caae11b06a1b7ab3dc0c4e99d4c4cff48aa9093d592af04fe6439b3a7930",
+     "sha1": "608ec4c7d1453646db9c07cf23f071d0d6fbc866"
+    }
+   }
+  ]
+ },
+ {
+  "id": "4IUuvYDv",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.4.5",
+  "name": "1.4.5",
+  "version_type": "release",
+  "date_published": "2026-01-05T09:08:58.841812Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.4.5.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/4IUuvYDv/zamega-fabric-1.4.5.jar",
+    "primary": true,
+    "size": 2395143,
+    "hashes": {
+     "sha512": "651d05b5ca19883b94abcfd247a14012b8c94530486306dc454e6a8ec30a1864adecdb8fc18323aa00ebfcc2c2a7bbac96b88f36df5428c521f7a04c9f9a3ae6",
+     "sha1": "3815b4f852bea76535385c01a2b1688d22319d6c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "cTgRx4kT",
+  "project_id": "2V1Y86sc",
+  "version_number": "1.4.4",
+  "name": "1.4.4",
+  "version_type": "release",
+  "date_published": "2025-12-31T04:31:02.034013Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "zamega-fabric-1.4.4.jar",
+    "url": "https://cdn.modrinth.com/data/2V1Y86sc/versions/cTgRx4kT/zamega-fabric-1.4.4.jar",
+    "primary": true,
+    "size": 2163789,
+    "hashes": {
+     "sha512": "7070039308fc4699dd6b5f10935f76d868fd008b7eb0bdbb60f546528f741ce3caaec3bb71fb5affe0c65b2ca530f4443c6a105d94d45622131bc158b8b3e2c4",
+     "sha1": "c54fb89f8afebef906b55fc91d80d4f51fdd281a"
+    }
+   }
+  ]
+ }
+]
