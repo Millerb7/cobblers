@@ -20,7 +20,7 @@ jars, or hand-copy mods. Report that the script is missing as the blocker.
 
 1. **Assemble** — `.\server\scripts\assemble-server.ps1` builds a server
    directory from `modpack/manifest/`, excluding mods whose environment is
-   `client` (see `.Codex/rules/server.md`). Record the manifest revision
+   `client` (see `.claude/rules/server.md`). Record the manifest revision
    (`git rev-parse HEAD`) and the resulting mod list.
 2. **EULA gate** — if `eula.txt` is absent or `eula=false`, the server will
    stop and say so. **Do not set the `eula` key to true yourself.** Report it and ask the user
@@ -36,7 +36,7 @@ jars, or hand-copy mods. Report that the script is missing as the blocker.
    `build-doctor` for a verdict. Apply at most one minimal fix per
    iteration, through the owning agent, and re-run.
 6. **Record** — update the experiment README (results, versions, mod set,
-   decision) per the `experiment` skill and `.Codex/rules/research.md`, and
+   decision) per the `experiment` skill and `.claude/rules/research.md`, and
    move affected statuses in `docs/research/COBBLEVERSE_COMPATIBILITY.md`
    no higher than `NEEDS FUNCTIONAL TEST`.
 

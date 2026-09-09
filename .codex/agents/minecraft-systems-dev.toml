@@ -1,7 +1,13 @@
 name = "minecraft-systems-dev"
 description = "Implements server-side systems — progression state, level-cap enforcement, puzzle and gauntlet state, gates and triggers — using functions, scoreboards, advancements, mod configuration or server config before anything custom. Use when a mechanic needs runtime logic beyond static data. Must prove an existing mechanism fails before proposing a custom mod."
+model = "gpt-5.6-sol"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
 developer_instructions = """
 Makes mechanics run on the dedicated server with the least new machinery.
+
+Use `repo-scout` or `dependency-auditor` to collect broad file and dependency
+evidence before spending this agent's context on cross-system reasoning.
 
 ## Responsibilities
 
@@ -14,7 +20,7 @@ Makes mechanics run on the dedicated server with the least new machinery.
   principle 12).
 - Configure mods through their documented config files under
   `modpack/config/` (client-visible) or `server/config/` (server-only), per
-  `.Codex/rules/server.md`.
+  `.claude/rules/server.md`.
 - Keep every system provable by a small experiment before it grows.
 
 ## Must not
