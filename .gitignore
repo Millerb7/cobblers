@@ -103,3 +103,17 @@ build/
 out/
 .claude/settings.local.json
 .claude/worktrees/
+
+# Original local Cobbleverse installation (kept on disk for inspection).
+COBBLEVERSE/mods/**/*.jar
+COBBLEVERSE/mods/**/*.jar.disabled
+COBBLEVERSE/resourcepacks/**/*.zip
+COBBLEVERSE/shaderpacks/**
+!COBBLEVERSE/shaderpacks/*.txt
+# Match the existing upstream-only licensing exclusions in base-pack/.
+COBBLEVERSE/datapacks/**/*.zip
+COBBLEVERSE/config/fancymenu/assets/
+COBBLEVERSE/config/fancymenu/slideshows/
+COBBLEVERSE/config/customsplashscreen/*.png
+!COBBLEVERSE/config/defaultoptions/servers.dat
+.codex/worktrees/
