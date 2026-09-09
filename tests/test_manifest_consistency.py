@@ -56,7 +56,10 @@ def test_server_exclude_matches_client_side_mods(base, overlay):
     mods = [f for f in base["files"] if f["kind"] == "mod"]
     client = {f["mod_id"] for f in mods if f["side"] == "client"}
     non_client = {f["mod_id"] for f in mods if f["side"] != "client"}
-    assert sorted(overlay["server_exclude"]) == sorted(client - non_client)
+    excluded = set(overlay["server_exclude"])
+    overrides = {e["mod_id"] for e in overlay.get("server_exclude_overrides", [])}
+    assert client - non_client <= excluded
+    assert excluded - (client - non_client) == overrides
     assert sorted(e["mod_id"] for e in overlay.get("server_exclude_ambiguous", [])) == sorted(client & non_client)
 
 
@@ -79,6 +82,17 @@ def test_plan_server_side_has_no_client_mods(repo_root, python, overlay):
     assert not leaked, leaked
     assert {e["status"] for e in plan} >= {"base", "replace", "remove"}
     assert any(e["filename"] == "Cobblemon-fabric-1.8.0+1.21.1.jar" for e in active)
+    assert not any(e["mod_id"] == "playerxp" for e in active)
+
+
+def test_playerxp_remains_in_client_plan(repo_root, python):
+    r = subprocess.run(
+        [python, "tools/pack_manifest.py", "plan", "--side", "client", "--json"],
+        cwd=repo_root, capture_output=True, text=True, check=True,
+    )
+    plan = json.loads(r.stdout)
+    active = [e for e in plan if e["status"] in ("base", "replace", "add")]
+    assert any(e["mod_id"] == "playerxp" for e in active)
 
 
 def test_replacement_only_download_matches_overlay(repo_root, python, tmp_path, overlay):
@@ -98,6 +112,8 @@ def test_replacement_only_download_matches_overlay(repo_root, python, tmp_path, 
         text=True,
         check=True,
     )
-    assert f"{len(overlay['replace'])} files downloadable from Modrinth" in r.stdout
+    server_excluded = set(overlay["server_exclude"])
+    expected = sum(1 for entry in overlay["replace"] if entry["mod_id"] not in server_excluded)
+    assert f"{expected} files downloadable from Modrinth" in r.stdout
     assert "DRY RUN. Nothing downloaded." in r.stdout
     assert not (tmp_path / "downloads").exists()

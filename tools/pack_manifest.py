@@ -375,6 +375,9 @@ def build_plan(base: dict, overlay: dict | None, side: str | None = None, kind: 
         )
     if side:
         plan = [e for e in plan if e["side"] in ("both", side)]
+    if side == "server" and overlay:
+        excluded = set(overlay.get("server_exclude", []))
+        plan = [e for e in plan if e.get("mod_id") not in excluded]
     return plan
 
 

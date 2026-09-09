@@ -33,14 +33,14 @@ Removing a block provider after it has been used can replace map content with ai
 | Cobblemon Additions | Pokémon villages and spawn pools | preserve; UNKNOWN | locate villages and verify spawn-pool loading |
 | Repurposed Structures | broad structure generation | preserve provisionally | locate representative structures in fresh chunks |
 | Biome Replacer | maps Terralith biomes to biome categories used by the pack | freeze with its config | verify mappings and biome-dependent spawns |
-| Cobblemon Raid Dens | generated structures and persistent den blocks | preserve; UNKNOWN/high API coupling | locate den, start/finish raid, restart |
+| Cobblemon Raid Dens | generated structures and persistent den blocks | REMOVE from 1.8 target; runtime-incompatible | retest a future 1.8-compatible release before any world uses den blocks |
 | Mega Showdown | keystone ore, meteorite/worldgen, and persistent blocks | update to 1.0.2; functional test | generate resources and complete Mega flow |
 | PokeCenter PCs datapack | village PokéCenter structure NBT | preserve provisionally | locate structure and operate the PC |
 | Main Cobbleverse datapack | includes structure NBT and Mega/form data | preserve for fresh-world test | datapack load, structure placement, form assets |
 
 ## Other persistent block providers
 
-TMCraft, Cobblemon Battle Positions, Radical Cobblemon Trainers, Sophisticated Backpacks/Storage, Tom's Storage, and Iron Chests can leave blocks or block entities in the map. They are gameplay systems as well as world-state dependencies. TMCraft, RCT/RCT API, Mega Showdown, ZAMegas, Cobbreeding, CobbleNav, PlayerXP, Only Bottle Caps, Capture XP, and Tim Core use their Cobblemon 1.8-compatible overlay releases where available.
+TMCraft, Cobblemon Battle Positions, Radical Cobblemon Trainers, Sophisticated Backpacks/Storage, Tom's Storage, and Iron Chests can leave blocks or block entities in the map. They are gameplay systems as well as world-state dependencies. TMCraft, RCT/RCT API, Mega Showdown, ZAMegas, Cobbreeding, CobbleNav, Only Bottle Caps, Capture XP, and Tim Core use their Cobblemon 1.8-compatible overlay releases where available. PlayerXP's 1.8 update remains client-optional because it crashes a dedicated server. Raid Dens is omitted before map construction because removing its generated blocks later would damage a world.
 
 ## Generation implementation dependencies
 
@@ -50,7 +50,7 @@ TMCraft, Cobblemon Battle Positions, Radical Cobblemon Trainers, Sophisticated B
 
 1. Boot the complete overlay on a fresh disposable world.
 2. Confirm all required datapacks load without registry or tag errors.
-3. Generate fixed-seed chunks that exercise Terralith, biome replacement, villages, monuments, raid dens, and PokéCenters.
+3. Generate fixed-seed chunks that exercise Terralith, biome replacement, villages, monuments, and PokéCenters.
 4. Place representative blocks from every provider, use block entities, save, restart, and inspect the same chunks.
 5. Run the relevant multiplayer interactions.
 6. Record exact jar and datapack hashes, then accept the freeze in an ADR.

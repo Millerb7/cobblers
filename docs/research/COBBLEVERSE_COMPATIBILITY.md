@@ -2,9 +2,9 @@
 
 ## Decision snapshot
 
-**EXP-000 is not complete, and the repository is not ready for EXP-001.** The isolated server pack is reproducibly assembled, but Minecraft has not been launched because `eula.txt` has not been accepted by a human. Client connection and all gameplay smoke tests also remain unverified.
+**EXP-000 is not complete, and the repository is not ready for EXP-001.** The isolated dedicated server reached Minecraft's `Done` state on 2026-09-09 after two runtime-caused exclusions. Client connection and all gameplay smoke tests remain unverified.
 
-The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobblemon 1.8.0. The effective dedicated-server set has 103 jars: 90 unchanged base jars and 13 replacements. Better Pokédex Scanner is removed because its declared range excludes Cobblemon 1.8. The disabled legacy Particular jar is omitted; Particular Reforged remains.
+The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobblemon 1.8.0. The effective dedicated-server set has 101 jars: 89 unchanged base jars and 12 replacements. Better Pokédex Scanner and Raid Dens are removed, PlayerXP is excluded from the server only, and the disabled legacy Particular jar is omitted; Particular Reforged remains.
 
 ## Evidence standard
 
@@ -24,12 +24,12 @@ The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobbl
 | Fabric installer | — | 1.1.2 stable | Fabric Meta queried 2026-09-08 |
 | Java | 21 | Temurin 21.0.9 | executed `java -version` |
 | Cobblemon | 1.7.3+1.21.1 | 1.8.0+1.21.1 | local metadata and Modrinth version `YgmyyFcs` |
-| Server jars | 104 baseline jars | 103 effective jars | `pack_manifest.py verify` |
-| Client jars | base client set | 136 effective jars | `pack_manifest.py verify` |
+| Server jars | 104 baseline jars | 101 effective jars | `pack_manifest.py verify` and boot capture `20260909-001735` |
+| Client jars | base client set | 135 effective jars | `pack_manifest.py plan`; full post-removal client assembly still pending |
 | Config files | 223 base files | 224 assembled files | isolated runtime inventory |
 | Datapacks | 10 zip files | 10 assembled zip files | isolated runtime inventory |
 
-The immutable base verification found 104 matching server-side jars, zero missing, and zero hash mismatches. The 34 extras were exactly the 33 enabled client-only jars plus the disabled legacy Particular jar. The target verification found all 103 planned jars with zero missing, mismatched, extra, or unverified files.
+The immutable base verification found 104 matching server-side jars, zero missing, and zero hash mismatches. The 34 extras were exactly the 33 enabled client-only jars plus the disabled legacy Particular jar. The final target verification found all 101 planned server jars with zero missing, mismatched, extra, or unverified files. That exact set reached `Done (6.377s)` with mod-set hash `D1483348BC2D`.
 
 ## Required compatibility overlay
 
@@ -44,18 +44,19 @@ The immutable base verification found 104 matching server-side jars, zero missin
 | mega_showdown | 1.8.4+1.7.3+1.21.1 | 1.0.2+1.8+1.21.1-release | UPDATE | Mega Showdown 1.0.2 for Cobblemon 1.8 (2026-09-08). Note the version scheme reset (1.8.4 -> 1.0.2); its required dependencies are present in the base pack. |
 | cobbreeding | 2.2.2 | 2.3.0 | UPDATE | Release 2.3.0 explicitly updates Cobbreeding for Cobblemon 1.8. |
 | obc | 1.3.0 | 1.5.0-fabric | UPDATE | Release 1.5.0-fabric explicitly targets Cobblemon 1.8 and is not backward-compatible. |
-| playerxp | 1.0.9+1.21.1 | 1.1.1+1.21.1 | UPDATE | Release 1.1.1 explicitly updates PlayerXP for Cobblemon 1.8. |
+| playerxp | 1.0.9+1.21.1 | 1.1.1+1.21.1 | CLIENT OPTIONAL; SERVER EXCLUDE | No newer 1.21.1 release exists. Version 1.1.1 and current upstream source register client-only `ItemTooltipCallback` from the common `ModInitializer`, crashing a dedicated server during entrypoint initialization. Preserve in the client provisionally; connection safety and usefulness remain unverified. |
 | cobblenav | 2.3.3 | 2.4.1 | UPDATE | CobbleNav 2.4.x explicitly updates for Cobblemon 1.8. |
 | zamega | 1.7.3 | 1.7.7+1.8 | UPDATE | The base jar requires Mega Showdown's 1.7-era version range; release 1.7.7+1.8 targets the reset Mega Showdown 1.0.x line. |
 | fightorflight | 0.10.9 | 0.11.0 | UPDATE | Maintained Reborn release reports normal operation on Cobblemon 1.8; preserve provisionally and verify aggression, fleeing, battle start, and XP behavior. |
 | better_pokedex_scanner | better-pokedex-scanner-1.0.0.jar | — | REMOVE | Depends on cobblemon >=1.7.3 <1.8.0 and has no 1.8 build (single release 1.0.0, 2026-04-15). Client-side QoL; safe to drop. |
 | particular | particular-1.1.2+1.21.jar.disabled | — | REMOVE | Already .disabled in the base pack; duplicate mod id with Particular Reforged 1.5.5 (particular-1.21.1-Fabric-1.5.5.jar). Drop the file entirely. |
+| cobblemonraiddens | 0.11.3+1.21.1 | — | REMOVE | Runtime datapack reload fails with `NoSuchMethodError: GraalShowdownService.getContext()`. Published 0.11.7 and current upstream source retain the same removed API call. This also removes den blocks and structures before campaign world construction. |
 
 All replacement downloads are pinned by URL, Modrinth version ID, SHA-1, and SHA-512 in `modpack/manifest/overlay.json`. The six replacements added by current research are Cobbreeding, Only Bottle Caps, PlayerXP, CobbleNav, ZAMegas, and Fight or Flight Reborn. ZAMegas is mandatory: the base jar requires the old Mega Showdown version line, while Mega Showdown resets to 1.0.x for Cobblemon 1.8.
 
 ## Preserved systems requiring functional tests
 
-The target functional scope contains 27 retained Cobblemon-integrating addons and libraries. This includes the 24 lower-bound or undeclared integrations from the base audit plus the updated TMCraft, Capture XP, and Tim Core blockers. Server boot cannot validate the client-only Catch Indicator, Catch Rate Display, or LumyREI. High-risk server checks include RCT trainer lifecycle and multiplayer behavior, Mega Showdown plus ZAMegas, Raid Dens, CobbleNav, Cobbreeding, CobbleDollars, Capture XP, TMCraft, and world-critical CobbleFurnies/LumyMon/Legendary Monuments/Cobblemon Additions.
+The retained functional scope contains 26 Cobblemon-integrating addons and libraries after removing Raid Dens. PlayerXP is client-optional and needs a client connection test before it can be kept safely. Server boot cannot validate PlayerXP, Catch Indicator, Catch Rate Display, or LumyREI. High-risk server checks include RCT trainer lifecycle and multiplayer behavior, Mega Showdown plus ZAMegas, CobbleNav, Cobbreeding, CobbleDollars, Capture XP, TMCraft, and world-critical CobbleFurnies/LumyMon/Legendary Monuments/Cobblemon Additions.
 
 No standalone quest system was found. Cobbleverse progression behavior comes from RCT series and level-cap configuration, datapack advancements/functions, and badge items. Global Packs force-loads `config/cobbleverse`, `datapacks/`, and optional `datapacks/extra/`; these are part of the compatibility surface.
 
@@ -121,7 +122,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | Cobblemon Additions | WORLD-CRITICAL | 4.1.6 | ~1.21.1 | Fabric | — | NEEDS FUNCTIONAL TEST | PRESERVE; TEST | Pokemon-themed villages/structures (datapack-turned-mod), spawn pools. No cobblemon dependency declared but ships assets/cobblemon + spawn_pool data and 2 API refs. Worldgen: villages will be in the map. CC0. |
 | Cobblemon Battle Extras | OPTIONAL/CLIENT-QOL | 1.13.45 | ~1.21.1 | Fabric | >=1.6 | NEEDS FUNCTIONAL TEST | PRESERVE; TEST | Battle UI/QoL + controller support. cobblemon >=1.6. 74 API refs (battle UI coupling - high break risk). Breaks cobblemon-ui-tweaks/cobblestats/move_inspector. ARR, permission on file. |
 | Cobblemon Battle Positions | GAMEPLAY-CRITICAL | 1.1.2 | ~1.21.1 | Fabric | >=1.7.0 | NEEDS FUNCTIONAL TEST | PRESERVE; TEST | Arena marker blocks (5 blockstates) placed in world for NPC/PVP battle positions - blocks persist in map. cobblemon >=1.7.0, rctapi >=0.14.0. Jar says 1.1.3, metadata version 1.1.2. |
-| Cobblemon Raid Dens | GAMEPLAY-CRITICAL | 0.11.3+1.21.1 | 1.21.1 | Fabric | >=1.7.0 | NEEDS FUNCTIONAL TEST | PRESERVE; TEST | Raid dens: worldgen structures + raid crystal/home blocks (world-persistent). cobblemon >=1.7.0, geckolib >=4.7.0. 169 API refs (very high coupling). Suggests mega_showdown/cobbledollars/rctapi. |
+| Cobblemon Raid Dens | WORLD-CRITICAL / GAMEPLAY-CRITICAL | 0.11.3+1.21.1 | 1.21.1 | Fabric | >=1.7.0 | INCOMPATIBLE | REMOVE | Fatal on Cobblemon 1.8 during datapack reload: `NoSuchMethodError` for removed `GraalShowdownService.getContext()`. Latest published 0.11.7 and current source retain the call. Removing before map construction avoids orphaned den blocks and structures. |
 | Cobblenav | GAMEPLAY-CRITICAL | 2.3.3 | 1.21.1 | Fabric | >=1.7.0 | NEEDS FUNCTIONAL TEST | UPDATE → 2.4.1 | PokeNav item (spawn info/trainer contacts). cobblemon >=1.7.0. 191 API refs (very high coupling). MPL-2.0. |
 | Comforts | WORLD-CRITICAL | 9.0.5+1.21.1 | ~1.21 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Sleeping bags/hammocks - placeable blocks (34 blockstates). Bundles spectrelib + cardinal-components. |
 | Configurable | GAMEPLAY-CRITICAL / LIBRARY | 3.5.2 | ~1.21.1 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Needed by: neruina (~3.5.2). |
@@ -173,7 +174,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | Particular | OPTIONAL/CLIENT-QOL | 1.1.2+1.21 | ~1.21 | Fabric | — | REMOVE | REMOVE | Disabled in the reference pack. DISABLED duplicate: original 'Particular' 1.1.2 (client-only, needs owo-lib ^0.12.10). Same mod id 'particular' as the enabled Particular Reforged 1.5.5 - enabling both would be a duplicate-mod load failure. Delete or keep disabled. |
 | Particular Reforged | OPTIONAL/CLIENT-QOL | 1.5.5 | ~1.21.1 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Particular Reforged (multiloader fork) - ambience particles. Needs forgeconfigapiport. env=* (server presence needed?) - verify; recommends iris. |
 | PastureLoot | GAMEPLAY-CRITICAL | 1.0.5+1.21.1 | 1.21.1 | Fabric | >=1.7.1+1.21.1 | NEEDS FUNCTIONAL TEST | PRESERVE; TEST | Pasture loot drops (config/PastureLoot.json). cobblemon >=1.7.1+1.21.1. 1 API ref. Empty description; ARR. |
-| PlayerXP | GAMEPLAY-CRITICAL | 1.0.9+1.21.1 | 1.21.1 | Fabric | >=1.6.0 | NEEDS FUNCTIONAL TEST | UPDATE → 1.1.1+1.21.1 | Player XP from battles. cobblemon >=1.6.0. 1 API ref (low coupling). No fabricloader dep declared. |
+| PlayerXP | OPTIONAL/CLIENT-QOL | 1.1.1+1.21.1 | 1.21.1 | Fabric | >=1.6.0 | INCOMPATIBLE ON SERVER / NEEDS CLIENT TEST | CLIENT OPTIONAL; SERVER EXCLUDE | The common entrypoint loads Fabric's client-only `ItemTooltipCallback` and crashes a dedicated server. No newer release or source fix exists as of 2026-09-09. Client retention is provisional. |
 | Pokeblocks | WORLD-CRITICAL | 1.4.0-1.21.1 | ~1.21.1 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | 314 blockstates (Pokemon figurines, baskets, etc.) - decorative blocks in the map. No cobblemon dependency; needs geckolib >=4.7.3. CC-BY-NC-4.0. |
 | Radical Cobblemon Trainers API | GAMEPLAY-CRITICAL / LIBRARY | 0.15.2-beta | ~1.21.1 | Fabric | >=1.7 | NEEDS FUNCTIONAL TEST | UPDATE → 0.16.0-beta | Radical Cobblemon Trainers API - trainer/battle API. Needed by: rctmod (>=0.15.0-beta), cobblemonbattlepositions (>=0.14.0); suggested by raiddens. cobblemon >=1.7 (no upper). 56 API refs. Gameplay-critical library. |
 | Radical Cobblemon Trainers | GAMEPLAY-CRITICAL | 0.18.1-beta | 1.21.1 | Fabric | >=1.7.0 | NEEDS FUNCTIONAL TEST | UPDATE → 0.19.0-beta | 1500+ trainers spawning (Radical Red/Unbound/BDSP) + 3 blockstates. cobblemon >=1.7.0, rctapi, forgeconfigapiport >=21.1.1. Pack ships COBBLEVERSE-RCT-DP-v20 datapack + RCTmod RP for it. Bundles jgrapht. |
@@ -269,12 +270,14 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 
 ## Boot and smoke-test status
 
-The isolated runtime contains the pinned Fabric launcher, all 103 target server jars, base configuration, overlay configuration, and all 10 datapacks. A matching client instance contains 136 verified jars, 47 resource packs, 10 datapacks, and one shader pack. `boot-test.ps1 -WhatIf` verified Java, launcher, and mod presence, then refused at the EULA gate. No Minecraft process or GUI client was started and no boot log exists.
+The isolated runtime contains the pinned Fabric launcher, all 101 target server jars, base configuration, overlay configuration, and all 10 datapacks. The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack; its post-removal assembly and GUI launch remain pending.
 
-After a human accepts the EULA, run the staged attempts recorded in the EXP-000 README: baseline, Cobblemon-only cold swap, loader-blocker repairs, core gameplay replacements, then the complete overlay. A successful `Done (` is followed by a client connection and the multiplayer smoke checklist. Until those results exist, no component may be called VERIFIED WORKING.
+The first real complete-overlay launch failed in PlayerXP's common entrypoint. The next launch failed in Raid Dens during datapack reload. After applying the scoped exclusions above, capture `20260909-001735` reached `Done (6.377s)` and stopped cleanly. The retained upstream datapacks still emit nonfatal errors for orphaned Raid Dens loot tables; these were recorded without expanding the boot-fix scope. A client connection and the multiplayer smoke checklist are next. Server startup is verified for this exact mod set, while individual gameplay components remain unverified until their functional checks pass.
 
 ## Sources
 
 - Local evidence: `base-pack/inventory/mod_inventory.json`, `base-pack/inventory/pack_hashes.csv`, `modpack/manifest/base-cobbleverse-1.7.42.json`, and `modpack/manifest/overlay.json`.
 - [Fabric Meta loader API](https://meta.fabricmc.net/v2/versions/loader/1.21.1) and [installer API](https://meta.fabricmc.net/v2/versions/installer).
 - Modrinth version records are linked by stable version ID in `overlay.json`; examples include [Cobblemon 1.8.0](https://api.modrinth.com/v2/version/YgmyyFcs), [RCT 0.19.0-beta](https://api.modrinth.com/v2/version/jdUENp3C), and [Mega Showdown 1.0.2](https://api.modrinth.com/v2/version/TACsHsKC).
+- PlayerXP evidence: [Modrinth 1.21.1 releases](https://api.modrinth.com/v2/project/cobblemon-playerxp/version?loaders=%5B%22fabric%22%5D&game_versions=%5B%221.21.1%22%5D) and [current common entrypoint source](https://github.com/chudders1231/PlayerXP/blob/1.21.1/fabric/src/main/java/chadlymasterson/playerxp/PlayerXp.java).
+- Raid Dens evidence: [Modrinth releases](https://api.modrinth.com/v2/project/cobblemonraiddens/version?loaders=%5B%22fabric%22%5D&game_versions=%5B%221.21.1%22%5D) and [current reload-listener source](https://github.com/necro50n3/cobblemon-raiddens/blob/master/fabric/src/main/java/com/necro/raid/dens/fabric/events/reloader/StatusEffectsReloadListener.java).

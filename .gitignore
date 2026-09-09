@@ -35,6 +35,8 @@ eula.txt
 tmp/
 downloads/
 experiments/*/runtime/
+experiments/*/runs/*
+!experiments/*/runs/.gitkeep
 *.tmp
 *.part
 
