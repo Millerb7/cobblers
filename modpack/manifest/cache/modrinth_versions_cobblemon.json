@@ -1,0 +1,724 @@
+[
+ {
+  "id": "YgmyyFcs",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.8.0",
+  "name": "Cobblemon v1.8.0 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2026-09-06T01:30:57.678267Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/YgmyyFcs/Cobblemon-fabric-1.8.0%2B1.21.1.jar",
+    "primary": true,
+    "size": 162358118,
+    "hashes": {
+     "sha512": "6537ff48feb8888d5c9f124eeecd721162bf05ca8e30270753d8f58f08af4e5fbb8d06d2bfb6c9e6514524152709e46c8e7ed9ff38fa2cf759d0b43898d25883",
+     "sha1": "ed0bbc67467189161b3bb9e1b8451afd8d073fa8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "kF7CvxTo",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.7.3",
+  "name": "Cobblemon v1.7.3 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2026-01-31T01:14:51.955679Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/kF7CvxTo/Cobblemon-fabric-1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 135801550,
+    "hashes": {
+     "sha1": "f192cda3fdfec0f20d1dee1887ec1b9e77b1618c",
+     "sha512": "7b5376f5f48177db53790237b6fb25378806972b5d3b756151b4d8f2d3c27238d6b587b77da422bc1780bfd358b4702e74369fd82cef2a35301b4b68a2f13c2e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "FcsopG0e",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.7.2",
+  "name": "Cobblemon v1.7.2 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2026-01-25T01:34:45.859657Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.7.2+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/FcsopG0e/Cobblemon-fabric-1.7.2%2B1.21.1.jar",
+    "primary": true,
+    "size": 135794114,
+    "hashes": {
+     "sha512": "bf13dfb6f9325513c2e2db46ab34edd5e0a264775ec5f962cd53a8b06d729a858d780c0f284888c61b2cd0a5f3454f7eef07bc759189805ba7ffa957267d9104",
+     "sha1": "62d6ce4d8ab8e978633f954571e99fc638872ed9"
+    }
+   }
+  ]
+ },
+ {
+  "id": "s64m1opn",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.7.1",
+  "name": "Cobblemon v1.7.1 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2025-11-29T02:17:48.697474Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.7.1+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/s64m1opn/Cobblemon-fabric-1.7.1%2B1.21.1.jar",
+    "primary": true,
+    "size": 130797814,
+    "hashes": {
+     "sha512": "221382ccc0aa7ae65935298802ff6272b852f485bf0d03a5ba7b51f88a15aa3110282d6c9b0d6e2993fe72515f1dfffdec236b235d411ac01eb93b7dc9e5d750",
+     "sha1": "1d864c16796a98e0f40ba5bc61977a528cc1e3a1"
+    }
+   }
+  ]
+ },
+ {
+  "id": "Ygf8KJFC",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.7.0",
+  "name": "Cobblemon v1.7.0 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2025-11-21T23:42:02.502303Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.7.0+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/Ygf8KJFC/Cobblemon-fabric-1.7.0%2B1.21.1.jar",
+    "primary": true,
+    "size": 130736495,
+    "hashes": {
+     "sha1": "8e6af964b05dc56d2c9aa815fbe1d3ed04740cee",
+     "sha512": "2fa4f9e91fdc2511a2b7fa4309a3ca0848599058e86345056c7c771136cf518c6bfab94a6da6b661abd1e675354caedf5cdd6e4f0e39c5c3157116a72c58e878"
+    }
+   }
+  ]
+ },
+ {
+  "id": "v77SHSXW",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.6.1",
+  "name": "Cobblemon v1.6.1 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2025-01-26T00:03:08.667234Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.6.1+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/v77SHSXW/Cobblemon-fabric-1.6.1%2B1.21.1.jar",
+    "primary": true,
+    "size": 120710175,
+    "hashes": {
+     "sha512": "b7082befee07efd3e0c5857807f739082df5994ec0e7fe3217ce6cdaec7d2ca47ed51bd129096fd4eca8cbcf7de415d14602868a3357980ff88e55b3148dc7f4",
+     "sha1": "44657312c2d9d43f5db24ec779b5044b7453a924"
+    }
+   }
+  ]
+ },
+ {
+  "id": "qQkr9Wdi",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.6.0",
+  "name": "Cobblemon v1.6.0 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2024-12-25T00:16:10.837710Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.6.0+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/qQkr9Wdi/Cobblemon-fabric-1.6.0%2B1.21.1.jar",
+    "primary": true,
+    "size": 119400647,
+    "hashes": {
+     "sha1": "c21fe39e1e46b7ae04acca30200fe61bf24b940b",
+     "sha512": "6919a5042d6dbce4313150efb9ac4fd90b1e977d94a7abbc27b741b95cb5873709c44588ea32ea755274cdfa425703092089021d642d593ac5b5db2d3108fdca"
+    }
+   }
+  ]
+ },
+ {
+  "id": "EVozVxCq",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.5.2",
+  "name": "Cobblemon v1.5.2 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2024-05-27T06:10:59.835347Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.5.2+1.20.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/EVozVxCq/Cobblemon-fabric-1.5.2%2B1.20.1.jar",
+    "primary": true,
+    "size": 109746268,
+    "hashes": {
+     "sha1": "2465e767f2659240f1c16549e602cb6e8b9145db",
+     "sha512": "38f6e1ae17673f9c62915ebc68558b1c50cf4c2bdeb299ac06aed84ecf0bf9c56732cbc123252f43ea3abee10d3348c50b74fa46cac6d9d8dd0c11833bacaabe"
+    }
+   }
+  ]
+ },
+ {
+  "id": "1SsqxUgH",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.5.1",
+  "name": "Cobblemon v1.5.1 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2024-05-27T02:36:23.961883Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.5.1+1.20.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/1SsqxUgH/Cobblemon-fabric-1.5.1%2B1.20.1.jar",
+    "primary": true,
+    "size": 109746263,
+    "hashes": {
+     "sha512": "073fafb706511866ebee49b813e8515e330bef69404f53b85232d0a512698b4bee17c1ad384fc7be48a8a43c3572aa1b05044ae949e7369f20b95304293ca377",
+     "sha1": "36f272cbb6d7eab57e15a91c149227d6321256f3"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9oEoR7Si",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.5.0",
+  "name": "Cobblemon v1.5.0 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2024-05-11T23:51:15.138594Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.5.0+1.20.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/9oEoR7Si/Cobblemon-fabric-1.5.0%2B1.20.1.jar",
+    "primary": true,
+    "size": 108336406,
+    "hashes": {
+     "sha512": "23c5d63e18f481250c151c23c64e61e3915c8bcf4506d11838b392d7ee59412c01cda0d892c1d84762062d11a0ce6884f7c357df414394a2ca6412449aa1f974",
+     "sha1": "6c25f1e39884cc07e777b097c4ff71a150b58082"
+    }
+   }
+  ]
+ },
+ {
+  "id": "uWAkNUxZ",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.4.1",
+  "name": "Cobblemon v1.4.1 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2023-12-23T02:08:28.314469Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.4.1+1.20.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/uWAkNUxZ/Cobblemon-fabric-1.4.1%2B1.20.1.jar",
+    "primary": true,
+    "size": 104071103,
+    "hashes": {
+     "sha512": "6955c8ad187d727cbfc51761312258600c5480878983cfe710623070c90eb437e419c140ff3c77e5066164876ecfe1e31b87f58f5ef175f0758efcff246b85a8",
+     "sha1": "bd7fb792b67070d267b63bbc748754902fef34f7"
+    }
+   }
+  ]
+ },
+ {
+  "id": "YEzu8qAH",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.4.0",
+  "name": "Cobblemon v1.4.0 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2023-10-14T02:38:37.842893Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.4.0+1.20.1.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/YEzu8qAH/Cobblemon-fabric-1.4.0%2B1.20.1.jar",
+    "primary": true,
+    "size": 86809641,
+    "hashes": {
+     "sha1": "368e7a7dad4409b640cd14c9593d659fff9ec05c",
+     "sha512": "892420b4ef29981425675602e780b67ab25b740e610d27e2a71e957a479430b1cffe19f32c533dee03718dc8f50537cb9678c26b24399197f634d83ef4a9d3b4"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ZuhveJd6",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.3.2",
+  "name": "Cobblemon v1.3.2 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2023-04-01T04:32:20.150385Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "hfsU4hXq",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.3.2+1.19.2.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/ZuhveJd6/Cobblemon-fabric-1.3.2%2B1.19.2.jar",
+    "primary": true,
+    "size": 65011406,
+    "hashes": {
+     "sha1": "72b3e486c32f1145f8c533a86ec0940e60567976",
+     "sha512": "f22f614bec4b314c0e2d62dc9594ef368190c27a867d23054d4601b86c4bc80f42361d2a09ba65b6559ee5823540ce5a69eb855f6f3ab3f85a1720d52b8d49a2"
+    }
+   }
+  ]
+ },
+ {
+  "id": "3zopTj2c",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.3.1",
+  "name": "Cobblemon v1.3.1 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2023-04-01T01:26:46.226858Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "hfsU4hXq",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.3.1+1.19.2.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/3zopTj2c/Cobblemon-fabric-1.3.1%2B1.19.2.jar",
+    "primary": true,
+    "size": 65007153,
+    "hashes": {
+     "sha1": "58388c1541c6d283619a122dc48784d0d8f5a81d",
+     "sha512": "a96d501b7b66e5dfdc4db85d9018985f3c459df23786210cc5f4ac673d63cfdadb0bc033c5ca5554d72d0b2eb8bcaf283fc5413a68671a681ef663a425225992"
+    }
+   }
+  ]
+ },
+ {
+  "id": "BUYzYxsK",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.3.0",
+  "name": "Cobblemon 1.3.0 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2023-03-18T01:39:55.870759Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "hfsU4hXq",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.3.0+1.19.2.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/BUYzYxsK/Cobblemon-fabric-1.3.0%2B1.19.2.jar",
+    "primary": true,
+    "size": 64529081,
+    "hashes": {
+     "sha512": "1c79753f4238ac581aa44172b97f7d81d6afce02d95700b4f1caf4f7ca65d06374af8b08a96b2b5f691dc9b7f05603b7344805abe973ab125d2d2f51b22bfcf6",
+     "sha1": "eaaefb58f4f8b07cbed4520dec92bca8de31d65d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "Ytht2Amb",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.2.0",
+  "name": "Cobblemon v1.2.0 ~ Fabric",
+  "version_type": "release",
+  "date_published": "2023-01-01T04:22:16.777961Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "hfsU4hXq",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.2.0+1.19.2.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/Ytht2Amb/Cobblemon-fabric-1.2.0%2B1.19.2.jar",
+    "primary": true,
+    "size": 57042900,
+    "hashes": {
+     "sha512": "62f19d3b3a940e27c66525b3dab7c3388562070eb16acdfe9eac1f1d40af392d0c30833d35a3dae6ae1d42dd4d5334a6d7d31d544003cb679ef76749c85641d1",
+     "sha1": "b676bafb42065550fd2ebf4dd7254f8e3dbbcf67"
+    }
+   }
+  ]
+ },
+ {
+  "id": "YanJGnFy",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.1.1",
+  "name": "Cobblemon v1.1.1 ~ Fabric",
+  "version_type": "beta",
+  "date_published": "2022-11-28T04:15:28.535796Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "mrB7EiW4",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.1.1+1.19.2.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/YanJGnFy/Cobblemon-fabric-1.1.1%2B1.19.2.jar",
+    "primary": true,
+    "size": 106921570,
+    "hashes": {
+     "sha1": "a5dc5018301dd138f7b043c0dd3e1c6144963c76",
+     "sha512": "7329b1cbd1015686e514f1783ab8ee5aa18a640eb19abf900212aff9b623ed4fedd536b1c43bdba7ca72a038e65847f72cc67ff8c91c2d738c66be01862bfc8e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "JhtKiTGM",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.1.0",
+  "name": "Cobblemon v1.1.0 ~ Fabric",
+  "version_type": "beta",
+  "date_published": "2022-11-28T00:06:18.085920Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "hfsU4hXq",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.1.0+1.19.2.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/JhtKiTGM/Cobblemon-fabric-1.1.0%2B1.19.2.jar",
+    "primary": true,
+    "size": 106921556,
+    "hashes": {
+     "sha512": "c12a55f6a8b040ed2617b4dc2ea469b24c6835e4c52048af617a00f0f82bd297702bb2bc96eabce93f25b1c041c7a168d684f3bfa175cf6bb5420e731d4db182",
+     "sha1": "0f278cef0b8d9fc06b7c61d61a446af31dccf497"
+    }
+   }
+  ]
+ },
+ {
+  "id": "8PEfPFzz",
+  "project_id": "MdwFAVRL",
+  "version_number": "1.0.0",
+  "name": "Cobblemon v1.0.0 ~ Fabric",
+  "version_type": "beta",
+  "date_published": "2022-11-12T05:33:15.529638Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": "gdGDJ2bh",
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-1.0.0+1.19.2.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/8PEfPFzz/Cobblemon-fabric-1.0.0%2B1.19.2.jar",
+    "primary": true,
+    "size": 106784455,
+    "hashes": {
+     "sha1": "d4188a55a5514b102baa81bf2e91f861599c6545",
+     "sha512": "9308ea7f50cad1bea1a787565c7cdebc2334a90c64a26df59e3369002c10383b39b0d9f25ff0d7b990c4df27bc6fa6102cab35452fa93854dafb9685e3dc016c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "YOivHEUu",
+  "project_id": "MdwFAVRL",
+  "version_number": "0.9.9",
+  "name": "Cobblemon v0.9.9 ~ Fabric",
+  "version_type": "alpha",
+  "date_published": "2022-11-06T06:47:25.700216Z",
+  "game_versions": [
+   "1.19.2"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "HoIJp48v",
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "Cobblemon-fabric-0.9.9+1.19.2-remap.jar",
+    "url": "https://cdn.modrinth.com/data/MdwFAVRL/versions/YOivHEUu/Cobblemon-fabric-0.9.9%2B1.19.2-remap.jar",
+    "primary": true,
+    "size": 106972606,
+    "hashes": {
+     "sha1": "8b628af78b47ace0f1d6452481f1d2c5041c7125",
+     "sha512": "fdf678a696a5e5989a5ceb54d6ad5e631391517db1523d56119629ab06f699cdfd7dde28b5c798beb6f8d90a66b58992bb974a69e837571c0db300dde3c03089"
+    }
+   }
+  ]
+ }
+]

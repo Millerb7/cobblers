@@ -1,0 +1,1452 @@
+[
+ {
+  "id": "TACsHsKC",
+  "project_id": "SszvX85I",
+  "version_number": "1.0.2+1.8+1.21.1-release",
+  "name": "mega_showdown 1.0.2+1.8+1.21.1-release",
+  "version_type": "release",
+  "date_published": "2026-09-08T17:35:00.849229Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/TACsHsKC/mega_showdown-fabric-1.0.2%2B1.8%2B1.21.1-release.jar",
+    "primary": true,
+    "size": 19970594,
+    "hashes": {
+     "sha1": "50b2012b5207706fd93d42dfad73f94aa294c7a2",
+     "sha512": "7e3161f49da37a3763de9c9671f5a04fb1a45b83898cde498361edaa5d7637a2d7024c98b859d1582b11dfe213da48e30d2b5e4775a191405d2492908992bc79"
+    }
+   }
+  ]
+ },
+ {
+  "id": "5lCKWgzS",
+  "project_id": "SszvX85I",
+  "version_number": "1.0.1+1.8+1.21.1-release",
+  "name": "mega_showdown 1.0.1+1.8+1.21.1-release",
+  "version_type": "release",
+  "date_published": "2026-09-08T11:42:35.533171Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.0.1+1.8+1.21.1-release.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/5lCKWgzS/mega_showdown-fabric-1.0.1%2B1.8%2B1.21.1-release.jar",
+    "primary": true,
+    "size": 19971571,
+    "hashes": {
+     "sha1": "93d4bb225fcdc051363d3ce33df80b346ff8eb98",
+     "sha512": "a8173efee0cf2db0d9eaa45ddce4129086ff0d60d02058a713fd3d33155046ec4462edb5743a82eb88dea983421881df5aa1ceab54b0eb52b21e8c25ef3cdf0f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "we79kHpG",
+  "project_id": "SszvX85I",
+  "version_number": "1.0+1.8+1.21.1-release-hotfix",
+  "name": "mega_showdown 1.0+1.8+1.21.1-release-hotfix",
+  "version_type": "release",
+  "date_published": "2026-09-07T08:16:26.291482Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.0+1.8+1.21.1-release-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/we79kHpG/mega_showdown-fabric-1.0%2B1.8%2B1.21.1-release-hotfix.jar",
+    "primary": true,
+    "size": 20182807,
+    "hashes": {
+     "sha1": "a89f80298f8f975e3b2c290bc4519daf06802376",
+     "sha512": "55cee6905de40ac2a5ac9fab2fc5502c8fab77c6294134ada515481a2757b8354a79e03abbc71763870afee1d440581e3ba06b912f1aebdd4cd432d02555714f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "eT4kBnCd",
+  "project_id": "SszvX85I",
+  "version_number": "1.0+1.8+1.21.1-release",
+  "name": "mega_showdown 1.0+1.8+1.21.1-release",
+  "version_type": "release",
+  "date_published": "2026-09-07T07:29:35.371265Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.0+1.8+1.21.1-release.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/eT4kBnCd/mega_showdown-fabric-1.0%2B1.8%2B1.21.1-release.jar",
+    "primary": true,
+    "size": 20182809,
+    "hashes": {
+     "sha1": "ea6906ec30a2e0a386f8619ef55dd5ea4ce3eb7d",
+     "sha512": "58179170500efb13c31b3c4cadf71cf1b6f5f17e65c36a6f44779312cb64ae2d2d4544ce506a85e7b202f1de72b75085bf79af04a8d635e188acd3dd8eb79810"
+    }
+   }
+  ]
+ },
+ {
+  "id": "gI4z1gxU",
+  "project_id": "SszvX85I",
+  "version_number": "1.0+1.8+1.21.1-beta2",
+  "name": "mega_showdown 1.0+1.8+1.21.1-beta2",
+  "version_type": "beta",
+  "date_published": "2026-09-06T08:46:14.472465Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.0+1.8+1.21.1-beta2.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/gI4z1gxU/mega_showdown-fabric-1.0%2B1.8%2B1.21.1-beta2.jar",
+    "primary": true,
+    "size": 20209406,
+    "hashes": {
+     "sha512": "37a2088cdfd2619d8c315ef7aea35d4eea7894b2178f8ee5132e6a3795720d0a5f383f89a35f4b9c079a24feaf3c1101e7359077ea829a4f0809616cd33e3a33",
+     "sha1": "1963cc2ea28b71379f1f75d4b44c0a645bde8705"
+    }
+   }
+  ]
+ },
+ {
+  "id": "jkKKeTX2",
+  "project_id": "SszvX85I",
+  "version_number": "1.0+1.8+1.21.1-beta",
+  "name": "mega_showdown 1.0+1.8+1.21.1-beta",
+  "version_type": "beta",
+  "date_published": "2026-09-06T07:31:03.660443Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.0+1.8+1.21.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/jkKKeTX2/mega_showdown-fabric-1.0%2B1.8%2B1.21.1-beta.jar",
+    "primary": true,
+    "size": 20382744,
+    "hashes": {
+     "sha512": "15c847b630e786f2e20466e4bb057029587942465cc793c2eb76d1c2c6f22489cc3a344521ce8ce6e69890600bb608193aaee08ad7ed56676509596da4eed4b9",
+     "sha1": "861aa17b7999c5b8950314e389b17614ce549015"
+    }
+   }
+  ]
+ },
+ {
+  "id": "13b1fBn2",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.9+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.9+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-09-05T16:23:33.315768Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.9+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/13b1fBn2/mega_showdown-fabric-1.9.9%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 20450537,
+    "hashes": {
+     "sha512": "d44d1382e42f457f0a31f1dc1119c74952efd27e9cc24757872fa397f390d13635c8bfe5f4236b9ca7d2e8fe05e8bbc8f50fe13e6edbe76e8addc517598f89a1",
+     "sha1": "24fea20eea912ae6a0f8006901c782a94e1ea82f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "pim39JbN",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.8+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.8+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-09-03T14:51:45.030834Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.8+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/pim39JbN/mega_showdown-fabric-1.9.8%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 20392677,
+    "hashes": {
+     "sha1": "9928eb67d55788642c52377672707c61d25df9c1",
+     "sha512": "7f6804c8fcb76f24e37f9bb98d5ee338556d933110c1924d5ddb60e35cafdeb3936b3286e7669826121942384d8b4b7bc215bca750957bed41d7d0acff46ab09"
+    }
+   }
+  ]
+ },
+ {
+  "id": "VDHRz0YS",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.7+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.7+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-09-01T03:57:32.378148Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.7+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/VDHRz0YS/mega_showdown-fabric-1.9.7%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 20352745,
+    "hashes": {
+     "sha512": "e9bcb32c0f5c65e5689e7edebbbcd2e21695aa23a136bd919d8a63049b59282765401c9162e7e421ff9742aabbbd1e8de65f28348e9e5dd7c58d508c066bcf01",
+     "sha1": "b0692a5e86a2d058d9391f337b130be4256262f8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "zPVVW05O",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.6+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.6+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-08-30T20:03:33.323490Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.6+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/zPVVW05O/mega_showdown-fabric-1.9.6%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 20285208,
+    "hashes": {
+     "sha1": "98e0ac9c98f540b5ea4668e2a7acfab436907b3a",
+     "sha512": "527ffde5b984626afd060176f17cc271d07fce8ada86808ac6c90ca7bacf5b0b5945291616278616dd6d3ff4c5a339823ae5b61999357ae38bfb9f4073f44d57"
+    }
+   }
+  ]
+ },
+ {
+  "id": "oGDgZpN3",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.5+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.5+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-08-22T07:53:03.746770Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.5+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/oGDgZpN3/mega_showdown-fabric-1.9.5%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 20085492,
+    "hashes": {
+     "sha512": "9bfeccb746d9a1a9c03c3c9dee550e249defd493f684a3cc5fad01d173c5161661330a2967ca939fd1544480e6b9e352ce47c3c1b85d93b4dcf54fddab926786",
+     "sha1": "04e97a0187c788c4b28a72af6ecd877bdbcb7224"
+    }
+   }
+  ]
+ },
+ {
+  "id": "hKHLHUjJ",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.4+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.4+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-08-17T16:10:30.747916Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.4+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/hKHLHUjJ/mega_showdown-fabric-1.9.4%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 20025459,
+    "hashes": {
+     "sha512": "3aed87fce12537c73ef4f9d656ac7beaa83e955d7bf2c70ac1dd8ddd90c287e3b8ae5344ade45f86b4db4a86fa5a66b85dae10c5cf600476f03a1e4eec541648",
+     "sha1": "026db2ea733951bbad88fda7e2da1284d0841542"
+    }
+   }
+  ]
+ },
+ {
+  "id": "nslwf5V0",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.4+1.7.3+1.21.1-beta",
+  "name": "mega_showdown 1.9.4+1.7.3+1.21.1-beta",
+  "version_type": "beta",
+  "date_published": "2026-08-16T14:56:02.158780Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.4+1.7.3+1.21.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/nslwf5V0/mega_showdown-fabric-1.9.4%2B1.7.3%2B1.21.1-beta.jar",
+    "primary": true,
+    "size": 19753803,
+    "hashes": {
+     "sha512": "23cdf0a018036a71c06e0654e9325cb531160389939b5f28f4d98a053ab5c5b725bcf4d68811bde23e5c973f44513769e3edd3aa71ad0c2e6b0cfa84d9bdd20c",
+     "sha1": "861a27a7b462bf5b79e0c28770de3941d75086d7"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ch7DfnXP",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.3+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.3+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-07-27T09:16:49.411460Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.3+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/ch7DfnXP/mega_showdown-fabric-1.9.3%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 18944912,
+    "hashes": {
+     "sha512": "fbe6a1ec4818a4b2e151cd34c9c242ece940b54c351cc2c211814c3c9c67186053858b56d4493194a3ef12d4c00178706189c041f90b173905e24baaa5c09b74",
+     "sha1": "fd1bd49a87e166cf89bd880ca04244c2cc606cbd"
+    }
+   }
+  ]
+ },
+ {
+  "id": "DXe1Gdmk",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.2+1.7.3+1.21.1-hotfix",
+  "name": "mega_showdown 1.9.2+1.7.3+1.21.1-hotfix",
+  "version_type": "release",
+  "date_published": "2026-07-25T14:44:51.560318Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.2+1.7.3+1.21.1-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/DXe1Gdmk/mega_showdown-fabric-1.9.2%2B1.7.3%2B1.21.1-hotfix.jar",
+    "primary": true,
+    "size": 18930243,
+    "hashes": {
+     "sha1": "b11b425b64613e9b3342a1d8625225aca6ee9df4",
+     "sha512": "4a7da9913db57c305d64592aaec73ad5d2f93e9c24f0bb2a5504ccf6b2c22d742e5687087be5602db7118455c4b07068ad687102a7a21288fe99d5dd30ddb3e4"
+    }
+   }
+  ]
+ },
+ {
+  "id": "tXQw8Uch",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.2+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.2+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-07-25T05:53:16.343010Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.2+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/tXQw8Uch/mega_showdown-fabric-1.9.2%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 18930207,
+    "hashes": {
+     "sha1": "015ed3a75fb1c6ee6213ac1cd8edaff28940cd25",
+     "sha512": "007281cc452c01d4dcb317a9ce49b636118f3c68132d8284185bc7f35cc2dab05ae94c2eb339eaf3b2d192793609d69a277513a84ad322e7805fcce065718ce1"
+    }
+   }
+  ]
+ },
+ {
+  "id": "V8b5xhCp",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.1+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.1+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-07-23T16:52:31.307268Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.1+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/V8b5xhCp/mega_showdown-fabric-1.9.1%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 18918654,
+    "hashes": {
+     "sha512": "1617c9437a4d675aa37c1890612bdfc6cf585113f03a900472a2612bf40a55df460819b15b395afd62186f9c0815095e1bc91f791ca5126e2f156a96c74686b4",
+     "sha1": "6fafae0b11430c44c754db802ffd1de430228d85"
+    }
+   }
+  ]
+ },
+ {
+  "id": "5GXFsZw0",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.0+1.7.3+1.21.1-hotfix-v3",
+  "name": "mega_showdown 1.9.0+1.7.3+1.21.1-hotfix-v3",
+  "version_type": "release",
+  "date_published": "2026-07-22T09:42:58.557662Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.0+1.7.3+1.21.1-hotfix-v3.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/5GXFsZw0/mega_showdown-fabric-1.9.0%2B1.7.3%2B1.21.1-hotfix-v3.jar",
+    "primary": true,
+    "size": 18766988,
+    "hashes": {
+     "sha512": "cb747d685a0fdaceeee20d4b7563d1a41b89e3add6b4289abdd2df1b20e8752c6d26d863c98aac748372e01fa9159ed59150b8bd5c13cf47e291166b11653d80",
+     "sha1": "257b3d6917b226310fd50c10fae050695b06060d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "jLX7JJu9",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.0+1.7.3+1.21.1-hotfix-hotfix",
+  "name": "mega_showdown 1.9.0+1.7.3+1.21.1-hotfix-hotfix",
+  "version_type": "release",
+  "date_published": "2026-07-22T08:17:39.372311Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.0+1.7.3+1.21.1-hotfix-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/jLX7JJu9/mega_showdown-fabric-1.9.0%2B1.7.3%2B1.21.1-hotfix-hotfix.jar",
+    "primary": true,
+    "size": 18733881,
+    "hashes": {
+     "sha512": "10efc32e59981e2954593f1e3eddf09fbeb122fd6b049095318bd97b6d9516d6de68e6d9945f3e1d70463005f0c1cc1df961a4f46e1a7e6bef4e9a1034e41144",
+     "sha1": "f41cf2cfe8f4fea483927d77419ca7a9932d0cad"
+    }
+   }
+  ]
+ },
+ {
+  "id": "tCgR6dWQ",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.0+1.7.3+1.21.1-hotfix",
+  "name": "mega_showdown 1.9.0+1.7.3+1.21.1-hotfix",
+  "version_type": "release",
+  "date_published": "2026-07-22T07:34:23.072373Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.0+1.7.3+1.21.1-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/tCgR6dWQ/mega_showdown-fabric-1.9.0%2B1.7.3%2B1.21.1-hotfix.jar",
+    "primary": true,
+    "size": 18731891,
+    "hashes": {
+     "sha512": "aa24095e9ca9b68e296eb5a76aa5ea7810745435ae1438f5f2fef210d83e1ec43d9ec26219a62e519133a828ef5a24dcc6106fc7d9d51eb15809b611afa83ca4",
+     "sha1": "ca4558c6e0771251ceaccfe7380625600b43e8f6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9Nnak9BN",
+  "project_id": "SszvX85I",
+  "version_number": "1.9.0+1.7.3+1.21.1",
+  "name": "mega_showdown 1.9.0+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-07-22T07:02:15.258380Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.9.0+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/9Nnak9BN/mega_showdown-fabric-1.9.0%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 18693002,
+    "hashes": {
+     "sha1": "99f1291589e16e0cd7aa6efb7b94b18c50cdf11e",
+     "sha512": "fafb84fd97050ee6b96fc840d39cb5a95e21199fda26cb2e0b70094507bc957d968e6f1523bca5d4c380d9c4e4314f3ece1f33fe1a5be80795d1cbdbf6fe02d8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "Y6di9Ram",
+  "project_id": "SszvX85I",
+  "version_number": "1.8.4+1.7.3+1.21.1",
+  "name": "mega_showdown 1.8.4+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-05-17T09:55:32.880828Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.8.4+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/Y6di9Ram/mega_showdown-fabric-1.8.4%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 17213370,
+    "hashes": {
+     "sha1": "948795e4c112b0719859f0f44bb2e5cdf67d1859",
+     "sha512": "e378edfb6545b2ca28c7e82b1a63b4576de079e2536428467d7323bda4a6543dbaedd190b212fbcfa76b0af5604928d001fa8f4fcc6d278f3ac811dee6d5b03f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "7UIW15Xn",
+  "project_id": "SszvX85I",
+  "version_number": "1.8.4+1.7.3+1.21.1-hotfix-hotfix",
+  "name": "mega_showdown 1.8.4+1.7.3+1.21.1-hotfix-hotfix",
+  "version_type": "release",
+  "date_published": "2026-05-14T00:52:06.809559Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.8.4+1.7.3+1.21.1-hotfix-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/7UIW15Xn/mega_showdown-fabric-1.8.4%2B1.7.3%2B1.21.1-hotfix-hotfix.jar",
+    "primary": true,
+    "size": 17212693,
+    "hashes": {
+     "sha512": "22e2ea481c0ddcd5a07dcb471880b7884e7cff5898f1c291c54130646fd2a680feff2ac4a967bb0c5ddd06e9ee0bbd0fa1b33bf3b5e59e236d17fe931fc4b526",
+     "sha1": "9a459e95ddf397fa0c1a4193b58ce888bc5a4f5f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "3YiXVv6E",
+  "project_id": "SszvX85I",
+  "version_number": "1.8.3+1.7.3+1.21.1-hotfix",
+  "name": "mega_showdown 1.8.3+1.7.3+1.21.1-hotfix",
+  "version_type": "release",
+  "date_published": "2026-05-13T08:02:20.150472Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.8.3+1.7.3+1.21.1-hotfix.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/3YiXVv6E/mega_showdown-fabric-1.8.3%2B1.7.3%2B1.21.1-hotfix.jar",
+    "primary": true,
+    "size": 17215539,
+    "hashes": {
+     "sha512": "f75f1071685b0eb68f6bf7df2d898f9a8acbbda14ffa0c264c818c2caf5661edf8fac5f26786d7c954df603bbaa75c0a82ed513c8f464ec132553970347d24b1",
+     "sha1": "e344b917ac280b69d64e769c45b1dc4a76c01ce0"
+    }
+   }
+  ]
+ },
+ {
+  "id": "wlF7IAnP",
+  "project_id": "SszvX85I",
+  "version_number": "1.8.3+1.7.3+1.21.1",
+  "name": "mega_showdown 1.8.3+1.7.3+1.21.1",
+  "version_type": "release",
+  "date_published": "2026-05-13T06:12:01.608540Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "P7dR8mSH",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "jtmvUHXj",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ccKDOlHs",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "mega_showdown-fabric-1.8.3+1.7.3+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/SszvX85I/versions/wlF7IAnP/mega_showdown-fabric-1.8.3%2B1.7.3%2B1.21.1.jar",
+    "primary": true,
+    "size": 17215551,
+    "hashes": {
+     "sha1": "ff35d1406edea51cf36532fd8ccdcc6b138bd8b2",
+     "sha512": "d62df83b86a5ad7809c9d86b075dcf3209321447c3fdc466450c438439235f4affb8aa1a8d08412134b8c5b03662d3a59e420ce686fa0e57e9ee9a29fb8a9a0c"
+    }
+   }
+  ]
+ }
+]

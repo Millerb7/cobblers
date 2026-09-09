@@ -1,0 +1,1152 @@
+[
+ {
+  "id": "jdUENp3C",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.19.0-beta",
+  "name": "Version 0.19.0-beta",
+  "version_type": "beta",
+  "date_published": "2026-09-07T02:22:12.569863Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.19.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/jdUENp3C/rctmod-fabric-1.21.1-0.19.0-beta.jar",
+    "primary": true,
+    "size": 6783347,
+    "hashes": {
+     "sha1": "120887e0ed4e7a9a4db92a3e2029b3a122e6bfd2",
+     "sha512": "036153b8c9c01960b07dca5718d7e9ea91c60ff09293b70b43f177a7a98af8d3df283397e0212f4a6fb9dcde70ecbc75206397bfcf5e7363cb3f8545f85f7ae5"
+    }
+   }
+  ]
+ },
+ {
+  "id": "gQx1F1dx",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.18.1-beta",
+  "name": "Version 0.18.1-beta",
+  "version_type": "beta",
+  "date_published": "2026-04-12T00:51:34.447232Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.18.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/gQx1F1dx/rctmod-fabric-1.21.1-0.18.1-beta.jar",
+    "primary": true,
+    "size": 6757956,
+    "hashes": {
+     "sha512": "867fbd050afbcc76bf469942cbbe4294b1100ed870111a07917267568c4da3b674aaea4421cb89d6a8faa05713843e9d0cf37bbe1d9a258f28d331faca4a9e38",
+     "sha1": "00bf82e254bddb804529222567e5719310524085"
+    }
+   }
+  ]
+ },
+ {
+  "id": "Py1VoaHl",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.18.0-beta",
+  "name": "Version 0.18.0-beta",
+  "version_type": "beta",
+  "date_published": "2026-04-11T04:50:43.471442Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.18.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/Py1VoaHl/rctmod-fabric-1.21.1-0.18.0-beta.jar",
+    "primary": true,
+    "size": 6757887,
+    "hashes": {
+     "sha1": "3f2f8727976305f0b5280e632c9cc4e9a1abbf06",
+     "sha512": "843b11fd2bdf7c38a3baab4f436865bea41b8ecfa13c18f39fbf04f77fa1f2d775fac0a873fd4e9ac12ecf6823017d17eeacdc3b77ef4cfc08c2645014c85c92"
+    }
+   }
+  ]
+ },
+ {
+  "id": "8qqQxnjW",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.7-beta",
+  "name": "Version 0.17.7-beta",
+  "version_type": "beta",
+  "date_published": "2026-03-19T15:31:26.424971Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.7-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/8qqQxnjW/rctmod-fabric-1.21.1-0.17.7-beta.jar",
+    "primary": true,
+    "size": 4762456,
+    "hashes": {
+     "sha1": "898caa589b2732e820a5fc8026bb4530afb37b80",
+     "sha512": "54fce9ffe10d87d395b6ccb79add1c0eeadb9ac3683c85fca880f37967a1089c4af320fede69f157084578bf1e6faae87741f216a1db44c19f9e09b1c155d480"
+    }
+   }
+  ]
+ },
+ {
+  "id": "bsUShmbG",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.6-beta",
+  "name": "Version 0.17.6-beta",
+  "version_type": "beta",
+  "date_published": "2026-01-29T16:30:43.490288Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.6-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/bsUShmbG/rctmod-fabric-1.21.1-0.17.6-beta.jar",
+    "primary": true,
+    "size": 4757980,
+    "hashes": {
+     "sha512": "f58f972f3ddb60f942318216cc1ccf82a7a0862b5d5d6d18e0da80ed29e63417191342a662c5bb781c71feb47a7fd6f93b6fe123be699154fa05611045fc8e7d",
+     "sha1": "ebc4f12bbe69c57f5da00b13759c2816981bbdfd"
+    }
+   }
+  ]
+ },
+ {
+  "id": "KTsw1FOW",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.5-beta",
+  "name": "Version 0.17.5-beta",
+  "version_type": "beta",
+  "date_published": "2026-01-27T05:29:49.635914Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.5-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/KTsw1FOW/rctmod-fabric-1.21.1-0.17.5-beta.jar",
+    "primary": true,
+    "size": 4757789,
+    "hashes": {
+     "sha512": "c1c88a7879b588ed322665dd6e39c6d6dcd0eec87893578a832e00c955efc84939ab373f88ffc9e7980588afc688dae1990a17e267bd218cdafd72b50c9aee81",
+     "sha1": "b6f9cf74c4b9802672d211ec3a16ba679092baa9"
+    }
+   }
+  ]
+ },
+ {
+  "id": "6WnjrnPQ",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.4-beta",
+  "name": "Version 0.17.4-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-30T21:09:38.062791Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.4-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/6WnjrnPQ/rctmod-fabric-1.21.1-0.17.4-beta.jar",
+    "primary": true,
+    "size": 4735029,
+    "hashes": {
+     "sha1": "81f39c22da71c2801cb8558546708dd1e5a90d68",
+     "sha512": "be774b1b2817576a44e46b8e9106c3f26eeef42ad9fb37653be95af4a9b4a695c98c8071a2ea7b8a63968f3b37208c4ee0b00fcbde35ab02e5f1a9df70485da9"
+    }
+   }
+  ]
+ },
+ {
+  "id": "LR9K1bTq",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.3-beta",
+  "name": "Version 0.17.3-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-29T11:59:20.166463Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.3-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/LR9K1bTq/rctmod-fabric-1.21.1-0.17.3-beta.jar",
+    "primary": true,
+    "size": 4732859,
+    "hashes": {
+     "sha1": "56efae2e8ff2d0f4052d8c67e3d87c2ef17ea440",
+     "sha512": "798c9abbbcb31f1d62a23a3768ca2b42378595fbb406edd8c1c9f0c779f08ba9539f34c4658158431faa2b71eeaf7890a0b13ecfdb9d12548e50371f1974ab88"
+    }
+   }
+  ]
+ },
+ {
+  "id": "lYlTTvtU",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.2-beta",
+  "name": "Version 0.17.2-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-27T01:04:36.961210Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.2-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/lYlTTvtU/rctmod-fabric-1.21.1-0.17.2-beta.jar",
+    "primary": true,
+    "size": 4733327,
+    "hashes": {
+     "sha512": "7044c39e22f670e723be808abf2e6ed9dff2874fe294ce3f23842563723f38b8104e88e08416ddcb5ec80c6ff4d61c5d60f3acf13dc0096103777485d94a63d7",
+     "sha1": "3154b1b4151de7e7fc0a6307f534d0951ff0e7b4"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ssGAXdeG",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.1-beta",
+  "name": "Version 0.17.1-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-24T15:29:43.502550Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/ssGAXdeG/rctmod-fabric-1.21.1-0.17.1-beta.jar",
+    "primary": true,
+    "size": 4732917,
+    "hashes": {
+     "sha1": "fc9ddf4a69b9367a8c81ce405b57080831f859a1",
+     "sha512": "351a6b31234257657d617b5ed14afb75df9b152ae2391e0368d3c449615a939846938cf7914e2ae3810d7be35a5454cb07f0658b00c4ecb3d7196ce9b4d9f325"
+    }
+   }
+  ]
+ },
+ {
+  "id": "A2oaXGmI",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.17.0-beta",
+  "name": "Version 0.17.0-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-22T17:05:24.018724Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.17.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/A2oaXGmI/rctmod-fabric-1.21.1-0.17.0-beta.jar",
+    "primary": true,
+    "size": 4731271,
+    "hashes": {
+     "sha1": "d2a225407434371796b32db6ecab682ffa0c54f8",
+     "sha512": "b6c0732aa5fb1e3a1ebd0072c9bf7b06e226a3994b3eb26507bbe45fad6fa48170ae8f7186aad03e3607ab003b3b72e00bde79e1b09c66c9ab1fed94cee61f19"
+    }
+   }
+  ]
+ },
+ {
+  "id": "iHU7fhkc",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.11-beta",
+  "name": "Version 0.16.11-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-22T02:05:17.262470Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.11-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/iHU7fhkc/rctmod-fabric-1.21.1-0.16.11-beta.jar",
+    "primary": true,
+    "size": 4725270,
+    "hashes": {
+     "sha1": "f4d34b94e0e1e1c0973ce000e2ea0a739affcd42",
+     "sha512": "8f2a7b1ca613cf12c44700bae1aa6253e791945f0d49e898f8c762b4c1342b21b7bd87b6e3fcf648498acc702073c0d5432d7998c56c84993063927ae96b5fc8"
+    }
+   }
+  ]
+ },
+ {
+  "id": "eW5qWWkA",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.10-beta",
+  "name": "Version 0.16.10-beta",
+  "version_type": "beta",
+  "date_published": "2025-10-16T16:06:52.470273Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.10-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/eW5qWWkA/rctmod-fabric-1.21.1-0.16.10-beta.jar",
+    "primary": true,
+    "size": 4719796,
+    "hashes": {
+     "sha512": "8f54f42daae2c5cb86fdc5662817c91dfdc28e0b8ba0a3c7f36f86e79a717b713a839e3934782e3facb2e4862d8242741c4f1092a2cf73845044ccd1a6a7bd06",
+     "sha1": "8c35a3f5b2d474ecff548d732fafdee041c1e39d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "PZBs0l9F",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.9-beta",
+  "name": "Version 0.16.9-beta",
+  "version_type": "beta",
+  "date_published": "2025-10-06T18:48:17.394010Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.9-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/PZBs0l9F/rctmod-fabric-1.21.1-0.16.9-beta.jar",
+    "primary": true,
+    "size": 4719734,
+    "hashes": {
+     "sha1": "ea51fb00f17f5aa2eca7bc74d6ae24642d7cc377",
+     "sha512": "cfe8c1b859cfaa3f4566bec7c103484e0749b079ebb3fe87086b868e2d3fcded9a8c00e943a64ca2b49f957a64de3731b90162c686db5d565d732fac3bd4a7c6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "t63Vus03",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.8-beta",
+  "name": "Version 0.16.8-beta",
+  "version_type": "beta",
+  "date_published": "2025-09-15T19:57:09.309521Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.8-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/t63Vus03/rctmod-fabric-1.21.1-0.16.8-beta.jar",
+    "primary": true,
+    "size": 4719400,
+    "hashes": {
+     "sha512": "6ee5f3496eb9612ff367058e55d21045842c4ddf6e0842c8fe632d368ea75023e2e6baf8e462be7e4f3160d7f00a8f881ae56519e7a27134ff4bd365b65e3aee",
+     "sha1": "462cb9cf38a910fcda4960ea5111e2885fe0eb23"
+    }
+   }
+  ]
+ },
+ {
+  "id": "s7e9Tgyv",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.7-beta",
+  "name": "Version 0.16.7-beta",
+  "version_type": "beta",
+  "date_published": "2025-09-11T13:23:27.618356Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.7-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/s7e9Tgyv/rctmod-fabric-1.21.1-0.16.7-beta.jar",
+    "primary": true,
+    "size": 4714073,
+    "hashes": {
+     "sha1": "3ee985f3e953b96abb798c619772919042299add",
+     "sha512": "e963468fb255553641f7556138cd7ba478ef0c774b4c4610331a28200f52187b81f1c533825742a87d2783481bd004958b0262c9d86d692ecae5c812a11a1abb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "hUoLvBHy",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.6-beta",
+  "name": "Version 0.16.6-beta",
+  "version_type": "beta",
+  "date_published": "2025-07-07T14:19:00.506016Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.6-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/hUoLvBHy/rctmod-fabric-1.21.1-0.16.6-beta.jar",
+    "primary": true,
+    "size": 4711311,
+    "hashes": {
+     "sha1": "575dd00d0b2e3fc0b56bc817cacab64341d48ca1",
+     "sha512": "e922046ad432576a0ef934009f5af07aab20144c2e1c905005db05dbae34de68d78a12962456cc1a04653f2bcbc9254bd94ea9663709c968dd23423d858fd5bc"
+    }
+   }
+  ]
+ },
+ {
+  "id": "DmIv7WKY",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.5-beta",
+  "name": "Version 0.16.5-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-24T20:41:13.200593Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.5-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/DmIv7WKY/rctmod-fabric-1.21.1-0.16.5-beta.jar",
+    "primary": true,
+    "size": 4709589,
+    "hashes": {
+     "sha1": "2d9a3dc9c52550a92af61250c43a5e8bff3da277",
+     "sha512": "754c523ebfb4474fde6914519d3a0d485d7f3a269e784306c20f72afcfe62e9e8857afd5c70e8e308ca055e6858aa83df69e503ac185d419dcc4e9b1406ca884"
+    }
+   }
+  ]
+ },
+ {
+  "id": "U2M56SeG",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.4-beta",
+  "name": "Version 0.16.4-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-21T20:25:55.475406Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.4-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/U2M56SeG/rctmod-fabric-1.21.1-0.16.4-beta.jar",
+    "primary": true,
+    "size": 4709568,
+    "hashes": {
+     "sha512": "e9ce3fa2d75fb72c4eb3fe84359353a44d11e1a858b07edac388d0f2a76ed61e41ec86d1b62717ad19eb4de97fc7dff5725282ba1105979d7a86742af3ddcbf9",
+     "sha1": "703d406d3b463496ef61cc9c299e8203840b9c9d"
+    }
+   }
+  ]
+ },
+ {
+  "id": "aq2kCHwR",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.3-beta",
+  "name": "Version 0.16.3-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-17T13:55:47.950722Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.3-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/aq2kCHwR/rctmod-fabric-1.21.1-0.16.3-beta.jar",
+    "primary": true,
+    "size": 4709735,
+    "hashes": {
+     "sha512": "87a0f9f45a71eea843350a8afa8dac0fcc9ff9e8edf3b3c191a7aebea97b8991d7cc73792c5adbf94fd117bfac00f83308a8ecd06245ef8d75f91dfe21384746",
+     "sha1": "9bc6b9060dc226c55df024d08d77963532588348"
+    }
+   }
+  ]
+ },
+ {
+  "id": "hG6fwPe2",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.2-beta",
+  "name": "Version 0.16.2-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-16T20:43:18.704090Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.2-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/hG6fwPe2/rctmod-fabric-1.21.1-0.16.2-beta.jar",
+    "primary": true,
+    "size": 4709630,
+    "hashes": {
+     "sha1": "15d044490134f3912b195c77330ec4802e74550d",
+     "sha512": "0865108d7b8671e7debc65dc46bdcca4f74b93743cbaeabe6afe4d0318f7f36564d20e25628e73de815021c5d0356050c039f4b4daaddad03133d6ce755033f6"
+    }
+   }
+  ]
+ },
+ {
+  "id": "FRWVZOmG",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.1-beta",
+  "name": "Version 0.16.1-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-06T18:10:48.420208Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/FRWVZOmG/rctmod-fabric-1.21.1-0.16.1-beta.jar",
+    "primary": true,
+    "size": 4708230,
+    "hashes": {
+     "sha1": "ab0447fb5c038361ae35a830fab8b4c4f5b19566",
+     "sha512": "27b490fd3e6eb6f87fbd342093f0b6a88c068772487d141f27c04cb4c2b32f4d2ce903c5a26a3c5ecb7bff2e06f90bada73ef40c269604c8a1c436ef909c8b10"
+    }
+   }
+  ]
+ },
+ {
+  "id": "gcuFb5cB",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.16.0-beta",
+  "name": "Version 0.16.0-beta",
+  "version_type": "beta",
+  "date_published": "2025-05-13T18:55:01.804580Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.16.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/gcuFb5cB/rctmod-fabric-1.21.1-0.16.0-beta.jar",
+    "primary": true,
+    "size": 4703359,
+    "hashes": {
+     "sha1": "4de7270ffb2af480a0c55426d4f7125ec0b6ecb5",
+     "sha512": "5809d6e6b34b406913abe1cb6b01452f007105298035b803313042330a08e2c4c85049728f614583d8f40e56b2defed25d4a92e0f276579d77d57d2e99fa7a49"
+    }
+   }
+  ]
+ },
+ {
+  "id": "NtCCGmg3",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.15.1-beta",
+  "name": "Version 0.15.1-beta",
+  "version_type": "beta",
+  "date_published": "2025-04-25T13:17:38.685867Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.15.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/NtCCGmg3/rctmod-fabric-1.21.1-0.15.1-beta.jar",
+    "primary": true,
+    "size": 4701101,
+    "hashes": {
+     "sha1": "78a99962448474cfd43d6edcb6d75fb7ece08e8b",
+     "sha512": "0d3e1ec58b9387e4537531970629705989f208490ca42b014ea9f5667a26fe995d3c23e38c353d6b140db3ecdb2e327ed899eaab35e8a7802ec1a57ae21f3f60"
+    }
+   }
+  ]
+ },
+ {
+  "id": "wE274muB",
+  "project_id": "lRwTUnD7",
+  "version_number": "0.15.0-beta",
+  "name": "Version 0.15.0-beta",
+  "version_type": "beta",
+  "date_published": "2025-04-24T22:42:12.003138Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "CBfM2yw7",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "ohNO6lps",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctmod-fabric-1.21.1-0.15.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/lRwTUnD7/versions/wE274muB/rctmod-fabric-1.21.1-0.15.0-beta.jar",
+    "primary": true,
+    "size": 4700889,
+    "hashes": {
+     "sha512": "0f0889f8ea5afb1fb41e0a03e693944005ba4ccb46e1a97aad9883603b278e10cbc0c3441c54f40ab3258ff9db653aa71d094a3e089005ad756a9f494777626f",
+     "sha1": "0df1c76222cbeda52d67ff42801b7610027ccd6d"
+    }
+   }
+  ]
+ }
+]
