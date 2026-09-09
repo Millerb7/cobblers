@@ -69,6 +69,7 @@ PlayerXP out of the dedicated server; details in
 | `docs/architecture/` | Layer model, what runs where, what is committed |
 | `docs/mechanics/` | Mechanic designs once experiments prove them |
 | `docs/decisions/` | Architecture Decision Records |
+| `docs/world-building/` | Verified reusable-structure catalog, placement workflow, palette, and town kit |
 | `base-pack/` | Upstream Cobbleverse snapshot (config, licenses) plus inventory/hashes. **Never edited in place.** |
 | `modpack/` | The client pack players install: manifests, overlay, our config, our datapacks, resource packs |
 | `server/` | Dedicated server reproduction: config templates, launch docs, assembly and boot-test scripts |
