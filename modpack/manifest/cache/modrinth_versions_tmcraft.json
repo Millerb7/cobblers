@@ -1,0 +1,885 @@
+[
+ {
+  "id": "ixxKJV1J",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.19+1.8.0",
+  "name": "TMCraft 1.4.19+1.8.0",
+  "version_type": "release",
+  "date_published": "2026-09-06T10:32:28.486554Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "YgmyyFcs",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.19+1.8.0.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/ixxKJV1J/tmcraft-1.4.19%2B1.8.0.jar",
+    "primary": true,
+    "size": 6505564,
+    "hashes": {
+     "sha512": "e279cb5233fcc7d617e15ac2a520615b10014eb0c5f1e99f24bc74a27178b6d136c7aa5938a7923362cee60b6530ac6f619c3848328642db0c2edc1cf2db95ff",
+     "sha1": "6938cbe1ba999358146f7935c9b0678cd2829ec3"
+    }
+   }
+  ]
+ },
+ {
+  "id": "XAsmlreW",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.19+1.7.3",
+  "name": "TMCraft 1.4.19+1.7.3",
+  "version_type": "release",
+  "date_published": "2026-09-06T10:31:26.518128Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "kF7CvxTo",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.19+1.7.3.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/XAsmlreW/tmcraft-1.4.19%2B1.7.3.jar",
+    "primary": true,
+    "size": 6505565,
+    "hashes": {
+     "sha512": "d2e82ce05f41933cc3a61ac22b40bd08952210ff39126029dfbaeabe988a985e06835928e4bd025297b692dd9847df67ad8ec6c68f153351eb95ea465ed9639d",
+     "sha1": "4a43e18e35e8bd7f6596ae54cc769af5616671ff"
+    }
+   }
+  ]
+ },
+ {
+  "id": "PY8MJ8AA",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.19+1.5.2",
+  "name": "TMCraft 1.4.19+1.5.2",
+  "version_type": "release",
+  "date_published": "2026-09-06T10:31:02.306426Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "EVozVxCq",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.19+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/PY8MJ8AA/tmcraft-1.4.19%2B1.5.2.jar",
+    "primary": true,
+    "size": 3404046,
+    "hashes": {
+     "sha1": "c66e0cfb27eced1b9530d565c54815e782d2bf15",
+     "sha512": "97b6a67ae5108f5563522f24531e9bd22557435181ff133c16fb78a898017648289bf3756584e5ae66b3d9177df9cc3463f2c651aea1027cef646a1dd09491c7"
+    }
+   }
+  ]
+ },
+ {
+  "id": "6frUK72K",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.18+1.8.0",
+  "name": "TMCraft 1.4.18+1.8.0",
+  "version_type": "release",
+  "date_published": "2026-09-06T03:21:46.679877Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "2oL01rSF",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.18+1.8.0.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/6frUK72K/tmcraft-1.4.18%2B1.8.0.jar",
+    "primary": true,
+    "size": 3746053,
+    "hashes": {
+     "sha1": "4456a9bc60b781566da0c892f6a392d8fc8611c9",
+     "sha512": "1a1498db9a811975900d9640e3691e32bb25cf2444652a5a3981c28543e39eccfa3848f2f24838df8afcf84506036b256f9d0bfb6a41678862496b00f1778c85"
+    }
+   }
+  ]
+ },
+ {
+  "id": "RYBI5bnM",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.18+1.7.3",
+  "name": "TMCraft 1.4.18+1.7.3",
+  "version_type": "release",
+  "date_published": "2026-01-31T05:21:43.822071Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": "kF7CvxTo",
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.18+1.7.3.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/RYBI5bnM/tmcraft-1.4.18%2B1.7.3.jar",
+    "primary": true,
+    "size": 3360417,
+    "hashes": {
+     "sha512": "39fdb210d5a822ef851237e2a7a33eea23f67c210618098587d6a022d72afc33cd52217a3fbae8336353e2d4792510774d15acc5e1073df82437a9f9d9490ff5",
+     "sha1": "f423155efb2a99370fe838a6603c5f33c947946e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "VEezJGgr",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.18+1.7.2",
+  "name": "TMCraft 1.4.18+1.7.2",
+  "version_type": "release",
+  "date_published": "2026-01-25T02:27:44.298602Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.18+1.7.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/VEezJGgr/tmcraft-1.4.18%2B1.7.2.jar",
+    "primary": true,
+    "size": 3360417,
+    "hashes": {
+     "sha512": "256423ba0b8ca0cd96f1adef1eb17118fb0208fac39d41d6ae01a3ce6be61dc71d4d73c8b529aef25c57da1fcb8a8fd186a65c546358b9c045a07c1d0a1cda51",
+     "sha1": "c9bd7d83bd1e5e5ecdb9f7eefb0c238751962c8a"
+    }
+   }
+  ]
+ },
+ {
+  "id": "bqTQ8if8",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.18+1.7.1",
+  "name": "TMCraft 1.4.18+1.7.1",
+  "version_type": "release",
+  "date_published": "2025-12-07T04:34:26.709096Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.18+1.7.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/bqTQ8if8/tmcraft-1.4.18%2B1.7.1.jar",
+    "primary": true,
+    "size": 3360581,
+    "hashes": {
+     "sha1": "284d03c69dc267e65351d13d6ce3955332d30647",
+     "sha512": "87d6ce4ac9e6567302dd568c6ab8c4cf1130642385e88ca8e9feb3cccd6da1a7c5d95debbd46efce607ce4460b11f87220ebcafc5ac54085ae6f4a11d244f5c0"
+    }
+   }
+  ]
+ },
+ {
+  "id": "A95ZrOLQ",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.18+1.5.2",
+  "name": "TMCraft 1.4.18+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-12-07T04:34:12.544920Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.18+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/A95ZrOLQ/tmcraft-1.4.18%2B1.5.2.jar",
+    "primary": true,
+    "size": 3367240,
+    "hashes": {
+     "sha512": "f5fcf5d79c5eff0710719c0a98d026f02e83e0052a6df80afbb51f7d5f13d58725033a01a7080da216c3cc88263ed7f9d2ccefe956845d7bf4874ed9b47a9359",
+     "sha1": "e17ef7e18fee546fe511241f39c9722767e8868e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "2EawoyqI",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.17+1.7.1",
+  "name": "TMCraft 1.4.17+1.7.1",
+  "version_type": "release",
+  "date_published": "2025-12-01T11:04:03.912539Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.17+1.7.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/2EawoyqI/tmcraft-1.4.17%2B1.7.1.jar",
+    "primary": true,
+    "size": 3410256,
+    "hashes": {
+     "sha512": "a254528720773e811a8f0dee367e6809035134c407241b8349c0c793bb013aeb102cf8d34950809136f7e8c4032ea6d8bf4e8ef266841e39ace64462addd4421",
+     "sha1": "75992ade97569f917212066417ae7686c4ed3299"
+    }
+   }
+  ]
+ },
+ {
+  "id": "IRby9PMn",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.17+1.5.2",
+  "name": "TMCraft 1.4.17+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-12-01T11:03:47.221560Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.17+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/IRby9PMn/tmcraft-1.4.17%2B1.5.2.jar",
+    "primary": true,
+    "size": 3417051,
+    "hashes": {
+     "sha1": "4c569c1f9121bd39ea73cb82d897942c98d0744f",
+     "sha512": "fa654921b8510d0a6d0125e1fc2c7a76510b0ab464afeb71c0fbda0ece2ac86856d34a7e8f30072a5fc7a536adfb5415a731624557f066c35cf7a0b5754c824c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "vIesP9ur",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.16+1.7.1",
+  "name": "TMCraft 1.4.16+1.7.1",
+  "version_type": "release",
+  "date_published": "2025-11-29T11:46:09.467700Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.16+1.7.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/vIesP9ur/tmcraft-1.4.16%2B1.7.1.jar",
+    "primary": true,
+    "size": 3805976,
+    "hashes": {
+     "sha1": "491955f9fe88de145a3b723545ddaf98f7677407",
+     "sha512": "5464e5418df3012e2be6ed41796056e57068c833d0adaa3cd6c2e3be476d579521acd69c47f8b07f2de4b40b9e7ee5b83dfc8c189280a6e20bea10b707e6f62a"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9saoipfr",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.16+1.7.0",
+  "name": "TMCraft 1.4.16+1.7.0",
+  "version_type": "release",
+  "date_published": "2025-11-22T01:30:36.057241Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.16+1.7.0.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/9saoipfr/tmcraft-1.4.16%2B1.7.0.jar",
+    "primary": true,
+    "size": 3803220,
+    "hashes": {
+     "sha1": "3912b8e0c4d1eee31961f100bf573ef91623b13f",
+     "sha512": "428cd43103f979469b5f669394fcfb62c22cea8f3de3fc3e64c08899f718ec24a161779bc39b353132ca9a3f52fa6653e07f11efecaf9c43c2d85a0c4ce0294b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ORe6MH6i",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.16+1.5.2",
+  "name": "TMCraft 1.4.16+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-11-22T01:30:21.683698Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.16+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/ORe6MH6i/tmcraft-1.4.16%2B1.5.2.jar",
+    "primary": true,
+    "size": 3812759,
+    "hashes": {
+     "sha512": "46116a0a9498d14fc5d770bffc57dfc91af0130d2ba68eb1a5a43ed2e6ee78c3fbae34bde814e5f3b481bd6c596152bf2ee98d9556d7e94ba9d45e95b2938e11",
+     "sha1": "0bfce0718ed8797276bd8862ed68d161aa41cb87"
+    }
+   }
+  ]
+ },
+ {
+  "id": "M1sP9dQb",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.15+1.6.1",
+  "name": "TMCraft 1.4.15+1.6.1",
+  "version_type": "release",
+  "date_published": "2025-11-11T07:29:57.726417Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.15+1.6.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/M1sP9dQb/tmcraft-1.4.15%2B1.6.1.jar",
+    "primary": true,
+    "size": 3805045,
+    "hashes": {
+     "sha512": "97f005e8cc1428f00542c673af366b6d9510704846faac0b892fd2eae88ef2e853fd1d9b1f6f9e15b7d0492efaa5033b05e868aa27aedb002bdac73c37720821",
+     "sha1": "22d945a3beba287beb9d9fd3d3146a69413dfcf4"
+    }
+   },
+   {
+    "filename": "tmcraft-1.4.15+1.6.1-norecipes.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/M1sP9dQb/tmcraft-1.4.15%2B1.6.1-norecipes.jar",
+    "primary": false,
+    "size": 3542116,
+    "hashes": {
+     "sha1": "33258a599e28528e28f890053ce06b374a7b2703",
+     "sha512": "5d2f64da9721fb4a0e47ab05c781420b86a1224951c4a4076620e4c1ea59801fcf17c053e2e63985c536054f50c291513afbcf1bdbbede25217b03907d2fce29"
+    }
+   }
+  ]
+ },
+ {
+  "id": "i5pzXPuj",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.15+1.5.2",
+  "name": "TMCraft 1.4.15+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-11-11T07:29:31.617825Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.15+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/i5pzXPuj/tmcraft-1.4.15%2B1.5.2.jar",
+    "primary": true,
+    "size": 3811846,
+    "hashes": {
+     "sha1": "bb3a7d0510b28488e9ec061b82aacffa78811a7e",
+     "sha512": "2a8171c346ef71a56f750f64ad71a666e04150914b916ec841c7f2ed6b5498c01828239399278afcb95528b05603e1ce13fcdde8edc0bd60a15736cabdde0857"
+    }
+   }
+  ]
+ },
+ {
+  "id": "qyLXqU46",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.14+1.6.1",
+  "name": "TMCraft 1.4.14+1.6.1",
+  "version_type": "release",
+  "date_published": "2025-08-23T10:35:45.812438Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.14+1.6.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/qyLXqU46/tmcraft-1.4.14%2B1.6.1.jar",
+    "primary": true,
+    "size": 3803817,
+    "hashes": {
+     "sha512": "e2d4a40cefcc876c7404c2e253f5a08c6754d7f3fa1b623a7102f8404da4088447b6a74bc0fda1a778f62b4ec776996f83d14d20539e234255220b42f469bf1f",
+     "sha1": "b173d9debfafc28e087bf1bd48acc739cdfd58ca"
+    }
+   }
+  ]
+ },
+ {
+  "id": "CFONud4T",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.14+1.5.2",
+  "name": "TMCraft 1.4.14+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-08-23T10:35:27.417774Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.14+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/CFONud4T/tmcraft-1.4.14%2B1.5.2.jar",
+    "primary": true,
+    "size": 3813798,
+    "hashes": {
+     "sha1": "98e1320d0d1a6b5604ab22be9050db551b0293cf",
+     "sha512": "7e0f526083a45d351e08637e9f796de9bfc9800c28be208a923c3c4a48357252114bb13508d2ea594a49e4d1ddd289cfd7a6903bae3867e8cf3c5858caaf1ea4"
+    }
+   }
+  ]
+ },
+ {
+  "id": "QfDQMgIM",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.13+1.6.1",
+  "name": "TMCraft 1.4.13+1.6.1",
+  "version_type": "release",
+  "date_published": "2025-07-29T00:04:34.613063Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.13+1.6.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/QfDQMgIM/tmcraft-1.4.13%2B1.6.1.jar",
+    "primary": true,
+    "size": 3805831,
+    "hashes": {
+     "sha1": "6887aee87abb3d9cd4d13a8383452d07296ae877",
+     "sha512": "d0a0320a80a6cc3471d83f99b518daca845c38fc161af11e732df60637402c93c0dc8c014fe806a8747c62ed644dabcf250af588639f5347744f11efe53883af"
+    }
+   }
+  ]
+ },
+ {
+  "id": "XNCJPlW1",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.13+1.5.2",
+  "name": "TMCraft 1.4.13+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-07-29T00:04:05.320582Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.13+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/XNCJPlW1/tmcraft-1.4.13%2B1.5.2.jar",
+    "primary": true,
+    "size": 3815795,
+    "hashes": {
+     "sha512": "b5af9bf84302cc4afa339d21cf7289f60275204696dea0b7ed619c8ead047e2c94a4132056950c5fa9493fbdb56bc7d9b5106b704b96133e21ad695c03f493e7",
+     "sha1": "75ca4321004c8dc5ba590d612464a8de2d20db6e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "w2KzRiZz",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.12+1.6.1",
+  "name": "TMCraft 1.4.12+1.6.1",
+  "version_type": "release",
+  "date_published": "2025-06-27T00:35:56.919960Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.12+1.6.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/w2KzRiZz/tmcraft-1.4.12%2B1.6.1.jar",
+    "primary": true,
+    "size": 3805773,
+    "hashes": {
+     "sha512": "8a1bfc8d79702e327e6c98bfb07fc6703e6f13b40bb38e49749589807e8ee5c018e7c29f1197b57766f23cab9a1c4a79297b866eaab8f86736c9bd5c737a3c77",
+     "sha1": "0869510ecc65406e3cccaed67975e40e63b97778"
+    }
+   },
+   {
+    "filename": "tmcraft-1.4.12+1.6.1-norecipes.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/w2KzRiZz/tmcraft-1.4.12%2B1.6.1-norecipes.jar",
+    "primary": false,
+    "size": 3542848,
+    "hashes": {
+     "sha1": "0b7e8dcdffa69b104440a8e63cb82c459de7c58f",
+     "sha512": "682043e5f0b71624c0b9db829ef3e18a1ee26acda5249e85e4075d7647d1306e77a26ca634e642a8bc9ffc2bae8ff461ffecdc72ce2d710c5b794adda6fb8daa"
+    }
+   }
+  ]
+ },
+ {
+  "id": "hwZPmfnQ",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.12+1.5.2",
+  "name": "TMCraft 1.4.12+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-06-27T00:35:33.852594Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.12+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/hwZPmfnQ/tmcraft-1.4.12%2B1.5.2.jar",
+    "primary": true,
+    "size": 3815738,
+    "hashes": {
+     "sha512": "82440388b32a353e0ccccfc403e931fe1f4be4c72d925dc98834ed1912623654baeffd809e2f289856fb269f79c8b380766a443dea22d479c22e3f3c9b84e4c2",
+     "sha1": "c66484a9208c4ef7929b21147473122674fa5540"
+    }
+   }
+  ]
+ },
+ {
+  "id": "aZ0Dkgoo",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.11+1.6.1",
+  "name": "TMCraft 1.4.11+1.6.1",
+  "version_type": "release",
+  "date_published": "2025-06-01T00:56:28.201894Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.11+1.6.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/aZ0Dkgoo/tmcraft-1.4.11%2B1.6.1.jar",
+    "primary": true,
+    "size": 3805721,
+    "hashes": {
+     "sha512": "0868dd7a92979a4ea2132294b3c26fa802eedf439342b307d5a381e7d0c3017e7d5bd09a54daf32993104333b387e8f4f1c42e8e201ec527d242c06c1c8f1928",
+     "sha1": "62666ea70412f13dde6b80b20af9aef5cbb64ab3"
+    }
+   },
+   {
+    "filename": "tmcraft-1.4.11+1.6.1-norecipes.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/aZ0Dkgoo/tmcraft-1.4.11%2B1.6.1-norecipes.jar",
+    "primary": false,
+    "size": 3542799,
+    "hashes": {
+     "sha1": "334d0c0d85d2a11bbffc8763d4b3238d2bf8e7de",
+     "sha512": "726e50816bca973a5959e4db07bc64910dfe9e9b7ad158bd97b892e1b865afa614b158d4d43fd513e56158a027c3b308dec3f06b094c674927ee03ec33c8c1bb"
+    }
+   }
+  ]
+ },
+ {
+  "id": "NJ4I8PXx",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.11+1.5.2",
+  "name": "TMCraft 1.4.11+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-06-01T00:56:06.450757Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.11+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/NJ4I8PXx/tmcraft-1.4.11%2B1.5.2.jar",
+    "primary": true,
+    "size": 3815695,
+    "hashes": {
+     "sha1": "26e65e0fae69faadd96b8e32512182d2b315501f",
+     "sha512": "288cc3457a8e3a10d08ecab1c2c382d4700cb1d6f2c345ee561d5154a67fdc0b16217582c58b026630e323d2eaa008627c68478a763bb49f1741e1e211ae3341"
+    }
+   }
+  ]
+ },
+ {
+  "id": "V9WvegJQ",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.10+1.6.1",
+  "name": "TMCraft 1.4.10+1.6.1",
+  "version_type": "release",
+  "date_published": "2025-05-26T05:25:16.494886Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.10+1.6.1.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/V9WvegJQ/tmcraft-1.4.10%2B1.6.1.jar",
+    "primary": true,
+    "size": 3805708,
+    "hashes": {
+     "sha512": "56b19da35308db95a8cb7795ad80e41fc327aa36841665fcc7bcb78354a91e4cf6f902c1f30e54e9954e89bc3160db789b49b821a8942c4a58486fd8e1fa9b35",
+     "sha1": "47b2c44fd4678374de70acf400b7d550dc85a867"
+    }
+   },
+   {
+    "filename": "tmcraft-1.4.10+1.6.1-norecipes.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/V9WvegJQ/tmcraft-1.4.10%2B1.6.1-norecipes.jar",
+    "primary": false,
+    "size": 3542788,
+    "hashes": {
+     "sha512": "c5f12c0b21d1c60d4445e85ec5aa4a3d0efe2508655e21236baed1f49f8789f8b7b5de97e4029cee797989f9dce0f3283065ac0525c78735e024952b3755dec3",
+     "sha1": "eb821229a4fd49acbef8478d0ef6266f2330ff89"
+    }
+   }
+  ]
+ },
+ {
+  "id": "BmINtI27",
+  "project_id": "HU6mkUZs",
+  "version_number": "1.4.10+1.5.2",
+  "name": "TMCraft 1.4.10+1.5.2",
+  "version_type": "release",
+  "date_published": "2025-05-26T05:24:47.988564Z",
+  "game_versions": [
+   "1.20.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "tmcraft-1.4.10+1.5.2.jar",
+    "url": "https://cdn.modrinth.com/data/HU6mkUZs/versions/BmINtI27/tmcraft-1.4.10%2B1.5.2.jar",
+    "primary": true,
+    "size": 3815679,
+    "hashes": {
+     "sha512": "56074d78e1667240685b6daba637383ed411ac61770f0ec80ab301b96ebc6041a7bee7b3e82f91997b31142bf00b6927c33080a615f427735931af3c60559028",
+     "sha1": "22cca4d32d92d49e9257ef366e753b28f2956bfa"
+    }
+   }
+  ]
+ }
+]

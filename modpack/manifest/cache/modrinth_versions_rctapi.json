@@ -1,0 +1,1002 @@
+[
+ {
+  "id": "poXTxoNY",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.16.0-beta",
+  "name": "Version 0.16.0-beta",
+  "version_type": "beta",
+  "date_published": "2026-09-06T23:05:33.321353Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.16.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/poXTxoNY/rctapi-fabric-1.21.1-0.16.0-beta.jar",
+    "primary": true,
+    "size": 257750,
+    "hashes": {
+     "sha512": "71dc2caeea39d5b76889e35cab882a00b5be49b98ccba3ad6f09eb6308e9851b4917c118ba0e5265831f891478dc33e777ecee3db5600c1b6ecf3923be6e94ba",
+     "sha1": "0f4b58e94373344cb3a61674488a6f537ec14e31"
+    }
+   }
+  ]
+ },
+ {
+  "id": "9OZx0coL",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.15.2-beta",
+  "name": "Version 0.15.2-beta",
+  "version_type": "beta",
+  "date_published": "2026-04-19T19:58:36.982829Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.15.2-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/9OZx0coL/rctapi-fabric-1.21.1-0.15.2-beta.jar",
+    "primary": true,
+    "size": 234250,
+    "hashes": {
+     "sha1": "a75bb662e507c3932304d80ed514ec57e5dbf69b",
+     "sha512": "f0e740fed61051e2e4a35345e8900d0dcf59c6e69de59ae5c8f1a88e06c8f4aa711e7c2480c7d86d95b1e03a1b9466031d092d9eea1bcb3d2362c8db746c4150"
+    }
+   }
+  ]
+ },
+ {
+  "id": "7cUZXy2w",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.15.1-beta",
+  "name": "Version 0.15.1-beta",
+  "version_type": "beta",
+  "date_published": "2026-04-17T21:05:59.420698Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.15.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/7cUZXy2w/rctapi-fabric-1.21.1-0.15.1-beta.jar",
+    "primary": true,
+    "size": 234254,
+    "hashes": {
+     "sha1": "54ce018737ade2c1eb4fdb0d7fcf83a35711be48",
+     "sha512": "f0a0621b6ea2791518e7a29091d4a190d8f9d70b7bf91f45088e22ccf06b2feaad0736b99e576f1a8c83896b99ec5d114f027984730dbb61d3a3a3cdf41e3fc3"
+    }
+   }
+  ]
+ },
+ {
+  "id": "kwYWScnz",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.15.0-beta",
+  "name": "Version 0.15.0-beta",
+  "version_type": "beta",
+  "date_published": "2026-03-21T21:24:29.669725Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.15.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/kwYWScnz/rctapi-fabric-1.21.1-0.15.0-beta.jar",
+    "primary": true,
+    "size": 233126,
+    "hashes": {
+     "sha1": "d9999f2f7e6ceb1a47ebebad0cf023e042cb7299",
+     "sha512": "dc7fb3db0ec3f655d02fd13a905943e4b14ee46963d6d7df381658277c28706889f8ae515f291c9f1627acb8f84457661e2bcaf1a0e6d932aaa7222df9164d07"
+    }
+   }
+  ]
+ },
+ {
+  "id": "C4VTuik1",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.8-beta",
+  "name": "Version 0.14.8-beta",
+  "version_type": "beta",
+  "date_published": "2026-02-14T02:21:52.385584Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.8-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/C4VTuik1/rctapi-fabric-1.21.1-0.14.8-beta.jar",
+    "primary": true,
+    "size": 229381,
+    "hashes": {
+     "sha1": "f9b4f8dd9ef58e8faf61151b8a5656f918171c34",
+     "sha512": "e808854f1b5f8209b648a64cd603f06d2ec815761e232884cb3c1c805a256d759d29f21027b58afb707df49c5e08a0bc50bd3ba66f9f5be20a2c1703e5dbb0ac"
+    }
+   }
+  ]
+ },
+ {
+  "id": "g2pvVH9L",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.7-beta",
+  "name": "Version 0.14.7-beta",
+  "version_type": "beta",
+  "date_published": "2026-02-13T22:33:59.609979Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.7-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/g2pvVH9L/rctapi-fabric-1.21.1-0.14.7-beta.jar",
+    "primary": true,
+    "size": 225248,
+    "hashes": {
+     "sha1": "83052faf7f3efc9292b92aaa7080f55ab6e85e59",
+     "sha512": "5288aad9bb099d04047bddd4dbf6a9364cf571c7b3bd3ca8f06fbbf863b5055da9b396c49de6d0e27c00d31f308450089e85eb20a5d55167cf6ce133680dc69c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "XRYb3brF",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.6-beta",
+  "name": "Version 0.14.6-beta",
+  "version_type": "beta",
+  "date_published": "2026-01-18T18:03:32.910616Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.6-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/XRYb3brF/rctapi-fabric-1.21.1-0.14.6-beta.jar",
+    "primary": true,
+    "size": 221587,
+    "hashes": {
+     "sha512": "a2a02ce69fb0b63920abfb38a83c072ac7af3465dfe1f7ae42b01dee8489a9872bac77a9b7cf134e76bbfe56114b5ebb87de60c7e2f4c2b2ff75e7e79cdccaac",
+     "sha1": "29afe413a527db44846c5d21757145c89082ae77"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ZIWxMaY6",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.5-beta",
+  "name": "Version 0.14.5-beta",
+  "version_type": "beta",
+  "date_published": "2025-12-27T16:22:42.821810Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.5-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/ZIWxMaY6/rctapi-fabric-1.21.1-0.14.5-beta.jar",
+    "primary": true,
+    "size": 218989,
+    "hashes": {
+     "sha1": "c88169574d523c1ce32d9b4b64b21f8ad9e8332d",
+     "sha512": "7f71d0a1b90c220ce881ae550fd835119386cc7c20ee69594db5a1221e58e8a3b0908a841ebc537a97456fa3f530e5eb772fab066f9bc3e2d7625d33bd840b39"
+    }
+   }
+  ]
+ },
+ {
+  "id": "mpyupO4W",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.4-beta",
+  "name": "Version 0.14.4-beta",
+  "version_type": "beta",
+  "date_published": "2025-12-11T09:37:25.496760Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.4-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/mpyupO4W/rctapi-fabric-1.21.1-0.14.4-beta.jar",
+    "primary": true,
+    "size": 207967,
+    "hashes": {
+     "sha1": "1db48045a6078a76c2248722923daaaea24e8541",
+     "sha512": "319bf3236c5e8b8dc0e59b9374d51ab65ae97fbe6d9e88bf73fd87e08cc1d9974a04fb8fcac0efa58c19fdc83ddb91293fc7c3ebbd3dfa423660a48264af7312"
+    }
+   }
+  ]
+ },
+ {
+  "id": "3EKcU1cf",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.3-beta",
+  "name": "Version 0.14.3-beta",
+  "version_type": "beta",
+  "date_published": "2025-12-05T07:45:15.943339Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.3-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/3EKcU1cf/rctapi-fabric-1.21.1-0.14.3-beta.jar",
+    "primary": true,
+    "size": 206897,
+    "hashes": {
+     "sha512": "823fcaea38210843601300b371af470974fb197c3332b7a79e3739cea6d155b8d9db48ecae7684aefe2da4512490e5c4d81dc9851d58e435de0db7356c38b30a",
+     "sha1": "21c9421bd2167f452a4d3fa6e4595dd2251486da"
+    }
+   }
+  ]
+ },
+ {
+  "id": "CMQzWORd",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.2-beta",
+  "name": "Version 0.14.2-beta",
+  "version_type": "beta",
+  "date_published": "2025-12-04T20:20:27.557423Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.2-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/CMQzWORd/rctapi-fabric-1.21.1-0.14.2-beta.jar",
+    "primary": true,
+    "size": 206807,
+    "hashes": {
+     "sha512": "840a3270f679c6e96d5ad6eb703f93aa02b0e6bbfb9b9446383a29f3ddd10c75303e0ed6849b08e368e457f486fc9420fb22bb55eb00f9a79ee160a9c564446f",
+     "sha1": "c70e84e76e3b483b30eac764ec944ca7dcf5743f"
+    }
+   }
+  ]
+ },
+ {
+  "id": "o44fzA4w",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.1-beta",
+  "name": "Version 0.14.1-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-24T15:34:15.532058Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/o44fzA4w/rctapi-fabric-1.21.1-0.14.1-beta.jar",
+    "primary": true,
+    "size": 226754,
+    "hashes": {
+     "sha512": "9b27055d42b6d3029f3cf347f167284dfe0f75f701939600e291cf71c1e6b2a303658bcb5d64e080f517cccfc752bdb00cf8e277bcc3cd31b8906446d8220f8c",
+     "sha1": "f24cadfc8261c9af06bc10282c7fd897b391dfb7"
+    }
+   }
+  ]
+ },
+ {
+  "id": "IO3HcMGq",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.14.0-beta",
+  "name": "Version 0.14.0-beta",
+  "version_type": "beta",
+  "date_published": "2025-11-22T05:32:09.947304Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.14.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/IO3HcMGq/rctapi-fabric-1.21.1-0.14.0-beta.jar",
+    "primary": true,
+    "size": 226721,
+    "hashes": {
+     "sha1": "3b37a5386e3c1db658edff42e3409cf685e4847a",
+     "sha512": "576c30faabcd66a91c37684ba518ce06ed925b674c1928001a3b68e47fe13fbea9b1404ab76c7539011c67b88f4d7bd56f6e0b194bf90ff69ce3a2ea99a19b9e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "dy6O0ZYb",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.9-beta",
+  "name": "Version 0.13.9-beta",
+  "version_type": "beta",
+  "date_published": "2025-09-26T14:30:10.225764Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.9-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/dy6O0ZYb/rctapi-fabric-1.21.1-0.13.9-beta.jar",
+    "primary": true,
+    "size": 245250,
+    "hashes": {
+     "sha1": "4de002ff96445c809a2d020253fddcf8fbd41c0e",
+     "sha512": "d961dfd63cb50989d049753cbb99b057ea7ee0df7f70853f16f60d10498d87e05a498594602749f3be78b5ff25edad5d19eb36933f9ad1d5fd9fffe4e4bb4ca5"
+    }
+   }
+  ]
+ },
+ {
+  "id": "jwoF6kzr",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.8-beta",
+  "name": "Version 0.13.8-beta",
+  "version_type": "beta",
+  "date_published": "2025-09-09T11:15:32.145798Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.8-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/jwoF6kzr/rctapi-fabric-1.21.1-0.13.8-beta.jar",
+    "primary": true,
+    "size": 243878,
+    "hashes": {
+     "sha1": "5aeeed6c3627c14aa5436f149af04b03fba1621e",
+     "sha512": "5e1979a7db2bfbb9eacc21bc5f301b2d4a3acc11f706eb1706ab30cf1d6e2004e39405b6eba20af3d51c391230630b0c8bb2d47e2369fe46800361ee9c3da618"
+    }
+   }
+  ]
+ },
+ {
+  "id": "sZK1GcWC",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.7-beta",
+  "name": "Version 0.13.7-beta",
+  "version_type": "beta",
+  "date_published": "2025-07-05T19:41:11.089502Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.7-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/sZK1GcWC/rctapi-fabric-1.21.1-0.13.7-beta.jar",
+    "primary": true,
+    "size": 218718,
+    "hashes": {
+     "sha512": "2b07779c03e6bc098189871b91b73dc00da8e9355b09ae4d02ebbd188a70f9b29c6b1e971ac5d9f067dca6dc0d5142c38e9cdd909baa41bb136cc3bd80b67a0f",
+     "sha1": "5df1931d859695ac56c7ba8138171fbe82be447e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "ws0S1A3X",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.6-beta",
+  "name": "Version 0.13.6-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-17T14:40:27.254466Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.6-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/ws0S1A3X/rctapi-fabric-1.21.1-0.13.6-beta.jar",
+    "primary": true,
+    "size": 218688,
+    "hashes": {
+     "sha512": "ce4ce25da2befe92c780fd42cd5bd6c8b63339a49376aea574e0a88292c0e9a3259a12296c3526c2edfc5005e18e250b24557fe2910ba8f137b7c6e1d8159a29",
+     "sha1": "05f111a1c0935fd96b5e3e2204cd08d66f644d9b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "JCNFPUUB",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.5-beta",
+  "name": "Version 0.13.5-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-14T20:49:01.955847Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.5-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/JCNFPUUB/rctapi-fabric-1.21.1-0.13.5-beta.jar",
+    "primary": true,
+    "size": 218769,
+    "hashes": {
+     "sha512": "49a4ff6a1d02a76c8b649dfb89c7a1c60946b4404a7fb0bf443454a0bca40c24b19c2def5c77ca9c4614dc1c5e8cc53af5bd77d5405fbf17998bf4658ba6d64c",
+     "sha1": "1e8bc4fcf049f1226607ade48c0a2140f1006d46"
+    }
+   }
+  ]
+ },
+ {
+  "id": "LQLUrfh3",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.4-beta",
+  "name": "Version 0.13.4-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-10T00:57:20.495971Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.4-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/LQLUrfh3/rctapi-fabric-1.21.1-0.13.4-beta.jar",
+    "primary": true,
+    "size": 215851,
+    "hashes": {
+     "sha512": "5e3596fa0922908243a7f4c432cf2eb186caa846517abac4b4dcf0c4b1ff02f44b8deca38dd29c5cfbfcb07af7c518d0561f3b536114e02c30a3683f1893aeeb",
+     "sha1": "7452c8231b2095b618588055b1df1b305e9b3a5e"
+    }
+   }
+  ]
+ },
+ {
+  "id": "SFKAHcC0",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.3-beta",
+  "name": "Version 0.13.3-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-03T20:25:57.285705Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.3-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/SFKAHcC0/rctapi-fabric-1.21.1-0.13.3-beta.jar",
+    "primary": true,
+    "size": 215458,
+    "hashes": {
+     "sha512": "4dd55390a342f9fc83bc930de14e0a3a4be64146465ce2c57e4849e40cdab363d83eb3ac47a587e4631d34bcb1d183b103367d7573f5083fc0db1cc30d786569",
+     "sha1": "6e20edcc6867917472ba369a519c7397a5dd3cdf"
+    }
+   }
+  ]
+ },
+ {
+  "id": "GegSX050",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.2-beta",
+  "name": "Version 0.13.2-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-02T18:41:08.478154Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.2-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/GegSX050/rctapi-fabric-1.21.1-0.13.2-beta.jar",
+    "primary": true,
+    "size": 215498,
+    "hashes": {
+     "sha512": "6a544a40c92afd464693f9964344edc6feea476582f4ad8ab16fb1026f5338f190e29a41e85d6902f857d85d6abb141b855e3cc2359fb741915a8f3f1a30adc8",
+     "sha1": "23556063c39a077f74ae8a13f0b016f69625f81a"
+    }
+   }
+  ]
+ },
+ {
+  "id": "O49s7zos",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.1-beta",
+  "name": "Version 0.13.1-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-02T18:07:32.388044Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/O49s7zos/rctapi-fabric-1.21.1-0.13.1-beta.jar",
+    "primary": true,
+    "size": 215507,
+    "hashes": {
+     "sha1": "d6b3c35d97034c1573b060af2c028bd83def8921",
+     "sha512": "6dfbcb7b2b836fb20dc56d12c1937a73458063a40ac1ef208547cbe3c3a32807f0fdb9dbe5d9cd4439e82c943418e1c01d1d5e648a6229b29ef95c62748cf03b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "bi9BIvk1",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.13.0-beta",
+  "name": "Version 0.13.0-beta",
+  "version_type": "beta",
+  "date_published": "2025-06-02T02:45:13.718476Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.13.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/bi9BIvk1/rctapi-fabric-1.21.1-0.13.0-beta.jar",
+    "primary": true,
+    "size": 215505,
+    "hashes": {
+     "sha1": "dee583aa987b784a78ebdfd581086b3f98f8d5b7",
+     "sha512": "4eaa6795e7702773aa180777dbb6e41b6b06dd62093df63af6b364e641510b4216f9ebf42e1bff31ba3acebb72df154d05ab160d6ca986cb529bb68c288b9e7b"
+    }
+   }
+  ]
+ },
+ {
+  "id": "FY8Lm8Ie",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.12.1-beta",
+  "name": "Version 0.12.1-beta",
+  "version_type": "beta",
+  "date_published": "2025-05-24T14:16:34.510370Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.12.1-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/FY8Lm8Ie/rctapi-fabric-1.21.1-0.12.1-beta.jar",
+    "primary": true,
+    "size": 204762,
+    "hashes": {
+     "sha512": "cd8f92590944ae1998ccfa4478656e28e1227c042465172b0a5d73440512e772eb78ae156962b5bb3eef1266c59e71d206bb236c1e3f1d04fbde08baf3d9557d",
+     "sha1": "a01052c13ca400b036b452af337e68821c68420c"
+    }
+   }
+  ]
+ },
+ {
+  "id": "BdOoHayz",
+  "project_id": "CBfM2yw7",
+  "version_number": "0.12.0-beta",
+  "name": "Version 0.12.0-beta",
+  "version_type": "beta",
+  "date_published": "2025-05-13T17:10:44.540730Z",
+  "game_versions": [
+   "1.21.1"
+  ],
+  "loaders": [
+   "fabric"
+  ],
+  "dependencies": [
+   {
+    "version_id": null,
+    "project_id": "lhGA9TYQ",
+    "file_name": null,
+    "dependency_type": "required"
+   },
+   {
+    "version_id": null,
+    "project_id": "MdwFAVRL",
+    "file_name": null,
+    "dependency_type": "required"
+   }
+  ],
+  "files": [
+   {
+    "filename": "rctapi-fabric-1.21.1-0.12.0-beta.jar",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/BdOoHayz/rctapi-fabric-1.21.1-0.12.0-beta.jar",
+    "primary": true,
+    "size": 187775,
+    "hashes": {
+     "sha1": "af6b35164ddefe0777a39a34beed4be203d950ee",
+     "sha512": "13d475d9b7aa122d9a33fe9e913f846e097680606280e9bc6e79c46c292b33bd16f75020fdedc108e4f0698c4bd01eec17f81c290b20f8713ca8105001ceb6d4"
+    }
+   }
+  ]
+ }
+]

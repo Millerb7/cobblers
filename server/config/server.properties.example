@@ -1,0 +1,64 @@
+# server.properties.example - private Cobblemon campaign server
+# Copy to <serverdir>/server.properties. The live file is NOT tracked (it may
+# hold rcon.password). Lines starting with '#' are comments; Minecraft rewrites
+# the file on boot and drops them, so keep this example as the documented copy.
+
+# --- identity / access --------------------------------------------------
+motd=Cobblers private campaign
+# online-mode=true: Mojang authentication. Keep true on any internet-reachable
+# server; it is what makes whitelist/ops UUIDs mean anything.
+online-mode=true
+# Friends-only server: whitelist on, enforce so removed players get kicked.
+white-list=true
+enforce-whitelist=true
+max-players=8
+server-port=25565
+# rcon stays off unless you need remote console; if enabled, set a real
+# password in the live file only, never in this example.
+enable-rcon=false
+enable-query=false
+enable-status=true
+
+# --- gameplay ------------------------------------------------------------
+# Campaign difficulty comes from trainers and level caps, not from vanilla
+# mobs, but 'hard' keeps the overworld from being trivial.
+difficulty=hard
+gamemode=survival
+force-gamemode=false
+hardcore=false
+pvp=false
+allow-flight=true
+# Spawn protection blocks building near spawn for non-ops; we build the hub
+# ourselves, so 0.
+spawn-protection=0
+# Level type is set by the pack (Terralith datapack etc.); leave default and
+# let datapacks/worldgen decide. Set level-seed deliberately when the campaign
+# world is generated and record it in docs/, not here.
+level-name=world
+level-seed=
+allow-nether=true
+generate-structures=true
+spawn-monsters=true
+spawn-npcs=true
+spawn-animals=true
+max-world-size=29999984
+
+# --- performance ---------------------------------------------------------
+# 10 chunks is plenty for 4-8 players and keeps Cobblemon spawning cheap.
+view-distance=10
+simulation-distance=8
+max-tick-time=60000
+network-compression-threshold=256
+entity-broadcast-range-percentage=100
+sync-chunk-writes=true
+
+# --- pack / resources ----------------------------------------------------
+# Resource packs are shipped in the modpack, not pushed by the server.
+require-resource-pack=false
+resource-pack=
+resource-pack-sha1=
+# Datapacks are force-loaded by the Global Packs mod (config/global_packs.toml);
+# initial-enabled-packs only matters for vanilla-registered packs.
+initial-enabled-packs=vanilla
+function-permission-level=2
+op-permission-level=4

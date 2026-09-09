@@ -1,180 +1,161 @@
-# Job-Bored
+# Cobblers — a Cobblemon campaign
 
-A job-search-oriented desktop browser: **Qt 6 Widgets** native chrome + **CEF 135** (Chromium) web rendering. Windows-only, C++17. Single developer, early stage (several thousand lines of source).
+A handcrafted, difficult Pokémon-style region inside Minecraft, played
+cooperatively by a small group of friends on a private Cobblemon (Fabric)
+server. `docs/vision/GAME_VISION.md` is the design source of truth and
+`docs/architecture/TECHNICAL_ARCHITECTURE.md` the technical one. Where a
+document and the repository disagree, say so — the disagreement is a finding,
+never something to paper over silently.
 
-`ARCHITECTURE.md` is the design source of truth. Read it before structural work; do not contradict it silently — if the code and the doc disagree, say so.
+## Baseline and target (verified)
 
-## Architecture (verified)
+- **Reference/base experience:** the COBBLEVERSE modpack (Modrinth slug
+  `cobbleverse`), local snapshot consistent with release 1.7.42 (2026-07-21),
+  stored at `base-pack/cobbleverse/` — `config/` and `licenses/` are tracked;
+  mod jars, resource-pack zips, shaderpacks and the Lumyverse datapack zips
+  (no-redistribution license) are gitignored and described by
+  `base-pack/inventory/*.json|csv|md`. The full snapshot exists only in the
+  local checkout; the datapack contents are documented in `docs/research/notes/`.
+- **Baseline:** Minecraft 1.21.1, Fabric loader (pack requires >= 0.18.4),
+  Fabric API 0.116.14+1.21.1, Fabric Language Kotlin 1.13.13+kotlin.2.4.10,
+  Cobblemon 1.7.3, Architectury 13.0.8, Java 21.
+- **Target:** Cobblemon 1.8.x on Minecraft 1.21.1 Fabric (Cobblemon 1.8.0
+  released 2026-09-06 for MC 1.21.1). Same Minecraft version, so the
+  compatibility question is addon API/data compatibility, not MC version.
+- **Base-pack systems:** trainers = Radical Cobblemon Trainers (`rctmod` +
+  `rctapi`, data-driven via datapack JSON); Mega Evolution = Mega Showdown;
+  TMs = TMCraft (Cobblemon 1.8 also adds native TMs); badges =
+  CobbleverseBadges; raids = Cobblemon Raid Dens; breeding = Cobbreeding;
+  economy = CobbleDollars.
+- **World-critical (blocks/worldgen):** Rechiseled, CobbleFurnies, Carved
+  Wood, Pokeblocks, Cozy Home, Handcrafted, Moar Concrete, VanillaBackport,
+  LumyMon, Beautify, LegendaryMonuments, Waystones, Comforts,
+  cobblemon-additions, Repurposed Structures, Biome Replacer, the Terralith
+  datapack, and the region datapacks in `base-pack/cobbleverse/datapacks/extra`.
+- **No KubeJS or scripting layer exists in the base pack.** Cobblemon itself
+  has Molang-scriptable NPCs and datapack folders (1.8 adds `party_pools`,
+  `party_compositions`, `moveset_builders`, and a Habitat Block for spawn
+  control on adventure maps). Do not assert more than this about APIs without
+  a cited source.
 
-```
-app/src/main.cpp        CEF subprocess check → QApplication → CefInitialize → RootWindow
-app/src/app/             WorkspaceRouter (sole owner of workspace selection), Workspace enum
-app/src/handlers/        CEF client layer (SimpleApp, SimpleHandler)
-app/src/domain/          application/ — tracking value types + repository interface (headers only)
-app/src/infrastructure/  application/ — ApplicationDatabase, SqliteApplicationRepository
-app/src/services/        BookmarkStore, ApplicationTrackingService, ApplicationTrackingComposition
-app/src/viewmodels/      ContextSummaryProvider, AutofillProfileViewModel,
-                          ApplicationTableModel/FilterProxyModel/EventListModel
-app/src/ui/
-  atoms/                 IconButton, ShellIcon
-  molecules/             ControlButtons, UrlBar, OpenPageRow, EmptyState, SummaryCard, FormSection, WorkspaceNavButton, BookmarkButton
-  organisms/              SidebarShell (composes SidebarWindowHeader/WorkspaceNavGrid/ContextSummaryPanel/OpenPagesPanel), BottomBar, BrowserView, SettingsDialog
-  pages/                  per-workspace pages: Home, Browse, Applications, Inbox, Autofill, Settings
-  templates/              RootWindow (only window template), TabManager (per-window tabs)
-  styles/themes/          light.qss, dark.qss (bundled via resources.qrc), theme.py generator
-app/tests/               Qt Test targets for the tracking library (no Widgets, no CEF)
-```
-
-The tracking code compiles into two static libraries: `jobbored_tracking`
-(**only** `Qt6::Core` + `Qt6::Sql`) and `jobbored_tracking_ui` (adds
-`Qt6::Widgets`). **Neither links CEF.** Keep it that way — that boundary is
-what lets the whole test suite run without CEF, and it is enforced by the
-linker, not by convention.
-
-`main.cpp` owns the `ApplicationTrackingComposition` in a scope that
-**outlives `RootWindow`**, and passes a non-owning `ApplicationTrackingService*`
-down. Never make it a `RootWindow` member: members are destroyed before
-`~QObject` deletes child widgets, so every model holding the service would
-dangle. Every write goes through the service; no widget touches SQL.
-
-Composition flows upward (atoms → templates). Events flow **signal-up, handle-down**: molecules/organisms emit intent, templates handle it. `BrowserView` is the **only** organism that touches CEF; `RootWindow` contains no CEF code.
-
-## Implementation vs QA
-
-Feature implementation and PR QA are separate workflows.
-
-Implementation agents may build and run existing deterministic tests, but must
-not run or modify the automated QA review system unless explicitly requested.
-
-`qa/` is evaluated independently by CI, and only once a human marks the draft
-PR **ready for review**. Opening the draft PR does not start QA — that
-separation is what keeps implementation from grading itself.
-
-An implementation agent that notices a QA coverage gap reports it rather than
-changing QA policy as part of an unrelated feature.
-
-## Work items
-
-A GitHub Issue is the canonical work item; the PR is the implementation record.
-The `JobBored Work Items` Project is a view over Issues, never a second source
-of truth. Status lives in a Project field, never in a label.
+## Layer model
 
 ```
-Todo → In Progress → PR Made → In QA → Release → Done
+upstream   Cobbleverse pack + third-party mods      base-pack/   (read-only reference)
+   ↓
+overlay    our modpack: compatibility fixes, mod     modpack/     (what players install)
+           list, configs, overlay datapacks
+   ↓
+server     dedicated server config, launch, scripts  server/
+   ↓
+campaign   progression, encounters, trainers, bosses campaign/    (authored content)
+   ↓
+world      the handcrafted region: sources,          world/       (assets; the live save
+           schematics, structures, templates                       is NOT source code)
 ```
 
-Branch-scoped feature or fix work runs end to end:
+Each layer only depends on the ones above it. Upstream content is never
+edited in place — it is overridden from the overlay or campaign layer.
 
-```
-resolve Issue → In Progress → implement → developer verify
-  → commit → push the feature branch → linked draft PR → PR Made → stop
-```
+## Repository layout
 
-The `start-work` skill opens it (`scripts/start-work.ps1`); the `open-pr` skill
-closes it (`scripts/open-pr.ps1`). Both set the Project status themselves — do
-not move cards by hand.
+| Path | What belongs here |
+|---|---|
+| `CLAUDE.md`, `README.md`, `.gitignore`, `.gitattributes` | Root identity and repository policy |
+| `.claude/` | Assistant configuration (agents, rules, skills); see `.claude/README.md` |
+| `docs/vision/GAME_VISION.md` | The game we are making; design source of truth |
+| `docs/research/` | `COBBLEVERSE_COMPATIBILITY.md`, `CAPABILITY_MATRIX.md`, `EXPERIMENT_BACKLOG.md` — verified vs assumed facts, with sources |
+| `docs/architecture/TECHNICAL_ARCHITECTURE.md` | Technical source of truth for layers and boundaries |
+| `docs/mechanics/` | Mechanic designs (level caps, encounters, rewards) before they become content |
+| `docs/decisions/` | ADRs: `README.md`, `TEMPLATE.md`, `ADR-001-modpack-base-strategy.md`, … |
+| `base-pack/` | Cobbleverse reference snapshot (`cobbleverse/`) and its inventory (`inventory/`); never edited |
+| `modpack/manifest/`, `mods/`, `config/`, `resourcepacks/`, `datapacks/`, `overrides/` | Our overlay = the players' client pack |
+| `server/config/`, `scripts/`, `launch/`, `README.md` | Dedicated server; `server/scripts/boot-test.ps1` and `assemble-server.ps1` are planned entry points |
+| `campaign/progression`, `encounters`, `trainers`, `bosses`, `gyms`, `gauntlets`, `quests`, `rewards`, `dungeons`, `villain`, `dialogue` | Authored campaign content and data |
+| `world/source`, `schematics`, `structures`, `templates` | World assets and specs; not the live save |
+| `experiments/` | `README.md` template plus `EXP-NNN-<slug>/README.md` per proof (`EXP-000-cobblemon-1.8-compat` first) |
+| `tools/validate.py`, `tools/pack_manifest.py` | Validation and manifest tooling (Python) |
+| `tests/` | pytest suites for tooling and content validity |
 
-**Implementation stops at the draft PR.** Marking it ready for review is a
-human act, and that act is what starts independent QA. Never mark your own PR
-ready, invoke QA, merge, push `main`, force-push, or move an item to `In QA`,
-`Release`, or `Done`. Implementation does not grade its own work.
+## Principles
 
-Everything past the review boundary is owned elsewhere: `In QA` and the
-unmerged-close transition by `.github/workflows/work-item-status.yml`,
-`Release` by the QA publisher, `Done` by merge linkage plus the Project's
-built-in *Item closed* workflow. Full lifecycle and owners: `docs/WORKFLOW.md`.
+1. Cobbleverse is the reference/base experience.
+2. Cobblemon 1.8.x is the target unless explicitly changed.
+3. Preserve desirable Cobbleverse features when compatible.
+4. Our campaign owns progression, encounter balance, bosses, world design and story.
+5. Never assume a custom mod is required.
+6. Prefer existing functionality, configuration and data before custom code, in
+   this order: Cobblemon native → compatible addon → Cobbleverse dependency →
+   configuration → datapack → functions/commands → scripting layer →
+   server-side companion → custom Fabric mod last.
+7. Never fabricate Cobblemon APIs or config formats.
+8. Unknown behavior becomes an experiment.
+9. Do not casually add dependencies.
+10. World-critical dependencies require extra scrutiny.
+11. Avoid removing world-critical dependencies after serious map development begins.
+12. Preserve multiplayer compatibility.
+13. Keep upstream content separate from authored campaign content.
+14. Do not treat the live world save as ordinary source code.
+15. Use small proofs before large implementations.
+16. Content implementation and test/review should preferably use different agents.
+17. Important architectural choices require ADRs.
+18. A generated configuration is not proof that a feature works.
+19. Important features should eventually be tested inside a running Minecraft environment.
+20. Do not build large amounts of campaign content before foundational mechanics are proven.
 
-Trivial housekeeping (typo, comment, formatting) needs no work item.
+## Delegation
 
-**An `owner:<person>` label means manual developer work.** Never select, plan or
-implement such an Issue — not when picking the next ticket, not when asked to
-"work on anything open", not when filling a parallel round, not when you notice
-it mid-task. Reading it for context or linking to it is fine; starting it is
-not. `start-work.ps1` and `new-worktree.ps1` refuse these by default and take
-`-IncludeManualOwner`; pass it only when the user has authorized that specific
-Issue in this conversation. `owner:miller` is the one in use today. See
-`docs/WORKFLOW.md`, "Ownership labels".
+Do the work directly when it is a few tool calls. Delegate only when the task
+is large, independently scoped, and the result compresses into a summary.
+One subagent, not several, when one can finish the job. Never spawn an agent
+to check, confirm or rephrase another agent's output — verify with files, logs
+and running Minecraft instead. Agents do not spawn their own agent teams.
 
-## Parallel sessions
+| Need | Agent | Writes |
+|---|---|---|
+| Find where something lives (cheap) | `repo-scout` | nothing (read-only) |
+| Mod/jar metadata, 1.8 compatibility status, EXP-000 | `dependency-auditor` | `docs/research/COBBLEVERSE_COMPATIBILITY.md`, `base-pack/inventory/`, `experiments/EXP-000-*` |
+| What Cobblemon/addons actually support, with sources | `cobblemon-researcher` | `docs/research/` only |
+| Campaign architecture, data models, datapack-vs-script-vs-mod boundaries, ADR proposals | `content-architect` | `docs/decisions/`, `docs/mechanics/` |
+| Datapacks, functions, advancements, loot, spawn configs | `datapack-content-dev` | `modpack/datapacks/`, `campaign/` |
+| Server-side logic, progression/puzzle/gauntlet state | `minecraft-systems-dev` | `server/config/`, `modpack/config/`, `modpack/datapacks/`, `campaign/` |
+| Dungeon specs, structures, schematics, templates | `world-content-dev` | `world/` |
+| Encounter tables, level caps, boss/gym/gauntlet teams, rewards | `trainer-balance-designer` | `campaign/` |
+| Validation tooling and tests | `test-author` | `tools/`, `tests/` |
+| Review an experiment against its success criteria | `qa-reviewer` | nothing (read-only; reports) |
+| Server/client boot failure triage | `build-doctor` | nothing (proposes fixes; reads logs) |
 
-```
-one Issue = one branch = one worktree = one implementation session
-```
+Read-only agents (`repo-scout`, `qa-reviewer`, `build-doctor`) do not need a
+worktree; worktrees exist to keep concurrent writers apart. **Content
+implementation and its test/review use different agents:** whoever wrote a
+datapack does not write its validator or grade its experiment. Implementation
+does not grade its own work.
 
-Several sessions may run at once, each in its own Git worktree
-(`Job-Bored-wt-15/`, `Job-Bored-wt-18/`, …) sharing this one repository.
-`Job-Bored/` is the control workspace.
+## Git and commit hygiene
 
-**Verify where you are before your first edit** — `git rev-parse --show-toplevel`,
-`git branch --show-current`. If the branch's `NNN-` prefix is not the Issue you
-were asked to work on, **stop**; another session may be mid-change. Never edit
-or switch branches in another Issue's worktree.
+- `one issue = one branch = one worktree = one implementation session`.
+  Verify `git branch --show-current` before the first edit; never edit another
+  session's worktree. Mechanics: `parallel-work` skill.
+- Never commit secrets, `eula.txt`, `servers.dat`, `ops.json`/`whitelist.json`,
+  world saves, logs, or mod/resource-pack jars and zips. `.gitignore` already
+  excludes them; do not work around it.
+- Never push or merge to `main`, never force-push, never amend a pushed
+  commit. Hand over with a draft PR (`open-pr` skill); marking it ready is a
+  human act.
 
-Read-only subagents (`repo-scout`, `security-reviewer`, `architect`) do **not**
-need a worktree. Worktrees exist to keep concurrent *writers* apart.
+## Verify before claiming
 
-Mechanics live in the `parallel-work` skill and `docs/WORKFLOW.md`.
-
-## Branch boundary
-
-When a task specifies a feature branch:
-
-1. Check branch and working-tree status before editing.
-2. Do not implement the ticket on `main`.
-3. Do not create or switch branches if doing so would mix unrelated uncommitted work.
-4. If the requested branch cannot be created safely because unrelated work is present, stop before editing and report the blocker.
-
-Never silently implement a branch-scoped ticket on `main`.
-
-## Build and run
-
-From the repo root — these locate MSVC, CMake and vcpkg themselves:
-
-```powershell
-.\scripts\build.ps1     # build Release
-.\scripts\run.ps1       # build, then launch
-.\scripts\dist.ps1      # shippable copy in dist\
-```
-
-Equivalent manual build (needs a VS x64 developer prompt and `VCPKG_ROOT`), from `app/`:
-`cmake --preset release && cmake --build --preset release`. **Release is the only
-working config** — the prebuilt CEF debug wrapper fails to link (`LNK1318`).
-
-Output is `build/JobBored.exe` (repo root). A healthy launch shows ~6 processes (1 browser + CEF subprocesses).
-
-Verification is a clean build **plus an observed run** — use the `build-and-verify` skill rather than improvising the command. `ctest` from `build/` runs the Qt Test suites; they cover the application-tracking libraries only, so a green `ctest` says nothing about whether the browser works.
-
-`qa/` holds a deterministic QA pipeline that maps a diff to affected features, generates policy cases, runs the required suites, and renders a report without a model. See `qa/README.md`; the `qa-review` skill runs it.
-
-## Non-negotiable principles
-
-- **Preserve the atomic layering and signal-up/handle-down flow.** No CEF, window, or app-state code in atoms/molecules/organisms other than `BrowserView`.
-- **No process-global browser or tab state.** Multi-window support is the roadmap goal; per-window ownership (`TabManager`) is deliberate. A `static`/global map of browsers or HWNDs is a defect.
-- **Prefer deleting complexity over adding abstraction.** Favor incremental change; do not rewrite working systems to match personal taste.
-- **Never claim something works without evidence.** A clean build is not a passing test, and neither proves the browser is secure. Report what you actually ran.
-- **Security-sensitive changes require the security rules.** Navigation, downloads, cookies, JS execution, permissions, IPC, and process boundaries are covered in `.claude/rules/security.md`.
+A generated config, datapack or manifest is not proof that a feature works. A
+clean `python tools/validate.py` run proves validity, not behavior. Important
+features are tested in a running Minecraft (the `boot-test` skill, then a
+functional test recorded in `experiments/`). Report exactly what you ran and
+observed; mark everything else "not verified". Never accept the Minecraft EULA
+on the user's behalf.
 
 ## Context boundaries
 
-- **Never search or read `external/` (4.1 GB CEF distribution, 571 headers) or `build/` (generated).** To learn a CEF API, read the one specific header you need by exact path, or ask the `repo-scout` agent.
-- Path-scoped rules in `.claude/rules/` load automatically for matching files — do not restate them here.
-- Long procedures live in `.claude/skills/`. Reference documents are read on demand, never imported eagerly.
-
-## Assistant configuration
-
-`.claude/rules/` (path-scoped conventions), `.claude/skills/` (procedures), `.claude/agents/` (delegation targets). Layout and model policy: `.claude/README.md`.
-
-## Delegation policy
-
-Do the work directly when it is a few tool calls. Delegate only when the task is large, independently scoped, and the result compresses into a summary — broad exploration, a full security review, or multi-file architectural analysis.
-
-- **One subagent, not several,** when one can finish the job.
-- **Never spawn an agent to check, confirm, or rephrase another agent's output.** Verify with builds, runs, and file evidence instead.
-- Do not let agents spawn their own agent teams.
-- Prefer `repo-scout` (cheap, read-only) over unbounded `Grep`/`Glob` when a search could touch `external/`.
-- Git is bounded by the work-item lifecycle above: commit, push the feature branch, and open a **draft** PR for a ticket you were asked to implement. Never push or merge to `main`, never force-push, never amend a pushed commit, never create tags, and never mark a PR ready for review. A user saying "do not commit" for a ticket overrides this.
-- Never send synthetic keyboard or mouse input to the desktop. Drive widgets through their own APIs, inspect windows and processes directly, or ask for a manual check.
-
-## Before changing an unfamiliar subsystem
-
-CEF threading, HWND embedding, frameless-window hit-testing, and the vcpkg/CEF build coupling are all subtly non-obvious here, and mistakes surface as hangs or blank windows rather than compile errors. Read the relevant rule file and the actual code first; if the change spans modules or touches process/thread boundaries, plan it with the `architect` agent before editing.
+- `base-pack/cobbleverse/` holds hundreds of config files and datapack zips.
+  Grep there deliberately with a narrow path, never by default; prefer
+  `repo-scout` or `base-pack/inventory/` when locating a mod or config.
+- Path-scoped rules in `.claude/rules/` load automatically; long procedures
+  live in `.claude/skills/`. Do not restate either here.
