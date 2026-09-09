@@ -12,7 +12,7 @@
   "Facts verified against the Modrinth API on 2026-09-08 unless an entry says 'unverified'.",
   "'file' on a remove entry pins the removal to one jar (two jars in the base share mod id 'particular').",
   "Run `python tools/pack_manifest.py resolve-overlay` to refresh version ids / URLs / hashes from Modrinth.",
-  "Nothing here has been boot-tested yet; see experiments/EXP-000-cobblemon-1.8-compat/."
+  "The 101-jar dedicated-server plan booted on 2026-09-09; individual gameplay and client compatibility still require functional tests."
  ],
  "replace": [
   {
@@ -373,7 +373,7 @@
      }
     ]
    },
-   "reason": "Release 1.1.1 explicitly updates PlayerXP for Cobblemon 1.8.",
+   "reason": "Release 1.1.1 targets Cobblemon 1.8 but is dedicated-server unsafe; retain only in the client plan pending a connection/usefulness test.",
    "to_file": "playerxp-fabric-1.1.1+1.21.1.jar",
    "sha512": "6cac056f8dbe94117fb428826f5d421d2438c6f3b644ddf5182b70476b378004ac48a4119d6f950507a6a4c38d100d22a8c275fad0f47d7f3402bc0cee50e6f2",
    "sha1": "814611655a2723a7adcaff3f8f2ef1c337249961",
@@ -522,6 +522,15 @@
    "mod_id": "particular",
    "file": "particular-1.1.2+1.21.jar.disabled",
    "reason": "Already .disabled in the base pack; duplicate mod id with Particular Reforged 1.5.5 (particular-1.21.1-Fabric-1.5.5.jar). Drop the file entirely."
+  },
+  {
+   "mod_id": "cobblemonraiddens",
+   "file": "cobblemonraiddens-fabric-0.11.3+1.21.1.jar",
+   "reason": "Runtime-incompatible with Cobblemon 1.8: datapack reload calls removed GraalShowdownService.getContext() and aborts world load. Published 0.11.7 and current upstream source retain the same call.",
+   "impact": "Raid battles and generated raid-den structures are unavailable in the 1.8 target.",
+   "replacement": "None during EXP-000; do not create a custom substitute during compatibility bootstrap.",
+   "world_save_risk": "HIGH: the mod adds den structures and persistent blocks, so omit it before campaign world construction rather than remove it later.",
+   "follow_up": "Retest a future release that explicitly adapts to Cobblemon 1.8, or evaluate a maintained alternative in a separate experiment."
   }
  ],
  "add": [],
@@ -552,6 +561,7 @@
   "paginatedadvancements",
   "particle_core",
   "particlerain",
+  "playerxp",
   "reeses-sodium-options",
   "resourcepackoverrides",
   "searchables",
@@ -560,7 +570,16 @@
   "tooltipfix",
   "zoomify"
  ],
- "server_exclude_note": "mod ids whose every jar declares environment 'client' in fabric.mod.json (33 ids, 34 client jars). Never install these on the dedicated server. Ids shared by a client jar and a non-client jar are listed in server_exclude_ambiguous instead.",
+ "server_exclude_note": "34 server exclusions: 33 mod ids whose jars declare environment 'client', plus PlayerXP as a runtime-proven dedicated-server incompatibility. Ids shared by a client jar and a non-client jar are listed in server_exclude_ambiguous instead.",
+ "server_exclude_overrides": [
+  {
+   "mod_id": "playerxp",
+   "classification": "CLIENT OPTIONAL",
+   "reason": "PlayerXP 1.1.1 invokes Fabric's client-only ItemTooltipCallback from its common main entrypoint and crashes a dedicated server before EULA handling.",
+   "evidence": "experiments/EXP-000-cobblemon-1.8-compat/runtime/server/logs/latest.log, 2026-09-09; upstream source commit a4f81324 has the same client imports and no newer 1.21.1 release exists.",
+   "client_value": "May retain EXP Share binding tooltip/UI, but usefulness and client/server registry compatibility remain unverified."
+  }
+ ],
  "needs_functional_test": [
   {
    "mod_id": "tmcraft",
@@ -580,10 +599,6 @@
   },
   {
    "mod_id": "cobblenav",
-   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
-  },
-  {
-   "mod_id": "cobblemonraiddens",
    "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
   },
   {
@@ -656,7 +671,7 @@
   },
   {
    "mod_id": "playerxp",
-   "reason": "depends on cobblemon with no upper bound (>=1.7.x): loads under 1.8 but behaviour is unverified"
+   "reason": "CLIENT OPTIONAL only: dedicated-server boot fails because the main entrypoint loads ItemTooltipCallback; client usefulness and connection safety remain unverified"
   },
   {
    "mod_id": "zamega",

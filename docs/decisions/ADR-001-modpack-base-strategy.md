@@ -22,7 +22,9 @@ Facts that shaped the decision:
 - The Minecraft version does not change, so 106 of 138 jars have no Cobblemon
   dependency and need only a boot test.
 - 28 jars integrate with Cobblemon. Four hard-pin 1.7.3 and block loading; three of
-  those have 1.8 builds already, one (Better Pokedex Scanner) does not.
+  those have 1.8 builds already, one (Better Pokedex Scanner) does not. Runtime
+  testing then proved that PlayerXP's 1.8 build is unsafe on a dedicated server
+  and that Raid Dens calls a removed Cobblemon API during datapack reload.
 - The core systems we want (RCT trainers and level caps, Mega Showdown, raid dens,
   breeding, economy) have the highest API coupling and need functional tests even
   when they load.
@@ -41,10 +43,12 @@ Facts that shaped the decision:
 3. **Target is Cobblemon 1.8.x on Minecraft 1.21.1 Fabric.** The current overlay
    has 13 replacements: Cobblemon, TMCraft, Capture XP, Tim Core, RCT/API, Mega
    Showdown, ZAMegas, Cobbreeding, Only Bottle Caps, PlayerXP, CobbleNav, and
-   Fight or Flight. It removes Better Pokédex Scanner and the disabled duplicate
-   Particular jar, and flags 27 retained addons/libraries for functional testing.
+  Fight or Flight. It removes Better Pokédex Scanner, Raid Dens, and the disabled
+  duplicate Particular jar; PlayerXP is retained only in the client plan. The
+  effective server plan contains 101 jars and has reached Minecraft's `Done` state.
 4. **Cobbleverse's story content is not our story.** We inherit its models, blocks,
-   trainer system, badge items, raids, and quality-of-life. We replace its spawn
+   trainer system, badge items, and quality-of-life. Raid Dens is deferred until a
+   server-safe Cobblemon 1.8 release exists. We replace its spawn
    pools, trainer placement, series and level-cap configuration, advancements, and
    world with our own. This also limits our dependence on the closed-source glue.
 5. **The upgrade path is a re-base.** When Cobbleverse releases for Cobblemon 1.8,

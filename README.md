@@ -16,7 +16,7 @@ follows.
 | --- | --- |
 | Repository structure, docs, agent system | done (this commit) |
 | Base pack inventory and compatibility matrix | done, see `docs/research/` |
-| EXP-000 boot test of Cobbleverse on Cobblemon 1.8 | target assembled and verified; **blocked at human EULA gate** |
+| EXP-000 boot test of Cobbleverse on Cobblemon 1.8 | **server boot passed** with 101 jars; client and functional tests remain |
 | EXP-001 to EXP-007 capability experiments | backlog only |
 | Route 1, gyms, dungeons, story | not started, gated on EXP-000 |
 
@@ -54,7 +54,8 @@ shrinks or disappears and the campaign overlay moves across unchanged.
 
 The Minecraft version does not change. The migration risk is Cobblemon addon
 compatibility, not Minecraft compatibility. The current overlay applies 13
-versioned replacements and removes Better Pokédex Scanner; details in
+versioned replacements, removes Better Pokédex Scanner and Raid Dens, and keeps
+PlayerXP out of the dedicated server; details in
 [docs/research/COBBLEVERSE_COMPATIBILITY.md](docs/research/COBBLEVERSE_COMPATIBILITY.md).
 
 ## Repository layout

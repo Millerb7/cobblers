@@ -19,22 +19,24 @@
   "assembled_server": {
     "runtime_path": "runtime/server",
     "tracked": false,
-    "jars": 103,
-    "unchanged_base_jars": 90,
-    "replacement_jars": 13,
-    "removed_enabled_jars": 1,
-    "server_excluded_client_mod_ids": 33,
+    "jars": 101,
+    "unchanged_base_jars": 89,
+    "replacement_jars": 12,
+    "removed_enabled_jars": 2,
+    "server_excluded_mod_ids": 34,
     "datapack_zips": 10,
-    "status": "ASSEMBLED_HASH_VERIFIED_EULA_BLOCKED"
+    "status": "BOOTED",
+    "boot_capture": "runs/20260909-001735",
+    "mod_set_hash": "D1483348BC2D"
   },
   "assembled_client": {
     "runtime_path": "runtime/client",
     "tracked": false,
-    "jars": 136,
+    "jars": 135,
     "resourcepack_zips": 47,
     "datapack_zips": 10,
     "shaderpack_zips": 1,
-    "status": "ASSEMBLED_HASH_VERIFIED_NOT_LAUNCHED"
+    "status": "PLANNED_NOT_LAUNCHED"
   },
   "stages": [
     {
@@ -72,12 +74,26 @@
       "id": 5,
       "name": "complete preserved Cobbleverse server set",
       "changes": ["all overlay replacements and preserved unknown integrations"],
-      "status": "PREFLIGHT PASSED THROUGH EULA CHECK; NOT LAUNCHED"
+      "status": "FAILED: PLAYERXP CLIENT API ON DEDICATED SERVER"
+    },
+    {
+      "id": 6,
+      "name": "server without PlayerXP",
+      "changes": ["server-exclude playerxp"],
+      "status": "FAILED: RAID DENS REMOVED COBBLEMON API"
+    },
+    {
+      "id": 7,
+      "name": "server without PlayerXP or Raid Dens",
+      "changes": ["server-exclude playerxp", "remove cobblemonraiddens"],
+      "status": "BOOTED",
+      "run": "runs/20260909-001735",
+      "mod_set_hash": "D1483348BC2D"
     }
   ],
   "human_gate": {
     "file": "runtime/server/eula.txt",
-    "status": "MISSING",
+    "status": "ACCEPTED_BY_HUMAN",
     "instruction": "A human must read https://aka.ms/MinecraftEULA and accept it directly if they agree. Repository tooling never accepts it."
   }
 }
