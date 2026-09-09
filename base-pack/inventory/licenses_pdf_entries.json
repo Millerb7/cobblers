@@ -1,0 +1,696 @@
+[
+ {
+  "name": "Fabric API - modmuss50",
+  "license": "Apache-2.0",
+  "source": "https://github.com/FabricMC/fabric"
+ },
+ {
+  "name": "Sodium - jellysquid3",
+  "license": "PolyForm Shield License 1.0.0",
+  "source": "https://github.com/CaffeineMC/sodium"
+ },
+ {
+  "name": "Iris Shaders - coderbot",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/IrisShaders/Iris"
+ },
+ {
+  "name": "Ferrite Core - malte0811",
+  "license": "MIT",
+  "source": "https://github.com/malte0811/FerriteCore"
+ },
+ {
+  "name": "Mod Menu - Prospector",
+  "license": "MIT",
+  "source": "https://github.com/TerraformersMC/ModMenu"
+ },
+ {
+  "name": "Lithium - jellysquid3",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/CaffeineMC/lithium"
+ },
+ {
+  "name": "ImmediatelyFast - RaphiMC",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/RaphiMC/ImmediatelyFast"
+ },
+ {
+  "name": "Fabric Language Kotlin - modmuss50",
+  "license": "Apache-2.0",
+  "source": "https://github.com/FabricMC/fabric-language-kotlin/"
+ },
+ {
+  "name": "Cloth Config API - shedaniel",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/shedaniel/cloth-config"
+ },
+ {
+  "name": "ModernFix - embeddedt",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/embeddedt/ModernFix"
+ },
+ {
+  "name": "Reese's Sodium Options - FlashyReese",
+  "license": "MIT",
+  "source": "https://github.com/FlashyReese/reeses-sodium-options"
+ },
+ {
+  "name": "Continuity - PepperCode1",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/PepperCode1/Continuity"
+ },
+ {
+  "name": "More Culling - FX",
+  "license": "GPL-3.0-only",
+  "source": "http://github.com/fxmorin/moreculling"
+ },
+ {
+  "name": "Zoomify - isXander",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/isXander/Zoomify"
+ },
+ {
+  "name": "GeckoLib - Gecko",
+  "license": "MIT",
+  "source": "https://github.com/bernie-g/geckolib"
+ },
+ {
+  "name": "Sound Physics Remastered - henkelmax",
+  "license": "GPL-3.0-only",
+  "source": "https://github.com/henkelmax/sound-physics-remastered"
+ },
+ {
+  "name": "Mouse Tweaks - YaLTeR",
+  "license": "BSD-3-Clause",
+  "source": "https://github.com/YaLTeR/MouseTweaks"
+ },
+ {
+  "name": "oo (owo-lib) - glisco",
+  "license": "MIT",
+  "source": "https://github.com/wisp-forest/owo-lib"
+ },
+ {
+  "name": "Debugify - isXander",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/isXander/Debugify/"
+ },
+ {
+  "name": "BetterF3 - TreyRuffy",
+  "license": "Complementary-License-Agreement-1.5",
+  "source": "https://github.com/ComplementaryDevelopment/ComplementaryReimagined"
+ },
+ {
+  "name": "Controlling - jaredlll08",
+  "license": "MIT",
+  "source": "https://github.com/jaredlll08/Controlling"
+ },
+ {
+  "name": "Roughly Enough Items (REI) - shedaniel",
+  "license": "MIT",
+  "source": "https://github.com/shedaniel/RoughlyEnoughItems"
+ },
+ {
+  "name": "Cobblemon - Cobbled Studios",
+  "license": "MPL-2.0",
+  "source": "https://gitlab.com/cable-mc/cobblemon"
+ },
+ {
+  "name": "Comforts - TheIllusiveC4",
+  "license": "LGPL-3.0-or-later",
+  "source": "https://github.com/illusivesoulworks/comforts"
+ },
+ {
+  "name": "Trinkets - Emi",
+  "license": "MIT",
+  "source": "https://github.com/emilyploszaj/trinkets"
+ },
+ {
+  "name": "Athena - Terrarium",
+  "license": "MIT",
+  "source": "https://github.com/terrarium-earth/Athena"
+ },
+ {
+  "name": "Handcrafted - Terrarium",
+  "license": "Terrarium-License-v1",
+  "source": "http://github.com/terrarium-earth/Handcrafted"
+ },
+ {
+  "name": "ToolTipFix - kyrptonaught",
+  "license": "MIT",
+  "source": "https://github.com/kyrptonaught/tooltipfix"
+ },
+ {
+  "name": "Highlight - Team Resourceful",
+  "license": "MIT",
+  "source": "https://github.com/Team-Resourceful/Highlight"
+ },
+ {
+  "name": "Euphoria Patches - SpacEagle17",
+  "license": "MPL-2.0",
+  "source": "https://github.com/EuphoriaPatches/EuphoriaPatcher"
+ },
+ {
+  "name": "Not Enough Crashes - natanfudge",
+  "license": "MIT",
+  "source": "https://github.com/natanfudge/Not-Enough-Crashes"
+ },
+ {
+  "name": "Accessories - Wisp Forest",
+  "license": "MIT",
+  "source": "https://github.com/wisp-forest/accessories"
+ },
+ {
+  "name": "Accessories Compatibility Layer - Blodhgarm",
+  "license": "MIT",
+  "source": "https://github.com/wisp-forest/accessories-compat-layer"
+ },
+ {
+  "name": "Better Beds - Motschen",
+  "license": "MIT",
+  "source": "https://github.com/TeamMidnightDust/BetterBeds"
+ },
+ {
+  "name": "Particle Rain - PigCart",
+  "license": "MIT",
+  "source": "https://github.com/PigCart/particle-rain"
+ },
+ {
+  "name": "Repurposed Structures - Team Resourceful",
+  "license": "MIT",
+  "source": "https://github.com/Team-Resourceful/ResourcefulLib"
+ },
+ {
+  "name": "Resourceful Lib - TelepathicGrunt",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/TelepathicGrunt/RepurposedStructures"
+ },
+ {
+  "name": "Particular Reforged - Leclowndu93150",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/Leclowndu93150/Particular"
+ },
+ {
+  "name": "Ping Wheel - Luken",
+  "license": "MIT",
+  "source": "https://github.com/LukenSkyne/Minecraft-Ping-Wheel"
+ },
+ {
+  "name": "Packet Fixer - TonimatasDEV",
+  "license": "MIT",
+  "source": "https://github.com/TonimatasDEV/PacketFixer"
+ },
+ {
+  "name": "Resource Pack Overrides - Fuzs",
+  "license": "MPL-2.0",
+  "source": "https://github.com/Fuzss/resourcepackoverrides"
+ },
+ {
+  "name": "Interactic - glisco",
+  "license": "MIT",
+  "source": "https://github.com/gliscowo/interactic"
+ },
+ {
+  "name": "Cobblemon Interface - VinnyStalck",
+  "license": "MIT",
+  "source": "https://gitlab.com/VinnyStalck/cobblemon-interface/"
+ },
+ {
+  "name": "RespackOpts - JFronny",
+  "license": "MIT",
+  "source": "https://git.jfronny.dev/JfMods/Respackopts"
+ },
+ {
+  "name": "LibJF - JFronny",
+  "license": "MIT",
+  "source": "https://git.jfronny.dev/JfMods/LibJF"
+ },
+ {
+  "name": "Cobblemon Catch Rate Display - Akkiruk",
+  "license": "MIT",
+  "source": "https://github.com/Akkiruk/catchrate-display"
+ },
+ {
+  "name": "Music Delay Remover (Infinite Music) - PlasticStrawActivist",
+  "license": "MIT",
+  "source": "https://github.com/PlasticStrawActivist/Infinite-music-mod"
+ },
+ {
+  "name": "Stack Deobfuscator - booky10",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/booky10/StackDeobfuscator"
+ },
+ {
+  "name": "Sophisticated Core (Unofficial Fabric port) - Salandora",
+  "license": "GPL-3.0-only",
+  "source": "https://github.com/Salandora/SophisticatedCore"
+ },
+ {
+  "name": "Sophisticated Backpacks (Unofficial Fabric port) - Salandora",
+  "license": "GPL-3.0-only",
+  "source": "https://github.com/Salandora/SophisticatedBackpacks"
+ },
+ {
+  "name": "Cobbreeding - Ludichat",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/KosmoMoustache/MusicNotification"
+ },
+ {
+  "name": "MoreCobblemonTweaks - justahuman-xd",
+  "license": "GPL-3.0-only",
+  "source": "https://github.com/JustAHuman-xD/MoreCobblemonTweaks"
+ },
+ {
+  "name": "Cobblemon Capture XP - tmetcalfe89",
+  "license": "MIT",
+  "source": "https://github.com/timinc-cobble/cobblemon-capture-xp-1.4-fabric"
+ },
+ {
+  "name": "Cobblemon Tim Core - tmetcalfe89",
+  "license": "MEGA-SHOWDOWN-LICENSE-2.1 + Permission",
+  "source": "https://github.com/yajatkaul/Mega_Showdown"
+ },
+ {
+  "name": "Radical Cobblemon Trainers - hdainester",
+  "license": "LGPL-3.0-or-later",
+  "source": "https://gitlab.com/srcmc/rct/mod"
+ },
+ {
+  "name": "Cobblemon Pokenav - gatekeep06",
+  "license": "MPL-2.0",
+  "source": "https://github.com/gatekeep06/cobblenav"
+ },
+ {
+  "name": "Better F1 Reborn - MovTery",
+  "license": "MIT",
+  "source": "https://github.com/MovTery/Better-F1-Reborn"
+ },
+ {
+  "name": "Better Recipe Book - marshmallow",
+  "license": "MIT",
+  "source": "https://github.com/mrshmllow/BetterRecipeBook"
+ },
+ {
+  "name": "Cobblemon Emissive Ores - Jamesssssssssssssss",
+  "license": "MPL-2.0"
+ },
+ {
+  "name": "Cobblemon Additions - strikebyte",
+  "license": "MIT"
+ },
+ {
+  "name": "Radical Cobblemon Trainer API - hdainester",
+  "license": "LGPL-3.0-only",
+  "source": "https://gitlab.com/srcmc/rct/api"
+ },
+ {
+  "name": "Custom Splash Screen - Motschen",
+  "license": "MIT",
+  "source": "https://github.com/TeamMidnightDust/CustomSplashScreen"
+ },
+ {
+  "name": "MidnightLib - Motschen",
+  "license": "MIT",
+  "source": "https://github.com/TeamMidnightDust/MidnightLib"
+ },
+ {
+  "name": "Low Fire - Oculie",
+  "license": "CC-BY-4.0"
+ },
+ {
+  "name": "Pokeblocks - MrShawn",
+  "license": "CC-BY-NC-4.0"
+ },
+ {
+  "name": "Cobblemon Classic Grass Pack - WizzStar",
+  "license": "MIT"
+ },
+ {
+  "name": "PokeCenter PCs - Instrafe",
+  "license": "MIT"
+ },
+ {
+  "name": "Biome Replacer - werdei",
+  "license": "MIT",
+  "source": "https://github.com/WerDei/Biome-Replacer"
+ },
+ {
+  "name": "CobbleFurnies - LunazStudios",
+  "license": "MIT",
+  "source": "https://github.com/gifluana/CobbleFurnies"
+ },
+ {
+  "name": "Better Nether Map - Jummit",
+  "license": "MIT",
+  "source": "https://github.com/Jummit/better-nether-map"
+ },
+ {
+  "name": "Cobblemon 3D Poke Rods - akera099",
+  "license": "CC-BY-NC-4.0"
+ },
+ {
+  "name": "MobsBeGone - Okaeri Game Studio",
+  "license": "Custom",
+  "source": "https://github.com/OkaeriGameStudio/MobsBeGone"
+ },
+ {
+  "name": "Sophisticated Storage (Unofficial Fabric port) - Salandora",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/Salandora/SophisticatedStorage"
+ },
+ {
+  "name": "Lenient Death - JackFred",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/JackFred2/LenientDeath"
+ },
+ {
+  "name": "TMCraft - KiwiFlavoredApollo",
+  "license": "GPL-3.0-only",
+  "source": "https://github.com/KiwiFlavoredApollo/tm-craft"
+ },
+ {
+  "name": "Cobblemon Battle Music - Ramen",
+  "license": "Permission"
+ },
+ {
+  "name": "Original Pokemon Battle Music - realDunkin",
+  "license": "CC-BY-SA-4.0"
+ },
+ {
+  "name": "Huge Structure Blocks - SamB440",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/SamB440/huge-structure-blocks"
+ },
+ {
+  "name": "Comforts Modernized - pedro9006",
+  "license": "LGPL-3.0-only"
+ },
+ {
+  "name": "Sounds Be Gone - meza",
+  "license": "GPL-3.0-only",
+  "source": "https://github.com/meza/SoundsBeGone"
+ },
+ {
+  "name": "Villager Config - DrexHD",
+  "license": "MIT",
+  "source": "https://github.com/PrelawAverage/cozyhome-fabric"
+ },
+ {
+  "name": "Canon PC Wallpapers - dhi_holo",
+  "license": "CC0-1.0"
+ },
+ {
+  "name": "Architectury API - architectury",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/architectury/architectury-api"
+ },
+ {
+  "name": "FancyMenu - keksuccino",
+  "license": "DSMSLv3",
+  "source": "https://github.com/Keksuccino/FancyMenu"
+ },
+ {
+  "name": "No Chat Restrictions - Aizistral",
+  "license": "WTFPL",
+  "source": "https://github.com/Aizistral-Studios/No-Chat-Restrictions"
+ },
+ {
+  "name": "E19 - Cobblemon Minimap Icons - Emery319",
+  "license": "MPL-2.0"
+ },
+ {
+  "name": "Konkrete - keksuccino",
+  "license": "Apache-2.0",
+  "source": "https://github.com/Keksuccino/Konkrete"
+ },
+ {
+  "name": "Melody - keksuccino",
+  "license": "MIT",
+  "source": "https://github.com/chudders1231/PlayerXP"
+ },
+ {
+  "name": "Pok\ufffd Discs - Sosa",
+  "license": "MIT",
+  "source": "https://github.com/chudders1231/SafePastures"
+ },
+ {
+  "name": "CobbleCuisine - fyre520",
+  "license": "MIT",
+  "source": "https://github.com/Fyre520/CobbleCuisine-Java"
+ },
+ {
+  "name": "Forge Config API Port - Fuzs",
+  "license": "MPL-2.0",
+  "source": "https://github.com/Fuzss/forgeconfigapiport"
+ },
+ {
+  "name": "YetAnotherConfigLib (YACL) - isXander",
+  "license": "LGPL-3.0-or-later",
+  "source": "https://github.com/isXander/YetAnotherConfigLib"
+ },
+ {
+  "name": "Xaero's Minimap - xaero",
+  "license": "Custom"
+ },
+ {
+  "name": "Xaero's World Map - xaero",
+  "license": "Custom"
+ },
+ {
+  "name": "Balm - BlayTheNinth",
+  "license": "Custom",
+  "source": "https://github.com/TwelveIterationMods/Balm"
+ },
+ {
+  "name": "Waystones - BlayTheNinth",
+  "license": "Custom",
+  "source": "https://github.com/TwelveIterationMods/Waystones"
+ },
+ {
+  "name": "NetherPortalFix - BlayTheNinth",
+  "license": "Custom",
+  "source": "https://github.com/TwelveIterationMods/NetherPortalFix"
+ },
+ {
+  "name": "Default Options - BlayTheNinth",
+  "license": "Custom",
+  "source": "https://github.com/TwelveIterationMods/DefaultOptions"
+ },
+ {
+  "name": "Forgiving Void - BlayTheNinth",
+  "license": "Custom",
+  "source": "https://github.com/TwelveIterationMods/ForgivingVoid"
+ },
+ {
+  "name": "[ETF] Entity Texture Features - Traben",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/Traben-0/Entity_Texture_Features"
+ },
+ {
+  "name": "[EMF] Entity Model Features - Traben",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/Traben-0/Entity_Model_Features"
+ },
+ {
+  "name": "Fresh Animations - FreshLX",
+  "license": "Custom"
+ },
+ {
+  "name": "Fresh Moves - TrasTick",
+  "license": "CC-BY-NC-SA-4.0"
+ },
+ {
+  "name": "Only Bottle Caps - PCR's Content Studio",
+  "license": "MIT",
+  "source": "https://github.com/Suel-ki/Beautify-Refabricated"
+ },
+ {
+  "name": "Moar Concrete - mcjamweasel",
+  "license": "MIT",
+  "source": "https://github.com/mcjamweasel/moar-concrete-mod-1.21"
+ },
+ {
+  "name": "Paginated Advancements & Custom Frames - DaFuqs",
+  "license": "MIT",
+  "source": "https://github.com/DaFuqs/PaginatedAdvancements"
+ },
+ {
+  "name": "Carved Wood - Suel_ki",
+  "license": "Custom",
+  "source": "https://github.com/IIAmMaker/Carved-wood"
+ },
+ {
+  "name": "Global Packs - JTK222",
+  "license": "ARR",
+  "source": "https://github.com/JTK222/Global-Packs"
+ },
+ {
+  "name": "Fully Hisuian Starters - SwordEnd",
+  "license": "ARR / Custom + Permission"
+ },
+ {
+  "name": "AdvancementDisable - CozyPenguin",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/cschierig/AdvancementDisable"
+ },
+ {
+  "name": "Krypton - CozyPenguin",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/astei/krypton"
+ },
+ {
+  "name": "Advancement Plaques - Grend",
+  "license": "CC-BY-NC-ND-4.0 + Modpack Permission",
+  "source": "https://github.com/AHilyard/AdvancementPlaques/"
+ },
+ {
+  "name": "Iceberg - Grend",
+  "license": "CC-BY-NC-ND-4.0 + Modpack Permission",
+  "source": "https://github.com/AHilyard/Iceberg/"
+ },
+ {
+  "name": "Rechiseled - SuperMartijn642",
+  "license": "ARR + Modpack Permission",
+  "source": "https://github.com/SuperMartijn642/Rechiseled"
+ },
+ {
+  "name": "Not Enough Animations - tr7zw",
+  "license": "Custom",
+  "source": "https://github.com/tr7zw/NotEnoughAnimations"
+ },
+ {
+  "name": "Entity Culling - tr7zw",
+  "license": "Custom",
+  "source": "https://github.com/tr7zw/EntityCulling"
+ },
+ {
+  "name": "Tom's Simple Storage - tom5454",
+  "license": "MIT",
+  "source": "https://github.com/tom5454/Toms-Storage"
+ },
+ {
+  "name": "Terralith - Stardust Labs",
+  "license": "Custom",
+  "source": "https://github.com/Stardust-Labs-MC/Terralith"
+ },
+ {
+  "name": "Vanilla Backport - ItsBlackgear",
+  "license": "MIT",
+  "source": "https://github.com/ItsBlackGear/VanillaBackport"
+ },
+ {
+  "name": "Better Third Person - Socolio",
+  "license": "ARR"
+ },
+ {
+  "name": "Cobblemon Battle Extras - Raguto",
+  "license": "MPL-2.0"
+ },
+ {
+  "name": "Catch Indicator - levels",
+  "license": "ARR + Permission"
+ },
+ {
+  "name": "Cobblemon Raid Dens - necroso1",
+  "license": "MIT",
+  "source": "https://github.com/necro50n3/cobblemon-raiddens"
+ },
+ {
+  "name": "Puff Radio - Swordsman69x",
+  "license": "ARR"
+ },
+ {
+  "name": "CobbleDollars - Harmex",
+  "license": "ARR + Permission"
+ },
+ {
+  "name": "BadOptimizations - thosea",
+  "license": "MIT",
+  "source": "https://github.com/imthosea/BadOptimizations"
+ },
+ {
+  "name": "Concurrent Chunk Management Engine - ishland",
+  "license": "MIT",
+  "source": "https://github.com/RelativityMC/C2ME-fabric"
+ },
+ {
+  "name": "Fast Noise - ZenXArch",
+  "license": "MPL-2.0",
+  "source": "https://codeberg.org/ZenXArch/FastNoise"
+ },
+ {
+  "name": "Particle Core - fzzyhmstrs",
+  "license": "MIT",
+  "source": "https://github.com/fzzyhmstrs/pc"
+ },
+ {
+  "name": "ScalableLux - ishland",
+  "license": "LGPL-3.0-only",
+  "source": "https://github.com/RelativityMC/ScalableLux"
+ },
+ {
+  "name": "Cobblemon Better Pok\ufffddex Scanner - Joshiki",
+  "license": "MIT",
+  "source": "https://gitlab.com/jsroberts92/better-pokedex-scanner"
+ },
+ {
+  "name": "Neruina - Bawnorton",
+  "license": "MIT",
+  "source": "https://github.com/Bawnorton/Neruina"
+ },
+ {
+  "name": "Icon Xaero's X FreshAnimations - godkyo98",
+  "license": "ARR"
+ },
+ {
+  "name": "MysticMons - iMystxc-dev",
+  "license": "MPL-2.0"
+ },
+ {
+  "name": "MissingMons - RedRibbonz",
+  "license": "MIT"
+ },
+ {
+  "name": "Pokemans Pack - Tontra",
+  "license": "MPL-2.0"
+ },
+ {
+  "name": "GlitchDex - Glitch_Ratt",
+  "license": "MIT"
+ },
+ {
+  "name": "TDmon - DiEn",
+  "license": "MIT"
+ },
+ {
+  "name": "CobbleMotion - Lenkagari",
+  "license": "ARR + Permission"
+ },
+ {
+  "name": "LackingMons - Glowmons Dev Team",
+  "license": "MPL-2.0"
+ },
+ {
+  "name": "Hydro Reanimodel Pack - BlaziumHydro",
+  "license": "CC-BY-NC-4.0"
+ },
+ {
+  "name": "CavsCobbleMons - Xcavalier",
+  "license": "CC-BY-NC-4.0"
+ },
+ {
+  "name": "Planeta Cobblemon's Pok\ufffdmon Pack - Planeta Cobblemon",
+  "license": "CC-BY-NC-ND-4.0 + Permission"
+ },
+ {
+  "name": "MundialMons - Alexiocraft",
+  "license": "MIT"
+ },
+ {
+  "name": "Navas ZA Megas - natusue233 & YajatKaul",
+  "license": "MEGA SHOWDOWN LICENSE-2.1 + Permission"
+ },
+ {
+  "name": "AllTheMons x Mega Showdown - Lvnatic",
+  "license": "Permission"
+ }
+]
