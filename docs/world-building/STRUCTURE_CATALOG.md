@@ -42,17 +42,19 @@ provenance is in `world/structures/manifests/structure-dependencies.json`.
 | BCA-VILLAGE-FIGHTING-S | Fighting small village | Cobblemon Additions · `bca:village/fighting_small` | size-4 jigsaw | procedural | `/place structure`: PASS after 15×15 chunks loaded | component edits only | Two centers plus themed paths/houses/markets; use as vocabulary, not a final town |
 | BCA-ACADEMY-01 | The Academy | Cobblemon Additions · `bca:default/centers/center_the_academy` | NBT, 10 jigsaws, 38 entities | 49×60×73 | manual placement not run | WITH CARE | Large civic/school reference; 185 signs and 285 chiseled bookshelves |
 | BCA-DEPARTMENT-STORE-01 | Department store | Cobblemon Additions · `bca:default/centers/center_department_store` | NBT | UNKNOWN | manual placement not run | WITH CARE | Medium/major city commercial anchor |
-| CBL-F4-PALLET-HOUSE-01 | Pallet family house `large2` | CobblemonCityTowns 1.0 donor · copied as `cobblers:f4/pallet_house_large2` | MIT donor NBT; vanilla blocks; 3 jigsaws | 12×9×10 | generated EXP-001 placement pending runtime | YES, retain attribution | Relic Island house; placement resolves jigsaws and replaces loot |
-| CCT-PALLET-LAB-01 | Professor Oak's Lab | CobblemonCityTowns 1.0 · `cobblemoncitytowns:pallet_town/rare_structures/lab` | donor NBT; vanilla + Cobblemon; 5 jigsaws/5 entities | 19×20×20 | inspected, not copied or placed | YES, retain attribution | Canonical mainland Pallet laboratory candidate |
+| CBL-F4-PALLET-HOUSE-01 | Pallet family house `large2` | CobblemonCityTowns 1.0 donor · copied as `cobblers:f4/pallet_house_large2` | MIT donor NBT; vanilla blocks; 3 jigsaws | 12×9×10 | placed on Relic Island; server/restart verified | YES, retain attribution | Relic Island house; placement resolves jigsaws and replaces loot |
+| CCT-PALLET-KIT-01 | Five Pallet houses and town sign | CobblemonCityTowns 1.0 · copied under `cobblers:f4/pallet/` | MIT donor NBT; vanilla blocks | 9–13 wide, 8–11 tall | all mainland placements server/restart verified | YES, retain attribution | Core EXP-001 Pallet settlement vocabulary |
+| CCT-PALLET-LAB-01 | Professor Oak's Lab | CobblemonCityTowns 1.0 · copied as `cobblers:f4/pallet/rare_structures/lab` | donor NBT; vanilla + Cobblemon; 5 jigsaws/5 entities | 19×20×20 | server/restart verified | YES, retain attribution | Canonical mainland Pallet laboratory |
+| CCT-SERVICE-01 | Pokémon Center and Poké Mart | CobblemonCityTowns 1.0 · copied under `cobblers:f4/services/` | donor NBT; complete-overlay service blocks | 22×15×23 and 23×12×22 | both server/restart verified | YES, retain attribution | Keeps Pallet close to the Cobbleverse service loop |
 
 ### Pallet reference
 
 CobblemonCityTowns 1.0 is the primary external donor. Its MIT-licensed Minecraft
 1.21.1 archive contains five Pallet houses, a 19×20×20 Oak's Lab, roads, fences,
-lamps, trees, flowers, a pool, and a town sign. `CBL-F4-PALLET-HOUSE-01` copies
-the vanilla-only 12×9×10 `pallet_town/buildings/large2` NBT as
-`cobblers:f4/pallet_house_large2` for EXP-001. The donor's natural worldgen files
-are not enabled.
+lamps, trees, flowers, a pool, and a town sign. EXP-001 copies the five houses,
+lab, sign, Pokémon Center and Poké Mart into the campaign namespace. The
+standalone `large2` copy remains the Relic Island house. The donor's structure
+sets and natural worldgen files are not enabled.
 
 The local Cobbleverse datapack also contains `cobbleverse:ash` (43×22×44),
 including the Pallet Ash/Delia NPC setup, a PC, RCT spawners, furniture, and

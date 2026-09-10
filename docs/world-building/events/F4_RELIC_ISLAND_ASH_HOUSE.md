@@ -130,7 +130,7 @@ intended island center at sea level, and run:
 For the planned F4-local coordinates, execute from the server console:
 
 ```mcfunction
-execute positioned 420 62 790 run function cobblers:exp_001/f4_relic_island/place
+execute positioned 420 62 675 run function cobblers:exp_001/f4_relic_island/place
 ```
 
 The function is deterministic and intended only for a disposable prototype. It

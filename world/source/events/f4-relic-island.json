@@ -8,11 +8,11 @@
   "required": false,
   "coordinate_space": "f4-local-1000",
   "placement": {
-    "anchor": {"x": 420, "y": 62, "z": 790},
+    "anchor": {"x": 420, "y": 62, "z": 675},
     "anchor_definition": "island center at local sea level",
-    "pallet_shore_sightline": {"x": 420, "y": 68, "z": 645},
+    "pallet_shore_sightline": {"x": 420, "y": 68, "z": 530},
     "shore_distance_blocks": 145,
-    "command": "execute positioned 420 62 790 run function cobblers:exp_001/f4_relic_island/place"
+    "command": "execute positioned 420 62 675 run function cobblers:exp_001/f4_relic_island/place"
   },
   "footprint": {
     "island_blocks": [70, 58],

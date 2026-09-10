@@ -1,0 +1,126 @@
+{
+  "schema": "cobblers.exp001-f4-output/1",
+  "seed": 64929,
+  "dimensions": [
+    1000,
+    1000
+  ],
+  "height_range": [
+    47,
+    91
+  ],
+  "sea_level": 62,
+  "spawn": {
+    "x": 555,
+    "z": 390,
+    "y": 74
+  },
+  "town_placements": [
+    {
+      "id": "oak-lab",
+      "template": "cobblers:f4/pallet/rare_structures/lab",
+      "x": 610,
+      "z": 305,
+      "y": 75
+    },
+    {
+      "id": "player-house",
+      "template": "cobblers:f4/pallet/buildings/large1",
+      "x": 500,
+      "z": 350,
+      "y": 73
+    },
+    {
+      "id": "neighbor-house",
+      "template": "cobblers:f4/pallet/buildings/large2",
+      "x": 535,
+      "z": 410,
+      "y": 73
+    },
+    {
+      "id": "south-house",
+      "template": "cobblers:f4/pallet/buildings/small1",
+      "x": 590,
+      "z": 430,
+      "y": 75
+    },
+    {
+      "id": "west-house",
+      "template": "cobblers:f4/pallet/buildings/small2",
+      "x": 465,
+      "z": 420,
+      "y": 73
+    },
+    {
+      "id": "east-house",
+      "template": "cobblers:f4/pallet/buildings/small3",
+      "x": 640,
+      "z": 405,
+      "y": 75
+    },
+    {
+      "id": "pallet-sign",
+      "template": "cobblers:f4/pallet/town_centers/sign",
+      "x": 545,
+      "z": 465,
+      "y": 74
+    },
+    {
+      "id": "pokemon-center",
+      "template": "cobblers:f4/services/pokecenter",
+      "x": 690,
+      "z": 330,
+      "y": 78
+    },
+    {
+      "id": "poke-mart",
+      "template": "cobblers:f4/services/structure_pokemart",
+      "x": 700,
+      "z": 410,
+      "y": 78
+    }
+  ],
+  "events": [
+    {
+      "id": "abandoned-fish-hut",
+      "kind": "shore_hut",
+      "x": 170,
+      "z": 515,
+      "template": "cobblers:f4/pallet/buildings/small2",
+      "y": 78
+    },
+    {
+      "id": "abandoned-house",
+      "kind": "abandoned_house",
+      "x": 835,
+      "z": 175,
+      "template": "cobblers:f4/pallet/buildings/small3",
+      "y": 91
+    },
+    {
+      "id": "relic-island",
+      "kind": "worldshift_fragment",
+      "x": 420,
+      "z": 675,
+      "template": "cobblers:f4/pallet_house_large2",
+      "y": 71
+    },
+    {
+      "id": "broken-boat",
+      "kind": "shore_wreck",
+      "x": 790,
+      "z": 785,
+      "y": 69
+    }
+  ],
+  "sha256_pixels": {
+    "beach.png": "e9bff90f759d3b6687ac444e03642dc244e20c70440aa85413d9301fd2e889fe",
+    "events.png": "cd56f48719c0829b6a3253399da9bae61a93ce495c7c8739db6a828a2c594432",
+    "forest.png": "57a9304dbae9c75fb8d0183f9823d07cbb0485189be94884325bec19313f8622",
+    "heightmap.png": "b285c67bf5d9a76672046e1fe726bf7c352439d8dfc6abe850f789969c5e74c2",
+    "land-water.png": "cf113dec2430ccd7f80178238492c23db7d06e5196e14a995e95505b05a737ea",
+    "routes.png": "d153c3b03ff847215ea5815df12fadd3f8f9b7256f74b1336157987cce0f83f4",
+    "terrain-categories.png": "46c8b949bd4caca79e88159c97c32bf655a5a775873dc47b675b80d4c11d12ed"
+  },
+  "setup_function_sha256": "1260d70e4233d21b249e08fda4fe8ed1c387f20e29869c5defc806fcedb34501"
+}

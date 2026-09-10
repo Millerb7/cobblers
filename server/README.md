@@ -9,6 +9,8 @@ the things that must never be committed.
 | `launch/README.md` | yes | How the server is put together: Fabric installer, loader version, Java 21, memory. |
 | `scripts/assemble-server.ps1` | yes | Builds `server/mods/` from the manifest plan (`--side server`) out of a local jar folder. Dry-run by default. |
 | `scripts/boot-test.ps1` | yes | Pre-flight checks, boots the server once, captures logs into `experiments/EXP-000-cobblemon-1.8-compat/runs/`. |
+| `scripts/install-exp001-world.ps1` | yes | Installs/selects the separate F4 WorldPainter export in the proven local runtime; leaves EULA and EXP-009 untouched. |
+| `scripts/run-exp001-server.ps1` | yes | Guarded interactive launcher for the selected EXP-001 F4 world. |
 | `mods/` | **no** (`*.jar` gitignored) | Output of `assemble-server.ps1`. |
 | `libraries/`, `versions/`, `*.jar` | **no** | Fabric server launcher output. |
 
@@ -28,3 +30,11 @@ the things that must never be committed.
 5. Generate the Cobbleverse riding-compatible runtime datapack using the command in `launch/README.md`.
 6. Read and, if you agree, accept the EULA in `<serverdir>/eula.txt` yourself.
 7. `pwsh server/scripts/boot-test.ps1 -ServerDir <serverdir>`.
+
+## EXP-001 F4 playtest
+
+The local F4 profile reuses the verified 100-jar runtime but has its own world,
+`exp001-f4-pallet-prototype`. After export, install it with
+`server/scripts/install-exp001-world.ps1`; start it with
+`server/scripts/run-exp001-server.ps1`. Exact rebuild, placement and teleport
+commands are in `experiments/EXP-001-curated-route/README.md`.
