@@ -1,0 +1,207 @@
+COBBLERS CURRENT WORLD-BUILDING OUTLINE
+Date: 2026-09-10
+Branch: codex/exp-009-hex-prototype
+Current PR: https://github.com/Millerb7/cobblers/pull/6
+
+PURPOSE
+
+This file records what the repository is currently doing for world building,
+what the experiments have actually proved, and why the current generated result
+is not suitable as the production campaign world.
+
+
+1. CAMPAIGN WORLD GOAL
+
+The intended result is a handcrafted, believable Pokémon-style region inside
+Minecraft. Routes should feel like real landscapes with readable geography,
+settlements, paths, landmarks, optional discoveries, curated Pokémon, and
+deliberate progression. Cobbleverse remains the reference for the desired
+Cobblemon experience. The world should support that experience rather than feel
+like an empty generated Minecraft map with buildings dropped onto it.
+
+
+2. CURRENT EXPERIMENTAL APPROACH
+
+The present approach is a deterministic terrain-to-server pipeline:
+
+1. A JSON file describes the macro layout and coordinates.
+   - EXP-009 source: world/source/region.json
+   - EXP-001 F4 source: world/source/exp-001/f4-region.json
+
+2. A Python generator turns that description into raster masks.
+   - EXP-009: tools/generate_region.py
+   - EXP-001: tools/generate_exp001_f4.py
+   - Outputs include height, land/water, beach, forest, terrain-category,
+     route, and event masks.
+
+3. A WorldPainter script imports those masks and exports a Minecraft save.
+   - EXP-009: world/source/worldpainter/build-exp-009.js
+   - EXP-001: world/source/worldpainter/build-exp-001.js
+   - The EXP-001 test area is a finite 1,000 by 1,000-block world.
+
+4. A generated Minecraft function edits the exported terrain and places
+   structures at fixed coordinates.
+   - modpack/datapacks/cobblers_campaign/data/cobblers/function/
+     exp_001/f4/setup.mcfunction
+
+5. A guarded installer copies the disposable export into the existing verified
+   Cobblemon 1.8 server runtime as a separately named save.
+   - Installer: server/scripts/install-exp001-world.ps1
+   - Launcher: server/scripts/run-exp001-server.ps1
+   - Save name: exp001-f4-pallet-prototype
+
+The server executable and mods remain in the EXP-000 runtime because that is the
+known working 100-jar Cobblemon 1.8 environment. EXP-001 has its own world save;
+it does not use or overwrite the EXP-009 save.
+
+
+3. CONTENT CURRENTLY GENERATED FOR F4
+
+The F4 prototype currently attempts to create:
+
+- a broad southern coastline and ocean;
+- a Pallet Town clearing near the coast;
+- north, west, and east paths;
+- northern woods;
+- a northeastern rocky upland;
+- three offshore islands;
+- an abandoned western fish hut and dock;
+- an abandoned northeastern house;
+- a broken boat landmark;
+- an offshore Relic of Pallet Town house and reward cache.
+
+Pallet buildings are copied from the MIT-licensed CobblemonCityTowns donor pack
+and placed deliberately under the cobblers namespace. The donor pack is not
+enabled for natural world generation. The current town kit includes five Pallet
+houses, Oak's Lab, a town sign, a Pokémon Center, and a Poké Mart. Donor source,
+license, IDs, hashes, and campaign uses are recorded in:
+
+world/structures/manifests/pokemon-town-donors.json
+
+
+4. WHAT THE PIPELINE HAS PROVED
+
+The experiment has proved several technical capabilities:
+
+- deterministic source masks can be generated and validated;
+- WorldPainter 2.27.1 can export a Minecraft 1.21.1-compatible Anvil save;
+- the save boots under the complete Cobbleverse-style Cobblemon 1.8 overlay;
+- campaign-owned copies of donor NBT structures resolve correctly;
+- all 13 planned F4 locations can be placed by a datapack function;
+- the Pokémon Center, Poké Mart, houses, lab, events, and reward chest survive
+  a server save and restart;
+- separate experiment worlds can safely reuse one verified server runtime;
+- repository validation passes with zero errors and zero warnings;
+- the automated test suite passes all 37 tests.
+
+These results prove assembly, compatibility, placement, and persistence. They
+do not prove that the world looks or plays like a handcrafted region.
+
+
+5. CLIENT PLAYTEST RESULT
+
+The current visual result is rejected as a production-quality world-building
+method. The screenshots and in-game inspection show these problems:
+
+- The finite WorldPainter export creates severe exposed map-edge walls. At the
+  western coast, terrain ends in a huge vertical dirt and stone face beside the
+  ocean. This immediately breaks the illusion of a natural region.
+- The terrain reads as broad masks and terraces rather than authored geology.
+  Elevation changes are abrupt, repetitive, and insufficiently eroded.
+- The coastline is technically curved but lacks coves, rock shelves, dunes,
+  vegetation transitions, drainage, and small-scale variation.
+- Offshore islands are mostly flat grassy shapes with one isolated structure.
+  The Relic Island does not yet feel like a discovery or a composed location.
+- Pallet Town is a collection of separated donor houses on open grass. It lacks
+  convincing streets, yards, fences, gardens, elevation control, civic space,
+  shoreline integration, props, and visual hierarchy.
+- Paths are thin generated lines. They do not respond convincingly to terrain
+  or create the layered route composition expected from a Pokémon location.
+- Event locations are mechanically present but have too little authored
+  environment around them. A building or marker alone does not make an event.
+- Vegetation density and placement do not create believable forest depth or
+  frame views toward landmarks.
+- Large empty spaces remain between points of interest. Reducing the planning
+  scale from 1,250 to 1,000 blocks does not solve the lack of local composition.
+- The pipeline is capable of placing planned objects, but the generated terrain
+  does not approach the detail or intentionality required for the campaign.
+
+
+6. CURRENT EXPERIMENT STATUS
+
+EXP-009:
+
+- The 1,250-block hex scale was playtested and found too large and sparse for
+  the current content density.
+- A 1,000-block planning scale was selected for the next experiment only. It is
+  not the final region scale.
+- The EXP-009 world remains a disposable technical and scale prototype.
+
+EXP-001:
+
+- The F4 world is a disposable technical prototype, not a campaign-production
+  world.
+- Server boot, structure placement, and persistence succeeded.
+- The client visual-quality test failed.
+- Curated Route 1 Pokémon spawning has not yet been implemented or proven.
+- The current terrain should not be expanded into more hexes or treated as the
+  foundation of the final region.
+
+
+7. WHAT IS NOT CURRENTLY COMPLETE
+
+- a production-quality Pallet Town;
+- a production-quality Route 1;
+- a natural transition beyond the finite test-map boundary;
+- detailed terrain sculpting and erosion;
+- authored forests, shorelines, cliffs, streams, and habitat pockets;
+- integrated settlement roads, yards, props, and landscaping;
+- curated encounter tables;
+- trainer placement and progression;
+- multiplayer-safe event and reward state;
+- final scale selection;
+- a production campaign save.
+
+
+8. PRACTICAL CONCLUSION
+
+The current automated generator should be retained as a reproducible technical
+prototype tool, but it should not remain the primary authoring method for final
+terrain. Continuing to add more generated hexes would multiply the same visual
+problems.
+
+A viable next world-building approach should preserve the working server,
+datapack, donor, validation, and structure-placement infrastructure while
+changing how the visible world is authored. The likely next proof should be a
+much smaller, high-detail vertical slice made with deliberate WorldPainter
+sculpting and in-game editing:
+
+- manually shape one coastline, town edge, and short Route 1 segment;
+- use custom terrain and vegetation layers with erosion and transition passes;
+- compose paths, lots, landmarks, and sightlines by hand;
+- use donor buildings as parts of an authored settlement rather than dropping
+  them at generated coordinates;
+- add local details and event dressing in Minecraft, potentially with WorldEdit
+  as a development-only tool;
+- judge the result against visual references before producing additional area;
+- keep scripts for repeatable export, installation, validation, and testing,
+  not for deciding every aesthetic terrain feature.
+
+No additional region-scale generation should begin until that smaller slice
+demonstrates the required visual quality and establishes a realistic authoring
+workflow.
+
+
+9. RELEVANT FILES
+
+- experiments/EXP-001-curated-route/README.md
+- experiments/EXP-009-hex-scale-prototype/README.md
+- world/source/exp-001/f4-region.json
+- world/source/exp-001/f4-preview.png
+- world/source/worldpainter/build-exp-001.js
+- tools/generate_exp001_f4.py
+- modpack/datapacks/cobblers_campaign/
+- world/structures/manifests/pokemon-town-donors.json
+- server/scripts/install-exp001-world.ps1
+- server/scripts/run-exp001-server.ps1
+
