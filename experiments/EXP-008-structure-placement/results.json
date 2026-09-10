@@ -1,0 +1,32 @@
+{
+  "schema": "cobblers.experiment-result/1",
+  "experiment": "EXP-008",
+  "date": "2026-09-09",
+  "environment": {
+    "minecraft": "1.21.1",
+    "fabric_loader": "0.19.5",
+    "cobblemon": "1.8.0",
+    "server_jars": 101,
+    "mod_set_hash": "D1483348BC2D",
+    "world": "structure-proof (disposable, not committed)"
+  },
+  "observations": [
+    {"id": "CBM-CENTER-PLAINS-01", "command": "place template cobblemon:village_plains/village_plains_pokecenter 0 80 0", "result": "PASS", "server_response": "Loaded template at 0, 80, 0"},
+    {"id": "CBM-CENTER-PLAINS-01-TRANSFORM", "command": "place template cobblemon:village_plains/village_plains_pokecenter 64 80 0 clockwise_90 front_back 1.0 12345", "result": "PASS", "server_response": "Loaded template at 64, 80, 0"},
+    {"id": "BCA-MART-01", "command": "place template bca:default/one_off/structure_pokemart 160 80 160 clockwise_90 none 1.0 12345", "result": "PASS", "server_response": "Loaded template at 160, 80, 160"},
+    {"id": "BCA-BATTLEPAD-01", "command": "place template bca:default/one_off/small_battlepad 0 80 128 clockwise_90 left_right 1.0 12345", "result": "PASS", "server_response": "Loaded template at 0, 80, 128"},
+    {"id": "CBV-GYM-BROCK", "command": "place template cobbleverse:brock 0 80 256 180 none 1.0 12345", "result": "PASS", "server_response": "Loaded template at 0, 80, 256"},
+    {"id": "LM-FIRESCOURGE-SHRINE", "command": "execute in minecraft:the_nether run place template legendarymonuments:firescourge_shrine 256 80 0 clockwise_90 front_back 1.0 12345", "result": "PASS", "server_response": "Loaded template at 256, 80, 0"},
+    {"id": "BCA-VILLAGE-DEFAULT-S", "command": "place structure bca:village/default_small 0 80 0", "result": "PARTIAL", "server_response": "Generated structure; missing bca paths/store_workers/feature/decor pool warnings"},
+    {"id": "BCA-VILLAGE-FIGHTING-S", "command": "place structure bca:village/fighting_small 320 80 0", "result": "PASS_WITH_UNVERIFIED_CONTENT", "server_response": "Generated structure at 320, 80, 0"},
+    {"id": "LM-FIRESCOURGE-REGISTERED", "command": "execute in minecraft:the_nether run place structure legendarymonuments:firescourge_shrine 0 80 0", "result": "PARTIAL", "server_response": "Identifier resolved and command reported generated; mod terrain validation reported FAILED on flat site"},
+    {"id": "SAVE-RESTART", "command": "save-all flush; stop; restart same world", "result": "PASS", "server_response": "Saved; clean stop; restart reached Done (1.315s); clean stop"}
+  ],
+  "not_verified": [
+    "visual block completeness",
+    "entity completeness and orientation",
+    "PC, healer, shop, trainer, loot and shrine behavior",
+    "jigsaw seam quality",
+    "multiplayer synchronization"
+  ]
+}
