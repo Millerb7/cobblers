@@ -73,18 +73,21 @@ master coordinate system, so planning-cell boundaries do not create geography.
 - **FAIL — first client density:** the D4 meadow reached severe visible crowding
   with Cobblemon's generated `pokemonPerChunk: 1.0`. The overlay now uses a
   provisional `0.25` cap for the next run; this still needs visual confirmation.
-- **PASS AFTER SERVER FIX — client riding:** initially, Mudsdale and Charizard
-  accepted movement input while the player remained detached. Disabling Better
-  Third Person and Not Enough Animations separately did not change the failure.
-  A vanilla boat attached normally, isolating the problem from Minecraft's base
-  passenger handling. Krypton 0.2.8 was then removed from the server only; with
-  the client copy still enabled, server queries showed Mudsdale and player at
-  `(690.898, 75.0, 637.870)`, then Charizard and player at
-  `(708.620, 78.900, 624.298)`. Krypton's server entity-tracker mixin is the
-  runtime-proven conflict and Krypton is now client-optional/server-excluded.
-- **PASS — corrected server boot:** the resulting 100-jar server reached
-  `Done (1.314s)` and stopped cleanly. Capture `20260910-110333`, mod-set hash
-  `62BEABD9398A`.
+- **PASS — client riding after datapack migration:** initially, Mudsdale and
+  Charizard accepted movement input while the player remained visually
+  detached. Disabling Better Third Person, Not Enough Animations, and client
+  Krypton did not change the failure. A vanilla boat attached normally.
+  Removing server-side Krypton synchronized the mount and player positions,
+  but the visual detachment remained, so Krypton was not sufficient to explain
+  the visible failure. Inspection then found 233 Cobbleverse 1.7-style riding
+  additions with offset-based seats in `COBBLEVERSE-DP-v31.zip`. The migration
+  tool replaced seats for the 51 native Cobblemon 1.8 mounts with their
+  authoritative `seat_N` locators while preserving custom riding statistics and
+  the 182 Cobbleverse-only definitions. The user then confirmed successful
+  riding on both Mudsdale and Charizard on 2026-09-10.
+- **PASS — patched server boot:** the 100-jar server with the migrated datapack
+  reached `Done (1.276s)` and stopped cleanly. Capture `20260910-124927`,
+  mod-set hash `62BEABD9398A`.
 - **CORRECTED — event visibility:** the original red event mask reserved all 16
   event sites but did not place blocks. The generator now emits an explicitly
   disposable marker for every reservation, including a fenced arena for the D4
@@ -105,7 +108,9 @@ nonfatal missing `DragonFight` field warning for the imported `level.dat`.
 BiomeReplacer also ignored its existing Terralith rules because those biome IDs
 are absent from this imported vanilla-biome prototype; neither warning blocked
 load, save, or restart. The reduced spawn cap is a test setting, not a final
-campaign decision.
+campaign decision. Mudsdale and Charizard prove one ground and one flying native
+1.8 mount; the other 49 migrated native mounts and 182 retained Cobbleverse-only
+mounts have not been sampled.
 
 ## Decision
 

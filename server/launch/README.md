@@ -33,9 +33,12 @@ later script) can reproduce the server exactly.
    The server needs at least `global_packs.toml` so datapacks load.
 4. **Datapacks**: copy `base-pack/cobbleverse/datapacks/` (including `extra/`) and `modpack/datapacks/` to `<serverdir>/datapacks/`
    (that is the path `global_packs.toml` force-loads; world-level `world/datapacks/` is not used).
-5. **server.properties**: from `server/config/server.properties.example`.
-6. **EULA**: open `<serverdir>/eula.txt`, read the linked EULA, and change the value yourself if you agree. No script does this.
-7. **Boot**: `pwsh server/scripts/boot-test.ps1 -ServerDir <serverdir>` (see the script header for parameters).
+5. **Riding compatibility**: generate a patched runtime copy of the main
+   Cobbleverse datapack. This leaves the local licensed source unchanged:
+   `python tools/patch_cobbleverse_riding.py base-pack/cobbleverse/datapacks/COBBLEVERSE-DP-v31.zip <serverdir>/datapacks/COBBLEVERSE-DP-v31.zip --cobblemon-jar <serverdir>/mods/Cobblemon-fabric-1.8.0+1.21.1.jar --expect-patched 51`.
+6. **server.properties**: from `server/config/server.properties.example`.
+7. **EULA**: open `<serverdir>/eula.txt`, read the linked EULA, and change the value yourself if you agree. No script does this.
+8. **Boot**: `pwsh server/scripts/boot-test.ps1 -ServerDir <serverdir>` (see the script header for parameters).
 
 ## JVM
 
