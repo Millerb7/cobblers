@@ -14,4 +14,4 @@ through `EXP-007-*` folders. This index records active and added proofs.
 | EXP-006 Static encounter | planned | controlled one-time Pokémon | multiplayer-safe authored encounter | gated by EXP-000 |
 | EXP-007 Story progression | planned | player/shared campaign flags | persistent unlock and reward | gated by EXP-000 |
 | EXP-008 Structure placement | partial | reuse existing NBT/jigsaw assets | five representative placements plus save/restart | use vanilla templates for prototypes; client visual QA next |
-
+| EXP-009 Automated hex world | ready for scale playtest | deterministic 2×2 terrain and scale proof | source masks → exported/booted world → client mount test | export, town placement, save, and restart passed; client mount/sightline test next |

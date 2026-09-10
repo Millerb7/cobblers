@@ -4,7 +4,7 @@
 
 **EXP-000 is not complete, and the repository is not ready for EXP-001.** The isolated dedicated server reached Minecraft's `Done` state on 2026-09-09 after two runtime-caused exclusions. Client connection and all gameplay smoke tests remain unverified.
 
-The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobblemon 1.8.0. The effective dedicated-server set has 101 jars: 89 unchanged base jars and 12 replacements. Better Pokédex Scanner and Raid Dens are removed, PlayerXP is excluded from the server only, and the disabled legacy Particular jar is omitted; Particular Reforged remains.
+The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobblemon 1.8.0. The effective dedicated-server set has 100 jars: 88 unchanged base jars and 12 replacements. Better Pokédex Scanner and Raid Dens are removed; PlayerXP and Krypton are excluded from the server only; the disabled legacy Particular jar is omitted, while Particular Reforged remains.
 
 ## Evidence standard
 
@@ -29,7 +29,7 @@ The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobbl
 | Config files | 223 base files | 224 assembled files | isolated runtime inventory |
 | Datapacks | 10 zip files | 10 assembled zip files | isolated runtime inventory |
 
-The immutable base verification found 104 matching server-side jars, zero missing, and zero hash mismatches. The 34 extras were exactly the 33 enabled client-only jars plus the disabled legacy Particular jar. The final target verification found all 101 planned server jars with zero missing, mismatched, extra, or unverified files. That exact set reached `Done (6.377s)` with mod-set hash `D1483348BC2D`.
+The immutable base verification found 104 matching server-side jars, zero missing, and zero hash mismatches. The 34 extras were exactly the 33 enabled client-only jars plus the disabled legacy Particular jar. After functional riding isolated Krypton, the final target verification found all 100 planned server jars with zero missing, mismatched, extra, or unverified files. That exact set reached `Done (1.314s)` with mod-set hash `62BEABD9398A`.
 
 ## Required compatibility overlay
 
@@ -70,7 +70,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | BadOptimizations | OPTIONAL/CLIENT-QOL | 2.4.1 | >=1.21.1 | Fabric | — | LIKELY WORKING | CLIENT ONLY | Client-only perf. |
 | BetterF1 | OPTIONAL/CLIENT-QOL | 1.1 | ~1.21 | Fabric | — | NEEDS BOOT TEST | CLIENT ONLY | ODD: jar named +1.21.7 but depends minecraft ~1.21 (any 1.21.x). Built against a newer MC; client mixin may not apply cleanly on 1.21.1. No source/contact in metadata. |
 | BetterF3 | OPTIONAL/CLIENT-QOL | 11.0.3 | >=1.21 | Fabric | — | LIKELY WORKING | CLIENT ONLY | Client-only debug HUD. |
-| Better Third Person | OPTIONAL/CLIENT-QOL | 1.9.0 | ~1.21 | Fabric | — | LIKELY WORKING | CLIENT ONLY | Client-only camera. ARR. |
+| Better Third Person | OPTIONAL/CLIENT-QOL | 1.9.0 | ~1.21 | Fabric | — | LIKELY WORKING | CLIENT OPTIONAL | Client-only camera. Disabling it did not change the EXP-009 riding failure, so it is not the observed cause. ARR. |
 | Carved Wood | WORLD-CRITICAL | 1.9.7-B | >=1.21 <1.22 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | 325 blockstates of decorative wood blocks; if used in the handcrafted map it must stay. Bundles cardinal-components. Contact points at fabric-example-mod template (no real source URL). |
 | CobbleDollars | GAMEPLAY-CRITICAL | 2.0.0+Beta-5.1+1.21.1 | >=1.21.1 | Fabric | >=1.6.0+1.21.1 | NEEDS FUNCTIONAL TEST | PRESERVE; TEST | Currency + merchant NPCs (villager template pools). cobblemon >=1.6.0+1.21.1 (no upper bound). 55 classes reference Cobblemon API. ARR. |
 | CobbleFurnies | WORLD-CRITICAL | 1.2 | ~1.21.1 | Fabric | >=1.7.1 | NEEDS FUNCTIONAL TEST | PRESERVE; TEST | 372 blockstates of Pokemon-themed furniture (labs, Pokecenters). Hard-required by LegendaryMonuments. cobblemon >=1.7.1, athena >=4.0.2, architectury >=13.0.8. 8 classes touch Cobblemon API. |
@@ -149,7 +149,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | Interactic | OPTIONAL/CLIENT-QOL | 0.2.3+1.21 | >=1.20.3 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Item throw/pickup animations (env=*). Needs owo. Bundles owo-sentinel. |
 | Iris | OPTIONAL/CLIENT-QOL | 1.8.14-beta.1+mc1.21.1 | ["1.21.1"] | Fabric | — | LIKELY WORKING | CLIENT ONLY | Client-only shaders; requires sodium 0.8.x. Beta build. |
 | Konkrete | GAMEPLAY-CRITICAL / LIBRARY | 1.9.9 | >=1.21 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Needed by: fancymenu (>=1.9.4). |
-| Krypton | OPTIONAL/CLIENT-QOL | 0.2.8 | >=1.21 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Network perf, server+client. |
+| Krypton | OPTIONAL/CLIENT-QOL | 0.2.8 | >=1.21 | Fabric | — | INCOMPATIBLE (SERVER) | CLIENT OPTIONAL; SERVER EXCLUDE | Its server `EntityTrackerEntryMixin` conflicts with Cobblemon 1.8 riding: Pokémon accepted controls while the player stayed detached. A vanilla boat attached normally. Removing Krypton from the server only restored Mudsdale and Charizard passenger attachment and synchronized server positions; the successful client still had Krypton enabled. |
 | Lenient Death | OPTIONAL/CLIENT-QOL | 1.2.5+1.21.1 | >=1.20.5 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Server-side death-item rules (config/lenientdeath.json5) - a gameplay rule, not Cobblemon-coupled. Bundles jackfredlib + fabric-permissions-api. |
 | LibJF | GAMEPLAY-CRITICAL / LIBRARY | 3.17.5 | * | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Needed by: respackopts (libjf-base/config-core-v2/data-manipulation). 12 nested modules. |
 | Lithium | OPTIONAL/CLIENT-QOL | 0.15.4+mc1.21.1 | ["1.21", "1.21.1"] | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Server+client perf. |
@@ -164,7 +164,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | Neruina | OPTIONAL/CLIENT-QOL | 3.3.3 | ~1.21.1 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Ticking-entity crash guard (server+client). Needs configurable ~3.5.2. Bundles github-api (auto-report). |
 | Better Nether Map | OPTIONAL/CLIENT-QOL | 4.0.0-1.21.1 | >=1.21.1 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Maps in nether. Needs cloth-config2. |
 | NetherPortalFix | OPTIONAL/CLIENT-QOL | 21.1.3 | >=1.21 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Server-side portal linking. Needs balm. ARR. |
-| NotEnoughAnimations | OPTIONAL/CLIENT-QOL | 1.12.4 | 1.21.1 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Client animations (env=*, client entrypoint). tr7zw protective license. |
+| NotEnoughAnimations | OPTIONAL/CLIENT-QOL | 1.12.4 | 1.21.1 | Fabric | — | LIKELY WORKING | CLIENT OPTIONAL | Client animations (env=*, client entrypoint). Disabling it did not change the EXP-009 riding failure, so it is not the observed cause. tr7zw protective license. |
 | Not Enough Crashes | OPTIONAL/CLIENT-QOL | 4.4.9+1.21.1 | >=1.17 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Crash handling. Sodium breaks <4.4.8 (ok at 4.4.9). |
 | oωo | GAMEPLAY-CRITICAL / LIBRARY | 0.12.15.4+1.21 | >=1.21 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Needed by: accessories (>=0.12.15.1), accessories_compat_layer (>=0.12.15.4), interactic (>=0.11.3), particular 1.1.2 (disabled). |
 | Packet Fixer | OPTIONAL/CLIENT-QOL | 3.3.1 | >=1.20.5 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Raises packet/NBT size limits - useful for large Cobblemon PC/NBT payloads on servers. minecraft >=1.20.5, fabricloader '*'. |
@@ -219,7 +219,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | datapacks/extra/COBBLEVERSE-Johto-DP.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
 | datapacks/extra/COBBLEVERSE-Sinnoh-DP.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
 | datapacks/extra/Terralith-DP.zip | WORLD-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
-| resourcepacks/ATMxMSD RP.zip | OPTIONAL / CLIENT-QOL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; CLIENT TEST | resourcepack |
+| resourcepacks/ATMxMSD RP.zip | OPTIONAL / CLIENT-QOL | 3.6.1 in base 1.7.42 | 1.21.1 | Fabric | Cobblemon model resolvers; Mega Showdown assets | INCOMPATIBLE | PRESERVE INSTALLED; DISABLE BY DEFAULT | First 1.8 client launch failed its resource reload because the pack resolves Mega Mewtwo X as `cobblemon:mewtwo_mega_x.geo`; Mega Showdown 1.0.2 for Cobblemon 1.8 provides `cobblemon:mewtwo_x.geo`. The fallback reload reached the title/welcome screen but left the custom splash visible. Retest a newer or patched pack separately. |
 | resourcepacks/COBBLEVERSE RCTmod RP.zip | OPTIONAL / CLIENT-QOL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; CLIENT TEST | resourcepack |
 | resourcepacks/COBBLEVERSE RP.zip | OPTIONAL / CLIENT-QOL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; CLIENT TEST | resourcepack |
 | resourcepacks/COBBLEVERSE Soundtrack.zip | OPTIONAL / CLIENT-QOL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; CLIENT TEST | resourcepack |
@@ -270,7 +270,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 
 ## Boot and smoke-test status
 
-The isolated runtime contains the pinned Fabric launcher, all 101 target server jars, base configuration, overlay configuration, and all 10 datapacks. The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack; its post-removal assembly and GUI launch remain pending.
+The isolated runtime contains the pinned Fabric launcher, all 100 target server jars, base configuration, overlay configuration, and all 10 datapacks. The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack. The assembled client launches and connects; broader gameplay smoke tests remain pending.
 
 The first real complete-overlay launch failed in PlayerXP's common entrypoint. The next launch failed in Raid Dens during datapack reload. After applying the scoped exclusions above, capture `20260909-001735` reached `Done (6.377s)` and stopped cleanly. The retained upstream datapacks still emit nonfatal errors for orphaned Raid Dens loot tables; these were recorded without expanding the boot-fix scope. A client connection and the multiplayer smoke checklist are next. Server startup is verified for this exact mod set, while individual gameplay components remain unverified until their functional checks pass.
 
