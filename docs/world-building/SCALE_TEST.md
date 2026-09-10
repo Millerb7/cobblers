@@ -23,6 +23,27 @@ Do not infer travel time from distance. Record each route manually on foot,
 Mudsdale, and Rapidash, then classify the 1,250-block scale as **too condensed**,
 **promising**, or **too empty**.
 
+## First qualitative result — 2026-09-10
+
+- **Scale:** the 1,250-block planning cells feel too empty/ginormous at the
+  prototype's current event density. No travel times were recorded, so this is
+  a qualitative result rather than the final scale selection.
+- **Visibility:** the live server uses `view-distance=10`, so the client receives
+  roughly 160 blocks of surrounding chunks. Increasing the client setting alone
+  cannot reveal terrain the server has not sent. This limits distant landmarks,
+  but it does not explain the long travel distances between content.
+- **Strong result:** the river felt convincing and gave the world a real sense
+  of place. Keep river-scale geography and use it to organize routes, crossings,
+  towns, and reveals.
+- **Direction:** preserve the Cobbleverse client experience and dependencies as
+  closely as practical. Test a modest server view-distance increase separately;
+  do not depend on a new LOD mod or extreme view distance to make campaign
+  geography readable.
+- **Next comparison:** test a denser layout at the 1,000-block candidate scale,
+  with meaningful route beats much closer together. The planning hex may remain
+  a macro design tool rather than a promise that every cell is one uninterrupted
+  playable route.
+
 ## Measured routes
 
 Coordinates use the deterministic terrain surface Y. Distances are straight-line
