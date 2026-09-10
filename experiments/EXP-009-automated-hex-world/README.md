@@ -68,8 +68,12 @@ master coordinate system, so planning-cell boundaries do not create geography.
 - **PASS — persistence:** `save-all flush` saved every dimension and a clean
   restart reached `Done (1.656s)` with the same 101 jars and mod-set hash. The
   captured restart is `runtime/runs/20260909-081753`.
-- **PENDING CLIENT TEST:** visual terrain, foundations, doors, functional
-  blocks, mount scale, and sightlines still require the prepared client test.
+- **PARTIAL CLIENT SCALE TEST:** the user reported that the river felt
+  convincing and gave the geography a strong sense of place. At the current
+  sparse prototype density, the 1,250-block cells felt ginormous. The server's
+  `view-distance=10` also prevented distant objects from participating in most
+  sightline checks. No travel times were recorded, so the final scale remains
+  undecided.
 - **FAIL — first client density:** the D4 meadow reached severe visible crowding
   with Cobblemon's generated `pokemonPerChunk: 1.0`. The overlay now uses a
   provisional `0.25` cap for the next run; this still needs visual confirmation.
@@ -114,12 +118,16 @@ mounts have not been sampled.
 
 ## Decision
 
-**READY FOR SCALE PLAYTEST.** The disposable world is exported, placed, saved,
-and restart-tested. Do not convert the full region map or choose a final hex
-scale until the manual test is recorded.
+**PIPELINE PASSED; 1,250-BLOCK DENSITY NEEDS REVISION.** The disposable world is
+exported, placed, saved, restart-tested, and playable. The first qualitative
+test classifies its current content spacing as too empty while strongly
+supporting the river-scale geography. Do not convert the full region map or
+choose a final hex scale until a denser 1,000-block comparison and measured
+travel tests are available.
 
 ## Follow-up
 
-Record screenshots, measured travel times, and the scale classification here.
-Only then compare 1,000, 1,250, and 1,500 blocks per planning hex; this
-experiment intentionally makes no final scale choice.
+Create a denser 1,000-block comparison without replacing the successful terrain
+pipeline. Test server view distance separately at a modest increase, record
+travel times, and keep the river as the prototype's successful geographic
+pattern. This experiment intentionally makes no final scale choice.

@@ -2,9 +2,10 @@
 
 This catalog records useful structure families available in the Cobblemon 1.8
 server plan. IDs and dimensions come from shipped registry JSON or parsed NBT;
-`UNKNOWN` means no cheap proof was available. Upstream assets remain in their
-original jars/datapacks. Machine-readable provenance is in
-`world/structures/manifests/structure-dependencies.json`.
+`UNKNOWN` means no cheap proof was available. Most upstream assets remain in
+their original jars/datapacks; explicitly licensed donor copies are recorded in
+`world/structures/manifests/pokemon-town-donors.json`. Machine-readable runtime
+provenance is in `world/structures/manifests/structure-dependencies.json`.
 
 ## Inventory summary
 
@@ -21,7 +22,8 @@ original jars/datapacks. Machine-readable provenance is in
   legendary sites, LumyMon's two large templates, and Cobblemon habitats/ruins.
 - Towers and facilities: Rocket/Galactic towers and HQ, dawn/dusk/bell/burned
   towers, leagues, academy, department store, observatory and archaeological site.
-- No standalone trade-tower or professor-lab ID was found.
+- No standalone trade-tower ID was found. External CobblemonCityTowns 1.0 adds a
+  verified Pallet Town Oak's Lab donor.
 
 ## Pokémon infrastructure
 
@@ -40,6 +42,25 @@ original jars/datapacks. Machine-readable provenance is in
 | BCA-VILLAGE-FIGHTING-S | Fighting small village | Cobblemon Additions · `bca:village/fighting_small` | size-4 jigsaw | procedural | `/place structure`: PASS after 15×15 chunks loaded | component edits only | Two centers plus themed paths/houses/markets; use as vocabulary, not a final town |
 | BCA-ACADEMY-01 | The Academy | Cobblemon Additions · `bca:default/centers/center_the_academy` | NBT, 10 jigsaws, 38 entities | 49×60×73 | manual placement not run | WITH CARE | Large civic/school reference; 185 signs and 285 chiseled bookshelves |
 | BCA-DEPARTMENT-STORE-01 | Department store | Cobblemon Additions · `bca:default/centers/center_department_store` | NBT | UNKNOWN | manual placement not run | WITH CARE | Medium/major city commercial anchor |
+| CBL-F4-PALLET-HOUSE-01 | Pallet family house `large2` | CobblemonCityTowns 1.0 donor · copied as `cobblers:f4/pallet_house_large2` | MIT donor NBT; vanilla blocks; 3 jigsaws | 12×9×10 | placed on Relic Island; server/restart verified | YES, retain attribution | Relic Island house; placement resolves jigsaws and replaces loot |
+| CCT-PALLET-KIT-01 | Five Pallet houses and town sign | CobblemonCityTowns 1.0 · copied under `cobblers:f4/pallet/` | MIT donor NBT; vanilla blocks | 9–13 wide, 8–11 tall | all mainland placements server/restart verified | YES, retain attribution | Core EXP-001 Pallet settlement vocabulary |
+| CCT-PALLET-LAB-01 | Professor Oak's Lab | CobblemonCityTowns 1.0 · copied as `cobblers:f4/pallet/rare_structures/lab` | donor NBT; vanilla + Cobblemon; 5 jigsaws/5 entities | 19×20×20 | server/restart verified | YES, retain attribution | Canonical mainland Pallet laboratory |
+| CCT-SERVICE-01 | Pokémon Center and Poké Mart | CobblemonCityTowns 1.0 · copied under `cobblers:f4/services/` | donor NBT; complete-overlay service blocks | 22×15×23 and 23×12×22 | both server/restart verified | YES, retain attribution | Keeps Pallet close to the Cobbleverse service loop |
+
+### Pallet reference
+
+CobblemonCityTowns 1.0 is the primary external donor. Its MIT-licensed Minecraft
+1.21.1 archive contains five Pallet houses, a 19×20×20 Oak's Lab, roads, fences,
+lamps, trees, flowers, a pool, and a town sign. EXP-001 copies the five houses,
+lab, sign, Pokémon Center and Poké Mart into the campaign namespace. The
+standalone `large2` copy remains the Relic Island house. The donor's structure
+sets and natural worldgen files are not enabled.
+
+The local Cobbleverse datapack also contains `cobbleverse:ash` (43×22×44),
+including the Pallet Ash/Delia NPC setup, a PC, RCT spawners, furniture, and
+berries. Use it only as an in-game visual reference for F4. The datapack is
+nonredistributable, and extracting it would bake unrelated behavior into the
+event.
 
 Cobblemon Additions contains 248 BCA NBT pieces, 33 pools, and nine village
 generators. Its route kit includes straight, curved, T-junction, and cross-road
@@ -67,9 +88,10 @@ encounters would conflict with this campaign and their redistribution terms.
 | CBV-SINNOH-GALACTIC-HQ | Team Galactic HQ | optional Sinnoh pack · `cobbleverse:team_galactic_hq` | NBT + jigsaw | REFERENCE ONLY for villain/lab vocabulary |
 | MSD-MEGA-SITE | Mega Site | Mega Showdown · `mega_showdown:mega_site` | NBT + jigsaw with processor | Test before use | Processor substitutes meteorid ores; depends on the exact 1.8 overlay build |
 
-No standalone trade-tower or professor-lab structure ID was found. Department
-stores, academies, Rocket/Galactic towers, and Mega Showdown's observatory and
-archaeological site are the closest verified references.
+No standalone trade-tower structure ID was found. The external donor manifest
+records CobblemonCityTowns' Oak's Lab for future Pallet work. Department stores,
+academies, Rocket/Galactic towers, and Mega Showdown's observatory and
+archaeological site remain useful facility references.
 
 ## Ancient, legendary, and natural
 

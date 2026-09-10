@@ -107,6 +107,14 @@ $crashDir = Join-Path $ServerDir 'crash-reports'
 $start = Get-Date
 $stdoutPath = Join-Path $runDir 'stdout.txt'
 
+# Preserve then clear the previous live log before Java starts. Some launchers
+# touch latest.log before Log4j truncates it, so timestamp checks alone can
+# briefly make an old Done line look current.
+if (Test-Path -LiteralPath $logPath) {
+    Copy-Item -LiteralPath $logPath -Destination (Join-Path $runDir 'latest-before.log')
+    Remove-Item -LiteralPath $logPath
+}
+
 $psi = New-Object System.Diagnostics.ProcessStartInfo
 $psi.FileName = $JavaExe
 $psi.Arguments = ($jvmArgs -join ' ')

@@ -1,0 +1,41 @@
+{
+  "schema": "cobblers.exp001-f4/1",
+  "seed": 64929,
+  "world": {
+    "name": "exp001-f4-pallet-prototype",
+    "width": 1000,
+    "height": 1000,
+    "hex_flat_to_flat": 1000,
+    "blocks_per_pixel": 1,
+    "sea_level": 62,
+    "minimum_height": 47,
+    "maximum_height": 104
+  },
+  "spawn": {"x": 555, "z": 390},
+  "town": {
+    "name": "Pallet Town",
+    "center": {"x": 555, "z": 390},
+    "placements": [
+      {"id": "oak-lab", "template": "cobblers:f4/pallet/rare_structures/lab", "x": 610, "z": 305},
+      {"id": "player-house", "template": "cobblers:f4/pallet/buildings/large1", "x": 500, "z": 350},
+      {"id": "neighbor-house", "template": "cobblers:f4/pallet/buildings/large2", "x": 535, "z": 410},
+      {"id": "south-house", "template": "cobblers:f4/pallet/buildings/small1", "x": 590, "z": 430},
+      {"id": "west-house", "template": "cobblers:f4/pallet/buildings/small2", "x": 465, "z": 420},
+      {"id": "east-house", "template": "cobblers:f4/pallet/buildings/small3", "x": 640, "z": 405},
+      {"id": "pallet-sign", "template": "cobblers:f4/pallet/town_centers/sign", "x": 545, "z": 465},
+      {"id": "pokemon-center", "template": "cobblers:f4/services/pokecenter", "x": 690, "z": 330},
+      {"id": "poke-mart", "template": "cobblers:f4/services/structure_pokemart", "x": 700, "z": 410}
+    ]
+  },
+  "events": [
+    {"id": "abandoned-fish-hut", "kind": "shore_hut", "x": 170, "z": 515, "template": "cobblers:f4/pallet/buildings/small2"},
+    {"id": "abandoned-house", "kind": "abandoned_house", "x": 835, "z": 175, "template": "cobblers:f4/pallet/buildings/small3"},
+    {"id": "relic-island", "kind": "worldshift_fragment", "x": 420, "z": 675, "template": "cobblers:f4/pallet_house_large2"},
+    {"id": "broken-boat", "kind": "shore_wreck", "x": 790, "z": 785}
+  ],
+  "routes": [
+    {"id": "north-route", "points": [[555, 390], [575, 300], [600, 190], [620, 30]]},
+    {"id": "west-coast-path", "points": [[555, 390], [430, 410], [300, 445], [170, 515]]},
+    {"id": "east-house-path", "points": [[555, 390], [680, 330], [760, 245], [835, 175]]}
+  ]
+}

@@ -1,5 +1,25 @@
 # Region terrain sources
 
+## EXP-001 F4 Pallet coast
+
+`exp-001/f4-region.json` defines a separate 1,000×1,000 coastal prototype.
+`tools/generate_exp001_f4.py` writes its one-block-per-pixel masks, preview,
+hash summary and the `cobblers:exp_001/f4/setup` function. Export it with:
+
+```powershell
+python tools/generate_exp001_f4.py
+New-Item -ItemType Directory -Force experiments/EXP-001-curated-route/runtime/export
+& 'C:\Program Files\WorldPainter\wpscript.exe' world/source/worldpainter/build-exp-001.js 100 export
+```
+
+The source places the Pallet coast, woods, northeastern upland and three
+offshore islands in one continuous heightmap. Donor buildings are applied after
+export, so CobblemonCityTowns is not enabled as a natural-generation datapack.
+See `experiments/EXP-001-curated-route/README.md` for installation and playtest
+coordinates.
+
+## EXP-009 four-cell scale prototype
+
 `region.json` is the source of truth for EXP-009. `hex_flat_to_flat`, row and
 column counts, and `blocks_per_pixel` derive both block and raster dimensions;
 the generator contains no second copy of the 1,250-block scale. The generation
