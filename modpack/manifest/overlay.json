@@ -12,7 +12,7 @@
   "Facts verified against the Modrinth API on 2026-09-08 unless an entry says 'unverified'.",
   "'file' on a remove entry pins the removal to one jar (two jars in the base share mod id 'particular').",
   "Run `python tools/pack_manifest.py resolve-overlay` to refresh version ids / URLs / hashes from Modrinth.",
-  "The corrected 100-jar dedicated-server plan booted on 2026-09-10 after Krypton was excluded server-side; remaining gameplay compatibility still requires functional tests."
+  "The corrected 100-jar dedicated-server plan booted on 2026-09-10 with Krypton provisionally excluded server-side and the Cobbleverse riding-seat migration applied; remaining gameplay compatibility still requires functional tests."
  ],
  "replace": [
   {
@@ -571,7 +571,7 @@
   "tooltipfix",
   "zoomify"
  ],
- "server_exclude_note": "35 server exclusions: 33 mod ids whose jars declare environment 'client', plus PlayerXP and Krypton as runtime-proven dedicated-server incompatibilities. Ids shared by a client jar and a non-client jar are listed in server_exclude_ambiguous instead.",
+ "server_exclude_note": "35 server exclusions: 33 mod ids whose jars declare environment 'client', PlayerXP as a runtime-proven dedicated-server incompatibility, and Krypton as a provisional server exclusion pending an isolated retest after the riding-seat migration. Ids shared by a client jar and a non-client jar are listed in server_exclude_ambiguous instead.",
  "server_exclude_overrides": [
   {
    "mod_id": "playerxp",
@@ -583,9 +583,9 @@
   {
    "mod_id": "krypton",
    "classification": "CLIENT OPTIONAL",
-   "reason": "With Krypton 0.2.8 present on the server, Cobblemon 1.8 mounts accepted movement input but did not attach the player to the Pokemon. Removing Krypton from the server restored passenger attachment and synchronized player/Pokemon positions.",
-   "evidence": "EXP-009 live test on 2026-09-10: Better Third Person and Not Enough Animations had no effect; a vanilla boat attached normally; after server-only Krypton removal, server queries showed Mudsdale/player at 690.898,75.0,637.870 and Charizard/player at 708.620,78.900,624.298.",
-   "client_value": "Retain on clients provisionally: the successful test client still had Krypton 0.2.8 enabled, isolating the observed conflict to its server-side behavior."
+   "reason": "Removing Krypton 0.2.8 from the server restored authoritative mount/player position synchronization, but visual rider detachment persisted until the Cobbleverse 1.7 seat definitions were migrated to Cobblemon 1.8 locators. Keep the tested exclusion provisionally and retest Krypton server-side after broader mount sampling.",
+   "evidence": "EXP-009 live test on 2026-09-10: Better Third Person, Not Enough Animations, and client Krypton had no effect; a vanilla boat attached normally; server-only Krypton removal synchronized queried positions; the generated datapack seat migration then produced a user-confirmed pass for Mudsdale and Charizard.",
+   "client_value": "Retain on clients: the successful Mudsdale and Charizard test used Krypton 0.2.8 client-side."
   }
  ],
  "needs_functional_test": [

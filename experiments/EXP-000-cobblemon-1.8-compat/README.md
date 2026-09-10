@@ -27,7 +27,8 @@ Determine whether the Cobbleverse 1.7.42 experience can be preserved on Cobblemo
 - the Fabric 1.21.1 server launcher with loader 0.19.5;
 - 100 hash-verified server jars: 88 unchanged base jars and 12 Modrinth-pinned replacements;
 - the reference config plus the repository overlay config;
-- all 10 reference datapack zips;
+- all 10 reference datapack zips, with a generated runtime copy of
+  `COBBLEVERSE-DP-v31.zip` that migrates 51 native mounts to Cobblemon 1.8 seat locators;
 - `server.properties` copied from the repository example.
 
 The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack. PlayerXP and Krypton remain client-optional; both are excluded from the server, while Raid Dens is removed from both sides. The assembled client launches and connects.
@@ -46,7 +47,8 @@ The reference pack was read and hashed only. No jar, config, datapack, save, or 
 | 5 | complete overlay with preserved unknown addons | determine actual stable server set | PlayerXP fatal during entrypoint initialization |
 | 6 | exclude PlayerXP from server only | preserve its possible client tooltip while fixing dedicated-server startup | Raid Dens fatal during datapack reload |
 | 7 | remove Raid Dens from both sides | omit a world-critical addon whose released/current code calls a removed API | **BOOTED**; reached `Done (6.377s)` |
-| 8 | exclude Krypton from the server only | resolve the runtime-proven Cobblemon passenger attachment conflict while retaining client network optimization | **BOOTED**; riding attachment restored and reached `Done (1.314s)` |
+| 8 | exclude Krypton from the server only | isolate its contribution to passenger synchronization while retaining client network optimization | **BOOTED**; authoritative positions synchronized but visual attachment still failed; reached `Done (1.314s)` |
+| 9 | migrate Cobbleverse riding seats | replace old offsets only for native 1.8 mounts while preserving custom stats and Cobbleverse-only mounts | **BOOTED**; Mudsdale and Charizard riding verified; reached `Done (1.276s)` |
 
 After each failed boot, change only the implicated overlay entry, reassemble, and record the exact error. Do not edit the runtime mod folder as the source of truth.
 
@@ -57,6 +59,7 @@ python tools/pack_manifest.py verify base-pack/cobbleverse/mods --side server --
 python tools/pack_manifest.py download --side server --replacements-only --target experiments/EXP-000-cobblemon-1.8-compat/runtime/replacements --yes
 pwsh server/scripts/assemble-server.ps1 -ExtraDir experiments/EXP-000-cobblemon-1.8-compat/runtime/replacements -TargetDir experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods -Apply -Clean
 python tools/assemble_client.py --replacements-dir experiments/EXP-000-cobblemon-1.8-compat/runtime/replacements --target experiments/EXP-000-cobblemon-1.8-compat/runtime/client --apply --clean
+python tools/patch_cobbleverse_riding.py base-pack/cobbleverse/datapacks/COBBLEVERSE-DP-v31.zip experiments/EXP-000-cobblemon-1.8-compat/runtime/server/datapacks/COBBLEVERSE-DP-v31.zip --cobblemon-jar experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods/Cobblemon-fabric-1.8.0+1.21.1.jar --expect-patched 51
 pwsh server/scripts/boot-test.ps1 -ServerDir experiments/EXP-000-cobblemon-1.8-compat/runtime/server -WhatIf
 ```
 
@@ -85,6 +88,7 @@ Run on a fresh disposable world after the server boots. Use two clients for rows
 | Cobbreeding | 2 | pasture breeding starts, persists, and produces an egg without duplication |
 | visibility/synchronization | 2 | each client sees the other player's Pokémon and battle state correctly |
 | reconnect/restart | 2 | party, trainer, den, breeding, and world block state remain consistent |
+| riding | 1 | player remains visually attached and position follows the mount for a ground and flying Pokémon |
 
 Record observations in `results.md`; do not infer a pass from an absent error.
 
@@ -92,14 +96,15 @@ Record observations in `results.md`; do not infer a pass from an absent error.
 
 - Baseline inventory: 138 jar records, 137 enabled and one disabled.
 - Immutable baseline server verification: 104 matching jars, zero missing, zero hash mismatches; 34 expected non-server extras.
-- Target overlay: 13 replacements, two enabled removals, one disabled-file removal, 33 metadata client-only mod IDs, and two runtime-proven server-only exclusions.
+- Target overlay: 13 replacements, two enabled removals, one disabled-file removal, 33 metadata client-only mod IDs, one proven server-only exclusion, and one provisional server-only exclusion.
 - Final server verification: 100 matching jars, zero missing, zero hash mismatches, zero extras, zero unverified.
-- Effective client plan: 135 jars. The full post-removal client assembly is pending because the immutable base jars are outside this worktree's local client source path.
+- Effective client plan: 135 jars. The assembled client launches and connects.
 - Runtime iteration: PlayerXP 1.1.1 crashed the dedicated server by loading `ItemTooltipCallback` from its common entrypoint. No newer release or upstream source fix exists, so it is excluded from the server only.
 - Runtime iteration: Raid Dens failed datapack reload with `NoSuchMethodError: GraalShowdownService.getContext()`. Published 0.11.7 and current source retain that call, so the addon is removed from both plans.
-- Runtime iteration: Krypton 0.2.8's server entity-tracker mixin prevented Cobblemon 1.8 from attaching the player as a passenger. Vanilla boat attachment passed; Better Third Person and Not Enough Animations were ruled out; server-only Krypton removal synchronized player and mount positions while the client copy remained enabled.
-- Final boot: the 100-jar server reached `Done (1.314s)` and stopped cleanly. Capture `20260910-110333`, mod-set hash `62BEABD9398A`.
-- Client connection and riding passed with one player; the remaining gameplay matrix is not tested.
+- Runtime iteration: server-only Krypton removal synchronized player and mount positions but did not repair the visible detachment. Keep it provisionally excluded until an isolated post-migration retest; client Krypton is retained.
+- Runtime iteration: the main Cobbleverse datapack had 233 old offset-based riding additions. The generated runtime copy migrates the 51 mounts with native Cobblemon 1.8 locator definitions and preserves the 182 Cobbleverse-only mounts.
+- Final boot: the 100-jar server with the migrated datapack reached `Done (1.276s)` and stopped cleanly. Capture `20260910-124927`, mod-set hash `62BEABD9398A`.
+- Client connection and riding passed with one player on Mudsdale and Charizard; the remaining gameplay matrix is not tested.
 
 See `docs/research/COBBLEVERSE_COMPATIBILITY.md` and `docs/research/WORLD_CRITICAL_DEPENDENCIES.md` for the full audit.
 
@@ -113,14 +118,18 @@ See `docs/research/COBBLEVERSE_COMPATIBILITY.md` and `docs/research/WORLD_CRITIC
 
 ## Decision
 
-**INCOMPLETE — NOT READY FOR EXP-001.** The target server now boots reproducibly, but no client connection or functional smoke test has run and the world-critical set is not frozen. Do not begin Route 1 or serious map construction.
+**INCOMPLETE — NOT READY FOR EXP-001.** The target server boots reproducibly,
+the client connects, and ground/flying riding passes for Mudsdale and Charizard.
+The remaining functional smoke tests have not run and the world-critical set is
+not frozen. Do not begin Route 1 or serious map construction.
 
-The next action is to assemble and launch the 135-jar client, connect it to the server, and run the smoke checklist. ADR-001 remains Proposed until client connection passes.
+The next action is to run the remaining smoke checklist. ADR-001 can advance
+only after the required foundation checks pass.
 
 ## Follow-up
 
-1. Complete the post-removal client assembly and connect.
-2. Decide whether PlayerXP provides enough client value and connects without a registry mismatch.
-3. Complete the two-player functional checklist.
+1. Decide whether PlayerXP provides enough client value to retain.
+2. Complete the two-player functional checklist.
+3. Isolate server Krypton again after broader mount sampling.
 4. Remove or override the now-orphaned Raid Dens loot-table data if its nonfatal load errors remain in the client/server pack.
 5. Freeze or replace world-critical dependencies from fresh-world evidence.

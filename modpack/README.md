@@ -24,5 +24,9 @@ python tools/pack_manifest.py plan --side server   # what a dedicated server nee
 python tools/validate.py                           # structural checks on tracked content
 ```
 
+The base `COBBLEVERSE-DP-v31.zip` also needs a generated runtime compatibility
+copy for Cobblemon 1.8 riding. See `modpack/datapacks/README.md`; the source ZIP
+stays unchanged and untracked.
+
 Nothing under `modpack/` is a finished product yet; it is the foundation the
 campaign content builds on.
