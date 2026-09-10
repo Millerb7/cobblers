@@ -1,0 +1,66 @@
+{
+  "schema": "cobblers.world-event/1",
+  "id": "cobblers:f4_relic_island_ash_house",
+  "name": "Relic Island — The Stranded Home",
+  "experiment": "EXP-001",
+  "hex": "F4",
+  "role": "medium_optional_worldshift_relic",
+  "required": false,
+  "coordinate_space": "f4-local-1000",
+  "placement": {
+    "anchor": {"x": 420, "y": 62, "z": 790},
+    "anchor_definition": "island center at local sea level",
+    "pallet_shore_sightline": {"x": 420, "y": 68, "z": 645},
+    "shore_distance_blocks": 145,
+    "command": "execute positioned 420 62 790 run function cobblers:exp_001/f4_relic_island/place"
+  },
+  "footprint": {
+    "island_blocks": [70, 58],
+    "house_blocks": [12, 9, 10],
+    "clearance_blocks": [82, 70, 24]
+  },
+  "terrain": {
+    "sea_level": 62,
+    "top_height": 66,
+    "shore": "irregular sand and gravel shelf",
+    "interior": "grass over dirt and stone",
+    "requirements": [
+      "open water around the full footprint",
+      "unobstructed northern sightline toward Pallet Town",
+      "no required route or gym progression through the island"
+    ]
+  },
+  "access": {
+    "recommended": "early optional swim or ordinary boat",
+    "clue": "broken dock and boat debris aligned with the Pallet shoreline",
+    "revisit": "later water mounts make the return trip faster; no hard gate"
+  },
+  "structure": {
+    "implementation": "generated island function plus copied MIT donor NBT",
+    "function": "cobblers:exp_001/f4_relic_island/place",
+    "generator": "tools/generate_f4_relic_island.py",
+    "template": "cobblers:f4/pallet_house_large2",
+    "donor": "CobblemonCityTowns 1.0 — cobblemoncitytowns:pallet_town/buildings/large2",
+    "donor_license": "MIT",
+    "dependencies": ["minecraft", "cobblemon"],
+    "modifications": "jigsaws resolved after placement, donor loot replaced, small roof-edge tear"
+  },
+  "reward": {
+    "recommended": "per-player level 5-7 Pichu encounter plus a lore collectible",
+    "prototype_cache": "cobblers:chests/f4_relic_island_placeholder",
+    "claim_model": "per-player once EXP-006 and EXP-007 prove encounter and progression state",
+    "early_access_safe": true
+  },
+  "lore_cues": [
+    "front path ends abruptly at the water",
+    "one upper corner is torn away rather than naturally ruined",
+    "household debris points back toward Pallet Town",
+    "calcite and amethyst scar crosses geology that does not match the coast",
+    "one surviving tree and broken fence make the fragment feel inhabited, then abandoned"
+  ],
+  "reference": {
+    "image": "world/source/events/reference/f4-pallet-coast-concept.jpg",
+    "provided_by": "user",
+    "use": "layout and mood reference; not a block-for-block blueprint"
+  }
+}
