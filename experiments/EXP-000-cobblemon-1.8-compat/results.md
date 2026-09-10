@@ -18,11 +18,11 @@
 | --- | --- | --- |
 | reference pack unchanged | PASS | 104 planned server jars match recorded hashes; zero mismatch/missing |
 | replacement acquisition | PASS | 13 Modrinth files downloaded and SHA-512 verified by `pack_manifest.py` |
-| target assembly | PASS | 101 planned jars; zero missing, mismatch, extra, or unverified |
+| target assembly | PASS | 100 planned jars; zero missing, mismatch, extra, or unverified |
 | client plan | PASS | 135 planned jars plus 47 resource packs, 10 datapacks, and one shader pack assembled and hash-verified; ATMxMSD retained but disabled by default after its first runtime failure |
 | config/datapack assembly | PASS | reference config present; 10 datapack zips present |
 | Fabric launcher | PASS | installer 1.1.2 generated MC 1.21.1 / loader 0.19.5 launcher |
-| complete-overlay boot | PASS | reached `Done (6.377s)` with 101 jars; stopped cleanly |
+| complete-overlay boot | PASS | corrected 100-jar set reached `Done (1.314s)`; stopped cleanly |
 
 ## Boot attempts
 
@@ -39,6 +39,7 @@
 | 6 | 2026-09-09 | complete overlay | runtime `logs/latest.log` | not captured | 1.8.0 | 0.19.5 | FAILED | PlayerXP 1.1.1 common entrypoint loaded client-only `ItemTooltipCallback` on SERVER | exclude PlayerXP from server only; retain client provisionally |
 | 7 | 2026-09-09 | without PlayerXP | `20260909-000955` | `4439B7A088FB` | 1.8.0 | 0.19.5 | FAILED | Raid Dens datapack reload called removed `GraalShowdownService.getContext()` | remove Raid Dens from both plans before world construction |
 | 8 | 2026-09-09 | without PlayerXP or Raid Dens | `20260909-001735` | `D1483348BC2D` | 1.8.0 | 0.19.5 | **BOOTED** | reached `Done (6.377s)` | server stopped cleanly |
+| 9 | 2026-09-10 | without server-side Krypton | `20260910-110333` | `62BEABD9398A` | 1.8.0 | 0.19.5 | **BOOTED** | reached `Done (1.314s)` after Krypton was isolated as the Cobblemon riding passenger conflict | keep Krypton client-optional; exclude it from server |
 
 ## Functional smoke tests
 
@@ -50,8 +51,8 @@
 
 | Test | Players | Result | Notes |
 | --- | ---: | --- | --- |
-| server boots | 0 | PASS | 101-jar complete overlay reached `Done (6.377s)` |
-| client connects | 1 | NOT TESTED | first GUI launch exposed the ATMxMSD resource incompatibility before connection; corrected profile relaunch pending |
+| server boots | 0 | PASS | corrected 100-jar complete overlay reached `Done (1.314s)` |
+| client connects | 1 | PASS | corrected client joined the complete-overlay server repeatedly |
 | `/pokespawn` and natural spawning | 1 | NOT TESTED | |
 | wild battle, catch, Capture XP | 1 | NOT TESTED | |
 | RCT trainer spawn and battle | 2 | NOT TESTED | |
@@ -63,14 +64,15 @@
 | Cobbreeding multiplayer flow | 2 | NOT TESTED | |
 | second client sees Pokémon/battle | 2 | NOT TESTED | |
 | reconnect and restart persistence | 2 | NOT TESTED | |
+| Cobblemon riding attachment | 1 | PASS AFTER FIX | vanilla boat attached; Better Third Person and Not Enough Animations had no effect; server-only Krypton removal made Mudsdale/Charizard and player positions match |
 
 ## Current conclusion
 
 EXP-000 remains **INCOMPLETE**. The dedicated-server boot criterion passes. The
 first client launch identified and isolated an incompatible optional resource
-pack; the corrected client still needs to reach the menu and connect. The
-repository is **NOT READY FOR EXP-001** until a client connects, the critical
-functional checks pass, and the world-critical freeze has runtime evidence. The
+pack; the corrected client now launches, connects, and rides after the
+server-only Krypton exclusion. The repository is **NOT READY FOR EXP-001** until
+the remaining critical functional checks pass and the world-critical freeze has runtime evidence. The
 successful server run still logs nonfatal errors from Raid Dens loot-table data
 retained inside an upstream datapack; this remains recorded rather than repaired
 because it did not block startup.

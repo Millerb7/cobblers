@@ -83,9 +83,10 @@ def test_plan_server_side_has_no_client_mods(repo_root, python, overlay):
     assert {e["status"] for e in plan} >= {"base", "replace", "remove"}
     assert any(e["filename"] == "Cobblemon-fabric-1.8.0+1.21.1.jar" for e in active)
     assert not any(e["mod_id"] == "playerxp" for e in active)
+    assert not any(e["mod_id"] == "krypton" for e in active)
 
 
-def test_playerxp_remains_in_client_plan(repo_root, python):
+def test_client_optional_server_exclusions_remain_in_client_plan(repo_root, python):
     r = subprocess.run(
         [python, "tools/pack_manifest.py", "plan", "--side", "client", "--json"],
         cwd=repo_root, capture_output=True, text=True, check=True,
@@ -93,6 +94,7 @@ def test_playerxp_remains_in_client_plan(repo_root, python):
     plan = json.loads(r.stdout)
     active = [e for e in plan if e["status"] in ("base", "replace", "add")]
     assert any(e["mod_id"] == "playerxp" for e in active)
+    assert any(e["mod_id"] == "krypton" for e in active)
 
 
 def test_replacement_only_download_matches_overlay(repo_root, python, tmp_path, overlay):

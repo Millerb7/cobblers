@@ -25,12 +25,12 @@ Determine whether the Cobbleverse 1.7.42 experience can be preserved on Cobblemo
 `test-pack.json` records the exact target and controlled stages. The disposable runtime is `runtime/server/` and is gitignored. It currently contains:
 
 - the Fabric 1.21.1 server launcher with loader 0.19.5;
-- 101 hash-verified server jars: 89 unchanged base jars and 12 Modrinth-pinned replacements;
+- 100 hash-verified server jars: 88 unchanged base jars and 12 Modrinth-pinned replacements;
 - the reference config plus the repository overlay config;
 - all 10 reference datapack zips;
 - `server.properties` copied from the repository example.
 
-The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack. PlayerXP remains client-optional; Raid Dens is removed from both sides. The full post-removal client assembly and GUI launch have not been completed.
+The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack. PlayerXP and Krypton remain client-optional; both are excluded from the server, while Raid Dens is removed from both sides. The assembled client launches and connects.
 
 The reference pack was read and hashed only. No jar, config, datapack, save, or launcher file under `base-pack/cobbleverse/` was modified.
 
@@ -46,6 +46,7 @@ The reference pack was read and hashed only. No jar, config, datapack, save, or 
 | 5 | complete overlay with preserved unknown addons | determine actual stable server set | PlayerXP fatal during entrypoint initialization |
 | 6 | exclude PlayerXP from server only | preserve its possible client tooltip while fixing dedicated-server startup | Raid Dens fatal during datapack reload |
 | 7 | remove Raid Dens from both sides | omit a world-critical addon whose released/current code calls a removed API | **BOOTED**; reached `Done (6.377s)` |
+| 8 | exclude Krypton from the server only | resolve the runtime-proven Cobblemon passenger attachment conflict while retaining client network optimization | **BOOTED**; riding attachment restored and reached `Done (1.314s)` |
 
 After each failed boot, change only the implicated overlay entry, reassemble, and record the exact error. Do not edit the runtime mod folder as the source of truth.
 
@@ -91,13 +92,14 @@ Record observations in `results.md`; do not infer a pass from an absent error.
 
 - Baseline inventory: 138 jar records, 137 enabled and one disabled.
 - Immutable baseline server verification: 104 matching jars, zero missing, zero hash mismatches; 34 expected non-server extras.
-- Target overlay: 13 replacements, two enabled removals, one disabled-file removal, 33 metadata client-only mod IDs, and one runtime-proven server-only exclusion.
-- Final server verification: 101 matching jars, zero missing, zero hash mismatches, zero extras, zero unverified.
+- Target overlay: 13 replacements, two enabled removals, one disabled-file removal, 33 metadata client-only mod IDs, and two runtime-proven server-only exclusions.
+- Final server verification: 100 matching jars, zero missing, zero hash mismatches, zero extras, zero unverified.
 - Effective client plan: 135 jars. The full post-removal client assembly is pending because the immutable base jars are outside this worktree's local client source path.
 - Runtime iteration: PlayerXP 1.1.1 crashed the dedicated server by loading `ItemTooltipCallback` from its common entrypoint. No newer release or upstream source fix exists, so it is excluded from the server only.
 - Runtime iteration: Raid Dens failed datapack reload with `NoSuchMethodError: GraalShowdownService.getContext()`. Published 0.11.7 and current source retain that call, so the addon is removed from both plans.
-- Final boot: the 101-jar server reached `Done (6.377s)` and stopped cleanly. Capture `20260909-001735`, mod-set hash `D1483348BC2D`.
-- Client and gameplay results: not tested.
+- Runtime iteration: Krypton 0.2.8's server entity-tracker mixin prevented Cobblemon 1.8 from attaching the player as a passenger. Vanilla boat attachment passed; Better Third Person and Not Enough Animations were ruled out; server-only Krypton removal synchronized player and mount positions while the client copy remained enabled.
+- Final boot: the 100-jar server reached `Done (1.314s)` and stopped cleanly. Capture `20260910-110333`, mod-set hash `62BEABD9398A`.
+- Client connection and riding passed with one player; the remaining gameplay matrix is not tested.
 
 See `docs/research/COBBLEVERSE_COMPATIBILITY.md` and `docs/research/WORLD_CRITICAL_DEPENDENCIES.md` for the full audit.
 

@@ -73,12 +73,18 @@ master coordinate system, so planning-cell boundaries do not create geography.
 - **FAIL — first client density:** the D4 meadow reached severe visible crowding
   with Cobblemon's generated `pokemonPerChunk: 1.0`. The overlay now uses a
   provisional `0.25` cap for the next run; this still needs visual confirmation.
-- **FAIL — first client riding:** Mudsdale and Charizard accepted movement input,
-  but the player view/entity remained at the interaction point while the mount
-  moved away. Client and server logs contained no causal riding error. Better
-  Third Person 1.9.0 is selected for removal in the next isolation run because
-  it modifies client camera/player rotation; causality remains unverified until
-  retested.
+- **PASS AFTER SERVER FIX — client riding:** initially, Mudsdale and Charizard
+  accepted movement input while the player remained detached. Disabling Better
+  Third Person and Not Enough Animations separately did not change the failure.
+  A vanilla boat attached normally, isolating the problem from Minecraft's base
+  passenger handling. Krypton 0.2.8 was then removed from the server only; with
+  the client copy still enabled, server queries showed Mudsdale and player at
+  `(690.898, 75.0, 637.870)`, then Charizard and player at
+  `(708.620, 78.900, 624.298)`. Krypton's server entity-tracker mixin is the
+  runtime-proven conflict and Krypton is now client-optional/server-excluded.
+- **PASS — corrected server boot:** the resulting 100-jar server reached
+  `Done (1.314s)` and stopped cleanly. Capture `20260910-110333`, mod-set hash
+  `62BEABD9398A`.
 - **CORRECTED — event visibility:** the original red event mask reserved all 16
   event sites but did not place blocks. The generator now emits an explicitly
   disposable marker for every reservation, including a fenced arena for the D4
@@ -98,8 +104,8 @@ river appearance, and sightlines need client inspection. WorldPainter emitted a
 nonfatal missing `DragonFight` field warning for the imported `level.dat`.
 BiomeReplacer also ignored its existing Terralith rules because those biome IDs
 are absent from this imported vanilla-biome prototype; neither warning blocked
-load, save, or restart. The reduced spawn cap and Better Third Person isolation
-are test settings, not final campaign decisions.
+load, save, or restart. The reduced spawn cap is a test setting, not a final
+campaign decision.
 
 ## Decision
 
