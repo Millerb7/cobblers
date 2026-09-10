@@ -25,5 +25,6 @@ the things that must never be committed.
 2. `pwsh server/scripts/assemble-server.ps1 -TargetDir <serverdir>/mods -Apply` (after a dry run).
 3. Copy `config/server.properties.example` to `<serverdir>/server.properties` and edit.
 4. Put the base datapacks (+ ours from `modpack/datapacks/`) where `global_packs.toml` expects them and copy the config overlay.
-5. Read and, if you agree, accept the EULA in `<serverdir>/eula.txt` yourself.
-6. `pwsh server/scripts/boot-test.ps1 -ServerDir <serverdir>`.
+5. Generate the Cobbleverse riding-compatible runtime datapack using the command in `launch/README.md`.
+6. Read and, if you agree, accept the EULA in `<serverdir>/eula.txt` yourself.
+7. `pwsh server/scripts/boot-test.ps1 -ServerDir <serverdir>`.

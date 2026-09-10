@@ -2,7 +2,7 @@
 
 ## Decision snapshot
 
-**EXP-000 is not complete, and the repository is not ready for EXP-001.** The isolated dedicated server reached Minecraft's `Done` state on 2026-09-09 after two runtime-caused exclusions. Client connection and all gameplay smoke tests remain unverified.
+**EXP-000 is not complete, and the repository is not ready for EXP-001.** The isolated dedicated server reaches Minecraft's `Done` state after the scoped runtime exclusions and Cobbleverse riding-seat migration. The assembled client connects, and Mudsdale and Charizard riding are verified; most gameplay smoke tests remain unverified.
 
 The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobblemon 1.8.0. The effective dedicated-server set has 100 jars: 88 unchanged base jars and 12 replacements. Better Pokédex Scanner and Raid Dens are removed; PlayerXP and Krypton are excluded from the server only; the disabled legacy Particular jar is omitted, while Particular Reforged remains.
 
@@ -24,12 +24,12 @@ The current target is Minecraft 1.21.1, Fabric Loader 0.19.5, Java 21, and Cobbl
 | Fabric installer | — | 1.1.2 stable | Fabric Meta queried 2026-09-08 |
 | Java | 21 | Temurin 21.0.9 | executed `java -version` |
 | Cobblemon | 1.7.3+1.21.1 | 1.8.0+1.21.1 | local metadata and Modrinth version `YgmyyFcs` |
-| Server jars | 104 baseline jars | 101 effective jars | `pack_manifest.py verify` and boot capture `20260909-001735` |
-| Client jars | base client set | 135 effective jars | `pack_manifest.py plan`; full post-removal client assembly still pending |
+| Server jars | 104 baseline jars | 100 effective jars | `pack_manifest.py verify` and boot capture `20260910-124927` |
+| Client jars | base client set | 135 effective jars | `pack_manifest.py plan` and assembled client launch |
 | Config files | 223 base files | 224 assembled files | isolated runtime inventory |
 | Datapacks | 10 zip files | 10 assembled zip files | isolated runtime inventory |
 
-The immutable base verification found 104 matching server-side jars, zero missing, and zero hash mismatches. The 34 extras were exactly the 33 enabled client-only jars plus the disabled legacy Particular jar. After functional riding isolated Krypton, the final target verification found all 100 planned server jars with zero missing, mismatched, extra, or unverified files. That exact set reached `Done (1.314s)` with mod-set hash `62BEABD9398A`.
+The immutable base verification found 104 matching server-side jars, zero missing, and zero hash mismatches. The 34 extras were exactly the 33 enabled client-only jars plus the disabled legacy Particular jar. The final target verification found all 100 planned server jars with zero missing, mismatched, extra, or unverified files. With Krypton provisionally excluded server-side and the riding-seat migration applied, that set reached `Done (1.276s)` with mod-set hash `62BEABD9398A`.
 
 ## Required compatibility overlay
 
@@ -51,6 +51,7 @@ The immutable base verification found 104 matching server-side jars, zero missin
 | better_pokedex_scanner | better-pokedex-scanner-1.0.0.jar | — | REMOVE | Depends on cobblemon >=1.7.3 <1.8.0 and has no 1.8 build (single release 1.0.0, 2026-04-15). Client-side QoL; safe to drop. |
 | particular | particular-1.1.2+1.21.jar.disabled | — | REMOVE | Already .disabled in the base pack; duplicate mod id with Particular Reforged 1.5.5 (particular-1.21.1-Fabric-1.5.5.jar). Drop the file entirely. |
 | cobblemonraiddens | 0.11.3+1.21.1 | — | REMOVE | Runtime datapack reload fails with `NoSuchMethodError: GraalShowdownService.getContext()`. Published 0.11.7 and current upstream source retain the same removed API call. This also removes den blocks and structures before campaign world construction. |
+| COBBLEVERSE-DP-v31 | 1.7 offset-based riding seats | generated runtime copy with 1.8 named locators | PATCH AT ASSEMBLY | The pack has 233 riding additions. For 51 native Cobblemon 1.8 mounts, old seats override the current model locators and leave the rendered rider detached. `tools/patch_cobbleverse_riding.py` copies the local licensed ZIP and replaces only those seats from the target Cobblemon JAR. It preserves custom riding stats and 182 Cobbleverse-only mounts. Mudsdale and Charizard pass in the client. |
 
 All replacement downloads are pinned by URL, Modrinth version ID, SHA-1, and SHA-512 in `modpack/manifest/overlay.json`. The six replacements added by current research are Cobbreeding, Only Bottle Caps, PlayerXP, CobbleNav, ZAMegas, and Fight or Flight Reborn. ZAMegas is mandatory: the base jar requires the old Mega Showdown version line, while Mega Showdown resets to 1.0.x for Cobblemon 1.8.
 
@@ -149,7 +150,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | Interactic | OPTIONAL/CLIENT-QOL | 0.2.3+1.21 | >=1.20.3 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Item throw/pickup animations (env=*). Needs owo. Bundles owo-sentinel. |
 | Iris | OPTIONAL/CLIENT-QOL | 1.8.14-beta.1+mc1.21.1 | ["1.21.1"] | Fabric | — | LIKELY WORKING | CLIENT ONLY | Client-only shaders; requires sodium 0.8.x. Beta build. |
 | Konkrete | GAMEPLAY-CRITICAL / LIBRARY | 1.9.9 | >=1.21 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Needed by: fancymenu (>=1.9.4). |
-| Krypton | OPTIONAL/CLIENT-QOL | 0.2.8 | >=1.21 | Fabric | — | INCOMPATIBLE (SERVER) | CLIENT OPTIONAL; SERVER EXCLUDE | Its server `EntityTrackerEntryMixin` conflicts with Cobblemon 1.8 riding: Pokémon accepted controls while the player stayed detached. A vanilla boat attached normally. Removing Krypton from the server only restored Mudsdale and Charizard passenger attachment and synchronized server positions; the successful client still had Krypton enabled. |
+| Krypton | OPTIONAL/CLIENT-QOL | 0.2.8 | >=1.21 | Fabric | — | NEEDS FUNCTIONAL TEST (SERVER) | CLIENT OPTIONAL; PROVISIONAL SERVER EXCLUDE | Removing it server-side restored authoritative mount/player position synchronization, but the rider still rendered detached until the Cobbleverse datapack seats were migrated. Keep the tested server exclusion for now; isolate it again after broader mount sampling before declaring Krypton incompatible. Client Krypton was restored and is present in the successful test. |
 | Lenient Death | OPTIONAL/CLIENT-QOL | 1.2.5+1.21.1 | >=1.20.5 | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Server-side death-item rules (config/lenientdeath.json5) - a gameplay rule, not Cobblemon-coupled. Bundles jackfredlib + fabric-permissions-api. |
 | LibJF | GAMEPLAY-CRITICAL / LIBRARY | 3.17.5 | * | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Needed by: respackopts (libjf-base/config-core-v2/data-manipulation). 12 nested modules. |
 | Lithium | OPTIONAL/CLIENT-QOL | 0.15.4+mc1.21.1 | ["1.21", "1.21.1"] | Fabric | — | LIKELY WORKING | PRESERVE FOR BOOT | Server+client perf. |
@@ -211,7 +212,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | datapacks/COBBLEVERSE - No Ender Dragon.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
 | datapacks/COBBLEVERSE - No Hunger.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
-| datapacks/COBBLEVERSE-DP-v31.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
+| datapacks/COBBLEVERSE-DP-v31.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | Cobblemon 1.7 riding data | NEEDS COMPATIBILITY PATCH | PRESERVE SOURCE; PATCH RUNTIME RIDING SEATS | Contains 233 offset-based riding additions. Generate a runtime copy with native 1.8 named locators for 51 mounts; retain 182 Cobbleverse-only offsets. Mudsdale and Charizard verified. |
 | datapacks/COBBLEVERSE-Loot-DP-v11.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
 | datapacks/COBBLEVERSE-RCT-DP-v20.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
 | datapacks/PokeCenterPCs-DP.zip | WORLD-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
@@ -270,9 +271,9 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 
 ## Boot and smoke-test status
 
-The isolated runtime contains the pinned Fabric launcher, all 100 target server jars, base configuration, overlay configuration, and all 10 datapacks. The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack. The assembled client launches and connects; broader gameplay smoke tests remain pending.
+The isolated runtime contains the pinned Fabric launcher, all 100 target server jars, base configuration, overlay configuration, and all 10 datapacks, with `COBBLEVERSE-DP-v31.zip` generated as a patched runtime copy. The effective client plan contains 135 jars, 47 resource packs, 10 datapacks, and one shader pack. The assembled client launches and connects; Mudsdale and Charizard riding pass, while broader gameplay smoke tests remain pending.
 
-The first real complete-overlay launch failed in PlayerXP's common entrypoint. The next launch failed in Raid Dens during datapack reload. After applying the scoped exclusions above, capture `20260909-001735` reached `Done (6.377s)` and stopped cleanly. The retained upstream datapacks still emit nonfatal errors for orphaned Raid Dens loot tables; these were recorded without expanding the boot-fix scope. A client connection and the multiplayer smoke checklist are next. Server startup is verified for this exact mod set, while individual gameplay components remain unverified until their functional checks pass.
+The first real complete-overlay launch failed in PlayerXP's common entrypoint. The next launch failed in Raid Dens during datapack reload. After applying the scoped exclusions, the server reached `Done`. Client riding then exposed stale 1.7 offset seats in the main Cobbleverse datapack. Capture `20260910-124927` reached `Done (1.276s)` with the generated seat migration, and the user verified Mudsdale and Charizard riding. The retained upstream datapacks still emit nonfatal errors for orphaned Raid Dens loot tables; these were recorded without expanding the boot-fix scope. Server startup and those two mounts are verified for this exact set; other gameplay components remain unverified until their functional checks pass.
 
 ## Sources
 
@@ -281,3 +282,4 @@ The first real complete-overlay launch failed in PlayerXP's common entrypoint. T
 - Modrinth version records are linked by stable version ID in `overlay.json`; examples include [Cobblemon 1.8.0](https://api.modrinth.com/v2/version/YgmyyFcs), [RCT 0.19.0-beta](https://api.modrinth.com/v2/version/jdUENp3C), and [Mega Showdown 1.0.2](https://api.modrinth.com/v2/version/TACsHsKC).
 - PlayerXP evidence: [Modrinth 1.21.1 releases](https://api.modrinth.com/v2/project/cobblemon-playerxp/version?loaders=%5B%22fabric%22%5D&game_versions=%5B%221.21.1%22%5D) and [current common entrypoint source](https://github.com/chudders1231/PlayerXP/blob/1.21.1/fabric/src/main/java/chadlymasterson/playerxp/PlayerXp.java).
 - Raid Dens evidence: [Modrinth releases](https://api.modrinth.com/v2/project/cobblemonraiddens/version?loaders=%5B%22fabric%22%5D&game_versions=%5B%221.21.1%22%5D) and [current reload-listener source](https://github.com/necro50n3/cobblemon-raiddens/blob/master/fabric/src/main/java/com/necro/raid/dens/fabric/events/reloader/StatusEffectsReloadListener.java).
+- Riding evidence: [Cobblemon riding setup](https://wiki.cobblemon.com/index.php/Tutorials/Riding_Setup), [Cobblemon species additions](https://wiki.cobblemon.com/index.php/Species_Additions), and [Cobblemon 1.8.0 changelog](https://modrinth.com/mod/cobblemon/version/YgmyyFcs).
