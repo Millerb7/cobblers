@@ -19,7 +19,7 @@
 | reference pack unchanged | PASS | 104 planned server jars match recorded hashes; zero mismatch/missing |
 | replacement acquisition | PASS | 13 Modrinth files downloaded and SHA-512 verified by `pack_manifest.py` |
 | target assembly | PASS | 101 planned jars; zero missing, mismatch, extra, or unverified |
-| client plan | PASS | 135 planned jars plus 47 resource packs, 10 datapacks, and one shader pack; full post-removal assembly pending |
+| client plan | PASS | 135 planned jars plus 47 resource packs, 10 datapacks, and one shader pack assembled and hash-verified; ATMxMSD retained but disabled by default after its first runtime failure |
 | config/datapack assembly | PASS | reference config present; 10 datapack zips present |
 | Fabric launcher | PASS | installer 1.1.2 generated MC 1.21.1 / loader 0.19.5 launcher |
 | complete-overlay boot | PASS | reached `Done (6.377s)` with 101 jars; stopped cleanly |
@@ -42,10 +42,16 @@
 
 ## Functional smoke tests
 
+### Client launch attempts
+
+| # | date | outcome | first causal error | action |
+| ---: | --- | --- | --- | --- |
+| 1 | 2026-09-10 | FAILED VISIBLE STARTUP | `ATMxMSD RP.zip` requested missing Cobblemon 1.8 model `cobblemon:mewtwo_mega_x.geo`; Minecraft's fallback reload reached the title/welcome screen after 65.176 seconds, but the custom splash remained visible | keep the optional pack installed but remove it from Resource Pack Overrides, Default Options, and the active selection; relaunch pending |
+
 | Test | Players | Result | Notes |
 | --- | ---: | --- | --- |
 | server boots | 0 | PASS | 101-jar complete overlay reached `Done (6.377s)` |
-| client connects | 1 | NOT TESTED | assembled client exists at `runtime/client/`; requires GUI launch and booted server |
+| client connects | 1 | NOT TESTED | first GUI launch exposed the ATMxMSD resource incompatibility before connection; corrected profile relaunch pending |
 | `/pokespawn` and natural spawning | 1 | NOT TESTED | |
 | wild battle, catch, Capture XP | 1 | NOT TESTED | |
 | RCT trainer spawn and battle | 2 | NOT TESTED | |
@@ -60,4 +66,11 @@
 
 ## Current conclusion
 
-EXP-000 remains **INCOMPLETE**. The dedicated-server boot criterion now passes. The repository is **NOT READY FOR EXP-001** until a client connects, the critical functional checks pass, and the world-critical freeze has runtime evidence. The successful run still logs nonfatal errors from Raid Dens loot-table data retained inside an upstream datapack; per the boot-iteration rule this was recorded rather than repaired because it did not block startup.
+EXP-000 remains **INCOMPLETE**. The dedicated-server boot criterion passes. The
+first client launch identified and isolated an incompatible optional resource
+pack; the corrected client still needs to reach the menu and connect. The
+repository is **NOT READY FOR EXP-001** until a client connects, the critical
+functional checks pass, and the world-critical freeze has runtime evidence. The
+successful server run still logs nonfatal errors from Raid Dens loot-table data
+retained inside an upstream datapack; this remains recorded rather than repaired
+because it did not block startup.
