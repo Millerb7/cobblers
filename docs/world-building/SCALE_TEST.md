@@ -30,7 +30,7 @@ horizontal distances between the stated endpoints.
 
 | Route | Start | End | Distance | Intended terrain/path character |
 | --- | --- | --- | ---: | --- |
-| A. Town → nearest medium event | Brookstep `(520, 78, 560)` | D4 meadow trial `(930, 80, 790)` | 470.1 blocks | Open meadow road becoming a lightly rolling approach to a trainer clearing. |
+| A. Town → nearest medium event | Brookstep `(520, 78, 560)` | Disposable D4 meadow marker `(930, 80, 790)` | 470.1 blocks | Open meadow road becoming a lightly rolling approach to a placeholder fenced arena. This measures scale; it is not the authored trial. |
 | B. Town → adjacent hex center | Brookstep `(520, 78, 560)` | D5 center `(1875, 93, 625)` | 1,356.6 blocks | Main eastbound dirt path, river crossing reservation, then forest-edge travel. |
 | C. Opposite sides of one hex | D4 west `(25, 82, 625)` | D4 east `(1225, 59, 625)` | 1,200.0 blocks | Broad lowland traverse through town influence toward the river bank. |
 | D. Longest useful prototype route | D4 berry grove `(280, 90, 1040)` | E5 cavern `(2150, 166, 1840)` | 2,033.9 blocks | Diagonal journey from meadow edge through river valley into steep rocky foothills. |

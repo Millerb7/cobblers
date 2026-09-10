@@ -122,6 +122,184 @@
       "y": 79
     }
   ],
+  "scale_test_markers": [
+    {
+      "id": "d4-meadow-trial",
+      "kind": "trainer_clearing",
+      "size": "medium",
+      "x": 930,
+      "y": 80,
+      "z": 790,
+      "marker_style": "fenced_arena",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d4-berry-grove",
+      "kind": "berry_grove",
+      "size": "small",
+      "x": 280,
+      "y": 90,
+      "z": 1040,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d4-fishing-bend",
+      "kind": "fishing_spot",
+      "size": "small",
+      "x": 1110,
+      "y": 60,
+      "z": 1130,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d4-old-mill",
+      "kind": "landmark",
+      "size": "small",
+      "x": 1030,
+      "y": 75,
+      "z": 270,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-cabin",
+      "kind": "abandoned_cabin",
+      "size": "medium",
+      "x": 1880,
+      "y": 90,
+      "z": 470,
+      "marker_style": "medium_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-nest",
+      "kind": "pokemon_nest",
+      "size": "small",
+      "x": 1450,
+      "y": 86,
+      "z": 210,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-shrine",
+      "kind": "shrine",
+      "size": "small",
+      "x": 2240,
+      "y": 104,
+      "z": 850,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-clearing",
+      "kind": "trainer_clearing",
+      "size": "small",
+      "x": 1570,
+      "y": 129,
+      "z": 1080,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-river-camp",
+      "kind": "ranger_camp",
+      "size": "medium",
+      "x": 560,
+      "y": 77,
+      "z": 1770,
+      "marker_style": "medium_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-ford",
+      "kind": "fishing_spot",
+      "size": "small",
+      "x": 1080,
+      "y": 71,
+      "z": 1500,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-grove",
+      "kind": "berry_grove",
+      "size": "small",
+      "x": 260,
+      "y": 88,
+      "z": 2210,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-cache",
+      "kind": "rocket_cache",
+      "size": "small",
+      "x": 940,
+      "y": 80,
+      "z": 2290,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-cavern",
+      "kind": "cavern_entrance",
+      "size": "medium",
+      "x": 2150,
+      "y": 166,
+      "z": 1840,
+      "marker_style": "medium_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-overlook",
+      "kind": "ridge_overlook",
+      "size": "small",
+      "x": 1740,
+      "y": 173,
+      "z": 1440,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-shrine",
+      "kind": "shrine",
+      "size": "small",
+      "x": 2310,
+      "y": 152,
+      "z": 2260,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-nest",
+      "kind": "pokemon_nest",
+      "size": "small",
+      "x": 1510,
+      "y": 121,
+      "z": 2180,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    }
+  ],
   "travel_paths": [
     {
       "id": "town-to-d5-center",

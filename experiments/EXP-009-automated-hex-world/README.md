@@ -22,9 +22,13 @@ and completes the manual mount test. Source generation alone is partial.
 ## Implementation
 
 `world/source/region.json` defines four cells, terrain parameters, 16 reserved
-events, one town, structure placements and measured routes. `tools/generate_region.py`
+events, one town, structure placements and measured routes. Reservations are
+planning locations rather than authored encounters. `tools/generate_region.py`
 creates the heightmap and full-resolution binary/category/planning masks,
-preview, hashes, resolved Y coordinates and placement commands.
+preview, hashes, resolved Y coordinates and placement commands. It also emits
+visible disposable markers for all 16 event reservations. The D4 meadow trial
+uses an entity-free fenced arena; the other sites use small or medium marker plinths. These are
+location markers, not authored berry groves, caverns, shrines, or encounters.
 
 The four macro identities are D4 rolling lowlands/town, D5 old-growth edge,
 E4 river valley, and E5 rocky foothills/ridge. All terrain is generated in one
@@ -66,6 +70,24 @@ master coordinate system, so planning-cell boundaries do not create geography.
   captured restart is `runtime/runs/20260909-081753`.
 - **PENDING CLIENT TEST:** visual terrain, foundations, doors, functional
   blocks, mount scale, and sightlines still require the prepared client test.
+- **FAIL — first client density:** the D4 meadow reached severe visible crowding
+  with Cobblemon's generated `pokemonPerChunk: 1.0`. The overlay now uses a
+  provisional `0.25` cap for the next run; this still needs visual confirmation.
+- **FAIL — first client riding:** Mudsdale and Charizard accepted movement input,
+  but the player view/entity remained at the interaction point while the mount
+  moved away. Client and server logs contained no causal riding error. Better
+  Third Person 1.9.0 is selected for removal in the next isolation run because
+  it modifies client camera/player rotation; causality remains unverified until
+  retested.
+- **CORRECTED — event visibility:** the original red event mask reserved all 16
+  event sites but did not place blocks. The generator now emits an explicitly
+  disposable marker for every reservation, including a fenced arena for the D4
+  meadow endpoint at `(930, 80, 790)`. The first client pass confirmed that the
+  Berry Grove and cavern had also been invisible before this correction.
+- **CORRECTED — repeat placement:** the marker function was run twice during the
+  client test. Its first meadow marker reused a BCA battle pad containing NPCs,
+  which duplicated Professor Saachi. The generated marker now removes those
+  disposable NPCs and builds the arena from blocks, so rerunning it is stable.
 
 ## Limitations
 
@@ -76,7 +98,8 @@ river appearance, and sightlines need client inspection. WorldPainter emitted a
 nonfatal missing `DragonFight` field warning for the imported `level.dat`.
 BiomeReplacer also ignored its existing Terralith rules because those biome IDs
 are absent from this imported vanilla-biome prototype; neither warning blocked
-load, save, or restart.
+load, save, or restart. The reduced spawn cap and Better Third Person isolation
+are test settings, not final campaign decisions.
 
 ## Decision
 

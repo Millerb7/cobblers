@@ -187,8 +187,57 @@ def write_outputs(cfg: dict, out: Path) -> None:
     loaded_batch([f"setblock {landmark['x']} {ly} {landmark['z']} minecraft:lodestone", f"setblock {landmark['x']} {ly+1} {landmark['z']} minecraft:lantern"],(landmark["x"]-16,landmark["z"]-16,landmark["x"]+16,landmark["z"]+16))
     (out/"place-town.mcfunction").write_text("\n".join(commands)+"\n",encoding="utf-8")
 
+    # Event masks reserve future authored content. Visible markers make the
+    # reservations inspectable in-game without pretending final content exists.
+    marker_commands=["# Generated disposable EXP-009 markers, not final campaign content."]
+    scale_test_markers=[]
+    for event in cfg["events"]:
+        mx,mz=event["x"],event["z"]
+        my=sample_y(heights,cfg,mx,mz)
+        marker_commands.append(f"# {event['id']}: reserved {event['kind']} ({event['size']})")
+        if event["id"] == "d4-meadow-trial":
+            marker_commands.extend([
+                f"forceload add {mx-40} {mz-40} {mx+40} {mz+40}",
+                f"fill {mx-32} {my-1} {mz-32} {mx+32} {my-1} {mz+32} minecraft:grass_block replace",
+            ])
+            for y1 in range(my,my+16,3):
+                marker_commands.append(f"fill {mx-32} {y1} {mz-32} {mx+32} {min(y1+2,my+15)} {mz+32} minecraft:air replace")
+            marker_commands.extend([
+                f"execute positioned {mx} {my} {mz} run kill @e[type=cobblemon:npc,distance=..48]",
+                f"fill {mx-16} {my} {mz-12} {mx+16} {my} {mz-12} minecraft:oak_fence replace",
+                f"fill {mx-16} {my} {mz+12} {mx+16} {my} {mz+12} minecraft:oak_fence replace",
+                f"fill {mx-16} {my} {mz-11} {mx-16} {my} {mz+11} minecraft:oak_fence replace",
+                f"fill {mx+16} {my} {mz-11} {mx+16} {my} {mz+11} minecraft:oak_fence replace",
+                f"setblock {mx} {my} {mz-12} minecraft:air",
+                f"setblock {mx} {my} {mz+12} minecraft:air",
+                f"fill {mx-8} {my-1} {mz-6} {mx+8} {my-1} {mz+6} minecraft:dirt_path replace",
+            ])
+            marker_z=mz-16
+            bounds=(mx-40,mz-40,mx+40,mz+40)
+            marker_style="fenced_arena"
+            structure_id=None
+        else:
+            radius=2 if event["size"]=="medium" else 1
+            base="minecraft:polished_andesite" if event["size"]=="medium" else "minecraft:moss_block"
+            marker_commands.extend([
+                f"forceload add {mx-16} {mz-16} {mx+16} {mz+16}",
+                f"fill {mx-radius} {my-1} {mz-radius} {mx+radius} {my-1} {mz+radius} {base} replace",
+                f"fill {mx} {my} {mz} {mx} {my+3} {mz} minecraft:air replace",
+            ])
+            marker_z=mz
+            bounds=(mx-16,mz-16,mx+16,mz+16)
+            marker_style="medium_plinth" if event["size"]=="medium" else "small_plinth"
+            structure_id=None
+        marker_commands.extend([
+            f"setblock {mx} {my} {marker_z} minecraft:lodestone",
+            f"setblock {mx} {my+1} {marker_z} minecraft:lantern",
+            f"forceload remove {bounds[0]} {bounds[1]} {bounds[2]} {bounds[3]}",
+        ])
+        scale_test_markers.append({"id":event["id"],"kind":event["kind"],"size":event["size"],"x":mx,"y":my,"z":mz,"marker_style":marker_style,"structure_id":structure_id,"disposable":True})
+    (out/"place-scale-markers.mcfunction").write_text("\n".join(marker_commands)+"\n",encoding="utf-8")
+
     def length(points): return round(sum(math.dist(a,b) for a,b in zip(points,points[1:])),1)
-    summary={"schema":"cobblers.region-output/1","seed":cfg["seed"],"required_versions":cfg["required_versions"],"dimensions_blocks":list(dimensions(cfg)[:2]),"dimensions_pixels":list(dimensions(cfg)[2:]),"height_range":[int(heights.min()),int(heights.max())],"sha256_pixels":{},"placements":placements,"travel_paths":[{"id":p["id"],"distance_blocks":length(p["points"]),"points":p["points"]} for p in cfg["travel_paths"]]}
+    summary={"schema":"cobblers.region-output/1","seed":cfg["seed"],"required_versions":cfg["required_versions"],"dimensions_blocks":list(dimensions(cfg)[:2]),"dimensions_pixels":list(dimensions(cfg)[2:]),"height_range":[int(heights.min()),int(heights.max())],"sha256_pixels":{},"placements":placements,"scale_test_markers":scale_test_markers,"travel_paths":[{"id":p["id"],"distance_blocks":length(p["points"]),"points":p["points"]} for p in cfg["travel_paths"]]}
     # Hash decoded pixels, not PNG bytes: encoder versions may choose different compression.
     for p in sorted(masks.glob("*.png")): summary["sha256_pixels"][p.name]=hashlib.sha256(Image.open(p).tobytes()).hexdigest()
     summary["preview_sha256_pixels"] = hashlib.sha256(Image.open(out/"prototype-preview.png").tobytes()).hexdigest()
