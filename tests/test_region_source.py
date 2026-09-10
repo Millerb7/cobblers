@@ -62,3 +62,28 @@ def test_town_function_loads_and_releases_edited_chunks(tmp_path):
                 placed.append(command)
     assert not active
     assert len(placed) == 8
+
+
+def test_event_scale_markers_are_visible_and_bounded(tmp_path):
+    subprocess.run([sys.executable, str(ROOT / "tools/generate_region.py"), "--output", str(tmp_path)], check=True)
+    commands = (tmp_path / "place-scale-markers.mcfunction").read_text(encoding="utf-8").splitlines()
+    summary = json.loads((tmp_path / "generation-summary.json").read_text(encoding="utf-8"))
+    markers = summary["scale_test_markers"]
+    marker = next(marker for marker in markers if marker["id"] == "d4-meadow-trial")
+
+    assert len(markers) == 16
+    assert {marker["id"] for marker in markers} == {
+        event["id"] for event in json.loads((ROOT / "world/source/region.json").read_text(encoding="utf-8"))["events"]
+    }
+    assert marker["x"] == 930
+    assert marker["z"] == 790
+    assert marker["disposable"] is True
+    assert sum(command.startswith("forceload add ") for command in commands) == 16
+    assert sum(command.startswith("forceload remove ") for command in commands) == 16
+    assert commands[-1].startswith("forceload remove ")
+    assert marker["marker_style"] == "fenced_arena"
+    assert not any(command.startswith("place template ") for command in commands)
+    assert any(command == "execute positioned 930 80 790 run kill @e[type=cobblemon:npc,distance=..48]" for command in commands)
+    assert any(command == f"setblock 930 {marker['y'] + 1} 774 minecraft:lantern" for command in commands)
+    assert "# d4-berry-grove: reserved berry_grove (small)" in commands
+    assert "# e5-cavern: reserved cavern_entrance (medium)" in commands

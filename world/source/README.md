@@ -13,9 +13,10 @@ python tools/generate_region.py
 python tools/validate.py --only region_source
 ```
 
-The generator writes `exp-009/masks/`, a visual preview, a hash manifest, and
-the post-export town placement function. Re-running with the same config and
-seed must reproduce every mask hash. Generated Minecraft worlds and
+The generator writes `exp-009/masks/`, a visual preview, a hash manifest, the
+post-export town placement function, and a disposable function that marks all
+16 reserved event sites in-game. Re-running with the same config and seed must
+reproduce every mask hash. Generated Minecraft worlds and
 WorldPainter `.world` files live in the experiment's ignored `runtime/` folder.
 
 ## Masks
@@ -45,7 +46,7 @@ from the global elevation/river functions and explicit transition bands:
 - lowland → 42-block bank → river channel;
 - the eastbound town route reserves an 11-block bridge crossing near (1245, 600);
 - elevation and the river are calculated over the whole master raster, so no
-  feature is generated independently on a D/E or 4/5 boundary.
+feature is generated independently on a D/E or 4/5 boundary.
 
 The fantasy hex map and adventure-plan document are visual and scale references.
 They are not machine inputs and their illustrated colours are never sampled as
@@ -70,6 +71,9 @@ verify the biome IDs, Deciduous layer, water fill, border/export settings, and
 spawn point in the installed WorldPainter version. Road and event masks become
 WorldPainter annotations; `place-town.mcfunction` then grades lots, clears
 building envelopes, lays the main dirt path and plaza, and places templates.
+`place-scale-markers.mcfunction` adds inspectable marker plinths to all reserved
+event coordinates and a disposable fenced arena at the D4 meadow endpoint. It
+does not author the named event content.
 The tested export is written under the experiment's ignored `runtime/export/`
 directory. The generated placement function force-loads each bounded edit
 window before changing it and releases it afterward, which is required because
