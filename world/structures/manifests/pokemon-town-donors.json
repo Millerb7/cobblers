@@ -1,0 +1,106 @@
+{
+  "schema": "cobblers.structure-donors/1",
+  "purpose": "Recognizable Pokemon architecture donor/reference libraries; none are enabled for natural world generation by this manifest.",
+  "sources": [
+    {
+      "source_pack": "CobblemonCityTowns",
+      "source_version": "1.0 (CurseForge file 7692448)",
+      "minecraft_version": "1.21.1",
+      "license": "MIT",
+      "source_url": "https://www.curseforge.com/minecraft/data-packs/cobblemoncitytowns",
+      "archive_sha256": "978b302ecc8dbcf4873e303a9ecbf124535d0340cd0feccf2274a78b2da00036",
+      "original_asset_source": {
+        "source_pack": "CobbleTowns",
+        "author": "LastGreenseer",
+        "source_version": "1.0.2 (CurseForge file 5383262)",
+        "license": "MIT",
+        "source_url": "https://www.curseforge.com/minecraft/data-packs/cobbletowns",
+        "original_nbt_sha256": "ef756189eedf937b6e7f3f256af8015b29424e6a2a3ac91f4556a0a1ed5ea351",
+        "trace_result": "Parsed NBT is identical after normalizing the maintained pack's cobblemoncitytowns namespace back to cobbletowns."
+      },
+      "disposition": "PRIMARY_DONOR",
+      "templates": [
+        {
+          "source_id": "cobblemoncitytowns:pallet_town/buildings/large2",
+          "campaign_id": "cobblers:f4/pallet_house_large2",
+          "dimensions": [12, 9, 10],
+          "block_namespaces": ["minecraft"],
+          "intended_campaign_use": "F4 Relic Island stranded Pallet family house; possible mainland Pallet vocabulary",
+          "use": "COPIED_UNMODIFIED",
+          "placement_modifications": "Placement function resolves three jigsaws, replaces donor loot, and removes a small roof edge.",
+          "nbt_sha256": "0ad3b2e13d85c836f14255bd1e3510ea5a401d45b4a0ac4ecb332e05e9e50cd7"
+        },
+        {
+          "source_id": "cobblemoncitytowns:pallet_town/rare_structures/lab",
+          "dimensions": [19, 20, 20],
+          "block_namespaces": ["minecraft", "cobblemon"],
+          "intended_campaign_use": "Professor Oak laboratory candidate for mainland Pallet Town",
+          "use": "REFERENCED"
+        },
+        {
+          "source_id": "cobblemoncitytowns:pallet_town/buildings/{small1,small2,small3,large1}",
+          "intended_campaign_use": "Additional mainland Pallet houses",
+          "use": "REFERENCED"
+        },
+        {
+          "source_id": "cobblemoncitytowns:pallet_town/{roads,extras,decor,town_centers}/*",
+          "intended_campaign_use": "Pallet roads, fences, lamps, vegetation, pool, rocks, and sign",
+          "use": "REFERENCED"
+        }
+      ],
+      "notes": "The archive has no Ash-named house. large2 was selected as the closest furnished family-home donor; do not describe it as an author-labeled Ash house. The structure originates with LastGreenseer's MIT CobbleTowns and was namespace-updated by wildin, then TheGreatToba."
+    },
+    {
+      "source_pack": "CobbleJourneyTown",
+      "source_version": "V0.2 (CurseForge file 8030836)",
+      "minecraft_version": "1.21.1",
+      "license": "MIT",
+      "source_url": "https://www.curseforge.com/minecraft/data-packs/cobblejourneytown",
+      "archive_sha256": "76920ffc42a9ca81bde6d627d0b575ce1aab4f42591d55274cbd7145623eef20",
+      "disposition": "SECONDARY_DONOR",
+      "templates": [
+        {
+          "source_id": "bca:one_off/{pokecenter,structure_pokemart}",
+          "intended_campaign_use": "Larger town service buildings where the primary Pallet kit is insufficient",
+          "use": "REFERENCED"
+        },
+        {
+          "source_id": "bca:centers/center_department_store",
+          "intended_campaign_use": "Future large-city commercial donor",
+          "use": "REFERENCED"
+        }
+      ],
+      "notes": "Archive inspection found no Pallet-, Ash-, or Oak-lab template. oakstone_hearth is a generic house name, not Professor Oak content."
+    },
+    {
+      "source_pack": "Radical Gyms & Structures",
+      "source_version": "UNPINNED_REFERENCE; 1.21.1 release listed 2026-09-10; archive not inspected",
+      "minecraft_version": "1.21.1",
+      "license": "MIT",
+      "source_url": "https://modrinth.com/datapack/radical-gyms-cobblemon",
+      "disposition": "GYM_REFERENCE_DONOR",
+      "templates": [
+        {
+          "source_id": "Kanto gym and League structures (IDs pending focused gym work)",
+          "intended_campaign_use": "Recognizable gym exteriors and League architecture",
+          "use": "REFERENCED"
+        }
+      ]
+    },
+    {
+      "source_pack": "CobbleStructures",
+      "source_version": "UNPINNED_REFERENCE; 1.21.1 release listed 2026-09-10; archive not inspected",
+      "minecraft_version": "1.21.1",
+      "license": "All Rights Reserved",
+      "source_url": "https://modrinth.com/datapack/cobblestructures",
+      "disposition": "REFERENCE_ONLY",
+      "templates": [
+        {
+          "source_id": "Pokecenters, Pokemarts, and Pokepitstops (IDs not imported)",
+          "intended_campaign_use": "Visual reference only unless separate permission is obtained",
+          "use": "NOT_COPIED"
+        }
+      ]
+    }
+  ]
+}

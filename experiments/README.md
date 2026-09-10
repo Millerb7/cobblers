@@ -10,7 +10,7 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | Id | Question | Status |
 |----|----------|--------|
 | EXP-000 | Does the Cobbleverse base boot on Cobblemon 1.8 with our overlay? | procedure written, not yet run |
-| EXP-001 | Can we author a curated route (controlled encounters)? | stub |
+| EXP-001 | Can F4 Route 1 feel authored through curated encounters and Relic Island? | donor/server proof passed; visual and spawn proof pending |
 | EXP-002 | Can we build a genuinely difficult trainer battle? | stub |
 | EXP-003 | Can we enforce a level cap? | stub |
 | EXP-004 | Can we build a trainer gauntlet with restrictions? | stub |

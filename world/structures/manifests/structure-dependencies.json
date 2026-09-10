@@ -44,6 +44,7 @@
     {"catalog_id": "CBM-HABITAT-METEORITE", "source_component": "cobblemon", "structure_id": "cobblemon:habitats/meteorite_impact", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "Cobblemon-fabric-1.8.0+1.21.1.jar!data/cobblemon/worldgen/structure/habitats/meteorite_impact.json"},
     {"catalog_id": "CBM-HABITAT-ZEN-GARDEN", "source_component": "cobblemon", "structure_id": "cobblemon:habitats/zen_garden", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "Cobblemon-fabric-1.8.0+1.21.1.jar!data/cobblemon/worldgen/structure/habitats/zen_garden.json"},
     {"catalog_id": "CBM-RUIN-GIMMI-TOWER", "source_component": "cobblemon", "structure_id": "cobblemon:ruins/deserted_gimmi_tower", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "Cobblemon-fabric-1.8.0+1.21.1.jar!data/cobblemon/worldgen/structure/ruins/deserted_gimmi_tower.json"},
+    {"catalog_id": "CBV-ASH-PALLET", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:ash", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": [43, 22, 44], "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/ash.nbt", "use": "LOCAL_REFERENCE_ONLY_NONREDISTRIBUTABLE"},
     {"catalog_id": "CBV-GYM-BROCK", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:brock", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/brock.nbt"},
     {"catalog_id": "CBV-LEAGUE-KANTO", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:kanto_league", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/kanto_league.nbt"},
     {"catalog_id": "CBV-ROCKET-TOWER", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:team_rocket_tower", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/team_rocket_tower.nbt"},
@@ -56,5 +57,13 @@
     {"catalog_id": "LUMY-TEMPLE-SINNOH", "source_component": "lumymon", "structure_id": "lumymon:temple_of_sinnoh", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": [35, 38, 103], "evidence": "LumyMon-0.6.6.jar!data/lumymon/structure/temple_of_sinnoh.nbt"},
     {"catalog_id": "MSD-MEGA-SITE", "source_component": "mega_showdown", "structure_id": "mega_showdown:mega_site", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar!data/mega_showdown/worldgen/structure/mega_site.json"}
   ],
-  "campaign_structures": []
+  "campaign_structures": [
+    {
+      "id": "campaign:f4/pallet_house_large2",
+      "structure_id": "cobblers:f4/pallet_house_large2",
+      "asset": "world/structures/campaign/f4/pallet_house_large2.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "The NBT is vanilla-only; the EXP-001 placement that owns it fills the house cache with Cobblemon items."
+    }
+  ]
 }
