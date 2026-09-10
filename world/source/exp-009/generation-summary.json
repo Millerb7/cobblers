@@ -1,0 +1,398 @@
+{
+  "schema": "cobblers.region-output/1",
+  "seed": 64929,
+  "required_versions": {
+    "minecraft": "1.21.1",
+    "cobblemon": "1.8.0",
+    "worldpainter": ">=2.27.1",
+    "python": ">=3.10"
+  },
+  "dimensions_blocks": [
+    2500,
+    2500
+  ],
+  "dimensions_pixels": [
+    2500,
+    2500
+  ],
+  "height_range": [
+    50,
+    184
+  ],
+  "sha256_pixels": {
+    "beach-coast.png": "1bb0575227cd65512a872c6f7c37c770aacb2b1cb761c9ca37b23417b57f43dc",
+    "event-reservations.png": "91ceca6afa9eaec559d92e2778a806647aa6dcc3cbecca1aa8edc54b8a320ad6",
+    "forest.png": "48383b5b3936a46e62312e5cd99f9e46ca022c174981d42cf8bf9e90922ddf93",
+    "heightmap.png": "a53e76d7d739a98cfd197e394a607d609b2e3f9956c00dbe3f6f9639d161f47e",
+    "land-water.png": "2e7ddbfcc0acb6b348c29e367d13f978e8f7e013e85691463172431deee6a9a6",
+    "mountain-rock.png": "73d8957c0b45b21cf269c23bc49b3900ba3468de89294fe806d4e369d0d93c14",
+    "plains.png": "839c7739f53993b824facb7129487540c9f9f4a386bf578ab77b5497f272e497",
+    "river.png": "09e9a3f8177cb291ce9f1d356ae5eea82ab02e6050bea91024c0c2ad51e24765",
+    "roads-trails.png": "c1dcf38d6c652d0152e155604f215488f97d72cd58bef556b0d6b98c61b2cbcd",
+    "terrain-categories.png": "33e0ead09afbc05b8286f89277789efd27e3d6723b23d8f90e4ec84f9c08c4d6",
+    "transition-bands.png": "a6cf7a37322f0ce0eb86d964854d2a1ff38b19d661b6475de582a7e4b7b7b1ef"
+  },
+  "placements": [
+    {
+      "id": "town-center",
+      "catalog_id": "CBM-CENTER-PLAINS-01",
+      "structure_id": "cobblemon:village_plains/village_plains_pokecenter",
+      "x": 430,
+      "z": 505,
+      "rotation": "none",
+      "mirror": "none",
+      "source_component": "pokecenterpcs",
+      "y": 80
+    },
+    {
+      "id": "town-mart",
+      "catalog_id": "BCA-MART-01",
+      "structure_id": "bca:default/one_off/structure_pokemart",
+      "x": 575,
+      "z": 505,
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "source_component": "cobblemon-additions",
+      "y": 78
+    },
+    {
+      "id": "town-lodge-north",
+      "catalog_id": "BCA-LODGE-01",
+      "structure_id": "bca:default/one_off/the_lodge",
+      "x": 485,
+      "z": 400,
+      "rotation": "none",
+      "mirror": "none",
+      "source_component": "cobblemon-additions",
+      "y": 79
+    },
+    {
+      "id": "town-lodge-west",
+      "catalog_id": "BCA-LODGE-01",
+      "structure_id": "bca:default/one_off/the_lodge",
+      "x": 350,
+      "z": 555,
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "source_component": "cobblemon-additions",
+      "y": 81
+    },
+    {
+      "id": "town-willow-east",
+      "catalog_id": "BCA-WILLOW-HOUSE-01",
+      "structure_id": "bca:default/structures/winding_willow_house",
+      "x": 690,
+      "z": 590,
+      "rotation": "180",
+      "mirror": "none",
+      "source_component": "cobblemon-additions",
+      "y": 75
+    },
+    {
+      "id": "town-willow-south",
+      "catalog_id": "BCA-WILLOW-HOUSE-01",
+      "structure_id": "bca:default/structures/winding_willow_house",
+      "x": 500,
+      "z": 690,
+      "rotation": "clockwise_90",
+      "mirror": "front_back",
+      "source_component": "cobblemon-additions",
+      "y": 81
+    },
+    {
+      "id": "town-battlepad",
+      "catalog_id": "BCA-BATTLEPAD-01",
+      "structure_id": "bca:default/one_off/small_battlepad",
+      "x": 680,
+      "z": 410,
+      "rotation": "none",
+      "mirror": "none",
+      "source_component": "cobblemon-additions",
+      "y": 78
+    },
+    {
+      "id": "town-well",
+      "catalog_id": "BCA-WELL-CROSSROAD-01",
+      "structure_id": "bca:default/paths/path_well_cross_road",
+      "x": 510,
+      "z": 545,
+      "rotation": "none",
+      "mirror": "none",
+      "source_component": "cobblemon-additions",
+      "y": 79
+    }
+  ],
+  "scale_test_markers": [
+    {
+      "id": "d4-meadow-trial",
+      "kind": "trainer_clearing",
+      "size": "medium",
+      "x": 930,
+      "y": 80,
+      "z": 790,
+      "marker_style": "fenced_arena",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d4-berry-grove",
+      "kind": "berry_grove",
+      "size": "small",
+      "x": 280,
+      "y": 90,
+      "z": 1040,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d4-fishing-bend",
+      "kind": "fishing_spot",
+      "size": "small",
+      "x": 1110,
+      "y": 60,
+      "z": 1130,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d4-old-mill",
+      "kind": "landmark",
+      "size": "small",
+      "x": 1030,
+      "y": 75,
+      "z": 270,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-cabin",
+      "kind": "abandoned_cabin",
+      "size": "medium",
+      "x": 1880,
+      "y": 90,
+      "z": 470,
+      "marker_style": "medium_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-nest",
+      "kind": "pokemon_nest",
+      "size": "small",
+      "x": 1450,
+      "y": 86,
+      "z": 210,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-shrine",
+      "kind": "shrine",
+      "size": "small",
+      "x": 2240,
+      "y": 104,
+      "z": 850,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "d5-clearing",
+      "kind": "trainer_clearing",
+      "size": "small",
+      "x": 1570,
+      "y": 129,
+      "z": 1080,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-river-camp",
+      "kind": "ranger_camp",
+      "size": "medium",
+      "x": 560,
+      "y": 77,
+      "z": 1770,
+      "marker_style": "medium_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-ford",
+      "kind": "fishing_spot",
+      "size": "small",
+      "x": 1080,
+      "y": 71,
+      "z": 1500,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-grove",
+      "kind": "berry_grove",
+      "size": "small",
+      "x": 260,
+      "y": 88,
+      "z": 2210,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e4-cache",
+      "kind": "rocket_cache",
+      "size": "small",
+      "x": 940,
+      "y": 80,
+      "z": 2290,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-cavern",
+      "kind": "cavern_entrance",
+      "size": "medium",
+      "x": 2150,
+      "y": 166,
+      "z": 1840,
+      "marker_style": "medium_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-overlook",
+      "kind": "ridge_overlook",
+      "size": "small",
+      "x": 1740,
+      "y": 173,
+      "z": 1440,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-shrine",
+      "kind": "shrine",
+      "size": "small",
+      "x": 2310,
+      "y": 152,
+      "z": 2260,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    },
+    {
+      "id": "e5-nest",
+      "kind": "pokemon_nest",
+      "size": "small",
+      "x": 1510,
+      "y": 121,
+      "z": 2180,
+      "marker_style": "small_plinth",
+      "structure_id": null,
+      "disposable": true
+    }
+  ],
+  "travel_paths": [
+    {
+      "id": "town-to-d5-center",
+      "distance_blocks": 1362.0,
+      "points": [
+        [
+          520,
+          560
+        ],
+        [
+          820,
+          620
+        ],
+        [
+          1180,
+          600
+        ],
+        [
+          1620,
+          620
+        ],
+        [
+          1875,
+          625
+        ]
+      ]
+    },
+    {
+      "id": "town-to-medium-event",
+      "distance_blocks": 470.5,
+      "points": [
+        [
+          520,
+          560
+        ],
+        [
+          700,
+          650
+        ],
+        [
+          930,
+          790
+        ]
+      ]
+    },
+    {
+      "id": "d4-west-to-east",
+      "distance_blocks": 1207.9,
+      "points": [
+        [
+          25,
+          625
+        ],
+        [
+          520,
+          560
+        ],
+        [
+          900,
+          610
+        ],
+        [
+          1225,
+          625
+        ]
+      ]
+    },
+    {
+      "id": "prototype-diagonal",
+      "distance_blocks": 2035.4,
+      "points": [
+        [
+          280,
+          1040
+        ],
+        [
+          720,
+          1230
+        ],
+        [
+          1180,
+          1450
+        ],
+        [
+          1700,
+          1680
+        ],
+        [
+          2150,
+          1840
+        ]
+      ]
+    }
+  ],
+  "preview_sha256_pixels": "bd8c753ef23273c90c66a4e4a17303e1ec3706ecb30edf034a1126d6d8a3dff3"
+}

@@ -19,15 +19,15 @@
   "assembled_server": {
     "runtime_path": "runtime/server",
     "tracked": false,
-    "jars": 101,
-    "unchanged_base_jars": 89,
+    "jars": 100,
+    "unchanged_base_jars": 88,
     "replacement_jars": 12,
     "removed_enabled_jars": 2,
-    "server_excluded_mod_ids": 34,
+    "server_excluded_mod_ids": 35,
     "datapack_zips": 10,
     "status": "BOOTED",
-    "boot_capture": "runs/20260909-001735",
-    "mod_set_hash": "D1483348BC2D"
+    "boot_capture": "runs/20260910-110333",
+    "mod_set_hash": "62BEABD9398A"
   },
   "assembled_client": {
     "runtime_path": "runtime/client",
@@ -89,6 +89,14 @@
       "status": "BOOTED",
       "run": "runs/20260909-001735",
       "mod_set_hash": "D1483348BC2D"
+    },
+    {
+      "id": 8,
+      "name": "server without Krypton",
+      "changes": ["server-exclude playerxp", "remove cobblemonraiddens", "server-exclude krypton"],
+      "status": "BOOTED; COBBLEMON RIDING ATTACHMENT RESTORED",
+      "run": "runs/20260910-110333",
+      "mod_set_hash": "62BEABD9398A"
     }
   ],
   "human_gate": {
