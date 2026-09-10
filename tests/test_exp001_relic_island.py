@@ -7,6 +7,8 @@ import struct
 import subprocess
 from pathlib import Path
 
+from PIL import Image
+
 
 TEMPLATE_ID = "cobblers:f4/pallet_house_large2"
 FUNCTION_ID = "cobblers:exp_001/f4_relic_island/place"
@@ -191,3 +193,90 @@ def test_donor_nbt_shape_and_contents(repo_root):
     assert len(jigsaws) == 3
     assert len(source_chests) == 1
     assert source_chests[0]["pos"] == [5, 1, 7]
+
+
+def test_f4_world_source_and_donor_assets_are_complete(repo_root):
+    config = json.loads(
+        (repo_root / "world/source/exp-001/f4-region.json").read_text(encoding="utf-8")
+    )
+    assert config["world"]["hex_flat_to_flat"] == 1000
+    assert config["world"]["width"] == config["world"]["height"] == 1000
+    assert {event["id"] for event in config["events"]} == {
+        "abandoned-fish-hut",
+        "abandoned-house",
+        "relic-island",
+        "broken-boat",
+    }
+    placements = config["town"]["placements"] + [
+        event for event in config["events"] if "template" in event
+    ]
+    for placement in placements:
+        namespace, relative = placement["template"].split(":", 1)
+        assert namespace == "cobblers"
+        assert (
+            repo_root
+            / "modpack/datapacks/cobblers_campaign/data/cobblers/structure"
+            / f"{relative}.nbt"
+        ).is_file()
+
+
+def test_f4_generated_masks_and_setup_match_config(repo_root):
+    config = json.loads(
+        (repo_root / "world/source/exp-001/f4-region.json").read_text(encoding="utf-8")
+    )
+    source = repo_root / "world/source/exp-001"
+    for name in (
+        "heightmap.png",
+        "terrain-categories.png",
+        "forest.png",
+        "land-water.png",
+        "beach.png",
+        "routes.png",
+        "events.png",
+    ):
+        assert Image.open(source / "masks" / name).size == (1000, 1000)
+    land = Image.open(source / "masks/land-water.png").convert("L")
+    assert land.getpixel((config["spawn"]["x"], config["spawn"]["z"])) == 255
+    relic = next(event for event in config["events"] if event["id"] == "relic-island")
+    assert land.getpixel((relic["x"], relic["z"])) == 255
+    assert land.getpixel((420, 600)) == 0
+
+    setup = (
+        repo_root
+        / "modpack/datapacks/cobblers_campaign/data/cobblers/function/exp_001/f4/setup.mcfunction"
+    ).read_text(encoding="utf-8")
+    for placement in config["town"]["placements"]:
+        assert f"place template {placement['template']}" in setup
+    assert "function cobblers:exp_001/f4_relic_island/place" in setup
+    assert "setworldspawn 555 74 390" in setup
+
+
+def test_f4_generator_is_deterministic(repo_root, python, tmp_path):
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    first_function = tmp_path / "first.mcfunction"
+    second_function = tmp_path / "second.mcfunction"
+    for output, function in ((first, first_function), (second, second_function)):
+        subprocess.run(
+            [
+                python,
+                "tools/generate_exp001_f4.py",
+                "--output",
+                str(output),
+                "--function-output",
+                str(function),
+            ],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    assert first_function.read_bytes() == second_function.read_bytes()
+    for relative in (
+        "f4-preview.png",
+        "generation-summary.json",
+        "masks/heightmap.png",
+        "masks/terrain-categories.png",
+        "masks/land-water.png",
+    ):
+        assert (first / relative).read_bytes() == (second / relative).read_bytes()

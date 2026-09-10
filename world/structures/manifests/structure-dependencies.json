@@ -59,6 +59,69 @@
   ],
   "campaign_structures": [
     {
+      "id": "campaign:f4/pallet/buildings/large1",
+      "structure_id": "cobblers:f4/pallet/buildings/large1",
+      "asset": "world/structures/campaign/f4/pallet/buildings/large1.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/large2",
+      "structure_id": "cobblers:f4/pallet/buildings/large2",
+      "asset": "world/structures/campaign/f4/pallet/buildings/large2.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/small1",
+      "structure_id": "cobblers:f4/pallet/buildings/small1",
+      "asset": "world/structures/campaign/f4/pallet/buildings/small1.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/small2",
+      "structure_id": "cobblers:f4/pallet/buildings/small2",
+      "asset": "world/structures/campaign/f4/pallet/buildings/small2.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/small3",
+      "structure_id": "cobblers:f4/pallet/buildings/small3",
+      "asset": "world/structures/campaign/f4/pallet/buildings/small3.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/rare_structures/lab",
+      "structure_id": "cobblers:f4/pallet/rare_structures/lab",
+      "asset": "world/structures/campaign/f4/pallet/rare_structures/lab.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT Oak's Lab donor contains Cobblemon blocks and is copied for deliberate placement."
+    },
+    {
+      "id": "campaign:f4/pallet/town_centers/sign",
+      "structure_id": "cobblers:f4/pallet/town_centers/sign",
+      "asset": "world/structures/campaign/f4/pallet/town_centers/sign.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/services/pokecenter",
+      "structure_id": "cobblers:f4/services/pokecenter",
+      "asset": "world/structures/campaign/f4/services/pokecenter.nbt",
+      "required_components": ["cobblemon", "waystones"],
+      "dependency_reason": "MIT donor Pokémon Center contains Cobblemon and Waystones blocks used by the complete overlay."
+    },
+    {
+      "id": "campaign:f4/services/structure_pokemart",
+      "structure_id": "cobblers:f4/services/structure_pokemart",
+      "asset": "world/structures/campaign/f4/services/structure_pokemart.nbt",
+      "required_components": ["cobblemon", "cobblemon-additions"],
+      "dependency_reason": "MIT donor Poké Mart contains Cobblemon and Cobblemon Additions blocks used by the complete overlay."
+    },
+    {
       "id": "campaign:f4/pallet_house_large2",
       "structure_id": "cobblers:f4/pallet_house_large2",
       "asset": "world/structures/campaign/f4/pallet_house_large2.nbt",
