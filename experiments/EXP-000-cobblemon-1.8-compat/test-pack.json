@@ -26,7 +26,7 @@
     "server_excluded_mod_ids": 35,
     "datapack_zips": 10,
     "status": "BOOTED",
-    "boot_capture": "runs/20260910-110333",
+    "boot_capture": "runs/20260910-124927",
     "mod_set_hash": "62BEABD9398A"
   },
   "assembled_client": {
@@ -36,7 +36,8 @@
     "resourcepack_zips": 47,
     "datapack_zips": 10,
     "shaderpack_zips": 1,
-    "status": "PLANNED_NOT_LAUNCHED"
+    "status": "LAUNCHED_AND_CONNECTED",
+    "verified_functionality": ["mudsdale riding", "charizard riding"]
   },
   "stages": [
     {
@@ -94,8 +95,16 @@
       "id": 8,
       "name": "server without Krypton",
       "changes": ["server-exclude playerxp", "remove cobblemonraiddens", "server-exclude krypton"],
-      "status": "BOOTED; COBBLEMON RIDING ATTACHMENT RESTORED",
+      "status": "BOOTED; AUTHORITATIVE POSITIONS SYNCHRONIZED; VISUAL ATTACHMENT STILL FAILED",
       "run": "runs/20260910-110333",
+      "mod_set_hash": "62BEABD9398A"
+    },
+    {
+      "id": 9,
+      "name": "Cobbleverse riding-seat migration",
+      "changes": ["patch 51 native mount seats to Cobblemon 1.8 locators", "preserve 182 Cobbleverse-only riding definitions"],
+      "status": "BOOTED; MUDSDALE AND CHARIZARD RIDING VERIFIED",
+      "run": "runs/20260910-124927",
       "mod_set_hash": "62BEABD9398A"
     }
   ],
