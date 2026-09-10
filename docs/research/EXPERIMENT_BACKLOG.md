@@ -1,0 +1,17 @@
+# Experiment backlog
+
+The detailed bootstrap backlog lives in the existing `experiments/EXP-000-*`
+through `EXP-007-*` folders. This index records active and added proofs.
+
+| Experiment | Status | Objective | Minimum proof | Decision / follow-up |
+| --- | --- | --- | --- | --- |
+| EXP-000 Cobblemon 1.8 compatibility | running | stable Cobbleverse-derived 1.8 foundation | server boot, client connect, critical smoke tests | server boot passed; client/function/world freeze remain |
+| EXP-001 Curated route | planned | authored encounter table | controlled 10–20-species area | gated by EXP-000 |
+| EXP-002 Difficult trainer | planned | ROM-hack-style boss control | one fully specified trainer battle | gated by EXP-000 |
+| EXP-003 Level cap | planned | prevent grinding past progression | one enforceable cap | gated by EXP-000 |
+| EXP-004 Trainer gauntlet | planned | multiplayer-safe chained battles | A→B→C→Admin flow | gated by EXP-000 |
+| EXP-005 Puzzle dungeon | planned | persistent puzzle + encounter | three states and sealed reward | gated by EXP-000 |
+| EXP-006 Static encounter | planned | controlled one-time Pokémon | multiplayer-safe authored encounter | gated by EXP-000 |
+| EXP-007 Story progression | planned | player/shared campaign flags | persistent unlock and reward | gated by EXP-000 |
+| EXP-008 Structure placement | partial | reuse existing NBT/jigsaw assets | five representative placements plus save/restart | use vanilla templates for prototypes; client visual QA next |
+

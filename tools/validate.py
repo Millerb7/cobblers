@@ -4,6 +4,7 @@
 Stdlib only. Walks:
   modpack/                       our overlay (manifests, config, datapacks, ...)
   campaign/                      campaign content (if it exists yet)
+  world/                         authored world assets and structure manifests
   base-pack/cobbleverse/config   base config snapshot
   base-pack/cobbleverse/datapacks  base datapacks, including inside .zip files
 
@@ -20,10 +21,10 @@ Checks (see CHECKS at the bottom):
 Issues under base-pack/ are reported as warnings by default (we do not own that
 content); pass --strict-base to make them errors.
 
-Extension points: the CHECKS registry. Future campaign checks (duplicate ids,
-missing Pokemon references, broken encounter/trainer/reward references, invalid
-progression dependencies, missing structure assets) are registered as stubs
-that report "skipped" until a content schema exists. Do not invent one here.
+Extension points: the CHECKS registry. Structure dependencies have a real schema
+and check; future campaign checks (duplicate ids, missing Pokemon references,
+broken encounter/trainer/reward references, invalid progression dependencies)
+remain registered as stubs until their content schemas exist.
 
 Exit code: 1 if any error, else 0.
 """
@@ -44,10 +45,12 @@ ROOT = Path(__file__).resolve().parent.parent
 WALK_ROOTS = [
     "modpack",
     "campaign",
+    "world",
     "base-pack/cobbleverse/config",
     "base-pack/cobbleverse/datapacks",
 ]
 HASH_CSV = ROOT / "base-pack" / "inventory" / "pack_hashes.csv"
+STRUCTURE_MANIFEST = Path("world/structures/manifests/structure-dependencies.json")
 SKIP_DIRS = {".git", "__pycache__", ".pytest_cache", "cache"}
 
 try:  # optional parsers
@@ -257,6 +260,136 @@ def check_manifest_sanity(ctx: Context) -> None:
         ctx.add("warning", "modpack/manifest/overlay.json", "missing")
 
 
+def check_structure_manifest(ctx: Context) -> None:
+    """Validate the lightweight structure catalog and campaign dependency records."""
+    path = ctx.root / STRUCTURE_MANIFEST
+    rel = STRUCTURE_MANIFEST.as_posix()
+    if not path.exists():
+        ctx.add("error", rel, "missing")
+        return
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (ValueError, UnicodeDecodeError) as exc:
+        ctx.add("error", rel, f"invalid JSON: {exc}")
+        return
+
+    if not isinstance(data, dict):
+        ctx.add("error", rel, "root must be an object")
+        return
+    if data.get("schema") != "cobblers.structure-dependencies/1":
+        ctx.add("error", rel, "unexpected or missing schema")
+    components = data.get("components")
+    verified = data.get("verified_structures")
+    campaign = data.get("campaign_structures")
+    if not isinstance(components, dict) or not isinstance(verified, list) or not isinstance(campaign, list):
+        ctx.add("error", rel, "components must be an object; verified_structures and campaign_structures must be arrays")
+        return
+
+    base_manifest = ctx.root / "modpack" / "manifest" / "base-cobbleverse-1.7.42.json"
+    known_mod_ids: set[str] = set()
+    known_filenames: set[str] = set()
+    if base_manifest.is_file():
+        try:
+            base_data = json.loads(base_manifest.read_text(encoding="utf-8"))
+            for item in base_data.get("files", []):
+                if isinstance(item, dict):
+                    if isinstance(item.get("mod_id"), str):
+                        known_mod_ids.add(item["mod_id"])
+                    if isinstance(item.get("filename"), str):
+                        known_filenames.add(item["filename"])
+        except (ValueError, UnicodeDecodeError):
+            pass  # manifest_sanity/json_parses report the source error
+    for name, component in components.items():
+        where = f"{rel}:components.{name}"
+        if not isinstance(component, dict):
+            ctx.add("error", where, "component must be an object")
+            continue
+        kind = component.get("kind")
+        runtime_id = component.get("runtime_id")
+        if kind not in ("mod", "datapack") or not isinstance(runtime_id, str):
+            ctx.add("error", where, "kind must be mod/datapack and runtime_id must be a string")
+        elif known_mod_ids or known_filenames:
+            if kind == "mod" and runtime_id not in known_mod_ids:
+                ctx.add("error", where, f"runtime mod id {runtime_id!r} is absent from the base manifest")
+            if kind == "datapack" and runtime_id not in known_filenames:
+                ctx.add("error", where, f"runtime datapack {runtime_id!r} is absent from the base manifest")
+
+    ids: set[str] = set()
+    for i, entry in enumerate(verified):
+        where = f"{rel}:verified_structures[{i}]"
+        if not isinstance(entry, dict):
+            ctx.add("error", where, "entry must be an object")
+            continue
+        catalog_id = entry.get("catalog_id")
+        if not isinstance(catalog_id, str) or not catalog_id:
+            ctx.add("error", where, "missing catalog_id")
+        elif catalog_id in ids:
+            ctx.add("error", where, f"duplicate catalog_id {catalog_id}")
+        else:
+            ids.add(catalog_id)
+        source = entry.get("source_component")
+        if not isinstance(source, str) or source not in components:
+            ctx.add("error", where, f"unknown source_component {source!r}")
+        structure_id = entry.get("structure_id")
+        if not isinstance(structure_id, str) or not re.fullmatch(r"[a-z0-9_.-]+:[a-z0-9_./-]+", structure_id):
+            ctx.add("error", where, f"invalid structure_id {structure_id!r}")
+        if not entry.get("implementation") or not entry.get("evidence"):
+            ctx.add("error", where, "implementation and evidence are required")
+        dims = entry.get("dimensions")
+        if dims is not None and (not isinstance(dims, list) or len(dims) != 3 or not all(isinstance(n, int) and n > 0 for n in dims)):
+            ctx.add("error", where, "dimensions must be null or three positive integers")
+
+    asset_root = ctx.root / "world" / "structures" / "campaign"
+    asset_root_resolved = asset_root.resolve()
+    documented_assets: set[str] = set()
+    campaign_ids: set[str] = set()
+    for i, entry in enumerate(campaign):
+        where = f"{rel}:campaign_structures[{i}]"
+        if not isinstance(entry, dict):
+            ctx.add("error", where, "entry must be an object")
+            continue
+        campaign_id = entry.get("id")
+        if not isinstance(campaign_id, str) or not re.fullmatch(r"campaign:[a-z0-9_./-]+", campaign_id):
+            ctx.add("error", where, f"invalid campaign id {campaign_id!r}")
+        elif campaign_id in campaign_ids:
+            ctx.add("error", where, f"duplicate campaign id {campaign_id}")
+        else:
+            campaign_ids.add(campaign_id)
+        based_on = entry.get("based_on")
+        if based_on is not None and (not isinstance(based_on, str) or based_on not in ids):
+            ctx.add("error", where, f"based_on references unknown verified structure {based_on!r}")
+        required = entry.get("required_components")
+        if not isinstance(required, list) or not required:
+            ctx.add("error", where, "required_components must be a non-empty array")
+        else:
+            for component in required:
+                if not isinstance(component, str) or component not in components:
+                    ctx.add("error", where, f"unknown required component {component!r}")
+        asset = entry.get("asset")
+        if not isinstance(asset, str) or not asset.startswith("world/structures/campaign/"):
+            ctx.add("error", where, "asset must be under world/structures/campaign/")
+        else:
+            candidate = (ctx.root / asset).resolve()
+            try:
+                candidate.relative_to(asset_root_resolved)
+            except ValueError:
+                ctx.add("error", where, f"asset escapes campaign structure root: {asset}")
+                continue
+            documented_assets.add(asset)
+            if not candidate.is_file():
+                ctx.add("error", where, f"missing asset {asset}")
+
+    if asset_root.is_dir():
+        actual = {
+            p.relative_to(ctx.root).as_posix()
+            for p in asset_root.rglob("*")
+            if p.is_file() and p.name != ".gitkeep"
+        }
+        for asset in sorted(actual - documented_assets):
+            ctx.add("error", asset, "campaign structure has no dependency-manifest entry")
+    ctx.add("info", rel, f"{len(ids)} verified upstream structures; {len(campaign_ids)} campaign structures")
+
+
 def _stub(name: str, what: str):
     """Placeholder for a future campaign check. Reports 'skipped' so nobody mistakes it for coverage."""
 
@@ -275,12 +408,12 @@ CHECKS = [
     ("duplicate_basenames", check_duplicate_basenames),
     ("hash_csv_wellformed", check_hash_csv_wellformed),
     ("manifest_sanity", check_manifest_sanity),
+    ("structure_manifest", check_structure_manifest),
     # --- extension points (EXP-001..EXP-007 will define the data these need) ---
     ("duplicate_ids", _stub("duplicate_ids", "duplicate campaign ids across routes/trainers/rewards")),
     ("missing_pokemon_refs", _stub("missing_pokemon_refs", "species/form names that Cobblemon does not know")),
     ("broken_refs", _stub("broken_refs", "encounter/trainer/reward references pointing at nothing")),
     ("progression_deps", _stub("progression_deps", "progression dependencies that cycle or reference unknown steps")),
-    ("structure_assets", _stub("structure_assets", "structure/nbt/schematic assets referenced but absent")),
 ]
 
 

@@ -1,0 +1,23 @@
+{
+  "schema": "cobblers.structure-source-evidence/1",
+  "captured": "2026-09-09",
+  "runtime": "EXP-000 101-jar server plan, mod set D1483348BC2D",
+  "archives": [
+    {"file": "PokeCenterPCs-DP.zip", "bytes": 386543, "sha256": "e462e091ef376595c5b0efab2615fe0463b93b4c54e462cc841749a90ecefe31"},
+    {"file": "cobblemon-additions-4.1.6.jar", "bytes": 1961229, "sha256": "c40eeee13943aa3b2ed532a25de5b55f5db4c76222e2a61c98d0bc35c028357d"},
+    {"file": "Cobblemon-fabric-1.8.0+1.21.1.jar", "bytes": 162358118, "sha256": "a6228f3291c70ed6348b9a47beadabc79cb241b6522312e7e2b56d428dc9ec31"},
+    {"file": "COBBLEVERSE-DP-v31.zip", "bytes": 4626446, "sha256": "24344c64d49cad1e4743276472f5598ed32d1c002f5ebb881b9e0cf7bc1a77c6"},
+    {"file": "COBBLEVERSE-Hoenn-DP.zip", "bytes": 1338585, "sha256": "68a1d6f49353eb75d970aaef03dbdba8eafe163d2259d45313c2430f8497817b"},
+    {"file": "COBBLEVERSE-Johto-DP.zip", "bytes": 746704, "sha256": "6ec080be3acd58bdc48740da122efcb21a639d839e6607d656cdb3192397d45a"},
+    {"file": "COBBLEVERSE-Sinnoh-DP.zip", "bytes": 1562135, "sha256": "b2e93ad20f27e96af87f589b8a9653c2f8ce7ed661adf412ba002d0ffec6cc32"},
+    {"file": "LegendaryMonuments-Cobbleverse.jar", "bytes": 5736792, "sha256": "34901d7c95bff58242384c44abc6acc50c2e06310b85f7e80bcd70f7c7e5b0b6"},
+    {"file": "LumyMon-0.6.6.jar", "bytes": 2331858, "sha256": "00ad0ddb4bbac26b6f1b83ad80255008be98ab72056d89de3eb9107b01d7eefb"},
+    {"file": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar", "bytes": 19970594, "sha256": "99f0e4b12b3d10e773f4483149a1979f0a6c35b24e62afa34b88d1bd6be21b1f"}
+  ],
+  "member_verification": {
+    "manifest": "structure-dependencies.json",
+    "verified_entries": 22,
+    "method": "Each evidence archive was matched by exact filename and each member by exact ZIP/JAR entry name.",
+    "result": "PASS"
+  }
+}
