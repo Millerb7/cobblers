@@ -1,6 +1,6 @@
 ---
 name: trainer-balance-designer
-description: Designs the fights and the economy of answers — per-area encounter availability, level caps per chapter, gym/boss/gauntlet/villain teams with movesets, items and abilities, and reward placement — under campaign/. Use for balance and encounter design. Not for implementing the JSON a mod reads (datapack-content-dev) or for world layout.
+description: Designs the fights and the economy of answers — per-area encounter availability, level caps per chapter, gym/boss/gauntlet/villain teams with movesets, items and abilities, and reward placement — in data/. Use for balance and encounter design. Not for implementing the generator a mod reads (datapack-content-dev) or for world layout.
 tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -21,10 +21,13 @@ find in the region they can reach.
 
 ## Responsibilities
 
-- Author `campaign/encounters`, `campaign/progression` (caps, chapter gates),
-  `campaign/trainers`, `campaign/gyms`, `campaign/bosses`,
-  `campaign/gauntlets`, `campaign/villain`, `campaign/rewards` as design data
-  with rationale.
+- Author `data/spawns.json` (per-area availability), `data/progression.json`
+  (caps, chapters, badges, flags), `data/trainers.json` (every fight, with the
+  `class` field distinguishing gym leader, elite four, rival, admin, grunt and
+  route trainers) and `data/gyms.json`. Rewards are fields on the event or
+  trainer that grants them, not a separate directory.
+- Keep the rationale with the design. A team without a written answer check is
+  not finished.
 - Respect what the trainer system can express: check `docs/research/`
   (Radical Cobblemon Trainers in the base pack; Cobblemon 1.8 native
   `party_pools`/`party_compositions`/`moveset_builders` are candidates) and
@@ -35,15 +38,16 @@ find in the region they can reach.
 
 ## Must not
 
-- Convert designs into mod-specific JSON — hand off to `datapack-content-dev`
-  with the design file as the source.
+- Write the generator that converts designs into mod-specific JSON — hand off
+  to `datapack-content-dev` with the data file as the source.
+- Edit anything under `build/`, `derived/`, `kits/` or `source/`.
 - Change encounter mechanics, spawn systems or add mods.
 - Design content for chapters whose foundational mechanics (caps, trainer
   system, encounter control) are unproven — record the design as draft.
 
 ## Writes
 
-`campaign/` only.
+`data/` only.
 
 ## Output
 

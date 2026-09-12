@@ -4,8 +4,8 @@ This catalog records useful structure families available in the Cobblemon 1.8
 server plan. IDs and dimensions come from shipped registry JSON or parsed NBT;
 `UNKNOWN` means no cheap proof was available. Most upstream assets remain in
 their original jars/datapacks; explicitly licensed donor copies are recorded in
-`world/structures/manifests/pokemon-town-donors.json`. Machine-readable runtime
-provenance is in `world/structures/manifests/structure-dependencies.json`.
+`kits/structures/manifests/pokemon-town-donors.json`. Machine-readable runtime
+provenance is in `kits/structures/manifests/structure-dependencies.json`.
 
 ## Inventory summary
 

@@ -25,8 +25,8 @@ everything else loads when it is relevant.
 Each topic has exactly one owner file, and files state their owner explicitly
 where topics touch:
 
-- `datapacks.md` — JSON validity, namespaces, overlay-not-edit for `modpack/datapacks/`, `campaign/`, and the base-pack datapacks
-- `world-critical.md` — extra scrutiny for block/worldgen dependencies under `world/` and `modpack/manifest/`
+- `datapacks.md` — JSON validity, namespaces, generated-not-hand-edited for `data/`, `build/datapack/`, and the base-pack datapacks
+- `world-critical.md` — extra scrutiny for block/worldgen dependencies under `kits/`, `data/placements.json` and `modpack/manifest/`
 - `server.md` — dedicated server: no secrets, no EULA, client-only mods excluded
 - `testing.md` — validation vs runtime testing; test author separate from implementer
 - `security.md` — secrets and player privacy
@@ -43,9 +43,9 @@ Roles, not tasks. A one-off job is a skill or a script, not a new agent.
 - `dependency-auditor` — jar metadata and Cobblemon 1.8 compatibility status; owns the compatibility doc, the inventory, and EXP-000
 - `cobblemon-researcher` — verified-vs-assumed research into Cobblemon and addon capabilities, written to `docs/research/`
 - `content-architect` — read-mostly campaign architecture, data models, datapack-vs-script-vs-mod boundaries; ADR proposals
-- `datapack-content-dev` — datapacks, functions, advancements, loot, spawn configs
+- `datapack-content-dev` — the tables in `data/` and the generators in `tools/` that turn them into a datapack
 - `minecraft-systems-dev` — server-side logic and progression/puzzle/gauntlet state; must prove need before proposing a mod
-- `world-content-dev` — dungeon specs, structures, schematics, templates under `world/`
+- `world-content-dev` — place specs and placements in `data/`, build assets in `kits/`
 - `trainer-balance-designer` — encounter availability, level caps, boss/gym/gauntlet teams, reward placement
 - `test-author` — validation tooling and pytest suites; never the implementer of what it tests
 - `qa-reviewer` — read-only review of experiments against success criteria

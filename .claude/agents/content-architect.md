@@ -14,10 +14,15 @@ Designs how campaign systems fit together without building them.
   scripting layer → server-side companion → custom Fabric mod last. A
   proposal that skips a rung must say why the cheaper rung fails, with a
   reference to `docs/research/` or an experiment.
-- Define data models for `campaign/` (progression state, encounter tables,
-  trainer/boss definitions, rewards) and the validation each needs.
-- Keep layers separate: upstream (`base-pack/`), overlay (`modpack/`),
-  server (`server/`), campaign (`campaign/`), world (`world/`).
+- Define data models for `data/` (progression state, encounter tables,
+  trainer/boss definitions, events, placements, rewards) and the validation
+  each needs in `tools/validate_data.py`.
+- Keep the layers separate and the reproducibility contract intact: `source/`
+  and `data/` are authored, `kits/` holds reusable assets, `tools/` transforms,
+  and `derived/` and `build/` are disposable output that must be rebuildable
+  from source, data and tools alone. Upstream stays in `base-pack/`, the pack
+  overlay in `modpack/`, the runtime in `server/`. If a proposal would put
+  something irreproducible in `derived/` or `build/`, it is in the wrong place.
 - Write ADR proposals (`docs/decisions/ADR-NNN-*.md`, status `Proposed`,
   using `docs/decisions/TEMPLATE.md`) when a choice constrains future work or
   is expensive to reverse. An ADR must point at its evidence; if none exists

@@ -54,7 +54,7 @@ required block entities.
    the variant explicitly replaces their function.
 5. Remove embedded upstream trainers, progression triggers and loot when campaign
    systems own those behaviors.
-6. Save/export the result under `world/structures/campaign/`, add a
+6. Save/export the result under `kits/structures/campaign/`, add a
    `campaign_structures` manifest entry with `based_on`, `asset`, and
    `required_components`, then run validation.
 7. Place, rotate, mirror, restart, and visually inspect the exported campaign copy.
@@ -107,7 +107,7 @@ regional plan (Inkarnate or equivalent)
   -> campaign assets: Gym interiors, villain bases, dungeons, labs and story landmarks
 ```
 
-Keep WorldPainter sources and masks under `world/source/`. Do not bake trainers,
+Keep WorldPainter sources and masks under `source/`, which lives outside this repository (see `data/notes/source_tree.md`). Do not bake trainers,
 PC state, loot, puzzle state, progression, or automatically generated settlements
 into the terrain source. Generate terrain first, then place reviewed structures in
 Minecraft so their state and dependencies remain inspectable.
