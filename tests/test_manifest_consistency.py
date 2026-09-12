@@ -114,8 +114,52 @@ def test_replacement_only_download_matches_overlay(repo_root, python, tmp_path, 
         text=True,
         check=True,
     )
+    # --replacements-only covers everything the overlay introduces on top of a
+    # base-pack install: replacements AND additions. An added mod that is not
+    # downloaded is simply missing from the server, so it must be counted.
     server_excluded = set(overlay["server_exclude"])
-    expected = sum(1 for entry in overlay["replace"] if entry["mod_id"] not in server_excluded)
+    expected = sum(
+        1
+        for entry in overlay["replace"] + overlay["add"]
+        if entry["mod_id"] not in server_excluded
+    )
     assert f"{expected} files downloadable from Modrinth" in r.stdout
     assert "DRY RUN. Nothing downloaded." in r.stdout
     assert not (tmp_path / "downloads").exists()
+
+
+def test_overlay_additions_are_downloadable(repo_root, python, tmp_path, overlay):
+    """An overlay addition without a resolved URL cannot be installed at all."""
+    assert overlay["add"], "expected at least one addition to guard"
+    for entry in overlay["add"]:
+        assert entry.get("modrinth", {}).get("url"), entry["mod_id"]
+        assert entry.get("sha512"), entry["mod_id"]
+        assert entry.get("side") in ("both", "client", "server"), entry["mod_id"]
+
+    r = subprocess.run(
+        [python, "tools/pack_manifest.py", "download", "--side", "server",
+         "--replacements-only", "--target", str(tmp_path / "downloads")],
+        cwd=repo_root, capture_output=True, text=True, check=True,
+    )
+    for entry in overlay["add"]:
+        if entry["side"] in ("both", "server"):
+            assert entry["file"] in r.stdout, entry["mod_id"]
+
+
+def test_distant_horizons_is_pinned_on_both_sides(overlay):
+    """DH rejects clients whose major version differs, so the pin must be exact."""
+    dh = [e for e in overlay["add"] if e["mod_id"] == "distanthorizons"]
+    assert len(dh) == 1
+    dh = dh[0]
+    assert dh["side"] == "both", "server-side DH is required for a shared horizon"
+    assert dh["pin"] == "exact"
+    assert dh["version"] == dh["modrinth"]["version_number"]
+    assert dh["mod_id"] not in set(overlay["server_exclude"])
+
+
+def test_c2me_is_removed_not_merely_server_excluded(overlay):
+    """C2ME deadlocks a dedicated server alongside server-side DH."""
+    removed = {e["mod_id"] for e in overlay["remove"]}
+    assert "c2me" in removed
+    assert "c2me" not in set(overlay["server_exclude"]), \
+        "removing it outright keeps the client and server mod sets identical"
