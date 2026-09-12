@@ -1,0 +1,132 @@
+{
+  "schema": "cobblers.structure-dependencies/1",
+  "components": {
+    "cobblemon": {"kind": "mod", "runtime_id": "cobblemon", "world_critical": true},
+    "pokecenterpcs": {"kind": "datapack", "runtime_id": "PokeCenterPCs-DP.zip", "world_critical": true, "depends_on": ["cobblemon"]},
+    "cobblemon-additions": {"kind": "mod", "runtime_id": "cobblemon-additions", "namespace": "bca", "world_critical": true},
+    "cobbleverse-core": {"kind": "datapack", "runtime_id": "COBBLEVERSE-DP-v31.zip", "world_critical": true, "redistribution": "prohibited"},
+    "cobbleverse-hoenn": {"kind": "datapack", "runtime_id": "COBBLEVERSE-Hoenn-DP.zip", "world_critical": true, "redistribution": "prohibited"},
+    "cobbleverse-johto": {"kind": "datapack", "runtime_id": "COBBLEVERSE-Johto-DP.zip", "world_critical": true, "redistribution": "prohibited"},
+    "cobbleverse-sinnoh": {"kind": "datapack", "runtime_id": "COBBLEVERSE-Sinnoh-DP.zip", "world_critical": true, "redistribution": "prohibited"},
+    "legendarymonuments": {"kind": "mod", "runtime_id": "legendarymonuments", "world_critical": true},
+    "lumymon": {"kind": "mod", "runtime_id": "lumymon", "world_critical": true},
+    "mega_showdown": {"kind": "mod", "runtime_id": "mega_showdown", "world_critical": true},
+    "rctmod": {"kind": "mod", "runtime_id": "rctmod", "world_critical": true},
+    "cobblefurnies": {"kind": "mod", "runtime_id": "cobblefurnies", "world_critical": true},
+    "waystones": {"kind": "mod", "runtime_id": "waystones", "world_critical": true},
+    "rechiseled": {"kind": "mod", "runtime_id": "rechiseled", "world_critical": true},
+    "carved_wood": {"kind": "mod", "runtime_id": "carved_wood", "world_critical": true},
+    "pokeblocks": {"kind": "mod", "runtime_id": "pokeblocks", "world_critical": true},
+    "cozyhome": {"kind": "mod", "runtime_id": "cozyhome", "world_critical": true},
+    "handcrafted": {"kind": "mod", "runtime_id": "handcrafted", "world_critical": true},
+    "moarconcrete": {"kind": "mod", "runtime_id": "moarconcrete", "world_critical": true},
+    "vanillabackport": {"kind": "mod", "runtime_id": "vanillabackport", "world_critical": true},
+    "beautify": {"kind": "mod", "runtime_id": "beautify", "world_critical": true},
+    "comforts": {"kind": "mod", "runtime_id": "comforts", "world_critical": true},
+    "cobbledollars": {"kind": "mod", "runtime_id": "cobbledollars", "world_critical": true},
+    "tmcraft": {"kind": "mod", "runtime_id": "tmcraft", "world_critical": true},
+    "sophisticatedstorage": {"kind": "mod", "runtime_id": "sophisticatedstorage", "world_critical": true},
+    "sophisticatedbackpacks": {"kind": "mod", "runtime_id": "sophisticatedbackpacks", "world_critical": true},
+    "toms_storage": {"kind": "mod", "runtime_id": "toms_storage", "world_critical": true}
+  },
+  "verified_structures": [
+    {"catalog_id": "CBM-CENTER-PLAINS-01", "source_component": "pokecenterpcs", "structure_id": "cobblemon:village_plains/village_plains_pokecenter", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": [10, 11, 14], "evidence": "PokeCenterPCs-DP.zip!data/cobblemon/structure/village_plains/village_plains_pokecenter.nbt"},
+    {"catalog_id": "BCA-CENTER-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/one_off/pokecenter", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": [22, 15, 23], "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/one_off/pokecenter.nbt"},
+    {"catalog_id": "BCA-MART-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/one_off/structure_pokemart", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/one_off/structure_pokemart.nbt"},
+    {"catalog_id": "BCA-BATTLEPAD-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/one_off/small_battlepad", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/one_off/small_battlepad.nbt"},
+    {"catalog_id": "BCA-LODGE-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/one_off/the_lodge", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/one_off/the_lodge.nbt"},
+    {"catalog_id": "BCA-WILLOW-HOUSE-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/structures/winding_willow_house", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/structures/winding_willow_house.nbt"},
+    {"catalog_id": "BCA-WELL-CROSSROAD-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/paths/path_well_cross_road", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/paths/path_well_cross_road.nbt"},
+    {"catalog_id": "BCA-VILLAGE-DEFAULT-S", "source_component": "cobblemon-additions", "structure_id": "bca:village/default_small", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/worldgen/structure/village/default_small.json"},
+    {"catalog_id": "BCA-VILLAGE-FIGHTING-S", "source_component": "cobblemon-additions", "structure_id": "bca:village/fighting_small", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/worldgen/structure/village/fighting_small.json"},
+    {"catalog_id": "BCA-ACADEMY-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/centers/center_the_academy", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": [49, 60, 73], "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/centers/center_the_academy.nbt"},
+    {"catalog_id": "BCA-DEPARTMENT-STORE-01", "source_component": "cobblemon-additions", "structure_id": "bca:default/centers/center_department_store", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": null, "evidence": "cobblemon-additions-4.1.6.jar!data/bca/structure/default/centers/center_department_store.nbt"},
+    {"catalog_id": "CBM-HABITAT-METEORITE", "source_component": "cobblemon", "structure_id": "cobblemon:habitats/meteorite_impact", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "Cobblemon-fabric-1.8.0+1.21.1.jar!data/cobblemon/worldgen/structure/habitats/meteorite_impact.json"},
+    {"catalog_id": "CBM-HABITAT-ZEN-GARDEN", "source_component": "cobblemon", "structure_id": "cobblemon:habitats/zen_garden", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "Cobblemon-fabric-1.8.0+1.21.1.jar!data/cobblemon/worldgen/structure/habitats/zen_garden.json"},
+    {"catalog_id": "CBM-RUIN-GIMMI-TOWER", "source_component": "cobblemon", "structure_id": "cobblemon:ruins/deserted_gimmi_tower", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "Cobblemon-fabric-1.8.0+1.21.1.jar!data/cobblemon/worldgen/structure/ruins/deserted_gimmi_tower.json"},
+    {"catalog_id": "CBV-ASH-PALLET", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:ash", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": [43, 22, 44], "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/ash.nbt", "use": "LOCAL_REFERENCE_ONLY_NONREDISTRIBUTABLE"},
+    {"catalog_id": "CBV-GYM-BROCK", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:brock", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/brock.nbt"},
+    {"catalog_id": "CBV-LEAGUE-KANTO", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:kanto_league", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/kanto_league.nbt"},
+    {"catalog_id": "CBV-ROCKET-TOWER", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:team_rocket_tower", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/team_rocket_tower.nbt"},
+    {"catalog_id": "CBV-DAWN-TOWER", "source_component": "cobbleverse-core", "structure_id": "cobbleverse:dawn_tower", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-DP-v31.zip!data/cobbleverse/structure/dawn_tower.nbt"},
+    {"catalog_id": "CBV-HOENN-SKY-PILLAR", "source_component": "cobbleverse-hoenn", "structure_id": "cobbleverse:sky_pillar", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-Hoenn-DP.zip!data/cobbleverse/structure/sky_pillar.nbt"},
+    {"catalog_id": "CBV-JOHTO-BELL-TOWER", "source_component": "cobbleverse-johto", "structure_id": "cobbleverse:bell_tower", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-Johto-DP.zip!data/cobbleverse/structure/bell_tower.nbt"},
+    {"catalog_id": "CBV-SINNOH-GALACTIC-HQ", "source_component": "cobbleverse-sinnoh", "structure_id": "cobbleverse:team_galactic_hq", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "COBBLEVERSE-Sinnoh-DP.zip!data/cobbleverse/structure/team_galactic_hq.nbt"},
+    {"catalog_id": "LM-FIRESCOURGE-SHRINE", "source_component": "legendarymonuments", "structure_id": "legendarymonuments:firescourge_shrine", "implementation": "VANILLA_STRUCTURE_NBT_AND_MOD_REGISTERED", "dimensions": [21, 15, 27], "evidence": "LegendaryMonuments-Cobbleverse.jar!data/legendarymonuments/structure/firescourge_shrine.nbt"},
+    {"catalog_id": "LM-TURNBACK-CAVE", "source_component": "legendarymonuments", "structure_id": "legendarymonuments:turnback_cave", "implementation": "JIGSAW_STRUCTURE", "dimensions": null, "evidence": "LegendaryMonuments-Cobbleverse.jar!data/legendarymonuments/worldgen/structure/turnback_cave.json"},
+    {"catalog_id": "LUMY-TEMPLE-SINNOH", "source_component": "lumymon", "structure_id": "lumymon:temple_of_sinnoh", "implementation": "VANILLA_STRUCTURE_NBT", "dimensions": [35, 38, 103], "evidence": "LumyMon-0.6.6.jar!data/lumymon/structure/temple_of_sinnoh.nbt"},
+    {"catalog_id": "MSD-MEGA-SITE", "source_component": "mega_showdown", "structure_id": "mega_showdown:mega_site", "implementation": "VANILLA_STRUCTURE_NBT_AND_JIGSAW", "dimensions": null, "evidence": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar!data/mega_showdown/worldgen/structure/mega_site.json"}
+  ],
+  "campaign_structures": [
+    {
+      "id": "campaign:f4/pallet/buildings/large1",
+      "structure_id": "cobblers:f4/pallet/buildings/large1",
+      "asset": "kits/structures/campaign/f4/pallet/buildings/large1.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/large2",
+      "structure_id": "cobblers:f4/pallet/buildings/large2",
+      "asset": "kits/structures/campaign/f4/pallet/buildings/large2.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/small1",
+      "structure_id": "cobblers:f4/pallet/buildings/small1",
+      "asset": "kits/structures/campaign/f4/pallet/buildings/small1.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/small2",
+      "structure_id": "cobblers:f4/pallet/buildings/small2",
+      "asset": "kits/structures/campaign/f4/pallet/buildings/small2.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/buildings/small3",
+      "structure_id": "cobblers:f4/pallet/buildings/small3",
+      "asset": "kits/structures/campaign/f4/pallet/buildings/small3.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/pallet/rare_structures/lab",
+      "structure_id": "cobblers:f4/pallet/rare_structures/lab",
+      "asset": "kits/structures/campaign/f4/pallet/rare_structures/lab.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT Oak's Lab donor contains Cobblemon blocks and is copied for deliberate placement."
+    },
+    {
+      "id": "campaign:f4/pallet/town_centers/sign",
+      "structure_id": "cobblers:f4/pallet/town_centers/sign",
+      "asset": "kits/structures/campaign/f4/pallet/town_centers/sign.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "MIT donor template copied into the campaign namespace for deliberate placement; Cobblemon is the campaign runtime baseline."
+    },
+    {
+      "id": "campaign:f4/services/pokecenter",
+      "structure_id": "cobblers:f4/services/pokecenter",
+      "asset": "kits/structures/campaign/f4/services/pokecenter.nbt",
+      "required_components": ["cobblemon", "waystones"],
+      "dependency_reason": "MIT donor Pokémon Center contains Cobblemon and Waystones blocks used by the complete overlay."
+    },
+    {
+      "id": "campaign:f4/services/structure_pokemart",
+      "structure_id": "cobblers:f4/services/structure_pokemart",
+      "asset": "kits/structures/campaign/f4/services/structure_pokemart.nbt",
+      "required_components": ["cobblemon", "cobblemon-additions"],
+      "dependency_reason": "MIT donor Poké Mart contains Cobblemon and Cobblemon Additions blocks used by the complete overlay."
+    },
+    {
+      "id": "campaign:f4/pallet_house_large2",
+      "structure_id": "cobblers:f4/pallet_house_large2",
+      "asset": "kits/structures/campaign/f4/pallet_house_large2.nbt",
+      "required_components": ["cobblemon"],
+      "dependency_reason": "The NBT is vanilla-only; the EXP-001 placement that owns it fills the house cache with Cobblemon items."
+    }
+  ]
+}

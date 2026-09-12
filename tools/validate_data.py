@@ -347,17 +347,54 @@ def check_world_config(ctx: Context):
                   file=f.rel, line=f.line_of_key("sea_level"))
 
     imp = w.get("import") or {}
-    rng = imp.get("input_range") or {}
-    for key in ("low_in", "high_in"):
-        v = imp.get(key)
-        if v is not None and rng.get("max") is not None and v > rng["max"]:
-            rep.error("schema", "import.%s=%s exceeds input_range.max=%s"
-                      % (key, v, rng["max"]), file=f.rel, line=f.line_of_key(key))
-    if hm.get("bit_depth") == 16 and rng.get("max") == 255:
+
+    # Inputs are fractions of full scale so the mapping survives a bit-depth
+    # change. Outputs are absolute Minecraft Y and never scale.
+    if imp.get("input_units") != "fraction_of_full_scale":
+        rep.error("schema",
+                  'import.input_units must be "fraction_of_full_scale"; absolute '
+                  "sample values silently break when the heightmap bit depth changes",
+                  file=f.rel, line=f.line_of_key("input_units"))
+    if "input_range" in imp:
+        rep.error("schema",
+                  "import.input_range is retired; low_in/high_in are fractions",
+                  file=f.rel, line=f.line_of_key("input_range"))
+
+    lo_in, hi_in = imp.get("low_in"), imp.get("high_in")
+    for key, val in (("low_in", lo_in), ("high_in", hi_in)):
+        if val is None:
+            rep.error("schema", "import.%s is unset" % key, file=f.rel,
+                      line=f.line_of_key(key))
+        elif not isinstance(val, (int, float)) or isinstance(val, bool) \
+                or not 0.0 <= float(val) <= 1.0:
+            rep.error("schema",
+                      "import.%s=%s must be a fraction of full scale between 0 and 1"
+                      % (key, val), file=f.rel, line=f.line_of_key(key))
+    if isinstance(lo_in, (int, float)) and isinstance(hi_in, (int, float)) \
+            and float(lo_in) >= float(hi_in):
+        rep.error("schema", "import.low_in (%s) must be below high_in (%s)"
+                  % (lo_in, hi_in), file=f.rel, line=f.line_of_key("low_in"))
+
+    for key in ("low_out", "high_out", "water_level"):
+        val = imp.get(key)
+        if val is None:
+            rep.error("schema", "import.%s is unset" % key, file=f.rel,
+                      line=f.line_of_key(key))
+        elif None not in (lo, hi) and not lo <= val <= hi:
+            rep.error("schema",
+                      "import.%s=%s is outside the vertical band %s..%s"
+                      % (key, val, lo, hi), file=f.rel, line=f.line_of_key(key))
+    if imp.get("low_out") is not None and imp.get("high_out") is not None \
+            and imp["low_out"] >= imp["high_out"]:
+        rep.error("schema", "import.low_out (%s) must be below high_out (%s)"
+                  % (imp["low_out"], imp["high_out"]),
+                  file=f.rel, line=f.line_of_key("low_out"))
+    if imp.get("water_level") is not None and sea is not None \
+            and imp["water_level"] != sea:
         rep.warn("schema",
-                 "heightmap declares 16-bit but import.input_range.max is 255; "
-                 "the mapping must be restated in 16-bit units before import",
-                 file=f.rel, line=f.line_of_key("input_range"))
+                 "import.water_level (%s) disagrees with vertical.sea_level (%s)"
+                 % (imp["water_level"], sea),
+                 file=f.rel, line=f.line_of_key("water_level"))
 
 
 def check_integrity(ctx: Context):
