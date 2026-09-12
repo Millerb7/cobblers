@@ -1,5 +1,10 @@
 # EXP-001: Can F4 Route 1 feel deliberately authored?
 
+> **Superseded.** The source files this record refers to under `world/source/`
+> were deleted when the prototype coordinate data was discarded. Both prototype
+> landscapes are gone; paths below are historical. Surviving design intent is in
+> `data/notes/legacy_events.md`, and the structure library lives in `kits/structures/`.
+
 **Status: READY FOR F4 CLIENT PLAYTEST. Curated encounter proof remains pending.**
 
 ## Objective

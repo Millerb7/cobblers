@@ -35,9 +35,9 @@ Cobblemon 1.8.x compatibility overlay   (modpack/manifest/overlay.json)
         +
 our pack configuration                  (modpack/config, modpack/overrides)
         +
-our campaign systems                    (campaign/, modpack/datapacks)
+our campaign design                     (data/, generated into build/datapack)
         +
-our authored world                      (world/)
+our authored world                      (source/ + data/ + kits/ -> build/world)
 ```
 
 When Cobbleverse ships its own Cobblemon 1.8 release, the compatibility overlay
@@ -71,12 +71,15 @@ PlayerXP out of the dedicated server; details in
 | `docs/decisions/` | Architecture Decision Records |
 | `docs/world-building/` | Verified reusable-structure catalog, placement workflow, palette, and town kit |
 | `base-pack/` | Upstream Cobbleverse snapshot (config, licenses) plus inventory/hashes. **Never edited in place.** |
-| `modpack/` | The client pack players install: manifests, overlay, our config, our datapacks, resource packs |
+| `modpack/` | The client pack players install: manifests, overlay, our config, resource packs |
 | `server/` | Dedicated server reproduction: config templates, launch docs, assembly and boot-test scripts |
-| `campaign/` | Authored campaign data: encounters, trainers, gyms, bosses, gauntlets, dungeons, quests, rewards, dialogue, progression |
-| `world/` | Reproducible world assets: WorldPainter sources, schematics, structure NBT, templates |
+| `source/` | Heightmap, masks, Gaea project. Irreplaceable, **outside this repo**, pinned by sha256. See `data/notes/source_tree.md` |
+| `data/` | The design: cells, events, placements, spawns, trainers, gyms, progression, routes. Hand-edited, the real product |
+| `kits/` | Reusable build assets: structure library, palettes, biome kits, schematics, templates |
+| `derived/` | Generated analysis: slope masks, site index, path networks, sightlines. Disposable |
+| `build/` | Generated output: datapack, world export, server bundle. Disposable |
 | `experiments/` | One folder per experiment (EXP-NNN) with README, results, and run logs |
-| `tools/` | Manifest and validation tooling (Python, stdlib only) |
+| `tools/` | Analysis, generators, manifest and validation tooling (Python, stdlib only) |
 | `tests/` | pytest checks that the repository is internally consistent |
 
 ## How compatibility testing works
@@ -106,9 +109,11 @@ download tool under `tools/`. Rationale in
 
 ## Where things go
 
-- A new encounter table, trainer team, gym, or dungeon design: `campaign/`.
-- A datapack that implements it: `modpack/datapacks/`.
-- A structure or schematic it needs: `world/`.
+- A new encounter table, trainer team, gym, or dungeon design: `data/`.
+- The generator that turns it into a datapack: `tools/`. The datapack itself is
+  output in `build/` and is never hand-edited.
+- A structure, schematic or palette it needs: `kits/`.
+- Where that structure stands: `data/placements.json`.
 - A server-only setting or script: `server/`.
 - A question about whether the game can do something: `docs/research/` and an
   experiment under `experiments/`.

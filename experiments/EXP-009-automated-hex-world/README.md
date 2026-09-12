@@ -1,5 +1,10 @@
 # EXP-009 — Automated 2×2 Hex World Prototype
 
+> **Superseded.** The source files this record refers to under `world/source/`
+> were deleted when the prototype coordinate data was discarded. Both prototype
+> landscapes are gone; paths below are historical. Surviving design intent is in
+> `data/notes/legacy_events.md`, and the structure library lives in `kits/structures/`.
+
 ## Objective
 
 Prove a deterministic, mount-scale terrain pipeline for four 1,250-block

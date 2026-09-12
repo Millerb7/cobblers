@@ -44,18 +44,33 @@ never something to paper over silently.
 upstream   Cobbleverse pack + third-party mods      base-pack/   (read-only reference)
    ↓
 overlay    our modpack: compatibility fixes, mod     modpack/     (what players install)
-           list, configs, overlay datapacks
+           list, configs
    ↓
 server     dedicated server config, launch, scripts  server/
-   ↓
-campaign   progression, encounters, trainers, bosses campaign/    (authored content)
-   ↓
-world      the handcrafted region: sources,          world/       (assets; the live save
-           schematics, structures, templates                       is NOT source code)
 ```
 
-Each layer only depends on the ones above it. Upstream content is never
-edited in place — it is overridden from the overlay or campaign layer.
+The world itself separates **world-as-data** from **world-as-blocks**:
+
+```
+source/    heightmap, masks, Gaea project, notes      irreplaceable, OUTSIDE the repo
+data/      the design: cells, events, placements,     authored, version controlled,
+           spawns, trainers, gyms, progression        THE PRODUCT
+kits/      structure library, palettes, biome kits    reusable assets
+tools/     analysis, generators, placement, validation
+   ↓
+derived/   slope maps, path networks, site index      disposable
+build/     datapack, world, server bundle             disposable
+```
+
+**The rule:** anything in `derived/` or `build/` must be reproducible from
+`source/`, `data/` and `tools/` alone. If it is not, it is in the wrong place.
+
+Upstream content is never edited in place. It is overridden from the overlay,
+or from a file our generators emit at the same namespace path.
+
+A cell indexes location only: a square 1024-block planning label, rows A–H
+north to south, columns 1–8 west to east. Region boundaries are a separate
+concept that follows terrain and does not align to cell edges.
 
 ## Repository layout
 
@@ -69,12 +84,15 @@ edited in place — it is overridden from the overlay or campaign layer.
 | `docs/mechanics/` | Mechanic designs (level caps, encounters, rewards) before they become content |
 | `docs/decisions/` | ADRs: `README.md`, `TEMPLATE.md`, `ADR-001-modpack-base-strategy.md`, … |
 | `base-pack/` | Cobbleverse reference snapshot (`cobbleverse/`) and its inventory (`inventory/`); never edited |
-| `modpack/manifest/`, `mods/`, `config/`, `resourcepacks/`, `datapacks/`, `overrides/` | Our overlay = the players' client pack |
-| `server/config/`, `scripts/`, `launch/`, `README.md` | Dedicated server; `server/scripts/boot-test.ps1` and `assemble-server.ps1` are planned entry points |
-| `campaign/progression`, `encounters`, `trainers`, `bosses`, `gyms`, `gauntlets`, `quests`, `rewards`, `dungeons`, `villain`, `dialogue` | Authored campaign content and data |
-| `world/source`, `schematics`, `structures`, `templates` | World assets and specs; not the live save |
+| `modpack/manifest/`, `mods/`, `config/`, `resourcepacks/`, `overrides/` | Our overlay = the players' client pack |
+| `server/config/`, `scripts/`, `launch/`, `README.md` | Dedicated server; `server/scripts/boot-test.ps1` and `assemble-server.ps1` are the entry points |
+| `source/` | Heightmap, masks, Gaea project. Irreplaceable, **outside this repo**, gitignored, pinned by sha256 in `data/world.json`. See `data/notes/source_tree.md` |
+| `data/` | `world.json` (the single config), `cells.json`, `landmarks.json`, `events.json`, `placements.json`, `spawns.json`, `trainers.json`, `gyms.json`, `progression.json`, `routes.json`, `notes/` |
+| `kits/structures`, `palettes`, `biome-kits`, `schematics`, `templates` | Reusable build assets; a template has no position |
+| `derived/` | Generated analysis: slope and aspect masks, site index, path networks, sightlines. Disposable |
+| `build/` | Generated output: datapack, world export, server bundle. Disposable, never hand-edited |
 | `experiments/` | `README.md` template plus `EXP-NNN-<slug>/README.md` per proof (`EXP-000-cobblemon-1.8-compat` first) |
-| `tools/validate.py`, `tools/pack_manifest.py` | Validation and manifest tooling (Python) |
+| `tools/` | `validate_data.py`, `validate.py`, `pack_manifest.py`, analysis tools and generators (Python, standalone CLIs) |
 | `tests/` | pytest suites for tooling and content validity |
 
 ## Principles
@@ -117,10 +135,10 @@ and running Minecraft instead. Agents do not spawn their own agent teams.
 | Mod/jar metadata, 1.8 compatibility status, EXP-000 | `dependency-auditor` | `docs/research/COBBLEVERSE_COMPATIBILITY.md`, `base-pack/inventory/`, `experiments/EXP-000-*` |
 | What Cobblemon/addons actually support, with sources | `cobblemon-researcher` | `docs/research/` only |
 | Campaign architecture, data models, datapack-vs-script-vs-mod boundaries, ADR proposals | `content-architect` | `docs/decisions/`, `docs/mechanics/` |
-| Datapacks, functions, advancements, loot, spawn configs | `datapack-content-dev` | `modpack/datapacks/`, `campaign/` |
-| Server-side logic, progression/puzzle/gauntlet state | `minecraft-systems-dev` | `server/config/`, `modpack/config/`, `modpack/datapacks/`, `campaign/` |
-| Dungeon specs, structures, schematics, templates | `world-content-dev` | `world/` |
-| Encounter tables, level caps, boss/gym/gauntlet teams, rewards | `trainer-balance-designer` | `campaign/` |
+| Spawn/trainer/gym tables and the generators that emit a datapack | `datapack-content-dev` | `data/`, `tools/` |
+| Server-side logic, progression/puzzle/gauntlet state | `minecraft-systems-dev` | `server/config/`, `modpack/config/`, `data/`, `tools/` |
+| Place specs, placements, structures, schematics, templates | `world-content-dev` | `data/`, `kits/` |
+| Encounter tables, level caps, boss/gym/gauntlet teams, rewards | `trainer-balance-designer` | `data/` |
 | Validation tooling and tests | `test-author` | `tools/`, `tests/` |
 | Review an experiment against its success criteria | `qa-reviewer` | nothing (read-only; reports) |
 | Server/client boot failure triage | `build-doctor` | nothing (proposes fixes; reads logs) |

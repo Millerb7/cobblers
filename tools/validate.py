@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""validate.py - structural checks on tracked pack/campaign content.
+"""validate.py - structural checks on tracked pack and data content.
 
 Stdlib only. Walks:
-  modpack/                       our overlay (manifests, config, datapacks, ...)
-  campaign/                      campaign content (if it exists yet)
-  world/                         authored world assets and structure manifests
+  modpack/                       our overlay (manifests, config, pack datapack overlays)
+  data/                          authored campaign design data
+  kits/                          structure library, palettes, biome kits
   base-pack/cobbleverse/config   base config snapshot
   base-pack/cobbleverse/datapacks  base datapacks, including inside .zip files
 
@@ -115,7 +115,7 @@ def collect(ctx: Context) -> None:
             else:
                 ctx.entries.append(Entry(rel, p.name, lambda p=p: p.read_bytes()))
     # datapack folders: any dir that contains pack.mcmeta or lives directly under a datapacks/ root
-    for r in ("modpack/datapacks", "base-pack/cobbleverse/datapacks", "campaign"):
+    for r in ("modpack/datapacks", "base-pack/cobbleverse/datapacks", "build/datapack"):
         base = ctx.root / r
         if not base.is_dir():
             continue
