@@ -1,0 +1,70 @@
+{
+  "schema": "cobblers.world/1",
+  "name": "cobblers",
+  "seed": null,
+
+  "source_root": null,
+
+  "heightmap": {
+    "path": "heightmap/land_8k_16.png",
+    "width": 8192,
+    "height": 8192,
+    "channel": "gray",
+    "bit_depth": 16,
+    "sha256": null,
+    "status": "blocked_pending_reexport"
+  },
+
+  "import": {
+    "input_range": { "min": 0, "max": 255 },
+    "low_in": 40,
+    "low_out": 40,
+    "high_in": 254,
+    "high_out": 200,
+    "water_level": 62,
+    "clamp_low": true,
+    "clamp_high": true
+  },
+
+  "bounds": { "min_x": null, "min_z": null, "max_x": null, "max_z": null },
+
+  "vertical": { "min_y": 40, "max_y": 200, "sea_level": 62 },
+
+  "grid": {
+    "kind": "square",
+    "cell_size": 1024,
+    "columns": 8,
+    "rows": 8,
+    "origin_x": null,
+    "origin_z": null,
+    "row_labels": ["A", "B", "C", "D", "E", "F", "G", "H"],
+    "column_labels": ["1", "2", "3", "4", "5", "6", "7", "8"]
+  },
+
+  "provenance": {
+    "gaea_project": "gaea/landmass.terrain",
+    "gaea_build_resolution": 1024,
+    "gimp_source": "gimp/pre_erosion_land_8k.xcf",
+    "pipeline": ["gaea", "gimp", "terresculptor", "worldpainter"],
+    "rejected_artifacts": [
+      {
+        "file": "erosion_land_8k.png",
+        "reason": "sawtooth wraparound across the surface; 7.3% of horizontally adjacent pixels differ by >100; stored as 8-bit RGB with height only in the red channel",
+        "macro_structure": "intact",
+        "usable": false
+      },
+      {
+        "file": "pre_erosion_land_8k.png",
+        "reason": "landmass clipped to 255 (mean 244, median 255); no land elevation data",
+        "usable": false
+      }
+    ]
+  },
+
+  "notes": [
+    "origin_x/origin_z are null until the northwest corner is confirmed from in-game F3. The validator fails while they are unset.",
+    "bounds are derived from grid origin + cell_size * columns/rows and are not authored by hand.",
+    "import values are expressed in the 8-bit input units of the rejected export (input_range 0-255). They must be restated against the 16-bit re-export before any import is run.",
+    "source_root is machine-specific and is not committed. Set COBBLERS_SOURCE_ROOT or pass --source-root."
+  ]
+}
