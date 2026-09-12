@@ -16,10 +16,10 @@
   },
 
   "import": {
-    "input_range": { "min": 0, "max": 255 },
-    "low_in": 40,
+    "input_units": "fraction_of_full_scale",
+    "low_in": 0.156863,
+    "high_in": 0.996078,
     "low_out": 40,
-    "high_in": 254,
     "high_out": 200,
     "water_level": 62,
     "clamp_low": true,
@@ -64,7 +64,8 @@
   "notes": [
     "origin_x/origin_z are null until the northwest corner is confirmed from in-game F3. The validator fails while they are unset.",
     "bounds are derived from grid origin + cell_size * columns/rows and are not authored by hand.",
-    "import values are expressed in the 8-bit input units of the rejected export (input_range 0-255). They must be restated against the 16-bit re-export before any import is run.",
-    "source_root is machine-specific and is not committed. Set COBBLERS_SOURCE_ROOT or pass --source-root."
+    "import.low_in/high_in are fractions of full scale, so they survive the 16-bit re-export unchanged. Tooling multiplies by (2**bit_depth - 1) at read time. They were originally authored as 40 and 254 against an 8-bit file, which is where 0.156863 and 0.996078 come from.",
+    "import.low_out/high_out/water_level are absolute Minecraft Y values and never scale.",
+    "source_root is machine-specific and is not committed. Set COBBLERS_SOURCE_ROOT or pass --source-root. Expected layout is in data/notes/source_tree.md."
   ]
 }

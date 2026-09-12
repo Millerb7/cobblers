@@ -45,15 +45,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 WALK_ROOTS = [
     "modpack",
-    "campaign",
-    "world",
+    "data",
+    "kits",
     "base-pack/cobbleverse/config",
     "base-pack/cobbleverse/datapacks",
 ]
 HASH_CSV = ROOT / "base-pack" / "inventory" / "pack_hashes.csv"
-STRUCTURE_MANIFEST = Path("world/structures/manifests/structure-dependencies.json")
-REGION_CONFIG = Path("world/source/region.json")
-REGION_OUTPUT = Path("world/source/exp-009")
+STRUCTURE_MANIFEST = Path("kits/structures/manifests/structure-dependencies.json")
 SKIP_DIRS = {".git", "__pycache__", ".pytest_cache", "cache"}
 
 try:  # optional parsers
@@ -342,7 +340,7 @@ def check_structure_manifest(ctx: Context) -> None:
         if dims is not None and (not isinstance(dims, list) or len(dims) != 3 or not all(isinstance(n, int) and n > 0 for n in dims)):
             ctx.add("error", where, "dimensions must be null or three positive integers")
 
-    asset_root = ctx.root / "world" / "structures" / "campaign"
+    asset_root = ctx.root / "kits" / "structures" / "campaign"
     asset_root_resolved = asset_root.resolve()
     documented_assets: set[str] = set()
     campaign_ids: set[str] = set()
@@ -369,8 +367,8 @@ def check_structure_manifest(ctx: Context) -> None:
                 if not isinstance(component, str) or component not in components:
                     ctx.add("error", where, f"unknown required component {component!r}")
         asset = entry.get("asset")
-        if not isinstance(asset, str) or not asset.startswith("world/structures/campaign/"):
-            ctx.add("error", where, "asset must be under world/structures/campaign/")
+        if not isinstance(asset, str) or not asset.startswith("kits/structures/campaign/"):
+            ctx.add("error", where, "asset must be under kits/structures/campaign/")
         else:
             candidate = (ctx.root / asset).resolve()
             try:
@@ -393,118 +391,6 @@ def check_structure_manifest(ctx: Context) -> None:
     ctx.add("info", rel, f"{len(ids)} verified upstream structures; {len(campaign_ids)} campaign structures")
 
 
-def _png_dimensions(path: Path) -> tuple[int, int]:
-    with path.open("rb") as fh:
-        if fh.read(8) != b"\x89PNG\r\n\x1a\n":
-            raise ValueError("not a PNG")
-        length = struct.unpack(">I", fh.read(4))[0]
-        if fh.read(4) != b"IHDR" or length < 8:
-            raise ValueError("missing PNG IHDR")
-        return struct.unpack(">II", fh.read(8))
-
-
-def check_region_source(ctx: Context) -> None:
-    """Validate EXP-009 scale, cells, events, placements, masks and generated bounds."""
-    path = ctx.root / REGION_CONFIG
-    rel = REGION_CONFIG.as_posix()
-    if not path.is_file():
-        ctx.add("error", rel, "missing")
-        return
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (ValueError, UnicodeDecodeError):
-        return
-    if data.get("schema") != "cobblers.region/1":
-        ctx.add("error", rel, "unexpected schema")
-    world = data.get("world", {})
-    required = ("hex_flat_to_flat", "prototype_columns", "prototype_rows", "blocks_per_pixel")
-    if not all(isinstance(world.get(k), int) and world[k] > 0 for k in required):
-        ctx.add("error", rel, f"world fields {required} must be positive integers")
-        return
-    width = world["hex_flat_to_flat"] * world["prototype_columns"]
-    height = world["hex_flat_to_flat"] * world["prototype_rows"]
-    bpp = world["blocks_per_pixel"]
-    if width % bpp or height % bpp:
-        ctx.add("error", rel, "block dimensions are not divisible by blocks_per_pixel")
-        return
-    expected_pixels = (width // bpp, height // bpp)
-
-    cells = data.get("cells")
-    if not isinstance(cells, list) or not cells:
-        ctx.add("error", rel, "cells must be a non-empty array")
-        return
-    cell_ids: set[str] = set()
-    cell_by_id: dict[str, dict] = {}
-    occupied: set[tuple[int, int]] = set()
-    for i, cell in enumerate(cells):
-        where = f"{rel}:cells[{i}]"
-        cid = cell.get("id") if isinstance(cell, dict) else None
-        if not isinstance(cid, str) or not re.fullmatch(r"[A-Z]+[1-9][0-9]*", cid):
-            ctx.add("error", where, f"invalid cell id {cid!r}")
-            continue
-        if cid in cell_ids:
-            ctx.add("error", where, f"duplicate cell id {cid}")
-        cell_ids.add(cid)
-        cell_by_id[cid] = cell
-        pos = (cell.get("column"), cell.get("row"))
-        if not all(isinstance(n, int) for n in pos) or not (0 <= pos[0] < world["prototype_columns"] and 0 <= pos[1] < world["prototype_rows"]):
-            ctx.add("error", where, f"cell position {pos} outside prototype grid")
-        elif pos in occupied:
-            ctx.add("error", where, f"duplicate grid position {pos}")
-        occupied.add(pos)
-
-    event_ids: set[str] = set(); counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-    for i, event in enumerate(data.get("events", [])):
-        where = f"{rel}:events[{i}]"; eid = event.get("id")
-        if not isinstance(eid, str) or not eid:
-            ctx.add("error", where, "missing event id")
-        elif eid in event_ids:
-            ctx.add("error", where, f"duplicate event id {eid}")
-        event_ids.add(eid)
-        cell = event.get("cell"); size = event.get("size")
-        if cell not in cell_ids: ctx.add("error", where, f"unknown cell {cell!r}")
-        elif all(isinstance(event.get(k), int) for k in ("x", "z")):
-            model = cell_by_id[cell]
-            expected_column = event["x"] // world["hex_flat_to_flat"]
-            expected_row = event["z"] // world["hex_flat_to_flat"]
-            if (expected_column, expected_row) != (model.get("column"), model.get("row")):
-                ctx.add("error", where, f"coordinate belongs to grid {(expected_column, expected_row)}, not cell {cell}")
-        if size not in ("small", "medium"): ctx.add("error", where, f"invalid size {size!r}")
-        else: counts[cell][size] += 1
-        if not all(isinstance(event.get(k), int) and 0 <= event[k] < limit for k, limit in (("x", width), ("z", height))):
-            ctx.add("error", where, "event coordinate outside prototype boundary")
-    for cid in cell_ids:
-        if counts[cid]["medium"] != 1 or not 2 <= counts[cid]["small"] <= 4:
-            ctx.add("error", rel, f"{cid} requires one medium and 2-4 small events; found {dict(counts[cid])}")
-
-    catalog_path = ctx.root / STRUCTURE_MANIFEST
-    catalog = json.loads(catalog_path.read_text(encoding="utf-8")) if catalog_path.is_file() else {}
-    known = {x.get("catalog_id"): x for x in catalog.get("verified_structures", []) if isinstance(x, dict)}
-    components = catalog.get("components", {})
-    placement_ids: set[str] = set()
-    for i, p in enumerate(data.get("settlement", {}).get("placements", [])):
-        where = f"{rel}:settlement.placements[{i}]"; pid = p.get("id")
-        if pid in placement_ids: ctx.add("error", where, f"duplicate placement id {pid}")
-        placement_ids.add(pid)
-        source = known.get(p.get("catalog_id"))
-        if source is None: ctx.add("error", where, f"unknown catalog_id {p.get('catalog_id')!r}")
-        elif source.get("structure_id") != p.get("structure_id"): ctx.add("error", where, "structure_id differs from verified catalog")
-        if p.get("source_component") not in components: ctx.add("error", where, f"unknown source component {p.get('source_component')!r}")
-        if not all(isinstance(p.get(k), int) and 0 <= p[k] < limit for k, limit in (("x", width), ("z", height))):
-            ctx.add("error", where, "placement outside prototype boundary")
-
-    mask_dir = ctx.root / REGION_OUTPUT / "masks"
-    expected = ["heightmap.png", "land-water.png", "river.png", "forest.png", "plains.png", "mountain-rock.png", "beach-coast.png", "terrain-categories.png", "transition-bands.png", "roads-trails.png", "event-reservations.png"]
-    for name in expected:
-        mp = mask_dir / name; mrel = mp.relative_to(ctx.root).as_posix()
-        if not mp.is_file(): ctx.add("error", mrel, "missing")
-        else:
-            try:
-                if _png_dimensions(mp) != expected_pixels: ctx.add("error", mrel, f"dimensions {_png_dimensions(mp)} != {expected_pixels}")
-            except ValueError as exc: ctx.add("error", mrel, str(exc))
-    ctx.add("info", rel, f"{width}x{height} blocks, {len(cell_ids)} cells, {len(event_ids)} events, {len(placement_ids)} placements")
-
-
 def _stub(name: str, what: str):
     """Placeholder for a future campaign check. Reports 'skipped' so nobody mistakes it for coverage."""
 
@@ -524,7 +410,6 @@ CHECKS = [
     ("hash_csv_wellformed", check_hash_csv_wellformed),
     ("manifest_sanity", check_manifest_sanity),
     ("structure_manifest", check_structure_manifest),
-    ("region_source", check_region_source),
     # --- extension points (EXP-001..EXP-007 will define the data these need) ---
     ("duplicate_ids", _stub("duplicate_ids", "duplicate campaign ids across routes/trainers/rewards")),
     ("missing_pokemon_refs", _stub("missing_pokemon_refs", "species/form names that Cobblemon does not know")),
