@@ -1,0 +1,92 @@
+{
+  "schema": "cobblers.world/1",
+  "name": "fixture",
+  "seed": 0,
+  "source_root": ".",
+  "heightmap": {
+    "path": "land_fixture.png",
+    "width": 256,
+    "height": 256,
+    "channel": "gray",
+    "bit_depth": 16,
+    "sha256": "abe247ae66b53948b24f4c548a7ef2dbf7d5a0074101f719816d1385b2a909bf",
+    "status": "ok"
+  },
+  "import": {
+    "input_units": "fraction_of_full_scale",
+    "low_in": 0.0,
+    "high_in": 1.0,
+    "low_out": 0,
+    "high_out": 255,
+    "water_level": 62,
+    "clamp_low": true,
+    "clamp_high": true
+  },
+  "bounds": {
+    "min_x": 0,
+    "min_z": 0,
+    "max_x": 255,
+    "max_z": 255
+  },
+  "vertical": {
+    "min_y": 0,
+    "max_y": 255,
+    "sea_level": 62
+  },
+  "grid": {
+    "kind": "square",
+    "cell_size": 64,
+    "columns": 4,
+    "rows": 4,
+    "origin_x": 0,
+    "origin_z": 0,
+    "row_labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "column_labels": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ]
+  },
+  "features": {
+    "base": 100.0,
+    "plateau": {
+      "x0": 16,
+      "x1": 47,
+      "z0": 16,
+      "z1": 47,
+      "height": 120.0
+    },
+    "cone": {
+      "cx": 192,
+      "cz": 64,
+      "radius": 40,
+      "apex": 140.0
+    },
+    "ridge": {
+      "cx": 112,
+      "z0": 90,
+      "z1": 170,
+      "halfwidth": 40,
+      "apex": 140.0
+    },
+    "trench": {
+      "cz": 200,
+      "halfwidth": 15,
+      "floor": 85.0
+    },
+    "sea": {
+      "z0": 235,
+      "z1": 255,
+      "height": 40.0
+    }
+  },
+  "notes": [
+    "Synthetic test surface. Not terrain. See tools/make_fixture.py."
+  ]
+}

@@ -1,5 +1,16 @@
 # F4 Relic Island — The Stranded Home
 
+> **Superseded. Retained for design intent only.**
+>
+> This describes the retired EXP-001 prototype, whose 1000×1000 `f4-local-1000`
+> landscape no longer exists. Every coordinate, distance and cell reference
+> below refers to that deleted world, not to the `erosion_land_8k` terrain.
+> The surviving intent is summarised in `data/notes/legacy_events.md`; when the
+> event is authored for real it becomes a record in `data/events.json` with an
+> absolute anchor on the current heightmap.
+>
+> The donor structures and their licences survive intact in `kits/structures/`.
+
 ## Event summary
 
 The Stranded Home is a fully optional medium event roughly 145 blocks off the
@@ -87,7 +98,7 @@ CobbleTowns 1.0.2; the maintained copy differs only in its internal namespace.
 `large2` was selected for the relic because it is compact, furnished,
 family-sized, and uses only vanilla block namespaces. No file labels one house
 specifically as Ash's, so the event claims visual association rather than false
-provenance. See `world/structures/manifests/pokemon-town-donors.json`.
+provenance. See `kits/structures/manifests/pokemon-town-donors.json`.
 
 CobbleJourneyTown V0.2 was inspected as the secondary donor. It contains useful
 large settlement structures, a PokéCenter, and a Poké Mart, but no Pallet-, Ash-,
@@ -120,7 +131,7 @@ Pair it with a small practical cache rather than presenting it alone.
 
 ## Prototype placement
 
-Install `modpack/datapacks/cobblers_campaign`, reload datapacks, stand at the
+Install the generated pack from `build/datapack/`, reload datapacks, stand at the
 intended island center at sea level, and run:
 
 ```mcfunction

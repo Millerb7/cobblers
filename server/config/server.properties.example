@@ -13,9 +13,19 @@ white-list=true
 enforce-whitelist=true
 max-players=8
 server-port=25565
-# rcon stays off unless you need remote console; if enabled, set a real
-# password in the live file only, never in this example.
+# RCON is off by default. Turn it on when the server is launched in the
+# background, because then it has no reachable stdin: without RCON the only
+# way to stop it is to kill the process, which skips the world save. It is
+# also the only way to run Distant Horizons' `dh pregen`.
+#
+# If you enable it: bind to localhost, set a real password in the LIVE file
+# only and never here, and put that password in a .rcon-password file beside
+# server/scripts/rcon.py (gitignored). Then:
+#   python server/scripts/rcon.py "dh pregen start overworld 4096 4096 256"
+#   python server/scripts/rcon.py "tick query"
+#   python server/scripts/rcon.py stop
 enable-rcon=false
+# rcon.port=25575
 enable-query=false
 enable-status=true
 
@@ -44,11 +54,24 @@ spawn-animals=true
 max-world-size=29999984
 
 # --- performance ---------------------------------------------------------
-# 10 chunks is plenty for 4-8 players and keeps Cobblemon spawning cheap.
+# These two are independent and are priced very differently.
+#
+# simulation-distance drives entity ticking, mob AI, redstone and block
+# updates. It is the expensive one, and with Cobblemon spawning a lot of
+# entities it is the number that decides server tick time. 6 is deliberate.
+#
+# view-distance only decides which chunks are sent to a client. Distant
+# Horizons renders everything past roughly 160 blocks from its own LOD data,
+# so a low vanilla view distance costs nothing visually. Do not raise this
+# above 12; if DH is doing its job, test whether 8 is enough once LOD is
+# populated and lower it further.
 view-distance=10
-simulation-distance=8
+simulation-distance=6
 max-tick-time=60000
 network-compression-threshold=256
+# Cobblemon keeps many entities loaded. Lower this toward 50 if player
+# connections show network pressure; it shrinks how far entity updates are
+# broadcast without touching what players can see of the terrain.
 entity-broadcast-range-percentage=100
 sync-chunk-writes=true
 

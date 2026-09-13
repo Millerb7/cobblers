@@ -12,7 +12,8 @@
   "Facts verified against the Modrinth API on 2026-09-08 unless an entry says 'unverified'.",
   "'file' on a remove entry pins the removal to one jar (two jars in the base share mod id 'particular').",
   "Run `python tools/pack_manifest.py resolve-overlay` to refresh version ids / URLs / hashes from Modrinth.",
-  "The corrected 100-jar dedicated-server plan booted on 2026-09-10 with Krypton provisionally excluded server-side and the Cobbleverse riding-seat migration applied; remaining gameplay compatibility still requires functional tests."
+  "The corrected 100-jar dedicated-server plan booted on 2026-09-10 with Krypton provisionally excluded server-side and the Cobbleverse riding-seat migration applied; remaining gameplay compatibility still requires functional tests.",
+  "C2ME was removed (not server_excluded) because of a documented deadlock with server-side Distant Horizons; see the remove entry for evidence."
  ],
  "replace": [
   {
@@ -531,9 +532,46 @@
    "replacement": "None during EXP-000; do not create a custom substitute during compatibility bootstrap.",
    "world_save_risk": "HIGH: the mod adds den structures and persistent blocks, so omit it before campaign world construction rather than remove it later.",
    "follow_up": "Retest a future release that explicitly adapts to Cobblemon 1.8, or evaluate a maintained alternative in a separate experiment."
+  },
+  {
+   "mod_id": "c2me",
+   "file": "c2me-fabric-mc1.21.1-0.4.0-alpha.0.23.jar",
+   "reason": "Deadlocks a dedicated server when run alongside server-side Distant Horizons. Reproduced upstream with only C2ME and DH installed: the server locks up and crashes after a few minutes of sustained flight, which is exactly how this 8192-block map is surveyed. DH alone does not crash.",
+   "evidence": "RelativityMC/C2ME-fabric issue 439, closed as not_planned 2025-06-21. C2ME maintainer: 'DH unable to catch up with the chunk loading speed and explodes. It is a long standing issue on their side.'",
+   "impact": "Loses parallel chunk-generation acceleration. The campaign world is pre-built and exported from WorldPainter, so almost no new chunk generation happens at runtime.",
+   "replacement": "None. Removed outright rather than server_excluded, so client and server mod sets stay identical.",
+   "world_save_risk": "NONE: C2ME registers no blocks, biomes or structures. It only changes how chunks are generated, not what they contain."
   }
  ],
- "add": [],
+ "add": [
+  {
+   "mod_id": "distanthorizons",
+   "version": "3.2.0-b-1.21.1",
+   "file": "DistantHorizons-3.2.0-b-1.21.1-fabric-neoforge.jar",
+   "side": "both",
+   "pin": "exact",
+   "modrinth": {
+    "slug": "distanthorizons",
+    "project_id": "uCdwusMi",
+    "version_id": "ZpKb4kZp",
+    "version_number": "3.2.0-b-1.21.1",
+    "version_type": "beta",
+    "date_published": "2026-07-07T20:30:38.837577Z",
+    "url": "https://cdn.modrinth.com/data/uCdwusMi/versions/ZpKb4kZp/DistantHorizons-3.2.0-b-1.21.1-fabric-neoforge.jar",
+    "filename": "DistantHorizons-3.2.0-b-1.21.1-fabric-neoforge.jar",
+    "size": 30207268,
+    "license": "LGPL-3.0-only",
+    "dependencies": []
+   },
+   "sha512": "d4199f92f992fbd2c75a3b0e4e81c8a98bee889013f7347f2149ffa62c86748bde22135e9b2c82a10875db94fa576571c661c5ee16d2f567bd8a93d6f255fd22",
+   "sha1": "df25e8cfe06917963778723a1d9a60610dd21bec",
+   "verification": "verified via Modrinth API 2026-09-12",
+   "reason": "Level-of-detail rendering so the authored landmarks (the central rift, the northwest range, the southeast volcano) are visible across an 8192-block map without raising server view distance.",
+   "pin_note": "Exact pin, no floating version. DH requires the same major version on client and server; a drifted client is rejected by the server, so version drift is a hard failure rather than a degradation.",
+   "beta_note": "Every 1.21.1 build of DH is on the beta channel. There is no stable release for this Minecraft version.",
+   "side_note": "One jar serves both Fabric and NeoForge and both sides. There is no separate server download. The server component is required: without it a client only sees LOD for terrain it has personally visited."
+  }
+ ],
  "server_exclude": [
   "advancementplaques",
   "badoptimizations",
