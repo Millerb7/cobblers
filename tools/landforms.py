@@ -25,6 +25,7 @@ from PIL import Image
 
 import terrain as T
 import cell_stats as C
+import landmarks as LM
 
 CLASSES = [
     # id, name, RGB for the preview
@@ -38,6 +39,7 @@ CLASSES = [
     (7, "steep", (120, 95, 80)),
     (8, "montane", (130, 120, 115)),
     (9, "alpine", (240, 240, 245)),
+    (10, "void_floor", (120, 40, 160)),
 ]
 
 
@@ -135,9 +137,10 @@ def find_peaks(heights_c, factor, min_y, window, cluster_radius):
     return peaks
 
 
-def classify(heights_c, slope_c, sea_c, lake_c, d_sea, sea_level, a):
+def classify(heights_c, slope_c, sea_c, lake_c, d_sea, sea_level, a, void_c=None):
     cls = np.zeros(heights_c.shape, dtype=np.uint8)
-    land = ~(sea_c | lake_c)
+    void_c = np.zeros_like(sea_c) if void_c is None else void_c
+    land = ~(sea_c | lake_c | void_c)
     y, s = heights_c, slope_c
     shore = land & (d_sea <= a.shore_distance) & (y < sea_level + a.shore_rise)
     alpine = land & (y >= a.treeline)
@@ -157,6 +160,7 @@ def classify(heights_c, slope_c, sea_c, lake_c, d_sea, sea_level, a):
     cls[steep] = 7
     cls[alpine] = 9
     cls[shore] = 2
+    cls[void_c] = 10
     return cls
 
 
@@ -175,7 +179,17 @@ def main(argv=None):
     p.add_argument("--peak-window", type=int, default=9, help="pixels at --factor")
     p.add_argument("--peak-cluster", type=float, default=300.0, help="blocks")
     p.add_argument("--min-body", type=int, default=64 * 64, help="ignore bodies smaller than this many blocks2")
+    p.add_argument("--landmarks", default=str(LM.DEFAULT_LANDMARKS),
+                   help="landmarks whose water policy is honoured (default data/landmarks.json)")
+    p.add_argument("--no-landmarks", action="store_true",
+                   help="ignore landmarks: every enclosed hollow below sea level is water")
     a = p.parse_args(argv)
+    landmarks = None
+    if not a.no_landmarks:
+        try:
+            landmarks = LM.load(a.landmarks)
+        except LM.LandmarkError as exc:
+            raise SystemExit("landmarks: %s (pass --no-landmarks to classify without them)" % exc)
 
     try:
         heights, world = T.load_from_args(a)
@@ -186,8 +200,14 @@ def main(argv=None):
     sea_level = T.sea_level(world)
     hc = C.downsample(heights.astype(np.float32), f, "mean")
     sc = C.downsample(T.slope_degrees(heights).astype(np.float32), f, "mean")
-    water_c = C.downsample(heights <= sea_level, f, "any")
-    land_c = ~water_c
+    below_c = C.downsample(heights <= sea_level, f, "any")
+    # Ground inside a water:"never" landmark is not a water body even below sea
+    # level. It is its own class, so nothing downstream reads the rift as a lake.
+    no_water_c = (LM.no_water_mask(landmarks, hc.shape, factor=f) if landmarks
+                  else np.zeros(hc.shape, dtype=bool))
+    void_c = below_c & no_water_c
+    water_c = below_c & ~no_water_c
+    land_c = ~below_c
     sea_c = C.connected_to_edge(water_c)
     lake_c = water_c & ~sea_c
     d_sea = C.distance_to(sea_c) * f
@@ -202,7 +222,7 @@ def main(argv=None):
             b["role"] = "island"
 
     peaks = find_peaks(hc, f, a.peak_min_y, a.peak_window, a.peak_cluster)
-    cls = classify(hc, sc, sea_c, lake_c, d_sea, sea_level, a)
+    cls = classify(hc, sc, sea_c, lake_c, d_sea, sea_level, a, void_c)
 
     outdir = Path(a.out) if a.out else T.ROOT / "derived" / "landforms"
     outdir.mkdir(parents=True, exist_ok=True)
@@ -216,7 +236,10 @@ def main(argv=None):
     payload = {
         "schema": "cobblers.derived.landforms/1",
         "parameters": {k: v for k, v in vars(a).items()
-                       if k not in ("world", "source_root", "heightmap", "out")},
+                       if k not in ("world", "source_root", "heightmap", "out", "landmarks",
+                                    "no_landmarks")},
+        "landmarks": None if a.no_landmarks else a.landmarks,
+        "void_fraction": round(float(void_c.mean()), 4),
         "source": T.provenance(world, a.world),
         "resolution_blocks": f,
         "class_ids": {name: cid for cid, name, _ in CLASSES},

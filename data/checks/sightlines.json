@@ -1,0 +1,215 @@
+{
+ "schema": "cobblers.checks.sightlines/1",
+ "note": "Sightline checks against data/landmarks.json. Observers stand on the ground at a player's eye height (1.62) unless a set says otherwise; hub sets are repeated from a 10-block rooftop (eye 12); summits and rims are targets at ground level. Hub observers are the largest flat site in each hub region (tools/find_sites.py, 4 degrees, below y190), not towns: no town has been placed. A target written @landmark* is the landmark's whole extent: its outline every 64 blocks plus its 40 highest points, visible if any one of them is. Named anchors test a single point; a flat-topped summit's centre is hidden by its own rim from below, so anchor results for clipped summits understate visibility.",
+ "sets": [
+  {
+   "id": "lake_to_range",
+   "note": "From the meltwater lake's east shore to the range summits.",
+   "from": "@meltwater_lake.east_shore",
+   "eye": 1.62,
+   "targets": [
+    "@northern_range*",
+    "@northern_range.summit_b4_east",
+    "@northern_range.summit_b3",
+    "@northern_range.summit_b2",
+    "@northern_range.summit_a3",
+    "@northern_range.summit_a1"
+   ]
+  },
+  {
+   "id": "glacier_head_to_lake",
+   "note": "Down the glacier corridor from its head to the lake: the valley's own axis view.",
+   "from": "@glacier_corridor.head",
+   "eye": 1.62,
+   "targets": [
+    "@meltwater_lake*",
+    "@glacier_corridor.saddle",
+    "@glacier_corridor.lower_trough_flats",
+    "@meltwater_lake.east_shore",
+    "@terminal_moraine"
+   ]
+  },
+  {
+   "id": "rift_trunk_rim_to_rim",
+   "note": "Across the trunk at d1024, where the walls are steepest.",
+   "from": "@rift.trunk_rim_left_d1024",
+   "eye": 1.62,
+   "targets": [
+    "@rift.trunk_rim_right_d1024"
+   ]
+  },
+  {
+   "id": "rift_nw_arm_rim_to_rim",
+   "from": "@rift.west_arm_nw_rim_left_d512",
+   "eye": 1.62,
+   "targets": [
+    "@rift.west_arm_nw_rim_right_d512"
+   ]
+  },
+  {
+   "id": "rift_se_arm_rim_to_rim",
+   "from": "@rift.east_arm_se_rim_left_d768",
+   "eye": 1.62,
+   "targets": [
+    "@rift.east_arm_se_rim_right_d768"
+   ]
+  },
+  {
+   "id": "rim_uplands_to_cones",
+   "note": "Rim Uplands site (C4) to the cones across the rift: 3.8-4.3 km.",
+   "from": "3149,2768",
+   "eye": 1.62,
+   "targets": [
+    "@volcanic_cones*",
+    "@volcanic_cones.cone_1",
+    "@volcanic_cones.cone_4"
+   ]
+  },
+  {
+   "id": "stillwater_e7_to_cones",
+   "note": "Stillwater Basin's east-coast site (E7) to the cones, 0.4-1.6 km.",
+   "from": "6805,4407",
+   "eye": 1.62,
+   "targets": [
+    "@volcanic_cones*",
+    "@volcanic_cones.cone_1",
+    "@volcanic_cones.cone_2",
+    "@volcanic_cones.cone_3",
+    "@volcanic_cones.cone_4"
+   ]
+  },
+  {
+   "id": "eastern_downs_to_cones",
+   "note": "The brief's 'Downs to cones' check, from the Eastern Downs' largest site (D7).",
+   "from": "6446,3527",
+   "eye": 1.62,
+   "targets": [
+    "@volcanic_cones*",
+    "@volcanic_cones.cone_1",
+    "@volcanic_cones.cone_2",
+    "@volcanic_cones.cone_3",
+    "@volcanic_cones.cone_4"
+   ]
+  },
+  {
+   "id": "glacier_floor_site_to_landmarks",
+   "note": "The flat ground that earned Stillwater Basin hub tier in the previous pass (D6, 139 blocks). It now lies inside the Glacier Valley.",
+   "from": "5646,3302",
+   "eye": 1.62,
+   "targets": [
+    "@meltwater_lake*",
+    "@rift*",
+    "@northern_range*",
+    "@volcanic_cones*",
+    "@meltwater_lake.east_shore",
+    "@rift.tip_ne",
+    "@northern_range.summit_b4_east",
+    "@volcanic_cones.cone_1"
+   ]
+  },
+  {
+   "id": "hub_leeward_plateau_ground",
+   "note": "Leeward Plateau's largest flat site (E2, 114 blocks square), observer at ground eye height 1.6. Nearest landmarks by edge distance: rift 932 blocks, northern_range 1820 blocks.",
+   "from": "1224,4170",
+   "eye": 1.62,
+   "targets": [
+    "@rift*",
+    "@northern_range*",
+    "@rift.tip_w",
+    "@rift.west_junction"
+   ]
+  },
+  {
+   "id": "hub_leeward_plateau_rooftop",
+   "note": "Leeward Plateau's largest flat site (E2, 114 blocks square), observer at rooftop eye height 12.0. Nearest landmarks by edge distance: rift 932 blocks, northern_range 1820 blocks.",
+   "from": "1224,4170",
+   "eye": 12.0,
+   "targets": [
+    "@rift*",
+    "@northern_range*",
+    "@rift.tip_w",
+    "@rift.west_junction"
+   ]
+  },
+  {
+   "id": "hub_rim_uplands_ground",
+   "note": "Rim Uplands's largest flat site (C4, 106 blocks square), observer at ground eye height 1.6. Nearest landmarks by edge distance: rift 353 blocks, glacier_corridor 526 blocks.",
+   "from": "3149,2768",
+   "eye": 1.62,
+   "targets": [
+    "@rift*",
+    "@glacier_corridor*",
+    "@northern_range*",
+    "@volcanic_cones*",
+    "@rift.trunk_rim_left_d1024",
+    "@northern_range.summit_b4_east"
+   ]
+  },
+  {
+   "id": "hub_rim_uplands_rooftop",
+   "note": "Rim Uplands's largest flat site (C4, 106 blocks square), observer at rooftop eye height 12.0. Nearest landmarks by edge distance: rift 353 blocks, glacier_corridor 526 blocks.",
+   "from": "3149,2768",
+   "eye": 12.0,
+   "targets": [
+    "@rift*",
+    "@glacier_corridor*",
+    "@northern_range*",
+    "@volcanic_cones*",
+    "@rift.trunk_rim_left_d1024",
+    "@northern_range.summit_b4_east"
+   ]
+  },
+  {
+   "id": "hub_stillwater_basin_ground",
+   "note": "Stillwater Basin's largest flat site (E7, 104 blocks square), observer at ground eye height 1.6. Nearest landmarks by edge distance: volcanic_cones 349 blocks, glacier_corridor 455 blocks.",
+   "from": "6805,4407",
+   "eye": 1.62,
+   "targets": [
+    "@volcanic_cones*",
+    "@meltwater_lake*",
+    "@rift*",
+    "@glacier_corridor*",
+    "@volcanic_cones.cone_1"
+   ]
+  },
+  {
+   "id": "hub_stillwater_basin_rooftop",
+   "note": "Stillwater Basin's largest flat site (E7, 104 blocks square), observer at rooftop eye height 12.0. Nearest landmarks by edge distance: volcanic_cones 349 blocks, glacier_corridor 455 blocks.",
+   "from": "6805,4407",
+   "eye": 12.0,
+   "targets": [
+    "@volcanic_cones*",
+    "@meltwater_lake*",
+    "@rift*",
+    "@glacier_corridor*",
+    "@volcanic_cones.cone_1"
+   ]
+  },
+  {
+   "id": "hub_eastern_downs_ground",
+   "note": "Eastern Downs's largest flat site (D7, 107 blocks square), observer at ground eye height 1.6. Nearest landmarks by edge distance: glacier_corridor 119 blocks, meltwater_lake 283 blocks.",
+   "from": "6446,3527",
+   "eye": 1.62,
+   "targets": [
+    "@glacier_corridor*",
+    "@meltwater_lake*",
+    "@volcanic_cones*",
+    "@northern_range*",
+    "@meltwater_lake.east_shore"
+   ]
+  },
+  {
+   "id": "hub_eastern_downs_rooftop",
+   "note": "Eastern Downs's largest flat site (D7, 107 blocks square), observer at rooftop eye height 12.0. Nearest landmarks by edge distance: glacier_corridor 119 blocks, meltwater_lake 283 blocks.",
+   "from": "6446,3527",
+   "eye": 12.0,
+   "targets": [
+    "@glacier_corridor*",
+    "@meltwater_lake*",
+    "@volcanic_cones*",
+    "@northern_range*",
+    "@meltwater_lake.east_shore"
+   ]
+  }
+ ]
+}

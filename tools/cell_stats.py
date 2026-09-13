@@ -19,6 +19,7 @@ from pathlib import Path
 import numpy as np
 
 import terrain as T
+import landmarks as LM
 
 
 # ---------------------------------------------------------------- rasters
@@ -115,11 +116,16 @@ def cell_grid(world, shape):
                    r, c, x0, z0, x0 + size - 1, z0 + size - 1)
 
 
-def measure(heights, world, coast_factor):
+def measure(heights, world, coast_factor, no_water=None):
+    """no_water: full-resolution mask of ground that is below sea level but must
+    never hold water (a landmark with water "never", such as the rift). It is
+    counted as void, neither land nor water, and no distance is measured to it.
+    """
     sea_level = T.sea_level(world)
     slope = T.slope_degrees(heights).astype(np.float32)
     land = heights > sea_level
-    water = ~land
+    void = ~land & no_water if no_water is not None else np.zeros_like(land)
+    water = ~land & ~void
 
     # coast distance on a coarser grid; a cell is 1024 blocks so 8-block
     # precision is ample, and it keeps the flood fill fast
@@ -142,8 +148,10 @@ def measure(heights, world, coast_factor):
         dw = d_water[cz0:cz1, cx0:cx1]
         lc = land_c[cz0:cz1, cx0:cx1]
         lk = lake_c[cz0:cz1, cx0:cx1]
+        vm = void[z0:z1 + 1, x0:x1 + 1]
 
         land_frac = float(lm.mean())
+        void_frac = float(vm.mean())
         entry = {
             "id": cid, "row": r, "column": c,
             "bounds": {"min_x": x0, "min_z": z0, "max_x": x1, "max_z": z1},
@@ -152,7 +160,8 @@ def measure(heights, world, coast_factor):
                 "max_y": round(float(h.max()), 2),
                 "mean_y": round(float(h.mean()), 2),
                 "land_fraction": round(land_frac, 4),
-                "water_fraction": round(1.0 - land_frac, 4),
+                "water_fraction": round(1.0 - land_frac - void_frac, 4),
+                "void_fraction": round(void_frac, 4),
                 "mean_slope": round(float(s.mean()), 3),
                 "max_slope": round(float(s.max()), 3),
                 "computed_from_sha256": sha,
@@ -189,6 +198,7 @@ def measure(heights, world, coast_factor):
         "sea_fraction": round(float(sea_c.mean()), 4),
         "inland_water_fraction": round(float(lake_c.mean()), 4),
         "land_fraction": round(float(land.mean()), 4),
+        "void_fraction": round(float(void.mean()), 4),
     }
 
 
@@ -197,24 +207,37 @@ def main(argv=None):
     T.add_common_args(p)
     p.add_argument("--coast-factor", type=int, default=8,
                    help="block size of the coast-distance grid (default 8)")
+    p.add_argument("--landmarks", default=str(LM.DEFAULT_LANDMARKS),
+                   help="landmarks whose water policy is honoured (default data/landmarks.json)")
+    p.add_argument("--no-landmarks", action="store_true",
+                   help="ignore landmarks: every enclosed hollow below sea level is water")
     a = p.parse_args(argv)
+    landmarks = None
+    if not a.no_landmarks:
+        try:
+            landmarks = LM.load(a.landmarks)
+        except LM.LandmarkError as exc:
+            raise SystemExit("landmarks: %s (pass --no-landmarks to measure without them)" % exc)
     try:
         heights, world = T.load_from_args(a)
     except T.TerrainUnavailable as exc:
         raise SystemExit("terrain unavailable: %s" % exc)
+    no_water = LM.no_water_mask(landmarks, heights.shape) if landmarks else None
     try:
-        cells, totals = measure(heights, world, a.coast_factor)
+        cells, totals = measure(heights, world, a.coast_factor, no_water)
     except T.TerrainUnavailable as exc:
         raise SystemExit("terrain unavailable: %s" % exc)
 
     payload = {
         "schema": "cobblers.derived.cell_stats/1",
-        "parameters": {"coast_factor": a.coast_factor},
+        "parameters": {"coast_factor": a.coast_factor,
+                       "landmarks": None if a.no_landmarks else a.landmarks},
         "source": T.provenance(world, a.world),
         "notes": [
             "Slopes are in degrees. terrain.* covers the whole cell; land.* covers land only.",
             "Distance to sea is octagonal, within about 8% of Euclidean, at coast_factor-block resolution.",
             "Sea is water connected to the map edge; inland water is enclosed.",
+            "Void is ground below sea level inside a landmark whose water policy is never.",
         ],
         "totals": totals,
         "cells": cells,

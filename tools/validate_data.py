@@ -135,8 +135,15 @@ SCHEMAS = {
     "landmarks.json": (
         "cobblers.landmarks/1",
         "landmarks",
-        ["id", "name", "kind", "anchor"],
-        {"kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass"}},
+        ["id", "name", "kind", "anchor", "status"],
+        {
+            "kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass",
+                     "glacier", "moraine", "river"},
+            # built: in the terrain as intended; partial: present but under-delivered;
+            # planned: a spec only. Nothing drops silently when terrain falls short.
+            "status": {"built", "partial", "planned"},
+            "water": {"allowed", "never"},
+        },
     ),
     "events.json": (
         "cobblers.events/1",

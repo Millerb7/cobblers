@@ -6,7 +6,7 @@ no abstraction over engines or games we do not use.
 
 ## Terrain analysis
 
-All four read the heightmap through `terrain.py`, which resolves the path and
+All of these read the heightmap through `terrain.py`, which resolves the path and
 the import mapping from `data/world.json` and **refuses to run** while
 `heightmap.status` is anything other than `"ok"`, while the recorded `sha256`
 is null, or while the file on disk does not match that hash. There is no flag
@@ -24,6 +24,23 @@ detected rather than trusted.
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
 | `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |
 | `landforms.py` | Land and water bodies, peaks, candidate landform classes | `derived/landforms/` |
+| `cross_section.py` | Profiles perpendicular to a polyline or landmark axis: floor, rims, depth, floor and rim-to-rim width, wall angle, U / V / flat-floored / asymmetric | `derived/sections/` |
+
+### Landmarks
+
+`landmarks.py` reads `data/landmarks.json`: named features with outlines, axes, anchors, a
+`status` (`built`, `partial`, `planned`) and a water policy. Tools look features up there
+instead of inferring them from the heightmap.
+
+- `cross_section.py --landmark rift --axis trunk` reads the axis and transect width.
+- `sightlines.py` accepts `@landmark` or `@landmark.anchor` wherever it takes a point, and
+  `@landmark*` as a target meaning any part of the feature: its outline and highest points.
+  `--plan FILE` runs many sets on one terrain load.
+- `landforms.py` and `cell_stats.py` honour `water: never`. Ground below sea level inside
+  such a landmark is `void_floor` / `void_fraction`, never inland water. Pass
+  `--no-landmarks` to measure without them.
+
+A malformed landmarks file stops these tools; it is never silently ignored.
 
 These produce **candidates**. A human picks. None of them decides where a town
 goes, which way a road runs, or what a place looks like.
@@ -33,12 +50,29 @@ python tools/find_sites.py  --min-size 24 --max-slope 4 --top 20
 python tools/route_path.py  --from 3400,3400 --to 4100,3900 --slope-weight 10
 python tools/sightlines.py  --from 3400,3400 --eye 2 --target volcano:6654,6242
 python tools/slope_masks.py --max-degrees 60
+python tools/cross_section.py --landmark glacier_corridor --axis trough --sample-step 4 --level 62
+python tools/sightlines.py  --plan data/checks/sightlines.json
 ```
 
 Useful flags: `--bbox X0,Z0,X1,Z1` restricts the site search; `--max-y` excludes ground
 clipped flat at the height ceiling, which otherwise ranks first; `--slope-weight 0`
 gives a straight line and a high value hugs contours; `--max-slope` sets what
 counts as impassable or unbuildable; `--world` points at a different config.
+
+## Pack analysis
+
+| Tool | Does | Writes |
+| --- | --- | --- |
+| `spawn_biomes.py` | Reads the server's vanilla jar, mod jars (with nested jars) and datapacks. Enumerates every biome and biome tag Cobblemon spawn conditions reference, resolves tags to loaded biomes, and checks coverage and species reachability against `data/regions.json` | `derived/spawns/`, optional markdown table |
+
+It needs a server directory (`--server-dir` or `COBBLERS_SERVER_DIR`), not the heightmap.
+`--scope default` reads the Cobblemon jar alone; `--scope pack` applies mod and datapack
+overrides by path. `datapacks/extra/` is read only with `--include-extra`, because the server
+does not load it.
+
+```bash
+python tools/spawn_biomes.py --server-dir ../cobblers-server --regions data/regions.json     --markdown docs/world-building/BIOME_COVERAGE_MATRIX.md
+```
 
 ## Fixture and tests
 

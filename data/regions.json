@@ -1,33 +1,53 @@
 {
- "schema": "cobblers.regions/1",
+ "schema": "cobblers.regions/2",
  "schema_status": "proposed",
  "status": "draft",
  "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+ "landmarks": "data/landmarks.json",
  "geometry": {
   "resolution_blocks": 8,
   "polygon_tolerance_blocks": 24,
   "polygon_note": "Outer boundaries only, in block coordinates [x, z], simplified from an 8-block raster. Traced polygon area is 97-99% of raster area.",
-  "coverage": "Every land block belongs to exactly one region. Only cell C8, which is open sea, holds no region."
+  "coverage": "Every land block and the rift's void floor belong to exactly one region. Only cell C8, open sea, holds no region."
+ },
+ "enums": {
+  "region_class": {
+   "terrain": "a region defined by its landform and climate",
+   "anomaly": "an out-of-this-world region; biome, spawns and rendering come from a custom datapack biome"
+  },
+  "tier": {
+   "hub": "holds flat ground of at least 99 blocks square below y190",
+   "route": "a corridor between hubs",
+   "wilderness": "optional, remote or hostile",
+   "destination": "an anomaly players travel into; its campaign role is not assigned"
+  },
+  "status": {
+   "built": "the terrain delivers the region's character",
+   "partial": "present but needs terrain work, specified in its notes",
+   "planned": "exists only as a spec"
+  }
  },
  "climate": {
   "prevailing_wind_from": "WNW",
   "basis": "A coastal ridge (crest y145-153 near z3500-3900) stands 13-20 blocks above the interior, and the northern range reaches y167 north of it. A wind from the west-northwest drops its moisture on both and leaves the interior plateau in their lee.",
   "treeline_y": 165,
-  "snowline": "y165 in the Northern Range; snow to sea level on the Northern Isles; no snowline on the Ember Highlands, which are warm and leeward."
+  "snowline": "y165 in the Northern Range; snow to sea level on the Northern Isles; snow on the Glacier Valley floor and walls as a deliberate glacial exception; no snowline on the Ember Highlands, which are warm and leeward."
  },
  "sea_biomes": {
-  "note": "The sea is not a region, but ocean biomes carry about 1,275 spawn entries, so it has its own plan.",
+  "note": "The sea is not a region. Ocean biomes carry many spawn entries, so it has its own plan.",
   "shares": {
    "minecraft:warm_ocean": 0.275,
    "minecraft:cold_ocean": 0.204,
    "minecraft:ocean": 0.138,
-   "minecraft:frozen_ocean": 0.137,
+   "minecraft:frozen_ocean": 0.123,
    "minecraft:lukewarm_ocean": 0.118,
    "minecraft:deep_lukewarm_ocean": 0.054,
    "minecraft:deep_ocean": 0.05,
-   "minecraft:deep_cold_ocean": 0.023
+   "minecraft:deep_cold_ocean": 0.023,
+   "minecraft:deep_frozen_ocean": 0.014
   },
   "rules": [
+   "deep_frozen_ocean: north of z1300, depth >= 16, >= 400 from land",
    "frozen_ocean: north of z1300, at least 120 blocks from land",
    "deep_cold_ocean: north of z2600, depth >= 16, >= 400 from land",
    "cold_ocean: north of z2600",
@@ -38,23 +58,59 @@
    "ocean: everything else"
   ]
  },
+ "underground_biomes": [
+  {
+   "biome": "minecraft:dripstone_caves",
+   "regions": [
+    "northern_range",
+    "windward_coast",
+    "leeward_plateau",
+    "rim_uplands",
+    "glacier_valley",
+    "stillwater_basin",
+    "eastern_downs",
+    "ember_highlands",
+    "lakeshore_vale",
+    "strand_flats",
+    "northern_isles",
+    "jungle_isle",
+    "southern_isles"
+   ],
+   "status": "planned",
+   "method": "WorldPainter Dimension Properties > General > Underground biome (honoured since 2.25.0): every 4x4 column below its lowest surface point minus the top-layer depth.",
+   "note": "One per dimension. Applies under every region including the rift unless the rift's custom biome is set another way."
+  },
+  {
+   "biome": "minecraft:lush_caves",
+   "regions": [
+    "lakeshore_vale",
+    "jungle_isle"
+   ],
+   "status": "planned",
+   "method": "WorldPainter Custom Cave/Tunnel layer with Biome set (since 2.10.0): every 4x4x4 cell the carved cave touches.",
+   "note": "Also the only loaded member of #cobblemon:is_lush."
+  },
+  {
+   "biome": "minecraft:deep_dark",
+   "regions": [
+    "northern_range"
+   ],
+   "status": "planned",
+   "method": "WorldPainter Custom Cave/Tunnel layer with Biome set.",
+   "note": "world.json puts the lowest terrain at y40, so caves under the range have at most about 90 blocks of rock to occupy."
+  },
+  {
+   "biome": "minecraft:sulfur_caves",
+   "regions": [
+    "ember_highlands"
+   ],
+   "status": "planned",
+   "kind": "optional",
+   "method": "WorldPainter Custom Cave/Tunnel layer with Biome set.",
+   "note": "Loaded by VanillaBackport. Painting it binds the save to that mod."
+  }
+ ],
  "tag_overlays": [
-  {
-   "tag": "#cobblemon:is_volcanic",
-   "add_biomes": [
-    "minecraft:eroded_badlands"
-   ],
-   "scoped_to": "ember_highlands",
-   "reason": "Unreachable with any vanilla overworld biome; the listed biome is used by no other region, so the overlay is region-scoped in practice."
-  },
-  {
-   "tag": "#cobblemon:is_thermal",
-   "add_biomes": [
-    "minecraft:eroded_badlands"
-   ],
-   "scoped_to": "ember_highlands",
-   "reason": "Unreachable with any vanilla overworld biome; the listed biome is used by no other region, so the overlay is region-scoped in practice."
-  },
   {
    "tag": "#cobblemon:is_tropical_island",
    "add_biomes": [
@@ -62,58 +118,348 @@
     "minecraft:bamboo_jungle",
     "minecraft:sparse_jungle"
    ],
-   "scoped_to": "jungle_isle, southern_isles",
-   "reason": "Unreachable with any vanilla overworld biome; the listed biome is used by no other region, so the overlay is region-scoped in practice."
+   "scoped_to": [
+    "jungle_isle",
+    "southern_isles"
+   ],
+   "kind": "identity",
+   "reason": "No loaded biome is a member; the tag lists only Biomes O' Plenty and Wythers biomes.",
+   "only_through_this_overlay": {
+    "spawn_entries": 12,
+    "species": []
+   }
   },
   {
    "tag": "#cobblemon:is_snowy_forest",
    "add_biomes": [
-    "minecraft:grove"
+    "minecraft:grove",
+    "minecraft:snowy_taiga"
    ],
-   "scoped_to": "northern_range",
-   "reason": "Unreachable with any vanilla overworld biome; the listed biome is used by no other region, so the overlay is region-scoped in practice."
+   "scoped_to": [
+    "northern_range",
+    "glacier_valley"
+   ],
+   "kind": "identity",
+   "reason": "No loaded biome is a member; the tag lists only modded snowy forests.",
+   "only_through_this_overlay": {
+    "spawn_entries": 1,
+    "species": []
+   }
+  },
+  {
+   "tag": "#cobblemon:is_volcanic",
+   "add_biomes": [
+    "minecraft:eroded_badlands"
+   ],
+   "scoped_to": [
+    "ember_highlands"
+   ],
+   "kind": "identity",
+   "reason": "No loaded biome is a member; the tag lists only Terralith, Biomes O' Plenty and Wythers volcanoes.",
+   "only_through_this_overlay": {
+    "spawn_entries": 31,
+    "species": []
+   }
+  },
+  {
+   "tag": "#cobblemon:is_thermal",
+   "add_biomes": [
+    "minecraft:eroded_badlands"
+   ],
+   "scoped_to": [
+    "ember_highlands"
+   ],
+   "kind": "identity",
+   "reason": "No loaded biome is a member; the tag lists only modded hot springs and calderas.",
+   "only_through_this_overlay": {
+    "spawn_entries": 7,
+    "species": []
+   }
   },
   {
    "tag": "#cobblemon:is_lush",
    "add_biomes": [
     "minecraft:flower_forest"
    ],
-   "scoped_to": "lakeshore_vale",
-   "reason": "Unreachable with any vanilla overworld biome; the listed biome is used by no other region, so the overlay is region-scoped in practice."
+   "scoped_to": [
+    "lakeshore_vale"
+   ],
+   "kind": "fallback",
+   "reason": "Fallback, kept from the previous plan. The tag's only loaded member is lush_caves, a cave biome planned underground but not yet verified in a WorldPainter export. Every fossil Pokemon in the pack reaches the overworld only through is_lush, so this overlay stays until the underground experiment passes, then should be withdrawn.",
+   "only_through_this_overlay": {
+    "spawn_entries": 0,
+    "species": []
+   }
+  },
+  {
+   "tag": "#cobblemon:is_sky",
+   "add_biomes": [
+    "minecraft:jagged_peaks"
+   ],
+   "scoped_to": [
+    "northern_range"
+   ],
+   "kind": "optional",
+   "reason": "Optional. The tag lists only Terralith skylands. jagged_peaks is the range's highest lee ground, the nearest thing to sky islands on this map.",
+   "only_through_this_overlay": {
+    "spawn_entries": 39,
+    "species": []
+   }
+  },
+  {
+   "tag": "#cobblemon:is_shrubland",
+   "add_biomes": [
+    "minecraft:savanna"
+   ],
+   "scoped_to": [
+    "leeward_plateau"
+   ],
+   "kind": "optional",
+   "reason": "Optional. The tag lists only modded shrublands; dry savanna scrub is the closest vanilla ground.",
+   "only_through_this_overlay": {
+    "spawn_entries": 0,
+    "species": []
+   }
   }
  ],
  "tag_coverage": {
-  "overworld_spawn_tags": 58,
-  "covered_by_painted_biomes": 48,
-  "covered_with_overlays": 53,
-  "uncovered": [
-   {
-    "tag": "#cobblemon:is_sky",
-    "spawn_entries": 186
+  "tool": "tools/spawn_biomes.py",
+  "scope_note": "pack: Cobblemon jar after mods and required datapacks override it (what the server runs). default: the Cobblemon jar alone.",
+  "checks_biomes_only": "Non-biome conditions (light, Y, sky, structures, nearby blocks) are not evaluated.",
+  "scenarios": {
+   "pack": {
+    "painted surface only": {
+     "references": [
+      66,
+      73
+     ],
+     "species": [
+      934,
+      963
+     ],
+     "spawn_entries_reachable": 4179,
+     "uncovered": [
+      "#cobblemon:is_cave",
+      "#cobblemon:is_deep_dark",
+      "#cobblemon:is_dripstone",
+      "#cobblemon:is_lush",
+      "minecraft:deep_dark",
+      "minecraft:dripstone_caves",
+      "minecraft:lush_caves"
+     ]
+    },
+    "+ identity overlays": {
+     "references": [
+      66,
+      73
+     ],
+     "species": [
+      935,
+      964
+     ],
+     "spawn_entries_reachable": 4230,
+     "uncovered": [
+      "#cobblemon:is_cave",
+      "#cobblemon:is_deep_dark",
+      "#cobblemon:is_dripstone",
+      "#cobblemon:is_lush",
+      "minecraft:deep_dark",
+      "minecraft:dripstone_caves",
+      "minecraft:lush_caves"
+     ]
+    },
+    "+ is_lush fallback overlay (no underground)": {
+     "references": [
+      67,
+      73
+     ],
+     "species": [
+      958,
+      964
+     ],
+     "spawn_entries_reachable": 4344,
+     "uncovered": [
+      "#cobblemon:is_cave",
+      "#cobblemon:is_deep_dark",
+      "#cobblemon:is_dripstone",
+      "minecraft:deep_dark",
+      "minecraft:dripstone_caves",
+      "minecraft:lush_caves"
+     ]
+    },
+    "identity overlays + underground, no fallback (unverified)": {
+     "references": [
+      73,
+      73
+     ],
+     "species": [
+      964,
+      964
+     ],
+     "spawn_entries_reachable": 4416,
+     "uncovered": []
+    },
+    "full plan": {
+     "references": [
+      73,
+      73
+     ],
+     "species": [
+      964,
+      964
+     ],
+     "spawn_entries_reachable": 4455,
+     "uncovered": []
+    }
    },
-   {
-    "tag": "#cobblemon:is_dripstone",
-    "spawn_entries": 70
-   },
-   {
-    "tag": "#cobblemon:is_deep_dark",
-    "spawn_entries": 59
-   },
-   {
-    "tag": "#cobblemon:is_cave",
-    "spawn_entries": 10
-   },
-   {
-    "tag": "#cobblemon:is_shrubland",
-    "spawn_entries": 4
+   "default": {
+    "painted surface only": {
+     "references": [
+      46,
+      49
+     ],
+     "species": [
+      840,
+      861
+     ],
+     "spawn_entries_reachable": 3946,
+     "uncovered": [
+      "#cobblemon:is_deep_dark",
+      "#cobblemon:is_dripstone",
+      "#cobblemon:is_lush"
+     ]
+    },
+    "+ identity overlays": {
+     "references": [
+      46,
+      49
+     ],
+     "species": [
+      841,
+      862
+     ],
+     "spawn_entries_reachable": 3999,
+     "uncovered": [
+      "#cobblemon:is_deep_dark",
+      "#cobblemon:is_dripstone",
+      "#cobblemon:is_lush"
+     ]
+    },
+    "+ is_lush fallback overlay (no underground)": {
+     "references": [
+      47,
+      49
+     ],
+     "species": [
+      862,
+      862
+     ],
+     "spawn_entries_reachable": 4104,
+     "uncovered": [
+      "#cobblemon:is_deep_dark",
+      "#cobblemon:is_dripstone"
+     ]
+    },
+    "identity overlays + underground, no fallback (unverified)": {
+     "references": [
+      49,
+      49
+     ],
+     "species": [
+      862,
+      862
+     ],
+     "spawn_entries_reachable": 4161,
+     "uncovered": []
+    },
+    "full plan": {
+     "references": [
+      49,
+      49
+     ],
+     "species": [
+      862,
+      862
+     ],
+     "spawn_entries_reachable": 4200,
+     "uncovered": []
+    }
    }
-  ]
+  },
+  "sole_biome_species": {
+   "minecraft:bamboo_jungle": [
+    "bewear",
+    "pangoroheld_item",
+    "stufful"
+   ],
+   "minecraft:beach": [
+    "koraidon",
+    "miraidon",
+    "palossand",
+    "sandygast"
+   ],
+   "minecraft:cherry_grove": [
+    "kartana",
+    "kubfu",
+    "urshifu"
+   ],
+   "minecraft:dark_forest": [
+    "grimmsnarl",
+    "ironboulder",
+    "morgrem",
+    "zacian",
+    "zamazenta"
+   ],
+   "minecraft:deep_dark": [
+    "marshadow",
+    "stakataka"
+   ],
+   "minecraft:desert": [
+    "braixen",
+    "delphox",
+    "fennekin",
+    "flygon",
+    "hippopotas",
+    "hippowdon",
+    "ironhands",
+    "krokorok",
+    "krookodile",
+    "sandaconda",
+    "sandile",
+    "silicobra",
+    "trapinch",
+    "vibrava"
+   ],
+   "minecraft:dripstone_caves": [
+    "genesect"
+   ],
+   "minecraft:eroded_badlands": [
+    "turtonator"
+   ],
+   "minecraft:ice_spikes": [
+    "kyurem"
+   ],
+   "minecraft:jungle": [
+    "zarude"
+   ],
+   "minecraft:lush_caves": [
+    "diancie"
+   ],
+   "minecraft:sunflower_plains": [
+    "meloetta"
+   ],
+   "minecraft:windswept_forest": [
+    "cobalion"
+   ]
+  }
  },
  "regions": [
   {
    "id": "northern_range",
    "display_name": "The Northern Range",
+   "region_class": "terrain",
    "tier": "wilderness",
+   "status": "built",
    "character": "A snow-capped massif on the windward north-west, summits clipped flat at the height ceiling, falling through snowy spruce to a windswept northern foreshore.",
    "contiguous": true,
    "pieces": 1,
@@ -135,12 +481,12 @@
     "A1": 0.164,
     "A2": 0.136,
     "B2": 0.131,
-    "A3": 0.112,
-    "A4": 0.102,
-    "B4": 0.1,
+    "A3": 0.113,
+    "A4": 0.103,
+    "B4": 0.098,
     "C3": 0.032,
     "A5": 0.014,
-    "C2": 0.013,
+    "C2": 0.014,
     "B5": 0.01
    },
    "bounds": {
@@ -173,9 +519,10 @@
     }
    ],
    "measured": {
-    "area_km2": 5.16,
-    "land_km2": 5.154,
+    "area_km2": 5.147,
+    "land_km2": 5.141,
     "water_km2": 0.006,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
      "p10": 85.6,
@@ -184,15 +531,16 @@
      "max": 200.0
     },
     "slope_degrees": {
-     "mean": 11.39,
-     "p90": 21.54,
-     "flat_under_5_pct": 26.2,
+     "mean": 11.37,
+     "p90": 21.53,
+     "flat_under_5_pct": 26.3,
      "steep_over_25_pct": 5.2
     },
-    "above_treeline_pct": 19.9,
+    "above_treeline_pct": 20.0,
     "median_distance_to_sea": 392.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:windswept_forest",
     "secondary": [
      "minecraft:grove",
@@ -208,12 +556,12 @@
      },
      {
       "biome": "minecraft:grove",
-      "share": 0.226,
+      "share": 0.225,
       "rule": "y 128-148"
      },
      {
       "biome": "minecraft:snowy_slopes",
-      "share": 0.131,
+      "share": 0.132,
       "rule": "y 148-165"
      },
      {
@@ -229,9 +577,6 @@
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/oak_log",
-    "#cobblemon:has_block/spruce_log",
     "#cobblemon:is_cold",
     "#cobblemon:is_forest",
     "#cobblemon:is_freezing",
@@ -240,21 +585,30 @@
     "#cobblemon:is_mountain",
     "#cobblemon:is_overworld",
     "#cobblemon:is_peak",
+    "#cobblemon:is_sky",
     "#cobblemon:is_snowy",
     "#cobblemon:is_snowy_forest",
     "#cobblemon:is_snowy_taiga",
     "#cobblemon:is_taiga",
     "#cobblemon:is_temperate",
     "#minecraft:is_forest",
-    "#minecraft:is_hill",
-    "#minecraft:is_mountain",
     "#minecraft:is_overworld"
    ],
    "tag_overlays_required": [
     {
      "tag": "#cobblemon:is_snowy_forest",
-     "biome": "minecraft:grove"
+     "biome": "minecraft:grove",
+     "kind": "identity"
+    },
+    {
+     "tag": "#cobblemon:is_sky",
+     "biome": "minecraft:jagged_peaks",
+     "kind": "optional"
     }
+   ],
+   "underground_biomes": [
+    "minecraft:dripstone_caves",
+    "minecraft:deep_dark"
    ],
    "distinctness": {
     "ground": "Snow and grey stone above y148; spruce litter and podzol below.",
@@ -264,7 +618,9 @@
     "signature_at_128_blocks": "White summits or the snowline are in view from anywhere inside, and the ground is never level for long."
    },
    "notes": [
-    "The north foreshore is a compromise: only 9% of it lies within 16 blocks of mountain ground. It drains north and is cut off from the Windward Coast by the A1 massif, so it has no better contiguous home."
+    "The north foreshore is a compromise: only 9% of it lies within 16 blocks of mountain ground. It drains north and is cut off from the Windward Coast by the A1 massif, so it has no better contiguous home.",
+    "Gives 0.013 km2 at the glacier head to the Glacier Valley.",
+    "Underground: deep_dark in its cave systems (see underground_biomes)."
    ],
    "polygons": [
     [
@@ -357,8 +713,20 @@
       1792
      ],
      [
-      3392,
-      1656
+      3592,
+      1768
+     ],
+     [
+      3576,
+      1688
+     ],
+     [
+      3512,
+      1632
+     ],
+     [
+      3360,
+      1624
      ],
      [
       3304,
@@ -506,7 +874,9 @@
   {
    "id": "windward_coast",
    "display_name": "The Windward Coast",
+   "region_class": "terrain",
    "tier": "route",
+   "status": "built",
    "character": "A rain-soaked old-growth coast on the west, dark canopy running down to a rocky shore under the full weight of the prevailing wind.",
    "contiguous": true,
    "pieces": 1,
@@ -520,8 +890,7 @@
     "D1",
     "D2",
     "E2",
-    "A2",
-    "F1"
+    "A2"
    ],
    "cell_share": {
     "C2": 0.293,
@@ -533,8 +902,7 @@
     "D1": 0.071,
     "D2": 0.017,
     "E2": 0.009,
-    "A2": 0.008,
-    "F1": 0.002
+    "A2": 0.008
    },
    "bounds": {
     "min_x": 352,
@@ -561,6 +929,7 @@
     "area_km2": 2.845,
     "land_km2": 2.839,
     "water_km2": 0.005,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
      "p10": 77.7,
@@ -578,15 +947,17 @@
     "median_distance_to_sea": 320.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:dark_forest",
     "secondary": [
      "minecraft:old_growth_spruce_taiga",
-     "minecraft:stony_shore"
+     "minecraft:stony_shore",
+     "minecraft:pale_garden"
     ],
     "bands": [
      {
       "biome": "minecraft:dark_forest",
-      "share": 0.661,
+      "share": 0.59,
       "rule": "everything else"
      },
      {
@@ -598,13 +969,15 @@
       "biome": "minecraft:stony_shore",
       "share": 0.102,
       "rule": "within 48 blocks of the sea"
+     },
+     {
+      "biome": "minecraft:pale_garden",
+      "share": 0.071,
+      "rule": "the flattest dark-forest ground (slope < 2 degrees) at y 96-112, the sheltered hollows"
      }
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/dark_oak_log",
-    "#cobblemon:has_block/spruce_log",
     "#cobblemon:is_coast",
     "#cobblemon:is_cold",
     "#cobblemon:is_forest",
@@ -612,14 +985,15 @@
     "#cobblemon:is_mushroom",
     "#cobblemon:is_overworld",
     "#cobblemon:is_spooky",
-    "#cobblemon:is_stony_beach",
     "#cobblemon:is_taiga",
     "#cobblemon:is_temperate",
     "#minecraft:is_forest",
-    "#minecraft:is_overworld",
-    "#minecraft:is_taiga"
+    "#minecraft:is_overworld"
    ],
    "tag_overlays_required": [],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
    "distinctness": {
     "ground": "Moss, podzol and coarse dirt; stony shore at the sea.",
     "vegetation": "Closed dark-oak and old spruce canopy, the densest on the mainland.",
@@ -627,7 +1001,9 @@
     "sightlines": "Short inland; open only at the shore.",
     "signature_at_128_blocks": "A dark, closed canopy with the sea glimpsed through the trees."
    },
-   "notes": [],
+   "notes": [
+    "pale_garden is not a vanilla 1.21.1 biome. It is loaded by VanillaBackport, already world-critical; painting it binds the save to that mod. One spawn entry references it and no species depends on it alone."
+   ],
    "polygons": [
     [
      [
@@ -880,7 +1256,9 @@
   {
    "id": "leeward_plateau",
    "display_name": "The Leeward Plateau",
+   "region_class": "terrain",
    "tier": "hub",
+   "status": "built",
    "character": "A dry, flat tableland in the rain shadow of the coastal ridge and the range: sun-bleached grass, scattered acacia and a sandy desert heart.",
    "contiguous": true,
    "pieces": 1,
@@ -892,9 +1270,7 @@
     "E1",
     "C2",
     "C3",
-    "F2",
-    "C1",
-    "E3"
+    "F2"
    ],
    "cell_share": {
     "D2": 0.346,
@@ -904,9 +1280,7 @@
     "E1": 0.056,
     "C2": 0.051,
     "C3": 0.023,
-    "F2": 0.012,
-    "C1": 0.003,
-    "E3": 0.0
+    "F2": 0.012
    },
    "bounds": {
     "min_x": 528,
@@ -933,6 +1307,7 @@
     "area_km2": 2.889,
     "land_km2": 2.889,
     "water_km2": 0.0,
+    "void_km2": 0.0,
     "elevation": {
      "min": 113.1,
      "p10": 121.9,
@@ -947,19 +1322,26 @@
      "steep_over_25_pct": 0.0
     },
     "above_treeline_pct": 0.0,
-    "median_distance_to_sea": 856.0
+    "median_distance_to_sea": 864.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:savanna_plateau",
     "secondary": [
+     "minecraft:savanna",
      "minecraft:desert",
      "minecraft:windswept_savanna"
     ],
     "bands": [
      {
       "biome": "minecraft:savanna_plateau",
-      "share": 0.759,
+      "share": 0.381,
       "rule": "everything else"
+     },
+     {
+      "biome": "minecraft:savanna",
+      "share": 0.378,
+      "rule": "y < 128 (the lower tableland)"
      },
      {
       "biome": "minecraft:desert",
@@ -974,20 +1356,29 @@
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/acacia_log",
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/sand",
     "#cobblemon:is_arid",
     "#cobblemon:is_desert",
     "#cobblemon:is_grassland",
+    "#cobblemon:is_hills",
+    "#cobblemon:is_mountain",
     "#cobblemon:is_overworld",
     "#cobblemon:is_plateau",
     "#cobblemon:is_sandy",
     "#cobblemon:is_savanna",
+    "#cobblemon:is_shrubland",
     "#minecraft:is_overworld",
     "#minecraft:is_savanna"
    ],
-   "tag_overlays_required": [],
+   "tag_overlays_required": [
+    {
+     "tag": "#cobblemon:is_shrubland",
+     "biome": "minecraft:savanna",
+     "kind": "optional"
+    }
+   ],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
    "distinctness": {
     "ground": "Yellow-brown grass and coarse dirt; sand at the core.",
     "vegetation": "Sparse acacia; almost treeless.",
@@ -996,7 +1387,9 @@
     "signature_at_128_blocks": "The flattest ground on the map and the only dry yellow grassland in the mainland interior."
    },
    "notes": [
-    "Flattest region: 72.1% of its land is under 5 degrees."
+    "Flattest region: 72.1% of its land is under 5 degrees.",
+    "Largest site: 114 blocks square at (1224, 4170), y133-137.",
+    "savanna is new here and carries the optional #cobblemon:is_shrubland overlay."
    ],
    "polygons": [
     [
@@ -1184,10 +1577,330 @@
    ]
   },
   {
-   "id": "sunken_rift",
-   "display_name": "The Sunken Rift",
-   "tier": "route",
-   "character": "A flooded rift lake in two broad basins joined by a narrow strait, ringed by steep gravel walls, with mangrove shallows at the wide ends.",
+   "id": "rim_uplands",
+   "display_name": "The Rim Uplands",
+   "region_class": "terrain",
+   "tier": "hub",
+   "status": "built",
+   "character": "A high, open upland between the range's foot, the rift's north rim and the glacier valley: wind-cut grass and stone, old pines toward the mountains, and the rift opening at its southern edge.",
+   "contiguous": true,
+   "pieces": 1,
+   "cells": [
+    "C4",
+    "D4",
+    "C3",
+    "D5",
+    "C5",
+    "B3",
+    "D3",
+    "B4"
+   ],
+   "cell_share": {
+    "C4": 0.267,
+    "D4": 0.238,
+    "C3": 0.179,
+    "D5": 0.144,
+    "C5": 0.092,
+    "B3": 0.035,
+    "D3": 0.023,
+    "B4": 0.022
+   },
+   "bounds": {
+    "min_x": 2208,
+    "min_z": 1464,
+    "max_x": 5087,
+    "max_z": 3735
+   },
+   "climate": {
+    "exposure": "leeward",
+    "moisture": "temperate",
+    "temperature": "cool"
+   },
+   "boundary_basis": [
+    {
+     "basis": "valley",
+     "detail": "Its north-east edge is the Glacier Valley: the trough's rim level along the measured axis."
+    },
+    {
+     "basis": "rim",
+     "detail": "Its southern edge is the rift's rim."
+    },
+    {
+     "basis": "contour",
+     "detail": "Its north-west edge is the Northern Range's smoothed y128 contour."
+    },
+    {
+     "basis": "split",
+     "detail": "Split from the Eastern Downs, which the Glacier Valley now cuts in three. This is the piece west of the valley and north of the rift."
+    }
+   ],
+   "measured": {
+    "area_km2": 2.601,
+    "land_km2": 2.601,
+    "water_km2": 0.0,
+    "void_km2": 0.0,
+    "elevation": {
+     "min": 99.4,
+     "p10": 109.2,
+     "median": 121.1,
+     "p90": 139.5,
+     "max": 156.0
+    },
+    "slope_degrees": {
+     "mean": 4.0,
+     "p90": 7.12,
+     "flat_under_5_pct": 71.2,
+     "steep_over_25_pct": 0.0
+    },
+    "above_treeline_pct": 0.0,
+    "median_distance_to_sea": 1888.0
+   },
+   "biomes": {
+    "deferred": false,
+    "primary": "minecraft:windswept_hills",
+    "secondary": [
+     "minecraft:old_growth_pine_taiga"
+    ],
+    "bands": [
+     {
+      "biome": "minecraft:windswept_hills",
+      "share": 0.784,
+      "rule": "everything else: open wind-cut upland on the rift's north rim"
+     },
+     {
+      "biome": "minecraft:old_growth_pine_taiga",
+      "share": 0.216,
+      "rule": "y >= 132 (toward the range foot)"
+     }
+    ]
+   },
+   "biome_tags": [
+    "#cobblemon:is_cold",
+    "#cobblemon:is_hills",
+    "#cobblemon:is_mountain",
+    "#cobblemon:is_overworld",
+    "#cobblemon:is_taiga",
+    "#minecraft:is_overworld"
+   ],
+   "tag_overlays_required": [],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
+   "distinctness": {
+    "ground": "Short grass broken by stone and gravel; scree at the rift rim.",
+    "vegetation": "Almost treeless hills; tall old pines above y132 toward the range.",
+    "water": "None standing.",
+    "sightlines": "Down into the rift from its rim; the range and the glacier valley behind.",
+    "signature_at_128_blocks": "Bare, wind-cut hills with either the rift or the range's old pines in view."
+   },
+   "notes": [
+    "Hub tier follows its sites: 106 blocks square at (3149, 2768) y122-126 and 100 at (3401, 2951), both formerly counted for the Eastern Downs.",
+    "71% of its land is under 5 degrees; median y121; median 1,888 blocks from the sea."
+   ],
+   "polygons": [
+    [
+     [
+      3088,
+      1464
+     ],
+     [
+      3304,
+      1528
+     ],
+     [
+      3352,
+      1624
+     ],
+     [
+      3216,
+      1664
+     ],
+     [
+      3096,
+      1800
+     ],
+     [
+      3072,
+      2248
+     ],
+     [
+      3152,
+      2304
+     ],
+     [
+      3280,
+      2304
+     ],
+     [
+      3488,
+      2440
+     ],
+     [
+      3592,
+      2352
+     ],
+     [
+      3752,
+      2376
+     ],
+     [
+      3928,
+      2512
+     ],
+     [
+      4072,
+      2528
+     ],
+     [
+      4256,
+      2624
+     ],
+     [
+      4352,
+      2752
+     ],
+     [
+      4720,
+      2856
+     ],
+     [
+      5080,
+      3152
+     ],
+     [
+      4984,
+      3264
+     ],
+     [
+      4992,
+      3192
+     ],
+     [
+      4904,
+      3184
+     ],
+     [
+      4800,
+      3088
+     ],
+     [
+      4736,
+      3176
+     ],
+     [
+      4960,
+      3384
+     ],
+     [
+      4696,
+      3424
+     ],
+     [
+      4512,
+      3536
+     ],
+     [
+      4408,
+      3520
+     ],
+     [
+      4256,
+      3624
+     ],
+     [
+      4056,
+      3656
+     ],
+     [
+      3984,
+      3728
+     ],
+     [
+      3472,
+      3688
+     ],
+     [
+      3184,
+      3600
+     ],
+     [
+      3016,
+      3488
+     ],
+     [
+      2856,
+      3112
+     ],
+     [
+      2816,
+      2776
+     ],
+     [
+      2744,
+      2608
+     ],
+     [
+      2776,
+      2528
+     ],
+     [
+      2720,
+      2552
+     ],
+     [
+      2632,
+      2440
+     ],
+     [
+      2480,
+      2384
+     ],
+     [
+      2288,
+      2520
+     ],
+     [
+      2208,
+      2680
+     ],
+     [
+      2288,
+      2440
+     ],
+     [
+      2240,
+      2272
+     ],
+     [
+      2400,
+      2152
+     ],
+     [
+      2560,
+      2128
+     ],
+     [
+      2792,
+      1960
+     ],
+     [
+      2952,
+      1744
+     ],
+     [
+      2976,
+      1616
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "the_rift",
+   "display_name": "The Rift",
+   "region_class": "anomaly",
+   "tier": "destination",
+   "status": "built",
+   "character": "A branching tear through the centre of the island, walls falling 50-65 blocks to a floor that is never seen: fog, portal light and sound rising from below. Players descend into it.",
    "contiguous": true,
    "pieces": 1,
    "cells": [
@@ -1201,8 +1914,7 @@
     "D6",
     "E4",
     "F6",
-    "F5",
-    "E2"
+    "F5"
    ],
    "cell_share": {
     "D3": 0.186,
@@ -1215,8 +1927,7 @@
     "D6": 0.055,
     "E4": 0.042,
     "F6": 0.039,
-    "F5": 0.007,
-    "E2": 0.001
+    "F5": 0.007
    },
    "bounds": {
     "min_x": 2024,
@@ -1226,8 +1937,8 @@
    },
    "climate": {
     "exposure": "sheltered",
-    "moisture": "wet",
-    "temperature": "temperate"
+    "moisture": "anomalous",
+    "temperature": "anomalous"
    },
    "boundary_basis": [
     {
@@ -1238,7 +1949,8 @@
    "measured": {
     "area_km2": 3.771,
     "land_km2": 2.073,
-    "water_km2": 1.698,
+    "water_km2": 0.0,
+    "void_km2": 1.698,
     "elevation": {
      "min": 62.0,
      "p10": 64.9,
@@ -1253,58 +1965,45 @@
      "steep_over_25_pct": 37.6
     },
     "above_treeline_pct": 0.0,
-    "median_distance_to_sea": 1912.0
+    "median_distance_to_sea": 1920.0
    },
    "biomes": {
-    "primary": "minecraft:river",
-    "secondary": [
-     "minecraft:windswept_gravelly_hills",
-     "minecraft:mangrove_swamp"
-    ],
-    "bands": [
-     {
-      "biome": "minecraft:river",
-      "share": 0.45,
-      "rule": "the lake water"
-     },
-     {
-      "biome": "minecraft:windswept_gravelly_hills",
-      "share": 0.339,
-      "rule": "walls, slope >= 14 degrees"
-     },
-     {
-      "biome": "minecraft:mangrove_swamp",
-      "share": 0.211,
-      "rule": "shallow margins and gentle rim"
-     }
-    ]
+    "deferred": true,
+    "primary": null,
+    "secondary": [],
+    "bands": [],
+    "custom_biome": {
+     "required": true,
+     "id": null,
+     "status": "deferred",
+     "wanted": [
+      "heavy fog",
+      "custom sky and fog colour",
+      "ambient particles: nether portal, reverse portal, soul fire flame",
+      "ambient sound loop",
+      "light emitting from below"
+     ]
+    }
    },
-   "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/gravel",
-    "#cobblemon:has_block/mangrove_log",
-    "#cobblemon:has_block/mud",
-    "#cobblemon:is_freshwater",
-    "#cobblemon:is_hills",
-    "#cobblemon:is_mountain",
-    "#cobblemon:is_overworld",
-    "#cobblemon:is_river",
-    "#cobblemon:is_swamp",
-    "#minecraft:is_hill",
-    "#minecraft:is_overworld",
-    "#minecraft:is_river"
-   ],
+   "spawn_table": {
+    "status": "deferred"
+   },
+   "biome_tags": [],
    "tag_overlays_required": [],
+   "underground_biomes": [],
    "distinctness": {
-    "ground": "Gravel and stone on the walls; mud in the shallows.",
-    "vegetation": "None on the walls; mangrove at the basin ends.",
-    "water": "The lake itself, 45% of the region.",
-    "sightlines": "Across open water to the far wall.",
-    "signature_at_128_blocks": "You are on the water, on a steep gravel wall, or looking across the lake."
+    "ground": "Stone and gravel walls; no visible floor.",
+    "vegetation": "None.",
+    "water": "None. The floor lies below sea level and must never hold water.",
+    "sightlines": "Across to the far rim; nothing below the fog.",
+    "signature_at_128_blocks": "Fog and portal particles rising out of a trench in the ground."
    },
    "notes": [
-    "The strait at D4 narrows to 172 blocks: the natural crossing point.",
-    "The floor lies at y43.6-54.5, below sea level, so the whole rift is flooded."
+    "Not water and not dry land. The floor (y44-62) stays below sea level, must not be filled with water, and must not render as a visible surface: void, barrier, or a light-emitting layer below reach, decided later.",
+    "Biome and spawn table deferred. A custom datapack biome is required: heavy fog, custom sky and fog colour, ambient particles (nether portal, reverse portal, soul fire flame), an ambient sound loop, light from below. No ocean or vanilla default biome is assigned.",
+    "data/landmarks.json marks it water: never; landforms.py and cell_stats.py count its floor as void, not inland water.",
+    "Victory Road / League suitability is assessed in docs/world-building/REGIONS.md, not decided.",
+    "The previous plan called this the Sunken Rift and gave it river, windswept_gravelly_hills and mangrove_swamp. Those biomes now live in the Glacier Valley and the Strand Flats."
    ],
    "polygons": [
     [
@@ -1405,7 +2104,7 @@
       3496
      ],
      [
-      5512,
+      5520,
       3560
      ],
      [
@@ -1636,43 +2335,515 @@
    ]
   },
   {
-   "id": "stillwater_basin",
-   "display_name": "Stillwater Basin",
-   "tier": "hub",
-   "character": "A sheltered bowl draining to a small, still enclosed lake, filled with cherry groves and ringed by swamp at the water.",
+   "id": "glacier_valley",
+   "display_name": "The Glacier Valley",
+   "region_class": "terrain",
+   "tier": "route",
+   "status": "partial",
+   "character": "A glacier tongue filling a long trough from the range's south-east flank to a meltwater lake held behind a gravel moraine, drained east to the sea by a single river.",
    "contiguous": true,
    "pieces": 1,
    "cells": [
-    "E6",
     "D6",
-    "C6",
-    "E7",
-    "D7",
-    "F6",
     "C5",
+    "C4",
+    "D7",
+    "B4",
+    "C6",
+    "B5",
     "D5",
-    "E5",
-    "F7",
-    "C7"
+    "E7",
+    "E6"
    ],
    "cell_share": {
-    "E6": 0.262,
-    "D6": 0.249,
-    "C6": 0.143,
-    "E7": 0.121,
-    "D7": 0.107,
-    "F6": 0.051,
-    "C5": 0.038,
-    "D5": 0.014,
-    "E5": 0.007,
-    "F7": 0.004,
-    "C7": 0.004
+    "D6": 0.254,
+    "C5": 0.232,
+    "C4": 0.117,
+    "D7": 0.116,
+    "B4": 0.113,
+    "C6": 0.1,
+    "B5": 0.025,
+    "D5": 0.02,
+    "E7": 0.011,
+    "E6": 0.011
    },
    "bounds": {
-    "min_x": 4752,
-    "min_z": 2456,
-    "max_x": 6879,
-    "max_z": 5479
+    "min_x": 3080,
+    "min_z": 1632,
+    "max_x": 6975,
+    "max_z": 4239
+   },
+   "climate": {
+    "exposure": "sheltered",
+    "moisture": "wet",
+    "temperature": "cold"
+   },
+   "boundary_basis": [
+    {
+     "basis": "valley",
+     "detail": "Inside the annotated glacier outline, ground no higher than the lower rim of its nearest cross-section station (smoothed over three stations) minus 2 blocks, kept as the component on the trough axis."
+    },
+    {
+     "basis": "lake",
+     "detail": "The enclosed meltwater lake (0.22 km2 below sea level, floor y44.5)."
+    },
+    {
+     "basis": "planned_feature",
+     "detail": "Ground within 90 blocks of the planned moraine crest and within 72 blocks of the planned meltwater river channel, from data/landmarks.json."
+    }
+   ],
+   "measured": {
+    "area_km2": 3.028,
+    "land_km2": 2.808,
+    "water_km2": 0.219,
+    "void_km2": 0.0,
+    "elevation": {
+     "min": 62.0,
+     "p10": 73.7,
+     "median": 99.3,
+     "p90": 112.9,
+     "max": 155.3
+    },
+    "slope_degrees": {
+     "mean": 5.51,
+     "p90": 10.63,
+     "flat_under_5_pct": 55.5,
+     "steep_over_25_pct": 0.4
+    },
+    "above_treeline_pct": 0.0,
+    "median_distance_to_sea": 1144.0
+   },
+   "biomes": {
+    "deferred": false,
+    "primary": "minecraft:snowy_taiga",
+    "secondary": [
+     "minecraft:taiga",
+     "minecraft:frozen_river",
+     "minecraft:river",
+     "minecraft:windswept_gravelly_hills"
+    ],
+    "bands": [
+     {
+      "biome": "minecraft:snowy_taiga",
+      "share": 0.437,
+      "rule": "valley walls at y >= 96"
+     },
+     {
+      "biome": "minecraft:taiga",
+      "share": 0.264,
+      "rule": "everything else: the lower walls around the lake"
+     },
+     {
+      "biome": "minecraft:frozen_river",
+      "share": 0.188,
+      "rule": "the valley floor within 90 blocks of the trough axis, from the head to d3100 (the glacier tongue)"
+     },
+     {
+      "biome": "minecraft:river",
+      "share": 0.08,
+      "rule": "the meltwater lake and the planned meltwater river channel (within 24 blocks of it)"
+     },
+     {
+      "biome": "minecraft:windswept_gravelly_hills",
+      "share": 0.031,
+      "rule": "the planned terminal moraine (within 90 blocks of its crest)"
+     }
+    ]
+   },
+   "biome_tags": [
+    "#cobblemon:is_cold",
+    "#cobblemon:is_freezing",
+    "#cobblemon:is_freshwater",
+    "#cobblemon:is_hills",
+    "#cobblemon:is_mountain",
+    "#cobblemon:is_overworld",
+    "#cobblemon:is_river",
+    "#cobblemon:is_snowy",
+    "#cobblemon:is_snowy_forest",
+    "#cobblemon:is_snowy_taiga",
+    "#cobblemon:is_taiga",
+    "#minecraft:is_overworld"
+   ],
+   "tag_overlays_required": [
+    {
+     "tag": "#cobblemon:is_snowy_forest",
+     "biome": "minecraft:snowy_taiga",
+     "kind": "identity"
+    }
+   ],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
+   "distinctness": {
+    "ground": "Ice and packed snow on the valley floor; gravel on the moraine; snow under spruce on the walls.",
+    "vegetation": "Snowy spruce on the upper walls, taiga around the lake, none on the ice.",
+    "water": "The meltwater lake and the river leaving it.",
+    "sightlines": "Along the valley axis, once carved; today the saddle at d1800 blocks the view.",
+    "signature_at_128_blocks": "A white, flat-floored valley between dark spruce walls."
+   },
+   "notes": [
+    "Status partial: the trough exists but is under-carved (median wall 5.5 degrees, median depth 19.6 blocks, a 4-block saddle at d1792). A WorldPainter hand-carve is specified in docs/world-building/GLACIER_CARVE.md and data/landmarks.json.",
+    "Snow below the treeline is deliberate here and is the one exception to 'snow above y165': a glacier and cold-air drainage from the range.",
+    "The flat ground that earned Stillwater Basin hub tier in the previous pass lies inside this valley: 139 blocks square at (5646, 3302) y75-78, and 104, 103, 103 and 100. The carve as specified narrows the floor; the largest flat square on the carved floor is 124 blocks.",
+    "The moraine and the river are planned features and exist only as a spec."
+   ],
+   "polygons": [
+    [
+     [
+      3336,
+      1632
+     ],
+     [
+      3512,
+      1640
+     ],
+     [
+      3568,
+      1688
+     ],
+     [
+      3560,
+      1744
+     ],
+     [
+      3640,
+      1800
+     ],
+     [
+      3736,
+      1792
+     ],
+     [
+      3800,
+      1672
+     ],
+     [
+      4288,
+      1816
+     ],
+     [
+      4416,
+      1888
+     ],
+     [
+      4400,
+      1992
+     ],
+     [
+      4432,
+      2064
+     ],
+     [
+      4568,
+      2104
+     ],
+     [
+      4688,
+      2024
+     ],
+     [
+      5064,
+      2232
+     ],
+     [
+      5112,
+      2272
+     ],
+     [
+      5000,
+      2328
+     ],
+     [
+      4912,
+      2216
+     ],
+     [
+      4848,
+      2232
+     ],
+     [
+      4784,
+      2192
+     ],
+     [
+      4760,
+      2256
+     ],
+     [
+      4824,
+      2344
+     ],
+     [
+      5008,
+      2496
+     ],
+     [
+      5096,
+      2424
+     ],
+     [
+      5080,
+      2480
+     ],
+     [
+      5136,
+      2560
+     ],
+     [
+      5200,
+      2544
+     ],
+     [
+      5456,
+      2736
+     ],
+     [
+      5784,
+      2744
+     ],
+     [
+      5800,
+      2824
+     ],
+     [
+      5896,
+      2944
+     ],
+     [
+      6216,
+      3112
+     ],
+     [
+      6368,
+      3296
+     ],
+     [
+      6416,
+      3376
+     ],
+     [
+      6360,
+      3568
+     ],
+     [
+      6400,
+      3680
+     ],
+     [
+      6552,
+      3688
+     ],
+     [
+      6536,
+      3864
+     ],
+     [
+      6936,
+      3888
+     ],
+     [
+      6968,
+      3912
+     ],
+     [
+      6912,
+      3960
+     ],
+     [
+      6936,
+      4024
+     ],
+     [
+      6552,
+      4008
+     ],
+     [
+      6528,
+      4072
+     ],
+     [
+      6392,
+      4120
+     ],
+     [
+      6320,
+      4232
+     ],
+     [
+      6016,
+      4216
+     ],
+     [
+      5680,
+      4040
+     ],
+     [
+      5496,
+      3896
+     ],
+     [
+      5528,
+      3560
+     ],
+     [
+      5400,
+      3408
+     ],
+     [
+      5360,
+      3448
+     ],
+     [
+      5264,
+      3416
+     ],
+     [
+      5192,
+      3448
+     ],
+     [
+      5096,
+      3384
+     ],
+     [
+      4968,
+      3384
+     ],
+     [
+      4744,
+      3184
+     ],
+     [
+      4800,
+      3096
+     ],
+     [
+      4904,
+      3192
+     ],
+     [
+      4992,
+      3200
+     ],
+     [
+      4976,
+      3272
+     ],
+     [
+      5080,
+      3192
+     ],
+     [
+      5088,
+      3152
+     ],
+     [
+      5032,
+      3088
+     ],
+     [
+      4840,
+      2968
+     ],
+     [
+      4816,
+      2912
+     ],
+     [
+      4704,
+      2840
+     ],
+     [
+      4352,
+      2744
+     ],
+     [
+      4256,
+      2616
+     ],
+     [
+      4072,
+      2520
+     ],
+     [
+      3928,
+      2504
+     ],
+     [
+      3752,
+      2368
+     ],
+     [
+      3592,
+      2344
+     ],
+     [
+      3488,
+      2432
+     ],
+     [
+      3280,
+      2296
+     ],
+     [
+      3152,
+      2296
+     ],
+     [
+      3080,
+      2248
+     ],
+     [
+      3104,
+      1800
+     ],
+     [
+      3216,
+      1672
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "stillwater_basin",
+   "display_name": "Stillwater Basin",
+   "region_class": "terrain",
+   "tier": "hub",
+   "status": "built",
+   "character": "Sheltered rolling ground between the rift's south-east arm, the glacier's lake and the Ember Highlands, reaching the east coast: cherry groves over a swampy low end.",
+   "contiguous": true,
+   "pieces": 1,
+   "cells": [
+    "E7",
+    "E6",
+    "F7",
+    "F8",
+    "F6",
+    "D6",
+    "G7",
+    "G8",
+    "D7",
+    "D5",
+    "E5"
+   ],
+   "cell_share": {
+    "E7": 0.34,
+    "E6": 0.309,
+    "F7": 0.089,
+    "F8": 0.08,
+    "F6": 0.063,
+    "D6": 0.028,
+    "G7": 0.027,
+    "G8": 0.027,
+    "D7": 0.013,
+    "D5": 0.013,
+    "E5": 0.008
+   },
+   "bounds": {
+    "min_x": 4784,
+    "min_z": 3904,
+    "max_x": 7391,
+    "max_z": 6759
    },
    "climate": {
     "exposure": "sheltered",
@@ -1682,159 +2853,211 @@
    "boundary_basis": [
     {
      "basis": "watershed",
-     "detail": "The priority-flood drainage basin of the enclosed D6 lake (floor y44.5). Everything inside drains to that lake."
+     "detail": "What remains of the D6 lake's drainage basin once the Glacier Valley is taken out."
+    },
+    {
+     "basis": "valley",
+     "detail": "Its northern edge is the Glacier Valley."
+    },
+    {
+     "basis": "split",
+     "detail": "Takes the east-coast land south of the valley mouth that the valley cut off from the Eastern Downs; bounded by the valley, the rift's south-east arm, the Ember Highlands contour and the sea."
     }
    ],
    "measured": {
-    "area_km2": 3.15,
-    "land_km2": 2.931,
-    "water_km2": 0.219,
+    "area_km2": 2.567,
+    "land_km2": 2.564,
+    "water_km2": 0.003,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
-     "p10": 73.9,
-     "median": 94.2,
-     "p90": 118.3,
+     "p10": 76.3,
+     "median": 100.7,
+     "p90": 127.5,
      "max": 137.2
     },
     "slope_degrees": {
-     "mean": 4.96,
-     "p90": 9.29,
-     "flat_under_5_pct": 59.5,
+     "mean": 7.3,
+     "p90": 17.01,
+     "flat_under_5_pct": 46.3,
      "steep_over_25_pct": 0.0
     },
     "above_treeline_pct": 0.0,
-    "median_distance_to_sea": 1056.0
+    "median_distance_to_sea": 672.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:cherry_grove",
     "secondary": [
-     "minecraft:swamp"
+     "minecraft:swamp",
+     "minecraft:stony_shore"
     ],
     "bands": [
      {
       "biome": "minecraft:cherry_grove",
-      "share": 0.859,
+      "share": 0.76,
       "rule": "everything else"
      },
      {
       "biome": "minecraft:swamp",
-      "share": 0.141,
-      "rule": "the lake and land below y72"
+      "share": 0.179,
+      "rule": "y <= 84: the low ground against the rift's south-east arm"
+     },
+     {
+      "biome": "minecraft:stony_shore",
+      "share": 0.061,
+      "rule": "within 48 blocks of the sea"
      }
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/cherry_log",
-    "#cobblemon:has_block/oak_log",
     "#cobblemon:is_cherry_blossom",
+    "#cobblemon:is_coast",
+    "#cobblemon:is_cold",
     "#cobblemon:is_floral",
     "#cobblemon:is_forest",
     "#cobblemon:is_freshwater",
+    "#cobblemon:is_hills",
     "#cobblemon:is_mountain",
     "#cobblemon:is_overworld",
+    "#cobblemon:is_plateau",
     "#cobblemon:is_swamp",
     "#cobblemon:is_temperate",
-    "#minecraft:is_mountain",
     "#minecraft:is_overworld"
    ],
    "tag_overlays_required": [],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
    "distinctness": {
     "ground": "Grass; mud and clay at the lake.",
     "vegetation": "Pink cherry canopy over an open understorey.",
-    "water": "An enclosed still lake.",
+    "water": "Swampy low ground against the rift; the sea on the east coast strip.",
     "sightlines": "Inward to the lake, bounded by the basin rim.",
     "signature_at_128_blocks": "Pink canopy. Unmistakable from any distance."
    },
    "notes": [
-    "Holds the most flat buildable ground on the map: 6 of the 15 largest sites under 4 degrees below the ceiling, including the largest (139 blocks square at y75-78 near the lake).",
-    "Not glacial. Its watershed does not reach the range, and no U-shaped profile or moraine was found, so the brief's glacial valley is not represented."
+    "Kept as its own region and hub, as directed. The measurement behind the directive has changed: the enclosed lake it was named for is the glacier's meltwater lake, and all of its previous hub sites lie inside the glacier trough. Name kept pending your call.",
+    "Hub tier is still supported by flat ground: 104 blocks square at (6805, 4407) y107-109 on the east coast, inherited from the Eastern Downs. Its best site in the old basin area is 96 blocks at (6205, 4791), below the 99-block bar used for tiers.",
+    "The east-coast strip south of the valley mouth is narrow, about 250 blocks, where it runs beside the Ember Highlands."
    ],
    "polygons": [
     [
      [
-      5896,
-      2456
+      5488,
+      3904
      ],
      [
-      5928,
-      2504
+      5720,
+      4072
      ],
      [
-      5928,
-      2816
+      6088,
+      4240
      ],
      [
-      5976,
-      2888
+      6320,
+      4240
      ],
      [
-      6032,
-      2944
-     ],
-     [
-      6080,
-      2928
-     ],
-     [
-      6168,
-      2968
-     ],
-     [
-      6208,
-      3024
-     ],
-     [
-      6304,
-      3024
+      6392,
+      4128
      ],
      [
       6528,
-      3320
+      4080
      ],
      [
-      6872,
-      3488
+      6552,
+      4016
      ],
      [
-      6464,
-      3464
+      6944,
+      4024
      ],
      [
-      6384,
-      3576
+      7088,
+      4184
      ],
      [
-      6416,
-      4136
+      7120,
+      4400
      ],
      [
-      6432,
-      4216
+      7000,
+      4712
+     ],
+     [
+      7336,
+      5280
+     ],
+     [
+      7384,
+      5520
+     ],
+     [
+      7376,
+      6104
+     ],
+     [
+      7304,
+      6448
+     ],
+     [
+      7000,
+      6752
+     ],
+     [
+      6992,
+      6432
+     ],
+     [
+      7120,
+      6216
+     ],
+     [
+      7160,
+      5608
+     ],
+     [
+      7072,
+      5456
+     ],
+     [
+      6848,
+      5416
+     ],
+     [
+      6704,
+      5688
+     ],
+     [
+      6560,
+      5688
      ],
      [
       6528,
-      4312
+      5552
      ],
      [
-      6512,
-      4528
+      6560,
+      5424
      ],
      [
-      6592,
-      4592
+      6784,
+      5288
      ],
      [
-      6576,
-      4696
+      6824,
+      5216
      ],
      [
-      6648,
-      4840
+      6816,
+      5120
      ],
      [
-      6648,
-      4976
+      6704,
+      5008
      ],
      [
       6528,
@@ -1857,8 +3080,8 @@
       5296
      ],
      [
-      5808,
-      5472
+      5824,
+      5464
      ],
      [
       5568,
@@ -1961,104 +3184,8 @@
       3928
      ],
      [
-      5280,
+      5296,
       4064
-     ],
-     [
-      5352,
-      4040
-     ],
-     [
-      5520,
-      3864
-     ],
-     [
-      5520,
-      3560
-     ],
-     [
-      5416,
-      3392
-     ],
-     [
-      5360,
-      3368
-     ],
-     [
-      5360,
-      3312
-     ],
-     [
-      5224,
-      3176
-     ],
-     [
-      4992,
-      3152
-     ],
-     [
-      4992,
-      3088
-     ],
-     [
-      4904,
-      3008
-     ],
-     [
-      4760,
-      2984
-     ],
-     [
-      4752,
-      2952
-     ],
-     [
-      4832,
-      2928
-     ],
-     [
-      4856,
-      2736
-     ],
-     [
-      4920,
-      2712
-     ],
-     [
-      4936,
-      2616
-     ],
-     [
-      5120,
-      2584
-     ],
-     [
-      5168,
-      2504
-     ],
-     [
-      5232,
-      2504
-     ],
-     [
-      5256,
-      2560
-     ],
-     [
-      5432,
-      2632
-     ],
-     [
-      5496,
-      2552
-     ],
-     [
-      5608,
-      2608
-     ],
-     [
-      5784,
-      2568
      ]
     ]
    ]
@@ -2066,65 +3193,37 @@
   {
    "id": "eastern_downs",
    "display_name": "The Eastern Downs",
+   "region_class": "terrain",
    "tier": "hub",
-   "character": "Open rolling grassland between the range, the rift and the east coast, broken by birch copses and rising to high meadow in the north.",
+   "status": "built",
+   "character": "Open rolling grassland on the north and east coasts beyond the glacier valley, rising to high meadow in the north, broken by birch copses.",
    "contiguous": true,
    "pieces": 1,
    "cells": [
-    "C4",
     "B5",
-    "C5",
-    "D7",
-    "D4",
     "C6",
+    "D7",
     "C7",
-    "B4",
-    "E7",
     "B6",
-    "C3",
-    "D5",
-    "F7",
-    "F8",
-    "B3",
-    "G7",
-    "G8",
-    "D3",
-    "D6",
-    "D8",
-    "E8",
-    "B7",
-    "A5"
+    "B4",
+    "C5",
+    "D8"
    ],
    "cell_share": {
-    "C4": 0.122,
-    "B5": 0.11,
-    "C5": 0.108,
-    "D7": 0.075,
-    "D4": 0.072,
-    "C6": 0.07,
-    "C7": 0.065,
-    "B4": 0.062,
-    "E7": 0.061,
-    "B6": 0.059,
-    "C3": 0.054,
-    "D5": 0.049,
-    "F7": 0.025,
-    "F8": 0.024,
-    "B3": 0.011,
-    "G7": 0.008,
-    "G8": 0.008,
-    "D3": 0.007,
-    "D6": 0.006,
-    "D8": 0.004,
-    "E8": 0.001,
-    "B7": 0.0,
-    "A5": 0.0
+    "B5": 0.242,
+    "C6": 0.208,
+    "D7": 0.168,
+    "C7": 0.159,
+    "B6": 0.141,
+    "B4": 0.04,
+    "C5": 0.029,
+    "D8": 0.01
    },
    "bounds": {
-    "min_x": 2208,
+    "min_x": 3680,
     "min_z": 1008,
-    "max_x": 7391,
-    "max_z": 6759
+    "max_x": 7271,
+    "max_z": 3919
    },
    "climate": {
     "exposure": "maritime",
@@ -2134,7 +3233,11 @@
    "boundary_basis": [
     {
      "basis": "watershed",
-     "detail": "Land draining to the north and east seas, plus the rift's north shore."
+     "detail": "Land draining to the north and east seas."
+    },
+    {
+     "basis": "valley",
+     "detail": "Its south-west edge is the Glacier Valley, which splits it from the Rim Uplands and Stillwater Basin."
     },
     {
      "basis": "strip_width",
@@ -2142,26 +3245,28 @@
     }
    ],
    "measured": {
-    "area_km2": 8.612,
-    "land_km2": 8.604,
-    "water_km2": 0.008,
+    "area_km2": 3.579,
+    "land_km2": 3.575,
+    "water_km2": 0.005,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
-     "p10": 84.5,
-     "median": 108.6,
-     "p90": 129.7,
-     "max": 156.0
+     "p10": 80.0,
+     "median": 103.5,
+     "p90": 119.1,
+     "max": 133.5
     },
     "slope_degrees": {
-     "mean": 5.9,
-     "p90": 13.48,
-     "flat_under_5_pct": 55.6,
-     "steep_over_25_pct": 0.1
+     "mean": 5.86,
+     "p90": 13.09,
+     "flat_under_5_pct": 54.0,
+     "steep_over_25_pct": 0.0
     },
     "above_treeline_pct": 0.0,
-    "median_distance_to_sea": 768.0
+    "median_distance_to_sea": 384.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:plains",
     "secondary": [
      "minecraft:meadow",
@@ -2171,30 +3276,29 @@
     "bands": [
      {
       "biome": "minecraft:plains",
-      "share": 0.566,
+      "share": 0.501,
       "rule": "everything else"
      },
      {
       "biome": "minecraft:meadow",
-      "share": 0.198,
-      "rule": "y >= 122 (the northern rise)"
+      "share": 0.249,
+      "rule": "y >= 112 (the northern rise)"
      },
      {
       "biome": "minecraft:birch_forest",
-      "share": 0.19,
+      "share": 0.185,
       "rule": "slope >= 7 degrees"
      },
      {
       "biome": "minecraft:stony_shore",
-      "share": 0.046,
+      "share": 0.065,
       "rule": "within 48 blocks of the sea"
      }
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/birch_log",
     "#cobblemon:is_coast",
+    "#cobblemon:is_cold",
     "#cobblemon:is_floral",
     "#cobblemon:is_forest",
     "#cobblemon:is_grassland",
@@ -2203,13 +3307,15 @@
     "#cobblemon:is_mountain",
     "#cobblemon:is_overworld",
     "#cobblemon:is_plains",
-    "#cobblemon:is_stony_beach",
+    "#cobblemon:is_plateau",
     "#cobblemon:is_temperate",
     "#minecraft:is_forest",
-    "#minecraft:is_mountain",
     "#minecraft:is_overworld"
    ],
    "tag_overlays_required": [],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
    "distinctness": {
     "ground": "Short green grass and dirt paths.",
     "vegetation": "Open grassland with scattered birch copses; flowering meadow on the northern rise.",
@@ -2218,7 +3324,8 @@
     "signature_at_128_blocks": "Open green country with pale birch stands and the snow range on the skyline."
    },
    "notes": [
-    "Largest region at 8.61 km2 and the most at risk of reading as generic. If it proves unidentifiable in play, the divide between its north and east watersheds is the natural split line."
+    "Reduced from 8.61 to 3.58 km2: the Glacier Valley took 1.56 km2 and cut the rest in three.",
+    "Hub tier kept: its largest site is 107 blocks square at (6446, 3527) y92-94, beside the glacier valley mouth, then 99 at (6209, 2738). Its C4 sites went to the Rim Uplands and its E7 site to Stillwater Basin."
    ],
    "polygons": [
     [
@@ -2227,16 +3334,8 @@
       1008
      ],
      [
-      4840,
-      1136
-     ],
-     [
-      5184,
-      1216
-     ],
-     [
-      5416,
-      1376
+      5256,
+      1256
      ],
      [
       5640,
@@ -2263,408 +3362,144 @@
       3224
      ],
      [
-      7216,
-      3344
+      7240,
+      3416
      ],
      [
-      7264,
-      3528
-     ],
-     [
-      7248,
-      3672
+      7256,
+      3648
      ],
      [
       7120,
       3832
      ],
      [
-      6952,
-      3920
+      6976,
+      3912
      ],
      [
-      6912,
-      3992
+      6816,
+      3864
      ],
      [
-      7120,
-      4256
+      6544,
+      3864
      ],
      [
-      7112,
-      4440
+      6576,
+      3720
      ],
      [
-      7000,
-      4712
-     ],
-     [
-      7336,
-      5280
-     ],
-     [
-      7384,
-      5520
-     ],
-     [
-      7376,
-      6104
-     ],
-     [
-      7304,
-      6448
-     ],
-     [
-      7000,
-      6752
-     ],
-     [
-      6992,
-      6432
-     ],
-     [
-      7128,
-      6176
-     ],
-     [
-      7168,
-      5808
-     ],
-     [
-      7152,
-      5568
-     ],
-     [
-      7072,
-      5456
-     ],
-     [
-      6848,
-      5416
-     ],
-     [
-      6704,
-      5688
-     ],
-     [
-      6552,
-      5672
-     ],
-     [
-      6528,
-      5488
-     ],
-     [
-      6560,
-      5424
-     ],
-     [
-      6784,
-      5288
-     ],
-     [
-      6832,
-      5160
-     ],
-     [
-      6656,
-      4984
-     ],
-     [
-      6656,
-      4840
-     ],
-     [
-      6584,
-      4696
-     ],
-     [
-      6600,
-      4592
-     ],
-     [
-      6520,
-      4528
-     ],
-     [
-      6536,
-      4312
-     ],
-     [
-      6440,
-      4216
-     ],
-     [
-      6392,
-      3776
-     ],
-     [
-      6392,
-      3576
-     ],
-     [
-      6464,
-      3472
-     ],
-     [
-      6744,
-      3504
-     ],
-     [
-      6872,
-      3496
-     ],
-     [
-      6880,
-      3464
-     ],
-     [
-      6528,
-      3312
-     ],
-     [
-      6304,
-      3016
-     ],
-     [
-      6208,
-      3016
-     ],
-     [
-      6168,
-      2960
-     ],
-     [
-      6080,
-      2920
-     ],
-     [
-      6032,
-      2936
-     ],
-     [
-      5984,
-      2888
-     ],
-     [
-      5936,
-      2816
-     ],
-     [
-      5912,
-      2448
-     ],
-     [
-      5784,
-      2560
-     ],
-     [
-      5608,
-      2600
-     ],
-     [
-      5496,
-      2544
-     ],
-     [
-      5432,
-      2624
-     ],
-     [
-      5256,
-      2552
-     ],
-     [
-      5232,
-      2496
-     ],
-     [
-      5168,
-      2496
-     ],
-     [
-      5120,
-      2576
-     ],
-     [
-      4936,
-      2608
-     ],
-     [
-      4912,
-      2712
-     ],
-     [
-      4848,
-      2736
-     ],
-     [
-      4824,
-      2928
-     ],
-     [
-      4744,
-      2976
-     ],
-     [
-      4904,
-      3016
-     ],
-     [
-      4984,
-      3088
-     ],
-     [
-      4992,
-      3160
-     ],
-     [
-      5224,
-      3184
-     ],
-     [
-      5352,
-      3312
-     ],
-     [
-      5352,
-      3368
-     ],
-     [
-      5408,
-      3392
-     ],
-     [
-      5376,
-      3440
-     ],
-     [
-      5264,
-      3416
-     ],
-     [
-      5192,
-      3448
-     ],
-     [
-      5056,
-      3376
-     ],
-     [
-      4696,
-      3424
-     ],
-     [
-      4512,
-      3536
-     ],
-     [
-      4408,
-      3520
-     ],
-     [
-      4256,
-      3624
-     ],
-     [
-      4056,
+      6512,
       3656
      ],
      [
-      3984,
-      3728
+      6400,
+      3672
      ],
      [
-      3504,
-      3696
+      6368,
+      3552
      ],
      [
-      3184,
-      3600
+      6424,
+      3368
      ],
      [
-      3024,
-      3496
+      6280,
+      3168
      ],
      [
-      2856,
-      3112
+      5896,
+      2936
      ],
      [
-      2816,
-      2776
+      5784,
+      2736
      ],
      [
-      2744,
-      2608
+      5456,
+      2728
      ],
      [
-      2784,
+      5200,
       2536
      ],
      [
-      2720,
+      5136,
       2552
      ],
      [
-      2632,
+      5088,
+      2480
+     ],
+     [
+      5096,
+      2416
+     ],
+     [
+      5024,
+      2488
+     ],
+     [
+      4936,
       2440
      ],
      [
-      2480,
-      2384
+      4800,
+      2312
      ],
      [
-      2288,
-      2520
+      4768,
+      2216
      ],
      [
-      2208,
-      2680
+      4896,
+      2216
      ],
      [
-      2288,
-      2440
+      5024,
+      2336
      ],
      [
-      2240,
+      5120,
       2272
      ],
      [
-      2400,
-      2152
+      5024,
+      2200
      ],
      [
-      2560,
-      2128
+      4688,
+      2016
      ],
      [
-      2792,
-      1960
+      4568,
+      2096
      ],
      [
-      2952,
-      1744
+      4432,
+      2056
      ],
      [
-      2976,
-      1616
+      4424,
+      1888
      ],
      [
-      3088,
-      1464
+      4240,
+      1792
      ],
      [
-      3304,
-      1528
-     ],
-     [
-      3392,
+      3800,
       1664
      ],
      [
-      3672,
-      1800
+      3776,
+      1744
+     ],
+     [
+      3680,
+      1792
      ],
      [
       3784,
@@ -2708,8 +3543,10 @@
   {
    "id": "ember_highlands",
    "display_name": "The Ember Highlands",
+   "region_class": "terrain",
    "tier": "wilderness",
-   "character": "A scorched volcanic tableland near y150 crowned by four clipped cones, red and ash-coloured, with dry savanna on its lower flanks.",
+   "status": "built",
+   "character": "A scorched volcanic tableland near y150 crowned by four clipped cones: red badlands below, wooded mesa tops, broken ash-coloured ground on the flanks.",
    "contiguous": true,
    "pieces": 1,
    "cells": [
@@ -2755,6 +3592,7 @@
     "area_km2": 3.458,
     "land_km2": 3.458,
     "water_km2": 0.0,
+    "void_km2": 0.0,
     "elevation": {
      "min": 132.3,
      "p10": 138.0,
@@ -2769,24 +3607,31 @@
      "steep_over_25_pct": 4.6
     },
     "above_treeline_pct": 12.4,
-    "median_distance_to_sea": 664.0
+    "median_distance_to_sea": 672.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:eroded_badlands",
     "secondary": [
-     "minecraft:windswept_savanna",
+     "minecraft:badlands",
+     "minecraft:wooded_badlands",
      "minecraft:stony_peaks"
     ],
     "bands": [
      {
       "biome": "minecraft:eroded_badlands",
-      "share": 0.628,
-      "rule": "the tableland"
+      "share": 0.419,
+      "rule": "everything else: the broken tableland and cone flanks"
      },
      {
-      "biome": "minecraft:windswept_savanna",
+      "biome": "minecraft:badlands",
       "share": 0.248,
-      "rule": "below y142 (lower flanks)"
+      "rule": "y < 142 (the lower slopes)"
+     },
+     {
+      "biome": "minecraft:wooded_badlands",
+      "share": 0.21,
+      "rule": "flat tableland (slope < 3 degrees) at y 142-165"
      },
      {
       "biome": "minecraft:stony_peaks",
@@ -2796,34 +3641,34 @@
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/acacia_log",
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/red_sand",
     "#cobblemon:is_arid",
     "#cobblemon:is_badlands",
     "#cobblemon:is_cold",
-    "#cobblemon:is_grassland",
     "#cobblemon:is_mountain",
     "#cobblemon:is_overworld",
     "#cobblemon:is_peak",
+    "#cobblemon:is_plateau",
     "#cobblemon:is_sandy",
-    "#cobblemon:is_savanna",
     "#cobblemon:is_thermal",
     "#cobblemon:is_volcanic",
     "#minecraft:is_badlands",
-    "#minecraft:is_mountain",
-    "#minecraft:is_overworld",
-    "#minecraft:is_savanna"
+    "#minecraft:is_overworld"
    ],
    "tag_overlays_required": [
     {
      "tag": "#cobblemon:is_volcanic",
-     "biome": "minecraft:eroded_badlands"
+     "biome": "minecraft:eroded_badlands",
+     "kind": "identity"
     },
     {
      "tag": "#cobblemon:is_thermal",
-     "biome": "minecraft:eroded_badlands"
+     "biome": "minecraft:eroded_badlands",
+     "kind": "identity"
     }
+   ],
+   "underground_biomes": [
+    "minecraft:dripstone_caves",
+    "minecraft:sulfur_caves"
    ],
    "distinctness": {
     "ground": "Red and orange terracotta and coarse dirt; basalt and ash from the kit palette.",
@@ -2834,7 +3679,9 @@
    },
    "notes": [
     "No snowline: the cone tops are stony peaks, not snow, because the region is warm and in the lee.",
-    "is_volcanic and is_thermal are unreachable with vanilla biomes; both require the eroded_badlands tag overlay."
+    "#cobblemon:is_volcanic and #cobblemon:is_thermal have no loaded member biome; both require the eroded_badlands tag overlay.",
+    "badlands and wooded_badlands are new here, so all three badlands variants are covered.",
+    "Underground: sulfur_caves (VanillaBackport) under the cones is optional."
    ],
    "polygons": [
     [
@@ -3016,7 +3863,9 @@
   {
    "id": "lakeshore_vale",
    "display_name": "Lakeshore Vale",
+   "region_class": "terrain",
    "tier": "route",
+   "status": "built",
    "character": "Deep mixed forest on the rift's south shore, opening into flowered glades on its flatter ground.",
    "contiguous": true,
    "pieces": 1,
@@ -3032,8 +3881,7 @@
     "G6",
     "G5",
     "G7",
-    "F5",
-    "G3"
+    "F5"
    ],
    "cell_share": {
     "F4": 0.169,
@@ -3047,8 +3895,7 @@
     "G6": 0.046,
     "G5": 0.046,
     "G7": 0.041,
-    "F5": 0.016,
-    "G3": 0.002
+    "F5": 0.016
    },
    "bounds": {
     "min_x": 1464,
@@ -3071,6 +3918,7 @@
     "area_km2": 5.823,
     "land_km2": 5.82,
     "water_km2": 0.004,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
      "p10": 98.7,
@@ -3088,21 +3936,28 @@
     "median_distance_to_sea": 896.0
    },
    "biomes": {
-    "primary": "minecraft:forest",
+    "deferred": false,
+    "primary": "minecraft:flower_forest",
     "secondary": [
-     "minecraft:flower_forest",
+     "minecraft:forest",
+     "minecraft:old_growth_birch_forest",
      "minecraft:beach"
     ],
     "bands": [
      {
-      "biome": "minecraft:forest",
-      "share": 0.487,
-      "rule": "everything else"
-     },
-     {
       "biome": "minecraft:flower_forest",
       "share": 0.482,
       "rule": "slope < 4 degrees (the glades)"
+     },
+     {
+      "biome": "minecraft:forest",
+      "share": 0.383,
+      "rule": "everything else"
+     },
+     {
+      "biome": "minecraft:old_growth_birch_forest",
+      "share": 0.104,
+      "rule": "y >= 130 (the higher forest)"
      },
      {
       "biome": "minecraft:beach",
@@ -3112,16 +3967,13 @@
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/birch_log",
-    "#cobblemon:has_block/oak_log",
     "#cobblemon:is_beach",
     "#cobblemon:is_coast",
     "#cobblemon:is_floral",
     "#cobblemon:is_forest",
     "#cobblemon:is_lush",
     "#cobblemon:is_overworld",
-    "#cobblemon:is_stony_beach",
+    "#cobblemon:is_sandy",
     "#cobblemon:is_temperate",
     "#minecraft:is_beach",
     "#minecraft:is_forest",
@@ -3130,8 +3982,13 @@
    "tag_overlays_required": [
     {
      "tag": "#cobblemon:is_lush",
-     "biome": "minecraft:flower_forest"
+     "biome": "minecraft:flower_forest",
+     "kind": "fallback"
     }
+   ],
+   "underground_biomes": [
+    "minecraft:dripstone_caves",
+    "minecraft:lush_caves"
    ],
    "distinctness": {
     "ground": "Grass and forest floor; flowers in the glades.",
@@ -3141,7 +3998,9 @@
     "signature_at_128_blocks": "Closed but bright forest broken by flower meadows, lighter than the Windward Coast."
    },
    "notes": [
-    "Tiered route, not hub: 60% of its land is under 5 degrees but only in small patches. It holds no flat square of 99 blocks or more."
+    "Tiered route, not hub: 60% of its land is under 5 degrees but only in small patches. Its largest flat square is 96 blocks.",
+    "#cobblemon:is_lush has one loaded member, lush_caves, planned underground here. The flower_forest overlay from the previous plan stays as a fallback until an export proves the underground biome works, because every fossil species depends on is_lush.",
+    "old_growth_birch_forest is new here."
    ],
    "polygons": [
     [
@@ -3471,7 +4330,9 @@
   {
    "id": "strand_flats",
    "display_name": "The Strand Flats",
+   "region_class": "terrain",
    "tier": "route",
+   "status": "partial",
    "character": "The lowest ground on the mainland's south coast: a sandy strand backed by sunflower flats. Designated as the map's flat coastal lowland.",
    "contiguous": true,
    "pieces": 1,
@@ -3480,16 +4341,14 @@
     "G4",
     "F3",
     "F2",
-    "F4",
-    "G2"
+    "F4"
    ],
    "cell_share": {
     "G3": 0.441,
     "G4": 0.28,
     "F3": 0.12,
     "F2": 0.109,
-    "F4": 0.05,
-    "G2": 0.002
+    "F4": 0.05
    },
    "bounds": {
     "min_x": 1488,
@@ -3512,6 +4371,7 @@
     "area_km2": 0.766,
     "land_km2": 0.763,
     "water_km2": 0.003,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
      "p10": 69.4,
@@ -3529,37 +4389,49 @@
     "median_distance_to_sea": 168.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:sunflower_plains",
     "secondary": [
-     "minecraft:beach"
+     "minecraft:beach",
+     "minecraft:mangrove_swamp"
     ],
     "bands": [
      {
       "biome": "minecraft:sunflower_plains",
-      "share": 0.67,
+      "share": 0.542,
       "rule": "everything else"
      },
      {
       "biome": "minecraft:beach",
       "share": 0.33,
-      "rule": "within 96 blocks of the sea or below y68"
+      "rule": "within 96 blocks of the sea"
+     },
+     {
+      "biome": "minecraft:mangrove_swamp",
+      "share": 0.128,
+      "rule": "y <= 82 behind the beach (the lowest ground; needs the flattening pass)"
      }
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
+    "#cobblemon:has_block/mud",
     "#cobblemon:is_beach",
     "#cobblemon:is_coast",
     "#cobblemon:is_floral",
+    "#cobblemon:is_freshwater",
     "#cobblemon:is_grassland",
     "#cobblemon:is_overworld",
     "#cobblemon:is_plains",
-    "#cobblemon:is_stony_beach",
+    "#cobblemon:is_sandy",
+    "#cobblemon:is_swamp",
     "#cobblemon:is_temperate",
     "#minecraft:is_beach",
     "#minecraft:is_overworld"
    ],
    "tag_overlays_required": [],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
    "distinctness": {
     "ground": "Sand and short grass.",
     "vegetation": "Sunflowers and low grass; no trees.",
@@ -3568,7 +4440,8 @@
     "signature_at_128_blocks": "Sand, sunflowers and open sea, with nothing overhead."
    },
    "notes": [
-    "Does not yet meet the flatness bar: only 37.8% of its land is under 5 degrees. It needs a terrain flattening pass; see the gap list."
+    "Status partial: designated the flat coastal lowland, but only 37.8% of its land is under 5 degrees. It needs a terrain flattening pass.",
+    "mangrove_swamp moved here from the rift. It needs low, wet, near-sea-level ground, which the flattening pass has to create."
    ],
    "polygons": [
     [
@@ -3674,7 +4547,9 @@
   {
    "id": "northern_isles",
    "display_name": "The Northern Isles",
+   "region_class": "terrain",
    "tier": "wilderness",
+   "status": "built",
    "character": "Three cold, low islands off the north coast, snow-covered to their shores.",
    "contiguous": false,
    "pieces": 3,
@@ -3715,6 +4590,7 @@
     "area_km2": 2.716,
     "land_km2": 2.705,
     "water_km2": 0.01,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
      "p10": 67.9,
@@ -3732,38 +4608,46 @@
     "median_distance_to_sea": 136.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:snowy_plains",
     "secondary": [
-     "minecraft:snowy_beach"
+     "minecraft:snowy_beach",
+     "minecraft:ice_spikes"
     ],
     "bands": [
      {
       "biome": "minecraft:snowy_plains",
-      "share": 0.8,
+      "share": 0.62,
       "rule": "everything else"
      },
      {
       "biome": "minecraft:snowy_beach",
       "share": 0.2,
       "rule": "within 48 blocks of the sea"
+     },
+     {
+      "biome": "minecraft:ice_spikes",
+      "share": 0.181,
+      "rule": "flat interior (slope < 4 degrees, >= 160 blocks from the sea)"
      }
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
     "#cobblemon:is_beach",
     "#cobblemon:is_coast",
     "#cobblemon:is_cold",
     "#cobblemon:is_freezing",
+    "#cobblemon:is_glacial",
     "#cobblemon:is_overworld",
     "#cobblemon:is_snowy",
-    "#cobblemon:is_snowy_flat",
-    "#cobblemon:is_stony_beach",
     "#cobblemon:is_tundra",
     "#minecraft:is_beach",
     "#minecraft:is_overworld"
    ],
    "tag_overlays_required": [],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
+   ],
    "distinctness": {
     "ground": "Snow over grass; snowy beach.",
     "vegetation": "Almost treeless.",
@@ -3771,7 +4655,9 @@
     "sightlines": "Open across cold sea to the range.",
     "signature_at_128_blocks": "The only snow at sea level."
    },
-   "notes": [],
+   "notes": [
+    "ice_spikes is new here. In the pack scope it is the only biome that reaches Kyurem."
+   ],
    "polygons": [
     [
      [
@@ -3964,7 +4850,9 @@
   {
    "id": "jungle_isle",
    "display_name": "The Jungle Isle",
+   "region_class": "terrain",
    "tier": "wilderness",
+   "status": "built",
    "character": "A long, ridged island off the east coast under dense jungle, with bamboo along its crest.",
    "contiguous": true,
    "pieces": 1,
@@ -4003,6 +4891,7 @@
     "area_km2": 2.508,
     "land_km2": 2.5,
     "water_km2": 0.008,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
      "p10": 70.9,
@@ -4020,6 +4909,7 @@
     "median_distance_to_sea": 152.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:jungle",
     "secondary": [
      "minecraft:bamboo_jungle",
@@ -4044,14 +4934,13 @@
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/jungle_log",
     "#cobblemon:is_bamboo",
     "#cobblemon:is_beach",
     "#cobblemon:is_coast",
+    "#cobblemon:is_island",
     "#cobblemon:is_jungle",
     "#cobblemon:is_overworld",
-    "#cobblemon:is_stony_beach",
+    "#cobblemon:is_sandy",
     "#cobblemon:is_tropical_island",
     "#minecraft:is_beach",
     "#minecraft:is_jungle",
@@ -4060,12 +4949,18 @@
    "tag_overlays_required": [
     {
      "tag": "#cobblemon:is_tropical_island",
-     "biome": "minecraft:jungle"
+     "biome": "minecraft:jungle",
+     "kind": "identity"
     },
     {
      "tag": "#cobblemon:is_tropical_island",
-     "biome": "minecraft:bamboo_jungle"
+     "biome": "minecraft:bamboo_jungle",
+     "kind": "identity"
     }
+   ],
+   "underground_biomes": [
+    "minecraft:dripstone_caves",
+    "minecraft:lush_caves"
    ],
    "distinctness": {
     "ground": "Jungle floor and podzol; sand at the shore.",
@@ -4074,7 +4969,9 @@
     "sightlines": "Short under the canopy; open from the crest.",
     "signature_at_128_blocks": "Towering jungle canopy."
    },
-   "notes": [],
+   "notes": [
+    "Underground: lush_caves."
+   ],
    "polygons": [
     [
      [
@@ -4167,7 +5064,9 @@
   {
    "id": "southern_isles",
    "display_name": "The Southern Isles",
+   "region_class": "terrain",
    "tier": "wilderness",
+   "status": "built",
    "character": "Warm, open islands off the south and west coasts under sparse jungle, with one mushroom islet in the west.",
    "contiguous": false,
    "pieces": 3,
@@ -4220,6 +5119,7 @@
     "area_km2": 4.713,
     "land_km2": 4.699,
     "water_km2": 0.013,
+    "void_km2": 0.0,
     "elevation": {
      "min": 62.0,
      "p10": 72.4,
@@ -4237,6 +5137,7 @@
     "median_distance_to_sea": 176.0
    },
    "biomes": {
+    "deferred": false,
     "primary": "minecraft:sparse_jungle",
     "secondary": [
      "minecraft:mushroom_fields",
@@ -4261,15 +5162,13 @@
     ]
    },
    "biome_tags": [
-    "#cobblemon:has_block/apricorn_log",
-    "#cobblemon:has_block/jungle_log",
     "#cobblemon:is_beach",
     "#cobblemon:is_coast",
     "#cobblemon:is_island",
     "#cobblemon:is_jungle",
     "#cobblemon:is_mushroom",
     "#cobblemon:is_overworld",
-    "#cobblemon:is_stony_beach",
+    "#cobblemon:is_sandy",
     "#cobblemon:is_tropical_island",
     "#minecraft:is_beach",
     "#minecraft:is_jungle",
@@ -4278,8 +5177,12 @@
    "tag_overlays_required": [
     {
      "tag": "#cobblemon:is_tropical_island",
-     "biome": "minecraft:sparse_jungle"
+     "biome": "minecraft:sparse_jungle",
+     "kind": "identity"
     }
+   ],
+   "underground_biomes": [
+    "minecraft:dripstone_caves"
    ],
    "distinctness": {
     "ground": "Sand and grass; mycelium on the F1 islet.",
