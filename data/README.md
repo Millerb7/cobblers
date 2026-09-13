@@ -11,7 +11,8 @@ matters.
 
 | File | Holds | State |
 | --- | --- | --- |
-| `world.json` | The single config: heightmap path and hash, import mapping, vertical band, grid | present, origin and hash deliberately unset |
+| `world.json` | The single config: heightmap path and hash, import mapping, vertical band, grid | present and verified: origin 0,0, heightmap pinned by sha256 |
+| `regions.json` | Terrain-bounded regions: character, tier, biomes by band, tags, overlays, polygons | **draft**, schema proposed and awaiting approval. Rationale in `docs/world-building/REGIONS.md` |
 | `cells.json` | The 8×8 planning grid and measured terrain per cell | not written yet |
 | `landmarks.json` | Named features: rift, peaks, volcano, island chains | not written yet |
 | `events.json` | Authored event definitions with anchors and terrain requirements | not written yet |
@@ -23,9 +24,8 @@ matters.
 | `routes.json` | Authored route polylines | not written yet |
 | `notes/` | Plain markdown. Not validated, not read by tooling |
 
-The absent files are absent on purpose. An empty validated skeleton is the
-correct state until the heightmap is re-exported and the grid origin is known;
-a populated one would be authored against terrain that does not exist yet.
+The absent files are absent on purpose. Regions come first; towns, routes, events and
+trainers are authored against them once the region layout is approved.
 
 ## Rules
 
