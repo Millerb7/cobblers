@@ -1,0 +1,40 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "exp013-p0-instrument",
+      "pokemon": "dracozolt",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "5-10",
+      "weight": 1000.0
+    },
+    {
+      "id": "exp013-p1-village",
+      "pokemon": "arctozolt",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "5-10",
+      "weight": 1000.0,
+      "condition": {
+        "structures": ["#minecraft:village"]
+      }
+    },
+    {
+      "id": "exp013-p2-ruined-portal",
+      "pokemon": "dracovish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "5-10",
+      "weight": 1000.0,
+      "condition": {
+        "structures": ["#minecraft:ruined_portal"]
+      }
+    }
+  ]
+}

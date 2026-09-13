@@ -274,9 +274,10 @@ No ADR written; this feeds the structure-placement ADR when one is drafted.
 
 ## Follow-up
 
-- Client test (one player): EXP-D `/checkspawn` with a `structures: ["minecraft:igloo"]` test
-  spawn at A1/A4 and at a natural igloo; EXP-E Brock spawner spawns; LumyMon Brock-map trade and
-  legendary radar next to a pasted gym.
+- Client test (one player): EXP-D and EXP-E are staged on `cobblers-10240` and specified in
+  [`SESSION-DE.md`](SESSION-DE.md) (probe datapack `datapack/exp013de`, pasted village square,
+  pasted ruined portal, natural Nether portal and warped village as controls, pasted Brock gym,
+  authored spawner). LumyMon Brock-map trade and legendary radar next to a pasted gym: not staged.
 - Decide the replacement for structure-tag maps and spawns (content-architect ADR).
 - Optional: check `/locate` and `gym_map` against a complete copy of the export (all regions) to
   confirm where answers go when every export chunk exists.
