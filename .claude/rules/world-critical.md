@@ -1,7 +1,8 @@
 ---
-description: Extra scrutiny for block, biome, structure and worldgen dependencies referenced by world assets or the pack manifest
+description: Extra scrutiny for block, biome, structure and worldgen dependencies referenced by kits, placements or the pack manifest
 paths:
-  - "world/**"
+  - "kits/**"
+  - "data/placements.json"
   - "modpack/manifest/**"
 ---
 
@@ -25,13 +26,15 @@ known set is listed in `CLAUDE.md` ("World-critical").
 - **Updating** one: check the changelog for block-ID, blockstate or worldgen
   changes; anything that renames or removes blocks is treated as a removal.
 - **Removing** one after serious map development has begun is a last resort
-  (`CLAUDE.md` principle 11). It requires an ADR with an inventory of
-  affected places in `world/` and a migration plan.
+  (`CLAUDE.md` principle 11). It requires an ADR with an inventory of the
+  affected entries in `kits/` and `data/placements.json`, and a migration plan.
 - Worldgen-affecting settings (`biome_replacer`, Terralith, region
   datapacks, Repurposed Structures, seed) are frozen once map building
   starts; changes alter every newly generated chunk. Record the frozen
   values in `modpack/manifest/` and treat them as world-critical.
-- `world/` specs list the mods their palette relies on. A spec that uses a
-  block from a mod not in the manifest is a defect, not a feature request.
-- The live world save is never edited by hand or by script without an
-  explicit request and a backup noted in the experiment or task log.
+- Palettes in `kits/palettes/` and templates in `kits/structures/` list the
+  mods they rely on. A palette that uses a block from a mod not in the
+  manifest is a defect, not a feature request.
+- The live world save is never edited by hand or by script without an explicit
+  request and a backup noted in the experiment or task log. A save that has
+  been played is not a build artifact and never belongs in `build/`.

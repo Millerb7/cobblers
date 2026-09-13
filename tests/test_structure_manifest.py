@@ -4,13 +4,13 @@ from tools.validate import Context, check_structure_manifest
 
 
 def write_manifest(root, data):
-    path = root / "world" / "structures" / "manifests" / "structure-dependencies.json"
+    path = root / "kits" / "structures" / "manifests" / "structure-dependencies.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data), encoding="utf-8")
 
 
 def write_raw_manifest(root, text):
-    path = root / "world" / "structures" / "manifests" / "structure-dependencies.json"
+    path = root / "kits" / "structures" / "manifests" / "structure-dependencies.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
 
@@ -53,7 +53,7 @@ def test_structure_manifest_rejects_duplicate_and_broken_references(tmp_path):
     data["campaign_structures"].append({
         "id": "campaign:test_center",
         "based_on": "MISSING-ID",
-        "asset": "world/structures/campaign/towns/test.nbt",
+        "asset": "kits/structures/campaign/towns/test.nbt",
         "required_components": ["missing-mod"],
     })
     errors = issues_for(tmp_path, data)
@@ -66,7 +66,7 @@ def test_structure_manifest_rejects_duplicate_and_broken_references(tmp_path):
 
 def test_structure_manifest_requires_dependencies_for_every_campaign_asset(tmp_path):
     data = base_manifest()
-    asset = tmp_path / "world" / "structures" / "campaign" / "towns" / "orphan.nbt"
+    asset = tmp_path / "kits" / "structures" / "campaign" / "towns" / "orphan.nbt"
     asset.parent.mkdir(parents=True)
     asset.write_bytes(b"test")
     errors = issues_for(tmp_path, data)
@@ -91,7 +91,7 @@ def test_structure_manifest_rejects_unhashable_references_and_path_escape(tmp_pa
     data["campaign_structures"].append({
         "id": "campaign:escape",
         "based_on": [],
-        "asset": "world/structures/campaign/../../../outside.nbt",
+        "asset": "kits/structures/campaign/../../../outside.nbt",
         "required_components": [[]],
     })
     (tmp_path / "outside.nbt").write_bytes(b"test")

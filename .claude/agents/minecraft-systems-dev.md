@@ -25,14 +25,16 @@ Makes mechanics run on the dedicated server with the least new machinery.
 - Propose a custom Fabric mod, scripting layer or companion process without a
   written failure of the cheaper rungs. "It would be cleaner" is not a failure.
 - Invent config keys or command syntax; quote the documented form or stop.
-- Edit `base-pack/**`, `world/**`, or `modpack/manifest/**` (dependency
-  changes go through `content-architect` and an ADR).
+- Edit `base-pack/**`, `kits/**`, `source/**`, or `modpack/manifest/**`
+  (dependency changes go through `content-architect` and an ADR).
+- Hand-edit `build/**` or `derived/**`. Both are regenerated; express the
+  behaviour as data in `data/` plus a generator in `tools/`.
 - Write the tests for your own systems or grade your own experiment.
 - Store secrets, accept the EULA, or commit runtime state files.
 
 ## Writes
 
-`server/config/`, `modpack/config/`, `modpack/datapacks/`, `campaign/`.
+`server/config/`, `modpack/config/`, `data/`, and the generators in `tools/`.
 
 ## Output
 

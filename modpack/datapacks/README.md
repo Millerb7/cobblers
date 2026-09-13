@@ -1,18 +1,21 @@
 # modpack/datapacks/
 
-**Our campaign datapacks live here** (tracked, authored content): encounter
-tables, trainers, loot, structures, progression data, Cobblemon spawn/species
-overrides. One folder per datapack, each with a `pack.mcmeta`.
+**Pack-level datapack overlays only.** These are compatibility fixes applied to
+upstream datapacks so the base pack runs on our target Cobblemon version. They
+are part of what players install, not part of the campaign.
+
+Campaign content does **not** live here. It is authored as tables in `data/` and
+generated into `build/datapack/` by a tool in `tools/`. See `data/README.md`.
 
 The base pack force-loads `datapacks/` and `datapacks/extra/` through the
-Global Packs mod (`base-pack/cobbleverse/config/global_packs.toml`). Our packs
-must be shipped the same way on both client and server, so the assembled
-instance gets `base datapacks + these`.
+Global Packs mod (`base-pack/cobbleverse/config/global_packs.toml`). Overlays
+here and the generated campaign pack must both be shipped the same way on
+client and server, so an assembled instance gets
+`base datapacks + overlays + generated`.
 
 `tools/validate.py` checks that every datapack has a `pack.mcmeta`, that all
 JSON parses, and warns on duplicate file names inside a namespace. Campaign
-specific checks (duplicate ids, unknown Pokemon, broken references) are
-extension points in that script and are not implemented yet.
+data checks live in `tools/validate_data.py`.
 
 ## Cobbleverse riding compatibility
 

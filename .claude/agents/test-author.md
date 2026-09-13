@@ -8,9 +8,13 @@ Turns "it should be valid" into a command that fails when it is not.
 
 ## Responsibilities
 
-- Extend `tools/validate.py` and `tools/pack_manifest.py` and the suites in
-  `tests/` (`python -m pytest`). Prefer checks that read the real files in
-  `modpack/`, `campaign/`, `server/config/`, `experiments/`.
+- Extend `tools/validate_data.py`, `tools/validate.py` and
+  `tools/pack_manifest.py`, and the suites in `tests/` (`python -m pytest`).
+  Prefer checks that read the real files in `data/`, `kits/`, `modpack/`,
+  `server/config/`, `experiments/`.
+- Test the analysis tools against a deterministic synthetic fixture with
+  hand-computable expected values, never against the real heightmap. A tool
+  that only works on one surface is untested.
 - Test behavior of the tooling and properties of the data (parses, required
   fields present, namespaces ours, no file overrides upstream by accident,
   manifest entries have name/version/sha256/source), not implementation
@@ -24,8 +28,8 @@ Turns "it should be valid" into a command that fails when it is not.
 
 - Test content you implemented in the same session; if asked to, report the
   conflict and stop.
-- Edit `modpack/`, `campaign/`, `server/`, `world/` or `base-pack/` to make a
-  test pass; report the defect instead.
+- Edit `data/`, `kits/`, `modpack/`, `server/`, `source/` or `base-pack/` to
+  make a test pass; report the defect instead.
 - Launch Minecraft, download jars, or read secrets/EULA/`servers.dat`.
 - Bind a test to a fixture that does not exercise the property just to turn
   a report green.

@@ -2,17 +2,34 @@
 
 ## Layer model
 
+Two axes. The **delivery** stack decides which mods run:
+
 ```text
 upstream Cobbleverse modpack and its mods         base-pack/        (reference, read-only)
           ↓
 our modpack compatibility layer                   modpack/manifest/ (overlay: replace / remove / add)
           ↓
 server                                            server/           (dedicated server reproduction)
-          ↓
-campaign systems                                  campaign/ + modpack/datapacks/ + modpack/config/
-          ↓
-world                                             world/            (authored terrain and structures)
 ```
+
+The **world** is organised as data, not as blocks:
+
+```text
+source/     heightmap, masks, Gaea project        irreplaceable, OUTSIDE the repo
+data/       cells, events, placements, spawns,    authored, version controlled
+            trainers, gyms, progression, routes   THE PRODUCT
+kits/       structure library, palettes, biome kits
+tools/      analysis, generators, placement, validation
+          ↓
+derived/    slope and aspect masks, site index,   disposable
+            path networks, sightlines
+build/      datapack, world export, server bundle disposable
+```
+
+**The reproducibility rule.** Anything in `derived/` or `build/` must be
+reproducible from `source/`, `data/` and `tools/` alone. If regenerating it
+needs a manual step, a remembered parameter, or a file that exists nowhere
+else, it is in the wrong place and belongs in `source/` or `data/`.
 
 Each layer only depends on the layers above it. Nothing below edits anything above
 it in place; changes are expressed as overlays, so an upstream update is a re-base
@@ -41,20 +58,46 @@ Configuration templates, launch documentation, assembly and boot-test scripts.
 Client-only mods (34 in the base pack) are excluded by the manifest's side field.
 The live server directory itself is not in the repository.
 
-### Campaign systems (campaign/, modpack/datapacks/, modpack/config/)
+### Source (source/)
 
-Authored data: encounter tables, trainer teams, gyms, bosses, gauntlets, dungeons,
-quests, rewards, dialogue, progression flags. `campaign/` holds the design-level
-definitions; `modpack/datapacks/` holds the datapacks that implement them in
-whatever format the chosen systems consume (Cobblemon spawn pools, RCT trainer
-JSON, advancements, functions). Keeping the two apart lets the implementation
-format change without rewriting the design.
+The Gaea project, the GIMP working files, the masks and the canonical heightmap.
+Large, irreplaceable, and **outside this repository**: gitignored, located per
+machine via `COBBLERS_SOURCE_ROOT`, and pinned by `sha256` in `data/world.json`.
+The validator recomputes that hash and fails closed when it is null, the file is
+missing, or the hashes disagree. Layout and current status are in
+`data/notes/source_tree.md`.
 
-### World (world/)
+### Campaign data (data/)
 
-WorldPainter sources, schematics, structure NBT, town and dungeon templates. The
-live save is a build product, not source. If a save is ever committed, an ADR says
-why.
+The design itself and the real product of this repository: `world.json` as the
+single config, plus cells, landmarks, events, placements, spawns, trainers, gyms,
+progression and routes. Hand-edited and version controlled.
+
+Everything the game loads is **generated** from these tables by a tool in
+`tools/` into `build/datapack/`. Nothing under `build/` is hand-edited; if
+something cannot be generated, that is a missing field in `data/`. Keeping the
+authored table and the emitted format apart lets the mod-specific format change
+without rewriting the design.
+
+`data/world.json` is the only place import parameters and the heightmap path
+live. No tool carries its own copy of 40, 200, 62 or 8192. The input mapping is
+expressed as fractions of full scale so it survives a change of heightmap bit
+depth; the outputs are absolute Minecraft Y and never scale.
+
+### Kits (kits/)
+
+Reusable assets that content is assembled from: the structure library with its
+provenance manifests and licences, block palettes, and biome kits. A template in
+`kits/` has no position. The decision to put one at a coordinate is a placement
+and lives in `data/placements.json`.
+
+### Derived and build (derived/, build/)
+
+Both disposable, both gitignored apart from their READMEs. `derived/` holds
+analysis output; `build/` holds the datapack, the world export and the server
+bundle. A world save that has been played is no longer reproducible from source,
+so it is a save to be backed up, not a build artifact, and never belongs in
+`build/`. If a save is ever committed, an ADR says why.
 
 ## What runs where
 
