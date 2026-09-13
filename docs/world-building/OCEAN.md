@@ -1,7 +1,8 @@
 # The ocean: depth, seabed, marine regions and what lies underneath
 
-**Status: proposal for review.** Nothing here has been built. There are no terrain edits,
-no biome painting and no world changes. The measurements come from the pinned heightmap
+**Status: section 2 (the revised import) is applied.** Since 2026-09-13 the world
+`cobblers-10240` uses it; `REEXPORT.md` has the export and the measured seabed. Everything
+else here is still a proposal: no seabed pass, no biome painting, no content. The measurements come from the pinned heightmap
 (`land_8k_16_eroded.png`, sha256 `526fe220…`) sampled on the 8-block raster the region
 plan uses. Planned regions are in `data/regions.json` under `marine_regions`, all with
 status `planned`.

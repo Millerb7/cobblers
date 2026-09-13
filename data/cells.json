@@ -1,0 +1,1479 @@
+{
+ "schema": "cobblers.cells/1",
+ "status": "draft",
+ "note": "One record per planning cell. terrain is measured by tools/cell_stats.py --write-cells and re-checked by tools/validate_data.py; every other field is authored.",
+ "cells": [
+  {
+   "id": "A1",
+   "row": 0,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 0,
+    "max_x": 1023,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 12.71,
+    "max_y": 200.0,
+    "mean_y": 106.09,
+    "land_fraction": 0.805,
+    "water_fraction": 0.195,
+    "void_fraction": 0.0,
+    "mean_slope": 14.942,
+    "max_slope": 35.725,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "A2",
+   "row": 0,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 0,
+    "max_x": 2047,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 11.17,
+    "max_y": 200.0,
+    "mean_y": 98.51,
+    "land_fraction": 0.6889,
+    "water_fraction": 0.3111,
+    "void_fraction": 0.0,
+    "mean_slope": 13.909,
+    "max_slope": 42.503,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "A3",
+   "row": 0,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 0,
+    "max_x": 3071,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 10.48,
+    "max_y": 200.0,
+    "mean_y": 89.88,
+    "land_fraction": 0.5525,
+    "water_fraction": 0.4475,
+    "void_fraction": 0.0,
+    "mean_slope": 9.76,
+    "max_slope": 33.673,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "A4",
+   "row": 0,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 0,
+    "max_x": 4095,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 10.12,
+    "max_y": 151.07,
+    "mean_y": 66.66,
+    "land_fraction": 0.5037,
+    "water_fraction": 0.4963,
+    "void_fraction": 0.0,
+    "mean_slope": 7.52,
+    "max_slope": 22.179,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "A5",
+   "row": 0,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 0,
+    "max_x": 5119,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 10.12,
+    "max_y": 114.94,
+    "mean_y": 41.23,
+    "land_fraction": 0.2439,
+    "water_fraction": 0.7561,
+    "void_fraction": 0.0,
+    "mean_slope": 7.807,
+    "max_slope": 20.061,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "A6",
+   "row": 0,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 0,
+    "max_x": 6143,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 10.12,
+    "max_y": 129.48,
+    "mean_y": 79.58,
+    "land_fraction": 0.6688,
+    "water_fraction": 0.3312,
+    "void_fraction": 0.0,
+    "mean_slope": 10.948,
+    "max_slope": 20.955,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "A7",
+   "row": 0,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 0,
+    "max_x": 7167,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 10.12,
+    "max_y": 108.93,
+    "mean_y": 38.47,
+    "land_fraction": 0.2165,
+    "water_fraction": 0.7835,
+    "void_fraction": 0.0,
+    "mean_slope": 7.209,
+    "max_slope": 18.492,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "A8",
+   "row": 0,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 0,
+    "max_x": 8191,
+    "max_z": 1023
+   },
+   "terrain": {
+    "min_y": 10.14,
+    "max_y": 101.54,
+    "mean_y": 66.71,
+    "land_fraction": 0.62,
+    "water_fraction": 0.38,
+    "void_fraction": 0.0,
+    "mean_slope": 7.351,
+    "max_slope": 18.227,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B1",
+   "row": 1,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 1024,
+    "max_x": 1023,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 10.09,
+    "max_y": 118.81,
+    "mean_y": 42.13,
+    "land_fraction": 0.274,
+    "water_fraction": 0.726,
+    "void_fraction": 0.0,
+    "mean_slope": 6.955,
+    "max_slope": 21.12,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B2",
+   "row": 1,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 1024,
+    "max_x": 2047,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 63.49,
+    "max_y": 200.0,
+    "mean_y": 140.25,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 9.0,
+    "max_slope": 39.445,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B3",
+   "row": 1,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 1024,
+    "max_x": 3071,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 103.85,
+    "max_y": 200.0,
+    "mean_y": 147.62,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 7.843,
+    "max_slope": 32.582,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B4",
+   "row": 1,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 1024,
+    "max_x": 4095,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 85.35,
+    "max_y": 182.72,
+    "mean_y": 119.67,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 8.191,
+    "max_slope": 40.264,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B5",
+   "row": 1,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 1024,
+    "max_x": 5119,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 28.81,
+    "max_y": 122.76,
+    "mean_y": 101.55,
+    "land_fraction": 0.9494,
+    "water_fraction": 0.0506,
+    "void_fraction": 0.0,
+    "mean_slope": 5.123,
+    "max_slope": 20.116,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B6",
+   "row": 1,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 1024,
+    "max_x": 6143,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 14.02,
+    "max_y": 117.42,
+    "mean_y": 60.71,
+    "land_fraction": 0.4809,
+    "water_fraction": 0.5191,
+    "void_fraction": 0.0,
+    "mean_slope": 7.686,
+    "max_slope": 21.647,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B7",
+   "row": 1,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 1024,
+    "max_x": 7167,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 14.04,
+    "max_y": 118.06,
+    "mean_y": 62.05,
+    "land_fraction": 0.489,
+    "water_fraction": 0.511,
+    "void_fraction": 0.0,
+    "mean_slope": 7.649,
+    "max_slope": 20.65,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "B8",
+   "row": 1,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 1024,
+    "max_x": 8191,
+    "max_z": 2047
+   },
+   "terrain": {
+    "min_y": 10.11,
+    "max_y": 116.23,
+    "mean_y": 55.71,
+    "land_fraction": 0.4226,
+    "water_fraction": 0.5774,
+    "void_fraction": 0.0,
+    "mean_slope": 7.429,
+    "max_slope": 18.941,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C1",
+   "row": 2,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 2048,
+    "max_x": 1023,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 10.45,
+    "max_y": 126.12,
+    "mean_y": 65.85,
+    "land_fraction": 0.5431,
+    "water_fraction": 0.4569,
+    "void_fraction": 0.0,
+    "mean_slope": 6.916,
+    "max_slope": 19.569,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C2",
+   "row": 2,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 2048,
+    "max_x": 2047,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 92.73,
+    "max_y": 134.84,
+    "mean_y": 109.01,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 3.489,
+    "max_slope": 11.167,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C3",
+   "row": 2,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 2048,
+    "max_x": 3071,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 45.52,
+    "max_y": 134.83,
+    "mean_y": 101.94,
+    "land_fraction": 0.8317,
+    "water_fraction": 0.0,
+    "void_fraction": 0.1683,
+    "mean_slope": 7.227,
+    "max_slope": 36.901,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C4",
+   "row": 2,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 2048,
+    "max_x": 4095,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 85.25,
+    "max_y": 155.29,
+    "mean_y": 115.65,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 4.927,
+    "max_slope": 42.796,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C5",
+   "row": 2,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 2048,
+    "max_x": 5119,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 88.34,
+    "max_y": 138.26,
+    "mean_y": 109.86,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 3.941,
+    "max_slope": 15.318,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C6",
+   "row": 2,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 2048,
+    "max_x": 6143,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 78.86,
+    "max_y": 133.47,
+    "mean_y": 112.82,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 4.902,
+    "max_slope": 20.4,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C7",
+   "row": 2,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 2048,
+    "max_x": 7167,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 14.05,
+    "max_y": 124.21,
+    "mean_y": 65.67,
+    "land_fraction": 0.5442,
+    "water_fraction": 0.4558,
+    "void_fraction": 0.0,
+    "mean_slope": 7.753,
+    "max_slope": 21.289,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "C8",
+   "row": 2,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 2048,
+    "max_x": 8191,
+    "max_z": 3071
+   },
+   "terrain": {
+    "min_y": 10.1,
+    "max_y": 58.24,
+    "mean_y": 13.34,
+    "land_fraction": 0.0,
+    "water_fraction": 1.0,
+    "void_fraction": 0.0,
+    "mean_slope": 1.613,
+    "max_slope": 16.083,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D1",
+   "row": 3,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 3072,
+    "max_x": 1023,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 11.16,
+    "max_y": 156.77,
+    "mean_y": 87.23,
+    "land_fraction": 0.6176,
+    "water_fraction": 0.3824,
+    "void_fraction": 0.0,
+    "mean_slope": 8.843,
+    "max_slope": 23.692,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D2",
+   "row": 3,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 3072,
+    "max_x": 2047,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 107.82,
+    "max_y": 148.27,
+    "mean_y": 133.22,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 3.584,
+    "max_slope": 11.648,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D3",
+   "row": 3,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 3072,
+    "max_x": 3071,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 45.51,
+    "max_y": 142.76,
+    "mean_y": 86.67,
+    "land_fraction": 0.596,
+    "water_fraction": 0.0,
+    "void_fraction": 0.404,
+    "mean_slope": 8.939,
+    "max_slope": 37.438,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D4",
+   "row": 3,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 3072,
+    "max_x": 4095,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 53.89,
+    "max_y": 155.96,
+    "mean_y": 108.12,
+    "land_fraction": 0.9003,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0997,
+    "mean_slope": 6.72,
+    "max_slope": 45.999,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D5",
+   "row": 3,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 3072,
+    "max_x": 5119,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 43.61,
+    "max_y": 155.8,
+    "mean_y": 92.71,
+    "land_fraction": 0.6518,
+    "water_fraction": 0.0,
+    "void_fraction": 0.3482,
+    "mean_slope": 7.882,
+    "max_slope": 43.942,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D6",
+   "row": 3,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 3072,
+    "max_x": 6143,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 44.44,
+    "max_y": 112.45,
+    "mean_y": 77.7,
+    "land_fraction": 0.8002,
+    "water_fraction": 0.1648,
+    "void_fraction": 0.035,
+    "mean_slope": 5.98,
+    "max_slope": 32.895,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D7",
+   "row": 3,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 3072,
+    "max_x": 7167,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 30.09,
+    "max_y": 115.46,
+    "mean_y": 83.95,
+    "land_fraction": 0.8961,
+    "water_fraction": 0.1039,
+    "void_fraction": 0.0,
+    "mean_slope": 6.481,
+    "max_slope": 24.094,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "D8",
+   "row": 3,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 3072,
+    "max_x": 8191,
+    "max_z": 4095
+   },
+   "terrain": {
+    "min_y": 10.11,
+    "max_y": 89.53,
+    "mean_y": 18.18,
+    "land_fraction": 0.0355,
+    "water_fraction": 0.9645,
+    "void_fraction": 0.0,
+    "mean_slope": 3.295,
+    "max_slope": 18.359,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E1",
+   "row": 4,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 4096,
+    "max_x": 1023,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 10.09,
+    "max_y": 138.68,
+    "mean_y": 56.71,
+    "land_fraction": 0.4027,
+    "water_fraction": 0.5973,
+    "void_fraction": 0.0,
+    "mean_slope": 7.46,
+    "max_slope": 21.165,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E2",
+   "row": 4,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 4096,
+    "max_x": 2047,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 85.45,
+    "max_y": 140.93,
+    "mean_y": 123.26,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 3.551,
+    "max_slope": 18.786,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E3",
+   "row": 4,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 4096,
+    "max_x": 3071,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 46.85,
+    "max_y": 143.79,
+    "mean_y": 102.4,
+    "land_fraction": 0.8358,
+    "water_fraction": 0.0003,
+    "void_fraction": 0.1639,
+    "mean_slope": 7.105,
+    "max_slope": 39.5,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E4",
+   "row": 4,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 4096,
+    "max_x": 4095,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 63.88,
+    "max_y": 149.42,
+    "mean_y": 124.62,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 6.554,
+    "max_slope": 43.057,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E5",
+   "row": 4,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 4096,
+    "max_x": 5119,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 45.13,
+    "max_y": 149.0,
+    "mean_y": 96.74,
+    "land_fraction": 0.6958,
+    "water_fraction": 0.0,
+    "void_fraction": 0.3042,
+    "mean_slope": 8.854,
+    "max_slope": 41.286,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E6",
+   "row": 4,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 4096,
+    "max_x": 6143,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 55.51,
+    "max_y": 118.77,
+    "mean_y": 86.42,
+    "land_fraction": 0.9336,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0664,
+    "mean_slope": 5.273,
+    "max_slope": 33.082,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E7",
+   "row": 4,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 4096,
+    "max_x": 7167,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 29.36,
+    "max_y": 200.0,
+    "mean_y": 100.97,
+    "land_fraction": 0.9268,
+    "water_fraction": 0.0732,
+    "void_fraction": 0.0,
+    "mean_slope": 8.537,
+    "max_slope": 37.954,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "E8",
+   "row": 4,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 4096,
+    "max_x": 8191,
+    "max_z": 5119
+   },
+   "terrain": {
+    "min_y": 10.11,
+    "max_y": 96.73,
+    "mean_y": 43.75,
+    "land_fraction": 0.2858,
+    "water_fraction": 0.7142,
+    "void_fraction": 0.0,
+    "mean_slope": 7.834,
+    "max_slope": 19.659,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F1",
+   "row": 5,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 5120,
+    "max_x": 1023,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 11.0,
+    "max_y": 150.71,
+    "mean_y": 96.83,
+    "land_fraction": 0.7502,
+    "water_fraction": 0.2498,
+    "void_fraction": 0.0,
+    "mean_slope": 13.54,
+    "max_slope": 24.646,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F2",
+   "row": 5,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 5120,
+    "max_x": 2047,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 12.69,
+    "max_y": 138.82,
+    "mean_y": 80.38,
+    "land_fraction": 0.6432,
+    "water_fraction": 0.3568,
+    "void_fraction": 0.0,
+    "mean_slope": 8.62,
+    "max_slope": 20.945,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F3",
+   "row": 5,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 5120,
+    "max_x": 3071,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 70.46,
+    "max_y": 151.3,
+    "mean_y": 118.84,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 5.017,
+    "max_slope": 19.646,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F4",
+   "row": 5,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 5120,
+    "max_x": 4095,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 85.13,
+    "max_y": 143.63,
+    "mean_y": 112.28,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 3.634,
+    "max_slope": 14.326,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F5",
+   "row": 5,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 5120,
+    "max_x": 5119,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 63.4,
+    "max_y": 168.44,
+    "mean_y": 150.7,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 4.343,
+    "max_slope": 40.543,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F6",
+   "row": 5,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 5120,
+    "max_x": 6143,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 57.47,
+    "max_y": 200.0,
+    "mean_y": 140.62,
+    "land_fraction": 0.9706,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0294,
+    "mean_slope": 9.091,
+    "max_slope": 52.421,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F7",
+   "row": 5,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 5120,
+    "max_x": 7167,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 87.27,
+    "max_y": 200.0,
+    "mean_y": 149.19,
+    "land_fraction": 1.0,
+    "water_fraction": 0.0,
+    "void_fraction": 0.0,
+    "mean_slope": 7.649,
+    "max_slope": 38.246,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "F8",
+   "row": 5,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 5120,
+    "max_x": 8191,
+    "max_z": 6143
+   },
+   "terrain": {
+    "min_y": 25.35,
+    "max_y": 139.05,
+    "mean_y": 84.63,
+    "land_fraction": 0.7411,
+    "water_fraction": 0.2589,
+    "void_fraction": 0.0,
+    "mean_slope": 12.598,
+    "max_slope": 23.106,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G1",
+   "row": 6,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 6144,
+    "max_x": 1023,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 10.09,
+    "max_y": 123.09,
+    "mean_y": 22.95,
+    "land_fraction": 0.0729,
+    "water_fraction": 0.9271,
+    "void_fraction": 0.0,
+    "mean_slope": 5.61,
+    "max_slope": 24.178,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G2",
+   "row": 6,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 6144,
+    "max_x": 2047,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 10.62,
+    "max_y": 145.47,
+    "mean_y": 58.04,
+    "land_fraction": 0.4094,
+    "water_fraction": 0.5906,
+    "void_fraction": 0.0,
+    "mean_slope": 7.962,
+    "max_slope": 22.528,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G3",
+   "row": 6,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 6144,
+    "max_x": 3071,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 18.51,
+    "max_y": 109.85,
+    "mean_y": 62.46,
+    "land_fraction": 0.5375,
+    "water_fraction": 0.4625,
+    "void_fraction": 0.0,
+    "mean_slope": 8.206,
+    "max_slope": 19.293,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G4",
+   "row": 6,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 6144,
+    "max_x": 4095,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 12.39,
+    "max_y": 121.76,
+    "mean_y": 71.68,
+    "land_fraction": 0.6174,
+    "water_fraction": 0.3826,
+    "void_fraction": 0.0,
+    "mean_slope": 6.962,
+    "max_slope": 18.731,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G5",
+   "row": 6,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 6144,
+    "max_x": 5119,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 12.4,
+    "max_y": 165.21,
+    "mean_y": 77.94,
+    "land_fraction": 0.5478,
+    "water_fraction": 0.4522,
+    "void_fraction": 0.0,
+    "mean_slope": 11.018,
+    "max_slope": 23.799,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G6",
+   "row": 6,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 6144,
+    "max_x": 6143,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 14.61,
+    "max_y": 171.07,
+    "mean_y": 86.07,
+    "land_fraction": 0.5996,
+    "water_fraction": 0.4004,
+    "void_fraction": 0.0,
+    "mean_slope": 11.023,
+    "max_slope": 25.97,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G7",
+   "row": 6,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 6144,
+    "max_x": 7167,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 13.8,
+    "max_y": 150.3,
+    "mean_y": 91.66,
+    "land_fraction": 0.6478,
+    "water_fraction": 0.3522,
+    "void_fraction": 0.0,
+    "mean_slope": 8.854,
+    "max_slope": 23.19,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "G8",
+   "row": 6,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 6144,
+    "max_x": 8191,
+    "max_z": 7167
+   },
+   "terrain": {
+    "min_y": 29.52,
+    "max_y": 145.71,
+    "mean_y": 100.8,
+    "land_fraction": 0.8239,
+    "water_fraction": 0.1761,
+    "void_fraction": 0.0,
+    "mean_slope": 12.467,
+    "max_slope": 23.605,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H1",
+   "row": 7,
+   "column": 0,
+   "bounds": {
+    "min_x": 0,
+    "min_z": 7168,
+    "max_x": 1023,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 10.09,
+    "max_y": 130.93,
+    "mean_y": 26.29,
+    "land_fraction": 0.1295,
+    "water_fraction": 0.8705,
+    "void_fraction": 0.0,
+    "mean_slope": 5.268,
+    "max_slope": 24.87,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H2",
+   "row": 7,
+   "column": 1,
+   "bounds": {
+    "min_x": 1024,
+    "min_z": 7168,
+    "max_x": 2047,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 13.31,
+    "max_y": 148.38,
+    "mean_y": 94.3,
+    "land_fraction": 0.7526,
+    "water_fraction": 0.2474,
+    "void_fraction": 0.0,
+    "mean_slope": 7.892,
+    "max_slope": 21.543,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H3",
+   "row": 7,
+   "column": 2,
+   "bounds": {
+    "min_x": 2048,
+    "min_z": 7168,
+    "max_x": 3071,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 13.27,
+    "max_y": 111.14,
+    "mean_y": 74.33,
+    "land_fraction": 0.7058,
+    "water_fraction": 0.2942,
+    "void_fraction": 0.0,
+    "mean_slope": 6.559,
+    "max_slope": 16.995,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H4",
+   "row": 7,
+   "column": 3,
+   "bounds": {
+    "min_x": 3072,
+    "min_z": 7168,
+    "max_x": 4095,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 10.1,
+    "max_y": 114.99,
+    "mean_y": 40.09,
+    "land_fraction": 0.2568,
+    "water_fraction": 0.7432,
+    "void_fraction": 0.0,
+    "mean_slope": 7.019,
+    "max_slope": 18.749,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H5",
+   "row": 7,
+   "column": 4,
+   "bounds": {
+    "min_x": 4096,
+    "min_z": 7168,
+    "max_x": 5119,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 10.11,
+    "max_y": 142.03,
+    "mean_y": 63.24,
+    "land_fraction": 0.4487,
+    "water_fraction": 0.5513,
+    "void_fraction": 0.0,
+    "mean_slope": 8.725,
+    "max_slope": 23.414,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H6",
+   "row": 7,
+   "column": 5,
+   "bounds": {
+    "min_x": 5120,
+    "min_z": 7168,
+    "max_x": 6143,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 10.1,
+    "max_y": 138.18,
+    "mean_y": 73.84,
+    "land_fraction": 0.5557,
+    "water_fraction": 0.4443,
+    "void_fraction": 0.0,
+    "mean_slope": 9.688,
+    "max_slope": 20.262,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H7",
+   "row": 7,
+   "column": 6,
+   "bounds": {
+    "min_x": 6144,
+    "min_z": 7168,
+    "max_x": 7167,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 10.11,
+    "max_y": 128.23,
+    "mean_y": 34.14,
+    "land_fraction": 0.1929,
+    "water_fraction": 0.8071,
+    "void_fraction": 0.0,
+    "mean_slope": 6.312,
+    "max_slope": 23.273,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  },
+  {
+   "id": "H8",
+   "row": 7,
+   "column": 7,
+   "bounds": {
+    "min_x": 7168,
+    "min_z": 7168,
+    "max_x": 8191,
+    "max_z": 8191
+   },
+   "terrain": {
+    "min_y": 10.1,
+    "max_y": 149.11,
+    "mean_y": 84.05,
+    "land_fraction": 0.6171,
+    "water_fraction": 0.3829,
+    "void_fraction": 0.0,
+    "mean_slope": 10.362,
+    "max_slope": 23.129,
+    "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "computed_from_import": "97df2052d11ea011"
+   }
+  }
+ ]
+}

@@ -80,9 +80,15 @@ Run against a stopped server's world folder, or a copy. Procedures are in
 | --- | --- | --- |
 | `region_trim.py` | Classifies saved chunks (region, entities, poi) inside or outside a block rectangle in one dimension, and lists structure starts outside. Dry run by default; `--apply` needs `--backup-dir` outside the dimension, backs files up, deletes wholly-outside files and clears outside chunks from straddling ones. Does not touch Distant Horizons data | JSON report; the world only with `--apply` |
 | `dimension_audit.py` | After pregen: generation status coverage inside the rectangle, chunks saved outside, every structure start inside, and which catalog structures of the required classes are missing. `--fail-on-missing` and `--fail-on-incomplete` gate a procedure | JSON report |
-`--scope default` reads the Cobblemon jar alone; `--scope pack` applies mod and datapack
-overrides by path. `datapacks/extra/` is read only with `--include-extra`, because the server
-does not load it.
+| `world_heights.py` | `extract`: decodes every chunk in a rectangle into per-column ground and water-top heights, with chunk presence, status and chunks saved outside. `compare`: drift of that surface against the heightmap at the `world.json` mapping (land, seabed, clipped summits, margin, water) | `derived/world/` |
+| `level_dat.py` | Type-preserving level.dat reader/writer. `summary` (seed shown only as sha256), `seed-match`, `carry` (copy top-level keys from one level.dat to another, with a backup) | the target level.dat with `carry` |
+| `reexport.py` | Re-exports the heightmap with WorldPainter: reads the mapping, margin, border and spawn from `world.json` and the seed from the old world (passed to WorldPainter only through the environment). Runs `worldpainter/export_world.js` through `wpscript`, then carries `WorldGenSettings`, datapack selection and game settings from the old `level.dat`. Refuses to overwrite a world | a new world folder and `.world` project |
+
+Record of the 2026-09-13 run: `docs/world-building/REEXPORT.md`.
+
+Pack-analysis tools take `--scope default` (the Cobblemon jar alone) or `--scope pack`
+(mod and datapack overrides by path). `datapacks/extra/` is read only with
+`--include-extra`, because the server does not load it.
 
 ```bash
 python tools/spawn_biomes.py --server-dir ../cobblers-server --regions data/regions.json     --markdown docs/world-building/BIOME_COVERAGE_MATRIX.md
@@ -109,7 +115,7 @@ ridge with zero climb rather than over it.
 
 | Tool | Does |
 | --- | --- |
-| `validate_data.py` | Schema, referential, integrity, progression and spatial checks on `data/` |
+| `validate_data.py` | Schema, referential, integrity and progression checks on `data/`. With a verified heightmap it also recomputes every `cells.json` terrain block (`cell-terrain`, fails on drift) and checks landmark anchors, region and marine polygons and the export border geometry (`spatial`) |
 | `validate.py` | File-level structural checks: JSON parses, `pack.mcmeta` present, duplicate basenames |
 | `pack_manifest.py` | Base manifest and overlay: `generate`, `resolve-overlay`, `plan`, `verify`, `download` |
 | `assemble_client.py` | Builds the client instance from the manifest |
