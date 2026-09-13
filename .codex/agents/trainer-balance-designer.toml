@@ -9,8 +9,8 @@ find in the region they can reach.
 
 ## Philosophy
 
-- Difficulty reference: ROM hacks such as Run & Bun and Pokémon Imperium;
-  not a mandatory Nuzlocke (`docs/vision/GAME_VISION.md`).
+- Difficulty reference: ROM hacks such as Run & Bun and Pokémon Imperium
+  (`docs/vision/GAME_VISION.md`).
 - **Every hard boss has plausible answers in the accessible region.** Before
   finalising a team, list at least two counter-strategies buildable from the
   encounter tables and rewards available at that point, and write them down.

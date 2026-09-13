@@ -8,8 +8,7 @@ Imperium**. The Minecraft reference point is the **Cobbleverse** modpack, which 
 of the players particularly enjoys and which we keep as our base experience wherever
 it remains compatible with our target Cobblemon version.
 
-This is **not** a mandatory Nuzlocke. Difficulty comes from the fights, the level
-cap, and the need to build answers, not from permadeath rules.
+Difficulty comes from the fights, the level cap, and the need to build answers.
 
 ## What we are building
 
@@ -132,7 +131,6 @@ makes the game better.
 
 - Hard, fair, and readable. Bosses telegraph their strategy; scouting is possible.
 - Level caps per chapter. Overleveling is prevented, not merely discouraged.
-- No mandatory Nuzlocke, no permadeath. Optional self-imposed rules are welcome.
 - Healing and PC restrictions apply inside gauntlets and some dungeons only.
 
 ## What this is not
