@@ -13,9 +13,19 @@ white-list=true
 enforce-whitelist=true
 max-players=8
 server-port=25565
-# rcon stays off unless you need remote console; if enabled, set a real
-# password in the live file only, never in this example.
+# RCON is off by default. Turn it on when the server is launched in the
+# background, because then it has no reachable stdin: without RCON the only
+# way to stop it is to kill the process, which skips the world save. It is
+# also the only way to run Distant Horizons' `dh pregen`.
+#
+# If you enable it: bind to localhost, set a real password in the LIVE file
+# only and never here, and put that password in a .rcon-password file beside
+# server/scripts/rcon.py (gitignored). Then:
+#   python server/scripts/rcon.py "dh pregen start overworld 4096 4096 256"
+#   python server/scripts/rcon.py "tick query"
+#   python server/scripts/rcon.py stop
 enable-rcon=false
+# rcon.port=25575
 enable-query=false
 enable-status=true
 

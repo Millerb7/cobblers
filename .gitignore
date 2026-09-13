@@ -131,3 +131,7 @@ out/
 # Multi-gigabyte and reproducible from the manifests.
 experiments/*/runtime/
 experiments/*/runs/*/
+
+# RCON password for the local server. Never commit.
+.rcon-password
+**/.rcon-password
