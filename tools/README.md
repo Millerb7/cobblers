@@ -65,7 +65,10 @@ counts as impassable or unbuildable; `--world` points at a different config.
 | --- | --- | --- |
 | `spawn_biomes.py` | Reads the server's vanilla jar, mod jars (with nested jars) and datapacks. Enumerates every biome and biome tag Cobblemon spawn conditions reference, resolves tags to loaded biomes, and checks coverage and species reachability against `data/regions.json` | `derived/spawns/`, optional markdown table |
 
-It needs a server directory (`--server-dir` or `COBBLERS_SERVER_DIR`), not the heightmap.
+| `structure_inventory.py` | Every structure the loaded pack generates: biomes, structure set, footprint from template NBT, template contents (loot, trainer spawners, altars, command blocks), spawn entries and data files that depend on it, plus mod worldgen features. With `--world`, scans a save's region files for structure starts inside and outside the map bounds | `derived/structures/`, optional markdown tables |
+| `nbt.py` | Read-only NBT and Anvil region reader used by the above | nothing |
+
+Both need a server directory (`--server-dir` or `COBBLERS_SERVER_DIR`), not the heightmap.
 `--scope default` reads the Cobblemon jar alone; `--scope pack` applies mod and datapack
 overrides by path. `datapacks/extra/` is read only with `--include-extra`, because the server
 does not load it.

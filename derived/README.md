@@ -19,6 +19,7 @@ Expected contents once the step 4 analysis toolkit lands:
 | `derived/landforms/` | `landforms.py` | bodies, peaks, landform classes including `void_floor` |
 | `derived/sections/` | `cross_section.py` | per-station profiles along landmark axes |
 | `derived/spawns/` | `spawn_biomes.py` | spawn biome and tag references, coverage against the region plan |
+| `derived/structures/` | `structure_inventory.py` | structure inventory and world structure-start scan |
 
 Every artifact records the heightmap `sha256` it was computed from, so a stale
 derivative can be detected rather than trusted.

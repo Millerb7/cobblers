@@ -17,6 +17,7 @@ matters.
 | `landmarks.json` | Named features from the annotated heightmap: outlines, axes, anchors, `status` (built / partial / planned), water policy, carve and anomaly specs | **draft**: rift, glacier corridor, meltwater lake, moraine, meltwater river, range, cones. Validated for required fields and enums |
 | `checks/sightlines.json` | Sightline sets run against landmarks by `tools/sightlines.py --plan` | present; results in `docs/world-building/SIGHTLINES.md` |
 | `events.json` | Authored event definitions with anchors and terrain requirements | not written yet |
+| `structures.json` | Every structure the loaded pack generates, with an authored class (PROGRESSION, LEGENDARY, NAMED, SCATTER) and disposition | **draft**, schema `cobblers.structures/1` proposed. Report in `docs/world-building/STRUCTURE_INVENTORY.md` |
 | `placements.json` | Every structure instance and its position | not written yet |
 | `trainers.json` | Trainer teams, AI, gating, rewards | not written yet |
 | `spawns.json` | Curated encounter tables | not written yet |
