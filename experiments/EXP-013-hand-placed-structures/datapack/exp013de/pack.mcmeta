@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 48,
+    "description": "EXP-013 D/E probes: test spawn entries for species that never spawn naturally. Disable after the session."
+  }
+}
