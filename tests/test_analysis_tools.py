@@ -36,6 +36,42 @@ def load(out):
 # --------------------------------------------------------------- find_sites
 
 
+def _reference_largest_squares(mask):
+    """The textbook O(n) recurrence, written plainly as the oracle."""
+    dp = np.zeros(mask.shape, np.int32)
+    m = mask.astype(np.int32)
+    dp[0, :] = m[0, :]
+    dp[:, 0] = m[:, 0]
+    for z in range(1, mask.shape[0]):
+        for x in range(1, mask.shape[1]):
+            if m[z, x]:
+                dp[z, x] = 1 + min(dp[z - 1, x], dp[z, x - 1], dp[z - 1, x - 1])
+    return dp
+
+
+@pytest.mark.parametrize("h,w,p,seed", [
+    (40, 40, 0.90, 1), (64, 31, 0.70, 2), (50, 77, 0.97, 3),
+    (120, 120, 0.85, 4), (1, 30, 0.9, 5), (30, 1, 0.9, 6),
+])
+def test_vectorised_squares_match_the_reference(h, w, p, seed):
+    """The fast recurrence must equal the textbook one cell for cell,
+    including the top row and left column where the edge case lives."""
+    mask = np.random.default_rng(seed).random((h, w)) < p
+    assert np.array_equal(find_sites.largest_squares(mask),
+                          _reference_largest_squares(mask))
+
+
+def test_greedy_extraction_recompute_is_exact():
+    """Recomputing only from the taken row must equal a full recompute."""
+    mask = np.random.default_rng(9).random((90, 90)) < 0.93
+    work = mask.copy()
+    dp = find_sites.largest_squares(work)
+    z0, z1, x0, x1 = 20, 35, 10, 30
+    work[z0:z1 + 1, x0:x1 + 1] = False
+    partial = find_sites.largest_squares(work, start_row=z0, dp=dp.copy())
+    assert np.array_equal(partial, find_sites.largest_squares(work))
+
+
 def test_finds_the_plateau_exactly(tmp_path):
     """The plateau is 32x32 at y=120 with zero slope. Nothing else qualifies."""
     out = run(find_sites, W + ["--min-size", "8", "--max-slope", "1",
@@ -49,6 +85,16 @@ def test_finds_the_plateau_exactly(tmp_path):
     assert site["height"]["max"] == pytest.approx(120.0, abs=0.01)
     assert site["slope_degrees"]["max"] == pytest.approx(0.0, abs=0.01)
     assert d["buildable_fraction"] == pytest.approx(1.0)
+
+
+def test_max_y_excludes_high_flat_ground(tmp_path):
+    """The 120 plateau is flat but above a y110 ceiling, so it must vanish."""
+    out = run(find_sites, W + ["--min-size", "8", "--max-slope", "1",
+                               "--bbox", "16,16,47,47", "--max-y", "110"],
+              tmp_path / "sites.json")
+    d = load(out)
+    assert d["site_count"] == 0
+    assert d["buildable_fraction"] == pytest.approx(0.0)
 
 
 def test_no_site_is_steeper_than_asked(tmp_path):
@@ -192,6 +238,21 @@ def test_masks_record_their_source(tmp_path):
 
 
 # ------------------------------------------------------- the blocked guard
+
+
+def test_explicit_heightmap_cannot_bypass_the_hash_check(tmp_path):
+    """--heightmap must be verified against the recorded sha256, not trusted."""
+    forged = tmp_path / "forged.png"
+    data = bytearray((FIXTURE / "land_fixture.png").read_bytes())
+    data[-20] ^= 0xFF  # corrupt one byte inside the image data
+    forged.write_bytes(bytes(data))
+    with pytest.raises(T.TerrainUnavailable, match="sha256 mismatch"):
+        T.load(FIXTURE / "world.json", heightmap=forged)
+
+
+def test_explicit_heightmap_accepts_the_verified_file():
+    h, _ = T.load(FIXTURE / "world.json", heightmap=FIXTURE / "land_fixture.png")
+    assert h.shape == (256, 256)
 
 
 @pytest.mark.parametrize("mod,args", [

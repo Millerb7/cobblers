@@ -22,6 +22,8 @@ detected rather than trusted.
 | `route_path.py` | A* between two points, paying for climb | `derived/paths/` |
 | `sightlines.py` | Raycasts from a viewpoint to named landmarks | `derived/sightlines/` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
+| `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |
+| `landforms.py` | Land and water bodies, peaks, candidate landform classes | `derived/landforms/` |
 
 These produce **candidates**. A human picks. None of them decides where a town
 goes, which way a road runs, or what a place looks like.
@@ -33,7 +35,8 @@ python tools/sightlines.py  --from 3400,3400 --eye 2 --target volcano:6654,6242
 python tools/slope_masks.py --max-degrees 60
 ```
 
-Useful flags: `--bbox X0,Z0,X1,Z1` restricts the site search; `--slope-weight 0`
+Useful flags: `--bbox X0,Z0,X1,Z1` restricts the site search; `--max-y` excludes ground
+clipped flat at the height ceiling, which otherwise ranks first; `--slope-weight 0`
 gives a straight line and a high value hugs contours; `--max-slope` sets what
 counts as impassable or unbuildable; `--world` points at a different config.
 
