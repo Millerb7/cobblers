@@ -64,11 +64,22 @@ counts as impassable or unbuildable; `--world` points at a different config.
 | Tool | Does | Writes |
 | --- | --- | --- |
 | `spawn_biomes.py` | Reads the server's vanilla jar, mod jars (with nested jars) and datapacks. Enumerates every biome and biome tag Cobblemon spawn conditions reference, resolves tags to loaded biomes, and checks coverage and species reachability against `data/regions.json` | `derived/spawns/`, optional markdown table |
-
 | `structure_inventory.py` | Every structure the loaded pack generates: biomes, structure set, footprint from template NBT, template contents (loot, trainer spawners, altars, command blocks), spawn entries and data files that depend on it, plus mod worldgen features. With `--world`, scans a save's region files for structure starts inside and outside the map bounds | `derived/structures/`, optional markdown tables |
+| `worldgen_features.py` | Every non-vanilla placed feature, the modded blocks it places, the items those drop, and whether each item has another source in data (recipes, non-block loot, datapack trades) | `derived/features/`, optional markdown table |
+| `structure_candidates.py` | Candidate start chunks of random-spread structure sets inside a rectangle, from the world seed in `level.dat` (never written out). Upper bound: biome checks are not modelled. Verified against 49 real starts | optional JSON |
 | `nbt.py` | Read-only NBT and Anvil region reader used by the above | nothing |
 
-Both need a server directory (`--server-dir` or `COBBLERS_SERVER_DIR`), not the heightmap.
+These need a server directory (`--server-dir` or `COBBLERS_SERVER_DIR`), not the heightmap.
+
+## World saves
+
+Run against a stopped server's world folder, or a copy. Procedures are in
+`docs/world-building/DIMENSIONS_AND_BORDERS.md`.
+
+| Tool | Does | Writes |
+| --- | --- | --- |
+| `region_trim.py` | Classifies saved chunks (region, entities, poi) inside or outside a block rectangle in one dimension, and lists structure starts outside. Dry run by default; `--apply` needs `--backup-dir` outside the dimension, backs files up, deletes wholly-outside files and clears outside chunks from straddling ones. Does not touch Distant Horizons data | JSON report; the world only with `--apply` |
+| `dimension_audit.py` | After pregen: generation status coverage inside the rectangle, chunks saved outside, every structure start inside, and which catalog structures of the required classes are missing. `--fail-on-missing` and `--fail-on-incomplete` gate a procedure | JSON report |
 `--scope default` reads the Cobblemon jar alone; `--scope pack` applies mod and datapack
 overrides by path. `datapacks/extra/` is read only with `--include-extra`, because the server
 does not load it.

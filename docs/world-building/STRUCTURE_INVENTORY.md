@@ -1,8 +1,18 @@
 # Structure inventory and classification
 
 **Status: Step 1 of the placement work, for review.** Nothing is placed. The strategy is
-decided: every structure is hand-placed inside the 8192×8192 authored map, and no content
+decided: every overworld structure is hand-placed inside the authored map, and no content
 depends on worldgen scatter. This document is the inventory that decision needs.
+
+> **Amended 2026-09-13.** Decisions and experiment results since this report are in
+> [`STRUCTURE_DECISIONS.md`](STRUCTURE_DECISIONS.md):
+> - **The Nether and the End stay vanilla-generated dimensions.** Blaine, the Kanto League,
+>   Moltres, the four Ruin shrines, Eternatus and both Necrozma towers are no longer
+>   relocation candidates.
+> - **The overworld border is 10240** ([`DIMENSIONS_AND_BORDERS.md`](DIMENSIONS_AND_BORDERS.md)).
+> - **EXP-013 answered the placement-method question:** no method writes structure data.
+>
+> The sections below are corrected where they said otherwise.
 
 The data behind this report:
 
@@ -83,7 +93,7 @@ Lance, Blue). A LumyMon elevator in it requires the advancement
 
 | Structure | Leader | Biome it generates in | Footprint x·y·z | Notes |
 | --- | --- | --- | --- | --- |
-| `cobbleverse:brock` | kanto_brock | plains | 27·17·24 | 9 command blocks. On placement they summon a "Kanto Map Guide" villager and then erase themselves. Holds a LumyMon Kanto cartography table (map trader) |
+| `cobbleverse:brock` | kanto_brock | plains | 27·17·24 | 9 command blocks. When its pressure plate is pressed (with `enable-command-block=true`), they summon a "Kanto Map Guide" villager and erase themselves; placement alone runs nothing (EXP-013 C). Holds a LumyMon Kanto cartography table (map trader) |
 | `cobbleverse:misty` | kanto_misty | lukewarm_ocean | 36·40·32 | two variants |
 | `cobbleverse:erika` | kanto_erika | flower_forest | 27·17·23 | |
 | `cobbleverse:ltsurge` | kanto_ltsurge | savanna_plateau | 27·17·23 | |
@@ -123,8 +133,8 @@ planned), so reusing, re-skinning or retiring these nine is a decision still to 
 | `legendarymonuments:distortion_portal` | portal to the Distortion World | portal entity | **never** | 5·2·5 |
 
 **Only 5 legendary structures generate in the overworld.** Eight more generate in the Nether
-or the End. Under the hand-place-everything rule those eight have to be
-relocated into the map, replaced, or dropped. Of the seven "never" structures, six exist in a loaded mod but cannot generate, because their
+or the End. They stay there: those dimensions are vanilla-generated and audited after
+pregen (amended 2026-09-13). Of the seven "never" structures, six exist in a loaded mod but cannot generate, because their
 biome tags are defined only in the disabled Sinnoh pack or nowhere at all. The seventh,
 Giratina's island, generates only in Legendary Monuments' Distortion World dimension.
 
@@ -251,22 +261,25 @@ in `docs/research/notes/hand-placed-structures.md`.
 | Cobbleverse `gym_map` | yes. It is a vanilla `minecraft:exploration_map` function aimed at `cobbleverse:kanto_brock_gym`. I read the loot table; vanilla skips already-generated chunks by default | **will not find** a hand-placed gym | loot table read; outcome inferred |
 | LumyMon cartography maps, gym locator items, legendary radars | not public: LumyMon is closed source | probably do not find hand-placed builds | not verified |
 | `/locate`, explorer maps, `location_check` advancements (Mega Showdown "find" advancements) | yes | will not match | mechanism verified |
-| Command blocks inside templates (Brock's map guide, Mew's temple, the Necrozma towers) | no, but `enable-command-block=true` is needed. Whether a pasted template powers them is unknown | unknown | partly verified |
+| Command blocks inside templates (Brock's map guide, Mew's temple, the Necrozma towers) | no, but `enable-command-block=true` is needed | Brock's run only from their own trigger, never on placement (EXP-013 C) | observed for Brock |
 
-**What paste methods leave behind:**
-- `/place template`, structure blocks, WorldEdit and Axiom store only blocks, block entities
-  and entities.
-- Whether `/place structure` or `/place jigsaw` save a start is **not verified**.
-- `/place structure` also checks biome and height against the seed's noise terrain, not the
-  painted terrain (Mojira MC-263279, works as intended). On a WorldPainter map it can land at
-  the wrong height or refuse to place.
+**What paste methods leave behind** (EXP-013, run headless on a disposable world):
+- **No structure data from any command.** `/place structure`, `/place jigsaw` and
+  `/place template` all left every chunk with empty `starts` and `References`. `/locate`,
+  `location_check` and the gym map ignored the builds; natural controls passed.
+- **Structure blocks, WorldEdit and Axiom** store only blocks, block entities and entities.
+  They were not run.
+- **`/place structure` misplaces jigsaws on painted terrain.** It placed village houses and
+  Brock's gym at seed-terrain height, 20–54 blocks under the painted surface.
+  `/place jigsaw` dropped the houses. `/place template` at an explicit Y lands where asked.
 
 **Consequences:**
-- Every structure-gated spawn and every locator item in the pack stops working on a
-  hand-placed map, unless an experiment shows a placement method that writes structure data.
-- The alternatives are the ones already on record: Habitat Blocks, position-based spawn
-  conditions, and authored guidance instead of locator maps.
-- EXP-A to EXP-F in the research note settle the open rows.
+- Every structure-gated spawn and every locator item in the pack stops working for
+  overworld builds. Only the Nether and End keep them, because they generate normally.
+- The replacements are Habitat Blocks, non-structure spawn conditions, and authored
+  guidance instead of locator maps.
+- EXP-013 D (spawns) and E (trainer spawning) still need a player; see
+  `STRUCTURE_DECISIONS.md`.
 
 ## c. Classification
 
@@ -299,8 +312,8 @@ in `docs/research/notes/hand-placed-structures.md`.
 - LEGENDARY may be hidden but needs a distance cue.
 - NAMED rewards curiosity.
 - SCATTER fills space.
-- The out-of-overworld PROGRESSION and LEGENDARY structures are the first relocation
-  decisions.
+- The out-of-overworld PROGRESSION and LEGENDARY structures are not placed. They generate in
+  their own dimensions and are audited there.
 
 ## d. The Cobbleverse legendary spawns with undefined biome IDs
 
@@ -325,9 +338,9 @@ them**. What each needs is a way to get the encounter on the map:
 | Glastrier | crown_spire | `crown_spire` statue and anchor | overworld | hand-place the structure |
 | Spectrier | crown_cemetery | `crown_cemetery` statue and anchor | overworld | hand-place the structure |
 | Calyrex | custom_spawn | both crown sites | overworld | hand-place the structures |
-| Moltres | moltres_tower | `legendary/moltres` altar | Nether | relocate the structure into the map |
-| Eternatus | eternatus_cocoon | `eternatus_cocoon` | End | relocate the structure |
-| Wo-Chien, Chien-Pao, Ting-Lu, Chi-Yu | grasswither, icerend, groundblight, firescoruge (*sic*) shrine | four Legendary Monuments shrines | Nether | relocate the structures |
+| Moltres | moltres_tower | `legendary/moltres` altar | Nether | kept in the Nether (vanilla); audit after pregen |
+| Eternatus | eternatus_cocoon | `eternatus_cocoon` | End | kept in the End (vanilla); audit after pregen |
+| Wo-Chien, Chien-Pao, Ting-Lu, Chi-Yu | grasswither, icerend, groundblight, firescoruge (*sic*) shrine | four Legendary Monuments shrines | Nether | kept in the Nether (vanilla); audit after pregen |
 | Uxie, Mesprit, Azelf | custom_spawn | `lake_acuity`, `lake_verity`, `lake_valor` | never (tag only in the Sinnoh pack) | hand-place the structures; the missing tag only blocks worldgen |
 | Heatran | custom_spawn (cannot see sky) | `stark_mountain` Stark Forge | never | hand-place the structure (120·90·137) |
 | Giratina | custom_spawn | `turnback_cave` + `giratina_island` in the Distortion World | never / other dimension | hand-place the cave; the island needs relocating or replacing |
@@ -349,7 +362,7 @@ Rayquaza at 0,70,0 in the End. `end_dimension` schedules it.
 | What the species needs | Count |
 | --- | ---: |
 | An overworld structure the pack already generates | 6 |
-| Relocation from another dimension | 6 |
+| A structure kept in the Nether or End | 6 |
 | A loaded structure that never generates, hand-placed | 5 |
 | No structure | 1 |
 | Only a disabled-pack structure or an authored replacement | 24 |
@@ -368,11 +381,11 @@ generation would have put here.
 
 | Class | One of every ID | One of every family | Every family in every region it fits | Worldgen density |
 | --- | ---: | ---: | ---: | ---: |
-| PROGRESSION (+2 relocated) | 9 | 9 | 9 | ~28 duplicates, meaningless for unique gyms |
-| LEGENDARY (+8 relocated, +5 never-generating that can be hand-placed) | 18 | 18 | 18 | ~1 |
+| PROGRESSION (7 overworld; Blaine and the League stay in their dimensions) | 7 | 7 | 7 | ~28 duplicates, meaningless for unique gyms |
+| LEGENDARY (5 overworld + 5 never-generating that can be hand-placed; 8 stay in the Nether and End) | 10 | 10 | 10 | ~1 |
 | NAMED | 71 | 27 | 27 | ~525 (trial chambers alone ~227, megaroids ~91) |
 | SCATTER | 116 | 21 | **153** | **~3,530** (mineshafts ~1,250, Cobblemon ruins ~990, habitats ~233, ocean ruins ~202, ruined portals ~164, fishing boats ~161, shipwrecks ~154, mega sites ~128) |
-| **Total** | **214** | **75** | **207** | **~4,100** |
+| **Total** (as first reported, with the 10 out-of-overworld sites; 204 / 65 / 197 without them) | **214** | **75** | **207** | **~4,100** |
 
 On top of that sit the worldgen features (ore veins, fossils, apricorn trees, berries,
 plants, waystones), which are not counted here and run to thousands of individual
@@ -409,18 +422,18 @@ placements at vanilla density.
 
 ## For review before Step 2
 
-1. **Out-of-map worldgen.** Stop structure and feature generation outside 0-8191, since two
-   Brock gyms already exist there.
+Where each item stands after the 2026-09-13 decisions:
+
+1. **Out-of-map worldgen.** Decided: a 10240 border. The margin is rewritten by the re-export,
+   which removes the two Brock gyms there (`DIMENSIONS_AND_BORDERS.md`).
 2. **The nine Kanto progression structures.** Reuse, re-skin or retire them against the
-   campaign's own gyms.
-3. **The ten out-of-overworld legendary and progression sites.** Relocate into the map, or
-   drop.
-4. **The 24 legendaries that exist only in disabled packs.** Which to bring in, as donor
-   templates or as authored encounters.
-5. **Scatter density.** Somewhere between about 150 and about 3,500. Habitats and ruins are
-   really spawn and economy systems.
-6. **Worldgen features.** Apricorns, berries, evolution stones, fossils and waystones are
-   absent from the map and not yet in scope.
-7. **Placement method.** Structure-conditioned spawns, `gym_map` and probably every LumyMon
-   locator stop working unless a placement method writes structure data. EXP-A decides it
-   before Step 3 commits to a method.
+   campaign's own gyms. Still open.
+3. **The ten out-of-overworld legendary and progression sites.** Decided: they stay in the
+   Nether and End.
+4. **The disabled-pack legendaries.** Proposed: six, as four authored encounters
+   (`STRUCTURE_DECISIONS.md`).
+5. **Scatter density.** Decided: start at about 150. The distribution is proposed in
+   `STRUCTURE_DECISIONS.md`.
+6. **Worldgen features.** Decided: in scope, ahead of scatter (`WORLDGEN_FEATURES.md`).
+7. **Placement method.** Answered by EXP-013 A: no method writes structure data, so paste
+   templates at an explicit Y and replace structure-keyed systems.

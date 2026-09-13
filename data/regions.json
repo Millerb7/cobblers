@@ -13,7 +13,8 @@
  "enums": {
   "region_class": {
    "terrain": "a region defined by its landform and climate",
-   "anomaly": "an out-of-this-world region; biome, spawns and rendering come from a custom datapack biome"
+   "anomaly": "an out-of-this-world region; biome, spawns and rendering come from a custom datapack biome",
+   "marine": "a sea region defined by depth, temperature and its coast; planned until the seabed pass is built"
   },
   "tier": {
    "hub": "holds flat ground of at least 99 blocks square below y190",
@@ -34,30 +35,948 @@
   "snowline": "y165 in the Northern Range; snow to sea level on the Northern Isles; snow on the Glacier Valley floor and walls as a deliberate glacial exception; no snowline on the Ember Highlands, which are warm and leeward."
  },
  "sea_biomes": {
-  "note": "The sea is not a region. Ocean biomes carry many spawn entries, so it has its own plan.",
+  "note": "The sea is planned as marine regions (marine_regions below), over the 10240-block world with its 1024-block border margin. These shares are the area-weighted totals of those regions.",
+  "world_km2": 104.9,
+  "sea_km2": 58.45,
   "shares": {
-   "minecraft:warm_ocean": 0.275,
-   "minecraft:cold_ocean": 0.204,
-   "minecraft:ocean": 0.138,
-   "minecraft:frozen_ocean": 0.123,
-   "minecraft:lukewarm_ocean": 0.118,
-   "minecraft:deep_lukewarm_ocean": 0.054,
-   "minecraft:deep_ocean": 0.05,
-   "minecraft:deep_cold_ocean": 0.023,
-   "minecraft:deep_frozen_ocean": 0.014
+   "minecraft:deep_lukewarm_ocean": 0.276,
+   "minecraft:deep_frozen_ocean": 0.2,
+   "minecraft:deep_ocean": 0.126,
+   "minecraft:warm_ocean": 0.108,
+   "minecraft:lukewarm_ocean": 0.108,
+   "minecraft:cold_ocean": 0.067,
+   "minecraft:deep_cold_ocean": 0.053,
+   "minecraft:frozen_ocean": 0.045,
+   "minecraft:ocean": 0.018
   },
   "rules": [
-   "deep_frozen_ocean: north of z1300, depth >= 16, >= 400 from land",
-   "frozen_ocean: north of z1300, at least 120 blocks from land",
-   "deep_cold_ocean: north of z2600, depth >= 16, >= 400 from land",
-   "cold_ocean: north of z2600",
-   "warm_ocean: south of z6200, within 260 of land",
-   "deep_lukewarm_ocean: south of z5200, depth >= 16, >= 400 from land",
-   "lukewarm_ocean: south of z5200",
-   "deep_ocean: depth >= 16, >= 400 from land",
-   "ocean: everything else"
-  ]
+   "see marine_regions[].biomes.rules"
+  ],
+  "previous_plan": {
+   "shares": {
+    "minecraft:warm_ocean": 0.275,
+    "minecraft:cold_ocean": 0.204,
+    "minecraft:ocean": 0.138,
+    "minecraft:frozen_ocean": 0.123,
+    "minecraft:lukewarm_ocean": 0.118,
+    "minecraft:deep_lukewarm_ocean": 0.054,
+    "minecraft:deep_ocean": 0.05,
+    "minecraft:deep_cold_ocean": 0.023,
+    "minecraft:deep_frozen_ocean": 0.014
+   },
+   "rules": [
+    "deep_frozen_ocean: north of z1300, depth >= 16, >= 400 from land",
+    "frozen_ocean: north of z1300, at least 120 blocks from land",
+    "deep_cold_ocean: north of z2600, depth >= 16, >= 400 from land",
+    "cold_ocean: north of z2600",
+    "warm_ocean: south of z6200, within 260 of land",
+    "deep_lukewarm_ocean: south of z5200, depth >= 16, >= 400 from land",
+    "lukewarm_ocean: south of z5200",
+    "deep_ocean: depth >= 16, >= 400 from land",
+    "ocean: everything else"
+   ],
+   "note": "Superseded 2026-09-13: depth rules assumed the y40-floored import and no border margin."
+  }
  },
+ "marine_regions": [
+  {
+   "id": "frostwater_shelf",
+   "display_name": "The Frostwater Shelf",
+   "region_class": "marine",
+   "tier": "wilderness",
+   "status": "planned",
+   "character": "A broad cold shelf under the Northern Range and around the Northern Isles: kelp forest in the cold water, pack ice over the frozen water north of z1300, and a shelf break into dark deep water.",
+   "extent": "Sea north of z2600, and the border margin along the north edge.",
+   "bounds": {
+    "min_x": -512,
+    "min_z": -512,
+    "max_x": 8703,
+    "max_z": 2599
+   },
+   "climate": {
+    "exposure": "windward",
+    "temperature": "cold",
+    "moisture": "wet"
+   },
+   "measured": {
+    "area_km2": 11.99,
+    "inside_landmass_box_km2": 7.53,
+    "border_margin_km2": 4.46,
+    "seabed_with_extended_import": {
+     "p10": 11.5,
+     "median": 23.2,
+     "p90": 53.3
+    },
+    "seabed_note": "Seabed Y if the heightmap is re-imported with low_in 0, low_out 10.09 (identical land). The current import clamps every sea column below f=0.157 to y40."
+   },
+   "seabed_plan": {
+    "shelf_width_blocks": 240,
+    "profile": "shelf y60 to y46 across the shelf width; shelf break to y28 over 80 blocks; slope to y18 over 400 blocks; basin to y10 over 600 blocks",
+    "planned_seabed_y": {
+     "p10": 20.4,
+     "median": 42.4,
+     "p90": 57.2
+    }
+   },
+   "biomes": {
+    "shares": {
+     "minecraft:deep_frozen_ocean": 0.369,
+     "minecraft:cold_ocean": 0.327,
+     "minecraft:frozen_ocean": 0.219,
+     "minecraft:deep_cold_ocean": 0.085
+    },
+    "rules": [
+     "deep_frozen_ocean: north of z1300 where the planned seabed is at or below y36",
+     "frozen_ocean: north of z1300, 120 or more blocks from land, seabed above y36",
+     "deep_cold_ocean: z1300-2600 where the planned seabed is at or below y36",
+     "cold_ocean: everything else in the zone"
+    ]
+   },
+   "flora": [
+    "kelp forests on cold_ocean shelf and slope (y28-58): the only large kelp in the north",
+    "seagrass on cold_ocean shelf; none under frozen_ocean",
+    "no coral: vanilla places coral only in warm_ocean"
+   ],
+   "content": [
+    "drifting iceberg habitats (Cobblemon habitat blocks, the cold-water spawn points)",
+    "cold ocean ruins on the slope",
+    "a shipwreck cove on the shelf break (cold_ocean is its biome)"
+   ],
+   "polygons": [
+    [
+     [
+      -512,
+      -512
+     ],
+     [
+      8696,
+      -512
+     ],
+     [
+      8184,
+      0
+     ],
+     [
+      8184,
+      2592
+     ],
+     [
+      6776,
+      2592
+     ],
+     [
+      6640,
+      2360
+     ],
+     [
+      6296,
+      2136
+     ],
+     [
+      6032,
+      1816
+     ],
+     [
+      5640,
+      1600
+     ],
+     [
+      5328,
+      1296
+     ],
+     [
+      5152,
+      1192
+     ],
+     [
+      4512,
+      992
+     ],
+     [
+      3832,
+      504
+     ],
+     [
+      3248,
+      432
+     ],
+     [
+      2776,
+      512
+     ],
+     [
+      2432,
+      400
+     ],
+     [
+      1648,
+      488
+     ],
+     [
+      1408,
+      472
+     ],
+     [
+      1432,
+      176
+     ],
+     [
+      1240,
+      -8
+     ],
+     [
+      456,
+      -8
+     ],
+     [
+      280,
+      80
+     ],
+     [
+      96,
+      320
+     ],
+     [
+      8,
+      552
+     ],
+     [
+      8,
+      744
+     ],
+     [
+      80,
+      888
+     ],
+     [
+      232,
+      1008
+     ],
+     [
+      584,
+      976
+     ],
+     [
+      1016,
+      680
+     ],
+     [
+      1096,
+      688
+     ],
+     [
+      1016,
+      1016
+     ],
+     [
+      752,
+      1368
+     ],
+     [
+      688,
+      1768
+     ],
+     [
+      392,
+      2240
+     ],
+     [
+      392,
+      2392
+     ],
+     [
+      472,
+      2592
+     ],
+     [
+      0,
+      2592
+     ],
+     [
+      0,
+      0
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "windward_deep",
+   "display_name": "The Windward Deep",
+   "region_class": "marine",
+   "tier": "wilderness",
+   "status": "planned",
+   "character": "The exposed west. A narrow 160-block shelf under the Windward Coast drops fast into deep water, so real depth is closest to shore here.",
+   "extent": "Sea west of x4096 between z2600 and z5200, and the border margin along the west edge.",
+   "bounds": {
+    "min_x": -512,
+    "min_z": -504,
+    "max_x": 991,
+    "max_z": 8695
+   },
+   "climate": {
+    "exposure": "windward",
+    "temperature": "temperate",
+    "moisture": "wet"
+   },
+   "measured": {
+    "area_km2": 5.8,
+    "inside_landmass_box_km2": 1.35,
+    "border_margin_km2": 4.45,
+    "seabed_with_extended_import": {
+     "p10": 11.9,
+     "median": 18.5,
+     "p90": 48.4
+    },
+    "seabed_note": "Seabed Y if the heightmap is re-imported with low_in 0, low_out 10.09 (identical land). The current import clamps every sea column below f=0.157 to y40."
+   },
+   "seabed_plan": {
+    "shelf_width_blocks": 160,
+    "profile": "shelf y60 to y46 across the shelf width; shelf break to y28 over 80 blocks; slope to y18 over 400 blocks; basin to y10 over 600 blocks",
+    "planned_seabed_y": {
+     "p10": 13.9,
+     "median": 21.8,
+     "p90": 48.8
+    }
+   },
+   "biomes": {
+    "shares": {
+     "minecraft:deep_ocean": 0.823,
+     "minecraft:ocean": 0.177
+    },
+    "rules": [
+     "deep_ocean: planned seabed at or below y36",
+     "ocean: the narrow shelf"
+    ]
+   },
+   "flora": [
+    "kelp on the shelf and upper slope",
+    "seagrass on the shelf",
+    "no coral"
+   ],
+   "content": [
+    "the ocean monument (deep_ocean is its biome): the zone's named site",
+    "shipwrecks on the slope below the coastal ridge"
+   ],
+   "polygons": [
+    [
+     [
+      -512,
+      -504
+     ],
+     [
+      -8,
+      0
+     ],
+     [
+      -8,
+      2592
+     ],
+     [
+      480,
+      2600
+     ],
+     [
+      496,
+      2640
+     ],
+     [
+      520,
+      2904
+     ],
+     [
+      384,
+      3184
+     ],
+     [
+      344,
+      3448
+     ],
+     [
+      400,
+      3904
+     ],
+     [
+      512,
+      4280
+     ],
+     [
+      504,
+      4528
+     ],
+     [
+      624,
+      4792
+     ],
+     [
+      984,
+      5192
+     ],
+     [
+      -8,
+      5200
+     ],
+     [
+      -8,
+      8184
+     ],
+     [
+      -512,
+      8688
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "eastern_reach",
+   "display_name": "The Eastern Reach",
+   "region_class": "marine",
+   "tier": "route",
+   "status": "planned",
+   "character": "Lukewarm water off the Eastern Downs, a 320-block shelf that carries the sea lane south towards the isles, with a deep basin off the shelf.",
+   "extent": "Sea east of x4096 between z2600 and z4456-5200, and the border margin along the east edge.",
+   "bounds": {
+    "min_x": 6776,
+    "min_z": -504,
+    "max_x": 8703,
+    "max_z": 8695
+   },
+   "climate": {
+    "exposure": "maritime",
+    "temperature": "temperate",
+    "moisture": "temperate"
+   },
+   "measured": {
+    "area_km2": 6.53,
+    "inside_landmass_box_km2": 2.08,
+    "border_margin_km2": 4.45,
+    "seabed_with_extended_import": {
+     "p10": 10.1,
+     "median": 12.5,
+     "p90": 42.4
+    },
+    "seabed_note": "Seabed Y if the heightmap is re-imported with low_in 0, low_out 10.09 (identical land). The current import clamps every sea column below f=0.157 to y40."
+   },
+   "seabed_plan": {
+    "shelf_width_blocks": 320,
+    "profile": "shelf y60 to y46 across the shelf width; shelf break to y28 over 80 blocks; slope to y18 over 400 blocks; basin to y10 over 600 blocks",
+    "planned_seabed_y": {
+     "p10": 16.2,
+     "median": 26.2,
+     "p90": 53.7
+    }
+   },
+   "biomes": {
+    "shares": {
+     "minecraft:deep_lukewarm_ocean": 0.64,
+     "minecraft:lukewarm_ocean": 0.36
+    },
+    "rules": [
+     "deep_lukewarm_ocean: planned seabed at or below y36",
+     "lukewarm_ocean: the shelf"
+    ]
+   },
+   "flora": [
+    "kelp and seagrass on the shelf",
+    "no coral (lukewarm_ocean does not grow it in vanilla)"
+   ],
+   "content": [
+    "Misty's gym if the Kanto gyms are reused: its biome is lukewarm_ocean, and it belongs on the shelf, not in deep water, because it is gym 2",
+    "fishing-boat wrecks and warm ocean ruins on the shelf"
+   ],
+   "polygons": [
+    [
+     [
+      8696,
+      -504
+     ],
+     [
+      8696,
+      8688
+     ],
+     [
+      8192,
+      8184
+     ],
+     [
+      8192,
+      4456
+     ],
+     [
+      7112,
+      4448
+     ],
+     [
+      7128,
+      4256
+     ],
+     [
+      6920,
+      3960
+     ],
+     [
+      7208,
+      3752
+     ],
+     [
+      7272,
+      3528
+     ],
+     [
+      7176,
+      3248
+     ],
+     [
+      6976,
+      3048
+     ],
+     [
+      6776,
+      2600
+     ],
+     [
+      8192,
+      2592
+     ],
+     [
+      8192,
+      0
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "southern_shallows",
+   "display_name": "The Southern Shallows",
+   "region_class": "marine",
+   "tier": "route",
+   "status": "planned",
+   "character": "The warm south: a 400-block shelf around the Southern Isles, Strand Flats and Jungle Isle with coral reefs close in, lukewarm water further out, and a deep basin beyond.",
+   "extent": "Sea south of z5200, sea east of x6000 south of z4456, and the border margin along the south edge.",
+   "bounds": {
+    "min_x": -512,
+    "min_z": 4456,
+    "max_x": 8703,
+    "max_z": 8703
+   },
+   "climate": {
+    "exposure": "maritime",
+    "temperature": "warm",
+    "moisture": "wet"
+   },
+   "measured": {
+    "area_km2": 14.2,
+    "inside_landmass_box_km2": 9.74,
+    "border_margin_km2": 4.46,
+    "seabed_with_extended_import": {
+     "p10": 10.1,
+     "median": 23.5,
+     "p90": 53.3
+    },
+    "seabed_note": "Seabed Y if the heightmap is re-imported with low_in 0, low_out 10.09 (identical land). The current import clamps every sea column below f=0.157 to y40."
+   },
+   "seabed_plan": {
+    "shelf_width_blocks": 400,
+    "profile": "shelf y60 to y46 across the shelf width; shelf break to y28 over 80 blocks; slope to y18 over 400 blocks; basin to y10 over 600 blocks",
+    "planned_seabed_y": {
+     "p10": 23.4,
+     "median": 51.0,
+     "p90": 58.3
+    }
+   },
+   "biomes": {
+    "shares": {
+     "minecraft:warm_ocean": 0.445,
+     "minecraft:lukewarm_ocean": 0.278,
+     "minecraft:deep_lukewarm_ocean": 0.277
+    },
+    "rules": [
+     "deep_lukewarm_ocean: planned seabed at or below y36",
+     "warm_ocean: shelf within 220 blocks of land",
+     "lukewarm_ocean: the rest of the shelf"
+    ]
+   },
+   "flora": [
+    "coral reefs on warm_ocean shelf (y46-60): the only coral in the world, and what Corsola and Cursola need nearby",
+    "sea pickles on the reefs",
+    "seagrass across the shelf; no kelp in warm_ocean"
+   ],
+   "content": [
+    "reef habitats and warm ocean ruins",
+    "buried treasure on sandbars",
+    "beached shipwrecks"
+   ],
+   "polygons": [
+    [
+     [
+      7112,
+      4456
+     ],
+     [
+      7840,
+      4456
+     ],
+     [
+      7672,
+      4568
+     ],
+     [
+      7624,
+      4696
+     ],
+     [
+      7672,
+      5216
+     ],
+     [
+      7544,
+      5680
+     ],
+     [
+      7528,
+      6264
+     ],
+     [
+      7360,
+      6576
+     ],
+     [
+      7208,
+      7112
+     ],
+     [
+      6872,
+      7488
+     ],
+     [
+      6824,
+      7640
+     ],
+     [
+      6840,
+      7824
+     ],
+     [
+      6928,
+      7936
+     ],
+     [
+      7072,
+      8000
+     ],
+     [
+      7384,
+      8024
+     ],
+     [
+      7608,
+      7984
+     ],
+     [
+      7816,
+      7848
+     ],
+     [
+      8032,
+      7472
+     ],
+     [
+      8184,
+      6408
+     ],
+     [
+      8152,
+      5032
+     ],
+     [
+      8072,
+      4576
+     ],
+     [
+      7944,
+      4456
+     ],
+     [
+      8184,
+      4456
+     ],
+     [
+      8184,
+      8184
+     ],
+     [
+      8696,
+      8696
+     ],
+     [
+      -512,
+      8696
+     ],
+     [
+      0,
+      8184
+     ],
+     [
+      0,
+      5904
+     ],
+     [
+      144,
+      6088
+     ],
+     [
+      320,
+      6200
+     ],
+     [
+      640,
+      6256
+     ],
+     [
+      752,
+      6224
+     ],
+     [
+      896,
+      6096
+     ],
+     [
+      984,
+      5880
+     ],
+     [
+      952,
+      5584
+     ],
+     [
+      736,
+      5296
+     ],
+     [
+      552,
+      5208
+     ],
+     [
+      328,
+      5208
+     ],
+     [
+      0,
+      5448
+     ],
+     [
+      0,
+      5200
+     ],
+     [
+      984,
+      5200
+     ],
+     [
+      1096,
+      5384
+     ],
+     [
+      1848,
+      6080
+     ],
+     [
+      2200,
+      6224
+     ],
+     [
+      2392,
+      6416
+     ],
+     [
+      3144,
+      6816
+     ],
+     [
+      3568,
+      6824
+     ],
+     [
+      3816,
+      6776
+     ],
+     [
+      4144,
+      6560
+     ],
+     [
+      4424,
+      6560
+     ],
+     [
+      4592,
+      6624
+     ],
+     [
+      5376,
+      6560
+     ],
+     [
+      5920,
+      6760
+     ],
+     [
+      6768,
+      6880
+     ],
+     [
+      6944,
+      6808
+     ],
+     [
+      7272,
+      6512
+     ],
+     [
+      7384,
+      6104
+     ],
+     [
+      7392,
+      5520
+     ],
+     [
+      7344,
+      5280
+     ],
+     [
+      7008,
+      4712
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "the_outer_deep",
+   "display_name": "The Outer Deep",
+   "region_class": "marine",
+   "tier": "destination",
+   "status": "planned",
+   "character": "The band 512 to 1024 blocks outside the landmass, to the world border: an abyssal plain at about y8, broken by seamounts and one trench. Nothing is visible from the surface, and the border wall is the end of the world.",
+   "extent": "Every block 512 or more outside the 0-8191 box, to the border at -1024 and 9215.",
+   "bounds": {
+    "min_x": -1024,
+    "min_z": -1024,
+    "max_x": 9215,
+    "max_z": 9215
+   },
+   "climate": {
+    "exposure": "open",
+    "temperature": "graded north to south",
+    "moisture": "open sea"
+   },
+   "measured": {
+    "area_km2": 19.92,
+    "inside_landmass_box_km2": 0.0,
+    "border_margin_km2": 19.92,
+    "seabed_with_extended_import": null,
+    "seabed_note": "Seabed Y if the heightmap is re-imported with low_in 0, low_out 10.09 (identical land). The current import clamps every sea column below f=0.157 to y40."
+   },
+   "seabed_plan": {
+    "shelf_width_blocks": 160,
+    "profile": "shelf y60 to y46 across the shelf width; shelf break to y28 over 80 blocks; slope to y18 over 400 blocks; basin to y10 over 600 blocks; abyssal plain y8",
+    "planned_seabed_y": {
+     "p10": 8.0,
+     "median": 8.0,
+     "p90": 8.0
+    }
+   },
+   "biomes": {
+    "shares": {
+     "minecraft:deep_lukewarm_ocean": 0.402,
+     "minecraft:deep_frozen_ocean": 0.366,
+     "minecraft:deep_ocean": 0.129,
+     "minecraft:deep_cold_ocean": 0.103
+    },
+    "rules": [
+     "deep_frozen_ocean: z < 1500",
+     "deep_cold_ocean: z 1500-3500",
+     "deep_ocean: z 3500-6000",
+     "deep_lukewarm_ocean: z >= 6000"
+    ]
+   },
+   "flora": [
+    "none on the abyssal plain; kelp on seamount summits above y40"
+   ],
+   "content": [
+    "the authored trench set piece (see OCEAN.md)",
+    "seamount sites that break the surface light",
+    "the deepest shipwreck cove"
+   ],
+   "geometry": {
+    "kind": "ring",
+    "outer": [
+     -1024,
+     -1024,
+     9215,
+     9215
+    ],
+    "inner": [
+     -512,
+     -512,
+     8703,
+     8703
+    ],
+    "note": "Rectangle ring, block coordinates [min_x, min_z, max_x, max_z]; open sea only"
+   },
+   "features": {
+    "trench_axis": [
+     [
+      9000,
+      5200
+     ],
+     [
+      8600,
+      6200
+     ],
+     [
+      8200,
+      7400
+     ],
+     [
+      7400,
+      8400
+     ],
+     [
+      6200,
+      8900
+     ]
+    ],
+    "trench_note": "South-east margin, following the border; floor planned at y-20 to y-40 in deepslate",
+    "seamounts": [
+     {
+      "x": -600,
+      "z": 2200,
+      "summit_y": 52
+     },
+     {
+      "x": -500,
+      "z": 6000,
+      "summit_y": 48
+     },
+     {
+      "x": 4200,
+      "z": -700,
+      "summit_y": 50
+     },
+     {
+      "x": 9000,
+      "z": 1800,
+      "summit_y": 46
+     },
+     {
+      "x": 1500,
+      "z": 8900,
+      "summit_y": 54
+     }
+    ]
+   }
+  }
+ ],
  "underground_biomes": [
   {
    "biome": "minecraft:dripstone_caves",

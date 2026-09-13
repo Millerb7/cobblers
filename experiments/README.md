@@ -17,6 +17,8 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | EXP-005 | Can we build a puzzle dungeon with persistent state? | stub |
 | EXP-006 | Can we place a static, authored encounter? | stub |
 | EXP-007 | Can we track story progression? | stub |
+| EXP-013 | Does any in-game placement method give hand-placed builds structure data, and what reads it? | run headless: no method writes structure data; spawn and trainer checks (D, E) need a player |
+| EXP-014 | Can WorldPainter place Cobblemon ores, apricorn trees and berries? | run headless: ores via Underground Pockets (not Resources), objects via Sponge v2/.nbt; in-game load check pending |
 
 ## Template
 
