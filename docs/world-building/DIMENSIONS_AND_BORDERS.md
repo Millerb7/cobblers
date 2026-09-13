@@ -1,6 +1,8 @@
 # Borders, trim, and the Nether and End
 
-**Status: procedures and tooling for review. No world has been touched.**
+**Status: the overworld border is applied in the re-exported world `cobblers-10240`
+(`REEXPORT.md`).** The trim became unnecessary: the export is a full overwrite with nothing
+outside the canvas. Nether and End pregen and audit are still procedures only.
 
 **Decisions on record (2026-09-13):**
 - **Overworld border:** 10240 × 10240, centred so the 8192 landmass has 1024 blocks of

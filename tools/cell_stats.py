@@ -209,6 +209,8 @@ def main(argv=None):
                    help="block size of the coast-distance grid (default 8)")
     p.add_argument("--landmarks", default=str(LM.DEFAULT_LANDMARKS),
                    help="landmarks whose water policy is honoured (default data/landmarks.json)")
+    p.add_argument("--write-cells", default=None,
+                   help="also write the terrain blocks into this cells file (data/cells.json), keeping authored fields")
     p.add_argument("--no-landmarks", action="store_true",
                    help="ignore landmarks: every enclosed hollow below sea level is water")
     a = p.parse_args(argv)
@@ -245,7 +247,32 @@ def main(argv=None):
     out = Path(a.out) if a.out else T.ROOT / "derived" / "cells" / "cell_stats.json"
     T.write_json(out, payload)
     print("%d cells -> %s" % (len(cells), out))
+    if a.write_cells:
+        write_cells(Path(a.write_cells), cells, world)
+        print("terrain blocks written to %s" % a.write_cells)
     return 0
+
+
+def write_cells(path, cells, world):
+    """Write measured terrain into data/cells.json, keeping any authored fields already there."""
+    import json
+    import validate_data as V
+    existing = {}
+    doc = {"schema": "cobblers.cells/1", "status": "draft",
+           "note": "One record per planning cell. terrain is measured by tools/cell_stats.py --write-cells and "
+                   "re-checked by tools/validate_data.py; every other field is authored.",
+           "cells": []}
+    if path.is_file():
+        old = json.loads(path.read_text(encoding="utf-8"))
+        existing = {c["id"]: c for c in old.get("cells") or []}
+        doc.update({k: v for k, v in old.items() if k != "cells"})
+    digest = V.import_digest(world)
+    for c in cells:
+        rec = dict(existing.get(c["id"], {}))
+        rec.update({"id": c["id"], "row": c["row"], "column": c["column"], "bounds": c["bounds"]})
+        rec["terrain"] = dict(c["terrain"], computed_from_import=digest)
+        doc["cells"].append(rec)
+    path.write_text(json.dumps(doc, indent=1) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

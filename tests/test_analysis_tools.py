@@ -261,8 +261,9 @@ def test_explicit_heightmap_accepts_the_verified_file():
     (sightlines, ["--from", "1,1", "--target", "t:2,2"]),
     (slope_masks, []),
 ])
-def test_every_tool_refuses_the_real_blocked_heightmap(mod, args, tmp_path, capsys):
-    """data/world.json is blocked_pending_reexport; no tool may produce output."""
+def test_every_tool_refuses_the_real_blocked_heightmap(mod, args, tmp_path, capsys, monkeypatch):
+    """Without a source root the real heightmap cannot be verified; no tool may produce output."""
+    monkeypatch.delenv("COBBLERS_SOURCE_ROOT", raising=False)
     with pytest.raises(SystemExit) as exc:
         mod.main(args + ["--out", str(tmp_path / "nope")])
     assert "terrain unavailable" in str(exc.value)

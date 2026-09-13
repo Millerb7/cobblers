@@ -11,9 +11,9 @@ matters.
 
 | File | Holds | State |
 | --- | --- | --- |
-| `world.json` | The single config: heightmap path and hash, import mapping, vertical band, grid | present and verified: origin 0,0, heightmap pinned by sha256 |
+| `world.json` | The single config: heightmap path and hash, import mapping, vertical band, grid, and `export` (WorldPainter levels, canvas, border, spawn, seed digest) | present and verified: origin 0,0, heightmap pinned by sha256; exported as `cobblers-10240` (`docs/world-building/REEXPORT.md`) |
 | `regions.json` | Terrain-bounded regions: class, tier, status, character, biomes by band, underground biomes, tags, overlays, coverage, polygons. `marine_regions` holds the five planned sea regions (seabed profile, biome bands, flora, content) | **draft**, schema `cobblers.regions/2` proposed and awaiting approval. Rationale in `docs/world-building/REGIONS.md` and `OCEAN.md`. `marine_regions` is not yet checked by the validator |
-| `cells.json` | The 8×8 planning grid and measured terrain per cell | not written yet |
+| `cells.json` | The 8×8 planning grid and measured terrain per cell | **draft**: terrain blocks written by `tools/cell_stats.py --write-cells`, tied to the heightmap sha256 and import digest, recomputed by the validator; authored fields (role, landmarks) not yet written |
 | `landmarks.json` | Named features from the annotated heightmap: outlines, axes, anchors, `status` (built / partial / planned), water policy, carve and anomaly specs | **draft**: rift, glacier corridor, meltwater lake, moraine, meltwater river, range, cones. Validated for required fields and enums |
 | `checks/sightlines.json` | Sightline sets run against landmarks by `tools/sightlines.py --plan` | present; results in `docs/world-building/SIGHTLINES.md` |
 | `events.json` | Authored event definitions with anchors and terrain requirements | not written yet |
