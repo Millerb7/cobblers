@@ -11,6 +11,16 @@ the overworld generator is `minecraft:noise`.
 **Vanilla 1.21.1 source was not read.** No public decompiled `PlaceCommand` body was found. So every
 answer about what `/place` writes to chunk data is NOT VERIFIED until EXP-A below is run.
 
+> **Update 2026-09-13: EXP-A, B, C and F have been run** (`experiments/EXP-013-hand-placed-structures/`).
+> - **A:** no `/place` variant wrote structure starts or References; `/locate` and `location_check`
+>   ignored the builds.
+> - **B:** `/place structure` buried jigsaw pieces at seed-terrain height.
+> - **C:** template command blocks run only from their own trigger.
+> - **F:** the gym map never found a pasted gym.
+> - **D and E** need a player.
+>
+> The verdicts below are the research as written before the run.
+
 ## Verdicts
 
 | # | Question | Answer | Source | Status |

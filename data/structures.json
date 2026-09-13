@@ -16,7 +16,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:dark",
    "plan_regions_with_a_valid_biome": [
     "southern_isles",
@@ -93,7 +93,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:dark",
    "plan_regions_with_a_valid_biome": [
     "southern_isles",
@@ -170,7 +170,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:villages",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -245,7 +245,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:villages",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -322,7 +322,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:villages",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -398,7 +398,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:fighting",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -474,7 +474,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:fighting",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -550,7 +550,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:fighting",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -626,7 +626,7 @@
    "class_reason": "witch hut variant generated with the village set; a small repeatable site",
    "source": "cobblemon-additions-4.1.6.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#bca:special_structures/witch_hut",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin"
@@ -680,7 +680,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_beach",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -726,7 +726,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_deep_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -768,7 +768,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_warm_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -810,7 +810,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_badlands",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -852,7 +852,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_temperate",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -899,7 +899,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_highlands",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs"
@@ -941,7 +941,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_savanna",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -983,7 +983,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_freezing",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -1028,7 +1028,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_lukewarm_and_temperate_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -1070,7 +1070,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -1112,7 +1112,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -1154,7 +1154,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_cold_and_temperate_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -1196,7 +1196,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_magical",
    "plan_regions_with_a_valid_biome": [
     "windward_coast"
@@ -1238,7 +1238,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_cherry_blossom",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin"
@@ -1280,7 +1280,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_temperate",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -1327,7 +1327,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_mushroom",
    "plan_regions_with_a_valid_biome": [
     "southern_isles",
@@ -1370,7 +1370,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -1413,7 +1413,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -1456,7 +1456,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -1499,7 +1499,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_badlands",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -1541,7 +1541,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_mountain",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -1589,7 +1589,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_grassland",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -1633,7 +1633,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_grassland",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -1677,7 +1677,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_floral",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -1722,7 +1722,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -1766,7 +1766,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -1812,7 +1812,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_grassland",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -1856,7 +1856,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#c:is_snowy_plains",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -1898,7 +1898,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#c:is_snowy_plains",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -1940,7 +1940,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#c:is_snowy_plains",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -1982,7 +1982,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_snowy_flat",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -2024,7 +2024,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_grassland",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -2068,7 +2068,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_savanna",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -2110,7 +2110,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -2153,7 +2153,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -2196,7 +2196,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_highlands",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs"
@@ -2284,7 +2284,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_cave",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs (underground)",
@@ -2338,7 +2338,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_floral",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -2427,7 +2427,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -2511,7 +2511,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -2595,7 +2595,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -2683,7 +2683,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -2767,7 +2767,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -2851,7 +2851,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -2939,7 +2939,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:ice_spikes",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -3027,7 +3027,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_snowy",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -3113,7 +3113,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_snowy_taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -3198,7 +3198,7 @@
    "class_reason": "henge with its own spawn entries",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_savanna",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -3285,7 +3285,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -3370,7 +3370,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -3460,7 +3460,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -3550,7 +3550,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_swamp",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin",
@@ -3635,7 +3635,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:dark_forest",
    "plan_regions_with_a_valid_biome": [
     "windward_coast"
@@ -3723,7 +3723,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -3812,7 +3812,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_lush",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle (underground)",
@@ -3855,7 +3855,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_swamp",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin",
@@ -3940,7 +3940,7 @@
    "class_reason": "henge with its own spawn entries",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -4030,7 +4030,7 @@
    "class_reason": "henge with its own spawn entries",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_plains",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -4119,7 +4119,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:deep_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -4207,7 +4207,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/red_sand",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -4291,7 +4291,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_badlands",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -4379,7 +4379,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_temperate",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -4468,7 +4468,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_forest",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -4556,7 +4556,7 @@
    "class_reason": "common, repeatable site",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:has_block/sand",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -4640,7 +4640,7 @@
    "class_reason": "large cove with trial spawners and a starter-move treasure chest (Frenzy Plant, Blast Burn, Hydro Cannon)",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_cold_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -4771,7 +4771,7 @@
    "class_reason": "large cove with trial spawners and a starter-move treasure chest (Frenzy Plant, Blast Burn, Hydro Cannon)",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_cold_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -4843,7 +4843,7 @@
    "class_reason": "large cove with trial spawners and a starter-move treasure chest (Frenzy Plant, Blast Burn, Hydro Cannon)",
    "source": "Cobblemon-fabric-1.8.0+1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_cold_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -4992,7 +4992,7 @@
    "class_reason": "unique Kanto set piece with trainers (Pallet house; Rocket tower with 8 trainer spawners), not on the badge path",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:plains",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs"
@@ -5038,7 +5038,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "nether",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": [
     "minecraft:crimson_forest"
    ],
@@ -5089,7 +5089,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:plains",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs"
@@ -5141,7 +5141,7 @@
    "class_reason": "Calyrex statue, summon trigger and anchor; awakened with a carrot crop grown on site",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:old_growth_pine_taiga",
    "plan_regions_with_a_valid_biome": [
     "rim_uplands"
@@ -5205,7 +5205,7 @@
    "class_reason": "Calyrex statue, summon trigger and anchor; awakened with a carrot crop grown on site",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:snowy_plains",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -5255,7 +5255,7 @@
    "class_reason": "command blocks spawn Necrozma at the top of a 90-block tower",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "end",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "end_highlands",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "46x90x45",
@@ -5307,7 +5307,7 @@
    "class_reason": "command blocks spawn Necrozma at the top of a 90-block tower",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "end",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "end_highlands",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "46x90x45",
@@ -5359,7 +5359,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:flower_forest",
    "plan_regions_with_a_valid_biome": [
     "lakeshore_vale"
@@ -5410,7 +5410,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ancient_city",
    "plan_regions_with_a_valid_biome": [
     "northern_range (underground)"
@@ -5463,7 +5463,7 @@
    "class_reason": "Kanto League: Elite Four and Champion trainer spawners, advancement-gated elevator",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "end",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "end_highlands",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "111x159x120",
@@ -5516,7 +5516,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:swamp",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin"
@@ -5568,7 +5568,7 @@
    "class_reason": "LumyMon altar or shrine summons the legendary; located by a LumyMon radar",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:snowy_plains",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -5610,7 +5610,7 @@
    "class_reason": "LumyMon altar or shrine summons the legendary; located by a LumyMon radar",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "nether",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": [
     "minecraft:nether_wastes"
    ],
@@ -5652,7 +5652,7 @@
    "class_reason": "LumyMon altar or shrine summons the legendary; located by a LumyMon radar",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:stony_shore",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -5696,7 +5696,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:savanna_plateau",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -5747,7 +5747,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:lukewarm_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -5798,7 +5798,7 @@
    "class_reason": "LumyMon altar or shrine summons the legendary; located by a LumyMon radar",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle"
@@ -5850,7 +5850,7 @@
    "class_reason": "Kanto gym: RCT gym leader trainer spawner, battle positions and healer; the RCT Kanto series and CobbleverseBadges key off the leader",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:dark_forest",
    "plan_regions_with_a_valid_biome": [
     "windward_coast"
@@ -5899,7 +5899,7 @@
    "class_reason": "unique Kanto set piece with trainers (Pallet house; Rocket tower with 8 trainer spawners), not on the badge path",
    "source": "COBBLEVERSE-DP-v31.zip",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "minecraft:badlands",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -5955,7 +5955,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "unresolved",
-   "disposition": "never generates in this pack (its biome requirement resolves to no loaded biome); valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "never generates in this pack (biome requirement matches no loaded biome); hand-place in the overworld only if chosen",
    "biomes": "#legendarymonuments:has_structure/distortion_portal",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "5x2x5",
@@ -5991,7 +5991,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "end",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": [
     "minecraft:end_highlands",
     "minecraft:end_midlands"
@@ -6034,7 +6034,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "nether",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "minecraft:nether_wastes",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "21x15x27",
@@ -6074,7 +6074,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "unresolved",
-   "disposition": "never generates in this pack (its biome requirement resolves to no loaded biome); valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: generates in the Distortion World dimension; audit with that dimension",
    "biomes": "legendarymonuments:distortion_world_biome",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "42x43x38 start, jigsaw depth 7, up to 232 wide",
@@ -6117,7 +6117,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "nether",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "minecraft:warped_forest",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "21x22x27",
@@ -6157,7 +6157,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "nether",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "minecraft:soul_sand_valley",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "21x18x27",
@@ -6197,7 +6197,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "nether",
-   "disposition": "valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "minecraft:basalt_deltas",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "21x16x33",
@@ -6237,7 +6237,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "unresolved",
-   "disposition": "never generates in this pack (its biome requirement resolves to no loaded biome); valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "never generates in this pack (biome requirement matches no loaded biome); hand-place in the overworld only if chosen",
    "biomes": "#cobbleverse:has_structure/lake_acuity",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "37x48x37 start, jigsaw depth 7, up to 232 wide",
@@ -6279,7 +6279,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "unresolved",
-   "disposition": "never generates in this pack (its biome requirement resolves to no loaded biome); valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "never generates in this pack (biome requirement matches no loaded biome); hand-place in the overworld only if chosen",
    "biomes": "#cobbleverse:has_structure/lake_valor",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "37x48x37 start, jigsaw depth 7, up to 232 wide",
@@ -6321,7 +6321,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "unresolved",
-   "disposition": "never generates in this pack (its biome requirement resolves to no loaded biome); valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "never generates in this pack (biome requirement matches no loaded biome); hand-place in the overworld only if chosen",
    "biomes": "#cobbleverse:has_structure/lake_verity",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "37x48x37 start, jigsaw depth 7, up to 232 wide",
@@ -6363,7 +6363,7 @@
    "class_reason": "roadside merchant stand",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -6401,7 +6401,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "unresolved",
-   "disposition": "never generates in this pack (its biome requirement resolves to no loaded biome); valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "never generates in this pack (biome requirement matches no loaded biome); hand-place in the overworld only if chosen",
    "biomes": "#cobbleverse:has_structure/stark_mountain",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "120x90x137",
@@ -6449,7 +6449,7 @@
    "class_reason": "Legendary Monuments site: altar, shrine blocks or Pokemon trial spawners",
    "source": "LegendaryMonuments-Cobbleverse.jar",
    "dimension": "unresolved",
-   "disposition": "never generates in this pack (its biome requirement resolves to no loaded biome); valuable but generated outside the overworld landmass: relocate into the map, replace, or drop",
+   "disposition": "never generates in this pack (biome requirement matches no loaded biome); hand-place in the overworld only if chosen",
    "biomes": "#cobbleverse:has_structure/turnback_cave",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "41x13x41 start, jigsaw depth 7, up to 232 wide",
@@ -6494,7 +6494,7 @@
    "class_reason": "Mega Showdown site holding a mechanic item (key stone, mega stone, wishing star, Z-ruins); advancement 'find' target",
    "source": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -6546,7 +6546,7 @@
    "class_reason": "small meteor crater with one mega stone crystal; common by design (spacing 32), repeatable reward",
    "source": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:is_overworld",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -6617,7 +6617,7 @@
    "class_reason": "Mega Showdown site holding a mechanic item (key stone, mega stone, wishing star, Z-ruins); advancement 'find' target",
    "source": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:is_overworld",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -6688,7 +6688,7 @@
    "class_reason": "Mega Showdown site holding a mechanic item (key stone, mega stone, wishing star, Z-ruins); advancement 'find' target",
    "source": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -6745,7 +6745,7 @@
    "class_reason": "Mega Showdown site holding a mechanic item (key stone, mega stone, wishing star, Z-ruins); advancement 'find' target",
    "source": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#cobblemon:is_spooky",
    "plan_regions_with_a_valid_biome": [
     "northern_range (underground)",
@@ -6798,7 +6798,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ancient_city",
    "plan_regions_with_a_valid_biome": [
     "northern_range (underground)"
@@ -6858,7 +6858,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#minecraft:has_structure/bastion_remnant",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "46x24x46 start, jigsaw depth 6, up to 160 wide",
@@ -6918,7 +6918,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/buried_treasure",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -6961,7 +6961,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/desert_pyramid",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -6999,7 +6999,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#minecraft:has_structure/end_city",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "code-generated",
@@ -7048,7 +7048,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#minecraft:has_structure/nether_fortress",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "code-generated",
@@ -7100,7 +7100,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/igloo",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -7152,7 +7152,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/jungle_temple",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle"
@@ -7190,7 +7190,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/woodland_mansion",
    "plan_regions_with_a_valid_biome": [
     "windward_coast"
@@ -7251,7 +7251,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/mineshaft",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -7316,7 +7316,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/mineshaft_mesa",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -7355,7 +7355,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ocean_monument",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -7413,7 +7413,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#minecraft:has_structure/nether_fossil",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "code-generated",
@@ -7458,7 +7458,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ocean_ruin_cold",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -7507,7 +7507,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ocean_ruin_warm",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -7556,7 +7556,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/pillager_outpost",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -7620,7 +7620,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ruined_portal_standard",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -7681,7 +7681,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ruined_portal_desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -7719,7 +7719,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ruined_portal_jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -7758,7 +7758,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ruined_portal_mountain",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -7803,7 +7803,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#minecraft:has_structure/ruined_portal_nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "code-generated",
@@ -7839,7 +7839,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ruined_portal_ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -7877,7 +7877,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/ruined_portal_swamp",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin",
@@ -7916,7 +7916,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/shipwreck",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -7967,7 +7967,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/shipwreck_beached",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -8022,7 +8022,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/stronghold",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -8086,7 +8086,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/swamp_hut",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin"
@@ -8149,7 +8149,7 @@
    "class_reason": "common, repeatable site",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/trail_ruins",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -8209,7 +8209,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/trial_chambers",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -8287,7 +8287,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/village_desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -8338,7 +8338,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/village_plains",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs"
@@ -8390,7 +8390,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/village_savanna",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -8443,7 +8443,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/village_snowy",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -8496,7 +8496,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "server-1.21.1.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#minecraft:has_structure/village_taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley"
@@ -8549,7 +8549,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/ancient_cities/end",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "18x31x41 start, jigsaw depth 7, extent not in data",
@@ -8593,7 +8593,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/ancient_cities/nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "18x32x41 start, jigsaw depth 7, extent not in data",
@@ -8637,7 +8637,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/ancient_cities/ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -8686,7 +8686,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/bastions/underground",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -8763,7 +8763,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/cities/nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x16x16 start, jigsaw depth 5, extent not in data",
@@ -8809,7 +8809,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/cities/overworld",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -8862,7 +8862,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/fortresses/jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -8917,7 +8917,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/igloos/grassy",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -8963,7 +8963,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/igloos/mangrove",
    "plan_regions_with_a_valid_biome": [
     "strand_flats"
@@ -9007,7 +9007,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/igloos/mushroom",
    "plan_regions_with_a_valid_biome": [
     "southern_isles"
@@ -9051,7 +9051,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/igloos/stone",
    "plan_regions_with_a_valid_biome": [
     "rim_uplands",
@@ -9096,7 +9096,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/birch",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -9141,7 +9141,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -9185,7 +9185,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -9230,7 +9230,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/mangrove",
    "plan_regions_with_a_valid_biome": [
     "strand_flats"
@@ -9274,7 +9274,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/oak",
    "plan_regions_with_a_valid_biome": [
     "lakeshore_vale"
@@ -9318,7 +9318,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/savanna",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -9362,7 +9362,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/snowy",
    "plan_regions_with_a_valid_biome": [
     "northern_isles"
@@ -9406,7 +9406,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mansions/taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley"
@@ -9450,7 +9450,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/mineshafts/basalt",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "11x10x10 start, jigsaw depth 10, extent not in data",
@@ -9495,7 +9495,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/birch",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -9543,7 +9543,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/mineshafts/crimson",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "11x10x10 start, jigsaw depth 10, extent not in data",
@@ -9588,7 +9588,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/dark_forest",
    "plan_regions_with_a_valid_biome": [
     "northern_range (underground)",
@@ -9636,7 +9636,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -9683,7 +9683,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/mineshafts/end",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "11x10x10 start, jigsaw depth 11, extent not in data",
@@ -9728,7 +9728,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/icy",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -9773,7 +9773,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -9821,7 +9821,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/mineshafts/nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "11x10x10 start, jigsaw depth 10, extent not in data",
@@ -9866,7 +9866,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -9913,7 +9913,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/savanna",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -9960,7 +9960,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/mineshafts/soul",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "11x10x10 start, jigsaw depth 10, extent not in data",
@@ -10005,7 +10005,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/stone",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -10058,7 +10058,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/swamp",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin",
@@ -10106,7 +10106,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/mineshafts/taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -10155,7 +10155,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/mineshafts/warped",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "11x10x10 start, jigsaw depth 10, extent not in data",
@@ -10200,7 +10200,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/monuments/desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -10244,7 +10244,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/monuments/icy",
    "plan_regions_with_a_valid_biome": [
     "northern_isles",
@@ -10289,7 +10289,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/monuments/jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -10334,7 +10334,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/monuments/nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "code-generated",
@@ -10376,7 +10376,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/badlands",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -10420,7 +10420,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/outposts/basalt",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x30x16 start, jigsaw depth 11, extent not in data",
@@ -10462,7 +10462,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/birch",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -10507,7 +10507,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/outposts/crimson",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x30x16 start, jigsaw depth 11, extent not in data",
@@ -10549,7 +10549,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/desert",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -10593,7 +10593,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/outposts/end",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x30x16 start, jigsaw depth 11, extent not in data",
@@ -10635,7 +10635,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/giant_tree_taiga",
    "plan_regions_with_a_valid_biome": [
     "rim_uplands",
@@ -10680,7 +10680,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/icy",
    "plan_regions_with_a_valid_biome": [
     "northern_isles",
@@ -10725,7 +10725,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -10770,7 +10770,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/mangrove",
    "plan_regions_with_a_valid_biome": [
     "strand_flats"
@@ -10814,7 +10814,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/outposts/nether_brick",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x30x16 start, jigsaw depth 11, extent not in data",
@@ -10856,7 +10856,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/oak",
    "plan_regions_with_a_valid_biome": [
     "lakeshore_vale"
@@ -10900,7 +10900,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -10944,7 +10944,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/savanna",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -10988,7 +10988,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/snowy",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -11034,7 +11034,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/outposts/soul",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x30x16 start, jigsaw depth 11, extent not in data",
@@ -11076,7 +11076,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/outposts/taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley"
@@ -11120,7 +11120,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/outposts/warped",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x30x16 start, jigsaw depth 11, extent not in data",
@@ -11162,7 +11162,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/badlands",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -11207,7 +11207,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/dark_forest",
    "plan_regions_with_a_valid_biome": [
     "northern_range (underground)",
@@ -11253,7 +11253,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/pyramids/end",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "21x15x21 start, jigsaw depth 3, extent not in data",
@@ -11297,7 +11297,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/flower_forest",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -11344,7 +11344,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/giant_tree_taiga",
    "plan_regions_with_a_valid_biome": [
     "rim_uplands",
@@ -11389,7 +11389,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/icy",
    "plan_regions_with_a_valid_biome": [
     "northern_isles",
@@ -11434,7 +11434,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -11483,7 +11483,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/mushroom",
    "plan_regions_with_a_valid_biome": [
     "southern_isles"
@@ -11527,7 +11527,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/pyramids/nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "21x13x21",
@@ -11570,7 +11570,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -11614,7 +11614,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/pyramids/snowy",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -11661,7 +11661,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/ruined_portals/end",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "14x23x17",
@@ -11716,7 +11716,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/ruins/land_cold",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -11764,7 +11764,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/ruins/land_hot",
    "plan_regions_with_a_valid_biome": [
     "leeward_plateau"
@@ -11809,7 +11809,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/ruins/land_icy",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -11856,7 +11856,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/ruins/land_warm",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -11903,7 +11903,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/ruins/nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "16x11x17",
@@ -11945,7 +11945,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/shipwrecks/crimson",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "27x24x38",
@@ -11989,7 +11989,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/shipwrecks/end",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "9x9x16",
@@ -12033,7 +12033,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/shipwrecks/nether_bricks",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "13x24x29",
@@ -12075,7 +12075,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/shipwrecks/warped",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "27x24x38",
@@ -12119,7 +12119,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "end",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/strongholds/end",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "5x35x5 start, jigsaw depth 15, extent not in data",
@@ -12168,7 +12168,7 @@
    "class_reason": "large one-off dungeon or fortification",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/strongholds/nether",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "5x11x5 start, jigsaw depth 15, extent not in data",
@@ -12217,7 +12217,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/temples/nether_basalt",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "12x15x15",
@@ -12261,7 +12261,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/temples/nether_crimson",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "12x14x15",
@@ -12305,7 +12305,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/temples/nether_soul",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "12x14x15",
@@ -12349,7 +12349,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/temples/nether_warped",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "12x14x15",
@@ -12395,7 +12395,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/temples/nether_wasteland",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "12x14x15",
@@ -12440,7 +12440,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/temples/ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -12484,7 +12484,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/temples/taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -12532,7 +12532,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/badlands",
    "plan_regions_with_a_valid_biome": [
     "ember_highlands"
@@ -12767,7 +12767,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/bamboo",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle"
@@ -12998,7 +12998,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/birch",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -13230,7 +13230,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/cherry",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -13465,7 +13465,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/villages/crimson",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "9x4x9 start, jigsaw depth 6, extent not in data",
@@ -13692,7 +13692,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/dark_forest",
    "plan_regions_with_a_valid_biome": [
     "northern_range (underground)",
@@ -13924,7 +13924,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/giant_taiga",
    "plan_regions_with_a_valid_biome": [
     "rim_uplands",
@@ -14157,7 +14157,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/jungle",
    "plan_regions_with_a_valid_biome": [
     "jungle_isle",
@@ -14390,7 +14390,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/mountains",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley",
@@ -14624,7 +14624,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/mushroom",
    "plan_regions_with_a_valid_biome": [
     "southern_isles"
@@ -14859,7 +14859,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/oak",
    "plan_regions_with_a_valid_biome": [
     "lakeshore_vale"
@@ -15090,7 +15090,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/ocean",
    "plan_regions_with_a_valid_biome": [
     "sea"
@@ -15321,7 +15321,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/villages/swamp",
    "plan_regions_with_a_valid_biome": [
     "stillwater_basin",
@@ -15554,7 +15554,7 @@
    "class_reason": "settlement; villages carry the #minecraft:village spawn tag, PokeCenters and merchants",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "nether",
-   "disposition": "not overworld: out of scope unless the dimension is kept as authored content",
+   "disposition": "keep: vanilla-generated in its own dimension; audit after pregen within that dimension's border",
    "biomes": "#repurposed_structures:has_structure/villages/warped",
    "plan_regions_with_a_valid_biome": [],
    "footprint": "9x4x9 start, jigsaw depth 6, extent not in data",
@@ -15781,7 +15781,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/witch_huts/birch",
    "plan_regions_with_a_valid_biome": [
     "eastern_downs",
@@ -15822,7 +15822,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/witch_huts/dark_forest",
    "plan_regions_with_a_valid_biome": [
     "northern_range (underground)",
@@ -15863,7 +15863,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/witch_huts/giant_tree_taiga",
    "plan_regions_with_a_valid_biome": [
     "rim_uplands",
@@ -15904,7 +15904,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/witch_huts/mangrove",
    "plan_regions_with_a_valid_biome": [
     "strand_flats"
@@ -15944,7 +15944,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/witch_huts/oak",
    "plan_regions_with_a_valid_biome": [
     "lakeshore_vale"
@@ -15984,7 +15984,7 @@
    "class_reason": "common, repeatable site",
    "source": "repurposed_structures-7.5.21+1.21.1-fabric.jar",
    "dimension": "overworld",
-   "disposition": "hand-place in the overworld",
+   "disposition": "hand-place in the overworld region",
    "biomes": "#repurposed_structures:has_structure/witch_huts/taiga",
    "plan_regions_with_a_valid_biome": [
     "glacier_valley"
