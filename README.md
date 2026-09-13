@@ -2,7 +2,7 @@
 
 A private multiplayer **Cobblemon** campaign: a handcrafted, difficult Pokémon-style
 region inside Minecraft for a small group of friends, inspired by ROM hacks such as
-Run & Bun and Pokémon Imperium. Not a mandatory Nuzlocke.
+Run & Bun and Pokémon Imperium.
 
 Read [docs/vision/GAME_VISION.md](docs/vision/GAME_VISION.md) for what we are making
 and [CLAUDE.md](CLAUDE.md) for the working rules every contributor (human or agent)
