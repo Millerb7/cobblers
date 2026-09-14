@@ -1,5 +1,9 @@
 # Town placements: eight gyms, the hometown, the League
 
+> **The critical path.** These ten are the whole route. Everything off it (major towns, rest
+> stops, outposts) is in [`SETTLEMENTS.md`](SETTLEMENTS.md); both tiers live in
+> `data/towns.json`.
+
 **Status: proposed, 2026-09-14.**
 - **Data:** `data/towns.json` (schema `cobblers.towns/1`, validated).
 - **Nothing is built.** These are placements for you to accept before Axiom work starts.
@@ -97,9 +101,9 @@ nearest landmarks.
   9 deep) at about (6632, 3904).
 - **Without crossing** the river or the lake: 9,496 blocks, back past the river's head.
 - **This puts the game's first real obstacle between badges 6 and 7.**
-- **Blaine's town is on the Craters' north-west rim.** For the gym itself, a 156-block flat in
-  the East Cones by the eastern bowl (6607, 5622) is recorded as an alternative, if the gym
-  should stand in the caldera.
+- **Blaine's town is on the Craters' north-west rim.** The East Cones flat by the eastern bowl,
+  once recorded as a caldera site for the gym, now holds the Mining Town
+  ([`SETTLEMENTS.md`](SETTLEMENTS.md)).
 
 **7 → 8, Blaine to Giovanni** (3,055 blocks, no crossings).
 - **The route runs west** along the south of the Craters and the Rift's southern arms.
