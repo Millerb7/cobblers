@@ -1,6 +1,51 @@
 # Re-export: cobblers-10240
 
-**Status: done 2026-09-13, verified, stopped before painting.**
+## 2026-09-14: carved terrain, painted
+
+**Status: exported and pregenerated for Distant Horizons.** No player has been in it yet.
+
+| Step | Result |
+| --- | --- |
+| Heightmap | the carved revision, sha256 `acdc3d1d…`, same import line as below |
+| Paint maps | `python tools/paint_maps.py --source-root <source> --out build/paint` from `data/regions.json` presets and `data/landmarks.json` water bodies ([`REGIONS.md`](REGIONS.md) §6) |
+| Export | `python tools/reexport.py --old-world <retired cobblers-10240> --out-dir ../cobblers-server --name cobblers-10240 --world-file <source>/cobblers-10240.world --paint build/paint/manifest.json` |
+| WorldPainter | 2.27.1. 7,056 tiles with the margin. Paint applied in 11 s; save 21 s; export 672 s; 484 region files, 2.3 GB |
+| Lakes raised | Tilpey y77 (1.19 M columns), Shrew y106, Arrow y100, Marshy Marsh y100, Peak Pond y105, Lake Viltri y103, Mt Clay pond y119, Watering Hole y95 |
+| Seed | carried; `level.dat` seed sha256 matches `48202407…`; `WorldGenSettings`, datapacks and game rules carried as before |
+| Border | `worldborder get`: 10240 in the overworld and the Nether |
+| Spawn | (3400, 3400) unchanged. It now lands on the floor of the Rift's west spur, about y96 |
+| Distant Horizons | server generation stays off. LODs built from the exported chunks with `dh pregen start minecraft:overworld 4096 4096 320`. The client LOD cache for this server was moved out, because DH keys it by seed |
+
+**Spot check** of 8 region files (craters, dunes, glacier, Shrew Lake, marsh, Viltri Woods,
+Pine Isles, the Tri Peaks):
+- basalt, blackstone and magma, sand and cactus;
+- snow layers and snow blocks;
+- mud;
+- oak, birch and spruce logs;
+- sweet berry bushes, azalea, tall grass;
+- raised water.
+
+**Known issues in this export:**
+- **`minecraft:grass` blocks.** 25,754 of them in the sample. They do not come from the plant
+  sets, which avoid "Short Grass"; WorldPainter itself writes the old block name. Minecraft
+  1.21.1 has no such block, so those columns load without it.
+- **Coastal paint overhang.** The maps were generated before a fix: sub-region polygons
+  overhanging the coast could put tree density, plants and frost on sea columns. The fixed tool
+  clears all three on sea and on flooded lake columns. It applies from the next repaint.
+- **Not yet checked in game:** how painted trees look, whether any grow in water, and how
+  lakes behave when their water updates.
+
+**Retired, not deleted,** to `cobblers-server-retired/2026-09-14/`:
+- the unpainted `cobblers-10240` world, with its DH stores;
+- `cobblers-10240.world`;
+- the client LOD cache `local+ho`;
+- an aborted partial export.
+
+The earlier 2026-09-13 export is described below.
+
+---
+
+**Status (2026-09-13): done, verified, stopped before painting.**
 
 The server world is now `cobblers-10240`, exported from the canonical heightmap. Nothing is
 painted or carved: the terrain is the heightmap and nothing else.

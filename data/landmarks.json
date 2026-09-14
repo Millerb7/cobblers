@@ -2,13 +2,22 @@
  "schema": "cobblers.landmarks/1",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+ "computed_from_sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
  "annotation": {
   "path": "land_8k_16_eroded_annotated.png",
-  "sha256": "527934438db8763db420e3f8e9e73c57b99e67935f2d3f9fb9eed3091c2c3142",
+  "sha256": "377b3f80ad9c01715342a9ad17927568d5b6b11bcff00d98166c23762ae90925",
   "location": "source root (outside the repository), beside the heightmap",
-  "note": "Hand-drawn red outlines over the heightmap: mountain range, glacier, lake/moraine label, rift, volcanic cones. The outlines are ground truth for where features are. Extents here are the stroke-enclosed areas widened by half a stroke (24 blocks) and simplified to 24 blocks.",
-  "text_disagreement": "The written brief described the glacier as running north-east from the rift toward the upper right, x4800-7000, z2400-4400, with the lake at its south-west end. The drawn outline runs north-west to south-east, x3128-6504, z1680-4192: from the range's south-east flank (head) to the lake beside the rift's north-east arm (terminus). The drawing was used, per the brief's instruction that the annotation overrides narrative."
+  "verified_clean_heightmap": "The annotation is a separate RGBA copy. Outside the strokes its grey matches the 16-bit heightmap to within 0.65 grey levels (p99), and no label pixels appear in land_8k_16_eroded.png.",
+  "note": "Outlines by colour: yellow mountains, blue water and ice, magenta the Rift, red the Craters, green town candidates. Extents are the stroke-enclosed areas, with gaps bridged where an outline was not closed (the gap per landmark is recorded)."
+ },
+ "replaces": {
+  "glacier_corridor": "glacial_tear",
+  "meltwater_lake": "lake_tilpey",
+  "northern_range": "tri_peaks, mt_vessu, mt_clay",
+  "volcanic_cones": "craters",
+  "rift": "rift",
+  "terminal_moraine": "dropped (not in the new annotation)",
+  "meltwater_river": "dropped (not in the new annotation)"
  },
  "coordinates": "Block x, z. A1 origin at 0,0; x east, z south.",
  "status_values": {
@@ -22,1565 +31,5509 @@
  },
  "landmarks": [
   {
-   "id": "rift",
-   "kind": "rift",
-   "name": "The Rift",
+   "id": "tri_peaks",
+   "kind": "mountain",
+   "name": "The Tri Peaks",
    "status": "built",
-   "status_basis": "The branching trench exists at full depth on every arm: floor y44-62, median wall 23-33 degrees by arm, median depth below the lower rim 52-66 blocks, rim to rim 476-624 blocks.",
-   "water": "never",
-   "surface": {
-    "floor_visible": false,
-    "treatment": "The floor stays below sea level but is never water and never a surface the player sees: void, barrier, or a light-emitting layer below reach. Decided later."
-   },
-   "custom_biome": {
-    "required": true,
-    "biome": null,
-    "spawn_table": null,
-    "status": "deferred",
-    "wanted": [
-     "heavy fog",
-     "custom sky and fog colour",
-     "ambient particles: nether portal, reverse portal, soul fire flame",
-     "ambient sound loop",
-     "light emitting from below"
-    ]
-   },
-   "role": {
-    "kind": "destination",
-    "note": "Players descend into it; it is not a barrier routed around. Victory Road / League suitability is assessed in docs/world-building/REGIONS.md, not decided."
-   },
-   "anchor": {
-    "x": 3877,
-    "z": 4012
-   },
-   "anchors": {
-    "west_junction": {
-     "x": 2860,
-     "z": 3940
-    },
-    "east_junction": {
-     "x": 4660,
-     "z": 3908
-    },
-    "tip_nw": {
-     "x": 2476,
-     "z": 2660
-    },
-    "tip_w": {
-     "x": 2300,
-     "z": 4236
-    },
-    "tip_ne": {
-     "x": 4964,
-     "z": 3620
-    },
-    "tip_se": {
-     "x": 5356,
-     "z": 5268
-    },
-    "trunk_rim_left_d1024": {
-     "x": 3877,
-     "z": 3708,
-     "y": 148.51
-    },
-    "trunk_rim_right_d1024": {
-     "x": 3877,
-     "z": 4332,
-     "y": 147.31
-    },
-    "west_arm_nw_rim_left_d512": {
-     "x": 2863,
-     "z": 3104,
-     "y": 116.68
-    },
-    "west_arm_nw_rim_right_d512": {
-     "x": 2153,
-     "z": 3247,
-     "y": 127.67
-    },
-    "east_arm_se_rim_left_d768": {
-     "x": 5094,
-     "z": 4378,
-     "y": 98.5
-    },
-    "east_arm_se_rim_right_d768": {
-     "x": 4696,
-     "z": 4719,
-     "y": 121.35
-    }
-   },
-   "extent": {
-    "polygons": [
-     [
-      [
-       2488,
-       2472
-      ],
-      [
-       2552,
-       2472
-      ],
-      [
-       2696,
-       2616
-      ],
-      [
-       2784,
-       2784
-      ],
-      [
-       2832,
-       3000
-      ],
-      [
-       3040,
-       3400
-      ],
-      [
-       3248,
-       3600
-      ],
-      [
-       3808,
-       3712
-      ],
-      [
-       4256,
-       3728
-      ],
-      [
-       4384,
-       3688
-      ],
-      [
-       4640,
-       3464
-      ],
-      [
-       4848,
-       3344
-      ],
-      [
-       5024,
-       3360
-      ],
-      [
-       5280,
-       3640
-      ],
-      [
-       5496,
-       4320
-      ],
-      [
-       5536,
-       5072
-      ],
-      [
-       5488,
-       5120
-      ],
-      [
-       5544,
-       5128
-      ],
-      [
-       5544,
-       5208
-      ],
-      [
-       5488,
-       5464
-      ],
-      [
-       5320,
-       5416
-      ],
-      [
-       5328,
-       5328
-      ],
-      [
-       5224,
-       5328
-      ],
-      [
-       4872,
-       4952
-      ],
-      [
-       4432,
-       4608
-      ],
-      [
-       3464,
-       4168
-      ],
-      [
-       3224,
-       4152
-      ],
-      [
-       3016,
-       4184
-      ],
-      [
-       2792,
-       4248
-      ],
-      [
-       2432,
-       4448
-      ],
-      [
-       2152,
-       4384
-      ],
-      [
-       2152,
-       4016
-      ],
-      [
-       2328,
-       3496
-      ],
-      [
-       2312,
-       2640
-      ],
-      [
-       2360,
-       2536
-      ]
-     ]
-    ]
-   },
-   "axes": [
-    {
-     "id": "west_arm_nw",
-     "polyline": [
-      [
-       2476,
-       2660
-      ],
-      [
-       2584,
-       3196
-      ],
-      [
-       2737,
-       3524
-      ],
-      [
-       2857,
-       3684
-      ],
-      [
-       2860,
-       3940
-      ]
-     ],
-     "section_width": 2400,
-     "from": "north-west tip",
-     "to": "west junction",
-     "basis": "least-cost path along the lowest ground inside the annotated outline, smoothed and simplified to 24 blocks",
-     "measured": {
-      "source": "derived/sections/rift.west_arm_nw.json",
-      "length_blocks": 1364.7,
-      "stations": 11,
-      "shape_counts": {
-       "U": 4,
-       "flat_floored": 6,
-       "asymmetric": 1
-      },
-      "floor_y": [
-       45.99,
-       54.03
-      ],
-      "depth": {
-       "median": 65.82,
-       "range": [
-        13.43,
-        77.76
-       ]
-      },
-      "floor_width": {
-       "median": 240.0,
-       "range": [
-        120.0,
-        404.0
-       ]
-      },
-      "top_width": {
-       "median": 624.0,
-       "range": [
-        492.0,
-        916.0
-       ]
-      },
-      "wall_deg": {
-       "median": 26.5,
-       "range": [
-        1.5,
-        31.9
-       ]
-      },
-      "b_mean": {
-       "median": 2.37,
-       "range": [
-        0.88,
-        3.35
-       ]
-      },
-      "level_width": {
-       "level": 62.0,
-       "range": [
-        280.0,
-        560.0
-       ],
-       "median": 372.0
-      },
-      "long_profile": {
-       "start_floor_y": 52.52,
-       "end_floor_y": 54.03,
-       "uphill_steps": 5,
-       "downhill_steps": 4
-      }
-     }
-    },
-    {
-     "id": "west_arm_w",
-     "polyline": [
-      [
-       2300,
-       4236
-      ],
-      [
-       2604,
-       4140
-      ],
-      [
-       2860,
-       3940
-      ]
-     ],
-     "section_width": 2400,
-     "from": "west tip",
-     "to": "west junction",
-     "basis": "least-cost path along the lowest ground inside the annotated outline, smoothed and simplified to 24 blocks",
-     "measured": {
-      "source": "derived/sections/rift.west_arm_w.json",
-      "length_blocks": 643.7,
-      "stations": 6,
-      "shape_counts": {
-       "U": 3,
-       "flat_floored": 2,
-       "asymmetric": 1
-      },
-      "floor_y": [
-       47.12,
-       53.36
-      ],
-      "depth": {
-       "median": 63.39,
-       "range": [
-        13.73,
-        73.85
-       ]
-      },
-      "floor_width": {
-       "median": 228.0,
-       "range": [
-        80.0,
-        300.0
-       ]
-      },
-      "top_width": {
-       "median": 584.0,
-       "range": [
-        568.0,
-        628.0
-       ]
-      },
-      "wall_deg": {
-       "median": 26.9,
-       "range": [
-        1.9,
-        31.6
-       ]
-      },
-      "b_mean": {
-       "median": 1.98,
-       "range": [
-        1.09,
-        3.44
-       ]
-      },
-      "level_width": {
-       "level": 62.0,
-       "range": [
-        328.0,
-        372.0
-       ],
-       "median": 360.0
-      },
-      "long_profile": {
-       "start_floor_y": 51.66,
-       "end_floor_y": 53.36,
-       "uphill_steps": 2,
-       "downhill_steps": 2
-      }
-     }
-    },
-    {
-     "id": "trunk",
-     "polyline": [
-      [
-       2860,
-       3940
-      ],
-      [
-       3268,
-       3924
-      ],
-      [
-       3852,
-       4012
-      ],
-      [
-       4188,
-       4012
-      ],
-      [
-       4444,
-       3877
-      ],
-      [
-       4660,
-       3908
-      ]
-     ],
-     "section_width": 2400,
-     "from": "west junction",
-     "to": "east junction",
-     "basis": "least-cost path along the lowest ground inside the annotated outline, smoothed and simplified to 24 blocks",
-     "measured": {
-      "source": "derived/sections/rift.trunk.json",
-      "length_blocks": 1842.5,
-      "stations": 15,
-      "shape_counts": {
-       "U": 3,
-       "flat_floored": 8,
-       "asymmetric": 2,
-       "none": 2
-      },
-      "floor_y": [
-       46.84,
-       61.63
-      ],
-      "depth": {
-       "median": 60.66,
-       "range": [
-        5.45,
-        86.24
-       ]
-      },
-      "floor_width": {
-       "median": 244.0,
-       "range": [
-        100.0,
-        488.0
-       ]
-      },
-      "top_width": {
-       "median": 536.0,
-       "range": [
-        492.0,
-        904.0
-       ]
-      },
-      "wall_deg": {
-       "median": 33.2,
-       "range": [
-        1.2,
-        39.2
-       ]
-      },
-      "b_mean": {
-       "median": 2.04,
-       "range": [
-        1.13,
-        2.57
-       ]
-      },
-      "level_width": {
-       "level": 62.0,
-       "range": [
-        40.0,
-        848.0
-       ],
-       "median": 160.0
-      },
-      "long_profile": {
-       "start_floor_y": 48.48,
-       "end_floor_y": 46.84,
-       "uphill_steps": 7,
-       "downhill_steps": 5
-      }
-     }
-    },
-    {
-     "id": "east_arm_ne",
-     "polyline": [
-      [
-       4660,
-       3908
-      ],
-      [
-       4964,
-       3620
-      ]
-     ],
-     "section_width": 2400,
-     "from": "east junction",
-     "to": "north-east tip",
-     "basis": "least-cost path along the lowest ground inside the annotated outline, smoothed and simplified to 24 blocks",
-     "measured": {
-      "source": "derived/sections/rift.east_arm_ne.json",
-      "length_blocks": 418.8,
-      "stations": 4,
-      "shape_counts": {
-       "U": 1,
-       "flat_floored": 2,
-       "asymmetric": 1
-      },
-      "floor_y": [
-       43.62,
-       47.52
-      ],
-      "depth": {
-       "median": 56.95,
-       "range": [
-        55.15,
-        59.0
-       ]
-      },
-      "floor_width": {
-       "median": 256.0,
-       "range": [
-        236.0,
-        280.0
-       ]
-      },
-      "top_width": {
-       "median": 618.0,
-       "range": [
-        588.0,
-        660.0
-       ]
-      },
-      "wall_deg": {
-       "median": 22.9,
-       "range": [
-        12.4,
-        26.0
-       ]
-      },
-      "b_mean": {
-       "median": 2.42,
-       "range": [
-        1.8,
-        2.63
-       ]
-      },
-      "level_width": {
-       "level": 62.0,
-       "range": [
-        360.0,
-        452.0
-       ],
-       "median": 402.0
-      },
-      "long_profile": {
-       "start_floor_y": 47.52,
-       "end_floor_y": 43.62,
-       "uphill_steps": 0,
-       "downhill_steps": 3
-      }
-     }
-    },
-    {
-     "id": "east_arm_se",
-     "polyline": [
-      [
-       4660,
-       3908
-      ],
-      [
-       4597,
-       4004
-      ],
-      [
-       4605,
-       4212
-      ],
-      [
-       5132,
-       4828
-      ],
-      [
-       5165,
-       4956
-      ],
-      [
-       5263,
-       5068
-      ],
-      [
-       5356,
-       5268
-      ]
-     ],
-     "section_width": 2400,
-     "from": "east junction",
-     "to": "south-east tip",
-     "basis": "least-cost path along the lowest ground inside the annotated outline, smoothed and simplified to 24 blocks",
-     "measured": {
-      "source": "derived/sections/rift.east_arm_se.json",
-      "length_blocks": 1635.2,
-      "stations": 13,
-      "shape_counts": {
-       "U": 1,
-       "flat_floored": 9,
-       "asymmetric": 3
-      },
-      "floor_y": [
-       45.27,
-       58.95
-      ],
-      "depth": {
-       "median": 51.57,
-       "range": [
-        7.42,
-        58.12
-       ]
-      },
-      "floor_width": {
-       "median": 236.0,
-       "range": [
-        108.0,
-        412.0
-       ]
-      },
-      "top_width": {
-       "median": 476.0,
-       "range": [
-        408.0,
-        1292.0
-       ]
-      },
-      "wall_deg": {
-       "median": 25.5,
-       "range": [
-        0.7,
-        33.5
-       ]
-      },
-      "b_mean": {
-       "median": 3.12,
-       "range": [
-        1.02,
-        4.12
-       ]
-      },
-      "level_width": {
-       "level": 62.0,
-       "range": [
-        208.0,
-        704.0
-       ],
-       "median": 304.0
-      },
-      "long_profile": {
-       "start_floor_y": 47.49,
-       "end_floor_y": 58.95,
-       "uphill_steps": 9,
-       "downhill_steps": 2
-      }
-     }
-    }
-   ]
-  },
-  {
-   "id": "glacier_corridor",
-   "kind": "glacier",
-   "name": "Glacier corridor",
-   "status": "partial",
-   "status_basis": "A trough runs the whole outline but is under-carved: median wall 5.5 degrees, median depth 19.6 blocks, rim to rim 548 blocks, shapes U 10, V 7, flat_floored 3, asymmetric 11, none 1. At d1792 (4784, 2719) it is only 4.0 blocks deep: a saddle, not a continuous valley.",
+   "status_basis": "Three summits present inside the outline; the highest reach the y200 ceiling and are clipped flat.",
    "water": "allowed",
    "anchor": {
-    "x": 4767,
-    "z": 2736
-   },
-   "anchors": {
-    "head": {
-     "x": 3268,
-     "z": 1908
-    },
-    "saddle": {
-     "x": 4767,
-     "z": 2736
-    },
-    "lower_trough_flats": {
-     "x": 5646,
-     "z": 3302
-    },
-    "terminus": {
-     "x": 6500,
-     "z": 3988
-    }
+    "x": 1310,
+    "z": 882,
+    "y": 200.0
    },
    "extent": {
     "polygons": [
      [
       [
-       3384,
-       1680
+       1296,
+       664
       ],
       [
-       3472,
-       1680
+       1392,
+       664
       ],
       [
-       3464,
-       1760
+       1452,
+       688
       ],
       [
-       3640,
+       1528,
+       736
+      ],
+      [
+       1660,
+       860
+      ],
+      [
+       1672,
+       884
+      ],
+      [
+       1680,
+       856
+      ],
+      [
+       1712,
+       856
+      ],
+      [
+       1716,
+       892
+      ],
+      [
+       1768,
+       1008
+      ],
+      [
+       1768,
+       1040
+      ],
+      [
+       1816,
+       1044
+      ],
+      [
+       1816,
+       1084
+      ],
+      [
+       1864,
+       1168
+      ],
+      [
+       1856,
+       1228
+      ],
+      [
+       1884,
+       1244
+      ],
+      [
+       1912,
+       1324
+      ],
+      [
+       1912,
+       1412
+      ],
+      [
+       1888,
+       1500
+      ],
+      [
+       1864,
+       1544
+      ],
+      [
+       1820,
+       1584
+      ],
+      [
+       1776,
+       1596
+      ],
+      [
+       1636,
+       1596
+      ],
+      [
+       1572,
+       1612
+      ],
+      [
+       1448,
+       1612
+      ],
+      [
+       1388,
+       1596
+      ],
+      [
+       1332,
+       1564
+      ],
+      [
+       1200,
+       1536
+      ],
+      [
+       1104,
+       1484
+      ],
+      [
+       916,
+       1276
+      ],
+      [
+       892,
+       1224
+      ],
+      [
+       892,
+       1064
+      ],
+      [
+       916,
+       920
+      ],
+      [
+       940,
+       872
+      ],
+      [
+       1100,
+       728
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 24 blocks bridged, simplified to 8 blocks"
+   }
+  },
+  {
+   "id": "mt_vessu",
+   "kind": "mountain",
+   "name": "Mt Vessu",
+   "status": "built",
+   "status_basis": "The massif's largest summit. Its top is a clipped plateau at y200 of about 0.1 km2, and a town box is drawn on it.",
+   "water": "allowed",
+   "anchor": {
+    "x": 2154,
+    "z": 682,
+    "y": 200.0
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2056,
+       556
+      ],
+      [
+       2212,
+       560
+      ],
+      [
+       2216,
+       576
+      ],
+      [
+       2320,
+       652
+      ],
+      [
+       2396,
+       792
+      ],
+      [
+       2384,
+       944
+      ],
+      [
+       2348,
+       1028
+      ],
+      [
+       2348,
+       1076
+      ],
+      [
+       2320,
+       1080
+      ],
+      [
+       2280,
+       1172
+      ],
+      [
+       2176,
+       1264
+      ],
+      [
+       2176,
+       1296
+      ],
+      [
+       2016,
+       1300
+      ],
+      [
+       1888,
+       1240
+      ],
+      [
+       1840,
+       1104
+      ],
+      [
+       1816,
+       1072
+      ],
+      [
+       1792,
+       1072
+      ],
+      [
+       1792,
+       1040
+      ],
+      [
+       1772,
+       1016
+      ],
+      [
+       1792,
+       784
+      ],
+      [
+       1820,
+       712
+      ],
+      [
+       1868,
+       652
+      ],
+      [
+       1940,
+       600
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 32 blocks bridged, simplified to 8 blocks"
+   }
+  },
+  {
+   "id": "mt_clay",
+   "kind": "mountain",
+   "name": "Mt Clay",
+   "status": "built",
+   "status_basis": "A single summit south-east of Vessu, inside a closed outline.",
+   "water": "allowed",
+   "anchor": {
+    "x": 2614,
+    "z": 1510,
+    "y": 200.0
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2612,
+       1368
+      ],
+      [
+       2664,
+       1368
+      ],
+      [
+       2724,
+       1400
+      ],
+      [
+       2752,
+       1488
+      ],
+      [
+       2808,
+       1600
+      ],
+      [
+       2800,
+       1744
+      ],
+      [
+       2764,
+       1808
+      ],
+      [
+       2644,
+       1808
+      ],
+      [
+       2576,
+       1784
+      ],
+      [
+       2492,
        1696
       ],
       [
-       4240,
-       1864
+       2444,
+       1620
       ],
       [
-       4784,
-       2144
+       2436,
+       1476
       ],
       [
-       5240,
-       2440
+       2496,
+       1412
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   }
+  },
+  {
+   "id": "merian",
+   "kind": "basin",
+   "name": "Merian",
+   "status": "partial",
+   "status_basis": "A smooth, flat-floored cirque at the glacier's head, ground y107-181 (median 122). It is not a closed hollow: no basin holds water inside the outline, it opens down the Glacial Tear.",
+   "water": "allowed",
+   "anchor": {
+    "x": 2754,
+    "z": 1055
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2752,
+       732
       ],
       [
-       5832,
-       2976
+       2876,
+       732
       ],
       [
-       6136,
-       3312
+       2928,
+       760
       ],
       [
-       6440,
-       3728
+       3012,
+       844
       ],
       [
-       6496,
-       3920
+       3080,
+       968
       ],
       [
-       6480,
-       4080
+       3088,
+       1096
       ],
       [
-       6312,
-       4176
+       3084,
+       1124
       ],
       [
-       6136,
-       4184
+       2944,
+       1124
       ],
       [
-       5768,
-       4016
+       2916,
+       1140
       ],
       [
-       5560,
-       3864
+       2908,
+       1192
       ],
       [
-       5352,
-       3632
+       2896,
+       1196
       ],
       [
-       4728,
-       3080
+       2884,
+       1248
       ],
       [
-       3792,
-       2584
+       2872,
+       1252
       ],
       [
-       3272,
-       2200
+       2864,
+       1388
       ],
       [
-       3248,
-       2248
+       2808,
+       1404
       ],
       [
-       3128,
-       2208
+       2660,
+       1404
       ],
       [
-       3128,
-       1960
+       2572,
+       1380
       ],
       [
-       3200,
-       1912
+       2516,
+       1316
       ],
       [
-       3152,
+       2484,
+       1120
+      ],
+      [
+       2476,
+       980
+      ],
+      [
+       2504,
+       916
+      ],
+      [
+       2560,
+       852
+      ],
+      [
+       2596,
+       788
+      ],
+      [
+       2668,
+       756
+      ],
+      [
+       2748,
+       752
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "measured": {
+    "ground_in_outline": {
+     "min": 107.3,
+     "median": 121.5,
+     "max": 181.2
+    }
+   }
+  },
+  {
+   "id": "glacial_tear",
+   "kind": "glacier",
+   "name": "Glacial Tear",
+   "status": "built",
+   "status_basis": "A continuous U-shaped trough from Merian to Lake Tilpey: median depth 35 blocks, floor 141 and rim to rim 396 blocks wide, walls 16 degrees. The floor falls from y108 to y63 with no counter-slope over 0.8 blocks.",
+   "water": "allowed",
+   "anchor": {
+    "x": 4380,
+    "z": 2640
+   },
+   "anchors": {
+    "head": {
+     "x": 3002,
+     "z": 1254
+    },
+    "terminus": {
+     "x": 5598,
+     "z": 3742
+    },
+    "rift_apex_contact": {
+     "x": 3840,
+     "z": 2385
+    }
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       3072,
+       1196
+      ],
+      [
+       3120,
+       1196
+      ],
+      [
+       3144,
+       1280
+      ],
+      [
+       3156,
+       1284
+      ],
+      [
+       3156,
+       1316
+      ],
+      [
+       3208,
+       1384
+      ],
+      [
+       3224,
+       1388
+      ],
+      [
+       3224,
+       1408
+      ],
+      [
+       3300,
+       1476
+      ],
+      [
+       3300,
+       1496
+      ],
+      [
+       3436,
+       1620
+      ],
+      [
+       3436,
+       1632
+      ],
+      [
+       3596,
+       1792
+      ],
+      [
+       3628,
+       1800
+      ],
+      [
+       3652,
+       1836
+      ],
+      [
+       3672,
+       1836
+      ],
+      [
+       3672,
+       1856
+      ],
+      [
+       3716,
+       1880
+      ],
+      [
+       3724,
+       1900
+      ],
+      [
+       3740,
        1904
       ],
       [
-       3152,
+       3748,
+       1924
+      ],
+      [
+       3952,
+       2116
+      ],
+      [
+       3964,
+       2148
+      ],
+      [
+       4032,
+       2220
+      ],
+      [
+       4052,
+       2292
+      ],
+      [
+       4076,
+       2316
+      ],
+      [
+       4084,
+       2348
+      ],
+      [
+       4108,
+       2364
+      ],
+      [
+       4108,
+       2380
+      ],
+      [
+       4132,
+       2408
+      ],
+      [
+       4148,
+       2408
+      ],
+      [
+       4164,
+       2440
+      ],
+      [
+       4188,
+       2452
+      ],
+      [
+       4324,
+       2600
+      ],
+      [
+       4352,
+       2608
+      ],
+      [
+       4404,
+       2668
+      ],
+      [
+       4436,
+       2676
+      ],
+      [
+       4460,
+       2712
+      ],
+      [
+       4488,
+       2720
+      ],
+      [
+       4492,
+       2736
+      ],
+      [
+       4548,
+       2768
+      ],
+      [
+       4560,
+       2788
+      ],
+      [
+       4644,
+       2832
+      ],
+      [
+       4696,
+       2892
+      ],
+      [
+       4724,
+       2900
+      ],
+      [
+       4760,
+       2944
+      ],
+      [
+       4780,
+       2944
+      ],
+      [
+       4784,
+       2960
+      ],
+      [
+       4864,
+       3024
+      ],
+      [
+       4884,
+       3024
+      ],
+      [
+       4896,
+       3048
+      ],
+      [
+       4916,
+       3048
+      ],
+      [
+       4988,
+       3116
+      ],
+      [
+       5016,
+       3124
+      ],
+      [
+       5164,
+       3304
+      ],
+      [
+       5196,
+       3316
+      ],
+      [
+       5212,
+       3340
+      ],
+      [
+       5252,
+       3348
+      ],
+      [
+       5268,
+       3372
+      ],
+      [
+       5288,
+       3372
+      ],
+      [
+       5324,
+       3416
+      ],
+      [
+       5420,
+       3460
+      ],
+      [
+       5436,
+       3484
+      ],
+      [
+       5468,
+       3496
+      ],
+      [
+       5480,
+       3520
+      ],
+      [
+       5512,
+       3520
+      ],
+      [
+       5524,
+       3540
+      ],
+      [
+       5572,
+       3540
+      ],
+      [
+       5588,
+       3584
+      ],
+      [
+       5624,
+       3608
+      ],
+      [
+       5644,
+       3720
+      ],
+      [
+       5480,
+       3744
+      ],
+      [
+       5420,
+       3772
+      ],
+      [
+       5356,
+       3772
+      ],
+      [
+       5352,
+       3760
+      ],
+      [
+       5324,
+       3760
+      ],
+      [
+       5296,
+       3736
+      ],
+      [
+       5256,
+       3728
+      ],
+      [
+       5252,
+       3716
+      ],
+      [
+       5220,
+       3716
+      ],
+      [
+       5208,
+       3692
+      ],
+      [
+       5184,
+       3692
+      ],
+      [
+       5164,
+       3684
+      ],
+      [
+       5160,
+       3668
+      ],
+      [
+       5120,
+       3660
+      ],
+      [
+       5104,
+       3636
+      ],
+      [
+       5084,
+       3636
+      ],
+      [
+       5060,
+       3600
+      ],
+      [
+       5032,
+       3592
+      ],
+      [
+       5004,
+       3556
+      ],
+      [
+       4972,
+       3548
+      ],
+      [
+       4768,
+       3332
+      ],
+      [
+       4740,
+       3324
+      ],
+      [
+       4724,
+       3300
+      ],
+      [
+       4704,
+       3300
+      ],
+      [
+       4692,
+       3280
+      ],
+      [
+       4672,
+       3280
+      ],
+      [
+       4668,
+       3264
+      ],
+      [
+       4636,
+       3256
+      ],
+      [
+       4588,
+       3212
+      ],
+      [
+       4568,
+       3212
+      ],
+      [
+       4376,
+       3064
+      ],
+      [
+       4344,
+       3052
+      ],
+      [
+       4300,
+       3008
+      ],
+      [
+       4292,
+       2980
+      ],
+      [
+       4244,
+       2940
+      ],
+      [
+       4232,
+       2912
+      ],
+      [
+       4212,
+       2908
+      ],
+      [
+       4188,
+       2864
+      ],
+      [
+       4164,
+       2852
+      ],
+      [
+       4156,
+       2820
+      ],
+      [
+       4132,
+       2808
+      ],
+      [
+       4112,
+       2776
+      ],
+      [
+       3908,
+       2584
+      ],
+      [
+       3904,
+       2568
+      ],
+      [
+       3872,
+       2560
+      ],
+      [
+       3804,
+       2480
+      ],
+      [
+       3776,
+       2472
+      ],
+      [
+       3772,
+       2448
+      ],
+      [
+       3752,
+       2448
+      ],
+      [
+       3708,
+       2384
+      ],
+      [
+       3672,
+       2360
+      ],
+      [
+       3664,
+       2328
+      ],
+      [
+       3648,
+       2324
+      ],
+      [
+       3552,
+       2192
+      ],
+      [
+       3536,
+       2188
+      ],
+      [
+       3436,
+       2076
+      ],
+      [
+       3356,
+       2032
+      ],
+      [
+       3356,
+       2012
+      ],
+      [
+       3200,
+       1876
+      ],
+      [
+       3192,
        1848
       ],
       [
-       3264,
-       1720
+       3156,
+       1820
+      ],
+      [
+       3156,
+       1800
+      ],
+      [
+       3132,
+       1784
+      ],
+      [
+       3112,
+       1736
+      ],
+      [
+       3088,
+       1716
+      ],
+      [
+       3068,
+       1668
+      ],
+      [
+       3036,
+       1640
+      ],
+      [
+       3036,
+       1624
+      ],
+      [
+       2996,
+       1584
+      ],
+      [
+       2932,
+       1560
+      ],
+      [
+       2932,
+       1540
+      ],
+      [
+       2888,
+       1504
+      ],
+      [
+       2888,
+       1488
+      ],
+      [
+       2868,
+       1472
+      ],
+      [
+       2868,
+       1392
+      ],
+      [
+       2940,
+       1380
+      ],
+      [
+       2964,
+       1360
+      ],
+      [
+       3056,
+       1256
       ]
      ]
-    ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 32 blocks bridged, simplified to 8 blocks"
    },
    "axes": [
     {
      "id": "trough",
      "polyline": [
       [
-       3268,
-       1908
+       3002,
+       1254
       ],
       [
-       3348,
-       1917
+       3108,
+       1362
       ],
       [
-       3460,
-       2001
+       3126,
+       1430
       ],
       [
-       3676,
-       2021
+       3210,
+       1546
       ],
       [
-       3988,
+       3305,
+       1742
+      ],
+      [
+       3641,
+       2090
+      ],
+      [
+       3731,
+       2210
+      ],
+      [
+       3743,
        2286
       ],
       [
-       4276,
-       2319
+       4470,
+       3014
       ],
       [
-       4460,
-       2401
+       5010,
+       3387
       ],
       [
-       4964,
-       2897
+       5078,
+       3451
       ],
       [
-       5364,
-       3100
+       5350,
+       3617
       ],
       [
-       5916,
-       3652
+       5486,
+       3736
       ],
       [
-       5967,
-       3780
-      ],
-      [
-       6084,
-       3899
-      ],
-      [
-       6412,
-       3925
-      ],
-      [
-       6500,
-       3988
+       5598,
+       3742
       ]
      ],
-     "section_width": 1600,
-     "from": "head, on the south-east flank of the Northern Range",
-     "to": "terminus, beyond the meltwater lake",
-     "basis": "least-cost path along the lowest ground inside the annotated outline, between its extreme points on the principal axis",
+     "section_width": 900,
+     "from": "head below Merian",
+     "to": "Lake Tilpey",
+     "basis": "least-cost path on the lowest ground inside the outline",
      "measured": {
-      "source": "derived/sections/glacier_corridor.trough.json",
-      "length_blocks": 4016.4,
-      "stations": 32,
-      "shape_counts": {
-       "U": 10,
-       "V": 7,
-       "flat_floored": 3,
-       "asymmetric": 11,
-       "none": 1
+      "length": 3683.4,
+      "stations": 77,
+      "shapes": {
+       "U": 43,
+       "V": 1,
+       "flat_floored": 16,
+       "asymmetric": 14,
+       "none": 3
       },
       "floor_y": [
-       44.66,
-       110.07
+       52.45,
+       107.55
       ],
       "depth": {
-       "median": 19.55,
+       "median": 34.66,
        "range": [
-        3.99,
-        64.36
+        3.58,
+        64.64
        ]
       },
       "floor_width": {
-       "median": 160.0,
+       "median": 141.0,
        "range": [
-        72.0,
-        336.0
+        120.0,
+        318.0
        ]
       },
       "top_width": {
-       "median": 548.0,
+       "median": 396.0,
        "range": [
-        380.0,
-        1016.0
+        272.0,
+        732.0
        ]
       },
       "wall_deg": {
-       "median": 5.5,
+       "median": 15.9,
        "range": [
-        1.4,
-        18.9
+        2.0,
+        26.5
        ]
       },
-      "b_mean": {
-       "median": 1.55,
-       "range": [
-        1.08,
-        4.65
-       ]
+      "source": "tools/cross_section.py, derived/sections/glacial_tear.trough.json (not committed)"
+     },
+     "long_profile": {
+      "start_bed": 107.5,
+      "end_bed": 62.9,
+      "min_bed": 62.9,
+      "max_bed": 107.6,
+      "below_62_pct": 0.0,
+      "max_counter_rise": 0.8,
+      "counter_rise_at": {
+       "d": 1128,
+       "x": 3838,
+       "z": 2382,
+       "bed": 92.0
       },
-      "level_width": {
-       "level": 62.0,
-       "range": [
-        0.0,
-        544.0
-       ],
-       "median": 0.0
-      },
-      "long_profile": {
-       "start_floor_y": 99.0,
-       "end_floor_y": 70.74,
-       "uphill_steps": 11,
-       "downhill_steps": 19
-      }
+      "stations_rising_over_2": 0,
+      "overall_drop": 44.6
      }
     }
-   ],
-   "carve_spec": {
-    "status": "planned",
-    "method": "WorldPainter hand-carve after region assignment",
-    "axis": "trough",
-    "long_profile_floor_y": [
-     [
-      0,
-      100
-     ],
-     [
-      1400,
-      90
-     ],
-     [
-      2300,
-      84
-     ],
-     [
-      3050,
-      66
-     ],
-     [
-      3200,
-      58
-     ],
-     [
-      3700,
-      58
-     ],
-     [
-      3760,
-      62
-     ]
-    ],
-    "shoulder_y": [
-     [
-      0,
-      145
-     ],
-     [
-      1400,
-      128
-     ],
-     [
-      2300,
-      120
-     ],
-     [
-      3050,
-      104
-     ],
-     [
-      3760,
-      94
-     ]
-    ],
-    "floor_width_blocks": 120,
-    "toe_width_blocks": 70,
-    "wall_angle_degrees": 34,
-    "blend_width_blocks": 150,
-    "head": {
-     "x": 3268,
-     "z": 1908,
-     "floor_y": 100,
-     "shoulder_y": 145
-    },
-    "terminus": {
-     "x": 6346,
-     "z": 3900,
-     "floor_y": 62,
-     "shoulder_y": 94
-    },
-    "simulated": {
-     "carved_km2": 0.532,
-     "cut_million_blocks": 5.94,
-     "cut": {
-      "mean": 11.2,
-      "p50": 9.7,
-      "p95": 24.4,
-      "max": 28.6
-     },
-     "fill_km2": 1.868,
-     "fill_million_blocks": 24.06,
-     "after": {
-      "shape_counts": {
-       "U": 0,
-       "V": 1,
-       "flat_floored": 30,
-       "asymmetric": 1,
-       "none": 0
-      },
-      "floor_width": {
-       "median": 180.0,
-       "range": [
-        76.0,
-        204.0
-       ]
-      },
-      "top_width": {
-       "median": 306.0,
-       "range": [
-        292.0,
-        448.0
-       ]
-      },
-      "wall_deg": {
-       "median": 29.0,
-       "range": [
-        3.1,
-        30.7
-       ]
-      },
-      "depth": {
-       "median": 38.1,
-       "range": [
-        12.91,
-        44.4
-       ]
-      },
-      "long_profile": {
-       "start_floor_y": 100.0,
-       "end_floor_y": 70.74,
-       "uphill_steps": 3,
-       "downhill_steps": 25
-      }
-     }
-    },
-    "note": "Distances are along the trough axis from the head. See docs/world-building/GLACIER_CARVE.md."
-   }
+   ]
   },
   {
-   "id": "meltwater_lake",
+   "id": "lake_tilpey",
    "kind": "lake",
-   "name": "Meltwater lake",
+   "name": "Lake Tilpey",
    "status": "built",
-   "status_basis": "An enclosed basin exists at the glacier's lower end: 0.22 km2 below sea level, floor y44.5. It is the D6 inland water body reported in the previous pass.",
+   "status_basis": "A closed basin at the glacier's end: floor y51, spill y77.9. At sea level it holds 0.74 km2 of water; filled to y77 it covers 1.16 km2, which matches the drawn outline (82% overlap). Two islands.",
    "water": "allowed",
    "anchor": {
-    "x": 6025,
-    "z": 3810
-   },
-   "anchors": {
-    "deepest": {
-     "x": 6096,
-     "z": 3920
-    },
-    "east_shore": {
-     "x": 6304,
-     "z": 3880
-    }
+    "x": 5870,
+    "z": 3874,
+    "y": 51.3
    },
    "extent": {
     "polygons": [
      [
       [
-       5928,
-       3520
+       5820,
+       3652
       ],
       [
-       6112,
-       3552
+       6008,
+       3652
       ],
       [
-       6168,
-       3608
+       6264,
+       3684
       ],
       [
-       6296,
-       3880
-      ],
-      [
-       6240,
-       4000
-      ],
-      [
-       6112,
-       4088
-      ],
-      [
-       5912,
-       4048
-      ],
-      [
-       5808,
-       3904
-      ],
-      [
-       5784,
+       6284,
        3704
       ],
       [
-       5816,
-       3616
+       6456,
+       3784
+      ],
+      [
+       6484,
+       3820
+      ],
+      [
+       6508,
+       3920
+      ],
+      [
+       6496,
+       4204
+      ],
+      [
+       6468,
+       4268
+      ],
+      [
+       6400,
+       4364
+      ],
+      [
+       6304,
+       4464
+      ],
+      [
+       6236,
+       4520
+      ],
+      [
+       6144,
+       4548
+      ],
+      [
+       5912,
+       4604
+      ],
+      [
+       5808,
+       4608
+      ],
+      [
+       5488,
+       4656
+      ],
+      [
+       5328,
+       4652
+      ],
+      [
+       5196,
+       4604
+      ],
+      [
+       5108,
+       4532
+      ],
+      [
+       5076,
+       4448
+      ],
+      [
+       5076,
+       4372
+      ],
+      [
+       5044,
+       4196
+      ],
+      [
+       5044,
+       4108
+      ],
+      [
+       5064,
+       4012
+      ],
+      [
+       5132,
+       3920
+      ],
+      [
+       5268,
+       3880
+      ],
+      [
+       5400,
+       3784
+      ],
+      [
+       5432,
+       3784
+      ],
+      [
+       5436,
+       3800
+      ],
+      [
+       5640,
+       3800
+      ],
+      [
+       5660,
+       3772
+      ],
+      [
+       5660,
+       3708
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 24 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 77,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       4748,
+       3152
+      ],
+      [
+       4796,
+       3152
+      ],
+      [
+       4884,
+       3192
+      ],
+      [
+       4912,
+       3220
+      ],
+      [
+       5116,
+       3336
+      ],
+      [
+       5176,
+       3384
+      ],
+      [
+       5308,
+       3456
+      ],
+      [
+       5432,
+       3540
+      ],
+      [
+       5512,
+       3588
+      ],
+      [
+       5604,
+       3628
+      ],
+      [
+       5684,
+       3700
+      ],
+      [
+       5724,
+       3696
+      ],
+      [
+       5860,
+       3600
+      ],
+      [
+       5976,
+       3564
+      ],
+      [
+       6068,
+       3620
+      ],
+      [
+       6120,
+       3676
+      ],
+      [
+       6248,
+       3708
+      ],
+      [
+       6348,
+       3760
+      ],
+      [
+       6448,
+       3856
+      ],
+      [
+       6472,
+       3868
+      ],
+      [
+       6536,
+       3856
+      ],
+      [
+       6616,
+       3868
+      ],
+      [
+       6640,
+       3888
+      ],
+      [
+       6648,
+       3916
+      ],
+      [
+       6600,
+       3948
+      ],
+      [
+       6540,
+       3948
+      ],
+      [
+       6472,
+       4008
+      ],
+      [
+       6428,
+       4096
+      ],
+      [
+       6396,
+       4296
+      ],
+      [
+       6368,
+       4372
+      ],
+      [
+       6312,
+       4440
+      ],
+      [
+       6228,
+       4484
+      ],
+      [
+       6124,
+       4512
+      ],
+      [
+       5916,
+       4496
+      ],
+      [
+       5888,
+       4508
+      ],
+      [
+       5852,
+       4552
+      ],
+      [
+       5828,
+       4560
+      ],
+      [
+       5784,
+       4596
+      ],
+      [
+       5716,
+       4620
+      ],
+      [
+       5664,
+       4616
+      ],
+      [
+       5640,
+       4600
+      ],
+      [
+       5616,
+       4564
+      ],
+      [
+       5592,
+       4552
+      ],
+      [
+       5544,
+       4548
+      ],
+      [
+       5520,
+       4552
+      ],
+      [
+       5464,
+       4588
+      ],
+      [
+       5336,
+       4616
+      ],
+      [
+       5240,
+       4612
+      ],
+      [
+       5184,
+       4592
+      ],
+      [
+       5144,
+       4528
+      ],
+      [
+       5132,
+       4460
+      ],
+      [
+       5160,
+       4364
+      ],
+      [
+       5208,
+       4280
+      ],
+      [
+       5216,
+       4216
+      ],
+      [
+       5200,
+       4160
+      ],
+      [
+       5128,
+       4072
+      ],
+      [
+       5132,
+       4004
+      ],
+      [
+       5152,
+       3968
+      ],
+      [
+       5176,
+       3948
+      ],
+      [
+       5224,
+       3928
+      ],
+      [
+       5376,
+       3904
+      ],
+      [
+       5436,
+       3876
+      ],
+      [
+       5456,
+       3856
+      ],
+      [
+       5456,
+       3836
+      ],
+      [
+       5404,
+       3764
+      ],
+      [
+       5284,
+       3648
+      ],
+      [
+       5176,
+       3564
+      ],
+      [
+       5052,
+       3492
+      ],
+      [
+       4912,
+       3360
+      ],
+      [
+       4884,
+       3348
+      ],
+      [
+       4840,
+       3304
+      ],
+      [
+       4804,
+       3288
+      ],
+      [
+       4776,
+       3260
+      ],
+      [
+       4740,
+       3244
+      ],
+      [
+       4716,
+       3204
+      ],
+      [
+       4716,
+       3180
       ]
      ]
     ]
    },
    "measured": {
-    "area_km2": 0.219,
-    "floor_y": 44.5,
-    "surface_y": 62,
-    "outlet": null
+    "outline_km2": 1.1695,
+    "ground_in_outline": {
+     "min": 51.3,
+     "median": 55.0,
+     "max": 103.8
+    },
+    "below_sea_km2": 0.7363,
+    "basin_floor_y": 51.3,
+    "basin_spill_y": 77.9,
+    "basin_depth": 26.5,
+    "basin_area_at_spill_km2": 1.1611,
+    "basin_share_of_outline_pct": 81.9,
+    "water_level_y": 77
    }
   },
   {
-   "id": "terminal_moraine",
-   "kind": "moraine",
-   "name": "Terminal moraine",
-   "status": "planned",
-   "status_basis": "No ridge exists. The valley mouth beyond the lake rises only to y70-75.",
+   "id": "peak_pond",
+   "kind": "lake",
+   "name": "Peak Pond",
+   "status": "built",
+   "status_basis": "A 20-block-deep closed basin in the northern downs, fed by an unannotated carved creek from the north-west. It holds water only if painted: it sits above sea level.",
    "water": "allowed",
    "anchor": {
-    "x": 6425,
-    "z": 3945
+    "x": 4042,
+    "z": 1470,
+    "y": 86.1
    },
-   "axes": [
-    {
-     "id": "crest",
-     "polyline": [
+   "extent": {
+    "polygons": [
+     [
       [
-       6291,
-       4099
+       4024,
+       1340
       ],
       [
-       6425,
-       3945
+       4060,
+       1340
       ],
       [
-       6489,
-       3751
+       4176,
+       1400
+      ],
+      [
+       4204,
+       1440
+      ],
+      [
+       4204,
+       1480
+      ],
+      [
+       4172,
+       1520
+      ],
+      [
+       4112,
+       1544
+      ],
+      [
+       3960,
+       1540
+      ],
+      [
+       3912,
+       1520
+      ],
+      [
+       3908,
+       1460
+      ],
+      [
+       3928,
+       1412
+      ],
+      [
+       3964,
+       1372
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 105,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       4056,
+       1264
+      ],
+      [
+       4128,
+       1300
+      ],
+      [
+       4116,
+       1352
+      ],
+      [
+       4120,
+       1384
+      ],
+      [
+       4128,
+       1416
+      ],
+      [
+       4160,
+       1464
+      ],
+      [
+       4160,
+       1492
+      ],
+      [
+       4136,
+       1516
+      ],
+      [
+       4124,
+       1544
+      ],
+      [
+       4124,
+       1572
+      ],
+      [
+       4148,
+       1604
+      ],
+      [
+       4148,
+       1640
+      ],
+      [
+       4096,
+       1692
+      ],
+      [
+       4068,
+       1688
+      ],
+      [
+       4020,
+       1636
+      ],
+      [
+       3988,
+       1616
+      ],
+      [
+       3968,
+       1584
+      ],
+      [
+       3940,
+       1572
+      ],
+      [
+       3928,
+       1536
+      ],
+      [
+       3928,
+       1424
+      ],
+      [
+       3868,
+       1324
+      ],
+      [
+       3872,
+       1304
+      ],
+      [
+       3888,
+       1304
+      ],
+      [
+       3920,
+       1324
+      ],
+      [
+       3968,
+       1300
+      ],
+      [
+       4020,
+       1304
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.0485,
+    "ground_in_outline": {
+     "min": 86.1,
+     "median": 99.7,
+     "max": 109.4
+    },
+    "below_sea_km2": 0.0,
+    "basin_floor_y": 86.1,
+    "basin_spill_y": 106.1,
+    "basin_depth": 20.0,
+    "basin_area_at_spill_km2": 0.0774,
+    "basin_share_of_outline_pct": 81.4,
+    "water_level_y": 105
+   }
+  },
+  {
+   "id": "lake_viltri",
+   "kind": "lake",
+   "name": "Lake Viltri",
+   "status": "built",
+   "status_basis": "A 30-block-deep closed basin at the head of Viltri's Path. The drawn outline is small (0.02 km2); the basin at spill is 0.04 km2. It holds water only if painted: it sits above sea level.",
+   "water": "allowed",
+   "anchor": {
+    "x": 1638,
+    "z": 2998,
+    "y": 75.1
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       1560,
+       2876
+      ],
+      [
+       1640,
+       2880
+      ],
+      [
+       1680,
+       2916
+      ],
+      [
+       1680,
+       2932
+      ],
+      [
+       1592,
+       2932
+      ],
+      [
+       1580,
+       2960
+      ],
+      [
+       1560,
+       2960
+      ],
+      [
+       1560,
+       2928
+      ],
+      [
+       1540,
+       2924
+      ],
+      [
+       1540,
+       2972
+      ],
+      [
+       1704,
+       2972
+      ],
+      [
+       1732,
+       2960
+      ],
+      [
+       1752,
+       3000
+      ],
+      [
+       1732,
+       3012
+      ],
+      [
+       1640,
+       3012
+      ],
+      [
+       1632,
+       3000
+      ],
+      [
+       1520,
+       3004
+      ],
+      [
+       1484,
+       2972
+      ],
+      [
+       1484,
+       2952
+      ],
+      [
+       1500,
+       2920
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 103,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       1664,
+       2876
+      ],
+      [
+       1704,
+       2880
+      ],
+      [
+       1740,
+       2920
+      ],
+      [
+       1748,
+       2980
+      ],
+      [
+       1720,
+       3032
+      ],
+      [
+       1668,
+       3060
+      ],
+      [
+       1604,
+       3068
+      ],
+      [
+       1564,
+       3060
+      ],
+      [
+       1512,
+       3028
+      ],
+      [
+       1472,
+       3020
+      ],
+      [
+       1536,
+       2924
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.021,
+    "ground_in_outline": {
+     "min": 75.1,
+     "median": 96.7,
+     "max": 108.5
+    },
+    "below_sea_km2": 0.0,
+    "basin_floor_y": 75.1,
+    "basin_spill_y": 104.8,
+    "basin_depth": 29.7,
+    "basin_area_at_spill_km2": 0.0381,
+    "basin_share_of_outline_pct": 77.5,
+    "water_level_y": 103
+   }
+  },
+  {
+   "id": "shrew_lake",
+   "kind": "lake",
+   "name": "Shrew Lake",
+   "status": "built",
+   "status_basis": "A 52-block-deep pit. At sea level only 0.02 km2 would be water at the bottom; filled to y106 it matches the outline (85% overlap). It holds water only if painted: it sits above sea level.",
+   "water": "allowed",
+   "anchor": {
+    "x": 2822,
+    "z": 3954,
+    "y": 55.2
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2620,
+       3776
+      ],
+      [
+       2724,
+       3784
+      ],
+      [
+       2748,
+       3800
+      ],
+      [
+       2928,
+       3804
+      ],
+      [
+       3064,
+       3840
+      ],
+      [
+       3164,
+       3904
+      ],
+      [
+       3180,
+       3932
+      ],
+      [
+       3176,
+       3976
+      ],
+      [
+       3132,
+       4032
+      ],
+      [
+       3000,
+       4076
+      ],
+      [
+       2776,
+       4072
+      ],
+      [
+       2680,
+       4056
+      ],
+      [
+       2668,
+       4012
+      ],
+      [
+       2632,
+       4004
+      ],
+      [
+       2628,
+       3984
+      ],
+      [
+       2576,
+       4004
+      ],
+      [
+       2540,
+       3972
+      ],
+      [
+       2508,
+       3916
+      ],
+      [
+       2520,
+       3836
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 106,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       2684,
+       3756
+      ],
+      [
+       2708,
+       3756
+      ],
+      [
+       2756,
+       3784
+      ],
+      [
+       2876,
+       3788
+      ],
+      [
+       3028,
+       3848
+      ],
+      [
+       3108,
+       3856
+      ],
+      [
+       3128,
+       3876
+      ],
+      [
+       3120,
+       3928
+      ],
+      [
+       3088,
+       3968
+      ],
+      [
+       2976,
+       4068
+      ],
+      [
+       2904,
+       4080
+      ],
+      [
+       2760,
+       4132
+      ],
+      [
+       2712,
+       4132
+      ],
+      [
+       2656,
+       4108
+      ],
+      [
+       2616,
+       4104
+      ],
+      [
+       2556,
+       4176
+      ],
+      [
+       2544,
+       4216
+      ],
+      [
+       2496,
+       4300
+      ],
+      [
+       2496,
+       4320
+      ],
+      [
+       2448,
+       4376
+      ],
+      [
+       2428,
+       4424
+      ],
+      [
+       2396,
+       4452
+      ],
+      [
+       2348,
+       4524
+      ],
+      [
+       2320,
+       4544
+      ],
+      [
+       2272,
+       4560
+      ],
+      [
+       2268,
+       4540
+      ],
+      [
+       2284,
+       4484
+      ],
+      [
+       2272,
+       4440
+      ],
+      [
+       2360,
+       4372
+      ],
+      [
+       2376,
+       4340
+      ],
+      [
+       2392,
+       4264
+      ],
+      [
+       2408,
+       4252
+      ],
+      [
+       2440,
+       4248
+      ],
+      [
+       2496,
+       4188
+      ],
+      [
+       2548,
+       4112
+      ],
+      [
+       2576,
+       4052
+      ],
+      [
+       2552,
+       4008
+      ],
+      [
+       2536,
+       3940
+      ],
+      [
+       2560,
+       3844
+      ],
+      [
+       2608,
+       3784
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.1552,
+    "ground_in_outline": {
+     "min": 55.2,
+     "median": 84.5,
+     "max": 137.4
+    },
+    "below_sea_km2": 0.0245,
+    "basin_floor_y": 55.2,
+    "basin_spill_y": 107.3,
+    "basin_depth": 52.1,
+    "basin_area_at_spill_km2": 0.2026,
+    "basin_share_of_outline_pct": 85.3,
+    "water_level_y": 106
+   }
+  },
+  {
+   "id": "arrow_lake",
+   "kind": "lake",
+   "name": "Arrow Lake",
+   "status": "built",
+   "status_basis": "A 46-block-deep pit; filled to y100 it matches the outline (91% overlap). It holds water only if painted: it sits above sea level.",
+   "water": "allowed",
+   "anchor": {
+    "x": 2790,
+    "z": 4606,
+    "y": 54.8
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2812,
+       4476
+      ],
+      [
+       2940,
+       4480
+      ],
+      [
+       2972,
+       4496
+      ],
+      [
+       3056,
+       4596
+      ],
+      [
+       3072,
+       4628
+      ],
+      [
+       3068,
+       4672
+      ],
+      [
+       2964,
+       4736
+      ],
+      [
+       2848,
+       4768
+      ],
+      [
+       2740,
+       4760
+      ],
+      [
+       2616,
+       4720
+      ],
+      [
+       2584,
+       4684
+      ],
+      [
+       2588,
+       4592
+      ],
+      [
+       2612,
+       4552
+      ],
+      [
+       2720,
+       4496
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 100,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       2716,
+       4460
+      ],
+      [
+       2788,
+       4460
+      ],
+      [
+       2868,
+       4484
+      ],
+      [
+       2988,
+       4544
+      ],
+      [
+       3036,
+       4588
+      ],
+      [
+       3048,
+       4620
+      ],
+      [
+       3036,
+       4664
+      ],
+      [
+       3008,
+       4692
+      ],
+      [
+       2952,
+       4720
+      ],
+      [
+       2920,
+       4760
+      ],
+      [
+       2916,
+       4848
+      ],
+      [
+       2864,
+       4788
+      ],
+      [
+       2768,
+       4764
+      ],
+      [
+       2704,
+       4764
+      ],
+      [
+       2568,
+       4664
+      ],
+      [
+       2548,
+       4616
+      ],
+      [
+       2556,
+       4568
+      ],
+      [
+       2624,
+       4492
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.1121,
+    "ground_in_outline": {
+     "min": 54.8,
+     "median": 79.5,
+     "max": 117.9
+    },
+    "below_sea_km2": 0.0204,
+    "basin_floor_y": 54.8,
+    "basin_spill_y": 101.2,
+    "basin_depth": 46.5,
+    "basin_area_at_spill_km2": 0.1204,
+    "basin_share_of_outline_pct": 91.2,
+    "water_level_y": 100
+   }
+  },
+  {
+   "id": "watering_hole",
+   "kind": "lake",
+   "name": "Watering Hole",
+   "status": "built",
+   "status_basis": "A small 14-block-deep basin on the Arrow Lake creek. It holds water only if painted: it sits above sea level.",
+   "water": "allowed",
+   "anchor": {
+    "x": 2962,
+    "z": 5238,
+    "y": 81.9
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2848,
+       5252
+      ],
+      [
+       3060,
+       5264
+      ],
+      [
+       3064,
+       5288
+      ],
+      [
+       3044,
+       5324
+      ],
+      [
+       3020,
+       5332
+      ],
+      [
+       2912,
+       5332
+      ],
+      [
+       2876,
+       5324
+      ],
+      [
+       2868,
+       5300
+      ],
+      [
+       2944,
+       5300
+      ],
+      [
+       2948,
+       5288
+      ],
+      [
+       2920,
+       5276
+      ],
+      [
+       2848,
+       5276
       ]
      ],
-     "section_width": 400,
-     "basis": "planned: an arc across the valley mouth, convex downstream, 40 blocks east of the lake's east shore"
-    }
-   ],
-   "spec": {
-    "crest_y": [
-     78,
-     82
+     [
+      [
+       2940,
+       5172
+      ],
+      [
+       2984,
+       5176
+      ],
+      [
+       3024,
+       5208
+      ],
+      [
+       3032,
+       5236
+      ],
+      [
+       2864,
+       5236
+      ],
+      [
+       2872,
+       5208
+      ]
+     ]
     ],
-    "base_width_blocks": [
-     80,
-     120
-    ],
-    "outer_face_degrees": 20,
-    "inner_face_degrees": 28,
-    "material": "gravel, cobble and coarse dirt with boulders",
-    "breach": {
-     "x": 6448,
-     "z": 3944,
-     "floor_y": 62,
-     "width_blocks": 16
-    }
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 95,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       2948,
+       5160
+      ],
+      [
+       2964,
+       5160
+      ],
+      [
+       3040,
+       5224
+      ],
+      [
+       3040,
+       5260
+      ],
+      [
+       3012,
+       5320
+      ],
+      [
+       3016,
+       5364
+      ],
+      [
+       3036,
+       5404
+      ],
+      [
+       3032,
+       5420
+      ],
+      [
+       3020,
+       5420
+      ],
+      [
+       2988,
+       5388
+      ],
+      [
+       2936,
+       5316
+      ],
+      [
+       2896,
+       5300
+      ],
+      [
+       2876,
+       5260
+      ],
+      [
+       2880,
+       5208
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.022,
+    "ground_in_outline": {
+     "min": 81.9,
+     "median": 91.8,
+     "max": 101.1
+    },
+    "below_sea_km2": 0.0,
+    "basin_floor_y": 81.9,
+    "basin_spill_y": 96.0,
+    "basin_depth": 14.1,
+    "basin_area_at_spill_km2": 0.0255,
+    "basin_share_of_outline_pct": 76.0,
+    "water_level_y": 95
    }
   },
   {
-   "id": "meltwater_river",
-   "kind": "river",
-   "name": "Meltwater river",
-   "status": "planned",
-   "status_basis": "The lake has no outlet. The lowest route to the sea runs 480 blocks east from the moraine breach over ground no higher than y75.",
+   "id": "pond_west_of_mt_clay",
+   "kind": "lake",
+   "name": "Unnamed pond west of Mt Clay",
+   "status": "built",
+   "status_basis": "A closed basin circled on the annotation with no label. Named here only descriptively; it needs a name. It holds water only if painted: it sits above sea level.",
    "water": "allowed",
    "anchor": {
-    "x": 6680,
-    "z": 3944
+    "x": 2110,
+    "z": 1706,
+    "y": 93.9
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2144,
+       1572
+      ],
+      [
+       2204,
+       1580
+      ],
+      [
+       2256,
+       1624
+      ],
+      [
+       2284,
+       1676
+      ],
+      [
+       2260,
+       1740
+      ],
+      [
+       2208,
+       1772
+      ],
+      [
+       2160,
+       1784
+      ],
+      [
+       2100,
+       1784
+      ],
+      [
+       1992,
+       1744
+      ],
+      [
+       1968,
+       1708
+      ],
+      [
+       1972,
+       1664
+      ],
+      [
+       1992,
+       1628
+      ],
+      [
+       2036,
+       1600
+      ],
+      [
+       2116,
+       1588
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 119,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       2096,
+       1616
+      ],
+      [
+       2172,
+       1620
+      ],
+      [
+       2208,
+       1640
+      ],
+      [
+       2216,
+       1712
+      ],
+      [
+       2200,
+       1748
+      ],
+      [
+       2152,
+       1784
+      ],
+      [
+       2092,
+       1800
+      ],
+      [
+       2052,
+       1800
+      ],
+      [
+       1988,
+       1776
+      ],
+      [
+       1976,
+       1732
+      ],
+      [
+       1992,
+       1672
+      ],
+      [
+       2032,
+       1636
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.0528,
+    "ground_in_outline": {
+     "min": 93.9,
+     "median": 116.4,
+     "max": 130.9
+    },
+    "below_sea_km2": 0.0,
+    "basin_floor_y": 93.9,
+    "basin_spill_y": 120.1,
+    "basin_depth": 26.2,
+    "basin_area_at_spill_km2": 0.0364,
+    "basin_share_of_outline_pct": 61.8,
+    "water_level_y": 119
+   }
+  },
+  {
+   "id": "marshy_marsh",
+   "kind": "marsh",
+   "name": "Marshy Marsh",
+   "status": "partial",
+   "status_basis": "Carved as a 38-block-deep pit (floor y63, spill y101.6), not a shallow wetland. It can be a deep pond ringed by swamp, or the pit needs filling to become a marsh.",
+   "water": "allowed",
+   "anchor": {
+    "x": 5158,
+    "z": 2166,
+    "y": 62.9
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       5072,
+       2000
+      ],
+      [
+       5256,
+       2008
+      ],
+      [
+       5328,
+       2048
+      ],
+      [
+       5348,
+       2104
+      ],
+      [
+       5352,
+       2192
+      ],
+      [
+       5308,
+       2272
+      ],
+      [
+       5264,
+       2320
+      ],
+      [
+       5140,
+       2348
+      ],
+      [
+       5048,
+       2344
+      ],
+      [
+       4944,
+       2300
+      ],
+      [
+       4872,
+       2232
+      ],
+      [
+       4860,
+       2172
+      ],
+      [
+       4892,
+       2104
+      ],
+      [
+       4984,
+       2032
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "water_body": {
+    "level_y": 100,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       5288,
+       1764
+      ],
+      [
+       5348,
+       1772
+      ],
+      [
+       5376,
+       1792
+      ],
+      [
+       5364,
+       1832
+      ],
+      [
+       5376,
+       1872
+      ],
+      [
+       5368,
+       1972
+      ],
+      [
+       5452,
+       2060
+      ],
+      [
+       5468,
+       2092
+      ],
+      [
+       5456,
+       2204
+      ],
+      [
+       5412,
+       2236
+      ],
+      [
+       5352,
+       2236
+      ],
+      [
+       5296,
+       2212
+      ],
+      [
+       5276,
+       2212
+      ],
+      [
+       5216,
+       2244
+      ],
+      [
+       5176,
+       2280
+      ],
+      [
+       5132,
+       2264
+      ],
+      [
+       5064,
+       2256
+      ],
+      [
+       5036,
+       2240
+      ],
+      [
+       5008,
+       2200
+      ],
+      [
+       5020,
+       2112
+      ],
+      [
+       5060,
+       2044
+      ],
+      [
+       5132,
+       1968
+      ],
+      [
+       5140,
+       1952
+      ],
+      [
+       5132,
+       1920
+      ],
+      [
+       5172,
+       1868
+      ],
+      [
+       5240,
+       1788
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.1392,
+    "ground_in_outline": {
+     "min": 62.9,
+     "median": 98.4,
+     "max": 121.5
+    },
+    "below_sea_km2": 0.0,
+    "basin_floor_y": 62.9,
+    "basin_spill_y": 101.6,
+    "basin_depth": 38.6,
+    "basin_area_at_spill_km2": 0.1499,
+    "basin_share_of_outline_pct": 54.2,
+    "water_level_y": 100
+   }
+  },
+  {
+   "id": "viltris_path",
+   "kind": "river",
+   "name": "Viltri's Path",
+   "status": "partial",
+   "status_basis": "A carved groove from Lake Viltri to the west coast, median 3.3 blocks deep and ~32 blocks wide at the floor. It is draped over the terrain, not graded: the bed climbs from y76 at the lake to y134 at (870, 3846) before dropping to y65 near the coast, so it cannot carry water from the lake to the sea.",
+   "water": "allowed",
+   "anchor": {
+    "x": 1100,
+    "z": 3600
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       1384,
+       2972
+      ],
+      [
+       1468,
+       2972
+      ],
+      [
+       1468,
+       3052
+      ],
+      [
+       1444,
+       3056
+      ],
+      [
+       1436,
+       3084
+      ],
+      [
+       1400,
+       3084
+      ],
+      [
+       1348,
+       3136
+      ],
+      [
+       1328,
+       3176
+      ],
+      [
+       1308,
+       3324
+      ],
+      [
+       1308,
+       3496
+      ],
+      [
+       1284,
+       3568
+      ],
+      [
+       1276,
+       3644
+      ],
+      [
+       1248,
+       3708
+      ],
+      [
+       1204,
+       3756
+      ],
+      [
+       1072,
+       3852
+      ],
+      [
+       960,
+       3876
+      ],
+      [
+       904,
+       3904
+      ],
+      [
+       876,
+       3936
+      ],
+      [
+       852,
+       4032
+      ],
+      [
+       788,
+       4124
+      ],
+      [
+       768,
+       4180
+      ],
+      [
+       720,
+       4172
+      ],
+      [
+       632,
+       4228
+      ],
+      [
+       588,
+       4228
+      ],
+      [
+       588,
+       4188
+      ],
+      [
+       620,
+       4152
+      ],
+      [
+       644,
+       4000
+      ],
+      [
+       672,
+       3952
+      ],
+      [
+       828,
+       3796
+      ],
+      [
+       856,
+       3788
+      ],
+      [
+       928,
+       3720
+      ],
+      [
+       1044,
+       3644
+      ],
+      [
+       1064,
+       3420
+      ],
+      [
+       1104,
+       3348
+      ],
+      [
+       1108,
+       3264
+      ],
+      [
+       1120,
+       3244
+      ],
+      [
+       1116,
+       3136
+      ],
+      [
+       1152,
+       3060
+      ],
+      [
+       1236,
+       3004
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 32 blocks bridged, simplified to 8 blocks"
    },
    "axes": [
     {
      "id": "channel",
      "polyline": [
       [
-       6448,
-       3944
+       1666,
+       2986
       ],
       [
-       6784,
-       3944
+       1618,
+       3002
       ],
       [
-       6920,
-       3960
+       1570,
+       3010
+      ],
+      [
+       1522,
+       3010
+      ],
+      [
+       1474,
+       3022
+      ],
+      [
+       1426,
+       3034
+      ],
+      [
+       1378,
+       3042
+      ],
+      [
+       1330,
+       3058
+      ],
+      [
+       1282,
+       3082
+      ],
+      [
+       1250,
+       3130
+      ],
+      [
+       1230,
+       3178
+      ],
+      [
+       1218,
+       3226
+      ],
+      [
+       1210,
+       3274
+      ],
+      [
+       1202,
+       3322
+      ],
+      [
+       1202,
+       3370
+      ],
+      [
+       1202,
+       3418
+      ],
+      [
+       1202,
+       3466
+      ],
+      [
+       1202,
+       3514
+      ],
+      [
+       1186,
+       3562
+      ],
+      [
+       1138,
+       3610
+      ],
+      [
+       1090,
+       3658
+      ],
+      [
+       1042,
+       3706
+      ],
+      [
+       1034,
+       3754
+      ],
+      [
+       990,
+       3802
+      ],
+      [
+       942,
+       3818
+      ],
+      [
+       894,
+       3834
+      ],
+      [
+       846,
+       3858
+      ],
+      [
+       798,
+       3902
+      ],
+      [
+       770,
+       3950
+      ],
+      [
+       754,
+       3998
+      ],
+      [
+       742,
+       4046
+      ],
+      [
+       722,
+       4094
+      ],
+      [
+       690,
+       4142
+      ],
+      [
+       662,
+       4190
+      ],
+      [
+       630,
+       4238
+      ],
+      [
+       586,
+       4274
+      ],
+      [
+       554,
+       4270
       ]
      ],
      "section_width": 200,
-     "basis": "least-cost path to open sea preferring low ground"
+     "from": "Lake Viltri",
+     "to": "Mouth of Viltri",
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map",
+     "measured": {
+      "length": 1903.3,
+      "stations": 60,
+      "shapes": {
+       "U": 8,
+       "V": 10,
+       "flat_floored": 2,
+       "asymmetric": 5,
+       "none": 35
+      },
+      "floor_y": [
+       67.44,
+       134.47
+      ],
+      "depth": {
+       "median": 4.77,
+       "range": [
+        0.0,
+        28.16
+       ]
+      },
+      "floor_width": {
+       "median": 32.0,
+       "range": [
+        28.0,
+        44.0
+       ]
+      },
+      "top_width": {
+       "median": 132.0,
+       "range": [
+        68.0,
+        168.0
+       ]
+      },
+      "wall_deg": {
+       "median": 14.3,
+       "range": [
+        3.5,
+        28.2
+       ]
+      },
+      "source": "tools/cross_section.py, derived/sections/viltris_path.channel.json (not committed)"
+     }
     }
    ],
-   "spec": {
-    "bed_y": [
-     61,
-     62
-    ],
-    "width_blocks": [
-     8,
-     16
-    ],
-    "max_cut_blocks": 14
+   "measured": {
+    "length_blocks": 1942,
+    "high_end": {
+     "x": 1666,
+     "z": 2986,
+     "bed": 75.7
+    },
+    "low_end": {
+     "x": 554,
+     "z": 4270,
+     "bed": 64.6
+    },
+    "bed_y": {
+     "min": 64.6,
+     "max": 134.4,
+     "below_62_pct": 0.0
+    },
+    "incision_blocks": {
+     "median": 3.3,
+     "p10": -0.5,
+     "stations_under_1_pct": 19.5
+    },
+    "worst_counter_rise_blocks": 59.2,
+    "worst_counter_rise_at": {
+     "x": 870,
+     "z": 3846,
+     "bed": 134.4,
+     "d": 1370
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
    }
   },
   {
-   "id": "northern_range",
-   "kind": "mountain",
-   "name": "The Northern Range",
-   "status": "built",
-   "status_basis": "Present as annotated. Summits are clipped flat at the y200 ceiling.",
+   "id": "mouth_of_viltri",
+   "kind": "estuary",
+   "name": "Mouth of Viltri",
+   "status": "partial",
+   "status_basis": "The outline reaches the west coast but only 0.005 km2 inside it is below sea level; the channel's lowest end sits at y65, a few blocks above the sea.",
    "water": "allowed",
    "anchor": {
-    "x": 2668,
-    "z": 1572
-   },
-   "anchors": {
-    "summit_b3": {
-     "x": 2668,
-     "z": 1572,
-     "y": 200
-    },
-    "summit_a3": {
-     "x": 2068,
-     "z": 708,
-     "y": 200
-    },
-    "summit_b2": {
-     "x": 1876,
-     "z": 1388,
-     "y": 200
-    },
-    "summit_a1": {
-     "x": 772,
-     "z": 412,
-     "y": 200
-    },
-    "summit_b4_east": {
-     "x": 3628,
-     "z": 1596,
-     "y": 182.5
-    }
+    "x": 613,
+    "z": 4306
    },
    "extent": {
     "polygons": [
      [
       [
-       2192,
-       368
+       716,
+       4196
       ],
       [
-       2864,
-       368
+       752,
+       4196
       ],
       [
-       3512,
-       600
+       752,
+       4220
       ],
       [
-       3760,
-       816
+       692,
+       4312
       ],
       [
-       3872,
-       1032
+       652,
+       4348
       ],
       [
-       3920,
-       1192
+       552,
+       4384
       ],
       [
-       3872,
-       1480
+       448,
+       4372
       ],
       [
-       3632,
-       1664
+       444,
+       4344
       ],
       [
-       3384,
-       1664
+       476,
+       4356
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 16 blocks bridged, simplified to 8 blocks"
+   },
+   "measured": {
+    "below_sea_km2": 0.0045,
+    "ground_in_outline": {
+     "min": 37.8,
+     "median": 83.1,
+     "max": 109.8
+    }
+   }
+  },
+  {
+   "id": "river_of_shrews",
+   "kind": "river",
+   "name": "River of Shrews",
+   "status": "partial",
+   "status_basis": "A groove 2.9 blocks deep running south-west from Shrew Lake. It is perched: its bed sits at y100-109, 40 blocks above the lake floor, rises by up to 11 blocks along its length, and ends inland in a closed basin (spill y109) instead of reaching the sea.",
+   "water": "allowed",
+   "anchor": {
+    "x": 2150,
+    "z": 4450
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       2576,
+       4016
       ],
       [
-       3472,
-       1680
+       2664,
+       4052
       ],
       [
-       3448,
-       1760
+       2668,
+       4072
       ],
       [
-       3200,
-       1904
+       2624,
+       4204
       ],
       [
-       3152,
-       1904
+       2556,
+       4312
       ],
       [
-       3144,
-       1840
+       2536,
+       4312
       ],
       [
-       3072,
-       1976
+       2508,
+       4280
       ],
       [
-       2480,
-       2280
+       2372,
+       4404
+      ],
+      [
+       2336,
+       4416
+      ],
+      [
+       2308,
+       4456
+      ],
+      [
+       2328,
+       4484
+      ],
+      [
+       2412,
+       4412
+      ],
+      [
+       2408,
+       4388
+      ],
+      [
+       2444,
+       4388
+      ],
+      [
+       2456,
+       4360
+      ],
+      [
+       2472,
+       4360
+      ],
+      [
+       2500,
+       4328
+      ],
+      [
+       2524,
+       4328
+      ],
+      [
+       2524,
+       4352
+      ],
+      [
+       2352,
+       4548
+      ],
+      [
+       2232,
+       4624
+      ],
+      [
+       2156,
+       4652
+      ],
+      [
+       2156,
+       4620
+      ],
+      [
+       2180,
+       4616
+      ],
+      [
+       2216,
+       4584
+      ],
+      [
+       2216,
+       4552
+      ],
+      [
+       2196,
+       4544
+      ],
+      [
+       2196,
+       4524
+      ],
+      [
+       2212,
+       4508
+      ],
+      [
+       2232,
+       4508
+      ],
+      [
+       2236,
+       4536
+      ],
+      [
+       2256,
+       4548
+      ],
+      [
+       2300,
+       4508
+      ],
+      [
+       2300,
+       4488
+      ],
+      [
+       2280,
+       4468
+      ],
+      [
+       2260,
+       4468
+      ],
+      [
+       2260,
+       4444
+      ],
+      [
+       2444,
+       4128
+      ],
+      [
+       2508,
+       4048
+      ]
+     ],
+     [
+      [
+       2160,
+       4552
+      ],
+      [
+       2180,
+       4552
+      ],
+      [
+       2176,
+       4576
       ],
       [
        2128,
-       2352
+       4616
       ],
       [
-       1504,
-       2368
+       2096,
+       4624
       ],
       [
-       1256,
-       2328
+       2092,
+       4644
       ],
       [
-       984,
-       2232
+       2076,
+       4644
       ],
       [
-       776,
-       2040
+       2044,
+       4672
       ],
       [
-       688,
-       1904
+       2056,
+       4704
       ],
       [
-       616,
-       1712
+       1692,
+       4724
       ],
       [
-       616,
-       1496
+       1616,
+       4708
       ],
       [
-       856,
-       1184
+       1560,
+       4668
       ],
       [
-       1280,
-       760
+       1560,
+       4628
       ],
       [
-       1352,
-       744
+       1636,
+       4572
       ],
       [
-       1632,
-       528
+       1952,
+       4576
       ]
      ]
-    ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       2722,
+       3978
+      ],
+      [
+       2674,
+       3998
+      ],
+      [
+       2626,
+       4046
+      ],
+      [
+       2582,
+       4094
+      ],
+      [
+       2558,
+       4142
+      ],
+      [
+       2534,
+       4190
+      ],
+      [
+       2510,
+       4238
+      ],
+      [
+       2482,
+       4286
+      ],
+      [
+       2450,
+       4334
+      ],
+      [
+       2418,
+       4382
+      ],
+      [
+       2382,
+       4430
+      ],
+      [
+       2350,
+       4478
+      ],
+      [
+       2306,
+       4526
+      ],
+      [
+       2258,
+       4574
+      ],
+      [
+       2210,
+       4606
+      ],
+      [
+       2162,
+       4626
+      ],
+      [
+       2114,
+       4634
+      ],
+      [
+       2066,
+       4638
+      ],
+      [
+       2018,
+       4638
+      ],
+      [
+       1970,
+       4638
+      ],
+      [
+       1922,
+       4638
+      ],
+      [
+       1874,
+       4642
+      ],
+      [
+       1826,
+       4642
+      ],
+      [
+       1778,
+       4642
+      ],
+      [
+       1730,
+       4642
+      ],
+      [
+       1682,
+       4642
+      ],
+      [
+       1642,
+       4650
+      ]
+     ],
+     "section_width": 200,
+     "from": "Shrew Lake",
+     "to": "inland end",
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map",
+     "measured": {
+      "length": 1399.1,
+      "stations": 44,
+      "shapes": {
+       "U": 2,
+       "V": 19,
+       "asymmetric": 1,
+       "none": 22
+      },
+      "floor_y": [
+       59.26,
+       109.21
+      ],
+      "depth": {
+       "median": 5.9,
+       "range": [
+        1.03,
+        12.38
+       ]
+      },
+      "floor_width": {
+       "median": 36.0,
+       "range": [
+        34.0,
+        40.0
+       ]
+      },
+      "top_width": {
+       "median": 156.0,
+       "range": [
+        106.0,
+        188.0
+       ]
+      },
+      "wall_deg": {
+       "median": 8.6,
+       "range": [
+        2.8,
+        14.1
+       ]
+      },
+      "source": "tools/cross_section.py, derived/sections/river_of_shrews.channel.json (not committed)"
+     }
+    }
+   ],
+   "measured": {
+    "length_blocks": 1412,
+    "high_end": {
+     "x": 1642,
+     "z": 4650,
+     "bed": 97.9
+    },
+    "low_end": {
+     "x": 2722,
+     "z": 3978,
+     "bed": 60.8
+    },
+    "bed_y": {
+     "min": 60.8,
+     "max": 109.2,
+     "below_62_pct": 1.3
+    },
+    "incision_blocks": {
+     "median": 2.9,
+     "p10": 2.1,
+     "stations_under_1_pct": 2.6
+    },
+    "worst_counter_rise_blocks": 11.3,
+    "worst_counter_rise_at": {
+     "x": 2218,
+     "z": 4602,
+     "bed": 109.2,
+     "d": 825
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
    }
   },
   {
-   "id": "volcanic_cones",
-   "kind": "volcano",
-   "name": "The volcanic cones",
+   "id": "rift",
+   "kind": "rift",
+   "name": "The Rift",
    "status": "built",
-   "status_basis": "Four cones present as annotated. Tops are clipped flat at y200; none has a crater.",
+   "status_basis": "A branching U-shaped trench (trunk, west spur, south-west and south-east arms): floor y82-89, median depth 36-38 blocks on the main arms, rim to rim 300-380 blocks, walls ~17 degrees. The floor is a closed basin (spill y92) and lies 20 blocks above sea level, so it is a dry valley unless painted.",
    "water": "allowed",
+   "surface": {
+    "floor_visible": true,
+    "flood": false,
+    "treatment": "The floor is now above sea level and visible. The earlier void/barrier treatment and the water: never policy no longer apply; the closed basin is left dry. A custom biome is still wanted."
+   },
+   "custom_biome": {
+    "required": true,
+    "biome": null,
+    "spawn_table": null,
+    "status": "deferred"
+   },
+   "role": {
+    "kind": "destination"
+   },
    "anchor": {
-    "x": 6116,
-    "z": 5396
+    "x": 4160,
+    "z": 3920
    },
    "anchors": {
-    "cone_1": {
-     "x": 6580,
-     "z": 5196,
-     "y": 200
+    "apex": {
+     "x": 3660,
+     "z": 2400
     },
-    "cone_2": {
-     "x": 6356,
-     "z": 5580,
-     "y": 200
+    "fork": {
+     "x": 4160,
+     "z": 3920
     },
-    "cone_3": {
-     "x": 6116,
-     "z": 5396,
-     "y": 200
+    "west_spur_end": {
+     "x": 2980,
+     "z": 3240
     },
-    "cone_4": {
-     "x": 5748,
-     "z": 5636,
-     "y": 200
+    "south_west_tip": {
+     "x": 3700,
+     "z": 5120
+    },
+    "south_east_tip": {
+     "x": 4430,
+     "z": 4860
     }
    },
    "extent": {
     "polygons": [
      [
       [
-       6344,
-       4704
+       3656,
+       2336
       ],
       [
-       6400,
-       4704
+       3688,
+       2336
       ],
       [
-       6440,
-       4752
+       3728,
+       2368
       ],
       [
-       7000,
-       4752
+       3776,
+       2436
       ],
       [
-       7144,
-       4840
+       3780,
+       2564
       ],
       [
-       7240,
-       5016
+       3740,
+       2648
       ],
       [
-       7240,
-       5184
+       3740,
+       2696
       ],
       [
-       7176,
-       5368
+       3768,
+       2796
       ],
       [
-       6752,
+       3780,
+       3000
+      ],
+      [
+       3820,
+       3128
+      ],
+      [
+       3928,
+       3324
+      ],
+      [
+       4216,
+       3588
+      ],
+      [
+       4256,
+       3652
+      ],
+      [
+       4260,
+       3708
+      ],
+      [
+       4244,
+       3712
+      ],
+      [
+       4284,
+       3756
+      ],
+      [
+       4324,
+       3872
+      ],
+      [
+       4372,
+       3948
+      ],
+      [
+       4396,
+       4052
+      ],
+      [
+       4452,
+       4156
+      ],
+      [
+       4476,
+       4260
+      ],
+      [
+       4492,
+       4284
+      ],
+      [
+       4492,
+       4328
+      ],
+      [
+       4532,
+       4484
+      ],
+      [
+       4556,
+       4688
+      ],
+      [
+       4604,
+       4868
+      ],
+      [
+       4604,
+       5040
+      ],
+      [
+       4564,
+       5136
+      ],
+      [
+       4432,
+       5224
+      ],
+      [
+       4336,
+       5308
+      ],
+      [
+       4180,
+       5388
+      ],
+      [
+       3696,
+       5376
+      ],
+      [
+       3608,
+       5344
+      ],
+      [
+       3564,
+       5276
+      ],
+      [
+       3564,
+       5164
+      ],
+      [
+       3616,
+       4992
+      ],
+      [
+       3800,
+       4680
+      ],
+      [
+       3864,
+       4532
+      ],
+      [
+       3908,
+       4480
+      ],
+      [
+       3924,
+       4436
+      ],
+      [
+       4020,
+       4332
+      ],
+      [
+       4052,
+       4264
+      ],
+      [
+       4052,
+       4124
+      ],
+      [
+       4024,
+       4100
+      ],
+      [
+       3992,
+       4008
+      ],
+      [
+       3888,
+       3900
+      ],
+      [
+       3736,
+       3820
+      ],
+      [
+       3692,
+       3784
+      ],
+      [
+       3608,
+       3752
+      ],
+      [
+       3536,
+       3696
+      ],
+      [
+       3348,
+       3632
+      ],
+      [
+       3168,
+       3544
+      ],
+      [
+       3020,
+       3404
+      ],
+      [
+       2964,
+       3320
+      ],
+      [
+       2908,
+       3264
+      ],
+      [
+       2928,
+       3172
+      ],
+      [
+       2968,
+       3112
+      ],
+      [
+       3204,
+       2872
+      ],
+      [
+       3264,
+       2828
+      ],
+      [
+       3456,
+       2524
+      ],
+      [
+       3572,
+       2384
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "axes": [
+    {
+     "id": "trunk",
+     "polyline": [
+      [
+       3686,
+       2442
+      ],
+      [
+       3648,
+       2498
+      ],
+      [
+       3594,
+       2758
+      ],
+      [
+       3596,
+       3282
+      ],
+      [
+       4174,
+       3882
+      ]
+     ],
+     "section_width": 1400,
+     "from": "apex at the Glacial Tear",
+     "to": "fork",
+     "basis": "least-cost path on the lowest ground inside the outline",
+     "measured": {
+      "length": 1690.3,
+      "stations": 36,
+      "shapes": {
+       "U": 26,
+       "flat_floored": 6,
+       "asymmetric": 4
+      },
+      "floor_y": [
+       82.09,
+       87.56
+      ],
+      "depth": {
+       "median": 37.52,
+       "range": [
+        11.73,
+        62.31
+       ]
+      },
+      "floor_width": {
+       "median": 113.0,
+       "range": [
+        62.0,
+        268.0
+       ]
+      },
+      "top_width": {
+       "median": 378.0,
+       "range": [
+        226.0,
+        540.0
+       ]
+      },
+      "wall_deg": {
+       "median": 17.5,
+       "range": [
+        6.3,
+        26.4
+       ]
+      },
+      "source": "tools/cross_section.py, derived/sections/rift.trunk.json (not committed)"
+     }
+    },
+    {
+     "id": "west_arm",
+     "polyline": [
+      [
+       3598,
+       3294
+      ],
+      [
+       3558,
+       3318
+      ],
+      [
+       3362,
+       3318
+      ],
+      [
+       3126,
+       3260
+      ],
+      [
+       3022,
+       3254
+      ]
+     ],
+     "section_width": 1400,
+     "from": "trunk",
+     "to": "west spur end",
+     "basis": "least-cost path on the lowest ground inside the outline",
+     "measured": {
+      "length": 589.8,
+      "stations": 19,
+      "shapes": {
+       "U": 8,
+       "V": 2,
+       "flat_floored": 2,
+       "asymmetric": 6,
+       "none": 1
+      },
+      "floor_y": [
+       82.09,
+       88.07
+      ],
+      "depth": {
+       "median": 20.14,
+       "range": [
+        3.42,
+        38.23
+       ]
+      },
+      "floor_width": {
+       "median": 78.0,
+       "range": [
+        68.0,
+        612.0
+       ]
+      },
+      "top_width": {
+       "median": 350.0,
+       "range": [
+        236.0,
+        1004.0
+       ]
+      },
+      "wall_deg": {
+       "median": 9.1,
+       "range": [
+        0.4,
+        14.1
+       ]
+      },
+      "source": "tools/cross_section.py, derived/sections/rift.west_arm.json (not committed)"
+     }
+    },
+    {
+     "id": "south_west_arm",
+     "polyline": [
+      [
+       4174,
+       3882
+      ],
+      [
+       4278,
+       4042
+      ],
+      [
+       4276,
+       4286
+      ],
+      [
+       4219,
+       4422
+      ],
+      [
+       4196,
+       4586
+      ],
+      [
+       3838,
+       4954
+      ],
+      [
+       3738,
+       5082
+      ]
+     ],
+     "section_width": 1400,
+     "from": "fork",
+     "to": "south-west tip",
+     "basis": "least-cost path on the lowest ground inside the outline",
+     "measured": {
+      "length": 1423.7,
+      "stations": 30,
+      "shapes": {
+       "U": 27,
+       "asymmetric": 3
+      },
+      "floor_y": [
+       82.74,
+       87.89
+      ],
+      "depth": {
+       "median": 36.95,
+       "range": [
+        29.23,
+        62.06
+       ]
+      },
+      "floor_width": {
+       "median": 85.0,
+       "range": [
+        72.0,
+        286.0
+       ]
+      },
+      "top_width": {
+       "median": 346.0,
+       "range": [
+        276.0,
+        970.0
+       ]
+      },
+      "wall_deg": {
+       "median": 17.2,
+       "range": [
+        4.6,
+        24.4
+       ]
+      },
+      "source": "tools/cross_section.py, derived/sections/rift.south_west_arm.json (not committed)"
+     }
+    },
+    {
+     "id": "south_east_arm",
+     "polyline": [
+      [
+       4174,
+       3882
+      ],
+      [
+       4253,
+       3986
+      ],
+      [
+       4270,
+       4046
+      ],
+      [
+       4270,
+       4330
+      ],
+      [
+       4213,
+       4514
+      ],
+      [
+       4211,
+       4714
+      ],
+      [
+       4390,
+       4894
+      ]
+     ],
+     "section_width": 1400,
+     "from": "fork",
+     "to": "south-east tip",
+     "basis": "least-cost path on the lowest ground inside the outline",
+     "measured": {
+      "length": 1123.5,
+      "stations": 24,
+      "shapes": {
+       "U": 21,
+       "flat_floored": 2,
+       "asymmetric": 1
+      },
+      "floor_y": [
+       82.75,
+       89.41
+      ],
+      "depth": {
+       "median": 35.89,
+       "range": [
+        29.09,
+        45.48
+       ]
+      },
+      "floor_width": {
+       "median": 80.0,
+       "range": [
+        64.0,
+        274.0
+       ]
+      },
+      "top_width": {
+       "median": 297.0,
+       "range": [
+        270.0,
+        610.0
+       ]
+      },
+      "wall_deg": {
+       "median": 17.4,
+       "range": [
+        11.8,
+        24.5
+       ]
+      },
+      "source": "tools/cross_section.py, derived/sections/rift.south_east_arm.json (not committed)"
+     }
+    }
+   ],
+   "measured": {
+    "closed_basin": {
+     "floor_y": 82.1,
+     "spill_y": 92.0,
+     "area_at_spill_km2": 0.578
+    }
+   }
+  },
+  {
+   "id": "craters",
+   "kind": "volcano",
+   "name": "The Craters",
+   "status": "partial",
+   "status_basis": "Three cones inside the outline. The great cone's top is clipped flat at y200; only the eastern cone has a bowl (7 blocks deep, floor y127). The other two read as rings in the local relief but hold no crater.",
+   "water": "allowed",
+   "anchor": {
+    "x": 6454,
+    "z": 5078,
+    "y": 200.0
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       6288,
+       4896
+      ],
+      [
+       6376,
+       4896
+      ],
+      [
+       6444,
+       4916
+      ],
+      [
+       6556,
+       4988
+      ],
+      [
+       6712,
+       5216
+      ],
+      [
+       6768,
+       5340
+      ],
+      [
+       6836,
+       5444
+      ],
+      [
+       6828,
+       5632
+      ],
+      [
+       6784,
+       5736
+      ],
+      [
+       6736,
        5800
       ],
       [
-       6344,
-       6056
+       6652,
+       5872
       ],
       [
-       5872,
-       6168
+       6492,
+       5932
       ],
       [
-       5496,
-       6168
+       6300,
+       5980
       ],
       [
-       5328,
-       6096
+       6036,
+       5968
       ],
       [
-       5144,
-       5880
+       5892,
+       5932
       ],
       [
-       5144,
-       5648
+       5740,
+       5868
       ],
       [
-       5216,
-       5464
+       5620,
+       5780
       ],
       [
-       5256,
-       5416
+       5556,
+       5712
       ],
       [
-       5320,
-       5416
-      ],
-      [
-       5320,
-       5360
-      ],
-      [
-       5496,
-       5128
-      ],
-      [
-       5544,
-       5128
+       5524,
+       5652
       ],
       [
        5536,
-       5400
+       5544
       ],
       [
-       5568,
-       5056
+       5664,
+       5264
       ],
       [
-       5616,
-       5008
+       5760,
+       5156
       ],
       [
-       5976,
-       4896
+       5760,
+       5136
+      ],
+      [
+       5792,
+       5132
+      ],
+      [
+       5920,
+       5040
+      ],
+      [
+       6024,
+       4992
+      ],
+      [
+       6096,
+       4980
+      ],
+      [
+       6164,
+       4948
+      ],
+      [
+       6208,
+       4948
+      ],
+      [
+       6212,
+       4912
       ]
      ]
-    ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 24 blocks bridged, simplified to 8 blocks"
+   },
+   "anchors": {
+    "eastern_bowl": {
+     "x": 6672,
+     "z": 5508,
+     "y": 126.8
+    }
+   }
+  },
+  {
+   "id": "peak_pond_creek",
+   "kind": "river",
+   "name": "Unnamed creek into Peak Pond",
+   "status": "partial",
+   "status_basis": "Carved from a pit north of the crags to Peak Pond; not annotated. Median incision 3.3 blocks; the bed rises 29 blocks at (3542, 1002), so it does not drain end to end and does not reach the sea.",
+   "water": "allowed",
+   "annotated": false,
+   "anchor": {
+    "x": 3786,
+    "z": 1182
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       3366,
+       906
+      ],
+      [
+       3414,
+       946
+      ],
+      [
+       3462,
+       962
+      ],
+      [
+       3510,
+       986
+      ],
+      [
+       3558,
+       1010
+      ],
+      [
+       3606,
+       1022
+      ],
+      [
+       3654,
+       1054
+      ],
+      [
+       3702,
+       1086
+      ],
+      [
+       3738,
+       1134
+      ],
+      [
+       3786,
+       1182
+      ],
+      [
+       3834,
+       1186
+      ],
+      [
+       3862,
+       1226
+      ],
+      [
+       3862,
+       1274
+      ],
+      [
+       3886,
+       1322
+      ],
+      [
+       3926,
+       1370
+      ],
+      [
+       3974,
+       1414
+      ],
+      [
+       4022,
+       1434
+      ],
+      [
+       4038,
+       1434
+      ]
+     ],
+     "section_width": 200,
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map"
+    }
+   ],
+   "measured": {
+    "length_blocks": 931,
+    "high_end": {
+     "x": 3366,
+     "z": 906,
+     "bed": 105.3
+    },
+    "low_end": {
+     "x": 4038,
+     "z": 1434,
+     "bed": 87.6
+    },
+    "bed_y": {
+     "min": 87.6,
+     "max": 134.0,
+     "below_62_pct": 0.0
+    },
+    "incision_blocks": {
+     "median": 3.3,
+     "p10": -0.7,
+     "stations_under_1_pct": 22.2
+    },
+    "worst_counter_rise_blocks": 29.0,
+    "worst_counter_rise_at": {
+     "x": 3542,
+     "z": 1002,
+     "bed": 134.0,
+     "d": 206
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
+   }
+  },
+  {
+   "id": "marsh_to_tilpey",
+   "kind": "river",
+   "name": "Unnamed creek from Marshy Marsh to Lake Tilpey",
+   "status": "partial",
+   "status_basis": "Carved from Marshy Marsh east then south to Tilpey's north shore; not annotated. Median incision 1.8 blocks; the bed rises 49 blocks at (5774, 2562), so it does not drain end to end and does not reach the sea.",
+   "water": "allowed",
+   "annotated": false,
+   "anchor": {
+    "x": 5822,
+    "z": 2726
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       5150,
+       2166
+      ],
+      [
+       5198,
+       2170
+      ],
+      [
+       5246,
+       2170
+      ],
+      [
+       5294,
+       2190
+      ],
+      [
+       5342,
+       2210
+      ],
+      [
+       5390,
+       2234
+      ],
+      [
+       5438,
+       2270
+      ],
+      [
+       5486,
+       2294
+      ],
+      [
+       5534,
+       2326
+      ],
+      [
+       5582,
+       2370
+      ],
+      [
+       5630,
+       2414
+      ],
+      [
+       5658,
+       2462
+      ],
+      [
+       5658,
+       2510
+      ],
+      [
+       5702,
+       2542
+      ],
+      [
+       5750,
+       2558
+      ],
+      [
+       5798,
+       2582
+      ],
+      [
+       5826,
+       2630
+      ],
+      [
+       5826,
+       2678
+      ],
+      [
+       5822,
+       2726
+      ],
+      [
+       5786,
+       2774
+      ],
+      [
+       5762,
+       2822
+      ],
+      [
+       5746,
+       2870
+      ],
+      [
+       5706,
+       2918
+      ],
+      [
+       5670,
+       2966
+      ],
+      [
+       5654,
+       3014
+      ],
+      [
+       5654,
+       3062
+      ],
+      [
+       5662,
+       3110
+      ],
+      [
+       5694,
+       3158
+      ],
+      [
+       5742,
+       3206
+      ],
+      [
+       5790,
+       3226
+      ],
+      [
+       5838,
+       3262
+      ],
+      [
+       5870,
+       3310
+      ],
+      [
+       5870,
+       3358
+      ],
+      [
+       5870,
+       3406
+      ],
+      [
+       5914,
+       3454
+      ],
+      [
+       5962,
+       3502
+      ],
+      [
+       5970,
+       3510
+      ]
+     ],
+     "section_width": 200,
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map"
+    }
+   ],
+   "measured": {
+    "length_blocks": 1981,
+    "high_end": {
+     "x": 5970,
+     "z": 3510,
+     "bed": 83.0
+    },
+    "low_end": {
+     "x": 5150,
+     "z": 2166,
+     "bed": 63.0
+    },
+    "bed_y": {
+     "min": 62.9,
+     "max": 131.6,
+     "below_62_pct": 0.0
+    },
+    "incision_blocks": {
+     "median": 1.8,
+     "p10": -0.5,
+     "stations_under_1_pct": 41.5
+    },
+    "worst_counter_rise_blocks": 48.6,
+    "worst_counter_rise_at": {
+     "x": 5774,
+     "z": 2562,
+     "bed": 131.6,
+     "d": 804
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
+   }
+  },
+  {
+   "id": "arrow_lake_south",
+   "kind": "river",
+   "name": "Unnamed creek south of Arrow Lake",
+   "status": "partial",
+   "status_basis": "Carved from Arrow Lake south past the Watering Hole toward the south coast; not annotated. Median incision 2.2 blocks; the bed rises 33 blocks at (2930, 4870), so it does not drain end to end and does not reach the sea.",
+   "water": "allowed",
+   "annotated": false,
+   "anchor": {
+    "x": 3202,
+    "z": 5622
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       2866,
+       4622
+      ],
+      [
+       2862,
+       4670
+      ],
+      [
+       2878,
+       4718
+      ],
+      [
+       2898,
+       4766
+      ],
+      [
+       2914,
+       4814
+      ],
+      [
+       2930,
+       4862
+      ],
+      [
+       2934,
+       4910
+      ],
+      [
+       2946,
+       4958
+      ],
+      [
+       2946,
+       5006
+      ],
+      [
+       2950,
+       5054
+      ],
+      [
+       2954,
+       5102
+      ],
+      [
+       2962,
+       5150
+      ],
+      [
+       2962,
+       5198
+      ],
+      [
+       2966,
+       5246
+      ],
+      [
+       2970,
+       5294
+      ],
+      [
+       2986,
+       5342
+      ],
+      [
+       3010,
+       5390
+      ],
+      [
+       3038,
+       5438
+      ],
+      [
+       3070,
+       5486
+      ],
+      [
+       3106,
+       5534
+      ],
+      [
+       3154,
+       5582
+      ],
+      [
+       3202,
+       5622
+      ],
+      [
+       3250,
+       5670
+      ],
+      [
+       3266,
+       5718
+      ],
+      [
+       3266,
+       5766
+      ],
+      [
+       3254,
+       5814
+      ],
+      [
+       3226,
+       5862
+      ],
+      [
+       3198,
+       5910
+      ],
+      [
+       3170,
+       5958
+      ],
+      [
+       3142,
+       6006
+      ],
+      [
+       3114,
+       6054
+      ],
+      [
+       3086,
+       6102
+      ],
+      [
+       3062,
+       6150
+      ],
+      [
+       3034,
+       6198
+      ],
+      [
+       3002,
+       6246
+      ],
+      [
+       2958,
+       6294
+      ],
+      [
+       2930,
+       6342
+      ],
+      [
+       2902,
+       6390
+      ],
+      [
+       2874,
+       6438
+      ],
+      [
+       2854,
+       6486
+      ],
+      [
+       2830,
+       6534
+      ],
+      [
+       2810,
+       6582
+      ],
+      [
+       2810,
+       6582
+      ]
+     ],
+     "section_width": 200,
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map"
+    }
+   ],
+   "measured": {
+    "length_blocks": 2236,
+    "high_end": {
+     "x": 2810,
+     "z": 6582,
+     "bed": 68.6
+    },
+    "low_end": {
+     "x": 2866,
+     "z": 4622,
+     "bed": 56.5
+    },
+    "bed_y": {
+     "min": 56.5,
+     "max": 101.2,
+     "below_62_pct": 2.0
+    },
+    "incision_blocks": {
+     "median": 2.2,
+     "p10": 1.3,
+     "stations_under_1_pct": 4.9
+    },
+    "worst_counter_rise_blocks": 32.6,
+    "worst_counter_rise_at": {
+     "x": 2930,
+     "z": 4870,
+     "bed": 101.2,
+     "d": 266
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
+   }
+  },
+  {
+   "id": "arrow_lake_south_east_branch",
+   "kind": "river",
+   "name": "Unnamed creek, south-east branch",
+   "status": "partial",
+   "status_basis": "Branches east from the Arrow Lake creek toward the south coast; not annotated. Median incision 2.3 blocks; the bed rises 34 blocks at (3838, 5946), so it does not drain end to end and does not reach the sea.",
+   "water": "allowed",
+   "annotated": false,
+   "anchor": {
+    "x": 3870,
+    "z": 5978
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       3246,
+       5734
+      ],
+      [
+       3294,
+       5746
+      ],
+      [
+       3342,
+       5774
+      ],
+      [
+       3390,
+       5786
+      ],
+      [
+       3438,
+       5798
+      ],
+      [
+       3486,
+       5806
+      ],
+      [
+       3534,
+       5810
+      ],
+      [
+       3582,
+       5810
+      ],
+      [
+       3630,
+       5818
+      ],
+      [
+       3678,
+       5830
+      ],
+      [
+       3726,
+       5842
+      ],
+      [
+       3774,
+       5882
+      ],
+      [
+       3822,
+       5930
+      ],
+      [
+       3870,
+       5978
+      ],
+      [
+       3918,
+       6006
+      ],
+      [
+       3966,
+       6010
+      ],
+      [
+       3986,
+       6058
+      ],
+      [
+       3986,
+       6106
+      ],
+      [
+       3978,
+       6154
+      ],
+      [
+       3978,
+       6202
+      ],
+      [
+       3978,
+       6250
+      ],
+      [
+       3978,
+       6298
+      ],
+      [
+       3982,
+       6346
+      ],
+      [
+       3990,
+       6394
+      ],
+      [
+       4006,
+       6442
+      ],
+      [
+       4034,
+       6490
+      ],
+      [
+       4034,
+       6490
+      ]
+     ],
+     "section_width": 200,
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map"
+    }
+   ],
+   "measured": {
+    "length_blocks": 1319,
+    "high_end": {
+     "x": 3246,
+     "z": 5734,
+     "bed": 82.3
+    },
+    "low_end": {
+     "x": 4034,
+     "z": 6490,
+     "bed": 75.2
+    },
+    "bed_y": {
+     "min": 75.2,
+     "max": 113.7,
+     "below_62_pct": 0.0
+    },
+    "incision_blocks": {
+     "median": 2.3,
+     "p10": -0.1,
+     "stations_under_1_pct": 16.6
+    },
+    "worst_counter_rise_blocks": 33.5,
+    "worst_counter_rise_at": {
+     "x": 3838,
+     "z": 5946,
+     "bed": 113.7,
+     "d": 662
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
+   }
+  },
+  {
+   "id": "tilpey_south_west_outlet",
+   "kind": "river",
+   "name": "Unnamed channel south-west of Lake Tilpey",
+   "status": "partial",
+   "status_basis": "A short channel leaving Tilpey's south-west shore; not annotated. Median incision 3.2 blocks; the bed rises 7 blocks at (5014, 4862), so it does not drain end to end and does not reach the sea.",
+   "water": "allowed",
+   "annotated": false,
+   "anchor": {
+    "x": 5042,
+    "z": 4798
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       5178,
+       4566
+      ],
+      [
+       5138,
+       4606
+      ],
+      [
+       5094,
+       4654
+      ],
+      [
+       5078,
+       4702
+      ],
+      [
+       5066,
+       4750
+      ],
+      [
+       5042,
+       4798
+      ],
+      [
+       5018,
+       4846
+      ],
+      [
+       5010,
+       4894
+      ],
+      [
+       4990,
+       4942
+      ],
+      [
+       4974,
+       4974
+      ]
+     ],
+     "section_width": 200,
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map"
+    }
+   ],
+   "measured": {
+    "length_blocks": 479,
+    "high_end": {
+     "x": 4974,
+     "z": 4974,
+     "bed": 114.3
+    },
+    "low_end": {
+     "x": 5178,
+     "z": 4566,
+     "bed": 70.4
+    },
+    "bed_y": {
+     "min": 70.4,
+     "max": 118.1,
+     "below_62_pct": 0.0
+    },
+    "incision_blocks": {
+     "median": 3.2,
+     "p10": 2.2,
+     "stations_under_1_pct": 0.0
+    },
+    "worst_counter_rise_blocks": 6.7,
+    "worst_counter_rise_at": {
+     "x": 5014,
+     "z": 4862,
+     "bed": 118.1,
+     "d": 354
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
    }
   }
  ]

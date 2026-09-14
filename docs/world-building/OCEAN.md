@@ -1,5 +1,7 @@
 # The ocean: depth, seabed, marine regions and what lies underneath
 
+> **Note 2026-09-14.** The coastline changed with the carved terrain revision. The marine regions below are carried into `cobblers.regions/3` unchanged and have not been re-measured.
+
 **Status: section 2 (the revised import) is applied.** Since 2026-09-13 the world
 `cobblers-10240` uses it; `REEXPORT.md` has the export and the measured seabed. Everything
 else here is still a proposal: no seabed pass, no biome painting, no content. The measurements come from the pinned heightmap

@@ -12,6 +12,8 @@
 //   --margin=<blocks>          ocean tiles added around the image on every side
 //   --spawn-x=<int> --spawn-z=<int>
 //   --border-centre=<int> --border-size=<int>
+//   --paint=<manifest.json>    optional: paint biomes, terrain, vegetation and water (tools/worldpainter/paint.js)
+//   --paint-script=<paint.js>  required with --paint
 //
 // The mapping is a straight line through (image-low, world-low) and
 // (image-high, world-high). WorldPainter's world levels are whole numbers, so a
@@ -109,6 +111,14 @@ t0 = System.currentTimeMillis();
 importer(marginMap, true).importToDimension(dim, true, null);
 print("with margin: " + dim.getTileCount() + " tiles in " + ((System.currentTimeMillis() - t0) / 1000) + " s; extent in tiles x "
     + dim.getLowestX() + ".." + dim.getHighestX() + ", z " + dim.getLowestY() + ".." + dim.getHighestY());
+
+// Optional paint pass from 8-bit maps aligned with the heightmap (pixel = block), described by a manifest
+if (params.get("paint") != null) {
+    load(param("paint-script"));
+    t0 = System.currentTimeMillis();
+    paintWorld(world, dim, param("paint"));
+    print("painted in " + ((System.currentTimeMillis() - t0) / 1000) + " s");
+}
 
 // Export settings: no WorldPainter border or wall, let Minecraft populate nothing, Minecraft world border as configured
 dim.setPopulate(false);

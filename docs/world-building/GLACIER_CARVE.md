@@ -1,5 +1,7 @@
 # Glacier Valley carve specification
 
+> **Superseded 2026-09-14.** The glacier has since been hand-carved as the Glacial Tear; it measures as a continuous U-shaped trough ([`TERRAIN_2026-09-14.md`](TERRAIN_2026-09-14.md) §3). This spec is kept for history.
+
 **Status: planned.** This is the spec for a WorldPainter hand-carve after region
 assignment. No terrain has been edited. The machine-readable copy is the `carve_spec`
 block of `glacier_corridor` in `data/landmarks.json`; where the two differ, fix one of
