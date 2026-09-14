@@ -1,6 +1,43 @@
 # Re-export: cobblers-10240
 
+## 2026-09-14 (second): river-cut terrain, rivers filled
+
+**Status: exported and pregenerated for Distant Horizons.** No player has been in it yet.
+
+| Step | Result |
+| --- | --- |
+| Heightmap | `land_8k_16_eroded_rivers.png`, sha256 `861d10ac…`: the carved revision with graded rivers, catchment-sized channels and the major river's valley cut in by `tools/grade_rivers.py` ([`RIVERS.md`](RIVERS.md)). Same import line |
+| Re-measured | `data/cells.json` (no drift), `data/regions.json` measured blocks (`tools/region_measure.py`); validator clean |
+| Paint maps | `python tools/paint_maps.py --source-root <source> --out build/paint`. Adds per-column water for all 10 cut courses, bed and bank material, river biome; ravines keep gravel floors |
+| Export | the same `reexport.py` command, with the old world from `cobblers-server-retired/2026-09-14-rivers/` |
+| WorldPainter | paint applied; save 23 s; export 764 s; 484 region files, 2.33 GB; `.world` sha256 `c0c716bf…` |
+| Water | lakes as before. Rivers, raised per column: major river trunk 41,804 columns, Viltri's Path 12,747, Watering Hole outflow 13,820, Tilpey outflow 7,246, and six smaller courses |
+| Seed | carried; `seed_match: true` |
+| Border | `worldborder get`: 10240 |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320`, complete in 7.5 minutes; `data/DistantHorizons*` 667 MB; region files still 484 |
+
+**Checked in the region files** (`world_heights.extract` on four stretches, 37,601 planned water
+columns):
+- **Dry columns:** 0.
+- **At the planned level:** 96–100%.
+- **The rest** are 1 block higher, inside Lake Tilpey's basin outline, where the lake's level
+  raises them.
+
+**Retired, not deleted,** to `cobblers-server-retired/2026-09-14-rivers/`:
+- the previous `cobblers-10240` world, with its DH stores;
+- `cobblers-10240.world`;
+- the client LOD cache `local+ho`, because the seed is unchanged and it would otherwise show the
+  old terrain.
+
+**Not checked in game:**
+- how river water behaves at its 1-block steps and where it meets a lake;
+- how the river biome spawns;
+- whether the known `minecraft:grass` issue below still applies.
+
 ## 2026-09-14: carved terrain, painted
+
+> Superseded by the export above. The world it describes is in
+> `cobblers-server-retired/2026-09-14-rivers/`.
 
 **Status: exported and pregenerated for Distant Horizons.** No player has been in it yet.
 

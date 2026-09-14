@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -107,12 +108,93 @@ def fill_gaps(idx, land):
     return idx
 
 
+RIVER_BANK = 2       # blocks of bank material beyond the water's edge
+COLD_BIOMES = ("minecraft:snowy_taiga", "minecraft:snowy_plains", "minecraft:grove", "minecraft:snowy_slopes",
+               "minecraft:frozen_peaks", "minecraft:jagged_peaks", "minecraft:ice_spikes", "minecraft:snowy_beach")
+
+
+def paint_rivers(rivers_path, heights, biome, terr, trees, plants, frost, out):
+    """Fill every cut river course with water at its stored surface (the whole block below it), paint its bed
+    by reach, sand or gravel banks, the river biome (frozen river among cold biomes), and clear trees, plants
+    and frost off the water: moving water does not freeze, and an iced-over river would stop being a barrier.
+
+    Writes one level map per course: 8-bit crop, value = water level y, 0 = none. Only the stations of the
+    heightmap that was cut are filled, so a plan whose cut does not match the imported heightmap refuses."""
+    import grade_rivers as G
+
+    doc = json.loads(Path(rivers_path).read_text(encoding="utf-8"))
+    cut = doc.get("cut") or {}
+    world = T.load_world(ROOT / "data" / "world.json")
+    if (cut.get("output") or {}).get("sha256") != world["heightmap"]["sha256"]:
+        raise SystemExit("rivers.json cut output %s is not the imported heightmap %s; rerun the cut and import it"
+                         % ((cut.get("output") or {}).get("sha256"), world["heightmap"]["sha256"]))
+    cold = [WP_BIOMES[b] for b in COLD_BIOMES]
+    manifest = []
+    for c in doc["courses"]:
+        if c["id"] not in cut.get("courses_cut", []):
+            continue
+        pts, chain = G.densify_chained(c["graded_polyline"])
+        reach_of = [G.at_chainage(c["reaches"], ch) for ch in chain]
+        pad = max(r["width"] for r in c["reaches"]) // 2 + RIVER_BANK + 2
+        xs = [p[0] for p in pts]
+        zs = [p[1] for p in pts]
+        x0, x1 = max(0, int(min(xs)) - pad), min(N, int(max(xs)) + pad + 1)
+        z0, z1 = max(0, int(min(zs)) - pad), min(N, int(max(zs)) + pad + 1)
+        best = np.full((z1 - z0, x1 - x0), np.inf, np.float32)
+        level = np.zeros((z1 - z0, x1 - x0), np.uint8)
+        bedmap = np.zeros((z1 - z0, x1 - x0), np.uint8)
+        bank = np.zeros((z1 - z0, x1 - x0), bool)
+        for (x, z, surface, _floor), r in zip(pts, reach_of):
+            if r["water_body"]:
+                continue
+            hw = r["width"] / 2.0
+            rr = int(math.ceil(hw)) + RIVER_BANK + 1
+            ax0, ax1 = max(x0, int(x) - rr), min(x1, int(x) + rr + 2)
+            az0, az1 = max(z0, int(z) - rr), min(z1, int(z) + rr + 2)
+            zz, xx = np.mgrid[az0:az1, ax0:ax1]
+            dist = np.hypot(xx - x, zz - z).astype(np.float32)
+            sub = (slice(az0 - z0, az1 - z0), slice(ax0 - x0, ax1 - x0))
+            wet = (dist <= hw) & (dist < best[sub])
+            best[sub] = np.where(wet, dist, best[sub])
+            level[sub] = np.where(wet, int(math.floor(surface + 0.01)), level[sub])   # 76.999 interpolated is 77
+            bedmap[sub] = np.where(wet, TERRAIN_CODES[r["bed"]], bedmap[sub])
+            bank[sub] |= (dist > hw) & (dist <= hw + RIVER_BANK)
+            if r["bed"] == "GRAVEL":
+                bedmap[sub] = np.where((dist > hw) & (dist <= hw + RIVER_BANK) & (bedmap[sub] == 0),
+                                       TERRAIN_CODES["GRAVEL"], bedmap[sub])
+        h = heights[z0:z1, x0:x1]
+        water = (level > 0) & (h < level)
+        level = np.where(water, level, 0).astype(np.uint8)
+        region = (slice(z0, z1), slice(x0, x1))
+        bed_or_bank = (level > 0) | bank
+        codes = np.where(bedmap > 0, bedmap, TERRAIN_CODES["SAND"]).astype(np.uint8)
+        t = terr[region]
+        t[bed_or_bank] = codes[bed_or_bank]
+        b = biome[region]
+        is_cold = np.isin(b, cold)
+        b[bed_or_bank] = np.where(is_cold[bed_or_bank], WP_BIOMES["minecraft:frozen_river"], WP_BIOMES["minecraft:river"])
+        for k in trees:
+            trees[k][region][bed_or_bank] = 0
+        for k in plants:
+            plants[k][region][level > 0] = False
+        frost[region][level > 0] = False
+        name = "river_%s.png" % c["id"]
+        Image.fromarray(level).save(out / name)
+        cols = int((level > 0).sum())
+        manifest.append({"name": c["id"], "levels": name, "x": x0, "z": z0, "columns": cols,
+                         "min_level": int(level[level > 0].min()) if cols else None,
+                         "max_level": int(level.max()) if cols else None})
+    return manifest
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
     p.add_argument("--regions", default=str(ROOT / "data" / "regions.json"))
     p.add_argument("--landmarks", default=str(ROOT / "data" / "landmarks.json"))
     p.add_argument("--seed", type=int, default=20260914, help="noise seed, so repaints are repeatable")
+    p.add_argument("--rivers", default=str(ROOT / "data" / "rivers.json"),
+                   help="graded rivers (tools/grade_rivers.py); '' to paint none")
     a = p.parse_args(argv)
     out = Path(a.out) if a.out else ROOT / "build" / "paint"
     out.mkdir(parents=True, exist_ok=True)
@@ -249,11 +331,11 @@ def main(argv=None):
             plants[k][wet] = False
         frost[wet] = False
 
-    # carved channels: dry creek beds of gravel, no trees on the bed
+    # dry ravines (carves that cannot hold a river): gravel floors, no trees on the floor
     cimg = Image.new("L", (N, N), 0)
     cd = ImageDraw.Draw(cimg)
     for lm in landmarks["landmarks"]:
-        if lm.get("kind") != "river":
+        if lm.get("kind") != "ravine":
             continue
         for ax in lm.get("axes") or []:
             cd.line([tuple(q) for q in ax["polyline"]], fill=1, width=10)
@@ -261,6 +343,9 @@ def main(argv=None):
     terr[creek] = TERRAIN_CODES["GRAVEL"]
     for k in trees:
         trees[k][creek] = 0
+
+    # graded rivers: water at each station's stored surface, bed material by reach, banks, river biome
+    manifest_rivers = paint_rivers(a.rivers, heights, biome, terr, trees, plants, frost, out) if a.rivers else []
 
     Image.fromarray(biome).save(out / "biomes.png")
     Image.fromarray(terr).save(out / "terrain.png")
@@ -274,14 +359,16 @@ def main(argv=None):
         "terrain_codes": {str(v): k for k, v in TERRAIN_CODES.items()},
         "trees": [{"layer": k, "map": "trees_%s.png" % k} for k in TREE_LAYERS if trees[k].any()],
         "plants": [{"name": "cobblers_%s" % k, "map": "plants_%s.png" % k, "plants": PLANT_SETS[k]} for k in PLANT_SETS if plants[k].any()],
-        "frost": "frost.png", "water": manifest_water,
+        "frost": "frost.png", "water": manifest_water + manifest_rivers,
         "source": {"regions": str(a.regions), "landmarks": str(a.landmarks), "heightmap_sha256": world["heightmap"]["sha256"], "seed": a.seed},
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     used = sorted({name for name, bid in WP_BIOMES.items() if (biome == bid).any()})
     stats = {"biomes_used": used,
              "tree_cover_pct": {k: round(100.0 * (v > 0).mean(), 2) for k, v in trees.items()},
-             "frost_pct": round(100.0 * frost.mean(), 2), "lakes": [w["name"] for w in manifest_water]}
+             "frost_pct": round(100.0 * frost.mean(), 2), "lakes": [w["name"] for w in manifest_water],
+             "rivers": {w["name"]: {"water_columns": w["columns"], "levels": [w["min_level"], w["max_level"]]}
+                        for w in manifest_rivers}}
     (out / "stats.json").write_text(json.dumps(stats, indent=1), encoding="utf-8")
     print(json.dumps(stats, indent=1))
     return 0

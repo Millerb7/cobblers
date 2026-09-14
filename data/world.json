@@ -6,15 +6,21 @@
   "source_root": null,
 
   "heightmap": {
-    "path": "land_8k_16_eroded.png",
+    "path": "land_8k_16_eroded_rivers.png",
     "width": 8192,
     "height": 8192,
     "channel": "gray",
     "bit_depth": 16,
-    "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+    "sha256": "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1",
     "status": "ok",
-    "previous_sha256": ["526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6"],
-    "revision_note": "2026-09-14: hand-carved revision (glacier, rift, lakes, rivers) saved under the same file name. The earlier file survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
+    "derived_from": {
+      "path": "land_8k_16_eroded.png",
+      "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+      "generator": "python tools/grade_rivers.py plan && python tools/grade_rivers.py cut --replace",
+      "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
+    },
+    "previous_sha256": ["526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6", "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7"],
+    "revision_note": "2026-09-14 (second): the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
   },
 
   "import": {
@@ -53,8 +59,8 @@
     "seed_policy": "Carried from the previous world's level.dat. Not committed: the public repo records only its sha256.",
     "seed_sha256": "48202407c92bc5d07cd215b93f631b384a5f7dde58e993e7bc9f7365e03563f3",
     "worldpainter_project": "cobblers-10240.world",
-    "worldpainter_project_sha256": "59f6805435c4a01391a5df46b43116b9c1fb3827418bb2b527341b2545878ddc",
-    "painted": {"date": "2026-09-14", "maps": "tools/paint_maps.py from data/regions.json paint_presets and data/landmarks.json water bodies", "note": "Preview paint. See docs/world-building/REEXPORT.md for the export and its known issues."},
+    "worldpainter_project_sha256": "c0c716bf9a7a08984abf6c506f004de4ed57c199fd4e4ef173a4d418abc4fcf5",
+    "painted": {"date": "2026-09-14", "maps": "tools/paint_maps.py from data/regions.json paint_presets, data/landmarks.json water bodies and ravines, and data/rivers.json graded courses (per-column water levels, bed material, river biome)", "note": "Preview paint on the river-cut heightmap. See docs/world-building/REEXPORT.md for the export and its known issues."},
     "worldpainter_project_note": "Beside the heightmap under source_root. Painting starts from this file; its hash changes when it is saved again.",
     "exported": "2026-09-14",
     "carried_from_previous_level_dat": ["WorldGenSettings", "DataPacks", "GameRules", "Difficulty", "DifficultyLocked", "GameType", "allowCommands", "hardcore"],

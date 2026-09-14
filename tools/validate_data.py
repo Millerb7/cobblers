@@ -140,7 +140,7 @@ SCHEMAS = {
         ["id", "name", "kind", "anchor", "status"],
         {
             "kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass",
-                     "glacier", "moraine", "river", "basin", "marsh", "estuary"},
+                     "glacier", "moraine", "river", "basin", "marsh", "estuary", "ravine"},
             # built: in the terrain as intended; partial: present but under-delivered;
             # planned: a spec only. Nothing drops silently when terrain falls short.
             "status": {"built", "partial", "planned"},
@@ -194,6 +194,12 @@ SCHEMAS = {
     ),
     "progression.json": ("cobblers.progression/1", None, [], {}),
     "rivers.json": ("cobblers.rivers/1", "courses", ["id", "source", "valid", "verdict"], {}),
+    "towns.json": (
+        "cobblers.towns/1",
+        "towns",
+        ["id", "order", "role", "status", "centre", "footprint"],
+        {"role": {"hometown", "gym_town", "league", "town"}, "status": {"proposed", "accepted", "built"}},
+    ),
     "routes.json": ("cobblers.routes/1", "routes", ["id", "from", "to"], {}),
 }
 
@@ -877,12 +883,21 @@ def check_rivers(ctx: Context):
     if not f:
         return
     world = ctx.doc("world.json") or {}
-    sha = (world.get("heightmap") or {}).get("sha256")
+    hm = world.get("heightmap") or {}
+    imported = hm.get("sha256")
+    derived = hm.get("derived_from") or {}
+    sha = derived.get("sha256") or imported      # rivers are planned on the authored heightmap
     sea = float((world.get("vertical") or {}).get("sea_level", 62))
     if f.doc.get("computed_from_sha256") != sha:
         rep.error("rivers", "rivers.json was computed from heightmap %s, not %s; rerun tools/grade_rivers.py plan"
                   % ((f.doc.get("computed_from_sha256") or "")[:12], (sha or "")[:12]),
                   file=f.rel, line=f.line_of_key("computed_from_sha256"))
+    if derived:
+        out_sha = ((f.doc.get("cut") or {}).get("output") or {}).get("sha256")
+        if out_sha != imported:
+            rep.error("rivers", "the imported heightmap %s is not the river cut recorded in rivers.json (%s); rerun "
+                      "tools/grade_rivers.py cut and update world.json" % ((imported or "")[:12], (out_sha or "")[:12]),
+                      file=f.rel, line=f.line_of_key("cut"))
     for c in courses:
         line = f.line_of_id(c.get("id"))
         poly = c.get("graded_polyline")
@@ -909,6 +924,42 @@ def check_rivers(ctx: Context):
                  % (cut.get("output") or {}).get("path"), file=f.rel, line=f.line_of_key("cut"))
 
 
+def check_towns(ctx: Context):
+    """Town placements: unique ids and orders, footprints inside the border and around their centre, and every
+    town a progression flag names exists."""
+    rep = ctx.report
+    f, towns = ctx.records("towns.json")
+    if not f:
+        return
+    world = ctx.doc("world.json") or {}
+    border = (world.get("export") or {}).get("border") or {}
+    seen, orders = set(), set()
+    for t in towns:
+        tid = t.get("id")
+        line = f.line_of_id(tid)
+        if tid in seen:
+            rep.error("towns", 'duplicate town "%s"' % tid, file=f.rel, line=line, where=tid)
+        seen.add(tid)
+        if t.get("order") in orders:
+            rep.error("towns", 'town "%s" repeats order %s' % (tid, t.get("order")), file=f.rel, line=line, where=tid)
+        orders.add(t.get("order"))
+        fp, c = t.get("footprint") or {}, t.get("centre") or {}
+        try:
+            if not (fp["min_x"] <= c["x"] <= fp["max_x"] and fp["min_z"] <= c["z"] <= fp["max_z"]):
+                rep.error("towns", 'town "%s" centre lies outside its footprint' % tid, file=f.rel, line=line, where=tid)
+            if border and not (border["min_x"] <= fp["min_x"] and fp["max_x"] <= border["max_x"]
+                               and border["min_z"] <= fp["min_z"] and fp["max_z"] <= border["max_z"]):
+                rep.error("towns", 'town "%s" footprint crosses the world border' % tid, file=f.rel, line=line, where=tid)
+        except (KeyError, TypeError):
+            rep.error("towns", 'town "%s" needs centre x/z and footprint min/max x/z' % tid, file=f.rel, line=line, where=tid)
+    prog = ctx.doc("progression.json") or {}
+    for flag in prog.get("flags") or []:
+        town = (flag.get("waystone") or {}).get("town")
+        if town and town not in seen:
+            rep.error("towns", 'progression flag "%s" names town "%s", which is not in towns.json'
+                      % (flag.get("id"), town), file="data/progression.json", where=flag.get("id"))
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -916,6 +967,7 @@ CHECKS = [
     ("referential", check_referential),
     ("progression", check_progression),
     ("rivers", check_rivers),
+    ("towns", check_towns),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
 ]

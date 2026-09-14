@@ -73,7 +73,7 @@ def _regions(presets=PRESETS, hill_preset="banded_hill"):
 LANDMARKS = {"landmarks": [
     {"id": "fixture_lake", "kind": "lake", "water_body": {"level_y": LAKE_LEVEL, "basin_polygons": [LAKE_BASIN]}},
     {"id": "dry_pond", "kind": "lake", "water_body": {"level_y": 70, "basin_polygons": [DRY_BASIN]}},
-    {"id": "fixture_creek", "kind": "river", "axes": [{"id": "channel", "polyline": CREEK}]},
+    {"id": "fixture_creek", "kind": "ravine", "axes": [{"id": "channel", "polyline": CREEK}]},
 ]}
 
 
@@ -105,7 +105,7 @@ def _run_main(mp, d, regions=None, landmarks=None):
     mp.setattr(PP.T, "load_from_args", lambda args: (heights.copy(), json.loads(json.dumps(WORLD))))
     rp, lp = _write_inputs(d, regions, landmarks)
     out = d / "paint"
-    rc = PP.main(["--regions", str(rp), "--landmarks", str(lp), "--out", str(out), "--seed", "7"])
+    rc = PP.main(["--regions", str(rp), "--landmarks", str(lp), "--out", str(out), "--seed", "7", "--rivers", ""])
     return rc, out, heights
 
 
