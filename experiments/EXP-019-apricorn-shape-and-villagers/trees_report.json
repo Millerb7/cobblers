@@ -1,0 +1,781 @@
+[
+ {
+  "tree": {
+   "x": 3548,
+   "y": 130,
+   "z": 3178,
+   "colour": "red"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 65,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 10,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 18,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 7,
+  "fruit_block": [
+   "cobblemon:red_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 4,
+   "3": 3
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"west\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 1,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3559,
+   "y": 130,
+   "z": 3178,
+   "colour": "blue"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 67,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 12,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 31,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:blue_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 4,
+   "3": 4
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"south\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3570,
+   "y": 130,
+   "z": 3178,
+   "colour": "green"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 67,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 12,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 20,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:green_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 3,
+   "3": 5
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"west\"}": 4,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 1,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3581,
+   "y": 130,
+   "z": 3178,
+   "colour": "pink"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 66,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 11,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 7,
+  "fruit_block": [
+   "cobblemon:pink_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 2,
+   "3": 5
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"north\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3548,
+   "y": 130,
+   "z": 3189,
+   "colour": "white"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 68,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 13,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 32,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:white_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 3,
+   "3": 5
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"north\"}": 4,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 1,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3559,
+   "y": 130,
+   "z": 3189,
+   "colour": "yellow"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 64,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 9,
+   "2": 20,
+   "3": 20,
+   "4": 10,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 29,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 18,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 7,
+  "fruit_block": [
+   "cobblemon:yellow_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 3,
+   "3": 4
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"south\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3570,
+   "y": 130,
+   "z": 3189,
+   "colour": "black"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 66,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 11,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:black_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 4,
+   "3": 4
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"east\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3581,
+   "y": 130,
+   "z": 3189,
+   "colour": "red"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 66,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 11,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 6,
+  "fruit_block": [
+   "cobblemon:red_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 3,
+   "3": 3
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"east\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3548,
+   "y": 130,
+   "z": 3200,
+   "colour": "blue"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 66,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 11,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:blue_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 3,
+   "3": 5
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"east\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3559,
+   "y": 130,
+   "z": 3200,
+   "colour": "green"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 67,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 12,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 31,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:green_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 3,
+   "3": 5
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"east\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 1,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3570,
+   "y": 130,
+   "z": 3200,
+   "colour": "pink"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 66,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 11,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:pink_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 4,
+   "3": 4
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"west\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3581,
+   "y": 130,
+   "z": 3200,
+   "colour": "white"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 67,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 12,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 20,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 6,
+  "fruit_block": [
+   "cobblemon:white_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 5,
+   "3": 1
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"east\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 1,
+   "{\"age\": \"0\", \"facing\": \"west\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3548,
+   "y": 130,
+   "z": 3211,
+   "colour": "yellow"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 65,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 10,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 18,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:yellow_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 5,
+   "3": 3
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"north\"}": 4,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 3,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 1
+  }
+ },
+ {
+  "tree": {
+   "x": 3559,
+   "y": 130,
+   "z": 3211,
+   "colour": "black"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 65,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 10,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 18,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:black_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 3,
+   "3": 5
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"west\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 2
+  }
+ },
+ {
+  "tree": {
+   "x": 3570,
+   "y": 130,
+   "z": 3211,
+   "colour": "red"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 65,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 10,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 18,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 8,
+  "fruit_block": [
+   "cobblemon:red_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 5,
+   "3": 3
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"east\"}": 4,
+   "{\"age\": \"0\", \"facing\": \"south\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2
+  }
+ },
+ {
+  "tree": {
+   "x": 3581,
+   "y": 130,
+   "z": 3211,
+   "colour": "blue"
+  },
+  "logs": 5,
+  "trunk_height": 5,
+  "log_columns": 1,
+  "log_axes": {
+   "y": 5
+  },
+  "leaves": 66,
+  "leaf_bbox": [
+   -2,
+   2,
+   1,
+   5,
+   -2,
+   2
+  ],
+  "leaf_layers": {
+   "1": 10,
+   "2": 20,
+   "3": 20,
+   "4": 11,
+   "5": 5
+  },
+  "leaf_props": {
+   "{\"distance\": \"2\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 30,
+   "{\"distance\": \"3\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 19,
+   "{\"distance\": \"1\", \"persistent\": \"false\", \"waterlogged\": \"false\"}": 17
+  },
+  "fruit": 5,
+  "fruit_block": [
+   "cobblemon:blue_apricorn"
+  ],
+  "fruit_y_rel": {
+   "2": 1,
+   "3": 4
+  },
+  "fruit_props": {
+   "{\"age\": \"0\", \"facing\": \"south\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"north\"}": 2,
+   "{\"age\": \"0\", \"facing\": \"east\"}": 1
+  }
+ }
+]
