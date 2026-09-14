@@ -1,0 +1,2751 @@
+{
+  "schema": "cobblers.rivers/1",
+  "status": "derived",
+  "computed_from_sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+  "generated": "2026-09-14",
+  "generator": "tools/grade_rivers.py plan",
+  "rule": "a bed never rises in the direction of flow; the surface at each station is the lowest ground met so far, never below sea level; cut = ground above that surface",
+  "parameters": {
+    "grid_blocks": 4,
+    "max_gouge": 20.0,
+    "slack": 2.0,
+    "cap": 64.0,
+    "bed_radius": 2,
+    "near_lake": 150,
+    "near_sea": 150,
+    "destination_radius": 400,
+    "corridor_half_width": 100,
+    "canal_pct": 50,
+    "sea_level": 62.0,
+    "channels": {
+      "river": {
+        "half_width": 4,
+        "depth": 3,
+        "bank_slope": 1.0
+      },
+      "creek": {
+        "half_width": 2,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "outflow": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      }
+    }
+  },
+  "lakes": [
+    {
+      "id": "lake_tilpey",
+      "level_y": 77.0,
+      "spill_y": 77.9,
+      "freeboard": 0.9,
+      "outflow": "real",
+      "min_worst_cut": 0.8,
+      "ends_in": "open_sea",
+      "course": "lake_tilpey_outflow"
+    },
+    {
+      "id": "watering_hole",
+      "level_y": 95.0,
+      "spill_y": 96.0,
+      "freeboard": 1.0,
+      "outflow": "real",
+      "min_worst_cut": 0.9,
+      "ends_in": "open_sea",
+      "course": "watering_hole_outflow"
+    },
+    {
+      "id": "arrow_lake",
+      "level_y": 100.0,
+      "spill_y": 101.2,
+      "freeboard": 1.2,
+      "outflow": "real",
+      "min_worst_cut": 1.2,
+      "ends_in": "watering_hole",
+      "course": "arrow_lake_outflow"
+    },
+    {
+      "id": "marshy_marsh",
+      "level_y": 100.0,
+      "spill_y": 101.6,
+      "freeboard": 1.6,
+      "outflow": "real",
+      "min_worst_cut": 1.6,
+      "ends_in": "open_sea",
+      "course": "marshy_marsh_outflow"
+    },
+    {
+      "id": "lake_viltri",
+      "level_y": 103.0,
+      "spill_y": 104.8,
+      "freeboard": 1.8,
+      "outflow": "real",
+      "min_worst_cut": 1.8,
+      "ends_in": "open_sea",
+      "course": "lake_viltri_outflow"
+    },
+    {
+      "id": "peak_pond",
+      "level_y": 105.0,
+      "spill_y": 106.1,
+      "freeboard": 1.1,
+      "outflow": "real",
+      "min_worst_cut": 1.1,
+      "ends_in": "open_sea",
+      "course": "peak_pond_outflow"
+    },
+    {
+      "id": "shrew_lake",
+      "level_y": 106.0,
+      "spill_y": 107.3,
+      "freeboard": 1.3,
+      "outflow": "real",
+      "min_worst_cut": 1.3,
+      "ends_in": "arrow_lake",
+      "course": "shrew_lake_outflow"
+    },
+    {
+      "id": "pond_west_of_mt_clay",
+      "level_y": 119.0,
+      "spill_y": 120.1,
+      "freeboard": 1.1,
+      "outflow": "real",
+      "min_worst_cut": 1.1,
+      "ends_in": "lake_viltri_outflow",
+      "course": "pond_west_of_mt_clay_outflow"
+    }
+  ],
+  "rivers": [
+    {
+      "id": "viltris_path",
+      "name": "Viltri's Path",
+      "kind": "river",
+      "annotated": true,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 1666,
+          "z": 2986,
+          "bed_y": 75.7,
+          "at": "lake",
+          "lake": "lake_viltri"
+        },
+        {
+          "end": "low_end",
+          "x": 554,
+          "z": 4270,
+          "bed_y": 64.6,
+          "at": "sea",
+          "lake": null
+        }
+      ],
+      "lakes_at_ends": [
+        "lake_viltri"
+      ],
+      "courses": [
+        "lake_viltri_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "lake_viltri",
+            "from_y": 103.0,
+            "to": "sea end 554,4270",
+            "min_worst_cut": 31.5,
+            "verdict": "no river along the carve: needs a 31.5-block cut"
+          }
+        ]
+      }
+    },
+    {
+      "id": "river_of_shrews",
+      "name": "River of Shrews",
+      "kind": "river",
+      "annotated": true,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 1642,
+          "z": 4650,
+          "bed_y": 97.9,
+          "at": "inland",
+          "lake": null,
+          "course": "river_of_shrews_from_high_end"
+        },
+        {
+          "end": "low_end",
+          "x": 2722,
+          "z": 3978,
+          "bed_y": 60.8,
+          "at": "lake",
+          "lake": "shrew_lake"
+        }
+      ],
+      "lakes_at_ends": [
+        "shrew_lake"
+      ],
+      "courses": [
+        "river_of_shrews_from_high_end",
+        "shrew_lake_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "inland end 1642,4650",
+            "from_y": 98.0,
+            "to": "shrew_lake",
+            "min_worst_cut": null,
+            "verdict": "no descending course inside the band within a 64-block cut"
+          },
+          {
+            "from": "shrew_lake",
+            "from_y": 106.0,
+            "to": "inland end 1642,4650",
+            "min_worst_cut": 3.2,
+            "verdict": "water can run along the carve with a cut of up to 3.2 blocks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "peak_pond_creek",
+      "name": "Unnamed creek into Peak Pond",
+      "kind": "creek",
+      "annotated": false,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 3366,
+          "z": 906,
+          "bed_y": 105.3,
+          "at": "inland",
+          "lake": null,
+          "course": "peak_pond_creek_from_high_end"
+        },
+        {
+          "end": "low_end",
+          "x": 4038,
+          "z": 1434,
+          "bed_y": 87.6,
+          "at": "lake",
+          "lake": "peak_pond"
+        }
+      ],
+      "lakes_at_ends": [
+        "peak_pond"
+      ],
+      "courses": [
+        "peak_pond_creek_from_high_end",
+        "peak_pond_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "inland end 3366,906",
+            "from_y": 105.7,
+            "to": "peak_pond",
+            "min_worst_cut": 28.3,
+            "verdict": "no river along the carve: needs a 28.3-block cut"
+          },
+          {
+            "from": "peak_pond",
+            "from_y": 105.0,
+            "to": "inland end 3366,906",
+            "min_worst_cut": 29.0,
+            "verdict": "no river along the carve: needs a 29.0-block cut"
+          }
+        ]
+      }
+    },
+    {
+      "id": "marsh_to_tilpey",
+      "name": "Unnamed creek from Marshy Marsh to Lake Tilpey",
+      "kind": "creek",
+      "annotated": false,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 5970,
+          "z": 3510,
+          "bed_y": 83.0,
+          "at": "lake",
+          "lake": "lake_tilpey"
+        },
+        {
+          "end": "low_end",
+          "x": 5150,
+          "z": 2166,
+          "bed_y": 63.0,
+          "at": "lake",
+          "lake": "marshy_marsh"
+        }
+      ],
+      "lakes_at_ends": [
+        "lake_tilpey",
+        "marshy_marsh"
+      ],
+      "courses": [
+        "lake_tilpey_outflow",
+        "marshy_marsh_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "lake_tilpey",
+            "from_y": 77.0,
+            "to": "marshy_marsh",
+            "min_worst_cut": null,
+            "verdict": "no descending course inside the band within a 64-block cut"
+          },
+          {
+            "from": "marshy_marsh",
+            "from_y": 100.0,
+            "to": "lake_tilpey",
+            "min_worst_cut": 31.7,
+            "verdict": "no river along the carve: needs a 31.7-block cut"
+          }
+        ]
+      }
+    },
+    {
+      "id": "arrow_lake_south",
+      "name": "Unnamed creek south of Arrow Lake",
+      "kind": "creek",
+      "annotated": false,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 2810,
+          "z": 6582,
+          "bed_y": 68.6,
+          "at": "sea",
+          "lake": null
+        },
+        {
+          "end": "low_end",
+          "x": 2866,
+          "z": 4622,
+          "bed_y": 56.5,
+          "at": "lake",
+          "lake": "arrow_lake"
+        }
+      ],
+      "lakes_at_ends": [
+        "arrow_lake"
+      ],
+      "courses": [
+        "arrow_lake_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "arrow_lake",
+            "from_y": 100.0,
+            "to": "sea end 2810,6582",
+            "min_worst_cut": 1.2,
+            "verdict": "water can run along the carve with a cut of up to 1.2 blocks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "arrow_lake_south_east_branch",
+      "name": "Unnamed creek, south-east branch",
+      "kind": "creek",
+      "annotated": false,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 3246,
+          "z": 5734,
+          "bed_y": 82.3,
+          "at": "confluence",
+          "lake": null,
+          "confluence_with": "arrow_lake_south"
+        },
+        {
+          "end": "low_end",
+          "x": 4034,
+          "z": 6490,
+          "bed_y": 75.2,
+          "at": "sea",
+          "lake": null
+        }
+      ],
+      "lakes_at_ends": [],
+      "courses": [],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "confluence end 3246,5734",
+            "from_y": 83.4,
+            "to": "sea end 4034,6490",
+            "min_worst_cut": 26.9,
+            "verdict": "no river along the carve: needs a 26.9-block cut"
+          }
+        ]
+      }
+    },
+    {
+      "id": "tilpey_south_west_outlet",
+      "name": "Unnamed channel south-west of Lake Tilpey",
+      "kind": "creek",
+      "annotated": false,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 4974,
+          "z": 4974,
+          "bed_y": 114.3,
+          "at": "inland",
+          "lake": null,
+          "course": "tilpey_south_west_outlet_from_high_end"
+        },
+        {
+          "end": "low_end",
+          "x": 5178,
+          "z": 4566,
+          "bed_y": 70.4,
+          "at": "lake",
+          "lake": "lake_tilpey"
+        }
+      ],
+      "lakes_at_ends": [
+        "lake_tilpey"
+      ],
+      "courses": [
+        "tilpey_south_west_outlet_from_high_end",
+        "lake_tilpey_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "inland end 4974,4974",
+            "from_y": 115.2,
+            "to": "lake_tilpey",
+            "min_worst_cut": 3.1,
+            "verdict": "water can run along the carve with a cut of up to 3.1 blocks"
+          },
+          {
+            "from": "lake_tilpey",
+            "from_y": 77.0,
+            "to": "inland end 4974,4974",
+            "min_worst_cut": 41.3,
+            "verdict": "no river along the carve: needs a 41.3-block cut"
+          }
+        ]
+      }
+    }
+  ],
+  "courses": [
+    {
+      "id": "lake_tilpey_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "lake_tilpey",
+        "level_y": 77.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 0.8,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "open_sea",
+      "end_at": {
+        "x": 6970,
+        "z": 3970
+      },
+      "routed": {
+        "length_blocks": 352,
+        "surface_start_y": 77.0,
+        "surface_end_y": 62.0,
+        "total_drop": 15.0,
+        "worst_cut": 0.8,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 6683,
+          "z": 3938
+        },
+        "worst_cut_to_sea": 0.8,
+        "stations_needing_cut_pct": 15.3,
+        "water_bodies_on_course": [
+          "lake_tilpey"
+        ]
+      },
+      "verdict": "descends",
+      "graded_polyline": [
+        [
+          6638,
+          3922,
+          77.0,
+          75.0
+        ],
+        [
+          6654,
+          3922,
+          77.0,
+          75.0
+        ],
+        [
+          6670,
+          3938,
+          77.0,
+          75.0
+        ],
+        [
+          6734,
+          3938,
+          77.0,
+          75.0
+        ],
+        [
+          6754,
+          3958,
+          76.97,
+          74.97
+        ],
+        [
+          6766,
+          3958,
+          76.66,
+          74.66
+        ],
+        [
+          6770,
+          3962,
+          76.61,
+          74.61
+        ],
+        [
+          6889,
+          3962,
+          70.07,
+          68.07
+        ],
+        [
+          6942,
+          3962,
+          65.47,
+          63.47
+        ],
+        [
+          6946,
+          3966,
+          64.83,
+          62.83
+        ],
+        [
+          6966,
+          3966,
+          62.43,
+          60.43
+        ],
+        [
+          6970,
+          3970,
+          62.0,
+          60.0
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "watering_hole_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "watering_hole",
+        "level_y": 95.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 0.9,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "open_sea",
+      "end_at": {
+        "x": 2582,
+        "z": 6494
+      },
+      "routed": {
+        "length_blocks": 1312,
+        "surface_start_y": 95.0,
+        "surface_end_y": 62.0,
+        "total_drop": 33.0,
+        "worst_cut": 0.9,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 3042,
+          "z": 5442
+        },
+        "worst_cut_to_sea": 0.9,
+        "stations_needing_cut_pct": 3.8,
+        "water_bodies_on_course": [
+          "watering_hole"
+        ]
+      },
+      "verdict": "descends",
+      "graded_polyline": [
+        [
+          3030,
+          5414,
+          95.0,
+          93.0
+        ],
+        [
+          3030,
+          5422,
+          95.0,
+          93.0
+        ],
+        [
+          3034,
+          5426,
+          95.0,
+          93.0
+        ],
+        [
+          3042,
+          5446,
+          95.0,
+          93.0
+        ],
+        [
+          3054,
+          5458,
+          95.0,
+          93.0
+        ],
+        [
+          3054,
+          5462,
+          95.0,
+          93.0
+        ],
+        [
+          3062,
+          5474,
+          94.82,
+          92.82
+        ],
+        [
+          3062,
+          5486,
+          94.43,
+          92.43
+        ],
+        [
+          3066,
+          5490,
+          94.09,
+          92.09
+        ],
+        [
+          3066,
+          5534,
+          93.94,
+          91.94
+        ],
+        [
+          3070,
+          5538,
+          93.94,
+          91.94
+        ],
+        [
+          3070,
+          5546,
+          93.94,
+          91.94
+        ],
+        [
+          3078,
+          5554,
+          93.65,
+          91.65
+        ],
+        [
+          3078,
+          5558,
+          93.65,
+          91.65
+        ],
+        [
+          3086,
+          5570,
+          93.53,
+          91.53
+        ],
+        [
+          3086,
+          5607,
+          93.52,
+          91.52
+        ],
+        [
+          3086,
+          5662,
+          91.64,
+          89.64
+        ],
+        [
+          3054,
+          5694,
+          91.37,
+          89.37
+        ],
+        [
+          3054,
+          5840,
+          90.36,
+          88.36
+        ],
+        [
+          3054,
+          5854,
+          89.48,
+          87.48
+        ],
+        [
+          3022,
+          5886,
+          89.48,
+          87.48
+        ],
+        [
+          3022,
+          5902,
+          88.56,
+          86.56
+        ],
+        [
+          3006,
+          5918,
+          88.56,
+          86.56
+        ],
+        [
+          3006,
+          6062,
+          86.95,
+          84.95
+        ],
+        [
+          2894,
+          6174,
+          85.18,
+          83.18
+        ],
+        [
+          2894,
+          6182,
+          84.82,
+          82.82
+        ],
+        [
+          2857,
+          6219,
+          84.8,
+          82.8
+        ],
+        [
+          2727,
+          6349,
+          79.61,
+          77.61
+        ],
+        [
+          2635,
+          6441,
+          71.37,
+          69.37
+        ],
+        [
+          2582,
+          6494,
+          62.0,
+          60.0
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "arrow_lake_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "arrow_lake",
+        "level_y": 100.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 1.2,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "watering_hole",
+      "end_at": {
+        "x": 2958,
+        "z": 5166
+      },
+      "routed": {
+        "length_blocks": 361,
+        "surface_start_y": 100.0,
+        "surface_end_y": 94.5,
+        "total_drop": 5.5,
+        "worst_cut": 1.3,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 2930,
+          "z": 4871
+        },
+        "worst_cut_to_sea": 1.3,
+        "stations_needing_cut_pct": 22.3,
+        "water_bodies_on_course": [
+          "arrow_lake",
+          "watering_hole"
+        ]
+      },
+      "verdict": "descends with a cut of up to 1.3 blocks",
+      "graded_polyline": [
+        [
+          2914,
+          4830,
+          100.0,
+          98.0
+        ],
+        [
+          2914,
+          4846,
+          100.0,
+          98.0
+        ],
+        [
+          2930,
+          4862,
+          100.0,
+          98.0
+        ],
+        [
+          2930,
+          4942,
+          99.5,
+          97.5
+        ],
+        [
+          2950,
+          4962,
+          99.31,
+          97.31
+        ],
+        [
+          2950,
+          4974,
+          99.01,
+          97.01
+        ],
+        [
+          2954,
+          4978,
+          99.0,
+          97.0
+        ],
+        [
+          2954,
+          4986,
+          99.0,
+          97.0
+        ],
+        [
+          2958,
+          4990,
+          99.0,
+          97.0
+        ],
+        [
+          2958,
+          5010,
+          98.92,
+          96.92
+        ],
+        [
+          2962,
+          5014,
+          98.92,
+          96.92
+        ],
+        [
+          2962,
+          5026,
+          98.52,
+          96.52
+        ],
+        [
+          2966,
+          5030,
+          98.52,
+          96.52
+        ],
+        [
+          2966,
+          5070,
+          98.46,
+          96.46
+        ],
+        [
+          2962,
+          5074,
+          98.35,
+          96.35
+        ],
+        [
+          2962,
+          5086,
+          98.35,
+          96.35
+        ],
+        [
+          2958,
+          5090,
+          98.28,
+          96.28
+        ],
+        [
+          2958,
+          5126,
+          98.24,
+          96.24
+        ],
+        [
+          2958,
+          5143,
+          97.3,
+          95.3
+        ],
+        [
+          2958,
+          5166,
+          94.47,
+          92.47
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "marshy_marsh_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "marshy_marsh",
+        "level_y": 100.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 1.6,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "open_sea",
+      "end_at": {
+        "x": 5662,
+        "z": 1598
+      },
+      "routed": {
+        "length_blocks": 395,
+        "surface_start_y": 100.0,
+        "surface_end_y": 62.0,
+        "total_drop": 38.0,
+        "worst_cut": 2.4,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 5446,
+          "z": 1806
+        },
+        "worst_cut_to_sea": 2.4,
+        "stations_needing_cut_pct": 42.5,
+        "water_bodies_on_course": [
+          "marshy_marsh"
+        ]
+      },
+      "verdict": "descends with a cut of up to 2.4 blocks",
+      "graded_polyline": [
+        [
+          5358,
+          1806,
+          100.0,
+          98.0
+        ],
+        [
+          5462,
+          1806,
+          100.0,
+          98.0
+        ],
+        [
+          5510,
+          1758,
+          100.0,
+          98.0
+        ],
+        [
+          5565,
+          1703,
+          92.19,
+          90.19
+        ],
+        [
+          5596,
+          1672,
+          85.67,
+          83.67
+        ],
+        [
+          5650,
+          1618,
+          67.87,
+          65.87
+        ],
+        [
+          5650,
+          1610,
+          66.15,
+          64.15
+        ],
+        [
+          5662,
+          1598,
+          62.0,
+          60.0
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "lake_viltri_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "lake_viltri",
+        "level_y": 103.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 1.8,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "open_sea",
+      "end_at": {
+        "x": 674,
+        "z": 1846
+      },
+      "routed": {
+        "length_blocks": 1711,
+        "surface_start_y": 103.0,
+        "surface_end_y": 62.0,
+        "total_drop": 41.0,
+        "worst_cut": 1.9,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 1444,
+          "z": 3018
+        },
+        "worst_cut_to_sea": 1.9,
+        "stations_needing_cut_pct": 16.9,
+        "water_bodies_on_course": [
+          "lake_viltri"
+        ]
+      },
+      "verdict": "descends with a cut of up to 1.9 blocks",
+      "graded_polyline": [
+        [
+          1490,
+          3014,
+          103.0,
+          101.0
+        ],
+        [
+          1486,
+          3018,
+          103.0,
+          101.0
+        ],
+        [
+          1442,
+          3018,
+          103.0,
+          101.0
+        ],
+        [
+          1438,
+          3022,
+          103.0,
+          101.0
+        ],
+        [
+          1426,
+          3022,
+          103.0,
+          101.0
+        ],
+        [
+          1422,
+          3026,
+          103.0,
+          101.0
+        ],
+        [
+          1410,
+          3026,
+          103.0,
+          101.0
+        ],
+        [
+          1406,
+          3030,
+          103.0,
+          101.0
+        ],
+        [
+          1370,
+          3030,
+          102.91,
+          100.91
+        ],
+        [
+          1362,
+          3022,
+          102.91,
+          100.91
+        ],
+        [
+          1314,
+          3022,
+          102.25,
+          100.25
+        ],
+        [
+          1294,
+          3002,
+          101.16,
+          99.16
+        ],
+        [
+          1294,
+          2998,
+          101.16,
+          99.16
+        ],
+        [
+          1270,
+          2974,
+          101.12,
+          99.12
+        ],
+        [
+          1266,
+          2974,
+          101.12,
+          99.12
+        ],
+        [
+          1246,
+          2954,
+          101.12,
+          99.12
+        ],
+        [
+          1242,
+          2954,
+          101.12,
+          99.12
+        ],
+        [
+          1222,
+          2934,
+          101.12,
+          99.12
+        ],
+        [
+          1222,
+          2930,
+          101.12,
+          99.12
+        ],
+        [
+          1210,
+          2918,
+          101.12,
+          99.12
+        ],
+        [
+          1162,
+          2870,
+          99.3,
+          97.3
+        ],
+        [
+          1154,
+          2870,
+          99.12,
+          97.12
+        ],
+        [
+          1150,
+          2866,
+          98.67,
+          96.67
+        ],
+        [
+          1138,
+          2866,
+          98.28,
+          96.28
+        ],
+        [
+          1134,
+          2862,
+          97.79,
+          95.79
+        ],
+        [
+          1122,
+          2862,
+          97.36,
+          95.36
+        ],
+        [
+          1118,
+          2858,
+          97.08,
+          95.08
+        ],
+        [
+          1106,
+          2858,
+          97.03,
+          95.03
+        ],
+        [
+          1102,
+          2854,
+          96.86,
+          94.86
+        ],
+        [
+          1090,
+          2854,
+          96.81,
+          94.81
+        ],
+        [
+          1054,
+          2818,
+          94.94,
+          92.94
+        ],
+        [
+          1042,
+          2818,
+          94.94,
+          92.94
+        ],
+        [
+          1038,
+          2814,
+          94.88,
+          92.88
+        ],
+        [
+          1038,
+          2789,
+          93.35,
+          91.35
+        ],
+        [
+          1038,
+          2754,
+          93.03,
+          91.03
+        ],
+        [
+          1042,
+          2750,
+          92.94,
+          90.94
+        ],
+        [
+          1042,
+          2746,
+          92.94,
+          90.94
+        ],
+        [
+          1050,
+          2738,
+          92.77,
+          90.77
+        ],
+        [
+          1050,
+          2710,
+          92.77,
+          90.77
+        ],
+        [
+          1086,
+          2674,
+          92.65,
+          90.65
+        ],
+        [
+          1086,
+          2514,
+          92.65,
+          90.65
+        ],
+        [
+          1066,
+          2494,
+          92.57,
+          90.57
+        ],
+        [
+          1066,
+          2426,
+          92.4,
+          90.4
+        ],
+        [
+          1038,
+          2398,
+          92.4,
+          90.4
+        ],
+        [
+          1038,
+          2342,
+          92.14,
+          90.14
+        ],
+        [
+          1006,
+          2306,
+          92.14,
+          90.14
+        ],
+        [
+          1006,
+          2274,
+          91.62,
+          89.62
+        ],
+        [
+          974,
+          2242,
+          91.52,
+          89.52
+        ],
+        [
+          974,
+          2178,
+          90.81,
+          88.81
+        ],
+        [
+          883,
+          2087,
+          90.1,
+          88.1
+        ],
+        [
+          867,
+          2071,
+          89.65,
+          87.65
+        ],
+        [
+          848,
+          2052,
+          88.0,
+          86.0
+        ],
+        [
+          814,
+          2018,
+          87.89,
+          85.89
+        ],
+        [
+          814,
+          1986,
+          87.53,
+          85.53
+        ],
+        [
+          799,
+          1971,
+          87.47,
+          85.47
+        ],
+        [
+          758,
+          1930,
+          82.72,
+          80.72
+        ],
+        [
+          739,
+          1911,
+          79.69,
+          77.69
+        ],
+        [
+          716,
+          1888,
+          74.03,
+          72.03
+        ],
+        [
+          674,
+          1846,
+          62.0,
+          60.0
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "peak_pond_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "peak_pond",
+        "level_y": 105.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 1.1,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "open_sea",
+      "end_at": {
+        "x": 4498,
+        "z": 966
+      },
+      "routed": {
+        "length_blocks": 545,
+        "surface_start_y": 105.0,
+        "surface_end_y": 62.0,
+        "total_drop": 43.0,
+        "worst_cut": 1.4,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 4263,
+          "z": 1213
+        },
+        "worst_cut_to_sea": 1.4,
+        "stations_needing_cut_pct": 30.6,
+        "water_bodies_on_course": [
+          "peak_pond"
+        ]
+      },
+      "verdict": "descends with a cut of up to 1.4 blocks",
+      "graded_polyline": [
+        [
+          4114,
+          1326,
+          105.0,
+          103.0
+        ],
+        [
+          4126,
+          1326,
+          105.0,
+          103.0
+        ],
+        [
+          4158,
+          1294,
+          105.0,
+          103.0
+        ],
+        [
+          4186,
+          1294,
+          105.0,
+          103.0
+        ],
+        [
+          4210,
+          1270,
+          105.0,
+          103.0
+        ],
+        [
+          4210,
+          1266,
+          105.0,
+          103.0
+        ],
+        [
+          4294,
+          1182,
+          105.0,
+          103.0
+        ],
+        [
+          4322,
+          1154,
+          101.74,
+          99.74
+        ],
+        [
+          4322,
+          1138,
+          101.05,
+          99.05
+        ],
+        [
+          4324,
+          1136,
+          100.83,
+          98.83
+        ],
+        [
+          4377,
+          1083,
+          90.87,
+          88.87
+        ],
+        [
+          4399,
+          1061,
+          87.48,
+          85.48
+        ],
+        [
+          4432,
+          1028,
+          80.12,
+          78.12
+        ],
+        [
+          4456,
+          1004,
+          74.32,
+          72.32
+        ],
+        [
+          4490,
+          970,
+          63.75,
+          61.75
+        ],
+        [
+          4494,
+          970,
+          63.12,
+          61.12
+        ],
+        [
+          4498,
+          966,
+          62.0,
+          60.0
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "shrew_lake_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "shrew_lake",
+        "level_y": 106.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 1.3,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "arrow_lake",
+      "end_at": {
+        "x": 2554,
+        "z": 4590
+      },
+      "routed": {
+        "length_blocks": 231,
+        "surface_start_y": 106.0,
+        "surface_end_y": 99.9,
+        "total_drop": 6.1,
+        "worst_cut": 1.3,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 2400,
+          "z": 4530
+        },
+        "worst_cut_to_sea": 1.3,
+        "stations_needing_cut_pct": 41.1,
+        "water_bodies_on_course": [
+          "shrew_lake",
+          "arrow_lake"
+        ]
+      },
+      "verdict": "descends with a cut of up to 1.3 blocks",
+      "graded_polyline": [
+        [
+          2358,
+          4506,
+          106.0,
+          104.0
+        ],
+        [
+          2382,
+          4530,
+          106.0,
+          104.0
+        ],
+        [
+          2453,
+          4530,
+          106.0,
+          104.0
+        ],
+        [
+          2494,
+          4530,
+          104.84,
+          102.84
+        ],
+        [
+          2530,
+          4566,
+          103.23,
+          101.23
+        ],
+        [
+          2554,
+          4590,
+          99.91,
+          97.91
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "pond_west_of_mt_clay_outflow",
+      "river": null,
+      "source": {
+        "kind": "lake_outflow",
+        "lake": "pond_west_of_mt_clay",
+        "level_y": 119.0
+      },
+      "channel": {
+        "half_width": 3,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 1.1,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "lake_viltri_outflow",
+      "end_at": {
+        "x": 858,
+        "z": 2062
+      },
+      "routed": {
+        "length_blocks": 1261,
+        "surface_start_y": 119.0,
+        "surface_end_y": 88.2,
+        "total_drop": 30.8,
+        "worst_cut": 1.2,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 1977,
+          "z": 1787
+        },
+        "worst_cut_to_sea": 1.9,
+        "stations_needing_cut_pct": 3.0,
+        "water_bodies_on_course": [
+          "pond_west_of_mt_clay",
+          "lake_viltri_outflow"
+        ]
+      },
+      "verdict": "descends with a cut of up to 1.2 blocks",
+      "graded_polyline": [
+        [
+          1994,
+          1766,
+          119.0,
+          117.0
+        ],
+        [
+          1994,
+          1770,
+          118.99,
+          116.99
+        ],
+        [
+          1938,
+          1826,
+          118.43,
+          116.43
+        ],
+        [
+          1922,
+          1826,
+          118.32,
+          116.32
+        ],
+        [
+          1858,
+          1890,
+          113.88,
+          111.88
+        ],
+        [
+          1773,
+          1890,
+          111.57,
+          109.57
+        ],
+        [
+          1572,
+          1890,
+          109.79,
+          107.79
+        ],
+        [
+          1514,
+          1890,
+          108.09,
+          106.09
+        ],
+        [
+          1474,
+          1890,
+          107.96,
+          105.96
+        ],
+        [
+          1458,
+          1906,
+          106.89,
+          104.89
+        ],
+        [
+          1442,
+          1906,
+          106.89,
+          104.89
+        ],
+        [
+          1426,
+          1922,
+          106.37,
+          104.37
+        ],
+        [
+          1378,
+          1922,
+          103.69,
+          101.69
+        ],
+        [
+          1330,
+          1922,
+          103.25,
+          101.25
+        ],
+        [
+          1298,
+          1954,
+          99.01,
+          97.01
+        ],
+        [
+          1262,
+          1954,
+          96.3,
+          94.3
+        ],
+        [
+          1218,
+          1954,
+          95.14,
+          93.14
+        ],
+        [
+          1202,
+          1970,
+          93.39,
+          91.39
+        ],
+        [
+          1170,
+          1970,
+          92.54,
+          90.54
+        ],
+        [
+          1106,
+          2034,
+          90.51,
+          88.51
+        ],
+        [
+          1074,
+          2034,
+          90.4,
+          88.4
+        ],
+        [
+          1058,
+          2050,
+          90.02,
+          88.02
+        ],
+        [
+          870,
+          2050,
+          88.24,
+          86.24
+        ],
+        [
+          858,
+          2062,
+          88.24,
+          86.24
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "river_of_shrews_from_high_end",
+      "river": "river_of_shrews",
+      "source": {
+        "kind": "inland_end",
+        "end": "high_end",
+        "x": 1642,
+        "z": 4650,
+        "ground_y": 98.0
+      },
+      "channel": {
+        "half_width": 4,
+        "depth": 3,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 11.3,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "arrow_lake_outflow",
+      "end_at": {
+        "x": 2958,
+        "z": 5142
+      },
+      "routed": {
+        "length_blocks": 1777,
+        "surface_start_y": 98.0,
+        "surface_end_y": 97.0,
+        "total_drop": 1.0,
+        "worst_cut": 11.3,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 1984,
+          "z": 4638
+        },
+        "worst_cut_to_sea": 11.3,
+        "stations_needing_cut_pct": 93.7,
+        "water_bodies_on_course": [
+          "arrow_lake_outflow"
+        ]
+      },
+      "canal": true,
+      "verdict": "canal, not a river: descends only by cutting up to 11.3 blocks along 94% of its length; graded but not cut unless asked",
+      "graded_polyline": [
+        [
+          1642,
+          4650,
+          97.97,
+          94.97
+        ],
+        [
+          1654,
+          4646,
+          97.97,
+          94.97
+        ],
+        [
+          1662,
+          4638,
+          97.97,
+          94.97
+        ],
+        [
+          2118,
+          4638,
+          97.97,
+          94.97
+        ],
+        [
+          2122,
+          4634,
+          97.97,
+          94.97
+        ],
+        [
+          2142,
+          4634,
+          97.97,
+          94.97
+        ],
+        [
+          2146,
+          4630,
+          97.97,
+          94.97
+        ],
+        [
+          2154,
+          4630,
+          97.97,
+          94.97
+        ],
+        [
+          2158,
+          4626,
+          97.97,
+          94.97
+        ],
+        [
+          2170,
+          4626,
+          97.97,
+          94.97
+        ],
+        [
+          2174,
+          4622,
+          97.97,
+          94.97
+        ],
+        [
+          2182,
+          4622,
+          97.97,
+          94.97
+        ],
+        [
+          2194,
+          4614,
+          97.97,
+          94.97
+        ],
+        [
+          2202,
+          4614,
+          97.97,
+          94.97
+        ],
+        [
+          2210,
+          4606,
+          97.97,
+          94.97
+        ],
+        [
+          2218,
+          4606,
+          97.97,
+          94.97
+        ],
+        [
+          2226,
+          4598,
+          97.97,
+          94.97
+        ],
+        [
+          2230,
+          4598,
+          97.97,
+          94.97
+        ],
+        [
+          2270,
+          4558,
+          97.97,
+          94.97
+        ],
+        [
+          2294,
+          4558,
+          97.97,
+          94.97
+        ],
+        [
+          2298,
+          4554,
+          97.97,
+          94.97
+        ],
+        [
+          2490,
+          4554,
+          97.97,
+          94.97
+        ],
+        [
+          2554,
+          4618,
+          97.97,
+          94.97
+        ],
+        [
+          2554,
+          4626,
+          97.97,
+          94.97
+        ],
+        [
+          2558,
+          4630,
+          97.97,
+          94.97
+        ],
+        [
+          2558,
+          4638,
+          97.97,
+          94.97
+        ],
+        [
+          2562,
+          4642,
+          97.97,
+          94.97
+        ],
+        [
+          2562,
+          4650,
+          97.97,
+          94.97
+        ],
+        [
+          2566,
+          4654,
+          97.97,
+          94.97
+        ],
+        [
+          2566,
+          4662,
+          97.97,
+          94.97
+        ],
+        [
+          2578,
+          4674,
+          97.97,
+          94.97
+        ],
+        [
+          2582,
+          4674,
+          97.97,
+          94.97
+        ],
+        [
+          2590,
+          4682,
+          97.97,
+          94.97
+        ],
+        [
+          2594,
+          4682,
+          97.97,
+          94.97
+        ],
+        [
+          2610,
+          4698,
+          97.97,
+          94.97
+        ],
+        [
+          2614,
+          4698,
+          97.97,
+          94.97
+        ],
+        [
+          2622,
+          4706,
+          97.97,
+          94.97
+        ],
+        [
+          2626,
+          4706,
+          97.97,
+          94.97
+        ],
+        [
+          2634,
+          4714,
+          97.97,
+          94.97
+        ],
+        [
+          2638,
+          4714,
+          97.97,
+          94.97
+        ],
+        [
+          2658,
+          4734,
+          97.97,
+          94.97
+        ],
+        [
+          2662,
+          4734,
+          97.97,
+          94.97
+        ],
+        [
+          2670,
+          4742,
+          97.97,
+          94.97
+        ],
+        [
+          2674,
+          4742,
+          97.97,
+          94.97
+        ],
+        [
+          2694,
+          4758,
+          97.97,
+          94.97
+        ],
+        [
+          2698,
+          4758,
+          97.97,
+          94.97
+        ],
+        [
+          2710,
+          4766,
+          97.97,
+          94.97
+        ],
+        [
+          2718,
+          4766,
+          97.97,
+          94.97
+        ],
+        [
+          2722,
+          4770,
+          97.97,
+          94.97
+        ],
+        [
+          2738,
+          4770,
+          97.97,
+          94.97
+        ],
+        [
+          2742,
+          4766,
+          97.97,
+          94.97
+        ],
+        [
+          2758,
+          4766,
+          97.97,
+          94.97
+        ],
+        [
+          2762,
+          4770,
+          97.97,
+          94.97
+        ],
+        [
+          2782,
+          4770,
+          97.97,
+          94.97
+        ],
+        [
+          2786,
+          4774,
+          97.97,
+          94.97
+        ],
+        [
+          2802,
+          4774,
+          97.97,
+          94.97
+        ],
+        [
+          2806,
+          4778,
+          97.97,
+          94.97
+        ],
+        [
+          2842,
+          4778,
+          97.97,
+          94.97
+        ],
+        [
+          2846,
+          4782,
+          97.97,
+          94.97
+        ],
+        [
+          2858,
+          4782,
+          97.97,
+          94.97
+        ],
+        [
+          2890,
+          4814,
+          97.97,
+          94.97
+        ],
+        [
+          2894,
+          4826,
+          97.97,
+          94.97
+        ],
+        [
+          2910,
+          4842,
+          97.97,
+          94.97
+        ],
+        [
+          2910,
+          4846,
+          97.97,
+          94.97
+        ],
+        [
+          2922,
+          4858,
+          97.97,
+          94.97
+        ],
+        [
+          2922,
+          4906,
+          97.97,
+          94.97
+        ],
+        [
+          2926,
+          4910,
+          97.97,
+          94.97
+        ],
+        [
+          2926,
+          4942,
+          97.97,
+          94.97
+        ],
+        [
+          2930,
+          4946,
+          97.97,
+          94.97
+        ],
+        [
+          2930,
+          5006,
+          97.79,
+          94.79
+        ],
+        [
+          2926,
+          5010,
+          97.79,
+          94.79
+        ],
+        [
+          2926,
+          5054,
+          97.08,
+          94.08
+        ],
+        [
+          2930,
+          5058,
+          96.98,
+          93.98
+        ],
+        [
+          2930,
+          5062,
+          96.98,
+          93.98
+        ],
+        [
+          2954,
+          5086,
+          96.95,
+          93.95
+        ],
+        [
+          2954,
+          5138,
+          96.95,
+          93.95
+        ],
+        [
+          2958,
+          5142,
+          96.95,
+          93.95
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    },
+    {
+      "id": "peak_pond_creek_from_high_end",
+      "river": "peak_pond_creek",
+      "source": {
+        "kind": "inland_end",
+        "end": "high_end",
+        "x": 3366,
+        "z": 906,
+        "ground_y": 105.7
+      },
+      "channel": {
+        "half_width": 2,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 22.5,
+      "valid": false,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "pond_west_of_mt_clay_outflow",
+      "end_at": {
+        "x": 1414,
+        "z": 1922
+      },
+      "verdict": "no river: the least-cut descending course still needs a 22.5-block cut",
+      "worst_cut_at": {
+        "x": 2315,
+        "z": 530
+      }
+    },
+    {
+      "id": "tilpey_south_west_outlet_from_high_end",
+      "river": "tilpey_south_west_outlet",
+      "source": {
+        "kind": "inland_end",
+        "end": "high_end",
+        "x": 4974,
+        "z": 4974,
+        "ground_y": 115.2
+      },
+      "channel": {
+        "half_width": 2,
+        "depth": 2,
+        "bank_slope": 1.0
+      },
+      "min_worst_cut": 3.1,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "lake_tilpey",
+      "end_at": {
+        "x": 5182,
+        "z": 4590
+      },
+      "routed": {
+        "length_blocks": 484,
+        "surface_start_y": 115.2,
+        "surface_end_y": 77.0,
+        "total_drop": 38.2,
+        "worst_cut": 3.4,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 5014,
+          "z": 4859
+        },
+        "worst_cut_to_sea": 3.4,
+        "stations_needing_cut_pct": 31.5,
+        "water_bodies_on_course": [
+          "lake_tilpey"
+        ]
+      },
+      "verdict": "descends with a cut of up to 3.4 blocks",
+      "graded_polyline": [
+        [
+          4974,
+          4974,
+          115.19,
+          113.19
+        ],
+        [
+          4990,
+          4974,
+          115.16,
+          113.16
+        ],
+        [
+          5006,
+          4958,
+          115.07,
+          113.07
+        ],
+        [
+          5006,
+          4954,
+          115.05,
+          113.05
+        ],
+        [
+          5010,
+          4950,
+          115.05,
+          113.05
+        ],
+        [
+          5010,
+          4942,
+          114.99,
+          112.99
+        ],
+        [
+          5014,
+          4938,
+          114.99,
+          112.99
+        ],
+        [
+          5014,
+          4850,
+          114.94,
+          112.94
+        ],
+        [
+          5030,
+          4830,
+          114.94,
+          112.94
+        ],
+        [
+          5030,
+          4818,
+          114.94,
+          112.94
+        ],
+        [
+          5034,
+          4814,
+          114.94,
+          112.94
+        ],
+        [
+          5034,
+          4810,
+          114.94,
+          112.94
+        ],
+        [
+          5042,
+          4802,
+          114.94,
+          112.94
+        ],
+        [
+          5042,
+          4786,
+          114.94,
+          112.94
+        ],
+        [
+          5058,
+          4770,
+          114.76,
+          112.76
+        ],
+        [
+          5058,
+          4738,
+          113.86,
+          111.86
+        ],
+        [
+          5074,
+          4722,
+          112.95,
+          110.95
+        ],
+        [
+          5074,
+          4704,
+          112.01,
+          110.01
+        ],
+        [
+          5074,
+          4690,
+          110.86,
+          108.86
+        ],
+        [
+          5092,
+          4672,
+          108.62,
+          106.62
+        ],
+        [
+          5101,
+          4663,
+          106.38,
+          104.38
+        ],
+        [
+          5117,
+          4647,
+          104.3,
+          102.3
+        ],
+        [
+          5131,
+          4633,
+          100.83,
+          98.83
+        ],
+        [
+          5143,
+          4621,
+          95.89,
+          93.89
+        ],
+        [
+          5158,
+          4606,
+          88.02,
+          86.02
+        ],
+        [
+          5166,
+          4606,
+          86.67,
+          84.67
+        ],
+        [
+          5181,
+          4591,
+          77.04,
+          75.04
+        ],
+        [
+          5182,
+          4590,
+          77.0,
+          75.0
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ]
+    }
+  ],
+  "cut": {
+    "generated": "2026-09-14",
+    "generator": "tools/grade_rivers.py cut",
+    "from_heightmap": {
+      "path": "land_8k_16_eroded.png",
+      "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7"
+    },
+    "output": {
+      "path": "land_8k_16_eroded_rivers.png",
+      "sha256": "9deec4a6d9528f9175365f9da1614297ece6ab62af7aefb16180d3a572b74255"
+    },
+    "courses_cut": [
+      "lake_tilpey_outflow",
+      "watering_hole_outflow",
+      "arrow_lake_outflow",
+      "marshy_marsh_outflow",
+      "lake_viltri_outflow",
+      "peak_pond_outflow",
+      "shrew_lake_outflow",
+      "pond_west_of_mt_clay_outflow",
+      "tilpey_south_west_outlet_from_high_end"
+    ],
+    "courses_not_cut": [
+      "river_of_shrews_from_high_end"
+    ],
+    "columns_lowered": 72844,
+    "lowered_blocks": {
+      "max": 5.41,
+      "mean": 1.96
+    },
+    "check": {
+      "method": "on the written file, at every block of each course: the lowest ground across the bed (half width - 1) against the planned floor; the largest rise of the planned floor; and the largest rise of that lowest ground (clamped half a block under the floor, so a lake bed on the course does not count as a rise)",
+      "courses": [
+        {
+          "course": "lake_tilpey_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "watering_hole_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "arrow_lake_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "marshy_marsh_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "lake_viltri_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "peak_pond_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "shrew_lake_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "pond_west_of_mt_clay_outflow",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        },
+        {
+          "course": "tilpey_south_west_outlet_from_high_end",
+          "thalweg_above_floor_max": 0.0,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.0
+        }
+      ]
+    }
+  }
+}

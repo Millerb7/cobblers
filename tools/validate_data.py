@@ -193,6 +193,7 @@ SCHEMAS = {
         {},
     ),
     "progression.json": ("cobblers.progression/1", None, [], {}),
+    "rivers.json": ("cobblers.rivers/1", "courses", ["id", "source", "valid", "verdict"], {}),
     "routes.json": ("cobblers.routes/1", "routes", ["id", "from", "to"], {}),
 }
 
@@ -869,12 +870,52 @@ def import_digest(world):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
+def check_rivers(ctx: Context):
+    """Graded river courses: traced to the current heightmap, and every graded bed descends."""
+    rep = ctx.report
+    f, courses = ctx.records("rivers.json")
+    if not f:
+        return
+    world = ctx.doc("world.json") or {}
+    sha = (world.get("heightmap") or {}).get("sha256")
+    sea = float((world.get("vertical") or {}).get("sea_level", 62))
+    if f.doc.get("computed_from_sha256") != sha:
+        rep.error("rivers", "rivers.json was computed from heightmap %s, not %s; rerun tools/grade_rivers.py plan"
+                  % ((f.doc.get("computed_from_sha256") or "")[:12], (sha or "")[:12]),
+                  file=f.rel, line=f.line_of_key("computed_from_sha256"))
+    for c in courses:
+        line = f.line_of_id(c.get("id"))
+        poly = c.get("graded_polyline")
+        if not c.get("valid"):
+            if poly:
+                rep.error("rivers", 'course "%s" is not valid but carries a graded polyline' % c.get("id"),
+                          file=f.rel, line=line, where=c.get("id"))
+            continue
+        if not poly or len(poly) < 2:
+            rep.error("rivers", 'valid course "%s" has no graded polyline' % c.get("id"),
+                      file=f.rel, line=line, where=c.get("id"))
+            continue
+        for (_, _, s0, f0), (_, _, s1, f1) in zip(poly, poly[1:]):
+            if s1 > s0 + 1e-6 or f1 > f0 + 1e-6:
+                rep.error("rivers", 'course "%s" rises from %.2f to %.2f' % (c.get("id"), f0, f1),
+                          file=f.rel, line=line, where=c.get("id"))
+                break
+        if min(p[2] for p in poly) < sea - 1e-6:
+            rep.error("rivers", 'course "%s" has a water surface below sea level' % c.get("id"),
+                      file=f.rel, line=line, where=c.get("id"))
+    cut = f.doc.get("cut")
+    if cut and (cut.get("from_heightmap") or {}).get("sha256") != sha:
+        rep.warn("rivers", "the cut heightmap %s was made from a different heightmap; rerun the cut"
+                 % (cut.get("output") or {}).get("path"), file=f.rel, line=f.line_of_key("cut"))
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
     ("integrity", check_integrity),
     ("referential", check_referential),
     ("progression", check_progression),
+    ("rivers", check_rivers),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
 ]

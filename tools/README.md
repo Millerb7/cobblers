@@ -19,7 +19,8 @@ detected rather than trusted.
 | Tool | Does | Writes |
 | --- | --- | --- |
 | `find_sites.py` | Ranks flat buildable squares above sea level | `derived/sites/` |
-| `route_path.py` | A* between two points, paying for climb | `derived/paths/` |
+| `route_path.py` | A* between two points, paying for climb; also the descent searches (`descend_min_cut`, `descend_route`) for beds that never rise | `derived/paths/` |
+| `grade_rivers.py` | `plan`: least-cut descending course from every lake and river source to the sea, graded polylines, checks along each carve. `cut`: lower those courses into a new heightmap beside the source and re-check it (`docs/world-building/RIVERS.md`) | `data/rivers.json`, `<source root>/land_8k_16_eroded_rivers.png` |
 | `sightlines.py` | Raycasts from a viewpoint to named landmarks | `derived/sightlines/` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
 | `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |
