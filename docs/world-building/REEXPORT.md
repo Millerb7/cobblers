@@ -14,7 +14,7 @@
 | Seed | carried; `level.dat` seed sha256 matches `48202407…`; `WorldGenSettings`, datapacks and game rules carried as before |
 | Border | `worldborder get`: 10240 in the overworld and the Nether |
 | Spawn | (3400, 3400) unchanged. It now lands on the floor of the Rift's west spur, about y96 |
-| Distant Horizons | server generation stays off. LODs built from the exported chunks with `dh pregen start minecraft:overworld 4096 4096 320`. The client LOD cache for this server was moved out, because DH keys it by seed |
+| Distant Horizons | server generation stays off. LODs built from the exported chunks with `dh pregen start minecraft:overworld 4096 4096 320`: complete in 6 minutes, 673 MB, and region files still 484 (nothing generated). The client LOD cache for this server was moved out, because DH keys it by seed |
 
 **Spot check** of 8 region files (craters, dunes, glacier, Shrew Lake, marsh, Viltri Woods,
 Pine Isles, the Tri Peaks):
