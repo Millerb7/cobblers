@@ -1,5 +1,10 @@
 # Town candidates: buildability, Kanto order, gym 1 counters
 
+> **Superseded 2026-09-14 by [`TOWNS.md`](TOWNS.md)** and `data/towns.json`: proposed
+> placements on the river-cut terrain. Blaine is at the Craters, box E is moved to Lake Viltri,
+> box G is moved to Peak Pond, and a League site is at the head of the Rift. The gym 1 counter
+> analysis below still stands.
+
 **Status: assessment only (2026-09-14). No town is placed.**
 - **Candidates:** the eleven green boxes on `land_8k_16_eroded_annotated.png`. One is labelled
   Pallet Town.
