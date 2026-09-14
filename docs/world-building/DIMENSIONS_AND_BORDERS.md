@@ -250,7 +250,10 @@ hand-placed.
 
 The shared-border recommendation (section 2) and the portal-clamp note are unchanged.
 
-### 4.2 The League: proposed in the overworld, not yet decided
+### 4.2 The League: in the overworld (decided 2026-09-14)
+
+**Decided: the League is an overworld town at the head of the Rift.** The consequences below
+now apply: disable the End's League copies, and move End access to post-game.
 
 The same reasoning moves the League.
 - **The generated structure** is `cobbleverse:kanto_league` (end_highlands; 111 × 159 × 120,
@@ -329,6 +332,6 @@ The generator already takes a `dimension` per waystone.
 | Border and pregen timing | decided: after the re-export |
 | End access: authored portal room after Giovanni, eyes or pre-lit | proposed; moves to post-game if the League moves |
 | Blaine's gym | **decided 2026-09-14: overworld, the Craters**; Nether copies to be disabled (4.1) |
-| The League | **proposed:** overworld, at the Rift's head (4.2); **your call** |
+| The League | **decided 2026-09-14: overworld, at the Rift's head** (4.2); End copies to be disabled, End access post-game |
 | Rayquaza at the End spawn | **your call** |
 | Soft limit for deep-Nether portals | not proposed unless the clamp proves a problem |
