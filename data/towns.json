@@ -16,6 +16,12 @@
    "by": "user",
    "date": "2026-09-14",
    "text": "Keep the Kanto chain; move the north-coast box inland near Peak Pond and Misty's box to Lake Viltri."
+  },
+  {
+   "id": "league_in_the_overworld",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "The League is an overworld town at the head of the Rift, reached by Victory Road through the Rift."
   }
  ],
  "method": "Sites from tools/find_sites.py's largest-square search on the river-cut heightmap, with lake and river water and a 24-block setback excluded; legs from a terrain-weighted route on 8-block cells (docs/world-building/TOWNS.md). Tools produce candidates; these are proposals for a human to accept.",
@@ -589,7 +595,7 @@
    "id": "league",
    "order": 9,
    "role": "league",
-   "status": "proposed",
+   "status": "accepted",
    "working_name": "Pokemon League",
    "display_name": null,
    "leader": null,
@@ -642,7 +648,7 @@
     "text": "North up the Rift as Victory Road, 4,038 blocks by the shortest route, to the plateau on the Rift's west rim at its head. No water crossings."
    },
    "route_role": "The League on the Foothill Woods plateau 178 blocks from the Rift and 447 from the Glacial Tear, overlooking the major river. The Rift, a dry valley with its own custom biome still to come, is the approach. Proposed in the overworld: see the note on the End.",
-   "note_on_the_end": "Following the Blaine decision (a hand-placed overworld gym instead of a generated Nether copy), the League is placed in the overworld too. The End's generated Kanto League copies would then need to be disabled like the Nether's Blaine copies. Not yet a decision; see docs/world-building/TOWNS.md."
+   "note_on_the_end": "Decided 2026-09-14: the League is in the overworld. The End's generated cobbleverse:kanto_league copies need disabling like the Nether's Blaine copies, and End access becomes post-game (docs/world-building/DIMENSIONS_AND_BORDERS.md 4.2)."
   }
  ],
  "not_placed": "Nothing is built. Waystone positions in data/progression.json stay null until the towns are built; each gymN_town id here is the town those flags name."

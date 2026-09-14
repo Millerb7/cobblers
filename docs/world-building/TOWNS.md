@@ -112,9 +112,12 @@ nearest landmarks.
 - **The League is on the plateau at the Rift's head:** 178 blocks from its west rim, 447 from the
   Glacial Tear, looking over the major river.
 
-## The League: one more decision
+## The League: decided
 
-**Why the League is proposed in the overworld.** The reasoning that moved Blaine applies:
+**Decided 2026-09-14 (yours): the League is in the overworld, at the head of the Rift.** Its
+entry in `data/towns.json` is `accepted`; the other towns are still `proposed`.
+
+**Why it moved.** The reasoning that moved Blaine applies:
 Cobbleverse's League (`cobbleverse:kanto_league`) would otherwise generate on the End's outer
 islands.
 
