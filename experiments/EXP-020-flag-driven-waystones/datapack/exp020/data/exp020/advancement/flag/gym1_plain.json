@@ -1,0 +1,1 @@
+{"criteria":{"defeated":{"trigger":"rctmod:defeat_count","conditions":{"trainer_ids":["kanto_brock","johto_falkner"]}}},"rewards":{"function":"exp020:reward"}}

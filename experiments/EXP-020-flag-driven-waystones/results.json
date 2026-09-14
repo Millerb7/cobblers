@@ -1,0 +1,20 @@
+{
+  "schema": "cobblers.experiment-result/1",
+  "experiment": "EXP-020",
+  "date": "2026-09-13",
+  "world": "exp020-waystones (disposable copy of the EXP-019 world, booted with --world; moved to scratch afterwards)",
+  "versions": {"waystones": "21.1.37", "rctmod": "0.19.0-beta", "xaerominimap": "26.4.2", "xaeroworldmap": "1.44.2", "function_permission_level": 2},
+  "A_waystones_commands_in_functions": {"status": "PASS", "loaded": "exp020:activate (activate @a pos, forget @a pos, forget @a all, execute if entity @s[advancements] run activate)", "control": "exp020:bogus failed to load"},
+  "B_rctmod_defeat_count_advancement": {"status": "PASS", "codec_fields": ["player", "count", "trainer_ids", "trainer_type"], "loaded": ["with count", "without count"], "control": "minecraft:no_such_trigger failed to parse"},
+  "C_activation_stat_criterion": {"status": "FAIL", "tried": ["minecraft.custom:waystones.waystone_activated", "minecraft.custom:waystones.waystones_activated", "minecraft.custom:balm.waystone_activated"], "controls_created": ["minecraft.custom:minecraft.jump", "minecraft.custom:cobblemon.battles_won"]},
+  "D_block_use_advancements": {"status": "PASS (loads only)", "triggers": ["minecraft:any_block_use with #waystones:waystones", "minecraft:default_block_use with waystones:waystone"]},
+  "E_xaero_server_waypoints": {
+    "status": "NO PACKET",
+    "minimap_packets": ["HandshakePacket", "ClientboundRulesPacket", "ClientboundTrackedPlayerPacket", "ClientboundPlayerTrackerResetPacket", "LevelMapProperties"],
+    "worldmap_packets": ["HandshakePacket", "ClientboundRulesPacket", "ClientboundTrackedPlayerPacket", "ClientboundPlayerTrackerResetPacket"],
+    "server_waypoint_manager": "xaero/hud/minimap/waypoint/server/ServerWaypointManager, @Deprecated, origin xaerominimap:server, client-side container with no network feed found",
+    "chat_share": "system and player chat scanned for 'xaero-waypoint:' / 'xaero_waypoint:'; server-sent shares labelled 'Server' with an [Add] link that opens the Add Waypoint screen for the player to confirm",
+    "waystones_compat": "xaero/hud/compat/mods/SupportWaystones listens to WaystonesListReceivedEvent, WaystoneUpdatedEvent, WaystoneRemoveReceivedEvent; adds activated waystones (discovered origin) and global waystones (other origin); config discovered_waystone_waypoints / other_waystone_waypoints = true in the cobbleverse profile"
+  },
+  "F_player": {"status": "NOT RUN"}
+}
