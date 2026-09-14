@@ -1,0 +1,116 @@
+{
+  "experiment": "EXP-017",
+  "title": "Underground Pockets calibration for modded ores, and in-game load of WorldPainter-exported Cobblemon block entities",
+  "date": "2026-09-13",
+  "branch": "design/structures",
+  "environment": {
+    "worldpainter": "2.27.1 wpscript (source tag v2.27.1)",
+    "server": "Fabric 1.21.1, Cobblemon-fabric-1.8.0+1.21.1, LumyMon-0.6.6, LegendaryMonuments-Cobbleverse, mega_showdown-fabric-1.0.2+1.8+1.21.1 (cobblers-server mods/)",
+    "java": "Temurin 21.0.9, server run with -Xms4G -Xmx10G --world <disposable folder>",
+    "disposable_worlds": ["exp017-objects-template", "exp017-objects-schemv2", "exp017-veins"],
+    "live_world_touched": false
+  },
+  "task_a": {
+    "status": "RUN",
+    "ore_configs": {
+      "source": "feature JSON read from the jars; biome attachment from bytecode (javap) with yarn 1.21.1+build.3 names",
+      "cobblemon_stones": {
+        "ores": ["dawn", "dusk", "fire", "ice", "leaf", "moon", "shiny", "sun", "thunder", "water"],
+        "configured": "minecraft:ore size 3, discard 0.0, targets stone_ore_replaceables -> <x>_stone_ore, deepslate_ore_replaceables -> deepslate_<x>_stone_ore; sun_stone also tag minecraft:terracotta -> terracotta_sun_stone_ore",
+        "placed": {"<x>_lower": "count 8, in_square, trapezoid -64..192, biome", "<x>_upper": "count 8, trapezoid 64..320", "<x>_lower_rare": "count 4, trapezoid -64..192", "<x>_upper_rare": "count 4, trapezoid 64..320"},
+        "biomes": "CobblemonOrePlacedFeatures: upper+lower -> #cobblemon:has_ore/ore_<x>_stone_normal, *_rare -> ..._rare, UNDERGROUND_ORES step"
+      },
+      "cobblemon_moon_stone_dripstone": "minecraft:ore size 3 target #cobblemon:dripstone_replaceables (dripstone_block); count 256 trapezoid -64..256; #cobblemon:has_ore/ore_moon_stone_dripstone",
+      "cobblemon_fire_stone_nether": "minecraft:ore size 5 block_match netherrack; count 1 uniform above_bottom 10..below_top 10; #cobblemon:has_ore/ore_fire_stone_nether (#minecraft:is_nether)",
+      "cobblemon_type_gems": "cobblemon:type_gem feature, config state deepslate_crystal_core; count 2, rarity_filter 1/3, trapezoid -64..0; attached to #minecraft:is_overworld; code needs origin in deepslate_ore_replaceables with an air neighbour",
+      "lumymon": {
+        "dragon_ore": "scattered_ore size 1 block_match sculk; count 30 uniform -60..0; deep_dark",
+        "electron_ore": "scattered_ore size 1 block_match sandstone; count 1 uniform 30..90; desert",
+        "ice_ore": "scattered_ore size 1 block_match packed_ice; count 3 uniform 65..125; ice_spikes, frozen_ocean, frozen_peaks",
+        "rock_ore": "scattered_ore size 1 block_match terracotta; count 2 uniform 75..135; badlands, eroded_badlands, wooded_badlands",
+        "steel_ore": "scattered_ore size 1 tag deepslate_ore_replaceables; count 1 uniform -50..10; dripstone_caves"
+      },
+      "legendarymonuments": {
+        "galar_particle_ore_placed": "minecraft:ore size 5 stone_ore_replaceables; rarity 1/4 then count 5, trapezoid -48..24; BiomeSelectors.foundInOverworld()",
+        "deepslate_galar_particle_ore_placed": "minecraft:ore size 5 deepslate_ore_replaceables; count 10, trapezoid -24..56; foundInOverworld()"
+      },
+      "mega_showdown_keystone": "no worldgen feature; mega_showdown:keystone_ore appears once in data/mega_showdown/structure/megaroid.nbt"
+    },
+    "density_model": {
+      "formula": "D(y) per 1,000 host blocks = 1000 * count / rarity * B * p(y) / 256",
+      "B_simulated_100k": {"ore_size_3": 0.4608, "ore_size_5": 3.1526, "scattered_size_1": 0.5},
+      "B_in_game_place_feature_961_attempts_each": {
+        "cobblemon:ore/thunder_stone y60 stone": 0.4131, "y40 stone": 0.3954, "y-10 deepslate": 0.4527,
+        "legendarymonuments:galar_particle_ore y20 stone": 2.9511,
+        "legendarymonuments:deepslate_galar_particle_ore y-50": 2.4412,
+        "lumymon:steel_ore y-30": 0.512
+      },
+      "empty_attempts": {"size3_sim": 0.648, "size3_game": [0.673, 0.693, 0.666], "size5_sim": 0.071, "size5_game_stone": 0.101, "size5_game_deepslate": 0.212},
+      "vein_blob_mean_6conn_sim": {"size3": 1.103, "size5": 2.269},
+      "targets_permille_host": {
+        "cobblemon_stone_normal": {"deepslate_-63_-1": 0.0286, "stone_0_63": 0.0835, "stone_64_191": 0.1125, "stone_0_255": 0.0982, "stone_0_94": 0.093},
+        "cobblemon_stone_rare": {"deepslate_-63_-1": 0.0143, "stone_0_255": 0.0491, "stone_0_94": 0.0465},
+        "moon_stone_dripstone_per_dripstone_block": {"-63_-1": 0.587, "0_191": 2.009},
+        "fire_stone_nether_per_netherrack": {"10_245": 0.0522},
+        "galar_particle_stone": {"0_24": 0.1462},
+        "galar_particle_deepslate": {"-24_-1": 0.9157, "-63_-1": 0.3489},
+        "lumymon_dragon_per_sculk": {"-60_0": 0.9606},
+        "lumymon_electron_per_sandstone": {"30_90": 0.032},
+        "lumymon_ice_per_packed_ice": {"65_125": 0.096},
+        "lumymon_rock_per_terracotta": {"75_135": 0.064},
+        "lumymon_steel_per_deepslate": {"-50_-1": 0.032}
+      }
+    },
+    "calibration": {
+      "source_relation": "promille threshold = frequency * 0.9^(8 - layerValue) (UndergroundPocketsLayerExporter.java:29); noise cell = 4.099 * scale / 100 blocks (:31); pockets stop topLayerDepth below the surface (:73); applyLayer default value 8 for nibble layers (MappingOp.java:74)",
+      "sweep": "42 worlds, frequency {1,2,5,10,20,50} x scale {5,10,20,35,50,100,200}, value 8, one SIMPLE layer -64..319, measured rows -63..94 (10,354,688 cells)",
+      "k_measured_over_nominal": {"all": {"mean": 0.754, "min": 0.467, "max": 0.88}, "f1": {"mean": 0.622, "min": 0.467, "max": 0.751}, "f2": 0.743, "f5": 0.747, "f10": 0.754, "f20": 0.809, "f50": 0.852},
+      "value_tests_f1_s20": {"v1": 0.263, "v4": 0.327, "v12": 0.994, "f10_v4": 4.933},
+      "blob_size_mean": {"scale<=35_f<=20": "1.00-1.12", "scale50": {"f1": 1.087, "f5": 1.218, "f20": 1.387, "f50": 1.926}, "scale100": {"f1": 2.466, "f5": 3.29, "f20": 6.081, "f50": 11.586}, "scale200": {"f1": 16.35, "f5": 20.65, "f20": 47.22}},
+      "relation": "permille ~= 0.75 (0.47-0.88) * frequency * 0.9^(8 - value) * q, q = ore/(ore+host) for a NOISE MixedMaterial; blob size set by scale: <=35 single blocks, 50 ~1.1-1.4, 100 ~2.5-6, 200 16+",
+      "floor_without_dilution": "frequency 1 value 1 = 0.263 permille, still 2.7x the Cobblemon normal stone target and 9x the deepslate target"
+    },
+    "verification_exports": [
+      {"world": "ver-cobblemon-normal-a", "layer": "fire_stone_ore NOISE 1:5 stone f1 s20 0..319", "rows": "0..94", "target": 0.093, "measured": 0.094, "blob_mean": 1.0},
+      {"world": "ver-cobblemon-normal-b", "layer": "same, other seed", "rows": "0..94", "target": 0.093, "measured": 0.1028, "blob_mean": 1.0},
+      {"world": "ver-cobblemon-normal-a", "layer": "deepslate_fire_stone_ore NOISE 1:20 deepslate f1 s20 -64..-1", "rows": "-63..-1", "target": 0.0286, "measured": 0.0211, "blob_mean": 1.0},
+      {"world": "ver-cobblemon-normal-b", "layer": "same, other seed", "rows": "-63..-1", "target": 0.0286, "measured": 0.0356, "blob_mean": 1.0},
+      {"world": "ver-cobblemon-rare", "layer": "stone 1:11 f1 s20", "rows": "0..94", "target": 0.0465, "measured": 0.0572},
+      {"world": "ver-cobblemon-rare", "layer": "deepslate 1:41 f1 s20", "rows": "-63..-1", "target": 0.0143, "measured": 0.0165},
+      {"world": "ver-galar", "layer": "deepslate_galar_particle_ore SIMPLE f1 s100 value 10 -24..-1", "rows": "-24..-1", "target": 0.9157, "measured": 0.8437, "blob_mean": 2.453, "vanilla_blob_mean_sim": 2.269},
+      {"world": "ver-galar", "layer": "galar_particle_ore NOISE 1:4 stone f1 s100 0..24", "rows": "0..24", "target": 0.1462, "measured": 0.174, "blob_mean": 1.203},
+      {"world": "ver-steel", "layer": "lumymon:steel_ore NOISE 1:18 deepslate f1 s10 -50..-1", "rows": "-50..-1", "target": 0.032, "measured": 0.033, "blob_mean": 1.0}
+    ],
+    "not_verified": [
+      "Natural Cobblemon/LumyMon/Legendary Monuments ore generation rates in real terrain (only /place feature counts and the model)",
+      "GUI: brush intensity to layer value mapping; NOISE mode MixedMaterial authored in the GUI",
+      "Nether fire stone, dripstone moon stone, sculk/sandstone/packed ice/terracotta hosts: recommendations computed, no export",
+      "Cave biomes (3D biomes) in WorldPainter exports and biome-filtered pockets",
+      "Exports are not bit-reproducible with NOISE mode (MixedMaterial.java:468 new Random())"
+    ]
+  },
+  "task_b": {
+    "status": "RUN, PASS",
+    "template_world": {
+      "source": "EXP-014 export exp014-obj-cobblemon-template (Cobblemon habitats/berry_patch10.nbt)",
+      "chunks": 256, "data_version_before": 2860, "data_version_after": 3955, "status_after": "minecraft:full",
+      "rcon_data_get": {"cobblemon:berry": "766/766 block data, all keys and string values present", "cobblemon:habitat_block": "969/969"},
+      "rcon_execute_if_block": {"cobblemon:coba_berry": "386/386", "cobblemon:payapa_berry": "380/380", "cobblemon:habitat_block": "969/969", "properties_sample": "20/20 each"},
+      "saved_region_reread": {"cobblemon:berry": "766 present, 766 data identical", "cobblemon:habitat_block": "969 present, 969 identical", "minecraft:jigsaw": "765 identical", "added_key": "keepPacked", "blocks_same_state": "386/386, 380/380, 969/969"}
+    },
+    "schem_v2_world": {
+      "source": "EXP-014 export exp014-obj-schem-v2 (hand-made Sponge v2 apricorn tree + oran berry)",
+      "rcon_data_get": {"cobblemon:berry": "103/103"},
+      "rcon_execute_if_block": {"cobblemon:apricorn_leaves": "5219/5219", "cobblemon:apricorn_log": "416/416", "cobblemon:red_apricorn": "106/106", "cobblemon:oran_berry": "103/103"},
+      "saved_region_reread": {"cobblemon:berry": "103 present, 103 identical", "apricorn_leaves": "5219 same block; all gained persistent=false; distance changed on 19", "apricorn_log": "416 identical state", "red_apricorn": "106 identical", "oran_berry": "103 identical", "leaves_distance7_after": 19},
+      "leaf_property_probe": "execute if block 7 84 12 cobblemon:apricorn_leaves[persistent=false] passed, [persistent=true] failed"
+    },
+    "random_tick_control": "randomTickSpeed 1000 for ~1,000 game ticks in force-loaded chunks with no player: oak_leaves[distance=7,persistent=false] stayed, wheat stayed age 0 -> no random ticks; leaf decay and berry growth NOT VERIFIED",
+    "side_observations": [
+      "2 modded ore blocks (cobblemon:sun_stone_ore at 252,43,255; cobblemon:deepslate_leaf_stone_ore at 71,-3,255) appeared inside the exported area after load: generation of the new neighbouring chunks wrote into the border of the exported chunks; exported chunks gained blending_data",
+      "server logged 'key missing: DragonFight' reading the WorldPainter level.dat and continued",
+      "server rewrote server.properties on start as usual; level-name still cobblers-10240"
+    ],
+    "not_verified": ["habitat block spawning", "berry harvest/growth", "apricorn leaf decay with a player nearby", "whether persistent=true in an object survives WorldPainter export"]
+  }
+}
