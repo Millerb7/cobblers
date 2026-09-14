@@ -6,3 +6,7 @@ under `add` with `"kind": "resourcepack"` and a hash/URL so it can be fetched.
 Small, authored packs may be kept as folders (tracked) instead of zips.
 
 Resource packs are never installed on the dedicated server.
+
+## Local fix pack
+
+`cobblers-model-fixes.zip` is built on each client by `tools/client_model_fix.py` from the local Cobblemon jar and loaded at the top of the pack list. It restores Cobblemon's own models for forms a third-party pack breaks under Cobblemon 1.8. It is never committed. Recheck after every pack update: `docs/research/CLIENT_MODEL_FIXES.md`.

@@ -55,6 +55,12 @@ The immutable base verification found 104 matching server-side jars, zero missin
 
 All replacement downloads are pinned by URL, Modrinth version ID, SHA-1, and SHA-512 in `modpack/manifest/overlay.json`. The six replacements added by current research are Cobbreeding, Only Bottle Caps, PlayerXP, CobbleNav, ZAMegas, and Fight or Flight Reborn. ZAMegas is mandatory: the base jar requires the old Mega Showdown version line, while Mega Showdown resets to 1.0.x for Cobblemon 1.8.
 
+**Client resource packs vs Cobblemon 1.8 models (2026-09-14): client crash, patched.**
+- **Cause:** COBBLEVERSE RP ships Pokémon models built for Cobblemon 1.7. Where Cobblemon 1.8 poses a form with a built-in poser, a renamed or missing bone crashes the client on first render.
+- **Seen:** Alolan Persian, `NoSuchElementException: Can't find part persian`.
+- **Fix:** seven forms are flagged, and `cobblers-model-fixes.zip` restores Cobblemon's own models for them. The pack is built and installed with `tools/client_model_fix.py`.
+- **Recheck** after every modpack, resource pack or Cobblemon update. The log and procedure are in [`CLIENT_MODEL_FIXES.md`](CLIENT_MODEL_FIXES.md).
+
 ## Preserved systems requiring functional tests
 
 The retained functional scope contains 26 Cobblemon-integrating addons and libraries after removing Raid Dens. PlayerXP is client-optional and needs a client connection test before it can be kept safely. Server boot cannot validate PlayerXP, Catch Indicator, Catch Rate Display, or LumyREI. High-risk server checks include RCT trainer lifecycle and multiplayer behavior, Mega Showdown plus ZAMegas, CobbleNav, Cobbreeding, CobbleDollars, Capture XP, TMCraft, and world-critical CobbleFurnies/LumyMon/Legendary Monuments/Cobblemon Additions.
