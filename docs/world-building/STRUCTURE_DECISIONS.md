@@ -60,7 +60,7 @@ and `server.properties` was restored byte-for-byte.
 | System | Replacement |
 | --- | --- |
 | Structure-gated spawns | Habitat Blocks, or datapack overrides with non-structure conditions |
-| Gym maps, cartographer maps, radars | authored guidance: fixed maps, waypoints or signage |
+| Gym maps, cartographer maps, radars | removed; flag-driven waystones and Xaero markers (`NAVIGATION.md`) |
 | `location_check` advancements | position or scoreboard triggers |
 
 **D and E need one player for about 15 minutes** on the disposable world

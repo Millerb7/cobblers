@@ -234,14 +234,14 @@ Each gym's generation biome comes from its structure.
   Nether before End stays true without a lock.
 
 **2. Guidance to Blaine and the League.**
-- **Locators work in these two dimensions.** Unlike the overworld, the Nether and End
-  generate normally, so their structures have real structure data. The Cobbleverse
-  `gym_map`, LumyMon's cartographer maps and the Rival Sling locator should find Blaine and
-  the League. That is expected from EXP-013's natural controls, not tested in those
-  dimensions.
-- **The gym-7 and league maps are produced in the overworld.** Whether an exploration map
-  made in one dimension can target another is not verified. Test it when Brock's map guide
-  or the cartographer is reused. The fallback is authored coordinates from the audit.
+
+*Superseded 2026-09-13.* Navigation is waystone-only, with map markers
+(`NAVIGATION.md`). Locator items are removed everywhere, including these dimensions. The
+gyms generate from the carried seed, so their positions are fixed:
+- record them once from the audit candidates;
+- give each a waystone and a marker in the dimension it is in.
+
+The generator already takes a `dimension` per waystone.
 
 **3. Risk: the outer islands need a gateway.**
 - **The League is at least 1024 blocks out.** Every candidate lies on the outer islands.

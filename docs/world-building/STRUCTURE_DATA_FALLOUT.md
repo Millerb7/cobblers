@@ -104,31 +104,22 @@ Poltchageist the matcha of cherry and bamboo country.
 - LumyMon's gym-locator and legendary-radar items are closed source. Assume they fail the same
   way.
 
-**Proposal: point at fixed coordinates, which data can do in 1.21.1**
+**Decision (2026-09-13): no replacement item.** An earlier draft proposed a gym compass
+(`lodestone_tracker`) and the matching EXP-018. Both are withdrawn. Navigation is waystones
+plus Xaero map markers, driven by the progression flags, and nothing else answers "where do I
+go next". The design is in [`NAVIGATION.md`](NAVIGATION.md).
 
-| Item | How | Where it comes from |
-| --- | --- | --- |
-| **Gym compass** | a `minecraft:compass` with the `minecraft:lodestone_tracker` component: `{target: {dimension: "minecraft:overworld", pos: [x, y, z]}, tracked: false}`. It points at the stored position without a lodestone block | a datapack override of `cobbleverse:gym_map` (same loot table id, so every drop and trade that rolls it gives the compass), with `minecraft:set_components` and a per-gym `minecraft:set_name` |
-| **Gym map** (optional) | a `minecraft:filled_map` with a `minecraft:map_decorations` component marking the gym, added the same way | same loot tables |
-| **Cartographer trades** | LumyMon's `data/lumymon/trades/kanto_cartographer.json` is datapack JSON. Override it so each gym's trade gives that gym's compass | datapack override |
-| **Travel** | a Waystone at each gym town; Waystones is already in the pack | placed with the town |
-
-**Coordinates stay in one place:** they come from the placement data (`placements.json`,
-Step 3), and a small generator writes the loot tables. Nobody types a coordinate twice.
-
-**Not verified:**
-- that a loot table can set `lodestone_tracker` and `map_decorations` with
-  `set_components` in 1.21.1;
-- that the decorations draw on a map whose area was never explored.
-
-**EXP-018 (proposed, headless):**
-1. `loot give` the overridden table.
-2. `data get` the item's components.
-3. One look in-game that the needle points at the gym.
+**What remains to do here:** remove the finders that point nowhere, because an item that
+searches and finds nothing is a false cue.
+- Override `cobbleverse:gym_map` so it no longer drops or trades.
+- Override LumyMon's `data/lumymon/trades/kanto_cartographer.json` (datapack JSON) to drop the
+  exploration-map offers.
+- Find where LumyMon's locator items are obtained (recipe or loot) and remove that source. They
+  are closed source; not verified.
 
 **Gyms in the Nether and End** (Blaine, the League) generate normally, so Cobbleverse's own
-maps and locators can keep working there. EXP-013 F's natural controls support that; it was
-not tested in those dimensions.
+maps and locators may still work there. That was not tested in those dimensions. They are
+still removed, so that one cue system covers every gym.
 
 ## 4. Villagers in built towns (rolled trades)
 
@@ -196,8 +187,8 @@ authored):
 | `gym` | trainer id(s) and spawner position. A spawner works with its `TrainerIds` and redstone power (EXP-013 E) |
 | `villagers` | count and job-site blocks placed (rolled trades) |
 | `beds_spare`, `bell` | village-life requirements |
-| `waystone` | position |
-| `guidance` | the gym compass and map loot entries generated from the gym position |
+| `waystone` | position, and the progression flag that unlocks it (`NAVIGATION.md`) |
+| `marker` | the map-marker position and label; it defaults to the waystone |
 
 **What the game knows about a town:**
 - the blocks: paving (spawns), beds, bells and job sites (villagers), spawner blocks

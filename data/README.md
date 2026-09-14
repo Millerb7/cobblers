@@ -22,7 +22,7 @@ matters.
 | `trainers.json` | Trainer teams, AI, gating, rewards | not written yet |
 | `spawns.json` | Curated encounter tables | not written yet |
 | `gyms.json` | The eight gyms and the Elite Four | not written yet |
-| `progression.json` | Chapters, badges, level caps, flags | not written yet |
+| `progression.json` | Chapters, flags (one per gym: badge ledger and waystone unlock), trainer ids per RCT series, waystone towns | **draft**: 8 gym flags and the champion flag with kanto/johto/hoenn/sinnoh ids; waystone positions null until towns are placed. `tools/progression_pack.py` builds the datapack. Design in `docs/world-building/NAVIGATION.md` |
 | `routes.json` | Authored route polylines | not written yet |
 | `notes/` | Plain markdown. Not validated, not read by tooling |
 
