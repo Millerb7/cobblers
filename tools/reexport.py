@@ -60,6 +60,7 @@ def main(argv=None):
     p.add_argument("--world-file", required=True)
     p.add_argument("--wpscript", default=r"C:\Program Files\WorldPainter\wpscript.exe")
     p.add_argument("--log", default=None)
+    p.add_argument("--paint", default=None, help="manifest.json from tools/paint_maps.py; paints biomes, terrain, vegetation and lakes")
     a = p.parse_args(argv)
 
     world = T.load_world(a.world)
@@ -83,6 +84,8 @@ def main(argv=None):
             "--margin=%d" % exp["export_margin_blocks"],
             "--spawn-x=%d" % exp["spawn"][0], "--spawn-z=%d" % exp["spawn"][1],
             "--border-centre=%d" % exp["border"]["centre"], "--border-size=%d" % exp["border"]["size"]]
+    if a.paint:
+        args += ["--paint=%s" % Path(a.paint).resolve(), "--paint-script=%s" % (ROOT / "tools" / "worldpainter" / "paint.js")]
     print("levels:", json.dumps(levels))
     env = dict(os.environ, COBBLERS_WP_SEED=str(seed))
     proc = subprocess.run(args, env=env, capture_output=True, text=True)

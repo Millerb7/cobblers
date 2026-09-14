@@ -140,7 +140,7 @@ SCHEMAS = {
         ["id", "name", "kind", "anchor", "status"],
         {
             "kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass",
-                     "glacier", "moraine", "river"},
+                     "glacier", "moraine", "river", "basin", "marsh", "estuary"},
             # built: in the terrain as intended; partial: present but under-delivered;
             # planned: a spec only. Nothing drops silently when terrain falls short.
             "status": {"built", "partial", "planned"},

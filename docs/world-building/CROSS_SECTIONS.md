@@ -1,5 +1,7 @@
 # Cross-section report: the glacier corridor and the rift
 
+> **Superseded 2026-09-14.** This report measures the 2026-09-13 terrain. The glacier, rift and river sections of the carved revision are in [`TERRAIN_2026-09-14.md`](TERRAIN_2026-09-14.md).
+
 Measured with `tools/cross_section.py` against `land_8k_16_eroded.png`
 (sha256 `526fe220…a860f6`), along the axes stored in `data/landmarks.json`.
 

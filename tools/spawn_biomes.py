@@ -259,6 +259,10 @@ def planned_biomes(regions_doc):
     where = defaultdict(set)
     for r in regions_doc.get("regions") or []:
         b = r.get("biomes") or {}
+        if isinstance(b, list):          # cobblers.regions/3: a plain list of the biomes the region paints
+            for name in b:
+                where[name].add(r["id"])
+            continue
         if b.get("deferred"):
             continue
         for band in b.get("bands") or []:

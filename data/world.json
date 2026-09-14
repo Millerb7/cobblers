@@ -11,8 +11,10 @@
     "height": 8192,
     "channel": "gray",
     "bit_depth": 16,
-    "sha256": "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
-    "status": "ok"
+    "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+    "status": "ok",
+    "previous_sha256": ["526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6"],
+    "revision_note": "2026-09-14: hand-carved revision (glacier, rift, lakes, rivers) saved under the same file name. The earlier file survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
   },
 
   "import": {
@@ -51,9 +53,10 @@
     "seed_policy": "Carried from the previous world's level.dat. Not committed: the public repo records only its sha256.",
     "seed_sha256": "48202407c92bc5d07cd215b93f631b384a5f7dde58e993e7bc9f7365e03563f3",
     "worldpainter_project": "cobblers-10240.world",
-    "worldpainter_project_sha256": "3d38724dac0506e21321a6851f19df0087006251da5e8b8586bea16f0172cd97",
+    "worldpainter_project_sha256": "59f6805435c4a01391a5df46b43116b9c1fb3827418bb2b527341b2545878ddc",
+    "painted": {"date": "2026-09-14", "maps": "tools/paint_maps.py from data/regions.json paint_presets and data/landmarks.json water bodies", "note": "Preview paint. See docs/world-building/REEXPORT.md for the export and its known issues."},
     "worldpainter_project_note": "Beside the heightmap under source_root. Painting starts from this file; its hash changes when it is saved again.",
-    "exported": "2026-09-13",
+    "exported": "2026-09-14",
     "carried_from_previous_level_dat": ["WorldGenSettings", "DataPacks", "GameRules", "Difficulty", "DifficultyLocked", "GameType", "allowCommands", "hardcore"],
     "measured_ceiling_y": 201,
     "measured_ceiling_note": "WorldPainter does not clamp at the top of the line: source values above 65406 reach y200.75 and round to y201 (0.88% of land). The design clamp stays 200."
@@ -77,14 +80,15 @@
     "terresculptor_project": "land_8k_16.TSmap",
     "pipeline": ["gaea", "gimp", "terresculptor", "worldpainter"],
     "verified": {
-      "date": "2026-09-13",
-      "dimensions": "8192x8192, 16-bit, single channel (PNG color_type 0)",
-      "distinct_values": 65536,
-      "max_neighbour_step_blocks": 1.3,
+      "date": "2026-09-14",
+      "dimensions": "8192x8192, 16-bit, single channel (PIL mode I;16)",
+      "distinct_values": 65532,
+      "max_neighbour_step_blocks": 3.77,
       "neighbours_over_5_blocks_pct": 0.0,
-      "clipped_at_zero_pct": 0.1463,
-      "clipped_at_max_pct": 0.3391,
-      "land_fraction_pct": 66.3
+      "clipped_at_zero_pct": 0.0,
+      "clipped_at_max_pct": 0.6045,
+      "land_fraction_pct": 68.3,
+      "note": "Re-measured on the 2026-09-14 hand-carved revision. The largest steps (3-4 blocks) are pixel-stepped terraces on the carved basin walls around Lake Tilpey and the glacier mouth."
     },
     "rejected_artifacts": [
       {

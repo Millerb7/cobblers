@@ -1,5 +1,7 @@
 # Biome and biome-tag coverage
 
+> **Superseded 2026-09-14.** Biome coverage is no longer a region-design constraint; spawns will be curated per sub-region. The current plan and its unused-biome list are in [`REGIONS.md`](REGIONS.md).
+
 **Status: draft, part of the region plan awaiting approval.** No biome has been painted.
 
 Every number here comes from `tools/spawn_biomes.py`, which reads the jars and datapacks

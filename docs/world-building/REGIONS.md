@@ -1,410 +1,224 @@
-# Region layout: rationale and gap list
+# Region layout, third revision: terrain character and sub-regions
 
-**Status: draft for review, second revision.** The schemas of `data/regions.json`
-(`cobblers.regions/2`) and `data/landmarks.json` (`cobblers.landmarks/1`) are proposed and
-not yet approved. No terrain has been edited and no biomes have been painted. Gym towns,
-routes and events are not assigned.
+**Status: draft for review (2026-09-14).**
+- **Schemas:** `data/regions.json` is on `cobblers.regions/3` (proposed); `data/landmarks.json`
+  stays on `cobblers.landmarks/1`.
+- **Terrain:** the 2026-09-14 carve, measured in [`TERRAIN_2026-09-14.md`](TERRAIN_2026-09-14.md).
+- **Painted:** biomes and vegetation, as a rough preview (§6).
+- **Not assigned:** encounter lists, towns and routes.
 
-Everything was measured from `land_8k_16_eroded.png` (sha256 `526fe220…a860f6`) with the
-tools in `tools/`. Feature locations come from the annotated copy
-`land_8k_16_eroded_annotated.png` (sha256 `52793443…2c3142`), recorded in
-`data/landmarks.json`.
+The second revision (14 regions, biome coverage as a primary constraint) was built on the old
+terrain and is superseded. It remains in git history.
 
-Companion reports:
+## 1. Design basis
 
-| Report | Covers |
+| Then | Now |
 | --- | --- |
-| [`CROSS_SECTIONS.md`](CROSS_SECTIONS.md) | glacier and rift profiles; the rift-width question |
-| [`GLACIER_CARVE.md`](GLACIER_CARVE.md) | the planned carve |
-| [`SIGHTLINES.md`](SIGHTLINES.md) | what can be seen from where |
-| [`BIOME_COVERAGE.md`](BIOME_COVERAGE.md) | biome and tag coverage analysis |
-| [`BIOME_COVERAGE_MATRIX.md`](BIOME_COVERAGE_MATRIX.md) | the full reference table |
-| [`../mechanics/SPAWN_PHILOSOPHY.md`](../mechanics/SPAWN_PHILOSOPHY.md) | curated versus full-dex spawning |
+| Every loaded biome placed, so every spawn reference is reachable | **Not a constraint.** Spawns will be curated per sub-region, so a region needs a terrain character a player recognises, not a biome quota |
+| Region = spawn unit | **Region = terrain character; sub-region = spawn unit**, sized to one stretch of travel |
+| Feature locations partly from the brief | **Only from the paint.** Every landmark extent is the annotated outline (the previous pass missed the glacier by following prose) |
 
-## What changed since the first draft
+## 2. Method
 
-| Change | Result |
+**Output:** labels on an 8-block raster, traced to polygons.
+
+1. **Hard regions from terrain and the annotation:**
+   - the massif (ground above y138 around the Tri Peaks, Vessu and Clay);
+   - the Glacial Tear (trough outline widened ~100 blocks to its walls, plus Merian and the
+     crags above the head);
+   - the Rift outline;
+   - Lake Tilpey's basin;
+   - the Craters outline;
+   - the south-east plateau above y140;
+   - each island.
+2. **Seeded regions for the remaining mainland,** grown by terrain-weighted distance:
+   - each step costs its length times (1 + 0.35 × climb);
+   - crossing a carved channel adds a fixed cost;
+   - water is impassable.
+
+   Borders therefore settle where fronts meet over ridges, channels and coasts.
+3. **Sub-regions grown the same way** inside each region, from hand-placed seeds.
+4. **Clean-up and measurement:**
+   - disconnected pieces join the neighbour they share most border with;
+   - polygons are simplified to 24 blocks;
+   - elevation, slope, bounds and area are measured per region and per sub-region.
+
+## 3. Regions (21) and sub-regions (62)
+
+| Region | Class | Area km² | Median y | Sub-regions (km²) | Painted biomes |
+| --- | --- | ---: | ---: | --- | --- |
+| **The Tri Peaks** (`tri_peaks`) | terrain | 1.69 | 164 | The Tri Peaks (0.63), Mt Vessu (0.73), Mt Clay (0.33) | grove, snowy_slopes, jagged_peaks |
+| **Frostpeak Point** (`frostpeak_point`) | terrain | 1.27 | 105 | Frostpeak (0.88), Frostpeak Strand (0.39) | snowy_taiga, snowy_slopes, frozen_peaks |
+| **The Glacial Tear** (`glacial_tear`) | terrain | 2.79 | 109 | Merian Cirque (0.54), The Crags (0.42), Upper Trough (0.82), Lower Trough (1.01) | snowy_plains, snowy_slopes, grove, stony_peaks |
+| **The Northern Downs** (`northern_downs`) | terrain | 1.93 | 111 | Peak Pond Hollow (1.16), North Shore Downs (0.46), North-East Downs (0.31) | old_growth_spruce_taiga, meadow, taiga |
+| **The Marsh Country** (`marsh_country`) | terrain | 3.27 | 112 | Marshy Marsh (0.94), Marsh Creek (0.72), Eastern Moor (1.15), Glacier Foot Fields (0.46) | swamp, meadow, plains |
+| **Tilpey Lakeland** (`tilpey_lakeland`) | terrain | 3.29 | 95 | Tilpey North Shore (0.56), Tilpey Waters (0.78), Tilpey South Shore (1.01), Tilpey West Meadows (0.26), Tilpey East Shore (0.69) | birch_forest, river, forest, flower_forest |
+| **The Wedge** (`the_wedge`) | terrain | 0.75 | 124 | Wedge North (0.27), Wedge South (0.47) | dark_forest, forest |
+| **The Rift** (`the_rift`) | terrain | 2.25 | 110 | Rift Trunk (0.57), Rift West Spur (0.53), Rift South-West Arm (0.55), Rift South-East Arm (0.61) | windswept_gravelly_hills (custom biome still wanted) |
+| **Viltri Woods** (`viltri_woods`) | terrain | 5.84 | 113 | Lake Viltri Hollow (0.81), Viltri's Path Valley (0.88), Foothill Woods (1.95), North-West Coast (1.10), Viltri Plateau (1.09) | forest, windswept_forest, old_growth_birch_forest, plains |
+| **The Shrew Lakes** (`shrew_lakes`) | terrain | 2.73 | 115 | Shrew Lake Shores (1.16), Arrow Lake Shores (0.56), River of Shrews Vale (1.01) | cherry_grove, flower_forest, plains |
+| **Pallet Fields** (`pallet_fields`) | terrain | 1.80 | 115 | Pallet Meadows (0.78), West Shore (0.80), South-West Fields (0.22) | plains, sunflower_plains |
+| **The Southern Coast** (`southern_coast`) | terrain | 3.60 | 106 | Arrow Creeks (1.85), South Strand (1.00), Rift Foot (0.75) | savanna, plains |
+| **The Scorched Plateau** (`scorched_plateau`) | terrain | 1.65 | 152 | Plateau West (0.87), Plateau South (0.66), Plateau East (0.13) | badlands, wooded_badlands, eroded_badlands |
+| **The Craters** (`the_craters`) | terrain | 1.31 | 143 | North-West Rim (0.30), Great Crater (0.61), East Cones (0.40) | stony_peaks, savanna_plateau |
+| **The Eastern Dunes** (`eastern_dunes`) | terrain | 2.31 | 124 | East Coast Dunes (0.89), South-East Dunes (1.42) | desert |
+| **Northgate Isle** (`northgate_isle`) | island | 0.93 | 101 | Northgate West (0.42), Northgate East (0.50) | old_growth_spruce_taiga, taiga |
+| **The Pine Isles** (`pine_isles`) | island | 1.97 | 91 | North Pine Isle (0.79), South Pine Isle (1.18) | snowy_taiga |
+| **Fungal Isle** (`fungal_isle`) | island | 0.80 | 113 | Fungal North (0.41), Fungal South (0.39) | mushroom_fields |
+| **Sunset Isle** (`sunset_isle`) | island | 2.58 | 97 | Sunset West (1.35), Sunset East (1.23) | savanna, flower_forest |
+| **Jungle Isle** (`jungle_isle`) | island | 1.26 | 110 | Jungle West (0.61), Jungle East (0.65) | jungle, sparse_jungle |
+| **The Long Isle** (`long_isle`) | island | 2.58 | 105 | Long Isle North (0.65), Long Isle Middle (0.85), Long Isle South (1.09) | taiga, forest, sparse_jungle |
+
+**Size:**
+- Sub-regions are 0.13–1.95 km². Most are 0.4–1.2 km², roughly 600–1,100 blocks across: one
+  stretch of travel.
+- **Two are large enough to split** if routes need it: Foothill Woods (1.95) and Arrow Creeks
+  (1.85).
+- **One is a sliver** that should merge: Plateau East (0.13).
+
+**Pieces:** every region is one piece except the Pine Isles, which is two islands by design.
+
+## 4. Sub-region schema (proposed)
+
+Each record in `subregions[]`:
+
+| Field | Holds |
 | --- | --- |
-| The annotation is ground truth for feature locations | `data/landmarks.json` holds 7 landmarks with outlines, axes and anchors. Tools look features up instead of inferring them |
-| The rift is neither water nor dry | New region class `anomaly`. Biome and spawn table deferred, custom biome required, water policy `never`. `landforms.py` and `cell_stats.py` classify its floor as void; the only inland water left on the map is the meltwater lake |
-| The glacier is a planned carve | New region **Glacier Valley**, status `partial`, with a carve spec. It cuts the Eastern Downs in three |
-| Biome coverage is a primary constraint | All 55 loaded overworld biomes are placed; 73 of 73 spawn references are covered, with overlays and underground biomes |
-| Status on regions and landmarks | `built` / `partial` / `planned`. `partial`: Glacier Valley, Strand Flats, glacier corridor. `planned`: moraine, meltwater river |
-| Region count | 12 → 14: Glacier Valley and Rim Uplands added; Sunken Rift renamed The Rift |
+| `id` | stable snake_case id, unique across all sub-regions. The spawn unit's key |
+| `display_name` | player-facing name |
+| `parent` | region id; each region also lists its `subregions` |
+| `polygons` | block x, z rings |
+| `measured` | area, bounds, elevation p10/median/p90/max, slope mean/p90/flat share |
+| `boundaries` | every neighbour, with the measured basis of the shared edge and its length (below) |
+| `encounters` | `{ "table": null, "status": "empty" }`, the slot for the encounter table. **Not populated:** the spawn philosophy is open |
+| `paint` | `{ "preset": … }`, a key into `paint_presets` |
 
-## Where the brief and the terrain disagree
+### Boundary legibility (measured)
 
-| Brief says | Terrain measures | Consequence |
-| --- | --- | --- |
-| Glacier runs **north-east** from the rift, x4800-7000, z2400-4400, lake at its **south-west** end | The drawn outline runs **north-west to south-east**, x3128-6504, z1680-4192. Its floor falls from y99 at the range to y44.7 in the lake, which sits at the **south-east** end beside the rift's north-east arm | The drawing was used, as instructed |
-| Glacier faintly present, under-carved | Confirmed. Median wall 5.5°, depth 19.6, rim to rim 548. Shapes: U 10, V 7, flat 3, asymmetric 11, none 1. A saddle at d1792 is 4 blocks deep | Status `partial`; carve specified |
-| **Stillwater Basin (D6) is unrelated to the glacier** | **It is not.** Its enclosed lake is the glacier's meltwater lake, and all six of its ranked hub sites (139, 104, 103, 103, 100, 99) lie inside the glacier trough | Kept as its own hub as directed, now justified by other ground; see [the Stillwater decision](#stillwater-basin-needs-your-decision) |
-| Rift: floor below sea level, never water, never visible | 1.70 km² lies below y62. Another **0.78 km² of floor and shelf lies at y62-80** and would render as visible ground | The floor treatment has to reach about y80, not only y62 |
-| Rift painted widest at the centre, measured narrowest at D4 (172) | Rim to rim, the trunk centre (508-712) is as wide as the arms (476-624 by median). The 172 figure was the width below y62; the trunk floor sits at y57-62 against y44-54 in the arms | A floor-depth effect, not width. See `CROSS_SECTIONS.md` |
-| The rift is an erosion feature, or was changed by erosion | The erosion pass changed no block by as much as one block (max 0.77) | The rift was painted between the Gaea export and the pre-erosion export. **The "eroded" heightmap carries no erosion** |
-| Volcanic cones | As annotated, south-east. Clipped flat at y200, no craters | Unchanged gap |
-| A large flat coastal lowland | Still none. The Strand Flats have 38% of land under 5° | Status `partial` |
+**How each shared edge is classified:**
+- **creek or trench:** at least 25% of the edge on carved ground;
+- **ridge:** the edge stands 3+ blocks above both sides;
+- **coast;**
+- **painted change of cover:** a treeline, snowline or ground change, because the two sides use
+  different presets;
+- **open ground:** otherwise.
 
-## How boundaries were drawn
+| Basis | Edge length (blocks, both sides counted) |
+| --- | ---: |
+| Painted change of cover | 195,700 |
+| Coast | 157,200 |
+| Open ground: not legible | 25,100 |
+| Creek or trench | 8,400 |
+| Ridge | 0 |
 
-No boundary is a coordinate or a cell edge. Each region's `boundary_basis` names one or
-more of these:
+**Where edges fail to read:**
+- **Seams that follow high ground are not detected as ridges.** The distance growth drew them
+  along slopes and cols rather than along crests, so the classifier finds no ridge anywhere.
+  Most inland edges are legible only because the two sides are painted differently.
+- **Open-ground edges over 25% of a sub-region's inland edge:**
+  - **Fungal Isle's halves**, both painted mushroom fields: merge them;
+  - **the four Rift arms** and **the three massif summits**, split at valley forks and cols
+    between same-preset neighbours: legible on the ground as separate arms and peaks, but the
+    classifier cannot see it;
+  - **the Great Crater and the East Cones;**
+  - **Plateau East, Pallet Meadows and the East Coast Dunes.**
+- **Fix:** vary their cover slightly, or mark the edge with a path or sign when routes are
+  drawn.
 
-| Basis | Meaning |
+## 5. Biomes
+
+**38 vanilla overworld biomes are painted.**
+
+**14 are unused:**
+- bamboo_jungle, mangrove_swamp, old_growth_pine_taiga;
+- windswept_hills, windswept_savanna, ice_spikes;
+- beach, snowy_beach, stony_shore (shores are painted as terrain, not biome);
+- frozen_river, lukewarm_ocean;
+- and the three cave biomes: deep_dark, dripstone_caves, lush_caves.
+
+**The cave biomes are planned** in `underground_biomes`, remapped to the new region ids: lush
+under the Shrew Lakes and Jungle Isle, deep dark under the Tri Peaks, sulfur caves (optional)
+under the Craters. **Nothing underground is painted**: the exported world has no caves yet.
+
+**Pale Garden is not painted.** WorldPainter lists it, but Minecraft 1.21.1 does not have it.
+
+## 6. Paint
+
+`tools/paint_maps.py` turns each sub-region's preset into maps, and
+`tools/worldpainter/paint.js` applies them during the export.
+
+**Each preset sets:**
+- a biome, or biome bands by height;
+- base terrain, noise patches, terrain above or below a height, and rock on steep ground;
+- tree layers with a density range;
+- plant sets with a coverage;
+- frost.
+
+**Density follows two-octave noise between each preset's minimum and maximum, with
+clearings**, so no forest is uniform. The rules across all sub-regions:
+
+| Feature | Rule |
 | --- | --- |
-| `contour` | A smoothed elevation threshold |
-| `rim` | Distance to the rift combined with slope |
-| `watershed` | A priority-flood drainage divide |
-| `coastline` | Distance to open sea combined with elevation |
-| `ridge` | A measured crest line |
-| `strip_width` | Width of land pinned between two features |
-| `nearest_high_core` | Proximity to the nearer of two high cores |
-| `land_body` | A separate island |
-| `valley` | **New.** Inside the annotated glacier outline, ground no higher than the lower rim of its nearest cross-section station (smoothed over three stations) less 2 blocks |
-| `lake` | **New.** An enclosed water body |
-| `planned_feature` | **New.** A buffer around a planned landmark's axis: 90 blocks for the moraine crest, 72 for the river channel |
-| `split` | **New.** A piece of a former region cut off by another region, assigned by which features bound it |
+| Snow line | frost above y136 (alpine) or y140 (crags); snow terrain above y146, deep snow above y172; biome bands grove → snowy slopes → jagged peaks. Band edges wobble ±8 blocks so they are not contour lines |
+| Forests | deciduous (oak/birch), pine, swamp and jungle layers; dense dark forest in the Wedge, old-growth birch on the Viltri Plateau, mixed pine and oak in the Foothill Woods |
+| Shrubland | shrub plants (sweet berry, azalea, large fern, tall grass) at 18–22% coverage in the Northern Downs, Eastern Moor and coastal scrub |
+| Desert | desert terrain (sand, cactus, dead bush) on the Eastern Dunes |
+| Mesa | terracotta bands and red sand, with scattered trees on the plateau top |
+| Swamp | swamp trees, mud patches, orchids and ferns around Marshy Marsh, thinning along its creek |
+| Glacier | deep snow and frost on the trough floor, bare rock on walls steeper than 26° |
+| The Rift | stone and gravel, gravel floor below y96, almost no trees |
+| Craters | basalt and blackstone with specks of magma |
+| Lakes | water raised to one block below each spill; clay and gravel beds, sand banks |
+| Carved channels | dry gravel beds 10 blocks wide, no trees |
+| Coast | beach terrain on gentle shore within 3 blocks of sea level, gravel on cold shores |
+| Sea | frozen, cold, temperate and warm oceans north to south; deep variants below y34 |
 
-## Prevailing wind and rain shadow
+**WorldPainter note:** its "Short Grass" plant writes `minecraft:grass`, a block Minecraft
+1.21.1 no longer has, so the plant sets avoid it.
 
-**Unchanged.** Wind from the west-northwest; treeline and snowline y165. The Windward
-Coast and range are wet, the Leeward Plateau dry, and the Ember Highlands warm and leeward.
+## 7. Spawn capacity reserved underground and off-world
 
-**One deliberate exception:** the Glacier Valley carries snow on its floor and walls below
-the treeline. That comes from the glacier ice and cold air draining from the range.
+**Source:** every spawn entry the server loads (5,195 entries, 1,019 species ids). Each species
+is classified by where its entries can place it:
+- **Nether or End:** by biome tag.
+- **Cave:** cave biomes, `canSeeSky: false`, `maxY` below 50, or a sky-light cap of 7 or less.
+- **Surface:** everything else.
 
-## Regions
+| Where the pack lets a species spawn | Species | Share |
+| --- | ---: | ---: |
+| Surface only | 525 | 51.5% |
+| Surface and also cave, Nether or End | 368 | 36.1% |
+| Cave only | 57 | 5.6% |
+| Cave and/or other dimension, never surface | 15 | 1.5% |
+| End only | 11 | 1.1% |
+| Nether only | 2 | 0.2% |
+| Only in unresolved non-vanilla dimensions (e.g. Aether tags) | 41 | 4.0% |
 
-Areas include water and void. "Flat" is the share of land under 5°.
+Species with at least one entry anywhere underground or off-world: cave 354, Nether 114,
+End 52.
 
-| Region | Class | Tier | Status | Area km² | Median y | Flat | Biome bands |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Northern Range | terrain | wilderness | built | 5.15 | 131 | 26% | windswept_forest 44, grove 22, snowy_slopes 13, frozen_peaks 12, jagged_peaks 8 |
-| Windward Coast | terrain | route | built | 2.85 | 104 | 46% | dark_forest 59, old_growth_spruce_taiga 24, stony_shore 10, pale_garden 7 |
-| Leeward Plateau | terrain | hub | built | 2.89 | 130 | 72% | savanna_plateau 38, savanna 38, desert 18, windswept_savanna 6 |
-| **Rim Uplands** | terrain | hub | built | 2.60 | 121 | 71% | windswept_hills 78, old_growth_pine_taiga 22 |
-| **The Rift** | **anomaly** | **destination** | built | 3.77 (void 1.70) | 89 | 15% | **deferred**: custom biome required |
-| **Glacier Valley** | terrain | route | **partial** | 3.03 | 99 | 56% | snowy_taiga 44, taiga 26, frozen_river 19, river 8, windswept_gravelly_hills 3 |
-| Stillwater Basin | terrain | hub | built | 2.57 | 101 | 46% | cherry_grove 76, swamp 18, stony_shore 6 |
-| Eastern Downs | terrain | hub | built | 3.58 | 104 | 54% | plains 50, meadow 25, birch_forest 18, stony_shore 6 |
-| Ember Highlands | terrain | wilderness | built | 3.46 | 149 | 60% | eroded_badlands 42, badlands 25, wooded_badlands 21, stony_peaks 12 |
-| Lakeshore Vale | terrain | route | built | 5.82 | 117 | 60% | flower_forest 48, forest 38, old_growth_birch_forest 10, beach 3 |
-| Strand Flats | terrain | route | **partial** | 0.77 | 85 | 38% | sunflower_plains 54, beach 33, mangrove_swamp 13 |
-| Northern Isles | terrain | wilderness | built | 2.72 | 90 | 26% | snowy_plains 62, snowy_beach 20, ice_spikes 18 |
-| Jungle Isle | terrain | wilderness | built | 2.51 | 104 | 20% | jungle 53, bamboo_jungle 30, beach 17 |
-| Southern Isles | terrain | wilderness | built | 4.71 | 102 | 29% | sparse_jungle 70, mushroom_fields 18, beach 12 |
+**Recommended reservation when curating:** roughly **60% surface, 22% caves, 12% Nether, 6%
+End** of the species the campaign uses.
+- **Committed first:** the 85 species that can never be surface. They go underground or
+  off-world.
+- **The rest comes from the flexible pool:** the 368 species that can spawn in both places.
+  Assign about 120 cave-capable species to caves, 70 Nether-capable to the Nether and 30
+  End-capable to the End, and keep them off surface tables.
+- **The surface then keeps about 670 species** (893 surface-capable minus the 220 reserved) to
+  spread across 62 sub-regions: about eleven per sub-region with no repeats, which suits
+  "roughly 10–20 deliberate species" per area.
 
-**Underground biomes** (planned; the WorldPainter method is verified in source, not tested
-in an export):
+**Caveat:** this is a budget, not a list. Encounter lists stay empty until the spawn philosophy
+is decided.
 
-| Biome | Where |
-| --- | --- |
-| dripstone_caves | under every region except the rift |
-| lush_caves | Lakeshore Vale, Jungle Isle |
-| deep_dark | Northern Range |
-| sulfur_caves | Ember Highlands, optional |
+## 8. Open items
 
-### The new and changed regions
-
-**The Rift** (renamed from the Sunken Rift)
-- *Geometry:* the same, bounded by its rim.
-- *Class and biome:* region class `anomaly`, tier `destination`. No biome and no spawn table
-  are assigned; no ocean or vanilla default either. The river, gravelly hills and mangroves
-  it held last draft moved to the Glacier Valley and the Strand Flats.
-- *Water:* its landmark's water policy is `never`, so tools count its sub-sea floor as void.
-
-**Glacier Valley** (new, `partial`)
-- *Extent:* the measured trough inside the annotated outline, the meltwater lake, and
-  buffers around the planned moraine and river.
-- *Taken from:* Stillwater Basin (1.23 km²), the Eastern Downs (1.56 km²) and a sliver of
-  the range head (0.01 km²).
-- *Biomes:* follow the glacier landform. `frozen_river` and `river` need the carve before
-  they are painted.
-
-**Rim Uplands** (new)
-- *Extent:* the piece of the old Eastern Downs west of the glacier valley, north of the rift
-  and south-east of the range.
-- *Character:* high (median y121), flat (71% under 5°), far from the sea (median 1,888
-  blocks).
-- *Tier:* hub. It holds the 106 and 100-block sites at C4 that made the Downs a hub.
-
-**Stillwater Basin**
-- *Extent:* what remains of the D6 lake's drainage basin outside the glacier valley, plus the
-  east-coast piece of the Downs south of the valley mouth, which it borders.
-- *Biomes:* unchanged palette: cherry grove, swamp low ground, stony shore on the new coast.
-
-**Eastern Downs**
-- *Extent:* the north-east piece: land draining to the north and east seas beyond the
-  glacier valley. 3.58 km², down from 8.61, so the "largest and most generic region" gap is
-  closed.
-- *Tier:* stays hub on a 107-block site at (6446, 3527).
-
-**Other region changes:**
-
-| Region | Change |
-| --- | --- |
-| Leeward Plateau | Gains `savanna` on its lower tableland |
-| Ember Highlands | Gains `badlands` and `wooded_badlands`; loses `windswept_savanna`, which no longer fits any of its ground |
-| Lakeshore Vale | Gains `old_growth_birch_forest` |
-| Windward Coast | Gains `pale_garden` (VanillaBackport) |
-| Northern Isles | Gains `ice_spikes`, Kyurem's only biome in the pack |
-| Strand Flats | Gains `mangrove_swamp` |
-| Sea | Gains `deep_frozen_ocean` |
-
-## Stillwater Basin needs your decision
-
-You asked to keep Stillwater Basin (D6) as its own region with hub tier, as unrelated to
-the glacier. The region is kept separate and tiered hub. The premise, though, does not hold:
-
-- **The "still water" is the glacier's meltwater lake:** the enclosed basin at (6025, 3810),
-  floor y44.5, at the drawn glacier's south-east end.
-- **Every site that earned it hub tier lies inside the glacier trough:**
-  - 139 blocks square at (5646, 3302), the largest flat ground on the map below y190;
-  - 104 at (5881, 3378), 103, 103 and 100.
-- **Without the trough, its original basin area's best site is 96 blocks**, below the
-  99-block bar that kept Lakeshore Vale a route.
-- **As now drawn, the hub tier is honest for a different reason.** The east-coast land
-  inherited from the Downs holds a 104-block site at (6805, 4407).
-
-**Options:**
-
-| | Option | Effect |
-| --- | --- | --- |
-| **A** | Keep the current proposal | Stillwater is a hub on the east coast; its name no longer describes its ground |
-| **B** | Make the Glacier Valley floor the hub | The largest flat ground on the map is there. The carve as specified still leaves 122-124-block squares on the floor, but not near the lake. The lower flats become a sloping floor |
-| **C** | Leave the lower trough uncarved | Keep the 139-block flats near the lake as the hub. The glacier reads as a glacier only from the saddle up |
-
-## The Rift as a destination: Victory Road or the League?
-
-This is an assessment. Nothing is assigned.
-
-**What the rift offers:**
-
-- **Layout:** five arms (5.9 km of axis) meeting at two junctions, with 476-624 blocks
-  between rims.
-- **Descent:** walls median 23-33°, falling a median 52-66 blocks.
-- **Floor:** 1.70 km² that will never be seen, plus 0.78 km² of low shelf that also needs
-  the floor treatment.
-- **Neighbours:** six regions border it — Rim Uplands, Leeward Plateau, Lakeshore Vale,
-  Stillwater Basin, Ember Highlands and Glacier Valley.
-- **Visibility:**
-  - The rims are visible from every hub checked against them.
-  - A structure rising 130 blocks from either junction floor is visible from all four hubs'
-    sites at 1.2-4.0 km.
-- **Entry:** no natural walk-down ramp was found, so every descent would be authored.
-
-| | Victory Road | The League |
-| --- | --- | --- |
-| Shape it needs | A long, branching, hostile traversal just before the end | One climactic place, arrived at, not wandered |
-| Fit | **Strong.** Five arms and two junctions make a natural branching gauntlet. The descent is a threshold, and the hidden floor and custom biome make it feel unlike anywhere else | **Partial.** There is no ground to build on, since the floor is void by design. A League here is a built structure: suspended, bridged rim to rim, or standing on the unseen floor and rising through the fog. The trunk has the steepest walls (33°) and highest rims (y130-156), the most dramatic setting |
-| Visibility | Being seen early is a promise; the rift shows from the hubs | A tower at a junction is seen from every hub, a long-running "that is where we are going" |
-| Sequence-break risk | **High.** The rift is open along its whole rim. Players can dig, pillar or build down anywhere, so authored descents only gate a traversal if descending elsewhere is prevented or pointless | Lower. A structure can be locked |
-| Terrain work | Floor treatment up to about y80, authored descents, custom biome | The same, plus a structure with no terrain to sit on |
-
-**Assessment:** the rift suits **Victory Road naturally** and the **League only as
-architecture**. The two are compatible: a Victory Road through the arms that ends at a
-League structure at the east junction, where the south-east and north-east arms meet the
-trunk. Two things decide which is realistic:
-
-1. whether the rim can be made non-traversable except at authored descents;
-2. whether the custom biome's fog and light read as the brief intends.
-
-Both are experiments, not decisions.
-
-## Buildable sites by region
-
-Largest flat squares, at most 4° slope, at least y64 and at most y190. They were found with
-`tools/find_sites.py`'s functions applied to each region's mask by a design script; the
-command-line tool only takes a bounding box. Tiers use a 99-block bar.
-
-| Region | Largest | Second | Third |
-| --- | --- | --- | --- |
-| Glacier Valley | 139 at (5646, 3302) y75-78 | 104 at (5881, 3378) y67-71 | 103 at (5063, 2724) y108-112 |
-| Leeward Plateau | 114 at (1224, 4170) y133-137 | 104 at (1426, 3837) | 100 at (912, 3936) |
-| Ember Highlands | 111 at (4841, 5816) y162-164 | 93 | 92 |
-| Eastern Downs | 107 at (6446, 3527) y92-94 | 99 at (6209, 2738) | 89 |
-| Rim Uplands | 106 at (3149, 2768) y122-126 | 100 at (3401, 2951) | 92 |
-| Stillwater Basin | 104 at (6805, 4407) y107-109 | 96 at (6205, 4791) | 79 |
-| Lakeshore Vale | 96 | 93 | 93 |
-| Windward Coast | 95 | 88 | 82 |
-| Northern Range | 92 | 82 | 76 |
-| Southern Isles | 91 | 81 | 77 |
-| The Rift | 85 at y97-99 on a wall shelf | 84 at y69-73 on the floor shelf | |
-| Jungle Isle | 83 | 74 | 71 |
-| Northern Isles | 81 | 78 | 73 |
-| Strand Flats | 76 | 72 | 68 |
-
-The Ember Highlands clear the bar but stay wilderness; their ground is a hot, remote
-tableland. The Glacier Valley's figures are before the carve; afterwards its largest is
-124.
-
-## Distinguishable at 128 blocks
-
-New neighbour pairs, and what separates them:
-
-| Neighbours | Separated by |
-| --- | --- |
-| Rim Uplands / Eastern Downs | Bare wind-cut hills and old pines, against green grassland and birch; the glacier valley between them |
-| Rim Uplands / Leeward Plateau | Grey-green windswept grass and stone, against yellow savanna and sand |
-| Glacier Valley / Northern Range | A white flat valley floor between snowy spruce walls, against open snow slopes and bare peaks |
-| Glacier Valley / Eastern Downs | Snow and spruce, against green grass |
-| Stillwater Basin / Eastern Downs | Pink cherry canopy, against open grass |
-| The Rift / anything | Fog and portal particles rising from a trench |
-
-## Biome coverage, in brief
-
-The full analysis is in `BIOME_COVERAGE.md`.
-
-- **Every loaded overworld biome has a place:** all 55, including two from VanillaBackport.
-- **The pack's spawn references:**
-  - 73 of 73 are covered with overlays and underground biomes;
-  - 66 are covered by painted surface biomes alone;
-  - 67 are covered with the `is_lush` fallback and no underground biomes.
-- **Six tags have no loaded member and need overlays.** Four are for identity
-  (`is_tropical_island`, `is_snowy_forest`, `is_volcanic`, `is_thermal`) and two are
-  optional (`is_sky`, `is_shrubland`). A seventh overlay, the `is_lush` fallback, stays
-  until underground `lush_caves` is proven.
-- **No species depends on an overlay.**
-- **Underground biomes are the real dependency.** Without them and without the fallback,
-  29 species are unreachable, including every fossil.
-
-## Gap list
-
-1. **Stillwater Basin's premise.** See the decision above.
-2. **The glacier carve.** 5.9M blocks cut, 24.1M raised. It shrinks the valley's building
-   ground, and cannot open a head-to-lake view because the valley bends.
-3. **Rift floor treatment.** It must cover 0.78 km² of ground between y62 and y80 as well
-   as the 1.70 km² void. The custom biome needs a datapack biome JSON and an in-game test;
-   WorldPainter can write a custom biome ID (source verified, not tested).
-4. **Underground biomes.** An export test must come first. 29 species depend on it, or
-   6 with the `is_lush` fallback.
-5. **The erosion pass did nothing.** If erosion was intended, the heightmap needs
-   re-exporting from TerreSculptor, and every measurement here must be rerun against the
-   new hash.
-6. **No flat coastal lowland.** The Strand Flats still need flattening, now also for
-   mangroves.
-7. **Summits clipped at y200.** Cones have no craters, and summit anchors hide their own
-   centres.
-8. **Islands cannot be contiguous.** Northern and Southern Isles are three bodies each.
-9. **Range north foreshore compromise.** Unchanged.
-10. **The Stillwater east-coast strip** runs about 250 blocks wide beside the Ember
-    Highlands.
-11. **Cobbleverse legendary-structure spawns** reference 30 `cobbleverse:custom_spawn/...`
-    biome IDs that no loaded pack defines. **Not verified in game.**
-12. **Only cell C8 has no region.** It is open sea.
-
-## Proposed schemas
-
-### `data/regions.json`: `cobblers.regions/2`
-
-Top level:
-
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `schema` | string | `cobblers.regions/2` |
-| `schema_status` | enum | `proposed` until approved |
-| `status` | enum | `draft`, `approved` |
-| `computed_from_sha256` | string | Heightmap the measurements came from |
-| `landmarks` | string | Path of the landmarks file the plan was built against |
-| `geometry` | object | Raster resolution, polygon tolerance, coverage statement |
-| `enums` | object | Meaning of each `region_class`, `tier` and `status` value |
-| `climate` | object | `prevailing_wind_from`, `basis`, `treeline_y`, `snowline` |
-| `sea_biomes` | object | `shares` and `rules` |
-| `underground_biomes` | array | `{biome, regions, status, method, note, optional?}` |
-| `tag_overlays` | array | `{tag, add_biomes, scoped_to, kind: identity or optional or fallback, reason, only_through_this_overlay}` |
-| `tag_coverage` | object | Coverage by plan layer and scope, and single-home species, from `tools/spawn_biomes.py` |
-| `regions` | array | One entry per region |
-
-Each region:
-
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `id`, `display_name` | string | Stable id and player-facing name |
-| `region_class` | enum | `terrain`, `anomaly` |
-| `tier` | enum | `hub`, `route`, `wilderness`, `destination` |
-| `status` | enum | `built`, `partial`, `planned` |
-| `character` | string | One-sentence identity |
-| `contiguous`, `pieces` | bool, int | False only for archipelagos |
-| `cells`, `cell_share` | array, object | Cells by share, at least 0.5% |
-| `bounds` | object | Block bounding box |
-| `climate` | object | `exposure`, `moisture`, `temperature` |
-| `boundary_basis` | array | `{basis, detail}` |
-| `measured` | object | Area, land, water, void, elevation percentiles, slope, treeline share, distance to sea |
-| `biomes` | object | `deferred`; `primary`, `secondary`, `bands` of `{biome, share, rule}`; for anomalies, `custom_biome` |
-| `spawn_table` | object | Anomalies only: `{status: deferred}` |
-| `biome_tags` | array | Spawn-referenced tags its biomes resolve into, overlays included |
-| `tag_overlays_required` | array | `{tag, biome, kind}` |
-| `underground_biomes` | array | Biome ids planned beneath it |
-| `distinctness` | object | `ground`, `vegetation`, `water`, `sightlines`, `signature_at_128_blocks` |
-| `notes` | array | Caveats |
-| `polygons` | array | Outer rings as `[x, z]`, one per piece |
-
-Changes from `/1`:
-
-- new fields: `region_class`, `status`, `spawn_table`, `underground_biomes`, `measured.void_km2`,
-  `biomes.deferred`, `biomes.custom_biome`, `enums`, `landmarks`;
-- tier value `destination`;
-- `tag_overlays` gains `kind` and `only_through_this_overlay`;
-- `tag_coverage` is restructured.
-
-### `data/landmarks.json`: `cobblers.landmarks/1`
-
-The validator already registered this schema; this revision extends it. It now requires
-`id`, `name`, `kind`, `anchor` and `status`.
-
-| Field | Values |
-| --- | --- |
-| `kind` | now also `glacier`, `moraine`, `river` |
-| `status` | `built`, `partial`, `planned` |
-| `water` | `allowed`, `never` |
-
-Each landmark also carries:
-
-| Field | Meaning |
-| --- | --- |
-| `status_basis` | Why it has that status |
-| `anchors` | Named points; tools address them as `landmark.anchor` |
-| `extent.polygons` | The outline |
-| `axes` | `{id, polyline, section_width, basis, measured}` |
-| `carve_spec` | The glacier's planned carve |
-| `spec` | Moraine and river specifications |
-| `custom_biome`, `surface`, `role` | The rift's anomaly requirements |
-| `annotation` (top level) | The source image's path and hash, and the disagreement between drawing and text |
-
-### Validation once approved
-
-**Already enforced for landmarks:** `tools/validate_data.py` checks the required fields and
-enums above.
-
-**For regions, once the schema is approved, it should check that:**
-
-- ids are unique;
-- biome ids are present in the loaded registry, via `tools/spawn_biomes.py`;
-- band shares sum to one;
-- `pieces` equals the polygon count;
-- `computed_from_sha256` matches `data/world.json`;
-- each overlay biome is painted only in its `scoped_to` regions;
-- every land and void block lies inside exactly one polygon;
-- deferred regions carry no bands;
-- every region with `status` other than `built` explains itself in `notes`.
-
-## Reproducing
-
-```bash
-python tools/landforms.py     --source-root <source root>
-python tools/cell_stats.py    --source-root <source root>
-python tools/cross_section.py --source-root <source root> --landmark glacier_corridor --axis trough --sample-step 4 --level 62
-python tools/cross_section.py --source-root <source root> --landmark rift --axis trunk --sample-step 4 --level 62
-python tools/sightlines.py    --source-root <source root> --plan data/checks/sightlines.json
-python tools/spawn_biomes.py  --server-dir <server dir> --regions data/regions.json --markdown docs/world-building/BIOME_COVERAGE_MATRIX.md
-python tools/find_sites.py    --source-root <source root> --min-size 48 --max-slope 4 --above-sea 2 --max-y 190   # whole map
-```
-
-The terrain tools verify the heightmap hash before reading it. The landmark-aware tools read
-`data/landmarks.json`, and refuse to run if it is malformed unless `--no-landmarks` is
-passed.
-
-The region raster, band assignment, glacier trough mask and carve simulation were built by
-design scripts outside the repository. The rules they applied are recorded in each region's
-`boundary_basis` and band `rule`. Those scripts are not committed, so the polygons cannot yet
-be regenerated from `tools/` alone.
+- **Rivers:** grade, step or keep dry ([`TERRAIN_2026-09-14.md`](TERRAIN_2026-09-14.md) §4).
+- **Marshy Marsh:** fill to a shallow bowl if it should read as a marsh.
+- **Merges:** Fungal Isle's halves and Plateau East.
+- **Rift custom biome:** still wanted; it is painted as windswept gravelly hills for now.
+- **Marine regions:** carried from revision 2 without re-measurement.
+- **Superseded companion reports:** [`CROSS_SECTIONS.md`](CROSS_SECTIONS.md),
+  [`GLACIER_CARVE.md`](GLACIER_CARVE.md), [`SIGHTLINES.md`](SIGHTLINES.md),
+  [`BIOME_COVERAGE.md`](BIOME_COVERAGE.md) and [`BIOME_COVERAGE_MATRIX.md`](BIOME_COVERAGE_MATRIX.md)
+  describe the 2026-09-13 terrain.

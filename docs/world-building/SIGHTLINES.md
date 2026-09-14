@@ -1,5 +1,7 @@
 # Sightline report: the annotated landmarks
 
+> **Superseded 2026-09-14.** Computed on the 2026-09-13 terrain and landmark ids (`glacier_corridor`, `northern_range`, ...) that no longer exist in `data/landmarks.json`. `data/checks/sightlines.json` needs its references updated before `tools/sightlines.py --plan` is rerun.
+
 Raycasts from `tools/sightlines.py --plan data/checks/sightlines.json` against
 `land_8k_16_eroded.png` (sha256 `526fe220…a860f6`). Every observer and target is a
 landmark reference or a measured site; nothing is typed as a coordinate of a feature.
