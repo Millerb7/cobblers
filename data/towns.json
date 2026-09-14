@@ -1,0 +1,649 @@
+{
+ "schema": "cobblers.towns/1",
+ "schema_status": "proposed",
+ "status": "proposed",
+ "computed_from_sha256": "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1",
+ "coordinates": "Block x, z. A1 origin at 0,0; x east, z south.",
+ "decisions": [
+  {
+   "id": "blaine_at_the_craters",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "Blaine is an overworld gym at the Craters, not the Nether."
+  },
+  {
+   "id": "kanto_first_half_boxes_move",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "Keep the Kanto chain; move the north-coast box inland near Peak Pond and Misty's box to Lake Viltri."
+  }
+ ],
+ "method": "Sites from tools/find_sites.py's largest-square search on the river-cut heightmap, with lake and river water and a 24-block setback excluded; legs from a terrain-weighted route on 8-block cells (docs/world-building/TOWNS.md). Tools produce candidates; these are proposals for a human to accept.",
+ "towns": [
+  {
+   "id": "hometown",
+   "order": 0,
+   "role": "hometown",
+   "status": "proposed",
+   "working_name": "Hometown",
+   "display_name": null,
+   "leader": null,
+   "leader_type": null,
+   "annotation_box": "A (Pallet Town)",
+   "centre": {
+    "x": 1462,
+    "z": 5293,
+    "ground_y": 116.2
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "small",
+    "size_blocks": 132,
+    "min_x": 1397,
+    "min_z": 5228,
+    "max_x": 1528,
+    "max_z": 5359,
+    "ground_y": [
+     109.3,
+     118.1
+    ],
+    "slope_degrees": {
+     "mean": 2.6,
+     "max": 8.0
+    },
+    "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "pallet_meadows",
+   "region": "pallet_fields",
+   "nearby": [
+    {
+     "landmark": "river_of_shrews",
+     "distance_blocks": 605
+    },
+    {
+     "landmark": "shrew_lake",
+     "distance_blocks": 1092
+    },
+    {
+     "landmark": "mouth_of_viltri",
+     "distance_blocks": 1245
+    }
+   ],
+   "approach": {
+    "from": null,
+    "text": "The start. Pallet Meadows' upper bench, looking west over the sea; the first route runs north up the plains and onto the Viltri Plateau."
+   },
+   "route_role": "Start of the Kanto chain. South-west corner of the mainland, so the loop runs north first and returns along the south coast for Giovanni. Tight: the bench holds a small town, not a spread one."
+  },
+  {
+   "id": "gym1_town",
+   "order": 1,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 1 town (Brock)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_brock"
+   },
+   "leader_type": "rock",
+   "annotation_box": "D (Viltri Plateau)",
+   "centre": {
+    "x": 1743,
+    "z": 3628,
+    "ground_y": 137.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 217,
+    "min_x": 1635,
+    "min_z": 3520,
+    "max_x": 1851,
+    "max_z": 3736,
+    "ground_y": [
+     130.8,
+     142.4
+    ],
+    "slope_degrees": {
+     "mean": 2.7,
+     "max": 8.0
+    },
+    "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "viltri_plateau",
+   "region": "viltri_woods",
+   "nearby": [
+    {
+     "landmark": "viltri_ravine",
+     "distance_blocks": 455
+    },
+    {
+     "landmark": "lake_viltri",
+     "distance_blocks": 573
+    },
+    {
+     "landmark": "viltris_path",
+     "distance_blocks": 664
+    }
+   ],
+   "approach": {
+    "from": "hometown",
+    "route_length_blocks": 1780,
+    "straight_line_blocks": 1687,
+    "water_crossings": [],
+    "text": "North from the hometown through Pallet Meadows and up onto the plateau, no water on the way."
+   },
+   "route_role": "Rock gym on a birch upland, the first town north of the hometown as Pewter is north of Pallet. The Water and Grass answers to Brock are one leg ahead (Lake Viltri, 570 blocks) and on the plateau itself."
+  },
+  {
+   "id": "gym2_town",
+   "order": 2,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 2 town (Misty)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_misty"
+   },
+   "leader_type": "water",
+   "annotation_box": "E, moved to Lake Viltri (your decision)",
+   "centre": {
+    "x": 1605,
+    "z": 2801,
+    "ground_y": 107.2
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 119,
+    "min_x": 1546,
+    "min_z": 2742,
+    "max_x": 1664,
+    "max_z": 2860,
+    "ground_y": [
+     105.2,
+     109.0
+    ],
+    "slope_degrees": {
+     "mean": 1.8,
+     "max": 5.0
+    },
+    "basis": "largest square in the search window with slope under 5 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "lake_viltri_hollow",
+   "region": "viltri_woods",
+   "nearby": [
+    {
+     "landmark": "lake_viltri",
+     "distance_blocks": 86
+    },
+    {
+     "landmark": "viltri_ravine",
+     "distance_blocks": 195
+    },
+    {
+     "landmark": "viltris_path",
+     "distance_blocks": 242
+    }
+   ],
+   "approach": {
+    "from": "gym1_town",
+    "route_length_blocks": 908,
+    "straight_line_blocks": 835,
+    "water_crossings": [],
+    "text": "Down off the plateau to the lake's north shore; the town fronts the water 86 blocks away. Viltri's Path, redrawn on the lake's real outflow, leaves the lake 240 blocks to the west."
+   },
+   "route_role": "Misty on a real lake: the flattest site of the ten (under 5 degrees, 4 blocks of relief). The short leg from Brock (908 blocks) makes the first two towns a pair, as Pewter and Cerulean are close."
+  },
+  {
+   "id": "gym3_town",
+   "order": 3,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 3 town (Ltsurge)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_ltsurge"
+   },
+   "leader_type": "electric",
+   "annotation_box": "F (Mt Vessu), moved off the clipped summit",
+   "centre": {
+    "x": 1847,
+    "z": 1262,
+    "ground_y": 190.4
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "small",
+    "size_blocks": 83,
+    "min_x": 1806,
+    "min_z": 1221,
+    "max_x": 1888,
+    "max_z": 1303,
+    "ground_y": [
+     186.3,
+     193.6
+    ],
+    "slope_degrees": {
+     "mean": 3.9,
+     "max": 8.0
+    },
+    "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "mt_vessu",
+   "region": "tri_peaks",
+   "nearby": [
+    {
+     "landmark": "tri_peaks",
+     "distance_blocks": 35
+    },
+    {
+     "landmark": "mt_vessu",
+     "distance_blocks": 47
+    },
+    {
+     "landmark": "pond_west_of_mt_clay",
+     "distance_blocks": 387
+    }
+   ],
+   "approach": {
+    "from": "gym2_town",
+    "route_length_blocks": 1643,
+    "straight_line_blocks": 1563,
+    "water_crossings": [
+     {
+      "kind": "river",
+      "x": 1824,
+      "z": 1888
+     }
+    ],
+    "text": "North 1,643 blocks up the Tri Peaks' flank, bridging the creek out of the pond west of Mt Clay at (1824, 1888): the first crossing of the game, a small one."
+   },
+   "route_role": "An exposed high town for the electric gym, the highest on the route (y186-194). Box F's plateau is the clipped y200 ceiling, flat only because it is cut off; this shoulder is real ground 47 blocks from the summit. It is also the tightest site (83 blocks square): a small town."
+  },
+  {
+   "id": "gym4_town",
+   "order": 4,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 4 town (Erika)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_erika"
+   },
+   "leader_type": "grass",
+   "annotation_box": "G, moved inland to Peak Pond (your decision)",
+   "centre": {
+    "x": 4309,
+    "z": 1555,
+    "ground_y": 110.0
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 179,
+    "min_x": 4220,
+    "min_z": 1466,
+    "max_x": 4398,
+    "max_z": 1644,
+    "ground_y": [
+     106.9,
+     112.0
+    ],
+    "slope_degrees": {
+     "mean": 2.0,
+     "max": 4.9
+    },
+    "basis": "largest square in the search window with slope under 5 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "peak_pond_hollow",
+   "region": "northern_downs",
+   "nearby": [
+    {
+     "landmark": "peak_pond",
+     "distance_blocks": 129
+    },
+    {
+     "landmark": "peak_pond_creek",
+     "distance_blocks": 297
+    },
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 665
+    }
+   ],
+   "approach": {
+    "from": "gym3_town",
+    "route_length_blocks": 2640,
+    "straight_line_blocks": 2482,
+    "water_crossings": [],
+    "text": "East 2,640 blocks along the north of the massif. The route passes the major river's head where it is still a creek, so the north has no barrier."
+   },
+   "route_role": "Erika in Peak Pond Hollow, 129 blocks from the pond, replacing the box that was in the sea. The sub-region is painted as dense taiga; Erika's own structure generates in flower forest, so the paint around the town is a candidate for a flower preset when Axiom work starts."
+  },
+  {
+   "id": "gym5_town",
+   "order": 5,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 5 town (Koga)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_koga"
+   },
+   "leader_type": "poison",
+   "annotation_box": "I (Glacier Foot Fields)",
+   "centre": {
+    "x": 4646,
+    "z": 2446,
+    "ground_y": 117.5
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 230,
+    "min_x": 4532,
+    "min_z": 2332,
+    "max_x": 4761,
+    "max_z": 2561,
+    "ground_y": [
+     114.5,
+     123.2
+    ],
+    "slope_degrees": {
+     "mean": 2.5,
+     "max": 7.8
+    },
+    "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "glacier_foot_fields",
+   "region": "marsh_country",
+   "nearby": [
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 311
+    },
+    {
+     "landmark": "marshy_marsh",
+     "distance_blocks": 311
+    },
+    {
+     "landmark": "major_river",
+     "distance_blocks": 507
+    }
+   ],
+   "approach": {
+    "from": "gym4_town",
+    "route_length_blocks": 1027,
+    "straight_line_blocks": 949,
+    "water_crossings": [],
+    "text": "South 1,027 blocks through the forest to the fields at the foot of the Glacial Tear; Marshy Marsh is 311 blocks east."
+   },
+   "route_role": "Poison beside the marsh. The Glacial Tear and the major river's valley lie 311-507 blocks south-west: visible from town, not yet in the way."
+  },
+  {
+   "id": "gym6_town",
+   "order": 6,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 6 town (Sabrina)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_sabrina"
+   },
+   "leader_type": "psychic",
+   "annotation_box": "J (Tilpey North Shore)",
+   "centre": {
+    "x": 6196,
+    "z": 3398,
+    "ground_y": 94.8
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 198,
+    "min_x": 6098,
+    "min_z": 3300,
+    "max_x": 6295,
+    "max_z": 3497,
+    "ground_y": [
+     93.4,
+     98.0
+    ],
+    "slope_degrees": {
+     "mean": 1.8,
+     "max": 5.0
+    },
+    "basis": "largest square in the search window with slope under 5 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "tilpey_north_shore",
+   "region": "tilpey_lakeland",
+   "nearby": [
+    {
+     "landmark": "marsh_to_tilpey",
+     "distance_blocks": 252
+    },
+    {
+     "landmark": "lake_tilpey",
+     "distance_blocks": 256
+    },
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 609
+    }
+   ],
+   "approach": {
+    "from": "gym5_town",
+    "route_length_blocks": 1946,
+    "straight_line_blocks": 1821,
+    "water_crossings": [],
+    "text": "East 1,946 blocks along the north side of the Glacial Tear's mouth to the terrace over Lake Tilpey."
+   },
+   "route_role": "The central hub, as Saffron is Kanto's centre: over the lake where the glacier and the major river end. It is the last town before the barrier."
+  },
+  {
+   "id": "gym7_town",
+   "order": 7,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 7 town (Blaine)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_blaine"
+   },
+   "leader_type": "fire",
+   "annotation_box": "K (Craters north-west rim), your decision",
+   "centre": {
+    "x": 6074,
+    "z": 4995,
+    "ground_y": 107.8
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 152,
+    "min_x": 5999,
+    "min_z": 4920,
+    "max_x": 6150,
+    "max_z": 5071,
+    "ground_y": [
+     105.4,
+     110.5
+    ],
+    "slope_degrees": {
+     "mean": 2.0,
+     "max": 5.0
+    },
+    "basis": "largest square in the search window with slope under 5 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "crater_rim_north_west",
+   "region": "the_craters",
+   "nearby": [
+    {
+     "landmark": "craters",
+     "distance_blocks": 27
+    },
+    {
+     "landmark": "lake_tilpey",
+     "distance_blocks": 423
+    },
+    {
+     "landmark": "tilpey_south_west_outlet",
+     "distance_blocks": 993
+    }
+   ],
+   "approach": {
+    "from": "gym6_town",
+    "route_length_blocks": 2021,
+    "straight_line_blocks": 1604,
+    "water_crossings": [
+     {
+      "kind": "major river",
+      "x": 6632,
+      "z": 3904
+     },
+     {
+      "kind": "lake",
+      "x": 6632,
+      "z": 3904
+     }
+    ],
+    "text": "South across the major river. The shortest way is 2,021 blocks, bridging the Tilpey outflow gorge (22-32 blocks of water, 9 deep) at about (6632, 3904). Without crossing the river or the lake it is 9,496 blocks, back past the river's head.",
+    "without_crossing_blocks": 9496
+   },
+   "route_role": "Blaine at the Craters instead of the Nether. The town sits on the north-west rim, 27 blocks from the crater outline; the river crossing before it is the first real barrier of the game, placed between badges 6 and 7.",
+   "gym_structure_alternative": {
+    "centre": {
+     "x": 6607,
+     "z": 5622
+    },
+    "size_blocks": 156,
+    "ground_y": [
+     128.5,
+     137.9
+    ],
+    "note": "a 156-block flat in the East Cones by the eastern bowl (6672, 5508), if the gym itself should stand in the caldera with the town on the rim"
+   }
+  },
+  {
+   "id": "gym8_town",
+   "order": 8,
+   "role": "gym_town",
+   "status": "proposed",
+   "working_name": "Gym 8 town (Giovanni)",
+   "display_name": null,
+   "leader": {
+    "kanto": "kanto_giovanni"
+   },
+   "leader_type": "ground",
+   "annotation_box": "C (South Strand ridge)",
+   "centre": {
+    "x": 3647,
+    "z": 6497,
+    "ground_y": 112.4
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 124,
+    "min_x": 3586,
+    "min_z": 6436,
+    "max_x": 3709,
+    "max_z": 6559,
+    "ground_y": [
+     108.5,
+     115.0
+    ],
+    "slope_degrees": {
+     "mean": 2.5,
+     "max": 4.9
+    },
+    "basis": "largest square in the search window with slope under 5 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "south_strand",
+   "region": "southern_coast",
+   "nearby": [
+    {
+     "landmark": "arrow_lake_south_east_branch",
+     "distance_blocks": 358
+    },
+    {
+     "landmark": "arrow_lake_south",
+     "distance_blocks": 680
+    },
+    {
+     "landmark": "rift",
+     "distance_blocks": 1122
+    }
+   ],
+   "approach": {
+    "from": "gym7_town",
+    "route_length_blocks": 3055,
+    "straight_line_blocks": 2859,
+    "water_crossings": [],
+    "text": "West 3,055 blocks along the south of the Craters and the Rift's southern arms, no water crossings."
+   },
+   "route_role": "Giovanni back near the hometown for the finale, as Viridian's gym is beside Pallet and opens last. The Rift's south-west tip is 1,122 blocks north: the start of Victory Road."
+  },
+  {
+   "id": "league",
+   "order": 9,
+   "role": "league",
+   "status": "proposed",
+   "working_name": "Pokemon League",
+   "display_name": null,
+   "leader": null,
+   "leader_type": null,
+   "annotation_box": null,
+   "centre": {
+    "x": 3297,
+    "z": 2603,
+    "ground_y": 118.2
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "major",
+    "size_blocks": 196,
+    "min_x": 3200,
+    "min_z": 2506,
+    "max_x": 3395,
+    "max_z": 2701,
+    "ground_y": [
+     114.2,
+     121.2
+    ],
+    "slope_degrees": {
+     "mean": 2.3,
+     "max": 8.0
+    },
+    "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+   },
+   "subregion": "foothill_woods",
+   "region": "viltri_woods",
+   "nearby": [
+    {
+     "landmark": "rift",
+     "distance_blocks": 178
+    },
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 447
+    },
+    {
+     "landmark": "major_river",
+     "distance_blocks": 571
+    }
+   ],
+   "approach": {
+    "from": "gym8_town",
+    "route_length_blocks": 4038,
+    "straight_line_blocks": 3911,
+    "water_crossings": [],
+    "text": "North up the Rift as Victory Road, 4,038 blocks by the shortest route, to the plateau on the Rift's west rim at its head. No water crossings."
+   },
+   "route_role": "The League on the Foothill Woods plateau 178 blocks from the Rift and 447 from the Glacial Tear, overlooking the major river. The Rift, a dry valley with its own custom biome still to come, is the approach. Proposed in the overworld: see the note on the End.",
+   "note_on_the_end": "Following the Blaine decision (a hand-placed overworld gym instead of a generated Nether copy), the League is placed in the overworld too. The End's generated Kanto League copies would then need to be disabled like the Nether's Blaine copies. Not yet a decision; see docs/world-building/TOWNS.md."
+  }
+ ],
+ "not_placed": "Nothing is built. Waystone positions in data/progression.json stay null until the towns are built; each gymN_town id here is the town those flags name."
+}

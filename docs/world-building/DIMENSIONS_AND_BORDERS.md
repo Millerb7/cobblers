@@ -197,20 +197,74 @@ and `DIM1` contain only `data/` (the DH database and raid data), with no `region
 
 ## 4. How the Nether and End fit the overworld critical path
 
-**The Kanto series order** comes from RCT `requiredDefeats` in the loaded trainer files.
-Each gym's generation biome comes from its structure.
+> **Changed 2026-09-14 (your decision): Blaine is an overworld gym at the Craters, not the
+> Nether.** Towns are hand-built from now on, so a structure generating for free in a
+> dimension is no longer a reason to put a gym there. Placements are in `data/towns.json`
+> and [`TOWNS.md`](TOWNS.md). The table below is updated; section 4.1 says what the Nether
+> needs instead. The League follows the same logic and is **proposed** in the overworld,
+> which is not yet decided (4.2).
 
-| Step | Leader | Structure generates in | Dimension | First needed |
+**The Kanto series order** comes from RCT `requiredDefeats` in the loaded trainer files.
+Each gym's generation biome comes from its structure. No structure generates in the
+overworld, because every overworld chunk is written by the export, so every overworld gym is
+hand-placed.
+
+| Step | Leader | Structure generates in | Where it goes | First needed |
 | --- | --- | --- | --- | --- |
-| 1 | Brock | plains | overworld (hand-placed) | start |
-| 2 | Misty | lukewarm_ocean | overworld (hand-placed, on the Eastern Reach shelf) | early; shallow water only |
-| 3 | Lt. Surge | savanna_plateau | overworld | |
-| 4 | Erika | flower_forest | overworld | |
-| 5 | Koga | swamp | overworld | |
-| 6 | Sabrina | dark_forest | overworld | |
-| **7** | **Blaine** | **crimson_forest** | **Nether** | **first Nether trip** |
-| 8 | Giovanni | `#has_structure/ancient_city` (deep dark) | overworld underground (hand-placed) | |
-| 9–13 | Lorelei, Bruno, Agatha, Lance, Champion Blue | end_highlands | **End, outer islands** | **first End trip** |
+| 1 | Brock | plains | overworld, hand-placed: Viltri Plateau | start |
+| 2 | Misty | lukewarm_ocean | overworld, hand-placed: Lake Viltri north shore | early |
+| 3 | Lt. Surge | savanna_plateau | overworld, hand-placed: Mt Vessu shoulder | |
+| 4 | Erika | flower_forest | overworld, hand-placed: Peak Pond Hollow | |
+| 5 | Koga | swamp | overworld, hand-placed: Glacier Foot Fields | |
+| 6 | Sabrina | dark_forest | overworld, hand-placed: Tilpey North Shore | |
+| **7** | **Blaine** | crimson_forest (Nether copies to be disabled, 4.1) | **overworld, hand-placed: the Craters** | after crossing the major river |
+| 8 | Giovanni | `#has_structure/ancient_city` (deep dark) | overworld, hand-placed: South Strand | |
+| 9–13 | Lorelei, Bruno, Agatha, Lance, Champion Blue | end_highlands | **proposed: overworld, hand-placed at the Rift's head (4.2)**; today's plan: End, outer islands | end of Victory Road |
+
+### 4.1 What the Nether needs now that Blaine has left it
+
+**Nothing on the critical path needs the Nether.** It becomes optional. Four things follow:
+
+1. **Disable Blaine's generated copies.** Cobbleverse's `cobbleverse:blaine` structure set
+   (COBBLEVERSE-DP-v31, spacing 25, separation 10, crimson forest) would place dozens of copies
+   in a 10240 Nether. Each carries the `kanto_blaine` RCT spawner and a healer. RCT still
+   requires Sabrina first, but after badge 6 a player could beat Blaine in any Nether copy and
+   skip the Craters.
+   - **The fix** is an overlay datapack override, applied before anyone enters the Nether or
+     it is pregenerated. It overrides either the structure set or the structure's biome
+     list.
+   - **Not verified:** which override form 1.21.1 accepts without a worldgen error. That is an
+     experiment. The exact file path inside the zip has to be read from it, not assumed.
+2. **Give it a reason to visit, or accept that it has none.** The Nether still holds Moltres
+   and the four Ruin shrines (16 and 67 attempts in the shared border), fortresses and blaze
+   rods, and Nether materials.
+   - **Recommended:** keep it as optional exploration opened by obsidian, which fits
+     mid-game.
+   - **If the End portal room asks for eyes of ender,** blaze powder keeps one real reason to
+     go.
+3. **Change the audit's required list.** `dimension_audit.py --require-classes` must stop
+   requiring `cobbleverse:blaine`, or the Nether audit fails by design once the copies are
+   disabled.
+4. **Change the guidance plan.** No gym waystone or marker in the Nether; markers there only
+   for legendaries, if any.
+
+The shared-border recommendation (section 2) and the portal-clamp note are unchanged.
+
+### 4.2 The League: proposed in the overworld, not yet decided
+
+The same reasoning moves the League.
+- **The generated structure** is `cobbleverse:kanto_league` (end_highlands; 111 × 159 × 120,
+  so large), and the End's 26 candidates are only attempts.
+- **A hand-placed League** at the head of the Rift puts Victory Road on the overworld critical
+  path. `data/towns.json` has a 196-block square site.
+
+**If you accept it:**
+- the End's `kanto_league` copies need the same override as Blaine's;
+- the End portal room moves from after Giovanni to post-game;
+- the End becomes post-game: the Necrozma towers, Eternatus, and the Rayquaza question.
+
+**If you keep the League in the End,** the overworld site becomes the Victory Road terminus
+and the portal room.
 
 ### When a player first has to go
 
@@ -273,6 +327,8 @@ The generator already takes a `dimension` per waystone.
 | Nether and End borders | proposed: the shared border (−1024…9215), no extra mechanism |
 | Pregen method: Chunky, or a forceload script | **your call** |
 | Border and pregen timing | decided: after the re-export |
-| End access: authored portal room after Giovanni, eyes or pre-lit | proposed |
+| End access: authored portal room after Giovanni, eyes or pre-lit | proposed; moves to post-game if the League moves |
+| Blaine's gym | **decided 2026-09-14: overworld, the Craters**; Nether copies to be disabled (4.1) |
+| The League | **proposed:** overworld, at the Rift's head (4.2); **your call** |
 | Rayquaza at the End spawn | **your call** |
 | Soft limit for deep-Nether portals | not proposed unless the clamp proves a problem |
