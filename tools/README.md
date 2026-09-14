@@ -20,7 +20,9 @@ detected rather than trusted.
 | --- | --- | --- |
 | `find_sites.py` | Ranks flat buildable squares above sea level | `derived/sites/` |
 | `route_path.py` | A* between two points, paying for climb; also the descent searches (`descend_min_cut`, `descend_route`) for beds that never rise | `derived/paths/` |
-| `grade_rivers.py` | `plan`: least-cut descending course from every lake and river source to the sea, graded polylines, checks along each carve. `cut`: lower those courses into a new heightmap beside the source and re-check it (`docs/world-building/RIVERS.md`) | `data/rivers.json`, `<source root>/land_8k_16_eroded_rivers.png` |
+| `grade_rivers.py` | `plan`: least-cut descending course from every lake and river source to the sea, catchment-sized reaches (width, depth, banks, bed, incision), the major river chosen by catchment with its valley, checks along each carve. `cut`: carve those sections into the heightmap `heightmap.derived_from` names, write the imported file and re-check it (`docs/world-building/RIVERS.md`) | `data/rivers.json`, `<source root>/land_8k_16_eroded_rivers.png` |
+| `drainage.py` | Priority flood, D8 flow directions and accumulation on a coarse height grid | (library) |
+| `region_measure.py` | Re-measure `regions.json` measured blocks from the committed polygons on the current heightmap | `data/regions.json` with `--write` |
 | `sightlines.py` | Raycasts from a viewpoint to named landmarks | `derived/sightlines/` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
 | `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |

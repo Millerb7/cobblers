@@ -1713,7 +1713,12 @@
        3180
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "lake_tilpey_outflow",
+     "ends_in": "open_sea",
+     "notch_blocks": 0.8
+    }
    },
    "measured": {
     "outline_km2": 1.1695,
@@ -1908,7 +1913,12 @@
        1304
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "peak_pond_outflow",
+     "ends_in": "open_sea",
+     "notch_blocks": 1.1
+    }
    },
    "measured": {
     "outline_km2": 0.0485,
@@ -2075,7 +2085,12 @@
        2924
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "lake_viltri_outflow",
+     "ends_in": "open_sea",
+     "notch_blocks": 1.8
+    }
    },
    "measured": {
     "outline_km2": 0.021,
@@ -2354,7 +2369,12 @@
        3784
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "shrew_lake_outflow",
+     "ends_in": "arrow_lake",
+     "notch_blocks": 1.3
+    }
    },
    "measured": {
     "outline_km2": 0.1552,
@@ -2525,7 +2545,12 @@
        4492
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "arrow_lake_outflow",
+     "ends_in": "watering_hole",
+     "notch_blocks": 1.2
+    }
    },
    "measured": {
     "outline_km2": 0.1121,
@@ -2698,7 +2723,12 @@
        5208
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "watering_hole_outflow",
+     "ends_in": "open_sea",
+     "notch_blocks": 0.9
+    }
    },
    "measured": {
     "outline_km2": 0.022,
@@ -2845,7 +2875,12 @@
        1636
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "pond_west_of_mt_clay_outflow",
+     "ends_in": "lake_viltri_outflow",
+     "notch_blocks": 1.1
+    }
    },
    "measured": {
     "outline_km2": 0.0528,
@@ -3048,7 +3083,12 @@
        1788
       ]
      ]
-    ]
+    ],
+    "outflow": {
+     "course": "marshy_marsh_outflow",
+     "ends_in": "open_sea",
+     "notch_blocks": 1.6
+    }
    },
    "measured": {
     "outline_km2": 0.1392,
@@ -3070,411 +3110,156 @@
    "id": "viltris_path",
    "kind": "river",
    "name": "Viltri's Path",
-   "status": "partial",
-   "status_basis": "A carved groove from Lake Viltri to the west coast, median 3.3 blocks deep and ~32 blocks wide at the floor. It is draped over the terrain, not graded: the bed climbs from y76 at the lake to y134 at (870, 3846) before dropping to y65 near the coast, so it cannot carry water from the lake to the sea.",
+   "status": "built",
+   "status_basis": "Redrawn 2026-09-14 on the drainage: Lake Viltri's real outflow, north-west to the coast, a 1.8-block notch at the rim instead of a 31-block gouge on the drawn course. Graded and cut.",
    "water": "allowed",
    "anchor": {
-    "x": 1100,
-    "z": 3600
-   },
-   "extent": {
-    "polygons": [
-     [
-      [
-       1384,
-       2972
-      ],
-      [
-       1468,
-       2972
-      ],
-      [
-       1468,
-       3052
-      ],
-      [
-       1444,
-       3056
-      ],
-      [
-       1436,
-       3084
-      ],
-      [
-       1400,
-       3084
-      ],
-      [
-       1348,
-       3136
-      ],
-      [
-       1328,
-       3176
-      ],
-      [
-       1308,
-       3324
-      ],
-      [
-       1308,
-       3496
-      ],
-      [
-       1284,
-       3568
-      ],
-      [
-       1276,
-       3644
-      ],
-      [
-       1248,
-       3708
-      ],
-      [
-       1204,
-       3756
-      ],
-      [
-       1072,
-       3852
-      ],
-      [
-       960,
-       3876
-      ],
-      [
-       904,
-       3904
-      ],
-      [
-       876,
-       3936
-      ],
-      [
-       852,
-       4032
-      ],
-      [
-       788,
-       4124
-      ],
-      [
-       768,
-       4180
-      ],
-      [
-       720,
-       4172
-      ],
-      [
-       632,
-       4228
-      ],
-      [
-       588,
-       4228
-      ],
-      [
-       588,
-       4188
-      ],
-      [
-       620,
-       4152
-      ],
-      [
-       644,
-       4000
-      ],
-      [
-       672,
-       3952
-      ],
-      [
-       828,
-       3796
-      ],
-      [
-       856,
-       3788
-      ],
-      [
-       928,
-       3720
-      ],
-      [
-       1044,
-       3644
-      ],
-      [
-       1064,
-       3420
-      ],
-      [
-       1104,
-       3348
-      ],
-      [
-       1108,
-       3264
-      ],
-      [
-       1120,
-       3244
-      ],
-      [
-       1116,
-       3136
-      ],
-      [
-       1152,
-       3060
-      ],
-      [
-       1236,
-       3004
-      ]
-     ]
-    ],
-    "basis": "stroke-enclosed area of the annotation outline, gaps up to 32 blocks bridged, simplified to 8 blocks"
+    "x": 1086,
+    "z": 2514
    },
    "axes": [
     {
      "id": "channel",
      "polyline": [
       [
-       1666,
-       2986
+       1490,
+       3014
       ],
       [
-       1618,
-       3002
+       1442,
+       3018
       ],
       [
-       1570,
-       3010
+       1370,
+       3030
       ],
       [
-       1522,
-       3010
-      ],
-      [
-       1474,
+       1314,
        3022
       ],
       [
-       1426,
-       3034
+       1270,
+       2974
       ],
       [
-       1378,
-       3042
+       1222,
+       2934
       ],
       [
-       1330,
-       3058
+       1162,
+       2870
       ],
       [
-       1282,
-       3082
+       1118,
+       2858
       ],
       [
-       1250,
-       3130
+       1054,
+       2818
       ],
       [
-       1230,
-       3178
+       1038,
+       2754
       ],
       [
-       1218,
-       3226
+       1050,
+       2710
       ],
       [
-       1210,
-       3274
+       1086,
+       2674
       ],
       [
-       1202,
-       3322
+       1086,
+       2514
       ],
       [
-       1202,
-       3370
+       1066,
+       2426
       ],
       [
-       1202,
-       3418
+       1038,
+       2342
       ],
       [
-       1202,
-       3466
+       1006,
+       2306
       ],
       [
-       1202,
-       3514
+       974,
+       2242
       ],
       [
-       1186,
-       3562
+       974,
+       2178
       ],
       [
-       1138,
-       3610
+       902,
+       2106
       ],
       [
-       1090,
-       3658
+       868,
+       2072
       ],
       [
-       1042,
-       3706
+       814,
+       2018
       ],
       [
-       1034,
-       3754
+       799,
+       1971
       ],
       [
-       990,
-       3802
+       741,
+       1913
       ],
       [
-       942,
-       3818
+       679,
+       1851
       ],
       [
-       894,
-       3834
-      ],
-      [
-       846,
-       3858
-      ],
-      [
-       798,
-       3902
-      ],
-      [
-       770,
-       3950
-      ],
-      [
-       754,
-       3998
-      ],
-      [
-       742,
-       4046
-      ],
-      [
-       722,
-       4094
-      ],
-      [
-       690,
-       4142
-      ],
-      [
-       662,
-       4190
-      ],
-      [
-       630,
-       4238
-      ],
-      [
-       586,
-       4274
-      ],
-      [
-       554,
-       4270
+       674,
+       1846
       ]
      ],
      "section_width": 200,
      "from": "Lake Viltri",
-     "to": "Mouth of Viltri",
-     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map",
-     "measured": {
-      "length": 1903.3,
-      "stations": 60,
-      "shapes": {
-       "U": 8,
-       "V": 10,
-       "flat_floored": 2,
-       "asymmetric": 5,
-       "none": 35
-      },
-      "floor_y": [
-       67.44,
-       134.47
-      ],
-      "depth": {
-       "median": 4.77,
-       "range": [
-        0.0,
-        28.16
-       ]
-      },
-      "floor_width": {
-       "median": 32.0,
-       "range": [
-        28.0,
-        44.0
-       ]
-      },
-      "top_width": {
-       "median": 132.0,
-       "range": [
-        68.0,
-        168.0
-       ]
-      },
-      "wall_deg": {
-       "median": 14.3,
-       "range": [
-        3.5,
-        28.2
-       ]
-      },
-      "source": "tools/cross_section.py, derived/sections/viltris_path.channel.json (not committed)"
-     }
+     "to": "north-west coast",
+     "basis": "graded course lake_viltri_outflow"
     }
    ],
    "measured": {
-    "length_blocks": 1942,
+    "length_blocks": 1711,
     "high_end": {
-     "x": 1666,
-     "z": 2986,
-     "bed": 75.7
+     "x": 1490,
+     "z": 3014,
+     "bed": 101.6
     },
     "low_end": {
-     "x": 554,
-     "z": 4270,
-     "bed": 64.6
+     "x": 674,
+     "z": 1846,
+     "bed": 59.1
     },
-    "bed_y": {
-     "min": 64.6,
-     "max": 134.4,
-     "below_62_pct": 0.0
-    },
-    "incision_blocks": {
-     "median": 3.3,
-     "p10": -0.5,
-     "stations_under_1_pct": 19.5
-    },
-    "worst_counter_rise_blocks": 59.2,
-    "worst_counter_rise_at": {
-     "x": 870,
-     "z": 3846,
-     "bed": 134.4,
-     "d": 1370
-    },
-    "drains_end_to_end": false,
-    "low_end_at_open_sea": false
-   }
+    "surface_y": [
+     103.0,
+     62.0
+    ],
+    "width_blocks": [
+     4,
+     10
+    ],
+    "centre_depth_blocks": [
+     1.4,
+     2.9
+    ],
+    "drains_end_to_end": true,
+    "low_end_at_open_sea": true,
+    "basis": "graded course in data/rivers.json (lake_viltri_outflow)"
+   },
+   "graded_courses": [
+    "lake_viltri_outflow"
+   ],
+   "redrawn_from": "viltri_ravine"
   },
   {
    "id": "mouth_of_viltri",
@@ -3543,8 +3328,8 @@
    "id": "river_of_shrews",
    "kind": "river",
    "name": "River of Shrews",
-   "status": "partial",
-   "status_basis": "A groove 2.9 blocks deep running south-west from Shrew Lake. It is perched: its bed sits at y100-109, 40 blocks above the lake floor, rises by up to 11 blocks along its length, and ends inland in a closed basin (spill y109) instead of reaching the sea.",
+   "status": "planned",
+   "status_basis": "Not a river: from its inland end the only descent is a 1,777-block trench cut along 94% of its length (up to 11.3 blocks). Left uncut; kept on file as a possible authored canal (graded course river_of_shrews_from_high_end, marked canal in data/rivers.json).",
    "water": "allowed",
    "anchor": {
     "x": 2150,
@@ -3968,7 +3753,11 @@
     },
     "drains_end_to_end": false,
     "low_end_at_open_sea": false
-   }
+   },
+   "canal_candidate": true,
+   "graded_courses": [
+    "river_of_shrews_from_high_end"
+   ]
   },
   {
    "id": "rift",
@@ -4728,11 +4517,11 @@
   },
   {
    "id": "peak_pond_creek",
-   "kind": "river",
-   "name": "Unnamed creek into Peak Pond",
-   "status": "partial",
-   "status_basis": "Carved from a pit north of the crags to Peak Pond; not annotated. Median incision 3.3 blocks; the bed rises 29 blocks at (3542, 1002), so it does not drain end to end and does not reach the sea.",
-   "water": "allowed",
+   "kind": "ravine",
+   "name": "Dry ravine above Peak Pond",
+   "status": "built",
+   "status_basis": "Carved toward Peak Pond; its head is less than a block above the pond with a 22-29-block rise between, so it cannot carry water. A dry ravine by design.",
+   "water": "never",
    "annotated": false,
    "anchor": {
     "x": 3786,
@@ -4850,15 +4639,16 @@
     },
     "drains_end_to_end": false,
     "low_end_at_open_sea": false
-   }
+   },
+   "dry_by_design": true
   },
   {
    "id": "marsh_to_tilpey",
-   "kind": "river",
-   "name": "Unnamed creek from Marshy Marsh to Lake Tilpey",
-   "status": "partial",
-   "status_basis": "Carved from Marshy Marsh east then south to Tilpey's north shore; not annotated. Median incision 1.8 blocks; the bed rises 49 blocks at (5774, 2562), so it does not drain end to end and does not reach the sea.",
-   "water": "allowed",
+   "kind": "ravine",
+   "name": "Dry ravine, Marshy Marsh toward Lake Tilpey",
+   "status": "built",
+   "status_basis": "Carved from Marshy Marsh east then south toward Tilpey. Water cannot run along it without a 31.7-block cut; the marsh drains north-east instead. A dry ravine by design.",
+   "water": "never",
    "annotated": false,
    "anchor": {
     "x": 5822,
@@ -5052,14 +4842,16 @@
     },
     "drains_end_to_end": false,
     "low_end_at_open_sea": false
-   }
+   },
+   "dry_by_design": true,
+   "replaced_by": "marsh_outflow"
   },
   {
    "id": "arrow_lake_south",
    "kind": "river",
    "name": "Unnamed creek south of Arrow Lake",
-   "status": "partial",
-   "status_basis": "Carved from Arrow Lake south past the Watering Hole toward the south coast; not annotated. Median incision 2.2 blocks; the bed rises 33 blocks at (2930, 4870), so it does not drain end to end and does not reach the sea.",
+   "status": "built",
+   "status_basis": "Works along the carve (1.2-block cut): Arrow Lake drains through the Watering Hole to the south coast. Graded and cut as the two lake outflows.",
    "water": "allowed",
    "annotated": false,
    "anchor": {
@@ -5278,15 +5070,19 @@
     },
     "drains_end_to_end": false,
     "low_end_at_open_sea": false
-   }
+   },
+   "graded_courses": [
+    "arrow_lake_outflow",
+    "watering_hole_outflow"
+   ]
   },
   {
    "id": "arrow_lake_south_east_branch",
-   "kind": "river",
-   "name": "Unnamed creek, south-east branch",
-   "status": "partial",
-   "status_basis": "Branches east from the Arrow Lake creek toward the south coast; not annotated. Median incision 2.3 blocks; the bed rises 34 blocks at (3838, 5946), so it does not drain end to end and does not reach the sea.",
-   "water": "allowed",
+   "kind": "ravine",
+   "name": "Dry ravine, south-east of the Arrow Lake creek",
+   "status": "built",
+   "status_basis": "Carved from its confluence with the creek below Arrow Lake toward the south-east coast; water cannot run along it without a 26.9-block cut. A dry ravine by design.",
+   "water": "never",
    "annotated": false,
    "anchor": {
     "x": 3870,
@@ -5440,14 +5236,15 @@
     },
     "drains_end_to_end": false,
     "low_end_at_open_sea": false
-   }
+   },
+   "dry_by_design": true
   },
   {
    "id": "tilpey_south_west_outlet",
    "kind": "river",
-   "name": "Unnamed channel south-west of Lake Tilpey",
-   "status": "partial",
-   "status_basis": "A short channel leaving Tilpey's south-west shore; not annotated. Median incision 3.2 blocks; the bed rises 7 blocks at (5014, 4862), so it does not drain end to end and does not reach the sea.",
+   "name": "Creek into Lake Tilpey from the south-west",
+   "status": "built",
+   "status_basis": "Water runs down it into Tilpey (3.1-block cut); it cannot be an outlet (41.3). Graded and cut as an inflow creek.",
    "water": "allowed",
    "annotated": false,
    "anchor": {
@@ -5534,7 +5331,686 @@
     },
     "drains_end_to_end": false,
     "low_end_at_open_sea": false
-   }
+   },
+   "graded_courses": [
+    "tilpey_south_west_outlet_from_high_end"
+   ]
+  },
+  {
+   "id": "viltri_ravine",
+   "kind": "ravine",
+   "name": "Viltri Ravine",
+   "status": "built",
+   "status_basis": "The original carve of Viltri's Path, Lake Viltri south-west to the Mouth of Viltri. Water cannot run along it without a 31.5-block cut, so it stays a dry ravine (a landform, not a river). Measured on the authored heightmap.",
+   "water": "never",
+   "anchor": {
+    "x": 1100,
+    "z": 3600
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       1384,
+       2972
+      ],
+      [
+       1468,
+       2972
+      ],
+      [
+       1468,
+       3052
+      ],
+      [
+       1444,
+       3056
+      ],
+      [
+       1436,
+       3084
+      ],
+      [
+       1400,
+       3084
+      ],
+      [
+       1348,
+       3136
+      ],
+      [
+       1328,
+       3176
+      ],
+      [
+       1308,
+       3324
+      ],
+      [
+       1308,
+       3496
+      ],
+      [
+       1284,
+       3568
+      ],
+      [
+       1276,
+       3644
+      ],
+      [
+       1248,
+       3708
+      ],
+      [
+       1204,
+       3756
+      ],
+      [
+       1072,
+       3852
+      ],
+      [
+       960,
+       3876
+      ],
+      [
+       904,
+       3904
+      ],
+      [
+       876,
+       3936
+      ],
+      [
+       852,
+       4032
+      ],
+      [
+       788,
+       4124
+      ],
+      [
+       768,
+       4180
+      ],
+      [
+       720,
+       4172
+      ],
+      [
+       632,
+       4228
+      ],
+      [
+       588,
+       4228
+      ],
+      [
+       588,
+       4188
+      ],
+      [
+       620,
+       4152
+      ],
+      [
+       644,
+       4000
+      ],
+      [
+       672,
+       3952
+      ],
+      [
+       828,
+       3796
+      ],
+      [
+       856,
+       3788
+      ],
+      [
+       928,
+       3720
+      ],
+      [
+       1044,
+       3644
+      ],
+      [
+       1064,
+       3420
+      ],
+      [
+       1104,
+       3348
+      ],
+      [
+       1108,
+       3264
+      ],
+      [
+       1120,
+       3244
+      ],
+      [
+       1116,
+       3136
+      ],
+      [
+       1152,
+       3060
+      ],
+      [
+       1236,
+       3004
+      ]
+     ]
+    ],
+    "basis": "stroke-enclosed area of the annotation outline, gaps up to 32 blocks bridged, simplified to 8 blocks"
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       1666,
+       2986
+      ],
+      [
+       1618,
+       3002
+      ],
+      [
+       1570,
+       3010
+      ],
+      [
+       1522,
+       3010
+      ],
+      [
+       1474,
+       3022
+      ],
+      [
+       1426,
+       3034
+      ],
+      [
+       1378,
+       3042
+      ],
+      [
+       1330,
+       3058
+      ],
+      [
+       1282,
+       3082
+      ],
+      [
+       1250,
+       3130
+      ],
+      [
+       1230,
+       3178
+      ],
+      [
+       1218,
+       3226
+      ],
+      [
+       1210,
+       3274
+      ],
+      [
+       1202,
+       3322
+      ],
+      [
+       1202,
+       3370
+      ],
+      [
+       1202,
+       3418
+      ],
+      [
+       1202,
+       3466
+      ],
+      [
+       1202,
+       3514
+      ],
+      [
+       1186,
+       3562
+      ],
+      [
+       1138,
+       3610
+      ],
+      [
+       1090,
+       3658
+      ],
+      [
+       1042,
+       3706
+      ],
+      [
+       1034,
+       3754
+      ],
+      [
+       990,
+       3802
+      ],
+      [
+       942,
+       3818
+      ],
+      [
+       894,
+       3834
+      ],
+      [
+       846,
+       3858
+      ],
+      [
+       798,
+       3902
+      ],
+      [
+       770,
+       3950
+      ],
+      [
+       754,
+       3998
+      ],
+      [
+       742,
+       4046
+      ],
+      [
+       722,
+       4094
+      ],
+      [
+       690,
+       4142
+      ],
+      [
+       662,
+       4190
+      ],
+      [
+       630,
+       4238
+      ],
+      [
+       586,
+       4274
+      ],
+      [
+       554,
+       4270
+      ]
+     ],
+     "section_width": 200,
+     "from": "Lake Viltri",
+     "to": "Mouth of Viltri",
+     "basis": "least-cost path along the most incised ground near a guide read from the local-relief map",
+     "measured": {
+      "length": 1903.3,
+      "stations": 60,
+      "shapes": {
+       "U": 8,
+       "V": 10,
+       "flat_floored": 2,
+       "asymmetric": 5,
+       "none": 35
+      },
+      "floor_y": [
+       67.44,
+       134.47
+      ],
+      "depth": {
+       "median": 4.77,
+       "range": [
+        0.0,
+        28.16
+       ]
+      },
+      "floor_width": {
+       "median": 32.0,
+       "range": [
+        28.0,
+        44.0
+       ]
+      },
+      "top_width": {
+       "median": 132.0,
+       "range": [
+        68.0,
+        168.0
+       ]
+      },
+      "wall_deg": {
+       "median": 14.3,
+       "range": [
+        3.5,
+        28.2
+       ]
+      },
+      "source": "tools/cross_section.py, derived/sections/viltris_path.channel.json (not committed)"
+     }
+    }
+   ],
+   "measured": {
+    "length_blocks": 1942,
+    "high_end": {
+     "x": 1666,
+     "z": 2986,
+     "bed": 75.7
+    },
+    "low_end": {
+     "x": 554,
+     "z": 4270,
+     "bed": 64.6
+    },
+    "bed_y": {
+     "min": 64.6,
+     "max": 134.4,
+     "below_62_pct": 0.0
+    },
+    "incision_blocks": {
+     "median": 3.3,
+     "p10": -0.5,
+     "stations_under_1_pct": 19.5
+    },
+    "worst_counter_rise_blocks": 59.2,
+    "worst_counter_rise_at": {
+     "x": 870,
+     "z": 3846,
+     "bed": 134.4,
+     "d": 1370
+    },
+    "drains_end_to_end": false,
+    "low_end_at_open_sea": false
+   },
+   "dry_by_design": true,
+   "replaced_by": "viltris_path"
+  },
+  {
+   "id": "marsh_outflow",
+   "kind": "river",
+   "name": "Marsh outflow (unnamed)",
+   "status": "built",
+   "status_basis": "Marshy Marsh's real outflow, north-east to the coast: a 1.6-block notch at the rim. Redrawn 2026-09-14 in place of the dry ravine toward Tilpey. Graded and cut.",
+   "water": "allowed",
+   "annotated": false,
+   "anchor": {
+    "x": 5565,
+    "z": 1703
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       5358,
+       1806
+      ],
+      [
+       5462,
+       1806
+      ],
+      [
+       5510,
+       1758
+      ],
+      [
+       5565,
+       1703
+      ],
+      [
+       5650,
+       1618
+      ],
+      [
+       5662,
+       1598
+      ]
+     ],
+     "section_width": 200,
+     "from": "Marshy Marsh",
+     "to": "north-east coast",
+     "basis": "graded course marshy_marsh_outflow"
+    }
+   ],
+   "measured": {
+    "length_blocks": 395,
+    "high_end": {
+     "x": 5358,
+     "z": 1806,
+     "bed": 97.9
+    },
+    "low_end": {
+     "x": 5662,
+     "z": 1598,
+     "bed": 59.9
+    },
+    "surface_y": [
+     100.0,
+     62.0
+    ],
+    "width_blocks": [
+     6,
+     10
+    ],
+    "centre_depth_blocks": [
+     2.1,
+     2.1
+    ],
+    "drains_end_to_end": true,
+    "low_end_at_open_sea": true,
+    "basis": "graded course in data/rivers.json (marshy_marsh_outflow)"
+   },
+   "graded_courses": [
+    "marshy_marsh_outflow"
+   ],
+   "redrawn_from": "marsh_to_tilpey"
+  },
+  {
+   "id": "major_river",
+   "kind": "river",
+   "name": "Major river (unnamed): Merian to the east coast",
+   "status": "built",
+   "status_basis": "Chosen by catchment: the Tilpey system drains 14.0 km2, the largest on the map, with the longest descending path (3389 blocks) and the most tributaries (8). Its trunk runs from the flank above Merian down the Glacial Tear into Lake Tilpey and out to the east coast. Graded, incised, with floodplain and terraces where it is at least 16 blocks wide.",
+   "water": "allowed",
+   "anchor": {
+    "x": 3214,
+    "z": 1714
+   },
+   "axes": [
+    {
+     "id": "channel",
+     "polyline": [
+      [
+       2506,
+       1446
+      ],
+      [
+       2530,
+       1406
+      ],
+      [
+       2562,
+       1350
+      ],
+      [
+       2626,
+       1346
+      ],
+      [
+       2682,
+       1346
+      ],
+      [
+       2738,
+       1374
+      ],
+      [
+       2784,
+       1394
+      ],
+      [
+       2831,
+       1427
+      ],
+      [
+       2910,
+       1506
+      ],
+      [
+       2990,
+       1586
+      ],
+      [
+       3038,
+       1618
+      ],
+      [
+       3118,
+       1618
+      ],
+      [
+       3157,
+       1657
+      ],
+      [
+       3214,
+       1714
+      ],
+      [
+       3681,
+       2181
+      ],
+      [
+       3728,
+       2228
+      ],
+      [
+       3773,
+       2273
+      ],
+      [
+       3819,
+       2319
+      ],
+      [
+       3865,
+       2365
+      ],
+      [
+       4066,
+       2566
+      ],
+      [
+       4150,
+       2666
+      ],
+      [
+       4184,
+       2700
+      ],
+      [
+       4302,
+       2818
+      ],
+      [
+       4526,
+       3026
+      ],
+      [
+       4574,
+       3026
+      ],
+      [
+       4746,
+       3198
+      ],
+      [
+       6638,
+       3922
+      ],
+      [
+       6734,
+       3938
+      ],
+      [
+       6885,
+       3962
+      ],
+      [
+       6942,
+       3962
+      ],
+      [
+       6970,
+       3970
+      ]
+     ],
+     "section_width": 400,
+     "from": "above Merian",
+     "to": "east coast",
+     "basis": "graded courses major_river_trunk, lake_tilpey_outflow"
+    }
+   ],
+   "measured": {
+    "length_blocks": 3437,
+    "high_end": {
+     "x": 2506,
+     "z": 1446,
+     "bed": 168.8
+    },
+    "low_end": {
+     "x": 6970,
+     "z": 3970,
+     "bed": 53.0
+    },
+    "surface_y": [
+     169.9,
+     62.0
+    ],
+    "width_blocks": [
+     3,
+     32
+    ],
+    "centre_depth_blocks": [
+     1.1,
+     9.0
+    ],
+    "drains_end_to_end": true,
+    "low_end_at_open_sea": true,
+    "basis": "graded course in data/rivers.json (major_river_trunk, lake_tilpey_outflow)"
+   },
+   "graded_courses": [
+    "major_river_trunk",
+    "lake_tilpey_outflow"
+   ],
+   "role": {
+    "kind": "barrier",
+    "note": "20-32 blocks of water up to 9 deep, set 6-8 blocks under its floodplain in the lower Glacial Tear: players cross by bridge or boat"
+   },
+   "name_status": "working name; naming is yours"
   }
  ]
 }

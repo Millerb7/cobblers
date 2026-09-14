@@ -2,7 +2,7 @@
  "schema": "cobblers.regions/3",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+ "computed_from_sha256": "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1",
  "landmarks": "data/landmarks.json",
  "geometry": {
   "raster_cell_blocks": 8,
@@ -1873,7 +1873,7 @@
     "northgate_east"
    ],
    "measured": {
-    "area_km2": 0.925,
+    "area_km2": 0.898,
     "bounds": {
      "min_x": 4728,
      "min_z": 0,
@@ -1881,15 +1881,15 @@
      "max_z": 1007
     },
     "elevation": {
-     "p10": 69.5,
-     "median": 101.2,
-     "p90": 126.0,
+     "p10": 71.5,
+     "median": 102.3,
+     "p90": 126.1,
      "max": 132.5
     },
     "slope_degrees": {
-     "mean": 11.2,
-     "p90": 17.0,
-     "flat_under_5_pct": 18.1
+     "mean": 11.1,
+     "p90": 16.9,
+     "flat_under_5_pct": 18.6
     }
    },
    "biomes": [
@@ -1970,7 +1970,7 @@
     "south_pine_isle"
    ],
    "measured": {
-    "area_km2": 1.97,
+    "area_km2": 1.938,
     "bounds": {
      "min_x": 6416,
      "min_z": 0,
@@ -1978,15 +1978,15 @@
      "max_z": 2055
     },
     "elevation": {
-     "p10": 67.9,
-     "median": 90.6,
-     "p90": 114.4,
+     "p10": 68.7,
+     "median": 91.0,
+     "p90": 114.5,
      "max": 125.5
     },
     "slope_degrees": {
      "mean": 8.3,
-     "p90": 14.9,
-     "flat_under_5_pct": 28.8
+     "p90": 14.8,
+     "flat_under_5_pct": 29.3
     }
    },
    "biomes": [
@@ -2144,7 +2144,7 @@
     "fungal_south"
    ],
    "measured": {
-    "area_km2": 0.8,
+    "area_km2": 0.782,
     "bounds": {
      "min_x": 0,
      "min_z": 5216,
@@ -2152,15 +2152,15 @@
      "max_z": 6247
     },
     "elevation": {
-     "p10": 71.7,
-     "median": 112.7,
-     "p90": 142.4,
+     "p10": 73.8,
+     "median": 114.0,
+     "p90": 142.6,
      "max": 147.0
     },
     "slope_degrees": {
-     "mean": 13.5,
+     "mean": 13.4,
      "p90": 20.1,
-     "flat_under_5_pct": 18.2
+     "flat_under_5_pct": 18.6
     }
    },
    "biomes": [
@@ -2240,7 +2240,7 @@
     "sunset_east"
    ],
    "measured": {
-    "area_km2": 2.581,
+    "area_km2": 2.559,
     "bounds": {
      "min_x": 816,
      "min_z": 6664,
@@ -2248,15 +2248,15 @@
      "max_z": 8015
     },
     "elevation": {
-     "p10": 72.0,
-     "median": 97.2,
-     "p90": 127.3,
+     "p10": 72.6,
+     "median": 97.4,
+     "p90": 127.4,
      "max": 146.7
     },
     "slope_degrees": {
      "mean": 8.2,
-     "p90": 16.7,
-     "flat_under_5_pct": 38.8
+     "p90": 16.6,
+     "flat_under_5_pct": 39.2
     }
    },
    "biomes": [
@@ -2385,7 +2385,7 @@
     "jungle_east"
    ],
    "measured": {
-    "area_km2": 1.257,
+    "area_km2": 1.232,
     "bounds": {
      "min_x": 4384,
      "min_z": 6880,
@@ -2393,15 +2393,15 @@
      "max_z": 7983
     },
     "elevation": {
-     "p10": 71.7,
-     "median": 110.1,
-     "p90": 131.8,
+     "p10": 73.4,
+     "median": 110.8,
+     "p90": 131.9,
      "max": 138.6
     },
     "slope_degrees": {
-     "mean": 10.8,
-     "p90": 18.0,
-     "flat_under_5_pct": 24.3
+     "mean": 10.7,
+     "p90": 17.9,
+     "flat_under_5_pct": 24.8
     }
    },
    "biomes": [
@@ -2495,23 +2495,23 @@
     "long_isle_south"
    ],
    "measured": {
-    "area_km2": 2.583,
+    "area_km2": 2.559,
     "bounds": {
      "min_x": 6832,
      "min_z": 4432,
      "max_x": 8191,
-     "max_z": 8023
+     "max_z": 8015
     },
     "elevation": {
-     "p10": 71.1,
-     "median": 105.2,
-     "p90": 142.0,
+     "p10": 71.8,
+     "median": 105.7,
+     "p90": 142.1,
      "max": 149.1
     },
     "slope_degrees": {
-     "mean": 11.5,
+     "mean": 11.4,
      "p90": 19.0,
-     "flat_under_5_pct": 20.0
+     "flat_under_5_pct": 20.1
     }
    },
    "biomes": [
@@ -2627,23 +2627,23 @@
     "lower_trough"
    ],
    "measured": {
-    "area_km2": 2.791,
+    "area_km2": 2.769,
     "bounds": {
-     "min_x": 2440,
+     "min_x": 2448,
      "min_z": 696,
      "max_x": 5743,
      "max_z": 3871
     },
     "elevation": {
-     "p10": 82.3,
-     "median": 109.0,
-     "p90": 146.0,
-     "max": 189.0
+     "p10": 79.3,
+     "median": 108.8,
+     "p90": 145.5,
+     "max": 187.5
     },
     "slope_degrees": {
-     "mean": 8.8,
-     "p90": 19.0,
-     "flat_under_5_pct": 39.1
+     "mean": 9.6,
+     "p90": 20.0,
+     "flat_under_5_pct": 35.7
     }
    },
    "biomes": [
@@ -2851,7 +2851,7 @@
     "mt_clay"
    ],
    "measured": {
-    "area_km2": 1.692,
+    "area_km2": 1.674,
     "bounds": {
      "min_x": 888,
      "min_z": 504,
@@ -2859,15 +2859,15 @@
      "max_z": 1927
     },
     "elevation": {
-     "p10": 125.8,
-     "median": 163.8,
+     "p10": 127.1,
+     "median": 164.4,
      "p90": 200.0,
      "max": 200.0
     },
     "slope_degrees": {
-     "mean": 13.0,
-     "p90": 25.1,
-     "flat_under_5_pct": 18.3
+     "mean": 12.9,
+     "p90": 24.8,
+     "flat_under_5_pct": 18.6
     }
    },
    "biomes": [
@@ -3011,23 +3011,23 @@
     "rift_south_east_arm"
    ],
    "measured": {
-    "area_km2": 2.25,
+    "area_km2": 2.221,
     "bounds": {
      "min_x": 2888,
      "min_z": 2320,
-     "max_x": 4623,
+     "max_x": 4607,
      "max_z": 5407
     },
     "elevation": {
-     "p10": 85.6,
-     "median": 109.7,
-     "p90": 133.3,
-     "max": 151.1
+     "p10": 85.5,
+     "median": 109.4,
+     "p90": 132.9,
+     "max": 150.7
     },
     "slope_degrees": {
      "mean": 9.3,
-     "p90": 18.8,
-     "flat_under_5_pct": 35.5
+     "p90": 18.9,
+     "flat_under_5_pct": 35.2
     }
    },
    "biomes": [
@@ -3164,7 +3164,7 @@
     "east_cones"
    ],
    "measured": {
-    "area_km2": 1.307,
+    "area_km2": 1.289,
     "bounds": {
      "min_x": 5472,
      "min_z": 4848,
@@ -3172,15 +3172,15 @@
      "max_z": 6031
     },
     "elevation": {
-     "p10": 117.7,
-     "median": 143.1,
+     "p10": 118.0,
+     "median": 143.2,
      "p90": 200.0,
      "max": 200.0
     },
     "slope_degrees": {
-     "mean": 9.9,
-     "p90": 25.6,
-     "flat_under_5_pct": 45.8
+     "mean": 10.0,
+     "p90": 25.7,
+     "flat_under_5_pct": 45.6
     }
    },
    "biomes": [
@@ -3262,7 +3262,7 @@
     "plateau_east"
    ],
    "measured": {
-    "area_km2": 1.652,
+    "area_km2": 1.64,
     "bounds": {
      "min_x": 4088,
      "min_z": 4944,
@@ -3270,15 +3270,15 @@
      "max_z": 6407
     },
     "elevation": {
-     "p10": 141.1,
-     "median": 152.5,
+     "p10": 141.4,
+     "median": 152.6,
      "p90": 162.5,
      "max": 170.1
     },
     "slope_degrees": {
      "mean": 4.3,
-     "p90": 7.7,
-     "flat_under_5_pct": 68.3
+     "p90": 7.6,
+     "flat_under_5_pct": 68.8
     }
    },
    "biomes": [
@@ -3400,7 +3400,7 @@
     "frostpeak_strand"
    ],
    "measured": {
-    "area_km2": 1.274,
+    "area_km2": 1.239,
     "bounds": {
      "min_x": 24,
      "min_z": 0,
@@ -3408,15 +3408,15 @@
      "max_z": 1007
     },
     "elevation": {
-     "p10": 70.5,
-     "median": 104.9,
-     "p90": 162.1,
+     "p10": 72.3,
+     "median": 106.2,
+     "p90": 163.0,
      "max": 200.0
     },
     "slope_degrees": {
      "mean": 16.4,
-     "p90": 23.4,
-     "flat_under_5_pct": 4.6
+     "p90": 23.3,
+     "flat_under_5_pct": 4.7
     }
    },
    "biomes": [
@@ -3553,7 +3553,7 @@
     "tilpey_east_shore"
    ],
    "measured": {
-    "area_km2": 3.293,
+    "area_km2": 3.3,
     "bounds": {
      "min_x": 4624,
      "min_z": 2920,
@@ -3567,9 +3567,9 @@
      "max": 139.2
     },
     "slope_degrees": {
-     "mean": 6.1,
-     "p90": 14.5,
-     "flat_under_5_pct": 55.0
+     "mean": 6.3,
+     "p90": 14.7,
+     "flat_under_5_pct": 54.7
     }
    },
    "biomes": [
@@ -3772,21 +3772,21 @@
     "wedge_south"
    ],
    "measured": {
-    "area_km2": 0.75,
+    "area_km2": 0.738,
     "bounds": {
-     "min_x": 3760,
+     "min_x": 3768,
      "min_z": 2648,
      "max_x": 4943,
      "max_z": 4847
     },
     "elevation": {
-     "p10": 109.3,
+     "p10": 109.5,
      "median": 124.1,
      "p90": 144.4,
      "max": 151.6
     },
     "slope_degrees": {
-     "mean": 4.1,
+     "mean": 4.2,
      "p90": 7.0,
      "flat_under_5_pct": 69.1
     }
@@ -3862,7 +3862,7 @@
     "north_east_downs"
    ],
    "measured": {
-    "area_km2": 1.927,
+    "area_km2": 1.919,
     "bounds": {
      "min_x": 2776,
      "min_z": 432,
@@ -3870,14 +3870,14 @@
      "max_z": 2623
     },
     "elevation": {
-     "p10": 84.7,
-     "median": 111.3,
-     "p90": 125.3,
+     "p10": 86.1,
+     "median": 111.4,
+     "p90": 125.4,
      "max": 138.9
     },
     "slope_degrees": {
      "mean": 6.5,
-     "p90": 15.5,
+     "p90": 15.4,
      "flat_under_5_pct": 53.5
     }
    },
@@ -4018,23 +4018,23 @@
     "glacier_foot_fields"
    ],
    "measured": {
-    "area_km2": 3.27,
+    "area_km2": 3.24,
     "bounds": {
-     "min_x": 4584,
+     "min_x": 4592,
      "min_z": 1152,
      "max_x": 7287,
-     "max_z": 3735
+     "max_z": 3727
     },
     "elevation": {
-     "p10": 84.4,
-     "median": 111.8,
-     "p90": 131.6,
+     "p10": 85.1,
+     "median": 111.9,
+     "p90": 131.7,
      "max": 140.3
     },
     "slope_degrees": {
      "mean": 6.2,
      "p90": 14.4,
-     "flat_under_5_pct": 54.5
+     "flat_under_5_pct": 54.7
     }
    },
    "biomes": [
@@ -4159,23 +4159,23 @@
     "viltri_plateau"
    ],
    "measured": {
-    "area_km2": 5.84,
+    "area_km2": 5.824,
     "bounds": {
-     "min_x": 368,
+     "min_x": 376,
      "min_z": 1208,
      "max_x": 3527,
      "max_z": 4135
     },
     "elevation": {
-     "p10": 90.8,
+     "p10": 90.7,
      "median": 113.3,
      "p90": 131.7,
      "max": 155.9
     },
     "slope_degrees": {
-     "mean": 5.1,
-     "p90": 11.7,
-     "flat_under_5_pct": 65.2
+     "mean": 5.2,
+     "p90": 11.9,
+     "flat_under_5_pct": 64.6
     }
    },
    "biomes": [
@@ -4339,7 +4339,7 @@
     "river_of_shrews_vale"
    ],
    "measured": {
-    "area_km2": 2.728,
+    "area_km2": 2.707,
     "bounds": {
      "min_x": 1472,
      "min_z": 3088,
@@ -4347,15 +4347,15 @@
      "max_z": 5271
     },
     "elevation": {
-     "p10": 101.1,
-     "median": 115.2,
+     "p10": 101.0,
+     "median": 115.1,
      "p90": 139.0,
      "max": 151.6
     },
     "slope_degrees": {
      "mean": 5.6,
-     "p90": 13.7,
-     "flat_under_5_pct": 67.8
+     "p90": 13.9,
+     "flat_under_5_pct": 67.3
     }
    },
    "biomes": [
@@ -4490,7 +4490,7 @@
     "south_west_fields"
    ],
    "measured": {
-    "area_km2": 1.796,
+    "area_km2": 1.789,
     "bounds": {
      "min_x": 472,
      "min_z": 4024,
@@ -4498,15 +4498,15 @@
      "max_z": 6263
     },
     "elevation": {
-     "p10": 80.0,
-     "median": 115.4,
+     "p10": 80.3,
+     "median": 115.5,
      "p90": 126.5,
      "max": 137.8
     },
     "slope_degrees": {
      "mean": 7.0,
      "p90": 15.9,
-     "flat_under_5_pct": 50.2
+     "flat_under_5_pct": 50.4
     }
    },
    "biomes": [
@@ -4620,7 +4620,7 @@
     "rift_foot"
    ],
    "measured": {
-    "area_km2": 3.605,
+    "area_km2": 3.612,
     "bounds": {
      "min_x": 2088,
      "min_z": 4384,
@@ -4628,15 +4628,15 @@
      "max_z": 6823
     },
     "elevation": {
-     "p10": 81.5,
-     "median": 105.7,
-     "p90": 128.4,
+     "p10": 81.6,
+     "median": 105.8,
+     "p90": 128.6,
      "max": 148.5
     },
     "slope_degrees": {
-     "mean": 5.5,
-     "p90": 11.2,
-     "flat_under_5_pct": 57.8
+     "mean": 5.6,
+     "p90": 11.5,
+     "flat_under_5_pct": 57.3
     }
    },
    "biomes": [
@@ -4817,23 +4817,23 @@
     "south_east_dunes"
    ],
    "measured": {
-    "area_km2": 2.306,
+    "area_km2": 2.321,
     "bounds": {
-     "min_x": 4752,
+     "min_x": 4768,
      "min_z": 4152,
-     "max_x": 7399,
+     "max_x": 7391,
      "max_z": 6879
     },
     "elevation": {
-     "p10": 76.8,
-     "median": 124.0,
+     "p10": 77.1,
+     "median": 124.3,
      "p90": 147.7,
      "max": 157.0
     },
     "slope_degrees": {
-     "mean": 10.1,
+     "mean": 10.0,
      "p90": 19.5,
-     "flat_under_5_pct": 36.7
+     "flat_under_5_pct": 37.2
     }
    },
    "biomes": [
@@ -4979,7 +4979,7 @@
    "display_name": "Northgate West",
    "parent": "northgate_isle",
    "measured": {
-    "area_km2": 0.422,
+    "area_km2": 0.415,
     "bounds": {
      "min_x": 4728,
      "min_z": 0,
@@ -4987,15 +4987,15 @@
      "max_z": 879
     },
     "elevation": {
-     "p10": 69.0,
-     "median": 98.1,
-     "p90": 120.8,
+     "p10": 70.4,
+     "median": 98.9,
+     "p90": 121.3,
      "max": 132.5
     },
     "slope_degrees": {
-     "mean": 11.2,
+     "mean": 11.1,
      "p90": 16.8,
-     "flat_under_5_pct": 13.6
+     "flat_under_5_pct": 14.2
     }
    },
    "boundaries": [
@@ -5078,23 +5078,23 @@
    "display_name": "Northgate East",
    "parent": "northgate_isle",
    "measured": {
-    "area_km2": 0.503,
+    "area_km2": 0.494,
     "bounds": {
      "min_x": 5256,
      "min_z": 72,
-     "max_x": 6071,
+     "max_x": 6063,
      "max_z": 1007
     },
     "elevation": {
-     "p10": 70.0,
-     "median": 104.5,
-     "p90": 126.9,
-     "max": 131.7
+     "p10": 70.9,
+     "median": 104.9,
+     "p90": 126.8,
+     "max": 131.5
     },
     "slope_degrees": {
      "mean": 11.1,
      "p90": 17.1,
-     "flat_under_5_pct": 21.8
+     "flat_under_5_pct": 21.9
     }
    },
    "boundaries": [
@@ -5177,23 +5177,23 @@
    "display_name": "North Pine Isle",
    "parent": "pine_isles",
    "measured": {
-    "area_km2": 0.789,
+    "area_km2": 0.778,
     "bounds": {
      "min_x": 6936,
      "min_z": 0,
      "max_x": 8079,
-     "max_z": 1047
+     "max_z": 1039
     },
     "elevation": {
-     "p10": 66.3,
-     "median": 83.2,
-     "p90": 96.9,
+     "p10": 66.8,
+     "median": 83.4,
+     "p90": 97.0,
      "max": 105.5
     },
     "slope_degrees": {
      "mean": 7.0,
-     "p90": 12.0,
-     "flat_under_5_pct": 32.1
+     "p90": 11.9,
+     "flat_under_5_pct": 32.6
     }
    },
    "boundaries": [
@@ -5285,23 +5285,23 @@
    "display_name": "South Pine Isle",
    "parent": "pine_isles",
    "measured": {
-    "area_km2": 1.181,
+    "area_km2": 1.163,
     "bounds": {
      "min_x": 6416,
      "min_z": 728,
-     "max_x": 7743,
+     "max_x": 7735,
      "max_z": 2055
     },
     "elevation": {
-     "p10": 69.8,
-     "median": 100.4,
+     "p10": 71.0,
+     "median": 100.8,
      "p90": 116.2,
      "max": 125.5
     },
     "slope_degrees": {
-     "mean": 9.2,
+     "mean": 9.1,
      "p90": 15.5,
-     "flat_under_5_pct": 26.6
+     "flat_under_5_pct": 27.0
     }
    },
    "boundaries": [
@@ -5401,7 +5401,7 @@
    "display_name": "Fungal North",
    "parent": "fungal_isle",
    "measured": {
-    "area_km2": 0.414,
+    "area_km2": 0.405,
     "bounds": {
      "min_x": 0,
      "min_z": 5216,
@@ -5409,15 +5409,15 @@
      "max_z": 5783
     },
     "elevation": {
-     "p10": 72.4,
-     "median": 112.5,
-     "p90": 140.3,
+     "p10": 73.9,
+     "median": 113.6,
+     "p90": 140.5,
      "max": 146.6
     },
     "slope_degrees": {
-     "mean": 13.0,
+     "mean": 12.9,
      "p90": 19.8,
-     "flat_under_5_pct": 20.1
+     "flat_under_5_pct": 20.8
     }
    },
    "boundaries": [
@@ -5496,7 +5496,7 @@
    "display_name": "Fungal South",
    "parent": "fungal_isle",
    "measured": {
-    "area_km2": 0.386,
+    "area_km2": 0.374,
     "bounds": {
      "min_x": 0,
      "min_z": 5720,
@@ -5504,15 +5504,15 @@
      "max_z": 6247
     },
     "elevation": {
-     "p10": 71.1,
-     "median": 112.9,
-     "p90": 144.0,
+     "p10": 72.4,
+     "median": 113.3,
+     "p90": 143.9,
      "max": 147.0
     },
     "slope_degrees": {
      "mean": 14.1,
      "p90": 20.4,
-     "flat_under_5_pct": 16.1
+     "flat_under_5_pct": 15.6
     }
    },
    "boundaries": [
@@ -5595,23 +5595,23 @@
    "display_name": "Sunset West",
    "parent": "sunset_isle",
    "measured": {
-    "area_km2": 1.351,
+    "area_km2": 1.333,
     "bounds": {
-     "min_x": 816,
+     "min_x": 824,
      "min_z": 6664,
      "max_x": 2087,
      "max_z": 8015
     },
     "elevation": {
-     "p10": 75.2,
-     "median": 111.9,
-     "p90": 134.6,
+     "p10": 76.4,
+     "median": 112.1,
+     "p90": 134.7,
      "max": 146.7
     },
     "slope_degrees": {
-     "mean": 9.3,
+     "mean": 9.2,
      "p90": 18.6,
-     "flat_under_5_pct": 36.6
+     "flat_under_5_pct": 36.9
     }
    },
    "boundaries": [
@@ -5710,7 +5710,7 @@
    "display_name": "Sunset East",
    "parent": "sunset_isle",
    "measured": {
-    "area_km2": 1.23,
+    "area_km2": 1.219,
     "bounds": {
      "min_x": 1944,
      "min_z": 6856,
@@ -5718,15 +5718,15 @@
      "max_z": 8015
     },
     "elevation": {
-     "p10": 69.9,
-     "median": 91.5,
-     "p90": 102.2,
+     "p10": 70.6,
+     "median": 91.6,
+     "p90": 102.3,
      "max": 114.0
     },
     "slope_degrees": {
-     "mean": 7.1,
-     "p90": 13.3,
-     "flat_under_5_pct": 41.3
+     "mean": 7.0,
+     "p90": 13.1,
+     "flat_under_5_pct": 41.7
     }
    },
    "boundaries": [
@@ -5821,23 +5821,23 @@
    "display_name": "Jungle West",
    "parent": "jungle_isle",
    "measured": {
-    "area_km2": 0.607,
+    "area_km2": 0.598,
     "bounds": {
      "min_x": 4384,
      "min_z": 6880,
-     "max_x": 5159,
+     "max_x": 5151,
      "max_z": 7967
     },
     "elevation": {
-     "p10": 71.9,
-     "median": 110.6,
-     "p90": 131.6,
+     "p10": 73.4,
+     "median": 111.3,
+     "p90": 131.8,
      "max": 138.6
     },
     "slope_degrees": {
-     "mean": 11.2,
-     "p90": 18.9,
-     "flat_under_5_pct": 24.7
+     "mean": 11.0,
+     "p90": 18.8,
+     "flat_under_5_pct": 25.3
     }
    },
    "boundaries": [
@@ -5912,23 +5912,23 @@
    "display_name": "Jungle East",
    "parent": "jungle_isle",
    "measured": {
-    "area_km2": 0.65,
+    "area_km2": 0.643,
     "bounds": {
-     "min_x": 5144,
+     "min_x": 5152,
      "min_z": 6880,
      "max_x": 5935,
      "max_z": 7983
     },
     "elevation": {
-     "p10": 71.4,
-     "median": 109.5,
-     "p90": 131.8,
+     "p10": 72.3,
+     "median": 109.9,
+     "p90": 131.9,
      "max": 137.1
     },
     "slope_degrees": {
      "mean": 10.5,
      "p90": 16.9,
-     "flat_under_5_pct": 23.9
+     "flat_under_5_pct": 24.0
     }
    },
    "boundaries": [
@@ -6003,23 +6003,23 @@
    "display_name": "Long Isle North",
    "parent": "long_isle",
    "measured": {
-    "area_km2": 0.649,
+    "area_km2": 0.644,
     "bounds": {
      "min_x": 7568,
      "min_z": 4432,
-     "max_x": 8167,
+     "max_x": 8159,
      "max_z": 5815
     },
     "elevation": {
-     "p10": 68.2,
-     "median": 89.8,
-     "p90": 107.0,
-     "max": 122.4
+     "p10": 68.4,
+     "median": 89.9,
+     "p90": 106.9,
+     "max": 123.0
     },
     "slope_degrees": {
-     "mean": 9.7,
-     "p90": 15.5,
-     "flat_under_5_pct": 20.5
+     "mean": 9.6,
+     "p90": 15.6,
+     "flat_under_5_pct": 20.7
     }
    },
    "boundaries": [
@@ -6110,7 +6110,7 @@
    "display_name": "Long Isle Middle",
    "parent": "long_isle",
    "measured": {
-    "area_km2": 0.848,
+    "area_km2": 0.836,
     "bounds": {
      "min_x": 7304,
      "min_z": 5576,
@@ -6118,15 +6118,15 @@
      "max_z": 6919
     },
     "elevation": {
-     "p10": 73.2,
-     "median": 118.6,
+     "p10": 73.9,
+     "median": 118.9,
      "p90": 143.5,
      "max": 147.8
     },
     "slope_degrees": {
      "mean": 12.8,
      "p90": 19.8,
-     "flat_under_5_pct": 15.9
+     "flat_under_5_pct": 16.0
     }
    },
    "boundaries": [
@@ -6216,7 +6216,7 @@
    "display_name": "Long Isle South",
    "parent": "long_isle",
    "measured": {
-    "area_km2": 1.087,
+    "area_km2": 1.082,
     "bounds": {
      "min_x": 6832,
      "min_z": 6856,
@@ -6224,15 +6224,15 @@
      "max_z": 8023
     },
     "elevation": {
-     "p10": 72.9,
-     "median": 118.1,
+     "p10": 73.2,
+     "median": 118.3,
      "p90": 143.7,
      "max": 149.1
     },
     "slope_degrees": {
-     "mean": 11.5,
+     "mean": 11.4,
      "p90": 18.7,
-     "flat_under_5_pct": 22.8
+     "flat_under_5_pct": 22.9
     }
    },
    "boundaries": [
@@ -6331,23 +6331,23 @@
    "display_name": "Merian Cirque",
    "parent": "glacial_tear",
    "measured": {
-    "area_km2": 0.536,
+    "area_km2": 0.521,
     "bounds": {
-     "min_x": 2440,
+     "min_x": 2448,
      "min_z": 696,
      "max_x": 3207,
      "max_z": 1719
     },
     "elevation": {
      "p10": 107.4,
-     "median": 124.6,
-     "p90": 161.0,
-     "max": 189.0
+     "median": 124.3,
+     "p90": 160.2,
+     "max": 187.5
     },
     "slope_degrees": {
-     "mean": 9.3,
-     "p90": 19.2,
-     "flat_under_5_pct": 33.1
+     "mean": 9.4,
+     "p90": 19.3,
+     "flat_under_5_pct": 33.5
     }
    },
    "boundaries": [
@@ -6476,7 +6476,7 @@
    "display_name": "The Crags",
    "parent": "glacial_tear",
    "measured": {
-    "area_km2": 0.417,
+    "area_km2": 0.414,
     "bounds": {
      "min_x": 3088,
      "min_z": 944,
@@ -6484,15 +6484,15 @@
      "max_z": 1727
     },
     "elevation": {
-     "p10": 109.8,
-     "median": 141.4,
+     "p10": 109.6,
+     "median": 141.6,
      "p90": 166.8,
      "max": 183.5
     },
     "slope_degrees": {
      "mean": 12.4,
      "p90": 20.2,
-     "flat_under_5_pct": 11.7
+     "flat_under_5_pct": 11.8
     }
    },
    "boundaries": [
@@ -6596,7 +6596,7 @@
    "display_name": "Upper Trough",
    "parent": "glacial_tear",
    "measured": {
-    "area_km2": 0.824,
+    "area_km2": 0.83,
     "bounds": {
      "min_x": 2936,
      "min_z": 1616,
@@ -6604,15 +6604,15 @@
      "max_z": 3055
     },
     "elevation": {
-     "p10": 92.0,
-     "median": 102.6,
-     "p90": 121.6,
-     "max": 153.9
+     "p10": 88.0,
+     "median": 102.4,
+     "p90": 121.9,
+     "max": 155.2
     },
     "slope_degrees": {
-     "mean": 6.6,
-     "p90": 16.3,
-     "flat_under_5_pct": 53.5
+     "mean": 8.2,
+     "p90": 19.6,
+     "flat_under_5_pct": 45.7
     }
    },
    "boundaries": [
@@ -6776,7 +6776,7 @@
    "display_name": "Lower Trough",
    "parent": "glacial_tear",
    "measured": {
-    "area_km2": 1.014,
+    "area_km2": 1.009,
     "bounds": {
      "min_x": 4168,
      "min_z": 2472,
@@ -6784,15 +6784,15 @@
      "max_z": 3871
     },
     "elevation": {
-     "p10": 71.7,
-     "median": 100.0,
-     "p90": 126.5,
-     "max": 139.2
+     "p10": 71.0,
+     "median": 99.5,
+     "p90": 126.6,
+     "max": 138.6
     },
     "slope_degrees": {
-     "mean": 8.9,
-     "p90": 19.6,
-     "flat_under_5_pct": 41.8
+     "mean": 9.7,
+     "p90": 20.5,
+     "flat_under_5_pct": 38.5
     }
    },
    "boundaries": [
@@ -6951,7 +6951,7 @@
    "display_name": "The Tri Peaks",
    "parent": "tri_peaks",
    "measured": {
-    "area_km2": 0.628,
+    "area_km2": 0.626,
     "bounds": {
      "min_x": 888,
      "min_z": 664,
@@ -6959,8 +6959,8 @@
      "max_z": 1663
     },
     "elevation": {
-     "p10": 100.3,
-     "median": 151.9,
+     "p10": 99.9,
+     "median": 152.1,
      "p90": 184.4,
      "max": 200.0
     },
@@ -7106,7 +7106,7 @@
    "display_name": "Mt Vessu",
    "parent": "tri_peaks",
    "measured": {
-    "area_km2": 0.731,
+    "area_km2": 0.727,
     "bounds": {
      "min_x": 1512,
      "min_z": 504,
@@ -7114,15 +7114,15 @@
      "max_z": 1591
     },
     "elevation": {
-     "p10": 141.0,
-     "median": 186.6,
+     "p10": 142.0,
+     "median": 186.8,
      "p90": 200.0,
      "max": 200.0
     },
     "slope_degrees": {
-     "mean": 11.3,
-     "p90": 25.5,
-     "flat_under_5_pct": 32.0
+     "mean": 11.2,
+     "p90": 25.2,
+     "flat_under_5_pct": 32.2
     }
    },
    "boundaries": [
@@ -7237,7 +7237,7 @@
    "display_name": "Mt Clay",
    "parent": "tri_peaks",
    "measured": {
-    "area_km2": 0.332,
+    "area_km2": 0.327,
     "bounds": {
      "min_x": 1880,
      "min_z": 1176,
@@ -7245,15 +7245,15 @@
      "max_z": 1927
     },
     "elevation": {
-     "p10": 133.4,
-     "median": 152.3,
-     "p90": 187.4,
+     "p10": 133.7,
+     "median": 152.5,
+     "p90": 187.6,
      "max": 200.0
     },
     "slope_degrees": {
-     "mean": 11.6,
-     "p90": 17.6,
-     "flat_under_5_pct": 6.2
+     "mean": 11.7,
+     "p90": 17.7,
+     "flat_under_5_pct": 6.3
     }
    },
    "boundaries": [
@@ -7372,7 +7372,7 @@
    "display_name": "Rift Trunk",
    "parent": "the_rift",
    "measured": {
-    "area_km2": 0.569,
+    "area_km2": 0.563,
     "bounds": {
      "min_x": 3424,
      "min_z": 2320,
@@ -7380,15 +7380,15 @@
      "max_z": 3903
     },
     "elevation": {
-     "p10": 83.6,
-     "median": 97.3,
-     "p90": 135.9,
+     "p10": 83.7,
+     "median": 97.2,
+     "p90": 136.0,
      "max": 151.1
     },
     "slope_degrees": {
      "mean": 11.5,
-     "p90": 23.1,
-     "flat_under_5_pct": 25.7
+     "p90": 23.2,
+     "flat_under_5_pct": 25.8
     }
    },
    "boundaries": [
@@ -7532,23 +7532,23 @@
    "display_name": "Rift West Spur",
    "parent": "the_rift",
    "measured": {
-    "area_km2": 0.528,
+    "area_km2": 0.523,
     "bounds": {
      "min_x": 2888,
      "min_z": 2504,
-     "max_x": 3879,
+     "max_x": 3871,
      "max_z": 3919
     },
     "elevation": {
-     "p10": 86.6,
-     "median": 107.9,
-     "p90": 129.6,
+     "p10": 86.1,
+     "median": 107.3,
+     "p90": 128.8,
      "max": 146.6
     },
     "slope_degrees": {
-     "mean": 7.0,
-     "p90": 14.2,
-     "flat_under_5_pct": 43.3
+     "mean": 7.1,
+     "p90": 14.6,
+     "flat_under_5_pct": 42.7
     }
    },
    "boundaries": [
@@ -7643,7 +7643,7 @@
    "display_name": "Rift South-West Arm",
    "parent": "the_rift",
    "measured": {
-    "area_km2": 0.545,
+    "area_km2": 0.543,
     "bounds": {
      "min_x": 3544,
      "min_z": 3880,
@@ -7653,13 +7653,13 @@
     "elevation": {
      "p10": 86.8,
      "median": 115.2,
-     "p90": 139.1,
-     "max": 149.3
+     "p90": 137.9,
+     "max": 149.1
     },
     "slope_degrees": {
-     "mean": 8.0,
-     "p90": 16.0,
-     "flat_under_5_pct": 43.1
+     "mean": 7.9,
+     "p90": 15.8,
+     "flat_under_5_pct": 43.4
     }
    },
    "boundaries": [
@@ -7796,7 +7796,7 @@
    "display_name": "Rift South-East Arm",
    "parent": "the_rift",
    "measured": {
-    "area_km2": 0.608,
+    "area_km2": 0.609,
     "bounds": {
      "min_x": 3992,
      "min_z": 3760,
@@ -7805,14 +7805,14 @@
     },
     "elevation": {
      "p10": 87.9,
-     "median": 115.7,
-     "p90": 132.2,
+     "median": 115.8,
+     "p90": 132.6,
      "max": 146.3
     },
     "slope_degrees": {
-     "mean": 10.3,
-     "p90": 19.4,
-     "flat_under_5_pct": 31.0
+     "mean": 10.4,
+     "p90": 19.5,
+     "flat_under_5_pct": 30.5
     }
    },
    "boundaries": [
@@ -7925,7 +7925,7 @@
    "display_name": "North-West Rim",
    "parent": "the_craters",
    "measured": {
-    "area_km2": 0.297,
+    "area_km2": 0.286,
     "bounds": {
      "min_x": 5472,
      "min_z": 4848,
@@ -7933,15 +7933,15 @@
      "max_z": 5751
     },
     "elevation": {
-     "p10": 107.2,
+     "p10": 107.4,
      "median": 119.2,
-     "p90": 138.3,
-     "max": 157.2
+     "p90": 138.9,
+     "max": 161.8
     },
     "slope_degrees": {
-     "mean": 5.7,
-     "p90": 12.8,
-     "flat_under_5_pct": 59.5
+     "mean": 5.9,
+     "p90": 13.3,
+     "flat_under_5_pct": 58.8
     }
    },
    "boundaries": [
@@ -8043,7 +8043,7 @@
    "display_name": "Great Crater",
    "parent": "the_craters",
    "measured": {
-    "area_km2": 0.611,
+    "area_km2": 0.609,
     "bounds": {
      "min_x": 5504,
      "min_z": 5160,
@@ -8052,14 +8052,14 @@
     },
     "elevation": {
      "p10": 138.1,
-     "median": 153.2,
+     "median": 153.6,
      "p90": 200.0,
      "max": 200.0
     },
     "slope_degrees": {
      "mean": 11.6,
      "p90": 28.3,
-     "flat_under_5_pct": 42.5
+     "flat_under_5_pct": 41.9
     }
    },
    "boundaries": [
@@ -8169,7 +8169,7 @@
    "display_name": "East Cones",
    "parent": "the_craters",
    "measured": {
-    "area_km2": 0.4,
+    "area_km2": 0.389,
     "bounds": {
      "min_x": 6272,
      "min_z": 4856,
@@ -8177,9 +8177,9 @@
      "max_z": 5967
     },
     "elevation": {
-     "p10": 132.2,
-     "median": 143.0,
-     "p90": 192.1,
+     "p10": 132.1,
+     "median": 142.6,
+     "p90": 193.3,
      "max": 200.0
     },
     "slope_degrees": {
@@ -8283,7 +8283,7 @@
    "display_name": "Plateau West",
    "parent": "scorched_plateau",
    "measured": {
-    "area_km2": 0.868,
+    "area_km2": 0.865,
     "bounds": {
      "min_x": 4088,
      "min_z": 4944,
@@ -8291,15 +8291,15 @@
      "max_z": 6327
     },
     "elevation": {
-     "p10": 140.7,
+     "p10": 140.9,
      "median": 150.3,
-     "p90": 161.2,
+     "p90": 161.1,
      "max": 166.3
     },
     "slope_degrees": {
-     "mean": 3.7,
+     "mean": 3.6,
      "p90": 6.5,
-     "flat_under_5_pct": 75.1
+     "flat_under_5_pct": 75.3
     }
    },
    "boundaries": [
@@ -8422,23 +8422,23 @@
    "display_name": "Plateau South",
    "parent": "scorched_plateau",
    "measured": {
-    "area_km2": 0.658,
+    "area_km2": 0.652,
     "bounds": {
      "min_x": 4512,
      "min_z": 5376,
      "max_x": 5623,
-     "max_z": 6399
+     "max_z": 6391
     },
     "elevation": {
-     "p10": 143.5,
-     "median": 155.7,
-     "p90": 164.3,
+     "p10": 143.8,
+     "median": 155.8,
+     "p90": 164.4,
      "max": 170.1
     },
     "slope_degrees": {
-     "mean": 4.9,
-     "p90": 10.5,
-     "flat_under_5_pct": 66.3
+     "mean": 4.8,
+     "p90": 10.2,
+     "flat_under_5_pct": 66.9
     }
    },
    "boundaries": [
@@ -8563,18 +8563,18 @@
      "min_x": 5560,
      "min_z": 5848,
      "max_x": 5895,
-     "max_z": 6407
+     "max_z": 6399
     },
     "elevation": {
-     "p10": 138.9,
-     "median": 147.1,
-     "p90": 157.5,
-     "max": 163.2
+     "p10": 139.5,
+     "median": 147.4,
+     "p90": 157.7,
+     "max": 163.0
     },
     "slope_degrees": {
-     "mean": 6.2,
-     "p90": 9.2,
-     "flat_under_5_pct": 32.1
+     "mean": 6.1,
+     "p90": 9.0,
+     "flat_under_5_pct": 33.5
     }
    },
    "boundaries": [
@@ -8642,7 +8642,7 @@
    "display_name": "Frostpeak",
    "parent": "frostpeak_point",
    "measured": {
-    "area_km2": 0.882,
+    "area_km2": 0.877,
     "bounds": {
      "min_x": 24,
      "min_z": 0,
@@ -8650,15 +8650,15 @@
      "max_z": 1007
     },
     "elevation": {
-     "p10": 75.2,
-     "median": 118.0,
-     "p90": 174.1,
+     "p10": 75.9,
+     "median": 118.1,
+     "p90": 174.2,
      "max": 200.0
     },
     "slope_degrees": {
      "mean": 15.3,
      "p90": 21.7,
-     "flat_under_5_pct": 5.8
+     "flat_under_5_pct": 5.9
     }
    },
    "boundaries": [
@@ -8753,7 +8753,7 @@
    "display_name": "Frostpeak Strand",
    "parent": "frostpeak_point",
    "measured": {
-    "area_km2": 0.392,
+    "area_km2": 0.385,
     "bounds": {
      "min_x": 928,
      "min_z": 0,
@@ -8761,14 +8761,14 @@
      "max_z": 751
     },
     "elevation": {
-     "p10": 67.0,
-     "median": 85.3,
-     "p90": 111.6,
-     "max": 127.4
+     "p10": 67.5,
+     "median": 85.9,
+     "p90": 111.7,
+     "max": 127.5
     },
     "slope_degrees": {
      "mean": 19.0,
-     "p90": 26.6,
+     "p90": 26.9,
      "flat_under_5_pct": 1.9
     }
    },
@@ -8917,23 +8917,23 @@
    "display_name": "Tilpey North Shore",
    "parent": "tilpey_lakeland",
    "measured": {
-    "area_km2": 0.564,
+    "area_km2": 0.558,
     "bounds": {
      "min_x": 5088,
      "min_z": 2920,
      "max_x": 6423,
-     "max_z": 3775
+     "max_z": 3759
     },
     "elevation": {
-     "p10": 76.8,
+     "p10": 78.1,
      "median": 97.0,
-     "p90": 114.2,
+     "p90": 114.1,
      "max": 128.0
     },
     "slope_degrees": {
-     "mean": 4.8,
-     "p90": 10.8,
-     "flat_under_5_pct": 65.6
+     "mean": 4.7,
+     "p90": 10.6,
+     "flat_under_5_pct": 66.2
     }
    },
    "boundaries": [
@@ -9064,7 +9064,7 @@
    "display_name": "Tilpey Waters",
    "parent": "tilpey_lakeland",
    "measured": {
-    "area_km2": 0.775,
+    "area_km2": 0.769,
     "bounds": {
      "min_x": 5168,
      "min_z": 3736,
@@ -9079,8 +9079,8 @@
     },
     "slope_degrees": {
      "mean": 5.9,
-     "p90": 17.4,
-     "flat_under_5_pct": 64.3
+     "p90": 17.5,
+     "flat_under_5_pct": 64.5
     }
    },
    "boundaries": [
@@ -9239,7 +9239,7 @@
    "display_name": "Tilpey South Shore",
    "parent": "tilpey_lakeland",
    "measured": {
-    "area_km2": 1.009,
+    "area_km2": 1.004,
     "bounds": {
      "min_x": 4624,
      "min_z": 4320,
@@ -9247,15 +9247,15 @@
      "max_z": 5495
     },
     "elevation": {
-     "p10": 77.3,
-     "median": 108.6,
+     "p10": 77.7,
+     "median": 108.5,
      "p90": 131.2,
      "max": 139.2
     },
     "slope_degrees": {
-     "mean": 5.9,
-     "p90": 12.1,
-     "flat_under_5_pct": 52.5
+     "mean": 6.0,
+     "p90": 12.2,
+     "flat_under_5_pct": 52.4
     }
    },
    "boundaries": [
@@ -9435,7 +9435,7 @@
    "display_name": "Tilpey West Meadows",
    "parent": "tilpey_lakeland",
    "measured": {
-    "area_km2": 0.256,
+    "area_km2": 0.249,
     "bounds": {
      "min_x": 4664,
      "min_z": 3544,
@@ -9443,15 +9443,15 @@
      "max_z": 4423
     },
     "elevation": {
-     "p10": 87.6,
+     "p10": 88.0,
      "median": 101.9,
      "p90": 108.2,
      "max": 116.7
     },
     "slope_degrees": {
-     "mean": 6.1,
-     "p90": 17.0,
-     "flat_under_5_pct": 62.8
+     "mean": 6.0,
+     "p90": 16.8,
+     "flat_under_5_pct": 63.1
     }
    },
    "boundaries": [
@@ -9563,7 +9563,7 @@
    "display_name": "Tilpey East Shore",
    "parent": "tilpey_lakeland",
    "measured": {
-    "area_km2": 0.689,
+    "area_km2": 0.693,
     "bounds": {
      "min_x": 6176,
      "min_z": 3376,
@@ -9571,15 +9571,15 @@
      "max_z": 4895
     },
     "elevation": {
-     "p10": 63.5,
-     "median": 91.6,
+     "p10": 62.6,
+     "median": 91.7,
      "p90": 109.8,
      "max": 125.0
     },
     "slope_degrees": {
-     "mean": 7.9,
-     "p90": 15.9,
-     "flat_under_5_pct": 36.8
+     "mean": 8.4,
+     "p90": 16.4,
+     "flat_under_5_pct": 35.3
     }
    },
    "boundaries": [
@@ -9752,23 +9752,23 @@
    "display_name": "Wedge North",
    "parent": "the_wedge",
    "measured": {
-    "area_km2": 0.274,
+    "area_km2": 0.276,
     "bounds": {
-     "min_x": 3760,
+     "min_x": 3768,
      "min_z": 2648,
      "max_x": 4575,
-     "max_z": 3567
+     "max_z": 3559
     },
     "elevation": {
      "p10": 131.9,
      "median": 139.9,
-     "p90": 148.6,
+     "p90": 148.7,
      "max": 151.6
     },
     "slope_degrees": {
      "mean": 3.5,
      "p90": 5.9,
-     "flat_under_5_pct": 80.7
+     "flat_under_5_pct": 80.6
     }
    },
    "boundaries": [
@@ -9855,7 +9855,7 @@
    "display_name": "Wedge South",
    "parent": "the_wedge",
    "measured": {
-    "area_km2": 0.475,
+    "area_km2": 0.473,
     "bounds": {
      "min_x": 4240,
      "min_z": 3384,
@@ -9863,15 +9863,15 @@
      "max_z": 4847
     },
     "elevation": {
-     "p10": 106.7,
-     "median": 116.8,
+     "p10": 106.9,
+     "median": 116.7,
      "p90": 130.4,
-     "max": 148.0
+     "max": 147.9
     },
     "slope_degrees": {
      "mean": 4.5,
      "p90": 7.5,
-     "flat_under_5_pct": 62.4
+     "flat_under_5_pct": 62.8
     }
    },
    "boundaries": [
@@ -9980,7 +9980,7 @@
    "display_name": "Peak Pond Hollow",
    "parent": "northern_downs",
    "measured": {
-    "area_km2": 1.161,
+    "area_km2": 1.16,
     "bounds": {
      "min_x": 2776,
      "min_z": 512,
@@ -9988,15 +9988,15 @@
      "max_z": 2599
     },
     "elevation": {
-     "p10": 105.0,
+     "p10": 105.1,
      "median": 112.6,
-     "p90": 128.5,
+     "p90": 128.6,
      "max": 138.9
     },
     "slope_degrees": {
      "mean": 5.4,
-     "p90": 12.7,
-     "flat_under_5_pct": 61.8
+     "p90": 12.6,
+     "flat_under_5_pct": 61.6
     }
    },
    "boundaries": [
@@ -10188,7 +10188,7 @@
    "display_name": "North Shore Downs",
    "parent": "northern_downs",
    "measured": {
-    "area_km2": 0.457,
+    "area_km2": 0.442,
     "bounds": {
      "min_x": 2944,
      "min_z": 432,
@@ -10196,15 +10196,15 @@
      "max_z": 1639
     },
     "elevation": {
-     "p10": 67.9,
-     "median": 92.9,
-     "p90": 109.9,
+     "p10": 69.5,
+     "median": 93.8,
+     "p90": 110.2,
      "max": 119.8
     },
     "slope_degrees": {
-     "mean": 10.7,
+     "mean": 10.6,
      "p90": 17.5,
-     "flat_under_5_pct": 20.5
+     "flat_under_5_pct": 20.6
     }
    },
    "boundaries": [
@@ -10310,7 +10310,7 @@
    "display_name": "North-East Downs",
    "parent": "northern_downs",
    "measured": {
-    "area_km2": 0.309,
+    "area_km2": 0.319,
     "bounds": {
      "min_x": 4472,
      "min_z": 1120,
@@ -10318,15 +10318,15 @@
      "max_z": 2623
     },
     "elevation": {
-     "p10": 101.9,
-     "median": 116.8,
+     "p10": 101.5,
+     "median": 116.7,
      "p90": 122.3,
      "max": 126.8
     },
     "slope_degrees": {
      "mean": 4.9,
      "p90": 13.9,
-     "flat_under_5_pct": 70.9
+     "flat_under_5_pct": 70.7
     }
    },
    "boundaries": [
@@ -10437,7 +10437,7 @@
    "display_name": "Marshy Marsh",
    "parent": "marsh_country",
    "measured": {
-    "area_km2": 0.945,
+    "area_km2": 0.938,
     "bounds": {
      "min_x": 4656,
      "min_z": 1152,
@@ -10445,15 +10445,15 @@
      "max_z": 2495
     },
     "elevation": {
-     "p10": 81.3,
-     "median": 107.4,
-     "p90": 118.6,
-     "max": 133.3
+     "p10": 82.3,
+     "median": 107.5,
+     "p90": 118.4,
+     "max": 133.1
     },
     "slope_degrees": {
      "mean": 7.0,
      "p90": 14.4,
-     "flat_under_5_pct": 47.9
+     "flat_under_5_pct": 47.5
     }
    },
    "boundaries": [
@@ -10553,7 +10553,7 @@
    "display_name": "Marsh Creek",
    "parent": "marsh_country",
    "measured": {
-    "area_km2": 0.716,
+    "area_km2": 0.715,
     "bounds": {
      "min_x": 5440,
      "min_z": 1800,
@@ -10562,14 +10562,14 @@
     },
     "elevation": {
      "p10": 107.3,
-     "median": 121.4,
+     "median": 121.5,
      "p90": 133.2,
-     "max": 139.1
+     "max": 139.2
     },
     "slope_degrees": {
-     "mean": 4.3,
+     "mean": 4.2,
      "p90": 8.2,
-     "flat_under_5_pct": 69.5
+     "flat_under_5_pct": 69.9
     }
    },
    "boundaries": [
@@ -10688,18 +10688,18 @@
    "display_name": "Eastern Moor",
    "parent": "marsh_country",
    "measured": {
-    "area_km2": 1.149,
+    "area_km2": 1.138,
     "bounds": {
      "min_x": 5792,
      "min_z": 1696,
      "max_x": 7287,
-     "max_z": 3735
+     "max_z": 3727
     },
     "elevation": {
-     "p10": 74.5,
+     "p10": 75.0,
      "median": 100.6,
-     "p90": 120.3,
-     "max": 131.2
+     "p90": 120.4,
+     "max": 131.4
     },
     "slope_degrees": {
      "mean": 8.0,
@@ -10829,23 +10829,23 @@
    "display_name": "Glacier Foot Fields",
    "parent": "marsh_country",
    "measured": {
-    "area_km2": 0.46,
+    "area_km2": 0.458,
     "bounds": {
-     "min_x": 4584,
+     "min_x": 4592,
      "min_z": 2096,
      "max_x": 5479,
      "max_z": 3007
     },
     "elevation": {
-     "p10": 118.4,
-     "median": 131.0,
+     "p10": 118.7,
+     "median": 131.1,
      "p90": 137.4,
      "max": 140.3
     },
     "slope_degrees": {
      "mean": 3.3,
      "p90": 5.9,
-     "flat_under_5_pct": 82.4
+     "flat_under_5_pct": 82.7
     }
    },
    "boundaries": [
@@ -10931,7 +10931,7 @@
    "display_name": "Lake Viltri Hollow",
    "parent": "viltri_woods",
    "measured": {
-    "area_km2": 0.815,
+    "area_km2": 0.799,
     "bounds": {
      "min_x": 928,
      "min_z": 2320,
@@ -10939,15 +10939,15 @@
      "max_z": 3303
     },
     "elevation": {
-     "p10": 92.3,
-     "median": 105.9,
-     "p90": 117.5,
+     "p10": 92.1,
+     "median": 105.5,
+     "p90": 117.4,
      "max": 132.2
     },
     "slope_degrees": {
-     "mean": 4.6,
-     "p90": 9.3,
-     "flat_under_5_pct": 72.8
+     "mean": 4.7,
+     "p90": 10.1,
+     "flat_under_5_pct": 71.7
     }
    },
    "boundaries": [
@@ -11046,7 +11046,7 @@
    "display_name": "Viltri's Path Valley",
    "parent": "viltri_woods",
    "measured": {
-    "area_km2": 0.88,
+    "area_km2": 0.872,
     "bounds": {
      "min_x": 368,
      "min_z": 2992,
@@ -11054,15 +11054,15 @@
      "max_z": 4135
     },
     "elevation": {
-     "p10": 94.7,
+     "p10": 96.1,
      "median": 126.8,
      "p90": 142.7,
      "max": 151.0
     },
     "slope_degrees": {
-     "mean": 8.3,
-     "p90": 17.6,
-     "flat_under_5_pct": 36.2
+     "mean": 8.2,
+     "p90": 17.4,
+     "flat_under_5_pct": 36.6
     }
    },
    "boundaries": [
@@ -11178,7 +11178,7 @@
    "display_name": "Foothill Woods",
    "parent": "viltri_woods",
    "measured": {
-    "area_km2": 1.951,
+    "area_km2": 1.944,
     "bounds": {
      "min_x": 1232,
      "min_z": 1528,
@@ -11188,13 +11188,13 @@
     "elevation": {
      "p10": 103.0,
      "median": 114.7,
-     "p90": 126.6,
+     "p90": 126.5,
      "max": 155.9
     },
     "slope_degrees": {
      "mean": 4.4,
-     "p90": 8.5,
-     "flat_under_5_pct": 70.8
+     "p90": 8.6,
+     "flat_under_5_pct": 70.7
     }
    },
    "boundaries": [
@@ -11400,7 +11400,7 @@
    "display_name": "North-West Coast",
    "parent": "viltri_woods",
    "measured": {
-    "area_km2": 1.102,
+    "area_km2": 1.099,
     "bounds": {
      "min_x": 416,
      "min_z": 1208,
@@ -11408,15 +11408,15 @@
      "max_z": 3183
     },
     "elevation": {
-     "p10": 74.9,
-     "median": 92.8,
+     "p10": 74.3,
+     "median": 92.6,
      "p90": 105.7,
-     "max": 115.5
+     "max": 115.8
     },
     "slope_degrees": {
-     "mean": 6.1,
-     "p90": 13.7,
-     "flat_under_5_pct": 55.5
+     "mean": 6.4,
+     "p90": 13.9,
+     "flat_under_5_pct": 52.9
     }
    },
    "boundaries": [
@@ -11532,9 +11532,9 @@
    "display_name": "Viltri Plateau",
    "parent": "viltri_woods",
    "measured": {
-    "area_km2": 1.092,
+    "area_km2": 1.093,
     "bounds": {
-     "min_x": 1208,
+     "min_x": 1216,
      "min_z": 2928,
      "max_x": 3055,
      "max_z": 4127
@@ -11548,7 +11548,7 @@
     "slope_degrees": {
      "mean": 3.2,
      "p90": 5.7,
-     "flat_under_5_pct": 82.6
+     "flat_under_5_pct": 82.7
     }
    },
    "boundaries": [
@@ -11700,16 +11700,16 @@
    "display_name": "Shrew Lake Shores",
    "parent": "shrew_lakes",
    "measured": {
-    "area_km2": 1.16,
+    "area_km2": 1.161,
     "bounds": {
-     "min_x": 2192,
+     "min_x": 2200,
      "min_z": 3088,
      "max_x": 4031,
      "max_z": 4351
     },
     "elevation": {
-     "p10": 98.0,
-     "median": 116.7,
+     "p10": 98.1,
+     "median": 116.6,
      "p90": 142.6,
      "max": 151.6
     },
@@ -11871,23 +11871,23 @@
    "display_name": "Arrow Lake Shores",
    "parent": "shrew_lakes",
    "measured": {
-    "area_km2": 0.556,
+    "area_km2": 0.552,
     "bounds": {
      "min_x": 2432,
      "min_z": 4224,
-     "max_x": 3967,
+     "max_x": 3959,
      "max_z": 5063
     },
     "elevation": {
-     "p10": 80.1,
-     "median": 115.4,
-     "p90": 138.1,
+     "p10": 80.0,
+     "median": 114.8,
+     "p90": 138.0,
      "max": 146.0
     },
     "slope_degrees": {
-     "mean": 7.9,
+     "mean": 8.0,
      "p90": 20.9,
-     "flat_under_5_pct": 53.5
+     "flat_under_5_pct": 52.9
     }
    },
    "boundaries": [
@@ -12015,7 +12015,7 @@
    "display_name": "River of Shrews Vale",
    "parent": "shrew_lakes",
    "measured": {
-    "area_km2": 1.012,
+    "area_km2": 1.004,
     "bounds": {
      "min_x": 1472,
      "min_z": 3832,
@@ -12025,13 +12025,13 @@
     "elevation": {
      "p10": 106.5,
      "median": 113.8,
-     "p90": 122.5,
+     "p90": 122.4,
      "max": 129.7
     },
     "slope_degrees": {
-     "mean": 3.4,
+     "mean": 3.5,
      "p90": 6.0,
-     "flat_under_5_pct": 83.0
+     "flat_under_5_pct": 82.7
     }
    },
    "boundaries": [
@@ -12148,7 +12148,7 @@
    "display_name": "Pallet Meadows",
    "parent": "pallet_fields",
    "measured": {
-    "area_km2": 0.778,
+    "area_km2": 0.768,
     "bounds": {
      "min_x": 952,
      "min_z": 4648,
@@ -12156,15 +12156,15 @@
      "max_z": 5799
     },
     "elevation": {
-     "p10": 86.8,
-     "median": 112.0,
+     "p10": 87.2,
+     "median": 112.1,
      "p90": 122.4,
      "max": 135.5
     },
     "slope_degrees": {
      "mean": 6.2,
-     "p90": 15.1,
-     "flat_under_5_pct": 54.8
+     "p90": 15.0,
+     "flat_under_5_pct": 54.9
     }
    },
    "boundaries": [
@@ -12284,7 +12284,7 @@
    "display_name": "West Shore",
    "parent": "pallet_fields",
    "measured": {
-    "area_km2": 0.799,
+    "area_km2": 0.804,
     "bounds": {
      "min_x": 472,
      "min_z": 4024,
@@ -12292,15 +12292,15 @@
      "max_z": 5111
     },
     "elevation": {
-     "p10": 81.7,
-     "median": 120.1,
-     "p90": 127.7,
-     "max": 135.1
+     "p10": 81.0,
+     "median": 120.0,
+     "p90": 127.6,
+     "max": 134.4
     },
     "slope_degrees": {
-     "mean": 6.4,
-     "p90": 15.8,
-     "flat_under_5_pct": 54.9
+     "mean": 6.5,
+     "p90": 15.9,
+     "flat_under_5_pct": 54.7
     }
    },
    "boundaries": [
@@ -12416,7 +12416,7 @@
    "display_name": "South-West Fields",
    "parent": "pallet_fields",
    "measured": {
-    "area_km2": 0.218,
+    "area_km2": 0.22,
     "bounds": {
      "min_x": 1528,
      "min_z": 5560,
@@ -12424,15 +12424,15 @@
      "max_z": 6263
     },
     "elevation": {
-     "p10": 69.3,
+     "p10": 69.2,
      "median": 103.2,
-     "p90": 132.5,
+     "p90": 132.2,
      "max": 137.8
     },
     "slope_degrees": {
-     "mean": 11.8,
+     "mean": 11.9,
      "p90": 16.9,
-     "flat_under_5_pct": 16.3
+     "flat_under_5_pct": 16.0
     }
    },
    "boundaries": [
@@ -12517,7 +12517,7 @@
    "display_name": "Arrow Creeks",
    "parent": "southern_coast",
    "measured": {
-    "area_km2": 1.851,
+    "area_km2": 1.847,
     "bounds": {
      "min_x": 2088,
      "min_z": 4384,
@@ -12531,9 +12531,9 @@
      "max": 148.5
     },
     "slope_degrees": {
-     "mean": 4.4,
-     "p90": 7.7,
-     "flat_under_5_pct": 65.8
+     "mean": 4.5,
+     "p90": 7.8,
+     "flat_under_5_pct": 65.3
     }
    },
    "boundaries": [
@@ -12689,7 +12689,7 @@
    "display_name": "South Strand",
    "parent": "southern_coast",
    "measured": {
-    "area_km2": 1.003,
+    "area_km2": 0.989,
     "bounds": {
      "min_x": 2256,
      "min_z": 5856,
@@ -12697,15 +12697,15 @@
      "max_z": 6823
     },
     "elevation": {
-     "p10": 71.0,
-     "median": 89.8,
+     "p10": 71.3,
+     "median": 90.0,
      "p90": 106.8,
      "max": 115.0
     },
     "slope_degrees": {
-     "mean": 6.0,
-     "p90": 12.7,
-     "flat_under_5_pct": 52.0
+     "mean": 6.1,
+     "p90": 12.8,
+     "flat_under_5_pct": 51.8
     }
    },
    "boundaries": [
@@ -12818,7 +12818,7 @@
    "display_name": "Rift Foot",
    "parent": "southern_coast",
    "measured": {
-    "area_km2": 0.751,
+    "area_km2": 0.746,
     "bounds": {
      "min_x": 3440,
      "min_z": 5248,
@@ -12826,14 +12826,14 @@
      "max_z": 6615
     },
     "elevation": {
-     "p10": 95.8,
-     "median": 112.2,
+     "p10": 96.1,
+     "median": 112.3,
      "p90": 131.4,
-     "max": 138.5
+     "max": 138.9
     },
     "slope_degrees": {
      "mean": 7.4,
-     "p90": 17.1,
+     "p90": 17.0,
      "flat_under_5_pct": 45.6
     }
    },
@@ -12995,7 +12995,7 @@
    "display_name": "East Coast Dunes",
    "parent": "eastern_dunes",
    "measured": {
-    "area_km2": 0.888,
+    "area_km2": 0.884,
     "bounds": {
      "min_x": 6544,
      "min_z": 4152,
@@ -13003,15 +13003,15 @@
      "max_z": 6111
     },
     "elevation": {
-     "p10": 75.3,
+     "p10": 75.8,
      "median": 113.2,
-     "p90": 142.5,
+     "p90": 142.6,
      "max": 157.0
     },
     "slope_degrees": {
      "mean": 9.9,
      "p90": 18.1,
-     "flat_under_5_pct": 29.7
+     "flat_under_5_pct": 30.1
     }
    },
    "boundaries": [
@@ -13132,7 +13132,7 @@
    "display_name": "South-East Dunes",
    "parent": "eastern_dunes",
    "measured": {
-    "area_km2": 1.418,
+    "area_km2": 1.412,
     "bounds": {
      "min_x": 4752,
      "min_z": 5776,
@@ -13140,15 +13140,15 @@
      "max_z": 6879
     },
     "elevation": {
-     "p10": 78.1,
-     "median": 133.7,
+     "p10": 79.7,
+     "median": 134.5,
      "p90": 148.5,
      "max": 157.0
     },
     "slope_degrees": {
-     "mean": 10.1,
+     "mean": 10.0,
      "p90": 20.1,
-     "flat_under_5_pct": 41.1
+     "flat_under_5_pct": 42.1
     }
    },
    "boundaries": [

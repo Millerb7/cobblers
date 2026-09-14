@@ -660,7 +660,12 @@ def _build_world(tmp_path, heights):
 
 
 def _course(cid, z, x0, x1, floor0, floor1, **extra):
-    return dict({"id": cid, "valid": True, "channel": CH,
+    # one dry reach over the whole course (cobblers.rivers/1 now carries per-reach geometry; see
+    # tests/test_river_character.py for the reach-by-reach cut): width 2 * half_width, centre depth 2
+    reach = {"from_m": 0, "to_m": abs(x1 - x0), "catchment_km2": 1.0, "grade": 0.001, "water_body": False,
+             "bank_slope": CH["bank_slope"], "bed": "SAND", "width": 2 * CH["half_width"], "depth": CH["depth"],
+             "incision": 1.0}
+    return dict({"id": cid, "valid": True, "reaches": [reach],
                  "graded_polyline": [[x0, z, floor0 + 2, floor0], [x1, z, floor1 + 2, floor1]],
                  "graded_polyline_fields": ["x", "z", "surface_y", "floor_y"]}, **extra)
 
@@ -726,7 +731,7 @@ def test_cut_only_lowers_and_reaches_the_floor(carved_world):
 
     for x in range(4, 57):
         assert y[16, x] <= floor_at(x) + 1e-9
-        # the flat bed of a station half_width downstream is the deepest the centre may go
+        # a station half_width downstream is the deepest the centre may go (its parabola only rises from its floor)
         assert y[16, x] >= min(float(T.sample_to_height(src[16, x], world)), floor_at(x + CH["half_width"])) - 0.01
 
 
@@ -825,7 +830,10 @@ def test_cut_banks_reach_natural_ground(tmp_path):
     _run_cut(wpath, src_dir, plan)
     y = T.sample_to_height(_read(src_dir / "carved.png"), world)
     one_sample = 255.0 / 65535.0
+    hw, surface, floor = CH["half_width"], 102.0, 100.0
     for z in range(n):
         d = abs(z - 64)
-        ideal = min(150.0, 100.0 + CH["bank_slope"] * max(0.0, d - CH["half_width"]))
+        # parabola from the floor to one block under the water at the half width, then the bank slope
+        section = floor + (surface - 1 - floor) * (d / hw) ** 2 if d <= hw else surface - 1 + CH["bank_slope"] * (d - hw)
+        ideal = min(150.0, section)
         assert (y[z, 40:88] <= ideal + one_sample).all(), "bank above the slope at distance %d" % d

@@ -17,22 +17,18 @@
     "corridor_half_width": 100,
     "canal_pct": 50,
     "sea_level": 62.0,
-    "channels": {
-      "river": {
-        "half_width": 4,
-        "depth": 3,
-        "bank_slope": 1.0
-      },
-      "creek": {
-        "half_width": 2,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
-      "outflow": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      }
+    "reach_blocks": 64,
+    "grade_window_blocks": 128,
+    "tributary_km2": 0.25,
+    "character": {
+      "catchment": "D8 accumulation on the priority-flooded planning grid with every cut course burned in; a station takes the largest catchment within one cell, never less than upstream",
+      "grade": "drop of the graded surface over the reach and half a grade window either side, per block",
+      "width": "rivers: (3 + 4.5 * sqrt(catchment km2)) * speed, 3..19; on the major river the larger of that and 30 * sqrt(catchment / the course's largest dry catchment) * speed, up to 32; speed = (grade / 0.005) ** -0.2 clamped 0.75..1.3, so slow water is wider",
+      "depth": "centre depth, rivers: 1 + 1.1 * catchment ** 0.45, 1..4.5; on the major river the larger of that and 9 * (catchment / largest dry catchment) ** 0.4; the bed is a parabola to one block deep at the edge",
+      "bank_slope": "rise per run, interpolated on log10(grade) from -3.0 to -1.5: 0.4 at grade 0.001 or less, 2.0 at 0.0316 or more",
+      "bed": "GRAVEL at grade >= 0.01, SAND at >= 0.0025, CLAY (silt) below",
+      "incision": "the water surface is the lowest ground met so far minus the incision, kept non-rising: 1 block on every river, up to 8 on the major river scaled by sqrt(catchment share); never below the level the course ends in, zero on lakes, and below a lake outlet it grows at most 0.02 per block",
+      "valley": "major river reaches at least 16 wide, with grade under 0.02 and more than 150 blocks from a lake on the course: floodplain one block above the water, width 10 + 0.6 * width * sqrt(0.01 / grade) (10..48); two terraces of 5 blocks, treads 0.6 and 0.4 of the floodplain; valley wall 0.6 beyond"
     }
   },
   "lakes": [
@@ -121,22 +117,26 @@
     {
       "id": "viltris_path",
       "name": "Viltri's Path",
+      "landmark_kind": "river",
+      "graded_courses": [
+        "lake_viltri_outflow"
+      ],
       "kind": "river",
       "annotated": true,
       "ends": [
         {
           "end": "high_end",
-          "x": 1666,
-          "z": 2986,
-          "bed_y": 75.7,
+          "x": 1490,
+          "z": 3014,
+          "bed_y": 101.6,
           "at": "lake",
           "lake": "lake_viltri"
         },
         {
           "end": "low_end",
-          "x": 554,
-          "z": 4270,
-          "bed_y": 64.6,
+          "x": 674,
+          "z": 1846,
+          "bed_y": 59.1,
           "at": "sea",
           "lake": null
         }
@@ -154,9 +154,9 @@
           {
             "from": "lake_viltri",
             "from_y": 103.0,
-            "to": "sea end 554,4270",
-            "min_worst_cut": 31.5,
-            "verdict": "no river along the carve: needs a 31.5-block cut"
+            "to": "sea end 674,1846",
+            "min_worst_cut": 1.8,
+            "verdict": "water can run along the carve with a cut of up to 1.8 blocks"
           }
         ]
       }
@@ -164,6 +164,10 @@
     {
       "id": "river_of_shrews",
       "name": "River of Shrews",
+      "landmark_kind": "river",
+      "graded_courses": [
+        "river_of_shrews_from_high_end"
+      ],
       "kind": "river",
       "annotated": true,
       "ends": [
@@ -189,8 +193,7 @@
         "shrew_lake"
       ],
       "courses": [
-        "river_of_shrews_from_high_end",
-        "shrew_lake_outflow"
+        "river_of_shrews_from_high_end"
       ],
       "along_carve": {
         "band_half_width": 100,
@@ -215,7 +218,9 @@
     },
     {
       "id": "peak_pond_creek",
-      "name": "Unnamed creek into Peak Pond",
+      "name": "Dry ravine above Peak Pond",
+      "landmark_kind": "ravine",
+      "graded_courses": null,
       "kind": "creek",
       "annotated": false,
       "ends": [
@@ -267,7 +272,9 @@
     },
     {
       "id": "marsh_to_tilpey",
-      "name": "Unnamed creek from Marshy Marsh to Lake Tilpey",
+      "name": "Dry ravine, Marshy Marsh toward Lake Tilpey",
+      "landmark_kind": "ravine",
+      "graded_courses": null,
       "kind": "creek",
       "annotated": false,
       "ends": [
@@ -320,6 +327,11 @@
     {
       "id": "arrow_lake_south",
       "name": "Unnamed creek south of Arrow Lake",
+      "landmark_kind": "river",
+      "graded_courses": [
+        "arrow_lake_outflow",
+        "watering_hole_outflow"
+      ],
       "kind": "creek",
       "annotated": false,
       "ends": [
@@ -344,7 +356,8 @@
         "arrow_lake"
       ],
       "courses": [
-        "arrow_lake_outflow"
+        "arrow_lake_outflow",
+        "watering_hole_outflow"
       ],
       "along_carve": {
         "band_half_width": 100,
@@ -362,7 +375,9 @@
     },
     {
       "id": "arrow_lake_south_east_branch",
-      "name": "Unnamed creek, south-east branch",
+      "name": "Dry ravine, south-east of the Arrow Lake creek",
+      "landmark_kind": "ravine",
+      "graded_courses": null,
       "kind": "creek",
       "annotated": false,
       "ends": [
@@ -402,7 +417,11 @@
     },
     {
       "id": "tilpey_south_west_outlet",
-      "name": "Unnamed channel south-west of Lake Tilpey",
+      "name": "Creek into Lake Tilpey from the south-west",
+      "landmark_kind": "river",
+      "graded_courses": [
+        "tilpey_south_west_outlet_from_high_end"
+      ],
       "kind": "creek",
       "annotated": false,
       "ends": [
@@ -428,8 +447,7 @@
         "lake_tilpey"
       ],
       "courses": [
-        "tilpey_south_west_outlet_from_high_end",
-        "lake_tilpey_outflow"
+        "tilpey_south_west_outlet_from_high_end"
       ],
       "along_carve": {
         "band_half_width": 100,
@@ -451,8 +469,228 @@
           }
         ]
       }
+    },
+    {
+      "id": "viltri_ravine",
+      "name": "Viltri Ravine",
+      "landmark_kind": "ravine",
+      "graded_courses": null,
+      "kind": "river",
+      "annotated": true,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 1666,
+          "z": 2986,
+          "bed_y": 75.7,
+          "at": "lake",
+          "lake": "lake_viltri"
+        },
+        {
+          "end": "low_end",
+          "x": 554,
+          "z": 4270,
+          "bed_y": 64.6,
+          "at": "sea",
+          "lake": null
+        }
+      ],
+      "lakes_at_ends": [
+        "lake_viltri"
+      ],
+      "courses": [
+        "lake_viltri_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "lake_viltri",
+            "from_y": 103.0,
+            "to": "sea end 554,4270",
+            "min_worst_cut": 31.5,
+            "verdict": "no river along the carve: needs a 31.5-block cut"
+          }
+        ]
+      }
+    },
+    {
+      "id": "marsh_outflow",
+      "name": "Marsh outflow (unnamed)",
+      "landmark_kind": "river",
+      "graded_courses": [
+        "marshy_marsh_outflow"
+      ],
+      "kind": "creek",
+      "annotated": false,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 5358,
+          "z": 1806,
+          "bed_y": 97.9,
+          "at": "lake",
+          "lake": "marshy_marsh"
+        },
+        {
+          "end": "low_end",
+          "x": 5662,
+          "z": 1598,
+          "bed_y": 59.9,
+          "at": "sea",
+          "lake": null
+        }
+      ],
+      "lakes_at_ends": [
+        "marshy_marsh"
+      ],
+      "courses": [
+        "marshy_marsh_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "marshy_marsh",
+            "from_y": 100.0,
+            "to": "sea end 5662,1598",
+            "min_worst_cut": 1.6,
+            "verdict": "water can run along the carve with a cut of up to 1.6 blocks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "major_river",
+      "name": "Major river (unnamed): Merian to the east coast",
+      "landmark_kind": "river",
+      "graded_courses": [
+        "major_river_trunk",
+        "lake_tilpey_outflow"
+      ],
+      "kind": "river",
+      "annotated": true,
+      "ends": [
+        {
+          "end": "high_end",
+          "x": 2506,
+          "z": 1446,
+          "bed_y": 168.8,
+          "at": "graded_source",
+          "lake": null
+        },
+        {
+          "end": "low_end",
+          "x": 6970,
+          "z": 3970,
+          "bed_y": 53.0,
+          "at": "sea",
+          "lake": null
+        }
+      ],
+      "lakes_at_ends": [],
+      "courses": [
+        "major_river_trunk",
+        "lake_tilpey_outflow"
+      ],
+      "along_carve": {
+        "band_half_width": 100,
+        "basis": "4-block grid, inside the band around the carved axis",
+        "directions": [
+          {
+            "from": "graded_source end 2506,1446",
+            "from_y": 170.9,
+            "to": "sea end 6970,3970",
+            "min_worst_cut": 0.8,
+            "verdict": "water can run along the carve with a cut of up to 0.8 blocks"
+          }
+        ]
+      }
     }
   ],
+  "major_river": {
+    "selection": "the coastal system with the largest catchment; its trunk runs from the head of the system's longest descending flow path to the sea",
+    "systems_ranked": [
+      {
+        "mouth": {
+          "x": 6964,
+          "z": 3964
+        },
+        "catchment_km2": 14.03,
+        "longest_descending_path_blocks": 3389,
+        "tributaries": 8,
+        "head": {
+          "x": 2504,
+          "z": 1444,
+          "ground_y": 170.9
+        },
+        "path_basis": "farthest ground falling without a rise to lake_tilpey_outflow, lake_tilpey"
+      },
+      {
+        "mouth": {
+          "x": 2584,
+          "z": 6492
+        },
+        "catchment_km2": 4.73,
+        "longest_descending_path_blocks": 2862,
+        "tributaries": 4,
+        "head": {
+          "x": 3528,
+          "z": 3916,
+          "ground_y": 140.5
+        },
+        "path_basis": "farthest ground falling without a rise to watering_hole_outflow, watering_hole"
+      },
+      {
+        "mouth": {
+          "x": 676,
+          "z": 1848
+        },
+        "catchment_km2": 3.36,
+        "longest_descending_path_blocks": 2550,
+        "tributaries": 3,
+        "head": {
+          "x": 2304,
+          "z": 720,
+          "ground_y": 199.7
+        },
+        "path_basis": "farthest ground falling without a rise to lake_viltri_outflow, lake_viltri"
+      },
+      {
+        "mouth": {
+          "x": 2768,
+          "z": 6616
+        },
+        "catchment_km2": 1.0,
+        "longest_descending_path_blocks": null,
+        "tributaries": 0,
+        "head": null
+      },
+      {
+        "mouth": {
+          "x": 5660,
+          "z": 1600
+        },
+        "catchment_km2": 0.99,
+        "longest_descending_path_blocks": null,
+        "tributaries": 2,
+        "head": null
+      }
+    ],
+    "chosen_rank_by": {
+      "catchment_km2": 1,
+      "longest_descending_path_blocks": 1,
+      "tributaries": 1
+    },
+    "metrics_agree": true,
+    "courses": [
+      "major_river_trunk",
+      "lake_tilpey_outflow"
+    ],
+    "mouth_catchment_km2": 14.05
+  },
   "courses": [
     {
       "id": "lake_tilpey_outflow",
@@ -462,11 +700,7 @@
         "lake": "lake_tilpey",
         "level_y": 77.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "major",
       "min_worst_cut": 0.8,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -498,73 +732,79 @@
           6638,
           3922,
           77.0,
-          75.0
+          68.0
         ],
         [
           6654,
           3922,
-          77.0,
-          75.0
+          76.76,
+          67.76
         ],
         [
           6670,
           3938,
-          77.0,
-          75.0
+          76.31,
+          67.31
         ],
         [
           6734,
           3938,
-          77.0,
-          75.0
+          75.03,
+          66.03
         ],
         [
           6754,
           3958,
-          76.97,
-          74.97
+          74.43,
+          65.43
         ],
         [
           6766,
           3958,
-          76.66,
-          74.66
+          73.89,
+          64.89
         ],
         [
           6770,
           3962,
-          76.61,
-          74.61
+          73.72,
+          64.72
         ],
         [
-          6889,
+          6885,
           3962,
-          70.07,
-          68.07
+          65.12,
+          56.12
+        ],
+        [
+          6917,
+          3962,
+          62.0,
+          53.0
         ],
         [
           6942,
           3962,
-          65.47,
-          63.47
+          62.0,
+          53.0
         ],
         [
           6946,
           3966,
-          64.83,
-          62.83
+          62.0,
+          53.0
         ],
         [
           6966,
           3966,
-          62.43,
-          60.43
+          62.0,
+          53.0
         ],
         [
           6970,
           3970,
           62.0,
-          60.0
+          53.0
         ]
       ],
       "graded_polyline_fields": [
@@ -572,7 +812,118 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 4,
+          "catchment_km2": 13.95,
+          "grade": 0.0001,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 32,
+          "depth": 9.0,
+          "incision": 8.0,
+          "valley_omitted": "within 150 blocks of a lake"
+        },
+        {
+          "from_m": 4,
+          "to_m": 69,
+          "catchment_km2": 13.96,
+          "grade": 0.0005,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 32,
+          "depth": 9.0,
+          "incision": 8.0,
+          "valley_omitted": "within 150 blocks of a lake"
+        },
+        {
+          "from_m": 69,
+          "to_m": 133,
+          "catchment_km2": 13.992,
+          "grade": 0.0163,
+          "water_body": false,
+          "bank_slope": 1.69,
+          "bed": "GRAVEL",
+          "width": 24,
+          "depth": 9.0,
+          "incision": 8.0,
+          "valley_omitted": "within 150 blocks of a lake"
+        },
+        {
+          "from_m": 133,
+          "to_m": 198,
+          "catchment_km2": 13.995,
+          "grade": 0.0342,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 22,
+          "depth": 9.0,
+          "incision": 8.0
+        },
+        {
+          "from_m": 198,
+          "to_m": 263,
+          "catchment_km2": 14.029,
+          "grade": 0.0629,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 22,
+          "depth": 9.0,
+          "incision": 8.0
+        },
+        {
+          "from_m": 263,
+          "to_m": 327,
+          "catchment_km2": 14.044,
+          "grade": 0.0768,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 22,
+          "depth": 9.0,
+          "incision": 8.0
+        },
+        {
+          "from_m": 327,
+          "to_m": 352,
+          "catchment_km2": 14.048,
+          "grade": 0.0937,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 22,
+          "depth": 9.0,
+          "incision": 8.0
+        }
+      ],
+      "character": {
+        "width": [
+          22,
+          32
+        ],
+        "depth": [
+          9.0,
+          9.0
+        ],
+        "bank_slope": [
+          0.4,
+          2.0
+        ],
+        "catchment_km2": [
+          13.96,
+          14.048
+        ],
+        "bed_share_pct": {
+          "CLAY": 19,
+          "GRAVEL": 81
+        }
+      }
     },
     {
       "id": "watering_hole_outflow",
@@ -582,11 +933,7 @@
         "lake": "watering_hole",
         "level_y": 95.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "outflow",
       "min_worst_cut": 0.9,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -618,181 +965,187 @@
           3030,
           5414,
           95.0,
-          93.0
+          91.9
         ],
         [
           3030,
           5422,
-          95.0,
-          93.0
+          94.92,
+          91.82
         ],
         [
           3034,
           5426,
-          95.0,
-          93.0
+          94.81,
+          91.71
         ],
         [
           3042,
           5446,
-          95.0,
-          93.0
+          94.34,
+          91.24
         ],
         [
           3054,
           5458,
-          95.0,
-          93.0
+          94.0,
+          90.9
         ],
         [
           3054,
           5462,
-          95.0,
-          93.0
+          94.0,
+          90.9
         ],
         [
           3062,
           5474,
-          94.82,
-          92.82
+          93.82,
+          90.72
         ],
         [
           3062,
           5486,
-          94.43,
-          92.43
+          93.43,
+          90.33
         ],
         [
           3066,
           5490,
-          94.09,
-          92.09
+          93.09,
+          89.99
         ],
         [
           3066,
           5534,
-          93.94,
-          91.94
+          92.94,
+          89.84
         ],
         [
           3070,
           5538,
-          93.94,
-          91.94
+          92.94,
+          89.84
         ],
         [
           3070,
           5546,
-          93.94,
-          91.94
+          92.94,
+          89.84
         ],
         [
           3078,
           5554,
-          93.65,
-          91.65
+          92.65,
+          89.55
         ],
         [
           3078,
           5558,
-          93.65,
-          91.65
+          92.65,
+          89.55
         ],
         [
           3086,
           5570,
-          93.53,
-          91.53
+          92.53,
+          89.43
         ],
         [
           3086,
           5607,
-          93.52,
-          91.52
+          92.52,
+          89.42
         ],
         [
           3086,
           5662,
-          91.64,
-          89.64
+          90.64,
+          87.54
         ],
         [
           3054,
           5694,
-          91.37,
-          89.37
+          90.37,
+          87.27
         ],
         [
           3054,
           5840,
-          90.36,
-          88.36
+          89.36,
+          86.16
         ],
         [
           3054,
           5854,
-          89.48,
-          87.48
+          88.48,
+          85.28
         ],
         [
           3022,
           5886,
-          89.48,
-          87.48
+          88.48,
+          85.28
         ],
         [
           3022,
           5902,
-          88.56,
-          86.56
+          87.56,
+          84.36
         ],
         [
           3006,
           5918,
-          88.56,
-          86.56
+          87.56,
+          84.36
         ],
         [
           3006,
           6062,
-          86.95,
-          84.95
+          85.95,
+          82.75
         ],
         [
           2894,
           6174,
-          85.18,
-          83.18
+          84.18,
+          80.98
         ],
         [
           2894,
           6182,
-          84.82,
-          82.82
+          83.82,
+          80.62
         ],
         [
           2857,
           6219,
-          84.8,
-          82.8
+          83.8,
+          80.6
         ],
         [
           2727,
           6349,
-          79.61,
-          77.61
+          78.61,
+          75.41
         ],
         [
-          2635,
-          6441,
-          71.37,
-          69.37
+          2638,
+          6438,
+          70.73,
+          67.53
+        ],
+        [
+          2588,
+          6488,
+          62.0,
+          58.8
         ],
         [
           2582,
           6494,
           62.0,
-          60.0
+          58.8
         ]
       ],
       "graded_polyline_fields": [
@@ -800,7 +1153,295 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 4,
+          "catchment_km2": 4.342,
+          "grade": 0.0001,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 16,
+          "depth": 3.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 4,
+          "to_m": 69,
+          "catchment_km2": 4.347,
+          "grade": 0.0079,
+          "water_body": false,
+          "bank_slope": 1.36,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 3.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 69,
+          "to_m": 134,
+          "catchment_km2": 4.351,
+          "grade": 0.0076,
+          "water_body": false,
+          "bank_slope": 1.34,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 3.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 134,
+          "to_m": 197,
+          "catchment_km2": 4.353,
+          "grade": 0.0159,
+          "water_body": false,
+          "bank_slope": 1.68,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 197,
+          "to_m": 261,
+          "catchment_km2": 4.356,
+          "grade": 0.0137,
+          "water_body": false,
+          "bank_slope": 1.61,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 261,
+          "to_m": 325,
+          "catchment_km2": 4.386,
+          "grade": 0.0153,
+          "water_body": false,
+          "bank_slope": 1.66,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 325,
+          "to_m": 389,
+          "catchment_km2": 4.408,
+          "grade": 0.0081,
+          "water_body": false,
+          "bank_slope": 1.37,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 3.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 389,
+          "to_m": 453,
+          "catchment_km2": 4.501,
+          "grade": 0.0095,
+          "water_body": false,
+          "bank_slope": 1.44,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 453,
+          "to_m": 518,
+          "catchment_km2": 4.506,
+          "grade": 0.0121,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 11,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 518,
+          "to_m": 581,
+          "catchment_km2": 4.531,
+          "grade": 0.0151,
+          "water_body": false,
+          "bank_slope": 1.66,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 581,
+          "to_m": 645,
+          "catchment_km2": 4.556,
+          "grade": 0.0132,
+          "water_body": false,
+          "bank_slope": 1.59,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 645,
+          "to_m": 709,
+          "catchment_km2": 4.56,
+          "grade": 0.0107,
+          "water_body": false,
+          "bank_slope": 1.5,
+          "bed": "GRAVEL",
+          "width": 11,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 709,
+          "to_m": 774,
+          "catchment_km2": 4.567,
+          "grade": 0.0116,
+          "water_body": false,
+          "bank_slope": 1.53,
+          "bed": "GRAVEL",
+          "width": 11,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 774,
+          "to_m": 840,
+          "catchment_km2": 4.571,
+          "grade": 0.0109,
+          "water_body": false,
+          "bank_slope": 1.51,
+          "bed": "GRAVEL",
+          "width": 11,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 840,
+          "to_m": 904,
+          "catchment_km2": 4.621,
+          "grade": 0.0156,
+          "water_body": false,
+          "bank_slope": 1.67,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 904,
+          "to_m": 968,
+          "catchment_km2": 4.633,
+          "grade": 0.0176,
+          "water_body": false,
+          "bank_slope": 1.73,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 968,
+          "to_m": 1033,
+          "catchment_km2": 4.66,
+          "grade": 0.0256,
+          "water_body": false,
+          "bank_slope": 1.9,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1033,
+          "to_m": 1098,
+          "catchment_km2": 4.67,
+          "grade": 0.039,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1098,
+          "to_m": 1163,
+          "catchment_km2": 4.716,
+          "grade": 0.0509,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1163,
+          "to_m": 1228,
+          "catchment_km2": 4.731,
+          "grade": 0.0809,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1228,
+          "to_m": 1292,
+          "catchment_km2": 4.732,
+          "grade": 0.0929,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1292,
+          "to_m": 1308,
+          "catchment_km2": 4.732,
+          "grade": 0.1221,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 10,
+          "depth": 3.2,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          10,
+          11
+        ],
+        "depth": [
+          3.1,
+          3.2
+        ],
+        "bank_slope": [
+          1.34,
+          2.0
+        ],
+        "catchment_km2": [
+          4.347,
+          4.732
+        ],
+        "bed_share_pct": {
+          "GRAVEL": 80,
+          "SAND": 20
+        }
+      }
     },
     {
       "id": "arrow_lake_outflow",
@@ -810,11 +1451,7 @@
         "lake": "arrow_lake",
         "level_y": 100.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "outflow",
       "min_worst_cut": 1.2,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -847,121 +1484,115 @@
           2914,
           4830,
           100.0,
-          98.0
+          97.2
         ],
         [
           2914,
           4846,
-          100.0,
-          98.0
+          99.76,
+          96.96
         ],
         [
           2930,
           4862,
-          100.0,
-          98.0
+          99.31,
+          96.51
         ],
         [
           2930,
           4942,
-          99.5,
-          97.5
+          98.5,
+          95.7
         ],
         [
           2950,
           4962,
-          99.31,
-          97.31
+          98.31,
+          95.51
         ],
         [
           2950,
           4974,
-          99.01,
-          97.01
+          98.01,
+          95.21
         ],
         [
           2954,
           4978,
-          99.0,
-          97.0
+          98.0,
+          95.2
         ],
         [
           2954,
           4986,
-          99.0,
-          97.0
+          98.0,
+          95.2
         ],
         [
           2958,
           4990,
-          99.0,
-          97.0
+          98.0,
+          95.2
         ],
         [
           2958,
           5010,
-          98.92,
-          96.92
+          97.92,
+          95.12
         ],
         [
           2962,
           5014,
-          98.92,
-          96.92
+          97.92,
+          95.12
         ],
         [
           2962,
           5026,
-          98.52,
-          96.52
+          97.52,
+          94.72
         ],
         [
           2966,
           5030,
-          98.52,
-          96.52
+          97.52,
+          94.72
         ],
         [
           2966,
           5070,
-          98.46,
-          96.46
+          97.46,
+          94.61
         ],
         [
           2962,
           5074,
-          98.35,
-          96.35
+          97.35,
+          94.49
         ],
         [
           2962,
           5086,
-          98.35,
-          96.35
+          97.35,
+          94.48
         ],
         [
           2958,
           5090,
-          98.28,
-          96.28
+          97.28,
+          94.39
         ],
         [
           2958,
           5126,
-          98.24,
-          96.24
-        ],
-        [
-          2958,
-          5143,
-          97.3,
-          95.3
+          97.24,
+          94.34
         ],
         [
           2958,
           5166,
           94.47,
-          92.47
+          91.57
         ]
       ],
       "graded_polyline_fields": [
@@ -969,7 +1600,115 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 4,
+          "catchment_km2": 3.03,
+          "grade": 0.0001,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 14,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 4,
+          "to_m": 69,
+          "catchment_km2": 3.035,
+          "grade": 0.0047,
+          "water_body": false,
+          "bank_slope": 1.12,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 69,
+          "to_m": 133,
+          "catchment_km2": 3.045,
+          "grade": 0.0052,
+          "water_body": false,
+          "bank_slope": 1.17,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 133,
+          "to_m": 197,
+          "catchment_km2": 3.052,
+          "grade": 0.008,
+          "water_body": false,
+          "bank_slope": 1.36,
+          "bed": "SAND",
+          "width": 10,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 197,
+          "to_m": 262,
+          "catchment_km2": 3.093,
+          "grade": 0.0067,
+          "water_body": false,
+          "bank_slope": 1.28,
+          "bed": "SAND",
+          "width": 10,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 262,
+          "to_m": 326,
+          "catchment_km2": 3.178,
+          "grade": 0.0276,
+          "water_body": false,
+          "bank_slope": 1.94,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 326,
+          "to_m": 361,
+          "catchment_km2": 3.179,
+          "grade": 0.0401,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.9,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          8,
+          11
+        ],
+        "depth": [
+          2.8,
+          2.9
+        ],
+        "bank_slope": [
+          1.12,
+          2.0
+        ],
+        "catchment_km2": [
+          3.035,
+          3.179
+        ],
+        "bed_share_pct": {
+          "GRAVEL": 28,
+          "SAND": 72
+        }
+      }
     },
     {
       "id": "marshy_marsh_outflow",
@@ -979,11 +1718,7 @@
         "lake": "marshy_marsh",
         "level_y": 100.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "outflow",
       "min_worst_cut": 1.6,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -1015,49 +1750,55 @@
           5358,
           1806,
           100.0,
-          98.0
+          97.9
         ],
         [
           5462,
           1806,
-          100.0,
-          98.0
+          99.0,
+          96.9
         ],
         [
           5510,
           1758,
-          100.0,
-          98.0
+          99.0,
+          96.9
         ],
         [
           5565,
           1703,
-          92.19,
-          90.19
+          91.19,
+          89.09
         ],
         [
           5596,
           1672,
-          85.67,
-          83.67
+          84.67,
+          82.57
         ],
         [
           5650,
           1618,
-          67.87,
-          65.87
+          66.87,
+          64.77
         ],
         [
           5650,
           1610,
-          66.15,
-          64.15
+          65.15,
+          63.05
+        ],
+        [
+          5658,
+          1602,
+          62.03,
+          59.93
         ],
         [
           5662,
           1598,
           62.0,
-          60.0
+          59.9
         ]
       ],
       "graded_polyline_fields": [
@@ -1065,7 +1806,127 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 4,
+          "catchment_km2": 0.978,
+          "grade": 0.0001,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 4,
+          "to_m": 68,
+          "catchment_km2": 0.98,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 68,
+          "to_m": 132,
+          "catchment_km2": 0.982,
+          "grade": 0.0114,
+          "water_body": false,
+          "bank_slope": 1.53,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 132,
+          "to_m": 197,
+          "catchment_km2": 0.987,
+          "grade": 0.0492,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 197,
+          "to_m": 262,
+          "catchment_km2": 0.989,
+          "grade": 0.1151,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 262,
+          "to_m": 327,
+          "catchment_km2": 0.99,
+          "grade": 0.1826,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 327,
+          "to_m": 392,
+          "catchment_km2": 0.991,
+          "grade": 0.2148,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 392,
+          "to_m": 395,
+          "catchment_km2": 0.991,
+          "grade": 0.2304,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          6,
+          10
+        ],
+        "depth": [
+          2.1,
+          2.1
+        ],
+        "bank_slope": [
+          0.4,
+          2.0
+        ],
+        "catchment_km2": [
+          0.98,
+          0.991
+        ],
+        "bed_share_pct": {
+          "CLAY": 16,
+          "GRAVEL": 84
+        }
+      }
     },
     {
       "id": "lake_viltri_outflow",
@@ -1075,11 +1936,7 @@
         "lake": "lake_viltri",
         "level_y": 103.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "outflow",
       "min_worst_cut": 1.8,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -1111,355 +1968,361 @@
           1490,
           3014,
           103.0,
-          101.0
+          101.6
         ],
         [
           1486,
           3018,
           103.0,
-          101.0
+          101.6
         ],
         [
           1442,
           3018,
-          103.0,
-          101.0
+          102.12,
+          100.7
         ],
         [
           1438,
           3022,
-          103.0,
-          101.0
+          102.01,
+          100.58
         ],
         [
           1426,
           3022,
-          103.0,
-          101.0
+          102.0,
+          100.55
         ],
         [
           1422,
           3026,
-          103.0,
-          101.0
+          102.0,
+          100.55
         ],
         [
           1410,
           3026,
-          103.0,
-          101.0
+          102.0,
+          100.53
         ],
         [
           1406,
           3030,
-          103.0,
-          101.0
+          102.0,
+          100.52
         ],
         [
           1370,
           3030,
-          102.91,
-          100.91
+          101.91,
+          100.41
         ],
         [
           1362,
           3022,
-          102.91,
-          100.91
+          101.91,
+          100.41
+        ],
+        [
+          1327,
+          3022,
+          101.89,
+          100.35
         ],
         [
           1314,
           3022,
-          102.25,
-          100.25
+          101.25,
+          99.61
         ],
         [
           1294,
           3002,
-          101.16,
-          99.16
+          100.16,
+          98.3
         ],
         [
           1294,
           2998,
-          101.16,
-          99.16
+          100.16,
+          98.27
         ],
         [
           1270,
           2974,
-          101.12,
-          99.12
+          100.12,
+          98.12
         ],
         [
           1266,
           2974,
-          101.12,
-          99.12
+          100.12,
+          98.12
         ],
         [
           1246,
           2954,
-          101.12,
-          99.12
+          100.12,
+          98.12
         ],
         [
           1242,
           2954,
-          101.12,
-          99.12
+          100.12,
+          98.12
         ],
         [
           1222,
           2934,
-          101.12,
-          99.12
+          100.12,
+          98.12
         ],
         [
           1222,
           2930,
-          101.12,
-          99.12
+          100.12,
+          98.12
         ],
         [
           1210,
           2918,
-          101.12,
-          99.12
+          100.12,
+          98.12
         ],
         [
           1162,
           2870,
-          99.3,
-          97.3
+          98.3,
+          96.3
         ],
         [
           1154,
           2870,
-          99.12,
-          97.12
+          98.12,
+          96.12
         ],
         [
           1150,
           2866,
-          98.67,
-          96.67
+          97.67,
+          95.67
         ],
         [
           1138,
           2866,
-          98.28,
-          96.28
+          97.28,
+          95.28
         ],
         [
           1134,
           2862,
-          97.79,
-          95.79
+          96.79,
+          94.79
         ],
         [
           1122,
           2862,
-          97.36,
-          95.36
+          96.36,
+          94.36
         ],
         [
           1118,
           2858,
-          97.08,
-          95.08
+          96.08,
+          94.08
         ],
         [
           1106,
           2858,
-          97.03,
-          95.03
+          96.03,
+          94.03
         ],
         [
           1102,
           2854,
-          96.86,
-          94.86
+          95.86,
+          93.86
         ],
         [
           1090,
           2854,
-          96.81,
-          94.81
+          95.81,
+          93.81
         ],
         [
           1054,
           2818,
-          94.94,
-          92.94
+          93.94,
+          91.87
         ],
         [
           1042,
           2818,
-          94.94,
-          92.94
+          93.94,
+          91.85
         ],
         [
           1038,
           2814,
-          94.88,
-          92.88
+          93.88,
+          91.79
         ],
         [
           1038,
           2789,
-          93.35,
-          91.35
+          92.35,
+          90.25
         ],
         [
           1038,
           2754,
-          93.03,
-          91.03
+          92.03,
+          89.93
         ],
         [
           1042,
           2750,
-          92.94,
-          90.94
+          91.94,
+          89.84
         ],
         [
           1042,
           2746,
-          92.94,
-          90.94
+          91.94,
+          89.84
         ],
         [
           1050,
           2738,
-          92.77,
-          90.77
+          91.77,
+          89.67
         ],
         [
           1050,
           2710,
-          92.77,
-          90.77
+          91.77,
+          89.67
         ],
         [
           1086,
           2674,
-          92.65,
-          90.65
+          91.65,
+          89.55
         ],
         [
           1086,
           2514,
-          92.65,
-          90.65
+          91.65,
+          89.55
         ],
         [
           1066,
           2494,
-          92.57,
-          90.57
+          91.57,
+          89.47
         ],
         [
           1066,
           2426,
-          92.4,
-          90.4
+          91.4,
+          89.3
         ],
         [
           1038,
           2398,
-          92.4,
-          90.4
+          91.4,
+          89.3
         ],
         [
           1038,
           2342,
-          92.14,
-          90.14
+          91.14,
+          89.04
         ],
         [
           1006,
           2306,
-          92.14,
-          90.14
+          91.14,
+          89.04
         ],
         [
           1006,
           2274,
-          91.62,
-          89.62
+          90.62,
+          88.52
         ],
         [
           974,
           2242,
-          91.52,
-          89.52
+          90.52,
+          88.42
         ],
         [
           974,
           2178,
-          90.81,
-          88.81
+          89.81,
+          87.71
         ],
         [
-          883,
-          2087,
-          90.1,
-          88.1
+          902,
+          2106,
+          89.37,
+          86.96
         ],
         [
-          867,
-          2071,
-          89.65,
-          87.65
+          868,
+          2072,
+          88.71,
+          85.81
         ],
         [
           848,
           2052,
-          88.0,
-          86.0
+          87.0,
+          84.1
         ],
         [
           814,
           2018,
-          87.89,
-          85.89
+          86.89,
+          83.99
         ],
         [
           814,
           1986,
-          87.53,
-          85.53
+          86.53,
+          83.63
         ],
         [
           799,
           1971,
-          87.47,
-          85.47
+          86.47,
+          83.57
         ],
         [
-          758,
-          1930,
-          82.72,
-          80.72
-        ],
-        [
-          739,
-          1911,
-          79.69,
-          77.69
+          741,
+          1913,
+          79.09,
+          76.19
         ],
         [
           716,
           1888,
-          74.03,
-          72.03
+          73.03,
+          70.13
+        ],
+        [
+          679,
+          1851,
+          62.18,
+          59.28
         ],
         [
           674,
           1846,
           62.0,
-          60.0
+          59.1
         ]
       ],
       "graded_polyline_fields": [
@@ -1467,7 +2330,368 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 6,
+          "catchment_km2": 0.131,
+          "grade": 0.0001,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 6,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 6,
+          "to_m": 70,
+          "catchment_km2": 0.136,
+          "grade": 0.0007,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 6,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 70,
+          "to_m": 135,
+          "catchment_km2": 0.145,
+          "grade": 0.0046,
+          "water_body": false,
+          "bank_slope": 1.11,
+          "bed": "SAND",
+          "width": 5,
+          "depth": 1.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 135,
+          "to_m": 200,
+          "catchment_km2": 0.147,
+          "grade": 0.0097,
+          "water_body": false,
+          "bank_slope": 1.45,
+          "bed": "SAND",
+          "width": 4,
+          "depth": 1.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 200,
+          "to_m": 265,
+          "catchment_km2": 0.83,
+          "grade": 0.0092,
+          "water_body": false,
+          "bank_slope": 1.43,
+          "bed": "SAND",
+          "width": 6,
+          "depth": 2.0,
+          "incision": 1.0
+        },
+        {
+          "from_m": 265,
+          "to_m": 329,
+          "catchment_km2": 0.831,
+          "grade": 0.011,
+          "water_body": false,
+          "bank_slope": 1.51,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.0,
+          "incision": 1.0
+        },
+        {
+          "from_m": 329,
+          "to_m": 394,
+          "catchment_km2": 0.834,
+          "grade": 0.0209,
+          "water_body": false,
+          "bank_slope": 1.81,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 2.0,
+          "incision": 1.0
+        },
+        {
+          "from_m": 394,
+          "to_m": 459,
+          "catchment_km2": 0.84,
+          "grade": 0.0286,
+          "water_body": false,
+          "bank_slope": 1.95,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 2.0,
+          "incision": 1.0
+        },
+        {
+          "from_m": 459,
+          "to_m": 524,
+          "catchment_km2": 0.848,
+          "grade": 0.0352,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 2.0,
+          "incision": 1.0
+        },
+        {
+          "from_m": 524,
+          "to_m": 589,
+          "catchment_km2": 0.912,
+          "grade": 0.0221,
+          "water_body": false,
+          "bank_slope": 1.83,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 589,
+          "to_m": 654,
+          "catchment_km2": 0.933,
+          "grade": 0.0149,
+          "water_body": false,
+          "bank_slope": 1.65,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 654,
+          "to_m": 719,
+          "catchment_km2": 0.94,
+          "grade": 0.0024,
+          "water_body": false,
+          "bank_slope": 0.8,
+          "bed": "CLAY",
+          "width": 9,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 719,
+          "to_m": 783,
+          "catchment_km2": 0.943,
+          "grade": 0.0006,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 783,
+          "to_m": 846,
+          "catchment_km2": 0.974,
+          "grade": 0.0012,
+          "water_body": false,
+          "bank_slope": 0.48,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 846,
+          "to_m": 910,
+          "catchment_km2": 0.978,
+          "grade": 0.0013,
+          "water_body": false,
+          "bank_slope": 0.51,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 910,
+          "to_m": 975,
+          "catchment_km2": 0.981,
+          "grade": 0.0013,
+          "water_body": false,
+          "bank_slope": 0.51,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 975,
+          "to_m": 1040,
+          "catchment_km2": 1.037,
+          "grade": 0.0014,
+          "water_body": false,
+          "bank_slope": 0.56,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1040,
+          "to_m": 1104,
+          "catchment_km2": 1.039,
+          "grade": 0.0046,
+          "water_body": false,
+          "bank_slope": 1.1,
+          "bed": "SAND",
+          "width": 8,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1104,
+          "to_m": 1169,
+          "catchment_km2": 1.061,
+          "grade": 0.0054,
+          "water_body": false,
+          "bank_slope": 1.18,
+          "bed": "SAND",
+          "width": 8,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1169,
+          "to_m": 1233,
+          "catchment_km2": 1.072,
+          "grade": 0.0092,
+          "water_body": false,
+          "bank_slope": 1.43,
+          "bed": "SAND",
+          "width": 7,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1233,
+          "to_m": 1298,
+          "catchment_km2": 1.078,
+          "grade": 0.0064,
+          "water_body": false,
+          "bank_slope": 1.26,
+          "bed": "SAND",
+          "width": 7,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1298,
+          "to_m": 1363,
+          "catchment_km2": 1.083,
+          "grade": 0.0165,
+          "water_body": false,
+          "bank_slope": 1.7,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1363,
+          "to_m": 1428,
+          "catchment_km2": 3.191,
+          "grade": 0.0141,
+          "water_body": false,
+          "bank_slope": 1.63,
+          "bed": "GRAVEL",
+          "width": 9,
+          "depth": 2.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1428,
+          "to_m": 1492,
+          "catchment_km2": 3.199,
+          "grade": 0.0244,
+          "water_body": false,
+          "bank_slope": 1.88,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1492,
+          "to_m": 1558,
+          "catchment_km2": 3.346,
+          "grade": 0.0467,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1558,
+          "to_m": 1623,
+          "catchment_km2": 3.347,
+          "grade": 0.1081,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1623,
+          "to_m": 1688,
+          "catchment_km2": 3.348,
+          "grade": 0.1541,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1688,
+          "to_m": 1710,
+          "catchment_km2": 3.348,
+          "grade": 0.1944,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.9,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          4,
+          10
+        ],
+        "depth": [
+          1.4,
+          2.9
+        ],
+        "bank_slope": [
+          0.4,
+          2.0
+        ],
+        "catchment_km2": [
+          0.136,
+          3.348
+        ],
+        "bed_share_pct": {
+          "CLAY": 26,
+          "GRAVEL": 47,
+          "SAND": 27
+        }
+      }
     },
     {
       "id": "peak_pond_outflow",
@@ -1477,11 +2701,7 @@
         "lake": "peak_pond",
         "level_y": 105.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "outflow",
       "min_worst_cut": 1.1,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -1513,103 +2733,91 @@
           4114,
           1326,
           105.0,
-          103.0
+          103.2
         ],
         [
           4126,
           1326,
-          105.0,
-          103.0
+          104.84,
+          103.04
         ],
         [
           4158,
           1294,
-          105.0,
-          103.0
+          104.0,
+          102.17
         ],
         [
           4186,
           1294,
-          105.0,
-          103.0
+          104.0,
+          102.12
         ],
         [
           4210,
           1270,
-          105.0,
-          103.0
+          104.0,
+          102.1
         ],
         [
           4210,
           1266,
-          105.0,
-          103.0
+          104.0,
+          102.1
         ],
         [
           4294,
           1182,
-          105.0,
-          103.0
+          104.0,
+          102.1
         ],
         [
           4322,
           1154,
-          101.74,
-          99.74
+          100.74,
+          98.84
         ],
         [
           4322,
           1138,
-          101.05,
-          99.05
+          100.05,
+          98.15
         ],
         [
           4324,
           1136,
-          100.83,
-          98.83
+          99.83,
+          97.93
         ],
         [
-          4377,
-          1083,
-          90.87,
-          88.87
+          4401,
+          1059,
+          86.07,
+          84.17
         ],
         [
-          4399,
-          1061,
-          87.48,
-          85.48
-        ],
-        [
-          4432,
-          1028,
-          80.12,
-          78.12
-        ],
-        [
-          4456,
-          1004,
-          74.32,
-          72.32
+          4447,
+          1013,
+          75.67,
+          73.77
         ],
         [
           4490,
           970,
-          63.75,
-          61.75
+          62.75,
+          60.85
         ],
         [
           4494,
           970,
-          63.12,
-          61.12
+          62.12,
+          60.22
         ],
         [
           4498,
           966,
           62.0,
-          60.0
+          60.1
         ]
       ],
       "graded_polyline_fields": [
@@ -1617,7 +2825,152 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 4,
+          "catchment_km2": 0.546,
+          "grade": 0.0001,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 8,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 4,
+          "to_m": 68,
+          "catchment_km2": 0.548,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 8,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 68,
+          "to_m": 133,
+          "catchment_km2": 0.628,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 9,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 133,
+          "to_m": 198,
+          "catchment_km2": 0.642,
+          "grade": 0.0079,
+          "water_body": false,
+          "bank_slope": 1.36,
+          "bed": "SAND",
+          "width": 6,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 198,
+          "to_m": 263,
+          "catchment_km2": 0.643,
+          "grade": 0.0401,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 263,
+          "to_m": 327,
+          "catchment_km2": 0.645,
+          "grade": 0.0812,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 327,
+          "to_m": 392,
+          "catchment_km2": 0.646,
+          "grade": 0.1239,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 392,
+          "to_m": 457,
+          "catchment_km2": 0.655,
+          "grade": 0.1558,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 457,
+          "to_m": 522,
+          "catchment_km2": 0.656,
+          "grade": 0.1786,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 522,
+          "to_m": 545,
+          "catchment_km2": 0.656,
+          "grade": 0.1991,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          5,
+          9
+        ],
+        "depth": [
+          1.8,
+          1.9
+        ],
+        "bank_slope": [
+          0.4,
+          2.0
+        ],
+        "catchment_km2": [
+          0.548,
+          0.656
+        ],
+        "bed_share_pct": {
+          "CLAY": 24,
+          "GRAVEL": 64,
+          "SAND": 12
+        }
+      }
     },
     {
       "id": "shrew_lake_outflow",
@@ -1627,11 +2980,7 @@
         "lake": "shrew_lake",
         "level_y": 106.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "outflow",
       "min_worst_cut": 1.3,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -1664,37 +3013,43 @@
           2358,
           4506,
           106.0,
-          104.0
+          103.3
         ],
         [
           2382,
           4530,
-          106.0,
-          104.0
+          105.43,
+          102.73
         ],
         [
           2453,
           4530,
-          106.0,
-          104.0
+          105.0,
+          102.3
         ],
         [
           2494,
           4530,
-          104.84,
-          102.84
+          103.84,
+          101.14
         ],
         [
-          2530,
-          4566,
-          103.23,
-          101.23
+          2526,
+          4562,
+          102.53,
+          99.83
+        ],
+        [
+          2547,
+          4583,
+          99.91,
+          97.21
         ],
         [
           2554,
           4590,
           99.91,
-          97.91
+          97.21
         ]
       ],
       "graded_polyline_fields": [
@@ -1702,7 +3057,91 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 6,
+          "catchment_km2": 2.476,
+          "grade": 0.0001,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 13,
+          "depth": 2.7,
+          "incision": 1.0
+        },
+        {
+          "from_m": 6,
+          "to_m": 70,
+          "catchment_km2": 2.478,
+          "grade": 0.0066,
+          "water_body": false,
+          "bank_slope": 1.28,
+          "bed": "SAND",
+          "width": 10,
+          "depth": 2.7,
+          "incision": 1.0
+        },
+        {
+          "from_m": 70,
+          "to_m": 134,
+          "catchment_km2": 2.481,
+          "grade": 0.0149,
+          "water_body": false,
+          "bank_slope": 1.65,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.7,
+          "incision": 1.0
+        },
+        {
+          "from_m": 134,
+          "to_m": 198,
+          "catchment_km2": 2.491,
+          "grade": 0.0378,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.7,
+          "incision": 1.0
+        },
+        {
+          "from_m": 198,
+          "to_m": 231,
+          "catchment_km2": 2.493,
+          "grade": 0.0537,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 8,
+          "depth": 2.7,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          8,
+          10
+        ],
+        "depth": [
+          2.7,
+          2.7
+        ],
+        "bank_slope": [
+          1.28,
+          2.0
+        ],
+        "catchment_km2": [
+          2.478,
+          2.493
+        ],
+        "bed_share_pct": {
+          "GRAVEL": 72,
+          "SAND": 28
+        }
+      }
     },
     {
       "id": "pond_west_of_mt_clay_outflow",
@@ -1712,11 +3151,7 @@
         "lake": "pond_west_of_mt_clay",
         "level_y": 119.0
       },
-      "channel": {
-        "half_width": 3,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "outflow",
       "min_worst_cut": 1.1,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -1749,145 +3184,151 @@
           1994,
           1766,
           119.0,
-          117.0
+          117.2
         ],
         [
           1994,
           1770,
           118.99,
-          116.99
+          117.19
         ],
         [
           1938,
           1826,
-          118.43,
-          116.43
+          117.43,
+          115.63
         ],
         [
           1922,
           1826,
-          118.32,
-          116.32
+          117.32,
+          115.52
         ],
         [
           1858,
           1890,
-          113.88,
-          111.88
+          112.88,
+          111.08
         ],
         [
           1773,
           1890,
-          111.57,
-          109.57
+          110.57,
+          108.77
         ],
         [
-          1572,
+          1573,
           1890,
-          109.79,
-          107.79
+          108.8,
+          106.92
         ],
         [
           1514,
           1890,
-          108.09,
-          106.09
+          107.09,
+          105.19
         ],
         [
           1474,
           1890,
-          107.96,
-          105.96
+          106.96,
+          104.99
         ],
         [
           1458,
           1906,
-          106.89,
-          104.89
+          105.89,
+          103.85
         ],
         [
           1442,
           1906,
-          106.89,
-          104.89
+          105.89,
+          103.8
         ],
         [
           1426,
           1922,
-          106.37,
-          104.37
+          105.37,
+          103.27
         ],
         [
           1378,
           1922,
-          103.69,
-          101.69
+          102.69,
+          100.59
         ],
         [
           1330,
           1922,
-          103.25,
-          101.25
+          102.25,
+          100.15
         ],
         [
           1298,
           1954,
-          99.01,
-          97.01
+          98.01,
+          95.91
         ],
         [
           1262,
           1954,
-          96.3,
-          94.3
+          95.3,
+          93.2
         ],
         [
           1218,
           1954,
-          95.14,
-          93.14
+          94.14,
+          92.04
         ],
         [
           1202,
           1970,
-          93.39,
-          91.39
+          92.39,
+          90.29
         ],
         [
           1170,
           1970,
-          92.54,
-          90.54
+          91.54,
+          89.44
         ],
         [
           1106,
           2034,
-          90.51,
-          88.51
+          89.51,
+          87.41
         ],
         [
           1074,
           2034,
-          90.4,
-          88.4
+          89.4,
+          87.3
         ],
         [
           1058,
           2050,
-          90.02,
-          88.02
+          89.02,
+          86.92
+        ],
+        [
+          1018,
+          2050,
+          88.24,
+          85.96
         ],
         [
           870,
           2050,
           88.24,
-          86.24
+          85.44
         ],
         [
           858,
           2062,
           88.24,
-          86.24
+          85.44
         ]
       ],
       "graded_polyline_fields": [
@@ -1895,7 +3336,283 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 4,
+          "catchment_km2": 0.436,
+          "grade": 0.0002,
+          "water_body": true,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 8,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 4,
+          "to_m": 69,
+          "catchment_km2": 0.438,
+          "grade": 0.0187,
+          "water_body": false,
+          "bank_slope": 1.76,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 69,
+          "to_m": 133,
+          "catchment_km2": 0.452,
+          "grade": 0.0271,
+          "water_body": false,
+          "bank_slope": 1.93,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 133,
+          "to_m": 198,
+          "catchment_km2": 0.455,
+          "grade": 0.037,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 198,
+          "to_m": 262,
+          "catchment_km2": 0.46,
+          "grade": 0.0274,
+          "water_body": false,
+          "bank_slope": 1.93,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 262,
+          "to_m": 326,
+          "catchment_km2": 0.47,
+          "grade": 0.0155,
+          "water_body": false,
+          "bank_slope": 1.67,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 326,
+          "to_m": 390,
+          "catchment_km2": 0.474,
+          "grade": 0.0095,
+          "water_body": false,
+          "bank_slope": 1.44,
+          "bed": "SAND",
+          "width": 5,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 390,
+          "to_m": 454,
+          "catchment_km2": 0.563,
+          "grade": 0.0143,
+          "water_body": false,
+          "bank_slope": 1.63,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 454,
+          "to_m": 518,
+          "catchment_km2": 0.567,
+          "grade": 0.0167,
+          "water_body": false,
+          "bank_slope": 1.71,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 518,
+          "to_m": 582,
+          "catchment_km2": 0.571,
+          "grade": 0.0209,
+          "water_body": false,
+          "bank_slope": 1.81,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 1.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 582,
+          "to_m": 647,
+          "catchment_km2": 0.972,
+          "grade": 0.026,
+          "water_body": false,
+          "bank_slope": 1.91,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 647,
+          "to_m": 711,
+          "catchment_km2": 0.978,
+          "grade": 0.044,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 711,
+          "to_m": 776,
+          "catchment_km2": 0.98,
+          "grade": 0.054,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 776,
+          "to_m": 840,
+          "catchment_km2": 0.986,
+          "grade": 0.0564,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 840,
+          "to_m": 905,
+          "catchment_km2": 0.991,
+          "grade": 0.0396,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 905,
+          "to_m": 970,
+          "catchment_km2": 0.993,
+          "grade": 0.0264,
+          "water_body": false,
+          "bank_slope": 1.92,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 970,
+          "to_m": 1035,
+          "catchment_km2": 0.999,
+          "grade": 0.0174,
+          "water_body": false,
+          "bank_slope": 1.72,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1035,
+          "to_m": 1099,
+          "catchment_km2": 1.001,
+          "grade": 0.0123,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1099,
+          "to_m": 1163,
+          "catchment_km2": 2.077,
+          "grade": 0.009,
+          "water_body": false,
+          "bank_slope": 1.42,
+          "bed": "SAND",
+          "width": 8,
+          "depth": 2.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1163,
+          "to_m": 1227,
+          "catchment_km2": 2.08,
+          "grade": 0.006,
+          "water_body": false,
+          "bank_slope": 1.23,
+          "bed": "SAND",
+          "width": 9,
+          "depth": 2.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1227,
+          "to_m": 1261,
+          "catchment_km2": 3.165,
+          "grade": 0.0073,
+          "water_body": false,
+          "bank_slope": 1.32,
+          "bed": "SAND",
+          "width": 10,
+          "depth": 2.8,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          5,
+          10
+        ],
+        "depth": [
+          1.8,
+          2.8
+        ],
+        "bank_slope": [
+          1.23,
+          2.0
+        ],
+        "catchment_km2": [
+          0.438,
+          3.165
+        ],
+        "bed_share_pct": {
+          "GRAVEL": 82,
+          "SAND": 18
+        }
+      }
     },
     {
       "id": "river_of_shrews_from_high_end",
@@ -1907,11 +3624,7 @@
         "z": 4650,
         "ground_y": 98.0
       },
-      "channel": {
-        "half_width": 4,
-        "depth": 3,
-        "bank_slope": 1.0
-      },
+      "kind": "river",
       "min_worst_cut": 11.3,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -1943,464 +3656,464 @@
         [
           1642,
           4650,
-          97.97,
-          94.97
+          96.97,
+          95.77
         ],
         [
           1654,
           4646,
-          97.97,
-          94.97
+          96.97,
+          95.77
         ],
         [
           1662,
           4638,
-          97.97,
-          94.97
+          96.97,
+          95.77
         ],
         [
           2118,
           4638,
-          97.97,
-          94.97
+          96.97,
+          95.47
         ],
         [
           2122,
           4634,
-          97.97,
-          94.97
+          96.97,
+          95.42
         ],
         [
           2142,
           4634,
-          97.97,
-          94.97
+          96.97,
+          95.23
         ],
         [
           2146,
           4630,
-          97.97,
-          94.97
+          96.97,
+          95.18
         ],
         [
           2154,
           4630,
-          97.97,
-          94.97
+          96.97,
+          95.11
         ],
         [
           2158,
           4626,
-          97.97,
-          94.97
+          96.97,
+          95.05
         ],
         [
           2170,
           4626,
-          97.97,
-          94.97
+          96.97,
+          94.94
         ],
         [
           2174,
           4622,
-          97.97,
-          94.97
+          96.97,
+          94.89
         ],
         [
           2182,
           4622,
-          97.97,
-          94.97
+          96.97,
+          94.85
         ],
         [
           2194,
           4614,
-          97.97,
-          94.97
+          96.97,
+          94.81
         ],
         [
           2202,
           4614,
-          97.97,
-          94.97
+          96.97,
+          94.78
         ],
         [
           2210,
           4606,
-          97.97,
-          94.97
+          96.97,
+          94.75
         ],
         [
           2218,
           4606,
-          97.97,
-          94.97
+          96.97,
+          94.72
         ],
         [
           2226,
           4598,
-          97.97,
-          94.97
+          96.97,
+          94.69
         ],
         [
           2230,
           4598,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2270,
           4558,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2294,
           4558,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2298,
           4554,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2490,
           4554,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2554,
           4618,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2554,
           4626,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2558,
           4630,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2558,
           4638,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2562,
           4642,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2562,
           4650,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2566,
           4654,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2566,
           4662,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2578,
           4674,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2582,
           4674,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2590,
           4682,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2594,
           4682,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2610,
           4698,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2614,
           4698,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2622,
           4706,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2626,
           4706,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2634,
           4714,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2638,
           4714,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2658,
           4734,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2662,
           4734,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2670,
           4742,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2674,
           4742,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2694,
           4758,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2698,
           4758,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2710,
           4766,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2718,
           4766,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2722,
           4770,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2738,
           4770,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2742,
           4766,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2758,
           4766,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2762,
           4770,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2782,
           4770,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2786,
           4774,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2802,
           4774,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2806,
           4778,
-          97.97,
-          94.97
+          96.97,
+          94.67
         ],
         [
           2842,
           4778,
-          97.97,
-          94.97
+          96.97,
+          94.39
         ],
         [
           2846,
           4782,
-          97.97,
-          94.97
+          96.97,
+          94.35
         ],
         [
           2858,
           4782,
-          97.97,
-          94.97
+          96.97,
+          94.25
         ],
         [
           2890,
           4814,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2894,
           4826,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2910,
           4842,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2910,
           4846,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2922,
           4858,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2922,
           4906,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2926,
           4910,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2926,
           4942,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2930,
           4946,
-          97.97,
-          94.97
+          96.97,
+          94.17
         ],
         [
           2930,
           5006,
-          97.79,
-          94.79
+          96.95,
+          94.15
         ],
         [
           2926,
           5010,
-          97.79,
-          94.79
+          96.95,
+          94.15
         ],
         [
           2926,
           5054,
-          97.08,
-          94.08
+          96.95,
+          94.1
         ],
         [
           2930,
           5058,
-          96.98,
-          93.98
+          96.95,
+          94.09
         ],
         [
           2930,
           5062,
-          96.98,
-          93.98
+          96.95,
+          94.08
         ],
         [
           2954,
           5086,
           96.95,
-          93.95
+          94.05
         ],
         [
           2954,
           5138,
           96.95,
-          93.95
+          94.05
         ],
         [
           2958,
           5142,
           96.95,
-          93.95
+          94.05
         ]
       ],
       "graded_polyline_fields": [
@@ -2408,7 +4121,367 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 65,
+          "catchment_km2": 0.016,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 5,
+          "depth": 1.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 65,
+          "to_m": 129,
+          "catchment_km2": 0.016,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 5,
+          "depth": 1.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 129,
+          "to_m": 192,
+          "catchment_km2": 0.017,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 5,
+          "depth": 1.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 192,
+          "to_m": 256,
+          "catchment_km2": 0.017,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 5,
+          "depth": 1.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 256,
+          "to_m": 320,
+          "catchment_km2": 0.017,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 5,
+          "depth": 1.2,
+          "incision": 1.0
+        },
+        {
+          "from_m": 320,
+          "to_m": 384,
+          "catchment_km2": 0.205,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 7,
+          "depth": 1.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 384,
+          "to_m": 448,
+          "catchment_km2": 0.205,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 7,
+          "depth": 1.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 448,
+          "to_m": 512,
+          "catchment_km2": 0.205,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 7,
+          "depth": 1.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 512,
+          "to_m": 576,
+          "catchment_km2": 1.029,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 10,
+          "depth": 2.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 576,
+          "to_m": 640,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 640,
+          "to_m": 705,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 705,
+          "to_m": 769,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 769,
+          "to_m": 833,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 833,
+          "to_m": 897,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 897,
+          "to_m": 961,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 961,
+          "to_m": 1026,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1026,
+          "to_m": 1090,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1090,
+          "to_m": 1154,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1154,
+          "to_m": 1218,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1218,
+          "to_m": 1283,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1283,
+          "to_m": 1347,
+          "catchment_km2": 1.541,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 11,
+          "depth": 2.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1347,
+          "to_m": 1411,
+          "catchment_km2": 2.913,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 14,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1411,
+          "to_m": 1475,
+          "catchment_km2": 3.031,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 14,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1475,
+          "to_m": 1539,
+          "catchment_km2": 3.039,
+          "grade": 0.0001,
+          "water_body": false,
+          "bank_slope": 0.4,
+          "bed": "CLAY",
+          "width": 14,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1539,
+          "to_m": 1604,
+          "catchment_km2": 3.042,
+          "grade": 0.0046,
+          "water_body": false,
+          "bank_slope": 1.11,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1604,
+          "to_m": 1668,
+          "catchment_km2": 3.042,
+          "grade": 0.0053,
+          "water_body": false,
+          "bank_slope": 1.17,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 2.8,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1668,
+          "to_m": 1732,
+          "catchment_km2": 3.175,
+          "grade": 0.006,
+          "water_body": false,
+          "bank_slope": 1.23,
+          "bed": "SAND",
+          "width": 11,
+          "depth": 2.9,
+          "incision": 1.0
+        },
+        {
+          "from_m": 1732,
+          "to_m": 1772,
+          "catchment_km2": 3.178,
+          "grade": 0.0012,
+          "water_body": false,
+          "bank_slope": 0.48,
+          "bed": "CLAY",
+          "width": 14,
+          "depth": 2.9,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          5,
+          14
+        ],
+        "depth": [
+          1.2,
+          2.9
+        ],
+        "bank_slope": [
+          0.4,
+          1.23
+        ],
+        "catchment_km2": [
+          0.016,
+          3.178
+        ],
+        "bed_share_pct": {
+          "CLAY": 89,
+          "SAND": 11
+        }
+      }
     },
     {
       "id": "peak_pond_creek_from_high_end",
@@ -2420,11 +4493,7 @@
         "z": 906,
         "ground_y": 105.7
       },
-      "channel": {
-        "half_width": 2,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "creek",
       "min_worst_cut": 22.5,
       "valid": false,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -2449,11 +4518,7 @@
         "z": 4974,
         "ground_y": 115.2
       },
-      "channel": {
-        "half_width": 2,
-        "depth": 2,
-        "bank_slope": 1.0
-      },
+      "kind": "creek",
       "min_worst_cut": 3.1,
       "valid": true,
       "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
@@ -2484,170 +4549,170 @@
         [
           4974,
           4974,
-          115.19,
-          113.19
+          114.19,
+          112.89
         ],
         [
           4990,
           4974,
-          115.16,
-          113.16
+          114.16,
+          112.86
         ],
         [
           5006,
           4958,
-          115.07,
-          113.07
+          114.07,
+          112.76
         ],
         [
           5006,
           4954,
-          115.05,
-          113.05
+          114.05,
+          112.73
         ],
         [
           5010,
           4950,
-          115.05,
-          113.05
+          114.05,
+          112.72
         ],
         [
           5010,
           4942,
-          114.99,
-          112.99
+          113.99,
+          112.66
         ],
         [
           5014,
           4938,
-          114.99,
-          112.99
+          113.99,
+          112.65
         ],
         [
           5014,
           4850,
-          114.94,
-          112.94
+          113.94,
+          112.54
         ],
         [
           5030,
           4830,
-          114.94,
-          112.94
+          113.94,
+          112.54
         ],
         [
           5030,
           4818,
-          114.94,
-          112.94
+          113.94,
+          112.54
         ],
         [
           5034,
           4814,
-          114.94,
-          112.94
+          113.94,
+          112.54
         ],
         [
           5034,
           4810,
-          114.94,
-          112.94
+          113.94,
+          112.54
         ],
         [
           5042,
           4802,
-          114.94,
-          112.94
+          113.94,
+          112.54
         ],
         [
           5042,
           4786,
-          114.94,
-          112.94
+          113.94,
+          112.54
         ],
         [
           5058,
           4770,
-          114.76,
-          112.76
+          113.76,
+          112.36
         ],
         [
           5058,
           4738,
-          113.86,
-          111.86
+          112.86,
+          111.46
         ],
         [
           5074,
           4722,
-          112.95,
-          110.95
+          111.95,
+          110.55
         ],
         [
           5074,
           4704,
-          112.01,
-          110.01
+          111.01,
+          109.61
         ],
         [
           5074,
           4690,
-          110.86,
-          108.86
+          109.86,
+          108.46
         ],
         [
-          5092,
-          4672,
-          108.62,
-          106.62
+          5093,
+          4671,
+          107.45,
+          106.05
         ],
         [
           5101,
           4663,
-          106.38,
-          104.38
+          105.38,
+          103.98
         ],
         [
-          5117,
-          4647,
-          104.3,
-          102.3
+          5119,
+          4645,
+          102.93,
+          101.53
         ],
         [
-          5131,
-          4633,
-          100.83,
-          98.83
+          5129,
+          4635,
+          100.43,
+          99.03
         ],
         [
           5143,
           4621,
-          95.89,
-          93.89
+          94.89,
+          93.49
         ],
         [
           5158,
           4606,
-          88.02,
-          86.02
+          87.02,
+          85.62
         ],
         [
           5166,
           4606,
-          86.67,
-          84.67
+          85.67,
+          84.27
         ],
         [
-          5181,
-          4591,
-          77.04,
-          75.04
+          5179,
+          4593,
+          77.26,
+          75.86
         ],
         [
           5182,
           4590,
           77.0,
-          75.0
+          75.6
         ]
       ],
       "graded_polyline_fields": [
@@ -2655,7 +4720,1489 @@
         "z",
         "surface_y",
         "floor_y"
-      ]
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 65,
+          "catchment_km2": 0.076,
+          "grade": 0.0019,
+          "water_body": false,
+          "bank_slope": 0.7,
+          "bed": "CLAY",
+          "width": 5,
+          "depth": 1.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 65,
+          "to_m": 129,
+          "catchment_km2": 0.083,
+          "grade": 0.0013,
+          "water_body": false,
+          "bank_slope": 0.51,
+          "bed": "CLAY",
+          "width": 6,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 129,
+          "to_m": 194,
+          "catchment_km2": 0.088,
+          "grade": 0.0035,
+          "water_body": false,
+          "bank_slope": 0.98,
+          "bed": "SAND",
+          "width": 5,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 194,
+          "to_m": 258,
+          "catchment_km2": 0.095,
+          "grade": 0.0164,
+          "water_body": false,
+          "bank_slope": 1.7,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 258,
+          "to_m": 323,
+          "catchment_km2": 0.1,
+          "grade": 0.0513,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 323,
+          "to_m": 388,
+          "catchment_km2": 0.103,
+          "grade": 0.1353,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 388,
+          "to_m": 453,
+          "catchment_km2": 0.105,
+          "grade": 0.2167,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 453,
+          "to_m": 483,
+          "catchment_km2": 0.106,
+          "grade": 0.2924,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.4,
+          "incision": 1.0
+        }
+      ],
+      "character": {
+        "width": [
+          3,
+          6
+        ],
+        "depth": [
+          1.3,
+          1.4
+        ],
+        "bank_slope": [
+          0.51,
+          2.0
+        ],
+        "catchment_km2": [
+          0.076,
+          0.106
+        ],
+        "bed_share_pct": {
+          "CLAY": 27,
+          "GRAVEL": 60,
+          "SAND": 13
+        }
+      }
+    },
+    {
+      "id": "major_river_trunk",
+      "river": "major_river",
+      "source": {
+        "kind": "system_head",
+        "x": 2504,
+        "z": 1444,
+        "ground_y": 170.9
+      },
+      "kind": "major",
+      "min_worst_cut": 0.8,
+      "valid": true,
+      "min_worst_cut_basis": "4-block grid, including any cut still needed below the body it joins",
+      "ends_in": "lake_tilpey",
+      "end_at": {
+        "x": 4746,
+        "z": 3198
+      },
+      "routed": {
+        "length_blocks": 3085,
+        "surface_start_y": 170.9,
+        "surface_end_y": 77.0,
+        "total_drop": 93.9,
+        "worst_cut": 1.5,
+        "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
+        "worst_cut_at": {
+          "x": 2702,
+          "z": 1358
+        },
+        "worst_cut_to_sea": 1.5,
+        "stations_needing_cut_pct": 3.9,
+        "water_bodies_on_course": [
+          "lake_tilpey"
+        ]
+      },
+      "verdict": "descends with a cut of up to 1.5 blocks",
+      "graded_polyline": [
+        [
+          2506,
+          1446,
+          169.87,
+          168.77
+        ],
+        [
+          2514,
+          1438,
+          169.87,
+          168.77
+        ],
+        [
+          2514,
+          1430,
+          169.57,
+          168.47
+        ],
+        [
+          2522,
+          1422,
+          169.57,
+          168.47
+        ],
+        [
+          2518,
+          1418,
+          169.54,
+          168.43
+        ],
+        [
+          2530,
+          1406,
+          169.54,
+          168.37
+        ],
+        [
+          2530,
+          1390,
+          169.39,
+          168.18
+        ],
+        [
+          2546,
+          1374,
+          169.39,
+          168.11
+        ],
+        [
+          2546,
+          1366,
+          169.19,
+          167.89
+        ],
+        [
+          2562,
+          1350,
+          169.09,
+          167.75
+        ],
+        [
+          2574,
+          1350,
+          169.09,
+          167.73
+        ],
+        [
+          2578,
+          1346,
+          168.78,
+          167.41
+        ],
+        [
+          2586,
+          1346,
+          168.38,
+          167.0
+        ],
+        [
+          2606,
+          1346,
+          165.7,
+          164.29
+        ],
+        [
+          2626,
+          1346,
+          161.18,
+          159.74
+        ],
+        [
+          2682,
+          1346,
+          146.1,
+          144.55
+        ],
+        [
+          2702,
+          1358,
+          146.1,
+          144.47
+        ],
+        [
+          2710,
+          1358,
+          145.71,
+          144.05
+        ],
+        [
+          2738,
+          1374,
+          145.64,
+          143.87
+        ],
+        [
+          2746,
+          1374,
+          145.05,
+          143.25
+        ],
+        [
+          2750,
+          1378,
+          145.03,
+          143.22
+        ],
+        [
+          2754,
+          1378,
+          145.02,
+          143.19
+        ],
+        [
+          2758,
+          1382,
+          145.0,
+          143.16
+        ],
+        [
+          2762,
+          1382,
+          144.92,
+          143.07
+        ],
+        [
+          2766,
+          1386,
+          144.9,
+          143.04
+        ],
+        [
+          2770,
+          1386,
+          144.78,
+          142.9
+        ],
+        [
+          2784,
+          1394,
+          144.54,
+          142.63
+        ],
+        [
+          2790,
+          1394,
+          143.56,
+          141.63
+        ],
+        [
+          2794,
+          1398,
+          143.55,
+          141.62
+        ],
+        [
+          2798,
+          1398,
+          143.16,
+          141.22
+        ],
+        [
+          2806,
+          1406,
+          143.15,
+          141.19
+        ],
+        [
+          2810,
+          1406,
+          142.74,
+          140.78
+        ],
+        [
+          2831,
+          1427,
+          141.92,
+          139.9
+        ],
+        [
+          2859,
+          1455,
+          138.65,
+          136.5
+        ],
+        [
+          2910,
+          1506,
+          134.58,
+          132.38
+        ],
+        [
+          2937,
+          1533,
+          130.69,
+          128.49
+        ],
+        [
+          2990,
+          1586,
+          120.73,
+          118.36
+        ],
+        [
+          3006,
+          1586,
+          119.2,
+          116.75
+        ],
+        [
+          3038,
+          1618,
+          115.48,
+          112.87
+        ],
+        [
+          3118,
+          1618,
+          105.51,
+          102.74
+        ],
+        [
+          3157,
+          1657,
+          102.75,
+          99.95
+        ],
+        [
+          3214,
+          1714,
+          101.2,
+          98.31
+        ],
+        [
+          3681,
+          2181,
+          92.95,
+          89.95
+        ],
+        [
+          3728,
+          2228,
+          88.22,
+          81.21
+        ],
+        [
+          3773,
+          2273,
+          86.57,
+          79.08
+        ],
+        [
+          3819,
+          2319,
+          85.88,
+          78.38
+        ],
+        [
+          3865,
+          2365,
+          84.61,
+          76.02
+        ],
+        [
+          4066,
+          2566,
+          82.03,
+          73.39
+        ],
+        [
+          4066,
+          2574,
+          81.91,
+          73.26
+        ],
+        [
+          4082,
+          2590,
+          81.91,
+          73.22
+        ],
+        [
+          4082,
+          2598,
+          81.86,
+          73.16
+        ],
+        [
+          4150,
+          2666,
+          80.38,
+          71.68
+        ],
+        [
+          4184,
+          2700,
+          78.88,
+          70.18
+        ],
+        [
+          4302,
+          2818,
+          76.98,
+          68.2
+        ],
+        [
+          4318,
+          2818,
+          76.98,
+          68.18
+        ],
+        [
+          4526,
+          3026,
+          76.98,
+          68.07
+        ],
+        [
+          4574,
+          3026,
+          76.98,
+          67.98
+        ],
+        [
+          4746,
+          3198,
+          76.98,
+          67.98
+        ]
+      ],
+      "graded_polyline_fields": [
+        "x",
+        "z",
+        "surface_y",
+        "floor_y"
+      ],
+      "reaches": [
+        {
+          "from_m": 0,
+          "to_m": 64,
+          "catchment_km2": 0.009,
+          "grade": 0.0061,
+          "water_body": false,
+          "bank_slope": 1.24,
+          "bed": "SAND",
+          "width": 3,
+          "depth": 1.1,
+          "incision": 1.0
+        },
+        {
+          "from_m": 64,
+          "to_m": 129,
+          "catchment_km2": 0.015,
+          "grade": 0.0519,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.3,
+          "incision": 1.0
+        },
+        {
+          "from_m": 129,
+          "to_m": 193,
+          "catchment_km2": 0.017,
+          "grade": 0.1209,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.4,
+          "incision": 1.0
+        },
+        {
+          "from_m": 193,
+          "to_m": 258,
+          "catchment_km2": 0.022,
+          "grade": 0.1234,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.5,
+          "incision": 1.0
+        },
+        {
+          "from_m": 258,
+          "to_m": 322,
+          "catchment_km2": 0.03,
+          "grade": 0.0847,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.7,
+          "incision": 1.0
+        },
+        {
+          "from_m": 322,
+          "to_m": 386,
+          "catchment_km2": 0.041,
+          "grade": 0.0302,
+          "water_body": false,
+          "bank_slope": 1.98,
+          "bed": "GRAVEL",
+          "width": 3,
+          "depth": 1.9,
+          "incision": 1.2
+        },
+        {
+          "from_m": 386,
+          "to_m": 451,
+          "catchment_km2": 0.049,
+          "grade": 0.0458,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 4,
+          "depth": 2.0,
+          "incision": 1.3
+        },
+        {
+          "from_m": 451,
+          "to_m": 516,
+          "catchment_km2": 0.055,
+          "grade": 0.067,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 4,
+          "depth": 2.2,
+          "incision": 1.3
+        },
+        {
+          "from_m": 516,
+          "to_m": 581,
+          "catchment_km2": 0.057,
+          "grade": 0.095,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 4,
+          "depth": 2.2,
+          "incision": 1.4
+        },
+        {
+          "from_m": 581,
+          "to_m": 646,
+          "catchment_km2": 0.058,
+          "grade": 0.1026,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 4,
+          "depth": 2.2,
+          "incision": 1.4
+        },
+        {
+          "from_m": 646,
+          "to_m": 710,
+          "catchment_km2": 0.077,
+          "grade": 0.1127,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 4,
+          "depth": 2.5,
+          "incision": 1.6
+        },
+        {
+          "from_m": 710,
+          "to_m": 775,
+          "catchment_km2": 0.095,
+          "grade": 0.0918,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 2.7,
+          "incision": 1.8
+        },
+        {
+          "from_m": 775,
+          "to_m": 840,
+          "catchment_km2": 0.105,
+          "grade": 0.071,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 2.8,
+          "incision": 1.9
+        },
+        {
+          "from_m": 840,
+          "to_m": 904,
+          "catchment_km2": 0.109,
+          "grade": 0.0354,
+          "water_body": false,
+          "bank_slope": 2.0,
+          "bed": "GRAVEL",
+          "width": 5,
+          "depth": 2.8,
+          "incision": 1.9
+        },
+        {
+          "from_m": 904,
+          "to_m": 969,
+          "catchment_km2": 0.113,
+          "grade": 0.0164,
+          "water_body": false,
+          "bank_slope": 1.69,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 1.9
+        },
+        {
+          "from_m": 969,
+          "to_m": 1034,
+          "catchment_km2": 0.114,
+          "grade": 0.013,
+          "water_body": false,
+          "bank_slope": 1.59,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 1.9
+        },
+        {
+          "from_m": 1034,
+          "to_m": 1099,
+          "catchment_km2": 0.115,
+          "grade": 0.0123,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 1.9
+        },
+        {
+          "from_m": 1099,
+          "to_m": 1164,
+          "catchment_km2": 0.115,
+          "grade": 0.0123,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 1.9
+        },
+        {
+          "from_m": 1164,
+          "to_m": 1229,
+          "catchment_km2": 0.116,
+          "grade": 0.0123,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 1.9
+        },
+        {
+          "from_m": 1229,
+          "to_m": 1294,
+          "catchment_km2": 0.117,
+          "grade": 0.0122,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 2.0
+        },
+        {
+          "from_m": 1294,
+          "to_m": 1359,
+          "catchment_km2": 0.118,
+          "grade": 0.0123,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 2.0
+        },
+        {
+          "from_m": 1359,
+          "to_m": 1424,
+          "catchment_km2": 0.119,
+          "grade": 0.0122,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 2.0
+        },
+        {
+          "from_m": 1424,
+          "to_m": 1488,
+          "catchment_km2": 0.12,
+          "grade": 0.0123,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 2.9,
+          "incision": 2.0
+        },
+        {
+          "from_m": 1488,
+          "to_m": 1554,
+          "catchment_km2": 0.121,
+          "grade": 0.0126,
+          "water_body": false,
+          "bank_slope": 1.57,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 3.0,
+          "incision": 2.0
+        },
+        {
+          "from_m": 1554,
+          "to_m": 1619,
+          "catchment_km2": 0.122,
+          "grade": 0.0136,
+          "water_body": false,
+          "bank_slope": 1.61,
+          "bed": "GRAVEL",
+          "width": 6,
+          "depth": 3.0,
+          "incision": 2.0
+        },
+        {
+          "from_m": 1619,
+          "to_m": 1684,
+          "catchment_km2": 1.049,
+          "grade": 0.0147,
+          "water_body": false,
+          "bank_slope": 1.65,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 19,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 11
+              },
+              {
+                "rise": 5,
+                "tread": 7
+              }
+            ],
+            "riser_slope": 1.65,
+            "wall_slope": 0.6
+          },
+          "width": 18,
+          "depth": 7.0,
+          "incision": 5.8
+        },
+        {
+          "from_m": 1684,
+          "to_m": 1749,
+          "catchment_km2": 1.255,
+          "grade": 0.0118,
+          "water_body": false,
+          "bank_slope": 1.54,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 21,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 13
+              },
+              {
+                "rise": 5,
+                "tread": 8
+              }
+            ],
+            "riser_slope": 1.54,
+            "wall_slope": 0.6
+          },
+          "width": 20,
+          "depth": 7.5,
+          "incision": 6.4
+        },
+        {
+          "from_m": 1749,
+          "to_m": 1814,
+          "catchment_km2": 1.266,
+          "grade": 0.0085,
+          "water_body": false,
+          "bank_slope": 1.39,
+          "bed": "SAND",
+          "valley": {
+            "floodplain_width": 24,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.39,
+            "wall_slope": 0.6
+          },
+          "width": 22,
+          "depth": 7.5,
+          "incision": 6.4
+        },
+        {
+          "from_m": 1814,
+          "to_m": 1879,
+          "catchment_km2": 1.731,
+          "grade": 0.0074,
+          "water_body": false,
+          "bank_slope": 1.32,
+          "bed": "SAND",
+          "valley": {
+            "floodplain_width": 28,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 17
+              },
+              {
+                "rise": 5,
+                "tread": 11
+              }
+            ],
+            "riser_slope": 1.32,
+            "wall_slope": 0.6
+          },
+          "width": 26,
+          "depth": 8.6,
+          "incision": 7.5
+        },
+        {
+          "from_m": 1879,
+          "to_m": 1944,
+          "catchment_km2": 1.741,
+          "grade": 0.0097,
+          "water_body": false,
+          "bank_slope": 1.45,
+          "bed": "SAND",
+          "valley": {
+            "floodplain_width": 25,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 15
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.45,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 8.6,
+          "incision": 7.5
+        },
+        {
+          "from_m": 1944,
+          "to_m": 2009,
+          "catchment_km2": 1.753,
+          "grade": 0.0098,
+          "water_body": false,
+          "bank_slope": 1.46,
+          "bed": "SAND",
+          "valley": {
+            "floodplain_width": 25,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 15
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.46,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 8.6,
+          "incision": 7.6
+        },
+        {
+          "from_m": 2009,
+          "to_m": 2073,
+          "catchment_km2": 1.762,
+          "grade": 0.0079,
+          "water_body": false,
+          "bank_slope": 1.36,
+          "bed": "SAND",
+          "valley": {
+            "floodplain_width": 27,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 16
+              },
+              {
+                "rise": 5,
+                "tread": 11
+              }
+            ],
+            "riser_slope": 1.36,
+            "wall_slope": 0.6
+          },
+          "width": 26,
+          "depth": 8.6,
+          "incision": 7.6
+        },
+        {
+          "from_m": 2073,
+          "to_m": 2138,
+          "catchment_km2": 1.769,
+          "grade": 0.0083,
+          "water_body": false,
+          "bank_slope": 1.38,
+          "bed": "SAND",
+          "valley": {
+            "floodplain_width": 27,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 16
+              },
+              {
+                "rise": 5,
+                "tread": 11
+              }
+            ],
+            "riser_slope": 1.38,
+            "wall_slope": 0.6
+          },
+          "width": 26,
+          "depth": 8.6,
+          "incision": 7.6
+        },
+        {
+          "from_m": 2138,
+          "to_m": 2202,
+          "catchment_km2": 1.779,
+          "grade": 0.0103,
+          "water_body": false,
+          "bank_slope": 1.48,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 25,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 15
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.48,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 8.7,
+          "incision": 7.6
+        },
+        {
+          "from_m": 2202,
+          "to_m": 2267,
+          "catchment_km2": 1.793,
+          "grade": 0.0162,
+          "water_body": false,
+          "bank_slope": 1.69,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 21,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 12
+              },
+              {
+                "rise": 5,
+                "tread": 8
+              }
+            ],
+            "riser_slope": 1.69,
+            "wall_slope": 0.6
+          },
+          "width": 23,
+          "depth": 8.7,
+          "incision": 7.6
+        },
+        {
+          "from_m": 2267,
+          "to_m": 2332,
+          "catchment_km2": 1.805,
+          "grade": 0.0175,
+          "water_body": false,
+          "bank_slope": 1.73,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 20,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 12
+              },
+              {
+                "rise": 5,
+                "tread": 8
+              }
+            ],
+            "riser_slope": 1.73,
+            "wall_slope": 0.6
+          },
+          "width": 22,
+          "depth": 8.7,
+          "incision": 7.7
+        },
+        {
+          "from_m": 2332,
+          "to_m": 2397,
+          "catchment_km2": 1.815,
+          "grade": 0.0182,
+          "water_body": false,
+          "bank_slope": 1.74,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 20,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 12
+              },
+              {
+                "rise": 5,
+                "tread": 8
+              }
+            ],
+            "riser_slope": 1.74,
+            "wall_slope": 0.6
+          },
+          "width": 22,
+          "depth": 8.7,
+          "incision": 7.7
+        },
+        {
+          "from_m": 2397,
+          "to_m": 2462,
+          "catchment_km2": 1.827,
+          "grade": 0.0136,
+          "water_body": false,
+          "bank_slope": 1.61,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 22,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 13
+              },
+              {
+                "rise": 5,
+                "tread": 9
+              }
+            ],
+            "riser_slope": 1.61,
+            "wall_slope": 0.6
+          },
+          "width": 24,
+          "depth": 8.7,
+          "incision": 7.7
+        },
+        {
+          "from_m": 2462,
+          "to_m": 2526,
+          "catchment_km2": 1.844,
+          "grade": 0.0128,
+          "water_body": false,
+          "bank_slope": 1.58,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 23,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 9
+              }
+            ],
+            "riser_slope": 1.58,
+            "wall_slope": 0.6
+          },
+          "width": 24,
+          "depth": 8.8,
+          "incision": 7.8
+        },
+        {
+          "from_m": 2526,
+          "to_m": 2591,
+          "catchment_km2": 1.856,
+          "grade": 0.0125,
+          "water_body": false,
+          "bank_slope": 1.57,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 23,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 9
+              }
+            ],
+            "riser_slope": 1.57,
+            "wall_slope": 0.6
+          },
+          "width": 24,
+          "depth": 8.8,
+          "incision": 7.8
+        },
+        {
+          "from_m": 2591,
+          "to_m": 2656,
+          "catchment_km2": 1.863,
+          "grade": 0.013,
+          "water_body": false,
+          "bank_slope": 1.59,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 23,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 9
+              }
+            ],
+            "riser_slope": 1.59,
+            "wall_slope": 0.6
+          },
+          "width": 24,
+          "depth": 8.8,
+          "incision": 7.8
+        },
+        {
+          "from_m": 2656,
+          "to_m": 2721,
+          "catchment_km2": 1.864,
+          "grade": 0.0124,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 23,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 9
+              }
+            ],
+            "riser_slope": 1.56,
+            "wall_slope": 0.6
+          },
+          "width": 24,
+          "depth": 8.8,
+          "incision": 7.8
+        },
+        {
+          "from_m": 2721,
+          "to_m": 2786,
+          "catchment_km2": 1.865,
+          "grade": 0.0112,
+          "water_body": false,
+          "bank_slope": 1.52,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 24,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.52,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 8.8,
+          "incision": 7.8
+        },
+        {
+          "from_m": 2786,
+          "to_m": 2851,
+          "catchment_km2": 1.955,
+          "grade": 0.0113,
+          "water_body": false,
+          "bank_slope": 1.52,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 24,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 15
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.52,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 9.0,
+          "incision": 8.0
+        },
+        {
+          "from_m": 2851,
+          "to_m": 2916,
+          "catchment_km2": 1.962,
+          "grade": 0.0114,
+          "water_body": false,
+          "bank_slope": 1.53,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 24,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 15
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.53,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 9.0,
+          "incision": 8.0
+        },
+        {
+          "from_m": 2916,
+          "to_m": 2981,
+          "catchment_km2": 1.963,
+          "grade": 0.0125,
+          "water_body": false,
+          "bank_slope": 1.57,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 23,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 9
+              }
+            ],
+            "riser_slope": 1.57,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 9.0,
+          "incision": 8.0
+        },
+        {
+          "from_m": 2981,
+          "to_m": 3046,
+          "catchment_km2": 1.964,
+          "grade": 0.0121,
+          "water_body": false,
+          "bank_slope": 1.56,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 24,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 9
+              }
+            ],
+            "riser_slope": 1.56,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 9.0,
+          "incision": 8.0
+        },
+        {
+          "from_m": 3046,
+          "to_m": 3080,
+          "catchment_km2": 1.964,
+          "grade": 0.0119,
+          "water_body": false,
+          "bank_slope": 1.55,
+          "bed": "GRAVEL",
+          "valley": {
+            "floodplain_width": 24,
+            "floodplain_above_water": 1,
+            "terraces": [
+              {
+                "rise": 5,
+                "tread": 14
+              },
+              {
+                "rise": 5,
+                "tread": 10
+              }
+            ],
+            "riser_slope": 1.55,
+            "wall_slope": 0.6
+          },
+          "width": 25,
+          "depth": 9.0,
+          "incision": 8.0
+        }
+      ],
+      "character": {
+        "width": [
+          3,
+          26
+        ],
+        "depth": [
+          1.1,
+          9.0
+        ],
+        "bank_slope": [
+          1.24,
+          2.0
+        ],
+        "catchment_km2": [
+          0.009,
+          1.964
+        ],
+        "bed_share_pct": {
+          "GRAVEL": 85,
+          "SAND": 15
+        }
+      }
     }
   ],
   "cut": {
@@ -2667,7 +6214,7 @@
     },
     "output": {
       "path": "land_8k_16_eroded_rivers.png",
-      "sha256": "9deec4a6d9528f9175365f9da1614297ece6ab62af7aefb16180d3a572b74255"
+      "sha256": "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1"
     },
     "courses_cut": [
       "lake_tilpey_outflow",
@@ -2678,18 +6225,73 @@
       "peak_pond_outflow",
       "shrew_lake_outflow",
       "pond_west_of_mt_clay_outflow",
-      "tilpey_south_west_outlet_from_high_end"
+      "tilpey_south_west_outlet_from_high_end",
+      "major_river_trunk"
     ],
     "courses_not_cut": [
       "river_of_shrews_from_high_end"
     ],
-    "columns_lowered": 72844,
+    "cost_by_course": {
+      "lake_tilpey_outflow": {
+        "volume_blocks": 88406,
+        "deepest_cut_blocks": 15.1,
+        "widest_cut_half_width_blocks": 25
+      },
+      "watering_hole_outflow": {
+        "volume_blocks": 54782,
+        "deepest_cut_blocks": 5.2,
+        "widest_cut_half_width_blocks": 9
+      },
+      "arrow_lake_outflow": {
+        "volume_blocks": 15543,
+        "deepest_cut_blocks": 5.3,
+        "widest_cut_half_width_blocks": 11
+      },
+      "marshy_marsh_outflow": {
+        "volume_blocks": 13528,
+        "deepest_cut_blocks": 5.5,
+        "widest_cut_half_width_blocks": 17
+      },
+      "lake_viltri_outflow": {
+        "volume_blocks": 52565,
+        "deepest_cut_blocks": 4.9,
+        "widest_cut_half_width_blocks": 24
+      },
+      "peak_pond_outflow": {
+        "volume_blocks": 13621,
+        "deepest_cut_blocks": 4.3,
+        "widest_cut_half_width_blocks": 12
+      },
+      "shrew_lake_outflow": {
+        "volume_blocks": 7908,
+        "deepest_cut_blocks": 4.8,
+        "widest_cut_half_width_blocks": 7
+      },
+      "pond_west_of_mt_clay_outflow": {
+        "volume_blocks": 24111,
+        "deepest_cut_blocks": 3.6,
+        "widest_cut_half_width_blocks": 7
+      },
+      "tilpey_south_west_outlet_from_high_end": {
+        "volume_blocks": 13742,
+        "deepest_cut_blocks": 5.8,
+        "widest_cut_half_width_blocks": 25
+      },
+      "major_river_trunk": {
+        "volume_blocks": 1316951,
+        "deepest_cut_blocks": 19.7,
+        "widest_cut_half_width_blocks": 121
+      }
+    },
+    "cost_basis": "volume is what each course removed beyond the courses cut before it; deepest is the most any column it touched was lowered from the source heightmap; widest is the farthest column it lowered from its centreline",
+    "columns_lowered": 281347,
     "lowered_blocks": {
-      "max": 5.41,
-      "mean": 1.96
+      "max": 19.73,
+      "mean": 5.69,
+      "volume": 1601157
     },
     "check": {
-      "method": "on the written file, at every block of each course: the lowest ground across the bed (half width - 1) against the planned floor; the largest rise of the planned floor; and the largest rise of that lowest ground (clamped half a block under the floor, so a lake bed on the course does not count as a rise)",
+      "method": "on the written file, at every block of each course outside lakes: the lowest ground within one block of the centreline against the planned floor; the largest rise of the planned floor; and the largest rise of that lowest ground (clamped half a block under the floor)",
       "courses": [
         {
           "course": "lake_tilpey_outflow",
@@ -2699,9 +6301,9 @@
         },
         {
           "course": "watering_hole_outflow",
-          "thalweg_above_floor_max": 0.0,
+          "thalweg_above_floor_max": 0.013,
           "floor_rise_max": 0.0,
-          "thalweg_rise_max": 0.0
+          "thalweg_rise_max": 0.003
         },
         {
           "course": "arrow_lake_outflow",
@@ -2711,21 +6313,21 @@
         },
         {
           "course": "marshy_marsh_outflow",
-          "thalweg_above_floor_max": 0.0,
+          "thalweg_above_floor_max": 0.001,
           "floor_rise_max": 0.0,
-          "thalweg_rise_max": 0.0
+          "thalweg_rise_max": 0.003
         },
         {
           "course": "lake_viltri_outflow",
-          "thalweg_above_floor_max": 0.0,
+          "thalweg_above_floor_max": 0.009,
           "floor_rise_max": 0.0,
-          "thalweg_rise_max": 0.0
+          "thalweg_rise_max": 0.012
         },
         {
           "course": "peak_pond_outflow",
-          "thalweg_above_floor_max": 0.0,
+          "thalweg_above_floor_max": 0.003,
           "floor_rise_max": 0.0,
-          "thalweg_rise_max": 0.0
+          "thalweg_rise_max": 0.003
         },
         {
           "course": "shrew_lake_outflow",
@@ -2735,15 +6337,21 @@
         },
         {
           "course": "pond_west_of_mt_clay_outflow",
-          "thalweg_above_floor_max": 0.0,
+          "thalweg_above_floor_max": 0.002,
           "floor_rise_max": 0.0,
-          "thalweg_rise_max": 0.0
+          "thalweg_rise_max": 0.003
         },
         {
           "course": "tilpey_south_west_outlet_from_high_end",
-          "thalweg_above_floor_max": 0.0,
+          "thalweg_above_floor_max": 0.007,
           "floor_rise_max": 0.0,
-          "thalweg_rise_max": 0.0
+          "thalweg_rise_max": 0.009
+        },
+        {
+          "course": "major_river_trunk",
+          "thalweg_above_floor_max": 0.05,
+          "floor_rise_max": 0.0,
+          "thalweg_rise_max": 0.017
         }
       ]
     }

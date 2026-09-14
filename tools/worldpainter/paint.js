@@ -8,6 +8,8 @@
 //   plants   [{name, map, plants: {"<plant name>": occurrence}}]                     value 0/1
 //   frost    map, value 0/1
 //   water    [{name, level, x, z, mask}]  mask is a crop whose pixel (i, j) = block (x + i, z + j); 1 = raise water to level
+//            [{name, x, z, levels}]       levels is a crop whose value is the water level y of that column; 0 = none
+//            water is only ever raised, never lowered below what an earlier entry or the sea set
 var ImageIO = Java.type("javax.imageio.ImageIO");
 var JFile = Java.type("java.io.File");
 var Files = Java.type("java.nio.file.Files");
@@ -123,17 +125,23 @@ function paintWorld(world, dim, manifestPath) {
     }
 
     (m.water || []).forEach(function (w) {
-        var img = ImageIO.read(new JFile(base, w.mask));
+        var img = ImageIO.read(new JFile(base, w.levels ? w.levels : w.mask));
         var raster = img.getRaster();
         var n = 0;
         for (var j = 0; j < img.getHeight(); j++) {
             for (var i = 0; i < img.getWidth(); i++) {
-                if (raster.getSample(i, j, 0) > 0) {
-                    dim.setWaterLevelAt(w.x + i, w.z + j, w.level);
+                var v = raster.getSample(i, j, 0);
+                if (v <= 0) {
+                    continue;
+                }
+                var level = w.levels ? v : w.level;
+                // only ever raise: a river never lowers a lake it touches, or the sea
+                if (level > dim.getWaterLevelAt(w.x + i, w.z + j)) {
+                    dim.setWaterLevelAt(w.x + i, w.z + j, level);
                     n++;
                 }
             }
         }
-        print("paint: water " + w.name + " level " + w.level + " on " + n + " columns");
+        print("paint: water " + w.name + (w.levels ? " (per-column levels)" : " level " + w.level) + " on " + n + " columns");
     });
 }
