@@ -111,8 +111,8 @@ key raw observations are quoted here and in `results.json`.
 | EXP-A | RUN | PASS (answered) | None of `/place structure`, `/place jigsaw` or `/place template` wrote structure data. Every placement chunk saved as `structures: {References: {}, starts: {}}`, and all 225×7 site chunks had no starts and no References. `location_check` failed at all 11 in-structure points (igloo ×3, village ×5, brock ×3). `/locate` never returned a placed build. Natural controls passed: predicate `Test passed`, locate 8 and 10 blocks away, starts plus 16 and 9 References chunks. |
 | EXP-B | RUN | FAIL for projected jigsaws | `village_plains`: bell at y64 and houses buried 31–54 blocks under the painted surface; streets followed the surface (1617/1808 path blocks at dy 0). `/place structure cobbleverse:brock`: snapped to the chunk origin (1664, 62, 2176), 20 blocks under the surface at 82. Igloo: floor at the painted top (y107). `/place jigsaw` at an explicit y97: center at y97, streets on the surface, **no houses**. `desert_pyramid`: `Failed to place structure` (cause not verified). |
 | EXP-C | RUN | PASS (answered) | Placement never ran the Brock command blocks, with `enable-command-block` false or true (checked at 0 s and 5 s). The chain starts from a **light weighted pressure plate**; an item entity pressed it. With false: the command block got `powered:1b` and a new `LastExecution` but did nothing. With true: plate removed, command blocks turned to dirt, villager "Kanto Map Guide" summoned. C1 (placed while off) and the structure-placed C3 also ran once triggered in boot 2. |
-| EXP-D | NOT RUN | — | `/checkspawn` exists but rejects RCON use (`Incorrect argument for command`). A player is needed. |
-| EXP-E | NOT RUN (spawn) | block data PASS | All three pasted gyms kept `rctmod:trainer_spawner {TrainerIds: ["kanto_brock"]}`. The template's `OwnerUUID` is absent after placement. Spawning needs a player (`/rctmod trainer spawn_for [<target>]`). |
+| EXP-D | RUN (player, 2026-09-13, `cobblers-10240`, [`SESSION-DE.md`](SESSION-DE.md)) | **CONFIRMED for villages; portal pair inconclusive** | Probe datapack `exp013de`. D0 spawn: Dracozolt 50.07% (instrument works). D1 pasted plains meeting point: Dracozolt 50.18%, **Arctozolt (`#minecraft:village`) absent**. D2 pasted ruined portal: **Dracovish absent** (reported). D4 natural RS warped village in the Nether: **Arctozolt 43.48%**, Dracozolt 43.48%, i.e. the village control passed. D3 natural Nether ruined portal: Dracovish absent **and Dracozolt absent too**, so by the protocol that reading is invalid, not a control failure. The spot was a cramped soul-sand tunnel; the likely cause is that the probe species' large hitbox had no room (not verified). Conclusion: a structure-gated spawn entry fires in a natural village and does not fire in a pasted one; the `structures` condition is the same code path for every tag |
+| EXP-E | RUN (player, same session) | **PASS** | E1 pasted `cobbleverse:brock`: Brock spawned from the template's powered spawner, and right-clicking him started the battle (E1+ PASS). E2 bare `rctmod:trainer_spawner` set by command with `TrainerIds ["kanto_brock"]` on a redstone block: Brock spawned on the spawner and battled (screenshot: Brock's Geodude Lv16 vs Geodude Lv15). Side observation: with a Lv26 Plusle in the party RCT would not let the battle happen; that matches the RCT level cap (`initialLevelCap 20`, `relativeLevelCap 5`), exact message not recorded |
 | EXP-F | RUN (loot) | FAIL for hand-placed | 6 `gym_map` rolls (3 per boot, 2 next to hand-placed gyms and 1 outside) all returned `filled_map` with `target_point` at unrelated places, never at a hand-placed gym. LumyMon trades and radars: NOT RUN. |
 
 ### EXP-A raw excerpts
@@ -231,8 +231,13 @@ no natural `cobbleverse:brock` start, so no map could point at a natural gym the
 
 ## Limitations
 
-- **Headless.** No player joined, so Cobblemon spawns (EXP-D), RCT spawns (EXP-E), LumyMon trades
-  and radars were not tested, and nothing was checked visually.
+- **Headless for A, B, C and F.** D and E were run later by one player (see Results). LumyMon trades
+  and radars were never tested.
+- **D readings are `/checkspawn` lists, not observed spawns.** The ruined-portal pair is
+  inconclusive because the natural control position gave an invalid reading. The D session also
+  showed a client render glitch near E2: vertical smeared terrain columns that stayed until the
+  player left the server. Cause not investigated; Distant Horizons LOD rendering after teleports is
+  a candidate, not verified.
 - **Partial world.** Only 12 region files existed, so most of the 8k export was ungenerated in the
   disposable world. Locate and map answers landed in those gaps. In the full live world, every
   chunk inside the export exists; answers there are NOT VERIFIED. The skip control only shows that
@@ -254,8 +259,12 @@ no natural `cobbleverse:brock` start, so no map could point at a natural gym the
 **Hand-placement cannot rely on structure data.** On this server, every in-game placement method
 we tested left the chunks with no start and no References. Anything keyed to structure IDs will
 therefore not see our builds. That covers `/locate`, `location_check` / advancements, the
-Cobbleverse `gym_map`, LumyMon's exploration-map trades (same function, not run), and very likely
-Cobblemon `structures` spawn conditions (not run).
+Cobbleverse `gym_map`, LumyMon's exploration-map trades (same function, not run), and Cobblemon
+`structures` spawn conditions (EXP-D: a pasted village square does not satisfy `#minecraft:village`;
+a natural village does).
+
+**Trainer spawners do not need structure data** (EXP-E): a pasted Cobbleverse gym and a spawner set
+by command both spawn their trainer, and the battle starts. Gyms can be pasted or authored builds.
 
 Implications:
 - Gym maps, cartographer trades and legendary radars that target structure tags need a
@@ -274,10 +283,12 @@ No ADR written; this feeds the structure-placement ADR when one is drafted.
 
 ## Follow-up
 
-- Client test (one player): EXP-D and EXP-E are staged on `cobblers-10240` and specified in
-  [`SESSION-DE.md`](SESSION-DE.md) (probe datapack `datapack/exp013de`, pasted village square,
-  pasted ruined portal, natural Nether portal and warped village as controls, pasted Brock gym,
-  authored spawner). LumyMon Brock-map trade and legendary radar next to a pasted gym: not staged.
+- EXP-D and EXP-E: done ([`SESSION-DE.md`](SESSION-DE.md)). Cleanup done afterwards: probe datapack
+  removed, game rules restored in `level.dat`, region `r.6.6` (all four overworld sites) restored from
+  the pre-build backup; the two Nether controls are vanilla terrain and stay.
+- Optional: re-read the ruined-portal control from an open spot at the natural portal, if the portal
+  pair ever matters on its own.
+- LumyMon Brock-map trade and legendary radar next to a pasted gym: not staged.
 - Decide the replacement for structure-tag maps and spawns (content-architect ADR).
 - Optional: check `/locate` and `gym_map` against a complete copy of the export (all regions) to
   confirm where answers go when every export chunk exists.

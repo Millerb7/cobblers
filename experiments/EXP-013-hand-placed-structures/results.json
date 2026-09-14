@@ -113,8 +113,32 @@
       ],
       "not_tested": "structure block Load button; a template with an auto:1 impulse or repeating command block (the Brock impulse block is auto:0); triggering by a player"
     },
+    "EXP-D-player-session": {
+      "status": "RUN",
+      "date": "2026-09-13",
+      "world": "cobblers-10240",
+      "procedure": "SESSION-DE.md; probe datapack datapack/exp013de (Dracozolt no condition, Arctozolt #minecraft:village, Dracovish #minecraft:ruined_portal; common, weight 1000)",
+      "observations": {
+        "D0_spawn": "Dracozolt 50.07% listed",
+        "D1_pasted_village_meeting_point": "Dracozolt 50.18%; Arctozolt absent",
+        "D2_pasted_ruined_portal": "Dracovish absent (player report)",
+        "D3_natural_nether_ruined_portal": "Dracovish absent and Dracozolt absent: invalid reading under the protocol; cramped soul-sand tunnel, large-hitbox probe species likely had no room (NOT VERIFIED)",
+        "D4_natural_rs_warped_village": "Arctozolt 43.48% and Dracozolt 43.48% listed"
+      },
+      "result": "CONFIRMED for #minecraft:village: the entry fires in a natural village and not in a pasted one. Ruined-portal pair inconclusive (control reading invalid)."
+    },
+    "EXP-E-player-session": {
+      "status": "RUN",
+      "date": "2026-09-13",
+      "observations": {
+        "E1_pasted_cobbleverse_brock": "Brock spawned from the powered template spawner; right-click started the battle",
+        "E2_command_set_spawner_on_redstone_block": "Brock spawned on the spawner and battled (Brock's Geodude Lv16 vs player's Geodude Lv15)",
+        "level_cap_side_note": "with a Lv26 Plusle in the party the battle did not start; consistent with RCT level cap, message not recorded"
+      },
+      "result": "PASS: trainer spawners work in pasted and command-authored builds without structure data"
+    },
     "EXP-D": {
-      "status": "NOT RUN",
+      "status": "NOT RUN (headless run; see EXP-D-player-session)",
       "reason": "Cobblemon spawn checks need a player. /checkspawn is registered: 'help checkspawn' printed nothing, and 'execute positioned 1670 64 2188 run checkspawn common' returned 'Incorrect argument for command'. No player-free spawn-condition evaluator was found in the help output",
       "client_test_needs": "a player online, a test spawn entry with structures: [\"minecraft:igloo\"] (or cobbleverse:brock), and /checkspawn (or observed spawns) at A1 (structure-placed igloo), A4 (template igloo) and a naturally generated igloo",
       "prediction_from_EXP_A": "fails at hand-placed sites, because Cobblemon reads chunk structure starts and these chunks have none (NOT VERIFIED)"
@@ -149,8 +173,6 @@
   },
   "conclusion": "No placement method tested (/place structure, /place jigsaw, /place template) wrote structures.starts or structures.References to any chunk. Every consumer that reads structure data (/locate, location_check, the Cobbleverse gym_map exploration map) ignored the hand-placed builds, while natural mega_site and mineshaft starts in the same world passed.",
   "not_verified": [
-    "Cobblemon structures-gated spawns at any site (EXP-D)",
-    "RCT trainer spawns from pasted spawners (EXP-E)",
     "LumyMon cartographer trades and legendary radars (need a player/villager trade)",
     "structure block Load button and WorldEdit/Axiom pastes",
     "cause of the desert_pyramid 'Failed to place structure'",
