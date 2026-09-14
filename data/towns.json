@@ -18,10 +18,46 @@
    "text": "Keep the Kanto chain; move the north-coast box inland near Peak Pond and Misty's box to Lake Viltri."
   },
   {
+   "id": "end_league_copies_disabled",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "Disable the Cobbleverse-generated League copies (cobbleverse:kanto_league) in the End."
+  },
+  {
+   "id": "end_access_post_game",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "End access is post-game."
+  },
+  {
+   "id": "critical_path_is_ten",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "The critical path stays at ten settlements; everything added is off the route and optional."
+  },
+  {
    "id": "league_in_the_overworld",
    "by": "user",
    "date": "2026-09-14",
-   "text": "The League is an overworld town at the head of the Rift, reached by Victory Road through the Rift."
+   "text": "The League stays at the head of the Rift, in the overworld."
+  },
+  {
+   "id": "end_league_copies_disabled",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "Disable the Cobbleverse-generated League copies (cobbleverse:kanto_league) in the End."
+  },
+  {
+   "id": "end_access_post_game",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "End access is post-game."
+  },
+  {
+   "id": "critical_path_is_ten",
+   "by": "user",
+   "date": "2026-09-14",
+   "text": "The critical path stays at ten settlements; everything added is off the route and optional."
   }
  ],
  "method": "Sites from tools/find_sites.py's largest-square search on the river-cut heightmap, with lake and river water and a 24-block setback excluded; legs from a terrain-weighted route on 8-block cells (docs/world-building/TOWNS.md). Tools produce candidates; these are proposals for a human to accept.",
@@ -79,7 +115,18 @@
     "from": null,
     "text": "The start. Pallet Meadows' upper bench, looking west over the sea; the first route runs north up the plains and onto the Viltri Plateau."
    },
-   "route_role": "Start of the Kanto chain. South-west corner of the mainland, so the loop runs north first and returns along the south coast for Giovanni. Tight: the bench holds a small town, not a spread one."
+   "route_role": "Start of the Kanto chain. South-west corner of the mainland, so the loop runs north first and returns along the south coast for Giovanni. Tight: the bench holds a small town, not a spread one.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": null,
+    "unlock": "open question: given at start or earned (progression.json hometown_waystone)"
+   },
+   "nearest_settlement": {
+    "id": "relic_island",
+    "distance_blocks": 440
+   }
   },
   {
    "id": "gym1_town",
@@ -139,7 +186,18 @@
     "water_crossings": [],
     "text": "North from the hometown through Pallet Meadows and up onto the plateau, no water on the way."
    },
-   "route_role": "Rock gym on a birch upland, the first town north of the hometown as Pewter is north of Pallet. The Water and Grass answers to Brock are one leg ahead (Lake Viltri, 570 blocks) and on the plateau itself."
+   "route_role": "Rock gym on a birch upland, the first town north of the hometown as Pewter is north of Pallet. The Water and Grass answers to Brock are one leg ahead (Lake Viltri, 570 blocks) and on the plateau itself.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym1_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "gym2_town",
+    "distance_blocks": 838
+   }
   },
   {
    "id": "gym2_town",
@@ -199,7 +257,18 @@
     "water_crossings": [],
     "text": "Down off the plateau to the lake's north shore; the town fronts the water 86 blocks away. Viltri's Path, redrawn on the lake's real outflow, leaves the lake 240 blocks to the west."
    },
-   "route_role": "Misty on a real lake: the flattest site of the ten (under 5 degrees, 4 blocks of relief). The short leg from Brock (908 blocks) makes the first two towns a pair, as Pewter and Cerulean are close."
+   "route_role": "Misty on a real lake: the flattest site of the ten (under 5 degrees, 4 blocks of relief). The short leg from Brock (908 blocks) makes the first two towns a pair, as Pewter and Cerulean are close.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym2_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "gym1_town",
+    "distance_blocks": 838
+   }
   },
   {
    "id": "gym3_town",
@@ -265,7 +334,18 @@
     ],
     "text": "North 1,643 blocks up the Tri Peaks' flank, bridging the creek out of the pond west of Mt Clay at (1824, 1888): the first crossing of the game, a small one."
    },
-   "route_role": "An exposed high town for the electric gym, the highest on the route (y186-194). Box F's plateau is the clipped y200 ceiling, flat only because it is cut off; this shoulder is real ground 47 blocks from the summit. It is also the tightest site (83 blocks square): a small town."
+   "route_role": "An exposed high town for the electric gym, the highest on the route (y186-194). Box F's plateau is the clipped y200 ceiling, flat only because it is cut off; this shoulder is real ground 47 blocks from the summit. It is also the tightest site (83 blocks square): a small town.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym3_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "the_scar",
+    "distance_blocks": 408
+   }
   },
   {
    "id": "gym4_town",
@@ -325,7 +405,18 @@
     "water_crossings": [],
     "text": "East 2,640 blocks along the north of the massif. The route passes the major river's head where it is still a creek, so the north has no barrier."
    },
-   "route_role": "Erika in Peak Pond Hollow, 129 blocks from the pond, replacing the box that was in the sea. The sub-region is painted as dense taiga; Erika's own structure generates in flower forest, so the paint around the town is a candidate for a flower preset when Axiom work starts."
+   "route_role": "Erika in Peak Pond Hollow, 129 blocks from the pond, replacing the box that was in the sea. The sub-region is painted as dense taiga; Erika's own structure generates in flower forest, so the paint around the town is a candidate for a flower preset when Axiom work starts.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym4_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "gym5_town",
+    "distance_blocks": 953
+   }
   },
   {
    "id": "gym5_town",
@@ -385,7 +476,18 @@
     "water_crossings": [],
     "text": "South 1,027 blocks through the forest to the fields at the foot of the Glacial Tear; Marshy Marsh is 311 blocks east."
    },
-   "route_role": "Poison beside the marsh. The Glacial Tear and the major river's valley lie 311-507 blocks south-west: visible from town, not yet in the way."
+   "route_role": "Poison beside the marsh. The Glacial Tear and the major river's valley lie 311-507 blocks south-west: visible from town, not yet in the way.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym5_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "gym4_town",
+    "distance_blocks": 953
+   }
   },
   {
    "id": "gym6_town",
@@ -445,7 +547,18 @@
     "water_crossings": [],
     "text": "East 1,946 blocks along the north side of the Glacial Tear's mouth to the terrace over Lake Tilpey."
    },
-   "route_role": "The central hub, as Saffron is Kanto's centre: over the lake where the glacier and the major river end. It is the last town before the barrier."
+   "route_role": "The central hub, as Saffron is Kanto's centre: over the lake where the glacier and the major river end. It is the last town before the barrier.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym6_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "gorge_hamlet",
+    "distance_blocks": 1149
+   }
   },
   {
    "id": "gym7_town",
@@ -517,18 +630,17 @@
     "text": "South across the major river. The shortest way is 2,021 blocks, bridging the Tilpey outflow gorge (22-32 blocks of water, 9 deep) at about (6632, 3904). Without crossing the river or the lake it is 9,496 blocks, back past the river's head.",
     "without_crossing_blocks": 9496
    },
-   "route_role": "Blaine at the Craters instead of the Nether. The town sits on the north-west rim, 27 blocks from the crater outline; the river crossing before it is the first real barrier of the game, placed between badges 6 and 7.",
-   "gym_structure_alternative": {
-    "centre": {
-     "x": 6607,
-     "z": 5622
-    },
-    "size_blocks": 156,
-    "ground_y": [
-     128.5,
-     137.9
-    ],
-    "note": "a 156-block flat in the East Cones by the eastern bowl (6672, 5508), if the gym itself should stand in the caldera with the town on the rim"
+   "route_role": "Blaine at the Craters instead of the Nether. The town sits on the north-west rim, 27 blocks from the crater outline; the river crossing before it is the first real barrier of the game, placed between badges 6 and 7. (The East Cones flat once recorded as a caldera site for the gym now holds the Mining Town.)",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym7_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "mining_town",
+    "distance_blocks": 912
    }
   },
   {
@@ -589,7 +701,18 @@
     "water_crossings": [],
     "text": "West 3,055 blocks along the south of the Craters and the Rift's southern arms, no water crossings."
    },
-   "route_role": "Giovanni back near the hometown for the finale, as Viridian's gym is beside Pallet and opens last. The Rift's south-west tip is 1,122 blocks north: the start of Victory Road."
+   "route_role": "Giovanni back near the hometown for the finale, as Viridian's gym is beside Pallet and opens last. The Rift's south-west tip is 1,122 blocks north: the start of Victory Road.",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym8_cleared",
+    "unlock": "defeating the town's leader (data/progression.json)"
+   },
+   "nearest_settlement": {
+    "id": "tableland_stop",
+    "distance_blocks": 1449
+   }
   },
   {
    "id": "league",
@@ -648,8 +771,1084 @@
     "text": "North up the Rift as Victory Road, 4,038 blocks by the shortest route, to the plateau on the Rift's west rim at its head. No water crossings."
    },
    "route_role": "The League on the Foothill Woods plateau 178 blocks from the Rift and 447 from the Glacial Tear, overlooking the major river. The Rift, a dry valley with its own custom biome still to come, is the approach. Proposed in the overworld: see the note on the End.",
-   "note_on_the_end": "Decided 2026-09-14: the League is in the overworld. The End's generated cobbleverse:kanto_league copies need disabling like the Nether's Blaine copies, and End access becomes post-game (docs/world-building/DIMENSIONS_AND_BORDERS.md 4.2)."
+   "note_on_the_end": "Decided 2026-09-14: the League is in the overworld; the End's cobbleverse:kanto_league copies are to be disabled and End access is post-game (DIMENSIONS_AND_BORDERS.md 4.2).",
+   "tier": "critical",
+   "critical_path": true,
+   "waystone": {
+    "kind": "flag",
+    "flag": "gym8_cleared",
+    "unlock": "proposed: opens with the League"
+   },
+   "nearest_settlement": {
+    "id": "rift_dig_camp",
+    "distance_blocks": 736
+   }
+  },
+  {
+   "id": "sunset_west",
+   "order": null,
+   "role": "major_town",
+   "tier": "major",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Sunset West (harbour town)",
+   "display_name": null,
+   "for": "The region's harbour: a fishing and boat-building port on the south-western island, where players charter boats for the outer islands and the deep sea.",
+   "why_here": "The best building site on the map (408 blocks square under 8 degrees) on the largest island, 2,000 blocks from any gym. The sea crossing makes it a destination; its content is tuned for after the League.",
+   "centre": {
+    "x": 1716,
+    "z": 7298,
+    "ground_y": 114.8
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 408,
+    "min_x": 1513,
+    "min_z": 7095,
+    "max_x": 1920,
+    "max_z": 7502,
+    "ground_y": [
+     104.1,
+     123.1
+    ],
+    "slope_degrees": {
+     "mean": 2.5,
+     "max": 8.0
+    },
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "sunset_west",
+   "region": "sunset_isle",
+   "nearby": [
+    {
+     "landmark": "arrow_lake_south",
+     "distance_blocks": 1307
+    },
+    {
+     "landmark": "arrow_lake_south_east_branch",
+     "distance_blocks": 2188
+    },
+    {
+     "landmark": "watering_hole",
+     "distance_blocks": 2286
+    }
+   ],
+   "distance_from_critical_path_blocks": 2022,
+   "nearest_leg": {
+    "from": "hometown",
+    "to": "gym1_brock",
+    "at_fraction": 0.0
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "an island: the waystone is what a sea crossing earns"
+   },
+   "gates": [],
+   "post_game_intent": true,
+   "access": "sea crossing from the south-west coast; not locked",
+   "nearest_settlement": {
+    "id": "relic_island",
+    "distance_blocks": 1873
+   },
+   "buildability": "408-block square under 8 degrees; no flattening needed for a medium town"
+  },
+  {
+   "id": "northlight",
+   "order": null,
+   "role": "major_town",
+   "tier": "major",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Northlight (research town, South Pine Isle)",
+   "display_name": null,
+   "for": "A cold-water research town on the snowy spruce isles: the region's weather and aurora observatory and an ice-type field station.",
+   "why_here": "The only snowy island group, in the opposite corner from Sunset West, so the two post-game islands pull players to both ends of the map; 2,100 blocks from Sabrina, the nearest gym.",
+   "centre": {
+    "x": 7265,
+    "z": 1556,
+    "ground_y": 115.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 231,
+    "min_x": 7150,
+    "min_z": 1441,
+    "max_x": 7380,
+    "max_z": 1671,
+    "ground_y": [
+     110.8,
+     123.8
+    ],
+    "slope_degrees": {
+     "mean": 2.7,
+     "max": 8.0
+    },
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "south_pine_isle",
+   "region": "pine_isles",
+   "nearby": [
+    {
+     "landmark": "marsh_outflow",
+     "distance_blocks": 1604
+    },
+    {
+     "landmark": "marsh_to_tilpey",
+     "distance_blocks": 1790
+    },
+    {
+     "landmark": "marshy_marsh",
+     "distance_blocks": 1875
+    }
+   ],
+   "distance_from_critical_path_blocks": 2108,
+   "nearest_leg": {
+    "from": "gym5_koga",
+    "to": "gym6_sabrina",
+    "at_fraction": 0.8
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "an island: the waystone is what a sea crossing earns"
+   },
+   "gates": [],
+   "post_game_intent": true,
+   "access": "sea crossing from the north-east coast; not locked",
+   "nearest_settlement": {
+    "id": "gym6_town",
+    "distance_blocks": 2130
+   },
+   "buildability": "231-block square under 8 degrees with 13 blocks of relief: light terracing"
+  },
+  {
+   "id": "mining_town",
+   "order": null,
+   "role": "major_town",
+   "tier": "major",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Mining Town (East Cones)",
+   "display_name": null,
+   "for": "Ore and mineral production on the flank of the eastern cone: mine head, ore rail, smelter and fossil lab. The mine is the set piece: surface workings, adits into the cone, shafts down to the fossil levels and, deepest, the sleeping Groudon.",
+   "why_here": "The spec puts it in the volcanic cone region, and the eastern cone is the only one with a bowl (floor y127, 210 blocks north of the site). 912 blocks from Blaine's rim town: close enough to be heard of there, far enough to be its own trip.",
+   "centre": {
+    "x": 6633,
+    "z": 5716,
+    "ground_y": 137.3
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 227,
+    "min_x": 6520,
+    "min_z": 5603,
+    "max_x": 6746,
+    "max_z": 5829,
+    "ground_y": [
+     132.4,
+     144.3
+    ],
+    "slope_degrees": {
+     "mean": 2.9,
+     "max": 8.0
+    },
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "east_cones",
+   "region": "the_craters",
+   "nearby": [
+    {
+     "landmark": "craters",
+     "distance_blocks": 133
+    },
+    {
+     "landmark": "lake_tilpey",
+     "distance_blocks": 1260
+    },
+    {
+     "landmark": "major_river",
+     "distance_blocks": 1772
+    }
+   ],
+   "distance_from_critical_path_blocks": 903,
+   "nearest_leg": {
+    "from": "gym7_blaine",
+    "to": "gym8_giovanni",
+    "at_fraction": 0.03
+   },
+   "waystone": {
+    "kind": "none",
+    "reason": "Blaine's town waystone is 912 blocks away; the walk in is part of arriving at a working town"
+   },
+   "gates": [],
+   "volume_build": {
+    "tool": "Axiom / WorldEdit",
+    "surface": "the site square, terraced 12 blocks down the flank",
+    "mine": "adit from the town into the eastern cone toward the bowl; a main shaft from about y135 to the fossil levels (y40-70); deep workings below for Groudon",
+    "scope_estimate": "about 2 km of 3x4 galleries (25,000 blocks) plus four chambers of about 30x30x15 (54,000 blocks); the Groudon chamber authored separately",
+    "biomes": "sulfur_caves in the workings is planned for the Craters (regions.json underground_biomes, optional: it binds the save to VanillaBackport)",
+    "spawn_tags": "#cobblemon:is_volcanic and #cobblemon:is_thermal have no loaded biome; the overlay that puts the Craters' biomes into them is still to be written and verified",
+    "fossils": "the Mining Town is where the fossil-site placements go underground (WORLDGEN_FEATURES.md); which species become reachable is listed when the encounter tables are written",
+    "legendary": "Groudon in the deep workings (STRUCTURE_DECISIONS.md)"
+   },
+   "nearest_settlement": {
+    "id": "gym7_town",
+    "distance_blocks": 912
+   },
+   "buildability": "227-block square under 8 degrees with 12 blocks of relief down the cone flank: terraced, which suits a mine town"
+  },
+  {
+   "id": "displaced_city",
+   "order": null,
+   "role": "major_town",
+   "tier": "major",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "The Displaced City",
+   "display_name": null,
+   "for": "A summit town the Worldshift moved into a cherry-grove cavern beneath the Glacial Tear: streets still laid out for a mountaintop, trees living on light that is not the sun. The region's great mystery; Regigigas is sealed beside it.",
+   "why_here": "Beneath the glacier rather than off a Rift side-chamber: the Rift now has a purpose (Victory Road to the League), while the glacier head has none on the path; Regigigas was already planned beneath the glacier; ice above a blossoming city below is the absurdity the spec asks for; and the Scar on Mt Vessu is 900 blocks away across the Merian cirque, so the two can be connected by sight and story. The surface site is the entrance on the trough's south-west flank.",
+   "centre": {
+    "x": 2969,
+    "z": 1710,
+    "ground_y": 122.0
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "major",
+    "size_blocks": 132,
+    "min_x": 2904,
+    "min_z": 1645,
+    "max_x": 3035,
+    "max_z": 1776,
+    "ground_y": [
+     117.1,
+     126.8
+    ],
+    "slope_degrees": {
+     "mean": 3.5,
+     "max": 8.0
+    },
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "upper_trough",
+   "region": "glacial_tear",
+   "nearby": [
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 97
+    },
+    {
+     "landmark": "major_river",
+     "distance_blocks": 115
+    },
+    {
+     "landmark": "mt_clay",
+     "distance_blocks": 172
+    }
+   ],
+   "distance_from_critical_path_blocks": 426,
+   "nearest_leg": {
+    "from": "gym3_surge",
+    "to": "gym4_erika",
+    "at_fraction": 0.46
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "underground and hard to find twice: the waystone inside the city is the reward for finding it"
+   },
+   "gates": [],
+   "underground": {
+    "entrance": "the surface site: a meltwater cave mouth on the trough flank, 426 blocks off the Surge to Erika leg",
+    "cavern_centre": {
+     "x": 3350,
+     "z": 1750
+    },
+    "cavern_footprint_blocks": [
+     200,
+     200
+    ],
+    "cavern_y": [
+     32,
+     72
+    ],
+    "roof": "ground above is y96 or higher; the major river's bed nearby is about y98, so at least 24 blocks of rock over a y72 ceiling",
+    "ceiling": "recommended: a glowing false sky (light-emitting blocks set in the roof), so the cherry trees and grass grow on block light, which is the 'not sunlight' of the spec; daylight shafts would contradict it and full dark hides the city",
+    "excavation_estimate_blocks": "about 1.0-1.6 million for the cavern (200 x 200 x 40, less rock left standing) plus a 400-block access tunnel",
+    "tool": "Axiom / WorldEdit volume build",
+    "check_first": "the export's lowest block layer before digging below y40 (not verified)",
+    "linked": [
+     "the_scar",
+     "regigigas (sealed chamber beside the city)"
+    ]
+   },
+   "nearest_settlement": {
+    "id": "merian_hut",
+    "distance_blocks": 628
+   },
+   "buildability": "the surface entrance is a 132-block square under 8 degrees; the city itself is a volume build (see underground)"
+  },
+  {
+   "id": "tea_town",
+   "order": null,
+   "role": "major_town",
+   "tier": "major",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Tea town (Shrew Lake shores)",
+   "display_name": null,
+   "for": "A town built on one industry: tea terraces and a tea house in the cherry-blossom country above Shrew Lake, the set piece for Poltchageist and Sinistcha.",
+   "why_here": "The only cherry-grove country on the map (the blossom preset), with Shrew Lake 390 blocks south; the tea house was already the recommended home for Poltchageist (STRUCTURE_DATA_FALLOUT.md). 702 blocks off Victory Road and 911 from Brock, so it is found by wandering, not passed.",
+   "centre": {
+    "x": 2654,
+    "z": 3605,
+    "ground_y": 112.1
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "medium",
+    "size_blocks": 248,
+    "min_x": 2531,
+    "min_z": 3482,
+    "max_x": 2778,
+    "max_z": 3729,
+    "ground_y": [
+     106.7,
+     115.5
+    ],
+    "slope_degrees": {
+     "mean": 2.4,
+     "max": 8.0
+    },
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "shrew_lake_shores",
+   "region": "shrew_lakes",
+   "nearby": [
+    {
+     "landmark": "shrew_lake",
+     "distance_blocks": 154
+    },
+    {
+     "landmark": "river_of_shrews",
+     "distance_blocks": 379
+    },
+    {
+     "landmark": "rift",
+     "distance_blocks": 418
+    }
+   ],
+   "distance_from_critical_path_blocks": 898,
+   "nearest_leg": {
+    "from": "gym1_brock",
+    "to": "gym2_misty",
+    "at_fraction": 0.03
+   },
+   "waystone": {
+    "kind": "none",
+    "reason": "Brock's town waystone is 911 blocks away; a tea house is a place to walk to"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "rift_dig_camp",
+    "distance_blocks": 538
+   },
+   "buildability": "248-block square under 8 degrees with 9 blocks of relief: tea terraces use it"
+  },
+  {
+   "id": "merian_hut",
+   "order": null,
+   "role": "rest_stop",
+   "tier": "rest_stop",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Merian hut",
+   "display_name": null,
+   "for": "An alpine hut with a Pokémon Center in the Merian cirque, at the source of the major river.",
+   "why_here": "The Surge to Erika leg is 2,640 blocks; the cirque floor is the flattest ground near its middle (39% along), 181 blocks north of the route, and the river's source is its own small landmark.",
+   "centre": {
+    "x": 2813,
+    "z": 1102,
+    "ground_y": 107.4
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "small",
+    "size_blocks": 237,
+    "min_x": 2695,
+    "min_z": 984,
+    "max_x": 2931,
+    "max_z": 1220,
+    "ground_y": [
+     107.3,
+     109.1
+    ],
+    "slope_degrees": {
+     "mean": 0.3,
+     "max": 4.9
+    },
+    "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "merian_cirque",
+   "region": "glacial_tear",
+   "nearby": [
+    {
+     "landmark": "merian",
+     "distance_blocks": 110
+    },
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 243
+    },
+    {
+     "landmark": "major_river",
+     "distance_blocks": 277
+    }
+   ],
+   "distance_from_critical_path_blocks": 182,
+   "nearest_leg": {
+    "from": "gym3_surge",
+    "to": "gym4_erika",
+    "at_fraction": 0.39
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "a rest stop's only job is convenience; walking past loses nothing"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "displaced_city",
+    "distance_blocks": 628
+   },
+   "buildability": "237-block square under 5 degrees; far more than a hut needs"
+  },
+  {
+   "id": "gorge_hamlet",
+   "order": null,
+   "role": "rest_stop",
+   "tier": "rest_stop",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Gorge hamlet (Tilpey outflow)",
+   "display_name": null,
+   "for": "A bridge-keepers' hamlet above the Tilpey outflow gorge: a Center, two houses, and the NPC who knows the river.",
+   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits 330 blocks south-east of the bridge on the far bank, visible from it but not on the way.",
+   "centre": {
+    "x": 6814,
+    "z": 4367,
+    "ground_y": 112.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "small",
+    "size_blocks": 181,
+    "min_x": 6724,
+    "min_z": 4277,
+    "max_x": 6904,
+    "max_z": 4457,
+    "ground_y": [
+     109.3,
+     115.3
+    ],
+    "slope_degrees": {
+     "mean": 1.9,
+     "max": 4.9
+    },
+    "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "east_coast_dunes",
+   "region": "eastern_dunes",
+   "nearby": [
+    {
+     "landmark": "lake_tilpey",
+     "distance_blocks": 357
+    },
+    {
+     "landmark": "major_river",
+     "distance_blocks": 411
+    },
+    {
+     "landmark": "craters",
+     "distance_blocks": 662
+    }
+   ],
+   "distance_from_critical_path_blocks": 330,
+   "nearest_leg": {
+    "from": "gym6_sabrina",
+    "to": "gym7_blaine",
+    "at_fraction": 0.6
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "convenience on the barrier leg, earned by crossing"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "gym7_town",
+    "distance_blocks": 971
+   },
+   "buildability": "181-block square under 5 degrees"
+  },
+  {
+   "id": "tableland_stop",
+   "order": null,
+   "role": "rest_stop",
+   "tier": "rest_stop",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Tableland stop (Scorched Plateau)",
+   "display_name": null,
+   "for": "A waystation on the badlands tableland: a Center, a prospector's house and a lookout over the Craters and the Rift.",
+   "why_here": "The Blaine to Giovanni leg is 3,055 blocks; the plateau top at 56% of it has a flat 198-block square 235 blocks off the route, high enough (y158-162) to be seen from below.",
+   "centre": {
+    "x": 4876,
+    "z": 5729,
+    "ground_y": 160.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "small",
+    "size_blocks": 198,
+    "min_x": 4778,
+    "min_z": 5631,
+    "max_x": 4975,
+    "max_z": 5828,
+    "ground_y": [
+     157.8,
+     162.4
+    ],
+    "slope_degrees": {
+     "mean": 1.5,
+     "max": 5.0
+    },
+    "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "plateau_west",
+   "region": "scorched_plateau",
+   "nearby": [
+    {
+     "landmark": "craters",
+     "distance_blocks": 653
+    },
+    {
+     "landmark": "rift",
+     "distance_blocks": 670
+    },
+    {
+     "landmark": "tilpey_south_west_outlet",
+     "distance_blocks": 761
+    }
+   ],
+   "distance_from_critical_path_blocks": 235,
+   "nearest_leg": {
+    "from": "gym7_blaine",
+    "to": "gym8_giovanni",
+    "at_fraction": 0.56
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "convenience on a long leg"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "gym7_town",
+    "distance_blocks": 1405
+   },
+   "buildability": "198-block square under 5 degrees on the plateau top"
+  },
+  {
+   "id": "rift_rim_stop",
+   "order": null,
+   "role": "rest_stop",
+   "tier": "rest_stop",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Rift rim post",
+   "display_name": null,
+   "for": "A rangers' post with a Center on the Rift's east rim near the fork: the traditional stop before Victory Road, set off the road.",
+   "why_here": "Victory Road (Giovanni to the League, 4,038 blocks) runs along the Rift floor; the rim above the fork at 65% of the leg is 346 blocks off it, so players climb out to rest rather than walk through it.",
+   "centre": {
+    "x": 3734,
+    "z": 3951,
+    "ground_y": 139.5
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "small",
+    "size_blocks": 123,
+    "min_x": 3673,
+    "min_z": 3890,
+    "max_x": 3795,
+    "max_z": 4012,
+    "ground_y": [
+     137.5,
+     143.3
+    ],
+    "slope_degrees": {
+     "mean": 2.6,
+     "max": 5.0
+    },
+    "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "shrew_lake_shores",
+   "region": "shrew_lakes",
+   "nearby": [
+    {
+     "landmark": "rift",
+     "distance_blocks": 131
+    },
+    {
+     "landmark": "shrew_lake",
+     "distance_blocks": 554
+    },
+    {
+     "landmark": "arrow_lake",
+     "distance_blocks": 936
+    }
+   ],
+   "distance_from_critical_path_blocks": 365,
+   "nearest_leg": {
+    "from": "gym8_giovanni",
+    "to": "league",
+    "at_fraction": 0.62
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "convenience on the longest leg; Victory Road stays unbroken"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "rift_dig_camp",
+    "distance_blocks": 895
+   },
+   "buildability": "123-block square under 5 degrees"
+  },
+  {
+   "id": "relic_island",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Relic Island (Ash House)",
+   "display_name": null,
+   "for": "The F4 worldshift fragment: a Pallet starter home on a torn-off islet, one reward point, no services (events/F4_RELIC_ISLAND_ASH_HOUSE.md).",
+   "why_here": "The spec wants a house that reads as a displaced Pallet home, with its path pointing back toward town: 440 blocks west of the hometown in the sea, visible from its coast.",
+   "centre": {
+    "x": 1092,
+    "z": 5532,
+    "ground_y": 35.3
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 40,
+    "min_x": 1072,
+    "min_z": 5512,
+    "max_x": 1111,
+    "max_z": 5551,
+    "ground_y": [
+     35.0,
+     36.0
+    ],
+    "slope_degrees": {
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+   },
+   "subregion": null,
+   "region": null,
+   "nearby": [
+    {
+     "landmark": "river_of_shrews",
+     "distance_blocks": 976
+    },
+    {
+     "landmark": "mouth_of_viltri",
+     "distance_blocks": 1263
+    },
+    {
+     "landmark": "viltri_ravine",
+     "distance_blocks": 1356
+    }
+   ],
+   "distance_from_critical_path_blocks": 439,
+   "nearest_leg": {
+    "from": "hometown",
+    "to": "gym1_brock",
+    "at_fraction": 0.0
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "buildability": "built island: the seabed here is y35, so about 35 blocks of fill for a 40-block islet (about 50,000 blocks); the spec's own function builds it",
+   "sea_site": true,
+   "nearest_settlement": {
+    "id": "hometown",
+    "distance_blocks": 440
+   }
+  },
+  {
+   "id": "the_scar",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "The Scar (Mt Vessu summit)",
+   "display_name": null,
+   "for": "The empty footprint where the Displaced City stood: a bare flat summit with foundations and a road that ends at nothing.",
+   "why_here": "Mt Vessu's summit is already a flat bare plateau (the terrain is clipped at y200), which is exactly the spec's 'bare flat footprint'. It is 408 blocks above Surge's town, so the gym 3 town sees it, and 900 blocks from the Displaced City's entrance across the Merian cirque.",
+   "centre": {
+    "x": 2110,
+    "z": 950,
+    "ground_y": 200.0
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 301,
+    "min_x": 1960,
+    "min_z": 800,
+    "max_x": 2260,
+    "max_z": 1100,
+    "ground_y": [
+     200.0,
+     200.0
+    ],
+    "slope_degrees": {
+     "mean": 0.0,
+     "max": 3.7
+    },
+    "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "mt_vessu",
+   "region": "tri_peaks",
+   "nearby": [
+    {
+     "landmark": "mt_vessu",
+     "distance_blocks": 247
+    },
+    {
+     "landmark": "tri_peaks",
+     "distance_blocks": 309
+    },
+    {
+     "landmark": "merian",
+     "distance_blocks": 367
+    }
+   ],
+   "distance_from_critical_path_blocks": 310,
+   "nearest_leg": {
+    "from": "gym3_surge",
+    "to": "gym4_erika",
+    "at_fraction": 0.11
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "buildability": "flat because the heightmap is clipped at y200, the top of the terrain band: fine for a scar, which is meant to look scraped flat; nothing is built above it",
+   "linked": [
+    "displaced_city"
+   ],
+   "nearest_settlement": {
+    "id": "gym3_town",
+    "distance_blocks": 408
+   }
+  },
+  {
+   "id": "viltri_light",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Viltri Light (Mouth of Viltri)",
+   "display_name": null,
+   "for": "A lighthouse marking the Mouth of Viltri: an estuary no river uses any more.",
+   "why_here": "The annotated mouth of Viltri's Path now ends dry at Viltri Ravine while the real river runs north-west; a light still keeping watch over the old mouth is a story the terrain already tells. The coast here is low (y68), so the tower is the landmark, 928 blocks off the first leg.",
+   "centre": {
+    "x": 550,
+    "z": 4518,
+    "ground_y": 67.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 12,
+    "min_x": 544,
+    "min_z": 4512,
+    "max_x": 555,
+    "max_z": 4523,
+    "ground_y": [
+     65.7,
+     69.6
+    ],
+    "slope_degrees": {
+     "mean": 17.5,
+     "max": 18.6
+    },
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "west_shore",
+   "region": "pallet_fields",
+   "nearby": [
+    {
+     "landmark": "mouth_of_viltri",
+     "distance_blocks": 134
+    },
+    {
+     "landmark": "viltri_ravine",
+     "distance_blocks": 247
+    },
+    {
+     "landmark": "river_of_shrews",
+     "distance_blocks": 1016
+    }
+   ],
+   "distance_from_critical_path_blocks": 928,
+   "nearest_leg": {
+    "from": "hometown",
+    "to": "gym1_brock",
+    "at_fraction": 0.38
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "relic_island",
+    "distance_blocks": 1150
+   },
+   "buildability": "low coast (y66-70) falling to the sea, slopes to 19 degrees across the 12-block pad: a small raised platform for the tower, no real flattening"
+  },
+  {
+   "id": "rift_dig_camp",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Rift dig camp (west spur)",
+   "display_name": null,
+   "for": "An archaeologists' camp excavating the anomalous steel chamber in the Rift's dead-end west spur (Registeel).",
+   "why_here": "The west spur branches off the trunk and leads nowhere on Victory Road; the camp is 250 blocks off the route and gives the spur its reason. Registeel's chamber was already planned in the Rift.",
+   "centre": {
+    "x": 3106,
+    "z": 3314,
+    "ground_y": 91.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 121,
+    "min_x": 3046,
+    "min_z": 3254,
+    "max_x": 3166,
+    "max_z": 3374,
+    "ground_y": [
+     86.6,
+     101.5
+    ],
+    "slope_degrees": {
+     "mean": 6.2,
+     "max": 9.3
+    },
+    "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "rift_west_spur",
+   "region": "the_rift",
+   "nearby": [
+    {
+     "landmark": "rift",
+     "distance_blocks": 58
+    },
+    {
+     "landmark": "shrew_lake",
+     "distance_blocks": 521
+    },
+    {
+     "landmark": "river_of_shrews",
+     "distance_blocks": 767
+    }
+   ],
+   "distance_from_critical_path_blocks": 491,
+   "nearest_leg": {
+    "from": "gym8_giovanni",
+    "to": "league",
+    "at_fraction": 0.74
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "tea_town",
+    "distance_blocks": 538
+   },
+   "buildability": "121-block square under 9.3 degrees but 15 blocks of relief where the spur floor meets its wall: a camp, not a street grid, so it terraces rather than flattens"
+  },
+  {
+   "id": "frostpeak_shrine",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Frostpeak shrine",
+   "display_name": null,
+   "for": "A shrine on the lone summit of Frostpeak Point, reached over the low neck from the massif.",
+   "why_here": "The most remote corner of the mainland (1,458 blocks off the path): a summit worth climbing needs something on it.",
+   "centre": {
+    "x": 682,
+    "z": 380,
+    "ground_y": 200.0
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 111,
+    "min_x": 627,
+    "min_z": 325,
+    "max_x": 737,
+    "max_z": 435,
+    "ground_y": [
+     199.8,
+     200.0
+    ],
+    "slope_degrees": {
+     "mean": 0.0,
+     "max": 10.0
+    },
+    "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "frostpeak",
+   "region": "frostpeak_point",
+   "nearby": [
+    {
+     "landmark": "tri_peaks",
+     "distance_blocks": 544
+    },
+    {
+     "landmark": "mt_vessu",
+     "distance_blocks": 1181
+    },
+    {
+     "landmark": "viltris_path",
+     "distance_blocks": 1466
+    }
+   ],
+   "distance_from_critical_path_blocks": 1458,
+   "nearest_leg": {
+    "from": "gym2_misty",
+    "to": "gym3_surge",
+    "at_fraction": 1.0
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "buildability": "the summit square is flat because it is clipped at y200; the shrine stands on it",
+   "nearest_settlement": {
+    "id": "gym3_town",
+    "distance_blocks": 1461
+   }
+  },
+  {
+   "id": "jungle_ruins",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Jungle Isle ruins",
+   "display_name": null,
+   "for": "Overgrown ruins on the jungle island off the south coast: exploration, a cache, no services.",
+   "why_here": "The jungle island has no other purpose and is 1,736 blocks off the path; a ruin rewards the boat trip without adding another town.",
+   "centre": {
+    "x": 5160,
+    "z": 7463,
+    "ground_y": 127.4
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 301,
+    "min_x": 5010,
+    "min_z": 7313,
+    "max_x": 5310,
+    "max_z": 7613,
+    "ground_y": [
+     119.9,
+     134.0
+    ],
+    "slope_degrees": {
+     "mean": 2.8,
+     "max": 8.2
+    },
+    "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
+   },
+   "subregion": "jungle_east",
+   "region": "jungle_isle",
+   "nearby": [
+    {
+     "landmark": "arrow_lake_south_east_branch",
+     "distance_blocks": 1488
+    },
+    {
+     "landmark": "craters",
+     "distance_blocks": 1697
+    },
+    {
+     "landmark": "rift",
+     "distance_blocks": 2295
+    }
+   ],
+   "distance_from_critical_path_blocks": 1736,
+   "nearest_leg": {
+    "from": "gym7_blaine",
+    "to": "gym8_giovanni",
+    "at_fraction": 0.88
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "tableland_stop",
+    "distance_blocks": 1757
+   },
+   "buildability": "301-block square under 8 degrees, 14 blocks of relief: ruins sit on it as found"
   }
  ],
- "not_placed": "Nothing is built. Waystone positions in data/progression.json stay null until the towns are built; each gymN_town id here is the town those flags name."
+ "not_placed": "Nothing is built. Waystone positions in data/progression.json stay null until the towns are built; each gymN_town id here is the town those flags name.",
+ "tiers": {
+  "critical": "the ten places the route requires: hometown, eight gym towns, the League",
+  "major": "full off-path towns with their own identity and services; destinations",
+  "rest_stop": "small, slightly off a long leg: Center, waystone, a couple of buildings, one NPC",
+  "outpost": "one building or a small cluster; discovery without services"
+ },
+ "rules": [
+  "The critical path is exactly the ten critical towns. Nothing else is on it, gates progression, or is needed to reach the next gym: every non-critical place has critical_path false, no gates, and no progression flag names it.",
+  "Rest stops sit 100-450 blocks off their leg; major towns and outposts at least 250 off the routed path.",
+  "Spacing: towns and rest stops at least 600 blocks apart; an outpost at least 300 from any settlement.",
+  "Waystones: flag-driven at the ten critical towns; discovery waystones only where re-finding the place is the hard part (islands, the underground city) or where convenience is the whole point (rest stops); none at major towns within a short walk of a gym waystone, and none at outposts."
+ ],
+ "critical_path_geometry": {
+  "legs": "terrain-weighted routes between consecutive critical towns on 8-block cells, except Giovanni to the League, which is Victory Road along the Rift",
+  "victory_road_blocks": 4953,
+  "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
+ }
 }

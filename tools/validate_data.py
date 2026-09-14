@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -197,8 +198,9 @@ SCHEMAS = {
     "towns.json": (
         "cobblers.towns/1",
         "towns",
-        ["id", "order", "role", "status", "centre", "footprint"],
-        {"role": {"hometown", "gym_town", "league", "town"}, "status": {"proposed", "accepted", "built"}},
+        ["id", "role", "tier", "status", "centre", "footprint", "waystone"],
+        {"role": {"hometown", "gym_town", "league", "major_town", "rest_stop", "outpost"},
+         "tier": {"critical", "major", "rest_stop", "outpost"}, "status": {"proposed", "accepted", "built"}},
     ),
     "routes.json": ("cobblers.routes/1", "routes", ["id", "from", "to"], {}),
 }
@@ -924,25 +926,53 @@ def check_rivers(ctx: Context):
                  % (cut.get("output") or {}).get("path"), file=f.rel, line=f.line_of_key("cut"))
 
 
+CRITICAL_ROLES = {"hometown": 1, "gym_town": 8, "league": 1}
+OFF_PATH_RANGE = {"rest_stop": (100, 450), "major_town": (250, None), "outpost": (250, None)}
+SPACING = {"settlement": 600, "outpost": 300}
+
+
 def check_towns(ctx: Context):
-    """Town placements: unique ids and orders, footprints inside the border and around their centre, and every
-    town a progression flag names exists."""
+    """Settlements: unique ids; exactly ten on the critical path (hometown, eight gym towns, the League) with
+    unique orders; everything else off the path, ungated and named by no progression flag; footprints inside
+    the border and around their centre; spacing between places."""
     rep = ctx.report
     f, towns = ctx.records("towns.json")
     if not f:
         return
     world = ctx.doc("world.json") or {}
     border = (world.get("export") or {}).get("border") or {}
-    seen, orders = set(), set()
+    if not border:
+        rep.skip("towns", "world.json has no export.border; town footprints were not checked against the border",
+                 file=f.rel)
+    seen, orders, counts = set(), set(), {}
     for t in towns:
         tid = t.get("id")
         line = f.line_of_id(tid)
         if tid in seen:
             rep.error("towns", 'duplicate town "%s"' % tid, file=f.rel, line=line, where=tid)
         seen.add(tid)
-        if t.get("order") in orders:
-            rep.error("towns", 'town "%s" repeats order %s' % (tid, t.get("order")), file=f.rel, line=line, where=tid)
-        orders.add(t.get("order"))
+        role = t.get("role")
+        critical = role in CRITICAL_ROLES
+        counts[role] = counts.get(role, 0) + 1
+        if bool(t.get("critical_path")) != critical:
+            rep.error("towns", '"%s" (%s) has critical_path %s; only the hometown, gym towns and the League are on '
+                      "the critical path" % (tid, role, t.get("critical_path")), file=f.rel, line=line, where=tid)
+        if critical:
+            if t.get("order") is None or t.get("order") in orders:
+                rep.error("towns", 'critical town "%s" needs a unique order' % tid, file=f.rel, line=line, where=tid)
+            orders.add(t.get("order"))
+        else:
+            if t.get("order") is not None:
+                rep.error("towns", 'off-path "%s" must not have a route order' % tid, file=f.rel, line=line, where=tid)
+            if t.get("gates"):
+                rep.error("towns", 'off-path "%s" gates progression (%s)' % (tid, t.get("gates")),
+                          file=f.rel, line=line, where=tid)
+            lo, hi = OFF_PATH_RANGE.get(role, (250, None))
+            d = t.get("distance_from_critical_path_blocks")
+            if not isinstance(d, (int, float)) or isinstance(d, bool) or d < lo or (hi is not None and d > hi):
+                rep.error("towns", '"%s" (%s) is %s blocks from the critical path; expected %s'
+                          % (tid, role, d, "%d-%d" % (lo, hi) if hi else "at least %d" % lo),
+                          file=f.rel, line=line, where=tid)
         fp, c = t.get("footprint") or {}, t.get("centre") or {}
         try:
             if not (fp["min_x"] <= c["x"] <= fp["max_x"] and fp["min_z"] <= c["z"] <= fp["max_z"]):
@@ -951,13 +981,32 @@ def check_towns(ctx: Context):
                                and border["min_z"] <= fp["min_z"] and fp["max_z"] <= border["max_z"]):
                 rep.error("towns", 'town "%s" footprint crosses the world border' % tid, file=f.rel, line=line, where=tid)
         except (KeyError, TypeError):
-            rep.error("towns", 'town "%s" needs centre x/z and footprint min/max x/z' % tid, file=f.rel, line=line, where=tid)
+            rep.error("towns", 'town "%s" needs centre x/z and footprint min/max x/z' % tid,
+                      file=f.rel, line=line, where=tid)
+    for role, n in CRITICAL_ROLES.items():
+        if counts.get(role, 0) != n:
+            rep.error("towns", "the critical path needs %d %s, found %d" % (n, role, counts.get(role, 0)), file=f.rel)
+    placed = [t for t in towns if isinstance(t.get("centre"), dict)
+              and all(isinstance(t["centre"].get(k), (int, float)) for k in ("x", "z"))]
+    for i, a in enumerate(placed):
+        for b in placed[i + 1:]:
+            dist = math.hypot(a["centre"]["x"] - b["centre"]["x"], a["centre"]["z"] - b["centre"]["z"])
+            need = SPACING["outpost"] if "outpost" in (a.get("role"), b.get("role")) else SPACING["settlement"]
+            if dist < need:
+                rep.error("towns", '"%s" and "%s" are %d blocks apart; at least %d' % (a.get("id"), b.get("id"), dist, need),
+                          file=f.rel, line=f.line_of_id(b.get("id")), where=b.get("id"))
     prog = ctx.doc("progression.json") or {}
+    critical_ids = {t.get("id") for t in towns if t.get("role") in CRITICAL_ROLES}
     for flag in prog.get("flags") or []:
-        town = (flag.get("waystone") or {}).get("town")
+        if not isinstance(flag, dict):
+            continue
+        town = (flag.get("waystone") or {}).get("town") if isinstance(flag.get("waystone"), dict) else None
         if town and town not in seen:
             rep.error("towns", 'progression flag "%s" names town "%s", which is not in towns.json'
                       % (flag.get("id"), town), file="data/progression.json", where=flag.get("id"))
+        elif town and town not in critical_ids:
+            rep.error("towns", 'progression flag "%s" names off-path "%s"; nothing off the path may be tied to '
+                      "progression" % (flag.get("id"), town), file="data/progression.json", where=flag.get("id"))
 
 
 CHECKS = [

@@ -252,8 +252,13 @@ The shared-border recommendation (section 2) and the portal-clamp note are uncha
 
 ### 4.2 The League: in the overworld (decided 2026-09-14)
 
-**Decided: the League is an overworld town at the head of the Rift.** The consequences below
-now apply: disable the End's League copies, and move End access to post-game.
+**Decided (yours, 2026-09-14):**
+- **The League** is an overworld town at the head of the Rift.
+- **The End's League copies** (`cobbleverse:kanto_league`) are disabled.
+- **End access is post-game.**
+
+The consequences below now apply. The override that disables the copies is the same
+unverified experiment as Blaine's (4.1).
 
 The same reasoning moves the League.
 - **The generated structure** is `cobbleverse:kanto_league` (end_highlands; 111 × 159 × 120,
@@ -330,7 +335,8 @@ The generator already takes a `dimension` per waystone.
 | Nether and End borders | proposed: the shared border (−1024…9215), no extra mechanism |
 | Pregen method: Chunky, or a forceload script | **your call** |
 | Border and pregen timing | decided: after the re-export |
-| End access: authored portal room after Giovanni, eyes or pre-lit | proposed; moves to post-game if the League moves |
+| End access | **decided 2026-09-14: post-game.** The authored portal room (eyes or pre-lit) opens after the Champion, not after Giovanni |
+| End League copies (`cobbleverse:kanto_league`) | **decided 2026-09-14: disabled** (override form still an experiment) |
 | Blaine's gym | **decided 2026-09-14: overworld, the Craters**; Nether copies to be disabled (4.1) |
 | The League | **decided 2026-09-14: overworld, at the Rift's head** (4.2); End copies to be disabled, End access post-game |
 | Rayquaza at the End spawn | **your call** |
