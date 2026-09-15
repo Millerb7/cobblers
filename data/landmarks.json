@@ -2899,6 +2899,255 @@
    }
   },
   {
+   "id": "ravine_head_tarn",
+   "kind": "lake",
+   "name": "Unnamed tarn at the head of the ravine above Peak Pond",
+   "status": "built",
+   "status_basis": "A closed hollow carved at the head of the dry ravine above Peak Pond (floor y105, spill y128.3, 23 blocks deep). Missed by the annotation and so never painted: the 2026-09-14 export left it dry. Found from the air, then by a basin search. Named here only descriptively; it needs a name. It holds water only if painted: it sits above sea level.",
+   "water": "allowed",
+   "annotated": false,
+   "anchor": {
+    "x": 3376,
+    "z": 921,
+    "y": 105.0
+   },
+   "extent": {
+    "polygons": [
+     [
+      [
+       3220,
+       1008
+      ],
+      [
+       3200,
+       1004
+      ],
+      [
+       3172,
+       972
+      ],
+      [
+       3172,
+       936
+      ],
+      [
+       3188,
+       920
+      ],
+      [
+       3220,
+       864
+      ],
+      [
+       3244,
+       876
+      ],
+      [
+       3264,
+       872
+      ],
+      [
+       3324,
+       808
+      ],
+      [
+       3336,
+       804
+      ],
+      [
+       3364,
+       804
+      ],
+      [
+       3392,
+       816
+      ],
+      [
+       3416,
+       816
+      ],
+      [
+       3436,
+       824
+      ],
+      [
+       3456,
+       844
+      ],
+      [
+       3472,
+       884
+      ],
+      [
+       3468,
+       920
+      ],
+      [
+       3488,
+       956
+      ],
+      [
+       3484,
+       976
+      ],
+      [
+       3428,
+       972
+      ],
+      [
+       3388,
+       988
+      ],
+      [
+       3320,
+       1000
+      ],
+      [
+       3284,
+       996
+      ],
+      [
+       3276,
+       988
+      ],
+      [
+       3252,
+       984
+      ]
+     ]
+    ],
+    "basis": "the hollow below its spill on the imported heightmap, traced on 4-block cells and simplified to 4 blocks"
+   },
+   "water_body": {
+    "level_y": 127,
+    "basis": "one block below the basin spill",
+    "basin_polygons": [
+     [
+      [
+       3220,
+       1008
+      ],
+      [
+       3200,
+       1004
+      ],
+      [
+       3172,
+       972
+      ],
+      [
+       3172,
+       936
+      ],
+      [
+       3188,
+       920
+      ],
+      [
+       3220,
+       864
+      ],
+      [
+       3244,
+       876
+      ],
+      [
+       3264,
+       872
+      ],
+      [
+       3324,
+       808
+      ],
+      [
+       3336,
+       804
+      ],
+      [
+       3364,
+       804
+      ],
+      [
+       3392,
+       816
+      ],
+      [
+       3416,
+       816
+      ],
+      [
+       3436,
+       824
+      ],
+      [
+       3456,
+       844
+      ],
+      [
+       3472,
+       884
+      ],
+      [
+       3468,
+       920
+      ],
+      [
+       3488,
+       956
+      ],
+      [
+       3484,
+       976
+      ],
+      [
+       3428,
+       972
+      ],
+      [
+       3388,
+       988
+      ],
+      [
+       3320,
+       1000
+      ],
+      [
+       3284,
+       996
+      ],
+      [
+       3276,
+       988
+      ],
+      [
+       3252,
+       984
+      ]
+     ]
+    ]
+   },
+   "measured": {
+    "outline_km2": 0.0418,
+    "ground_in_outline": {
+     "min": 105.0,
+     "median": 123.7,
+     "max": 128.3
+    },
+    "below_sea_km2": 0.0,
+    "basin_floor_y": 105.0,
+    "basin_spill_y": 128.3,
+    "basin_spill_at": {
+     "x": 3289,
+     "z": 848
+    },
+    "basin_depth": 23.3,
+    "basin_area_at_spill_km2": 0.0418,
+    "basin_share_of_outline_pct": 100.0,
+    "water_level_y": 127,
+    "wet_columns": 29872
+   }
+  },
+  {
    "id": "marshy_marsh",
    "kind": "marsh",
    "name": "Marshy Marsh",
@@ -4520,7 +4769,7 @@
    "kind": "ravine",
    "name": "Dry ravine above Peak Pond",
    "status": "built",
-   "status_basis": "Carved toward Peak Pond; its head is less than a block above the pond with a 22-29-block rise between, so it cannot carry water. A dry ravine by design.",
+   "status_basis": "Carved toward Peak Pond; its head is less than a block above the pond with a 22-29-block rise between, so it cannot carry water. A dry ravine by design. Its head is the tarn ravine_head_tarn, which drains north to the coast instead (a 7-block cut would be needed along the carve).",
    "water": "never",
    "annotated": false,
    "anchor": {
