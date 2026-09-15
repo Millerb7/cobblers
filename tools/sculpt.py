@@ -506,6 +506,74 @@ def sculpt_volcano(h, vcfg, box, n, seed):
     return out
 
 
+# ------------------------------------------------------------------ hillside relief
+
+def unit_noise(n, spacing, seed):
+    """Zero-mean, unit-variance smooth noise on n x n blocks: a random grid every `spacing` blocks, bicubic."""
+    rng = np.random.default_rng(seed)
+    k = n // spacing + 4
+    g = rng.standard_normal((k, k)).astype(np.float32)
+    img = Image.fromarray(g, mode="F").resize((k * spacing, k * spacing), Image.BICUBIC)
+    off = int(rng.integers(0, spacing))
+    a = np.asarray(img)[off:off + n, off:off + n].astype(np.float32)
+    return (a - a.mean()) / max(float(a.std()), 1e-6)
+
+
+def sculpt_relief(h, rcfg, sea, seed, report=None, keep=None):
+    """Break the regular contour rings of smooth hillsides without smoothing them.
+
+    A slope of grade g quantises to a 1-block step every 1/g blocks; over a smooth ramp those steps run as parallel
+    rings. Relief of amplitude A across the slope at wavelength L moves each contour by A/g and tilts the local
+    grade by about 2*pi*A/L, so the ratio rho = (2*pi*A/L)/g sets whether contours wander (rho ~0.3) or break into
+    spurs and gullies (rho near 1). Amplitude is proportional to the regional grade (A = k*g, capped), so flats
+    stay flat and every grade gets the same rho. The noise is averaged along the fall line, so features run
+    downhill like spurs and gullies rather than as knobs.
+    """
+    n = h.shape[0]
+    sm = smooth(h, rcfg["regional_sigma_blocks"])
+    gz, gx = np.gradient(sm)
+    del sm
+    g = np.hypot(gx, gz).astype(np.float32)
+    ux = (gx / np.maximum(g, 1e-6)).astype(np.float32)
+    uz = (gz / np.maximum(g, 1e-6)).astype(np.float32)
+    del gx, gz
+    base = np.zeros((n, n), np.float32)
+    for i, o in enumerate(rcfg["octaves"]):
+        base += o["weight"] * unit_noise(n, o["spacing_blocks"], seed + i)
+    # average along the fall line (line integral convolution), in tiles
+    L, taps = rcfg["fall_line_stretch_blocks"], rcfg["fall_line_taps"]
+    ts = np.linspace(-L, L, taps).astype(np.float32)
+    ani = np.zeros_like(base)
+    T_, P = 1024, int(L) + 2
+    for tz in range(0, n, T_):
+        for tx in range(0, n, T_):
+            z0, z1, x0, x1 = tz, min(n, tz + T_), tx, min(n, tx + T_)
+            pz0, px0 = max(0, z0 - P), max(0, x0 - P)
+            crop = base[pz0:min(n, z1 + P), px0:min(n, x1 + P)]
+            zz, xx = np.mgrid[z0:z1, x0:x1].astype(np.float32)
+            u, w = ux[z0:z1, x0:x1], uz[z0:z1, x0:x1]
+            acc = np.zeros(zz.shape, np.float32)
+            for t in ts:
+                acc += bilinear(crop, xx + t * u - px0, zz + t * w - pz0)
+            ani[z0:z1, x0:x1] = acc / taps
+    del base
+    ani = (ani - ani.mean()) / max(float(ani.std()), 1e-6)
+    c = rcfg["noise_soft_clip_sigma"]
+    ani = c * np.tanh(ani / c)                      # no tails: the largest change stays near c * max amplitude
+    lo, hi = rcfg["low_fade_above_sea"]
+    s0, s1 = rcfg["steep_fade_grade"]
+    fade = smoothstep(sea + lo, sea + hi, h) * (1 - smoothstep(s0, s1, g))
+    amp = np.minimum(rcfg["amplitude_per_grade"] * g, rcfg["max_amplitude_blocks"]) * fade
+    if keep is not None:
+        amp = amp * keep                            # 0 inside protected footprints, basins, channels
+    delta = amp * ani
+    if report is not None:
+        report.update({"columns_changed_half_block": int((np.abs(delta) >= 0.5).sum()),
+                       "max_raise": round(float(delta.max()), 2), "max_lower": round(float(delta.min()), 2),
+                       "p99_abs": round(float(np.percentile(np.abs(delta[::4, ::4]), 99)), 2)})
+    return np.clip(h + delta, 10, 200).astype(np.float32)
+
+
 # ------------------------------------------------------------------ main pipeline
 
 def run(heights, world, cfg, regions, rivers, towns, foliage_doc, landmarks, seed=20260915, preview_dir=None):
@@ -606,6 +674,17 @@ def run(heights, world, cfg, regions, rivers, towns, foliage_doc, landmarks, see
     diff = new[box[1]:box[3], box[0]:box[2]] - prev
     report["volcano"] = {"box": box, "columns_changed_half_block": int((np.abs(diff) >= 0.5).sum()),
                          "max_raise": round(float(diff.max()), 1), "max_lower": round(float(diff.min()), 1)}
+
+    # hillside relief: after every shaping brush, before pads and protection
+    if cfg.get("relief"):
+        report["relief"] = {}
+        # relief is a few blocks at most, so protected sites are kept as drawn rectangles (no mesa to fear) and the
+        # footprints, basins and channels stay bit-identical
+        pr = protection(n, towns, foliage_doc, rivers, landmarks, cfg, 4, "rect")
+        keep = up(smoothstep(0, cfg["relief"]["protect_feather_blocks"], pr), 4, (n, n))
+        keep[up((pr <= 0).astype(np.float32), 4, (n, n)) > 0] = 0
+        new = sculpt_relief(new, cfg["relief"], sea, seed + 300, report["relief"], keep)
+        del keep, pr
 
     # pads: deliberately flat sites are pressed to their level with a soft edge, after the terrain brushes
     by_id = {tw["id"]: tw for tw in towns.get("towns") or []}
