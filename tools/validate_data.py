@@ -894,8 +894,18 @@ def check_rivers(ctx: Context):
         rep.error("rivers", "rivers.json was computed from heightmap %s, not %s; rerun tools/grade_rivers.py plan"
                   % ((f.doc.get("computed_from_sha256") or "")[:12], (sha or "")[:12]),
                   file=f.rel, line=f.line_of_key("computed_from_sha256"))
-    if derived:
-        out_sha = ((f.doc.get("cut") or {}).get("output") or {}).get("sha256")
+    # the chain: authored (derived_from) -> river cut (rivers.json cut.output) -> sculpt (sculpted_from) -> import.
+    # With a sculpt the cut is the sculpt's input; without one the cut is the import itself.
+    sculpted = hm.get("sculpted_from")
+    out_sha = ((f.doc.get("cut") or {}).get("output") or {}).get("sha256")
+    if sculpted is not None:
+        want = sculpted.get("sha256") if isinstance(sculpted, dict) else None
+        if not want or out_sha != want:
+            rep.error("rivers", "the sculpt input %s (world.json heightmap.sculpted_from) is not the river cut recorded "
+                      "in rivers.json (%s); rerun tools/grade_rivers.py cut, then tools/sculpt.py apply, and update "
+                      "world.json" % ((want or "")[:12], (out_sha or "")[:12]),
+                      file=f.rel, line=f.line_of_key("cut"))
+    elif derived:
         if out_sha != imported:
             rep.error("rivers", "the imported heightmap %s is not the river cut recorded in rivers.json (%s); rerun "
                       "tools/grade_rivers.py cut and update world.json" % ((imported or "")[:12], (out_sha or "")[:12]),
@@ -1455,6 +1465,313 @@ def check_foliage(ctx: Context):
              % (len(types), len(groups_used), n_objects, len(lt_ids)), file=rel)
 
 
+SCULPT_SCHEMA = "cobblers.sculpt/1"
+COAST_CLASSES = ("beach", "estuary", "shore", "rocky", "cliff")
+CONE_FORMS = {"stratovolcano", "lava_dome", "cinder_cone", "caldera"}
+# what tools/sculpt.py reads, and the constraint that keeps its arithmetic finite: "num" any number, "pos" > 0,
+# "nonneg" >= 0, "unit" in [0, 1], "range" [lo, hi] with lo <= hi, "range_pos" with 0 < lo <= hi, "range_open"
+# with lo < hi (passed to a smoothstep, which divides by hi - lo), "int_nonneg"
+SCULPT_PROTECT = {"settlement_margin_blocks": "nonneg", "landmark_tree_margin_blocks": "nonneg",
+                  "river_margin_blocks": "nonneg", "lake_margin_blocks": "nonneg", "feather_blocks": "pos",
+                  "terrain_feather_blocks": "pos"}
+SCULPT_COAST = {"band_blocks": "pos", "spacing_blocks": "pos", "concavity_radius_blocks": "pos",
+                "fetch_cap_blocks": "pos", "estuary_mouth_radius_blocks": "nonneg",
+                "class_smoothing_radius_blocks": "nonneg", "micro_relief_scale_blocks": "pos"}
+_BEACHLIKE = {"grade": "range_pos", "berm_blocks": "range", "top_above_sea": "range", "back_blocks": "range_pos",
+              "shelf_grade": "range_pos", "shelf_depth": "range", "micro_relief": "nonneg"}
+SCULPT_CLASS_KEYS = {
+    "beach": _BEACHLIKE,
+    "estuary": _BEACHLIKE,
+    "shore": {k: v for k, v in _BEACHLIKE.items() if k != "berm_blocks"},
+    "rocky": {"bank_grade": "pos", "bank_top_above_sea": "num", "back_blocks": "pos", "drop_grade": "pos",
+              "drop_depth": "nonneg", "rugged": "nonneg", "micro_relief": "nonneg"},
+    "cliff": {"height": "range", "relief_share": "nonneg", "face_blocks": "range_open", "back_blocks": "range_open",
+              "talus_blocks": "pos", "drop_grade": "pos", "drop_depth": "nonneg", "micro_relief": "nonneg"},
+}
+SCULPT_MASSIF = {"steep_faces_deg": "num", "shift_blocks": "nonneg", "shift_taper_blocks": "pos", "shift_from_y": "num"}
+SCULPT_SUMMITS = {"rise": "nonneg", "ridge_scale_blocks": "pos", "secondary_cap": "unit"}
+SCULPT_STRATA = {"from_y": "num", "cliff_slope_deg": "num", "cliff_band": "range_pos", "cliff_strength": "nonneg",
+                 "bench_slope_deg": "range", "bench_band": "range_pos", "bench_strength": "nonneg"}
+SCULPT_VOLCANO = {"steep_faces_deg": "num", "shift_blocks": "nonneg", "shift_taper_blocks": "pos", "shift_from_y": "num"}
+SCULPT_CONE = {
+    "stratovolcano": {"crater_radius": "pos", "crater_floor_y": "num", "rim_y": "num", "rim_width": "nonneg",
+                      "flank_to_radius": "pos", "flank_drop": "num", "breach_bearing_deg": "num",
+                      "breach_half_angle_deg": "pos", "breach_floor_y": "num", "breach_grade": "nonneg"},
+    "lava_dome": {"dome_radius": "pos", "dome_top_y": "num", "dome_drop": "num", "spines": "int_nonneg",
+                  "spine_radius": "pos"},
+    "cinder_cone": {"top_y": "num", "slope": "nonneg", "radius": "pos", "crater_radius": "pos",
+                    "crater_floor_y": "num", "strength": "unit", "plain_y": "num"},
+    "caldera": {"floor_radius": "pos", "floor_y": "num", "wall_to_radius": "pos", "rim_to_radius": "pos",
+                "rim_y": "num", "rim_noise": "nonneg", "flank_to_radius": "pos", "flank_grade": "nonneg"},
+}
+
+
+def _kind_ok(v, kind):
+    if kind == "num":
+        return _num(v)
+    if kind == "pos":
+        return _num(v) and v > 0
+    if kind == "nonneg":
+        return _num(v) and v >= 0
+    if kind == "unit":
+        return _num(v) and 0 <= v <= 1
+    if kind == "int_nonneg":
+        return _int(v) and v >= 0
+    if not (isinstance(v, list) and len(v) == 2 and all(_num(x) for x in v)):
+        return False
+    lo, hi = v
+    return {"range": lo <= hi, "range_pos": 0 < lo <= hi, "range_open": lo < hi}[kind]
+
+
+_KIND_TEXT = {"num": "a number", "pos": "a number > 0", "nonneg": "a number >= 0", "unit": "a number in [0, 1]",
+              "int_nonneg": "an integer >= 0", "range": "[lo, hi] with lo <= hi", "range_pos": "[lo, hi] with 0 < lo <= hi",
+              "range_open": "[lo, hi] with lo < hi"}
+
+
+def check_sculpt(ctx: Context):
+    """The terrain sculpt stage: data/sculpt.json essentials and references (regions, sub-regions, pad sites, world
+    bounds), and the import chain in world.json (heightmap.sculpted_from is the river cut recorded in rivers.json and
+    is not the imported file). A needed file that is absent makes that part SKIPPED; a present file that is malformed
+    or inconsistent is an ERROR."""
+    rep = ctx.report
+    C = "sculpt"
+    rel = "data/sculpt.json"
+    path = ctx.data_dir / "sculpt.json"
+    world = ctx.doc("world.json")
+    hm = (world or {}).get("heightmap") if isinstance(world, dict) else None
+    hm = hm if isinstance(hm, dict) else {}
+    if not path.is_file():
+        if hm.get("sculpted_from") is not None:
+            rep.error(C, "world.json heightmap.sculpted_from records a sculpt but data/sculpt.json is absent",
+                      file="data/world.json")
+        rep.skip(C, "data/sculpt.json is absent; the sculpt configuration was not checked", file=rel)
+        return
+    f = _load_json_for(C, path, rel, rep)
+    if not f:
+        return
+    doc = f.doc
+    if not isinstance(doc, dict):
+        rep.error(C, "top level must be an object", file=rel, line=1)
+        return
+
+    def err(msg, key=None, where=None):
+        rep.error(C, msg, file=rel, line=f.line_of_key(key) if key else None, where=where)
+
+    def need(obj, spec, where, key_for_line=None):
+        if not isinstance(obj, dict):
+            err("%s must be an object" % where, key_for_line)
+            return False
+        ok = True
+        for k, kind in spec.items():
+            if not _kind_ok(obj.get(k), kind):
+                err("%s.%s must be %s, got %r" % (where, k, _KIND_TEXT[kind], obj.get(k)), key_for_line or k, where)
+                ok = False
+        return ok
+
+    if doc.get("schema") != SCULPT_SCHEMA:
+        err('schema is "%s", expected "%s"' % (doc.get("schema"), SCULPT_SCHEMA), "schema")
+    wind = doc.get("prevailing_wind_from_deg")
+    if not (_num(wind) and 0 <= wind < 360):
+        err("prevailing_wind_from_deg must be a bearing in [0, 360), got %r" % (wind,), "prevailing_wind_from_deg")
+    need(doc.get("protect"), SCULPT_PROTECT, "protect", "protect")
+
+    # the import chain in world.json
+    sf = hm.get("sculpted_from")
+    if world is None:
+        rep.skip(C, "data/world.json is absent or unreadable; heightmap.sculpted_from was not checked", file=rel)
+    elif sf is None:
+        rep.error(C, "data/sculpt.json exists but world.json heightmap.sculpted_from is absent, so the import does not "
+                  "record which river cut it was sculpted from", file="data/world.json")
+    elif not isinstance(sf, dict) or not isinstance(sf.get("path"), str) or not sf["path"] \
+            or not (isinstance(sf.get("sha256"), str) and len(sf["sha256"]) == 64):
+        rep.error(C, "world.json heightmap.sculpted_from needs a path and a 64-hex sha256", file="data/world.json")
+    else:
+        if sf["path"] == hm.get("path"):
+            rep.error(C, "world.json heightmap.path %s is also its sculpted_from path: the sculpt must write a new "
+                      "file, not overwrite the river cut" % sf["path"], file="data/world.json")
+        if sf["sha256"] == hm.get("sha256"):
+            rep.warn(C, "world.json heightmap.sha256 equals sculpted_from.sha256: the sculpt changed nothing",
+                     file="data/world.json")
+        riv = ctx.data_dir / "rivers.json"
+        if not riv.is_file():
+            rep.skip(C, "data/rivers.json is absent; sculpted_from was not compared with the river cut", file=rel)
+        else:
+            rf = _load_json_for(C, riv, "data/rivers.json", rep)
+            out = ((rf.doc.get("cut") or {}).get("output") or {}) if rf and isinstance(rf.doc, dict) else {}
+            if rf and out.get("sha256") != sf["sha256"]:
+                rep.error(C, "world.json heightmap.sculpted_from.sha256 %s is not the river cut output %s in "
+                          "data/rivers.json" % (sf["sha256"][:12], (out.get("sha256") or "")[:12]),
+                          file="data/world.json")
+            if rf and out.get("path") and out["path"] != sf["path"]:
+                rep.error(C, "world.json heightmap.sculpted_from.path %s is not the river cut output path %s"
+                          % (sf["path"], out["path"]), file="data/world.json")
+
+    # coast
+    coast = doc.get("coast")
+    hard, soft = [], []
+    if need(coast, SCULPT_COAST, "coast", "coast"):
+        for key in ("hard_regions", "soft_regions"):
+            v = coast.get(key)
+            if not (isinstance(v, list) and all(isinstance(x, str) for x in v)):
+                err("coast.%s must be a list of region ids" % key, key)
+            else:
+                (hard if key == "hard_regions" else soft).extend(v)
+        for rid in sorted(set(hard) & set(soft)):
+            err('region "%s" is both a hard and a soft coast region' % rid, "soft_regions", rid)
+        classes = coast.get("classes")
+        if not isinstance(classes, dict) or set(classes) != set(COAST_CLASSES):
+            err("coast.classes must define exactly %s, got %s"
+                % (", ".join(COAST_CLASSES), sorted(classes) if isinstance(classes, dict) else classes), "classes")
+        else:
+            for cls in COAST_CLASSES:
+                need(classes[cls], SCULPT_CLASS_KEYS[cls], "coast.classes.%s" % cls, cls)
+    elif isinstance(coast, dict):
+        for key in ("hard_regions", "soft_regions"):
+            if isinstance(coast.get(key), list):
+                (hard if key == "hard_regions" else soft).extend(x for x in coast[key] if isinstance(x, str))
+
+    # massifs
+    massifs = doc.get("massifs")
+    if not isinstance(massifs, list):
+        err("massifs must be a list", "massifs")
+        massifs = []
+    points = []               # (where, [x, z]) to place inside the world bounds
+    sub_refs = []             # (massif id, sub-region id)
+    seen = set()
+    for i, m in enumerate(massifs):
+        mid = m.get("id") if isinstance(m, dict) else None
+        w = "massifs.%s" % (mid or i)
+        if not isinstance(mid, str) or not mid:
+            err("massifs[%d] needs an id" % i, "massifs")
+        elif mid in seen:
+            err('duplicate massif "%s"' % mid, None, mid)
+        seen.add(mid)
+        if not need(m, SCULPT_MASSIF, w, mid):
+            if not isinstance(m, dict):
+                continue
+        subs = m.get("subregions")
+        if not (isinstance(subs, list) and subs and all(isinstance(s, str) for s in subs)):
+            err("%s.subregions must be a non-empty list of sub-region ids" % w, mid, mid)
+        else:
+            sub_refs.extend((w, s) for s in subs)
+        s = m.get("summits")
+        if need(s, SCULPT_SUMMITS, w + ".summits", mid):
+            hi = s.get("highest")
+            if not (isinstance(hi, list) and len(hi) == 2 and all(_num(v) for v in hi)):
+                err("%s.summits.highest must be [x, z], got %r" % (w, hi), mid, mid)
+            else:
+                points.append(("%s.summits.highest" % w, hi))
+        need(m.get("strata"), SCULPT_STRATA, w + ".strata", mid)
+
+    # volcano
+    v = doc.get("volcano")
+    if need(v, SCULPT_VOLCANO, "volcano", "volcano"):
+        cones = v.get("cones")
+        if not isinstance(cones, list) or not cones:
+            err("volcano.cones must be a non-empty list (tools/sculpt.py run boxes the volcano from its cones)", "cones")
+            cones = []
+        cone_ids = set()
+        for i, c in enumerate(cones):
+            cid = c.get("id") if isinstance(c, dict) else None
+            w = "volcano.cones.%s" % (cid or i)
+            if not isinstance(c, dict):
+                err("%s must be an object" % w, "cones")
+                continue
+            if not isinstance(cid, str) or not cid:
+                err("volcano.cones[%d] needs an id" % i, "cones")
+            elif cid in cone_ids:
+                err('duplicate cone "%s"' % cid, None, cid)
+            cone_ids.add(cid)
+            ctr = c.get("centre")
+            if not (isinstance(ctr, list) and len(ctr) == 2 and all(_num(x) for x in ctr)):
+                err("%s.centre must be [x, z], got %r" % (w, ctr), cid, cid)
+            else:
+                points.append(("%s.centre" % w, ctr))
+            form = c.get("form")
+            if form not in CONE_FORMS:
+                err("%s.form %r is not one of %s" % (w, form, ", ".join(sorted(CONE_FORMS))), cid, cid)
+                continue
+            if not need(c, SCULPT_CONE[form], w, cid):
+                continue
+            if form == "stratovolcano" and not c["flank_to_radius"] > c["crater_radius"] + c["rim_width"]:
+                err("%s: flank_to_radius must exceed crater_radius + rim_width" % w, cid, cid)
+            if form == "cinder_cone" and not c["crater_radius"] < c["radius"]:
+                err("%s: crater_radius must be below radius" % w, cid, cid)
+            if form == "caldera" and not (c["floor_radius"] < c["wall_to_radius"] <= c["rim_to_radius"]
+                                          <= c["flank_to_radius"]):
+                err("%s: radii must satisfy floor_radius < wall_to_radius <= rim_to_radius <= flank_to_radius" % w,
+                    cid, cid)
+
+    # pads
+    pads = doc.get("pads", [])
+    if not isinstance(pads, list):
+        err("pads must be a list", "pads")
+        pads = []
+    pad_sites = []
+    for i, pd in enumerate(pads):
+        w = "pads[%d]" % i
+        if not isinstance(pd, dict) or not isinstance(pd.get("site"), str) or not pd["site"]:
+            err("%s needs a site (a data/towns.json id)" % w, "pads")
+            continue
+        need(pd, {"y": "num", "radius": "nonneg", "feather": "pos"}, "pads.%s" % pd["site"], pd["site"])
+        if pd["site"] in pad_sites:
+            err('pad site "%s" is listed twice' % pd["site"], None, pd["site"])
+        pad_sites.append(pd["site"])
+        imp = (world or {}).get("import") if isinstance(world, dict) else None
+        if isinstance(imp, dict) and _num(pd.get("y")) and _num(imp.get("low_out")) and _num(imp.get("high_out")) \
+                and not imp["low_out"] <= pd["y"] <= imp["high_out"]:
+            err("pads.%s.y %s is outside the import range %s..%s" % (pd["site"], pd["y"], imp["low_out"],
+                                                                     imp["high_out"]), pd["site"], pd["site"])
+
+    # references: regions and sub-regions
+    reg_path = ctx.data_dir / "regions.json"
+    if not reg_path.is_file():
+        rep.skip(C, "data/regions.json is absent; coast regions and massif sub-regions were not checked", file=rel)
+    else:
+        rf = _load_json_for(C, reg_path, "data/regions.json", rep)
+        if rf and isinstance(rf.doc, dict):
+            region_ids = {r.get("id") for r in rf.doc.get("regions") or [] if isinstance(r, dict)}
+            sub_ids = {s.get("id") for s in rf.doc.get("subregions") or [] if isinstance(s, dict)}
+            for key, ids in (("hard_regions", hard), ("soft_regions", soft)):
+                for rid in ids:
+                    if rid not in region_ids:
+                        err('coast.%s names "%s", which is not a region in data/regions.json' % (key, rid), key, rid)
+            for w, sid in sub_refs:
+                if sid not in sub_ids:
+                    err('%s.subregions names "%s", which is not a sub-region in data/regions.json' % (w, sid),
+                        sid, sid)
+
+    # references: pad sites
+    towns_path = ctx.data_dir / "towns.json"
+    if not towns_path.is_file():
+        if pad_sites:
+            rep.skip(C, "data/towns.json is absent; pad sites were not checked", file=rel)
+    else:
+        tf = _load_json_for(C, towns_path, "data/towns.json", rep)
+        if tf and isinstance(tf.doc, dict):
+            by_id = {t.get("id"): t for t in tf.doc.get("towns") or [] if isinstance(t, dict)}
+            for site in pad_sites:
+                t = by_id.get(site)
+                if t is None:
+                    err('pad site "%s" is not in data/towns.json' % site, site, site)
+                elif not (isinstance(t.get("centre"), dict) and _num(t["centre"].get("x")) and _num(t["centre"].get("z"))):
+                    err('pad site "%s" has no centre x/z in data/towns.json (the pad is pressed around it)' % site,
+                        site, site)
+
+    # points inside the world bounds
+    bounds = (world or {}).get("bounds") if isinstance(world, dict) else None
+    if not (isinstance(bounds, dict) and all(_num(bounds.get(k)) for k in ("min_x", "min_z", "max_x", "max_z"))):
+        if points:
+            rep.skip(C, "data/world.json has no bounds; summit and cone positions were not checked", file=rel)
+    else:
+        for w, (x, z) in points:
+            if not (bounds["min_x"] <= x <= bounds["max_x"] and bounds["min_z"] <= z <= bounds["max_z"]):
+                err("%s (%s, %s) is outside the world bounds" % (w, x, z), None, w)
+
+    rep.info(C, "checked %d massifs, %d volcano cones and %d pads" % (
+        len(massifs), len((v or {}).get("cones") or []) if isinstance(v, dict) else 0, len(pads)), file=rel)
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -1464,6 +1781,7 @@ CHECKS = [
     ("rivers", check_rivers),
     ("towns", check_towns),
     ("foliage", check_foliage),
+    ("sculpt", check_sculpt),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
 ]

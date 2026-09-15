@@ -10,6 +10,11 @@ the treeline) are checked both on the mask main() hands to placement and on the 
 real data/foliage.json does not map the fixture presets to any type, so running it here would place nothing
 and prove nothing. One test runs main() with --foliage '' to pin the no-trees path.
 
+Every run passes --coast-class explicitly. Its default is build/sculpt/coast_class.png, a build artifact written by
+tools/sculpt.py apply for the real 8192x8192 map, so a fixture run that left it out would depend on whether that
+file exists in the checkout. The island fixture passes '' (the uniform beach rule); the coast-class tests pass a
+fixture class map.
+
 Not covered: whether WorldPainter 2.27.1 accepts these maps (terrain names, plant names, biome ids, layer
 behaviour on flooded columns, custom object offsets and rotation) and what the exported world looks like. That
 needs a WorldPainter run and an in-game look, recorded as an experiment; nothing here touches the real
@@ -176,7 +181,7 @@ def _write_inputs(d, regions=None, landmarks=None):
     return rp, lp, fp, tp, lib
 
 
-def _run_main(mp, d, regions=None, landmarks=None, foliage=True, seen=None):
+def _run_main(mp, d, regions=None, landmarks=None, foliage=True, seen=None, coast_class=""):
     """seen: optional dict that receives the allowed and water masks main() hands to placement."""
     mp.setattr(PP, "N", SMALL_N)
     heights = _heights()
@@ -191,7 +196,8 @@ def _run_main(mp, d, regions=None, landmarks=None, foliage=True, seen=None):
         mp.setattr(PP, "paint_foliage", spy)
     out = d / "paint"
     rc = PP.main(["--regions", str(rp), "--landmarks", str(lp), "--out", str(out), "--seed", "7", "--rivers", "",
-                  "--foliage", str(fp) if foliage else "", "--library", str(lib), "--towns", str(tp)])
+                  "--foliage", str(fp) if foliage else "", "--library", str(lib), "--towns", str(tp),
+                  "--coast-class", str(coast_class)])
     return rc, out, heights
 
 
@@ -625,6 +631,202 @@ def test_unknown_preset_exits_naming_subregion(tmp_path, monkeypatch):
     assert "hill" in str(e.value.code) and "no_such_preset" in str(e.value.code)
 
 
+# ------------------------------------------------------------------ 5b. coast classes and scree
+
+# A west-to-east ramp h = 45 + 0.15 x: sea (y < 62) for x <= 113, shallows (y >= 55) from x 67, land from x 114,
+# sea + 1.2 at x 121.3, sea + 3 at x 133.3, sea + 5.5 at x 150; slope about 8.5 degrees everywhere. The class map
+# has bands by z: beach (warm), grassy shore (warm), outside the coastal band (warm), beach (cold biome).
+RAMP = 0.15
+COAST_PRESETS = {"warm": {"biome": "minecraft:plains", "terrain": "GRASS"},
+                 "cold": {"biome": "minecraft:snowy_plains", "terrain": "GRASS"}}
+CLASS_ROWS = {"beach": (8, 56), "shore": (72, 120), "outside": (136, 192), "cold_beach": (212, 248)}
+
+
+def _coast_heights():
+    xx = np.tile(np.arange(SMALL_N, dtype=np.float32), (SMALL_N, 1))
+    return (45.0 + RAMP * xx).astype(np.float32)
+
+
+def _class_map():
+    cm = np.zeros((SMALL_N, SMALL_N), np.uint8)
+    cm[0:64] = 1            # beach
+    cm[64:128] = 3          # grassy shore
+    cm[200:] = 1            # beach in a cold biome
+    return cm
+
+
+def _paint_run(mp, d, heights, presets, subs, class_map, record=None):
+    """main() on a fixture heightmap with no rivers, lakes or trees; class_map None passes --coast-class ''.
+    record: optional dict written as coast_class.json beside the class map (tools/sculpt.py apply writes one)."""
+    mp.setattr(PP, "N", SMALL_N)
+    mp.setattr(PP.T, "load_from_args", lambda args: (heights.copy(), json.loads(json.dumps(WORLD))))
+    rp, lp = d / "regions.json", d / "landmarks.json"
+    rp.write_text(json.dumps({"paint_presets": presets, "regions": [{"id": "test_isle"}], "subregions": subs}),
+                  encoding="utf-8")
+    lp.write_text(json.dumps({"landmarks": []}), encoding="utf-8")
+    cp = ""
+    if class_map is not None:
+        cp = d / "coast_class.png"
+        Image.fromarray(class_map).save(cp)
+        if record is not None:
+            (d / "coast_class.json").write_text(json.dumps(record), encoding="utf-8")
+    out = d / "paint"
+    PP.main(["--regions", str(rp), "--landmarks", str(lp), "--out", str(out), "--seed", "7", "--rivers", "",
+             "--foliage", "", "--coast-class", str(cp)])
+    return np.asarray(Image.open(out / "terrain.png")), PP.T.slope_degrees(heights)
+
+
+COAST_SUBS = [_sub("warm", "warm", _square(0, 0, 255, 199), 0.05), _sub("cold", "cold", _square(0, 200, 255, 255), 0.01)]
+
+
+@pytest.fixture(scope="module")
+def coast(tmp_path_factory):
+    h = _coast_heights()
+    with pytest.MonkeyPatch.context() as mp:
+        terr, slope = _paint_run(mp, tmp_path_factory.mktemp("coast"), h, COAST_PRESETS, COAST_SUBS, _class_map())
+    return terr, h, slope
+
+
+def _band(name):
+    z0, z1 = CLASS_ROWS[name]
+    rows = np.zeros((SMALL_N, SMALL_N), bool)
+    rows[z0:z1, 4:SMALL_N - 4] = True
+    return rows
+
+
+TC = PP.TERRAIN_CODES
+
+
+# Removing this lets a beach's shallows keep the preset ground or turn to sand below sea - 7, and its low land miss
+# the beach material, so sand no longer follows where the sculpt gave the beach width.
+def test_coast_class_beach_sand_in_shallows_and_beaches_on_low_land(coast):
+    terr, h, slope = coast
+    b = _band("beach")
+    shallow = b & (h < SEA) & (h >= SEA - 7)
+    deep = b & (h < SEA - 7)
+    low_land = b & (h >= SEA) & (h < SEA + 5.5) & (slope < 16)
+    high_land = b & (h >= SEA + 5.5)
+    assert shallow.any() and deep.any() and low_land.any() and high_land.any()
+    assert (terr[shallow] == TC["SAND"]).all()
+    assert not (terr[deep] == TC["SAND"]).any()
+    assert (terr[low_land] == TC["BEACHES"]).all()
+    assert (terr[high_land] == TC["GRASS"]).all()
+
+
+# Removing this lets a grassy shore grow a beach: only a thin gravel strand under sea + 1.2 and gravel shallows,
+# preset ground above.
+def test_coast_class_shore_is_a_thin_gravel_strand_not_sand(coast):
+    terr, h, slope = coast
+    b = _band("shore")
+    strand = b & (h >= SEA) & (h < SEA + 1.2)
+    above = b & (h >= SEA + 1.2)
+    shallow = b & (h < SEA) & (h >= SEA - 7)
+    assert strand.any() and above.any() and shallow.any()
+    assert (terr[strand] == TC["GRAVEL"]).all()
+    assert not np.isin(terr[above], [TC["SAND"], TC["BEACHES"], TC["GRAVEL"]]).any()
+    assert (terr[shallow] == TC["GRAVEL"]).all()
+
+
+# Removing this lets columns outside the coastal band (class 0) lose the uniform beach rule when a class map is given.
+def test_coast_class_zero_keeps_the_uniform_shore_rule(coast):
+    terr, h, slope = coast
+    b = _band("outside")
+    shore = b & (h >= SEA) & (h < SEA + 3) & (slope < 20)
+    assert shore.any()
+    assert (terr[shore] == TC["BEACHES"]).all()
+    assert not (terr[b & (h >= SEA + 3)] == TC["BEACHES"]).any()
+
+
+# Removing this lets a beach in a cold biome be painted as warm sand on land instead of gravel.
+def test_coast_class_beach_in_cold_biome_takes_gravel_on_land(coast):
+    terr, h, slope = coast
+    low_land = _band("cold_beach") & (h >= SEA) & (h < SEA + 5.5) & (slope < 16)
+    assert low_land.any() and (terr[low_land] == TC["GRAVEL"]).all()
+
+
+# Removing this lets a cold coast's beach shallows be sand again: sea columns carry ocean biomes (frozen_ocean here),
+# so they count as cold only by being near cold land.
+def test_coast_class_beach_in_cold_biome_takes_gravel_in_shallows(coast):
+    terr, h, slope = coast
+    shallow = _band("cold_beach") & (h < SEA) & (h >= SEA - 7)
+    assert shallow.any() and (terr[shallow] == TC["GRAVEL"]).all()
+
+
+# Removing this lets the cold-shallows rule spread over warm coasts: sea columns count as cold only within about 96
+# blocks of cold land. With a beach class everywhere, warm shallows 110 or more blocks from the cold sub-region (which
+# starts at z 200) stay SAND, while warm-biome shallows within 40 blocks of it take GRAVEL.
+def test_coast_class_warm_shallows_stay_sand_away_from_cold_land(tmp_path, monkeypatch):
+    h = _coast_heights()
+    terr, slope = _paint_run(monkeypatch, tmp_path, h, COAST_PRESETS, COAST_SUBS, np.ones((SMALL_N, SMALL_N), np.uint8))
+    shallows = (h < SEA) & (h >= SEA - 7)
+    far = np.zeros_like(shallows)
+    far[8:91, 4:SMALL_N - 4] = True
+    near = np.zeros_like(shallows)
+    near[160:200, 4:SMALL_N - 4] = True
+    assert (far & shallows).any() and (near & shallows).any()
+    assert (terr[far & shallows] == TC["SAND"]).all()
+    assert (terr[near & shallows] == TC["GRAVEL"]).all()
+
+
+# Removing this lets a coast class map made for another heightmap (a stale sculpt) be painted: its record beside the
+# map names a different heightmap sha256 than world.json imports.
+def test_coast_class_map_for_another_heightmap_is_refused(tmp_path, monkeypatch):
+    with pytest.raises(SystemExit) as e:
+        _paint_run(monkeypatch, tmp_path, _coast_heights(), COAST_PRESETS, COAST_SUBS, _class_map(),
+                   record={"heightmap_sha256": "f" * 64})
+    assert "re-run sculpt.py apply" in str(e.value.code)
+    assert not (tmp_path / "paint" / "terrain.png").exists()
+
+
+# Removing this lets the stale-map guard refuse a class map whose record names the imported heightmap, or one with no
+# record at all (older sculpt outputs), which must still paint by class.
+@pytest.mark.parametrize("record", [{"heightmap_sha256": WORLD["heightmap"]["sha256"]}, None], ids=["matching", "absent"])
+def test_coast_class_map_with_a_matching_or_no_record_is_painted(tmp_path, monkeypatch, record):
+    h = _coast_heights()
+    terr, slope = _paint_run(monkeypatch, tmp_path, h, COAST_PRESETS, COAST_SUBS, _class_map(), record=record)
+    shallow = _band("beach") & (h < SEA) & (h >= SEA - 7)
+    assert shallow.any() and (terr[shallow] == TC["SAND"]).all(), "classes were applied"
+
+
+# Removing this lets a coast class map for a different map size be applied misaligned instead of refused.
+def test_coast_class_map_of_the_wrong_size_is_refused(tmp_path, monkeypatch):
+    with pytest.raises(SystemExit) as e:
+        _paint_run(monkeypatch, tmp_path, _coast_heights(), COAST_PRESETS, COAST_SUBS, np.zeros((128, 128), np.uint8))
+    assert "not 256x256" in str(e.value.code)
+
+
+# Removing this lets --coast-class '' paint classes anyway (or crash), instead of the uniform beach rule everywhere.
+def test_empty_coast_class_uses_the_uniform_beach_rule(tmp_path, monkeypatch):
+    h = _coast_heights()
+    terr, slope = _paint_run(monkeypatch, tmp_path, h, COAST_PRESETS, COAST_SUBS, None)
+    warm = np.zeros((SMALL_N, SMALL_N), bool)
+    warm[8:192, 4:SMALL_N - 4] = True
+    shore = warm & (h >= SEA) & (h < SEA + 3) & (slope < 20)
+    assert (terr[shore] == TC["BEACHES"]).all()
+    assert not (terr[warm & (h < SEA)] == TC["SAND"]).any(), "no class map, no sand in the shallows"
+
+
+# A dome h = 80 + 120 exp(-(r/60)^2): slope runs from 0 at the top and the foot to about 60 degrees at r 42.
+SCREE_PRESET = {"mountain": {"biome": "minecraft:stony_peaks", "terrain": "GRASS", "rock_slope_deg": 40, "rock": "ROCK",
+                             "scree": {"slope_deg": [20, 40], "terrain": "GRAVEL", "coverage": 0.7}}}
+
+
+# Removing this lets scree be painted off its slope band (on gentle ground or over the bare rock above it), or not
+# at all.
+def test_scree_band_lies_between_its_slopes_below_rock(tmp_path, monkeypatch):
+    zz, xx = np.mgrid[0:SMALL_N, 0:SMALL_N].astype(np.float32)
+    h = (80.0 + 120.0 * np.exp(-((np.hypot(xx - 128, zz - 128) / 60.0) ** 2))).astype(np.float32)
+    subs = [_sub("dome", "mountain", _square(0, 0, 255, 255), 0.06)]
+    terr, slope = _paint_run(monkeypatch, tmp_path, h, SCREE_PRESET, subs, None)
+    gentle, band, steep = slope < 20, (slope >= 20) & (slope < 40), slope >= 40
+    assert gentle.any() and band.sum() > 500 and steep.any()
+    assert (terr[steep] == TC["ROCK"]).all()
+    assert not (terr[gentle] == TC["GRAVEL"]).any()
+    assert set(np.unique(terr[band]).tolist()) == {TC["GRAVEL"], TC["GRASS"]}
+    share = float((terr[band] == TC["GRAVEL"]).mean())
+    assert 0.4 < share < 0.95, "coverage 0.7 of the band, by noise"
+
+
 # ------------------------------------------------------------------ 6. plant names
 
 # Names listed from org.pepsoft.worldpainter.layers.plants.Plants.ALL_PLANTS on WorldPainter 2.27.1 (the part of
@@ -657,7 +859,7 @@ def test_plant_sets_use_known_names_and_no_short_grass():
 REAL_REGIONS = json.loads((ROOT / "data" / "regions.json").read_text(encoding="utf-8"))
 REAL_LANDMARKS = json.loads((ROOT / "data" / "landmarks.json").read_text(encoding="utf-8"))
 PRESET_KEYS = {"biome", "biome_bands", "terrain", "patches", "terrain_above", "terrain_below", "rock_slope_deg",
-               "rock", "plants", "frost", "frost_above_y", "treeline_y"}
+               "rock", "plants", "frost", "frost_above_y", "treeline_y", "scree"}
 
 
 def _check_preset(name, pr):
@@ -683,6 +885,12 @@ def _check_preset(name, pr):
     if pr.get("treeline_y") is not None:
         ty = pr["treeline_y"]
         assert isinstance(ty, (int, float)) and not isinstance(ty, bool), (name, "treeline_y", ty)
+    if "scree" in pr:
+        sc = pr["scree"]
+        assert set(sc) <= {"slope_deg", "terrain", "coverage"}, (name, "scree", set(sc))
+        lo, hi = sc["slope_deg"]
+        assert isinstance(lo, (int, float)) and isinstance(hi, (int, float)) and 0 <= lo < hi <= 90, (name, sc)
+        assert sc["terrain"] in PP.TERRAIN_CODES and 0 <= sc.get("coverage", 0.7) <= 1, (name, sc)
     for pl in pr.get("plants") or []:
         assert pl["set"] in PP.PLANT_SETS and 0 <= pl["coverage"] <= 1, (name, pl)
 
