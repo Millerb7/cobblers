@@ -956,6 +956,78 @@ def test_check_rivers_without_derived_from_compares_to_the_heightmap(tmp_path):
     assert len(errs) == 1 and "computed from" in errs[0]
 
 
+# ---------------------------------------------------------------- validate_data: the major river's head rule
+#
+# tools/grade_rivers.py decides the head inside plan(), which needs the whole planning context, so the rule is checked
+# on what plan records in rivers.json (major_river.head_rule, parameters.head_km2, the trunk's reaches) rather than by
+# calling it. Not covered: that plan() picks the first station reaching HEAD_KM2 along the path.
+
+HEAD = 0.13
+
+
+def _head_doc(**rule):
+    trunk = _course_row("major_river_trunk")
+    trunk.update(river="major_river", source={"kind": "system_head", "x": 3732, "z": 2232},
+                 reaches=[{"from_m": 0, "to_m": 65, "catchment_km2": 1.037}])
+    head_rule = {"min_catchment_km2": HEAD, "path_head": {"x": 2504, "z": 1444}, "moved_blocks_along_path": 1661,
+                 "catchment_at_head_km2": 0.915}
+    head_rule.update(rule)
+    return _derived_doc(parameters={"head_km2": HEAD}, courses=[trunk],
+                        major_river={"courses": ["major_river_trunk"], "head_rule": head_rule})
+
+
+def _head_errors(tmp_path, doc):
+    return [e for e in _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, doc)) if "head" in e or "trunk" in e]
+
+
+# removing this lets every head-rule breaking case below pass on a fixture that was already failing
+def test_head_rule_baseline_passes(tmp_path):
+    assert _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, _head_doc())) == []
+
+
+# removing this lets the real plan lose its head rule or start the trunk above HEAD_KM2 again
+def test_real_rivers_head_rule_passes():
+    ctx = V.Context(ROOT / "data", None, V.Report())
+    V.check_schema(ctx)
+    V.check_rivers(ctx)
+    errs = [f.message for f in ctx.report.findings if f.check == "rivers" and f.severity == V.ERROR
+            and ("head" in f.message or "trunk" in f.message)]
+    assert errs == []
+
+
+# removing this lets a plan start the major river on a bare hillside (the channel over the mountain f32f1de removed):
+# no recorded rule, a head or first reach draining under the threshold, or a threshold that is not the code's
+@pytest.mark.parametrize("change,needle", [
+    (lambda d: d["major_river"].pop("head_rule"), "head_rule is missing"),
+    (lambda d: d["major_river"]["head_rule"].update(catchment_at_head_km2=0.009), "head drains 0.009 km2, under"),
+    (lambda d: d["major_river"]["head_rule"].pop("catchment_at_head_km2"), "records no catchment_at_head_km2"),
+    (lambda d: d["courses"][0]["reaches"][0].update(catchment_km2=0.05), "first reach drains 0.05 km2, under"),
+    (lambda d: d["major_river"]["head_rule"].update(min_catchment_km2=0.1), "is not parameters.head_km2"),
+    (lambda d: d["courses"][0].update(source={"kind": "system_head", "x": 2504, "z": 1444}), "still starts at the path head"),
+    (lambda d: d["major_river"].update(courses=["nowhere"]), "does not name a trunk course"),
+])
+def test_head_rule_breaks_are_errors(tmp_path, change, needle):
+    doc = _head_doc()
+    change(doc)
+    errs = _head_errors(tmp_path, doc)
+    assert any(needle in e for e in errs), errs
+
+
+# removing this lets rivers.json keep a threshold the code no longer uses (plan not rerun after HEAD_KM2 changed)
+def test_head_rule_threshold_must_match_grade_rivers_head_km2(tmp_path, monkeypatch):
+    code = tmp_path / "grade_rivers.py"
+    code.write_text("HEAD_KM2 = 0.2\n", encoding="utf-8")
+    monkeypatch.setattr(V, "GRADE_RIVERS", code)
+    errs = _head_errors(tmp_path, _head_doc())
+    assert any("is not tools/grade_rivers.py HEAD_KM2 0.2" in e for e in errs), errs
+    assert V._module_constant(ROOT / "tools" / "grade_rivers.py", "HEAD_KM2") == HEAD, "the fixture threshold is the code's"
+
+
+# removing this lets a plan without a major river be reported as breaking the head rule
+def test_no_major_river_no_head_rule_findings(tmp_path):
+    assert _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, _derived_doc())) == []
+
+
 SCULPT_SHA = "d" * 64
 SCULPTED_HM = {"sha256": SCULPT_SHA, "derived_from": {"path": "base.png", "sha256": BASE_SHA},
                "sculpted_from": {"path": "cut.png", "sha256": CUT_SHA}}

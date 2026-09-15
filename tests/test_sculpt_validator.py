@@ -68,6 +68,11 @@ def _sculpt():
                  "flank_grade": 0.2},
             ],
         },
+        "relief": {"regional_sigma_blocks": 24, "octaves": [{"spacing_blocks": 12, "weight": 0.5},
+                                                      {"spacing_blocks": 24, "weight": 1.0}],
+                   "fall_line_stretch_blocks": 16, "fall_line_taps": 9, "amplitude_per_grade": 10,
+                   "max_amplitude_blocks": 2.5, "noise_soft_clip_sigma": 2.0, "low_fade_above_sea": [4, 12],
+                   "steep_fade_grade": [0.7, 1.0], "protect_feather_blocks": 24},
         "pads": [{"site": "scar", "y": 194, "radius": 150, "feather": 140}],
     }
 
@@ -247,6 +252,48 @@ def test_schema_breaks_are_errors(tmp_path, mutate, needle):
 
 
 # ------------------------------------------------------------------ references
+
+# ------------------------------------------------------------------ hillside relief
+
+# removing this lets a relief setting tools/sculpt.py sculpt_relief reads be missing, of the wrong type, or a value
+# that zeroes the relief, divides by zero (soft clip, smoothsteps, noise spacing) or samples the fall line one-sided
+@pytest.mark.parametrize("mutate,needle", [
+    (lambda s, w, t: s["relief"].pop("regional_sigma_blocks"), "relief.regional_sigma_blocks must be a number > 0"),
+    (lambda s, w, t: s["relief"].update(noise_soft_clip_sigma=0), "relief.noise_soft_clip_sigma must be a number > 0"),
+    (lambda s, w, t: s["relief"].update(fall_line_taps=1), "relief.fall_line_taps must be an integer >= 2"),
+    (lambda s, w, t: s["relief"].update(fall_line_taps=9.0), "relief.fall_line_taps must be an integer >= 2"),
+    (lambda s, w, t: s["relief"].update(fall_line_stretch_blocks=-1), "relief.fall_line_stretch_blocks must be a number >= 0"),
+    (lambda s, w, t: s["relief"].update(amplitude_per_grade="ten"), "relief.amplitude_per_grade must be a number >= 0"),
+    (lambda s, w, t: s["relief"].pop("max_amplitude_blocks"), "relief.max_amplitude_blocks must be a number >= 0"),
+    (lambda s, w, t: s["relief"].update(low_fade_above_sea=[12, 4]), "relief.low_fade_above_sea must be [lo, hi] with lo < hi"),
+    (lambda s, w, t: s["relief"].update(low_fade_above_sea=[-3, 12]), "must start at or above sea level"),
+    (lambda s, w, t: s["relief"].update(steep_fade_grade=[1.0, 1.0]), "relief.steep_fade_grade must be [lo, hi] with lo < hi"),
+    (lambda s, w, t: s["relief"].update(steep_fade_grade=[0, 1.0]), "relief.steep_fade_grade must be above grade 0"),
+    (lambda s, w, t: s["relief"].update(protect_feather_blocks=0), "relief.protect_feather_blocks must be a number > 0"),
+    (lambda s, w, t: s["relief"].update(octaves=[]), "relief.octaves must be a non-empty list"),
+    (lambda s, w, t: s["relief"]["octaves"][0].update(spacing_blocks=0), "relief.octaves[0].spacing_blocks must be an integer >= 1"),
+    (lambda s, w, t: s["relief"]["octaves"][1].pop("weight"), "relief.octaves[1].weight must be a number >= 0"),
+    (lambda s, w, t: [o.update(weight=0) for o in s["relief"]["octaves"]], "relief.octaves weights are all 0"),
+    (lambda s, w, t: s.update(relief=[1, 2]), "relief must be an object"),
+])
+def test_relief_breaks_are_errors(tmp_path, mutate, needle):
+    errs = errors_for(tmp_path, mutate)
+    assert any(needle in m for m in errs), errs
+
+
+# removing this lets a sculpt configuration without a relief block be refused, although run() treats it as optional
+def test_relief_block_is_optional(tmp_path):
+    s = _sculpt()
+    del s["relief"]
+    assert of(run(build(tmp_path, sculpt=s)), V.ERROR) == []
+
+
+# removing this lets the real relief settings drift from what the validator accepts
+def test_real_relief_settings_pass_the_relief_rules():
+    real = json.loads((ROOT / "data" / "sculpt.json").read_text(encoding="utf-8"))["relief"]
+    for k, kind in V.SCULPT_RELIEF.items():
+        assert V._kind_ok(real[k], kind), (k, real[k])
+
 
 # removing this lets a coast region, massif sub-region or pad site name something that does not exist, so the sculpt
 # silently skips it (regions never match, the massif mask is empty and run() crashes, or the pad KeyErrors)

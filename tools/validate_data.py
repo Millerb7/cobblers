@@ -934,6 +934,80 @@ def check_rivers(ctx: Context):
     if cut and (cut.get("from_heightmap") or {}).get("sha256") != sha:
         rep.warn("rivers", "the cut heightmap %s was made from a different heightmap; rerun the cut"
                  % (cut.get("output") or {}).get("path"), file=f.rel, line=f.line_of_key("cut"))
+    _check_major_head(rep, f, courses)
+
+
+GRADE_RIVERS = Path(__file__).resolve().parent / "grade_rivers.py"      # HEAD_KM2
+
+
+def _module_constant(path, name):
+    """A module-level numeric literal read with ast (no import), or None when the file or name is absent."""
+    import ast
+    path = Path(path)
+    if not path.is_file():
+        return None
+    for node in ast.parse(path.read_text(encoding="utf-8")).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) \
+                and node.targets[0].id == name:
+            return ast.literal_eval(node.value)
+    return None
+
+
+def _check_major_head(rep, f, courses):
+    """The major river's trunk starts where its path first drains HEAD_KM2 (tools/grade_rivers.py): the head rule is
+    recorded, its threshold is the code's and the plan's parameter, the head it chose drains at least that much, and
+    the trunk's first reach does too."""
+    major = f.doc.get("major_river")
+    if major is None:
+        return
+    line = f.line_of_key("head_rule") or f.line_of_key("major_river")
+    if not isinstance(major, dict):
+        rep.error("rivers", "major_river must be an object", file=f.rel, line=line)
+        return
+    hr = major.get("head_rule")
+    if not isinstance(hr, dict):
+        rep.error("rivers", "major_river.head_rule is missing: the plan does not record where the trunk starts or why; "
+                  "rerun tools/grade_rivers.py plan", file=f.rel, line=line)
+        return
+    th = hr.get("min_catchment_km2")
+    if not _num(th) or th <= 0:
+        rep.error("rivers", "major_river.head_rule.min_catchment_km2 must be a number > 0, got %r" % (th,),
+                  file=f.rel, line=line)
+        return
+    param = (f.doc.get("parameters") or {}).get("head_km2")
+    if param is not None and param != th:
+        rep.error("rivers", "major_river.head_rule.min_catchment_km2 %s is not parameters.head_km2 %s" % (th, param),
+                  file=f.rel, line=line)
+    try:
+        code = _module_constant(GRADE_RIVERS, "HEAD_KM2")
+    except (SyntaxError, ValueError) as exc:
+        rep.error("rivers", "cannot read HEAD_KM2 from %s: %s" % (GRADE_RIVERS, exc), file=f.rel)
+        code = None
+    if code is not None and code != th:
+        rep.error("rivers", "major_river.head_rule.min_catchment_km2 %s is not tools/grade_rivers.py HEAD_KM2 %s; "
+                  "rerun tools/grade_rivers.py plan" % (th, code), file=f.rel, line=line)
+    at = hr.get("catchment_at_head_km2")
+    if not _num(at):
+        rep.error("rivers", "major_river.head_rule records no catchment_at_head_km2", file=f.rel, line=line)
+    elif at < th:
+        rep.error("rivers", "the major river's head drains %s km2, under the head rule's %s km2" % (at, th),
+                  file=f.rel, line=line)
+    ids = major.get("courses") or []
+    by_id = {c.get("id"): c for c in courses}
+    trunk = by_id.get(ids[0]) if ids else None
+    if trunk is None:
+        rep.error("rivers", "major_river.courses does not name a trunk course in courses", file=f.rel, line=line)
+        return
+    reaches = trunk.get("reaches") or []
+    first = reaches[0].get("catchment_km2") if reaches and isinstance(reaches[0], dict) else None
+    if trunk.get("valid") and (not _num(first) or first < th):
+        rep.error("rivers", 'the major river trunk "%s" first reach drains %s km2, under the head rule\'s %s km2'
+                  % (trunk.get("id"), first, th), file=f.rel, line=f.line_of_id(trunk.get("id")), where=trunk.get("id"))
+    moved = hr.get("moved_blocks_along_path")
+    src, ph = trunk.get("source") or {}, hr.get("path_head") or {}
+    if _num(moved) and moved > 0 and (src.get("x"), src.get("z")) == (ph.get("x"), ph.get("z")):
+        rep.error("rivers", "the head rule moved the trunk %s blocks along its path, but the trunk still starts at the "
+                  "path head (%s, %s)" % (moved, ph.get("x"), ph.get("z")), file=f.rel, line=line)
 
 
 CRITICAL_ROLES = {"hometown": 1, "gym_town": 8, "league": 1}
@@ -1517,6 +1591,10 @@ def _kind_ok(v, kind):
         return _num(v) and 0 <= v <= 1
     if kind == "int_nonneg":
         return _int(v) and v >= 0
+    if kind == "int_pos":
+        return _int(v) and v >= 1
+    if kind == "int_two":
+        return _int(v) and v >= 2
     if not (isinstance(v, list) and len(v) == 2 and all(_num(x) for x in v)):
         return False
     lo, hi = v
@@ -1524,8 +1602,15 @@ def _kind_ok(v, kind):
 
 
 _KIND_TEXT = {"num": "a number", "pos": "a number > 0", "nonneg": "a number >= 0", "unit": "a number in [0, 1]",
-              "int_nonneg": "an integer >= 0", "range": "[lo, hi] with lo <= hi", "range_pos": "[lo, hi] with 0 < lo <= hi",
+              "int_nonneg": "an integer >= 0", "int_pos": "an integer >= 1", "int_two": "an integer >= 2",
+              "range": "[lo, hi] with lo <= hi", "range_pos": "[lo, hi] with 0 < lo <= hi",
               "range_open": "[lo, hi] with lo < hi"}
+# hillside relief (tools/sculpt.py sculpt_relief): smooth(sigma) and the fall-line average need positive sizes and at
+# least two taps; the soft clip divides by its sigma; both fades and the protection feather are smoothsteps
+SCULPT_RELIEF = {"regional_sigma_blocks": "pos", "fall_line_stretch_blocks": "nonneg", "fall_line_taps": "int_two",
+                 "amplitude_per_grade": "nonneg", "max_amplitude_blocks": "nonneg", "noise_soft_clip_sigma": "pos",
+                 "low_fade_above_sea": "range_open", "steep_fade_grade": "range_open", "protect_feather_blocks": "pos"}
+SCULPT_RELIEF_OCTAVE = {"spacing_blocks": "int_pos", "weight": "nonneg"}
 
 
 def check_sculpt(ctx: Context):
@@ -1701,6 +1786,25 @@ def check_sculpt(ctx: Context):
                                           <= c["flank_to_radius"]):
                 err("%s: radii must satisfy floor_radius < wall_to_radius <= rim_to_radius <= flank_to_radius" % w,
                     cid, cid)
+
+    # hillside relief (optional: tools/sculpt.py run applies it only when the block is present)
+    relief = doc.get("relief")
+    if relief is not None and need(relief, SCULPT_RELIEF, "relief", "relief"):
+        octaves = relief.get("octaves")
+        if not isinstance(octaves, list) or not octaves:
+            err("relief.octaves must be a non-empty list", "octaves")
+        else:
+            for i, o in enumerate(octaves):
+                need(o, SCULPT_RELIEF_OCTAVE, "relief.octaves[%d]" % i, "octaves")
+            if all(isinstance(o, dict) and _num(o.get("weight")) for o in octaves) \
+                    and not any(o["weight"] > 0 for o in octaves):
+                err("relief.octaves weights are all 0: the relief noise would be zero", "octaves")
+        lo = relief.get("low_fade_above_sea")
+        if _kind_ok(lo, "range_open") and lo[0] < 0:
+            err("relief.low_fade_above_sea must start at or above sea level, got %r" % (lo,), "low_fade_above_sea")
+        st = relief.get("steep_fade_grade")
+        if _kind_ok(st, "range_open") and st[0] <= 0:
+            err("relief.steep_fade_grade must be above grade 0, got %r" % (st,), "steep_fade_grade")
 
     # pads
     pads = doc.get("pads", [])
