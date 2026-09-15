@@ -2,7 +2,7 @@
  "schema": "cobblers.regions/3",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "924253ad30e088ba4e18ea4c7b585e2bb6d3313e67cc80e833d28706cc7ac736",
+ "computed_from_sha256": "a0e270c05768273ed0398fdac6e273fafc2b8108612a2c39f048d7ddd856c980",
  "landmarks": "data/landmarks.json",
  "geometry": {
   "raster_cell_blocks": 8,
@@ -2395,15 +2395,15 @@
      "max_z": 3871
     },
     "elevation": {
-     "p10": 79.3,
+     "p10": 79.2,
      "median": 108.7,
      "p90": 145.3,
      "max": 188.2
     },
     "slope_degrees": {
-     "mean": 10.1,
+     "mean": 10.2,
      "p90": 21.9,
-     "flat_under_5_pct": 35.8
+     "flat_under_5_pct": 34.9
     }
    },
    "biomes": [
@@ -6252,7 +6252,7 @@
     "slope_degrees": {
      "mean": 13.4,
      "p90": 23.5,
-     "flat_under_5_pct": 13.4
+     "flat_under_5_pct": 13.3
     }
    },
    "boundaries": [
@@ -6364,15 +6364,15 @@
      "max_z": 3055
     },
     "elevation": {
-     "p10": 87.7,
+     "p10": 87.8,
      "median": 102.3,
-     "p90": 121.9,
+     "p90": 121.8,
      "max": 158.2
     },
     "slope_degrees": {
-     "mean": 8.4,
-     "p90": 20.6,
-     "flat_under_5_pct": 46.4
+     "mean": 8.7,
+     "p90": 20.5,
+     "flat_under_5_pct": 43.4
     }
    },
    "boundaries": [
