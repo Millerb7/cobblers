@@ -870,6 +870,20 @@ def test_paint_rivers_refuses_a_cut_that_is_not_the_imported_heightmap(tmp_path,
     assert not list(out.glob("river_*.png"))
 
 
+# removing this lets paint_rivers refuse the sculpted import (whose river channels the sculpt keeps) or paint rivers on
+# a sculpt made from a different cut
+def test_paint_rivers_accepts_the_cut_a_sculpt_was_made_from(tmp_path, monkeypatch):
+    rp, heights, biome, terr, trees, plants, frost, out, _ = _paint_setup(tmp_path, monkeypatch)
+    wp = tmp_path / "data" / "world.json"
+    wp.write_text(json.dumps({"heightmap": {"sha256": "9" * 64, "sculpted_from": {"sha256": PAINT_SHA}}}),
+                  encoding="utf-8")
+    assert [m["name"] for m in PP.paint_rivers(rp, heights, biome, terr, trees, plants, frost, out)] == ["flows"]
+    wp.write_text(json.dumps({"heightmap": {"sha256": PAINT_SHA, "sculpted_from": {"sha256": "9" * 64}}}),
+                  encoding="utf-8")
+    with pytest.raises(SystemExit):
+        PP.paint_rivers(rp, heights, biome, terr, trees, plants, frost, out)
+
+
 # ================================================================ validate_data rivers
 
 
@@ -940,6 +954,31 @@ def test_check_rivers_without_derived_from_compares_to_the_heightmap(tmp_path):
     assert not _river_findings(_rivers_ctx(tmp_path, hm, doc))
     errs = _river_findings(_rivers_ctx(tmp_path, hm, _derived_doc(computed_from_sha256=CUT_SHA)))
     assert len(errs) == 1 and "computed from" in errs[0]
+
+
+SCULPT_SHA = "d" * 64
+SCULPTED_HM = {"sha256": SCULPT_SHA, "derived_from": {"path": "base.png", "sha256": BASE_SHA},
+               "sculpted_from": {"path": "cut.png", "sha256": CUT_SHA}}
+
+
+# removing this lets the validator reject the sculpt chain (authored -> river cut -> sculpt -> import) that
+# paint_maps accepts, or accept a sculpt made from something other than the recorded cut
+def test_check_rivers_follows_the_sculpt_chain(tmp_path):
+    assert not _river_findings(_rivers_ctx(tmp_path, SCULPTED_HM, _derived_doc()))
+    stale = dict(SCULPTED_HM, sculpted_from={"path": "cut.png", "sha256": "e" * 64})
+    errs = _river_findings(_rivers_ctx(tmp_path, stale, _derived_doc()))
+    assert len(errs) == 1 and "sculpted_from" in errs[0] and "not the river cut" in errs[0]
+
+
+# removing this lets a sculpted world pass when the cut output is the imported (sculpted) file itself, which would
+# mean the sculpt input and the cut disagree
+def test_check_rivers_with_a_sculpt_does_not_accept_the_import_as_the_cut(tmp_path):
+    doc = _derived_doc()
+    doc["cut"]["output"]["sha256"] = SCULPT_SHA
+    errs = _river_findings(_rivers_ctx(tmp_path, SCULPTED_HM, doc))
+    assert len(errs) == 1 and "sculpted_from" in errs[0]
+    broken = dict(SCULPTED_HM, sculpted_from={"path": "cut.png"})
+    assert len(_river_findings(_rivers_ctx(tmp_path, broken, _derived_doc()))) == 1
 
 
 # removing this lets a stored course that rises, or whose water is under the sea, pass validation
