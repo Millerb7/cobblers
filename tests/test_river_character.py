@@ -956,55 +956,191 @@ def test_check_rivers_without_derived_from_compares_to_the_heightmap(tmp_path):
     assert len(errs) == 1 and "computed from" in errs[0]
 
 
-# ---------------------------------------------------------------- validate_data: the major river's head rule
+# ---------------------------------------------------------------- the major river's head: valley walls
 #
-# tools/grade_rivers.py decides the head inside plan(), which needs the whole planning context, so the rule is checked
-# on what plan records in rivers.json (major_river.head_rule, parameters.head_km2, the trunk's reaches) rather than by
-# calling it. Not covered: that plan() picks the first station reaching HEAD_KM2 along the path.
+# grade_rivers.walled_stations and valley_head run on synthetic heights below. plan() applies the head inline: it
+# truncates the graded stations at the head, characterises the whole path (_trunk_full), drops the reaches above the
+# head chainage and shifts the rest, and counts the removed upper path in the sizing drainage (_trunk_upper). That
+# slicing lives inside plan(), which needs the whole planning context, so it is not unit-tested here: the validator
+# checks what plan records in rivers.json instead.
 
-HEAD = 0.13
+WALL_N = 600
+COURSE_Z = 300
+SURFACE = 80.0
+
+
+def _course(x0=20, x1=580, z=COURSE_Z):
+    """A straight dense course along x, one station per block, water at SURFACE."""
+    st = [(x, z, SURFACE - 3, -1) for x in range(x0, x1)]
+    return st, [SURFACE] * len(st)
+
+
+def _walls(north=True, south=True, rise=15.0, gap=100, x_from=0, x_to=WALL_N):
+    """Ground at SURFACE everywhere, raised by `rise` beyond `gap` blocks from the course on the chosen sides."""
+    h = np.full((WALL_N, WALL_N), SURFACE, np.float32)
+    if north:
+        h[:COURSE_Z - gap, x_from:x_to] += rise
+    if south:
+        h[COURSE_Z + gap + 1:, x_from:x_to] += rise
+    return h
+
+
+# removing this lets a trough with valley walls on both sides read as open ground, so the head never moves off the
+# hillside onto the confined valley floor
+def test_walled_stations_trough_with_two_walls_is_walled():
+    st, surf = _course()
+    rows = G.walled_stations(_walls(), st, surf)
+    assert rows and all(len(r) == 5 for r in rows), "(chainage, x, z, walled, station index)"
+    assert all(r[3] for r in rows)
+    assert [r[0] for r in rows] == [G.WALL_STEP * k for k in range(len(rows))], "one sample every WALL_STEP blocks"
+    assert (rows[0][1], rows[0][2]) == (20, COURSE_Z)
+    assert all(st[r[4]][:2] == (r[1], r[2]) for r in rows), "each row's index is the station it sampled"
+
+
+# removing this lets a hillside with ground rising on one side only count as a valley (the rule needs both sides)
+@pytest.mark.parametrize("north,south", [(True, False), (False, True)])
+def test_walled_stations_one_wall_is_not_walled(north, south):
+    st, surf = _course()
+    assert not any(r[3] for r in G.walled_stations(_walls(north=north, south=south), st, surf))
+
+
+# removing this lets a wall just under WALL_RISE, or one beyond WALL_REACH, count (and a wall exactly at the rise, or
+# inside the reach, fail to count)
+@pytest.mark.parametrize("rise,gap,walled", [
+    (G.WALL_RISE - 0.1, 100, False), (G.WALL_RISE, 100, True),
+    (15.0, G.WALL_REACH + 2, False), (15.0, G.WALL_REACH - 12, True),
+])
+def test_walled_stations_rise_and_reach_thresholds(rise, gap, walled):
+    st, surf = _course()
+    rows = G.walled_stations(_walls(rise=rise, gap=gap), st, surf)
+    assert rows and all(r[3] is walled for r in rows), (rise, gap, [r[3] for r in rows][:5])
+
+
+# removing this lets the head start at the first walled sample (or a run of two) instead of the first of WALL_RUN
+# consecutive walled samples, so a short confined gap on the hillside becomes the river's head
+def test_valley_head_needs_consecutive_walled_samples():
+    st, surf = _course()
+    h = np.full((WALL_N, WALL_N), SURFACE, np.float32)
+    gap = 100
+    for x_from, x_to in ((100, 170), (300, WALL_N)):         # samples x 116 and 164 walled, then x 308 onward
+        h[:COURSE_Z - gap, x_from:x_to] += 15
+        h[COURSE_Z + gap + 1:, x_from:x_to] += 15
+    i, d, rows = G.valley_head(h, st, surf)
+    walled = [r[1] for r in rows if r[3]]
+    assert walled[:2] == [116, 164] and 212 not in walled, "the fixture has a run of two before the real head"
+    assert d == 288 and st[i][:2] == (308, COURSE_Z)
+    assert G.WALL_RUN == 3
+
+
+# removing this lets a course that never runs between walls report a head (and move it)
+def test_valley_head_is_none_when_never_walled():
+    st, surf = _course()
+    i, d, rows = G.valley_head(_walls(north=False), st, surf)
+    assert (i, d) == (None, None) and rows and not any(r[3] for r in rows)
+
+
+# removing this lets valley_head return a station other than the one it sampled: the station after it where the
+# chainage rounds up (a diagonal course), or index 1 for a course walled from its first station, which plan's
+# `if i_head:` would treat as a move and cut one station off the trunk while recording 0 blocks moved
+@pytest.mark.parametrize("case", ["walled_from_start", "diagonal"])
+def test_valley_head_index_is_the_station_of_the_walled_sample(case):
+    if case == "walled_from_start":
+        st, surf = _course()
+        h = _walls()
+    else:
+        n = 900
+        zz, xx = np.mgrid[0:n, 0:n]
+        across = (zz - xx) / np.sqrt(2)
+        h = np.where((np.abs(across) > 100) & (xx + zz >= 500), SURFACE + 15, SURFACE).astype(np.float32)
+        st = [(k, k, SURFACE - 3, -1) for k in range(20, 860)]
+        surf = [SURFACE] * len(st)
+    i, d, rows = G.valley_head(h, st, surf)
+    first = next(r for k, r in enumerate(rows) if all(q[3] for q in rows[k:k + G.WALL_RUN]))
+    assert st[i][:2] == (first[1], first[2]), (case, i, st[i][:2], first)
+    assert (i, d) == (first[4], first[0])
+    if case == "walled_from_start":
+        assert (i, d) == (0, 0), "a head at the first station is index 0 at chainage 0: no move, nothing cut"
+    else:
+        assert i > 0 and d > 0
+
+
+# ---------------------------------------------------------------- validate_data: the recorded head rule
+
+WALLS = {"wall_rise_blocks": 10.0, "wall_reach_blocks": 250, "consecutive_stations": 3, "station_spacing_blocks": 48}
 
 
 def _head_doc(**rule):
-    trunk = _course_row("major_river_trunk")
-    trunk.update(river="major_river", source={"kind": "system_head", "x": 3732, "z": 2232},
+    trunk = _course_row("major_river_trunk", poly=[[3136, 1636, 104.12, 101.32], [3162, 1662, 102.53, 99.73]])
+    trunk.update(river="major_river", source={"kind": "system_head", "x": 3136, "z": 1636},
                  reaches=[{"from_m": 0, "to_m": 65, "catchment_km2": 1.037}])
-    head_rule = {"min_catchment_km2": HEAD, "path_head": {"x": 2504, "z": 1444}, "moved_blocks_along_path": 1661,
-                 "catchment_at_head_km2": 0.915}
+    shrews = _course_row("shrews", poly=[[100, 100, 90.0, 87.0], [110, 100, 89.0, 86.0]])
+    shrews["source"] = {"kind": "inland_end"}
+    outflow = _course_row("lake_outflow", poly=[[200, 100, 90.0, 87.0], [210, 100, 89.0, 86.0]])
+    outflow["source"] = {"kind": "lake_outflow"}
+    head_rule = dict(WALLS, rule="valley_walls", path_head={"x": 2504, "z": 1444, "ground_y": 170.9},
+                     moved_blocks_along_path=817)
     head_rule.update(rule)
-    return _derived_doc(parameters={"head_km2": HEAD}, courses=[trunk],
-                        major_river={"courses": ["major_river_trunk"], "head_rule": head_rule})
+    survey = [{"course": "shrews", "source_kind": "inland_end", "walled_from_start": True,
+               "rule_would_move_head_blocks": 0, "walled_samples": 24, "samples": 38}]
+    return _derived_doc(parameters={"grid_blocks": 4, "valley_head": {"wall_rise": 10.0, "wall_reach": 250, "run": 3,
+                                                                      "step": 48}},
+                        courses=[trunk, shrews, outflow],
+                        major_river={"courses": ["major_river_trunk"], "head_rule": head_rule,
+                                     "head_rule_survey_other_courses": survey})
 
 
-def _head_errors(tmp_path, doc):
-    return [e for e in _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, doc)) if "head" in e or "trunk" in e]
+def _head_errors(tmp_path, doc, severity=V.ERROR):
+    return _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, doc), severity)
 
 
 # removing this lets every head-rule breaking case below pass on a fixture that was already failing
 def test_head_rule_baseline_passes(tmp_path):
-    assert _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, _head_doc())) == []
+    findings = _rivers_ctx(tmp_path, DERIVED_HM, _head_doc())
+    assert _river_findings(findings) == [] and _river_findings(findings, V.WARNING) == []
 
 
-# removing this lets the real plan lose its head rule or start the trunk above HEAD_KM2 again
+# removing this lets the fixture's wall values drift from tools/grade_rivers.py, so the cases below test other numbers
+def test_head_rule_fixture_values_are_the_codes():
+    code = ROOT / "tools" / "grade_rivers.py"
+    assert {k: V._module_constant(code, c) for k, (c, _) in V.HEAD_RULE_CONSTANTS.items()} == WALLS
+    assert (G.WALL_RISE, G.WALL_REACH, G.WALL_RUN, G.WALL_STEP) == (10.0, 250, 3, 48)
+
+
+# removing this lets the real plan lose its head rule, record other wall values than the code's, or start the trunk
+# somewhere other than its first graded station
 def test_real_rivers_head_rule_passes():
     ctx = V.Context(ROOT / "data", None, V.Report())
     V.check_schema(ctx)
     V.check_rivers(ctx)
-    errs = [f.message for f in ctx.report.findings if f.check == "rivers" and f.severity == V.ERROR
-            and ("head" in f.message or "trunk" in f.message)]
-    assert errs == []
+    bad = [f.message for f in ctx.report.findings if f.check == "rivers" and f.severity in (V.ERROR, V.WARNING)]
+    assert bad == []
 
 
-# removing this lets a plan start the major river on a bare hillside (the channel over the mountain f32f1de removed):
-# no recorded rule, a head or first reach draining under the threshold, or a threshold that is not the code's
+# removing this lets a plan record a head it did not choose by the valley-wall rule, with other wall values than the
+# code's or the plan parameters', a negative move, a trunk source off its first station, or a malformed survey
 @pytest.mark.parametrize("change,needle", [
     (lambda d: d["major_river"].pop("head_rule"), "head_rule is missing"),
-    (lambda d: d["major_river"]["head_rule"].update(catchment_at_head_km2=0.009), "head drains 0.009 km2, under"),
-    (lambda d: d["major_river"]["head_rule"].pop("catchment_at_head_km2"), "records no catchment_at_head_km2"),
-    (lambda d: d["courses"][0]["reaches"][0].update(catchment_km2=0.05), "first reach drains 0.05 km2, under"),
-    (lambda d: d["major_river"]["head_rule"].update(min_catchment_km2=0.1), "is not parameters.head_km2"),
-    (lambda d: d["courses"][0].update(source={"kind": "system_head", "x": 2504, "z": 1444}), "still starts at the path head"),
+    (lambda d: d["major_river"]["head_rule"].update(rule="catchment"), 'is \'catchment\', not "valley_walls"'),
+    (lambda d: d["major_river"]["head_rule"].update(wall_rise_blocks=12.0), "wall_rise_blocks 12.0 is not tools/grade_rivers.py WALL_RISE 10.0"),
+    (lambda d: d["major_river"]["head_rule"].update(wall_reach_blocks=200), "wall_reach_blocks 200 is not tools/grade_rivers.py WALL_REACH 250"),
+    (lambda d: d["major_river"]["head_rule"].update(consecutive_stations=2), "consecutive_stations 2 is not tools/grade_rivers.py WALL_RUN 3"),
+    (lambda d: d["major_river"]["head_rule"].update(station_spacing_blocks=64), "station_spacing_blocks 64 is not tools/grade_rivers.py WALL_STEP 48"),
+    (lambda d: d["major_river"]["head_rule"].pop("wall_reach_blocks"), "wall_reach_blocks must be a number > 0"),
+    (lambda d: d["parameters"]["valley_head"].update(run=4), "is not parameters.valley_head.run 4"),
+    (lambda d: d["parameters"].pop("valley_head"), "parameters.valley_head is missing"),
+    (lambda d: d["major_river"]["head_rule"].update(moved_blocks_along_path=-48), "moved_blocks_along_path must be a number >= 0"),
+    (lambda d: d["major_river"]["head_rule"].pop("path_head"), "path_head needs x and z"),
+    (lambda d: d["courses"][0]["source"].update(x=3140), "is not its first graded station (3136, 1636)"),
+    (lambda d: d["courses"][0].update(source={"kind": "system_head", "x": 2504, "z": 1444}), "is not its first graded station"),
     (lambda d: d["major_river"].update(courses=["nowhere"]), "does not name a trunk course"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(course="ghost"), "names course 'ghost', which is not in courses"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(course="major_river_trunk"), "surveys the trunk itself"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(course="lake_outflow"), "a lake outflow"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"].append(dict(d["major_river"]["head_rule_survey_other_courses"][0])), 'lists "shrews" twice'),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(walled_samples=40), "needs integer samples >= walled_samples"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(walled_from_start="yes"), "walled_from_start must be true or false"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(rule_would_move_head_blocks=96), "walled from its start but the rule would move its head 96"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(rule_would_move_head_blocks=-1), "rule_would_move_head_blocks must be null or a number >= 0"),
 ])
 def test_head_rule_breaks_are_errors(tmp_path, change, needle):
     doc = _head_doc()
@@ -1013,14 +1149,29 @@ def test_head_rule_breaks_are_errors(tmp_path, change, needle):
     assert any(needle in e for e in errs), errs
 
 
-# removing this lets rivers.json keep a threshold the code no longer uses (plan not rerun after HEAD_KM2 changed)
-def test_head_rule_threshold_must_match_grade_rivers_head_km2(tmp_path, monkeypatch):
+# removing this lets a trunk source a few blocks off its first station, inside the same grid cell (the head is chosen
+# on the 4-block routing grid), be reported as broken
+def test_head_rule_source_within_one_grid_cell_passes(tmp_path):
+    doc = _head_doc()
+    doc["courses"][0]["source"].update(x=3139, z=1633)
+    assert _head_errors(tmp_path, doc) == []
+
+
+# removing this lets a plan that found no walled stretch pass silently (it keeps the path head): it is a warning
+def test_head_rule_without_a_walled_stretch_warns(tmp_path):
+    doc = _head_doc(moved_blocks_along_path=None)
+    assert _head_errors(tmp_path, doc) == []
+    assert any("found no walled stretch" in w for w in _head_errors(tmp_path, doc, V.WARNING))
+
+
+# removing this lets rivers.json keep wall values the code no longer uses (plan not rerun after a constant changed)
+def test_head_rule_values_must_match_the_code_constants(tmp_path, monkeypatch):
     code = tmp_path / "grade_rivers.py"
-    code.write_text("HEAD_KM2 = 0.2\n", encoding="utf-8")
+    code.write_text("FACTOR = 4\nWALL_RISE = 12.0\nWALL_REACH = 250\nWALL_RUN = 3\nWALL_STEP = 48\n", encoding="utf-8")
     monkeypatch.setattr(V, "GRADE_RIVERS", code)
     errs = _head_errors(tmp_path, _head_doc())
-    assert any("is not tools/grade_rivers.py HEAD_KM2 0.2" in e for e in errs), errs
-    assert V._module_constant(ROOT / "tools" / "grade_rivers.py", "HEAD_KM2") == HEAD, "the fixture threshold is the code's"
+    assert errs == ["major_river.head_rule.wall_rise_blocks 10.0 is not tools/grade_rivers.py WALL_RISE 12.0; rerun "
+                    "tools/grade_rivers.py plan"], errs
 
 
 # removing this lets a plan without a major river be reported as breaking the head rule
