@@ -66,6 +66,12 @@ def template_info(path):
             loot.append(b["pos"])
         if p["Name"].startswith("waystones:"):
             waystones.append(b["pos"])
+    side = Path(path).with_suffix(".json")
+    if entrance_pos is None and side.exists():
+        # a kit prefab (tools/kit.py) records its door in the sidecar instead of an entrance jigsaw
+        ent = (json.loads(side.read_text(encoding="utf-8")) or {}).get("entrance")
+        if ent:
+            entrance, entrance_pos = ent["facing"], list(ent["pos"])
     grade = entrance_pos[1] if entrance_pos else 0
     # columns the building stands on: a stored, non-air block at or below the ground layer
     base = {}
@@ -133,7 +139,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         info = template_info(ROOT / p["file"])
         if info["entrance_pos"] is None:
             raise SystemExit("%s: template %s has no entrance jigsaw (a horizontal jigsaw whose final state is a dirt "
-                             "path or stone), so its ground layer and door are unknown; refusing to seat it"
+                             "path or stone) and no sidecar entrance, so its ground layer and door are unknown; refusing to seat it"
                              % (p["id"], p["template"]))
         rot = rotation_for(info["entrance"], p["facing"])
         if p.get("rotation") and p["rotation"] != rot:

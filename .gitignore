@@ -126,6 +126,9 @@ out/
 !/derived/README.md
 /build/*
 !/build/README.md
+# raw exports waiting for tools/kit.py import; the imported prefab (.nbt + .json) is what is tracked
+/kits/structures/incoming/*
+!/kits/structures/incoming/README.md
 
 # Experiment runtimes and captured runs: server installs, worlds, logs.
 # Multi-gigabyte and reproducible from the manifests.
