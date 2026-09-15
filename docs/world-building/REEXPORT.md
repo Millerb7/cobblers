@@ -2,7 +2,7 @@
 
 ## 2026-09-14 (fourth): the missing tarn
 
-**Status: exported and checked in the region files.** Distant Horizons pregen: see the table.
+**Status: exported, checked in the region files and in game, and pregenerated.**
 
 **Why.** On the flight, the small lake at the top of the map had no water. It was not one of the
 eight painted lakes, which all held water at their levels. It was a closed hollow the annotation
@@ -22,6 +22,9 @@ missed, so it never got a `water_body`.
 | Re-measured | `cells.json` (sha only, no drift), `regions.json` measured blocks (Peak Pond hollow slope 61.6 → 61.4% flat); validator clean; 609 tests pass |
 | Paint | tarn mask at y127; stream levels y126 → y62; `spawn_tag_pack.py --check-paint` unchanged (98.85%, 98.17%) |
 | Export | `reexport.py`, old world from `cobblers-server-retired/2026-09-14-tarn/`; 1,818 s; 484 region files, 2.33 GB; `seed_match: true`; `.world` sha256 `a2d8e09e…`. The first attempt failed at once: `--out-dir ../cobblers-server` is resolved from WorldPainter's folder, so pass it absolute |
+| Server | boots; `worldborder get` 10240; `cobblers_spawn_tags` enabled. In game at (3376, 921): y127 water, y128 air |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320`, complete in 14 minutes; `data/DistantHorizons*` 654 MB; region files still 484 |
+| Client LOD cache | `local+ho` moved to `cobblers-server-retired/2026-09-14-tarn/client-distant-horizons-cache/` (the client was closed), so the tarn and the Crags summits are drawn fresh |
 
 **Checked in the region files:**
 - **Tarn:** every column below y127, 27,810 of them, holds water at y127.
