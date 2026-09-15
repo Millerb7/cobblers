@@ -6,18 +6,18 @@
   "source_root": null,
 
   "heightmap": {
-    "path": "land_8k_16_sculpted.png",
+    "path": "land_8k_16_sculpted_relief.png",
     "width": 8192,
     "height": 8192,
     "channel": "gray",
     "bit_depth": 16,
-    "sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
+    "sha256": "217d411c6ce31c8385b5797ac4e12cc764d3f46f0d78016622033ba62098b735",
     "status": "ok",
     "sculpted_from": {
       "path": "land_8k_16_eroded_rivers.png",
       "sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
       "generator": "python tools/sculpt.py apply (data/sculpt.json)",
-      "note": "Local brushes on the river cut: coasts by class, massif asymmetry and summits, volcano cones. Protected sites, river channels and lake basins keep their columns (checked: lake basins 0 changed, river water under 0.003 blocks, settlement footprints 0). docs/world-building/SCULPT.md"
+      "note": "Local brushes on the river cut: coasts by class, massif asymmetry and summits, volcano cones, hillside relief against contour rings. Protected sites, river channels and lake basins keep their columns (checked: lake basins 0 changed, river water under 0.003 blocks, settlement footprints 0). docs/world-building/SCULPT.md"
     },
     "derived_from": {
       "path": "land_8k_16_eroded.png",
@@ -25,8 +25,8 @@
       "generator": "python tools/grade_rivers.py plan && python tools/grade_rivers.py cut --replace",
       "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
     },
-    "previous_sha256": ["526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6", "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7", "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1", "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161"],
-    "revision_note": "2026-09-15: the import is the sculpted derivative of the river cut: coasts by class, massif asymmetry and summits, volcano cones (tools/sculpt.py).2026-09-14 (third): the tarn at the head of the ravine above Peak Pond became a lake (level 127) with a graded outflow to the north coast; 2,786 columns changed, nothing raised. The previous cut file is in cobblers-server-retired/2026-09-14-tarn/. 2026-09-14 (second): the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
+    "previous_sha256": ["526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6", "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7", "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1", "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161", "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5"],
+    "revision_note": "2026-09-15 (second): hillside relief added to the sculpt (data/sculpt.json relief): amplitude 10 x regional grade, capped at 2.5 blocks, stretched down the fall line, so contour rings break into spurs and gullies; largest change 4.9 blocks; footprints, basins, channels and the hometown area unchanged. The previous sculpt file land_8k_16_sculpted.png stays beside it. 2026-09-15: the import is the sculpted derivative of the river cut: coasts by class, massif asymmetry and summits, volcano cones (tools/sculpt.py).2026-09-14 (third): the tarn at the head of the ravine above Peak Pond became a lake (level 127) with a graded outflow to the north coast; 2,786 columns changed, nothing raised. The previous cut file is in cobblers-server-retired/2026-09-14-tarn/. 2026-09-14 (second): the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
   },
 
   "import": {
