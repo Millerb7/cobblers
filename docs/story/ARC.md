@@ -1,7 +1,7 @@
 # Narrative Arc
 
-**Status:** Proposed for review. Deliverable 1 only. No dialogue, quest data, or
-new progression fields are included.
+**Status:** Approved arc, revised 2026-09-15. Dialogue and quest schemas remain
+on hold. Side-content proposals are in `SIDEQUESTS.md`.
 
 ## Authority and current data limits
 
@@ -21,15 +21,16 @@ are null. This document therefore uses their stable IDs and working names.
 Pallet Town is established by the premise; other town names remain open.
 
 `data/trainers.json`, named route trainers, and faction progression flags do
-not exist on `origin/main`. Trainer prerequisites below are narrative
-requirements with IDs still to be authored. The arc uses the existing gym flags
-only and does not create a parallel quest state system.
+not exist on this branch. Trainer prerequisites below are narrative
+requirements with IDs still to be authored. Two approved additions should use
+the existing flag ledger: `crater_operation_stopped` after the Craters climax
+and `rift_crisis_resolved` after Hoopa is released at the Rift. This document
+defines their meaning; a later schema pass must add their concrete setters and
+chapter dependencies to `data/progression.json`.
 
-There is also one distance conflict inside `data/towns.json`: the League
-record gives the Giovanni-to-League approach as 4,038 blocks, while
-`critical_path_geometry.victory_road_blocks` gives 4,953 blocks. The story
-depends only on it being the longest final route. The terrain owner should
-resolve the measurement before dialogue quotes a distance.
+Victory Road is **4,953 blocks**, measured along the Rift. The 4,038-block
+Giovanni-to-League approach in `data/towns.json` is a stale straight-line
+measurement and needs correction by the terrain owner.
 
 ## Fixed path
 
@@ -42,9 +43,9 @@ resolve the measurement before dialogue quotes a distance.
 | 4 | `gym4_town` | Erika's town, Peak Pond Hollow | (4309, 110, 1555) | Sets `gym4_cleared` |
 | 5 | `gym5_town` | Koga's town, Glacier Foot Fields | (4646, 118, 2446) | Sets `gym5_cleared` |
 | 6 | `gym6_town` | Sabrina's town, Tilpey North Shore | (6196, 95, 3398) | Sets `gym6_cleared` |
-| 7 | `gym7_town` | Blaine's town, Crater north-west rim | (6074, 108, 4995) | Sets `gym7_cleared` |
+| 7 | `gym7_town` | Blaine's town, Crater north-west rim | (6074, 108, 4995) | Sets `crater_operation_stopped`, then `gym7_cleared` |
 | 8 | `gym8_town` | Giovanni's town, South Strand | (3647, 112, 6497) | Sets `gym8_cleared` |
-| 9 | `league` | Pokemon League, Rift head | (3297, 118, 2603) | Sets `champion_cleared` |
+| 9 | `league` | Pokemon League, Rift head | (3297, 118, 2603) | Requires `rift_crisis_resolved`; sets `champion_cleared` |
 
 Coordinates are rounded from the measured town centres for readability. They
 are identifiers and staging anchors, not permission to move terrain or town
@@ -67,6 +68,63 @@ footprints.
    fact needed to reach the next gym.
 8. The ending stops the forced exchanges. It does not conveniently return every
    displaced person or erase the cost already paid.
+
+## The Haven Compact
+
+The faction's public name is **the Haven Compact**. It began as an agreement
+between communities in collapsing worlds to share shelter, transport, food,
+and technical knowledge. Its relocation crews learned to trigger and steer
+Hoopa's exchanges. The name remains sincere even after its leadership chooses
+an occupied destination: most members still understand themselves as rescue
+workers. The Compact's leader, named members, history, and internal positions
+are defined in `FACTION.md`.
+
+## Rival — Maren of Pallet
+
+Maren grew up in Pallet and remembers Kanto. A close family member was outside
+town when Pallet moved, so Maren's loss points in the opposite direction from
+the native settlement that vanished: they want to know whether a controlled
+exchange could reconnect Pallet with the people left behind. They are neither
+the player's spokesperson nor a recurring obstacle. They investigate by a
+different route and sometimes reach a useful conclusion first.
+
+Maren's position diverges from the player's required course in one central
+way. The player must stop forced exchanges because the destination cannot
+consent and Hoopa is breaking. Maren spends much of the story believing one
+carefully measured exchange may still be justified if it can restore contact
+with Kanto. Sabrina's evidence makes them doubt the method; the occupied target
+at the Craters ends their support for it. At the Rift, Maren argues that release
+must be followed by a rescue effort for people stranded on every side. Their
+ending is a commitment to contact and repair, not a sudden agreement that every
+hope of reversal was foolish.
+
+| Settlement | Maren's appearance and changing position |
+| --- | --- |
+| `hometown` | Leaves Pallet with the same wrong map and a separate lead. Wants to find the family member who remained in Kanto. |
+| `gym1_town` | Hears the native account of the settlement Pallet displaced. Accepts that Pallet's survival caused another loss. |
+| `gym2_town` | Helps Haven Compact families unload supplies and listens when they describe successful rescues. Begins to think the Compact could reconnect Pallet with Kanto. |
+| `gym3_town` | Recovers a second signal trace while the player protects Surge's records. Concludes that steering is real and potentially reversible. |
+| `gym4_town` | Studies the dry channel and the evidence of an earlier city-scale exchange. Argues that better measurement, rather than a complete stop, may still prevent harm. |
+| `gym5_town` | Follows abandoned anchor marks through the wet ground. Accepts that each forced use makes the next exchange less controllable. |
+| `gym6_town` | Experiences part of Hoopa's distress through Sabrina. Stops defending the current method but still wants a future voluntary use. |
+| `gym7_town` | Helps a Compact dissenter verify that the selected destination is occupied. Rejects the crater operation and assists in stopping it. |
+| `gym8_town` | Works with displaced families while loyalists retreat. Insists that ending the mechanism does not end the duty to those whose homes are collapsing. |
+| `league` | Helps free Hoopa before the League opens. Watches the League recognition, then begins a postgame record of missing and displaced communities. |
+
+## Hoopa's physical location
+
+Hoopa is physically held in the Haven Compact's containment cradle beneath the
+League plateau at the head of the Rift, anchored to the `league` site at
+(3297, 2603). The Compact routes each remote operation through that cradle;
+Hoopa does not travel with its field crews. Before the finale the player can
+encounter ring effects, distress, and projected glimpses, but cannot reach
+Hoopa. Victory Road reaches the containment level after `gym8_cleared`, and the
+Rift confrontation releases Hoopa before the League challenge begins.
+
+The terrain data supplies the League footprint and nearby Rift, but no chamber
+or exact underground Y coordinate. That required build is recorded as a
+geography gap. Its entrance must lie on the 4,953-block Victory Road and cannot
+require an optional settlement.
 
 ## Gym-leader reconciliation
 
@@ -289,13 +347,24 @@ transfers until they can guarantee an empty destination. Others argue that
 waiting for certainty means abandoning living communities.
 
 Erika makes the player deal with both groups as residents rather than symbols.
-The critical scene is not a debate that resolves the issue. It is a failed
-attempt to identify a harmless destination: every apparently empty area has
-history, ecology, travellers, or people beyond the faction's measurements.
+Then she takes the player to the dry channel above Peak Pond. The channel is
+physically present at `peak_pond_creek` (3786, 1182), while its former head is
+the tarn at (3376, 921). The measured channel rises 22–29 blocks between its
+ends, so water cannot follow the carved course. The impossible grade is
+evidence the player can inspect, not a hypothetical harmless destination.
 
-The player learns that a transfer exchanges occupied volume rather than adding
-new land. A rescue cannot be separated from whatever leaves the destination.
-The faction still claims that careful targeting can reduce the harm.
+Erika pairs the channel with pre-event survey records kept in town. Those
+records show that the same exchange signature affected a settled summit west
+of the hollow: a complete city-scale exchange happened before Pallet. The
+required path therefore establishes the existence of the second exchange.
+Climbing to `the_scar` or finding `displaced_city` remains optional and reveals
+where the city went and how its people live now.
+
+The evidence establishes that a transfer exchanges occupied volume rather than
+adding new land. A rescue cannot be separated from whatever leaves the
+destination. The Haven Compact still claims that careful targeting can reduce
+the harm, and Maren still believes a sufficiently measured exchange might
+restore contact without repeating the loss.
 
 After `gym4_cleared`, Erika sends the player south because unusual equipment
 and concealed movement have been reported around the Glacier Foot Fields and
@@ -303,8 +372,8 @@ Marsh Country.
 
 **Knowledge state after the gym**
 
-- **Knows:** every transfer is an exchange; faction members disagree about
-  continuing; some are actively trying to reduce harm.
+- **Knows:** every transfer is an exchange; a previous city-scale exchange
+  moved a settled summit; faction members disagree about continuing.
 - **Believes:** Pallet was moved as part of the same programme.
 - **Suspects:** the faction cannot measure every life at a destination.
 - **Does not know:** why exchanges are becoming less stable or what powers them.
@@ -423,8 +492,10 @@ or avoidable. They choose their own community over the people already there.
 
 A faction member who has opposed that decision helps expose the destination
 data. Refugee families remain nearby, making the cost of stopping the operation
-visible. The player prevents the crater activation, but that victory does not
-solve the refugees' emergency.
+visible. The player prevents the crater activation, setting
+`crater_operation_stopped`, but that victory does not solve the refugees'
+emergency. `gym7_cleared` remains the badge and route flag; the two flags record
+different events.
 
 Blaine does not turn the gym into a reward ceremony. The battle confirms that
 the player can survive the southern route and act under catastrophic pressure.
@@ -496,7 +567,8 @@ the route from Giovanni to the League must remain traversable without them.
 - The League plateau is 178 blocks from `rift`, 447 blocks from
   `glacial_tear`, and 571 blocks from `major_river`.
 - Victory Road follows the Rift's south-west arm, fork, trunk, and apex.
-- The route length is unresolved in data: 4,038 or 4,953 blocks.
+- Victory Road is 4,953 blocks along the Rift. The 4,038 value in the League
+  approach record is stale.
 - The League is in the Overworld. End access is post-game.
 - Defeating the champion sets `champion_cleared`.
 
@@ -508,18 +580,18 @@ less stable toward the head. Required information is conveyed by what the
 player crosses and by brief encounters with both faction loyalists and
 dissenters. No optional settlement is needed.
 
-Near the Rift head, before the League challenge, the faction begins its final
-attempt. Their leader's position remains coherent: stopping means condemning
-their remaining community. The player's position is equally clear: proceeding
-means knowingly displacing another population, further breaking Hoopa, and
-risking uncontrolled exchanges across multiple worlds.
+Near the Rift head, before the League challenge, the Haven Compact begins its
+final attempt above the containment cradle. Its leader's position remains
+coherent: stopping means condemning their remaining community. The player's
+position is equally clear: proceeding means knowingly displacing another
+population, further breaking Hoopa, and risking uncontrolled exchanges across
+multiple worlds.
 
 The final story confrontation ends the forced activation and releases Hoopa
-from the steering mechanism. Exact battle, puzzle, multiplayer state, and
-completion mechanics are not yet supported by a progression flag. Until the
-progression schema gains an approved slot, this sequence must be treated as part
-of the `gym8_cleared` League chapter rather than encoded as a separate quest
-system.
+from the steering mechanism. It sets `rift_crisis_resolved`. Exact battle,
+puzzle, and multiplayer-safe setter mechanics remain for the progression schema
+pass, but the story state is distinct from both `gym8_cleared` and
+`champion_cleared`.
 
 The world does not snap back. Pallet remains here. The missing native
 settlement remains missing. Refugees already transferred remain people who need
@@ -527,9 +599,10 @@ homes. Faction members who defected must live with both the rescues and the
 displacements they enabled. Hoopa's condition improves enough to stop the
 immediate collapse, but safe reversal is not promised.
 
-The League then serves as the region's public resolution. The player has
-crossed every part of the crisis and is tested by the established trainers of
-this world. The champion battle sets `champion_cleared`.
+Only after `rift_crisis_resolved` does the League open. It is recognition: the
+region publicly acknowledges what the player has already done, and its
+established trainers test the team that crossed the continent. The crisis does
+not escalate again. The champion battle sets `champion_cleared`.
 
 **Knowledge state after the champion**
 
@@ -582,22 +655,23 @@ safer, but refusing or missing them cannot block progression.
 | Brock | Pallet replaced a native settlement |
 | Misty | The faction rescues people from collapsing worlds |
 | Surge | Exchanges can be triggered and steered |
-| Erika | Every rescue exchange displaces something at the destination |
+| Erika | Every rescue exchange displaces something at the destination; an earlier settled city was exchanged too |
 | Koga | Repeated use is destabilising Hoopa and the world |
 | Sabrina | Hoopa is being compelled; a mass rescue is imminent |
-| Blaine | Leadership knowingly chooses an occupied destination |
+| Blaine | Leadership knowingly chooses an occupied destination; `crater_operation_stopped` records that operation's defeat |
 | Giovanni | The final attempt will use the Rift |
-| League | Forced use ends; consequences remain and repair becomes post-game work |
+| Rift | Forced use ends; `rift_crisis_resolved` records Hoopa's release |
+| League | The region recognizes the player; repair becomes postgame work |
 
-# Review questions
+# Implementation and geography gaps
 
-1. Should the faction remain unnamed until `docs/story/FACTION.md`, or should
-   the arc establish its public name now?
-2. Is the final faction confrontation intended before the League battles, as
-   proposed here, or after the champion?
-3. May the story add approved progression flags for the crater operation and
-   Rift resolution, or must both remain implicit in `gym7_cleared` and
-   `gym8_cleared`?
-4. Which Victory Road length is authoritative: 4,038 or 4,953 blocks?
-5. Are the eight civic roles proposed for the gym leaders acceptable before
-   dialogue work begins?
+1. Add `crater_operation_stopped` and `rift_crisis_resolved` to the existing
+   progression flag ledger during the approved schema pass. Do not create a
+   parallel quest-state system.
+2. Correct the stale 4,038-block League approach value in `data/towns.json` to
+   the authoritative 4,953-block Victory Road measurement.
+3. Author a Haven Compact containment chamber beneath the League plateau at
+   (3297, 2603), with an entrance on Victory Road. Its exact Y, footprint, and
+   structure ID do not exist in current geography data.
+4. Maren and the named Haven Compact members need trainer or NPC IDs before
+   dialogue and implementation.
