@@ -75,6 +75,12 @@ this world. Their order and battle identities follow the fixed Kanto sequence,
 but the story does not treat them as Kanto arrivals, copies, or people Oak
 already knows. Pallet's residents remember Kanto; the eight leaders do not.
 
+**Antagonist identity:** The faction's leader is a new original character. They
+are not Giovanni, another Gym Leader, or a concealed version of an existing
+Kanto villain. Their name, history, internal allies, and exact position within
+the faction are deliberately deferred to `docs/story/FACTION.md`. Giovanni has
+no secret command relationship with them.
+
 Their proposed civic roles support the geography and arc:
 
 - Brock is a plateau builder and practical emergency coordinator.
@@ -84,8 +90,8 @@ Their proposed civic roles support the geography and arc:
 - Koga tracks covert movement through the marsh and glacier-foot country.
 - Sabrina studies the Rift's effects on memory, perception, and Pokémon.
 - Blaine is a crater researcher who understands the energy used by the faction.
-- Giovanni is the southern region's hard-edged civil defender, not the faction
-  leader.
+- Giovanni is the southern region's hard-edged civil defender. He is neither
+  the antagonist nor a member or leader of the faction.
 
 These roles are story proposals. They do not change trainer teams or structures.
 
@@ -595,4 +601,3 @@ safer, but refusing or missing them cannot block progression.
 4. Which Victory Road length is authoritative: 4,038 or 4,953 blocks?
 5. Are the eight civic roles proposed for the gym leaders acceptable before
    dialogue work begins?
-
