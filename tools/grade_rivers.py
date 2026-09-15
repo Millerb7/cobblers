@@ -537,23 +537,19 @@ def walled_stations(heights, st, surface, step=WALL_STEP, reach=WALL_REACH, rise
             xs = np.clip(np.rint(s_[0] + sign * px * t).astype(int), 0, nx - 1)
             zs = np.clip(np.rint(s_[1] + sign * pz * t).astype(int), 0, nz - 1)
             sides.append(float(heights[zs, xs].max()) - surface[i] >= rise)
-        out.append((round(chain[i]), int(s_[0]), int(s_[1]), all(sides)))
+        out.append((round(chain[i]), int(s_[0]), int(s_[1]), all(sides), i))
     return out
 
 
 def valley_head(heights, st, surface, run=WALL_RUN):
-    """Index into st of the first station that starts `run` consecutive walled samples, or None."""
+    """(index into st, chainage, samples) of the first station that starts `run` consecutive walled samples, or
+    (None, None, samples)."""
     rows = walled_stations(heights, st, surface)
     for a in range(len(rows) - run + 1):
         if all(r[3] for r in rows[a:a + run]):
-            d = rows[a][0]
-            chain = 0.0
-            for i in range(1, len(st)):
-                chain += math.hypot(st[i][0] - st[i - 1][0], st[i][1] - st[i - 1][1])
-                if chain >= d:
-                    return i, d, rows
-            return 0, d, rows
+            return rows[a][4], rows[a][0], rows
     return None, None, rows
+
 
 def drainage_for(ctx, course_ids):
     """Catchment on the planning grid with the given courses burned in, so flow follows them."""

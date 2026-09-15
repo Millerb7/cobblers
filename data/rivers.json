@@ -580,7 +580,7 @@
     },
     {
       "id": "major_river",
-      "name": "Major river (unnamed): the Glacial Tear valley to the east coast",
+      "name": "Major river (unnamed): the Glacial Tear to the east coast",
       "landmark_kind": "river",
       "graded_courses": [
         "major_river_trunk",
@@ -591,9 +591,9 @@
       "ends": [
         {
           "end": "high_end",
-          "x": 3734,
-          "z": 2234,
-          "bed_y": 81.1,
+          "x": 3136,
+          "z": 1636,
+          "bed_y": 101.3,
           "at": "graded_source",
           "lake": null
         },
@@ -616,8 +616,8 @@
         "basis": "4-block grid, inside the band around the carved axis",
         "directions": [
           {
-            "from": "graded_source end 3734,2234",
-            "from_y": 93.9,
+            "from": "graded_source end 3136,1636",
+            "from_y": 105.9,
             "to": "sea end 6970,3970",
             "min_worst_cut": 0.8,
             "verdict": "water can run along the carve with a cut of up to 0.8 blocks"
@@ -651,9 +651,9 @@
         "longest_descending_path_blocks": 3389,
         "tributaries": 8,
         "head": {
-          "x": 3136,
-          "z": 1636,
-          "ground_y": 105.9
+          "x": 3132,
+          "z": 1632,
+          "ground_y": 106.3
         },
         "path_basis": "farthest ground falling without a rise to lake_tilpey_outflow, lake_tilpey"
       },
@@ -5117,9 +5117,9 @@
       "river": "major_river",
       "source": {
         "kind": "system_head",
-        "x": 3136,
-        "z": 1636,
-        "ground_y": 105.9
+        "x": 3132,
+        "z": 1632,
+        "ground_y": 106.3
       },
       "kind": "major",
       "min_worst_cut": 0.8,
@@ -5131,10 +5131,10 @@
         "z": 3198
       },
       "routed": {
-        "length_blocks": 2266,
-        "surface_start_y": 106.0,
+        "length_blocks": 2268,
+        "surface_start_y": 106.1,
         "surface_end_y": 77.0,
-        "total_drop": 29.0,
+        "total_drop": 29.1,
         "worst_cut": 0.7,
         "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
         "worst_cut_at": {
@@ -5150,10 +5150,10 @@
       "verdict": "descends with a cut of up to 1.5 blocks",
       "graded_polyline": [
         [
-          3136,
-          1636,
-          104.12,
-          101.32
+          3135,
+          1635,
+          104.17,
+          101.37
         ],
         [
           3162,
@@ -5162,10 +5162,10 @@
           99.73
         ],
         [
-          3218,
-          1718,
-          101.12,
-          98.22
+          3217,
+          1717,
+          101.14,
+          98.24
         ],
         [
           3681,
@@ -5174,28 +5174,28 @@
           89.95
         ],
         [
-          3728,
-          2228,
-          88.22,
-          81.21
+          3727,
+          2227,
+          88.27,
+          81.28
         ],
         [
           3773,
           2273,
-          86.58,
-          79.08
+          86.57,
+          79.07
         ],
         [
-          3820,
-          2320,
-          85.86,
-          78.25
+          3819,
+          2319,
+          85.88,
+          78.28
         ],
         [
-          3866,
-          2366,
-          84.6,
-          76.0
+          3865,
+          2365,
+          84.61,
+          76.01
         ],
         [
           4066,
@@ -5224,8 +5224,8 @@
         [
           4150,
           2666,
-          80.39,
-          71.69
+          80.38,
+          71.68
         ],
         [
           4184,
@@ -5273,7 +5273,7 @@
       "reaches": [
         {
           "from_m": 0,
-          "to_m": 23,
+          "to_m": 24,
           "catchment_km2": 0.105,
           "grade": 0.071,
           "water_body": false,
@@ -5284,8 +5284,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 23,
-          "to_m": 88,
+          "from_m": 24,
+          "to_m": 89,
           "catchment_km2": 0.109,
           "grade": 0.0354,
           "water_body": false,
@@ -5296,8 +5296,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 88,
-          "to_m": 153,
+          "from_m": 89,
+          "to_m": 154,
           "catchment_km2": 0.113,
           "grade": 0.0164,
           "water_body": false,
@@ -5308,8 +5308,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 153,
-          "to_m": 218,
+          "from_m": 154,
+          "to_m": 219,
           "catchment_km2": 0.114,
           "grade": 0.013,
           "water_body": false,
@@ -5320,8 +5320,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 218,
-          "to_m": 283,
+          "from_m": 219,
+          "to_m": 284,
           "catchment_km2": 0.115,
           "grade": 0.0123,
           "water_body": false,
@@ -5332,8 +5332,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 283,
-          "to_m": 348,
+          "from_m": 284,
+          "to_m": 349,
           "catchment_km2": 0.115,
           "grade": 0.0123,
           "water_body": false,
@@ -5344,8 +5344,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 348,
-          "to_m": 413,
+          "from_m": 349,
+          "to_m": 414,
           "catchment_km2": 0.116,
           "grade": 0.0123,
           "water_body": false,
@@ -5356,8 +5356,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 413,
-          "to_m": 478,
+          "from_m": 414,
+          "to_m": 479,
           "catchment_km2": 0.117,
           "grade": 0.0122,
           "water_body": false,
@@ -5368,8 +5368,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 478,
-          "to_m": 543,
+          "from_m": 479,
+          "to_m": 544,
           "catchment_km2": 0.118,
           "grade": 0.0123,
           "water_body": false,
@@ -5380,8 +5380,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 543,
-          "to_m": 608,
+          "from_m": 544,
+          "to_m": 609,
           "catchment_km2": 0.119,
           "grade": 0.0122,
           "water_body": false,
@@ -5392,8 +5392,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 608,
-          "to_m": 673,
+          "from_m": 609,
+          "to_m": 674,
           "catchment_km2": 0.12,
           "grade": 0.0123,
           "water_body": false,
@@ -5404,8 +5404,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 673,
-          "to_m": 739,
+          "from_m": 674,
+          "to_m": 740,
           "catchment_km2": 0.121,
           "grade": 0.0126,
           "water_body": false,
@@ -5416,8 +5416,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 739,
-          "to_m": 804,
+          "from_m": 740,
+          "to_m": 805,
           "catchment_km2": 0.122,
           "grade": 0.0136,
           "water_body": false,
@@ -5428,8 +5428,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 804,
-          "to_m": 869,
+          "from_m": 805,
+          "to_m": 870,
           "catchment_km2": 1.049,
           "grade": 0.0147,
           "water_body": false,
@@ -5456,8 +5456,8 @@
           "incision": 5.8
         },
         {
-          "from_m": 869,
-          "to_m": 934,
+          "from_m": 870,
+          "to_m": 935,
           "catchment_km2": 1.255,
           "grade": 0.0118,
           "water_body": false,
@@ -5484,8 +5484,8 @@
           "incision": 6.4
         },
         {
-          "from_m": 934,
-          "to_m": 999,
+          "from_m": 935,
+          "to_m": 1000,
           "catchment_km2": 1.266,
           "grade": 0.0085,
           "water_body": false,
@@ -5512,8 +5512,8 @@
           "incision": 6.4
         },
         {
-          "from_m": 999,
-          "to_m": 1064,
+          "from_m": 1000,
+          "to_m": 1065,
           "catchment_km2": 1.731,
           "grade": 0.0074,
           "water_body": false,
@@ -5540,8 +5540,8 @@
           "incision": 7.5
         },
         {
-          "from_m": 1064,
-          "to_m": 1129,
+          "from_m": 1065,
+          "to_m": 1130,
           "catchment_km2": 1.741,
           "grade": 0.0097,
           "water_body": false,
@@ -5568,8 +5568,8 @@
           "incision": 7.5
         },
         {
-          "from_m": 1129,
-          "to_m": 1194,
+          "from_m": 1130,
+          "to_m": 1195,
           "catchment_km2": 1.753,
           "grade": 0.0098,
           "water_body": false,
@@ -5596,8 +5596,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 1194,
-          "to_m": 1259,
+          "from_m": 1195,
+          "to_m": 1260,
           "catchment_km2": 1.762,
           "grade": 0.0079,
           "water_body": false,
@@ -5624,8 +5624,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 1259,
-          "to_m": 1324,
+          "from_m": 1260,
+          "to_m": 1325,
           "catchment_km2": 1.769,
           "grade": 0.0083,
           "water_body": false,
@@ -5652,8 +5652,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 1324,
-          "to_m": 1388,
+          "from_m": 1325,
+          "to_m": 1389,
           "catchment_km2": 1.779,
           "grade": 0.0103,
           "water_body": false,
@@ -5680,8 +5680,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 1388,
-          "to_m": 1453,
+          "from_m": 1389,
+          "to_m": 1454,
           "catchment_km2": 1.793,
           "grade": 0.0162,
           "water_body": false,
@@ -5708,8 +5708,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 1453,
-          "to_m": 1518,
+          "from_m": 1454,
+          "to_m": 1519,
           "catchment_km2": 1.805,
           "grade": 0.0175,
           "water_body": false,
@@ -5736,8 +5736,8 @@
           "incision": 7.7
         },
         {
-          "from_m": 1518,
-          "to_m": 1583,
+          "from_m": 1519,
+          "to_m": 1584,
           "catchment_km2": 1.815,
           "grade": 0.0182,
           "water_body": false,
@@ -5764,8 +5764,8 @@
           "incision": 7.7
         },
         {
-          "from_m": 1583,
-          "to_m": 1648,
+          "from_m": 1584,
+          "to_m": 1649,
           "catchment_km2": 1.827,
           "grade": 0.0136,
           "water_body": false,
@@ -5792,8 +5792,8 @@
           "incision": 7.7
         },
         {
-          "from_m": 1648,
-          "to_m": 1712,
+          "from_m": 1649,
+          "to_m": 1713,
           "catchment_km2": 1.844,
           "grade": 0.0128,
           "water_body": false,
@@ -5820,8 +5820,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 1712,
-          "to_m": 1777,
+          "from_m": 1713,
+          "to_m": 1778,
           "catchment_km2": 1.856,
           "grade": 0.0125,
           "water_body": false,
@@ -5848,8 +5848,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 1777,
-          "to_m": 1842,
+          "from_m": 1778,
+          "to_m": 1843,
           "catchment_km2": 1.863,
           "grade": 0.013,
           "water_body": false,
@@ -5876,8 +5876,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 1842,
-          "to_m": 1908,
+          "from_m": 1843,
+          "to_m": 1909,
           "catchment_km2": 1.864,
           "grade": 0.0124,
           "water_body": false,
@@ -5904,8 +5904,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 1908,
-          "to_m": 1973,
+          "from_m": 1909,
+          "to_m": 1974,
           "catchment_km2": 1.865,
           "grade": 0.0112,
           "water_body": false,
@@ -5932,8 +5932,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 1973,
-          "to_m": 2038,
+          "from_m": 1974,
+          "to_m": 2039,
           "catchment_km2": 1.955,
           "grade": 0.0113,
           "water_body": false,
@@ -5960,8 +5960,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 2038,
-          "to_m": 2103,
+          "from_m": 2039,
+          "to_m": 2104,
           "catchment_km2": 1.962,
           "grade": 0.0114,
           "water_body": false,
@@ -5988,8 +5988,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 2103,
-          "to_m": 2168,
+          "from_m": 2104,
+          "to_m": 2169,
           "catchment_km2": 1.963,
           "grade": 0.0125,
           "water_body": false,
@@ -6016,8 +6016,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 2168,
-          "to_m": 2233,
+          "from_m": 2169,
+          "to_m": 2234,
           "catchment_km2": 1.964,
           "grade": 0.0121,
           "water_body": false,
@@ -6044,8 +6044,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 2233,
-          "to_m": 2267,
+          "from_m": 2234,
+          "to_m": 2268,
           "catchment_km2": 1.964,
           "grade": 0.0119,
           "water_body": false,
@@ -6105,7 +6105,7 @@
     },
     "output": {
       "path": "land_8k_16_eroded_rivers.png",
-      "sha256": "e9d92d6bd00786406acdde5340f12c9407d80a80061cf8d29cc7e5c1d42eeace"
+      "sha256": "f5ff054ee340a34a861d1790abe5824e22e5c9541c62563b06fc24d7d0c92afd"
     },
     "courses_cut": [
       "lake_tilpey_outflow",
@@ -6175,17 +6175,17 @@
         "widest_cut_half_width_blocks": 25
       },
       "major_river_trunk": {
-        "volume_blocks": 1301734,
+        "volume_blocks": 1302146,
         "deepest_cut_blocks": 19.7,
         "widest_cut_half_width_blocks": 121
       }
     },
     "cost_basis": "volume is what each course removed beyond the courses cut before it; deepest is the most any column it touched was lowered from the source heightmap; widest is the farthest column it lowered from its centreline",
-    "columns_lowered": 278536,
+    "columns_lowered": 278591,
     "lowered_blocks": {
       "max": 19.73,
       "mean": 5.72,
-      "volume": 1592203
+      "volume": 1592615
     },
     "check": {
       "method": "on the written file, at every block of each course outside lakes: the lowest ground within one block of the centreline against the planned floor; the largest rise of the planned floor; and the largest rise of that lowest ground (clamped half a block under the floor)",
@@ -6252,7 +6252,7 @@
         },
         {
           "course": "major_river_trunk",
-          "thalweg_above_floor_max": 0.008,
+          "thalweg_above_floor_max": 0.007,
           "floor_rise_max": 0.0,
           "thalweg_rise_max": 0.003
         }

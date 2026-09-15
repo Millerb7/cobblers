@@ -6082,7 +6082,7 @@
    "kind": "river",
    "name": "Major river (unnamed): the Glacial Tear to the east coast",
    "status": "built",
-   "status_basis": "Chosen by catchment: the Tilpey system drains 14.0 km2, the largest on the map, with the longest descending path and the most tributaries. The trunk starts where that path first runs between valley walls (ground 10 blocks above the water within 250 blocks on both sides, at three samples 48 blocks apart; tools/grade_rivers.py WALL_*): (3136, 1636) on the floor of the Glacial Tear trough. From there a 5-6-block meltwater creek runs about 780 blocks down the trough, then the river widens to 18-28 with floodplain and terraces into Lake Tilpey and out to the east coast. The first 817 blocks of the path, cut along the mountainside above Merian with no bank on the downhill side, are not a river.",
+   "status_basis": "Chosen by catchment: the Tilpey system drains 14.0 km2, the largest on the map, with the longest descending path and the most tributaries. The trunk starts where that path first runs between valley walls (ground 10 blocks above the water within 250 blocks on both sides, at three samples 48 blocks apart; tools/grade_rivers.py WALL_*): (3135, 1635) on the floor of the Glacial Tear trough. From there a 5-6-block meltwater creek runs about 780 blocks down the trough, then the river widens to 18-28 with floodplain and terraces into Lake Tilpey and out to the east coast. The first 817 blocks of the path, cut along the mountainside above Merian with no bank on the downhill side, are not a river.",
    "water": "allowed",
    "anchor": {
     "x": 4066,
@@ -6093,16 +6093,20 @@
      "id": "channel",
      "polyline": [
       [
-       3136,
-       1636
+       3135,
+       1635
       ],
       [
-       3820,
-       2320
+       3819,
+       2319
       ],
       [
        4150,
        2666
+      ],
+      [
+       4746,
+       3198
       ],
       [
        4746,
@@ -6142,9 +6146,9 @@
    "measured": {
     "length_blocks": 2618,
     "high_end": {
-     "x": 3136,
-     "z": 1636,
-     "bed": 101.3
+     "x": 3135,
+     "z": 1635,
+     "bed": 101.4
     },
     "low_end": {
      "x": 6970,
@@ -6152,7 +6156,7 @@
      "bed": 53.0
     },
     "surface_y": [
-     104.1,
+     104.2,
      62.0
     ],
     "width_blocks": [
