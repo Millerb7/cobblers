@@ -1,5 +1,37 @@
 # Re-export: cobblers-10240
 
+## 2026-09-15 (second and third): hillside relief, seated hometown, major river head
+
+**Status: exported twice, both checked in the region files and over RCON.** Each export was followed by a
+Distant Horizons pregen.
+
+| Step | Relief export | River-head export |
+| --- | --- | --- |
+| Heightmap | `217d411c…` (relief) | `924253ad…` on river cut `6b6352bc…` |
+| Corruption check (`heightmap_check.py`) | ok: 0 tears, 0.39% multiples of 257, 0 duplicate rows | ok, same |
+| Retired | `cobblers-server-retired/2026-09-15-pre-relief/` | `cobblers-server-retired/2026-09-15-river-head/`, with the previous cut and relief files and `rivers.json.before` |
+| Export | 865 s, `seed_match: true`, `.world` `f825eded…` | 878 s, `seed_match: true`, `.world` `25b74090…` |
+| Hometown | copied in (312 chunks) | copied in from the re-seated town (312 chunks) |
+| World checks | tread CV in 2048-block crops: 0.31 → 0.56 (north mountains), 0.23 → 0.43 (Pallet) | no water above y100 within 500 blocks of (2583, 1546) except the lake at y119; 508 river stations at 16-block spacing, 0 bed or water rises |
+| Distant Horizons | pregen complete in 7 minutes | pregen started |
+
+**The hometown between the two exports.**
+- **Restoring the ground:** the placed town was wiped back to pristine terrain by copying chunks from the sculpted
+  export kept before its first copy (`2026-09-15-pre-sculpt/sculpted-export-before-transplant`). Terrain in the
+  hometown rectangle is identical in every export since the sculpt.
+- **The seam:** outside the rectangle, the two exports differ by 457 blocks in the 8-block strips around it. About
+  170 are leaves or logs of a few trees; the rest is underground water pockets.
+- **Re-placing:** the town was placed again with the seating placer. `waystones.dat` was cleared of hometown
+  entries before boot. The original files are `2026-09-15-pre-relief/waystones.dat.before-*`.
+
+**Distant Horizons.**
+- **After the cache move:** the white terrain and hard-edged coloured wedge seen on the flight were Distant
+  Horizons rebuilding. The client cache had been moved away at 08:03. A new one was created at 08:12 and was
+  343.5 MB at its last write (08:28), against the server's 626 MB of LOD data, so the client had received about
+  half of it.
+- **This time:** the client cache was moved again after the relief export. None existed at the river-head export,
+  so the next join rebuilds from scratch again.
+
 ## 2026-09-15: sculpted coasts and massifs, the hometown placed
 
 **Status: exported, hometown carried across, checked over RCON, pregenerated.** Nobody had built in the

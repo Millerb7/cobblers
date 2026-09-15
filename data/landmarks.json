@@ -6082,7 +6082,7 @@
    "kind": "river",
    "name": "Major river (unnamed): the Glacial Tear valley to the east coast",
    "status": "built",
-   "status_basis": "Chosen by catchment: the Tilpey system drains 14.0 km2, the largest on the map, with the longest descending path and the most tributaries. The trunk starts where that path first drains 0.13 km2 (tools/grade_rivers.py HEAD_KM2, the smallest catchment feeding any lake outflow here), at (3732, 2232) in the Glacial Tear valley where both banks first rise 5-7 blocks, and runs into Lake Tilpey and out to the east coast. Until 2026-09-15 it started 1,661 blocks higher, at the far end of the path on the flank above Merian (catchment 0.009 km2), and was carved along the mountainside and straight across the plain below.",
+   "status_basis": "Chosen by catchment: the Tilpey system drains 14.0 km2, the largest on the map, with the longest descending path and the most tributaries. The trunk starts where that path first drains 0.13 km2 (tools/grade_rivers.py HEAD_KM2, the smallest catchment feeding any lake outflow here), at (3732, 2232) in the Glacial Tear valley where both banks first rise 5-7 blocks, and runs into Lake Tilpey and out to the east coast. Until 2026-09-15 it started 1,661 blocks higher, at the far end of the path on the flank above Merian (catchment 0.009 km2), cut for its first 720 blocks along the mountainside (no bank on the downhill side within 250 blocks, 22-57 blocks of wall uphill), then as a 3-6-block creek on the floor of the Glacial Tear trough.",
    "water": "allowed",
    "anchor": {
     "x": 4014,

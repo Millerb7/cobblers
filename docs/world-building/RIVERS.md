@@ -170,6 +170,30 @@ the terrain:
 | South coast (2584, 6492), the Watering Hole system | 4.73 | 2,862 | 4 |
 | North-west coast (676, 1848), Viltri's Path | 3.36 | 2,550 | 3 |
 
+**2026-09-15: the head moved down 1,661 blocks.** From the air, a channel ran across a mountain near (2583, 1546).
+- **Neither the GIMP river layer nor erosion made it.** The authored `land_8k_16_eroded.png` has no trench there:
+  no column sits more than 4 blocks below its 10-block surroundings within 700 blocks. The cut file lowered up to
+  6 blocks there.
+- **The channel came from `tools/grade_rivers.py`.** It started the trunk at the far end of the longest descending
+  path, where the catchment is 0.009 km².
+- **The first 720 blocks were cut along the mountainside.** Within 250 blocks, the downhill side never rises 10
+  blocks. The uphill side rises 22–57 blocks within 14–44 blocks.
+- **Below that, a 3–6-block creek ran on the floor of the Glacial Tear trough.** Its walls are 19–57 blocks high,
+  92–184 blocks either side, and its catchment stayed at 0.06–0.12 km².
+
+**The rule now.** The trunk starts where its path first drains `HEAD_KM2` = 0.13 km². That is the smallest catchment
+feeding any lake outflow on this map (Lake Viltri's, 0.131 km²); every lake-fed river starts at 0.131 km² or more.
+The path first reaches it at (3732, 2232), y94, where a tributary joins (catchment 0.915 km²) inside the Glacial
+Tear.
+
+**What went with it.** The removed 1,661 blocks are back to authored ground. The trunk is now 1,425 blocks to
+Tilpey. The northern route no longer crosses a creek.
+
+**Checked on every cut course.** 581 stations at 16-block spacing, excluding lake basins, on the graded floor, the
+heightmap bed, the world bed and the world water surface: no rise anywhere, before or after the change.
+
+**Original selection text** (the head it describes is the old one):
+
 **All three measures agree.** The trunk runs from the farthest ground that falls, without any
 rise, to Lake Tilpey:
 - it starts at (2504, 1444), y171, on the flank above Merian;

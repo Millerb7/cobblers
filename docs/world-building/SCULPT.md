@@ -147,6 +147,71 @@ Overall:
 | West cone (5620, 5620) | peak y167-187 with a clipped spur to y200 | Cinder cone: a regular 32° cone from y189 with a 28-block summit crater (floor y180); the spur is cut to the plain at y145 |
 | Eastern bowl (6672, 5508) | floor y127, rim 8-10 blocks higher | Caldera centred 38 blocks north at (6672, 5470): a flat floor 140 across at y104, steep walls, rim y148-154, about 46 blocks of wall. The rim sinks to the south, where the Mining Town keeps its ground |
 
+## 2b. Hillside relief: contour rings (added 2026-09-15, second pass)
+
+**The problem, measured.** From the air the whole landmass read as concentric contour rings. The source is not
+stepped: the old terrace index stays at or below 0.07 in the 16-bit data. The cause is quantisation of a grade
+that is too regular.
+
+**The arithmetic.** A slope of grade `g` becomes a 1-block step every `1/g` blocks. Those steps run as rings wherever
+the grade stays constant across a wide area.
+
+`tools/terrace_measure.py` measures it three ways, over the whole map:
+
+- **Regime:** 53% of land lies between 1:12 and 1:1.5, the grades that make visible rings, and it is in every region.
+- **Rho:** `rho = |grad(fine) - grad(regional)| / |grad(regional)|` on that ground. Contours run as parallel rings
+  near 0, wander above about 0.3, and break into spurs and gullies near 1.
+- **Tread CV:** the variation of consecutive treads on the block surface, in 64-block windows. A regular ring field
+  sits near 0.15.
+
+**Options, evaluated before implementing.**
+
+| Option | Arithmetic | Verdict |
+| --- | --- | --- |
+| Per-region grade multiplier (1:2 to 1:8) | Scales the fine and regional gradients alike, so rho and tread CV don't change: rings stay, only their spacing changes per region. It also moves ground by (m-1)·g·d: halving a 1:4 coast lowers ground 19 blocks, 150 blocks inland | Rejected: not local, and doesn't break rings |
+| Low-frequency noise on the falloff | 2πA/L changes the grade. On a 2048-block crop, 3 blocks at 160-block spacing added up to 5 blocks of change and broke fewer rings than 2 more points of the chosen k | Rejected on measurement |
+| Beach flats 10–20%, cliffs 5–10% | The brief's 1% and 0.5% were the pre-sculpt figures. Live, cliffs are already 6.8% at 1:1 or steeper, and flats under 1:20 are 2.4%. Flats on 10–20% of 74 km of shoreline convert 0.6–1.2 million columns, 2.4–4.8% of ring ground | Not done: doesn't reach the inland rings |
+| **Relief proportional to grade, stretched down the fall line** | `A = k·g` gives `rho = 2πk/L` at every grade, so flats stay flat. Averaging along the fall line makes spurs and gullies, not knobs. Wavelengths are about 24–144 blocks (grid spacings 12, 24, 48), so the relief survives Distant Horizons' coarse LODs | **Chosen**, k = 10, capped at 2.5 blocks, soft-clipped at 2σ |
+
+**Where it applies.** It fades out below sea+4..12, so the graded beaches stay as they were. It fades out on
+grades over 0.7..1.0, so the cliffs keep their faces. It is exactly zero inside protected sites: footprints,
+channels, lake basins and the hometown rectangle, with a 24-block feather.
+
+**Noise normalisation.** The noise is normalised by a statistic of the noise alone, not of the whole map. So an edit
+in one place changes the relief only near that edit.
+
+**Results.**
+
+| Whole map | Before sculpt | Sculpted | + relief |
+| --- | ---: | ---: | ---: |
+| rho median on ring ground | 0.093 | 0.146 | 0.401 |
+| ring ground with rho over 0.3 | 10% | 18% | 65% |
+| tread CV median (64-block windows) | 0.18 | 0.25 | 0.49 |
+| windows with tread CV under 0.2 | 58% | 32% | 7% |
+| terrace index p50 / p90 | 0.021 / 0.054 | 0.030 / 0.075 | 0.057 / 0.104 |
+| terrace index share under 0.05 | 88% | 77% | 38% |
+
+**Checked in the exported world** (ground read back from the region files):
+
+| Crop | Tread CV median | Windows under 0.2 |
+| --- | --- | --- |
+| North mountains | 0.31 → 0.56 | 16% → 1.6% |
+| Pallet lowland | 0.23 → 0.43 | 38% → 6.8% |
+
+The terrace index means nothing on whole blocks; it reads 1.2–1.6 in both worlds.
+
+**What the relief moves.**
+
+- **Terrain:** the largest change is 4.9 blocks, and 99% of changes are under 3.4.
+- **Lake basins and the hometown rectangle:** unchanged. River water: 10 raw columns under 0.003 blocks.
+- **Paint:** bare ROCK went from 210,627 to 367,045 columns, as steep spur faces tip over the rock slope. That is
+  0.35% of land.
+- **Foliage:** 77,750 objects became 76,636.
+- **Landmark sightlines:** Great Oak 20/37, Sentinel 26/81, Patriarch 68/155, Cherry Elder 61/160, Weeping Elder
+  36/144.
+
+**Not verified:** whether the rings stop dominating the view from y200. That needs a flight screenshot.
+
 ## 3. What the sculpt protects
 
 - Every settlement: the inscribed circle of its footprint plus 32 blocks, feathered over 24 blocks on coasts and

@@ -146,11 +146,29 @@ them into a datapack function (`cobblers:towns/hometown`, 3,919 commands) that w
 - **The buildings.** All nine are donor templates from the loaded pack. Each rotation comes from the template's
   entrance jigsaw so the door faces its street. Jigsaws are resolved to their final state and loot tables are
   stripped.
-- **Checked in the world:** 0 jigsaw blocks remain, both waystone halves are present, 913 path blocks, blocks
-  in all nine footprints, and `level.dat` spawn 1461 118 5306.
-- **Not wired:** the waystone is placed but not locked, since the hometown's unlock is the open question in
-  `progression.json`. The Pokémon Center donor may carry a waystone-like block of its own (seen on a top-down
-  render, not identified).
+- **Checked in the world (first placement):** 0 jigsaw blocks remain, both waystone halves are present, 913 path
+  blocks, blocks in all nine footprints, and `level.dat` spawn 1461 118 5306.
+- **Re-seated 2026-09-15.**
+  - **Why the buildings floated:** the first placement set each template on a levelled pad, one block above
+    grade, so every building floated by its ground layer's height. That was +1 for the houses, lab and Mart
+    (ground layer 0) and +4 for the Pokémon Center (ground layer 3, above a 3-layer basement).
+  - **How the placer seats them now:**
+    - it reads the ground from the stopped world's region files;
+    - it puts the entrance jigsaw's layer at the ground in front of the door;
+    - it runs a foundation course down to the ground under every column the building stands on;
+    - it fills air the template stores under a column's lowest block;
+    - it never lays a pad.
+  - **Verified over RCON:** 0 gaps across the 36 footprint corners and all 1,670 columns the buildings stand on.
+  - **Floor against outside ground at the corners:** 25 at grade, 7 one block below, 4 one block above.
+  - **The site:** ground under the hometown is 115–118, so no foundation course was needed here. The foundation
+    logic was checked on a synthetic 1-in-4 slope: foundations up to 4 blocks, cuts up to 6, 0 gaps.
+- **One waystone.** The Pokémon Center donor carried a `waystones:mossy_waystone`.
+  - **Why it had to come out of the template:** Waystones registers a waystone the moment a template places one,
+    and keeps it registered after the block is replaced.
+  - **What the placer does now:** it places a copy of the template with the waystone removed. Block entities and
+    entities are kept; only the waystone's 2 blocks and 2 block entities go.
+  - **Result:** `waystones.dat` holds exactly one entry, the placed waystone at (1467, 119, 5286).
+  - **Still not wired:** its unlock is the open question in `progression.json`.
 - **Across re-exports:** the built area (x1376-1567, z4976-5391) is protected from sculpting, and
   `tools/transplant_chunks.py` copies its chunks into a new export.
 
