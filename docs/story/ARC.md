@@ -1,7 +1,8 @@
 # Narrative Arc
 
-**Status:** Approved arc, revised 2026-09-15. Dialogue and quest schemas remain
-on hold. Side-content proposals are in `SIDEQUESTS.md`.
+**Status:** Approved arc, revised 2026-09-15. Main-story dialogue and quest
+schemas remain on hold. Side-content proposals are in `SIDEQUESTS.md` and
+`SIDE_EVENTS.md`.
 
 ## Authority and current data limits
 
