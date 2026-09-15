@@ -4,6 +4,9 @@
 implemented quest data. They add no required progression and set no gym,
 chapter, crater, Rift, or champion flag.
 
+Small ambient scenes and character encounters are cataloged separately in
+[`SIDE_EVENTS.md`](SIDE_EVENTS.md), with detailed prototypes under `events/`.
+
 ## Coordinate rule
 
 Coordinates below are block **(x, z)** anchors from `data/towns.json` and
