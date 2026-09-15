@@ -55,9 +55,10 @@ CORRIDOR = 100             # half width of the band around a carved axis when te
 CANAL_PCT = 50             # a course cut along more than this share of its length is a canal
 BURN = 100.0               # courses are lowered this much on the planning grid so drainage follows them
 TRIBUTARY_KM2 = 0.25       # a stream draining at least this much counts as a tributary
-HEAD_KM2 = 0.13            # the major river begins where its path drains this much: the smallest catchment that
-                           # feeds any lake outflow on this map (lake_viltri_outflow 0.131 km2). Above it the
-                           # longest descending path is a hillside, and a channel there is a cut, not a river
+WALL_RISE = 10.0           # a valley wall: ground at least this far above the water surface ...
+WALL_REACH = 250           # ... within this many blocks of the channel, on each side (the Glacial Tear is 396 wide)
+WALL_RUN = 3               # the head is the first of this many consecutive walled stations ...
+WALL_STEP = 48             # ... sampled this far apart along the path (so a 96-block confined stretch at least)
 REACH = 64                 # reach length along a course, blocks
 MAJOR_VALLEY_WIDTH = 16    # the major river gets a floodplain and terraces once it is this wide
 VALLEY_MAX_GRADE = 0.02    # steeper reaches are confined: steep banks, no floodplain or terraces
@@ -513,6 +514,47 @@ def base_heightmap(world, world_path, source_root, explicit=None):
 
 # ------------------------------------------------------------ character
 
+
+def walled_stations(heights, st, surface, step=WALL_STEP, reach=WALL_REACH, rise=WALL_RISE):
+    """Along a dense course: (distance, x, z, walled) every `step` blocks, walled when the ground rises `rise` blocks
+    above the water surface within `reach` blocks on both sides of the channel (authored heights)."""
+    chain = [0.0]
+    for a, b in zip(st, st[1:]):
+        chain.append(chain[-1] + math.hypot(b[0] - a[0], b[1] - a[1]))
+    out, nz, nx = [], heights.shape[0], heights.shape[1]
+    t = np.arange(4, reach + 1, 2, dtype=np.float64)
+    k = 0
+    for i, s_ in enumerate(st):
+        if chain[i] < k * step:
+            continue
+        k = int(chain[i] // step) + 1
+        j0, j1 = max(0, i - 6), min(len(st) - 1, i + 6)
+        dx, dz = st[j1][0] - st[j0][0], st[j1][1] - st[j0][1]
+        L = math.hypot(dx, dz) or 1.0
+        px, pz = -dz / L, dx / L
+        sides = []
+        for sign in (-1, 1):
+            xs = np.clip(np.rint(s_[0] + sign * px * t).astype(int), 0, nx - 1)
+            zs = np.clip(np.rint(s_[1] + sign * pz * t).astype(int), 0, nz - 1)
+            sides.append(float(heights[zs, xs].max()) - surface[i] >= rise)
+        out.append((round(chain[i]), int(s_[0]), int(s_[1]), all(sides)))
+    return out
+
+
+def valley_head(heights, st, surface, run=WALL_RUN):
+    """Index into st of the first station that starts `run` consecutive walled samples, or None."""
+    rows = walled_stations(heights, st, surface)
+    for a in range(len(rows) - run + 1):
+        if all(r[3] for r in rows[a:a + run]):
+            d = rows[a][0]
+            chain = 0.0
+            for i in range(1, len(st)):
+                chain += math.hypot(st[i][0] - st[i - 1][0], st[i][1] - st[i - 1][1])
+                if chain >= d:
+                    return i, d, rows
+            return 0, d, rows
+    return None, None, rows
+
 def drainage_for(ctx, course_ids):
     """Catchment on the planning grid with the given courses burned in, so flow follows them."""
     burn = ctx["ymin"].copy()
@@ -626,7 +668,12 @@ def characterise(ctx, cid, km2, major=False):
         catch.append(run)
     water = [s[3] >= 0 and bodies[s[3]].get("kind") != "course" for s in st]
     total = chain[-1]
-    major_mouth_km2 = (max([a for a, wet in zip(catch, water) if not wet] or catch) or None) if major else None
+    # the major scale is the largest catchment on open river: stations within VALLEY_CLEAR of a lake on the course are
+    # left out, because tributaries converge at a lake's edge and one reach there would shrink everything upstream
+    wet_chain = [c for c, w in zip(chain, water) if w]
+    open_catch = [a for a, c, w in zip(catch, chain, water)
+                  if not w and all(abs(c - wc) >= VALLEY_CLEAR for wc in wet_chain)]
+    major_mouth_km2 = (max(open_catch or [a for a, w in zip(catch, water) if not w] or catch) or None) if major else None
     reaches, i0 = [], 0
     while i0 < len(st) - 1:
         i1 = i0
@@ -846,26 +893,33 @@ def plan(args):
     trunk_id = "major_river_trunk"
     major_ids = []
     result, graded = run_course(ctx, [(hx, hz)], float(ymin[hz, hx]), only=top["_bodies"] or None)
-    # the trunk starts where the path first drains HEAD_KM2, not at the path's far end on a bare hillside
-    head_rule = {"min_catchment_km2": HEAD_KM2, "path_head": dict(top["head"])}
+    # the trunk starts where its path first runs between valley walls, not at the path's far end on an open
+    # hillside: the flat catchment threshold used before removed a creek from a glacial trough floor
+    head_rule = {"rule": "valley_walls", "wall_rise_blocks": WALL_RISE, "wall_reach_blocks": WALL_REACH,
+                 "consecutive_stations": WALL_RUN, "station_spacing_blocks": WALL_STEP, "path_head": dict(top["head"])}
     if graded:
-        ctx["dense"]["_trunk_probe"] = graded
-        probe = drainage_for(ctx, cuttable() + ["_trunk_probe"])
-        del ctx["dense"]["_trunk_probe"]
-        st_p, _ = graded
-        run_a, run_d, prev = 0.0, 0.0, None
-        for s_ in st_p:
-            cz, cx = s_[1] // FACTOR, s_[0] // FACTOR
-            run_a = max(run_a, float(probe["km2"][max(0, cz - 1):cz + 2, max(0, cx - 1):cx + 2].max()))
-            if prev is not None:
-                run_d += math.hypot(s_[0] - prev[0], s_[1] - prev[1])
-            prev = s_
-            if run_a >= HEAD_KM2:
-                break
-        head_rule.update({"moved_blocks_along_path": round(run_d), "catchment_at_head_km2": round(run_a, 3)})
-        if run_d > 0 and run_a >= HEAD_KM2:
-            hx, hz = int(prev[0] // FACTOR), int(prev[1] // FACTOR)
-            result, graded = run_course(ctx, [(hx, hz)], float(ymin[hz, hx]), only=top["_bodies"] or None)
+        st_p, surf_p = graded
+        i_head, d_head, _ = valley_head(ctx["heights"], st_p, surf_p)
+        head_rule["moved_blocks_along_path"] = d_head
+        if i_head:
+            # keep the graded course below the head as it was routed from the path head: routing again from the
+            # new head takes another grid line and moves the whole lower valley sideways
+            st_t, surf_t = st_p[i_head:], surf_p[i_head:]
+            hx, hz = int(st_t[0][0] // FACTOR), int(st_t[0][1] // FACTOR)
+            beds_t = [max(b[2], ctx["sea"]) for b in st_t]
+            worst_t, at_t = R.worst_cut(beds_t)
+            length_t = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(st_t, st_t[1:]))
+            result["routed"].update({
+                "length_blocks": round(length_t), "surface_start_y": round(surf_t[0], 1),
+                "total_drop": round(surf_t[0] - surf_t[-1], 1), "worst_cut": round(worst_t, 1),
+                "worst_cut_at": station_ref(st_t, at_t),
+                "stations_needing_cut_pct": round(100.0 * sum(1 for b, y in zip(beds_t, surf_t) if b > y + 0.5) / len(st_t), 1)})
+            graded = (st_t, surf_t)
+            # the hillside above still drains to the head overland: count it when sizing, but cut no channel there
+            ctx["dense"]["_trunk_upper"] = (st_p[:i_head + 1], surf_p[:i_head + 1])
+            # the river below the head keeps the reaches it has as part of the whole path
+            ctx["dense"]["_trunk_full"] = (st_p, surf_p)
+            ctx["trunk_head_chain"] = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(st_p[:i_head], st_p[1:i_head + 1]))
     top["head"] = {"x": hx * FACTOR, "z": hz * FACTOR, "ground_y": round(float(ymin[hz, hx]), 1)}
     print("major river head:", json.dumps(head_rule), flush=True)
     add_course(trunk_id, "major_river", {"kind": "system_head", "x": hx * FACTOR, "z": hz * FACTOR,
@@ -880,7 +934,7 @@ def plan(args):
         cur = nxt if nxt in by_course else nxt + "_outflow"
     major = {
         "selection": "the coastal system with the largest catchment; its trunk follows the system's longest "
-                     "descending flow path to the sea, starting where that path first drains HEAD_KM2",
+                     "descending flow path to the sea, starting where that path first runs between valley walls",
         "head_rule": head_rule,
         "systems_ranked": [{k: v for k, v in s.items() if not k.startswith("_")} for s in systems[:5]],
         "chosen_rank_by": {k: v + 1 for k, v in ranks.items()},
@@ -889,8 +943,8 @@ def plan(args):
     }
     print("major river:", json.dumps({k: v for k, v in major.items() if k != "systems_ranked"}), flush=True)
 
-    # size every cut course from its catchment, with the trunk burned in too
-    dr = drainage_for(ctx, cuttable())
+    # size every cut course from its catchment, with the trunk burned in too (and the path above its head)
+    dr = drainage_for(ctx, cuttable() + (["_trunk_upper"] if "_trunk_upper" in ctx["dense"] else []))
     mouth_km2 = max(float(dr["km2"][top["_cell"]]), top["catchment_km2"])
     for c in courses:
         if c["id"] not in ctx["dense"]:
@@ -899,8 +953,28 @@ def plan(args):
         if is_major:
             c["kind"] = "major"
         reaches, chain, total = characterise(ctx, c["id"], dr["km2"], is_major)
+        if c["id"] == trunk_id and "_trunk_full" in ctx["dense"]:
+            full, _, _ = characterise(ctx, "_trunk_full", dr["km2"], True)
+            d0 = ctx["trunk_head_chain"]
+            reaches = []
+            for r in full:
+                if r["to_m"] <= d0:
+                    continue
+                r = dict(r, from_m=max(0, round(r["from_m"] - d0)), to_m=round(r["to_m"] - d0))
+                reaches.append(r)
         finalize_course(ctx, c, reaches, chain, total)
     major["mouth_catchment_km2"] = round(mouth_km2, 2)
+    # the same rule, surveyed (not applied) on every other course whose head is not a lake
+    survey = []
+    for c in courses:
+        if c["id"] == trunk_id or (c.get("source") or {}).get("kind") == "lake_outflow" or c["id"] not in ctx["dense"]:
+            continue
+        st_c, surf_c = ctx["dense"][c["id"]]
+        i_c, d_c, rows_c = valley_head(ctx["heights"], st_c, surf_c)
+        survey.append({"course": c["id"], "source_kind": (c.get("source") or {}).get("kind"),
+                       "walled_from_start": bool(rows_c and all(r[3] for r in rows_c[:WALL_RUN])),
+                       "rule_would_move_head_blocks": d_c, "walled_samples": sum(1 for r in rows_c if r[3]), "samples": len(rows_c)})
+    major["head_rule_survey_other_courses"] = survey
 
     for rv in rivers:
         rv["courses"] = rv.get("graded_courses") or ([e["course"] for e in rv["ends"] if e.get("course")] +
@@ -921,7 +995,7 @@ def plan(args):
                        "bed_radius": BED_RADIUS, "near_lake": NEAR_LAKE, "near_sea": NEAR_SEA,
                        "destination_radius": DEST_RADIUS, "corridor_half_width": CORRIDOR,
                        "canal_pct": CANAL_PCT, "sea_level": sea, "reach_blocks": REACH,
-                       "grade_window_blocks": GRADE_WINDOW, "tributary_km2": TRIBUTARY_KM2, "head_km2": HEAD_KM2,
+                       "grade_window_blocks": GRADE_WINDOW, "tributary_km2": TRIBUTARY_KM2, "valley_head": {"wall_rise": WALL_RISE, "wall_reach": WALL_REACH, "run": WALL_RUN, "step": WALL_STEP},
                        "character": CHARACTER_RULES},
         "lakes": lake_rows,
         "rivers": rivers,
