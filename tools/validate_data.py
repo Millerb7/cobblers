@@ -937,7 +937,10 @@ def check_rivers(ctx: Context):
     _check_major_head(rep, f, courses)
 
 
-GRADE_RIVERS = Path(__file__).resolve().parent / "grade_rivers.py"      # HEAD_KM2
+GRADE_RIVERS = Path(__file__).resolve().parent / "grade_rivers.py"      # WALL_RISE, WALL_REACH, WALL_RUN, WALL_STEP, FACTOR
+# head_rule key -> (tools/grade_rivers.py constant, parameters.valley_head key)
+HEAD_RULE_CONSTANTS = {"wall_rise_blocks": ("WALL_RISE", "wall_rise"), "wall_reach_blocks": ("WALL_REACH", "wall_reach"),
+                       "consecutive_stations": ("WALL_RUN", "run"), "station_spacing_blocks": ("WALL_STEP", "step")}
 
 
 def _module_constant(path, name):
@@ -947,67 +950,112 @@ def _module_constant(path, name):
     if not path.is_file():
         return None
     for node in ast.parse(path.read_text(encoding="utf-8")).body:
-        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) \
-                and node.targets[0].id == name:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)                 and node.targets[0].id == name:
             return ast.literal_eval(node.value)
     return None
 
 
 def _check_major_head(rep, f, courses):
-    """The major river's trunk starts where its path first drains HEAD_KM2 (tools/grade_rivers.py): the head rule is
-    recorded, its threshold is the code's and the plan's parameter, the head it chose drains at least that much, and
-    the trunk's first reach does too."""
+    """The major river's trunk starts where its path first runs between valley walls (tools/grade_rivers.py
+    valley_head): the rule is recorded with the code's WALL_* values (and parameters.valley_head agrees), the head
+    moved a non-negative distance along the path, the trunk's recorded source is its first graded station, and the
+    survey of the rule on other courses is well formed."""
     major = f.doc.get("major_river")
     if major is None:
         return
     line = f.line_of_key("head_rule") or f.line_of_key("major_river")
+
+    def err(msg, where=None, ln=None):
+        rep.error("rivers", msg, file=f.rel, line=ln or line, where=where)
+
     if not isinstance(major, dict):
-        rep.error("rivers", "major_river must be an object", file=f.rel, line=line)
+        err("major_river must be an object")
         return
     hr = major.get("head_rule")
     if not isinstance(hr, dict):
-        rep.error("rivers", "major_river.head_rule is missing: the plan does not record where the trunk starts or why; "
-                  "rerun tools/grade_rivers.py plan", file=f.rel, line=line)
+        err("major_river.head_rule is missing: the plan does not record where the trunk starts or why; rerun "
+            "tools/grade_rivers.py plan")
         return
-    th = hr.get("min_catchment_km2")
-    if not _num(th) or th <= 0:
-        rep.error("rivers", "major_river.head_rule.min_catchment_km2 must be a number > 0, got %r" % (th,),
-                  file=f.rel, line=line)
+    if hr.get("rule") != "valley_walls":
+        err('major_river.head_rule.rule is %r, not "valley_walls"; rerun tools/grade_rivers.py plan' % (hr.get("rule"),))
         return
-    param = (f.doc.get("parameters") or {}).get("head_km2")
-    if param is not None and param != th:
-        rep.error("rivers", "major_river.head_rule.min_catchment_km2 %s is not parameters.head_km2 %s" % (th, param),
-                  file=f.rel, line=line)
     try:
-        code = _module_constant(GRADE_RIVERS, "HEAD_KM2")
+        code = {k: _module_constant(GRADE_RIVERS, c) for k, (c, _) in HEAD_RULE_CONSTANTS.items()}
+        grid = _module_constant(GRADE_RIVERS, "FACTOR")
     except (SyntaxError, ValueError) as exc:
-        rep.error("rivers", "cannot read HEAD_KM2 from %s: %s" % (GRADE_RIVERS, exc), file=f.rel)
-        code = None
-    if code is not None and code != th:
-        rep.error("rivers", "major_river.head_rule.min_catchment_km2 %s is not tools/grade_rivers.py HEAD_KM2 %s; "
-                  "rerun tools/grade_rivers.py plan" % (th, code), file=f.rel, line=line)
-    at = hr.get("catchment_at_head_km2")
-    if not _num(at):
-        rep.error("rivers", "major_river.head_rule records no catchment_at_head_km2", file=f.rel, line=line)
-    elif at < th:
-        rep.error("rivers", "the major river's head drains %s km2, under the head rule's %s km2" % (at, th),
-                  file=f.rel, line=line)
+        err("cannot read the head rule constants from %s: %s" % (GRADE_RIVERS, exc))
+        code, grid = {}, None
+    vh = (f.doc.get("parameters") or {}).get("valley_head")
+    for key, (const, pkey) in HEAD_RULE_CONSTANTS.items():
+        v = hr.get(key)
+        if not _num(v) or v <= 0:
+            err("major_river.head_rule.%s must be a number > 0, got %r" % (key, v))
+            continue
+        if code.get(key) is not None and v != code[key]:
+            err("major_river.head_rule.%s %s is not tools/grade_rivers.py %s %s; rerun tools/grade_rivers.py plan"
+                % (key, v, const, code[key]))
+        if isinstance(vh, dict) and vh.get(pkey) != v:
+            err("major_river.head_rule.%s %s is not parameters.valley_head.%s %s" % (key, v, pkey, vh.get(pkey)))
+    if not isinstance(vh, dict):
+        err("parameters.valley_head is missing; rerun tools/grade_rivers.py plan", ln=f.line_of_key("parameters"))
+    ph = hr.get("path_head")
+    if not (isinstance(ph, dict) and _num(ph.get("x")) and _num(ph.get("z"))):
+        err("major_river.head_rule.path_head needs x and z")
+    moved = hr.get("moved_blocks_along_path")
+    if moved is None:
+        rep.warn("rivers", "major_river.head_rule found no walled stretch (moved_blocks_along_path is null): the trunk "
+                 "starts at the path head", file=f.rel, line=line)
+    elif not _num(moved) or moved < 0:
+        err("major_river.head_rule.moved_blocks_along_path must be a number >= 0, got %r" % (moved,))
     ids = major.get("courses") or []
     by_id = {c.get("id"): c for c in courses}
     trunk = by_id.get(ids[0]) if ids else None
     if trunk is None:
-        rep.error("rivers", "major_river.courses does not name a trunk course in courses", file=f.rel, line=line)
+        err("major_river.courses does not name a trunk course in courses")
         return
-    reaches = trunk.get("reaches") or []
-    first = reaches[0].get("catchment_km2") if reaches and isinstance(reaches[0], dict) else None
-    if trunk.get("valid") and (not _num(first) or first < th):
-        rep.error("rivers", 'the major river trunk "%s" first reach drains %s km2, under the head rule\'s %s km2'
-                  % (trunk.get("id"), first, th), file=f.rel, line=f.line_of_id(trunk.get("id")), where=trunk.get("id"))
-    moved = hr.get("moved_blocks_along_path")
-    src, ph = trunk.get("source") or {}, hr.get("path_head") or {}
-    if _num(moved) and moved > 0 and (src.get("x"), src.get("z")) == (ph.get("x"), ph.get("z")):
-        rep.error("rivers", "the head rule moved the trunk %s blocks along its path, but the trunk still starts at the "
-                  "path head (%s, %s)" % (moved, ph.get("x"), ph.get("z")), file=f.rel, line=line)
+    src, poly = trunk.get("source") or {}, trunk.get("graded_polyline") or []
+    cell = (f.doc.get("parameters") or {}).get("grid_blocks") or grid or 4
+    if trunk.get("valid") and poly:
+        gx, gz = poly[0][0], poly[0][1]
+        if not (_num(src.get("x")) and _num(src.get("z")) and abs(src["x"] - gx) < cell and abs(src["z"] - gz) < cell):
+            err('the major river trunk "%s" source (%s, %s) is not its first graded station (%s, %s) within one %s-block '
+                "grid cell" % (trunk.get("id"), src.get("x"), src.get("z"), gx, gz, cell), where=trunk.get("id"),
+                ln=f.line_of_id(trunk.get("id")))
+    if _num(moved) and moved > 0 and isinstance(ph, dict) and (src.get("x"), src.get("z")) == (ph.get("x"), ph.get("z")):
+        err("the head rule moved the trunk %s blocks along its path, but the trunk still starts at the path head (%s, %s)"
+            % (moved, ph.get("x"), ph.get("z")))
+    survey = major.get("head_rule_survey_other_courses")
+    if survey is None:
+        return
+    if not isinstance(survey, list):
+        err("major_river.head_rule_survey_other_courses must be a list")
+        return
+    seen = set()
+    for i, row in enumerate(survey):
+        w = "major_river.head_rule_survey_other_courses[%d]" % i
+        if not isinstance(row, dict):
+            err("%s must be an object" % w)
+            continue
+        cid = row.get("course")
+        if cid not in by_id:
+            err('%s names course %r, which is not in courses' % (w, cid))
+        elif cid == trunk.get("id"):
+            err("%s surveys the trunk itself; the survey covers the other courses" % w)
+        elif (by_id[cid].get("source") or {}).get("kind") == "lake_outflow":
+            err('%s surveys "%s", a lake outflow; the survey covers courses whose head is not a lake' % (w, cid))
+        if cid in seen:
+            err('%s lists "%s" twice' % (w, cid))
+        seen.add(cid)
+        if not isinstance(row.get("walled_from_start"), bool):
+            err("%s.walled_from_start must be true or false" % w)
+        mv = row.get("rule_would_move_head_blocks")
+        if mv is not None and (not _num(mv) or mv < 0):
+            err("%s.rule_would_move_head_blocks must be null or a number >= 0, got %r" % (w, mv))
+        n, k = row.get("samples"), row.get("walled_samples")
+        if not (_int(n) and _int(k) and 0 <= k <= n):
+            err("%s needs integer samples >= walled_samples >= 0, got %r and %r" % (w, n, k))
+        elif row.get("walled_from_start") is True and mv not in (0, None):
+            err("%s is walled from its start but the rule would move its head %s blocks" % (w, mv))
 
 
 CRITICAL_ROLES = {"hometown": 1, "gym_town": 8, "league": 1}
