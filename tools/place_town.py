@@ -131,7 +131,11 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     seated = {}                                     # (x, z) -> Y of the building's ground layer there
     for p in [q for q in doc["placements"] if q.get("settlement") == settlement]:
         info = template_info(ROOT / p["file"])
-        rot = rotation_for(info["entrance"] or "west", p["facing"])
+        if info["entrance_pos"] is None:
+            raise SystemExit("%s: template %s has no entrance jigsaw (a horizontal jigsaw whose final state is a dirt "
+                             "path or stone), so its ground layer and door are unknown; refusing to seat it"
+                             % (p["id"], p["template"]))
+        rot = rotation_for(info["entrance"], p["facing"])
         if p.get("rotation") and p["rotation"] != rot:
             raise SystemExit("%s: rotation %s in data does not turn its %s entrance to face %s (needs %s)"
                              % (p["id"], p["rotation"], info["entrance"], p["facing"], rot))
