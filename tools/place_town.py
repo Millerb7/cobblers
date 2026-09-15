@@ -1,18 +1,29 @@
 #!/usr/bin/env python
 """Turn a settlement's placements (data/placements.json) into a datapack function that builds it in the world.
 
-For each building: a pad levelled at the median ground under its footprint (dirt fills hollows, air clears
-the volume), /place template with the rotation that turns its entrance to the requested facing, every jigsaw
-block replaced by its final state (a template placed by command keeps its jigsaws), and donor loot tables
-removed. Then paths (dirt path replacing the grass surface, plants cleared above), the route's first stretch
-along the routed leg, the waystone, and the world spawn.
+For each building, seated on the ground as the world has it (read from the region files of the stopped world,
+--surface-world): the template's ground layer is the layer of its entrance jigsaw (the path block in front of
+the door sits at grade), and that layer is placed at the ground height in front of the entrance, so the floor
+meets the street at grade. Trees and plants in the footprint are cleared; ground above the floor inside the
+building is replaced by the template's own air; where the ground falls away below the building, every column
+under the ground layer (and any basement) gets a foundation course down to the ground, never a levelled pad.
+Then /place template with the rotation that turns its entrance to the requested facing, every jigsaw block
+replaced by its final state (a template placed by command keeps its jigsaws), donor loot tables removed, and
+donor waystones stripped from a copy of the template before it is placed (one waystone per town, placed
+deliberately; the Waystones mod registers a placed waystone and keeps it registered after the block is gone). Then paths (dirt path replacing the
+grass surface, plants cleared above), the route's first stretch along the routed leg, the waystone, and the
+world spawn.
+
+  verify   over RCON, for every building: at each corner of its ground layer, the floor block is present,
+           the block under it is solid (no gap), and the floor height against the natural ground outside
 
 Rotation follows Minecraft's StructureTemplate transform about the placement origin:
   none (x, z) | clockwise_90 (-z, x) | 180 (-x, -z) | counterclockwise_90 (z, -x)
 so the command position is the requested footprint corner minus the rotated template's minimum corner.
 
-  python tools/place_town.py hometown --out build/datapacks/cobblers_towns [--install <server>/datapacks]
+  python tools/place_town.py hometown --surface-world <stopped world> [--install <server>/datapacks]
   then in game or over RCON: /reload, /function cobblers:towns/hometown
+  python tools/place_town.py hometown --verify --server-dir <server>
 """
 from __future__ import annotations
 
@@ -25,7 +36,6 @@ from pathlib import Path
 import numpy as np
 
 import nbt
-import terrain as T
 
 ROOT = Path(__file__).resolve().parent.parent
 DIRS = ["north", "east", "south", "west"]
@@ -43,7 +53,7 @@ def template_info(path):
     _, doc = nbt.load(path)
     pal = doc["palette"]
     size = doc["size"]
-    jigsaws, loot, entrance = [], [], None
+    jigsaws, loot, entrance, entrance_pos, waystones = [], [], None, None, []
     for b in doc["blocks"]:
         p = pal[b["state"]]
         n = b.get("nbt") or {}
@@ -51,9 +61,43 @@ def template_info(path):
             jigsaws.append((b["pos"], n.get("final_state") or "minecraft:air", (p.get("Properties") or {}).get("orientation", "")))
             if entrance is None and n.get("final_state") in ("minecraft:dirt_path", "minecraft:stone") and not (p.get("Properties") or {}).get("orientation", "").startswith("up"):
                 entrance = (p.get("Properties") or {})["orientation"].split("_")[0]
+                entrance_pos = b["pos"]
         if n.get("LootTable"):
             loot.append(b["pos"])
-    return {"size": size, "jigsaws": jigsaws, "loot": loot, "entrance": entrance}
+        if p["Name"].startswith("waystones:"):
+            waystones.append(b["pos"])
+    grade = entrance_pos[1] if entrance_pos else 0
+    # columns the building stands on: a stored, non-air block at or below the ground layer
+    base = {}
+    for b in doc["blocks"]:
+        x, y, z = b["pos"]
+        nm = pal[b["state"]]["Name"]
+        if y <= grade and nm not in ("minecraft:air", "minecraft:structure_void", "minecraft:cave_air"):
+            base[(x, z)] = min(base.get((x, z), y), y)
+    grade_cols = {(b["pos"][0], b["pos"][2]) for b in doc["blocks"] if b["pos"][1] == grade
+                  and pal[b["state"]]["Name"] not in ("minecraft:air", "minecraft:structure_void", "minecraft:cave_air", "minecraft:jigsaw")}
+    return {"grade_cols": grade_cols, "size": size, "jigsaws": jigsaws, "loot": loot, "entrance": entrance, "entrance_pos": entrance_pos,
+            "grade_layer": grade, "base": base, "waystones": waystones}
+
+
+def strip_waystones(src, dest):
+    """Copy a structure template without its waystone blocks (type-preserving NBT, block entities and entities
+    kept). Waystones registers a waystone the moment one is placed and does not forget it when the block is later
+    replaced, so a donor's waystone has to be gone from the template itself."""
+    import gzip
+    import level_dat as L
+    raw = Path(src).read_bytes()
+    name, root = L.loads(raw)
+    if gzip.decompress(L.dumps(name, root)) != gzip.decompress(raw):
+        raise SystemExit("%s does not round-trip through the NBT writer; refusing to rewrite it" % src)
+    pal = root["palette"][1][1]
+    names = [L.plain(e["Name"]) for e in pal]
+    lt, blocks = root["blocks"][1]
+    keep = [b for b in blocks if not names[L.plain(b["state"])].startswith("waystones:")]
+    root["blocks"] = (root["blocks"][0], (lt, keep))
+    Path(dest).parent.mkdir(parents=True, exist_ok=True)
+    Path(dest).write_bytes(L.dumps(name, root))
+    return len(blocks) - len(keep)
 
 
 def rotation_for(entrance, facing):
@@ -68,12 +112,23 @@ def footprint(size, rot):
     return min(xs), min(zs), max(xs) - min(xs) + 1, max(zs) - min(zs) + 1
 
 
-def build(settlement, doc, heights, legs_doc=None):
+def fill_boxes(x0, y0, z0, x1, y1, z1, limit=32768):
+    """Split a fill volume into boxes under the command's block limit (whole layers first)."""
+    area = (x1 - x0 + 1) * (z1 - z0 + 1)
+    per = max(1, limit // max(area, 1))
+    if area > limit:
+        half = (x0 + x1) // 2
+        return fill_boxes(x0, y0, z0, half, y1, z1, limit) + fill_boxes(half + 1, y0, z0, x1, y1, z1, limit)
+    return [(x0, y, z0, x1, min(y1, y + per - 1), z1) for y in range(y0, y1 + 1, per)]
+
+
+def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
+    """ground_at(x, z) -> Y of the world's ground (the highest block that is not air, water, a plant or a tree)."""
     s = doc["settlements"][settlement]
     cmds = ["# Generated by tools/place_town.py from data/placements.json (%s). Re-run to rebuild." % settlement]
     report = {"buildings": [], "roads": {}}
     boxes = []
-    pad_y_at = {}
+    seated = {}                                     # (x, z) -> Y of the building's ground layer there
     for p in [q for q in doc["placements"] if q.get("settlement") == settlement]:
         info = template_info(ROOT / p["file"])
         rot = rotation_for(info["entrance"] or "west", p["facing"])
@@ -87,35 +142,83 @@ def build(settlement, doc, heights, legs_doc=None):
             if not (x1 < other[1] or x0 > other[3] or z1 < other[2] or z0 > other[4]):
                 raise SystemExit("%s overlaps %s" % (p["id"], other[0]))
         boxes.append((p["id"], x0, z0, x1, z1))
-        ground = heights[z0:z1 + 1, x0:x1 + 1]
-        y = int(round(float(np.median(ground))))
         px, pz = x0 - mnx, z0 - mnz
-        h = info["size"][1]
+        G, H = info["grade_layer"], info["size"][1]
+
+        def world_xz(tx, tz):
+            rx, rz = rotate(tx, tz, rot)
+            return px + rx, pz + rz
+        # grade: the ground in front of the entrance, one block outside it
+        ex, ez = world_xz(info["entrance_pos"][0], info["entrance_pos"][2])
+        step = {"north": (0, -1), "south": (0, 1), "west": (-1, 0), "east": (1, 0)}[p["facing"]]
+        front = [ground_at(ex + step[0] * k + step[1] * j, ez + step[1] * k + step[0] * j) for k in (1, 2) for j in (-1, 0, 1)]
+        Y = int(np.median(front))                   # world Y of the template's ground layer
+        oy = Y - G                                  # command Y of the template origin
+        under = [ground_at(xx, zz) for zz in range(z0, z1 + 1) for xx in range(x0, x1 + 1)]
         m = 2
-        cmds += [
-            "forceload add %d %d %d %d" % (x0 - 16, z0 - 16, x1 + 16, z1 + 16),
-            "fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (x0 - m, y - 6, z0 - m, x1 + m, y - 1, z1 + m),
-            "fill %d %d %d %d %d %d minecraft:grass_block" % (x0 - m, y, z0 - m, x1 + m, y, z1 + m),
-            "fill %d %d %d %d %d %d minecraft:air" % (x0 - m, y + 1, z0 - m, x1 + m, y + h + 3, z1 + m),
-            "place template %s %d %d %d %s none 1.0 0" % (p["template"], px, y + 1, pz, rot),
-        ]
+        lo_clear = min(under) - 1
+        cmds.append("forceload add %d %d %d %d" % (x0 - 16, z0 - 16, x1 + 16, z1 + 16))
+        # trees and plants over the footprint and a 2-block margin, from below the lowest ground to above the roof
+        for tag in ("#minecraft:logs", "#minecraft:leaves"):
+            for bx in fill_boxes(x0 - m, lo_clear, z0 - m, x1 + m, oy + H + 6, z1 + m):
+                cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (tag,)))
+        for plant in PLANTS:
+            for bx in fill_boxes(x0 - m, lo_clear, z0 - m, x1 + m, max(Y, max(under)) + 2, z1 + m):
+                cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (plant,)))
+        template_id = p["template"]
+        if info["waystones"]:
+            if out_dir is None:
+                raise SystemExit("%s carries waystones; building it needs an output datapack to hold the stripped copy" % p["id"])
+            ns, path_ = template_id.split(":")
+            template_id = "cobblers:towns/stripped/%s/%s" % (ns, path_)
+            strip_waystones(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + ".nbt"))
+        cmds.append("place template %s %d %d %d %s none 1.0 0" % (template_id, px, oy, pz, rot))
         for (jx, jy, jz), final, _ in info["jigsaws"]:
-            rx, rz = rotate(jx, jz, rot)
+            wx, wz = world_xz(jx, jz)
             state = final if final != "minecraft:structure_void" else "minecraft:air"
-            cmds.append("setblock %d %d %d %s" % (px + rx, y + 1 + jy, pz + rz, state))
+            cmds.append("setblock %d %d %d %s" % (wx, oy + jy, wz, state))
         for (lx, ly, lz) in info["loot"]:
-            rx, rz = rotate(lx, lz, rot)
-            cmds.append("data remove block %d %d %d LootTable" % (px + rx, y + 1 + ly, pz + rz))
+            wx, wz = world_xz(lx, lz)
+            cmds.append("data remove block %d %d %d LootTable" % (wx, oy + ly, wz))
+        stripped = [list(q) for q in info["waystones"]]
+        # foundation: under every column the building stands on, down to the ground
+        material = p.get("foundation") or "minecraft:stone_bricks"
+        found_cols, found_max, cut_max, corners = 0, 0, 0, []
+        cols = []
+        for (tx, tz), by in info["base"].items():
+            wx, wz = world_xz(tx, tz)
+            bottom = oy + by                        # world Y of the lowest block in this column
+            gy = ground_at(wx, wz)
+            cols.append((wx, wz, bottom, gy))
+            seated[(wx, wz)] = Y
+            if gy < bottom - 1:
+                cmds.append("fill %d %d %d %d %d %d %s" % (wx, gy + 1, wz, wx, bottom - 1, wz, material))
+                found_cols += 1
+                found_max = max(found_max, bottom - 1 - gy)
+            if by > 0:
+                # the template stores air under this column's lowest block (placed after it, so it would leave a
+                # pocket): air below a column's lowest block is never a room, so fill it
+                cmds.append("fill %d %d %d %d %d %d %s replace #minecraft:replaceable" % (wx, oy, wz, wx, bottom - 1, wz, material))
+            cut_max = max(cut_max, gy - Y)
         cmds.append("forceload remove %d %d %d %d" % (x0 - 16, z0 - 16, x1 + 16, z1 + 16))
-        for zz in range(z0 - m, z1 + m + 1):
-            for xx in range(x0 - m, x1 + m + 1):
-                pad_y_at[(xx, zz)] = y
+        # verification points: the ground-layer column nearest each footprint corner
+        at_grade = {world_xz(tx, tz) for (tx, tz) in info["grade_cols"]}
+        for cxx, czz in ((x0, z0), (x1, z0), (x0, z1), (x1, z1)):
+            bx, bz = min(at_grade, key=lambda q: (q[0] - cxx) ** 2 + (q[1] - czz) ** 2)
+            ox = cxx + (-1 if cxx == x0 else 1)            # one block outside the footprint corner
+            oz = czz + (-1 if czz == z0 else 1)
+            corners.append({"corner": [cxx, czz], "column": [bx, bz], "floor_y": Y, "outside": [ox, oz],
+                            "ground_outside_y": ground_at(ox, oz)})
         report["buildings"].append({"id": p["id"], "template": p["template"], "rotation": rot, "facing": p["facing"],
-                                    "footprint": [x0, z0, x1, z1], "pad_y": y, "ground_range": [round(float(ground.min()), 1), round(float(ground.max()), 1)],
-                                    "command_position": [px, y + 1, pz]})
+                                    "footprint": [x0, z0, x1, z1], "grade_layer": G, "floor_y": Y, "origin_y": oy,
+                                    "entrance_ground": sorted(front), "ground_under": [min(under), max(under)],
+                                    "foundation_columns": found_cols, "foundation_max_height": found_max,
+                                    "cut_into_ground_max": cut_max, "waystones_stripped_from_template": stripped, "template_placed": template_id,
+                                    "columns": [[c[0], c[1], c[2]] for c in cols], "corners": corners,
+                                    "command_position": [px, oy, pz]})
 
     def surface(x, z):
-        return pad_y_at.get((x, z), int(round(float(heights[z, x]))))
+        return seated.get((x, z), ground_at(x, z))
 
     def lay(points, width, material, rid):
         cols = set()
@@ -182,27 +285,115 @@ def build(settlement, doc, heights, legs_doc=None):
     return cmds, report
 
 
+def settlement_bounds(settlement, doc, margin=64):
+    s = doc["settlements"][settlement]
+    xs, zs = [], []
+    for q in doc["placements"]:
+        if q.get("settlement") == settlement:
+            xs.append(q["position"]["x"]); zs.append(q["position"]["z"])
+    for r in s["roads"]:
+        for x, z in r.get("polyline") or []:
+            xs.append(x); zs.append(z)
+        if r.get("from"):
+            L = r.get("length_blocks", 0)
+            xs += [r["from"][0] - L, r["from"][0] + L]; zs += [r["from"][1] - L, r["from"][1] + L]
+    for k in ("waystone", "spawn"):
+        v = s[k]["position"] if k == "waystone" else s[k]
+        xs.append(v[0]); zs.append(v[1])
+    return min(xs) - margin, min(zs) - margin, max(xs) + margin, max(zs) + margin
+
+
+def verify(settlement, server_dir):
+    """Floor against ground over RCON for every building placed by the last build of this settlement."""
+    import sys
+    rep = json.loads((ROOT / "derived" / "towns" / ("%s_placement.json" % settlement)).read_text(encoding="utf-8"))
+    sys.path.insert(0, str(server_dir))
+    import rcon
+    pw = (Path(server_dir) / ".rcon-password").read_text().strip()
+
+    def solid(x, y, z):
+        return "passed" in rcon.run(["execute unless block %d %d %d #minecraft:replaceable" % (x, y, z)], pw)[0]
+
+    def top_solid(x, z, start, stop, skip_trees=False):
+        for y in range(start, stop, -1):
+            if solid(x, y, z):
+                if skip_trees and any("passed" in r for r in rcon.run(
+                        ["execute if block %d %d %d #minecraft:%s" % (x, y, z, t) for t in ("leaves", "logs")], pw)):
+                    continue
+                return y
+        return None
+    out = {"buildings": [], "gaps": 0, "columns_checked": 0}
+    fb = rep["buildings"]
+    xs = [b["footprint"][0] for b in fb] + [b["footprint"][2] for b in fb]
+    zs = [b["footprint"][1] for b in fb] + [b["footprint"][3] for b in fb]
+    rcon.run(["forceload add %d %d %d %d" % (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)], pw)
+    for b in fb:
+        rows = []
+        for c in b["corners"]:
+            x, z = c["column"]
+            Y = c["floor_y"]
+            floor = solid(x, Y, z)
+            support = top_solid(x, z, Y - 1, Y - 40)
+            ox, oz = c["outside"]
+            grade = top_solid(ox, oz, Y + 12, Y - 40, skip_trees=True)
+            rows.append({"column": [x, z], "floor_y": Y, "floor_block_present": floor, "support_y": support,
+                         "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
+                         "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
+        # every column the building stands on: the block under its lowest block is solid
+        gaps = []
+        for x, z, bottom in b["columns"]:
+            if not solid(x, bottom - 1, z):
+                gaps.append([x, bottom - 1, z])
+        out["columns_checked"] += len(b["columns"])
+        out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
+        out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
+                                 "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
+    rcon.run(["forceload remove %d %d %d %d" % (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)], pw)
+    return out
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    T.add_common_args(p)
     p.add_argument("settlement")
     p.add_argument("--placements", default=str(ROOT / "data" / "placements.json"))
     p.add_argument("--legs", default=str(ROOT / "derived" / "routes" / "critical_legs.json"))
+    p.add_argument("--surface-world", default=None, help="stopped world folder whose region files give the ground")
+    p.add_argument("--out", default=None)
     p.add_argument("--install", default=None, help="copy the datapack into this datapacks folder")
+    p.add_argument("--verify", action="store_true", help="check the built settlement over RCON")
+    p.add_argument("--server-dir", default=None)
     a = p.parse_args(argv)
+    if a.verify:
+        res = verify(a.settlement, a.server_dir)
+        path = ROOT / "derived" / "towns" / ("%s_verify.json" % a.settlement)
+        path.write_text(json.dumps(res, indent=1), encoding="utf-8")
+        print(json.dumps(res, indent=1))
+        raise SystemExit(0 if res["gaps"] == 0 else 1)
+    if not a.surface_world:
+        raise SystemExit("--surface-world is required: buildings are seated on the ground as the world has it")
+    import world_heights
     out = Path(a.out or ROOT / "build" / "datapacks" / "cobblers_towns")
-    heights, world = T.load_from_args(a)
     doc = json.loads(Path(a.placements).read_text(encoding="utf-8"))
     legs = json.loads(Path(a.legs).read_text(encoding="utf-8")) if Path(a.legs).exists() else None
-    cmds, report = build(a.settlement, doc, heights, legs)
+    bx0, bz0, bx1, bz1 = settlement_bounds(a.settlement, doc)
+    ground, _, meta = world_heights.extract(a.surface_world, (bx0, bz0, bx1, bz1))
+    if meta["columns_without_ground"]:
+        raise SystemExit("%d columns without ground in %s" % (meta["columns_without_ground"], a.surface_world))
+
+    def ground_at(x, z):
+        if not (bx0 <= x <= bx1 and bz0 <= z <= bz1):
+            raise SystemExit("(%d, %d) is outside the extracted ground %s" % (x, z, (bx0, bz0, bx1, bz1)))
+        return int(ground[z - bz0, x - bx0])
+    cmds, report = build(a.settlement, doc, ground_at, legs, out)
     fn = out / "data" / "cobblers" / "function" / "towns" / ("%s.mcfunction" % a.settlement)
     fn.parent.mkdir(parents=True, exist_ok=True)
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: settlement placement functions (tools/place_town.py)"}}, indent=2) + "\n", encoding="utf-8")
     fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
     rep = ROOT / "derived" / "towns" / ("%s_placement.json" % a.settlement)
     rep.parent.mkdir(parents=True, exist_ok=True)
-    rep.write_text(json.dumps(dict(report, provenance=T.provenance(world, Path(a.world))), indent=1), encoding="utf-8")
-    print(json.dumps({k: v for k, v in report.items() if k != "route_points"}, indent=1))
+    rep.write_text(json.dumps(dict(report, surface_world=str(a.surface_world), ground_bounds=[bx0, bz0, bx1, bz1]), indent=1), encoding="utf-8")
+    print(json.dumps({"buildings": [{k: v for k, v in b.items() if k not in ("columns", "corners")} for b in report["buildings"]],
+                      **{k: v for k, v in report.items() if k not in ("buildings", "route_points")}}, indent=1))
     if a.install:
         dest = Path(a.install) / out.name
         if dest.exists():
