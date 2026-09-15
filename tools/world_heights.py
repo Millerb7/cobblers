@@ -52,6 +52,9 @@ COVER = {
     "minecraft:mangrove_roots", "minecraft:mushroom_stem", "minecraft:brown_mushroom_block",
     "minecraft:red_mushroom_block", "minecraft:cocoa", "minecraft:pink_tulip", "minecraft:white_tulip",
     "minecraft:red_tulip", "minecraft:orange_tulip",
+    # forest understory and small foliage objects (data/foliage.json, kits/structures/foliage)
+    "minecraft:lily_of_the_valley", "minecraft:moss_carpet", "minecraft:leaf_litter", "minecraft:bush",
+    "minecraft:firefly_bush", "minecraft:wildflowers", "minecraft:vine",
 }
 # painted worlds carry trees: their trunks and canopy are not the ground surface
 COVER_SUFFIXES = ("_leaves", "_log", "_wood")

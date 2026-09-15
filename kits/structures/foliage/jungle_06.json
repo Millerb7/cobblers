@@ -1,0 +1,10 @@
+{
+ "group": "jungle",
+ "source": "vanilla",
+ "feature": "minecraft:jungle_tree",
+ "origin": [
+  3,
+  0,
+  3
+ ]
+}

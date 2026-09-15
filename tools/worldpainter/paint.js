@@ -6,6 +6,9 @@
 //   terrain  value = code; terrain_codes maps code -> Terrain name; 0 = leave the theme's terrain
 //   trees    [{layer: "DeciduousForest"|"PineForest"|"SwampLand"|"Jungle", map}]   value 0-15 = density
 //   plants   [{name, map, plants: {"<plant name>": occurrence}}]                     value 0/1
+//   objects  [{layer, map, objects: [{file, frequency, offset: [x, z, y], extend_foundation, rotate, mirror}]}]
+//            one custom object layer per entry; map value 15 marks a column that gets exactly one object,
+//            chosen from the entry's objects by frequency (see the placement rule at paintObjects)
 //   frost    map, value 0/1
 //   water    [{name, level, x, z, mask}]  mask is a crop whose pixel (i, j) = block (x + i, z + j); 1 = raise water to level
 //            [{name, x, z, levels}]       levels is a crop whose value is the water level y of that column; 0 = none
@@ -51,6 +54,50 @@ function plantByName(name) {
         }
     }
     throw "unknown plant " + name;
+}
+
+var CustomObjectManager = Java.type("org.pepsoft.worldpainter.plugins.CustomObjectManager");
+var Bo2Layer = Java.type("org.pepsoft.worldpainter.layers.Bo2Layer");
+var Bo2ObjectTube = Java.type("org.pepsoft.worldpainter.layers.bo2.Bo2ObjectTube");
+var WPObject = Java.type("org.pepsoft.worldpainter.objects.WPObject");
+var Point3i = Java.type("javax.vecmath.Point3i");
+var ArrayList = Java.type("java.util.ArrayList");
+var JInteger = Java.type("java.lang.Integer");
+var JBoolean = Java.type("java.lang.Boolean");
+
+// Custom object layers. WorldPainter 2.27.1 Bo2LayerExporter, read from its bytecode: at every column where
+// x % gridX == 0 and z % gridY == 0 and the layer value v > 0, it places one object when
+// Random.nextInt(density * 64) <= v * v. With grid 1 and density 1 that is always true for v >= 8, so the
+// map marks exact positions and tools/paint_maps.py decides spacing. Which object is placed is WorldPainter's
+// weighted pick by frequency. Above the terrain an object only fills air and plants, never ground or another
+// object's blocks.
+function paintObjects(world, base, entry) {
+    var list = new ArrayList();
+    entry.objects.forEach(function (o) {
+        var obj = CustomObjectManager.getInstance().loadObject(new JFile(o.file));
+        obj.setAttribute(WPObject.ATTRIBUTE_OFFSET, new Point3i(o.offset[0], o.offset[1], o.offset[2]));
+        obj.setAttribute(WPObject.ATTRIBUTE_FREQUENCY, JInteger.valueOf(o.frequency));
+        obj.setAttribute(WPObject.ATTRIBUTE_RANDOM_ROTATION, JBoolean.valueOf(o.rotate !== false));
+        obj.setAttribute(WPObject.ATTRIBUTE_RANDOM_MIRRORING_ONLY, JBoolean.FALSE);
+        obj.setAttribute(WPObject.ATTRIBUTE_SPAWN_ON_LAND, JBoolean.TRUE);
+        obj.setAttribute(WPObject.ATTRIBUTE_SPAWN_IN_WATER, JBoolean.valueOf(o.in_water === true));
+        obj.setAttribute(WPObject.ATTRIBUTE_SPAWN_ON_WATER, JBoolean.FALSE);
+        obj.setAttribute(WPObject.ATTRIBUTE_COLLISION_MODE, JInteger.valueOf(WPObject.COLLISION_MODE_NONE));
+        obj.setAttribute(WPObject.ATTRIBUTE_LEAF_DECAY_MODE, JInteger.valueOf(WPObject.LEAF_DECAY_OFF));
+        obj.setAttribute(WPObject.ATTRIBUTE_HEIGHT_MODE, JInteger.valueOf(WPObject.HEIGHT_MODE_TERRAIN));
+        obj.setAttribute(WPObject.ATTRIBUTE_VERTICAL_OFFSET, JInteger.valueOf(o.vertical_offset || 0));
+        obj.setAttribute(WPObject.ATTRIBUTE_Y_VARIATION, JInteger.valueOf(0));
+        obj.setAttribute(WPObject.ATTRIBUTE_EXTEND_FOUNDATION, JBoolean.valueOf(o.extend_foundation === true));
+        list.add(obj);
+    });
+    var layer = new Bo2Layer(new Bo2ObjectTube(entry.layer, list), "cobblers_" + entry.layer, null);
+    layer.setDensity(1);
+    layer.setGridX(1);
+    layer.setGridY(1);
+    layer.setRandomDisplacement(0);
+    var hm = wp.getHeightMap().fromFile(mapFile(base, entry.map)).go();
+    wp.applyHeightMap(hm).toWorld(world).applyToLayer(layer).fromLevel(15).toLevel(15).go();
+    return list.size();
 }
 
 function setField(obj, name, value) {
@@ -100,6 +147,12 @@ function paintWorld(world, dim, manifestPath) {
         }
         op2.go();
         print("paint: trees " + tr.layer + " (" + ((java.lang.System.currentTimeMillis() - t) / 1000) + " s)");
+    });
+
+    (m.objects || []).forEach(function (entry) {
+        t = java.lang.System.currentTimeMillis();
+        var n = paintObjects(world, base, entry);
+        print("paint: objects " + entry.layer + ", " + n + " variants (" + ((java.lang.System.currentTimeMillis() - t) / 1000) + " s)");
     });
 
     (m.plants || []).forEach(function (pl) {

@@ -101,12 +101,15 @@ def sample_height(heights, x, z):
     return float(heights[zi, xi])
 
 
-def cast(heights, observer, eye, target, target_height, step=0.5, margin=1.0):
+def cast(heights, observer, eye, target, target_height, step=0.5, margin=1.0, surface=None):
     """margin: blocks at each end excluded from occlusion.
 
     Without it, a target standing on the highest ground grazes its own summit
     and reports itself as the blocker. Samples are taken every step blocks and
     compared against the nearest heightmap block.
+
+    surface: optional occluding surface (for example terrain plus tree canopy). Observer and target
+    heights still come from heights, so an observer under a canopy stands on the ground.
     """
     ox, oz = observer
     tx, tz = target["x"], target["z"]
@@ -132,7 +135,7 @@ def cast(heights, observer, eye, target, target_height, step=0.5, margin=1.0):
     hh, ww = heights.shape
     xi = np.clip(np.rint(x).astype(np.int64), 0, ww - 1)
     zi = np.clip(np.rint(z).astype(np.int64), 0, hh - 1)
-    ground = heights[zi, xi].astype(np.float64)
+    ground = (heights if surface is None else surface)[zi, xi].astype(np.float64)
     clearance = line_y - ground
     w = int(np.argmin(clearance))
     below = np.flatnonzero(clearance < 0)

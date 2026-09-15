@@ -7,7 +7,8 @@ heightmap (pixel = block) plus manifest.json:
 
   biomes.png      WorldPainter biome id per column (sea biomes by depth and latitude)
   terrain.png     terrain code per column (see TERRAIN_CODES)
-  trees_*.png     density 0-15 per tree layer, modulated by noise so cover is never uniform
+  objects_*.png   one map per foliage object group, 15 where one object of the group stands (tools/foliage.py)
+  canopy.npz      planned canopy top on 4-block cells, for sightline checks (tools/landmark_trees.py)
   plants_*.png    one bit map per plant set
   frost.png       snow cover
   water_*.png     raised water for lakes above sea level, cropped to each basin
@@ -15,7 +16,11 @@ heightmap (pixel = block) plus manifest.json:
   python tools/paint_maps.py --source-root C:/Users/wnd/Documents --out build/paint
 
 This is a preview paint: rough by design. Everything it decides comes from the presets in
-data/regions.json, so a repaint is an edit there and a rerun.
+data/regions.json and the forest types in data/foliage.json, so a repaint is an edit there and a rerun.
+
+Trees are custom objects (kits/structures/foliage, tools/foliage_objects.py) at positions tools/foliage.py
+computes. The "allowed" mask records where a trunk may stand: land, off the shore, out of lake basins, river
+beds and banks, and dry ravine floors.
 """
 from __future__ import annotations
 
@@ -53,7 +58,8 @@ WP_BIOMES = {
 TERRAIN_CODES = {"GRASS": 1, "SAND": 2, "DESERT": 3, "RED_SAND": 4, "MESA": 5, "ROCK": 6, "STONE_MIX": 7, "GRAVEL": 8,
                  "SNOW": 9, "DEEP_SNOW": 10, "PODZOL": 11, "MUD": 12, "MYCELIUM": 13, "BASALT": 14, "BLACKSTONE": 15,
                  "BEACHES": 16, "PERMADIRT": 17, "MAGMA": 18, "CLAY": 19, "MOSS": 20, "RED_DESERT": 21, "BARE_GRASS": 22}
-TREE_LAYERS = ("DeciduousForest", "PineForest", "SwampLand", "Jungle")
+# one mask, 1 where a trunk may stand; the painting steps below clear it where nothing may grow
+TREE_LAYERS = ("allowed",)
 # Plant names are WorldPainter's (org.pepsoft.worldpainter.layers.plants.Plants). "Short Grass" is avoided:
 # WorldPainter 2.27.1 writes it as minecraft:grass, the pre-1.20.3 name. Minecraft upgrades it on chunk load (the
 # chunks carry DataVersion 2860), but Distant Horizons reads region files raw and warns, so the sets stay clear of it.
@@ -66,7 +72,25 @@ PLANT_SETS = {
     "dry_scrub": {"Dead Shrub": 6, "Tall Grass": 3},
     "swamp_floor": {"Blue Orchid": 2, "Fern": 4, "Tall Grass": 4, "Brown Mushroom": 1},
     "mushrooms": {"Red Mushroom": 1, "Brown Mushroom": 1},
+    # forest understory (data/foliage.json types), by how deep inside the forest a column is
+    "forest_floor_sparse": {"Fern": 3, "Large Fern": 1, "Brown Mushroom": 1},
+    "berry_fern": {"Fern": 5, "Sweet Berry Bush": 3, "Large Fern": 2},
+    "moss_mushroom": {"Moss Carpet": 6, "Brown Mushroom": 2, "Red Mushroom": 1},
+    "lily_valley": {"Lily of the Valley": 3, "Fern": 2, "Tall Grass": 3},
+    "petals": {"Pink Petals": 5, "Tall Grass": 2},
+    "jungle_floor": {"Fern": 4, "Large Fern": 3, "Tall Grass": 2},
 }
+# how WorldPainter renders each object group (tools/worldpainter/paint.js); groups not listed get the defaults:
+# random rotation, trunks extended down to uneven ground
+OBJECT_SETTINGS = {
+    "fallen_log_conifer": {"extend_foundation": False},
+    "fallen_log_broadleaf": {"extend_foundation": False},
+    "leaf_litter": {"extend_foundation": False},
+    "bush_broadleaf": {"extend_foundation": False},
+    "bush_conifer": {"extend_foundation": False},
+    "jungle_bush": {"extend_foundation": False},
+}
+ZONES = {"core": (0.66, 1.01), "mid": (0.33, 0.66), "edge": (-0.01, 0.33)}
 
 
 def value_noise(scale, seed, octaves=2):
@@ -188,6 +212,103 @@ def paint_rivers(rivers_path, heights, biome, terr, trees, plants, frost, out):
     return manifest
 
 
+def settlement_clearance(towns_path, margin):
+    """True inside every settlement footprint plus margin blocks."""
+    mask = np.zeros((N, N), bool)
+    if not towns_path or not Path(towns_path).exists():
+        return mask
+    doc = json.loads(Path(towns_path).read_text(encoding="utf-8"))
+    for t in doc.get("towns") or []:
+        if t.get("kind") == "landmark_tree":
+            continue            # its glade (data/foliage.json glade_radius) is the clearance
+        fp = t.get("footprint") or {}
+        if all(k in fp and fp[k] is not None for k in ("min_x", "min_z", "max_x", "max_z")):
+            x0, z0 = max(0, int(fp["min_x"]) - margin), max(0, int(fp["min_z"]) - margin)
+            x1, z1 = min(N, int(fp["max_x"]) + margin + 1), min(N, int(fp["max_z"]) + margin + 1)
+            mask[z0:z1, x0:x1] = True
+    return mask
+
+
+def paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr, plants, speck, nz, allowed, lake_depth, water, land):
+    import foliage as F
+    doc = json.loads(Path(a.foliage).read_text(encoding="utf-8"))
+    library = json.loads(Path(a.library).read_text(encoding="utf-8"))
+    lib_dir = Path(a.library).parent
+    excl = settlement_clearance(a.towns, doc["density_model"]["settlement_clearance_blocks"])
+    # water clearance at block scale: no ground contact within water_clearance_blocks of any water
+    from PIL import ImageFilter
+    c = int(doc["density_model"]["water_clearance_blocks"])
+    near_water = np.asarray(Image.fromarray(water.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(2 * c + 1))) > 0
+    allowed = allowed & ~near_water
+    res = F.place(doc, library, subs, presets, idx, heights, slope, allowed, lake_depth, water, excl, a.seed)
+    G = F.G
+
+    def up(grid):
+        return np.repeat(np.repeat(grid, G, axis=0), G, axis=1)
+
+    for ti, t in enumerate(res["type_ids"]):
+        spec = doc["types"][t]
+        f = res["fields"][t]
+        z0, z1, x0, x1 = f["box"]
+        bz0, bz1, bx0, bx1 = z0 * G, min(N, z1 * G), x0 * G, min(N, x1 * G)
+        view = (slice(bz0, bz1), slice(bx0, bx1))
+        hh, ww = bz1 - bz0, bx1 - bx0
+        mask = up(f["mask"])[:hh, :ww] & land[view] & ~water[view]
+        inside = up(f["inside"])[:hh, :ww]
+        core = up(f["core"])[:hh, :ww]
+        if spec.get("biome"):
+            biome[view][mask] = WP_BIOMES[spec["biome"]]
+        fl = spec.get("floor")
+        if fl:
+            tv = terr[view]
+            sel = inside & (core >= fl["threshold"]) & np.isin(tv, [TERRAIN_CODES[k] for k in ("GRASS", "BARE_GRASS", "PODZOL")])
+            pick = nz(24, 601)[view]
+            lo = 0.0
+            for i_, (name, share) in enumerate(fl["mix"]):
+                last = i_ == len(fl["mix"]) - 1
+                s = sel & (pick >= lo) & ((pick <= 1.0) if last else (pick < lo + share))
+                tv[s] = TERRAIN_CODES[name]
+                lo += share
+        sp = speck[view]
+        for zone, zspec in (spec.get("understory") or {}).items():
+            zlo, zhi = ZONES[zone]
+            zm = inside & (core > zlo) & (core <= zhi) & land[view] & ~water[view]
+            if zspec.get("clear"):
+                for k in plants:
+                    plants[k][view][zm] = False
+            plants[zspec["set"]][view][zm & (sp < zspec["coverage"])] = True
+
+    by_group = {r["group"]: [] for r in library["objects"]}
+    for r in library["objects"]:
+        by_group[r["group"]].append(r)
+    debris_offset = {}
+    for spec in doc["types"].values():
+        for db in spec.get("debris") or []:
+            if db.get("vertical_offset"):
+                debris_offset[db["group"]] = db["vertical_offset"]
+    manifest = []
+    for g, pts in sorted(res["positions"].items()):
+        if not pts:
+            continue
+        if g not in by_group:
+            raise SystemExit("foliage group %s has no objects in %s" % (g, a.library))
+        m = np.zeros((N, N), np.uint8)
+        arr = np.array(pts)
+        m[arr[:, 1], arr[:, 0]] = 15
+        name = "objects_%s.png" % g
+        Image.fromarray(m).save(out / name)
+        settings = OBJECT_SETTINGS.get(g, {})
+        objs = [{"file": str((lib_dir / r["file"]).resolve()), "frequency": 1,
+                 "offset": [-r["origin"][0], -r["origin"][2], -r["origin"][1]],
+                 "extend_foundation": settings.get("extend_foundation", True),
+                 "vertical_offset": debris_offset.get(g, 0)} for r in by_group[g]]
+        manifest.append({"layer": g, "map": name, "count": len(pts), "objects": objs})
+    np.savez_compressed(out / "canopy.npz", canopy=res["canopy"], grid_blocks=G)
+    stats = {"types": res["stats"], "objects": {e["layer"]: e["count"] for e in manifest},
+             "total_objects": int(sum(e["count"] for e in manifest))}
+    return manifest, stats
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
@@ -196,6 +317,9 @@ def main(argv=None):
     p.add_argument("--seed", type=int, default=20260914, help="noise seed, so repaints are repeatable")
     p.add_argument("--rivers", default=str(ROOT / "data" / "rivers.json"),
                    help="graded rivers (tools/grade_rivers.py); '' to paint none")
+    p.add_argument("--foliage", default=str(ROOT / "data" / "foliage.json"), help="forest types; '' to place no trees")
+    p.add_argument("--library", default=str(ROOT / "kits" / "structures" / "foliage" / "library.json"))
+    p.add_argument("--towns", default=str(ROOT / "data" / "towns.json"), help="settlement footprints kept clear of trees")
     a = p.parse_args(argv)
     out = Path(a.out) if a.out else ROOT / "build" / "paint"
     out.mkdir(parents=True, exist_ok=True)
@@ -225,7 +349,7 @@ def main(argv=None):
 
     biome = np.full((N, N), 255, np.uint8)
     terr = np.zeros((N, N), np.uint8)
-    trees = {k: np.zeros((N, N), np.uint8) for k in TREE_LAYERS}
+    trees = {k: np.ones((N, N), np.uint8) for k in TREE_LAYERS}
     plants = {k: np.zeros((N, N), bool) for k in PLANT_SETS}
     frost = np.zeros((N, N), bool)
     rng = np.random.default_rng(a.seed)
@@ -259,16 +383,13 @@ def main(argv=None):
         if steep:
             t[slope[m] >= steep] = TERRAIN_CODES[pr.get("rock", "STONE_MIX")]
         terr[m] = t
-        # trees: density follows noise between min and max, zero above max_y and on steep ground
-        for tr in pr.get("trees") or []:
-            n = nz(tr.get("scale", 160), 101 + TREE_LAYERS.index(tr["layer"]))[m]
-            dens = tr["min"] + (tr["max"] - tr["min"]) * n
-            if tr.get("clearings"):
-                dens[nz(96, 211)[m] < tr["clearings"]] = 0
-            dens[(heights[m] + jitter[m]) > tr.get("max_y", 1000)] = 0
-            dens[slope[m] > 35] = 0
-            layer = trees[tr["layer"]]
-            layer[m] = np.maximum(layer[m], np.clip(np.round(dens), 0, 15).astype(np.uint8))
+        # trees: none on cliffs or above the treeline; where they stand is tools/foliage.py's decision
+        blocked = slope[m] > 40
+        if pr.get("treeline_y") is not None:
+            blocked |= (heights[m] + jitter[m]) > pr["treeline_y"]
+        for k in trees:
+            layer = trees[k]
+            layer[m] = np.where(blocked, 0, layer[m])
         # plants
         for pl in pr.get("plants") or []:
             salt = 307 + sorted(PLANT_SETS).index(pl["set"])
@@ -304,6 +425,7 @@ def main(argv=None):
 
     # lakes above sea level: raise water inside each basin; beds and banks become sand, gravel or clay
     manifest_water = []
+    lake_depth = np.zeros((N, N), np.float32)
     for lm in landmarks["landmarks"]:
         wb = lm.get("water_body")
         if not wb:
@@ -324,6 +446,7 @@ def main(argv=None):
         manifest_water.append({"name": lm["id"], "level": int(level), "x": x0, "z": z0, "mask": name})
         bed = np.where(nz(40, 17) > 0.5, TERRAIN_CODES["GRAVEL"], TERRAIN_CODES["CLAY"]).astype(np.uint8)
         terr[wet] = bed[wet]
+        lake_depth[wet] = np.maximum(lake_depth[wet], level - heights[wet])
         bank = basin & ~wet & (heights < level + 2)
         terr[bank] = TERRAIN_CODES["SAND"]
         for k in trees:
@@ -348,17 +471,27 @@ def main(argv=None):
     # graded rivers: water at each station's stored surface, bed material by reach, banks, river biome
     manifest_rivers = paint_rivers(a.rivers, heights, biome, terr, trees, plants, frost, out) if a.rivers else []
 
+    # forests: exact object positions, floor, understory and biome by forest type
+    manifest_objects, foliage_stats = [], {}
+    if a.foliage:
+        water = sea | (lake_depth > 0)
+        for w in manifest_rivers:
+            lv = np.asarray(Image.open(out / w["levels"])).astype(np.float32)
+            h_, w_ = lv.shape
+            sub = heights[w["z"]:w["z"] + h_, w["x"]:w["x"] + w_]
+            water[w["z"]:w["z"] + h_, w["x"]:w["x"] + w_] |= (lv > 0) & (lv > sub)
+        manifest_objects, foliage_stats = paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr,
+                                                        plants, speck, nz, trees["allowed"] > 0, lake_depth, water, land)
+
     Image.fromarray(biome).save(out / "biomes.png")
     Image.fromarray(terr).save(out / "terrain.png")
-    for k, v in trees.items():
-        Image.fromarray(v).save(out / ("trees_%s.png" % k))
     for k, v in plants.items():
         Image.fromarray(v.astype(np.uint8)).save(out / ("plants_%s.png" % k))
     Image.fromarray(frost.astype(np.uint8)).save(out / "frost.png")
     manifest = {
         "biomes": "biomes.png", "terrain": "terrain.png",
         "terrain_codes": {str(v): k for k, v in TERRAIN_CODES.items()},
-        "trees": [{"layer": k, "map": "trees_%s.png" % k} for k in TREE_LAYERS if trees[k].any()],
+        "objects": manifest_objects,
         "plants": [{"name": "cobblers_%s" % k, "map": "plants_%s.png" % k, "plants": PLANT_SETS[k]} for k in PLANT_SETS if plants[k].any()],
         "frost": "frost.png", "water": manifest_water + manifest_rivers,
         "source": {"regions": str(a.regions), "landmarks": str(a.landmarks), "heightmap_sha256": world["heightmap"]["sha256"], "seed": a.seed},
@@ -366,7 +499,8 @@ def main(argv=None):
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     used = sorted({name for name, bid in WP_BIOMES.items() if (biome == bid).any()})
     stats = {"biomes_used": used,
-             "tree_cover_pct": {k: round(100.0 * (v > 0).mean(), 2) for k, v in trees.items()},
+             "tree_allowed_pct": round(100.0 * (trees["allowed"] > 0).mean(), 2),
+             "foliage": foliage_stats,
              "frost_pct": round(100.0 * frost.mean(), 2), "lakes": [w["name"] for w in manifest_water],
              "rivers": {w["name"]: {"water_columns": w["columns"], "levels": [w["min_level"], w["max_level"]]}
                         for w in manifest_rivers}}

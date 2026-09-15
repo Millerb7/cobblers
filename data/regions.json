@@ -1014,16 +1014,8 @@
    ],
    "rock_slope_deg": 34,
    "rock": "ROCK",
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 1,
-     "max": 11,
-     "scale": 128,
-     "max_y": 150
-    }
-   ],
-   "frost_above_y": 136
+   "frost_above_y": 136,
+   "treeline_y": 150
   },
   "snowy_peak": {
    "biome_bands": [
@@ -1049,16 +1041,8 @@
    ],
    "rock_slope_deg": 34,
    "rock": "ROCK",
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 2,
-     "max": 12,
-     "scale": 128,
-     "max_y": 145
-    }
-   ],
-   "frost": true
+   "frost": true,
+   "treeline_y": 145
   },
   "glacier_trough": {
    "biome_bands": [
@@ -1081,16 +1065,8 @@
    ],
    "rock_slope_deg": 26,
    "rock": "ROCK",
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 4,
-     "scale": 96,
-     "max_y": 150
-    }
-   ],
-   "frost": true
+   "frost": true,
+   "treeline_y": 150
   },
   "glacier_foot": {
    "biome": "minecraft:snowy_plains",
@@ -1103,14 +1079,6 @@
     }
    ],
    "rock_slope_deg": 30,
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 6,
-     "scale": 128
-    }
-   ],
    "frost": true
   },
   "cirque": {
@@ -1124,16 +1092,8 @@
    ],
    "rock_slope_deg": 30,
    "rock": "ROCK",
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 5,
-     "scale": 96,
-     "max_y": 150
-    }
-   ],
-   "frost": true
+   "frost": true,
+   "treeline_y": 150
   },
   "crags": {
    "biome_bands": [
@@ -1156,16 +1116,8 @@
    ],
    "rock_slope_deg": 28,
    "rock": "ROCK",
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 8,
-     "scale": 96,
-     "max_y": 150
-    }
-   ],
-   "frost_above_y": 140
+   "frost_above_y": 140,
+   "treeline_y": 150
   },
   "taiga_dense": {
    "biome": "minecraft:old_growth_spruce_taiga",
@@ -1175,15 +1127,6 @@
      "terrain": "GRASS",
      "coverage": 0.4,
      "scale": 96
-    }
-   ],
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 5,
-     "max": 14,
-     "scale": 192,
-     "clearings": 0.12
     }
    ],
    "plants": [
@@ -1203,15 +1146,6 @@
      "scale": 96
     }
    ],
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 9,
-     "scale": 160,
-     "clearings": 0.25
-    }
-   ],
    "plants": [
     {
      "set": "fern_floor",
@@ -1229,15 +1163,6 @@
      "scale": 96
     }
    ],
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 3,
-     "max": 13,
-     "scale": 160,
-     "clearings": 0.15
-    }
-   ],
    "frost": true
   },
   "heath_shrub": {
@@ -1248,22 +1173,6 @@
      "terrain": "PODZOL",
      "coverage": 0.2,
      "scale": 64
-    }
-   ],
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 4,
-     "scale": 128,
-     "clearings": 0.4
-    },
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 3,
-     "scale": 96,
-     "clearings": 0.4
     }
    ],
    "plants": [
@@ -1288,15 +1197,6 @@
      "scale": 48
     }
    ],
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 3,
-     "scale": 96,
-     "clearings": 0.5
-    }
-   ],
    "plants": [
     {
      "set": "shrub",
@@ -1319,15 +1219,6 @@
      "scale": 40
     }
    ],
-   "trees": [
-    {
-     "layer": "SwampLand",
-     "min": 4,
-     "max": 13,
-     "scale": 128,
-     "clearings": 0.1
-    }
-   ],
    "plants": [
     {
      "set": "swamp_floor",
@@ -1343,21 +1234,6 @@
      "terrain": "MUD",
      "coverage": 0.15,
      "scale": 40
-    }
-   ],
-   "trees": [
-    {
-     "layer": "SwampLand",
-     "min": 0,
-     "max": 8,
-     "scale": 128,
-     "clearings": 0.3
-    },
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 5,
-     "scale": 128
     }
    ],
    "plants": [
@@ -1381,15 +1257,6 @@
      "scale": 64
     }
    ],
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 3,
-     "max": 14,
-     "scale": 192,
-     "clearings": 0.15
-    }
-   ],
    "plants": [
     {
      "set": "grassland",
@@ -1400,15 +1267,6 @@
   "forest_sparse": {
    "biome": "minecraft:forest",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 9,
-     "scale": 160,
-     "clearings": 0.3
-    }
-   ],
    "plants": [
     {
      "set": "grassland",
@@ -1426,21 +1284,6 @@
      "scale": 64
     }
    ],
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 11,
-     "scale": 224
-    },
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 10,
-     "scale": 176,
-     "clearings": 0.2
-    }
-   ],
    "plants": [
     {
      "set": "fern_floor",
@@ -1451,15 +1294,6 @@
   "birch_woods": {
    "biome": "minecraft:old_growth_birch_forest",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 7,
-     "max": 15,
-     "scale": 160,
-     "clearings": 0.1
-    }
-   ],
    "plants": [
     {
      "set": "meadow_flowers",
@@ -1470,15 +1304,6 @@
   "birch_shore": {
    "biome": "minecraft:birch_forest",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 1,
-     "max": 10,
-     "scale": 160,
-     "clearings": 0.2
-    }
-   ],
    "plants": [
     {
      "set": "grassland",
@@ -1496,20 +1321,6 @@
      "scale": 64
     }
    ],
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 11,
-     "max": 15,
-     "scale": 128
-    },
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 6,
-     "scale": 128
-    }
-   ],
    "plants": [
     {
      "set": "mushrooms",
@@ -1524,15 +1335,6 @@
   "flower_meadow": {
    "biome": "minecraft:flower_forest",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 6,
-     "scale": 128,
-     "clearings": 0.35
-    }
-   ],
    "plants": [
     {
      "set": "meadow_flowers",
@@ -1544,15 +1346,6 @@
   "blossom": {
    "biome": "minecraft:cherry_grove",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 7,
-     "scale": 128,
-     "clearings": 0.3
-    }
-   ],
    "plants": [
     {
      "set": "blossom",
@@ -1564,15 +1357,6 @@
   "plains": {
    "biome": "minecraft:plains",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 4,
-     "scale": 160,
-     "clearings": 0.45
-    }
-   ],
    "plants": [
     {
      "set": "grassland",
@@ -1587,15 +1371,6 @@
   "sunflower_plains": {
    "biome": "minecraft:sunflower_plains",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 3,
-     "scale": 160,
-     "clearings": 0.5
-    }
-   ],
    "plants": [
     {
      "set": "grassland",
@@ -1620,15 +1395,6 @@
      "terrain": "RED_SAND",
      "coverage": 0.06,
      "scale": 40
-    }
-   ],
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 4,
-     "scale": 128,
-     "clearings": 0.4
     }
    ],
    "plants": [
@@ -1674,17 +1440,7 @@
      "scale": 80
     }
    ],
-   "rock_slope_deg": 0,
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 5,
-     "scale": 128,
-     "max_y": 1000,
-     "clearings": 0.35
-    }
-   ]
+   "rock_slope_deg": 0
   },
   "badlands_eroded": {
    "biome": "minecraft:eroded_badlands",
@@ -1741,15 +1497,6 @@
      "scale": 40
     }
    ],
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 3,
-     "scale": 96,
-     "clearings": 0.5
-    }
-   ],
    "plants": [
     {
      "set": "dry_scrub",
@@ -1774,29 +1521,11 @@
     ]
    ],
    "rock_slope_deg": 22,
-   "rock": "ROCK",
-   "trees": [
-    {
-     "layer": "PineForest",
-     "min": 0,
-     "max": 2,
-     "scale": 96,
-     "clearings": 0.6
-    }
-   ]
+   "rock": "ROCK"
   },
   "lake": {
    "biome": "minecraft:river",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "DeciduousForest",
-     "min": 0,
-     "max": 5,
-     "scale": 96,
-     "clearings": 0.4
-    }
-   ],
    "plants": [
     {
      "set": "grassland",
@@ -1824,14 +1553,6 @@
      "scale": 48
     }
    ],
-   "trees": [
-    {
-     "layer": "Jungle",
-     "min": 8,
-     "max": 15,
-     "scale": 128
-    }
-   ],
    "plants": [
     {
      "set": "fern_floor",
@@ -1842,15 +1563,6 @@
   "sparse_jungle": {
    "biome": "minecraft:sparse_jungle",
    "terrain": "GRASS",
-   "trees": [
-    {
-     "layer": "Jungle",
-     "min": 1,
-     "max": 9,
-     "scale": 128,
-     "clearings": 0.3
-    }
-   ],
    "plants": [
     {
      "set": "grassland",

@@ -1,0 +1,10 @@
+{
+ "group": "landmark_great_oak",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  13,
+  2,
+  15
+ ]
+}

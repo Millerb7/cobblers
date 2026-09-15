@@ -174,6 +174,22 @@ start Victory Road at the Rift's south-west tip, 1,122 blocks from Giovanni. Not
 | **Frostpeak shrine** | (682, 380) | 111², y200, flat | 1,458 | Surge's town 1,461 | A shrine on the lone summit of the most remote corner of the mainland |
 | **Jungle Isle ruins** | (5160, 7463) | 301², y120–134, ≤8° | 1,736 | Tableland stop 1,757 | Overgrown ruins and a cache that reward the boat trip without adding a town |
 
+### Landmark trees (outposts added by the foliage pass)
+
+Five giant trees are outposts too (`kind: landmark_tree`). They are discovery sites with nothing built, no waystone
+and no gate. The foliage paint places them; each keeps a glade clear. Sites, what each does and sightlines:
+[`FOLIAGE.md`](FOLIAGE.md) §4.
+
+| Landmark tree | Centre | Kind | Off path | Nearest |
+| --- | --- | --- | ---: | --- |
+| The Great Oak | (1800, 5184) | visible from a route | 339 | hometown 355 |
+| The Sentinel | (3264, 1008) | a clearing worth finding | 396 | Merian hut 461 |
+| The Patriarch | (4272, 3600) | ridge | 266 | Rift rim stop 642 |
+| The Cherry Elder | (3408, 3840) | vale | 523 | Rift rim stop 344 |
+| The Weeping Elder | (5640, 4176) | lake island (headland) | 762 | gym 7's town 927 |
+
+With them the outposts number 11, and the map has 30 places.
+
 **Buildability, honestly:**
 
 | Site | Condition | What it means |

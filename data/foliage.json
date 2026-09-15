@@ -1,0 +1,1683 @@
+{
+ "schema": "cobblers.foliage/1",
+ "status": "draft",
+ "note": "Forest identity and tree placement. tools/paint_maps.py reads this with data/regions.json: every tree, snag, log, boulder and litter patch is a custom object from kits/structures/foliage (tools/foliage_objects.py) placed at a position computed here, not a WorldPainter tree layer. Densities are stems per hectare (10,000 square blocks) at full density; they are biased low on purpose, because Minecraft canopy fills in visually and the map is meant to be seen through.",
+ "density_model": {
+  "grid_blocks": 4,
+  "text": [
+   "edge: distance inside the forest's own sub-regions to their boundary, plus ragged noise (so the boundary is a torn line, not the polygon); full density at edge_width blocks in",
+   "glades: low-frequency noise removes glade_share of the area as open clearings with soft edges",
+   "clumping: medium-frequency noise gathers stems into groves for types that should read as copses",
+   "slope: thins from slope_lo to slope_hi degrees; nothing stands on cliffs",
+   "elevation: thins over the 24 blocks below the preset's treeline",
+   "water: nothing within 3 blocks of water; riparian types gain density near it. Nothing stands in water: WorldPainter puts an object in a flooded column on the water surface, so it would float",
+   "lone trees: open-grown trees scattered past the edge into neighbouring open ground, thinning with distance",
+   "spacing: every stem keeps its class's minimum spacing from every other; big classes are placed first, so small trees fill gaps rather than crowd giants"
+  ],
+  "noise": {
+   "ragged_scale": 96,
+   "glade_scale": 320,
+   "clump_scale": 72
+  },
+  "water_clearance_blocks": 3,
+  "settlement_clearance_blocks": 16
+ },
+ "types": {
+  "old_growth_spruce": {
+   "identity": "Old-growth spruce: a cathedral of giant 2x2 spruce and pine, widely spaced over a dark mossy floor.",
+   "from_inside": "Trunks two blocks thick rise 20-50 blocks, 12-20 apart; you walk between them over moss, podzol and coarse dirt past boulders, fallen logs and snags, and see a long way along the floor.",
+   "biome": "minecraft:old_growth_pine_taiga",
+   "stems_per_ha": 36,
+   "edge_width": 100,
+   "ragged": 56,
+   "glade_share": 0.12,
+   "clumping": 0.0,
+   "slope_lo": 18,
+   "slope_hi": 32,
+   "classes": [
+    {
+     "group": "ancient_spruce",
+     "core": 1.4,
+     "edge": 0.0,
+     "spacing": 15
+    },
+    {
+     "group": "ancient_pine",
+     "core": 0.5,
+     "edge": 0.0,
+     "spacing": 14
+    },
+    {
+     "group": "mega_spruce",
+     "core": 6,
+     "edge": 2,
+     "spacing": 10
+    },
+    {
+     "group": "mega_pine",
+     "core": 3,
+     "edge": 1,
+     "spacing": 10
+    },
+    {
+     "group": "spruce",
+     "core": 0.8,
+     "edge": 4,
+     "spacing": 5
+    },
+    {
+     "group": "pine",
+     "core": 0.3,
+     "edge": 2,
+     "spacing": 5
+    }
+   ],
+   "lone": {
+    "per_ha": 0.8,
+    "reach": 120,
+    "groups": [
+     "mega_spruce",
+     "spruce",
+     "pine"
+    ]
+   },
+   "debris": [
+    {
+     "group": "boulder",
+     "per_ha": 2.5,
+     "zone": "any",
+     "max_slope": 20,
+     "vertical_offset": -1
+    },
+    {
+     "group": "forest_rock",
+     "per_ha": 2.0,
+     "zone": "any",
+     "max_slope": 20
+    },
+    {
+     "group": "fallen_log_conifer",
+     "per_ha": 3.0,
+     "zone": "core",
+     "max_slope": 7
+    },
+    {
+     "group": "snag_conifer",
+     "per_ha": 1.2,
+     "zone": "core",
+     "max_slope": 20
+    }
+   ],
+   "floor": {
+    "threshold": 0.45,
+    "mix": [
+     [
+      "PODZOL",
+      0.45
+     ],
+     [
+      "MOSS",
+      0.3
+     ],
+     [
+      "PERMADIRT",
+      0.25
+     ]
+    ]
+   },
+   "understory": {
+    "core": {
+     "set": "forest_floor_sparse",
+     "coverage": 0.03,
+     "clear": true
+    },
+    "mid": {
+     "set": "forest_floor_sparse",
+     "coverage": 0.06,
+     "clear": true
+    },
+    "edge": {
+     "set": "fern_floor",
+     "coverage": 0.1,
+     "clear": false
+    }
+   }
+  },
+  "spruce_thicket": {
+   "identity": "Spruce thicket: close-set spruce and pine, dark and plentiful, the old growth's opposite.",
+   "from_inside": "Trunks every six or seven blocks, crowns touching overhead, ferns and berry bushes at your feet; you thread through rather than stroll.",
+   "stems_per_ha": 190,
+   "edge_width": 80,
+   "ragged": 32,
+   "glade_share": 0.05,
+   "clumping": 0.0,
+   "slope_lo": 22,
+   "slope_hi": 36,
+   "classes": [
+    {
+     "group": "mega_spruce",
+     "core": 0.4,
+     "edge": 0.1,
+     "spacing": 8
+    },
+    {
+     "group": "spruce",
+     "core": 6,
+     "edge": 4,
+     "spacing": 3.5
+    },
+    {
+     "group": "pine",
+     "core": 3,
+     "edge": 3,
+     "spacing": 3.5
+    }
+   ],
+   "lone": {
+    "per_ha": 1.5,
+    "reach": 60,
+    "groups": [
+     "spruce",
+     "pine"
+    ]
+   },
+   "debris": [
+    {
+     "group": "forest_rock",
+     "per_ha": 1.0,
+     "zone": "any",
+     "max_slope": 20
+    },
+    {
+     "group": "fallen_log_conifer",
+     "per_ha": 1.0,
+     "zone": "core",
+     "max_slope": 7
+    }
+   ],
+   "floor": {
+    "threshold": 0.5,
+    "mix": [
+     [
+      "PODZOL",
+      0.7
+     ],
+     [
+      "PERMADIRT",
+      0.3
+     ]
+    ]
+   },
+   "understory": {
+    "core": {
+     "set": "berry_fern",
+     "coverage": 0.07,
+     "clear": true
+    },
+    "mid": {
+     "set": "berry_fern",
+     "coverage": 0.09,
+     "clear": true
+    },
+    "edge": {
+     "set": "fern_floor",
+     "coverage": 0.08,
+     "clear": false
+    }
+   }
+  },
+  "spruce_heath": {
+   "identity": "Spruce heath: lone spruces and small groves over open heath, the old growth's ragged fringe.",
+   "from_inside": "Open ground with a tree every thirty blocks or so, a few giants among them, rocks breaking the heather.",
+   "stems_per_ha": 12,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.5,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "spruce",
+     "core": 4,
+     "edge": 4,
+     "spacing": 6
+    },
+    {
+     "group": "pine",
+     "core": 2,
+     "edge": 2,
+     "spacing": 6
+    },
+    {
+     "group": "mega_spruce",
+     "core": 1,
+     "edge": 1,
+     "spacing": 12
+    }
+   ],
+   "debris": [
+    {
+     "group": "boulder",
+     "per_ha": 1.2,
+     "zone": "any",
+     "max_slope": 20,
+     "vertical_offset": -1
+    },
+    {
+     "group": "bush_conifer",
+     "per_ha": 3.0,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ]
+  },
+  "snow_pine": {
+   "identity": "Snowbound pines: tall, thin, bare-trunked pines standing apart in deep snow.",
+   "from_inside": "White ground and straight dark trunks eight to twelve blocks apart; sightlines run far between them, and wind-flagged scrub clings to the edges.",
+   "stems_per_ha": 48,
+   "edge_width": 100,
+   "ragged": 40,
+   "glade_share": 0.15,
+   "clumping": 0.0,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "mega_pine",
+     "core": 0.6,
+     "edge": 0.0,
+     "spacing": 10
+    },
+    {
+     "group": "pine",
+     "core": 6,
+     "edge": 3,
+     "spacing": 6
+    },
+    {
+     "group": "spruce",
+     "core": 2,
+     "edge": 3,
+     "spacing": 5
+    },
+    {
+     "group": "krummholz",
+     "core": 0.0,
+     "edge": 1.5,
+     "spacing": 4
+    }
+   ],
+   "lone": {
+    "per_ha": 1.0,
+    "reach": 80,
+    "groups": [
+     "pine",
+     "krummholz"
+    ]
+   },
+   "debris": [
+    {
+     "group": "boulder",
+     "per_ha": 1.0,
+     "zone": "any",
+     "max_slope": 25,
+     "vertical_offset": -1
+    },
+    {
+     "group": "snag_conifer",
+     "per_ha": 1.5,
+     "zone": "any",
+     "max_slope": 20
+    }
+   ]
+  },
+  "krummholz": {
+   "identity": "Krummholz: knee- to head-high, wind-flagged spruce hugging the rocks below the snowline.",
+   "from_inside": "Nothing above your head; low dark mats of spruce in clumps between boulders, all leaning the same way.",
+   "stems_per_ha": 45,
+   "edge_width": 60,
+   "ragged": 40,
+   "glade_share": 0.2,
+   "clumping": 0.6,
+   "slope_lo": 28,
+   "slope_hi": 40,
+   "classes": [
+    {
+     "group": "krummholz",
+     "core": 6,
+     "edge": 6,
+     "spacing": 3
+    },
+    {
+     "group": "spruce",
+     "core": 1,
+     "edge": 0.4,
+     "spacing": 5
+    }
+   ],
+   "debris": [
+    {
+     "group": "boulder",
+     "per_ha": 3.0,
+     "zone": "any",
+     "max_slope": 30,
+     "vertical_offset": -1
+    }
+   ]
+  },
+  "treeline_scatter": {
+   "identity": "Treeline scatter on the massif and glacier flanks: a thin spray of krummholz and stunted spruce up to the snowline.",
+   "from_inside": "Mostly rock and snow; the few trees are low and far apart.",
+   "stems_per_ha": 14,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.25,
+   "clumping": 0.7,
+   "slope_lo": 26,
+   "slope_hi": 38,
+   "classes": [
+    {
+     "group": "krummholz",
+     "core": 5,
+     "edge": 5,
+     "spacing": 3
+    },
+    {
+     "group": "spruce",
+     "core": 1,
+     "edge": 1,
+     "spacing": 5
+    }
+   ],
+   "debris": [
+    {
+     "group": "boulder",
+     "per_ha": 1.5,
+     "zone": "any",
+     "max_slope": 30,
+     "vertical_offset": -1
+    }
+   ]
+  },
+  "birch_plateau": {
+   "identity": "Birch plateau: tall white birch columns over a flower floor.",
+   "from_inside": "Pale trunks five to eight blocks apart with high, light crowns; flowers and lily of the valley underfoot and long views across the upland.",
+   "stems_per_ha": 70,
+   "edge_width": 110,
+   "ragged": 44,
+   "glade_share": 0.14,
+   "clumping": 0.0,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "core": 0.3,
+     "edge": 0.3,
+     "spacing": 9
+    },
+    {
+     "group": "tall_birch",
+     "core": 6,
+     "edge": 3,
+     "spacing": 5
+    },
+    {
+     "group": "birch",
+     "core": 2,
+     "edge": 4,
+     "spacing": 4.5
+    }
+   ],
+   "lone": {
+    "per_ha": 1.0,
+    "reach": 90,
+    "groups": [
+     "tall_birch",
+     "birch"
+    ]
+   },
+   "debris": [
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 1.0,
+     "zone": "core",
+     "max_slope": 7
+    },
+    {
+     "group": "snag_broadleaf",
+     "per_ha": 0.5,
+     "zone": "any",
+     "max_slope": 20
+    }
+   ],
+   "understory": {
+    "core": {
+     "set": "lily_valley",
+     "coverage": 0.06,
+     "clear": false
+    }
+   }
+  },
+  "foothill_mixed": {
+   "identity": "Foothill mixed wood: species sorted by height, oak and birch in the hollows and spruce on the rises.",
+   "from_inside": "Walk uphill and the wood changes around you, broadleaf giving way to spruce; the change reads as the lie of the land.",
+   "stems_per_ha": 80,
+   "edge_width": 120,
+   "ragged": 48,
+   "glade_share": 0.12,
+   "clumping": 0.0,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "elevation_sort": {
+    "radius": 256,
+    "span": 24
+   },
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "low": 3,
+     "high": 0.2,
+     "spacing": 9
+    },
+    {
+     "group": "oak",
+     "low": 4,
+     "high": 0.5,
+     "spacing": 5
+    },
+    {
+     "group": "birch",
+     "low": 2,
+     "high": 1.5,
+     "spacing": 5
+    },
+    {
+     "group": "spruce",
+     "low": 0.5,
+     "high": 5,
+     "spacing": 4.5
+    },
+    {
+     "group": "pine",
+     "low": 0.2,
+     "high": 2,
+     "spacing": 4.5
+    },
+    {
+     "group": "mega_spruce",
+     "low": 0.0,
+     "high": 0.6,
+     "spacing": 11
+    }
+   ],
+   "lone": {
+    "per_ha": 1.0,
+    "reach": 90,
+    "groups": [
+     "fancy_oak",
+     "spruce"
+    ]
+   },
+   "debris": [
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 1.0,
+     "zone": "core",
+     "max_slope": 7
+    },
+    {
+     "group": "boulder",
+     "per_ha": 0.8,
+     "zone": "any",
+     "max_slope": 20,
+     "vertical_offset": -1
+    }
+   ],
+   "understory": {
+    "mid": {
+     "set": "fern_floor",
+     "coverage": 0.06,
+     "clear": false
+    }
+   }
+  },
+  "riparian_woods": {
+   "identity": "Riparian woods: oaks, birches and azaleas crowd the water and thin out upslope.",
+   "from_inside": "The wood is thickest at the shore and river bank; climb away from the water and it opens into grass.",
+   "stems_per_ha": 55,
+   "edge_width": 90,
+   "ragged": 40,
+   "glade_share": 0.1,
+   "clumping": 0.0,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "water_boost": {
+    "factor": 1.6,
+    "reach": 60
+   },
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "core": 3,
+     "edge": 1.5,
+     "spacing": 8
+    },
+    {
+     "group": "oak",
+     "core": 3,
+     "edge": 3,
+     "spacing": 5
+    },
+    {
+     "group": "birch",
+     "core": 2,
+     "edge": 2,
+     "spacing": 5
+    },
+    {
+     "group": "azalea",
+     "core": 1,
+     "edge": 0.5,
+     "spacing": 6
+    }
+   ],
+   "lone": {
+    "per_ha": 0.8,
+    "reach": 90,
+    "groups": [
+     "fancy_oak",
+     "oak"
+    ]
+   },
+   "debris": [
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 4.0,
+     "zone": "any",
+     "max_slope": 25
+    },
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 1.0,
+     "zone": "core",
+     "max_slope": 7
+    }
+   ],
+   "understory": {
+    "mid": {
+     "set": "fern_floor",
+     "coverage": 0.05,
+     "clear": false
+    }
+   }
+  },
+  "dark_wood": {
+   "identity": "Dark wood: dark oak crowns knit into a roof over mushrooms, moss and leaf litter.",
+   "from_inside": "Dim and roofed, but the trunks stand six to eight blocks apart, so you can see along the floor between giant mushrooms, litter and fallen logs.",
+   "stems_per_ha": 110,
+   "edge_width": 70,
+   "ragged": 36,
+   "glade_share": 0.06,
+   "clumping": 0.0,
+   "slope_lo": 22,
+   "slope_hi": 36,
+   "classes": [
+    {
+     "group": "huge_brown_mushroom",
+     "core": 0.6,
+     "edge": 0.2,
+     "spacing": 7
+    },
+    {
+     "group": "huge_red_mushroom",
+     "core": 0.4,
+     "edge": 0.1,
+     "spacing": 7
+    },
+    {
+     "group": "dark_oak",
+     "core": 7,
+     "edge": 4,
+     "spacing": 6
+    },
+    {
+     "group": "oak",
+     "core": 0.0,
+     "edge": 1,
+     "spacing": 5
+    }
+   ],
+   "debris": [
+    {
+     "group": "leaf_litter",
+     "per_ha": 25,
+     "zone": "core",
+     "max_slope": 20
+    },
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 2.0,
+     "zone": "core",
+     "max_slope": 7
+    },
+    {
+     "group": "snag_broadleaf",
+     "per_ha": 1.0,
+     "zone": "any",
+     "max_slope": 20
+    }
+   ],
+   "floor": {
+    "threshold": 0.45,
+    "mix": [
+     [
+      "PODZOL",
+      0.4
+     ],
+     [
+      "PERMADIRT",
+      0.3
+     ],
+     [
+      "MOSS",
+      0.3
+     ]
+    ]
+   },
+   "understory": {
+    "core": {
+     "set": "moss_mushroom",
+     "coverage": 0.08,
+     "clear": true
+    },
+    "mid": {
+     "set": "moss_mushroom",
+     "coverage": 0.05,
+     "clear": true
+    }
+   }
+  },
+  "broken_oakwood": {
+   "identity": "Broken oakwood: the dark wood's lighter southern slope, oak and birch under a broken canopy with dark oak stragglers.",
+   "from_inside": "Patches of sky, ferns and litter; dark oaks thin out as you go south.",
+   "stems_per_ha": 60,
+   "edge_width": 90,
+   "ragged": 40,
+   "glade_share": 0.12,
+   "clumping": 0.2,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "core": 2,
+     "edge": 1,
+     "spacing": 9
+    },
+    {
+     "group": "dark_oak",
+     "core": 1,
+     "edge": 0.2,
+     "spacing": 6
+    },
+    {
+     "group": "oak",
+     "core": 4,
+     "edge": 3,
+     "spacing": 5
+    },
+    {
+     "group": "birch",
+     "core": 2,
+     "edge": 2,
+     "spacing": 5
+    }
+   ],
+   "lone": {
+    "per_ha": 0.8,
+    "reach": 80,
+    "groups": [
+     "oak",
+     "fancy_oak"
+    ]
+   },
+   "debris": [
+    {
+     "group": "leaf_litter",
+     "per_ha": 6,
+     "zone": "core",
+     "max_slope": 20
+    },
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 1.0,
+     "zone": "core",
+     "max_slope": 7
+    }
+   ],
+   "understory": {
+    "mid": {
+     "set": "fern_floor",
+     "coverage": 0.05,
+     "clear": false
+    }
+   }
+  },
+  "oak_parkland": {
+   "identity": "Oak parkland: great spreading oaks standing alone in long grass.",
+   "from_inside": "Open meadow with a big oak every sixty blocks or so and bushes at their feet; you always see the next tree.",
+   "stems_per_ha": 14,
+   "edge_width": 120,
+   "ragged": 40,
+   "glade_share": 0.1,
+   "clumping": 0.2,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "core": 6,
+     "edge": 4,
+     "spacing": 16
+    },
+    {
+     "group": "oak",
+     "core": 2,
+     "edge": 3,
+     "spacing": 8
+    }
+   ],
+   "lone": {
+    "per_ha": 1.0,
+    "reach": 150,
+    "groups": [
+     "fancy_oak",
+     "oak"
+    ]
+   },
+   "debris": [
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 4.0,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ]
+  },
+  "birch_shore": {
+   "identity": "Birch shore: a bright fringe of white birch over grass and flowers, open to the lake.",
+   "from_inside": "Light, white-barked woods five to eight blocks apart, flowers underfoot and the lake glinting between trunks.",
+   "stems_per_ha": 65,
+   "edge_width": 90,
+   "ragged": 40,
+   "glade_share": 0.12,
+   "clumping": 0.0,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "tall_birch",
+     "core": 3,
+     "edge": 1,
+     "spacing": 5
+    },
+    {
+     "group": "birch",
+     "core": 5,
+     "edge": 4,
+     "spacing": 5
+    },
+    {
+     "group": "oak",
+     "core": 0.5,
+     "edge": 0.5,
+     "spacing": 6
+    }
+   ],
+   "lone": {
+    "per_ha": 0.8,
+    "reach": 80,
+    "groups": [
+     "birch"
+    ]
+   },
+   "debris": [
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 1.0,
+     "zone": "core",
+     "max_slope": 7
+    },
+    {
+     "group": "snag_broadleaf",
+     "per_ha": 0.5,
+     "zone": "any",
+     "max_slope": 20
+    }
+   ]
+  },
+  "lakeside_copses": {
+   "identity": "Copses: tight clumps of oak and birch with open meadow between.",
+   "from_inside": "You cross meadow from one grove to the next; each copse is a dark island twenty or thirty blocks across.",
+   "stems_per_ha": 55,
+   "edge_width": 60,
+   "ragged": 40,
+   "glade_share": 0.0,
+   "clumping": 0.85,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "core": 1,
+     "edge": 1,
+     "spacing": 8
+    },
+    {
+     "group": "oak",
+     "core": 4,
+     "edge": 4,
+     "spacing": 4.5
+    },
+    {
+     "group": "birch",
+     "core": 3,
+     "edge": 3,
+     "spacing": 4.5
+    },
+    {
+     "group": "azalea",
+     "core": 0.5,
+     "edge": 0.5,
+     "spacing": 6
+    }
+   ],
+   "debris": [
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 6.0,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ]
+  },
+  "drowned_swamp": {
+   "identity": "Drowned swamp: vine-hung swamp oaks crowding the rim of dark water, with dead trunks among the living.",
+   "from_inside": "Wide, drooping crowns right to the water's edge, snags standing pale among them, and the open pond always in view.",
+   "stems_per_ha": 45,
+   "edge_width": 70,
+   "ragged": 36,
+   "glade_share": 0.1,
+   "clumping": 0.3,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "water_boost": {
+    "factor": 1.8,
+    "reach": 40
+   },
+   "classes": [
+    {
+     "group": "swamp_oak",
+     "core": 6,
+     "edge": 4,
+     "spacing": 7
+    }
+   ],
+   "debris": [
+    {
+     "group": "snag_broadleaf",
+     "per_ha": 3.0,
+     "zone": "any",
+     "max_slope": 20
+    },
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 1.0,
+     "zone": "any",
+     "max_slope": 7
+    }
+   ]
+  },
+  "snag_fen": {
+   "identity": "Snag fen: open wet grass with dead standing trunks, bushes and the odd swamp oak.",
+   "from_inside": "Pale dead trunks against the sky, bushes and reeds, and far views; the live trees are few.",
+   "stems_per_ha": 12,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.5,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "swamp_oak",
+     "core": 2,
+     "edge": 2,
+     "spacing": 8
+    },
+    {
+     "group": "oak",
+     "core": 1,
+     "edge": 1,
+     "spacing": 6
+    }
+   ],
+   "debris": [
+    {
+     "group": "snag_broadleaf",
+     "per_ha": 8.0,
+     "zone": "any",
+     "max_slope": 20
+    },
+    {
+     "group": "snag_conifer",
+     "per_ha": 2.0,
+     "zone": "any",
+     "max_slope": 20
+    },
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 10.0,
+     "zone": "any",
+     "max_slope": 25
+    },
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 2.0,
+     "zone": "any",
+     "max_slope": 7
+    }
+   ]
+  },
+  "cherry_vale": {
+   "identity": "Cherry vale: cherry groves standing in lawns of pink petals.",
+   "from_inside": "Pink crowns in clusters with open grass around each grove and petals drifting over the ground.",
+   "stems_per_ha": 30,
+   "edge_width": 80,
+   "ragged": 40,
+   "glade_share": 0.0,
+   "clumping": 0.7,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "cherry",
+     "core": 6,
+     "edge": 5,
+     "spacing": 7
+    },
+    {
+     "group": "birch",
+     "core": 0.5,
+     "edge": 0.5,
+     "spacing": 5
+    },
+    {
+     "group": "azalea",
+     "core": 0.5,
+     "edge": 0.5,
+     "spacing": 6
+    }
+   ],
+   "debris": [
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 2.0,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ],
+   "understory": {
+    "core": {
+     "set": "petals",
+     "coverage": 0.1,
+     "clear": false
+    }
+   }
+  },
+  "coastal_spruce": {
+   "identity": "Coastal spruce: storm-thinned spruce and pine, stunted and flagged toward the sea.",
+   "from_inside": "Mid-height conifers in loose ranks, low wind-bent scrub at the margins, the sea audible through the gaps.",
+   "stems_per_ha": 55,
+   "edge_width": 90,
+   "ragged": 44,
+   "glade_share": 0.12,
+   "clumping": 0.2,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "spruce",
+     "core": 4,
+     "edge": 2,
+     "spacing": 5
+    },
+    {
+     "group": "pine",
+     "core": 3,
+     "edge": 2,
+     "spacing": 5
+    },
+    {
+     "group": "krummholz",
+     "core": 0.5,
+     "edge": 3,
+     "spacing": 3
+    }
+   ],
+   "lone": {
+    "per_ha": 1.0,
+    "reach": 80,
+    "groups": [
+     "krummholz",
+     "spruce"
+    ]
+   },
+   "debris": [
+    {
+     "group": "boulder",
+     "per_ha": 1.0,
+     "zone": "any",
+     "max_slope": 25,
+     "vertical_offset": -1
+    }
+   ]
+  },
+  "mossy_broadleaf": {
+   "identity": "Mossy broadleaf: big oaks and dark oaks over a floor of moss and ferns, the temperate rainforest of the east.",
+   "from_inside": "Green everywhere: moss on the ground and on fallen logs, ferns knee-deep, heavy crowns eight to twelve blocks apart.",
+   "stems_per_ha": 75,
+   "edge_width": 100,
+   "ragged": 44,
+   "glade_share": 0.1,
+   "clumping": 0.0,
+   "slope_lo": 20,
+   "slope_hi": 34,
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "core": 3,
+     "edge": 2,
+     "spacing": 8
+    },
+    {
+     "group": "dark_oak",
+     "core": 2,
+     "edge": 0.5,
+     "spacing": 6
+    },
+    {
+     "group": "oak",
+     "core": 2,
+     "edge": 3,
+     "spacing": 5
+    },
+    {
+     "group": "birch",
+     "core": 0.5,
+     "edge": 1,
+     "spacing": 5
+    }
+   ],
+   "lone": {
+    "per_ha": 0.8,
+    "reach": 80,
+    "groups": [
+     "fancy_oak",
+     "oak"
+    ]
+   },
+   "debris": [
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 4.0,
+     "zone": "core",
+     "max_slope": 7
+    },
+    {
+     "group": "boulder",
+     "per_ha": 1.0,
+     "zone": "any",
+     "max_slope": 20,
+     "vertical_offset": -1
+    },
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 3.0,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ],
+   "floor": {
+    "threshold": 0.4,
+    "mix": [
+     [
+      "MOSS",
+      0.45
+     ],
+     [
+      "GRASS",
+      0.35
+     ],
+     [
+      "PODZOL",
+      0.2
+     ]
+    ]
+   },
+   "understory": {
+    "core": {
+     "set": "fern_floor",
+     "coverage": 0.16,
+     "clear": true
+    },
+    "mid": {
+     "set": "fern_floor",
+     "coverage": 0.12,
+     "clear": false
+    }
+   }
+  },
+  "emergent_jungle": {
+   "identity": "Emergent jungle: giant jungle trees tower over bushes and open ground.",
+   "from_inside": "Huge 2x2 trunks eleven or more blocks apart with a sea of jungle bushes between them; you look up, not through a wall.",
+   "stems_per_ha": 45,
+   "edge_width": 90,
+   "ragged": 44,
+   "glade_share": 0.08,
+   "clumping": 0.0,
+   "slope_lo": 22,
+   "slope_hi": 36,
+   "classes": [
+    {
+     "group": "mega_jungle",
+     "core": 3,
+     "edge": 0.5,
+     "spacing": 11
+    },
+    {
+     "group": "jungle",
+     "core": 3,
+     "edge": 3,
+     "spacing": 5
+    }
+   ],
+   "lone": {
+    "per_ha": 1.0,
+    "reach": 80,
+    "groups": [
+     "jungle"
+    ]
+   },
+   "debris": [
+    {
+     "group": "jungle_bush",
+     "per_ha": 30,
+     "zone": "any",
+     "max_slope": 25
+    },
+    {
+     "group": "fallen_log_broadleaf",
+     "per_ha": 1.0,
+     "zone": "core",
+     "max_slope": 7
+    }
+   ],
+   "understory": {
+    "core": {
+     "set": "jungle_floor",
+     "coverage": 0.1,
+     "clear": false
+    }
+   }
+  },
+  "jungle_edge": {
+   "identity": "Jungle edge: small jungle trees and bushes breaking into grass, the odd giant standing out.",
+   "from_inside": "Patchy cover you can see across, jungle bushes everywhere, a big tree here and there.",
+   "stems_per_ha": 30,
+   "edge_width": 60,
+   "ragged": 40,
+   "glade_share": 0.12,
+   "clumping": 0.4,
+   "slope_lo": 22,
+   "slope_hi": 36,
+   "classes": [
+    {
+     "group": "mega_jungle",
+     "core": 0.5,
+     "edge": 0.2,
+     "spacing": 11
+    },
+    {
+     "group": "jungle",
+     "core": 4,
+     "edge": 4,
+     "spacing": 5
+    }
+   ],
+   "debris": [
+    {
+     "group": "jungle_bush",
+     "per_ha": 20,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ]
+  },
+  "open_lone": {
+   "identity": "Open country: a lone tree or a small field copse every few hundred blocks.",
+   "from_inside": "Grass and flowers to the horizon, with a tree to walk to.",
+   "open": true,
+   "stems_per_ha": 1.2,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.6,
+   "slope_lo": 18,
+   "slope_hi": 30,
+   "classes": [
+    {
+     "group": "fancy_oak",
+     "core": 3,
+     "edge": 3,
+     "spacing": 10
+    },
+    {
+     "group": "oak",
+     "core": 2,
+     "edge": 2,
+     "spacing": 6
+    },
+    {
+     "group": "birch",
+     "core": 1,
+     "edge": 1,
+     "spacing": 6
+    }
+   ],
+   "debris": [
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 1.0,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ]
+  },
+  "heath_scrub": {
+   "identity": "Heath and coastal scrub: bushes and the occasional wind-shaped oak or spruce.",
+   "from_inside": "Low cover only; you see over it.",
+   "open": true,
+   "stems_per_ha": 2.5,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.5,
+   "slope_lo": 20,
+   "slope_hi": 32,
+   "classes": [
+    {
+     "group": "oak",
+     "core": 2,
+     "edge": 2,
+     "spacing": 6
+    },
+    {
+     "group": "spruce",
+     "core": 1,
+     "edge": 1,
+     "spacing": 6
+    },
+    {
+     "group": "krummholz",
+     "core": 1,
+     "edge": 1,
+     "spacing": 3
+    }
+   ],
+   "debris": [
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 6.0,
+     "zone": "any",
+     "max_slope": 25
+    },
+    {
+     "group": "boulder",
+     "per_ha": 0.5,
+     "zone": "any",
+     "max_slope": 25,
+     "vertical_offset": -1
+    }
+   ]
+  },
+  "savanna_lone": {
+   "identity": "Savanna: flat-topped acacias standing far apart.",
+   "from_inside": "Dry grass with an acacia every fifty to a hundred blocks.",
+   "open": true,
+   "stems_per_ha": 3,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.3,
+   "slope_lo": 20,
+   "slope_hi": 32,
+   "classes": [
+    {
+     "group": "acacia",
+     "core": 1,
+     "edge": 1,
+     "spacing": 12
+    }
+   ],
+   "debris": [
+    {
+     "group": "bush_broadleaf",
+     "per_ha": 0.5,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ]
+  },
+  "badlands_scrub": {
+   "identity": "Wooded badlands: small oaks scattered on the high tableland.",
+   "from_inside": "Terracotta and red sand with short oaks in loose groups.",
+   "open": true,
+   "stems_per_ha": 6,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.5,
+   "slope_lo": 18,
+   "slope_hi": 30,
+   "classes": [
+    {
+     "group": "oak",
+     "core": 1,
+     "edge": 1,
+     "spacing": 6
+    }
+   ],
+   "debris": [
+    {
+     "group": "snag_broadleaf",
+     "per_ha": 0.5,
+     "zone": "any",
+     "max_slope": 20
+    }
+   ]
+  },
+  "scorched_snags": {
+   "identity": "Scorched rim: dead trunks and a few surviving acacias on the crater rim.",
+   "from_inside": "Bare, pale snags standing out against dark rock.",
+   "open": true,
+   "stems_per_ha": 1.0,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.4,
+   "slope_lo": 18,
+   "slope_hi": 30,
+   "classes": [
+    {
+     "group": "acacia",
+     "core": 1,
+     "edge": 1,
+     "spacing": 12
+    }
+   ],
+   "debris": [
+    {
+     "group": "snag_broadleaf",
+     "per_ha": 2.0,
+     "zone": "any",
+     "max_slope": 25
+    }
+   ]
+  },
+  "rift_scatter": {
+   "identity": "The Rift: bare gravel and rock with a few spruce and boulders.",
+   "from_inside": "Nearly treeless; boulders on the floor.",
+   "open": true,
+   "stems_per_ha": 0.8,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.5,
+   "slope_lo": 18,
+   "slope_hi": 30,
+   "classes": [
+    {
+     "group": "spruce",
+     "core": 1,
+     "edge": 1,
+     "spacing": 6
+    }
+   ],
+   "debris": [
+    {
+     "group": "boulder",
+     "per_ha": 3.0,
+     "zone": "any",
+     "max_slope": 25,
+     "vertical_offset": -1
+    }
+   ]
+  },
+  "islet_trees": {
+   "identity": "Lake islets and banks: a few oaks and birches.",
+   "from_inside": "A handful of trees.",
+   "open": true,
+   "stems_per_ha": 6,
+   "edge_width": 0,
+   "ragged": 0,
+   "glade_share": 0.0,
+   "clumping": 0.5,
+   "slope_lo": 18,
+   "slope_hi": 30,
+   "classes": [
+    {
+     "group": "oak",
+     "core": 1,
+     "edge": 1,
+     "spacing": 6
+    },
+    {
+     "group": "birch",
+     "core": 1,
+     "edge": 1,
+     "spacing": 6
+    }
+   ]
+  }
+ },
+ "preset_defaults": {
+  "taiga_dense": "spruce_thicket",
+  "taiga_sparse": "coastal_spruce",
+  "snowy_taiga": "snow_pine",
+  "alpine_peaks": "treeline_scatter",
+  "snowy_peak": "treeline_scatter",
+  "crags": "treeline_scatter",
+  "glacier_trough": "treeline_scatter",
+  "glacier_foot": "treeline_scatter",
+  "cirque": "treeline_scatter",
+  "heath_shrub": "heath_scrub",
+  "coast_scrub": "heath_scrub",
+  "swamp": "drowned_swamp",
+  "swamp_edge": "snag_fen",
+  "forest": "broken_oakwood",
+  "forest_sparse": "riparian_woods",
+  "mixed_woods": "foothill_mixed",
+  "birch_woods": "birch_plateau",
+  "birch_shore": "birch_shore",
+  "dark_forest": "dark_wood",
+  "flower_meadow": "open_lone",
+  "blossom": "cherry_vale",
+  "plains": "open_lone",
+  "sunflower_plains": "open_lone",
+  "savanna": "savanna_lone",
+  "badlands_top": "badlands_scrub",
+  "volcanic_rim": "scorched_snags",
+  "rift_floor": "rift_scatter",
+  "lake": "islet_trees",
+  "jungle": "emergent_jungle",
+  "sparse_jungle": "jungle_edge"
+ },
+ "assign": {
+  "peak_pond_hollow": {
+   "type": "old_growth_spruce",
+   "why": "The most walked forest on the map: 1,369 blocks of the gym 3 to 4 and gym 4 to 5 legs cross it, and gym 4's town stands in it. 1.16 km2 of gentle ground (mean slope 5.4 degrees) at y113, already spruce, so the effect is felt from underneath for a long stretch, not glimpsed as a patch. Across the strait, Northgate Isle's thicket is the contrast."
+  },
+  "northgate_west": {
+   "type": "spruce_thicket",
+   "why": "The northern island's dense spruce, kept as the deliberate contrast to the old growth."
+  },
+  "northgate_east": {
+   "type": "spruce_thicket",
+   "density_scale": 0.75,
+   "why": "The same island's thicket, slightly thinner on its higher eastern half."
+  },
+  "north_east_downs": {
+   "type": "spruce_heath",
+   "why": "The old growth's fringe east of Peak Pond."
+  },
+  "long_isle_north": {
+   "type": "coastal_spruce"
+  },
+  "long_isle_middle": {
+   "type": "mossy_broadleaf"
+  },
+  "tilpey_south_shore": {
+   "type": "oak_parkland"
+  },
+  "tilpey_east_shore": {
+   "type": "lakeside_copses"
+  },
+  "lake_viltri_hollow": {
+   "type": "riparian_woods"
+  },
+  "viltris_path_valley": {
+   "type": "riparian_woods"
+  },
+  "wedge_south": {
+   "type": "broken_oakwood"
+  },
+  "frostpeak_strand": {
+   "type": "krummholz"
+  }
+ },
+ "landmark_trees": [
+  {
+   "id": "great_oak_pallet",
+   "object": "landmark_great_oak",
+   "site": [
+    1800,
+    5184
+   ],
+   "kind": "route",
+   "glade_radius": 30,
+   "seen_from": [
+    {
+     "kind": "legs",
+     "legs": [
+      "hometown->gym1_town"
+     ],
+     "spacing": 48
+    }
+   ],
+   "for": "A giant oak alone in open meadow: the first thing a new trainer can see from the first leg and walk off the path toward."
+  },
+  {
+   "id": "sentinel_spruce_tarn",
+   "object": "landmark_sentinel_spruce",
+   "site": [
+    3264,
+    1008
+   ],
+   "kind": "clearing",
+   "glade_radius": 28,
+   "seen_from": [
+    {
+     "kind": "legs",
+     "legs": [
+      "gym3_town->gym4_town",
+      "gym4_town->gym5_town"
+     ],
+     "spacing": 48
+    },
+    {
+     "kind": "ring",
+     "radius": 60,
+     "n": 24
+    }
+   ],
+   "for": "A 75-block spruce in a clearing of the old growth, beside the hidden tarn at the head of the dry ravine."
+  },
+  {
+   "id": "patriarch_wedge",
+   "object": "landmark_patriarch_dark_oak",
+   "site": [
+    4272,
+    3600
+   ],
+   "kind": "ridge",
+   "glade_radius": 30,
+   "seen_from": [
+    {
+     "kind": "legs",
+     "legs": [
+      "gym8_town->league"
+     ],
+     "spacing": 32
+    }
+   ],
+   "for": "An enormous flat-crowned dark oak on the crest of the Wedge, standing over the Rift."
+  },
+  {
+   "id": "cherry_elder_shrew",
+   "object": "landmark_cherry_elder",
+   "site": [
+    3408,
+    3840
+   ],
+   "kind": "vale",
+   "glade_radius": 28,
+   "seen_from": [
+    {
+     "kind": "legs",
+     "legs": [
+      "hometown->gym1_town",
+      "gym1_town->gym2_town",
+      "gym8_town->league"
+     ],
+     "spacing": 48
+    }
+   ],
+   "for": "An ancient leaning cherry with a pink crown 42 across on the shoulder above Shrew Lake, petals under it."
+  },
+  {
+   "id": "weeping_elder_tilpey",
+   "object": "landmark_weeping_elder",
+   "site": [
+    5640,
+    4176
+   ],
+   "kind": "headland",
+   "glade_radius": 30,
+   "seen_from": [
+    {
+     "kind": "legs",
+     "legs": [
+      "gym5_town->gym6_town",
+      "gym6_town->gym7_town",
+      "gym7_town->gym8_town"
+     ],
+     "spacing": 48
+    }
+   ],
+   "for": "A domed giant with curtains of leaves on the flat island in Lake Tilpey, reached only across water."
+  }
+ ]
+}

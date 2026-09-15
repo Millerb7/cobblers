@@ -1,0 +1,10 @@
+{
+ "group": "landmark_patriarch_dark_oak",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  16,
+  2,
+  17
+ ]
+}

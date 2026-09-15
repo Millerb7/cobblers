@@ -24,7 +24,12 @@ detected rather than trusted.
 | `drainage.py` | Priority flood, D8 flow directions and accumulation on a coarse height grid | (library) |
 | `region_measure.py` | Re-measure `regions.json` measured blocks from the committed polygons on the current heightmap | `data/regions.json` with `--write` |
 | `spawn_tag_pack.py` | Build the `cobblers_spawn_tags` overlay from `regions.json` `spawn_tag_overlays` (biome tags Cobblemon spawns on that no loaded biome carries); `--check-paint` fails if an overlay biome is painted outside its regions; `--install` copies it into a datapacks folder | `build/datapacks/cobblers_spawn_tags/` |
-| `sightlines.py` | Raycasts from a viewpoint to named landmarks | `derived/sightlines/` |
+| `sightlines.py` | Raycasts from a viewpoint to named landmarks; `cast(surface=)` occludes with terrain plus canopy | `derived/sightlines/` |
+| `foliage.py` | Forest placement for `paint_maps.py`: density fields (edge, ragged boundary, glades, clumping, slope, treeline, water) and exact object positions with class spacing, lone trees, debris, canopy and per-type stats (`docs/world-building/FOLIAGE.md`) | (library) |
+| `foliage_objects.py` | The foliage object library: `harvest` vanilla trees over RCON into `.nbt`, `generate` seeded objects and landmark giants, `index` sizes, crowns, eye-level widths and hashes | `kits/structures/foliage/` |
+| `structure_nbt.py` | Write and read structure templates (`.nbt`); capture a box of blocks from a world's region files | (library) |
+| `landmark_trees.py` | Landmark giant designs; `check` sightlines from each tree's intended observers over terrain plus canopy | `derived/foliage/landmark_sightlines.json` |
+| `critical_legs.py` | Route the critical path legs (Victory Road along the Rift axes) and tally blocks per sub-region | `derived/routes/critical_legs.json` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
 | `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |
 | `landforms.py` | Land and water bodies, peaks, candidate landform classes | `derived/landforms/` |
