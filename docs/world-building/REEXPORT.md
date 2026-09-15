@@ -22,7 +22,7 @@ the export below.
 | Export | the same `reexport.py` command, with the old world from `cobblers-server-retired/2026-09-14-biome-tags/`; export 835 s; 484 region files, 2.33 GB; `seed_match: true`; `.world` sha256 `dae3d5c5…` |
 | Datapack | `spawn_tag_pack.py --install <server>/datapacks`. Global Packs force-loads `datapacks/`; the log shows "Found new data pack cobblers_spawn_tags, loading it automatically", and `datapack list enabled` includes it |
 | Border | 10240 |
-| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320` |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320`, complete in 12.5 minutes; `data/DistantHorizons*` 659 MB; region files still 484 |
 
 **Tags checked in game** with `execute if biome` on force-loaded painted chunks. `locate biome`
 is no use here: it consults the world generator's noise biomes, not the painted chunks.
