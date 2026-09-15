@@ -556,8 +556,13 @@ def sculpt_relief(h, rcfg, sea, seed, report=None, keep=None):
             for t in ts:
                 acc += bilinear(crop, xx + t * u - px0, zz + t * w - pz0)
             ani[z0:z1, x0:x1] = acc / taps
+    # normalise by the same average taken along one fixed direction over a fixed window: a statistic of the noise
+    # alone, so a terrain edit in one place changes the relief only where the fall line moved
+    w0 = min(n, 1024)
+    zz, xx = np.mgrid[0:w0, 0:w0].astype(np.float32)
+    ref = sum(bilinear(base[:w0 + P, :w0 + P], xx + t + P, zz) for t in ts) / taps if n > w0 + P else ani
     del base
-    ani = (ani - ani.mean()) / max(float(ani.std()), 1e-6)
+    ani = ani / max(float(ref.std()), 1e-6)
     c = rcfg["noise_soft_clip_sigma"]
     ani = c * np.tanh(ani / c)                      # no tails: the largest change stays near c * max amplitude
     lo, hi = rcfg["low_fade_above_sea"]
