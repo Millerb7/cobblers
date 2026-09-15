@@ -57,9 +57,9 @@ z1650–1849).
 
 **Growth: not yet shown.**
 - **What happened:** 12 cherry saplings, 8 at the worst-lit points and 4 near a light, did not advance a single
-  stage in 10 minutes of force-loaded ticking.
-- **Why:** random ticks don't run in chunks with no player nearby. The chance of none of 12 advancing in that time
-  if they did is negligible.
+  stage in 60 minutes of force-loaded ticking (checked every 5 minutes).
+- **Why:** random ticks don't run in chunks with no player nearby. Under normal ticking each sapling gets a random
+  tick about every 68 seconds and advances on 1 in 7, so all 12 staying at stage 0 for an hour is not chance.
 - **To finish the test:** it needs a player within range. Stand or fly in spectator near (-800, -35, -800) for about
   20 minutes and the saplings should grow. The saplings and chamber are still there.
 
