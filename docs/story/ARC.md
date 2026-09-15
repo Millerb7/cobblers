@@ -1,0 +1,598 @@
+# Narrative Arc
+
+**Status:** Proposed for review. Deliverable 1 only. No dialogue, quest data, or
+new progression fields are included.
+
+## Authority and current data limits
+
+This arc treats geography as ground truth. Every required location below comes
+from `data/towns.json`; every named physical feature comes from
+`data/landmarks.json`, `data/regions.json`, or `data/rivers.json`.
+
+The ten critical settlements are the complete required path:
+
+`hometown` -> `gym1_town` -> `gym2_town` -> `gym3_town` ->
+`gym4_town` -> `gym5_town` -> `gym6_town` -> `gym7_town` ->
+`gym8_town` -> `league`.
+
+All ten have coordinates, but nine are marked `proposed` in
+`data/towns.json`; only `league` is marked `accepted`. Their display names
+are null. This document therefore uses their stable IDs and working names.
+Pallet Town is established by the premise; other town names remain open.
+
+`data/trainers.json`, named route trainers, and faction progression flags do
+not exist on `origin/main`. Trainer prerequisites below are narrative
+requirements with IDs still to be authored. The arc uses the existing gym flags
+only and does not create a parallel quest state system.
+
+There is also one distance conflict inside `data/towns.json`: the League
+record gives the Giovanni-to-League approach as 4,038 blocks, while
+`critical_path_geometry.victory_road_blocks` gives 4,953 blocks. The story
+depends only on it being the longest final route. The terrain owner should
+resolve the measurement before dialogue quotes a distance.
+
+## Fixed path
+
+| Order | Stable ID | Working place | Centre | Required progression |
+| ---: | --- | --- | --- | --- |
+| 0 | `hometown` | Pallet Town | (1462, 116, 5293) | Start |
+| 1 | `gym1_town` | Brock's town, Viltri Plateau | (1743, 138, 3628) | Sets `gym1_cleared` |
+| 2 | `gym2_town` | Misty's town, Lake Viltri Hollow | (1605, 107, 2801) | Sets `gym2_cleared` |
+| 3 | `gym3_town` | Surge's town, Mt Vessu | (1847, 190, 1262) | Sets `gym3_cleared` |
+| 4 | `gym4_town` | Erika's town, Peak Pond Hollow | (4309, 110, 1555) | Sets `gym4_cleared` |
+| 5 | `gym5_town` | Koga's town, Glacier Foot Fields | (4646, 118, 2446) | Sets `gym5_cleared` |
+| 6 | `gym6_town` | Sabrina's town, Tilpey North Shore | (6196, 95, 3398) | Sets `gym6_cleared` |
+| 7 | `gym7_town` | Blaine's town, Crater north-west rim | (6074, 108, 4995) | Sets `gym7_cleared` |
+| 8 | `gym8_town` | Giovanni's town, South Strand | (3647, 112, 6497) | Sets `gym8_cleared` |
+| 9 | `league` | Pokemon League, Rift head | (3297, 118, 2603) | Sets `champion_cleared` |
+
+Coordinates are rounded from the measured town centres for readability. They
+are identifiers and staging anchors, not permission to move terrain or town
+footprints.
+
+## Narrative rules
+
+1. Pallet contains no reliable exposition. The opening question is created by
+   the mismatch between memory and visible geography.
+2. Each required settlement adds one useful fact and one new uncertainty.
+3. The player understands the faction's rescue purpose before being asked to
+   oppose it.
+4. Ordinary displaced families remain visible after the faction becomes an
+   antagonist.
+5. The faction crosses the moral line when it knowingly chooses an occupied
+   destination, not when the player first sees its technology.
+6. Hoopa is destabilised by repeated forced use. Hoopa is neither a mastermind
+   nor a simple final monster.
+7. Optional places deepen or challenge the required account but never supply a
+   fact needed to reach the next gym.
+8. The ending stops the forced exchanges. It does not conveniently return every
+   displaced person or erase the cost already paid.
+
+## Gym-leader reconciliation
+
+Brock, Misty, Surge, Erika, Koga, Sabrina, Blaine, and Giovanni are natives of
+this world. Their order and battle identities follow the fixed Kanto sequence,
+but the story does not treat them as Kanto arrivals, copies, or people Oak
+already knows. Pallet's residents remember Kanto; the eight leaders do not.
+
+Their proposed civic roles support the geography and arc:
+
+- Brock is a plateau builder and practical emergency coordinator.
+- Misty manages a lake town accustomed to rescues and water travel.
+- Surge maintains power, signals, and storm-facing equipment on Mt Vessu.
+- Erika protects Peak Pond Hollow and mediates between residents and arrivals.
+- Koga tracks covert movement through the marsh and glacier-foot country.
+- Sabrina studies the Rift's effects on memory, perception, and Pokémon.
+- Blaine is a crater researcher who understands the energy used by the faction.
+- Giovanni is the southern region's hard-edged civil defender, not the faction
+  leader.
+
+These roles are story proposals. They do not change trainer teams or structures.
+
+# Act I — The place that should not be here
+
+## Settlement 1: `hometown` — Pallet Town
+
+**Ground truth**
+
+- Centre: (1462, 116, 5293), in `pallet_meadows` / `pallet_fields`.
+- The first route runs north through the plains toward `gym1_town`.
+- The coast lies nearby. `river_of_shrews` is 605 blocks away.
+- Optional `relic_island` is the nearest settlement, 440 blocks away, but it
+  is not part of the required path.
+
+**Required sequence**
+
+The opening stays familiar. Oak offers the starter, gives the ordinary send-off,
+and speaks as if the known route and neighboring landmarks are still outside.
+No one explains the premise.
+
+The break happens only when the player leaves the settled part of Pallet. The
+route remembered by Pallet's residents is absent. A native trail runs north
+through unfamiliar plains, the skyline is wrong, and expected Kanto landmarks
+cannot be found. The town itself is intact, but its edge does not join the land
+its residents remember.
+
+Residents offer incompatible interpretations in short, uncertain fragments:
+storm, attack, earthquake, dream, mass displacement. Oak admits that his maps
+and field knowledge no longer fit. He does not give a formal investigation
+quest. The player's clue is the mismatch itself: Pallet has not been damaged or
+rebuilt; it has been joined cleanly to the wrong ground.
+
+The only useful action is to take the starter and follow the real northbound
+trail toward the nearest critical settlement.
+
+**Knowledge state on departure**
+
+- **Knows:** Pallet is intact; the surrounding terrain is not Kanto; local
+  memories conflict with physical evidence.
+- **Believes:** a single event moved or transformed the town.
+- **Suspects:** someone outside Pallet may have seen what happened.
+- **Does not know:** that this was an exchange, that a native settlement was
+  displaced, that Hoopa was involved, or that the event was steered.
+
+**Optional echo**
+
+`relic_island` may show that part of Pallet was torn away from the main
+arrival. It can make the event feel less clean, but no clue found there may be
+required at Brock's town.
+
+## Settlement 2: `gym1_town` — Brock on Viltri Plateau
+
+**Ground truth**
+
+- Centre: (1743, 138, 3628), in `viltri_plateau` / `viltri_woods`.
+- Route from Pallet: 1,780 blocks; no water crossing.
+- Nearby: `viltri_ravine` 455 blocks, `lake_viltri` 573 blocks, and
+  `viltris_path` 664 blocks.
+- Defeating Brock sets `gym1_cleared`.
+
+**Required sequence**
+
+The player arrives as an unknown carrying a story that sounds impossible.
+Brock and the town do not immediately grant access to the leader. The player
+must defeat a short set of local trainers in public, ordinary battles. This is
+a competence test, not a faction encounter. Exact trainer IDs are a data gap.
+
+Brock then gives the first native account. From the plateau during the event,
+he saw the western horizon distort. When people reached Pallet Meadows, Pallet
+Town stood on ground where a native settlement had been. That settlement and
+its people were gone. Pallet did not merely arrive; something else left.
+
+Brock refuses to blame Pallet's residents. They look as stranded as everyone
+else. He also refuses to call the event random: smaller discontinuities have
+left straight seams, displaced material, and impossible alignments elsewhere.
+He knows effects, not a cause.
+
+The gym battle follows. After `gym1_cleared`, Brock directs the player toward
+the lake town because Misty's people keep records of unusual arrivals and move
+aid through Lake Viltri. This is a practical lead, not a lore assignment.
+
+**Knowledge state after the gym**
+
+- **Knows:** Pallet replaced an occupied native settlement; the event had
+  witnesses outside Pallet; other discontinuities exist.
+- **Believes:** the event is part of a regional pattern.
+- **Suspects:** the missing native settlement may have gone wherever Pallet
+  came from.
+- **Does not know:** who causes exchanges or whether they are deliberate.
+
+# Act II — Rescue and exchange
+
+## Settlement 3: `gym2_town` — Misty at Lake Viltri
+
+**Ground truth**
+
+- Centre: (1605, 107, 2801), in `lake_viltri_hollow` / `viltri_woods`.
+- Route from Brock: 908 blocks, with no water crossing.
+- `lake_viltri` is 86 blocks away; `viltri_ravine` is 195 blocks away;
+  `viltris_path` is 242 blocks away.
+- Defeating Misty sets `gym2_cleared`.
+
+**Required sequence**
+
+This is the first contact with the faction. They appear first as rescue workers,
+surveyors, and displaced civilians near a town already organised around water
+and recovery. Their ordinary families carry household belongings, medicines,
+and Pokémon from a world that is failing. They do not threaten the player.
+
+A faction field representative explains only the immediate truth: their home is
+collapsing, and moving people is the only method that has saved anyone. The
+player sees the human result before learning the cost. The faction recognises
+Pallet as an unusually large and successful transfer, but does not admit to
+causing it.
+
+Misty treats the arrivals as people in danger while keeping control of her
+shore. She does not ask the player to choose a side. Her gym tests whether the
+player can act under pressure without turning frightened people into enemies.
+
+After `gym2_cleared`, evidence from the lake records points north: the same
+distinct pulse seen when Pallet arrived has been detected around Mt Vessu. The
+route to Surge follows the actual 1,643-block climb and crosses the creek west
+of Mt Clay at (1824, 1888).
+
+**Knowledge state after the gym**
+
+- **Knows:** at least some faction members and families come from a collapsing
+  world; transfers can save real people.
+- **Believes:** the faction may understand the phenomenon better than it admits.
+- **Suspects:** Pallet's arrival resembles their rescue method.
+- **Does not know:** whether they triggered Pallet, how transfers choose a
+  destination, or what happens to those displaced from it.
+
+This is the sympathy beat. Opposition comes later.
+
+## Settlement 4: `gym3_town` — Surge on Mt Vessu
+
+**Ground truth**
+
+- Centre: (1847, 190, 1262), in `mt_vessu` / `tri_peaks`.
+- Route from Misty: 1,643 blocks; a small creek crossing at (1824, 1888).
+- `tri_peaks` is 35 blocks away and `mt_vessu` 47 blocks away.
+- Optional `the_scar` is 408 blocks from town.
+- Defeating Surge sets `gym3_cleared`.
+
+**Required sequence**
+
+Surge's instruments establish the next fact without explaining the whole
+system: the transfer pulse is not natural noise. It contains repeated timing
+and direction changes. Someone is triggering and steering it.
+
+A faction team in town attempts to recover or disable records before Surge can
+compare them with the Pallet event. This is the first direct obstruction. The
+team avoids harming civilians and withdraws when exposed, preserving the
+difference between secrecy and open violence.
+
+Surge's battle comes after the player secures the critical evidence in town.
+After `gym3_cleared`, he identifies the next signal source east of the massif,
+toward Peak Pond Hollow. He cannot determine whether the signal is a weapon, a
+rescue beacon, or both.
+
+**Knowledge state after the gym**
+
+- **Knows:** exchanges can be deliberately triggered and steered; the faction
+  conceals technical evidence.
+- **Believes:** the faction caused or directed Pallet's arrival.
+- **Suspects:** the clean arrival required a destination to be exchanged.
+- **Does not know:** who ordered Pallet's transfer or how much control the
+  faction truly has.
+
+**Optional echo**
+
+`the_scar` at (2110, 200, 950) is not required. Players who climb there see
+the empty summit footprint and a road ending at nothing. That discovery lets
+them infer a second town-scale exchange before the critical path confirms it.
+Players who skip it learn the same required fact later.
+
+## Settlement 5: `gym4_town` — Erika at Peak Pond Hollow
+
+**Ground truth**
+
+- Centre: (4309, 110, 1555), in `peak_pond_hollow` /
+  `northern_downs`.
+- Route from Surge: 2,640 blocks east along the north of the massif.
+- `peak_pond` is 129 blocks away; `peak_pond_creek` is 297 blocks away.
+- The major river is still a crossable headwater in this northern leg.
+- Defeating Erika sets `gym4_cleared`.
+
+**Required sequence**
+
+Peak Pond Hollow shows the faction's internal divide. Refugee families are
+being housed in and around the town. Some faction members want to stop forced
+transfers until they can guarantee an empty destination. Others argue that
+waiting for certainty means abandoning living communities.
+
+Erika makes the player deal with both groups as residents rather than symbols.
+The critical scene is not a debate that resolves the issue. It is a failed
+attempt to identify a harmless destination: every apparently empty area has
+history, ecology, travellers, or people beyond the faction's measurements.
+
+The player learns that a transfer exchanges occupied volume rather than adding
+new land. A rescue cannot be separated from whatever leaves the destination.
+The faction still claims that careful targeting can reduce the harm.
+
+After `gym4_cleared`, Erika sends the player south because unusual equipment
+and concealed movement have been reported around the Glacier Foot Fields and
+Marsh Country.
+
+**Knowledge state after the gym**
+
+- **Knows:** every transfer is an exchange; faction members disagree about
+  continuing; some are actively trying to reduce harm.
+- **Believes:** Pallet was moved as part of the same programme.
+- **Suspects:** the faction cannot measure every life at a destination.
+- **Does not know:** why exchanges are becoming less stable or what powers them.
+
+# Act III — The cost of repetition
+
+## Settlement 6: `gym5_town` — Koga at Glacier Foot Fields
+
+**Ground truth**
+
+- Centre: (4646, 118, 2446), in `glacier_foot_fields` /
+  `marsh_country`.
+- Route from Erika: 1,027 blocks south through forest.
+- `glacial_tear` and `marshy_marsh` are each 311 blocks away;
+  `major_river` is 507 blocks away.
+- Defeating Koga sets `gym5_cleared`.
+
+**Required sequence**
+
+Koga has tracked repeated faction movements through the wet ground and fields.
+The evidence is cumulative rather than spectacular: abandoned anchors,
+increasingly inaccurate destination marks, frightened Pokémon, and exchange
+effects that persist after the equipment is gone.
+
+The critical discovery is that each forced use makes the next transfer less
+stable. The faction's early operations could exchange bounded places. Current
+operations distort larger areas and leave effects far from the target.
+
+The player also finds the first reliable indication that the power is mediated
+through a living Pokémon. The name Hoopa need not be delivered as a speech; it
+can emerge from a recovered symbol, device label, or brief faction reaction.
+The essential fact is that the phenomenon is being forced through an unwilling,
+destabilised being.
+
+Koga's gym battle follows the investigation. After `gym5_cleared`, he sends
+the player east to Sabrina's central town, where observations from the glacier,
+river, and lake can be compared.
+
+**Knowledge state after the gym**
+
+- **Knows:** repeated forced exchanges are destabilising; a living Pokémon,
+  Hoopa, is being used.
+- **Believes:** even a technically successful rescue now makes later disasters
+  more likely.
+- **Suspects:** the Rift is accumulated damage rather than a natural landmark.
+- **Does not know:** the faction's next target or whether Hoopa can survive
+  another large exchange.
+
+## Settlement 7: `gym6_town` — Sabrina at Tilpey North Shore
+
+**Ground truth**
+
+- Centre: (6196, 95, 3398), in `tilpey_north_shore` /
+  `tilpey_lakeland`.
+- Route from Koga: 1,946 blocks along the north side of the Glacial Tear's
+  mouth.
+- `marsh_to_tilpey` is 252 blocks away; `lake_tilpey` 256 blocks away;
+  `glacial_tear` 609 blocks away.
+- Defeating Sabrina sets `gym6_cleared`.
+
+**Required sequence**
+
+Sabrina's town is where separate observations become one pattern. Water levels,
+glacier disturbances, memory gaps, Pokémon behaviour, and faction signal
+records all peak around the same forced exchanges. Sabrina can perceive Hoopa's
+distress, but she does not translate its experience into a lore lecture. The
+player receives fragments: fear before activation, pain during steering, and
+confusion afterward.
+
+A faction representative makes the strongest moral case here. One of their
+largest remaining communities will not survive without relocation. They accept
+that the method harms this world, but argue that refusing to act is also a
+choice that kills people.
+
+The player is not asked to declare the faction evil. The immediate conflict is
+whether another forced use is acceptable when neither side has a harmless
+answer.
+
+Sabrina's battle tests resolve before the first real geographic barrier. After
+`gym6_cleared`, the player can proceed south toward the Craters, crossing the
+major river and Lake Tilpey's outflow gorge at about (6632, 3904).
+
+**Knowledge state after the gym**
+
+- **Knows:** Hoopa is being compelled; the Rift and other instability track
+  repeated use; a large refugee community is in immediate danger.
+- **Believes:** another mass transfer may permanently break Hoopa or widen the
+  Rift.
+- **Suspects:** the faction is preparing that transfer at a major energy source.
+- **Does not know:** which destination they have selected or whether they will
+  accept a refusal.
+
+# Act IV — The line that cannot be defended
+
+## Settlement 8: `gym7_town` — Blaine at the Craters
+
+**Ground truth**
+
+- Centre: (6074, 108, 4995), in `crater_rim_north_west` /
+  `the_craters`.
+- Route from Sabrina: 2,021 blocks by the intended gorge crossing.
+- Avoiding river and lake water would require a 9,496-block detour.
+- `craters` begins 27 blocks from town; `lake_tilpey` is 423 blocks away.
+- Defeating Blaine sets `gym7_cleared`.
+
+**Required sequence**
+
+The faction is using the Craters as the energy source for its next mass
+exchange. This is not itself the moral break; using available power to save
+people remains understandable.
+
+The line is crossed when the player and Blaine establish that the chosen
+destination is occupied and the faction leadership proceeds anyway. Their
+measurements predict displacement. They no longer claim the harm is accidental
+or avoidable. They choose their own community over the people already there.
+
+A faction member who has opposed that decision helps expose the destination
+data. Refugee families remain nearby, making the cost of stopping the operation
+visible. The player prevents the crater activation, but that victory does not
+solve the refugees' emergency.
+
+Blaine does not turn the gym into a reward ceremony. The battle confirms that
+the player can survive the southern route and act under catastrophic pressure.
+After `gym7_cleared`, evidence points west along the southern coast: the
+faction is withdrawing toward the Rift's southern approach.
+
+**Knowledge state after the gym**
+
+- **Knows:** faction leadership knowingly selected an occupied destination;
+  another forced use would endanger Hoopa and this world.
+- **Believes:** the crater operation was preparation, not the faction's last
+  option.
+- **Suspects:** the Rift can be used directly for a final attempt.
+- **Does not know:** whether the faction's dissenters can prevent it or what
+  stopping all transfers means for the refugees.
+
+This is the moment the faction's chosen method stops being defensible. Their
+people do not stop being worth saving.
+
+## Settlement 9: `gym8_town` — Giovanni on South Strand
+
+**Ground truth**
+
+- Centre: (3647, 112, 6497), in `south_strand` /
+  `southern_coast`.
+- Route from Blaine: 3,055 blocks west, with no water crossing.
+- `arrow_lake_south_east_branch` is 358 blocks away;
+  `arrow_lake_south` 680 blocks away; `rift` 1,122 blocks away.
+- Defeating Giovanni sets `gym8_cleared`.
+
+**Required sequence**
+
+Giovanni has kept the final gym closed while defending the southern settlements
+and tracking movement toward the Rift. He is a native leader whose severity
+comes from watching communities disappear, not a secret version of the
+faction's commander.
+
+The faction's internal break becomes public here. One group remains committed
+to a final mass transfer through the Rift. Another refuses to trade one
+population for another and offers the player the information needed to reach
+the operation. Neither group has a way to save everyone.
+
+Giovanni's challenge is the final regional test. It asks whether the player can
+take responsibility for a decision whose cost cannot be hidden behind good
+intentions. Defeating him sets `gym8_cleared` and opens the League route along
+the Rift.
+
+The critical path does not require `tableland_stop`, `rift_rim_stop`, or
+`rift_dig_camp`. Those places may support travel or deepen the history, but
+the route from Giovanni to the League must remain traversable without them.
+
+**Knowledge state after the gym**
+
+- **Knows:** the final forced exchange will be attempted through the Rift;
+  faction dissenters will help stop it; the refugees still face collapse.
+- **Believes:** ending forced use is the only way to prevent a larger chain of
+  exchanges.
+- **Suspects:** Hoopa may be able to stabilise if released rather than
+  controlled.
+- **Does not know:** whether existing exchanges can ever be reversed safely.
+
+# Act V — The Rift and the League
+
+## Settlement 10: `league` — the Rift head
+
+**Ground truth**
+
+- Centre: (3297, 118, 2603), in `foothill_woods` / `viltri_woods`.
+- The League plateau is 178 blocks from `rift`, 447 blocks from
+  `glacial_tear`, and 571 blocks from `major_river`.
+- Victory Road follows the Rift's south-west arm, fork, trunk, and apex.
+- The route length is unresolved in data: 4,038 or 4,953 blocks.
+- The League is in the Overworld. End access is post-game.
+- Defeating the champion sets `champion_cleared`.
+
+**Required sequence**
+
+Victory Road is the Rift itself. The terrain supplies the final exposition:
+straight scars, displaced material, portal-like effects, and a path that grows
+less stable toward the head. Required information is conveyed by what the
+player crosses and by brief encounters with both faction loyalists and
+dissenters. No optional settlement is needed.
+
+Near the Rift head, before the League challenge, the faction begins its final
+attempt. Their leader's position remains coherent: stopping means condemning
+their remaining community. The player's position is equally clear: proceeding
+means knowingly displacing another population, further breaking Hoopa, and
+risking uncontrolled exchanges across multiple worlds.
+
+The final story confrontation ends the forced activation and releases Hoopa
+from the steering mechanism. Exact battle, puzzle, multiplayer state, and
+completion mechanics are not yet supported by a progression flag. Until the
+progression schema gains an approved slot, this sequence must be treated as part
+of the `gym8_cleared` League chapter rather than encoded as a separate quest
+system.
+
+The world does not snap back. Pallet remains here. The missing native
+settlement remains missing. Refugees already transferred remain people who need
+homes. Faction members who defected must live with both the rescues and the
+displacements they enabled. Hoopa's condition improves enough to stop the
+immediate collapse, but safe reversal is not promised.
+
+The League then serves as the region's public resolution. The player has
+crossed every part of the crisis and is tested by the established trainers of
+this world. The champion battle sets `champion_cleared`.
+
+**Knowledge state after the champion**
+
+- **Knows:** repeated forced use destabilised Hoopa and caused escalating
+  exchanges; the faction knowingly accepted displacement to save its own;
+  stopping forced use prevented a wider collapse.
+- **Believes:** repair must begin with consent, evidence, and care for people
+  stranded on every side.
+- **Suspects:** some exchanges may eventually be reversible, but a blind
+  reversal would repeat the same crime.
+- **Open question:** where Pallet's displaced native settlement went and
+  whether contact can be made without another forced swap.
+
+## Ending image
+
+Pallet is still geographically wrong, but no longer alone. News, travellers,
+and Pokémon now move between it and the native settlements. Oak's original map
+remains incorrect. A new map begins beside it.
+
+The emotional resolution is belonging without pretending the loss was harmless.
+
+# Optional discovery relationship
+
+Optional content can move a player from uncertainty to deeper understanding
+earlier, but the required settlement immediately afterward must still provide
+the minimum fact needed by players who skipped it.
+
+| Optional place | Real centre | Contribution | Must never gate |
+| --- | --- | --- | --- |
+| `relic_island` | (1092, 35, 5532) | Shows a Pallet fragment separated from the main exchange | Leaving Pallet or reaching Brock |
+| `viltri_light` | (550, 68, 4518) | Shows an old estuary whose river no longer arrives | Brock or Misty |
+| `the_scar` | (2110, 200, 950) | Shows the summit footprint of the displaced city | Surge or Erika |
+| `displaced_city` | (2969, 122, 1710) | Gives the deepest human account of a complete town exchange | Any gym or the League |
+| `tea_town` | (2654, 112, 3605) | Shows how ordinary culture continues beside impossible geography | Victory Road |
+| `rift_dig_camp` | (3106, 92, 3314) | Documents older anomalous material in the Rift's west spur | The League |
+| `mining_town` | (6633, 137, 5716) | Connects crater geology, fossil layers, and deep-world history | Blaine or Giovanni |
+| `sunset_west` | (1716, 115, 7298) | Post-game port and stories from the outer sea | Main story |
+| `northlight` | (7265, 116, 1556) | Post-game research on weather and distant instability | Main story |
+| `jungle_ruins` | (5160, 127, 7463) | Evidence that world anomalies predate the current faction | Main story |
+
+`merian_hut`, `gorge_hamlet`, `tableland_stop`, and
+`rift_rim_stop` are optional rest stops. Their services may make long routes
+safer, but refusing or missing them cannot block progression.
+
+# Reveal ladder
+
+| Stage | New required fact |
+| --- | --- |
+| Pallet | The town is intact in the wrong geography |
+| Brock | Pallet replaced a native settlement |
+| Misty | The faction rescues people from collapsing worlds |
+| Surge | Exchanges can be triggered and steered |
+| Erika | Every rescue exchange displaces something at the destination |
+| Koga | Repeated use is destabilising Hoopa and the world |
+| Sabrina | Hoopa is being compelled; a mass rescue is imminent |
+| Blaine | Leadership knowingly chooses an occupied destination |
+| Giovanni | The final attempt will use the Rift |
+| League | Forced use ends; consequences remain and repair becomes post-game work |
+
+# Review questions
+
+1. Should the faction remain unnamed until `docs/story/FACTION.md`, or should
+   the arc establish its public name now?
+2. Is the final faction confrontation intended before the League battles, as
+   proposed here, or after the champion?
+3. May the story add approved progression flags for the crater operation and
+   Rift resolution, or must both remain implicit in `gym7_cleared` and
+   `gym8_cleared`?
+4. Which Victory Road length is authoritative: 4,038 or 4,953 blocks?
+5. Are the eight civic roles proposed for the gym leaders acceptable before
+   dialogue work begins?
+
