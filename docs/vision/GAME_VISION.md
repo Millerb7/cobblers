@@ -8,15 +8,35 @@ Imperium**. The Minecraft reference point is the **Cobbleverse** modpack, which 
 of the players particularly enjoys and which we keep as our base experience wherever
 it remains compatible with our target Cobblemon version.
 
-This is **not** a mandatory Nuzlocke. Difficulty comes from the fights, the level
-cap, and the need to build answers, not from permadeath rules.
+Difficulty comes from the fights, the level cap, and the need to build answers.
+
+## An adventure map, not a sandbox
+
+*Recorded 2026-09-13.* Cobblers is an **adventure map** with **speedrun viability**
+and **nuzlocke viability** as explicit goals. It is not an open-world sandbox.
+**Route structure matters more than free exploration:**
+- there is a critical path;
+- the map tells players where it goes;
+- everything off it is optional.
+
+What the two goals require is under pillar 8.
+
+**Navigation is waystone-only.**
+- Each gym town has a waystone, and defeating that town's gym unlocks it.
+- The unlock is the same progression flag as the badge.
+- Map markers show where the towns are.
+- No compass, map item or locator answers "where do I go next". Two systems answering it is
+  one too many.
+
+The design is in `docs/world-building/NAVIGATION.md`.
 
 ## What we are building
 
 - A mostly **linear region progression**: routes, towns, gyms, a villain arc, and a
   final challenge, opened chapter by chapter.
-- **Routes as explorable biomes/areas**, not corridors. A route is a place with
-  side paths, hidden items, caves, ruins, and optional encounters.
+- **Routes as places on a readable path.** A route is a place with side paths, hidden
+  items, caves, ruins, and optional encounters. Its way forward is always clear, and
+  nothing on the critical path hides behind a side path.
 - **Curated Pokémon availability.** Every area has an authored encounter table of
   roughly 10 to 20 deliberate species. The generic Cobblemon "everything spawns
   everywhere" feel is the thing we are replacing.
@@ -31,8 +51,8 @@ cap, and the need to build answers, not from permadeath rules.
 - **Puzzle dungeons** with persistent state and sealed final chambers.
 - **Villain hideouts** with multi-trainer gauntlets and restrictions on healing,
   PC access, and retreat.
-- **Multiplayer exploration** that uses Minecraft's strengths (shared world,
-  building, cooperative exploration) instead of literally recreating a ROM.
+- **Multiplayer adventure** that uses Minecraft's strengths (shared world,
+  cooperative play) instead of literally recreating a ROM.
 
 ## The core loop
 
@@ -89,12 +109,15 @@ buried in random spawn weights; they are placed behind authored content:
 - A fossil obtained from an explorable archaeological dungeon.
 - A titan-class legendary locked behind a substantial ancient puzzle dungeon.
 
-### 4. Exploration that matters
+### 4. Exploration that pays, never exploration that is required
 
 Side areas hold real rewards: encounter species, held items, TMs, evolution items,
 optional trainers, lore, and shortcuts. Exploring should change what teams are
-possible. Handcrafted terrain is the medium; world-critical blocks and decoration
-are therefore chosen early and rarely changed.
+possible.
+
+The critical path never depends on finding a side area. A player who ignores every
+side area can still finish, although it is harder. Handcrafted terrain is the medium,
+so world-critical blocks and decoration are chosen early and rarely changed.
 
 ### 5. Dungeons and puzzles
 
@@ -128,18 +151,40 @@ player is ahead, when a player joins late, and when a player leaves mid-dungeon.
 Progression is player-specific by default; world unlocks are shared where that
 makes the game better.
 
+### 8. Speedrun and nuzlocke viability
+
+These are design goals, not modes the map forces on anyone.
+
+**A fast, clean run is possible:**
+- The critical path is deterministic. No mandatory item, species or answer hides
+  behind a rare spawn roll.
+- Nothing on the critical path makes a player wait: no time-of-day or weather gate, no
+  cooldown, no respawn timer.
+- Every "where next" has a cue, and nothing forces backtracking that a waystone could
+  not cover.
+- A run has a defined start, chosen by talking to Oak in the starting town, and a
+  defined end.
+
+**A self-imposed nuzlocke is fair:**
+- Areas are named and have readable boundaries, so "first encounter per area" can be
+  applied.
+- Every area offers enough species for that encounter.
+- No mandatory fight arrives without a chance to heal and change the team first.
+- No unavoidable encounter can wipe a team that followed the level cap.
+- A refusal (for example, over the level cap) always says why.
+
 ## Difficulty, stated plainly
 
 - Hard, fair, and readable. Bosses telegraph their strategy; scouting is possible.
 - Level caps per chapter. Overleveling is prevented, not merely discouraged.
-- No mandatory Nuzlocke, no permadeath. Optional self-imposed rules are welcome.
 - Healing and PC restrictions apply inside gauntlets and some dungeons only.
 
 ## What this is not
 
 - Not a survival-sandbox Cobblemon server with a few gyms attached.
-- Not a literal ROM recreation. Minecraft exploration, building, and co-op are
-  features, not obstacles.
+- Not an open-world sandbox. Free exploration is a reward, not the structure.
+- Not a literal ROM recreation. Minecraft terrain and co-op are features, not
+  obstacles.
 - Not a giant custom mod. Existing Cobblemon, Cobbleverse, datapack, and scripting
   capabilities are used first; custom code is a last resort proven by experiment.
 

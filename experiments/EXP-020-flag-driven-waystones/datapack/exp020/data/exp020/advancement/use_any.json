@@ -1,0 +1,1 @@
+{"criteria":{"used":{"trigger":"minecraft:any_block_use","conditions":{"location":[{"condition":"minecraft:location_check","predicate":{"block":{"blocks":"#waystones:waystones"}}}]}}},"rewards":{"function":"exp020:ok"}}

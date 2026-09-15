@@ -1,0 +1,16 @@
+[
+ {"world": "ver-cobblemon-normal-a", "layers": [
+  {"name": "fire_stone_ore_stone", "block": "cobblemon:fire_stone_ore", "host": "minecraft:stone", "ore": 1, "hostCount": 5, "frequency": 1, "scale": 20, "min": 0, "max": 319},
+  {"name": "fire_stone_ore_deepslate", "block": "cobblemon:deepslate_fire_stone_ore", "host": "minecraft:deepslate", "ore": 1, "hostCount": 20, "frequency": 1, "scale": 20, "min": -64, "max": -1}]},
+ {"world": "ver-cobblemon-normal-b", "layers": [
+  {"name": "fire_stone_ore_stone", "block": "cobblemon:fire_stone_ore", "host": "minecraft:stone", "ore": 1, "hostCount": 5, "frequency": 1, "scale": 20, "min": 0, "max": 319},
+  {"name": "fire_stone_ore_deepslate", "block": "cobblemon:deepslate_fire_stone_ore", "host": "minecraft:deepslate", "ore": 1, "hostCount": 20, "frequency": 1, "scale": 20, "min": -64, "max": -1}]},
+ {"world": "ver-cobblemon-rare", "layers": [
+  {"name": "fire_stone_ore_stone_rare", "block": "cobblemon:fire_stone_ore", "host": "minecraft:stone", "ore": 1, "hostCount": 11, "frequency": 1, "scale": 20, "min": 0, "max": 319},
+  {"name": "fire_stone_ore_deepslate_rare", "block": "cobblemon:deepslate_fire_stone_ore", "host": "minecraft:deepslate", "ore": 1, "hostCount": 41, "frequency": 1, "scale": 20, "min": -64, "max": -1}]},
+ {"world": "ver-galar", "layers": [
+  {"name": "deepslate_galar", "block": "legendarymonuments:deepslate_galar_particle_ore", "frequency": 1, "scale": 100, "min": -24, "max": -1, "value": 10},
+  {"name": "galar_stone", "block": "legendarymonuments:galar_particle_ore", "host": "minecraft:stone", "ore": 1, "hostCount": 4, "frequency": 1, "scale": 100, "min": 0, "max": 24}]},
+ {"world": "ver-steel", "layers": [
+  {"name": "steel", "block": "lumymon:steel_ore", "host": "minecraft:deepslate", "ore": 1, "hostCount": 18, "frequency": 1, "scale": 10, "min": -50, "max": -1}]}
+]

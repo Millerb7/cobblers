@@ -7,6 +7,10 @@ router go around a ridge rather than over it.
 
 Produces a candidate polyline. A human decides whether that is the road.
 
+The same module holds the descent searches used for rivers (descend_min_cut,
+descend_route): paths whose bed never rises, and the cut needed to force one.
+tools/grade_rivers.py runs them.
+
   python tools/route_path.py --world tests/fixtures/terrain/world.json \
       --from 60,130 --to 170,130 --slope-weight 12
 """
@@ -16,6 +20,7 @@ import argparse
 import heapq
 import json
 import math
+from array import array
 from pathlib import Path
 
 import numpy as np
@@ -84,6 +89,191 @@ def route(heights, passable, start, goal, slope_weight):
     path.append((sx, sz))
     path.reverse()
     return path, best[goal_i]
+
+
+# ------------------------------------------------------- monotonic descent
+#
+# A river bed may never rise in the direction of flow. A path of cells carries a
+# surface profile P: at each cell P is the lowest ground met so far, because the
+# bed can be cut down to P but never raised. Where the ground stands above P the
+# path needs a cut of (ground - P) to keep descending. Water bodies on the path
+# are flat at their level: a river may drop into one (level <= P) but can never
+# be cut into one that stands above it.
+#
+# descend_min_cut finds the smallest worst cut any descending path needs.
+# descend_route then finds the cheapest path that stays within a cut allowance.
+# Both work on a grid of cell heights; the caller picks the resolution.
+
+
+def _descent_step(g, wl, ni, P, water_tol):
+    """(cut, new P) for stepping into cell ni from surface P, or None if blocked."""
+    lv = wl[ni] if wl is not None else None
+    if lv is not None and lv == lv:              # a water body: flat at its level
+        if lv > P + water_tol:
+            return None
+        return 0.0, (lv if lv < P else P)
+    gv = g[ni]
+    if gv > P:
+        return gv - P, P
+    return 0.0, gv
+
+
+def _trace(lab_cell, lab_P, lab_parent, lid, w):
+    cells, prof = [], []
+    while lid >= 0:
+        z, x = divmod(lab_cell[lid], w)
+        cells.append((x, z))
+        prof.append(lab_P[lid])
+        lid = lab_parent[lid]
+    cells.reverse()
+    prof.reverse()
+    return cells, prof
+
+
+def descend_min_cut(ground, sources, source_level, goal, water=None, goal_cut=None,
+                    cap=64.0, water_tol=0.5, cell_size=1.0):
+    """Least worst-cut descending path from any source cell to any goal cell.
+
+    Exact label-setting search on (worst cut so far, surface P): labels leave the
+    queue in order of worst cut, so a cell's earlier label always has a smaller or
+    equal cut, and a later label survives only if it keeps a higher surface.
+
+    ground      2-D array of bed heights per cell
+    sources     iterable of (x, z) cells, all starting at surface source_level
+    goal        2-D bool mask; reaching any goal cell ends the search
+    water       2-D array: level of a water body, NaN where there is none
+    goal_cut    2-D array: cut still needed downstream of a goal cell (NaN = none)
+    cap         cuts deeper than this are never taken
+
+    Returns None when no path exists within cap, otherwise a dict with the worst
+    cut, the path cells, the surface profile and the index of the worst cut.
+    """
+    h, w = ground.shape
+    g = ground.astype(np.float64).ravel().tolist()
+    wl = water.astype(np.float64).ravel().tolist() if water is not None else None
+    gl = goal.ravel().tolist()
+    gc = goal_cut.astype(np.float64).ravel().tolist() if goal_cut is not None else None
+    settled = [-math.inf] * (h * w)
+    lab_cell, lab_P, lab_parent = array("l"), array("d"), array("l")
+    pq = []
+    for x, z in sources:
+        i = z * w + x
+        c0 = 0.0
+        if gl[i] and gc is not None and gc[i] == gc[i] and gc[i] > 0:
+            if gc[i] > cap:
+                continue
+            c0 = gc[i]
+        lab_cell.append(i)
+        lab_P.append(float(source_level))
+        lab_parent.append(-1)
+        heapq.heappush(pq, (c0, -float(source_level), 0.0, len(lab_cell) - 1))
+    diag = math.sqrt(2.0) * cell_size
+    while pq:
+        c, negP, dist, lid = heapq.heappop(pq)
+        cur = lab_cell[lid]
+        P = -negP
+        if P <= settled[cur]:
+            continue
+        settled[cur] = P
+        if gl[cur]:
+            cells, prof = _trace(lab_cell, lab_P, lab_parent, lid, w)
+            return {"cut": c, "cells": cells, "profile": prof,
+                    "length": dist, "labels": len(lab_cell)}
+        cz, cx = divmod(cur, w)
+        for dx, dz in NEIGHBOURS:
+            nx, nz = cx + dx, cz + dz
+            if nx < 0 or nz < 0 or nx >= w or nz >= h:
+                continue
+            ni = nz * w + nx
+            step = _descent_step(g, wl, ni, P, water_tol)
+            if step is None:
+                continue
+            cut, nP = step
+            if cut > cap or nP <= settled[ni]:
+                continue
+            nc = c if c >= cut else cut
+            if gl[ni] and gc is not None:
+                extra = gc[ni]
+                if extra == extra and extra > nc:
+                    if extra > cap:
+                        continue
+                    nc = extra
+            lab_cell.append(ni)
+            lab_P.append(nP)
+            lab_parent.append(lid)
+            heapq.heappush(pq, (nc, -nP, dist + (diag if dx and dz else cell_size), len(lab_cell) - 1))
+    return None
+
+
+def descend_route(ground, sources, source_level, goal, max_cut, penalty=None, water=None,
+                  heuristic=None, cut_weight=1.0, water_tol=0.5, level_eps=0.5, cell_size=1.0):
+    """Cheapest descending path whose every cut stays within max_cut.
+
+    A* on cost. Each step costs its length times (1 + penalty of the cell entered +
+    cut_weight * cut there), so the router prefers low valley ground and shallow
+    cuts. A cell keeps a later, costlier label only if that label holds a surface
+    more than level_eps higher; that makes the search exact to level_eps blocks.
+
+    penalty     2-D array >= 0, extra cost per block of length (None = 0)
+    heuristic   2-D array, an underestimate of the remaining length (None = 0)
+    """
+    h, w = ground.shape
+    g = ground.astype(np.float64).ravel().tolist()
+    wl = water.astype(np.float64).ravel().tolist() if water is not None else None
+    gl = goal.ravel().tolist()
+    pen = penalty.astype(np.float64).ravel().tolist() if penalty is not None else None
+    hl = heuristic.astype(np.float64).ravel().tolist() if heuristic is not None else None
+    settled = [-math.inf] * (h * w)
+    lab_cell, lab_P, lab_parent = array("l"), array("d"), array("l")
+    pq = []
+    for x, z in sources:
+        i = z * w + x
+        lab_cell.append(i)
+        lab_P.append(float(source_level))
+        lab_parent.append(-1)
+        heapq.heappush(pq, (hl[i] if hl else 0.0, 0.0, len(lab_cell) - 1))
+    while pq:
+        _, cost, lid = heapq.heappop(pq)
+        cur = lab_cell[lid]
+        P = lab_P[lid]
+        if settled[cur] != -math.inf and P <= settled[cur] + level_eps:
+            continue
+        settled[cur] = max(settled[cur], P)
+        if gl[cur]:
+            cells, prof = _trace(lab_cell, lab_P, lab_parent, lid, w)
+            return {"cost": cost, "cells": cells, "profile": prof, "labels": len(lab_cell)}
+        cz, cx = divmod(cur, w)
+        for dx, dz in NEIGHBOURS:
+            nx, nz = cx + dx, cz + dz
+            if nx < 0 or nz < 0 or nx >= w or nz >= h:
+                continue
+            ni = nz * w + nx
+            step = _descent_step(g, wl, ni, P, water_tol)
+            if step is None:
+                continue
+            cut, nP = step
+            if cut > max_cut:
+                continue
+            if settled[ni] != -math.inf and nP <= settled[ni] + level_eps:
+                continue
+            length = cell_size * (math.sqrt(2.0) if dx and dz else 1.0)
+            nc = cost + length * (1.0 + (pen[ni] if pen else 0.0) + cut_weight * cut)
+            lab_cell.append(ni)
+            lab_P.append(nP)
+            lab_parent.append(lid)
+            heapq.heappush(pq, (nc + (hl[ni] if hl else 0.0), nc, len(lab_cell) - 1))
+    return None
+
+
+def worst_cut(ground_profile):
+    """Along an ordered bed profile, the deepest cut a non-rising bed needs, and where."""
+    run, worst, at = math.inf, 0.0, None
+    for i, y in enumerate(ground_profile):
+        if y < run:
+            run = y
+        elif y - run > worst:
+            worst, at = y - run, i
+    return worst, at
 
 
 def simplify(points, tolerance=0.6):

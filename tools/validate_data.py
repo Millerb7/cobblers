@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """Validate the authored campaign data in data/.
 
-Standalone CLI, standard library only. Designed to be useful before any
-terrain exists: checks that cannot run without a verified heightmap are
-reported as SKIPPED with a reason, never silently passed.
+Standalone CLI. The structural checks use the standard library only; the
+terrain checks (cell-terrain recomputation, spatial) load the heightmap
+through tools/terrain.py and need numpy and Pillow. Checks that cannot run
+without a verified heightmap are reported as SKIPPED with a reason, never
+silently passed.
 
 Exit codes: 0 = no errors, 1 = at least one ERROR, 2 = usage/internal failure.
 """
@@ -12,6 +14,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -135,8 +138,15 @@ SCHEMAS = {
     "landmarks.json": (
         "cobblers.landmarks/1",
         "landmarks",
-        ["id", "name", "kind", "anchor"],
-        {"kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass"}},
+        ["id", "name", "kind", "anchor", "status"],
+        {
+            "kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass",
+                     "glacier", "moraine", "river", "basin", "marsh", "estuary", "ravine"},
+            # built: in the terrain as intended; partial: present but under-delivered;
+            # planned: a spec only. Nothing drops silently when terrain falls short.
+            "status": {"built", "partial", "planned"},
+            "water": {"allowed", "never"},
+        },
     ),
     "events.json": (
         "cobblers.events/1",
@@ -184,6 +194,14 @@ SCHEMAS = {
         {},
     ),
     "progression.json": ("cobblers.progression/1", None, [], {}),
+    "rivers.json": ("cobblers.rivers/1", "courses", ["id", "source", "valid", "verdict"], {}),
+    "towns.json": (
+        "cobblers.towns/1",
+        "towns",
+        ["id", "role", "tier", "status", "centre", "footprint", "waystone"],
+        {"role": {"hometown", "gym_town", "league", "major_town", "rest_stop", "outpost"},
+         "tier": {"critical", "major", "rest_stop", "outpost"}, "status": {"proposed", "accepted", "built"}},
+    ),
     "routes.json": ("cobblers.routes/1", "routes", ["id", "from", "to"], {}),
 }
 
@@ -642,27 +660,153 @@ def check_progression(ctx: Context):
                 claimed[cell] = ch.get("id")
 
 
+def load_terrain(ctx: Context):
+    """Heights, world config and the landmark no-water mask, loaded once.
+
+    Returns None (and sets ctx.terrain_reason) when the analysis modules or the
+    heightmap cannot be loaded.
+    """
+    if getattr(ctx, "terrain_cache", None) is not None:
+        return ctx.terrain_cache
+    if not ctx.terrain_available:
+        return None
+    tools = str(Path(__file__).resolve().parent)
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    try:
+        import terrain as T
+        import landmarks as LM
+        import cell_stats as CS
+    except ImportError as exc:
+        ctx.terrain_reason = "analysis modules unavailable (%s)" % exc
+        return None
+    try:
+        heights, world = T.load(ctx.data_dir / "world.json", ctx.source_root)
+    except T.TerrainUnavailable as exc:
+        ctx.terrain_reason = str(exc)
+        return None
+    no_water = None
+    lm_path = ctx.data_dir / "landmarks.json"
+    landmarks = None
+    if lm_path.is_file():
+        landmarks = LM.load(lm_path)
+        no_water = LM.no_water_mask(landmarks, heights.shape)
+    ctx.terrain_cache = {"heights": heights, "world": world, "no_water": no_water,
+                         "landmarks": landmarks, "T": T, "CS": CS}
+    return ctx.terrain_cache
+
+
+def _points(obj):
+    """(label, x, z) for a landmark's anchor and named anchors."""
+    out = []
+    a = obj.get("anchor")
+    if isinstance(a, dict) and "x" in a and "z" in a:
+        out.append(("anchor", a["x"], a["z"]))
+    for name, p in (obj.get("anchors") or {}).items():
+        if isinstance(p, dict) and "x" in p and "z" in p:
+            out.append(("anchors." + name, p["x"], p["z"]))
+    return out
+
+
 def check_spatial(ctx: Context):
     rep = ctx.report
     if not ctx.terrain_available:
         rep.skip("spatial",
                  "terrain checks not run (%s). Anchors are NOT confirmed in bounds, "
                  "on land, above sea level, or non-overlapping." % ctx.terrain_reason)
-        rep.skip("cell-terrain",
-                 "cell terrain statistics not recomputed (%s)" % ctx.terrain_reason)
         return
-
     world = ctx.doc("world.json") or {}
     grid = world.get("grid") or {}
-    ox, oz = grid.get("origin_x"), grid.get("origin_z")
-    if ox is None or oz is None:
+    if grid.get("origin_x") is None or grid.get("origin_z") is None:
         rep.skip("spatial", "grid origin unset; coordinates cannot be placed on the map")
         return
-    # Reaching here requires a verified heightmap and a known origin. The
-    # measurement code lands in step 4 alongside the analysis toolkit.
-    rep.skip("spatial",
-             "terrain is available but the measurement backend arrives with the "
-             "step 4 analysis toolkit")
+    t = load_terrain(ctx)
+    if t is None:
+        rep.skip("spatial", "terrain could not be loaded (%s)" % ctx.terrain_reason)
+        return
+    heights, T = t["heights"], t["T"]
+    sea = T.sea_level(t["world"])
+    b = world.get("bounds") or {}
+    f_world = ctx.files.get("world.json")
+
+    def inside(x, z, box, tol=0):
+        return box["min_x"] - tol <= x <= box["max_x"] + tol and box["min_z"] - tol <= z <= box["max_z"] + tol
+
+    # world geometry: landmass inside the border, border inside the exported canvas
+    exp = world.get("export") or {}
+    border, canvas = exp.get("border"), exp.get("canvas")
+    if border and canvas:
+        for name, inner, outer in (("bounds", b, border), ("export.border", border, canvas)):
+            if not (inside(inner["min_x"], inner["min_z"], outer) and inside(inner["max_x"], inner["max_z"], outer)):
+                rep.error("spatial", "%s is not inside %s" % (name, "export.border" if outer is border else "export.canvas"),
+                          file=f_world.rel if f_world else None)
+        size = border.get("size")
+        if size is not None and (border["max_x"] - border["min_x"] + 1 != size or border["max_z"] - border["min_z"] + 1 != size):
+            rep.error("spatial", "export.border extent does not match its size %s" % size,
+                      file=f_world.rel if f_world else None)
+        centre = border.get("centre")
+        if centre is not None and (border["min_x"] + border["max_x"] + 1) / 2 != centre:
+            rep.error("spatial", "export.border is not centred on %s" % centre,
+                      file=f_world.rel if f_world else None)
+
+    # landmark anchors: in bounds, distinct, and their ground height recorded
+    checked, low, high, seen = 0, None, None, {}
+    f_lm, lm_recs = ctx.records("landmarks.json")
+    for rec in lm_recs:
+        for label, x, z in _points(rec):
+            checked += 1
+            where = "%s.%s" % (rec.get("id"), label)
+            if not inside(x, z, b):
+                rep.error("spatial", "%s (%s, %s) is outside the landmass bounds" % (where, x, z),
+                          file=f_lm.rel, line=f_lm.line_of_id(rec.get("id")), where=rec.get("id"))
+                continue
+            y = float(heights[z - int(grid["origin_z"]), x - int(grid["origin_x"])])
+            low = y if low is None else min(low, y)
+            high = y if high is None else max(high, y)
+            # a landmark's anchor may coincide with one of its own named anchors, never with another landmark's
+            other = seen.get((x, z))
+            if other and other[0] != rec.get("id"):
+                rep.error("spatial", "%s shares its position with %s" % (where, other[1]),
+                          file=f_lm.rel, line=f_lm.line_of_id(rec.get("id")), where=rec.get("id"))
+            seen.setdefault((x, z), (rec.get("id"), where))
+            if rec.get("water") == "never" and label == "anchor" and y >= sea and rec.get("kind") == "rift":
+                rep.warn("spatial", "%s is a no-water hollow but its anchor ground y%.1f is above sea level" % (where, y),
+                         file=f_lm.rel, line=f_lm.line_of_id(rec.get("id")), where=rec.get("id"))
+
+    # region polygons inside the landmass (within polygon tolerance), marine geometry inside the border
+    polys = 0
+    reg_path = ctx.data_dir / "regions.json"
+    if reg_path.is_file():
+        reg = json.loads(reg_path.read_text(encoding="utf-8"))
+        tol = int(((reg.get("geometry") or {}).get("polygon_tolerance_blocks")) or 0)
+        for r in reg.get("regions") or []:
+            for ring in r.get("polygons") or []:
+                polys += 1
+                bad = [p for p in ring if not inside(p[0], p[1], b, tol)]
+                if bad:
+                    rep.error("spatial", 'region "%s" polygon has %d vertices outside the landmass bounds, first %s'
+                              % (r.get("id"), len(bad), bad[0]), file="data/regions.json", where=r.get("id"))
+        for r in reg.get("marine_regions") or []:
+            box = border or b
+            for ring in r.get("polygons") or []:
+                polys += 1
+                bad = [p for p in ring if not inside(p[0], p[1], box, tol)]
+                if bad:
+                    rep.error("spatial", 'marine region "%s" polygon has %d vertices outside the border, first %s'
+                              % (r.get("id"), len(bad), bad[0]), file="data/regions.json", where=r.get("id"))
+            geo = r.get("geometry") or {}
+            if geo.get("kind") == "ring" and border:
+                o = geo.get("outer") or []
+                if len(o) == 4 and not (inside(o[0], o[1], border) and inside(o[2], o[3], border)):
+                    rep.error("spatial", 'marine region "%s" ring extends past the border' % r.get("id"),
+                              file="data/regions.json", where=r.get("id"))
+    rep.info("spatial", "checked %d landmark anchors (ground y%s-y%s) and %d region polygons against bounds%s"
+             % (checked, "%.0f" % low if low is not None else "?", "%.0f" % high if high is not None else "?",
+                polys, " and the export border" if border else ""))
+
+
+CELL_TERRAIN_KEYS = ("min_y", "max_y", "mean_y", "land_fraction", "water_fraction", "void_fraction",
+                     "mean_slope", "max_slope")
 
 
 def check_cell_terrain_recorded(ctx: Context):
@@ -685,6 +829,185 @@ def check_cell_terrain_recorded(ctx: Context):
                       'cannot be traced to a heightmap' % rec.get("id"),
                       file=f.rel, line=line, where=rec.get("id"))
 
+    if not ctx.terrain_available:
+        rep.skip("cell-terrain", "cell terrain statistics not recomputed (%s)" % ctx.terrain_reason)
+        return
+    t = load_terrain(ctx)
+    if t is None:
+        rep.skip("cell-terrain", "cell terrain statistics not recomputed (%s)" % ctx.terrain_reason)
+        return
+    world = t["world"]
+    sha = (world.get("heightmap") or {}).get("sha256")
+    imp_digest = import_digest(world)
+    now, _ = t["CS"].measure(t["heights"], world, 8, t["no_water"])
+    by_id = {c["id"]: c["terrain"] for c in now}
+    recorded = {rec.get("id"): rec for rec in recs}
+    drift = 0
+    for cid in sorted(set(by_id) - set(recorded)):
+        rep.error("cell-terrain", 'grid cell "%s" is missing from cells.json' % cid, file=f.rel)
+    for cid, rec in recorded.items():
+        line = f.line_of_id(cid)
+        terrain = rec.get("terrain") or {}
+        if cid not in by_id:
+            rep.error("cell-terrain", 'cell "%s" is not in the grid' % cid, file=f.rel, line=line, where=cid)
+            continue
+        if terrain.get("computed_from_sha256") and terrain["computed_from_sha256"] != sha:
+            rep.error("cell-terrain", 'cell "%s" was computed from heightmap %s, not %s'
+                      % (cid, terrain["computed_from_sha256"][:12], (sha or "")[:12]), file=f.rel, line=line, where=cid)
+        if terrain.get("computed_from_import") and terrain["computed_from_import"] != imp_digest:
+            rep.error("cell-terrain", 'cell "%s" was computed with a different import mapping' % cid,
+                      file=f.rel, line=line, where=cid)
+        for key in CELL_TERRAIN_KEYS:
+            want, got = terrain.get(key), by_id[cid].get(key)
+            if want is None or got is None:
+                continue
+            tol = 0.0015 if key.endswith("fraction") else 0.02
+            if abs(float(want) - float(got)) > tol:
+                drift += 1
+                rep.error("cell-terrain", 'cell "%s" %s drifted: recorded %s, heightmap gives %s'
+                          % (cid, key, want, got), file=f.rel, line=line, where=cid)
+    rep.info("cell-terrain", "recomputed %d cells from heightmap %s at the current import mapping: %s"
+             % (len(by_id), (sha or "")[:12], "no drift" if not drift else "%d values drifted" % drift))
+
+
+def import_digest(world):
+    """Stable digest of the import mapping, so recorded statistics can be tied to it."""
+    imp = world.get("import") or {}
+    keys = ("input_units", "low_in", "high_in", "low_out", "high_out", "water_level", "clamp_low", "clamp_high")
+    text = json.dumps({k: imp.get(k) for k in keys}, sort_keys=True)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def check_rivers(ctx: Context):
+    """Graded river courses: traced to the current heightmap, and every graded bed descends."""
+    rep = ctx.report
+    f, courses = ctx.records("rivers.json")
+    if not f:
+        return
+    world = ctx.doc("world.json") or {}
+    hm = world.get("heightmap") or {}
+    imported = hm.get("sha256")
+    derived = hm.get("derived_from") or {}
+    sha = derived.get("sha256") or imported      # rivers are planned on the authored heightmap
+    sea = float((world.get("vertical") or {}).get("sea_level", 62))
+    if f.doc.get("computed_from_sha256") != sha:
+        rep.error("rivers", "rivers.json was computed from heightmap %s, not %s; rerun tools/grade_rivers.py plan"
+                  % ((f.doc.get("computed_from_sha256") or "")[:12], (sha or "")[:12]),
+                  file=f.rel, line=f.line_of_key("computed_from_sha256"))
+    if derived:
+        out_sha = ((f.doc.get("cut") or {}).get("output") or {}).get("sha256")
+        if out_sha != imported:
+            rep.error("rivers", "the imported heightmap %s is not the river cut recorded in rivers.json (%s); rerun "
+                      "tools/grade_rivers.py cut and update world.json" % ((imported or "")[:12], (out_sha or "")[:12]),
+                      file=f.rel, line=f.line_of_key("cut"))
+    for c in courses:
+        line = f.line_of_id(c.get("id"))
+        poly = c.get("graded_polyline")
+        if not c.get("valid"):
+            if poly:
+                rep.error("rivers", 'course "%s" is not valid but carries a graded polyline' % c.get("id"),
+                          file=f.rel, line=line, where=c.get("id"))
+            continue
+        if not poly or len(poly) < 2:
+            rep.error("rivers", 'valid course "%s" has no graded polyline' % c.get("id"),
+                      file=f.rel, line=line, where=c.get("id"))
+            continue
+        for (_, _, s0, f0), (_, _, s1, f1) in zip(poly, poly[1:]):
+            if s1 > s0 + 1e-6 or f1 > f0 + 1e-6:
+                rep.error("rivers", 'course "%s" rises from %.2f to %.2f' % (c.get("id"), f0, f1),
+                          file=f.rel, line=line, where=c.get("id"))
+                break
+        if min(p[2] for p in poly) < sea - 1e-6:
+            rep.error("rivers", 'course "%s" has a water surface below sea level' % c.get("id"),
+                      file=f.rel, line=line, where=c.get("id"))
+    cut = f.doc.get("cut")
+    if cut and (cut.get("from_heightmap") or {}).get("sha256") != sha:
+        rep.warn("rivers", "the cut heightmap %s was made from a different heightmap; rerun the cut"
+                 % (cut.get("output") or {}).get("path"), file=f.rel, line=f.line_of_key("cut"))
+
+
+CRITICAL_ROLES = {"hometown": 1, "gym_town": 8, "league": 1}
+OFF_PATH_RANGE = {"rest_stop": (100, 450), "major_town": (250, None), "outpost": (250, None)}
+SPACING = {"settlement": 600, "outpost": 300}
+
+
+def check_towns(ctx: Context):
+    """Settlements: unique ids; exactly ten on the critical path (hometown, eight gym towns, the League) with
+    unique orders; everything else off the path, ungated and named by no progression flag; footprints inside
+    the border and around their centre; spacing between places."""
+    rep = ctx.report
+    f, towns = ctx.records("towns.json")
+    if not f:
+        return
+    world = ctx.doc("world.json") or {}
+    border = (world.get("export") or {}).get("border") or {}
+    if not border:
+        rep.skip("towns", "world.json has no export.border; town footprints were not checked against the border",
+                 file=f.rel)
+    seen, orders, counts = set(), set(), {}
+    for t in towns:
+        tid = t.get("id")
+        line = f.line_of_id(tid)
+        if tid in seen:
+            rep.error("towns", 'duplicate town "%s"' % tid, file=f.rel, line=line, where=tid)
+        seen.add(tid)
+        role = t.get("role")
+        critical = role in CRITICAL_ROLES
+        counts[role] = counts.get(role, 0) + 1
+        if bool(t.get("critical_path")) != critical:
+            rep.error("towns", '"%s" (%s) has critical_path %s; only the hometown, gym towns and the League are on '
+                      "the critical path" % (tid, role, t.get("critical_path")), file=f.rel, line=line, where=tid)
+        if critical:
+            if t.get("order") is None or t.get("order") in orders:
+                rep.error("towns", 'critical town "%s" needs a unique order' % tid, file=f.rel, line=line, where=tid)
+            orders.add(t.get("order"))
+        else:
+            if t.get("order") is not None:
+                rep.error("towns", 'off-path "%s" must not have a route order' % tid, file=f.rel, line=line, where=tid)
+            if t.get("gates"):
+                rep.error("towns", 'off-path "%s" gates progression (%s)' % (tid, t.get("gates")),
+                          file=f.rel, line=line, where=tid)
+            lo, hi = OFF_PATH_RANGE.get(role, (250, None))
+            d = t.get("distance_from_critical_path_blocks")
+            if not isinstance(d, (int, float)) or isinstance(d, bool) or d < lo or (hi is not None and d > hi):
+                rep.error("towns", '"%s" (%s) is %s blocks from the critical path; expected %s'
+                          % (tid, role, d, "%d-%d" % (lo, hi) if hi else "at least %d" % lo),
+                          file=f.rel, line=line, where=tid)
+        fp, c = t.get("footprint") or {}, t.get("centre") or {}
+        try:
+            if not (fp["min_x"] <= c["x"] <= fp["max_x"] and fp["min_z"] <= c["z"] <= fp["max_z"]):
+                rep.error("towns", 'town "%s" centre lies outside its footprint' % tid, file=f.rel, line=line, where=tid)
+            if border and not (border["min_x"] <= fp["min_x"] and fp["max_x"] <= border["max_x"]
+                               and border["min_z"] <= fp["min_z"] and fp["max_z"] <= border["max_z"]):
+                rep.error("towns", 'town "%s" footprint crosses the world border' % tid, file=f.rel, line=line, where=tid)
+        except (KeyError, TypeError):
+            rep.error("towns", 'town "%s" needs centre x/z and footprint min/max x/z' % tid,
+                      file=f.rel, line=line, where=tid)
+    for role, n in CRITICAL_ROLES.items():
+        if counts.get(role, 0) != n:
+            rep.error("towns", "the critical path needs %d %s, found %d" % (n, role, counts.get(role, 0)), file=f.rel)
+    placed = [t for t in towns if isinstance(t.get("centre"), dict)
+              and all(isinstance(t["centre"].get(k), (int, float)) for k in ("x", "z"))]
+    for i, a in enumerate(placed):
+        for b in placed[i + 1:]:
+            dist = math.hypot(a["centre"]["x"] - b["centre"]["x"], a["centre"]["z"] - b["centre"]["z"])
+            need = SPACING["outpost"] if "outpost" in (a.get("role"), b.get("role")) else SPACING["settlement"]
+            if dist < need:
+                rep.error("towns", '"%s" and "%s" are %d blocks apart; at least %d' % (a.get("id"), b.get("id"), dist, need),
+                          file=f.rel, line=f.line_of_id(b.get("id")), where=b.get("id"))
+    prog = ctx.doc("progression.json") or {}
+    critical_ids = {t.get("id") for t in towns if t.get("role") in CRITICAL_ROLES}
+    for flag in prog.get("flags") or []:
+        if not isinstance(flag, dict):
+            continue
+        town = (flag.get("waystone") or {}).get("town") if isinstance(flag.get("waystone"), dict) else None
+        if town and town not in seen:
+            rep.error("towns", 'progression flag "%s" names town "%s", which is not in towns.json'
+                      % (flag.get("id"), town), file="data/progression.json", where=flag.get("id"))
+        elif town and town not in critical_ids:
+            rep.error("towns", 'progression flag "%s" names off-path "%s"; nothing off the path may be tied to '
+                      "progression" % (flag.get("id"), town), file="data/progression.json", where=flag.get("id"))
+
 
 CHECKS = [
     ("schema", check_schema),
@@ -692,6 +1015,8 @@ CHECKS = [
     ("integrity", check_integrity),
     ("referential", check_referential),
     ("progression", check_progression),
+    ("rivers", check_rivers),
+    ("towns", check_towns),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
 ]

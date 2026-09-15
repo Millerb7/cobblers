@@ -6,51 +6,100 @@
   "source_root": null,
 
   "heightmap": {
-    "path": "heightmap/land_8k_16.png",
+    "path": "land_8k_16_eroded_rivers.png",
     "width": 8192,
     "height": 8192,
     "channel": "gray",
     "bit_depth": 16,
-    "sha256": null,
-    "status": "blocked_pending_reexport"
+    "sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "status": "ok",
+    "derived_from": {
+      "path": "land_8k_16_eroded.png",
+      "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+      "generator": "python tools/grade_rivers.py plan && python tools/grade_rivers.py cut --replace",
+      "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
+    },
+    "previous_sha256": ["526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6", "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7", "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1"],
+    "revision_note": "2026-09-14 (third): the tarn at the head of the ravine above Peak Pond became a lake (level 127) with a graded outflow to the north coast; 2,786 columns changed, nothing raised. The previous cut file is in cobblers-server-retired/2026-09-14-tarn/. 2026-09-14 (second):the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
   },
 
   "import": {
     "input_units": "fraction_of_full_scale",
-    "low_in": 0.156863,
-    "high_in": 0.996078,
-    "low_out": 40,
+    "low_in": 0.0,
+    "high_in": 0.996078431,
+    "low_out": 10.093458,
     "high_out": 200,
     "water_level": 62,
     "clamp_low": true,
-    "clamp_high": true
+    "clamp_high": true,
+    "line_note": "The same straight line as the first import (40/255 -> y40, 254/255 -> y200), extended down to full-scale 0 -> y10.093458. Land is unchanged; only sea columns below y40 deepen (docs/world-building/OCEAN.md). Approved 2026-09-13.",
+    "previous": { "low_in": 0.156863, "high_in": 0.996078, "low_out": 40, "high_out": 200 }
   },
 
-  "bounds": { "min_x": null, "min_z": null, "max_x": null, "max_z": null },
+  "bounds": { "min_x": 0, "min_z": 0, "max_x": 8191, "max_z": 8191 },
 
-  "vertical": { "min_y": 40, "max_y": 200, "sea_level": 62 },
+  "vertical": { "min_y": 10, "max_y": 200, "sea_level": 62 },
+
+  "export": {
+    "tool": "WorldPainter 2.27.1 via tools/reexport.py and tools/worldpainter/export_world.js",
+    "map_format": "org.pepsoft.anvil.1.20.5",
+    "name": "cobblers-10240",
+    "worldpainter_levels": {
+      "image_low": -32.125,
+      "image_high": 65278,
+      "world_low": 10,
+      "world_high": 200,
+      "note": "WorldPainter world levels are whole numbers, so 10.093458 is written as image level -32.125 -> y10. Same line."
+    },
+    "export_margin_blocks": 1280,
+    "canvas": { "min_x": -1280, "min_z": -1280, "max_x": 9471, "max_z": 9471 },
+    "border": { "centre": 4096, "size": 10240, "min_x": -1024, "min_z": -1024, "max_x": 9215, "max_z": 9215 },
+    "buffer_note": "1024 blocks of ocean inside the border plus a 256-block ring outside it. The ring is never reachable; it exists so chunks loaded within view distance of the border are already written and nothing generates outside the border.",
+    "spawn": [3400, 3400],
+    "seed_policy": "Carried from the previous world's level.dat. Not committed: the public repo records only its sha256.",
+    "seed_sha256": "48202407c92bc5d07cd215b93f631b384a5f7dde58e993e7bc9f7365e03563f3",
+    "worldpainter_project": "cobblers-10240.world",
+    "worldpainter_project_sha256": "a2d8e09ec7ec7ad8c1546bb01192fcd4517b085a181bb1bbe04114e79bb34a46",
+    "painted": {"date": "2026-09-14", "maps": "tools/paint_maps.py from data/regions.json paint_presets, data/landmarks.json water bodies and ravines, and data/rivers.json graded courses (per-column water levels, bed material, river biome)", "note": "Preview paint on the river-cut heightmap. See docs/world-building/REEXPORT.md for the export and its known issues."},
+    "worldpainter_project_note": "Beside the heightmap under source_root. Painting starts from this file; its hash changes when it is saved again.",
+    "exported": "2026-09-14",
+    "carried_from_previous_level_dat": ["WorldGenSettings", "DataPacks", "GameRules", "Difficulty", "DifficultyLocked", "GameType", "allowCommands", "hardcore"],
+    "measured_ceiling_y": 201,
+    "measured_ceiling_note": "WorldPainter does not clamp at the top of the line: source values above 65406 reach y200.75 and round to y201 (0.88% of land). The design clamp stays 200."
+  },
 
   "grid": {
     "kind": "square",
     "cell_size": 1024,
     "columns": 8,
     "rows": 8,
-    "origin_x": null,
-    "origin_z": null,
+    "origin_x": 0,
+    "origin_z": 0,
     "row_labels": ["A", "B", "C", "D", "E", "F", "G", "H"],
     "column_labels": ["1", "2", "3", "4", "5", "6", "7", "8"]
   },
 
   "provenance": {
-    "gaea_project": "gaea/landmass.terrain",
+    "gaea_project": "landmass.terrain",
     "gaea_build_resolution": 1024,
-    "gimp_source": "gimp/pre_erosion_land_8k.xcf",
+    "pre_erosion_export": "land_8k_16.png",
+    "terresculptor_project": "land_8k_16.TSmap",
     "pipeline": ["gaea", "gimp", "terresculptor", "worldpainter"],
+    "verified": {
+      "date": "2026-09-14",
+      "dimensions": "8192x8192, 16-bit, single channel (PIL mode I;16)",
+      "distinct_values": 65532,
+      "max_neighbour_step_blocks": 3.77,
+      "neighbours_over_5_blocks_pct": 0.0,
+      "clipped_at_zero_pct": 0.0,
+      "clipped_at_max_pct": 0.6045,
+      "land_fraction_pct": 68.3,
+      "note": "Re-measured on the 2026-09-14 hand-carved revision. The largest steps (3-4 blocks) are pixel-stepped terraces on the carved basin walls around Lake Tilpey and the glacier mouth."
+    },
     "rejected_artifacts": [
       {
         "file": "erosion_land_8k.png",
-        "reason": "sawtooth wraparound across the surface; 7.3% of horizontally adjacent pixels differ by >100; stored as 8-bit RGB with height only in the red channel",
-        "macro_structure": "intact",
+        "reason": "sawtooth wraparound across the surface; 7.3% of horizontally adjacent pixels differed by >100 blocks; stored as 8-bit RGB with height only in the red channel",
         "usable": false
       },
       {
@@ -62,10 +111,12 @@
   },
 
   "notes": [
-    "origin_x/origin_z are null until the northwest corner is confirmed from in-game F3. The validator fails while they are unset.",
+    "Grid origin confirmed as corner-at-origin, A1 at block 0,0, spanning 0-8191 on both axes.",
     "bounds are derived from grid origin + cell_size * columns/rows and are not authored by hand.",
-    "import.low_in/high_in are fractions of full scale, so they survive the 16-bit re-export unchanged. Tooling multiplies by (2**bit_depth - 1) at read time. They were originally authored as 40 and 254 against an 8-bit file, which is where 0.156863 and 0.996078 come from.",
+    "import.low_in/high_in are fractions of full scale, so they survive a bit-depth change. Tooling multiplies by (2**bit_depth - 1) at read time. They were originally authored as 40 and 254 against an 8-bit file, which is where 0.156863 and 0.996078 come from.",
     "import.low_out/high_out/water_level are absolute Minecraft Y values and never scale.",
-    "source_root is machine-specific and is not committed. Set COBBLERS_SOURCE_ROOT or pass --source-root. Expected layout is in data/notes/source_tree.md."
+    "source_root is machine-specific and is not committed. On the authoring machine the heightmap and its provenance files sit directly in the Documents folder; set COBBLERS_SOURCE_ROOT or pass --source-root. See data/notes/source_tree.md.",
+    "The server world cobblers-10240 is exported from this heightmap by tools/reexport.py (2026-09-13). The previous world erosion-land-8k came from the rejected erosion_land_8k.png and was retired with its Distant Horizons LOD stores.",
+    "grid and bounds describe the landmass heightmap only; the exported world is larger (export.canvas) and the world border sits between the two (export.border)."
   ]
 }

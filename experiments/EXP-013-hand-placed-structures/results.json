@@ -1,0 +1,182 @@
+{
+  "schema": "cobblers.experiment-result/1",
+  "experiment": "EXP-013",
+  "title": "Hand-placed structures: structure data, placement height, command blocks, gym maps",
+  "date": "2026-09-13",
+  "question_source": "docs/research/notes/hand-placed-structures.md (EXP-A..EXP-F)",
+  "environment": {
+    "minecraft": "1.21.1",
+    "fabric_loader": "0.19.5",
+    "cobblemon": "1.8.0",
+    "server_dir": "cobblers-server (local, outside repo)",
+    "world": "exp013-structures (disposable copy; left in the server dir; not committed)",
+    "world_contents": "level.dat and r.3.3, r.3.4, r.4.3, r.4.4, r.6.6, r.-1.-1 copied from erosion-land-8k; before boot 2 also r.0.7, r.1.1, r.6.3, r.5.7, r.7.5, r.3.9 copied over files the server had created",
+    "launch": "java -Xms4G -Xmx10G -jar fabric-server-launch.jar nogui --world exp013-structures (accepted: log shows Preparing level \"exp013-structures\"; level-name not changed)",
+    "boots": [
+      {"boot": 1, "enable_command_block": false, "stopped_with": "rcon stop", "clean_exit": true},
+      {"boot": 2, "enable_command_block": true, "stopped_with": "rcon stop", "clean_exit": true}
+    ],
+    "server_properties": "backup taken before the run; only enable-command-block changed false->true for boot 2 (the server also rewrites the date comment on boot); original restored byte-for-byte, sha256 35fcf09de242e4022d50ca22af3ea4dd1309087019f75944271367f7eaea10fd matches the backup",
+    "live_world_erosion_land_8k": "not booted, not edited; the before/after file snapshot shows no change under erosion-land-8k"
+  },
+  "sites": {
+    "A1": {"method": "place structure minecraft:igloo", "cmd_pos": [1672, 107, 1672], "painted_top_y": 107},
+    "A2": {"method": "place structure minecraft:village_plains", "cmd_pos": [1912, 113, 1672], "painted_top_y": 113},
+    "A3": {"method": "place jigsaw minecraft:village/plains/town_centers minecraft:street 7", "cmd_pos": [1672, 97, 1912], "painted_top_y": 96},
+    "A4": {"method": "place template minecraft:igloo/top (control)", "cmd_pos": [1912, 99, 1912], "painted_top_y": 98},
+    "B1": {"method": "place structure minecraft:desert_pyramid", "cmd_pos": [2184, 106, 2184], "painted_top_y": 105},
+    "C1": {"method": "place template cobbleverse:brock (boot 1, command blocks off)", "cmd_pos": [2184, 117, 1672], "painted_top_y": 116},
+    "C2": {"method": "place template cobbleverse:brock (boot 2, command blocks on)", "cmd_pos": [2424, 114, 1912], "painted_top_y": 113},
+    "C3": {"method": "place structure cobbleverse:brock", "cmd_pos": [1672, 83, 2184], "painted_top_y": 82},
+    "C4": {"method": "place jigsaw cobbleverse:brock <target> 1", "cmd_pos": [1912, 89, 2424], "painted_top_y": 88},
+    "N1": {"method": "natural mega_showdown:mega_site start", "start_chunk": [-13, -23], "piece_bb": [-208, -9, -368, -196, 4, -356]},
+    "N2": {"method": "natural minecraft:mineshaft start", "start_chunk": [-27, -20], "piece_bb": [-430, -10, -318, -422, -2, -306]}
+  },
+  "experiments": {
+    "EXP-A": {
+      "status": "RUN",
+      "result": "PASS (question answered): no placement method wrote structure data; locate and location_check found nothing at any placed site; natural controls passed",
+      "observations": [
+        {"id": "A1-place", "command": "place structure minecraft:igloo 1672 107 1672", "response": "Generated structure \"minecraft:igloo\" at 1672, 107, 1672"},
+        {"id": "A2-place", "command": "place structure minecraft:village_plains 1912 113 1672", "response": "Generated structure \"minecraft:village_plains\" at 1912, 113, 1672"},
+        {"id": "A3-place", "command": "place jigsaw minecraft:village/plains/town_centers minecraft:street 7 1672 97 1912", "response": "Generated jigsaw at 1672, 97, 1912"},
+        {"id": "A4-place", "command": "place template minecraft:igloo/top 1912 99 1912", "response": "Loaded template \"minecraft:igloo/top\" at 1912, 99, 1912"},
+        {"id": "C3-place", "command": "place structure cobbleverse:brock 1672 83 2184", "response": "Generated structure \"cobbleverse:brock\" at 1672, 83, 2184"},
+        {"id": "C4-place", "command": "place jigsaw cobbleverse:brock minecraft:bottom 1 1912 89 2424", "response": "Failed to generate jigsaw", "log": "No starting jigsaw minecraft:bottom found in start pool cobbleverse:brock"},
+        {"id": "A1-pred", "command": "execute positioned 1667 108 1670 if predicate exp:inigloo", "response": "Test failed"},
+        {"id": "A1-pred2", "command": "execute positioned 1667 109 1670 if predicate exp:inigloo", "response": "Test failed"},
+        {"id": "A4-pred", "command": "execute positioned 1915 100 1915 if predicate exp:inigloo", "response": "Test failed"},
+        {"id": "A2-pred-bell", "command": "execute positioned 1911 64 1661 if predicate exp:invillage", "response": "Test failed"},
+        {"id": "A2-pred-plains", "command": "execute positioned 1911 65 1661 if predicate exp:invillageplains", "response": "Test failed"},
+        {"id": "A2-pred-street", "command": "execute positioned 1894 114 1648 if predicate exp:invillage", "response": "Test failed"},
+        {"id": "A3-pred-center", "command": "execute positioned 1674 97 1914 if predicate exp:invillage", "response": "Test failed"},
+        {"id": "A3-pred-street", "command": "execute positioned 1648 97 1892 if predicate exp:invillage", "response": "Test failed"},
+        {"id": "C1-pred", "command": "execute positioned 2197 118 1684 if predicate exp:inbrock", "response": "Test failed"},
+        {"id": "C3-pred-spawner", "command": "execute positioned 1670 64 2188 if predicate exp:inbrock", "response": "Test failed"},
+        {"id": "C3-pred-tag", "command": "execute positioned 1677 65 2190 if predicate exp:inbrocktag", "response": "Test failed"},
+        {"id": "A1-locate", "command": "execute positioned 1667 108 1670 run locate structure minecraft:igloo", "response": "The nearest minecraft:igloo is at [288, ~, 3648] (2411 blocks away)"},
+        {"id": "A4-locate", "command": "execute positioned 1915 100 1915 run locate structure minecraft:igloo", "response": "The nearest minecraft:igloo is at [288, ~, 3648] (2377 blocks away)"},
+        {"id": "A2-locate", "command": "execute positioned 1911 65 1661 run locate structure #minecraft:village", "response": "The nearest #minecraft:village (repurposed_structures:village_jungle) is at [848, ~, 816] (1357 blocks away)"},
+        {"id": "A3-locate", "command": "execute positioned 1674 97 1914 run locate structure #minecraft:village", "response": "... village_jungle) is at [848, ~, 816] (1374 blocks away)"},
+        {"id": "C1-locate", "command": "execute positioned 2197 120 1684 run locate structure cobbleverse:brock", "response": "The nearest cobbleverse:brock is at [3472, ~, 1936] (1299 blocks away)"},
+        {"id": "C3-locate", "command": "execute positioned 1680 90 2190 run locate structure cobbleverse:brock", "response": "The nearest cobbleverse:brock is at [144, ~, 1536] (1669 blocks away)"},
+        {"id": "N1-pred", "command": "execute positioned -202 0 -362 if predicate exp:inmegasite", "response": "Test passed"},
+        {"id": "N1-locate", "command": "execute positioned -202 0 -362 run locate structure mega_showdown:mega_site", "response": "The nearest mega_showdown:mega_site is at [-208, ~, -368] (8 blocks away)"},
+        {"id": "N2-pred", "command": "execute positioned -426 -6 -312 if predicate exp:inmineshaft", "response": "Test passed"},
+        {"id": "N2-locate", "command": "execute positioned -426 -6 -312 run locate structure minecraft:mineshaft", "response": "The nearest minecraft:mineshaft is at [-432, ~, -320] (10 blocks away)"},
+        {"id": "locate-skip-control", "note": "before boot 2 the region files holding the boot-1 answers were replaced with exported copies (full, no starts); the same queries then moved", "responses": {
+          "igloo_from_A1": "[640, ~, 3616] (was [288, ~, 3648])",
+          "village_from_A2": "repurposed_structures:village_oak [1136, ~, 1936] (was [848, ~, 816])",
+          "brock_from_C1": "[144, ~, 1536] (was [3472, ~, 1936])",
+          "mega_site_from_N1": "[-208, ~, -368] (unchanged)"}}
+      ],
+      "nbt_after_stop": {
+        "tool": "runs/20260913-122700/scripts/inspect_sites.py (tools/nbt.py reader)",
+        "placement_chunks": "Across the 15x15 chunks around A1, A2, A3, A4, C1, C2 and C3 (225 chunks each, all Status minecraft:full), structures.starts = {} and structures.References = {}. Whole-region scans of exp013 r.3.3, r.3.4, r.4.3, r.4.4: 0 chunks with starts, 0 chunks with References",
+        "placement_chunk_raw": {"(104,104)": "{References: {}, starts: {}}", "(119,104)": "{References: {}, starts: {}}", "(104,119)": "{References: {}, starts: {}}", "(119,119)": "{References: {}, starts: {}}", "(136,104)": "{References: {}, starts: {}}", "(104,136)": "{References: {}, starts: {}}"},
+        "natural_controls": {
+          "mega_site": "start chunk (-13,-23) was Status structure_starts before the run, minecraft:full after; starts has mega_showdown:mega_site (1 child); 16 chunks within radius 2 hold References to [-13,-23]",
+          "mineshaft": "start chunk (-27,-20) has minecraft:mineshaft (135 children); all 9 chunks within radius 1 hold References to [-27,-20]"
+        }
+      }
+    },
+    "EXP-B": {
+      "status": "RUN",
+      "result": "FAIL for heightmap-projected jigsaw structures on painted terrain: rigid pieces were buried 20-54 blocks below the surface; the igloo and templates matched the surface",
+      "observations": [
+        {"id": "A1-igloo", "landed": "blocks y107-111, bbox x1664-1670 z1667-1674 (snapped into the command chunk)", "painted_top_y": 107, "dy": "lowest snow layer at dy 0 (the floor replaces the top block); template control A4 placed at y99 on top block 98 (dy +1 as commanded)"},
+        {"id": "A2-village-structure", "landed": "town-center bell at y64; rigid pieces (cobblestone y59-81, oak_planks y63-77, white_terracotta y64-74) at dy -31..-54", "painted_top_y": "112-115 around the site", "streets": "1617 of 1808 dirt_path blocks at dy 0 (terrain_matching followed the painted surface); 57 at dy -51/-52"},
+        {"id": "A3-jigsaw", "landed": "center at the given y97 (cobblestone y92-100); streets at dy 0 (1684 of 1900 dirt_path)", "houses": "none placed: 0 oak_planks, oak_log, white_terracotta, bell, hay_block, glass_pane or farmland changed in a 224x200 area"},
+        {"id": "C3-brock-structure", "landed": "origin (1664, 62, 2176), not the command's x/z/y; floor y62, top y78", "painted_top_y": 82, "dy": "-20 (fully buried; the template's air blocks carved 8304 blocks of terrain)"},
+        {"id": "B1-desert-pyramid", "command": "place structure minecraft:desert_pyramid 2184 106 2184", "response": "Failed to place structure", "cause": "NOT VERIFIED; biome alone does not explain it, because igloo and village_plains were placed where the seed biome did not match"},
+        {"id": "biome-seed-vs-painted", "responses": {
+          "execute positioned 1672 107 1672 run locate biome #minecraft:has_structure/igloo": "minecraft:snowy_slopes at [1256, 171, 1800] (439 blocks away)",
+          "execute if biome 1672 107 1672 minecraft:plains": "Test passed",
+          "execute positioned 1912 113 1672 run locate biome #minecraft:has_structure/village_plains": "minecraft:plains at [1560, 113, 1992] (475 blocks away)",
+          "execute if biome 1912 113 1672 #minecraft:has_structure/village_plains": "Test passed",
+          "execute positioned 2184 106 2184 run locate biome #minecraft:has_structure/desert_pyramid": "minecraft:desert at [1896, 106, 1672] (587 blocks away)",
+          "execute if biome 2184 106 2184 minecraft:plains": "Test passed"}}
+      ]
+    },
+    "EXP-C": {
+      "status": "RUN",
+      "result": "PASS (question answered): placing the template never runs its command blocks; the Brock chain runs only when the pressure plate is pressed and enable-command-block=true",
+      "template_facts": "brock.nbt 27x17x24: impulse command_block at [17,0,15] (auto 0), chain blocks [18..23,0,15] (summon villager 'Kanto Map Guide', then replace the command blocks and redstone block with dirt); trigger is light_weighted_pressure_plate [13,2,18] -> command_block [13,0,18] (removes the plate) -> chain [13,0,17] fills bamboo_mosaic with redstone_block, powering [17,0,15]. The template's redstone_block [6,0,12] sits under the trainer spawner, not next to a command block",
+      "observations": [
+        {"id": "C1-place-off", "boot": 1, "command": "place template cobbleverse:brock 2184 117 1672", "response": "Loaded template \"cobbleverse:brock\" at 2184, 117, 1672", "after": "plate, command_block and chain_command_block present; villager 'Kanto Map Guide': Test failed"},
+        {"id": "C1-trigger-off", "boot": 1, "command": "summon minecraft:item 2197.5 119.1 1690.5 {Item:{id:\"minecraft:cobblestone\",count:1},PickupDelay:32767}", "after_3s": "plate still present; command block data powered:1b, SuccessCount:0, LastExecution changed 1164970 -> 1948336; bamboo_mosaic unchanged; villager: Test failed"},
+        {"id": "C2-place-on", "boot": 2, "command": "place template cobbleverse:brock 2424 114 1912", "response": "Loaded template \"cobbleverse:brock\" at 2424, 114, 1912", "after_0s_and_5s": "villager: Test failed; plate, command blocks, bamboo_mosaic present"},
+        {"id": "C2-trigger-on", "boot": 2, "command": "summon minecraft:item 2437.5 116.1 1930.5 {...}", "after_4s": "plate -> air; command_block, bamboo_mosaic and chain blocks -> dirt; villager 'Kanto Map Guide': Test passed, count 1, Pos [2447.5, 116.5625, 1928.5]"},
+        {"id": "C1-retrigger-on", "boot": 2, "note": "C1 was placed during boot 1 with command blocks off", "after_4s": "plate -> air; [2206,117,1687] -> dirt; villager within 5 blocks: Test passed, count 1"},
+        {"id": "C3-trigger-on", "boot": 2, "note": "structure-placed Brock, buried at y62", "after_4s": "plate -> air; [1686,62,2191] -> dirt; villager within 5 blocks: Test passed, count 1"},
+        {"id": "place-structure-brock-C3", "note": "see EXP-A C3-place; its command blocks were placed and ran when triggered"}
+      ],
+      "not_tested": "structure block Load button; a template with an auto:1 impulse or repeating command block (the Brock impulse block is auto:0); triggering by a player"
+    },
+    "EXP-D-player-session": {
+      "status": "RUN",
+      "date": "2026-09-13",
+      "world": "cobblers-10240",
+      "procedure": "SESSION-DE.md; probe datapack datapack/exp013de (Dracozolt no condition, Arctozolt #minecraft:village, Dracovish #minecraft:ruined_portal; common, weight 1000)",
+      "observations": {
+        "D0_spawn": "Dracozolt 50.07% listed",
+        "D1_pasted_village_meeting_point": "Dracozolt 50.18%; Arctozolt absent",
+        "D2_pasted_ruined_portal": "Dracovish absent (player report)",
+        "D3_natural_nether_ruined_portal": "Dracovish absent and Dracozolt absent: invalid reading under the protocol; cramped soul-sand tunnel, large-hitbox probe species likely had no room (NOT VERIFIED)",
+        "D4_natural_rs_warped_village": "Arctozolt 43.48% and Dracozolt 43.48% listed"
+      },
+      "result": "CONFIRMED for #minecraft:village: the entry fires in a natural village and not in a pasted one. Ruined-portal pair inconclusive (control reading invalid)."
+    },
+    "EXP-E-player-session": {
+      "status": "RUN",
+      "date": "2026-09-13",
+      "observations": {
+        "E1_pasted_cobbleverse_brock": "Brock spawned from the powered template spawner; right-click started the battle",
+        "E2_command_set_spawner_on_redstone_block": "Brock spawned on the spawner and battled (Brock's Geodude Lv16 vs player's Geodude Lv15)",
+        "level_cap_side_note": "with a Lv26 Plusle in the party the battle did not start; consistent with RCT level cap, message not recorded"
+      },
+      "result": "PASS: trainer spawners work in pasted and command-authored builds without structure data"
+    },
+    "EXP-D": {
+      "status": "NOT RUN (headless run; see EXP-D-player-session)",
+      "reason": "Cobblemon spawn checks need a player. /checkspawn is registered: 'help checkspawn' printed nothing, and 'execute positioned 1670 64 2188 run checkspawn common' returned 'Incorrect argument for command'. No player-free spawn-condition evaluator was found in the help output",
+      "client_test_needs": "a player online, a test spawn entry with structures: [\"minecraft:igloo\"] (or cobbleverse:brock), and /checkspawn (or observed spawns) at A1 (structure-placed igloo), A4 (template igloo) and a naturally generated igloo",
+      "prediction_from_EXP_A": "fails at hand-placed sites, because Cobblemon reads chunk structure starts and these chunks have none (NOT VERIFIED)"
+    },
+    "EXP-E": {
+      "status": "NOT RUN (spawning); block data RUN",
+      "reason": "RCT spawns need a nearby player; /rctmod trainer spawn_for [<target>] targets a player",
+      "observations": [
+        {"command": "data get block 2190 118 1684", "response": "{TrainerIds: [\"kanto_brock\"], z: 1684, x: 2190, id: \"rctmod:trainer_spawner\", y: 118}", "site": "C1 template"},
+        {"command": "data get block 2430 115 1924", "response": "{TrainerIds: [\"kanto_brock\"], ... id: \"rctmod:trainer_spawner\", y: 115}", "site": "C2 template"},
+        {"command": "data get block 1670 63 2188", "response": "{TrainerIds: [\"kanto_brock\"], ... id: \"rctmod:trainer_spawner\", y: 63}", "site": "C3 structure"},
+        {"note": "brock.nbt stores OwnerUUID on the spawner, but data get after placement does not show it"}
+      ]
+    },
+    "EXP-F": {
+      "status": "RUN (gym_map loot); NOT RUN (LumyMon trades, radars)",
+      "result": "FAIL for hand-placed gyms: all 6 maps pointed at other places, never at the three hand-placed Brock gyms",
+      "mechanism_read": "COBBLEVERSE-DP-v31 data/cobbleverse/loot_table/gym_map.json uses minecraft:exploration_map, destination tag cobbleverse:kanto_brock_gym (= [cobbleverse:brock]), search_radius 30, skip_existing_chunks not set (default true). data/lumymon/trades/kanto_cartographer.json in the same zip uses the same function (destination cobbleverse:kanto_brock_gym, search_radius 50) for Brock's Gym map trades. The cobbleverse:brock structure_set is random_spread spacing 40, separation 20",
+      "observations": [
+        {"boot": 1, "command": "loot spawn 2197 121 1684 loot cobbleverse:gym_map", "site": "next to C1 template gym", "item": "minecraft:filled_map map_id 0, target_point at x 2816, z 3840"},
+        {"boot": 1, "command": "loot spawn 1680 90 2190 loot cobbleverse:gym_map", "site": "next to C3 structure gym", "item": "filled_map map_id 1, target_point at x 3888, z 2624"},
+        {"boot": 1, "command": "loot spawn -202 70 -362 loot cobbleverse:gym_map", "site": "outside region r.-1.-1", "item": "filled_map map_id 2, target_point at x 1952, z 4656"},
+        {"boot": 2, "command": "loot spawn 2197 121 1684 loot cobbleverse:gym_map", "item": "filled_map map_id 3, target_point at x 2768, z 4624"},
+        {"boot": 2, "command": "loot spawn 1680 90 2190 loot cobbleverse:gym_map", "item": "filled_map map_id 4, target_point at x 2032, z 5408"},
+        {"boot": 2, "command": "loot spawn -202 70 -362 loot cobbleverse:gym_map", "item": "filled_map map_id 5, target_point at x 2672, z 5168"}
+      ],
+      "notes": [
+        "Every boot-1 target lay in a region absent from the disposable world. Those regions (r.5.7, r.7.5, r.3.9) then held small 12 KB files the server had written, and after exported copies replaced them every target moved. Maps also skip structures an earlier map already found, so the move is consistent with 'generated chunks without starts are skipped' but does not prove it on its own",
+        "No natural cobbleverse:brock start exists in the copied outside region, so the 'natural gym' case was not available"
+      ]
+    }
+  },
+  "conclusion": "No placement method tested (/place structure, /place jigsaw, /place template) wrote structures.starts or structures.References to any chunk. Every consumer that reads structure data (/locate, location_check, the Cobbleverse gym_map exploration map) ignored the hand-placed builds, while natural mega_site and mineshaft starts in the same world passed.",
+  "not_verified": [
+    "LumyMon cartographer trades and legendary radars (need a player/villager trade)",
+    "structure block Load button and WorldEdit/Axiom pastes",
+    "cause of the desert_pyramid 'Failed to place structure'",
+    "which heightmap the igloo used (it matched the painted surface; the seed height at that column was not measured)",
+    "behaviour in the full live world, where every chunk inside the export exists"
+  ]
+}

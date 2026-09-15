@@ -125,12 +125,49 @@ def read_heights(png_path, world):
     return sample_to_height(arr, world)
 
 
+def verify_file(path, world, world_path):
+    """Apply the same status and hash checks to an explicitly supplied file.
+
+    --heightmap exists so a tool can be pointed at a file outside the source
+    root layout. It must not be a way around the integrity guard.
+    """
+    hm = world.get("heightmap") or {}
+    status = hm.get("status")
+    if status and status != "ok":
+        raise TerrainUnavailable(
+            'heightmap.status is "%s"; terrain tools will not run against an '
+            "unusable heightmap" % status
+        )
+    sha = hm.get("sha256")
+    if not sha:
+        raise TerrainUnavailable(
+            "heightmap.sha256 is null in %s; refusing to run against an "
+            "unverified heightmap" % world_path
+        )
+    path = Path(path)
+    if not path.is_file():
+        raise TerrainUnavailable("heightmap not found: %s" % path)
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    if h.hexdigest() != sha:
+        raise TerrainUnavailable(
+            "heightmap sha256 mismatch: recorded %s, actual %s for %s"
+            % (sha, h.hexdigest(), path)
+        )
+    return path
+
+
 def load(world_path=None, source_root=None, heightmap=None):
-    """Return (heights, world). heights[z, x] is Minecraft Y as float."""
+    """Return (heights, world). heights[z, x] is Minecraft Y as float32."""
     world_path = Path(world_path or DEFAULT_WORLD)
     world = load_world(world_path)
-    path = Path(heightmap) if heightmap else resolve_heightmap(world, world_path, source_root)
-    return read_heights(path, world), world
+    if heightmap:
+        path = verify_file(heightmap, world, world_path)
+    else:
+        path = resolve_heightmap(world, world_path, source_root)
+    return read_heights(path, world).astype(np.float32), world
 
 
 # ------------------------------------------------------------------ analysis
