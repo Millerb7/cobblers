@@ -15,6 +15,15 @@ Expected contents once the step 4 analysis toolkit lands:
 | `derived/sites/` | buildable-site finder | ranked flat-area candidates with size and slope |
 | `derived/paths/` | path router | A* polylines between points, contour-following |
 | `derived/sightlines/` | sightline checker | raycast results from a point to named landmarks |
+| `derived/cells/` | `cell_stats.py` | per-cell terrain, land, water and void fractions |
+| `derived/landforms/` | `landforms.py` | bodies, peaks, landform classes including `void_floor` |
+| `derived/sections/` | `cross_section.py` | per-station profiles along landmark axes |
+| `derived/spawns/` | `spawn_biomes.py` | spawn biome and tag references, coverage against the region plan |
+| `derived/structures/` | `structure_inventory.py` | structure inventory and world structure-start scan |
+| `derived/features/` | `worldgen_features.py` | modded placed features, placed items and their other sources |
+| `derived/trim/` | `region_trim.py` | dry-run and apply reports per dimension and rectangle |
+| `derived/world/` | `world_heights.py` | per-column ground and water heights read from an exported world, and drift reports |
+| `derived/audit/` | `dimension_audit.py`, `structure_candidates.py` | pregen coverage, structure starts, candidates per border |
 
 Every artifact records the heightmap `sha256` it was computed from, so a stale
 derivative can be detected rather than trusted.

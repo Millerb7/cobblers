@@ -1,0 +1,81 @@
+{
+  "schema": "cobblers.progression/1",
+  "status": "draft",
+  "notes": [
+    "One flag per gym is both the badge ledger entry and the unlock for that town's waystone (docs/world-building/NAVIGATION.md).",
+    "Badges themselves are items given by each leader's RCT loot table on first defeat; the flag records the defeat, it does not give the badge.",
+    "Leader order is Cobbleverse's RCT requiredDefeats chain per series, read from COBBLEVERSE-RCT-DP-v20. Which leader sits in which town is a trainer-design decision still open.",
+    "Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 5 in config), so chapters carry no level_cap here.",
+    "Waystone positions are null until town locations are placed after the next terrain rendition."
+  ],
+  "namespace": "cobblers",
+  "active_series": "kanto",
+  "series": [
+    {"id": "kanto", "role": "main", "required_series": []},
+    {"id": "johto", "role": "prestige_candidate", "required_series": ["kanto"]},
+    {"id": "hoenn", "role": "prestige_candidate", "required_series": ["johto"]},
+    {"id": "sinnoh", "role": "prestige_candidate", "required_series": ["hoenn"]}
+  ],
+  "open_questions": [
+    {"id": "hometown_waystone", "question": "Is the hometown waystone given at start (set_by run_start) or earned?", "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"},
+    {"id": "midpoint_waystones", "question": "Do waystones exist between gym towns, and if so what unlocks them?", "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"}
+  ],
+  "flags": [
+    {
+      "id": "gym1_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_brock"], "johto": ["johto_valerio"], "hoenn": ["hoenn_petra"], "sinnoh": ["sinnoh_pedro"]}},
+      "waystone": {"town": "gym1_town", "position": null}
+    },
+    {
+      "id": "gym2_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_misty"], "johto": ["johto_raffaello"], "hoenn": ["hoenn_rudi"], "sinnoh": ["sinnoh_gardenia"]}},
+      "waystone": {"town": "gym2_town", "position": null}
+    },
+    {
+      "id": "gym3_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_ltsurge"], "johto": ["johto_chiara"], "hoenn": ["hoenn_walter"], "sinnoh": ["sinnoh_marzia"]}},
+      "waystone": {"town": "gym3_town", "position": null}
+    },
+    {
+      "id": "gym4_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_erika"], "johto": ["johto_angelo"], "hoenn": ["hoenn_fiammetta"], "sinnoh": ["sinnoh_omar"]}},
+      "waystone": {"town": "gym4_town", "position": null}
+    },
+    {
+      "id": "gym5_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_koga"], "johto": ["johto_furio"], "hoenn": ["hoenn_norman"], "sinnoh": ["sinnoh_fannie"]}},
+      "waystone": {"town": "gym5_town", "position": null}
+    },
+    {
+      "id": "gym6_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_sabrina"], "johto": ["johto_jasmine"], "hoenn": ["hoenn_alice"], "sinnoh": ["sinnoh_ferruccio"]}},
+      "waystone": {"town": "gym6_town", "position": null}
+    },
+    {
+      "id": "gym7_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_blaine"], "johto": ["johto_alfredo"], "hoenn": ["hoenn_tell"], "sinnoh": ["sinnoh_bianca"]}},
+      "waystone": {"town": "gym7_town", "position": null}
+    },
+    {
+      "id": "gym8_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_giovanni"], "johto": ["johto_sandra"], "hoenn": ["hoenn_adriano"], "sinnoh": ["sinnoh_corrado"]}},
+      "waystone": {"town": "gym8_town", "position": null}
+    },
+    {
+      "id": "champion_cleared",
+      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_champion_blue"], "johto": ["johto_champion_lance"], "hoenn": ["hoenn_champion_rocco"], "sinnoh": ["sinnoh_champion_camilla"]}}
+    }
+  ],
+  "chapters": [
+    {"id": "chapter_1", "order": 1, "unlocked_by": [], "unlocks": ["gym1_cleared"]},
+    {"id": "chapter_2", "order": 2, "unlocked_by": ["gym1_cleared"], "unlocks": ["gym2_cleared"]},
+    {"id": "chapter_3", "order": 3, "unlocked_by": ["gym2_cleared"], "unlocks": ["gym3_cleared"]},
+    {"id": "chapter_4", "order": 4, "unlocked_by": ["gym3_cleared"], "unlocks": ["gym4_cleared"]},
+    {"id": "chapter_5", "order": 5, "unlocked_by": ["gym4_cleared"], "unlocks": ["gym5_cleared"]},
+    {"id": "chapter_6", "order": 6, "unlocked_by": ["gym5_cleared"], "unlocks": ["gym6_cleared"]},
+    {"id": "chapter_7", "order": 7, "unlocked_by": ["gym6_cleared"], "unlocks": ["gym7_cleared"]},
+    {"id": "chapter_8", "order": 8, "unlocked_by": ["gym7_cleared"], "unlocks": ["gym8_cleared"]},
+    {"id": "league", "order": 9, "unlocked_by": ["gym8_cleared"], "unlocks": ["champion_cleared"]},
+    {"id": "postgame", "order": 10, "unlocked_by": ["champion_cleared"], "unlocks": []}
+  ]
+}
