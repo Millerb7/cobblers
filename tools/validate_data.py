@@ -1009,6 +1009,452 @@ def check_towns(ctx: Context):
                       "progression" % (flag.get("id"), town), file="data/progression.json", where=flag.get("id"))
 
 
+FOLIAGE_SCHEMA = "cobblers.foliage/1"
+FOLIAGE_LIBRARY = ("kits", "structures", "foliage", "library.json")    # relative to the data directory's parent
+PAINT_MAPS = Path(__file__).resolve().parent / "paint_maps.py"          # PLANT_SETS, TERRAIN_CODES, WP_BIOMES
+UNDERSTORY_ZONES = {"core", "mid", "edge"}
+DEBRIS_ZONES = {"core", "any"}
+SEEN_FROM_KINDS = {"legs", "ring", "points"}
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _int(v):
+    return isinstance(v, int) and not isinstance(v, bool)
+
+
+def _paint_tables(path):
+    """PLANT_SETS, TERRAIN_CODES and WP_BIOMES read from tools/paint_maps.py as literals, so this check stays
+    standard-library only (importing paint_maps would pull in numpy and Pillow)."""
+    import ast
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    want = {"PLANT_SETS", "TERRAIN_CODES", "WP_BIOMES"}
+    out = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) \
+                and node.targets[0].id in want:
+            out[node.targets[0].id] = ast.literal_eval(node.value)
+    missing = want - set(out)
+    if missing:
+        raise ValueError("no literal %s in %s" % (", ".join(sorted(missing)), path))
+    return out
+
+
+def _load_json_for(check, path, rel, rep):
+    """DataFile or None; unreadable or invalid JSON is an ERROR under this check (fail closed)."""
+    try:
+        raw = path.read_text(encoding="utf-8")
+        return DataFile(path, rel, raw, json.loads(raw))
+    except (OSError, UnicodeDecodeError) as exc:
+        rep.error(check, "cannot read file: %s" % exc, file=rel)
+    except json.JSONDecodeError as exc:
+        rep.error(check, "invalid JSON: %s" % exc.msg, file=rel, line=exc.lineno)
+    return None
+
+
+def check_foliage(ctx: Context):
+    """Forest types, their object groups and the landmark trees (data/foliage.json) against the paint presets and
+    sub-regions (data/regions.json), the object library (kits/structures/foliage/library.json, including each
+    file's sha256), the plant sets, terrain codes and biomes tools/paint_maps.py knows, the world bounds, and the
+    landmark-tree outposts in data/towns.json. A needed file that is absent makes that part SKIPPED; a present
+    file that is malformed is an ERROR."""
+    rep = ctx.report
+    C = "foliage"
+    rel = "data/foliage.json"
+    path = ctx.data_dir / "foliage.json"
+    if not path.is_file():
+        rep.skip(C, "data/foliage.json is absent; forest types, object groups and landmark trees were not checked",
+                 file=rel)
+        return
+    f = _load_json_for(C, path, rel, rep)
+    if not f:
+        return
+    doc = f.doc
+    if not isinstance(doc, dict):
+        rep.error(C, "top level must be an object", file=rel, line=1)
+        return
+
+    def err(msg, key=None, where=None):
+        rep.error(C, msg, file=rel, line=f.line_of_key(key) if key else None, where=where)
+
+    if doc.get("schema") != FOLIAGE_SCHEMA:
+        err('schema is "%s", expected "%s"' % (doc.get("schema"), FOLIAGE_SCHEMA), "schema")
+
+    # tables from tools/paint_maps.py
+    tables = None
+    if not Path(PAINT_MAPS).is_file():
+        rep.skip(C, "%s is absent; plant sets, floor terrains and biomes were not checked" % PAINT_MAPS, file=rel)
+    else:
+        try:
+            tables = _paint_tables(PAINT_MAPS)
+        except (SyntaxError, ValueError) as exc:
+            rep.error(C, "cannot read the paint tables: %s" % exc, file=str(PAINT_MAPS))
+
+    # density model
+    dm = doc.get("density_model")
+    if not isinstance(dm, dict):
+        err("density_model must be an object", "density_model")
+    else:
+        noise = dm.get("noise")
+        if not isinstance(noise, dict):
+            err("density_model.noise must be an object", "noise")
+        else:
+            for k in ("ragged_scale", "glade_scale", "clump_scale"):
+                if not _num(noise.get(k)) or noise[k] <= 0:
+                    err("density_model.noise.%s must be a positive number, got %r" % (k, noise.get(k)), k)
+        for k in ("water_clearance_blocks", "settlement_clearance_blocks"):
+            if not _num(dm.get(k)) or dm[k] < 0:
+                err("density_model.%s must be a number >= 0, got %r" % (k, dm.get(k)), k)
+
+    # types
+    types = doc.get("types")
+    if not isinstance(types, dict) or not types:
+        err("types must be a non-empty object", "types")
+        types = {}
+    groups_used = {}          # group -> first place it is referenced
+
+    def use(group, where):
+        if not isinstance(group, str) or not group:
+            err("%s: group must be a non-empty string, got %r" % (where, group), where=where)
+            return
+        groups_used.setdefault(group, where)
+
+    def unit(v):
+        return _num(v) and 0 <= v <= 1
+
+    for tid, t in types.items():
+        w = "types.%s" % tid
+        if not isinstance(t, dict):
+            err("%s must be an object" % w, tid, tid)
+            continue
+
+        def terr(msg, t_id=tid):
+            err("%s: %s" % ("types.%s" % t_id, msg), t_id, t_id)
+
+        for k in ("identity", "from_inside"):
+            if not isinstance(t.get(k), str) or not t[k].strip():
+                terr("%s must be a non-empty string" % k)
+        if not _num(t.get("stems_per_ha")) or t["stems_per_ha"] < 0:
+            terr("stems_per_ha must be a number >= 0, got %r" % t.get("stems_per_ha"))
+        for k in ("edge_width", "ragged"):
+            if k in t and (not _num(t[k]) or t[k] < 0):
+                terr("%s must be a number >= 0, got %r" % (k, t[k]))
+        for k in ("glade_share", "clumping"):
+            if k in t and not unit(t[k]):
+                terr("%s must be between 0 and 1, got %r" % (k, t[k]))
+        for k in ("slope_lo", "slope_hi"):
+            if k in t and not _num(t[k]):
+                terr("%s must be a number, got %r" % (k, t[k]))
+        if _num(t.get("slope_lo", 20)) and _num(t.get("slope_hi", 34)) and t.get("slope_lo", 20) > t.get("slope_hi", 34):
+            terr("slope_lo %s is above slope_hi %s" % (t.get("slope_lo", 20), t.get("slope_hi", 34)))
+        if "open" in t and not isinstance(t["open"], bool):
+            terr("open must be true or false")
+        es = t.get("elevation_sort")
+        if es is not None and not (isinstance(es, dict) and _num(es.get("radius")) and es["radius"] > 0
+                                   and _num(es.get("span")) and es["span"] > 0):
+            terr("elevation_sort needs a positive radius and span")
+        classes = t.get("classes")
+        if not isinstance(classes, list) or not classes:
+            terr("classes must be a non-empty list")
+            classes = []
+        for i, c in enumerate(classes):
+            cw = "%s.classes[%d]" % (w, i)
+            if not isinstance(c, dict):
+                err("%s must be an object" % cw, tid, tid)
+                continue
+            use(c.get("group"), cw)
+            if not _num(c.get("spacing")) or c["spacing"] <= 0:
+                err("%s: spacing must be a positive number, got %r" % (cw, c.get("spacing")), tid, tid)
+            by_height = "low" in c or "high" in c
+            by_edge = "core" in c or "edge" in c
+            if es is not None and not by_height:
+                err("%s: the type sorts classes by elevation, so the class needs low/high weights (core/edge are "
+                    "ignored and it would never be placed)" % cw, tid, tid)
+            if es is None and by_height:
+                err("%s: low/high weights need the type's elevation_sort; without it they are ignored" % cw, tid, tid)
+            if es is not None and by_edge:
+                err("%s: core/edge weights are ignored when the type has elevation_sort" % cw, tid, tid)
+            for k in ("core", "edge", "low", "high"):
+                if k in c and (not _num(c[k]) or c[k] < 0):
+                    err("%s: %s must be a number >= 0, got %r" % (cw, k, c[k]), tid, tid)
+        lone = t.get("lone")
+        if lone is not None:
+            if not isinstance(lone, dict):
+                terr("lone must be an object")
+            else:
+                if not _num(lone.get("per_ha")) or lone["per_ha"] < 0:
+                    terr("lone.per_ha must be a number >= 0")
+                if not _num(lone.get("reach")) or lone["reach"] <= 0:
+                    terr("lone.reach must be a positive number")
+                if not isinstance(lone.get("groups"), list) or not lone["groups"]:
+                    terr("lone.groups must be a non-empty list")
+                else:
+                    for g in lone["groups"]:
+                        use(g, "%s.lone" % w)
+                if t.get("open"):
+                    rep.warn(C, "%s: lone trees are never placed for an open type" % w, file=rel,
+                             line=f.line_of_key(tid), where=tid)
+        debris = t.get("debris")
+        if debris is not None and not isinstance(debris, list):
+            terr("debris must be a list")
+            debris = []
+        for i, db in enumerate(debris or []):
+            dw = "%s.debris[%d]" % (w, i)
+            if not isinstance(db, dict):
+                err("%s must be an object" % dw, tid, tid)
+                continue
+            use(db.get("group"), dw)
+            if not _num(db.get("per_ha")) or db["per_ha"] < 0:
+                err("%s: per_ha must be a number >= 0, got %r" % (dw, db.get("per_ha")), tid, tid)
+            if db.get("zone") not in DEBRIS_ZONES:
+                err("%s: zone %r is not one of %s" % (dw, db.get("zone"), ", ".join(sorted(DEBRIS_ZONES))), tid, tid)
+            if "max_slope" in db and not _num(db["max_slope"]):
+                err("%s: max_slope must be a number" % dw, tid, tid)
+            if "vertical_offset" in db and not _int(db["vertical_offset"]):
+                err("%s: vertical_offset must be an integer" % dw, tid, tid)
+        fl = t.get("floor")
+        if fl is not None:
+            mix = fl.get("mix") if isinstance(fl, dict) else None
+            if not isinstance(fl, dict) or not unit(fl.get("threshold")) or not isinstance(mix, list) or not mix:
+                terr("floor needs a threshold between 0 and 1 and a non-empty mix")
+            else:
+                shares = []
+                for entry in mix:
+                    if not (isinstance(entry, list) and len(entry) == 2 and isinstance(entry[0], str) and unit(entry[1])):
+                        terr("floor.mix entry %r must be [TERRAIN, share between 0 and 1]" % (entry,))
+                        continue
+                    shares.append(entry[1])
+                    if tables and entry[0] not in tables["TERRAIN_CODES"]:
+                        terr("floor terrain %s is not in tools/paint_maps.py TERRAIN_CODES" % entry[0])
+                if shares and len(shares) == len(mix) and abs(sum(shares) - 1.0) > 1e-6:
+                    terr("floor.mix shares sum to %s, not 1 (the last terrain silently takes the difference)"
+                         % round(sum(shares), 6))
+        us = t.get("understory")
+        if us is not None:
+            if not isinstance(us, dict):
+                terr("understory must be an object")
+            else:
+                for zone, z in us.items():
+                    if zone not in UNDERSTORY_ZONES:
+                        terr("understory zone %s is not one of %s" % (zone, ", ".join(sorted(UNDERSTORY_ZONES))))
+                        continue
+                    if not isinstance(z, dict) or not isinstance(z.get("set"), str) or not unit(z.get("coverage")):
+                        terr("understory.%s needs a plant set name and a coverage between 0 and 1" % zone)
+                        continue
+                    if "clear" in z and not isinstance(z["clear"], bool):
+                        terr("understory.%s.clear must be true or false" % zone)
+                    if tables and z["set"] not in tables["PLANT_SETS"]:
+                        terr("understory.%s plant set %s is not in tools/paint_maps.py PLANT_SETS" % (zone, z["set"]))
+        if "biome" in t:
+            if not isinstance(t["biome"], str):
+                terr("biome must be a string")
+            elif tables and t["biome"] not in tables["WP_BIOMES"]:
+                terr("biome %s is not in tools/paint_maps.py WP_BIOMES" % t["biome"])
+        wb = t.get("water_boost")
+        if wb is not None and not (isinstance(wb, dict) and _num(wb.get("factor")) and wb["factor"] > 0
+                                   and _num(wb.get("reach")) and wb["reach"] > 0):
+            terr("water_boost needs a positive factor and reach")
+
+    # preset_defaults and assign against data/regions.json
+    pdefs = doc.get("preset_defaults")
+    if not isinstance(pdefs, dict):
+        err("preset_defaults must be an object", "preset_defaults")
+        pdefs = {}
+    assign = doc.get("assign")
+    if not isinstance(assign, dict):
+        err("assign must be an object", "assign")
+        assign = {}
+    for preset, tid in pdefs.items():
+        if tid not in types:
+            err('preset_defaults.%s names type "%s", which is not defined' % (preset, tid), preset, preset)
+    for sid, a in assign.items():
+        if not isinstance(a, dict):
+            err("assign.%s must be an object" % sid, sid, sid)
+            continue
+        if a.get("type") not in types:
+            err('assign.%s names type "%s", which is not defined' % (sid, a.get("type")), sid, sid)
+        if "density_scale" in a and (not _num(a["density_scale"]) or a["density_scale"] < 0):
+            err("assign.%s.density_scale must be a number >= 0" % sid, sid, sid)
+    reg_path = ctx.data_dir / "regions.json"
+    if not reg_path.is_file():
+        rep.skip(C, "data/regions.json is absent; preset_defaults and assign keys were not checked", file=rel)
+    else:
+        rf = _load_json_for(C, reg_path, "data/regions.json", rep)
+        if rf:
+            presets = set((rf.doc.get("paint_presets") or {}) if isinstance(rf.doc, dict) else {})
+            subs = {s.get("id") for s in (rf.doc.get("subregions") or []) if isinstance(s, dict)} \
+                if isinstance(rf.doc, dict) else set()
+            for preset in pdefs:
+                if preset not in presets:
+                    err('preset_defaults key "%s" is not a paint preset in data/regions.json' % preset, preset, preset)
+            for sid in assign:
+                if sid not in subs:
+                    err('assign key "%s" is not a sub-region in data/regions.json' % sid, sid, sid)
+
+    # landmark trees
+    lts = doc.get("landmark_trees", [])
+    if not isinstance(lts, list):
+        err("landmark_trees must be a list", "landmark_trees")
+        lts = []
+    lt_ids, bad_sites = {}, set()
+    for i, lt in enumerate(lts):
+        if not isinstance(lt, dict):
+            err("landmark_trees[%d] must be an object" % i, "landmark_trees")
+            continue
+        lid = lt.get("id")
+        lw = "landmark_trees.%s" % lid
+        line_id = f.line_of_id(lid)
+        if not isinstance(lid, str) or not lid:
+            err("landmark_trees[%d] needs an id" % i, "landmark_trees")
+            continue
+        if lid in lt_ids:
+            rep.error(C, 'duplicate landmark tree "%s"' % lid, file=rel, line=line_id, where=lid)
+        lt_ids[lid] = lt
+        if not isinstance(lt.get("object"), str) or not lt["object"]:
+            rep.error(C, "%s needs an object name" % lw, file=rel, line=line_id, where=lid)
+        site = lt.get("site")
+        if not (isinstance(site, list) and len(site) == 2 and all(_int(v) for v in site)):
+            rep.error(C, "%s site must be [x, z] integers, got %r" % (lw, site), file=rel, line=line_id, where=lid)
+            bad_sites.add(lid)
+        if not _num(lt.get("glade_radius")) or lt["glade_radius"] <= 0:
+            rep.error(C, "%s glade_radius must be a positive number" % lw, file=rel, line=line_id, where=lid)
+        if not isinstance(lt.get("kind"), str) or not lt["kind"]:
+            rep.error(C, "%s needs a kind" % lw, file=rel, line=line_id, where=lid)
+        seen = lt.get("seen_from")
+        if not isinstance(seen, list) or not seen:
+            rep.error(C, "%s seen_from must be a non-empty list" % lw, file=rel, line=line_id, where=lid)
+            seen = []
+        for o in seen:
+            kind = o.get("kind") if isinstance(o, dict) else None
+            if kind not in SEEN_FROM_KINDS:
+                rep.error(C, "%s seen_from kind %r is not one of %s" % (lw, kind, ", ".join(sorted(SEEN_FROM_KINDS))),
+                          file=rel, line=line_id, where=lid)
+            elif kind == "legs" and not (isinstance(o.get("legs"), list) and o["legs"]
+                                         and all(isinstance(x, str) and "->" in x for x in o["legs"])):
+                rep.error(C, '%s seen_from legs needs a non-empty list of "from->to" names' % lw,
+                          file=rel, line=line_id, where=lid)
+            elif kind == "ring" and not (_num(o.get("radius")) and o["radius"] > 0):
+                rep.error(C, "%s seen_from ring needs a positive radius" % lw, file=rel, line=line_id, where=lid)
+            elif kind == "points" and not (isinstance(o.get("points"), list) and o["points"] and all(
+                    isinstance(p, list) and len(p) == 2 and all(_num(v) for v in p) for p in o["points"])):
+                rep.error(C, "%s seen_from points needs a non-empty list of [x, z]" % lw,
+                          file=rel, line=line_id, where=lid)
+
+    # object library: every referenced group and landmark object exists; every row's file matches its sha256
+    lib_path = ctx.data_dir.parent.joinpath(*FOLIAGE_LIBRARY)
+    lib_rel = "/".join(FOLIAGE_LIBRARY)
+    n_objects = 0
+    if not lib_path.is_file():
+        rep.skip(C, "%s is absent; object groups, landmark objects and object hashes were not checked" % lib_rel,
+                 file=rel)
+    else:
+        lf = _load_json_for(C, lib_path, lib_rel, rep)
+        rows = lf.doc.get("objects") if lf and isinstance(lf.doc, dict) else None
+        if lf and not isinstance(rows, list):
+            rep.error(C, "the library has no objects list", file=lib_rel)
+        if isinstance(rows, list):
+            groups, names = set(), set()
+            for r in rows:
+                if not isinstance(r, dict) or not isinstance(r.get("name"), str) or not isinstance(r.get("group"), str):
+                    rep.error(C, "library row %r needs a name and a group" % (r,), file=lib_rel)
+                    continue
+                n_objects += 1
+                names.add(r["name"])
+                groups.add(r["group"])
+                if not _int(r.get("ground_radius")) or r["ground_radius"] < 0:
+                    rep.error(C, 'library object "%s" needs ground_radius as an integer >= 0 (placement keeps that '
+                              "square of ground clear), got %r; rerun tools/foliage_objects.py index"
+                              % (r["name"], r.get("ground_radius")),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+                fn = r.get("file")
+                if not isinstance(fn, str) or not fn or Path(fn).name != fn:
+                    rep.error(C, 'library object "%s" file must be a bare file name, got %r' % (r["name"], fn),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+                    continue
+                obj = lib_path.parent / fn
+                if not obj.is_file():
+                    rep.error(C, 'library object "%s" file %s is missing' % (r["name"], fn),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+                    continue
+                actual = hashlib.sha256(obj.read_bytes()).hexdigest()
+                if r.get("sha256") != actual:
+                    rep.error(C, 'library object "%s" sha256 is %s but %s hashes to %s; rerun tools/foliage_objects.py '
+                              "index" % (r["name"], r.get("sha256"), fn, actual),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+            for g, where in sorted(groups_used.items()):
+                if g not in groups:
+                    err('%s uses object group "%s", which has no objects in %s' % (where, g, lib_rel),
+                        where.split(".")[1] if where.startswith("types.") else None, g)
+            for lid, lt in lt_ids.items():
+                obj = lt.get("object")
+                if isinstance(obj, str) and obj and (obj not in names or obj not in groups):
+                    rep.error(C, 'landmark tree "%s" object "%s" must be both an object name and a group in %s '
+                              "(placement keys it by group, the sightline check by name)" % (lid, obj, lib_rel),
+                              file=rel, line=f.line_of_id(lid), where=lid)
+
+    # sites inside the world bounds
+    world = ctx.doc("world.json")
+    if world is None and (ctx.data_dir / "world.json").is_file():
+        wf = _load_json_for(C, ctx.data_dir / "world.json", "data/world.json", rep)
+        world = wf.doc if wf else None
+    bounds = (world or {}).get("bounds") if isinstance(world, dict) else None
+    if not (isinstance(bounds, dict) and all(_num(bounds.get(k)) for k in ("min_x", "min_z", "max_x", "max_z"))):
+        rep.skip(C, "data/world.json has no bounds; landmark tree sites were not checked against the map", file=rel)
+    else:
+        for lid, lt in lt_ids.items():
+            if lid in bad_sites:
+                continue
+            x, z = lt["site"]
+            if not (bounds["min_x"] <= x <= bounds["max_x"] and bounds["min_z"] <= z <= bounds["max_z"]):
+                rep.error(C, 'landmark tree "%s" site (%s, %s) is outside the world bounds' % (lid, x, z),
+                          file=rel, line=f.line_of_id(lid), where=lid)
+
+    # landmark trees <-> data/towns.json outposts with kind landmark_tree; leg names name consecutive critical towns
+    towns_path = ctx.data_dir / "towns.json"
+    if not towns_path.is_file():
+        rep.skip(C, "data/towns.json is absent; landmark trees were not paired with outposts", file=rel)
+    else:
+        tf = _load_json_for(C, towns_path, "data/towns.json", rep)
+        towns = [t for t in ((tf.doc.get("towns") or []) if tf and isinstance(tf.doc, dict) else [])
+                 if isinstance(t, dict)]
+        if tf:
+            by_id = {t.get("id"): t for t in towns}
+            for lid, lt in lt_ids.items():
+                t = by_id.get(lid)
+                line = f.line_of_id(lid)
+                if t is None:
+                    rep.error(C, 'landmark tree "%s" has no outpost in data/towns.json' % lid, file=rel, line=line,
+                              where=lid)
+                    continue
+                if t.get("role") != "outpost" or t.get("kind") != "landmark_tree":
+                    rep.error(C, 'data/towns.json "%s" must be role outpost with kind landmark_tree (is %s / %s)'
+                              % (lid, t.get("role"), t.get("kind")), file=rel, line=line, where=lid)
+                c = t.get("centre") or {}
+                if lid not in bad_sites and [c.get("x"), c.get("z")] != list(lt["site"]):
+                    rep.error(C, 'landmark tree "%s" site %s is not its outpost centre (%s, %s)'
+                              % (lid, lt["site"], c.get("x"), c.get("z")), file=rel, line=line, where=lid)
+            for t in towns:
+                if t.get("kind") == "landmark_tree" and t.get("id") not in lt_ids:
+                    rep.error(C, 'data/towns.json "%s" is a landmark_tree outpost with no entry in landmark_trees'
+                              % t.get("id"), file="data/towns.json", where=t.get("id"))
+            crit = sorted([t for t in towns if t.get("tier") == "critical" and _num(t.get("order"))],
+                          key=lambda t: t["order"])
+            legs = {"%s->%s" % (a.get("id"), b.get("id")) for a, b in zip(crit, crit[1:])}
+            for lid, lt in lt_ids.items():
+                for o in lt.get("seen_from") or []:
+                    if isinstance(o, dict) and o.get("kind") == "legs" and isinstance(o.get("legs"), list):
+                        for name in o["legs"]:
+                            if name not in legs:
+                                rep.error(C, 'landmark tree "%s" is seen from leg "%s", which is not a pair of '
+                                          "consecutive critical towns" % (lid, name),
+                                          file=rel, line=f.line_of_id(lid), where=lid)
+
+    rep.info(C, "checked %d forest types, %d object groups, %d library objects and %d landmark trees"
+             % (len(types), len(groups_used), n_objects, len(lt_ids)), file=rel)
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -1017,6 +1463,7 @@ CHECKS = [
     ("progression", check_progression),
     ("rivers", check_rivers),
     ("towns", check_towns),
+    ("foliage", check_foliage),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
 ]
