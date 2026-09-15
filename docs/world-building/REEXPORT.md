@@ -2,7 +2,7 @@
 
 ## 2026-09-14 (fifth): foliage pass
 
-**Status: exported, checked in the region files and in game; Distant Horizons pregen started.** Same heightmap
+**Status: exported, checked in the region files and in game, and pregenerated.** Same heightmap
 (`60b241d1…`), rivers and lakes as the export below; the paint changed.
 
 **Exported twice.** A separate test author found five placement faults in the first export. It was retired
@@ -30,6 +30,7 @@ trees. Design, method and numbers: [`FOLIAGE.md`](FOLIAGE.md).
 | Export | `reexport.py`. The pre-foliage world is in `cobblers-server-retired/2026-09-14-foliage/`, and the first foliage export (seed carried from it) in `…-foliage-first-pass/`. Second export 1,690 s; 484 region files, 2.28 GB; `seed_match: true`; `.world` sha256 `6ca95bdc…` |
 | Rotation | 120 sampled 2x2 trunks (mega spruce, mega pine, ancient spruce) landed in all four quadrants around their painted column, every one inside the checked 3x3 |
 | Server | boots; border 10240; `cobblers_spawn_tags` enabled |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320`, complete; `data/DistantHorizons*` 602 MB |
 | Client LOD cache | `local+ho` moved to the retirement folder again (the client had rejoined since the last export and was closed) |
 
 **Checked in the region files: before and after, in 256 x 256 windows.** "Trunks/ha" counts connected log
