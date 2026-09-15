@@ -16,13 +16,13 @@
    "terrain": {
     "min_y": 13.2,
     "max_y": 200.0,
-    "mean_y": 104.44,
-    "land_fraction": 0.7873,
-    "water_fraction": 0.2127,
+    "mean_y": 104.74,
+    "land_fraction": 0.7858,
+    "water_fraction": 0.2142,
     "void_fraction": 0.0,
-    "mean_slope": 14.813,
-    "max_slope": 35.833,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 14.227,
+    "max_slope": 82.411,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -39,13 +39,13 @@
    "terrain": {
     "min_y": 11.42,
     "max_y": 200.0,
-    "mean_y": 99.25,
-    "land_fraction": 0.693,
-    "water_fraction": 0.307,
+    "mean_y": 97.7,
+    "land_fraction": 0.6917,
+    "water_fraction": 0.3083,
     "void_fraction": 0.0,
-    "mean_slope": 13.892,
-    "max_slope": 42.919,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 13.452,
+    "max_slope": 86.451,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -61,14 +61,14 @@
    },
    "terrain": {
     "min_y": 10.61,
-    "max_y": 200.0,
-    "mean_y": 88.75,
-    "land_fraction": 0.559,
-    "water_fraction": 0.441,
+    "max_y": 194.0,
+    "mean_y": 88.29,
+    "land_fraction": 0.558,
+    "water_fraction": 0.442,
     "void_fraction": 0.0,
-    "mean_slope": 10.357,
-    "max_slope": 33.093,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 10.221,
+    "max_slope": 81.754,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -85,13 +85,13 @@
    "terrain": {
     "min_y": 10.12,
     "max_y": 152.84,
-    "mean_y": 68.83,
-    "land_fraction": 0.5154,
-    "water_fraction": 0.4846,
+    "mean_y": 69.65,
+    "land_fraction": 0.5207,
+    "water_fraction": 0.4793,
     "void_fraction": 0.0,
-    "mean_slope": 8.246,
+    "mean_slope": 8.248,
     "max_slope": 63.371,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -108,13 +108,13 @@
    "terrain": {
     "min_y": 10.12,
     "max_y": 118.89,
-    "mean_y": 43.35,
-    "land_fraction": 0.2656,
-    "water_fraction": 0.7344,
+    "mean_y": 44.48,
+    "land_fraction": 0.2746,
+    "water_fraction": 0.7254,
     "void_fraction": 0.0,
-    "mean_slope": 8.213,
+    "mean_slope": 8.209,
     "max_slope": 61.254,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -131,13 +131,13 @@
    "terrain": {
     "min_y": 10.12,
     "max_y": 132.6,
-    "mean_y": 82.42,
-    "land_fraction": 0.692,
-    "water_fraction": 0.308,
+    "mean_y": 82.67,
+    "land_fraction": 0.695,
+    "water_fraction": 0.305,
     "void_fraction": 0.0,
-    "mean_slope": 11.087,
-    "max_slope": 21.308,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 10.678,
+    "max_slope": 63.081,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -154,13 +154,13 @@
    "terrain": {
     "min_y": 10.11,
     "max_y": 114.18,
-    "mean_y": 40.43,
-    "land_fraction": 0.2394,
-    "water_fraction": 0.7606,
+    "mean_y": 40.95,
+    "land_fraction": 0.2425,
+    "water_fraction": 0.7575,
     "void_fraction": 0.0,
-    "mean_slope": 7.574,
-    "max_slope": 19.289,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 7.454,
+    "max_slope": 33.127,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -177,13 +177,13 @@
    "terrain": {
     "min_y": 10.23,
     "max_y": 105.5,
-    "mean_y": 69.9,
-    "land_fraction": 0.6679,
-    "water_fraction": 0.3321,
+    "mean_y": 70.35,
+    "land_fraction": 0.6867,
+    "water_fraction": 0.3133,
     "void_fraction": 0.0,
-    "mean_slope": 7.467,
-    "max_slope": 18.782,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 7.136,
+    "max_slope": 60.897,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -200,13 +200,13 @@
    "terrain": {
     "min_y": 10.11,
     "max_y": 113.32,
-    "mean_y": 39.51,
-    "land_fraction": 0.2534,
-    "water_fraction": 0.7466,
+    "mean_y": 39.87,
+    "land_fraction": 0.2542,
+    "water_fraction": 0.7458,
     "void_fraction": 0.0,
-    "mean_slope": 6.571,
-    "max_slope": 61.413,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 6.53,
+    "max_slope": 80.157,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -221,15 +221,15 @@
     "max_z": 2047
    },
    "terrain": {
-    "min_y": 60.79,
-    "max_y": 200.0,
-    "mean_y": 137.22,
+    "min_y": 60.5,
+    "max_y": 197.44,
+    "mean_y": 134.4,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 9.474,
-    "max_slope": 61.727,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 9.059,
+    "max_slope": 80.056,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -245,14 +245,14 @@
    },
    "terrain": {
     "min_y": 93.9,
-    "max_y": 200.0,
-    "mean_y": 141.97,
+    "max_y": 194.0,
+    "mean_y": 140.39,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 9.384,
+    "mean_slope": 8.92,
     "max_slope": 63.609,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -275,7 +275,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.726,
     "max_slope": 63.399,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -292,13 +292,13 @@
    "terrain": {
     "min_y": 30.75,
     "max_y": 126.82,
-    "mean_y": 106.24,
-    "land_fraction": 0.9582,
-    "water_fraction": 0.0418,
+    "mean_y": 106.01,
+    "land_fraction": 0.9589,
+    "water_fraction": 0.0411,
     "void_fraction": 0.0,
-    "mean_slope": 5.122,
+    "mean_slope": 5.114,
     "max_slope": 62.504,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -315,13 +315,13 @@
    "terrain": {
     "min_y": 14.66,
     "max_y": 124.23,
-    "mean_y": 64.41,
-    "land_fraction": 0.5023,
-    "water_fraction": 0.4977,
+    "mean_y": 65.34,
+    "land_fraction": 0.512,
+    "water_fraction": 0.488,
     "void_fraction": 0.0,
-    "mean_slope": 8.218,
+    "mean_slope": 8.464,
     "max_slope": 63.406,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -338,13 +338,13 @@
    "terrain": {
     "min_y": 14.67,
     "max_y": 125.49,
-    "mean_y": 66.66,
-    "land_fraction": 0.5191,
-    "water_fraction": 0.4809,
+    "mean_y": 67.24,
+    "land_fraction": 0.5208,
+    "water_fraction": 0.4792,
     "void_fraction": 0.0,
-    "mean_slope": 8.039,
-    "max_slope": 21.785,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.038,
+    "max_slope": 35.225,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -361,13 +361,13 @@
    "terrain": {
     "min_y": 10.11,
     "max_y": 123.92,
-    "mean_y": 59.92,
-    "land_fraction": 0.4569,
-    "water_fraction": 0.5431,
+    "mean_y": 60.13,
+    "land_fraction": 0.4604,
+    "water_fraction": 0.5396,
     "void_fraction": 0.0,
-    "mean_slope": 7.85,
-    "max_slope": 20.254,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 7.848,
+    "max_slope": 27.921,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -384,13 +384,13 @@
    "terrain": {
     "min_y": 10.51,
     "max_y": 120.06,
-    "mean_y": 61.43,
-    "land_fraction": 0.523,
-    "water_fraction": 0.477,
+    "mean_y": 62.02,
+    "land_fraction": 0.5289,
+    "water_fraction": 0.4711,
     "void_fraction": 0.0,
-    "mean_slope": 6.578,
+    "mean_slope": 6.536,
     "max_slope": 58.142,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -413,7 +413,7 @@
     "void_fraction": 0.0,
     "mean_slope": 4.262,
     "max_slope": 59.392,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -436,7 +436,7 @@
     "void_fraction": 0.0,
     "mean_slope": 3.502,
     "max_slope": 18.113,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -459,7 +459,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.582,
     "max_slope": 59.427,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -482,7 +482,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.42,
     "max_slope": 60.119,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -499,13 +499,13 @@
    "terrain": {
     "min_y": 62.94,
     "max_y": 140.29,
-    "mean_y": 121.55,
+    "mean_y": 121.54,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 5.243,
-    "max_slope": 29.943,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 5.259,
+    "max_slope": 30.209,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -522,13 +522,13 @@
    "terrain": {
     "min_y": 14.85,
     "max_y": 131.25,
-    "mean_y": 71.49,
-    "land_fraction": 0.5758,
-    "water_fraction": 0.4242,
+    "mean_y": 72.19,
+    "land_fraction": 0.5855,
+    "water_fraction": 0.4145,
     "void_fraction": 0.0,
-    "mean_slope": 8.174,
-    "max_slope": 22.621,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.12,
+    "max_slope": 34.091,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -544,14 +544,14 @@
    },
    "terrain": {
     "min_y": 10.11,
-    "max_y": 64.38,
-    "mean_y": 13.88,
+    "max_y": 64.39,
+    "mean_y": 14.07,
     "land_fraction": 0.0017,
     "water_fraction": 0.9983,
     "void_fraction": 0.0,
-    "mean_slope": 1.841,
-    "max_slope": 16.919,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 1.907,
+    "max_slope": 20.263,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -568,13 +568,13 @@
    "terrain": {
     "min_y": 11.09,
     "max_y": 151.02,
-    "mean_y": 82.16,
-    "land_fraction": 0.5987,
-    "water_fraction": 0.4013,
+    "mean_y": 82.12,
+    "land_fraction": 0.5983,
+    "water_fraction": 0.4017,
     "void_fraction": 0.0,
-    "mean_slope": 8.728,
-    "max_slope": 23.475,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.727,
+    "max_slope": 45.765,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -597,7 +597,7 @@
     "void_fraction": 0.0,
     "mean_slope": 4.042,
     "max_slope": 28.674,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -620,7 +620,7 @@
     "void_fraction": 0.0,
     "mean_slope": 5.969,
     "max_slope": 35.502,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -643,7 +643,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.872,
     "max_slope": 32.556,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -666,7 +666,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.841,
     "max_slope": 55.677,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -689,7 +689,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.248,
     "max_slope": 60.235,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -704,15 +704,15 @@
     "max_z": 4095
    },
    "terrain": {
-    "min_y": 32.94,
+    "min_y": 41.69,
     "max_y": 122.55,
-    "mean_y": 89.96,
-    "land_fraction": 0.8955,
-    "water_fraction": 0.1045,
+    "mean_y": 89.65,
+    "land_fraction": 0.9022,
+    "water_fraction": 0.0978,
     "void_fraction": 0.0,
-    "mean_slope": 7.205,
+    "mean_slope": 7.236,
     "max_slope": 63.833,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -728,14 +728,14 @@
    },
    "terrain": {
     "min_y": 10.11,
-    "max_y": 97.0,
-    "mean_y": 19.28,
-    "land_fraction": 0.0479,
-    "water_fraction": 0.9521,
+    "max_y": 96.95,
+    "mean_y": 19.77,
+    "land_fraction": 0.048,
+    "water_fraction": 0.952,
     "void_fraction": 0.0,
-    "mean_slope": 3.657,
-    "max_slope": 19.615,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 3.754,
+    "max_slope": 42.183,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -752,13 +752,13 @@
    "terrain": {
     "min_y": 10.11,
     "max_y": 132.77,
-    "mean_y": 53.22,
-    "land_fraction": 0.3826,
-    "water_fraction": 0.6174,
+    "mean_y": 53.75,
+    "land_fraction": 0.388,
+    "water_fraction": 0.612,
     "void_fraction": 0.0,
-    "mean_slope": 7.063,
-    "max_slope": 22.953,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 7.314,
+    "max_slope": 43.514,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -773,15 +773,15 @@
     "max_z": 5119
    },
    "terrain": {
-    "min_y": 81.84,
+    "min_y": 74.67,
     "max_y": 134.81,
-    "mean_y": 118.17,
+    "mean_y": 118.16,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 3.569,
-    "max_slope": 18.709,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 3.584,
+    "max_slope": 29.352,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -804,7 +804,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.414,
     "max_slope": 62.764,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -827,7 +827,7 @@
     "void_fraction": 0.0,
     "mean_slope": 5.446,
     "max_slope": 26.997,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -850,7 +850,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.127,
     "max_slope": 62.657,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -873,7 +873,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.401,
     "max_slope": 69.415,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -888,15 +888,15 @@
     "max_z": 5119
    },
    "terrain": {
-    "min_y": 31.72,
+    "min_y": 45.99,
     "max_y": 200.0,
-    "mean_y": 101.8,
-    "land_fraction": 0.8762,
-    "water_fraction": 0.1238,
+    "mean_y": 101.65,
+    "land_fraction": 0.8974,
+    "water_fraction": 0.1026,
     "void_fraction": 0.0,
-    "mean_slope": 9.205,
-    "max_slope": 53.712,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.517,
+    "max_slope": 54.161,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -913,13 +913,13 @@
    "terrain": {
     "min_y": 10.11,
     "max_y": 102.13,
-    "mean_y": 46.99,
-    "land_fraction": 0.3191,
-    "water_fraction": 0.6809,
+    "mean_y": 48.76,
+    "land_fraction": 0.3277,
+    "water_fraction": 0.6723,
     "void_fraction": 0.0,
-    "mean_slope": 8.329,
-    "max_slope": 20.675,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.668,
+    "max_slope": 43.638,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -936,13 +936,13 @@
    "terrain": {
     "min_y": 11.11,
     "max_y": 147.06,
-    "mean_y": 92.78,
-    "land_fraction": 0.7257,
-    "water_fraction": 0.2743,
+    "mean_y": 95.08,
+    "land_fraction": 0.765,
+    "water_fraction": 0.235,
     "void_fraction": 0.0,
-    "mean_slope": 13.195,
-    "max_slope": 24.201,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 11.623,
+    "max_slope": 47.743,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -959,13 +959,13 @@
    "terrain": {
     "min_y": 12.66,
     "max_y": 136.43,
-    "mean_y": 78.48,
-    "land_fraction": 0.6359,
-    "water_fraction": 0.3641,
+    "mean_y": 79.6,
+    "land_fraction": 0.6464,
+    "water_fraction": 0.3536,
     "void_fraction": 0.0,
-    "mean_slope": 8.39,
-    "max_slope": 20.445,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.714,
+    "max_slope": 47.071,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -980,15 +980,15 @@
     "max_z": 6143
    },
    "terrain": {
-    "min_y": 68.68,
+    "min_y": 64.73,
     "max_y": 148.52,
-    "mean_y": 114.76,
+    "mean_y": 114.66,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 5.48,
+    "mean_slope": 5.576,
     "max_slope": 59.259,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1011,7 +1011,7 @@
     "void_fraction": 0.0,
     "mean_slope": 4.523,
     "max_slope": 59.368,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1034,7 +1034,7 @@
     "void_fraction": 0.0,
     "mean_slope": 3.676,
     "max_slope": 14.125,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1051,13 +1051,13 @@
    "terrain": {
     "min_y": 109.68,
     "max_y": 200.0,
-    "mean_y": 147.24,
+    "mean_y": 145.74,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 6.813,
-    "max_slope": 51.931,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 6.327,
+    "max_slope": 80.966,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1072,15 +1072,15 @@
     "max_z": 6143
    },
    "terrain": {
-    "min_y": 91.58,
+    "min_y": 89.91,
     "max_y": 200.0,
-    "mean_y": 150.76,
+    "mean_y": 148.5,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 7.311,
-    "max_slope": 37.16,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.843,
+    "max_slope": 72.588,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1095,15 +1095,15 @@
     "max_z": 6143
    },
    "terrain": {
-    "min_y": 27.28,
+    "min_y": 27.41,
     "max_y": 142.52,
-    "mean_y": 88.24,
-    "land_fraction": 0.7749,
-    "water_fraction": 0.2251,
+    "mean_y": 88.89,
+    "land_fraction": 0.8143,
+    "water_fraction": 0.1857,
     "void_fraction": 0.0,
-    "mean_slope": 12.691,
-    "max_slope": 23.358,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 11.694,
+    "max_slope": 41.311,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1119,14 +1119,14 @@
    },
    "terrain": {
     "min_y": 10.11,
-    "max_y": 120.54,
-    "mean_y": 22.34,
-    "land_fraction": 0.0662,
-    "water_fraction": 0.9338,
+    "max_y": 120.64,
+    "mean_y": 23.32,
+    "land_fraction": 0.0714,
+    "water_fraction": 0.9286,
     "void_fraction": 0.0,
-    "mean_slope": 5.374,
-    "max_slope": 24.186,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 5.356,
+    "max_slope": 47.404,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1143,13 +1143,13 @@
    "terrain": {
     "min_y": 10.63,
     "max_y": 143.68,
-    "mean_y": 57.15,
-    "land_fraction": 0.4041,
-    "water_fraction": 0.5959,
+    "mean_y": 58.46,
+    "land_fraction": 0.4203,
+    "water_fraction": 0.5797,
     "void_fraction": 0.0,
-    "mean_slope": 7.832,
-    "max_slope": 22.024,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 7.741,
+    "max_slope": 41.526,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1166,13 +1166,13 @@
    "terrain": {
     "min_y": 18.38,
     "max_y": 107.92,
-    "mean_y": 61.22,
-    "land_fraction": 0.5256,
-    "water_fraction": 0.4744,
+    "mean_y": 62.67,
+    "land_fraction": 0.5551,
+    "water_fraction": 0.4449,
     "void_fraction": 0.0,
-    "mean_slope": 8.233,
-    "max_slope": 63.195,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.043,
+    "max_slope": 63.192,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1189,13 +1189,13 @@
    "terrain": {
     "min_y": 12.25,
     "max_y": 116.14,
-    "mean_y": 69.23,
-    "land_fraction": 0.6079,
-    "water_fraction": 0.3921,
+    "mean_y": 70.22,
+    "land_fraction": 0.6255,
+    "water_fraction": 0.3745,
     "void_fraction": 0.0,
-    "mean_slope": 6.76,
-    "max_slope": 18.048,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 6.628,
+    "max_slope": 43.064,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1212,13 +1212,13 @@
    "terrain": {
     "min_y": 12.25,
     "max_y": 163.4,
-    "mean_y": 75.06,
-    "land_fraction": 0.5281,
-    "water_fraction": 0.4719,
+    "mean_y": 77.34,
+    "land_fraction": 0.5546,
+    "water_fraction": 0.4454,
     "void_fraction": 0.0,
-    "mean_slope": 10.77,
-    "max_slope": 22.699,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 10.451,
+    "max_slope": 45.448,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1235,13 +1235,13 @@
    "terrain": {
     "min_y": 14.71,
     "max_y": 170.13,
-    "mean_y": 85.06,
-    "land_fraction": 0.5922,
-    "water_fraction": 0.4078,
+    "mean_y": 87.06,
+    "land_fraction": 0.6178,
+    "water_fraction": 0.3822,
     "void_fraction": 0.0,
-    "mean_slope": 10.903,
-    "max_slope": 25.898,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 10.736,
+    "max_slope": 40.886,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1258,13 +1258,13 @@
    "terrain": {
     "min_y": 13.85,
     "max_y": 151.81,
-    "mean_y": 92.92,
-    "land_fraction": 0.6522,
-    "water_fraction": 0.3478,
+    "mean_y": 93.75,
+    "land_fraction": 0.6607,
+    "water_fraction": 0.3393,
     "void_fraction": 0.0,
-    "mean_slope": 8.816,
-    "max_slope": 22.52,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.742,
+    "max_slope": 44.459,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1279,15 +1279,15 @@
     "max_z": 7167
    },
    "terrain": {
-    "min_y": 30.43,
+    "min_y": 36.67,
     "max_y": 147.82,
-    "mean_y": 103.41,
-    "land_fraction": 0.8428,
-    "water_fraction": 0.1572,
+    "mean_y": 103.5,
+    "land_fraction": 0.8493,
+    "water_fraction": 0.1507,
     "void_fraction": 0.0,
-    "mean_slope": 12.461,
-    "max_slope": 23.715,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 12.111,
+    "max_slope": 65.456,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1304,13 +1304,13 @@
    "terrain": {
     "min_y": 10.1,
     "max_y": 128.89,
-    "mean_y": 25.81,
-    "land_fraction": 0.1255,
-    "water_fraction": 0.8745,
+    "mean_y": 25.78,
+    "land_fraction": 0.125,
+    "water_fraction": 0.875,
     "void_fraction": 0.0,
-    "mean_slope": 5.164,
-    "max_slope": 24.501,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 5.141,
+    "max_slope": 66.209,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1327,13 +1327,13 @@
    "terrain": {
     "min_y": 13.32,
     "max_y": 146.67,
-    "mean_y": 93.19,
-    "land_fraction": 0.7496,
-    "water_fraction": 0.2504,
+    "mean_y": 94.05,
+    "land_fraction": 0.7638,
+    "water_fraction": 0.2362,
     "void_fraction": 0.0,
-    "mean_slope": 7.673,
-    "max_slope": 20.829,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 7.535,
+    "max_slope": 56.631,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1350,13 +1350,13 @@
    "terrain": {
     "min_y": 13.28,
     "max_y": 109.28,
-    "mean_y": 74.13,
-    "land_fraction": 0.7065,
-    "water_fraction": 0.2935,
+    "mean_y": 74.63,
+    "land_fraction": 0.7155,
+    "water_fraction": 0.2845,
     "void_fraction": 0.0,
-    "mean_slope": 6.375,
-    "max_slope": 16.682,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 6.327,
+    "max_slope": 36.691,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1373,13 +1373,13 @@
    "terrain": {
     "min_y": 10.1,
     "max_y": 114.04,
-    "mean_y": 39.64,
-    "land_fraction": 0.2525,
-    "water_fraction": 0.7475,
+    "mean_y": 41.31,
+    "land_fraction": 0.2802,
+    "water_fraction": 0.7198,
     "void_fraction": 0.0,
-    "mean_slope": 6.9,
-    "max_slope": 18.048,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 6.778,
+    "max_slope": 41.665,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1397,12 +1397,12 @@
     "min_y": 10.11,
     "max_y": 138.62,
     "mean_y": 61.44,
-    "land_fraction": 0.4392,
-    "water_fraction": 0.5608,
+    "land_fraction": 0.4399,
+    "water_fraction": 0.5601,
     "void_fraction": 0.0,
-    "mean_slope": 8.494,
-    "max_slope": 23.175,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 8.48,
+    "max_slope": 45.59,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1419,13 +1419,13 @@
    "terrain": {
     "min_y": 10.11,
     "max_y": 137.11,
-    "mean_y": 73.37,
-    "land_fraction": 0.5544,
-    "water_fraction": 0.4456,
+    "mean_y": 74.34,
+    "land_fraction": 0.5702,
+    "water_fraction": 0.4298,
     "void_fraction": 0.0,
-    "mean_slope": 9.621,
-    "max_slope": 20.135,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 9.537,
+    "max_slope": 32.93,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1442,13 +1442,13 @@
    "terrain": {
     "min_y": 10.11,
     "max_y": 129.12,
-    "mean_y": 34.24,
-    "land_fraction": 0.1938,
-    "water_fraction": 0.8062,
+    "mean_y": 34.3,
+    "land_fraction": 0.1931,
+    "water_fraction": 0.8069,
     "void_fraction": 0.0,
-    "mean_slope": 6.315,
-    "max_slope": 22.942,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 6.287,
+    "max_slope": 59.115,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   },
@@ -1465,13 +1465,13 @@
    "terrain": {
     "min_y": 10.1,
     "max_y": 149.17,
-    "mean_y": 84.25,
-    "land_fraction": 0.6165,
-    "water_fraction": 0.3835,
+    "mean_y": 84.23,
+    "land_fraction": 0.6171,
+    "water_fraction": 0.3829,
     "void_fraction": 0.0,
-    "mean_slope": 10.268,
-    "max_slope": 22.872,
-    "computed_from_sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "mean_slope": 10.281,
+    "max_slope": 41.813,
+    "computed_from_sha256": "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
     "computed_from_import": "97df2052d11ea011"
    }
   }

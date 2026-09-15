@@ -150,9 +150,13 @@ def paint_rivers(rivers_path, heights, biome, terr, trees, plants, frost, out):
     doc = json.loads(Path(rivers_path).read_text(encoding="utf-8"))
     cut = doc.get("cut") or {}
     world = T.load_world(ROOT / "data" / "world.json")
-    if (cut.get("output") or {}).get("sha256") != world["heightmap"]["sha256"]:
-        raise SystemExit("rivers.json cut output %s is not the imported heightmap %s; rerun the cut and import it"
-                         % ((cut.get("output") or {}).get("sha256"), world["heightmap"]["sha256"]))
+    # the imported heightmap is the cut itself, or a sculpt of it (world.json heightmap.sculpted_from), which keeps
+    # river channels unchanged
+    hm = world["heightmap"]
+    cut_of_import = (hm.get("sculpted_from") or {}).get("sha256") or hm["sha256"]
+    if (cut.get("output") or {}).get("sha256") != cut_of_import:
+        raise SystemExit("rivers.json cut output %s is not the imported heightmap's river cut %s; rerun the cut (and "
+                         "the sculpt) and import it" % ((cut.get("output") or {}).get("sha256"), cut_of_import))
     cold = [WP_BIOMES[b] for b in COLD_BIOMES]
     manifest = []
     for c in doc["courses"]:
@@ -320,6 +324,8 @@ def main(argv=None):
     p.add_argument("--foliage", default=str(ROOT / "data" / "foliage.json"), help="forest types; '' to place no trees")
     p.add_argument("--library", default=str(ROOT / "kits" / "structures" / "foliage" / "library.json"))
     p.add_argument("--towns", default=str(ROOT / "data" / "towns.json"), help="settlement footprints kept clear of trees")
+    p.add_argument("--coast-class", default=str(ROOT / "build" / "sculpt" / "coast_class.png"),
+                   help="coast classes from tools/sculpt.py apply; '' for the uniform beach rule")
     a = p.parse_args(argv)
     out = Path(a.out) if a.out else ROOT / "build" / "paint"
     out.mkdir(parents=True, exist_ok=True)
@@ -379,6 +385,12 @@ def main(argv=None):
             t[h >= lo] = TERRAIN_CODES[name]
         for hi_, name in pr.get("terrain_below") or []:
             t[h < hi_] = TERRAIN_CODES[name]
+        # scree: loose rock on the band of slope just below where the ground turns to bare rock
+        sc = pr.get("scree")
+        if sc:
+            sm_ = slope[m]
+            sel = (sm_ >= sc["slope_deg"][0]) & (sm_ < sc["slope_deg"][1]) & (nz(24, 29)[m] < sc.get("coverage", 0.7))
+            t[sel] = TERRAIN_CODES[sc["terrain"]]
         steep = pr.get("rock_slope_deg", 38)
         if steep:
             t[slope[m] >= steep] = TERRAIN_CODES[pr.get("rock", "STONE_MIX")]
@@ -413,9 +425,57 @@ def main(argv=None):
     shore = land & (heights < sea_level + 3) & (slope < 20)
     cold = np.isin(biome, [WP_BIOMES[b] for b in ("minecraft:snowy_taiga", "minecraft:snowy_plains", "minecraft:grove",
                                                    "minecraft:snowy_slopes", "minecraft:frozen_peaks", "minecraft:jagged_peaks")])
+    # sea columns carry ocean biomes, so a cold coast's shallows follow the land: cold within about 96 blocks of
+    # cold land (a graded beach shelf reaches 7 deep some 70-80 blocks out)
+    cg = cold[::8, ::8].copy()
+    for _ in range(12):
+        g2 = cg.copy()
+        g2[1:, :] |= cg[:-1, :]; g2[:-1, :] |= cg[1:, :]; g2[:, 1:] |= cg[:, :-1]; g2[:, :-1] |= cg[:, 1:]
+        cg = g2
+    cold_near = np.repeat(np.repeat(cg, 8, 0), 8, 1)[:cold.shape[0], :cold.shape[1]]
+    cold = cold | (sea & cold_near)
     arid = np.isin(terr, [TERRAIN_CODES[k] for k in ("DESERT", "RED_DESERT", "MESA", "RED_SAND", "SAND")])
-    terr[shore & ~cold & ~arid] = TERRAIN_CODES["BEACHES"]
-    terr[shore & cold] = TERRAIN_CODES["GRAVEL"]
+    coast_class = None
+    if a.coast_class and Path(a.coast_class).exists():
+        coast_class = np.asarray(Image.open(a.coast_class))
+        record = Path(a.coast_class).with_suffix(".json")
+        if record.exists():
+            made_for = json.loads(record.read_text(encoding="utf-8")).get("heightmap_sha256")
+            if made_for != world["heightmap"]["sha256"]:
+                raise SystemExit("coast class map %s was made for heightmap %s, not the imported %s: re-run sculpt.py apply"
+                                 % (a.coast_class, str(made_for)[:12], world["heightmap"]["sha256"][:12]))
+        if coast_class.shape != (N, N):
+            raise SystemExit("coast class map %s is %s, not %dx%d" % (a.coast_class, coast_class.shape, N, N))
+    if coast_class is None:
+        terr[shore & ~cold & ~arid] = TERRAIN_CODES["BEACHES"]
+        terr[shore & cold] = TERRAIN_CODES["GRAVEL"]
+    else:
+        # shore materials by coast class (tools/sculpt.py): the grade was fixed first, so sand only lies where a
+        # beach has width; codes 1 beach, 2 estuary, 3 grassy shore, 4 rocky, 5 cliff, 0 outside the coastal band
+        def paint(cls, sel, name, cold_name=None):
+            s = (coast_class == cls) & sel
+            if cold_name:
+                terr[s & cold] = TERRAIN_CODES[cold_name]
+                s = s & ~cold
+            terr[s] = TERRAIN_CODES[name]
+        shallow = sea & (heights >= sea_level - 7)
+        pn = nz(32, 41)
+        paint(1, land & (heights < sea_level + 5.5) & (slope < 16), "BEACHES", "GRAVEL")
+        paint(1, shallow, "SAND", "GRAVEL")
+        paint(2, land & (heights < sea_level + 3) & (slope < 10) & (pn >= 0.3), "MUD")
+        paint(2, land & (heights < sea_level + 3) & (slope < 10) & (pn < 0.3), "CLAY")
+        paint(2, sea & (heights >= sea_level - 4), "MUD")
+        paint(3, land & (heights < sea_level + 1.2) & (slope < 12), "GRAVEL")
+        paint(3, shallow, "GRAVEL")
+        paint(4, land & (heights < sea_level + 7) & (pn >= 0.35), "STONE_MIX")
+        paint(4, land & (heights < sea_level + 7) & (pn < 0.35), "GRAVEL")
+        paint(4, sea & (heights >= sea_level - 9), "GRAVEL")
+        paint(5, land & (heights < sea_level + 4) & (slope < 30), "GRAVEL")
+        paint(5, sea & (heights >= sea_level - 12), "STONE_MIX")
+        outside = coast_class == 0
+        terr[shore & outside & ~cold & ~arid] = TERRAIN_CODES["BEACHES"]
+        terr[shore & outside & cold] = TERRAIN_CODES["GRAVEL"]
+        shore = shore | (land & np.isin(coast_class, [1, 2]) & (heights < sea_level + 5.5) & (slope < 16))
     # polygons are simplified, so they overhang the coast: nothing grows or freezes on the sea
     for k in trees:
         trees[k][shore | sea] = 0

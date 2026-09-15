@@ -1519,11 +1519,11 @@
    "working_name": "The Scar (Mt Vessu summit)",
    "display_name": null,
    "for": "The empty footprint where the Displaced City stood: a bare flat summit with foundations and a road that ends at nothing.",
-   "why_here": "Mt Vessu's summit is already a flat bare plateau (the terrain is clipped at y200), which is exactly the spec's 'bare flat footprint'. It is 408 blocks above Surge's town, so the gym 3 town sees it, and 900 blocks from the Displaced City's entrance across the Merian cirque.",
+   "why_here": "Mt Vessu's old clipped summit plateau is kept as one deliberate flat: the sculpt pass (tools/sculpt.py) presses the Scar to y194 as a scraped table just below the true summit (y200, 330 blocks north-west), and breaks the rest of the plateau into ridges. It is 408 blocks above Surge's town, so the gym 3 town sees it, and 900 blocks from the Displaced City's entrance across the Merian cirque.",
    "centre": {
     "x": 2110,
     "z": 950,
-    "ground_y": 200.0
+    "ground_y": 194.0
    },
    "footprint": {
     "shape": "square",
@@ -1534,8 +1534,8 @@
     "max_x": 2260,
     "max_z": 1100,
     "ground_y": [
-     200.0,
-     200.0
+     194.0,
+     194.0
     ],
     "slope_degrees": {
      "mean": 0.0,

@@ -1,0 +1,349 @@
+{
+ "schema": "cobblers.sculpt/1",
+ "status": "draft",
+ "note": "Local terrain sculpting on the river-cut heightmap: coasts by class, massif asymmetry and summits, and the volcano's cones. Applied by tools/sculpt.py as feathered brushes; every column outside a brush's mask is written back bit-identical. Protected sites (settlement footprints, landmark-tree glades, river channels, lake basins) keep their original terrain. docs/world-building/SCULPT.md.",
+ "prevailing_wind_from_deg": 250,
+ "prevailing_wind_basis": "West-south-west, off the open ocean: the western and south-western coasts face the longest fetch, the Frostpeak peninsula is snow-bound, and the Tri Peaks' eastern flank holds the Merian cirque and the Glacial Tear (glaciers form on the lee, shaded side). The same wind carries volcanic ash east, so the cones' eastern flanks are the long, gentle ones.",
+ "protect": {
+  "settlement_margin_blocks": 32,
+  "landmark_tree_margin_blocks": 8,
+  "river_margin_blocks": 12,
+  "lake_margin_blocks": 16,
+  "feather_blocks": 24,
+  "terrain_feather_blocks": 60,
+  "rectangles": [
+   {
+    "id": "hometown_built_area",
+    "min_x": 1376,
+    "min_z": 4976,
+    "max_x": 1567,
+    "max_z": 5391,
+    "why": "The placed starter town and the first stretch of route (data/placements.json). Chunk-aligned, so the town chunks from the live world can be carried into a re-export unchanged: no sculpt brush reaches them."
+   }
+  ]
+ },
+ "coast": {
+  "band_blocks": 300,
+  "spacing_blocks": 32,
+  "concavity_radius_blocks": 256,
+  "fetch_cap_blocks": 3000,
+  "estuary_mouth_radius_blocks": 200,
+  "class_smoothing_radius_blocks": 128,
+  "hard_regions": [
+   "tri_peaks",
+   "frostpeak_point",
+   "the_craters",
+   "scorched_plateau",
+   "glacial_tear",
+   "the_rift"
+  ],
+  "soft_regions": [
+   "eastern_dunes",
+   "sunset_isle",
+   "southern_coast",
+   "pallet_fields",
+   "jungle_isle",
+   "fungal_isle"
+  ],
+  "rules": [
+   "estuary: within estuary_mouth_radius of a river that reaches the open sea",
+   "cliff: a headland (land share under 0.40) that is exposed (over 0.5) or backed by more than 50 blocks of hinterland relief; or hard ground with more than 55",
+   "rocky: hard ground; or, on ground that is not soft, exposed (over 0.55) and not a bay, or more than 45 blocks of relief; or soft ground that is very exposed (over 0.7)",
+   "beach: a bay (land share over 0.55); or soft ground that is bay-like (over 0.48) or sheltered (exposure under 0.25); or a sheltered, low stretch (exposure under 0.1, relief under 15, land share over 0.45)",
+   "shore: everything else (a gentler grassy bank, no sand)"
+  ],
+  "classes": {
+   "beach": {
+    "grade": [
+     8,
+     15
+    ],
+    "berm_blocks": [
+     6,
+     18
+    ],
+    "top_above_sea": [
+     3.0,
+     5.5
+    ],
+    "back_blocks": [
+     40,
+     110
+    ],
+    "shelf_grade": [
+     12,
+     20
+    ],
+    "shelf_depth": [
+     3.5,
+     6
+    ],
+    "micro_relief": 0.25
+   },
+   "estuary": {
+    "grade": [
+     28,
+     42
+    ],
+    "berm_blocks": [
+     16,
+     32
+    ],
+    "top_above_sea": [
+     2.0,
+     3.0
+    ],
+    "back_blocks": [
+     60,
+     120
+    ],
+    "shelf_grade": [
+     20,
+     28
+    ],
+    "shelf_depth": [
+     2,
+     3
+    ],
+    "micro_relief": 0.15
+   },
+   "shore": {
+    "grade": [
+     5,
+     7
+    ],
+    "berm_blocks": [
+     0,
+     0
+    ],
+    "top_above_sea": [
+     5.0,
+     7.5
+    ],
+    "back_blocks": [
+     45,
+     110
+    ],
+    "shelf_grade": [
+     8,
+     11
+    ],
+    "shelf_depth": [
+     3.5,
+     5
+    ],
+    "micro_relief": 0.9
+   },
+   "rocky": {
+    "bank_grade": 1.8,
+    "bank_top_above_sea": 7.0,
+    "back_blocks": 50,
+    "drop_grade": 1.4,
+    "drop_depth": 9,
+    "rugged": 1.0,
+    "micro_relief": 0.9
+   },
+   "cliff": {
+    "height": [
+     10,
+     26
+    ],
+    "relief_share": 0.35,
+    "face_blocks": [
+     1,
+     7
+    ],
+    "back_blocks": [
+     35,
+     110
+    ],
+    "talus_blocks": 7,
+    "drop_grade": 0.9,
+    "drop_depth": 16,
+    "micro_relief": 0.9
+   }
+  },
+  "micro_relief_scale_blocks": 20,
+  "relief_basis": "hinterland relief: the 90th percentile of height 200-500 blocks inland, less y100 (the top of the uniform coastal ramp everywhere)",
+  "exposure_basis": "cos(angle between the seaward normal and the direction the prevailing wind comes from), times open-water fetch / 2000 (capped at 1)"
+ },
+ "massifs": [
+  {
+   "id": "tri_peaks_range",
+   "subregions": [
+    "the_tri_peaks",
+    "mt_vessu",
+    "mt_clay"
+   ],
+   "steep_faces_deg": 60,
+   "steep_basis": "East-north-east: the lee side under the prevailing wind, where the Merian cirque and the Glacial Tear already cut into the range, and toward the Rift. The west-south-west flank falls long and gentle to the Viltri uplands.",
+   "shift_blocks": 140,
+   "shift_taper_blocks": 320,
+   "shift_from_y": 110,
+   "summits": {
+    "base_y": 176,
+    "rise": 24,
+    "e_fold_blocks": 45,
+    "ridge_scale_blocks": 170,
+    "highest": [
+     1860,
+     770
+    ],
+    "highest_name": "Mt Vessu",
+    "secondary_cap": 0.75,
+    "highest_basis": "On the shifted crest north-west of the Scar, outside its pad blend (322 blocks away), 500 blocks north of gym 3 town"
+   },
+   "strata": {
+    "from_y": 130,
+    "cliff_slope_deg": 32,
+    "cliff_band": [
+     13,
+     19
+    ],
+    "cliff_strength": 0.45,
+    "bench_slope_deg": [
+     12,
+     26
+    ],
+    "bench_band": [
+     22,
+     32
+    ],
+    "bench_strength": 0.22
+   }
+  },
+  {
+   "id": "frostpeak",
+   "subregions": [
+    "frostpeak"
+   ],
+   "steep_faces_deg": 315,
+   "steep_basis": "North-west, into the prevailing storms off the open sea: a wave- and wind-cut face above the northern strand; the peninsula slopes gently south-east to the mainland.",
+   "shift_blocks": 55,
+   "shift_taper_blocks": 200,
+   "shift_from_y": 100,
+   "summits": {
+    "base_y": 180,
+    "rise": 20,
+    "e_fold_blocks": 35,
+    "ridge_scale_blocks": 120,
+    "highest": [
+     720,
+     390
+    ],
+    "highest_name": "Frostpeak",
+    "secondary_cap": 0.75
+   },
+   "strata": {
+    "from_y": 120,
+    "cliff_slope_deg": 32,
+    "cliff_band": [
+     12,
+     17
+    ],
+    "cliff_strength": 0.45,
+    "bench_slope_deg": [
+     12,
+     26
+    ],
+    "bench_band": [
+     20,
+     28
+    ],
+    "bench_strength": 0.2
+   }
+  }
+ ],
+ "volcano": {
+  "steep_faces_deg": 250,
+  "steep_basis": "The cones' west-south-west flanks face the prevailing wind and stay steep; ash falls to the east, so the eastern flanks are long and gentle.",
+  "shift_blocks": 25,
+  "shift_taper_blocks": 260,
+  "shift_from_y": 135,
+  "cones": [
+   {
+    "id": "great_cone",
+    "form": "stratovolcano",
+    "centre": [
+     6100,
+     5520
+    ],
+    "crater_radius": 48,
+    "crater_floor_y": 174,
+    "rim_y": 200,
+    "rim_width": 14,
+    "flank_to_radius": 240,
+    "flank_drop": 35,
+    "breach_bearing_deg": 90,
+    "breach_half_angle_deg": 28,
+    "breach_floor_y": 176,
+    "breach_grade": 0.15,
+    "why": "The tallest cone becomes the classic stratovolcano: a 96-block summit crater with its rim at y200, and a breach to the east where the crater wall collapsed and lava ran out downwind."
+   },
+   {
+    "id": "north_east_dome",
+    "form": "lava_dome",
+    "centre": [
+     6560,
+     5170
+    ],
+    "dome_radius": 70,
+    "dome_top_y": 199,
+    "dome_drop": 12,
+    "spines": 5,
+    "spine_radius": 4,
+    "spine_seed": 7,
+    "why": "A convex, steep-sided dome of viscous lava with rock spines on top: no crater, a different silhouette from the great cone."
+   },
+   {
+    "id": "west_cinder_cone",
+    "form": "cinder_cone",
+    "centre": [
+     5620,
+     5620
+    ],
+    "top_y": 189,
+    "slope": 0.62,
+    "radius": 75,
+    "crater_radius": 14,
+    "crater_floor_y": 180,
+    "strength": 0.7,
+    "why": "A small, regular, 32-degree cinder cone with a neat summit crater; it replaces the clipped spur that made it read as a broken ridge.",
+    "plain_y": 145
+   },
+   {
+    "id": "eastern_caldera",
+    "form": "caldera",
+    "centre": [
+     6672,
+     5470
+    ],
+    "floor_radius": 70,
+    "floor_y": 104,
+    "wall_to_radius": 92,
+    "rim_to_radius": 106,
+    "rim_y": 150,
+    "rim_noise": 4,
+    "flank_to_radius": 195,
+    "flank_grade": 0.2,
+    "why": "The shallow 7-block bowl becomes a collapsed caldera: a flat floor 140 blocks across at y104, steep inner walls and a rim near y150, about 46 blocks of wall. Centred 38 blocks north of the old bowl so the Mining Town footprint keeps its ground; the rim sinks toward the town on the south side."
+   }
+  ]
+ },
+ "pads": [
+  {
+   "site": "the_scar",
+   "y": 194,
+   "radius": 150,
+   "feather": 140,
+   "why": "Mt Vessu keeps one deliberate flat: the Scar, where the Displaced City was torn away, pressed flat at y194 as a scraped table just below the true summit (y200, north-west of it). The rest of the old clipped plateau is broken into ridges and saddles."
+  },
+  {
+   "site": "frostpeak_shrine",
+   "y": 200,
+   "radius": 55,
+   "feather": 70,
+   "why": "The shrine keeps a small levelled summit platform; the rest of Frostpeak's clipped top is broken up."
+  }
+ ]
+}
