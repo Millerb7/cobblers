@@ -55,6 +55,9 @@ CORRIDOR = 100             # half width of the band around a carved axis when te
 CANAL_PCT = 50             # a course cut along more than this share of its length is a canal
 BURN = 100.0               # courses are lowered this much on the planning grid so drainage follows them
 TRIBUTARY_KM2 = 0.25       # a stream draining at least this much counts as a tributary
+HEAD_KM2 = 0.13            # the major river begins where its path drains this much: the smallest catchment that
+                           # feeds any lake outflow on this map (lake_viltri_outflow 0.131 km2). Above it the
+                           # longest descending path is a hillside, and a channel there is a cut, not a river
 REACH = 64                 # reach length along a course, blocks
 MAJOR_VALLEY_WIDTH = 16    # the major river gets a floodplain and terraces once it is this wide
 VALLEY_MAX_GRADE = 0.02    # steeper reaches are confined: steep banks, no floodplain or terraces
@@ -843,6 +846,28 @@ def plan(args):
     trunk_id = "major_river_trunk"
     major_ids = []
     result, graded = run_course(ctx, [(hx, hz)], float(ymin[hz, hx]), only=top["_bodies"] or None)
+    # the trunk starts where the path first drains HEAD_KM2, not at the path's far end on a bare hillside
+    head_rule = {"min_catchment_km2": HEAD_KM2, "path_head": dict(top["head"])}
+    if graded:
+        ctx["dense"]["_trunk_probe"] = graded
+        probe = drainage_for(ctx, cuttable() + ["_trunk_probe"])
+        del ctx["dense"]["_trunk_probe"]
+        st_p, _ = graded
+        run_a, run_d, prev = 0.0, 0.0, None
+        for s_ in st_p:
+            cz, cx = s_[1] // FACTOR, s_[0] // FACTOR
+            run_a = max(run_a, float(probe["km2"][max(0, cz - 1):cz + 2, max(0, cx - 1):cx + 2].max()))
+            if prev is not None:
+                run_d += math.hypot(s_[0] - prev[0], s_[1] - prev[1])
+            prev = s_
+            if run_a >= HEAD_KM2:
+                break
+        head_rule.update({"moved_blocks_along_path": round(run_d), "catchment_at_head_km2": round(run_a, 3)})
+        if run_d > 0 and run_a >= HEAD_KM2:
+            hx, hz = int(prev[0] // FACTOR), int(prev[1] // FACTOR)
+            result, graded = run_course(ctx, [(hx, hz)], float(ymin[hz, hx]), only=top["_bodies"] or None)
+    top["head"] = {"x": hx * FACTOR, "z": hz * FACTOR, "ground_y": round(float(ymin[hz, hx]), 1)}
+    print("major river head:", json.dumps(head_rule), flush=True)
     add_course(trunk_id, "major_river", {"kind": "system_head", "x": hx * FACTOR, "z": hz * FACTOR,
                                          "ground_y": round(float(ymin[hz, hx]), 1)}, "major", result, graded)
     cur = trunk_id if result["valid"] else None
@@ -854,8 +879,9 @@ def plan(args):
             break
         cur = nxt if nxt in by_course else nxt + "_outflow"
     major = {
-        "selection": "the coastal system with the largest catchment; its trunk runs from the head of the system's "
-                     "longest descending flow path to the sea",
+        "selection": "the coastal system with the largest catchment; its trunk follows the system's longest "
+                     "descending flow path to the sea, starting where that path first drains HEAD_KM2",
+        "head_rule": head_rule,
         "systems_ranked": [{k: v for k, v in s.items() if not k.startswith("_")} for s in systems[:5]],
         "chosen_rank_by": {k: v + 1 for k, v in ranks.items()},
         "metrics_agree": all(v == 0 for v in ranks.values()),
@@ -895,7 +921,7 @@ def plan(args):
                        "bed_radius": BED_RADIUS, "near_lake": NEAR_LAKE, "near_sea": NEAR_SEA,
                        "destination_radius": DEST_RADIUS, "corridor_half_width": CORRIDOR,
                        "canal_pct": CANAL_PCT, "sea_level": sea, "reach_blocks": REACH,
-                       "grade_window_blocks": GRADE_WINDOW, "tributary_km2": TRIBUTARY_KM2,
+                       "grade_window_blocks": GRADE_WINDOW, "tributary_km2": TRIBUTARY_KM2, "head_km2": HEAD_KM2,
                        "character": CHARACTER_RULES},
         "lakes": lake_rows,
         "rivers": rivers,
