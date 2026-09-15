@@ -1,0 +1,32 @@
+{
+ "schema": "cobblers.placements/1",
+ "status": "draft",
+ "note": "Structure instances placed by command. tools/place_town.py turns a settlement's entries into a datapack function (pads, /place template with rotation, jigsaw blocks replaced by their final state, donor loot removed, paths, waystone, world spawn), so a placement can be repeated exactly after a re-export. Positions are the minimum corner of each building's footprint after rotation; y comes from the terrain (the median ground under the footprint, levelled into a pad). Templates are the MIT CobblemonCityTowns donors copied under cobblers: (docs/world-building/STRUCTURE_CATALOG.md).",
+ "settlements": {
+  "hometown": {
+   "centre": [1462, 5293],
+   "footprint_from": "data/towns.json hometown",
+   "composition": "A small coastal town on Pallet Meadows' upper bench. The main street runs north-south and leaves the town north as the first route toward gym 1; it crosses the east-west street at the Pallet sign's crossroads, the town centre. The Pokemon Center and Poke Mart face each other across the main street just north of the crossroads, where a returning trainer arrives. Five family houses line the cross street's western arm, on the lower ground that looks out over the sea. Oak's Lab stands apart on its own lane on the higher south-east corner. The waystone is beside the crossroads; players spawn on the main street south of the sign.",
+   "status": "proposed: composition for a human to accept or rework in Axiom",
+   "roads": [
+    {"id": "main_street", "width": 3, "surface": "minecraft:dirt_path", "polyline": [[1461, 5226], [1461, 5352]]},
+    {"id": "cross_street", "width": 3, "surface": "minecraft:dirt_path", "polyline": [[1403, 5292], [1522, 5292]]},
+    {"id": "lab_lane", "width": 3, "surface": "minecraft:dirt_path", "polyline": [[1461, 5318], [1486, 5318]]},
+    {"id": "route_north", "width": 3, "surface": "minecraft:dirt_path", "follow_leg": "hometown->gym1_town", "from": [1461, 5226], "length_blocks": 220}
+   ],
+   "waystone": {"position": [1467, 5286], "facing": "west", "unlock": "not yet: placed unactivated; the flag-driven lock (EXP-020) is not wired for the hometown"},
+   "spawn": [1461, 5306]
+  }
+ },
+ "placements": [
+  {"id": "hometown_sign", "settlement": "hometown", "template": "cobblers:f4/pallet/town_centers/sign", "file": "kits/structures/campaign/f4/pallet/town_centers/sign.nbt", "cell": "F2", "kind": "town_centre", "position": {"x": 1456, "z": 5287}, "facing": "west", "anchor_mode": "corner", "y_mode": "surface", "rotation": "none", "mirror": "none", "status": "planned"},
+  {"id": "hometown_pokecenter", "settlement": "hometown", "template": "cobblers:f4/services/pokecenter", "file": "kits/structures/campaign/f4/services/pokecenter.nbt", "cell": "F2", "kind": "service", "position": {"x": 1432, "z": 5238}, "facing": "east", "anchor_mode": "corner", "y_mode": "surface", "rotation": "180", "mirror": "none", "status": "planned"},
+  {"id": "hometown_pokemart", "settlement": "hometown", "template": "cobblers:f4/services/structure_pokemart", "file": "kits/structures/campaign/f4/services/structure_pokemart.nbt", "cell": "F2", "kind": "service", "position": {"x": 1467, "z": 5239}, "facing": "west", "anchor_mode": "corner", "y_mode": "surface", "rotation": "180", "mirror": "none", "status": "planned"},
+  {"id": "hometown_oaks_lab", "settlement": "hometown", "template": "cobblers:f4/pallet/rare_structures/lab", "file": "kits/structures/campaign/f4/pallet/rare_structures/lab.nbt", "cell": "F2", "kind": "lab", "position": {"x": 1487, "z": 5309}, "facing": "west", "anchor_mode": "corner", "y_mode": "surface", "rotation": "none", "mirror": "none", "status": "planned"},
+  {"id": "hometown_house_1", "settlement": "hometown", "template": "cobblers:f4/pallet/buildings/large2", "file": "kits/structures/campaign/f4/pallet/buildings/large2.nbt", "cell": "F2", "kind": "house", "position": {"x": 1409, "z": 5275}, "facing": "south", "anchor_mode": "corner", "y_mode": "surface", "rotation": "counterclockwise_90", "mirror": "none", "status": "planned"},
+  {"id": "hometown_house_2", "settlement": "hometown", "template": "cobblers:f4/pallet/buildings/small1", "file": "kits/structures/campaign/f4/pallet/buildings/small1.nbt", "cell": "F2", "kind": "house", "position": {"x": 1426, "z": 5278}, "facing": "south", "anchor_mode": "corner", "y_mode": "surface", "rotation": "counterclockwise_90", "mirror": "none", "status": "planned"},
+  {"id": "hometown_house_3", "settlement": "hometown", "template": "cobblers:f4/pallet/buildings/small2", "file": "kits/structures/campaign/f4/pallet/buildings/small2.nbt", "cell": "F2", "kind": "house", "position": {"x": 1411, "z": 5297}, "facing": "north", "anchor_mode": "corner", "y_mode": "surface", "rotation": "clockwise_90", "mirror": "none", "status": "planned"},
+  {"id": "hometown_house_4", "settlement": "hometown", "template": "cobblers:f4/pallet/buildings/small3", "file": "kits/structures/campaign/f4/pallet/buildings/small3.nbt", "cell": "F2", "kind": "house", "position": {"x": 1425, "z": 5297}, "facing": "north", "anchor_mode": "corner", "y_mode": "surface", "rotation": "clockwise_90", "mirror": "none", "status": "planned"},
+  {"id": "hometown_house_5", "settlement": "hometown", "template": "cobblers:f4/pallet/buildings/large1", "file": "kits/structures/campaign/f4/pallet/buildings/large1.nbt", "cell": "F2", "kind": "house", "position": {"x": 1444, "z": 5308}, "facing": "east", "anchor_mode": "corner", "y_mode": "surface", "rotation": "180", "mirror": "none", "status": "planned"}
+ ]
+}

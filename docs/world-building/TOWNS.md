@@ -132,11 +132,34 @@ islands.
 **If you keep the League in the End,** this site becomes the end of Victory Road and the portal
 room. See [`DIMENSIONS_AND_BORDERS.md`](DIMENSIONS_AND_BORDERS.md) §4.2.
 
+## Hometown: placed (2026-09-15, a proposal to keep or rework)
+
+The composition, roads, waystone and spawn are recorded in `data/placements.json`. `tools/place_town.py` builds
+them into a datapack function (`cobblers:towns/hometown`, 3,919 commands) that was run in the live world.
+
+- **Layout.** North to south:
+  - a main street runs 126 blocks from the route north at (1461, 5226);
+  - the Pokémon Center and Mart face each other at its head;
+  - a cross street at z5292 carries the town sign and five houses to the west;
+  - Oak's lab sits at the end of a lane to the east at z5318;
+  - spawn is on the main street at (1461, 118, 5306), south of the crossroads, facing the route.
+- **The buildings.** All nine are donor templates from the loaded pack. Each rotation comes from the template's
+  entrance jigsaw so the door faces its street. Jigsaws are resolved to their final state and loot tables are
+  stripped.
+- **Checked in the world:** 0 jigsaw blocks remain, both waystone halves are present, 913 path blocks, blocks
+  in all nine footprints, and `level.dat` spawn 1461 118 5306.
+- **Not wired:** the waystone is placed but not locked, since the hometown's unlock is the open question in
+  `progression.json`. The Pokémon Center donor may carry a waystone-like block of its own (seen on a top-down
+  render, not identified).
+- **Across re-exports:** the built area (x1376-1567, z4976-5391) is protected from sculpting, and
+  `tools/transplant_chunks.py` copies its chunks into a new export.
+
 ## Not decided here
 
 - **Town names.** `display_name` is null; the working names are placeholders.
 - **Layout, streets and buildings.** Those are authored in Axiom; the footprint is only the
-  flat square that fits.
+  flat square that fits. The hometown's placement above is a first composition for you to accept or
+  rework.
 - **Waystone positions** in `data/progression.json` stay null until the towns are built. Each
   `gymN_town` id here is the town those flags name, and the validator checks that they
   exist.

@@ -1,5 +1,35 @@
 # Re-export: cobblers-10240
 
+## 2026-09-15: sculpted coasts and massifs, the hometown placed
+
+**Status: prepared, NOT exported.** Exporting waits on the user, who may have built in the hometown since it was
+placed.
+
+**What is ready:**
+- **Heightmap:** `land_8k_16_sculpted.png` (`19abdd39…`), a sculpt of the river cut (`60b241d1…`). Design and
+  numbers: [`SCULPT.md`](SCULPT.md).
+- **Measurements:** cells and regions re-measured.
+- **Paint:** repainted on the sculpted terrain. Shore materials follow the coast class, cold shallows take
+  gravel, and scree bands are painted. 77,750 objects.
+- **Checks on the repaint:** spawn tags 98.85% and 98.17%. Landmark sightlines: Great Oak 21/37, Sentinel 33/81,
+  Patriarch 66/155, Cherry Elder 61/160, Weeping Elder 29/144.
+- **Spawn:** `world.json` `export.spawn` is (1461, 5306), the hometown's main street.
+
+**The live world already has the hometown and its spawn** (`place_town.py`, run on the `6ca95bdc` export).
+
+**Plan when approved:**
+1. Stop the server. Retire the world to `cobblers-server-retired/2026-09-15-pre-sculpt/`.
+2. Run `python tools/reexport.py … --out-dir <absolute server dir>` (a relative path resolves against
+   WorldPainter's folder).
+3. Carry the hometown across. The sculpt left the built area untouched, so its chunks fit the new terrain:
+   ```
+   python tools/transplant_chunks.py --from <retired world> --to <new world> --blocks 1376 4976 1567 5391
+   ```
+   The box is 1376-1567 by 4976-5391, which is 12 by 26 chunks. The tool copies region, entities and poi byte for
+   byte. It was byte-verified on retired worlds, but it has not been boot-tested.
+4. Boot, check the town blocks and spawn in game, run the Distant Horizons pregen, and retire the client LOD cache
+   if the client is closed.
+
 ## 2026-09-14 (fifth): foliage pass
 
 **Status: exported, checked in the region files and in game, and pregenerated.** Same heightmap

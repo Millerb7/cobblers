@@ -29,6 +29,11 @@ detected rather than trusted.
 | `foliage_objects.py` | The foliage object library: `harvest` vanilla trees over RCON into `.nbt`, `generate` seeded objects and landmark giants, `index` sizes, crowns, eye-level widths and hashes | `kits/structures/foliage/` |
 | `structure_nbt.py` | Write and read structure templates (`.nbt`); capture a box of blocks from a world's region files | (library) |
 | `landmark_trees.py` | Landmark giant designs; `check` sightlines from each tree's intended observers over terrain plus canopy | `derived/foliage/landmark_sightlines.json` |
+| `sculpt.py` | Local terrain brushes from `data/sculpt.json`: coasts by class, massif asymmetry, summits and strata, volcano cones, flat pads; writes the sculpted heightmap, the coast class map and before/after previews | `<source root>/land_8k_16_sculpted.png`, `build/sculpt/`, `derived/sculpt/` |
+| `coast_measure.py` | Profiles normal to the shoreline: grade over the first rise, shelf depth, terraces | `derived/coast/` |
+| `massif_measure.py` | Summits, radial flank grades, clipped tops and cone bowls | `derived/terrain/massifs.json` |
+| `place_town.py` | A settlement's placements as a datapack function: pads, rotated templates, jigsaws resolved, loot stripped, paths, waystone, spawn | `build/datapacks/cobblers_towns/`, `derived/towns/` |
+| `transplant_chunks.py` | Copy whole chunks (region, entities, poi) from one closed world into another, to carry a build across a re-export | (in place) |
 | `critical_legs.py` | Route the critical path legs (Victory Road along the Rift axes) and tally blocks per sub-region | `derived/routes/critical_legs.json` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
 | `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |
