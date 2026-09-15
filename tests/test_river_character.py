@@ -755,7 +755,7 @@ def _paint_setup(tmp_path, monkeypatch, sha=PAINT_SHA, courses_cut=("flows",)):
     biome = np.full((PN, PN), WARM_ID, np.uint8)
     biome[:, 64:] = COLD_ID
     terr = np.full((PN, PN), PP.TERRAIN_CODES["GRASS"], np.uint8)
-    trees = {k: np.full((PN, PN), 9, np.uint8) for k in PP.TREE_LAYERS}
+    trees = {k: np.ones((PN, PN), np.uint8) for k in PP.TREE_LAYERS}   # the "allowed" mask starts at 1
     plants = {k: np.ones((PN, PN), bool) for k in PP.PLANT_SETS}
     frost = np.ones((PN, PN), bool)
     out = tmp_path / "paint"
@@ -839,12 +839,14 @@ def test_bed_banks_and_biome_follow_reaches(painted_rivers):
     assert t[5, 20] == PP.TERRAIN_CODES["GRASS"] and b[5, 20] == WARM_ID
 
 
-# removing this lets trees stand in the river and snow sit on moving water
+# removing this lets trees stand in the river or on its banks, and snow sit on moving water
 def test_trees_plants_and_frost_cleared_on_the_water(painted_rivers):
     _, _, wet = _paint_oracle(painted_rivers["doc"]["courses"][0], painted_rivers["heights"])
+    assert list(painted_rivers["trees"]) == ["allowed"]
     for k, layer in painted_rivers["trees"].items():
         assert (layer[wet] == 0).all(), k
-        assert layer[5, 5] == 9, "trees away from the river are kept"
+        assert layer[30 - 4, 20] == 0 and layer[30 - 5, 100] == 0, "a trunk may not stand on the bank either"
+        assert layer[5, 5] == 1, "ground away from the river stays allowed"
     for k, layer in painted_rivers["plants"].items():
         assert not layer[wet].any(), k
     assert not painted_rivers["frost"][wet].any()
@@ -855,7 +857,7 @@ def test_trees_plants_and_frost_cleared_on_the_water(painted_rivers):
 def test_courses_not_cut_are_not_painted(painted_rivers):
     assert not (painted_rivers["out"] / "river_uncut.png").exists()
     assert (painted_rivers["terr"][80:100, :] == PP.TERRAIN_CODES["GRASS"]).all()
-    assert (painted_rivers["trees"]["PineForest"][80:100, :] == 9).all()
+    assert (painted_rivers["trees"]["allowed"][80:100, :] == 1).all()
 
 
 # removing this lets river water be painted on a heightmap that does not have the channels cut into it
