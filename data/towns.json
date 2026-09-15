@@ -991,7 +991,7 @@
     "mine": "adit from the town into the eastern cone toward the bowl; a main shaft from about y135 to the fossil levels (y40-70); deep workings below for Groudon",
     "scope_estimate": "about 2 km of 3x4 galleries (25,000 blocks) plus four chambers of about 30x30x15 (54,000 blocks); the Groudon chamber authored separately",
     "biomes": "sulfur_caves in the workings is planned for the Craters (regions.json underground_biomes, optional: it binds the save to VanillaBackport)",
-    "spawn_tags": "#cobblemon:is_volcanic and #cobblemon:is_thermal have no loaded biome; the overlay that puts the Craters' biomes into them is still to be written and verified",
+    "spawn_tags": "#cobblemon:is_volcanic (stony_peaks, savanna_plateau) and #cobblemon:is_thermal (stony_peaks) via the cobblers_spawn_tags overlay generated from data/regions.json spawn_tag_overlays; both biomes are painted only in the Craters",
     "fossils": "the Mining Town is where the fossil-site placements go underground (WORLDGEN_FEATURES.md); which species become reachable is listed when the encounter tables are written",
     "legendary": "Groudon in the deep workings (STRUCTURE_DECISIONS.md)"
    },
@@ -1081,11 +1081,21 @@
     "ceiling": "recommended: a glowing false sky (light-emitting blocks set in the roof), so the cherry trees and grass grow on block light, which is the 'not sunlight' of the spec; daylight shafts would contradict it and full dark hides the city",
     "excavation_estimate_blocks": "about 1.0-1.6 million for the cavern (200 x 200 x 40, less rock left standing) plus a 400-block access tunnel",
     "tool": "Axiom / WorldEdit volume build",
-    "check_first": "the export's lowest block layer before digging below y40 (not verified)",
     "linked": [
      "the_scar",
      "regigigas (sealed chamber beside the city)"
-    ]
+    ],
+    "depth_verified": {
+     "date": "2026-09-14",
+     "method": "full columns read from the exported region files over the 200 x 200 footprint",
+     "bedrock_y": -64,
+     "band_solid_share": 0.983,
+     "band_air_cells": 884,
+     "rock_over_y72_ceiling": {
+      "min": 24,
+      "median": 31
+     }
+    }
    },
    "nearest_settlement": {
     "id": "merian_hut",

@@ -90,10 +90,14 @@ In `data/towns.json` `decisions` and
     binds the save to VanillaBackport;
   - the underground fossil-site placements;
   - Groudon.
-- **Not done:**
-  - `#cobblemon:is_volcanic` and `#cobblemon:is_thermal` have no loaded biome, so the overlay
-    that puts the Craters' biomes into them is still to be written and verified;
-  - the list of fossil species it makes reachable comes with the encounter tables.
+- **Spawn tags, written 2026-09-14:** the overlay pack `cobblers_spawn_tags`, generated from
+  `regions.json` `spawn_tag_overlays` by `tools/spawn_tag_pack.py`, gives the Craters their
+  identity.
+  - `#cobblemon:is_volcanic` covers the cones and rim (`stony_peaks`, `savanna_plateau`).
+  - `#cobblemon:is_thermal` covers the cones, where the town and mine are.
+  - Both biomes are now painted only in the Craters (99% inside), so the tags do not leak.
+  - See `REEXPORT.md` for what was checked in game.
+- **Not done:** the list of fossil species it makes reachable comes with the encounter tables.
 
 **The Displaced City.** Your spec, placed and tiered.
 - **What it is for:** a summit town moved by the Worldshift into a cherry-grove cavern, streets
@@ -113,7 +117,12 @@ In `data/towns.json` `decisions` and
   - The ground above is y96 or higher, and the major river's bed nearby is about y98, so at
     least 24 blocks of rock over the ceiling.
   - Excavation: about 1.0–1.6 million blocks plus a 400-block tunnel.
-  - **Check first:** the export's lowest block layer before digging below y40 (not verified).
+  - **Depth, verified in the exported region files (2026-09-14):** under all 40,000 columns of
+    the cavern footprint the world is solid to bedrock at y−64. The y32–72 band is 98.3%
+    solid (stone, granite, andesite, diorite, dirt and gravel pockets, coal and iron ore),
+    with 884 air cells.
+    - The rock over a y72 ceiling is 24 blocks at its thinnest and 31 at the median.
+    - The spec stands. There is room to lower the cavern if a thicker roof is wanted.
 - **Ceiling, recommended: a glowing false sky.** Light blocks set in the roof let the cherry
   trees and grass live on block light, the "not sunlight" of the spec. Daylight shafts would
   contradict the spec, and full dark would hide the city.

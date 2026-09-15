@@ -23,6 +23,7 @@ detected rather than trusted.
 | `grade_rivers.py` | `plan`: least-cut descending course from every lake and river source to the sea, catchment-sized reaches (width, depth, banks, bed, incision), the major river chosen by catchment with its valley, checks along each carve. `cut`: carve those sections into the heightmap `heightmap.derived_from` names, write the imported file and re-check it (`docs/world-building/RIVERS.md`) | `data/rivers.json`, `<source root>/land_8k_16_eroded_rivers.png` |
 | `drainage.py` | Priority flood, D8 flow directions and accumulation on a coarse height grid | (library) |
 | `region_measure.py` | Re-measure `regions.json` measured blocks from the committed polygons on the current heightmap | `data/regions.json` with `--write` |
+| `spawn_tag_pack.py` | Build the `cobblers_spawn_tags` overlay from `regions.json` `spawn_tag_overlays` (biome tags Cobblemon spawns on that no loaded biome carries); `--check-paint` fails if an overlay biome is painted outside its regions; `--install` copies it into a datapacks folder | `build/datapacks/cobblers_spawn_tags/` |
 | `sightlines.py` | Raycasts from a viewpoint to named landmarks | `derived/sightlines/` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
 | `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |

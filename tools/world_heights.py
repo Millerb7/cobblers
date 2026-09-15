@@ -48,7 +48,17 @@ COVER = {
     "minecraft:azure_bluet", "minecraft:allium", "minecraft:blue_orchid", "minecraft:lilac",
     "minecraft:rose_bush", "minecraft:peony", "minecraft:sunflower", "minecraft:vine", "minecraft:cactus",
     "minecraft:sweet_berry_bush", "minecraft:brown_mushroom", "minecraft:red_mushroom",
+    "minecraft:azalea", "minecraft:flowering_azalea", "minecraft:pink_petals", "minecraft:bamboo",
+    "minecraft:mangrove_roots", "minecraft:mushroom_stem", "minecraft:brown_mushroom_block",
+    "minecraft:red_mushroom_block", "minecraft:cocoa", "minecraft:pink_tulip", "minecraft:white_tulip",
+    "minecraft:red_tulip", "minecraft:orange_tulip",
 }
+# painted worlds carry trees: their trunks and canopy are not the ground surface
+COVER_SUFFIXES = ("_leaves", "_log", "_wood")
+
+
+def is_cover(name):
+    return name in COVER or name.endswith(COVER_SUFFIXES)
 
 
 def unpack_states(raw, palette_len, count=4096):
@@ -65,7 +75,7 @@ def unpack_states(raw, palette_len, count=4096):
 
 
 def chunk_columns(chunk):
-    """-> ground (16,16) int16, water (16,16) int16, top-block names Counter, status."""
+    """-> ground (16,16) int16, water (16,16) int16, status. Ground skips cover: plants, snow layers and trees."""
     ground = np.full((16, 16), NONE, np.int16)
     water = np.full((16, 16), NONE, np.int16)
     names = Counter()
@@ -78,7 +88,7 @@ def chunk_columns(chunk):
         if not palette or (len(palette) == 1 and palette[0] in AIR):
             continue
         idx = unpack_states(bs.get("data"), len(palette)).reshape(16, 16, 16)  # [y, z, x]
-        is_ground = np.array([n not in AIR and n not in WATER and n not in COVER for n in palette])
+        is_ground = np.array([n not in AIR and n not in WATER and not is_cover(n) for n in palette])
         is_water = np.array([n in WATER for n in palette])
         base = int(sec.get("Y", 0)) * 16
         g = is_ground[idx]

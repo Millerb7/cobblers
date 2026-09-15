@@ -1,6 +1,91 @@
 # Re-export: cobblers-10240
 
+## 2026-09-14 (third): Crater-only volcanic biomes; pre-build checks
+
+**Status: exported, pregenerated, and checked.** The heightmap and river cuts are unchanged from
+the export below.
+
+**Why it was re-exported.**
+- **The tags:** the Mining Town's identity needs `#cobblemon:is_volcanic` and
+  `#cobblemon:is_thermal`. Cobblemon 1.8.0 fills them only with Terralith, Biomes O' Plenty,
+  Wythers and Darker Depths biomes, none of which is loaded.
+- **The overlay:** `cobblers_spawn_tags`, built from `regions.json` `spawn_tag_overlays` by
+  `tools/spawn_tag_pack.py`, adds `stony_peaks` and `savanna_plateau`, the Craters' two
+  biomes.
+- **The leak it had to fix:** 14% of `stony_peaks` was painted on the Crags summits. That
+  band now paints `jagged_peaks`, so both tag biomes are 98–99% inside the Craters (the rest
+  is region-edge rasterisation).
+
+| Step | Result |
+| --- | --- |
+| Paint maps | regenerated with the Crags change; `spawn_tag_pack.py --check-paint`: `stony_peaks` 98.85% and `savanna_plateau` 98.17% inside the Craters |
+| Export | the same `reexport.py` command, with the old world from `cobblers-server-retired/2026-09-14-biome-tags/`; export 835 s; 484 region files, 2.33 GB; `seed_match: true`; `.world` sha256 `dae3d5c5…` |
+| Datapack | `spawn_tag_pack.py --install <server>/datapacks`. Global Packs force-loads `datapacks/`; the log shows "Found new data pack cobblers_spawn_tags, loading it automatically", and `datapack list enabled` includes it |
+| Border | 10240 |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320` |
+
+**Tags checked in game** with `execute if biome` on force-loaded painted chunks. `locate biome`
+is no use here: it consults the world generator's noise biomes, not the painted chunks.
+
+| Position | Result |
+| --- | --- |
+| Mining Town (6633, 139, 5716) | `stony_peaks`; volcanic yes, thermal yes; volcanic at y60 underground too |
+| Crater rim (5913, 111, 5071) | volcanic yes, thermal no (as designed) |
+| Crags summit (3541, 164, 1323) | `jagged_peaks`; volcanic no |
+| Crags grove (3295, 128, 1402) | volcanic no |
+
+**Not checked:** that Cobblemon actually spawns volcanic or thermal species there. That is an
+encounter-table matter, still deferred.
+
+### Pre-build checks on the exported world
+
+**1. Displaced City depth.** Full columns under the 200 × 200 cavern footprint were read from
+the region files.
+- **Bedrock** is at y−64 under all 40,000 columns.
+- **The y32–72 band** is 98.3% solid: stone, granite, andesite, diorite, dirt and gravel
+  pockets, coal and iron ore, with 884 air cells.
+- **Rock over a y72 ceiling:** 24 blocks at its thinnest, 31 at the median.
+- **The spec stands.**
+
+**2. Surface against the heightmap.** A full-map `world_heights extract` and `compare` on the
+previous export; the terrain is unchanged in this one.
+- **Chunks:** all 262,144 present.
+- **Land:** 99.10% exact and 99.94% within 1 block. The rest is WorldPainter's rounding and
+  small plants.
+- **Seabed:** 99.9999% exact.
+- **First pass misreported this:** it showed about 10 million land columns 5 blocks high. That
+  was tree canopy counted as ground; `world_heights.py` now treats logs and leaves as cover.
+- **Below sea level without water:** 160,609 columns, almost all shoreline, where heightmap
+  y61.6–62 rounds to a y62 ground block.
+
+**3. Rivers and lakes.** Every cut course compared with its paint level map.
+- **Planned water columns:** 95,798.
+- **At the planned level:** 98.1%.
+- **Raised:** 1.9%, where a course meets a lake or another course; water is only ever raised.
+- **Dry or lower:** 0.
+- **Lakes:** at their levels (Tilpey 77, Shrew 106, Arrow 100 and so on).
+
+**4. Earlier paint issues.** A scan of all 451,584 saved chunks, including the margin.
+- **Coastal overhang:** fixed. There are 0 log or leaf blocks in sea water, and 0 ice or snow at
+  sea level over water.
+- **The old grass name:** WorldPainter writes `minecraft:grass` (1,250,087 blocks), the
+  pre-1.20.3 name.
+  - The chunks carry DataVersion 2860, so the server upgrades them to `short_grass` on load.
+    In game, `execute if block … minecraft:short_grass` passes on the scanned positions.
+  - Only Distant Horizons, which reads raw region files, logs "Unknown registry key …
+    minecraft:grass". The LODs miss those tufts, which is invisible at LOD distance.
+  - **No repaint is needed for it.**
+
+**Retired, not deleted,** to `cobblers-server-retired/2026-09-14-biome-tags/`: the previous
+`cobblers-10240` world and `cobblers-10240.world`.
+- **The client LOD cache was left in place,** because the game was running. Only the Crags'
+  summit colour differs from what it holds. Clear it in Distant Horizons if that band looks
+  stale.
+
 ## 2026-09-14 (second): river-cut terrain, rivers filled
+
+> Superseded by the export above (same terrain, the Crags repainted). That world is in
+> `cobblers-server-retired/2026-09-14-biome-tags/`.
 
 **Status: exported and pregenerated for Distant Horizons.** No player has been in it yet.
 
@@ -64,8 +149,11 @@ Pine Isles, the Tri Peaks):
 
 **Known issues in this export:**
 - **`minecraft:grass` blocks.** 25,754 of them in the sample. They do not come from the plant
-  sets, which avoid "Short Grass"; WorldPainter itself writes the old block name. Minecraft
-  1.21.1 has no such block, so those columns load without it.
+  sets, which avoid "Short Grass"; WorldPainter itself writes the old block name.
+  - *Corrected 2026-09-14:* the earlier note here said those columns load without it. That was
+    wrong. The chunks carry DataVersion 2860, so the server upgrades the name to `short_grass`
+    on load, which was checked in game.
+  - Only Distant Horizons, which reads raw region files, warns.
 - **Coastal paint overhang.** The maps were generated before a fix: sub-region polygons
   overhanging the coast could put tree density, plants and frost on sea columns. The fixed tool
   clears all three on sea and on flooded lake columns. It applies from the next repaint.
