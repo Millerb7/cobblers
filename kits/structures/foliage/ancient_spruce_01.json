@@ -1,0 +1,10 @@
+{
+ "group": "ancient_spruce",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  5,
+  0,
+  5
+ ]
+}

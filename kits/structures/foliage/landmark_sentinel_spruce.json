@@ -1,0 +1,10 @@
+{
+ "group": "landmark_sentinel_spruce",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  11,
+  2,
+  11
+ ]
+}

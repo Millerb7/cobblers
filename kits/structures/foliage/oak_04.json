@@ -1,0 +1,10 @@
+{
+ "group": "oak",
+ "source": "vanilla",
+ "feature": "minecraft:oak",
+ "origin": [
+  2,
+  0,
+  2
+ ]
+}

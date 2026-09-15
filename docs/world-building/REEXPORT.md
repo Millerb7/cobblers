@@ -1,6 +1,65 @@
 # Re-export: cobblers-10240
 
+## 2026-09-14 (fifth): foliage pass
+
+**Status: exported, checked in the region files and in game; Distant Horizons pregen started.** Same heightmap
+(`60b241d1…`), rivers and lakes as the export below; the paint changed.
+
+**Exported twice.** A separate test author found five placement faults in the first export. It was retired
+unplayed to `cobblers-server-retired/2026-09-14-foliage-first-pass/`:
+1. understory was mapped over water (the export itself had none there, because plant layers skip flooded
+   columns);
+2. the 3-block water clearance was only enforced on the 4-block grid;
+3. long objects (fallen logs, boulders) had only four columns checked;
+4. random rotation was not covered: 2x2 trunks turn about the painted column, so three quarters could stand
+   on unchecked columns;
+5. landmark-tree outposts added a 16-block settlement margin on top of their glades.
+
+All five are fixed. The table and checks below are the second export: 78,887 objects, 102 fewer. The sample
+windows and landmark sightlines came out the same.
+
+**Why.** The paint's forests were too packed and too uniform: WorldPainter tree layers at one density per
+preset. They are now placed per forest type as custom objects at computed positions, with five landmark
+trees. Design, method and numbers: [`FOLIAGE.md`](FOLIAGE.md).
+
+| Step | Result |
+| --- | --- |
+| Objects | `tools/foliage_objects.py`: 148 vanilla captures (19 groups) and 53 generated objects (17 groups) in `kits/structures/foliage/` |
+| Paint | 35 object layers, 78,887 objects; understory, floor and `old_growth_pine_taiga` by forest type; spawn tags still 98.85% and 98.17% inside the Craters |
+| Landmark sightlines | `tools/landmark_trees.py check` over terrain and the planned canopy: Great Oak seen from 21 of 37 first-leg points, Sentinel 27 of 81, Patriarch 66 of 155 on Victory Road, Cherry Elder 58 of 160, Weeping Elder 31 of 144 |
+| Export | `reexport.py`. The pre-foliage world is in `cobblers-server-retired/2026-09-14-foliage/`, and the first foliage export (seed carried from it) in `…-foliage-first-pass/`. Second export 1,690 s; 484 region files, 2.28 GB; `seed_match: true`; `.world` sha256 `6ca95bdc…` |
+| Rotation | 120 sampled 2x2 trunks (mega spruce, mega pine, ancient spruce) landed in all four quadrants around their painted column, every one inside the checked 3x3 |
+| Server | boots; border 10240; `cobblers_spawn_tags` enabled |
+| Client LOD cache | `local+ho` moved to the retirement folder again (the client had rejoined since the last export and was closed) |
+
+**Checked in the region files: before and after, in 256 x 256 windows.** "Trunks/ha" counts connected log
+columns two blocks above the ground. "Eye blocked" is the share of columns with a log or leaves at that
+height.
+
+| Window | Trunks/ha before | after | Eye blocked before | after |
+| --- | ---: | ---: | ---: | ---: |
+| Old growth (Peak Pond Hollow, densest giants) | 510 | 24 | 5.1% | 2.2% |
+| Thicket (Northgate Isle) | 534 | 137 | 5.3% | 12.7% |
+| Dark wood (the Wedge) | 960 | 66 | 9.9% | 3.0% |
+| Birch plateau | 518 | 60 | 6.6% | 0.8% |
+| Mossy broadleaf (Long Isle) | 397 | 51 | 5.7% | 3.1% |
+| Foothill mixed | 294 | 61 | 5.1% | 3.7% |
+
+- **Landmark trees:** all five are in place with every log and leaf block of their templates. Crown tops are
+  at y143, 205, 177, 170 and 116.
+- **Old-growth floor sample:** podzol, coarse dirt and moss, no grass block.
+
+**Checked in game:**
+- `minecraft:leaf_litter` survives chunk load (VanillaBackport);
+- the Sentinel's trunk is at (3264, 130, 1008);
+- `execute if biome … minecraft:old_growth_pine_taiga` passes at two old-growth positions.
+
+**Not checked:** how the forests read from inside and at distance. That is the flight.
+
 ## 2026-09-14 (fourth): the missing tarn
+
+> Superseded by the export above (same terrain, repainted forests). That world is in
+> `cobblers-server-retired/2026-09-14-foliage/`.
 
 **Status: exported, checked in the region files and in game, and pregenerated.**
 

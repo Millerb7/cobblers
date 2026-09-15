@@ -98,12 +98,17 @@ def load(path):
     return loads(Path(path).read_bytes())
 
 
-def region_chunks(path):
-    """Yield (chunk_x_in_region, chunk_z_in_region, compound) for every chunk in a .mca file."""
+def region_chunks(path, wanted=None):
+    """Yield (chunk_x_in_region, chunk_z_in_region, compound) for every chunk in a .mca file.
+
+    wanted: optional set of (chunk_x_in_region, chunk_z_in_region); other chunks are not decompressed.
+    """
     data = Path(path).read_bytes()
     if len(data) < 8192:
         return
     for idx in range(1024):
+        if wanted is not None and (idx % 32, idx // 32) not in wanted:
+            continue
         off = struct.unpack(">I", b"\x00" + data[idx * 4:idx * 4 + 3])[0]
         if off == 0:
             continue
