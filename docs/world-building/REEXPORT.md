@@ -1,6 +1,52 @@
 # Re-export: cobblers-10240
 
+## 2026-09-14 (fourth): the missing tarn
+
+**Status: exported and checked in the region files.** Distant Horizons pregen: see the table.
+
+**Why.** On the flight, the small lake at the top of the map had no water. It was not one of the
+eight painted lakes, which all held water at their levels. It was a closed hollow the annotation
+missed, so it never got a `water_body`.
+- **What it is:** a hollow 23 blocks deep at the head of the dry ravine above Peak Pond.
+  - Floor y105 at (3376, 921); spill y128.3 at (3289, 848); 0.042 km² at the spill.
+- **What the old world held there:** 0 water columns of 41,819.
+- **Now:** `ravine_head_tarn` in `landmarks.json`. It is a lake at y127, one block below its
+  spill, the same rule as every other lake.
+  - The polygon wets exactly the hollow below y127, 29,872 columns on the heightmap, and nothing
+    outside it.
+
+| Step | Result |
+| --- | --- |
+| Rivers | `grade_rivers.py plan`: one course added, `ravine_head_tarn_outflow`, 401 blocks north to the coast, cut up to 2.0, 4 wide, gravel. No existing course or the major river changed. `peak_pond_creek_from_high_end`, never cut (it needed 22.5), is gone: the tarn now drains that end |
+| Cut | `cut --replace`: sha256 `60b241d1…`. Against the previous cut, 2,786 columns changed, all in x3295–3337, z432–815; none raised. The previous file is in `cobblers-server-retired/2026-09-14-tarn/` |
+| Re-measured | `cells.json` (sha only, no drift), `regions.json` measured blocks (Peak Pond hollow slope 61.6 → 61.4% flat); validator clean; 609 tests pass |
+| Paint | tarn mask at y127; stream levels y126 → y62; `spawn_tag_pack.py --check-paint` unchanged (98.85%, 98.17%) |
+| Export | `reexport.py`, old world from `cobblers-server-retired/2026-09-14-tarn/`; 1,818 s; 484 region files, 2.33 GB; `seed_match: true`; `.world` sha256 `a2d8e09e…`. The first attempt failed at once: `--out-dir ../cobblers-server` is resolved from WorldPainter's folder, so pass it absolute |
+
+**Checked in the region files:**
+- **Tarn:** every column below y127, 27,810 of them, holds water at y127.
+- **Stream:** 1,539 columns with ground below their planned level. 1,497 are at that level, 42
+  are raised where the stream leaves the tarn, and 0 are dry.
+  - Another 369 painted columns have ground exactly at the level, so they have no room for water.
+    They are bank pixels.
+
+**Other unpainted closed hollows**, from the same basin search on 8-block cells, deeper than 7
+blocks. These are listed, not changed:
+
+| Near | Depth | Spill | Area km² | Inside |
+| --- | --- | --- | --- | --- |
+| (2550, 2785) | 13.7 | y108 | 0.03 | no landmark |
+| (1830, 4969) | 11.3 | y109 | 0.24 | no landmark |
+| (4715, 3899) | 9.4 | y100 | 0.02 | no landmark, above Tilpey's west arm |
+| (2819, 2365) | 8.6 | y109 | 0.22 | no landmark |
+| (4369, 2860) | 8.4 | y77 | 0.02 | the Glacial Tear |
+| (3779, 3707) | 8.3 | y90 | 0.49 | the Rift |
+| (6682, 5487) | 7.4 | y134 | 0.05 | the Craters |
+
 ## 2026-09-14 (third): Crater-only volcanic biomes; pre-build checks
+
+> Superseded by the export above (same paint, plus the tarn). That world is in
+> `cobblers-server-retired/2026-09-14-tarn/`.
 
 **Status: exported, pregenerated, and checked.** The heightmap and river cuts are unchanged from
 the export below.

@@ -75,6 +75,13 @@ lake is an artificial pit.
 | Peak Pond | 105 | 106.1 | 1.1 (routed 1.4) | the north coast (4498, 966) | 545 | 43 |
 | Shrew Lake | 106 | 107.3 | 1.3 | Arrow Lake | 231 | 6.1 |
 | Pond west of Mt Clay | 119 | 120.1 | 1.1 (routed 1.2) | Lake Viltri's outflow at (858, 2062) | 1,261 | 30.8 |
+| Tarn at the head of the Peak Pond ravine (added 2026-09-14, third pass) | 127 | 128.3 | 1.3 (routed 2.0) | the north coast (3298, 434) | 401 | 65 |
+
+**The tarn was missed** by the annotation and left dry by the first two passes. It is a closed
+hollow 23 blocks deep (floor y105) at the head of the dry ravine above Peak Pond, found from the
+air on the 2026-09-14 flight. It is `ravine_head_tarn` in `landmarks.json`. The ravine still
+cannot carry its water to Peak Pond, since that needs a 7-block cut along the carve. Its real
+outflow leaves the north-west rim at (3289, 848) and falls straight to the north coast.
 
 **Chains:**
 - **Shrew Lake → Arrow Lake → Watering Hole → the south coast.** This follows the carved creek
@@ -149,6 +156,7 @@ the terrain:
 | Shrew Lake outflow | 231 | 2.5 | 8 → 10 | 2.7 | 1.3–2.0 | gravel 72%, sand 28% | A short, fairly steep link from Shrew Lake down to Arrow Lake |
 | Marsh outflow | 395 | 1.0 | 6 → 10 | 2.1 | 0.4–2.0 | gravel 84%, clay 16% | Slack and clay-bedded as it leaves the marsh, then a steep gravel run to the sea |
 | Peak Pond outflow | 545 | 0.55 → 0.66 | 5 → 9 | 1.8 → 1.9 | 0.4–2.0 | gravel 64%, clay 24%, sand 12% | A small stream: a quiet start at the pond, then a steep drop to the north coast |
+| Tarn outflow (`ravine_head_tarn_outflow`) | 401 | 0.16 → 0.17 | 4 (6 in the tarn) | 1.5 | 2.0 | gravel | A narrow, steep mountain stream: 65 blocks of drop over 401 to the north coast |
 | Creek into Tilpey from the south-west | 484 | 0.08 → 0.11 | 3 → 6 | 1.3 → 1.4 | 0.5–2.0 | gravel 60%, clay 27%, sand 13% | The smallest: a narrow hill creek falling 38 blocks into Tilpey |
 | River of Shrews (not cut) | 1,777 | 0.02 → 3.18 | 5 → 14 | 1.2 → 2.9 | 0.4–1.2 | clay 89%, sand 11% | Would be a slow, clay-bedded ditch across flat ground. On file only |
 
