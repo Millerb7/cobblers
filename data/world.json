@@ -65,10 +65,10 @@
     "seed_policy": "Carried from the previous world's level.dat. Not committed: the public repo records only its sha256.",
     "seed_sha256": "48202407c92bc5d07cd215b93f631b384a5f7dde58e993e7bc9f7365e03563f3",
     "worldpainter_project": "cobblers-10240.world",
-    "worldpainter_project_sha256": "6ca95bdcc0f5c1a4e6f144ccd59916c630439155ad0876ddc84e90299b4756c9",
-    "painted": {"date": "2026-09-14", "maps": "tools/paint_maps.py from data/regions.json paint_presets, data/landmarks.json water bodies and ravines, data/rivers.json graded courses (per-column water levels, bed material, river biome), and data/foliage.json forests: 78,887 custom objects from kits/structures/foliage at computed positions, including five landmark trees", "note": "Preview paint on the river-cut heightmap. See docs/world-building/REEXPORT.md for the export and its known issues."},
+    "worldpainter_project_sha256": "cd6439ea2a2ae3f519803b1bdbd0da1ed44dee213e360e027f70414ba7317e77",
+    "painted": {"date": "2026-09-15", "maps": "tools/paint_maps.py from data/regions.json paint_presets (with scree), data/landmarks.json water bodies and ravines, data/rivers.json graded courses (per-column water levels, bed material, river biome), shore materials by coast class (build/sculpt/coast_class.png), and data/foliage.json forests: 77,750 custom objects from kits/structures/foliage at computed positions, including five landmark trees", "note": "Paint on the sculpted heightmap. See docs/world-building/REEXPORT.md for the export and its known issues."},
     "worldpainter_project_note": "Beside the heightmap under source_root. Painting starts from this file; its hash changes when it is saved again.",
-    "exported": "2026-09-14",
+    "exported": "2026-09-15",
     "carried_from_previous_level_dat": ["WorldGenSettings", "DataPacks", "GameRules", "Difficulty", "DifficultyLocked", "GameType", "allowCommands", "hardcore"],
     "measured_ceiling_y": 201,
     "measured_ceiling_note": "WorldPainter does not clamp at the top of the line: source values above 65406 reach y200.75 and round to y201 (0.88% of land). The design clamp stays 200."

@@ -2,8 +2,26 @@
 
 ## 2026-09-15: sculpted coasts and massifs, the hometown placed
 
-**Status: prepared, NOT exported.** Exporting waits on the user, who may have built in the hometown since it was
-placed.
+**Status: exported, hometown carried across, checked over RCON, pregenerated.** Nobody had built in the
+hometown, so the copied chunks are the placement as the script left it.
+
+| Step | Result |
+| --- | --- |
+| Retire | Server stopped (0 players). World and `.world` moved to `cobblers-server-retired/2026-09-15-pre-sculpt/` |
+| Export | `reexport.py` with an absolute `--out-dir`; 887 s; 484 region files; `seed_match: true`; spawn (1461, 5306); `.world` sha256 `cd6439ea…` |
+| Hometown | `transplant_chunks.py` over x1376-1567, z4976-5391: 312 region chunks, 37 entity chunks, 12 poi chunks. The untransplanted export is kept beside the retired world (`sculpted-export-before-transplant/`) |
+| Server | Boots, no chunk load errors. `level.dat` spawn is 1461 118 5306 |
+| Checked over RCON | Waystone halves at (1467, 118/119, 5286); main-street path at spawn; donor roof slab at (1482, 129, 5244) |
+| Surface against the heightmap | Caldera floor y104 against 104.0; great-cone crater 178 against 177.7; Mt Vessu 201 against 200.0; NE dome 197 against 197.5; Scar pad 195 against 194.0; spawn 117 against 116.6. The top block sits on the heightmap value, rounded up |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320`, complete in 7.5 minutes |
+| Client LOD cache | `local+ho` moved to `…/2026-09-15-pre-sculpt/client-distant-horizons-cache/` (the client was closed) |
+
+**Found:** the donor Pokémon Center carries its own `waystones:mossy_waystone` at (1449, 122-123, 5256). It is a
+second, unlocked waystone in the hometown.
+
+**Not checked:** how the coasts, cliffs, cones and town read in game. That is the flight.
+
+The preparation notes follow.
 
 **What is ready:**
 - **Heightmap:** `land_8k_16_sculpted.png` (`19abdd39…`), a sculpt of the river cut (`60b241d1…`). Design and
