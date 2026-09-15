@@ -2,7 +2,7 @@
  "schema": "cobblers.regions/3",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "a0e270c05768273ed0398fdac6e273fafc2b8108612a2c39f048d7ddd856c980",
+ "computed_from_sha256": "fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81",
  "landmarks": "data/landmarks.json",
  "geometry": {
   "raster_cell_blocks": 8,
