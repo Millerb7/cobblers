@@ -59,7 +59,7 @@
     "seed_policy": "Carried from the previous world's level.dat. Not committed: the public repo records only its sha256.",
     "seed_sha256": "48202407c92bc5d07cd215b93f631b384a5f7dde58e993e7bc9f7365e03563f3",
     "worldpainter_project": "cobblers-10240.world",
-    "worldpainter_project_sha256": "c0c716bf9a7a08984abf6c506f004de4ed57c199fd4e4ef173a4d418abc4fcf5",
+    "worldpainter_project_sha256": "dae3d5c545e53fe9c5cfe1cc6204bf9c71886aa5deae55933910bef0c4229f26",
     "painted": {"date": "2026-09-14", "maps": "tools/paint_maps.py from data/regions.json paint_presets, data/landmarks.json water bodies and ravines, and data/rivers.json graded courses (per-column water levels, bed material, river biome)", "note": "Preview paint on the river-cut heightmap. See docs/world-building/REEXPORT.md for the export and its known issues."},
     "worldpainter_project_note": "Beside the heightmap under source_root. Painting starts from this file; its hash changes when it is saved again.",
     "exported": "2026-09-14",

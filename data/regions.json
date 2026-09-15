@@ -1143,7 +1143,7 @@
     ],
     [
      null,
-     "minecraft:stony_peaks"
+     "minecraft:jagged_peaks"
     ]
    ],
    "terrain": "STONE_MIX",
@@ -2648,9 +2648,9 @@
    },
    "biomes": [
     "minecraft:grove",
+    "minecraft:jagged_peaks",
     "minecraft:snowy_plains",
-    "minecraft:snowy_slopes",
-    "minecraft:stony_peaks"
+    "minecraft:snowy_slopes"
    ],
    "polygons": [
     [
@@ -13304,6 +13304,32 @@
      ]
     ]
    ]
+  }
+ ],
+ "spawn_tag_overlays": [
+  {
+   "tag": "cobblemon:is_volcanic",
+   "biomes": [
+    "minecraft:stony_peaks",
+    "minecraft:savanna_plateau"
+   ],
+   "regions": [
+    "the_craters"
+   ],
+   "basis": "Cobblemon 1.8.0 fills this tag only with Terralith, Biomes O'Plenty, Wythers and Darker Depths biomes, none of which is loaded. The Craters are painted stony_peaks (the cones) and savanna_plateau (the rim), and each is kept exclusive to the Craters in the paint (crags summits use jagged_peaks), so the tag makes the whole volcanic region, and nowhere else, volcanic."
+  },
+  {
+   "tag": "cobblemon:is_thermal",
+   "biomes": [
+    "minecraft:stony_peaks"
+   ],
+   "optional_biomes": [
+    "minecraft:sulfur_caves"
+   ],
+   "regions": [
+    "the_craters"
+   ],
+   "basis": "Same gap. Thermal goes on the cones, where the Mining Town and its workings are; sulfur_caves, planned under the Craters and loaded only with VanillaBackport, is added as an optional entry so the pack never fails when it is absent."
   }
  ]
 }

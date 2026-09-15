@@ -55,7 +55,8 @@ TERRAIN_CODES = {"GRASS": 1, "SAND": 2, "DESERT": 3, "RED_SAND": 4, "MESA": 5, "
                  "BEACHES": 16, "PERMADIRT": 17, "MAGMA": 18, "CLAY": 19, "MOSS": 20, "RED_DESERT": 21, "BARE_GRASS": 22}
 TREE_LAYERS = ("DeciduousForest", "PineForest", "SwampLand", "Jungle")
 # Plant names are WorldPainter's (org.pepsoft.worldpainter.layers.plants.Plants). "Short Grass" is avoided:
-# WorldPainter 2.27.1 writes it as minecraft:grass, a name Minecraft 1.21.1 no longer has.
+# WorldPainter 2.27.1 writes it as minecraft:grass, the pre-1.20.3 name. Minecraft upgrades it on chunk load (the
+# chunks carry DataVersion 2860), but Distant Horizons reads region files raw and warns, so the sets stay clear of it.
 PLANT_SETS = {
     "grassland": {"Tall Grass": 12, "Fern": 2, "Dandelion": 1, "Poppy": 1},
     "meadow_flowers": {"Tall Grass": 6, "Oxeye Daisy": 3, "Cornflower": 3, "Azure Bluet": 2, "Allium": 1, "Dandelion": 2, "Poppy": 2},

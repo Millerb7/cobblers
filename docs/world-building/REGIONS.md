@@ -49,7 +49,7 @@ terrain and is superseded. It remains in git history.
 | --- | --- | ---: | ---: | --- | --- |
 | **The Tri Peaks** (`tri_peaks`) | terrain | 1.69 | 164 | The Tri Peaks (0.63), Mt Vessu (0.73), Mt Clay (0.33) | grove, snowy_slopes, jagged_peaks |
 | **Frostpeak Point** (`frostpeak_point`) | terrain | 1.27 | 105 | Frostpeak (0.88), Frostpeak Strand (0.39) | snowy_taiga, snowy_slopes, frozen_peaks |
-| **The Glacial Tear** (`glacial_tear`) | terrain | 2.79 | 109 | Merian Cirque (0.54), The Crags (0.42), Upper Trough (0.82), Lower Trough (1.01) | snowy_plains, snowy_slopes, grove, stony_peaks |
+| **The Glacial Tear** (`glacial_tear`) | terrain | 2.79 | 109 | Merian Cirque (0.54), The Crags (0.42), Upper Trough (0.82), Lower Trough (1.01) | snowy_plains, snowy_slopes, grove, jagged_peaks (was stony_peaks until 2026-09-14) |
 | **The Northern Downs** (`northern_downs`) | terrain | 1.93 | 111 | Peak Pond Hollow (1.16), North Shore Downs (0.46), North-East Downs (0.31) | old_growth_spruce_taiga, meadow, taiga |
 | **The Marsh Country** (`marsh_country`) | terrain | 3.27 | 112 | Marshy Marsh (0.94), Marsh Creek (0.72), Eastern Moor (1.15), Glacier Foot Fields (0.46) | swamp, meadow, plains |
 | **Tilpey Lakeland** (`tilpey_lakeland`) | terrain | 3.29 | 95 | Tilpey North Shore (0.56), Tilpey Waters (0.78), Tilpey South Shore (1.01), Tilpey West Meadows (0.26), Tilpey East Shore (0.69) | birch_forest, river, forest, flower_forest |
@@ -173,8 +173,15 @@ clearings**, so no forest is uniform. The rules across all sub-regions:
 | Coast | beach terrain on gentle shore within 3 blocks of sea level, gravel on cold shores |
 | Sea | frozen, cold, temperate and warm oceans north to south; deep variants below y34 |
 
-**WorldPainter note:** its "Short Grass" plant writes `minecraft:grass`, a block Minecraft
-1.21.1 no longer has, so the plant sets avoid it.
+**WorldPainter note:**
+- **The old grass name:** WorldPainter writes `minecraft:grass`, the pre-1.20.3 name for short
+  grass, both from its "Short Grass" plant and from its own grass terrain. The chunks carry
+  DataVersion 2860, so Minecraft 1.21.1 upgrades the name to `short_grass` when it loads a
+  chunk. This was checked in game on 2026-09-14. Only Distant Horizons, which reads the raw
+  region files, logs an "unknown block" warning. The plant sets still avoid "Short Grass".
+- **Changed 2026-09-14:** the Crags' summit band paints `jagged_peaks` instead of
+  `stony_peaks`. That leaves `stony_peaks` and `savanna_plateau` painted only in the Craters,
+  which the spawn-tag overlay needs (`spawn_tag_overlays`, `tools/spawn_tag_pack.py`).
 
 ## 7. Spawn capacity reserved underground and off-world
 
