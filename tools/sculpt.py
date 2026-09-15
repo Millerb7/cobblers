@@ -560,7 +560,11 @@ def sculpt_relief(h, rcfg, sea, seed, report=None, keep=None):
     # alone, so a terrain edit in one place changes the relief only where the fall line moved
     w0 = min(n, 1024)
     zz, xx = np.mgrid[0:w0, 0:w0].astype(np.float32)
-    ref = sum(bilinear(base[:w0 + P, :w0 + P], xx + t + P, zz) for t in ts) / taps if n > w0 + P else ani
+    if n > w0 + P:
+        src = base[:w0 + P, :w0 + P]
+    else:                                           # a small map: the same statistic from its own noise draw
+        src = sum(o["weight"] * unit_noise(w0 + 2 * P, o["spacing_blocks"], seed + i) for i, o in enumerate(rcfg["octaves"]))
+    ref = sum(bilinear(src, xx + t + P, zz) for t in ts) / taps
     del base
     ani = ani / max(float(ref.std()), 1e-6)
     c = rcfg["noise_soft_clip_sigma"]
