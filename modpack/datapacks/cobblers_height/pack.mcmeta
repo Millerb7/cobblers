@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 48,
+    "description": "Cobblers: raises the overworld build limit to y575 so the world tree at Foothill Woods can reach its full height. min_y is unchanged at -64, so every stored chunk keeps its data and the new space is added above it."
+  }
+}

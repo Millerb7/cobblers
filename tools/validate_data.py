@@ -894,8 +894,18 @@ def check_rivers(ctx: Context):
         rep.error("rivers", "rivers.json was computed from heightmap %s, not %s; rerun tools/grade_rivers.py plan"
                   % ((f.doc.get("computed_from_sha256") or "")[:12], (sha or "")[:12]),
                   file=f.rel, line=f.line_of_key("computed_from_sha256"))
-    if derived:
-        out_sha = ((f.doc.get("cut") or {}).get("output") or {}).get("sha256")
+    # the chain: authored (derived_from) -> river cut (rivers.json cut.output) -> sculpt (sculpted_from) -> import.
+    # With a sculpt the cut is the sculpt's input; without one the cut is the import itself.
+    sculpted = hm.get("sculpted_from")
+    out_sha = ((f.doc.get("cut") or {}).get("output") or {}).get("sha256")
+    if sculpted is not None:
+        want = sculpted.get("sha256") if isinstance(sculpted, dict) else None
+        if not want or out_sha != want:
+            rep.error("rivers", "the sculpt input %s (world.json heightmap.sculpted_from) is not the river cut recorded "
+                      "in rivers.json (%s); rerun tools/grade_rivers.py cut, then tools/sculpt.py apply, and update "
+                      "world.json" % ((want or "")[:12], (out_sha or "")[:12]),
+                      file=f.rel, line=f.line_of_key("cut"))
+    elif derived:
         if out_sha != imported:
             rep.error("rivers", "the imported heightmap %s is not the river cut recorded in rivers.json (%s); rerun "
                       "tools/grade_rivers.py cut and update world.json" % ((imported or "")[:12], (out_sha or "")[:12]),
@@ -924,6 +934,128 @@ def check_rivers(ctx: Context):
     if cut and (cut.get("from_heightmap") or {}).get("sha256") != sha:
         rep.warn("rivers", "the cut heightmap %s was made from a different heightmap; rerun the cut"
                  % (cut.get("output") or {}).get("path"), file=f.rel, line=f.line_of_key("cut"))
+    _check_major_head(rep, f, courses)
+
+
+GRADE_RIVERS = Path(__file__).resolve().parent / "grade_rivers.py"      # WALL_RISE, WALL_REACH, WALL_RUN, WALL_STEP, FACTOR
+# head_rule key -> (tools/grade_rivers.py constant, parameters.valley_head key)
+HEAD_RULE_CONSTANTS = {"wall_rise_blocks": ("WALL_RISE", "wall_rise"), "wall_reach_blocks": ("WALL_REACH", "wall_reach"),
+                       "consecutive_stations": ("WALL_RUN", "run"), "station_spacing_blocks": ("WALL_STEP", "step")}
+
+
+def _module_constant(path, name):
+    """A module-level numeric literal read with ast (no import), or None when the file or name is absent."""
+    import ast
+    path = Path(path)
+    if not path.is_file():
+        return None
+    for node in ast.parse(path.read_text(encoding="utf-8")).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)                 and node.targets[0].id == name:
+            return ast.literal_eval(node.value)
+    return None
+
+
+def _check_major_head(rep, f, courses):
+    """The major river's trunk starts where its path first runs between valley walls (tools/grade_rivers.py
+    valley_head): the rule is recorded with the code's WALL_* values (and parameters.valley_head agrees), the head
+    moved a non-negative distance along the path, the trunk's recorded source is its first graded station, and the
+    survey of the rule on other courses is well formed."""
+    major = f.doc.get("major_river")
+    if major is None:
+        return
+    line = f.line_of_key("head_rule") or f.line_of_key("major_river")
+
+    def err(msg, where=None, ln=None):
+        rep.error("rivers", msg, file=f.rel, line=ln or line, where=where)
+
+    if not isinstance(major, dict):
+        err("major_river must be an object")
+        return
+    hr = major.get("head_rule")
+    if not isinstance(hr, dict):
+        err("major_river.head_rule is missing: the plan does not record where the trunk starts or why; rerun "
+            "tools/grade_rivers.py plan")
+        return
+    if hr.get("rule") != "valley_walls":
+        err('major_river.head_rule.rule is %r, not "valley_walls"; rerun tools/grade_rivers.py plan' % (hr.get("rule"),))
+        return
+    try:
+        code = {k: _module_constant(GRADE_RIVERS, c) for k, (c, _) in HEAD_RULE_CONSTANTS.items()}
+        grid = _module_constant(GRADE_RIVERS, "FACTOR")
+    except (SyntaxError, ValueError) as exc:
+        err("cannot read the head rule constants from %s: %s" % (GRADE_RIVERS, exc))
+        code, grid = {}, None
+    vh = (f.doc.get("parameters") or {}).get("valley_head")
+    for key, (const, pkey) in HEAD_RULE_CONSTANTS.items():
+        v = hr.get(key)
+        if not _num(v) or v <= 0:
+            err("major_river.head_rule.%s must be a number > 0, got %r" % (key, v))
+            continue
+        if code.get(key) is not None and v != code[key]:
+            err("major_river.head_rule.%s %s is not tools/grade_rivers.py %s %s; rerun tools/grade_rivers.py plan"
+                % (key, v, const, code[key]))
+        if isinstance(vh, dict) and vh.get(pkey) != v:
+            err("major_river.head_rule.%s %s is not parameters.valley_head.%s %s" % (key, v, pkey, vh.get(pkey)))
+    if not isinstance(vh, dict):
+        err("parameters.valley_head is missing; rerun tools/grade_rivers.py plan", ln=f.line_of_key("parameters"))
+    ph = hr.get("path_head")
+    if not (isinstance(ph, dict) and _num(ph.get("x")) and _num(ph.get("z"))):
+        err("major_river.head_rule.path_head needs x and z")
+    moved = hr.get("moved_blocks_along_path")
+    if moved is None:
+        rep.warn("rivers", "major_river.head_rule found no walled stretch (moved_blocks_along_path is null): the trunk "
+                 "starts at the path head", file=f.rel, line=line)
+    elif not _num(moved) or moved < 0:
+        err("major_river.head_rule.moved_blocks_along_path must be a number >= 0, got %r" % (moved,))
+    ids = major.get("courses") or []
+    by_id = {c.get("id"): c for c in courses}
+    trunk = by_id.get(ids[0]) if ids else None
+    if trunk is None:
+        err("major_river.courses does not name a trunk course in courses")
+        return
+    src, poly = trunk.get("source") or {}, trunk.get("graded_polyline") or []
+    cell = (f.doc.get("parameters") or {}).get("grid_blocks") or grid or 4
+    if trunk.get("valid") and poly:
+        gx, gz = poly[0][0], poly[0][1]
+        if not (_num(src.get("x")) and _num(src.get("z")) and abs(src["x"] - gx) < cell and abs(src["z"] - gz) < cell):
+            err('the major river trunk "%s" source (%s, %s) is not its first graded station (%s, %s) within one %s-block '
+                "grid cell" % (trunk.get("id"), src.get("x"), src.get("z"), gx, gz, cell), where=trunk.get("id"),
+                ln=f.line_of_id(trunk.get("id")))
+    if _num(moved) and moved > 0 and isinstance(ph, dict) and (src.get("x"), src.get("z")) == (ph.get("x"), ph.get("z")):
+        err("the head rule moved the trunk %s blocks along its path, but the trunk still starts at the path head (%s, %s)"
+            % (moved, ph.get("x"), ph.get("z")))
+    survey = major.get("head_rule_survey_other_courses")
+    if survey is None:
+        return
+    if not isinstance(survey, list):
+        err("major_river.head_rule_survey_other_courses must be a list")
+        return
+    seen = set()
+    for i, row in enumerate(survey):
+        w = "major_river.head_rule_survey_other_courses[%d]" % i
+        if not isinstance(row, dict):
+            err("%s must be an object" % w)
+            continue
+        cid = row.get("course")
+        if cid not in by_id:
+            err('%s names course %r, which is not in courses' % (w, cid))
+        elif cid == trunk.get("id"):
+            err("%s surveys the trunk itself; the survey covers the other courses" % w)
+        elif (by_id[cid].get("source") or {}).get("kind") == "lake_outflow":
+            err('%s surveys "%s", a lake outflow; the survey covers courses whose head is not a lake' % (w, cid))
+        if cid in seen:
+            err('%s lists "%s" twice' % (w, cid))
+        seen.add(cid)
+        if not isinstance(row.get("walled_from_start"), bool):
+            err("%s.walled_from_start must be true or false" % w)
+        mv = row.get("rule_would_move_head_blocks")
+        if mv is not None and (not _num(mv) or mv < 0):
+            err("%s.rule_would_move_head_blocks must be null or a number >= 0, got %r" % (w, mv))
+        n, k = row.get("samples"), row.get("walled_samples")
+        if not (_int(n) and _int(k) and 0 <= k <= n):
+            err("%s needs integer samples >= walled_samples >= 0, got %r and %r" % (w, n, k))
+        elif row.get("walled_from_start") is True and mv not in (0, None):
+            err("%s is walled from its start but the rule would move its head %s blocks" % (w, mv))
 
 
 CRITICAL_ROLES = {"hometown": 1, "gym_town": 8, "league": 1}
@@ -1009,6 +1141,1005 @@ def check_towns(ctx: Context):
                       "progression" % (flag.get("id"), town), file="data/progression.json", where=flag.get("id"))
 
 
+FOLIAGE_SCHEMA = "cobblers.foliage/1"
+FOLIAGE_LIBRARY = ("kits", "structures", "foliage", "library.json")    # relative to the data directory's parent
+PAINT_MAPS = Path(__file__).resolve().parent / "paint_maps.py"          # PLANT_SETS, TERRAIN_CODES, WP_BIOMES
+UNDERSTORY_ZONES = {"core", "mid", "edge"}
+DEBRIS_ZONES = {"core", "any"}
+SEEN_FROM_KINDS = {"legs", "ring", "points"}
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def _int(v):
+    return isinstance(v, int) and not isinstance(v, bool)
+
+
+def _paint_tables(path):
+    """PLANT_SETS, TERRAIN_CODES and WP_BIOMES read from tools/paint_maps.py as literals, so this check stays
+    standard-library only (importing paint_maps would pull in numpy and Pillow)."""
+    import ast
+    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    want = {"PLANT_SETS", "TERRAIN_CODES", "WP_BIOMES"}
+    out = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) \
+                and node.targets[0].id in want:
+            out[node.targets[0].id] = ast.literal_eval(node.value)
+    missing = want - set(out)
+    if missing:
+        raise ValueError("no literal %s in %s" % (", ".join(sorted(missing)), path))
+    return out
+
+
+def _load_json_for(check, path, rel, rep):
+    """DataFile or None; unreadable or invalid JSON is an ERROR under this check (fail closed)."""
+    try:
+        raw = path.read_text(encoding="utf-8")
+        return DataFile(path, rel, raw, json.loads(raw))
+    except (OSError, UnicodeDecodeError) as exc:
+        rep.error(check, "cannot read file: %s" % exc, file=rel)
+    except json.JSONDecodeError as exc:
+        rep.error(check, "invalid JSON: %s" % exc.msg, file=rel, line=exc.lineno)
+    return None
+
+
+def check_foliage(ctx: Context):
+    """Forest types, their object groups and the landmark trees (data/foliage.json) against the paint presets and
+    sub-regions (data/regions.json), the object library (kits/structures/foliage/library.json, including each
+    file's sha256), the plant sets, terrain codes and biomes tools/paint_maps.py knows, the world bounds, and the
+    landmark-tree outposts in data/towns.json. A needed file that is absent makes that part SKIPPED; a present
+    file that is malformed is an ERROR."""
+    rep = ctx.report
+    C = "foliage"
+    rel = "data/foliage.json"
+    path = ctx.data_dir / "foliage.json"
+    if not path.is_file():
+        rep.skip(C, "data/foliage.json is absent; forest types, object groups and landmark trees were not checked",
+                 file=rel)
+        return
+    f = _load_json_for(C, path, rel, rep)
+    if not f:
+        return
+    doc = f.doc
+    if not isinstance(doc, dict):
+        rep.error(C, "top level must be an object", file=rel, line=1)
+        return
+
+    def err(msg, key=None, where=None):
+        rep.error(C, msg, file=rel, line=f.line_of_key(key) if key else None, where=where)
+
+    if doc.get("schema") != FOLIAGE_SCHEMA:
+        err('schema is "%s", expected "%s"' % (doc.get("schema"), FOLIAGE_SCHEMA), "schema")
+
+    # tables from tools/paint_maps.py
+    tables = None
+    if not Path(PAINT_MAPS).is_file():
+        rep.skip(C, "%s is absent; plant sets, floor terrains and biomes were not checked" % PAINT_MAPS, file=rel)
+    else:
+        try:
+            tables = _paint_tables(PAINT_MAPS)
+        except (SyntaxError, ValueError) as exc:
+            rep.error(C, "cannot read the paint tables: %s" % exc, file=str(PAINT_MAPS))
+
+    # density model
+    dm = doc.get("density_model")
+    if not isinstance(dm, dict):
+        err("density_model must be an object", "density_model")
+    else:
+        noise = dm.get("noise")
+        if not isinstance(noise, dict):
+            err("density_model.noise must be an object", "noise")
+        else:
+            for k in ("ragged_scale", "glade_scale", "clump_scale"):
+                if not _num(noise.get(k)) or noise[k] <= 0:
+                    err("density_model.noise.%s must be a positive number, got %r" % (k, noise.get(k)), k)
+        for k in ("water_clearance_blocks", "settlement_clearance_blocks"):
+            if not _num(dm.get(k)) or dm[k] < 0:
+                err("density_model.%s must be a number >= 0, got %r" % (k, dm.get(k)), k)
+
+    # types
+    types = doc.get("types")
+    if not isinstance(types, dict) or not types:
+        err("types must be a non-empty object", "types")
+        types = {}
+    groups_used = {}          # group -> first place it is referenced
+
+    def use(group, where):
+        if not isinstance(group, str) or not group:
+            err("%s: group must be a non-empty string, got %r" % (where, group), where=where)
+            return
+        groups_used.setdefault(group, where)
+
+    def unit(v):
+        return _num(v) and 0 <= v <= 1
+
+    for tid, t in types.items():
+        w = "types.%s" % tid
+        if not isinstance(t, dict):
+            err("%s must be an object" % w, tid, tid)
+            continue
+
+        def terr(msg, t_id=tid):
+            err("%s: %s" % ("types.%s" % t_id, msg), t_id, t_id)
+
+        for k in ("identity", "from_inside"):
+            if not isinstance(t.get(k), str) or not t[k].strip():
+                terr("%s must be a non-empty string" % k)
+        if not _num(t.get("stems_per_ha")) or t["stems_per_ha"] < 0:
+            terr("stems_per_ha must be a number >= 0, got %r" % t.get("stems_per_ha"))
+        for k in ("edge_width", "ragged"):
+            if k in t and (not _num(t[k]) or t[k] < 0):
+                terr("%s must be a number >= 0, got %r" % (k, t[k]))
+        for k in ("glade_share", "clumping"):
+            if k in t and not unit(t[k]):
+                terr("%s must be between 0 and 1, got %r" % (k, t[k]))
+        for k in ("slope_lo", "slope_hi"):
+            if k in t and not _num(t[k]):
+                terr("%s must be a number, got %r" % (k, t[k]))
+        if _num(t.get("slope_lo", 20)) and _num(t.get("slope_hi", 34)) and t.get("slope_lo", 20) > t.get("slope_hi", 34):
+            terr("slope_lo %s is above slope_hi %s" % (t.get("slope_lo", 20), t.get("slope_hi", 34)))
+        if "open" in t and not isinstance(t["open"], bool):
+            terr("open must be true or false")
+        es = t.get("elevation_sort")
+        if es is not None and not (isinstance(es, dict) and _num(es.get("radius")) and es["radius"] > 0
+                                   and _num(es.get("span")) and es["span"] > 0):
+            terr("elevation_sort needs a positive radius and span")
+        classes = t.get("classes")
+        if not isinstance(classes, list) or not classes:
+            terr("classes must be a non-empty list")
+            classes = []
+        for i, c in enumerate(classes):
+            cw = "%s.classes[%d]" % (w, i)
+            if not isinstance(c, dict):
+                err("%s must be an object" % cw, tid, tid)
+                continue
+            use(c.get("group"), cw)
+            if not _num(c.get("spacing")) or c["spacing"] <= 0:
+                err("%s: spacing must be a positive number, got %r" % (cw, c.get("spacing")), tid, tid)
+            by_height = "low" in c or "high" in c
+            by_edge = "core" in c or "edge" in c
+            if es is not None and not by_height:
+                err("%s: the type sorts classes by elevation, so the class needs low/high weights (core/edge are "
+                    "ignored and it would never be placed)" % cw, tid, tid)
+            if es is None and by_height:
+                err("%s: low/high weights need the type's elevation_sort; without it they are ignored" % cw, tid, tid)
+            if es is not None and by_edge:
+                err("%s: core/edge weights are ignored when the type has elevation_sort" % cw, tid, tid)
+            for k in ("core", "edge", "low", "high"):
+                if k in c and (not _num(c[k]) or c[k] < 0):
+                    err("%s: %s must be a number >= 0, got %r" % (cw, k, c[k]), tid, tid)
+        lone = t.get("lone")
+        if lone is not None:
+            if not isinstance(lone, dict):
+                terr("lone must be an object")
+            else:
+                if not _num(lone.get("per_ha")) or lone["per_ha"] < 0:
+                    terr("lone.per_ha must be a number >= 0")
+                if not _num(lone.get("reach")) or lone["reach"] <= 0:
+                    terr("lone.reach must be a positive number")
+                if not isinstance(lone.get("groups"), list) or not lone["groups"]:
+                    terr("lone.groups must be a non-empty list")
+                else:
+                    for g in lone["groups"]:
+                        use(g, "%s.lone" % w)
+                if t.get("open"):
+                    rep.warn(C, "%s: lone trees are never placed for an open type" % w, file=rel,
+                             line=f.line_of_key(tid), where=tid)
+        debris = t.get("debris")
+        if debris is not None and not isinstance(debris, list):
+            terr("debris must be a list")
+            debris = []
+        for i, db in enumerate(debris or []):
+            dw = "%s.debris[%d]" % (w, i)
+            if not isinstance(db, dict):
+                err("%s must be an object" % dw, tid, tid)
+                continue
+            use(db.get("group"), dw)
+            if not _num(db.get("per_ha")) or db["per_ha"] < 0:
+                err("%s: per_ha must be a number >= 0, got %r" % (dw, db.get("per_ha")), tid, tid)
+            if db.get("zone") not in DEBRIS_ZONES:
+                err("%s: zone %r is not one of %s" % (dw, db.get("zone"), ", ".join(sorted(DEBRIS_ZONES))), tid, tid)
+            if "max_slope" in db and not _num(db["max_slope"]):
+                err("%s: max_slope must be a number" % dw, tid, tid)
+            if "vertical_offset" in db and not _int(db["vertical_offset"]):
+                err("%s: vertical_offset must be an integer" % dw, tid, tid)
+        fl = t.get("floor")
+        if fl is not None:
+            mix = fl.get("mix") if isinstance(fl, dict) else None
+            if not isinstance(fl, dict) or not unit(fl.get("threshold")) or not isinstance(mix, list) or not mix:
+                terr("floor needs a threshold between 0 and 1 and a non-empty mix")
+            else:
+                shares = []
+                for entry in mix:
+                    if not (isinstance(entry, list) and len(entry) == 2 and isinstance(entry[0], str) and unit(entry[1])):
+                        terr("floor.mix entry %r must be [TERRAIN, share between 0 and 1]" % (entry,))
+                        continue
+                    shares.append(entry[1])
+                    if tables and entry[0] not in tables["TERRAIN_CODES"]:
+                        terr("floor terrain %s is not in tools/paint_maps.py TERRAIN_CODES" % entry[0])
+                if shares and len(shares) == len(mix) and abs(sum(shares) - 1.0) > 1e-6:
+                    terr("floor.mix shares sum to %s, not 1 (the last terrain silently takes the difference)"
+                         % round(sum(shares), 6))
+        us = t.get("understory")
+        if us is not None:
+            if not isinstance(us, dict):
+                terr("understory must be an object")
+            else:
+                for zone, z in us.items():
+                    if zone not in UNDERSTORY_ZONES:
+                        terr("understory zone %s is not one of %s" % (zone, ", ".join(sorted(UNDERSTORY_ZONES))))
+                        continue
+                    if not isinstance(z, dict) or not isinstance(z.get("set"), str) or not unit(z.get("coverage")):
+                        terr("understory.%s needs a plant set name and a coverage between 0 and 1" % zone)
+                        continue
+                    if "clear" in z and not isinstance(z["clear"], bool):
+                        terr("understory.%s.clear must be true or false" % zone)
+                    if tables and z["set"] not in tables["PLANT_SETS"]:
+                        terr("understory.%s plant set %s is not in tools/paint_maps.py PLANT_SETS" % (zone, z["set"]))
+        if "biome" in t:
+            if not isinstance(t["biome"], str):
+                terr("biome must be a string")
+            elif tables and t["biome"] not in tables["WP_BIOMES"]:
+                terr("biome %s is not in tools/paint_maps.py WP_BIOMES" % t["biome"])
+        wb = t.get("water_boost")
+        if wb is not None and not (isinstance(wb, dict) and _num(wb.get("factor")) and wb["factor"] > 0
+                                   and _num(wb.get("reach")) and wb["reach"] > 0):
+            terr("water_boost needs a positive factor and reach")
+
+    # preset_defaults and assign against data/regions.json
+    pdefs = doc.get("preset_defaults")
+    if not isinstance(pdefs, dict):
+        err("preset_defaults must be an object", "preset_defaults")
+        pdefs = {}
+    assign = doc.get("assign")
+    if not isinstance(assign, dict):
+        err("assign must be an object", "assign")
+        assign = {}
+    for preset, tid in pdefs.items():
+        if tid not in types:
+            err('preset_defaults.%s names type "%s", which is not defined' % (preset, tid), preset, preset)
+    for sid, a in assign.items():
+        if not isinstance(a, dict):
+            err("assign.%s must be an object" % sid, sid, sid)
+            continue
+        if a.get("type") not in types:
+            err('assign.%s names type "%s", which is not defined' % (sid, a.get("type")), sid, sid)
+        if "density_scale" in a and (not _num(a["density_scale"]) or a["density_scale"] < 0):
+            err("assign.%s.density_scale must be a number >= 0" % sid, sid, sid)
+    reg_path = ctx.data_dir / "regions.json"
+    if not reg_path.is_file():
+        rep.skip(C, "data/regions.json is absent; preset_defaults and assign keys were not checked", file=rel)
+    else:
+        rf = _load_json_for(C, reg_path, "data/regions.json", rep)
+        if rf:
+            presets = set((rf.doc.get("paint_presets") or {}) if isinstance(rf.doc, dict) else {})
+            subs = {s.get("id") for s in (rf.doc.get("subregions") or []) if isinstance(s, dict)} \
+                if isinstance(rf.doc, dict) else set()
+            for preset in pdefs:
+                if preset not in presets:
+                    err('preset_defaults key "%s" is not a paint preset in data/regions.json' % preset, preset, preset)
+            for sid in assign:
+                if sid not in subs:
+                    err('assign key "%s" is not a sub-region in data/regions.json' % sid, sid, sid)
+
+    # landmark trees
+    lts = doc.get("landmark_trees", [])
+    if not isinstance(lts, list):
+        err("landmark_trees must be a list", "landmark_trees")
+        lts = []
+    lt_ids, bad_sites = {}, set()
+    for i, lt in enumerate(lts):
+        if not isinstance(lt, dict):
+            err("landmark_trees[%d] must be an object" % i, "landmark_trees")
+            continue
+        lid = lt.get("id")
+        lw = "landmark_trees.%s" % lid
+        line_id = f.line_of_id(lid)
+        if not isinstance(lid, str) or not lid:
+            err("landmark_trees[%d] needs an id" % i, "landmark_trees")
+            continue
+        if lid in lt_ids:
+            rep.error(C, 'duplicate landmark tree "%s"' % lid, file=rel, line=line_id, where=lid)
+        lt_ids[lid] = lt
+        if not isinstance(lt.get("object"), str) or not lt["object"]:
+            rep.error(C, "%s needs an object name" % lw, file=rel, line=line_id, where=lid)
+        site = lt.get("site")
+        if not (isinstance(site, list) and len(site) == 2 and all(_int(v) for v in site)):
+            rep.error(C, "%s site must be [x, z] integers, got %r" % (lw, site), file=rel, line=line_id, where=lid)
+            bad_sites.add(lid)
+        if not _num(lt.get("glade_radius")) or lt["glade_radius"] <= 0:
+            rep.error(C, "%s glade_radius must be a positive number" % lw, file=rel, line=line_id, where=lid)
+        if not isinstance(lt.get("kind"), str) or not lt["kind"]:
+            rep.error(C, "%s needs a kind" % lw, file=rel, line=line_id, where=lid)
+        seen = lt.get("seen_from")
+        if not isinstance(seen, list) or not seen:
+            rep.error(C, "%s seen_from must be a non-empty list" % lw, file=rel, line=line_id, where=lid)
+            seen = []
+        for o in seen:
+            kind = o.get("kind") if isinstance(o, dict) else None
+            if kind not in SEEN_FROM_KINDS:
+                rep.error(C, "%s seen_from kind %r is not one of %s" % (lw, kind, ", ".join(sorted(SEEN_FROM_KINDS))),
+                          file=rel, line=line_id, where=lid)
+            elif kind == "legs" and not (isinstance(o.get("legs"), list) and o["legs"]
+                                         and all(isinstance(x, str) and "->" in x for x in o["legs"])):
+                rep.error(C, '%s seen_from legs needs a non-empty list of "from->to" names' % lw,
+                          file=rel, line=line_id, where=lid)
+            elif kind == "ring" and not (_num(o.get("radius")) and o["radius"] > 0):
+                rep.error(C, "%s seen_from ring needs a positive radius" % lw, file=rel, line=line_id, where=lid)
+            elif kind == "points" and not (isinstance(o.get("points"), list) and o["points"] and all(
+                    isinstance(p, list) and len(p) == 2 and all(_num(v) for v in p) for p in o["points"])):
+                rep.error(C, "%s seen_from points needs a non-empty list of [x, z]" % lw,
+                          file=rel, line=line_id, where=lid)
+
+    # object library: every referenced group and landmark object exists; every row's file matches its sha256
+    lib_path = ctx.data_dir.parent.joinpath(*FOLIAGE_LIBRARY)
+    lib_rel = "/".join(FOLIAGE_LIBRARY)
+    n_objects = 0
+    if not lib_path.is_file():
+        rep.skip(C, "%s is absent; object groups, landmark objects and object hashes were not checked" % lib_rel,
+                 file=rel)
+    else:
+        lf = _load_json_for(C, lib_path, lib_rel, rep)
+        rows = lf.doc.get("objects") if lf and isinstance(lf.doc, dict) else None
+        if lf and not isinstance(rows, list):
+            rep.error(C, "the library has no objects list", file=lib_rel)
+        if isinstance(rows, list):
+            groups, names = set(), set()
+            for r in rows:
+                if not isinstance(r, dict) or not isinstance(r.get("name"), str) or not isinstance(r.get("group"), str):
+                    rep.error(C, "library row %r needs a name and a group" % (r,), file=lib_rel)
+                    continue
+                n_objects += 1
+                names.add(r["name"])
+                groups.add(r["group"])
+                if not _int(r.get("ground_radius")) or r["ground_radius"] < 0:
+                    rep.error(C, 'library object "%s" needs ground_radius as an integer >= 0 (placement keeps that '
+                              "square of ground clear), got %r; rerun tools/foliage_objects.py index"
+                              % (r["name"], r.get("ground_radius")),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+                fn = r.get("file")
+                if not isinstance(fn, str) or not fn or Path(fn).name != fn:
+                    rep.error(C, 'library object "%s" file must be a bare file name, got %r' % (r["name"], fn),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+                    continue
+                obj = lib_path.parent / fn
+                if not obj.is_file():
+                    rep.error(C, 'library object "%s" file %s is missing' % (r["name"], fn),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+                    continue
+                actual = hashlib.sha256(obj.read_bytes()).hexdigest()
+                if r.get("sha256") != actual:
+                    rep.error(C, 'library object "%s" sha256 is %s but %s hashes to %s; rerun tools/foliage_objects.py '
+                              "index" % (r["name"], r.get("sha256"), fn, actual),
+                              file=lib_rel, line=lf.line_of_id(r["name"]), where=r["name"])
+            for g, where in sorted(groups_used.items()):
+                if g not in groups:
+                    err('%s uses object group "%s", which has no objects in %s' % (where, g, lib_rel),
+                        where.split(".")[1] if where.startswith("types.") else None, g)
+            for lid, lt in lt_ids.items():
+                obj = lt.get("object")
+                if isinstance(obj, str) and obj and (obj not in names or obj not in groups):
+                    rep.error(C, 'landmark tree "%s" object "%s" must be both an object name and a group in %s '
+                              "(placement keys it by group, the sightline check by name)" % (lid, obj, lib_rel),
+                              file=rel, line=f.line_of_id(lid), where=lid)
+
+    # sites inside the world bounds
+    world = ctx.doc("world.json")
+    if world is None and (ctx.data_dir / "world.json").is_file():
+        wf = _load_json_for(C, ctx.data_dir / "world.json", "data/world.json", rep)
+        world = wf.doc if wf else None
+    bounds = (world or {}).get("bounds") if isinstance(world, dict) else None
+    if not (isinstance(bounds, dict) and all(_num(bounds.get(k)) for k in ("min_x", "min_z", "max_x", "max_z"))):
+        rep.skip(C, "data/world.json has no bounds; landmark tree sites were not checked against the map", file=rel)
+    else:
+        for lid, lt in lt_ids.items():
+            if lid in bad_sites:
+                continue
+            x, z = lt["site"]
+            if not (bounds["min_x"] <= x <= bounds["max_x"] and bounds["min_z"] <= z <= bounds["max_z"]):
+                rep.error(C, 'landmark tree "%s" site (%s, %s) is outside the world bounds' % (lid, x, z),
+                          file=rel, line=f.line_of_id(lid), where=lid)
+
+    # landmark trees <-> data/towns.json outposts with kind landmark_tree; leg names name consecutive critical towns
+    towns_path = ctx.data_dir / "towns.json"
+    if not towns_path.is_file():
+        rep.skip(C, "data/towns.json is absent; landmark trees were not paired with outposts", file=rel)
+    else:
+        tf = _load_json_for(C, towns_path, "data/towns.json", rep)
+        towns = [t for t in ((tf.doc.get("towns") or []) if tf and isinstance(tf.doc, dict) else [])
+                 if isinstance(t, dict)]
+        if tf:
+            by_id = {t.get("id"): t for t in towns}
+            for lid, lt in lt_ids.items():
+                t = by_id.get(lid)
+                line = f.line_of_id(lid)
+                if t is None:
+                    rep.error(C, 'landmark tree "%s" has no outpost in data/towns.json' % lid, file=rel, line=line,
+                              where=lid)
+                    continue
+                if t.get("role") != "outpost" or t.get("kind") != "landmark_tree":
+                    rep.error(C, 'data/towns.json "%s" must be role outpost with kind landmark_tree (is %s / %s)'
+                              % (lid, t.get("role"), t.get("kind")), file=rel, line=line, where=lid)
+                c = t.get("centre") or {}
+                if lid not in bad_sites and [c.get("x"), c.get("z")] != list(lt["site"]):
+                    rep.error(C, 'landmark tree "%s" site %s is not its outpost centre (%s, %s)'
+                              % (lid, lt["site"], c.get("x"), c.get("z")), file=rel, line=line, where=lid)
+            for t in towns:
+                if t.get("kind") == "landmark_tree" and t.get("id") not in lt_ids:
+                    rep.error(C, 'data/towns.json "%s" is a landmark_tree outpost with no entry in landmark_trees'
+                              % t.get("id"), file="data/towns.json", where=t.get("id"))
+            crit = sorted([t for t in towns if t.get("tier") == "critical" and _num(t.get("order"))],
+                          key=lambda t: t["order"])
+            legs = {"%s->%s" % (a.get("id"), b.get("id")) for a, b in zip(crit, crit[1:])}
+            for lid, lt in lt_ids.items():
+                for o in lt.get("seen_from") or []:
+                    if isinstance(o, dict) and o.get("kind") == "legs" and isinstance(o.get("legs"), list):
+                        for name in o["legs"]:
+                            if name not in legs:
+                                rep.error(C, 'landmark tree "%s" is seen from leg "%s", which is not a pair of '
+                                          "consecutive critical towns" % (lid, name),
+                                          file=rel, line=f.line_of_id(lid), where=lid)
+
+    rep.info(C, "checked %d forest types, %d object groups, %d library objects and %d landmark trees"
+             % (len(types), len(groups_used), n_objects, len(lt_ids)), file=rel)
+
+
+SCULPT_SCHEMA = "cobblers.sculpt/1"
+COAST_CLASSES = ("beach", "estuary", "shore", "rocky", "cliff")
+CONE_FORMS = {"stratovolcano", "lava_dome", "cinder_cone", "caldera"}
+# what tools/sculpt.py reads, and the constraint that keeps its arithmetic finite: "num" any number, "pos" > 0,
+# "nonneg" >= 0, "unit" in [0, 1], "range" [lo, hi] with lo <= hi, "range_pos" with 0 < lo <= hi, "range_open"
+# with lo < hi (passed to a smoothstep, which divides by hi - lo), "int_nonneg"
+SCULPT_PROTECT = {"settlement_margin_blocks": "nonneg", "landmark_tree_margin_blocks": "nonneg",
+                  "river_margin_blocks": "nonneg", "lake_margin_blocks": "nonneg", "feather_blocks": "pos",
+                  "terrain_feather_blocks": "pos"}
+SCULPT_COAST = {"band_blocks": "pos", "spacing_blocks": "pos", "concavity_radius_blocks": "pos",
+                "fetch_cap_blocks": "pos", "estuary_mouth_radius_blocks": "nonneg",
+                "class_smoothing_radius_blocks": "nonneg", "micro_relief_scale_blocks": "pos"}
+_BEACHLIKE = {"grade": "range_pos", "berm_blocks": "range", "top_above_sea": "range", "back_blocks": "range_pos",
+              "shelf_grade": "range_pos", "shelf_depth": "range", "micro_relief": "nonneg"}
+SCULPT_CLASS_KEYS = {
+    "beach": _BEACHLIKE,
+    "estuary": _BEACHLIKE,
+    "shore": {k: v for k, v in _BEACHLIKE.items() if k != "berm_blocks"},
+    "rocky": {"bank_grade": "pos", "bank_top_above_sea": "num", "back_blocks": "pos", "drop_grade": "pos",
+              "drop_depth": "nonneg", "rugged": "nonneg", "micro_relief": "nonneg"},
+    "cliff": {"height": "range", "relief_share": "nonneg", "face_blocks": "range_open", "back_blocks": "range_open",
+              "talus_blocks": "pos", "drop_grade": "pos", "drop_depth": "nonneg", "micro_relief": "nonneg"},
+}
+SCULPT_MASSIF = {"steep_faces_deg": "num", "shift_blocks": "nonneg", "shift_taper_blocks": "pos", "shift_from_y": "num"}
+SCULPT_SUMMITS = {"rise": "nonneg", "ridge_scale_blocks": "pos", "secondary_cap": "unit"}
+SCULPT_STRATA = {"from_y": "num", "cliff_slope_deg": "num", "cliff_band": "range_pos", "cliff_strength": "nonneg",
+                 "bench_slope_deg": "range", "bench_band": "range_pos", "bench_strength": "nonneg"}
+SCULPT_VOLCANO = {"steep_faces_deg": "num", "shift_blocks": "nonneg", "shift_taper_blocks": "pos", "shift_from_y": "num"}
+SCULPT_CONE = {
+    "stratovolcano": {"crater_radius": "pos", "crater_floor_y": "num", "rim_y": "num", "rim_width": "nonneg",
+                      "flank_to_radius": "pos", "flank_drop": "num", "breach_bearing_deg": "num",
+                      "breach_half_angle_deg": "pos", "breach_floor_y": "num", "breach_grade": "nonneg"},
+    "lava_dome": {"dome_radius": "pos", "dome_top_y": "num", "dome_drop": "num", "spines": "int_nonneg",
+                  "spine_radius": "pos"},
+    "cinder_cone": {"top_y": "num", "slope": "nonneg", "radius": "pos", "crater_radius": "pos",
+                    "crater_floor_y": "num", "strength": "unit", "plain_y": "num"},
+    "caldera": {"floor_radius": "pos", "floor_y": "num", "wall_to_radius": "pos", "rim_to_radius": "pos",
+                "rim_y": "num", "rim_noise": "nonneg", "flank_to_radius": "pos", "flank_grade": "nonneg"},
+}
+
+
+def _kind_ok(v, kind):
+    if kind == "num":
+        return _num(v)
+    if kind == "pos":
+        return _num(v) and v > 0
+    if kind == "nonneg":
+        return _num(v) and v >= 0
+    if kind == "unit":
+        return _num(v) and 0 <= v <= 1
+    if kind == "int_nonneg":
+        return _int(v) and v >= 0
+    if kind == "int_pos":
+        return _int(v) and v >= 1
+    if kind == "int_two":
+        return _int(v) and v >= 2
+    if not (isinstance(v, list) and len(v) == 2 and all(_num(x) for x in v)):
+        return False
+    lo, hi = v
+    return {"range": lo <= hi, "range_pos": 0 < lo <= hi, "range_open": lo < hi}[kind]
+
+
+_KIND_TEXT = {"num": "a number", "pos": "a number > 0", "nonneg": "a number >= 0", "unit": "a number in [0, 1]",
+              "int_nonneg": "an integer >= 0", "int_pos": "an integer >= 1", "int_two": "an integer >= 2",
+              "range": "[lo, hi] with lo <= hi", "range_pos": "[lo, hi] with 0 < lo <= hi",
+              "range_open": "[lo, hi] with lo < hi"}
+# hillside relief (tools/sculpt.py sculpt_relief): smooth(sigma) and the fall-line average need positive sizes and at
+# least two taps; the soft clip divides by its sigma; both fades and the protection feather are smoothsteps
+SCULPT_RELIEF = {"regional_sigma_blocks": "pos", "fall_line_stretch_blocks": "nonneg", "fall_line_taps": "int_two",
+                 "amplitude_per_grade": "nonneg", "max_amplitude_blocks": "nonneg", "noise_soft_clip_sigma": "pos",
+                 "low_fade_above_sea": "range_open", "steep_fade_grade": "range_open", "protect_feather_blocks": "pos"}
+SCULPT_RELIEF_OCTAVE = {"spacing_blocks": "int_pos", "weight": "nonneg"}
+
+
+def check_sculpt(ctx: Context):
+    """The terrain sculpt stage: data/sculpt.json essentials and references (regions, sub-regions, pad sites, world
+    bounds), and the import chain in world.json (heightmap.sculpted_from is the river cut recorded in rivers.json and
+    is not the imported file). A needed file that is absent makes that part SKIPPED; a present file that is malformed
+    or inconsistent is an ERROR."""
+    rep = ctx.report
+    C = "sculpt"
+    rel = "data/sculpt.json"
+    path = ctx.data_dir / "sculpt.json"
+    world = ctx.doc("world.json")
+    hm = (world or {}).get("heightmap") if isinstance(world, dict) else None
+    hm = hm if isinstance(hm, dict) else {}
+    if not path.is_file():
+        if hm.get("sculpted_from") is not None:
+            rep.error(C, "world.json heightmap.sculpted_from records a sculpt but data/sculpt.json is absent",
+                      file="data/world.json")
+        rep.skip(C, "data/sculpt.json is absent; the sculpt configuration was not checked", file=rel)
+        return
+    f = _load_json_for(C, path, rel, rep)
+    if not f:
+        return
+    doc = f.doc
+    if not isinstance(doc, dict):
+        rep.error(C, "top level must be an object", file=rel, line=1)
+        return
+
+    def err(msg, key=None, where=None):
+        rep.error(C, msg, file=rel, line=f.line_of_key(key) if key else None, where=where)
+
+    def need(obj, spec, where, key_for_line=None):
+        if not isinstance(obj, dict):
+            err("%s must be an object" % where, key_for_line)
+            return False
+        ok = True
+        for k, kind in spec.items():
+            if not _kind_ok(obj.get(k), kind):
+                err("%s.%s must be %s, got %r" % (where, k, _KIND_TEXT[kind], obj.get(k)), key_for_line or k, where)
+                ok = False
+        return ok
+
+    if doc.get("schema") != SCULPT_SCHEMA:
+        err('schema is "%s", expected "%s"' % (doc.get("schema"), SCULPT_SCHEMA), "schema")
+    wind = doc.get("prevailing_wind_from_deg")
+    if not (_num(wind) and 0 <= wind < 360):
+        err("prevailing_wind_from_deg must be a bearing in [0, 360), got %r" % (wind,), "prevailing_wind_from_deg")
+    need(doc.get("protect"), SCULPT_PROTECT, "protect", "protect")
+
+    # the import chain in world.json
+    sf = hm.get("sculpted_from")
+    if world is None:
+        rep.skip(C, "data/world.json is absent or unreadable; heightmap.sculpted_from was not checked", file=rel)
+    elif sf is None:
+        rep.error(C, "data/sculpt.json exists but world.json heightmap.sculpted_from is absent, so the import does not "
+                  "record which river cut it was sculpted from", file="data/world.json")
+    elif not isinstance(sf, dict) or not isinstance(sf.get("path"), str) or not sf["path"] \
+            or not (isinstance(sf.get("sha256"), str) and len(sf["sha256"]) == 64):
+        rep.error(C, "world.json heightmap.sculpted_from needs a path and a 64-hex sha256", file="data/world.json")
+    else:
+        if sf["path"] == hm.get("path"):
+            rep.error(C, "world.json heightmap.path %s is also its sculpted_from path: the sculpt must write a new "
+                      "file, not overwrite the river cut" % sf["path"], file="data/world.json")
+        if sf["sha256"] == hm.get("sha256"):
+            rep.warn(C, "world.json heightmap.sha256 equals sculpted_from.sha256: the sculpt changed nothing",
+                     file="data/world.json")
+        riv = ctx.data_dir / "rivers.json"
+        if not riv.is_file():
+            rep.skip(C, "data/rivers.json is absent; sculpted_from was not compared with the river cut", file=rel)
+        else:
+            rf = _load_json_for(C, riv, "data/rivers.json", rep)
+            out = ((rf.doc.get("cut") or {}).get("output") or {}) if rf and isinstance(rf.doc, dict) else {}
+            if rf and out.get("sha256") != sf["sha256"]:
+                rep.error(C, "world.json heightmap.sculpted_from.sha256 %s is not the river cut output %s in "
+                          "data/rivers.json" % (sf["sha256"][:12], (out.get("sha256") or "")[:12]),
+                          file="data/world.json")
+            if rf and out.get("path") and out["path"] != sf["path"]:
+                rep.error(C, "world.json heightmap.sculpted_from.path %s is not the river cut output path %s"
+                          % (sf["path"], out["path"]), file="data/world.json")
+
+    # coast
+    coast = doc.get("coast")
+    hard, soft = [], []
+    if need(coast, SCULPT_COAST, "coast", "coast"):
+        for key in ("hard_regions", "soft_regions"):
+            v = coast.get(key)
+            if not (isinstance(v, list) and all(isinstance(x, str) for x in v)):
+                err("coast.%s must be a list of region ids" % key, key)
+            else:
+                (hard if key == "hard_regions" else soft).extend(v)
+        for rid in sorted(set(hard) & set(soft)):
+            err('region "%s" is both a hard and a soft coast region' % rid, "soft_regions", rid)
+        classes = coast.get("classes")
+        if not isinstance(classes, dict) or set(classes) != set(COAST_CLASSES):
+            err("coast.classes must define exactly %s, got %s"
+                % (", ".join(COAST_CLASSES), sorted(classes) if isinstance(classes, dict) else classes), "classes")
+        else:
+            for cls in COAST_CLASSES:
+                need(classes[cls], SCULPT_CLASS_KEYS[cls], "coast.classes.%s" % cls, cls)
+    elif isinstance(coast, dict):
+        for key in ("hard_regions", "soft_regions"):
+            if isinstance(coast.get(key), list):
+                (hard if key == "hard_regions" else soft).extend(x for x in coast[key] if isinstance(x, str))
+
+    # massifs
+    massifs = doc.get("massifs")
+    if not isinstance(massifs, list):
+        err("massifs must be a list", "massifs")
+        massifs = []
+    points = []               # (where, [x, z]) to place inside the world bounds
+    sub_refs = []             # (massif id, sub-region id)
+    seen = set()
+    for i, m in enumerate(massifs):
+        mid = m.get("id") if isinstance(m, dict) else None
+        w = "massifs.%s" % (mid or i)
+        if not isinstance(mid, str) or not mid:
+            err("massifs[%d] needs an id" % i, "massifs")
+        elif mid in seen:
+            err('duplicate massif "%s"' % mid, None, mid)
+        seen.add(mid)
+        if not need(m, SCULPT_MASSIF, w, mid):
+            if not isinstance(m, dict):
+                continue
+        subs = m.get("subregions")
+        if not (isinstance(subs, list) and subs and all(isinstance(s, str) for s in subs)):
+            err("%s.subregions must be a non-empty list of sub-region ids" % w, mid, mid)
+        else:
+            sub_refs.extend((w, s) for s in subs)
+        s = m.get("summits")
+        if need(s, SCULPT_SUMMITS, w + ".summits", mid):
+            hi = s.get("highest")
+            if not (isinstance(hi, list) and len(hi) == 2 and all(_num(v) for v in hi)):
+                err("%s.summits.highest must be [x, z], got %r" % (w, hi), mid, mid)
+            else:
+                points.append(("%s.summits.highest" % w, hi))
+        need(m.get("strata"), SCULPT_STRATA, w + ".strata", mid)
+
+    # volcano
+    v = doc.get("volcano")
+    if need(v, SCULPT_VOLCANO, "volcano", "volcano"):
+        cones = v.get("cones")
+        if not isinstance(cones, list) or not cones:
+            err("volcano.cones must be a non-empty list (tools/sculpt.py run boxes the volcano from its cones)", "cones")
+            cones = []
+        cone_ids = set()
+        for i, c in enumerate(cones):
+            cid = c.get("id") if isinstance(c, dict) else None
+            w = "volcano.cones.%s" % (cid or i)
+            if not isinstance(c, dict):
+                err("%s must be an object" % w, "cones")
+                continue
+            if not isinstance(cid, str) or not cid:
+                err("volcano.cones[%d] needs an id" % i, "cones")
+            elif cid in cone_ids:
+                err('duplicate cone "%s"' % cid, None, cid)
+            cone_ids.add(cid)
+            ctr = c.get("centre")
+            if not (isinstance(ctr, list) and len(ctr) == 2 and all(_num(x) for x in ctr)):
+                err("%s.centre must be [x, z], got %r" % (w, ctr), cid, cid)
+            else:
+                points.append(("%s.centre" % w, ctr))
+            form = c.get("form")
+            if form not in CONE_FORMS:
+                err("%s.form %r is not one of %s" % (w, form, ", ".join(sorted(CONE_FORMS))), cid, cid)
+                continue
+            if not need(c, SCULPT_CONE[form], w, cid):
+                continue
+            if form == "stratovolcano" and not c["flank_to_radius"] > c["crater_radius"] + c["rim_width"]:
+                err("%s: flank_to_radius must exceed crater_radius + rim_width" % w, cid, cid)
+            if form == "cinder_cone" and not c["crater_radius"] < c["radius"]:
+                err("%s: crater_radius must be below radius" % w, cid, cid)
+            if form == "caldera" and not (c["floor_radius"] < c["wall_to_radius"] <= c["rim_to_radius"]
+                                          <= c["flank_to_radius"]):
+                err("%s: radii must satisfy floor_radius < wall_to_radius <= rim_to_radius <= flank_to_radius" % w,
+                    cid, cid)
+
+    # hillside relief (optional: tools/sculpt.py run applies it only when the block is present)
+    relief = doc.get("relief")
+    if relief is not None and need(relief, SCULPT_RELIEF, "relief", "relief"):
+        octaves = relief.get("octaves")
+        if not isinstance(octaves, list) or not octaves:
+            err("relief.octaves must be a non-empty list", "octaves")
+        else:
+            for i, o in enumerate(octaves):
+                need(o, SCULPT_RELIEF_OCTAVE, "relief.octaves[%d]" % i, "octaves")
+            if all(isinstance(o, dict) and _num(o.get("weight")) for o in octaves) \
+                    and not any(o["weight"] > 0 for o in octaves):
+                err("relief.octaves weights are all 0: the relief noise would be zero", "octaves")
+        lo = relief.get("low_fade_above_sea")
+        if _kind_ok(lo, "range_open") and lo[0] < 0:
+            err("relief.low_fade_above_sea must start at or above sea level, got %r" % (lo,), "low_fade_above_sea")
+        st = relief.get("steep_fade_grade")
+        if _kind_ok(st, "range_open") and st[0] <= 0:
+            err("relief.steep_fade_grade must be above grade 0, got %r" % (st,), "steep_fade_grade")
+
+    # pads
+    pads = doc.get("pads", [])
+    if not isinstance(pads, list):
+        err("pads must be a list", "pads")
+        pads = []
+    pad_sites = []
+    for i, pd in enumerate(pads):
+        w = "pads[%d]" % i
+        if not isinstance(pd, dict) or not isinstance(pd.get("site"), str) or not pd["site"]:
+            err("%s needs a site (a data/towns.json id)" % w, "pads")
+            continue
+        need(pd, {"y": "num", "radius": "nonneg", "feather": "pos"}, "pads.%s" % pd["site"], pd["site"])
+        if pd["site"] in pad_sites:
+            err('pad site "%s" is listed twice' % pd["site"], None, pd["site"])
+        pad_sites.append(pd["site"])
+        imp = (world or {}).get("import") if isinstance(world, dict) else None
+        if isinstance(imp, dict) and _num(pd.get("y")) and _num(imp.get("low_out")) and _num(imp.get("high_out")) \
+                and not imp["low_out"] <= pd["y"] <= imp["high_out"]:
+            err("pads.%s.y %s is outside the import range %s..%s" % (pd["site"], pd["y"], imp["low_out"],
+                                                                     imp["high_out"]), pd["site"], pd["site"])
+
+    # references: regions and sub-regions
+    reg_path = ctx.data_dir / "regions.json"
+    if not reg_path.is_file():
+        rep.skip(C, "data/regions.json is absent; coast regions and massif sub-regions were not checked", file=rel)
+    else:
+        rf = _load_json_for(C, reg_path, "data/regions.json", rep)
+        if rf and isinstance(rf.doc, dict):
+            region_ids = {r.get("id") for r in rf.doc.get("regions") or [] if isinstance(r, dict)}
+            sub_ids = {s.get("id") for s in rf.doc.get("subregions") or [] if isinstance(s, dict)}
+            for key, ids in (("hard_regions", hard), ("soft_regions", soft)):
+                for rid in ids:
+                    if rid not in region_ids:
+                        err('coast.%s names "%s", which is not a region in data/regions.json' % (key, rid), key, rid)
+            for w, sid in sub_refs:
+                if sid not in sub_ids:
+                    err('%s.subregions names "%s", which is not a sub-region in data/regions.json' % (w, sid),
+                        sid, sid)
+
+    # references: pad sites
+    towns_path = ctx.data_dir / "towns.json"
+    if not towns_path.is_file():
+        if pad_sites:
+            rep.skip(C, "data/towns.json is absent; pad sites were not checked", file=rel)
+    else:
+        tf = _load_json_for(C, towns_path, "data/towns.json", rep)
+        if tf and isinstance(tf.doc, dict):
+            by_id = {t.get("id"): t for t in tf.doc.get("towns") or [] if isinstance(t, dict)}
+            for site in pad_sites:
+                t = by_id.get(site)
+                if t is None:
+                    err('pad site "%s" is not in data/towns.json' % site, site, site)
+                elif not (isinstance(t.get("centre"), dict) and _num(t["centre"].get("x")) and _num(t["centre"].get("z"))):
+                    err('pad site "%s" has no centre x/z in data/towns.json (the pad is pressed around it)' % site,
+                        site, site)
+
+    # points inside the world bounds
+    bounds = (world or {}).get("bounds") if isinstance(world, dict) else None
+    if not (isinstance(bounds, dict) and all(_num(bounds.get(k)) for k in ("min_x", "min_z", "max_x", "max_z"))):
+        if points:
+            rep.skip(C, "data/world.json has no bounds; summit and cone positions were not checked", file=rel)
+    else:
+        for w, (x, z) in points:
+            if not (bounds["min_x"] <= x <= bounds["max_x"] and bounds["min_z"] <= z <= bounds["max_z"]):
+                err("%s (%s, %s) is outside the world bounds" % (w, x, z), None, w)
+
+    rep.info(C, "checked %d massifs, %d volcano cones and %d pads" % (
+        len(massifs), len((v or {}).get("cones") or []) if isinstance(v, dict) else 0, len(pads)), file=rel)
+
+
+KITS = ("kits", "structures")                       # relative to the data directory's parent
+PREFABS = KITS + ("prefabs",)
+SPAWN_BLOCKS = "spawn_blocks.json"
+SPAWN_POLICY = "spawn_block_policy.json"
+
+
+def _palette(path):
+    """Block names in a structure template's palette (tools/nbt.py is standard library only)."""
+    tools = str(Path(__file__).resolve().parent)
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    import nbt
+    _, doc = nbt.load(path)
+    return [p.get("Name") for p in (doc.get("palette") or []) if isinstance(p, dict)]
+
+
+def _templates_naming(root, names):
+    """name -> [template paths whose bytes hold it as an NBT string]. Matching the length-prefixed string is exact
+    (no prefix hits: red_concrete does not match red_concrete_powder) and costs a decompression, not a full parse."""
+    import gzip
+    import struct
+    needles = {n: struct.pack(">H", len(n.encode("utf-8"))) + n.encode("utf-8") for n in names}
+    out = {n: [] for n in names}
+    for path in sorted(Path(root).rglob("*.nbt")):
+        try:
+            raw = path.read_bytes()
+            body = gzip.decompress(raw) if raw[:2] == bytes([0x1f, 0x8b]) else raw
+        except (OSError, EOFError, gzip.BadGzipFile):
+            continue
+        for n, needle in needles.items():
+            if needle in body:
+                out[n].append(path)
+    return out
+
+
+def _resolve_template_id(tid, kits_dir):
+    """cobblers:kits/trees/tree_town/oak -> kits/structures/prefabs/trees/tree_town/oak.nbt;
+    cobblers:f4/services/pokecenter -> kits/structures/campaign/f4/services/pokecenter.nbt. None when nothing matches."""
+    if not isinstance(tid, str) or not tid:
+        return None
+    rel = tid.split(":", 1)[1] if ":" in tid else tid
+    parts = rel.split("/")
+    cands = [Path(kits_dir, *(("prefabs",) + tuple(parts[1:])) if parts[0] == "kits" else ("campaign",) + tuple(parts))]
+    cands.append(Path(kits_dir, *parts))
+    for c in cands:
+        p = c.with_suffix(".nbt")
+        if p.is_file():
+            return p
+    hits = [p for p in Path(kits_dir).rglob(parts[-1] + ".nbt") if str(p).replace("\\", "/").endswith(rel + ".nbt")]
+    return hits[0] if len(hits) == 1 else None
+
+
+def check_spawn_blocks(ctx: Context):
+    """No placed template decides encounters by accident: a template a placement or plan names, and every prefab, may
+    contain a block from data/spawn_blocks.json only when data/spawn_block_policy.json whitelists it with a reason.
+    Substitutions must replace triggers with non-triggers, must be gone from the kits, and must match the files on
+    disk. A missing or empty spawn-block list makes the check SKIPPED, never a pass."""
+    rep = ctx.report
+    C = "spawn-blocks"
+    rel_b, rel_p = "data/" + SPAWN_BLOCKS, "data/" + SPAWN_POLICY
+    kits_dir = ctx.data_dir.parent.joinpath(*KITS)
+    bpath, ppath = ctx.data_dir / SPAWN_BLOCKS, ctx.data_dir / SPAWN_POLICY
+    if not bpath.is_file():
+        rep.skip(C, "%s is absent; placed templates were not checked for spawn-triggering blocks (rerun "
+                 "tools/spawn_blocks.py blocks)" % rel_b, file=rel_b)
+        return
+    bf = _load_json_for(C, bpath, rel_b, rep)
+    if not bf:
+        return
+    triggers = bf.doc.get("blocks") if isinstance(bf.doc, dict) else None
+    if not isinstance(triggers, dict) or not triggers:
+        rep.skip(C, "%s lists no blocks, so nothing could be checked against it; rerun tools/spawn_blocks.py blocks "
+                 "against the server" % rel_b, file=rel_b)
+        return
+    if not ppath.is_file():
+        rep.error(C, "%s is absent, so no template may be checked against the %d spawn-triggering blocks"
+                  % (rel_p, len(triggers)), file=rel_b)
+        return
+    pf = _load_json_for(C, ppath, rel_p, rep)
+    if not pf or not isinstance(pf.doc, dict):
+        if pf:
+            rep.error(C, "top level must be an object", file=rel_p, line=1)
+        return
+    policy = pf.doc
+
+    def perr(msg, key=None, where=None):
+        rep.error(C, msg, file=rel_p, line=pf.line_of_key(key) if key else None, where=where)
+
+    # whitelist
+    allowed = set()
+    wl = policy.get("whitelist")
+    if not isinstance(wl, list):
+        perr("whitelist must be a list", "whitelist")
+        wl = []
+    for i, w in enumerate(wl):
+        if not isinstance(w, dict):
+            perr("whitelist[%d] must be an object" % i, "whitelist")
+            continue
+        blocks = w.get("blocks")
+        if not (isinstance(blocks, list) and blocks and all(isinstance(b, str) and b for b in blocks)):
+            perr("whitelist[%d] needs a non-empty blocks list, got %r" % (i, blocks), "whitelist")
+            continue
+        if not (isinstance(w.get("why"), str) and w["why"].strip()):
+            perr("whitelist entry %s needs a why: an allowed trigger block is a deliberate encounter"
+                 % ", ".join(blocks[:3]), "whitelist", blocks[0])
+            continue
+        allowed.update(blocks)
+
+    if not kits_dir.is_dir():
+        rep.skip(C, "%s is absent; no template could be read" % "/".join(KITS), file=rel_p)
+        return
+
+    # substitutions
+    subs = policy.get("substitutions")
+    if not isinstance(subs, list):
+        perr("substitutions must be a list", "substitutions")
+        subs = []
+    froms = []
+    for i, s in enumerate(subs):
+        if not isinstance(s, dict) or not isinstance(s.get("from"), str) or not isinstance(s.get("to"), str):
+            perr("substitutions[%d] needs from and to block names" % i, "substitutions")
+            continue
+        if s["to"] in triggers:
+            perr('substitution %s -> %s replaces a spawn-triggering block with another one (%s)'
+                 % (s["from"], s["to"], _spawn_example(triggers, s["to"])), "substitutions", s["to"])
+        froms.append(s["from"])
+    for name, left in sorted(_templates_naming(kits_dir, froms).items()):
+        if left:
+            to = next(s["to"] for s in subs if isinstance(s, dict) and s.get("from") == name)
+            perr("substitution %s -> %s is not applied: %s still contains %s (%d template(s) under %s)"
+                 % (name, to, left[0].name, name, len(left), "/".join(KITS)), "substitutions", name)
+
+    applied = (policy.get("applied") or {}).get("templates")
+    if applied is not None and not isinstance(applied, list):
+        perr("applied.templates must be a list", "applied")
+        applied = []
+    for i, row in enumerate(applied or []):
+        if not isinstance(row, dict) or not isinstance(row.get("template"), str):
+            perr("applied.templates[%d] needs a template path" % i, "applied")
+            continue
+        path = ctx.data_dir.parent / row["template"]
+        if not path.is_file():
+            perr("applied.templates %s is not in the repository" % row["template"], "applied", row["template"])
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if row.get("sha256_after") != digest:
+            perr("applied.templates %s hashes to %s, not the recorded sha256_after %s: the template changed after the "
+                 "substitution, or it was never applied"
+                 % (row["template"], digest[:12], str(row.get("sha256_after"))[:12]), "applied", row["template"])
+
+    # the templates a placement or plan names, plus every prefab
+    placed, skipped = {}, []
+    plf = ctx.files.get("placements.json")
+    doc = plf.doc if plf else None
+    if doc is None and (ctx.data_dir / "placements.json").is_file():
+        f = _load_json_for(C, ctx.data_dir / "placements.json", "data/placements.json", rep)
+        doc = f.doc if f else None
+    if doc is None:
+        rep.skip(C, "data/placements.json is absent; only the prefabs were checked", file=rel_p)
+    elif isinstance(doc, dict):
+        for p in doc.get("placements") or []:
+            if not isinstance(p, dict):
+                continue
+            path = ctx.data_dir.parent / p["file"] if isinstance(p.get("file"), str) else None
+            if path is None or not path.is_file():
+                rep.error(C, 'placement "%s" names template file %r, which is not in the repository'
+                          % (p.get("id"), p.get("file")), file="data/placements.json", where=p.get("id"))
+                continue
+            placed.setdefault(path.resolve(), []).append("placement %s" % p.get("id"))
+        for sid, s in (doc.get("settlements") or {}).items():
+            anchors = ((s or {}).get("plan") or {}).get("anchors") or []
+            for a in anchors if isinstance(anchors, list) else []:
+                tid = a.get("template") if isinstance(a, dict) else None
+                if tid is None:
+                    continue
+                path = _resolve_template_id(tid, kits_dir)
+                if path is None:
+                    skipped.append("%s (%s)" % (tid, sid))
+                    continue
+                placed.setdefault(path.resolve(), []).append("%s anchor %s" % (sid, a.get("id", tid)))
+    if skipped:
+        rep.skip(C, "template ids that do not resolve to a file under %s were not checked: %s"
+                 % ("/".join(KITS), ", ".join(sorted(set(skipped)))), file=rel_p)
+    for path in sorted(ctx.data_dir.parent.joinpath(*PREFABS).rglob("*.nbt")):
+        placed.setdefault(path.resolve(), []).append("prefab")
+    kits_resolved = kits_dir.resolve()
+    checked = 0
+    for path, why in sorted(placed.items()):
+        if kits_resolved not in path.parents:
+            rep.error(C, "%s (%s) is outside %s, so its palette was not checked"
+                      % (path.name, why[0], "/".join(KITS)), file=rel_p)
+            continue
+        try:
+            pal = _palette(path)
+        except Exception as exc:                 # a template that cannot be read is not a template without triggers
+            rep.error(C, "cannot read template %s (%s): %s: %s" % (path.name, why[0], type(exc).__name__, exc),
+                      file=rel_p)
+            continue
+        checked += 1
+        for block in sorted({b for b in pal if b in triggers and b not in allowed}):
+            rep.error(C, '%s (%s) contains %s, which decides encounters wherever it is placed: %s. Substitute it '
+                      "(tools/spawn_blocks.py substitute) or whitelist it with a reason in %s"
+                      % (path.name, why[0], block, _spawn_example(triggers, block), rel_p),
+                      file=str(Path(*path.parts[-4:])), where=block)
+    rep.info(C, "checked %d placed templates and prefabs against %d spawn-triggering blocks (%d whitelisted)"
+             % (checked, len(triggers), len(allowed)), file=rel_p)
+
+
+def _spawn_example(triggers, block):
+    """One spawn that names the block, as data/spawn_blocks.json records it."""
+    uses = triggers.get(block)
+    if isinstance(uses, list) and uses:
+        return "%s%s" % (uses[0], "" if len(uses) == 1 else " and %d more" % (len(uses) - 1))
+    return "a loaded spawn condition"
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -1017,6 +2148,9 @@ CHECKS = [
     ("progression", check_progression),
     ("rivers", check_rivers),
     ("towns", check_towns),
+    ("foliage", check_foliage),
+    ("sculpt", check_sculpt),
+    ("spawn-blocks", check_spawn_blocks),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
 ]

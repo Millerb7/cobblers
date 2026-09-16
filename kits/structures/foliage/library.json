@@ -1,0 +1,5430 @@
+{
+ "schema": "cobblers.foliage_library/1",
+ "generator": "tools/foliage_objects.py index",
+ "note": "origin is the template coordinate of the object's base column (trunk corner for 2x2 trunks); WorldPainter's offset is its negation. Vanilla objects are captures of Minecraft 1.21.1 configured features; generated objects come from seeded code in this repository.",
+ "groups": {
+  "acacia": {
+   "objects": 8,
+   "height": [
+    7,
+    10
+   ],
+   "crown_radius": [
+    4.5,
+    6.3
+   ]
+  },
+  "ancient_pine": {
+   "objects": 3,
+   "height": [
+    32,
+    40
+   ],
+   "crown_radius": [
+    5.4,
+    5.8
+   ]
+  },
+  "ancient_spruce": {
+   "objects": 6,
+   "height": [
+    36,
+    51
+   ],
+   "crown_radius": [
+    6.7,
+    8.2
+   ]
+  },
+  "azalea": {
+   "objects": 6,
+   "height": [
+    6,
+    7
+   ],
+   "crown_radius": [
+    4.5,
+    6.3
+   ]
+  },
+  "birch": {
+   "objects": 8,
+   "height": [
+    6,
+    8
+   ],
+   "crown_radius": [
+    2.8,
+    2.8
+   ]
+  },
+  "boulder": {
+   "objects": 6,
+   "height": [
+    2,
+    4
+   ],
+   "crown_radius": [
+    1.0,
+    3.6
+   ]
+  },
+  "bush_broadleaf": {
+   "objects": 7,
+   "height": [
+    2,
+    3
+   ],
+   "crown_radius": [
+    1.0,
+    1.4
+   ]
+  },
+  "bush_conifer": {
+   "objects": 1,
+   "height": [
+    3,
+    3
+   ],
+   "crown_radius": [
+    1.0,
+    1.0
+   ]
+  },
+  "cherry": {
+   "objects": 8,
+   "height": [
+    9,
+    11
+   ],
+   "crown_radius": [
+    5.4,
+    8.2
+   ]
+  },
+  "dark_oak": {
+   "objects": 8,
+   "height": [
+    7,
+    11
+   ],
+   "crown_radius": [
+    5.0,
+    6.3
+   ]
+  },
+  "fallen_log_broadleaf": {
+   "objects": 4,
+   "height": [
+    3,
+    3
+   ],
+   "crown_radius": [
+    0.0,
+    0
+   ]
+  },
+  "fallen_log_conifer": {
+   "objects": 3,
+   "height": [
+    3,
+    3
+   ],
+   "crown_radius": [
+    0.0,
+    0
+   ]
+  },
+  "fancy_oak": {
+   "objects": 10,
+   "height": [
+    5,
+    16
+   ],
+   "crown_radius": [
+    2.2,
+    7.6
+   ]
+  },
+  "forest_rock": {
+   "objects": 4,
+   "height": [
+    1,
+    2
+   ],
+   "crown_radius": [
+    0.0,
+    0
+   ]
+  },
+  "huge_brown_mushroom": {
+   "objects": 4,
+   "height": [
+    5,
+    9
+   ],
+   "crown_radius": [
+    3.6,
+    3.6
+   ]
+  },
+  "huge_red_mushroom": {
+   "objects": 4,
+   "height": [
+    5,
+    7
+   ],
+   "crown_radius": [
+    2.2,
+    2.2
+   ]
+  },
+  "jungle": {
+   "objects": 8,
+   "height": [
+    6,
+    11
+   ],
+   "crown_radius": [
+    2.8,
+    2.8
+   ]
+  },
+  "jungle_bush": {
+   "objects": 8,
+   "height": [
+    2,
+    3
+   ],
+   "crown_radius": [
+    2.2,
+    2.8
+   ]
+  },
+  "krummholz": {
+   "objects": 7,
+   "height": [
+    2,
+    6
+   ],
+   "crown_radius": [
+    3.2,
+    4.1
+   ]
+  },
+  "landmark_cherry_elder": {
+   "objects": 1,
+   "height": [
+    26,
+    26
+   ],
+   "crown_radius": [
+    21.1,
+    21.1
+   ]
+  },
+  "landmark_great_oak": {
+   "objects": 1,
+   "height": [
+    40,
+    40
+   ],
+   "crown_radius": [
+    23.3,
+    23.3
+   ]
+  },
+  "landmark_kapok": {
+   "objects": 1,
+   "height": [
+    55,
+    55
+   ],
+   "crown_radius": [
+    22.8,
+    22.8
+   ]
+  },
+  "landmark_patriarch_dark_oak": {
+   "objects": 1,
+   "height": [
+    30,
+    30
+   ],
+   "crown_radius": [
+    21.6,
+    21.6
+   ]
+  },
+  "landmark_sentinel_spruce": {
+   "objects": 1,
+   "height": [
+    75,
+    75
+   ],
+   "crown_radius": [
+    13.0,
+    13.0
+   ]
+  },
+  "landmark_weeping_elder": {
+   "objects": 1,
+   "height": [
+    35,
+    35
+   ],
+   "crown_radius": [
+    18.4,
+    18.4
+   ]
+  },
+  "leaf_litter": {
+   "objects": 4,
+   "height": [
+    1,
+    1
+   ],
+   "crown_radius": [
+    0.0,
+    0
+   ]
+  },
+  "mega_jungle": {
+   "objects": 8,
+   "height": [
+    14,
+    31
+   ],
+   "crown_radius": [
+    6.4,
+    8.6
+   ]
+  },
+  "mega_pine": {
+   "objects": 10,
+   "height": [
+    21,
+    28
+   ],
+   "crown_radius": [
+    4.2,
+    5.1
+   ]
+  },
+  "mega_spruce": {
+   "objects": 10,
+   "height": [
+    17,
+    27
+   ],
+   "crown_radius": [
+    4.2,
+    5.1
+   ]
+  },
+  "oak": {
+   "objects": 8,
+   "height": [
+    5,
+    7
+   ],
+   "crown_radius": [
+    2.8,
+    2.8
+   ]
+  },
+  "pine": {
+   "objects": 10,
+   "height": [
+    8,
+    12
+   ],
+   "crown_radius": [
+    2.2,
+    3.6
+   ]
+  },
+  "snag_broadleaf": {
+   "objects": 3,
+   "height": [
+    7,
+    10
+   ],
+   "crown_radius": [
+    0.0,
+    0
+   ]
+  },
+  "snag_conifer": {
+   "objects": 3,
+   "height": [
+    6,
+    12
+   ],
+   "crown_radius": [
+    0.0,
+    0
+   ]
+  },
+  "spruce": {
+   "objects": 10,
+   "height": [
+    6,
+    11
+   ],
+   "crown_radius": [
+    2.2,
+    3.6
+   ]
+  },
+  "swamp_oak": {
+   "objects": 8,
+   "height": [
+    6,
+    9
+   ],
+   "crown_radius": [
+    4.2,
+    4.2
+   ]
+  },
+  "tall_birch": {
+   "objects": 8,
+   "height": [
+    6,
+    14
+   ],
+   "crown_radius": [
+    2.2,
+    2.8
+   ]
+  }
+ },
+ "objects": [
+  {
+   "name": "acacia_01",
+   "file": "acacia_01.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    6,
+    0,
+    3
+   ],
+   "sha256": "41ab7dd5d0ea3c97bce619b1d62cf21e307453a22253fbf7087d881397f20f41",
+   "size": [
+    9,
+    8,
+    8
+   ],
+   "blocks": 94,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "acacia_02",
+   "file": "acacia_02.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    3,
+    0,
+    4
+   ],
+   "sha256": "447ceca7126b1fcf22678331da72018d19d7af6b6ba2d27a5aec41975a0601a4",
+   "size": [
+    8,
+    8,
+    7
+   ],
+   "blocks": 94,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "acacia_03",
+   "file": "acacia_03.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    2,
+    0,
+    3
+   ],
+   "sha256": "f6e44d6dbd5152d31da74136e62e343be76230f50e53de4746b641eb493d9c2c",
+   "size": [
+    9,
+    7,
+    9
+   ],
+   "blocks": 95,
+   "height": 7,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "acacia_04",
+   "file": "acacia_04.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    2,
+    0,
+    3
+   ],
+   "sha256": "8c7e3596bb1c0ba9a3a4ea52d62891270f559b404f08cb0cf1e72d8dd6393dcf",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 66,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "acacia_05",
+   "file": "acacia_05.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    3,
+    0,
+    4
+   ],
+   "sha256": "5af5c4edd8ed5cbd1db19231d8da694f472d6d0f55056ea3184d36dc36a8a56a",
+   "size": [
+    8,
+    8,
+    7
+   ],
+   "blocks": 75,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "acacia_06",
+   "file": "acacia_06.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    4,
+    0,
+    3
+   ],
+   "sha256": "7556f0039e3e6f3e3a840e83df26b74d13f5331e1c0bb577745e888f30f8a282",
+   "size": [
+    7,
+    9,
+    9
+   ],
+   "blocks": 84,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 5.1,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "acacia_07",
+   "file": "acacia_07.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    3,
+    0,
+    1
+   ],
+   "sha256": "e956f6cd9ca5a486dd522866fd7ad03af1acb8fd35e760e70975f008bb72ce03",
+   "size": [
+    7,
+    9,
+    7
+   ],
+   "blocks": 65,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 5.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "acacia_08",
+   "file": "acacia_08.nbt",
+   "group": "acacia",
+   "source": "vanilla",
+   "feature": "minecraft:acacia",
+   "origin": [
+    2,
+    0,
+    3
+   ],
+   "sha256": "3649fa4ccbd6ac7e0f0a6cdd8133191855fbd04265495a9515600663779fd08f",
+   "size": [
+    7,
+    8,
+    8
+   ],
+   "blocks": 85,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_pine_01",
+   "file": "ancient_pine_01.nbt",
+   "group": "ancient_pine",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "a40fd30b620527e898eed0b7ef64041835ef1cd55e7847bb71a54e8e9b0266a4",
+   "size": [
+    10,
+    32,
+    10
+   ],
+   "blocks": 325,
+   "height": 32,
+   "eye_width": 4,
+   "ground_radius": 2,
+   "crown_radius": 5.8,
+   "trunk_footprint": 10,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_pine_02",
+   "file": "ancient_pine_02.nbt",
+   "group": "ancient_pine",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "76c0b0e1db998373638649b98be12fb1146370664b1ec928fabda78b321e6aa7",
+   "size": [
+    10,
+    36,
+    10
+   ],
+   "blocks": 319,
+   "height": 36,
+   "eye_width": 3,
+   "ground_radius": 2,
+   "crown_radius": 5.4,
+   "trunk_footprint": 9,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_pine_03",
+   "file": "ancient_pine_03.nbt",
+   "group": "ancient_pine",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "196bc8e8bd878e0b227d5eb06ccd47d77a3b5ff2dcd2e8f5d1a01cecd24fc98c",
+   "size": [
+    10,
+    40,
+    10
+   ],
+   "blocks": 395,
+   "height": 40,
+   "eye_width": 4,
+   "ground_radius": 2,
+   "crown_radius": 5.8,
+   "trunk_footprint": 9,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_spruce_01",
+   "file": "ancient_spruce_01.nbt",
+   "group": "ancient_spruce",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    5,
+    0,
+    5
+   ],
+   "sha256": "5e17d88880032f230178219f712819345db1f0d95d8757fa4074b078f13c61de",
+   "size": [
+    12,
+    36,
+    12
+   ],
+   "blocks": 660,
+   "height": 36,
+   "eye_width": 3,
+   "ground_radius": 2,
+   "crown_radius": 6.7,
+   "trunk_footprint": 8,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_spruce_02",
+   "file": "ancient_spruce_02.nbt",
+   "group": "ancient_spruce",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    5,
+    0,
+    5
+   ],
+   "sha256": "bdd9ad5fe330ea7e23a15b8b17d46466f31d15751ebacb47bd2a7b925bab7b03",
+   "size": [
+    12,
+    39,
+    12
+   ],
+   "blocks": 732,
+   "height": 39,
+   "eye_width": 4,
+   "ground_radius": 2,
+   "crown_radius": 6.7,
+   "trunk_footprint": 11,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_spruce_03",
+   "file": "ancient_spruce_03.nbt",
+   "group": "ancient_spruce",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    6,
+    0,
+    6
+   ],
+   "sha256": "b18c45b7205401cb80803d0f7da713ad4350e0bb246cdbe7e63a60d0eeeab1f2",
+   "size": [
+    14,
+    42,
+    14
+   ],
+   "blocks": 879,
+   "height": 42,
+   "eye_width": 3,
+   "ground_radius": 2,
+   "crown_radius": 7.3,
+   "trunk_footprint": 8,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_spruce_04",
+   "file": "ancient_spruce_04.nbt",
+   "group": "ancient_spruce",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    6,
+    0,
+    6
+   ],
+   "sha256": "3d6cdbf533c5d827bd0c077d942eeb2e0cb03efe8489354b0d998995609919ca",
+   "size": [
+    14,
+    45,
+    14
+   ],
+   "blocks": 952,
+   "height": 45,
+   "eye_width": 3,
+   "ground_radius": 2,
+   "crown_radius": 7.2,
+   "trunk_footprint": 6,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_spruce_05",
+   "file": "ancient_spruce_05.nbt",
+   "group": "ancient_spruce",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    6,
+    0,
+    6
+   ],
+   "sha256": "b5468d670ec628e4d967cce3d90f15b42fd4b75045fbd571ae50b52a20c7e1bf",
+   "size": [
+    14,
+    48,
+    14
+   ],
+   "blocks": 1135,
+   "height": 48,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 7.8,
+   "trunk_footprint": 8,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "ancient_spruce_06",
+   "file": "ancient_spruce_06.nbt",
+   "group": "ancient_spruce",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    7,
+    0,
+    7
+   ],
+   "sha256": "f8b81da12398c91f53dff6dfaaadc4a515c91cb3e61f0d47dfaf1e28dbe35784",
+   "size": [
+    16,
+    51,
+    16
+   ],
+   "blocks": 1377,
+   "height": 51,
+   "eye_width": 3,
+   "ground_radius": 2,
+   "crown_radius": 8.2,
+   "trunk_footprint": 11,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "azalea_01",
+   "file": "azalea_01.nbt",
+   "group": "azalea",
+   "source": "vanilla",
+   "feature": "minecraft:azalea_tree",
+   "origin": [
+    0,
+    0,
+    2
+   ],
+   "sha256": "8ce578684d11bcd0182a87f4920931fc66e6f849e3d65e00914a53d86f1261b9",
+   "size": [
+    7,
+    6,
+    5
+   ],
+   "blocks": 77,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "azalea_02",
+   "file": "azalea_02.nbt",
+   "group": "azalea",
+   "source": "vanilla",
+   "feature": "minecraft:azalea_tree",
+   "origin": [
+    4,
+    0,
+    2
+   ],
+   "sha256": "30beca5ec6ceb06b46b2eeb4b253904161d725ef21640a9365d142d58c584e5a",
+   "size": [
+    7,
+    7,
+    5
+   ],
+   "blocks": 98,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "azalea_03",
+   "file": "azalea_03.nbt",
+   "group": "azalea",
+   "source": "vanilla",
+   "feature": "minecraft:azalea_tree",
+   "origin": [
+    5,
+    0,
+    2
+   ],
+   "sha256": "42d303d0efb76b244315c6079594f7af05b5ee84dd7186599bb2781ec90c48be",
+   "size": [
+    7,
+    7,
+    5
+   ],
+   "blocks": 86,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 5.1,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "azalea_04",
+   "file": "azalea_04.nbt",
+   "group": "azalea",
+   "source": "vanilla",
+   "feature": "minecraft:azalea_tree",
+   "origin": [
+    2,
+    0,
+    0
+   ],
+   "sha256": "9489940895140010b026ede38ee43f4df2a23492d8d6d1b10a9b20a714e0718b",
+   "size": [
+    5,
+    6,
+    6
+   ],
+   "blocks": 69,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 5.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "azalea_05",
+   "file": "azalea_05.nbt",
+   "group": "azalea",
+   "source": "vanilla",
+   "feature": "minecraft:azalea_tree",
+   "origin": [
+    2,
+    0,
+    4
+   ],
+   "sha256": "17dec2ae7c50a8779e838319dfa17e5c23cb3f870ef9cc748ff37f2bca0d396c",
+   "size": [
+    5,
+    7,
+    7
+   ],
+   "blocks": 100,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "azalea_06",
+   "file": "azalea_06.nbt",
+   "group": "azalea",
+   "source": "vanilla",
+   "feature": "minecraft:azalea_tree",
+   "origin": [
+    5,
+    0,
+    2
+   ],
+   "sha256": "c355f872f406d5f3613898e29c07574de7ebc8716eff4107f4476455af2c5e4e",
+   "size": [
+    7,
+    7,
+    5
+   ],
+   "blocks": 87,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 5.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_01",
+   "file": "birch_01.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "638a626a9d6b9a67a2809ddbc34c94b0afd5bd34a48fdcc198d8d23bdffd4370",
+   "size": [
+    5,
+    7,
+    5
+   ],
+   "blocks": 64,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_02",
+   "file": "birch_02.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "2b8bb65b7871311440c509791eaac5607ea666084db877160b0e873dc7f44509",
+   "size": [
+    5,
+    7,
+    5
+   ],
+   "blocks": 58,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_03",
+   "file": "birch_03.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "0d6908cf18de5441d573ff5bd440bfc960f71af353960f19339b7dd51541579e",
+   "size": [
+    5,
+    8,
+    5
+   ],
+   "blocks": 60,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_04",
+   "file": "birch_04.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "f9515f2e5fe61c075535310c0d4079c6bb87862a17b27b6dc6a2c5d8a9a28b2a",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 62,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_05",
+   "file": "birch_05.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "c5e4cc5b4859e966a24be3f3130046fcf3d41a4c1abf5a6229a495b030bc52b7",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 58,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_06",
+   "file": "birch_06.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "38febed665f5e2ffda8a754862b74910696811c839f5552eac7a7de01f5d8270",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 61,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_07",
+   "file": "birch_07.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "c1cf2bc669a2c55e2d01bdb5afa9290bea89a559b7753904f50282bbd931cdcf",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 62,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "birch_08",
+   "file": "birch_08.nbt",
+   "group": "birch",
+   "source": "vanilla",
+   "feature": "minecraft:birch",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "e965a8eab6ddf231badbfd3a46b4b0a5c7910dcc0e7dbd2c0ae9dd4ddc0b4eda",
+   "size": [
+    5,
+    8,
+    5
+   ],
+   "blocks": 63,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "boulder_01",
+   "file": "boulder_01.nbt",
+   "group": "boulder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "aaef3de1930ed915a429b9da47577f9a82eebef836774c254f65cc8115bc0e9f",
+   "size": [
+    3,
+    2,
+    3
+   ],
+   "blocks": 11,
+   "height": 2,
+   "eye_width": 3,
+   "ground_radius": 1,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "boulder_02",
+   "file": "boulder_02.nbt",
+   "group": "boulder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "f6a8bbbe213742659586f618e4a39c6fd74f30a54d5c60e94e63cccb63aa686f",
+   "size": [
+    5,
+    3,
+    3
+   ],
+   "blocks": 24,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 2,
+   "crown_radius": 1.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "boulder_03",
+   "file": "boulder_03.nbt",
+   "group": "boulder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "0edcced5a29ded891e4e668bcf4d650450c433cd6cc367f8666058f05c8c2870",
+   "size": [
+    5,
+    4,
+    5
+   ],
+   "blocks": 51,
+   "height": 4,
+   "eye_width": 5,
+   "ground_radius": 2,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "boulder_04",
+   "file": "boulder_04.nbt",
+   "group": "boulder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    3,
+    0,
+    2
+   ],
+   "sha256": "11bea18fe75fed3d82acb4b54640e275fdfd8a06aef34cfd7dee5e74a510f6a8",
+   "size": [
+    7,
+    4,
+    5
+   ],
+   "blocks": 68,
+   "height": 4,
+   "eye_width": 7,
+   "ground_radius": 3,
+   "crown_radius": 3.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "boulder_05",
+   "file": "boulder_05.nbt",
+   "group": "boulder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    2
+   ],
+   "sha256": "c6f41f4f426e1f8d7c48c7563983679c23bdc64311dcf89bb87bde3ec3c0ea90",
+   "size": [
+    3,
+    3,
+    5
+   ],
+   "blocks": 32,
+   "height": 3,
+   "eye_width": 5,
+   "ground_radius": 2,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "boulder_06",
+   "file": "boulder_06.nbt",
+   "group": "boulder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    4,
+    0,
+    3
+   ],
+   "sha256": "bd300a3cccdea42f712250ff4539ef134546e0061f10bf390bc3241b709dbd99",
+   "size": [
+    8,
+    4,
+    7
+   ],
+   "blocks": 106,
+   "height": 4,
+   "eye_width": 7,
+   "ground_radius": 4,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_azalea_04",
+   "file": "bush_azalea_04.nbt",
+   "group": "bush_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "cfd4f4647bcb1d0f56c3c529a836026a656fbd04fc1c2843356663572cfe5af4",
+   "size": [
+    3,
+    3,
+    3
+   ],
+   "blocks": 11,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_birch_06",
+   "file": "bush_birch_06.nbt",
+   "group": "bush_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "4394b965d38f80bdb3254271f4ae29051e8956a4865979621478da647b04f5ed",
+   "size": [
+    3,
+    3,
+    3
+   ],
+   "blocks": 7,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 1.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_dark_oak_08",
+   "file": "bush_dark_oak_08.nbt",
+   "group": "bush_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "599148376ea42a9719a30e9acc4b6de69996ec72c6a9eb80b82ee3910c71a7e7",
+   "size": [
+    3,
+    3,
+    3
+   ],
+   "blocks": 8,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_flowering_azalea_05",
+   "file": "bush_flowering_azalea_05.nbt",
+   "group": "bush_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "b9307e27d3b63242b30255c1e4c325082c1c29231219501543693cf6ff05550e",
+   "size": [
+    3,
+    3,
+    3
+   ],
+   "blocks": 11,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_jungle_07",
+   "file": "bush_jungle_07.nbt",
+   "group": "bush_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "3460991d27ff334f66d4f2e5ef4fe9e91b8af4c0e76122416aae6c5d53d0cfac",
+   "size": [
+    3,
+    3,
+    3
+   ],
+   "blocks": 17,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_oak_01",
+   "file": "bush_oak_01.nbt",
+   "group": "bush_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    0
+   ],
+   "sha256": "3f55e781156d4da90b38539e938114c5e3f03eeeba57328a04ef13b599cf5ce6",
+   "size": [
+    2,
+    2,
+    1
+   ],
+   "blocks": 3,
+   "height": 2,
+   "eye_width": 2,
+   "ground_radius": 0,
+   "crown_radius": 1.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_oak_02",
+   "file": "bush_oak_02.nbt",
+   "group": "bush_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "52d65a5a47908b810f7630ff4231b96a26d1949ba1e7732655318430aaff0c3a",
+   "size": [
+    3,
+    3,
+    3
+   ],
+   "blocks": 15,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "bush_spruce_03",
+   "file": "bush_spruce_03.nbt",
+   "group": "bush_conifer",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "fa92520a6dc8acd74f2f3d4a35368e5d51b472e4e1dbd6f3387c1b49fddc7c2a",
+   "size": [
+    3,
+    3,
+    3
+   ],
+   "blocks": 7,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 1.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_01",
+   "file": "cherry_01.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    6,
+    0,
+    3
+   ],
+   "sha256": "72834a92b5e20dfdd3fccd34cb79670bb11c1d33cb48f8d46336493d00ab590c",
+   "size": [
+    13,
+    10,
+    7
+   ],
+   "blocks": 334,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_02",
+   "file": "cherry_02.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    3,
+    0,
+    6
+   ],
+   "sha256": "0605b472d2644bc83ed194f0d19534c20cb65e07cd5e869461c79ffffc93fa9d",
+   "size": [
+    7,
+    10,
+    13
+   ],
+   "blocks": 320,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_03",
+   "file": "cherry_03.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    0,
+    0,
+    3
+   ],
+   "sha256": "d91afd2f14eb3da248f668387dfb4e8be6e7701cc8f24fa91fcf997d3fce7f11",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 145,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_04",
+   "file": "cherry_04.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    3,
+    0,
+    6
+   ],
+   "sha256": "772115dac5eb50afe62c7d937537aaaf025a5d921e5fe5ca8d46de5552d99cc7",
+   "size": [
+    7,
+    11,
+    13
+   ],
+   "blocks": 342,
+   "height": 11,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_05",
+   "file": "cherry_05.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    3,
+    0,
+    5
+   ],
+   "sha256": "28f8cf8d4be563d428ac5d16365792ad6451c1eafa990c8f3a9b5fd601eaaf95",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 150,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 5.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_06",
+   "file": "cherry_06.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    3,
+    0,
+    5
+   ],
+   "sha256": "c6846a0bf92fc24eeb6d100fb81dcb8f1fc466a5b4f2b2847928e090457a6b61",
+   "size": [
+    7,
+    11,
+    13
+   ],
+   "blocks": 290,
+   "height": 11,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 7.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_07",
+   "file": "cherry_07.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    7,
+    0,
+    3
+   ],
+   "sha256": "8070410e4b50b1ce85aa44fa08d3b42080d660a01d38d8b58497d6cd221f5454",
+   "size": [
+    15,
+    9,
+    7
+   ],
+   "blocks": 295,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 7.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "cherry_08",
+   "file": "cherry_08.nbt",
+   "group": "cherry",
+   "source": "vanilla",
+   "feature": "minecraft:cherry",
+   "origin": [
+    3,
+    0,
+    6
+   ],
+   "sha256": "8db27a55234bac6d3cb28a944ae726d374828f5d18695175d81c9b8ec82c997a",
+   "size": [
+    7,
+    10,
+    15
+   ],
+   "blocks": 375,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 8.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_01",
+   "file": "dark_oak_01.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "90585b078b88418ed85eca2110832c61a317965e69ae7c24733e4ca9ee684f31",
+   "size": [
+    8,
+    8,
+    8
+   ],
+   "blocks": 167,
+   "height": 8,
+   "eye_width": 4,
+   "ground_radius": 2,
+   "crown_radius": 5.0,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_02",
+   "file": "dark_oak_02.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    3,
+    0,
+    5
+   ],
+   "sha256": "be9d74b391f0765e4398a63e7cc69ff2be087bfaf82b3d5f17254f95958813df",
+   "size": [
+    8,
+    9,
+    8
+   ],
+   "blocks": 156,
+   "height": 9,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.7,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_03",
+   "file": "dark_oak_03.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    3,
+    0,
+    2
+   ],
+   "sha256": "6ad20256301edb574d179896253974a59397243ec55c12e274934ef95a950c0e",
+   "size": [
+    8,
+    11,
+    8
+   ],
+   "blocks": 163,
+   "height": 11,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.4,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_04",
+   "file": "dark_oak_04.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    1,
+    0,
+    3
+   ],
+   "sha256": "848d330296f47208254b2f6ee3b47cc8efa128d2cde2aeb38068c7f2fe8b3a57",
+   "size": [
+    8,
+    7,
+    8
+   ],
+   "blocks": 149,
+   "height": 7,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 6.3,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_05",
+   "file": "dark_oak_05.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    3,
+    0,
+    2
+   ],
+   "sha256": "6cc7b9dd34e14a014ce28bc0053042deb7cff2c21afd12797688283413e9c748",
+   "size": [
+    8,
+    9,
+    8
+   ],
+   "blocks": 164,
+   "height": 9,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.4,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_06",
+   "file": "dark_oak_06.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "da36469b672ece5aaedd1232b35ea72d8e30392f23f522a1913bf72f707afccd",
+   "size": [
+    8,
+    8,
+    8
+   ],
+   "blocks": 164,
+   "height": 8,
+   "eye_width": 4,
+   "ground_radius": 2,
+   "crown_radius": 5.0,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_07",
+   "file": "dark_oak_07.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    3,
+    0,
+    1
+   ],
+   "sha256": "b64f80a398d3ef6fbef7e1f6c4d96f36ed2c6f61d76723ce1992ff63b2a9237f",
+   "size": [
+    8,
+    8,
+    8
+   ],
+   "blocks": 148,
+   "height": 8,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 6.3,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "dark_oak_08",
+   "file": "dark_oak_08.nbt",
+   "group": "dark_oak",
+   "source": "vanilla",
+   "feature": "minecraft:dark_oak",
+   "origin": [
+    2,
+    0,
+    3
+   ],
+   "sha256": "cc5e1af795ab6ca2117263b01f111c982983d58aae5061a4474d784523c3af7f",
+   "size": [
+    8,
+    11,
+    8
+   ],
+   "blocks": 166,
+   "height": 11,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.4,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fallen_birch_06",
+   "file": "fallen_birch_06.nbt",
+   "group": "fallen_log_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    2
+   ],
+   "sha256": "6dc1316ba5b678387877e090360b3543d1917f352fd5d1a333ea02cc94f5a689",
+   "size": [
+    8,
+    3,
+    4
+   ],
+   "blocks": 19,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 6,
+   "crown_radius": 0.0,
+   "trunk_footprint": 7,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fallen_dark_oak_07",
+   "file": "fallen_dark_oak_07.nbt",
+   "group": "fallen_log_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    2
+   ],
+   "sha256": "4b0922b7e17695b52c750d22c4821612ed55d8644bfcac3ea32a34715e4b37fd",
+   "size": [
+    9,
+    3,
+    4
+   ],
+   "blocks": 21,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 7,
+   "crown_radius": 0.0,
+   "trunk_footprint": 8,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fallen_oak_04",
+   "file": "fallen_oak_04.nbt",
+   "group": "fallen_log_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    2
+   ],
+   "sha256": "5f19c3a13f2ebf237c06e77e14e0a8f735f31c263221bca8b376f06f3ff97ab1",
+   "size": [
+    6,
+    3,
+    4
+   ],
+   "blocks": 15,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 4,
+   "crown_radius": 0.0,
+   "trunk_footprint": 5,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fallen_oak_05",
+   "file": "fallen_oak_05.nbt",
+   "group": "fallen_log_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "4bfe5e4f25b402e18bf1c7f9471fa93378e403c17ef6c482509131b80a3fa08d",
+   "size": [
+    9,
+    3,
+    4
+   ],
+   "blocks": 21,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 7,
+   "crown_radius": 0.0,
+   "trunk_footprint": 8,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fallen_spruce_01",
+   "file": "fallen_spruce_01.nbt",
+   "group": "fallen_log_conifer",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "b5d3c39d6ad2e0429e975c23e6ba80ace833a6c73ab956676b2820e8c48bdc68",
+   "size": [
+    7,
+    3,
+    4
+   ],
+   "blocks": 17,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 5,
+   "crown_radius": 0.0,
+   "trunk_footprint": 6,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fallen_spruce_02",
+   "file": "fallen_spruce_02.nbt",
+   "group": "fallen_log_conifer",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "d5998e2c39bb9920440f9caf8cd42cd605ffc5c42850a81ef47ca34b2e5244f8",
+   "size": [
+    10,
+    3,
+    4
+   ],
+   "blocks": 23,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 8,
+   "crown_radius": 0.0,
+   "trunk_footprint": 9,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fallen_spruce_03",
+   "file": "fallen_spruce_03.nbt",
+   "group": "fallen_log_conifer",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "031fba9cd3c58abc4b6979495c7cf30c97c13ec6c77a105b14e7ccb195602cdb",
+   "size": [
+    12,
+    3,
+    4
+   ],
+   "blocks": 25,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 10,
+   "crown_radius": 0.0,
+   "trunk_footprint": 11,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_01",
+   "file": "fancy_oak_01.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "b24c6b04dab54139e78568ade5c5ad99978965fcfbddcba2c0b92e7383537fa6",
+   "size": [
+    5,
+    5,
+    5
+   ],
+   "blocks": 73,
+   "height": 5,
+   "eye_width": 5,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_02",
+   "file": "fancy_oak_02.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "14b83d94589888cb1188319cfc51367b100c6d3639ad9b8d8de7e2e4181fabd4",
+   "size": [
+    5,
+    5,
+    5
+   ],
+   "blocks": 73,
+   "height": 5,
+   "eye_width": 5,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_03",
+   "file": "fancy_oak_03.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "91ea63dc7bd39483457e35e6fb37aa195a000d1cf7bc24d3f2f3320d651b68d9",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 74,
+   "height": 6,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_04",
+   "file": "fancy_oak_04.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "5e89984cbc9e5b3e77d22d1c853da258f4aef729d12f60e50087aa78c1cd1734",
+   "size": [
+    5,
+    8,
+    5
+   ],
+   "blocks": 76,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_05",
+   "file": "fancy_oak_05.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "3d94dcda0d96f938ac8e2427eef62d144a40e8894fe831333fde3a99b6703268",
+   "size": [
+    7,
+    12,
+    8
+   ],
+   "blocks": 212,
+   "height": 12,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_06",
+   "file": "fancy_oak_06.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    6,
+    0,
+    2
+   ],
+   "sha256": "e11fbe4bc4b32b523724a1e4cf72363f8b4a355061082a0c177b32c11e8ecf60",
+   "size": [
+    13,
+    15,
+    9
+   ],
+   "blocks": 383,
+   "height": 15,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 6.7,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_07",
+   "file": "fancy_oak_07.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    2,
+    0,
+    5
+   ],
+   "sha256": "8fe5afae01ea85c612ed2f188d0da9ce468143cb4779a574693eb84c79efeb5b",
+   "size": [
+    6,
+    10,
+    8
+   ],
+   "blocks": 139,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 5.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_08",
+   "file": "fancy_oak_08.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    5,
+    0,
+    4
+   ],
+   "sha256": "9c7fc9532e60b218a726e62b8ff917bfb40049e27270e5e5dbddd6ba8b932983",
+   "size": [
+    13,
+    16,
+    9
+   ],
+   "blocks": 394,
+   "height": 16,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 7.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_09",
+   "file": "fancy_oak_09.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "89338ccee17228b9722dc4f2180257ce18e95bd38128905ac5081df5ad95ec3b",
+   "size": [
+    5,
+    7,
+    5
+   ],
+   "blocks": 75,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "fancy_oak_10",
+   "file": "fancy_oak_10.nbt",
+   "group": "fancy_oak",
+   "source": "vanilla",
+   "feature": "minecraft:fancy_oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "91ea63dc7bd39483457e35e6fb37aa195a000d1cf7bc24d3f2f3320d651b68d9",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 74,
+   "height": 6,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "forest_rock_01",
+   "file": "forest_rock_01.nbt",
+   "group": "forest_rock",
+   "source": "vanilla",
+   "feature": "minecraft:forest_rock",
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "7ff6d7d0ccc56d95906ff52514d428ea9081b27ece9b84e85686afaee6eb9af9",
+   "size": [
+    3,
+    1,
+    2
+   ],
+   "blocks": 3,
+   "height": 1,
+   "eye_width": 0,
+   "ground_radius": 2,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "forest_rock_02",
+   "file": "forest_rock_02.nbt",
+   "group": "forest_rock",
+   "source": "vanilla",
+   "feature": "minecraft:forest_rock",
+   "origin": [
+    0,
+    0,
+    1
+   ],
+   "sha256": "5f227a9a19bcb91ff8163aa591c95bfcc33b095c15742d2340b268c6d88e72fd",
+   "size": [
+    1,
+    2,
+    3
+   ],
+   "blocks": 4,
+   "height": 2,
+   "eye_width": 1,
+   "ground_radius": 1,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "forest_rock_03",
+   "file": "forest_rock_03.nbt",
+   "group": "forest_rock",
+   "source": "vanilla",
+   "feature": "minecraft:forest_rock",
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "57223a66e4bb2f14ea05e9644d2a0725f2dd823c079b0faf0c37d87750e3ac9b",
+   "size": [
+    3,
+    1,
+    3
+   ],
+   "blocks": 5,
+   "height": 1,
+   "eye_width": 0,
+   "ground_radius": 1,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "forest_rock_04",
+   "file": "forest_rock_04.nbt",
+   "group": "forest_rock",
+   "source": "vanilla",
+   "feature": "minecraft:forest_rock",
+   "origin": [
+    1,
+    0,
+    2
+   ],
+   "sha256": "d617aeaf27148210ce2f70f27d7260756ea50eb56bdb14b3e59c50eb80a45169",
+   "size": [
+    3,
+    2,
+    3
+   ],
+   "blocks": 14,
+   "height": 2,
+   "eye_width": 3,
+   "ground_radius": 2,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_brown_mushroom_01",
+   "file": "huge_brown_mushroom_01.nbt",
+   "group": "huge_brown_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_brown_mushroom",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "2aacaabbebcb47f05c8896b9eb76fb06ac7724855f2b1b0f65a21cdbf9d413e9",
+   "size": [
+    7,
+    9,
+    7
+   ],
+   "blocks": 53,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_brown_mushroom_02",
+   "file": "huge_brown_mushroom_02.nbt",
+   "group": "huge_brown_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_brown_mushroom",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "7182e6306708853cf743306186413f3fd2d2ec1b20cd72e46aa36b14323ab99d",
+   "size": [
+    7,
+    7,
+    7
+   ],
+   "blocks": 51,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_brown_mushroom_03",
+   "file": "huge_brown_mushroom_03.nbt",
+   "group": "huge_brown_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_brown_mushroom",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "3369836c379730a4e0b7f86d7f6d44138eaf77cbecd17aa6f3502b1a87a4cbff",
+   "size": [
+    7,
+    5,
+    7
+   ],
+   "blocks": 49,
+   "height": 5,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_brown_mushroom_04",
+   "file": "huge_brown_mushroom_04.nbt",
+   "group": "huge_brown_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_brown_mushroom",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "08e51476cc6757659b7bb6a6fdfdc39ffbd5690cfe99adc502c5940c0a9d37a5",
+   "size": [
+    7,
+    6,
+    7
+   ],
+   "blocks": 50,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_red_mushroom_01",
+   "file": "huge_red_mushroom_01.nbt",
+   "group": "huge_red_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_red_mushroom",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "cdaae673f0e06c9674c29dd9bae603a3da975e964af14f86dab4fa22c3fcd1ba",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 50,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_red_mushroom_02",
+   "file": "huge_red_mushroom_02.nbt",
+   "group": "huge_red_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_red_mushroom",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "e4b04f2ed681869390de8406d4b70556809ce5779137f970760c95a96a394594",
+   "size": [
+    5,
+    7,
+    5
+   ],
+   "blocks": 51,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_red_mushroom_03",
+   "file": "huge_red_mushroom_03.nbt",
+   "group": "huge_red_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_red_mushroom",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "4ff9dbdac2f906a2c2b6ea5c4cb980f27f930e7843ef800134ae88bd5b561452",
+   "size": [
+    5,
+    5,
+    5
+   ],
+   "blocks": 49,
+   "height": 5,
+   "eye_width": 5,
+   "ground_radius": 2,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "huge_red_mushroom_04",
+   "file": "huge_red_mushroom_04.nbt",
+   "group": "huge_red_mushroom",
+   "source": "vanilla",
+   "feature": "minecraft:huge_red_mushroom",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "cdaae673f0e06c9674c29dd9bae603a3da975e964af14f86dab4fa22c3fcd1ba",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 50,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_01",
+   "file": "jungle_01.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "999b2f255a2c96a0c8911c9ed7253ba4ac677803da5678d93682972cd981a70c",
+   "size": [
+    7,
+    6,
+    7
+   ],
+   "blocks": 107,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_02",
+   "file": "jungle_02.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "6fd4355fb85df73036505145a3cf71f10129e95640bb93af3182cc9409643d33",
+   "size": [
+    7,
+    11,
+    7
+   ],
+   "blocks": 147,
+   "height": 11,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_03",
+   "file": "jungle_03.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "e3348233e730c1801582443693d9b0f7011d7a81dea0e8754a89770332956188",
+   "size": [
+    7,
+    6,
+    7
+   ],
+   "blocks": 97,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_04",
+   "file": "jungle_04.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "7563f08e13959d986f2a759a9b8496fdb7ad497e8889103b01fb22e9280e75b5",
+   "size": [
+    7,
+    9,
+    7
+   ],
+   "blocks": 125,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_05",
+   "file": "jungle_05.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "e2a609c91301e939063d7336a01d5381aea2b048525cc1104f9e70533c0d5589",
+   "size": [
+    6,
+    11,
+    7
+   ],
+   "blocks": 138,
+   "height": 11,
+   "eye_width": 3,
+   "ground_radius": 1,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_06",
+   "file": "jungle_06.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "3016a3749f47749239884d6217c46e38cdf62c6db8170ba8a3a1b0e4abdfee29",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 143,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_07",
+   "file": "jungle_07.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "ef1277e0355859d1855c907501ba259371d7c47c7d24901c402536080c8fdc8b",
+   "size": [
+    7,
+    11,
+    7
+   ],
+   "blocks": 118,
+   "height": 11,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_08",
+   "file": "jungle_08.nbt",
+   "group": "jungle",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_tree",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "4b8b35e80cd4c6a3a12362e9f99f2286e1df847c41113e51e57b778b2066744b",
+   "size": [
+    7,
+    7,
+    7
+   ],
+   "blocks": 107,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_01",
+   "file": "jungle_bush_01.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "ffebd3047d330187ad096a13cf088a07edaeaaff9d54d3bcb43fb7f29cbe7b83",
+   "size": [
+    5,
+    3,
+    5
+   ],
+   "blocks": 28,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_02",
+   "file": "jungle_bush_02.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "6b39a3e7ff92d277ddda8ab3242cd5bf21478013234112b00ff56da8a411d62e",
+   "size": [
+    5,
+    3,
+    5
+   ],
+   "blocks": 29,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_03",
+   "file": "jungle_bush_03.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "d1505c1655de59c6f63f351d1cb1c25303553d5fbe3898774330b0ee1d371048",
+   "size": [
+    5,
+    2,
+    5
+   ],
+   "blocks": 32,
+   "height": 2,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_04",
+   "file": "jungle_bush_04.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "4e274ea188fb3aa98bd238ec5b5f6056b9af39f09b5c9061932efe717e696c52",
+   "size": [
+    5,
+    3,
+    5
+   ],
+   "blocks": 31,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_05",
+   "file": "jungle_bush_05.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "55b07eb5f27ae912e4f12ad74601afe9d459fa386d0f50ed7487c6bd9cc3883a",
+   "size": [
+    5,
+    3,
+    5
+   ],
+   "blocks": 34,
+   "height": 3,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_06",
+   "file": "jungle_bush_06.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "5953f7844aa75beb0d366793a33f90d61aaa9ca20225ef883cb93b26bf6c1bdd",
+   "size": [
+    5,
+    2,
+    5
+   ],
+   "blocks": 30,
+   "height": 2,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_07",
+   "file": "jungle_bush_07.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "97b5def2106e07908aa115c407650ccefe3f11ca5d8a828a63860e86f2cda8ac",
+   "size": [
+    5,
+    2,
+    5
+   ],
+   "blocks": 29,
+   "height": 2,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_bush_08",
+   "file": "jungle_bush_08.nbt",
+   "group": "jungle_bush",
+   "source": "vanilla",
+   "feature": "minecraft:jungle_bush",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "9f098c7dc1f2d2c3fb8b627b1669768babc58293ebe8eb55d03e48967425ac10",
+   "size": [
+    5,
+    2,
+    5
+   ],
+   "blocks": 28,
+   "height": 2,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "krummholz_01",
+   "file": "krummholz_01.nbt",
+   "group": "krummholz",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "77548579af330d8a8bf361f5934dc01159849c032cf785cfd1d6ac30975a31b4",
+   "size": [
+    6,
+    2,
+    3
+   ],
+   "blocks": 16,
+   "height": 2,
+   "eye_width": 6,
+   "ground_radius": 0,
+   "crown_radius": 3.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "krummholz_02",
+   "file": "krummholz_02.nbt",
+   "group": "krummholz",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "c41e3bb7f509aa8d79d0e6bb5d73e563fc50e7597c3928b15b1431ef854db37a",
+   "size": [
+    6,
+    3,
+    3
+   ],
+   "blocks": 26,
+   "height": 3,
+   "eye_width": 6,
+   "ground_radius": 0,
+   "crown_radius": 4.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "krummholz_03",
+   "file": "krummholz_03.nbt",
+   "group": "krummholz",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "d4be7b2ed323ed161d3c51dbedc34f62860b6f3be8f504783cca429482adcf89",
+   "size": [
+    6,
+    3,
+    3
+   ],
+   "blocks": 24,
+   "height": 3,
+   "eye_width": 6,
+   "ground_radius": 0,
+   "crown_radius": 3.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "krummholz_04",
+   "file": "krummholz_04.nbt",
+   "group": "krummholz",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "f274c92af544962145e5101b3c58bb14e23e68b7b2d09c362f913a20d58b4922",
+   "size": [
+    6,
+    4,
+    3
+   ],
+   "blocks": 41,
+   "height": 4,
+   "eye_width": 6,
+   "ground_radius": 0,
+   "crown_radius": 3.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "krummholz_05",
+   "file": "krummholz_05.nbt",
+   "group": "krummholz",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "768a47e557d3973722ffee9f4563a294434236624e5dd4bbeadc684df0f1068f",
+   "size": [
+    6,
+    4,
+    3
+   ],
+   "blocks": 41,
+   "height": 4,
+   "eye_width": 6,
+   "ground_radius": 0,
+   "crown_radius": 3.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "krummholz_06",
+   "file": "krummholz_06.nbt",
+   "group": "krummholz",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "c8ea203ab61b7ac2310518985cf49875fb6369bfb493f3ee451a90e9e1ec396f",
+   "size": [
+    7,
+    5,
+    3
+   ],
+   "blocks": 55,
+   "height": 5,
+   "eye_width": 7,
+   "ground_radius": 0,
+   "crown_radius": 4.1,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "krummholz_07",
+   "file": "krummholz_07.nbt",
+   "group": "krummholz",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "880e2be879c68e86ef2671c84f1dc7ed5530f14317822a9a2db27cec1fd19d4d",
+   "size": [
+    7,
+    6,
+    5
+   ],
+   "blocks": 67,
+   "height": 6,
+   "eye_width": 7,
+   "ground_radius": 0,
+   "crown_radius": 4.1,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "landmark_cherry_elder",
+   "file": "landmark_cherry_elder.nbt",
+   "group": "landmark_cherry_elder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    12,
+    2,
+    12
+   ],
+   "sha256": "063f17034375ca6fc8eb1c6133165dd62c989f89b3419382c6d012f751c6f50f",
+   "size": [
+    34,
+    28,
+    30
+   ],
+   "blocks": 2542,
+   "height": 26,
+   "eye_width": 7,
+   "ground_radius": 20,
+   "crown_radius": 21.1,
+   "trunk_footprint": 17,
+   "depth_below_origin": 2
+  },
+  {
+   "name": "landmark_great_oak",
+   "file": "landmark_great_oak.nbt",
+   "group": "landmark_great_oak",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    13,
+    2,
+    15
+   ],
+   "sha256": "82eb3515fafb6b80f906110c7262e1d1158a6c6229e6b0d374ed4d08aa21999c",
+   "size": [
+    35,
+    42,
+    37
+   ],
+   "blocks": 4338,
+   "height": 40,
+   "eye_width": 10,
+   "ground_radius": 6,
+   "crown_radius": 23.3,
+   "trunk_footprint": 37,
+   "depth_below_origin": 2
+  },
+  {
+   "name": "landmark_kapok",
+   "file": "landmark_kapok.nbt",
+   "group": "landmark_kapok",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    19,
+    2,
+    21
+   ],
+   "sha256": "1aea6dc41960508f6ce582d7488d7bfed0eb89464727582d6e583d2a2d034014",
+   "size": [
+    42,
+    57,
+    41
+   ],
+   "blocks": 4309,
+   "height": 55,
+   "eye_width": 17,
+   "ground_radius": 9,
+   "crown_radius": 22.8,
+   "trunk_footprint": 48,
+   "depth_below_origin": 2
+  },
+  {
+   "name": "landmark_patriarch_dark_oak",
+   "file": "landmark_patriarch_dark_oak.nbt",
+   "group": "landmark_patriarch_dark_oak",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    16,
+    2,
+    17
+   ],
+   "sha256": "d73ddeace7d42b00dd609fdb97c6b477d8a83493ea06ae6a2edd05e60458cd8c",
+   "size": [
+    34,
+    32,
+    37
+   ],
+   "blocks": 5605,
+   "height": 30,
+   "eye_width": 13,
+   "ground_radius": 8,
+   "crown_radius": 21.6,
+   "trunk_footprint": 53,
+   "depth_below_origin": 2
+  },
+  {
+   "name": "landmark_sentinel_spruce",
+   "file": "landmark_sentinel_spruce.nbt",
+   "group": "landmark_sentinel_spruce",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    11,
+    2,
+    11
+   ],
+   "sha256": "b505591cfaa6f7a3b8b2147032f4238aa5050a64570c5ad131d9cec6f6b798b9",
+   "size": [
+    25,
+    77,
+    24
+   ],
+   "blocks": 4214,
+   "height": 75,
+   "eye_width": 7,
+   "ground_radius": 4,
+   "crown_radius": 13.0,
+   "trunk_footprint": 18,
+   "depth_below_origin": 2
+  },
+  {
+   "name": "landmark_weeping_elder",
+   "file": "landmark_weeping_elder.nbt",
+   "group": "landmark_weeping_elder",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    16,
+    2,
+    16
+   ],
+   "sha256": "fd6b256e80ba2e767854abe2aff6b1498f6b0ee3cda00b62fe2dd618ab7e9e70",
+   "size": [
+    35,
+    37,
+    35
+   ],
+   "blocks": 6337,
+   "height": 35,
+   "eye_width": 9,
+   "ground_radius": 5,
+   "crown_radius": 18.4,
+   "trunk_footprint": 26,
+   "depth_below_origin": 2
+  },
+  {
+   "name": "litter_01",
+   "file": "litter_01.nbt",
+   "group": "leaf_litter",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    0
+   ],
+   "sha256": "54315dd74d5cd7fae636324f90b57fddf9324ebd23eca52620b5b04313a65ceb",
+   "size": [
+    3,
+    1,
+    2
+   ],
+   "blocks": 4,
+   "height": 1,
+   "eye_width": 0,
+   "ground_radius": 1,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "litter_02",
+   "file": "litter_02.nbt",
+   "group": "leaf_litter",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "0a161d368b86bda60526ed001e939cb46eb530437dbc9f46ec7532557bf00e0e",
+   "size": [
+    5,
+    1,
+    5
+   ],
+   "blocks": 10,
+   "height": 1,
+   "eye_width": 0,
+   "ground_radius": 2,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "litter_03",
+   "file": "litter_03.nbt",
+   "group": "leaf_litter",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "e576a5219839233487f24b9e8b75d09125a4574ac716e6d4cc8441938b11a19c",
+   "size": [
+    4,
+    1,
+    5
+   ],
+   "blocks": 9,
+   "height": 1,
+   "eye_width": 0,
+   "ground_radius": 2,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "litter_04",
+   "file": "litter_04.nbt",
+   "group": "leaf_litter",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "8fb27091dc71e30e6db783d0976bd70fb297723641d5ff77b580f2d92b8d59cc",
+   "size": [
+    7,
+    1,
+    7
+   ],
+   "blocks": 25,
+   "height": 1,
+   "eye_width": 0,
+   "ground_radius": 3,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_01",
+   "file": "mega_jungle_01.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    5,
+    0,
+    6
+   ],
+   "sha256": "4eb91e16cdee9eb7573dcee24a92a6d15932042da13fa5ee9082a335e3c216f1",
+   "size": [
+    12,
+    14,
+    14
+   ],
+   "blocks": 462,
+   "height": 14,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 6.4,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_02",
+   "file": "mega_jungle_02.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    6,
+    0,
+    5
+   ],
+   "sha256": "ea6116a380c0ed18f2059fb2363ad1229bc5fcfef4dc20e4d1aa18a9cd4a9c7a",
+   "size": [
+    16,
+    24,
+    12
+   ],
+   "blocks": 675,
+   "height": 24,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 8.2,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_03",
+   "file": "mega_jungle_03.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    5,
+    0,
+    5
+   ],
+   "sha256": "d0589ce3de0840bc99b3ab2a302cf6adce780d9d1463129ff93079c8a5ab2c57",
+   "size": [
+    13,
+    31,
+    14
+   ],
+   "blocks": 752,
+   "height": 31,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 8.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_04",
+   "file": "mega_jungle_04.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    5,
+    0,
+    5
+   ],
+   "sha256": "9bdc669fc580b0db1d8d0af8fac585b3bc825e99cb8f20e45a74874536d26ce1",
+   "size": [
+    14,
+    15,
+    13
+   ],
+   "blocks": 517,
+   "height": 15,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 8.5,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_05",
+   "file": "mega_jungle_05.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    5,
+    0,
+    5
+   ],
+   "sha256": "6909f01aaa5f3d37d3c9e65b0d3a2b13dfa10c4f88972a3260ed002ec34538cf",
+   "size": [
+    14,
+    22,
+    14
+   ],
+   "blocks": 645,
+   "height": 22,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 8.5,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_06",
+   "file": "mega_jungle_06.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    6,
+    0,
+    6
+   ],
+   "sha256": "a02f451d59ed5a1d22dd8bae46ae10841c7eb2786cb62bb96df4a99dc39378fe",
+   "size": [
+    14,
+    15,
+    14
+   ],
+   "blocks": 482,
+   "height": 15,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 7.0,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_07",
+   "file": "mega_jungle_07.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    5,
+    0,
+    6
+   ],
+   "sha256": "27278105ab8c1beae3d43746a56497b6297cfbe9db5fe8119b823a987fa6b7f4",
+   "size": [
+    13,
+    16,
+    14
+   ],
+   "blocks": 538,
+   "height": 16,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 7.3,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_jungle_08",
+   "file": "mega_jungle_08.nbt",
+   "group": "mega_jungle",
+   "source": "vanilla",
+   "feature": "minecraft:mega_jungle_tree",
+   "origin": [
+    6,
+    0,
+    5
+   ],
+   "sha256": "ee538c0c0e8709c7c878ce0a73cf06187747a59ccf41d3ea774fabec8b9521c3",
+   "size": [
+    16,
+    29,
+    13
+   ],
+   "blocks": 709,
+   "height": 29,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 8.6,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_01",
+   "file": "mega_pine_01.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "64f172ae5e1fe7406ebe78e79e07daeb9d3b9312a26810fe0c8df02c62321d49",
+   "size": [
+    10,
+    24,
+    10
+   ],
+   "blocks": 412,
+   "height": 24,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_02",
+   "file": "mega_pine_02.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "bc20f0170edac2722518423d3af20b316985e7e08998e9c553c49a977a51670b",
+   "size": [
+    10,
+    26,
+    10
+   ],
+   "blocks": 480,
+   "height": 26,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_03",
+   "file": "mega_pine_03.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "8910a4c3a3effa370bcdf5e024d25532e50cbec1dcdfd336c7a77e798184ac1d",
+   "size": [
+    8,
+    22,
+    8
+   ],
+   "blocks": 352,
+   "height": 22,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 4.2,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_04",
+   "file": "mega_pine_04.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "0f274c4182b543913234dd5eb79ad1cfff971e47f7dda8e799db110f5dfeee79",
+   "size": [
+    10,
+    25,
+    10
+   ],
+   "blocks": 556,
+   "height": 25,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_05",
+   "file": "mega_pine_05.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "530b6beb8bbc1bd99ecadd7fbdc3df8b952f3425df7c7eb210fd9ad3d3c40058",
+   "size": [
+    10,
+    27,
+    10
+   ],
+   "blocks": 512,
+   "height": 27,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_06",
+   "file": "mega_pine_06.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "007f0eef52605b9cf80df0433c5d68fac1818a51618f65045e12f4e809a298a2",
+   "size": [
+    10,
+    28,
+    10
+   ],
+   "blocks": 536,
+   "height": 28,
+   "eye_width": 8,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_07",
+   "file": "mega_pine_07.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "7b30f1c5bc19da16244e83ff83c3632dbec6f5c1dcd2f9be3f7197fcf42b9c67",
+   "size": [
+    10,
+    24,
+    10
+   ],
+   "blocks": 384,
+   "height": 24,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_08",
+   "file": "mega_pine_08.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "ec3fac33673b13095b0c3ae6aab16a90204989882c20c3a0faf0904e596d9f92",
+   "size": [
+    10,
+    21,
+    10
+   ],
+   "blocks": 532,
+   "height": 21,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_09",
+   "file": "mega_pine_09.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "df0ce50c7edaa36d3f2669438b0ac66a059ea7780f3f0ec565e89b5d4941fb1d",
+   "size": [
+    10,
+    21,
+    10
+   ],
+   "blocks": 480,
+   "height": 21,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_pine_10",
+   "file": "mega_pine_10.nbt",
+   "group": "mega_pine",
+   "source": "vanilla",
+   "feature": "minecraft:mega_pine",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "edd506d16285a6588c6cefbbc910005c6e5426b18222341bd1d68b8d015bae48",
+   "size": [
+    10,
+    22,
+    10
+   ],
+   "blocks": 484,
+   "height": 22,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_01",
+   "file": "mega_spruce_01.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "1503374f320d1d20cd829ae4cc1ceb0820f4cde3769535dfb8dce35636aacd79",
+   "size": [
+    10,
+    24,
+    10
+   ],
+   "blocks": 392,
+   "height": 24,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_02",
+   "file": "mega_spruce_02.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "bed1ae0b6597129bd7d1866b014d72744dd2957111572f725ca5aa7219beaae5",
+   "size": [
+    10,
+    26,
+    10
+   ],
+   "blocks": 468,
+   "height": 26,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_03",
+   "file": "mega_spruce_03.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "ffe47a37f9828ab16e46ca7af75a64c04ea9732f0f489641f61cb502fc5e0932",
+   "size": [
+    8,
+    22,
+    8
+   ],
+   "blocks": 320,
+   "height": 22,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 4.2,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_04",
+   "file": "mega_spruce_04.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "e702b13db1f5dbec553c0e96921486cc6220a5f510f12917e57a0339559c8a36",
+   "size": [
+    10,
+    25,
+    10
+   ],
+   "blocks": 428,
+   "height": 25,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_05",
+   "file": "mega_spruce_05.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "cfda0373ecf60bb695b45102264eba51a958e0f610f140e417a00f3b3990bdc9",
+   "size": [
+    10,
+    27,
+    10
+   ],
+   "blocks": 436,
+   "height": 27,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_06",
+   "file": "mega_spruce_06.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "16cb5dc14d44c24b08fdcc8ff25c68f7572159ee5bd1d4a6ab5778b9ab698ad2",
+   "size": [
+    10,
+    17,
+    10
+   ],
+   "blocks": 384,
+   "height": 17,
+   "eye_width": 8,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_07",
+   "file": "mega_spruce_07.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "e88769795ab3eb4f77c489a775e85d06b48c4a0eead214e058d3847cb82a9f3a",
+   "size": [
+    8,
+    24,
+    8
+   ],
+   "blocks": 328,
+   "height": 24,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 4.2,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_08",
+   "file": "mega_spruce_08.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "8682b3dff2fbee05fc71951effe61d640253c35af09aa55f64242b500bca9599",
+   "size": [
+    10,
+    21,
+    10
+   ],
+   "blocks": 440,
+   "height": 21,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_09",
+   "file": "mega_spruce_09.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "86463128ff456b35fc8c6ef4357e944c17589b12ff9720edac3da0ba1e3fd82e",
+   "size": [
+    10,
+    20,
+    10
+   ],
+   "blocks": 416,
+   "height": 20,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mega_spruce_10",
+   "file": "mega_spruce_10.nbt",
+   "group": "mega_spruce",
+   "source": "vanilla",
+   "feature": "minecraft:mega_spruce",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "d69a5ffc51126f42ae2db0c1c33efe813e6162be0db6dc1e320bb2a094b616a0",
+   "size": [
+    10,
+    17,
+    10
+   ],
+   "blocks": 356,
+   "height": 17,
+   "eye_width": 2,
+   "ground_radius": 1,
+   "crown_radius": 5.1,
+   "trunk_footprint": 4,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_01",
+   "file": "oak_01.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "fde12bceb302736f5a9fdfd3e259b0ef7a5939373c153534b4527475c6040944",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 62,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_02",
+   "file": "oak_02.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "bd0ac1da5b7af69c932002fcd2a89b79237cacb052b42ae50fdfe0ef78a6bb9b",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 59,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_03",
+   "file": "oak_03.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "dca1ce5ee8ce0e24f509c2656753f97021719dc0a1f5a43c114c645e128e4496",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 59,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_04",
+   "file": "oak_04.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "39aed15430361474930f5e12513544bc68ce1102091946452f4efd3654736d44",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 61,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_05",
+   "file": "oak_05.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "8332df30eb1316875432e788300498fce8d0743e4a8240c6d1b0018cc4985b43",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 60,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_06",
+   "file": "oak_06.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "99fe71de318e61fca731f0994794e9c42881654b5960c4932d13fa14b0750efb",
+   "size": [
+    5,
+    5,
+    5
+   ],
+   "blocks": 59,
+   "height": 5,
+   "eye_width": 5,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_07",
+   "file": "oak_07.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "600d4dfc01fd9dc97c433530881de99f692e1906fbbdc41712f52ccd3494c37e",
+   "size": [
+    5,
+    7,
+    5
+   ],
+   "blocks": 64,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "oak_08",
+   "file": "oak_08.nbt",
+   "group": "oak",
+   "source": "vanilla",
+   "feature": "minecraft:oak",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "50f99023d0dd71adf038353b733b154781dc7c84de81254ceae1d27db029bd49",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 59,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_01",
+   "file": "pine_01.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "86215194d3dbfccbc351b095994983e3355f94e439f24b80b57b3d76b71f8ff4",
+   "size": [
+    5,
+    12,
+    5
+   ],
+   "blocks": 92,
+   "height": 12,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_02",
+   "file": "pine_02.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "78f7ac2ea3138493769f47352ef0418ebe822336378d8dce4d89af277cd6845a",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 130,
+   "height": 10,
+   "eye_width": 5,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_03",
+   "file": "pine_03.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "23de7dd0d4ca3c731984fc3b7cca4f51bbd1891f026b3df77dea7deb748ddaba",
+   "size": [
+    5,
+    9,
+    5
+   ],
+   "blocks": 49,
+   "height": 9,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_04",
+   "file": "pine_04.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "ec427fb3639f7e9f365b51943018d20aaaec15680b12dea4af5a1468726ded36",
+   "size": [
+    7,
+    11,
+    7
+   ],
+   "blocks": 175,
+   "height": 11,
+   "eye_width": 7,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_05",
+   "file": "pine_05.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "0cd15d69b22bcfb28eb5c08461c8116a273ab6fa8804fd98bf2bbeb7642bfaed",
+   "size": [
+    5,
+    10,
+    5
+   ],
+   "blocks": 86,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_06",
+   "file": "pine_06.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "9ecf24dfcfb74993d5b601e2ab6a17e8f90fde6493617bfc2d30ac3da479209d",
+   "size": [
+    7,
+    11,
+    7
+   ],
+   "blocks": 191,
+   "height": 11,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_07",
+   "file": "pine_07.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "055e842f514d75d70ad756c856b3c0bed6deeaae05f188672c6def22b4ddeb2a",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 146,
+   "height": 10,
+   "eye_width": 5,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_08",
+   "file": "pine_08.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "ce0d0efc64fa12ec8e2d619ee7e50a1694fff1c6182cdebc3b54f265b1d657e1",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 126,
+   "height": 10,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_09",
+   "file": "pine_09.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "4a4c3f89897a6dbfa4a98d6364dbc7278283f95b6a4f22743ca8ff61b65c105f",
+   "size": [
+    7,
+    8,
+    7
+   ],
+   "blocks": 100,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "pine_10",
+   "file": "pine_10.nbt",
+   "group": "pine",
+   "source": "vanilla",
+   "feature": "minecraft:pine",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "e113d8a7ab11ebce7bc3cd8ff3e08148313ae0a3d512902f9f41fd0d35361176",
+   "size": [
+    5,
+    9,
+    5
+   ],
+   "blocks": 81,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "snag_birch_05",
+   "file": "snag_birch_05.nbt",
+   "group": "snag_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    0,
+    0,
+    0
+   ],
+   "sha256": "557582069f7ac5db9e7de64274b3f256dca8294238bdd324ce5d1bc4ff7c925e",
+   "size": [
+    1,
+    10,
+    3
+   ],
+   "blocks": 12,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "snag_dark_oak_06",
+   "file": "snag_dark_oak_06.nbt",
+   "group": "snag_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "ed8ce24188a52feddd9a208f5202dc694cc67404a7c755671c62144c5e657879",
+   "size": [
+    2,
+    8,
+    2
+   ],
+   "blocks": 10,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "snag_oak_04",
+   "file": "snag_oak_04.nbt",
+   "group": "snag_broadleaf",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    0
+   ],
+   "sha256": "08090806ae98e9c391ebfdf6b18ec2443b62f096e8c21ff2e7b95bb3f777d50d",
+   "size": [
+    3,
+    7,
+    2
+   ],
+   "blocks": 11,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "snag_spruce_01",
+   "file": "snag_spruce_01.nbt",
+   "group": "snag_conifer",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    0,
+    0,
+    0
+   ],
+   "sha256": "26592b53e7ef1a0bb47914f38d1e431740742bc24276dd870fc88b30961c88a6",
+   "size": [
+    3,
+    6,
+    2
+   ],
+   "blocks": 9,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "snag_spruce_02",
+   "file": "snag_spruce_02.nbt",
+   "group": "snag_conifer",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "9104b656ba55f69a6d054b71dcaece4c88bd1a92b8399ebc6a61c9acb01fdacd",
+   "size": [
+    5,
+    9,
+    2
+   ],
+   "blocks": 14,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "snag_spruce_03",
+   "file": "snag_spruce_03.nbt",
+   "group": "snag_conifer",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    0,
+    0,
+    1
+   ],
+   "sha256": "4bc51628f4d9231e62012008bc7405039ea312267e46d9dbd0f554634d1391b6",
+   "size": [
+    2,
+    12,
+    2
+   ],
+   "blocks": 14,
+   "height": 12,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_01",
+   "file": "spruce_01.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "2b4a311afb1216cee039310e5fe507ede571e685bd90922fc6782418175c47ac",
+   "size": [
+    5,
+    9,
+    5
+   ],
+   "blocks": 61,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_02",
+   "file": "spruce_02.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "967594709fdb88d8430802fe3f5c7a0fc8e970eb71944e6ffbe45d8ceefb9e5e",
+   "size": [
+    7,
+    10,
+    7
+   ],
+   "blocks": 130,
+   "height": 10,
+   "eye_width": 5,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_03",
+   "file": "spruce_03.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "90a04d176c77664425a4096fece6f201862f0a7e9ca75f62b6eb5dc4410d4632",
+   "size": [
+    5,
+    7,
+    5
+   ],
+   "blocks": 39,
+   "height": 7,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_04",
+   "file": "spruce_04.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "ec427fb3639f7e9f365b51943018d20aaaec15680b12dea4af5a1468726ded36",
+   "size": [
+    7,
+    11,
+    7
+   ],
+   "blocks": 175,
+   "height": 11,
+   "eye_width": 7,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_05",
+   "file": "spruce_05.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "663175f7389211a40f800346f3474ce06e5c2e205dc85c704c251f766b1f9ce5",
+   "size": [
+    5,
+    8,
+    5
+   ],
+   "blocks": 60,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_06",
+   "file": "spruce_06.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "f4d95cd57548834e63a4220ba5add904cf65917777ffb002e34b1b943eb818bd",
+   "size": [
+    7,
+    9,
+    7
+   ],
+   "blocks": 109,
+   "height": 9,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 3.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_07",
+   "file": "spruce_07.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "8c988102f958a5b0d30003de5142031aaea897e9dfd0f398990978c14d4cfb5b",
+   "size": [
+    5,
+    8,
+    5
+   ],
+   "blocks": 60,
+   "height": 8,
+   "eye_width": 5,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_08",
+   "file": "spruce_08.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "9f294d6770dca15b5bcf99aca8b546528cd9550fb959b053dbfaf9e44ff1d5b9",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 38,
+   "height": 6,
+   "eye_width": 3,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_09",
+   "file": "spruce_09.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "94a309dac92d2a901b98b6dcfc71ec53c5cbba4e5562f3345c456b7af2fef1f7",
+   "size": [
+    5,
+    8,
+    5
+   ],
+   "blocks": 40,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "spruce_10",
+   "file": "spruce_10.nbt",
+   "group": "spruce",
+   "source": "vanilla",
+   "feature": "minecraft:spruce",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "2b4a311afb1216cee039310e5fe507ede571e685bd90922fc6782418175c47ac",
+   "size": [
+    5,
+    9,
+    5
+   ],
+   "blocks": 61,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_01",
+   "file": "swamp_oak_01.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "63b7f55a06cfa1ff85d2208a91828b308ebbaff96a5c5879ffb362c139660889",
+   "size": [
+    9,
+    9,
+    9
+   ],
+   "blocks": 218,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_02",
+   "file": "swamp_oak_02.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "cdd700e5af6662d9a2d3c08544b37aa598145fc2cd98f5d05144eb2835b75186",
+   "size": [
+    9,
+    9,
+    9
+   ],
+   "blocks": 216,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_03",
+   "file": "swamp_oak_03.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "4f592e800623636af67d1cf0fb09b77db8ae9460e11a77634d1a566c82bd76b6",
+   "size": [
+    9,
+    7,
+    9
+   ],
+   "blocks": 203,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_04",
+   "file": "swamp_oak_04.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "df667da61316dcbcd2313fc688359c5abab14a72aafe3a1a6c233fe82a924e6b",
+   "size": [
+    9,
+    9,
+    8
+   ],
+   "blocks": 223,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_05",
+   "file": "swamp_oak_05.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "e444429ff890c6d41fcba6ccaf34787eae8cd0833f6f2ae235253572ba87de8f",
+   "size": [
+    9,
+    6,
+    9
+   ],
+   "blocks": 185,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_06",
+   "file": "swamp_oak_06.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "2c77f31d0a710f21a849626539334604f175c1b241f82fb4c013887fe0fbe03a",
+   "size": [
+    9,
+    9,
+    9
+   ],
+   "blocks": 236,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_07",
+   "file": "swamp_oak_07.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "c72c1d70744a0f0a3301892c2a06e77b314da240b3b5af5690839d2d5087c817",
+   "size": [
+    9,
+    6,
+    9
+   ],
+   "blocks": 181,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_oak_08",
+   "file": "swamp_oak_08.nbt",
+   "group": "swamp_oak",
+   "source": "vanilla",
+   "feature": "minecraft:swamp_oak",
+   "origin": [
+    4,
+    0,
+    4
+   ],
+   "sha256": "8f6ef302aba42f3b1dd4e725beed2dc1709cfb157ac6ddecff89089f4181b7b2",
+   "size": [
+    9,
+    7,
+    9
+   ],
+   "blocks": 199,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 4.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_01",
+   "file": "tall_birch_01.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "a70aa465e1070fc2a2354921a844597d4d54dd8b8a6140e407ca71e35ddf9d57",
+   "size": [
+    5,
+    12,
+    5
+   ],
+   "blocks": 62,
+   "height": 12,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_02",
+   "file": "tall_birch_02.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "345e05b7862af551ccd42cfa6ee9975551462ee66707604678abf24d9d7182c1",
+   "size": [
+    5,
+    14,
+    5
+   ],
+   "blocks": 68,
+   "height": 14,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_03",
+   "file": "tall_birch_03.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "c167e99c5c8c3c711fb3430ca0d5b3a28a3394af1403920526c22cfda52708fa",
+   "size": [
+    5,
+    9,
+    5
+   ],
+   "blocks": 60,
+   "height": 9,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_04",
+   "file": "tall_birch_04.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "96b99edeb8f054443ca74080b4ce9fc98f7c0a9a83a1d329745fd6c40cf3f1a8",
+   "size": [
+    5,
+    10,
+    5
+   ],
+   "blocks": 61,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_05",
+   "file": "tall_birch_05.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "e0bc9334bc45d64b52b65adf262cdca5d3a931ca03a2a9f53e126fc7eec64a2a",
+   "size": [
+    5,
+    11,
+    5
+   ],
+   "blocks": 65,
+   "height": 11,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_06",
+   "file": "tall_birch_06.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "1ef6d4daa7db938af8b6380a6dfd919a4fccd2fe48b5cef1658ddf4a953e0086",
+   "size": [
+    5,
+    7,
+    5
+   ],
+   "blocks": 63,
+   "height": 7,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_07",
+   "file": "tall_birch_07.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "373eae1eb79330077d2c52bfe47aeb444d923259c21e6664767ffa8becfae8e7",
+   "size": [
+    5,
+    13,
+    5
+   ],
+   "blocks": 64,
+   "height": 13,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_birch_08",
+   "file": "tall_birch_08.nbt",
+   "group": "tall_birch",
+   "source": "vanilla",
+   "feature": "minecraft:super_birch_bees_0002",
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "61d49f47be2966c1753143d04890353d1a1e4019a708f527ea9deaff75f5f5c3",
+   "size": [
+    5,
+    6,
+    5
+   ],
+   "blocks": 63,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  }
+ ]
+}

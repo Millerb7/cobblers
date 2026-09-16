@@ -1,0 +1,46 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/tree_town/giant_birch_b",
+ "kind": "trees",
+ "set": "tree_town",
+ "name": "giant_birch_b",
+ "author": "tools/tree_grove.py",
+ "source": {
+  "file": "generated",
+  "imported": "2026-09-15",
+  "size": [
+   32,
+   48,
+   30
+  ],
+  "blocks": 6751
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  13,
+  2,
+  12
+ ],
+ "habitat": {
+  "floor_tier_y": [
+   16,
+   20
+  ],
+  "room_clear_y": [
+   21,
+   29
+  ],
+  "crown_y": [
+   30,
+   45
+  ],
+  "crown_radius": 14,
+  "limb_reach": 12,
+  "trunk": [
+   5,
+   5
+  ]
+ },
+ "notes": "trunk base at template (trunk_origin); the 5x5 trunk spans +0..+4 in x and z from it"
+}

@@ -1,0 +1,10 @@
+{
+ "group": "landmark_cherry_elder",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  12,
+  2,
+  12
+ ]
+}

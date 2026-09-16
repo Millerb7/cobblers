@@ -24,7 +24,24 @@ detected rather than trusted.
 | `drainage.py` | Priority flood, D8 flow directions and accumulation on a coarse height grid | (library) |
 | `region_measure.py` | Re-measure `regions.json` measured blocks from the committed polygons on the current heightmap | `data/regions.json` with `--write` |
 | `spawn_tag_pack.py` | Build the `cobblers_spawn_tags` overlay from `regions.json` `spawn_tag_overlays` (biome tags Cobblemon spawns on that no loaded biome carries); `--check-paint` fails if an overlay biome is painted outside its regions; `--install` copies it into a datapacks folder | `build/datapacks/cobblers_spawn_tags/` |
-| `sightlines.py` | Raycasts from a viewpoint to named landmarks | `derived/sightlines/` |
+| `sightlines.py` | Raycasts from a viewpoint to named landmarks; `cast(surface=)` occludes with terrain plus canopy | `derived/sightlines/` |
+| `foliage.py` | Forest placement for `paint_maps.py`: density fields (edge, ragged boundary, glades, clumping, slope, treeline, water) and exact object positions with class spacing, lone trees, debris, canopy and per-type stats (`docs/world-building/FOLIAGE.md`) | (library) |
+| `foliage_objects.py` | The foliage object library: `harvest` vanilla trees over RCON into `.nbt`, `generate` seeded objects and landmark giants, `index` sizes, crowns, eye-level widths and hashes | `kits/structures/foliage/` |
+| `structure_nbt.py` | Write and read structure templates (`.nbt`); capture a box of blocks from a world's region files | (library) |
+| `landmark_trees.py` | Landmark giant designs; `check` sightlines from each tree's intended observers over terrain plus canopy | `derived/foliage/landmark_sightlines.json` |
+| `sculpt.py` | Local terrain brushes from `data/sculpt.json`: coasts by class, massif asymmetry, summits and strata, volcano cones, flat pads; writes the sculpted heightmap, the coast class map and before/after previews | `<source root>/land_8k_16_sculpted.png`, `build/sculpt/`, `derived/sculpt/` |
+| `terrace_measure.py` | Contour terracing over the whole landmass: grade regimes, block treads and their variation in 64-block windows, the grade perturbation ratio rho, the source-side terrace index, shoreline flats and cliffs | `derived/terrace/` |
+| `heightmap_check.py` | Checks a heightmap file for silent corruption before use: decode and size, sha256, rails, 8-bit data scaled up, tears and duplicated rows against the predecessor, changes outside allowed boxes. Non-zero exit on failure | (report) |
+| `coast_measure.py` | Profiles normal to the shoreline: grade over the first rise, shelf depth, terraces | `derived/coast/` |
+| `massif_measure.py` | Summits, radial flank grades, clipped tops and cone bowls | `derived/terrain/massifs.json` |
+| `place_town.py` | A settlement's placements as a datapack function, seated on the ground read from a stopped world's region files: entrance layer at grade, trees cleared, foundation courses down to the ground (no pads), rotated templates, jigsaws resolved, loot stripped, donor waystones removed from a template copy, paths, waystone, spawn. `--verify` checks floor, support and outside ground over RCON | `build/datapacks/cobblers_towns/`, `derived/towns/` |
+| `kit.py` | Prefab kit: `import` Axiom `.schem` (Sponge v2/v3) or structure `.nbt` into `kits/structures/prefabs/<kind>/<set>/<name>.nbt` + sidecar, `index` to validate, `pack` into a datapack (`cobblers:kits/...`) | `kits/structures/prefabs/`, `build/datapacks/cobblers_kits/` |
+| `town_plan.py` | A town's plan data (streets, plaza, anchor lots) into graded street profiles, candidate house lots, lamp spacing, overlap and bounds checks, and terrain-prep fills at or below ground level (not run) | `derived/towns/<id>_plan.json`, `build/town_prep/` |
+| `cavern_plan.py` | The Displaced City cavern as numbered functions: seal water, excavate between a graded floor and a ceiling kept 24 blocks under the ground, false sky, light lattice, trees, tunnel, biome (separate) | `build/datapacks/cobblers_cavern/`, `derived/cavern/` |
+| `tree_town_sites.py` | Candidate tree-town sites: off-path, spacing, distance from Peak Pond Hollow, forest density, grove ground, wet ground, sightlines from the legs (candidates only) | `derived/sites/tree_town.json` |
+| `tree_grove.py` | Habitat giants (kit prefabs) and grove layouts at candidate sites, with a placement function (not run) | `kits/structures/prefabs/trees/tree_town/`, `derived/sites/`, `build/grove/` |
+| `transplant_chunks.py` | Copy whole chunks (region, entities, poi) from one closed world into another, to carry a build across a re-export | (in place) |
+| `critical_legs.py` | Route the critical path legs (Victory Road along the Rift axes) and tally blocks per sub-region | `derived/routes/critical_legs.json` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |
 | `cell_stats.py` | Per-cell elevation, land fraction, slope and distance to sea | `derived/cells/` |
 | `landforms.py` | Land and water bodies, peaks, candidate landform classes | `derived/landforms/` |

@@ -1,0 +1,37 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/buildings/test/hut_v3",
+ "kind": "buildings",
+ "set": "test",
+ "name": "hut_v3",
+ "author": "claude",
+ "source": {
+  "file": "kit_test_v3.schem",
+  "imported": "2026-09-15",
+  "format": "sponge_v3",
+  "data_version": 3955,
+  "size": [
+   5,
+   4,
+   6
+  ],
+  "blocks": 120,
+  "air_in_box": 41,
+  "air_kept": true,
+  "block_entities": 1,
+  "entities": 0,
+  "namespaces": {
+   "minecraft": 120
+  }
+ },
+ "entrance": {
+  "pos": [
+   2,
+   0,
+   0
+  ],
+  "facing": "north"
+ },
+ "grade_layer": 0,
+ "notes": "synthetic Sponge v3 test"
+}

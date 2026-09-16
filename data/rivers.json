@@ -2,7 +2,7 @@
   "schema": "cobblers.rivers/1",
   "status": "derived",
   "computed_from_sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
-  "generated": "2026-09-14",
+  "generated": "2026-09-15",
   "generator": "tools/grade_rivers.py plan",
   "rule": "a bed never rises in the direction of flow; the surface at each station is the lowest ground met so far, never below sea level; cut = ground above that surface",
   "parameters": {
@@ -20,6 +20,12 @@
     "reach_blocks": 64,
     "grade_window_blocks": 128,
     "tributary_km2": 0.25,
+    "valley_head": {
+      "wall_rise": 10.0,
+      "wall_reach": 250,
+      "run": 3,
+      "step": 48
+    },
     "character": {
       "catchment": "D8 accumulation on the priority-flooded planning grid with every cut course burned in; a station takes the largest catchment within one cell, never less than upstream",
       "grade": "drop of the graded surface over the reach and half a grade window either side, per block",
@@ -574,7 +580,7 @@
     },
     {
       "id": "major_river",
-      "name": "Major river (unnamed): Merian to the east coast",
+      "name": "Major river (unnamed): the Glacial Tear to the east coast",
       "landmark_kind": "river",
       "graded_courses": [
         "major_river_trunk",
@@ -585,9 +591,9 @@
       "ends": [
         {
           "end": "high_end",
-          "x": 2506,
-          "z": 1446,
-          "bed_y": 168.8,
+          "x": 3136,
+          "z": 1636,
+          "bed_y": 101.3,
           "at": "graded_source",
           "lake": null
         },
@@ -610,8 +616,8 @@
         "basis": "4-block grid, inside the band around the carved axis",
         "directions": [
           {
-            "from": "graded_source end 2506,1446",
-            "from_y": 170.9,
+            "from": "graded_source end 3136,1636",
+            "from_y": 105.9,
             "to": "sea end 6970,3970",
             "min_worst_cut": 0.8,
             "verdict": "water can run along the carve with a cut of up to 0.8 blocks"
@@ -621,7 +627,20 @@
     }
   ],
   "major_river": {
-    "selection": "the coastal system with the largest catchment; its trunk runs from the head of the system's longest descending flow path to the sea",
+    "selection": "the coastal system with the largest catchment; its trunk follows the system's longest descending flow path to the sea, starting where that path first runs between valley walls",
+    "head_rule": {
+      "rule": "valley_walls",
+      "wall_rise_blocks": 10.0,
+      "wall_reach_blocks": 250,
+      "consecutive_stations": 3,
+      "station_spacing_blocks": 48,
+      "path_head": {
+        "x": 2504,
+        "z": 1444,
+        "ground_y": 170.9
+      },
+      "moved_blocks_along_path": 817
+    },
     "systems_ranked": [
       {
         "mouth": {
@@ -632,9 +651,9 @@
         "longest_descending_path_blocks": 3389,
         "tributaries": 8,
         "head": {
-          "x": 2504,
-          "z": 1444,
-          "ground_y": 170.9
+          "x": 3132,
+          "z": 1632,
+          "ground_y": 106.3
         },
         "path_basis": "farthest ground falling without a rise to lake_tilpey_outflow, lake_tilpey"
       },
@@ -699,7 +718,25 @@
       "major_river_trunk",
       "lake_tilpey_outflow"
     ],
-    "mouth_catchment_km2": 14.05
+    "mouth_catchment_km2": 14.05,
+    "head_rule_survey_other_courses": [
+      {
+        "course": "river_of_shrews_from_high_end",
+        "source_kind": "inland_end",
+        "walled_from_start": true,
+        "rule_would_move_head_blocks": 0,
+        "walled_samples": 24,
+        "samples": 38
+      },
+      {
+        "course": "tilpey_south_west_outlet_from_high_end",
+        "source_kind": "inland_end",
+        "walled_from_start": true,
+        "rule_would_move_head_blocks": 0,
+        "walled_samples": 5,
+        "samples": 11
+      }
+    ]
   },
   "courses": [
     {
@@ -5080,9 +5117,9 @@
       "river": "major_river",
       "source": {
         "kind": "system_head",
-        "x": 2504,
-        "z": 1444,
-        "ground_y": 170.9
+        "x": 3132,
+        "z": 1632,
+        "ground_y": 106.3
       },
       "kind": "major",
       "min_worst_cut": 0.8,
@@ -5094,18 +5131,18 @@
         "z": 3198
       },
       "routed": {
-        "length_blocks": 3085,
-        "surface_start_y": 170.9,
+        "length_blocks": 2268,
+        "surface_start_y": 106.1,
         "surface_end_y": 77.0,
-        "total_drop": 93.9,
-        "worst_cut": 1.5,
+        "total_drop": 29.1,
+        "worst_cut": 0.7,
         "worst_cut_basis": "full resolution, lowest ground within 2 blocks of the centreline",
         "worst_cut_at": {
-          "x": 2702,
-          "z": 1358
+          "x": 4081,
+          "z": 2589
         },
         "worst_cut_to_sea": 1.5,
-        "stations_needing_cut_pct": 3.9,
+        "stations_needing_cut_pct": 0.4,
         "water_bodies_on_course": [
           "lake_tilpey"
         ]
@@ -5113,256 +5150,22 @@
       "verdict": "descends with a cut of up to 1.5 blocks",
       "graded_polyline": [
         [
-          2506,
-          1446,
-          169.87,
-          168.77
+          3135,
+          1635,
+          104.17,
+          101.37
         ],
         [
-          2514,
-          1438,
-          169.87,
-          168.77
+          3162,
+          1662,
+          102.53,
+          99.73
         ],
         [
-          2514,
-          1430,
-          169.57,
-          168.47
-        ],
-        [
-          2522,
-          1422,
-          169.57,
-          168.47
-        ],
-        [
-          2518,
-          1418,
-          169.54,
-          168.43
-        ],
-        [
-          2530,
-          1406,
-          169.54,
-          168.37
-        ],
-        [
-          2530,
-          1390,
-          169.39,
-          168.18
-        ],
-        [
-          2546,
-          1374,
-          169.39,
-          168.11
-        ],
-        [
-          2546,
-          1366,
-          169.19,
-          167.89
-        ],
-        [
-          2562,
-          1350,
-          169.09,
-          167.75
-        ],
-        [
-          2574,
-          1350,
-          169.09,
-          167.73
-        ],
-        [
-          2578,
-          1346,
-          168.78,
-          167.41
-        ],
-        [
-          2586,
-          1346,
-          168.38,
-          167.0
-        ],
-        [
-          2606,
-          1346,
-          165.7,
-          164.29
-        ],
-        [
-          2626,
-          1346,
-          161.18,
-          159.74
-        ],
-        [
-          2682,
-          1346,
-          146.1,
-          144.55
-        ],
-        [
-          2702,
-          1358,
-          146.1,
-          144.47
-        ],
-        [
-          2710,
-          1358,
-          145.71,
-          144.05
-        ],
-        [
-          2738,
-          1374,
-          145.64,
-          143.87
-        ],
-        [
-          2746,
-          1374,
-          145.05,
-          143.25
-        ],
-        [
-          2750,
-          1378,
-          145.03,
-          143.22
-        ],
-        [
-          2754,
-          1378,
-          145.02,
-          143.19
-        ],
-        [
-          2758,
-          1382,
-          145.0,
-          143.16
-        ],
-        [
-          2762,
-          1382,
-          144.92,
-          143.07
-        ],
-        [
-          2766,
-          1386,
-          144.9,
-          143.04
-        ],
-        [
-          2770,
-          1386,
-          144.78,
-          142.9
-        ],
-        [
-          2784,
-          1394,
-          144.54,
-          142.63
-        ],
-        [
-          2790,
-          1394,
-          143.56,
-          141.63
-        ],
-        [
-          2794,
-          1398,
-          143.55,
-          141.62
-        ],
-        [
-          2798,
-          1398,
-          143.16,
-          141.22
-        ],
-        [
-          2806,
-          1406,
-          143.15,
-          141.19
-        ],
-        [
-          2810,
-          1406,
-          142.74,
-          140.78
-        ],
-        [
-          2831,
-          1427,
-          141.92,
-          139.9
-        ],
-        [
-          2859,
-          1455,
-          138.65,
-          136.5
-        ],
-        [
-          2910,
-          1506,
-          134.58,
-          132.38
-        ],
-        [
-          2937,
-          1533,
-          130.69,
-          128.49
-        ],
-        [
-          2990,
-          1586,
-          120.73,
-          118.36
-        ],
-        [
-          3006,
-          1586,
-          119.2,
-          116.75
-        ],
-        [
-          3038,
-          1618,
-          115.48,
-          112.87
-        ],
-        [
-          3118,
-          1618,
-          105.51,
-          102.74
-        ],
-        [
-          3157,
-          1657,
-          102.75,
-          99.95
-        ],
-        [
-          3214,
-          1714,
-          101.2,
-          98.31
+          3217,
+          1717,
+          101.14,
+          98.24
         ],
         [
           3681,
@@ -5371,28 +5174,28 @@
           89.95
         ],
         [
-          3728,
-          2228,
-          88.22,
-          81.21
+          3727,
+          2227,
+          88.27,
+          81.28
         ],
         [
           3773,
           2273,
           86.57,
-          79.08
+          79.07
         ],
         [
           3819,
           2319,
           85.88,
-          78.38
+          78.28
         ],
         [
           3865,
           2365,
           84.61,
-          76.02
+          76.01
         ],
         [
           4066,
@@ -5470,151 +5273,7 @@
       "reaches": [
         {
           "from_m": 0,
-          "to_m": 64,
-          "catchment_km2": 0.009,
-          "grade": 0.0061,
-          "water_body": false,
-          "bank_slope": 1.24,
-          "bed": "SAND",
-          "width": 3,
-          "depth": 1.1,
-          "incision": 1.0
-        },
-        {
-          "from_m": 64,
-          "to_m": 129,
-          "catchment_km2": 0.015,
-          "grade": 0.0519,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 3,
-          "depth": 1.3,
-          "incision": 1.0
-        },
-        {
-          "from_m": 129,
-          "to_m": 193,
-          "catchment_km2": 0.017,
-          "grade": 0.1209,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 3,
-          "depth": 1.4,
-          "incision": 1.0
-        },
-        {
-          "from_m": 193,
-          "to_m": 258,
-          "catchment_km2": 0.022,
-          "grade": 0.1234,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 3,
-          "depth": 1.5,
-          "incision": 1.0
-        },
-        {
-          "from_m": 258,
-          "to_m": 322,
-          "catchment_km2": 0.03,
-          "grade": 0.0847,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 3,
-          "depth": 1.7,
-          "incision": 1.0
-        },
-        {
-          "from_m": 322,
-          "to_m": 386,
-          "catchment_km2": 0.041,
-          "grade": 0.0302,
-          "water_body": false,
-          "bank_slope": 1.98,
-          "bed": "GRAVEL",
-          "width": 3,
-          "depth": 1.9,
-          "incision": 1.2
-        },
-        {
-          "from_m": 386,
-          "to_m": 451,
-          "catchment_km2": 0.049,
-          "grade": 0.0458,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 4,
-          "depth": 2.0,
-          "incision": 1.3
-        },
-        {
-          "from_m": 451,
-          "to_m": 516,
-          "catchment_km2": 0.055,
-          "grade": 0.067,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 4,
-          "depth": 2.2,
-          "incision": 1.3
-        },
-        {
-          "from_m": 516,
-          "to_m": 581,
-          "catchment_km2": 0.057,
-          "grade": 0.095,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 4,
-          "depth": 2.2,
-          "incision": 1.4
-        },
-        {
-          "from_m": 581,
-          "to_m": 646,
-          "catchment_km2": 0.058,
-          "grade": 0.1026,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 4,
-          "depth": 2.2,
-          "incision": 1.4
-        },
-        {
-          "from_m": 646,
-          "to_m": 710,
-          "catchment_km2": 0.077,
-          "grade": 0.1127,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 4,
-          "depth": 2.5,
-          "incision": 1.6
-        },
-        {
-          "from_m": 710,
-          "to_m": 775,
-          "catchment_km2": 0.095,
-          "grade": 0.0918,
-          "water_body": false,
-          "bank_slope": 2.0,
-          "bed": "GRAVEL",
-          "width": 5,
-          "depth": 2.7,
-          "incision": 1.8
-        },
-        {
-          "from_m": 775,
-          "to_m": 840,
+          "to_m": 24,
           "catchment_km2": 0.105,
           "grade": 0.071,
           "water_body": false,
@@ -5625,8 +5284,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 840,
-          "to_m": 904,
+          "from_m": 24,
+          "to_m": 89,
           "catchment_km2": 0.109,
           "grade": 0.0354,
           "water_body": false,
@@ -5637,8 +5296,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 904,
-          "to_m": 969,
+          "from_m": 89,
+          "to_m": 154,
           "catchment_km2": 0.113,
           "grade": 0.0164,
           "water_body": false,
@@ -5649,8 +5308,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 969,
-          "to_m": 1034,
+          "from_m": 154,
+          "to_m": 219,
           "catchment_km2": 0.114,
           "grade": 0.013,
           "water_body": false,
@@ -5661,8 +5320,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 1034,
-          "to_m": 1099,
+          "from_m": 219,
+          "to_m": 284,
           "catchment_km2": 0.115,
           "grade": 0.0123,
           "water_body": false,
@@ -5673,8 +5332,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 1099,
-          "to_m": 1164,
+          "from_m": 284,
+          "to_m": 349,
           "catchment_km2": 0.115,
           "grade": 0.0123,
           "water_body": false,
@@ -5685,8 +5344,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 1164,
-          "to_m": 1229,
+          "from_m": 349,
+          "to_m": 414,
           "catchment_km2": 0.116,
           "grade": 0.0123,
           "water_body": false,
@@ -5697,8 +5356,8 @@
           "incision": 1.9
         },
         {
-          "from_m": 1229,
-          "to_m": 1294,
+          "from_m": 414,
+          "to_m": 479,
           "catchment_km2": 0.117,
           "grade": 0.0122,
           "water_body": false,
@@ -5709,8 +5368,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 1294,
-          "to_m": 1359,
+          "from_m": 479,
+          "to_m": 544,
           "catchment_km2": 0.118,
           "grade": 0.0123,
           "water_body": false,
@@ -5721,8 +5380,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 1359,
-          "to_m": 1424,
+          "from_m": 544,
+          "to_m": 609,
           "catchment_km2": 0.119,
           "grade": 0.0122,
           "water_body": false,
@@ -5733,8 +5392,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 1424,
-          "to_m": 1488,
+          "from_m": 609,
+          "to_m": 674,
           "catchment_km2": 0.12,
           "grade": 0.0123,
           "water_body": false,
@@ -5745,8 +5404,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 1488,
-          "to_m": 1554,
+          "from_m": 674,
+          "to_m": 740,
           "catchment_km2": 0.121,
           "grade": 0.0126,
           "water_body": false,
@@ -5757,8 +5416,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 1554,
-          "to_m": 1619,
+          "from_m": 740,
+          "to_m": 805,
           "catchment_km2": 0.122,
           "grade": 0.0136,
           "water_body": false,
@@ -5769,8 +5428,8 @@
           "incision": 2.0
         },
         {
-          "from_m": 1619,
-          "to_m": 1684,
+          "from_m": 805,
+          "to_m": 870,
           "catchment_km2": 1.049,
           "grade": 0.0147,
           "water_body": false,
@@ -5797,8 +5456,8 @@
           "incision": 5.8
         },
         {
-          "from_m": 1684,
-          "to_m": 1749,
+          "from_m": 870,
+          "to_m": 935,
           "catchment_km2": 1.255,
           "grade": 0.0118,
           "water_body": false,
@@ -5825,8 +5484,8 @@
           "incision": 6.4
         },
         {
-          "from_m": 1749,
-          "to_m": 1814,
+          "from_m": 935,
+          "to_m": 1000,
           "catchment_km2": 1.266,
           "grade": 0.0085,
           "water_body": false,
@@ -5849,12 +5508,12 @@
             "wall_slope": 0.6
           },
           "width": 22,
-          "depth": 7.5,
+          "depth": 7.6,
           "incision": 6.4
         },
         {
-          "from_m": 1814,
-          "to_m": 1879,
+          "from_m": 1000,
+          "to_m": 1065,
           "catchment_km2": 1.731,
           "grade": 0.0074,
           "water_body": false,
@@ -5881,8 +5540,8 @@
           "incision": 7.5
         },
         {
-          "from_m": 1879,
-          "to_m": 1944,
+          "from_m": 1065,
+          "to_m": 1130,
           "catchment_km2": 1.741,
           "grade": 0.0097,
           "water_body": false,
@@ -5909,8 +5568,8 @@
           "incision": 7.5
         },
         {
-          "from_m": 1944,
-          "to_m": 2009,
+          "from_m": 1130,
+          "to_m": 1195,
           "catchment_km2": 1.753,
           "grade": 0.0098,
           "water_body": false,
@@ -5937,8 +5596,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 2009,
-          "to_m": 2073,
+          "from_m": 1195,
+          "to_m": 1260,
           "catchment_km2": 1.762,
           "grade": 0.0079,
           "water_body": false,
@@ -5965,8 +5624,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 2073,
-          "to_m": 2138,
+          "from_m": 1260,
+          "to_m": 1325,
           "catchment_km2": 1.769,
           "grade": 0.0083,
           "water_body": false,
@@ -5993,8 +5652,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 2138,
-          "to_m": 2202,
+          "from_m": 1325,
+          "to_m": 1389,
           "catchment_km2": 1.779,
           "grade": 0.0103,
           "water_body": false,
@@ -6021,8 +5680,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 2202,
-          "to_m": 2267,
+          "from_m": 1389,
+          "to_m": 1454,
           "catchment_km2": 1.793,
           "grade": 0.0162,
           "water_body": false,
@@ -6049,8 +5708,8 @@
           "incision": 7.6
         },
         {
-          "from_m": 2267,
-          "to_m": 2332,
+          "from_m": 1454,
+          "to_m": 1519,
           "catchment_km2": 1.805,
           "grade": 0.0175,
           "water_body": false,
@@ -6077,8 +5736,8 @@
           "incision": 7.7
         },
         {
-          "from_m": 2332,
-          "to_m": 2397,
+          "from_m": 1519,
+          "to_m": 1584,
           "catchment_km2": 1.815,
           "grade": 0.0182,
           "water_body": false,
@@ -6105,8 +5764,8 @@
           "incision": 7.7
         },
         {
-          "from_m": 2397,
-          "to_m": 2462,
+          "from_m": 1584,
+          "to_m": 1649,
           "catchment_km2": 1.827,
           "grade": 0.0136,
           "water_body": false,
@@ -6133,8 +5792,8 @@
           "incision": 7.7
         },
         {
-          "from_m": 2462,
-          "to_m": 2526,
+          "from_m": 1649,
+          "to_m": 1713,
           "catchment_km2": 1.844,
           "grade": 0.0128,
           "water_body": false,
@@ -6161,8 +5820,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 2526,
-          "to_m": 2591,
+          "from_m": 1713,
+          "to_m": 1778,
           "catchment_km2": 1.856,
           "grade": 0.0125,
           "water_body": false,
@@ -6189,8 +5848,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 2591,
-          "to_m": 2656,
+          "from_m": 1778,
+          "to_m": 1843,
           "catchment_km2": 1.863,
           "grade": 0.013,
           "water_body": false,
@@ -6217,8 +5876,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 2656,
-          "to_m": 2721,
+          "from_m": 1843,
+          "to_m": 1909,
           "catchment_km2": 1.864,
           "grade": 0.0124,
           "water_body": false,
@@ -6245,8 +5904,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 2721,
-          "to_m": 2786,
+          "from_m": 1909,
+          "to_m": 1974,
           "catchment_km2": 1.865,
           "grade": 0.0112,
           "water_body": false,
@@ -6273,8 +5932,8 @@
           "incision": 7.8
         },
         {
-          "from_m": 2786,
-          "to_m": 2851,
+          "from_m": 1974,
+          "to_m": 2039,
           "catchment_km2": 1.955,
           "grade": 0.0113,
           "water_body": false,
@@ -6301,8 +5960,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 2851,
-          "to_m": 2916,
+          "from_m": 2039,
+          "to_m": 2104,
           "catchment_km2": 1.962,
           "grade": 0.0114,
           "water_body": false,
@@ -6329,8 +5988,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 2916,
-          "to_m": 2981,
+          "from_m": 2104,
+          "to_m": 2169,
           "catchment_km2": 1.963,
           "grade": 0.0125,
           "water_body": false,
@@ -6357,8 +6016,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 2981,
-          "to_m": 3046,
+          "from_m": 2169,
+          "to_m": 2234,
           "catchment_km2": 1.964,
           "grade": 0.0121,
           "water_body": false,
@@ -6385,8 +6044,8 @@
           "incision": 8.0
         },
         {
-          "from_m": 3046,
-          "to_m": 3080,
+          "from_m": 2234,
+          "to_m": 2268,
           "catchment_km2": 1.964,
           "grade": 0.0119,
           "water_body": false,
@@ -6415,30 +6074,30 @@
       ],
       "character": {
         "width": [
-          3,
+          5,
           26
         ],
         "depth": [
-          1.1,
+          2.8,
           9.0
         ],
         "bank_slope": [
-          1.24,
+          1.32,
           2.0
         ],
         "catchment_km2": [
-          0.009,
+          0.105,
           1.964
         ],
         "bed_share_pct": {
-          "GRAVEL": 85,
-          "SAND": 15
+          "GRAVEL": 83,
+          "SAND": 17
         }
       }
     }
   ],
   "cut": {
-    "generated": "2026-09-14",
+    "generated": "2026-09-15",
     "generator": "tools/grade_rivers.py cut",
     "from_heightmap": {
       "path": "land_8k_16_eroded.png",
@@ -6446,7 +6105,7 @@
     },
     "output": {
       "path": "land_8k_16_eroded_rivers.png",
-      "sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161"
+      "sha256": "f5ff054ee340a34a861d1790abe5824e22e5c9541c62563b06fc24d7d0c92afd"
     },
     "courses_cut": [
       "lake_tilpey_outflow",
@@ -6516,17 +6175,17 @@
         "widest_cut_half_width_blocks": 25
       },
       "major_river_trunk": {
-        "volume_blocks": 1316951,
+        "volume_blocks": 1302146,
         "deepest_cut_blocks": 19.7,
         "widest_cut_half_width_blocks": 121
       }
     },
     "cost_basis": "volume is what each course removed beyond the courses cut before it; deepest is the most any column it touched was lowered from the source heightmap; widest is the farthest column it lowered from its centreline",
-    "columns_lowered": 284133,
+    "columns_lowered": 278591,
     "lowered_blocks": {
       "max": 19.73,
-      "mean": 5.66,
-      "volume": 1607421
+      "mean": 5.72,
+      "volume": 1592615
     },
     "check": {
       "method": "on the written file, at every block of each course outside lakes: the lowest ground within one block of the centreline against the planned floor; the largest rise of the planned floor; and the largest rise of that lowest ground (clamped half a block under the floor)",
@@ -6593,9 +6252,9 @@
         },
         {
           "course": "major_river_trunk",
-          "thalweg_above_floor_max": 0.05,
+          "thalweg_above_floor_max": 0.007,
           "floor_rise_max": 0.0,
-          "thalweg_rise_max": 0.017
+          "thalweg_rise_max": 0.003
         }
       ]
     }

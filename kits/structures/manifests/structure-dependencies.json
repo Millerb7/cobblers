@@ -111,15 +111,17 @@
       "id": "campaign:f4/services/pokecenter",
       "structure_id": "cobblers:f4/services/pokecenter",
       "asset": "kits/structures/campaign/f4/services/pokecenter.nbt",
-      "required_components": ["cobblemon", "waystones"],
-      "dependency_reason": "MIT donor Pokémon Center contains Cobblemon and Waystones blocks used by the complete overlay."
+      "required_components": ["cobblemon", "waystones", "moarconcrete"],
+      "dependency_reason": "MIT donor Pokémon Center contains Cobblemon and Waystones blocks used by the complete overlay.",
+      "substitutions": "vanilla concrete replaced with moarconcrete:*_concrete_texture (data/spawn_block_policy.json): identical texture, no spawn condition"
     },
     {
       "id": "campaign:f4/services/structure_pokemart",
       "structure_id": "cobblers:f4/services/structure_pokemart",
       "asset": "kits/structures/campaign/f4/services/structure_pokemart.nbt",
-      "required_components": ["cobblemon", "cobblemon-additions"],
-      "dependency_reason": "MIT donor Poké Mart contains Cobblemon and Cobblemon Additions blocks used by the complete overlay."
+      "required_components": ["cobblemon", "cobblemon-additions", "moarconcrete"],
+      "dependency_reason": "MIT donor Poké Mart contains Cobblemon and Cobblemon Additions blocks used by the complete overlay.",
+      "substitutions": "vanilla concrete replaced with moarconcrete:*_concrete_texture (data/spawn_block_policy.json): identical texture, no spawn condition"
     },
     {
       "id": "campaign:f4/pallet_house_large2",
