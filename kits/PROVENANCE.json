@@ -47,8 +47,9 @@
   },
   {
    "paths": ["kits/structures/campaign/f4/services/pokecenter.nbt", "kits/structures/campaign/f4/services/structure_pokemart.nbt"],
-   "licence": "LicenseRef-All-Rights-Reserved",
+   "licence": "LicenseRef-conflicting-declarations",
    "source": "cobblemon-additions 4.1.6 (bca:default/one_off/pokecenter, structure_pokemart)",
+   "licence_evidence": "conflicting: the 4.1.6 jar ships LICENSE_cobblemon-additions (CC0-1.0) and fabric.mod.json says CC0-1.0; the Modrinth project says All Rights Reserved; the Cobbleverse licence snapshot says MIT; the declared source repo github.com/strikeknight57/BCA-CE returns 404. Kept local until the authors confirm.",
    "local_only": true
   },
   {
