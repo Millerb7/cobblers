@@ -141,3 +141,7 @@ experiments/*/runs/*/
 
 # Templates copied from all-rights-reserved packs (Lumyverse/Cobbleverse datapacks): usable locally, never published.
 kits/structures/prefabs/gyms/**/*.nbt
+
+# All-rights-reserved templates (cobblemon-additions): used locally, never committed.
+kits/structures/campaign/f4/services/pokecenter.nbt
+kits/structures/campaign/f4/services/structure_pokemart.nbt
