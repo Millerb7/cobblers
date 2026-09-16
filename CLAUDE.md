@@ -7,6 +7,16 @@ server. `docs/vision/GAME_VISION.md` is the design source of truth and
 document and the repository disagree, say so — the disagreement is a finding,
 never something to paper over silently.
 
+## Session state (required)
+
+Read `docs/STATE.md` before doing any work. It is the operational record of
+what is built, decided, open and blocked; when another document disagrees,
+verify reality and correct the state rather than rediscovering the question.
+Before ending every session, reconcile every affected line in `docs/STATE.md`
+without adding history; if no state category changed, report that it was
+reviewed and remains current. Follow its file-ownership table when making the
+update.
+
 ## Baseline and target (verified)
 
 - **Reference/base experience:** the COBBLEVERSE modpack (Modrinth slug
