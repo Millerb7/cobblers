@@ -1,0 +1,184 @@
+{
+ "schema": "cobblers.spawn-block-policy/1",
+ "status": "draft",
+ "note": "What a placed template may contain of the blocks in data/spawn_blocks.json. Everything else fails validation: a donor's roof must not decide a town's encounters. Substitutions are applied to the template itself by tools/spawn_blocks.py substitute, so the fix travels with the asset and is not rediscovered per placement.",
+ "substitutions": [
+  {
+   "from": "minecraft:red_concrete",
+   "to": "moarconcrete:red_concrete_texture",
+   "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+   "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+   "dependency": "moarconcrete, already a world-critical component of this pack"
+  },
+  {
+   "from": "minecraft:white_concrete",
+   "to": "moarconcrete:white_concrete_texture",
+   "why": "as above",
+   "visually": "byte-identical texture, cube_all model",
+   "dependency": "moarconcrete"
+  },
+  {
+   "from": "minecraft:blue_concrete",
+   "to": "moarconcrete:blue_concrete_texture",
+   "why": "as above",
+   "visually": "byte-identical texture, cube_all model",
+   "dependency": "moarconcrete"
+  },
+  {
+   "from": "minecraft:black_concrete",
+   "to": "moarconcrete:black_concrete_texture",
+   "why": "as above",
+   "visually": "byte-identical texture, cube_all model",
+   "dependency": "moarconcrete"
+  }
+ ],
+ "whitelist": [
+  {
+   "blocks": [
+    "minecraft:quartz_block"
+   ],
+   "why": "the only spawns conditioned on it (carbink, corsola galarian, cursola, duraludon, archaludon and their herds) require #cobblemon:nether/is_quartz biomes. In an overworld town it has no effect.",
+   "scope": "overworld placements only"
+  },
+  {
+   "blocks": [
+    "minecraft:amethyst_block"
+   ],
+   "why": "terapagos needs #cobblemon:is_cave, which is dripstone and lush caves plus #c:is_cave and #c:is_underground. The Displaced City cavern is filled with minecraft:cherry_grove, so the Pokemon Center's amethyst does nothing there.",
+   "scope": "overworld and the cherry-grove cavern; a placement left in a cave biome would need checking again"
+  },
+  {
+   "blocks": [
+    "cobblemon:pc",
+    "cobblemon:healing_machine",
+    "cobblemon:fossil_analyzer"
+   ],
+   "why": "rotom is drawn to the machines a Pokemon Center is made of. That is the encounter the building should create, and it is deliberate.",
+   "scope": "service buildings"
+  },
+  {
+   "blocks": [
+    "cobblemon:red_apricorn",
+    "cobblemon:white_apricorn",
+    "cobblemon:black_apricorn",
+    "cobblemon:blue_apricorn",
+    "cobblemon:green_apricorn",
+    "cobblemon:pink_apricorn",
+    "cobblemon:yellow_apricorn"
+   ],
+   "why": "apricorn trees draw electrode hisuian. A town that grows apricorns should get them.",
+   "scope": "gardens and orchards"
+  },
+  {
+   "tags": [
+    "leaves",
+    "flowers",
+    "petals",
+    "berries"
+   ],
+   "blocks": [
+    "minecraft:oak_leaves",
+    "minecraft:dark_oak_leaves",
+    "minecraft:cherry_leaves",
+    "minecraft:birch_leaves",
+    "minecraft:spruce_leaves",
+    "minecraft:jungle_leaves",
+    "minecraft:acacia_leaves",
+    "minecraft:mangrove_leaves",
+    "minecraft:azalea_leaves",
+    "minecraft:flowering_azalea_leaves",
+    "minecraft:flowering_azalea",
+    "minecraft:azalea",
+    "minecraft:pink_petals",
+    "minecraft:azure_bluet",
+    "minecraft:pink_tulip",
+    "minecraft:red_tulip",
+    "minecraft:orange_tulip",
+    "minecraft:white_tulip",
+    "minecraft:poppy",
+    "minecraft:dandelion",
+    "minecraft:cornflower",
+    "minecraft:oxeye_daisy",
+    "minecraft:lily_of_the_valley",
+    "minecraft:allium",
+    "minecraft:blue_orchid"
+   ],
+   "why": "flabebe and its kin are drawn to flowers, and several herds to leaves. Foliage objects and gardens are supposed to be foliage: this is the forest reading as forest, not a donor's roof deciding a town.",
+   "scope": "foliage objects, gardens and landmark trees"
+  }
+ ],
+ "checked_paving": {
+  "gym1_town": [
+   "minecraft:polished_andesite",
+   "minecraft:cobblestone",
+   "minecraft:stone_bricks"
+  ],
+  "gym2_town": [
+   "minecraft:mud_bricks",
+   "minecraft:prismarine_bricks"
+  ],
+  "cavern": [
+   "minecraft:grass_block",
+   "minecraft:dirt",
+   "minecraft:sea_lantern",
+   "minecraft:light_blue_stained_glass",
+   "minecraft:light",
+   "minecraft:stone",
+   "minecraft:stone_bricks",
+   "minecraft:stone_brick_stairs"
+  ],
+  "tree_town_grove": [
+   "minecraft:oak_log",
+   "minecraft:birch_log",
+   "minecraft:mangrove_log",
+   "minecraft:dark_oak_log"
+  ],
+  "roads_and_paths": [
+   "minecraft:dirt_path",
+   "minecraft:gravel"
+  ],
+  "result": "none of these appears in data/spawn_blocks.json; the grove's leaves are covered by the foliage entry above"
+ },
+ "applied": {
+  "date": "2026-09-15",
+  "by": "tools/spawn_blocks.py substitute",
+  "templates": [
+   {
+    "template": "kits/structures/campaign/f4/services/pokecenter.nbt",
+    "palette_entries_changed": 3,
+    "blocks": {
+     "minecraft:black_concrete": {
+      "count": 2,
+      "to": "moarconcrete:black_concrete_texture"
+     },
+     "minecraft:red_concrete": {
+      "count": 199,
+      "to": "moarconcrete:red_concrete_texture"
+     },
+     "minecraft:white_concrete": {
+      "count": 92,
+      "to": "moarconcrete:white_concrete_texture"
+     }
+    },
+    "sha256_before": "2e7df15b045d6997f2330b4b86e838ef6bd93de72df02ff7d880d0e47ffe5736",
+    "sha256_after": "e1228d277839977f9a653044be7849a4ab897e1e55d4d6144b800b297c89de58"
+   },
+   {
+    "template": "kits/structures/campaign/f4/services/structure_pokemart.nbt",
+    "palette_entries_changed": 2,
+    "blocks": {
+     "minecraft:blue_concrete": {
+      "count": 212,
+      "to": "moarconcrete:blue_concrete_texture"
+     },
+     "minecraft:white_concrete": {
+      "count": 60,
+      "to": "moarconcrete:white_concrete_texture"
+     }
+    },
+    "sha256_before": "ff54fac60c5193b0495cfcf4d316bc2639b5f456e5effc5abbb9e7f1943f9e08",
+    "sha256_after": "77f79c8724179789182e98813430cbdcd3edb529fda1e2e6eabdd556a98de115"
+   }
+  ]
+ }
+}
