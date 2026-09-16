@@ -65,24 +65,24 @@ progression.
 11. `H011` — It started with a spoon.
 12. `H012` — A completely normal spoon.
 13. `H013` — I put it in the wrong drawer.
-14. `H014` — Apparently we have a correct spoon drawer.
+14. `H014` — Apparently we have a correct spoon drawer. Chud bureaucracy, yk twin.
 15. `H015` — She was being a total fungus about it.
-16. `H016` — Very fungal behavior.
+16. `H016` — Very fungal behavior. Chud ahhhh regulations.
 17. `H017` — The chud heard me say that.
 18. `H018` — She always hears me say that.
-19. `H019` — My chud wife loves rules nobody voted on.
-20. `H020` — Forks left. Spoons right. Peace impossible.
+19. `H019` — My chud wife loves rules nobody voted on. Unelected fungus, yk.
+20. `H020` — Forks left. Spoons right. I get tires sometimes...
 21. `H021` — Then she brought up the boots.
 22. `H022` — The boots were by the door.
-23. `H023` — Doors are where boots go.
-24. `H024` — The chud says boots go under the bench.
+23. `H023` — "Doors are where boots go." chud ahhhh shit yk twin.
+24. `H024` — The chud says boots go under the bench. Under-the-bench ahhhh household.
 25. `H025` — The bench is also by the door.
 26. `H026` — We agree geographically.
-27. `H027` — Philosophically, we are enemies.
+27. `H027` — Philosophically, we are enemies. Spiritually, that is still my twin.
 28. `H028` — Then the windows flashed purple.
-29. `H029` — I thought the chud had finally become psychic.
+29. `H029` — I thought the chud had finally become psychic. Mind-reader ahhhh wife.
 30. `H030` — She said, “Hank, that is not me.”
-31. `H031` — Very calm for a fungus. Suspiciously calm.
+31. `H031` — Very calm for a fungus. Suspiciously calm, yk twin.
 32. `H032` — The floor pulled sideways.
 33. `H033` — Not down. Sideways.
 34. `H034` — Floors should pick one direction.
@@ -91,22 +91,22 @@ progression.
 37. `H037` — I was struck by her entire argument.
 38. `H038` — Three spoons. Maybe four.
 39. `H039` — She laughed.
-40. `H040` — During a disaster, the fungus laughed at me.
-41. `H041` — That is my chud.
+40. `H040` — During a disaster, the fungus laughed at me. Evil chud activities.
+41. `H041` — That is my chud. Locked in for life, unfortunately.
 42. `H042` — She finds the exact wrong moment delightful.
 43. `H043` — I tried to grab the table.
 44. `H044` — The table left first.
 45. `H045` — If you find it, the left leg wobbles.
-46. `H046` — Do not let that chud pretend it does not.
+46. `H046` — Do not let that chud pretend it does not. Gaslight ahhhh furniture.
 47. `H047` — She has denied that wobble for six years.
 48. `H048` — We put folded paper under it.
 49. `H049` — Her idea.
 50. `H050` — Good idea, honestly.
 51. `H051` — Then the roof made a sound like thunder eating gravel.
 52. `H052` — I called her name.
-53. `H053` — The chud called me a turnip.
+53. `H053` — The chud called me a turnip. Vegetable ahhhh insult.
 54. `H054` — That means she was scared.
-55. `H055` — Usually that fungus says “moldy turnip.”
+55. `H055` — Usually that fungus says “moldy turnip.” She got variants, yk twin.
 56. `H056` — Plain turnip is serious.
 57. `H057` — I remember reaching for her.
 58. `H058` — I remember the green necklace my chud always wears.
@@ -121,28 +121,28 @@ progression.
 67. `H067` — I dug at the front door.
 68. `H068` — The frame shifted when I touched it.
 69. `H069` — I stopped. I am irritating, not stupid.
-70. `H070` — My chud would dispute both parts.
+70. `H070` — My chud would dispute both parts. Professional-hater ahhhh wife.
 71. `H071` — She knows houses better than I do.
 72. `H072` — She fixed the pantry shelf herself.
 73. `H073` — I offered help.
-74. `H074` — The fungus asked me to stand farther away.
+74. `H074` — The fungus asked me to stand farther away. Support role, yk.
 75. `H075` — It has held for four years.
 76. `H076` — The shelf, I mean.
 77. `H077` — I hope the room around it held too.
 78. `H078` — The chud keeps tea behind the blue tin.
 79. `H079` — Emergency money under the flour.
 80. `H080` — Spare key inside the ugly planter.
-81. `H081` — The fungus says the planter is rustic.
+81. `H081` — The fungus says the planter is rustic. Ugly ahhhh pottery.
 82. `H082` — It is shaped like a screaming Bellsprout.
 83. `H083` — I bought it for her.
 84. `H084` — That is not the point.
-85. `H085` — The point is my chud cannot be gone.
+85. `H085` — The point is my chud cannot be gone. Who else is gonna hate like that, yk twin.
 86. `H086` — We still have not settled the spoon question.
-87. `H087` — And I called her a fungus. Accurate at the time.
+87. `H087` — And I called her a fungus. Deserved, respectfully.
 88. `H088` — Quietly. Mostly quietly.
-89. `H089` — The chud called me worse.
+89. `H089` — The chud called me worse. Bars were kinda crazy, yk.
 90. `H090` — Better, too. She is creative.
-91. `H091` — I should have grabbed the chud instead of the table.
+91. `H091` — I should have grabbed the chud instead of the table. Table was not my twin.
 92. `H092` — I knew the table was unreliable.
 93. `H093` — I knew she was right there.
 94. `H094` — I keep thinking she yelled after I landed.
@@ -150,7 +150,7 @@ progression.
 96. `H096` — I cannot move the front wall safely.
 97. `H097` — There may be a gap around the side.
 98. `H098` — You look less likely to collapse it than I am.
-99. `H099` — If the chud insults you, that means she is fine.
+99. `H099` — If the chud insults you, that means she is fine. Verbal-abuse ahhhh vital sign.
 100. `H100` — Please check on my chud wife.
 
 ## Objective text
