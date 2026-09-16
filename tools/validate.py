@@ -17,6 +17,9 @@ Checks (see CHECKS at the bottom):
   hash_csv_wellformed   base-pack/inventory/pack_hashes.csv has the expected columns,
                         64-hex sha256, integer sizes, unique paths
   manifest_sanity       modpack/manifest/*.json have the expected top-level shape
+  template_provenance   every structure template git would publish matches a kits/PROVENANCE.json record
+                        with a permissive licence (and a notice file when third-party); records for
+                        non-permissive sources may only cover gitignored, local-only files
 
 Issues under base-pack/ are reported as warnings by default (we do not own that
 content); pass --strict-base to make them errors.
@@ -36,6 +39,7 @@ import io
 import json
 import re
 import struct
+import subprocess
 import sys
 import zipfile
 from collections import defaultdict
@@ -52,6 +56,8 @@ WALK_ROOTS = [
 ]
 HASH_CSV = ROOT / "base-pack" / "inventory" / "pack_hashes.csv"
 STRUCTURE_MANIFEST = Path("kits/structures/manifests/structure-dependencies.json")
+PROVENANCE = Path("kits/PROVENANCE.json")
+TEMPLATE_SUFFIXES = {".nbt", ".schem", ".schematic", ".litematic", ".mcstructure"}
 SKIP_DIRS = {".git", "__pycache__", ".pytest_cache", "cache"}
 
 try:  # optional parsers
@@ -391,6 +397,73 @@ def check_structure_manifest(ctx: Context) -> None:
     ctx.add("info", rel, f"{len(ids)} verified upstream structures; {len(campaign_ids)} campaign structures")
 
 
+def _glob_regex(pattern: str) -> "re.Pattern[str]":
+    out, i = "", 0
+    while i < len(pattern):
+        if pattern.startswith("**/", i):
+            out, i = out + "(?:.*/)?", i + 3
+        elif pattern[i] == "*":
+            out, i = out + "[^/]*", i + 1
+        elif pattern[i] == "?":
+            out, i = out + "[^/]", i + 1
+        else:
+            out, i = out + re.escape(pattern[i]), i + 1
+    return re.compile(out + r"\Z")
+
+
+def publishable_files(root: Path) -> list[str] | None:
+    """Files git would publish: tracked (even if also ignored) plus untracked files that are not ignored.
+    None when git is unavailable."""
+    try:
+        out = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"], cwd=root,
+                             capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    deleted = set()
+    try:
+        deleted = set(subprocess.run(["git", "ls-files", "-z", "--deleted"], cwd=root, capture_output=True,
+                                     check=True).stdout.decode("utf-8").split("\0"))
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    return sorted({f for f in out.decode("utf-8").split("\0") if f} - deleted)
+
+
+def check_template_provenance(ctx: Context) -> None:
+    """Every publishable structure template has a permissive provenance record in kits/PROVENANCE.json."""
+    rel = PROVENANCE.as_posix()
+    try:
+        data = json.loads((ctx.root / PROVENANCE).read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        ctx.add("error", rel, "missing: provenance is mandatory for every structure template")
+        return
+    except (ValueError, UnicodeDecodeError) as exc:
+        ctx.add("error", rel, f"invalid JSON: {exc}")
+        return
+    permissive = set(data.get("permissive") or [])
+    records = []
+    for n, r in enumerate(data.get("records") or []):
+        if not r.get("paths") or not r.get("licence") or not r.get("source"):
+            ctx.add("error", rel, f"record {n} needs paths, licence and source")
+            continue
+        records.append((r, [_glob_regex(g) for g in r["paths"]]))
+    files = publishable_files(ctx.root)
+    if files is None:
+        ctx.add("error", rel, "git unavailable: cannot tell which templates would be published")
+        return
+    for f in files:
+        if Path(f).suffix.lower() not in TEMPLATE_SUFFIXES:
+            continue
+        match = next((r for r, rx in records if any(x.match(f) for x in rx)), None)
+        if match is None:
+            ctx.add("error", f, "structure template with no provenance record in kits/PROVENANCE.json")
+        elif match["licence"] not in permissive:
+            ctx.add("error", f, f"licence {match['licence']} is not permissive: this file must not be committed "
+                                "(keep it local and gitignored)")
+        elif match["licence"] not in ("original", "generated") and not (
+                match.get("notice") and (ctx.root / match["notice"]).is_file()):
+            ctx.add("error", f, f"third-party {match['licence']} template needs its notice file committed")
+
+
 def _stub(name: str, what: str):
     """Placeholder for a future campaign check. Reports 'skipped' so nobody mistakes it for coverage."""
 
@@ -410,6 +483,7 @@ CHECKS = [
     ("hash_csv_wellformed", check_hash_csv_wellformed),
     ("manifest_sanity", check_manifest_sanity),
     ("structure_manifest", check_structure_manifest),
+    ("template_provenance", check_template_provenance),
     # --- extension points (EXP-001..EXP-007 will define the data these need) ---
     ("duplicate_ids", _stub("duplicate_ids", "duplicate campaign ids across routes/trainers/rewards")),
     ("missing_pokemon_refs", _stub("missing_pokemon_refs", "species/form names that Cobblemon does not know")),
