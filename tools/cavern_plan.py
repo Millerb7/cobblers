@@ -263,7 +263,9 @@ def main(argv=None):
         if prev_y is not None and y < prev_y:
             cmds.append("fill %d %d %d %d %d %d minecraft:stone_brick_stairs[facing=%s] replace #minecraft:replaceable" % (xi - 2, y + 1, zi - 2, xi + 2, y + 1, zi + 2, back))
         prev_y = y
-    for s in range(0, len(stations), 20):
+    # a light every 8 blocks: the floor descends, so the distance from a light to the floor grows faster than the
+    # horizontal step. Measured at 20: 47 of 85 stations sat at block light 0, where monsters spawn
+    for s in range(0, len(stations), 8):
         xi, y, zi, _ = stations[s]
         cmds.append("setblock %d %d %d minecraft:light[level=15] keep" % (xi, y + 3, zi))
     cover = [(s, ground(stations[s][0], stations[s][2]) - (stations[s][1] + 5)) for s in range(3, len(stations) - 3)]
