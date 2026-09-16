@@ -1,0 +1,603 @@
+{
+  "schema": "cobblers.quests/1",
+  "status": "proposed",
+  "state_model": {
+    "authoritative_source": "data/progression.json",
+    "rule": "Quest definitions contain no mutable quest-local state. Every condition and transition reads or writes a typed field in the campaign progression registry.",
+    "default_scope": "player",
+    "supported_scopes": [
+      "player",
+      "world"
+    ],
+    "excluded_scope": "party",
+    "excluded_scope_reason": "The current runtime has no authoritative party membership, shared checkpoint, lock, recovery, or group-reward service.",
+    "field_types": [
+      "boolean",
+      "enum",
+      "integer"
+    ],
+    "quest_field_namespace": "quest.<quest_id>.<field>",
+    "quest_scope_modes": [
+      "player",
+      "world",
+      "mixed"
+    ]
+  },
+  "schema_definition": {
+    "quest_required": [
+      "id",
+      "source",
+      "scope",
+      "optional",
+      "progression_field_refs",
+      "availability",
+      "objectives",
+      "transitions",
+      "multiplayer"
+    ],
+    "transition_required": [
+      "id",
+      "conditions",
+      "effects"
+    ],
+    "condition_kinds": [
+      "all",
+      "any",
+      "held_item",
+      "inventory_contains",
+      "not",
+      "progression_equals",
+      "progression_in"
+    ],
+    "effect_kinds": [
+      "compare_and_set_progression",
+      "consume_held_item",
+      "give_item",
+      "grant_reward_once",
+      "relocate_actor",
+      "set_progression"
+    ],
+    "transaction_rule": "Progression writes and inventory changes in a transition commit atomically for the triggering player. grant_reward_once must durably commit its per-player claim receipt with item delivery. World compare-and-set and actor relocation are idempotent and retryable; they are not represented as one cross-scope transaction.",
+    "progression_registration_rule": "Every progression_field_refs id must be declared exactly once in data/progression.json quest_fields. That registry is authoritative for type, scope, initial value, and allowed values.",
+    "mixed_scope_rule": "A mixed quest declares scope per progression field. World effects use an idempotent compare-and-set transition; rewards and dialogue cursors remain per player."
+  },
+  "design_decisions": [
+    {
+      "id": "gastly_escort_scope",
+      "decision": "per_player_checkpoint_escort",
+      "reason": "One optional side quest does not justify introducing a shared-party state service into every quest schema.",
+      "retained_infrastructure": [
+        "player-owned Gastly actor binding",
+        "per-player proximity checks",
+        "per-player checkpoint progression",
+        "repositioning at the last checkpoint after reconnect or restart",
+        "per-player reward claim"
+      ],
+      "removed_infrastructure": [
+        "party membership and leader identity",
+        "shared checkpoint ownership",
+        "atomic transitions across several players",
+        "leader disconnect handoff",
+        "late-join party reconciliation",
+        "group reward fan-out and eligibility snapshots",
+        "shared battle locking"
+      ],
+      "experience_cost": [
+        "Friends no longer complete one authoritative family rescue together.",
+        "Players standing together may see separate Gastly actors or different checkpoint states.",
+        "A player joining midway must start or resume their own escort rather than inherit a friend's progress."
+      ]
+    }
+  ],
+  "quests": [
+    {
+      "id": "evt_route1_thirsty_stranger",
+      "external_event_id": "EVT-ROUTE1-THIRSTY-STRANGER",
+      "source": "docs/story/events/ROUTE1_THIRSTY_STRANGER.md",
+      "dialogue_id": "dlg_route1_thirsty_stranger",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "accepted_offerings": [
+        {
+          "id": "water_bucket",
+          "item": "minecraft:water_bucket",
+          "verified": true,
+          "consume": 1,
+          "return_item": {
+            "item": "minecraft:bucket",
+            "count": 1
+          }
+        }
+      ],
+      "deferred_offerings": [
+        {
+          "id": "approved_bottled_water",
+          "reason": "The pack's Fresh Water or Pokémon water-bottle item id has not been verified. Add it only after verification."
+        }
+      ],
+      "objectives": [
+        {
+          "id": "hear_request",
+          "active_when": {
+            "field": "quest.evt_route1_thirsty_stranger.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+            "equals": true
+          },
+          "text": "Figure out what the stranger is definitely not asking for."
+        },
+        {
+          "id": "bring_water",
+          "active_when": {
+            "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+            "equals": true
+          },
+          "text": "Bring the stranger water."
+        },
+        {
+          "id": "finish_conversation",
+          "active_when": {
+            "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_thirsty_stranger.completed",
+            "equals": true
+          },
+          "text": "Hear what the stranger has to say."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_thirsty_stranger.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "submit_water_bucket",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+              "value": false
+            },
+            {
+              "kind": "held_item",
+              "hand": "main",
+              "item": "minecraft:water_bucket"
+            },
+            {
+              "kind": "inventory_contains",
+              "item": "minecraft:water_bucket",
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "kind": "consume_held_item",
+              "hand": "main",
+              "item": "minecraft:water_bucket",
+              "count": 1,
+              "target": "triggering_player"
+            },
+            {
+              "kind": "give_item",
+              "item": "minecraft:bucket",
+              "count": 1,
+              "target": "triggering_player"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
+              "value": "tb01"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_thirsty_stranger.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_route1_thirsty_stranger",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route1_thirsty_stranger.reward_claimed",
+              "idempotency_key": "evt_route1_thirsty_stranger:reward_route1_thirsty_stranger:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
+              "value": "ta09"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_thirsty_stranger.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
+              "value": "repeat_beekeeper"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_route1_thirsty_stranger",
+          "status": "item_ids_pending_verification",
+          "intended_contents": [
+            "Black Glasses held-item candidate",
+            "one approved Minecraft music disc",
+            "small pre-Brock capture-supply bundle"
+          ],
+          "implementation_rule": "Do not emit a runtime reward table until every item id and quantity is verified and approved for early-game balance."
+        }
+      ],
+      "repeat_dialogue": {
+        "before_completion": [
+          "repeat_t006",
+          "repeat_t009",
+          "repeat_t015",
+          "repeat_t020"
+        ],
+        "after_completion": "repeat_beekeeper",
+        "after_completion_holding_water": "repeat_prepared"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "shared_chest": "decoration_only",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Verify the final reward item ids and quantities.",
+        "Choose the hut coordinate and place npc_route1_thirsty_stranger."
+      ],
+      "progression_field_refs": [
+        "quest.evt_route1_thirsty_stranger.started",
+        "quest.evt_route1_thirsty_stranger.water_delivered",
+        "quest.evt_route1_thirsty_stranger.reward_claimed",
+        "quest.evt_route1_thirsty_stranger.completed",
+        "quest.evt_route1_thirsty_stranger.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_pallet_crushed_house",
+      "external_event_id": "EVT-PALLET-CRUSHED-HOUSE",
+      "source": "docs/story/events/PALLET_CRUSHED_HOUSE.md",
+      "dialogue_ids": [
+        "dlg_pallet_crushed_house_hank",
+        "dlg_pallet_crushed_house_lena"
+      ],
+      "scope": "mixed",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npcs_remain_after_completion": true
+      },
+      "objectives": [
+        {
+          "id": "listen_to_hank",
+          "scope": "player",
+          "active_when": {
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "equals": "listening"
+          },
+          "complete_when": {
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "equals": "check_house"
+          },
+          "text": "Listen to Hank's account of the crushed house."
+        },
+        {
+          "id": "check_house",
+          "scope": "player",
+          "active_when": {
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "equals": "check_house"
+          },
+          "complete_when": {
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "equals": "complete"
+          },
+          "text": "Check the crushed house for Lena. Look for a safe opening rather than breaking the front wall."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "scope": "player",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "not_started"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "listening"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+              "value": "h001"
+            }
+          ]
+        },
+        {
+          "id": "complete_monologue",
+          "scope": "player",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "listening"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "check_house"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+              "value": "check_house_objective"
+            }
+          ]
+        },
+        {
+          "id": "start_lena_dialogue",
+          "scope": "player",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "check_house"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.house_state",
+              "value": "blocked"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "lena_dialogue"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+              "value": "l001"
+            }
+          ]
+        },
+        {
+          "id": "enter_shared_rescue_recap",
+          "scope": "player",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.house_state",
+              "value": "lena_relocated"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "shared_rescue_recap"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+              "value": "late_lena_recap"
+            }
+          ]
+        },
+        {
+          "id": "finish_rescue_and_reward",
+          "scope": "mixed",
+          "serialization": "world_compare_and_set_then_player_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "lena_dialogue"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "compare_and_set_progression",
+              "field": "quest.evt_pallet_crushed_house.house_state",
+              "scope": "world",
+              "from": "blocked",
+              "to": "lena_relocated",
+              "already_at_target": "success"
+            },
+            {
+              "kind": "relocate_actor",
+              "actor": "npc_pallet_crushed_house_lena",
+              "from_marker": "marker_pallet_crushed_house_interior_safe",
+              "to_marker": "marker_pallet_crushed_house_exterior_safe",
+              "scope": "world",
+              "idempotent": true
+            },
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_pallet_locket",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_pallet_crushed_house.reward_claimed",
+              "idempotency_key": "evt_pallet_crushed_house:reward_pallet_locket:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+              "value": "post_lena_1"
+            }
+          ]
+        },
+        {
+          "id": "claim_reward_after_shared_rescue",
+          "scope": "player",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.house_state",
+              "value": "lena_relocated"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pallet_crushed_house.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_pallet_locket",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_pallet_crushed_house.reward_claimed",
+              "idempotency_key": "evt_pallet_crushed_house:reward_pallet_locket:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.stage",
+              "value": "complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+              "value": "post_lena_1"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_pallet_locket",
+          "status": "item_component_syntax_pending_verification",
+          "intended_item": "Miracle Seed",
+          "display_name": "Pallet Locket",
+          "lore": "A green seed Lena wore for luck. It survived the Worldshift.",
+          "implementation_rule": "Do not emit the reward until the Cobblemon item id and Minecraft 1.21.1 custom-name and lore component syntax are verified."
+        }
+      ],
+      "actor_relocation": {
+        "actor": "npc_pallet_crushed_house_lena",
+        "world_state_field": "quest.evt_pallet_crushed_house.house_state",
+        "initial_state": "blocked",
+        "initial_marker": "marker_pallet_crushed_house_interior_safe",
+        "relocated_state": "lena_relocated",
+        "relocated_marker": "marker_pallet_crushed_house_exterior_safe",
+        "restart_rule": "On load, place Lena at the marker selected by the authoritative world field. Never infer state from current entity position."
+      },
+      "multiplayer": {
+        "dialogue_cursor": "per_player",
+        "house_state": "world",
+        "lena_relocation": "world_idempotent",
+        "reward": "once_per_player_after_world_rescue",
+        "concurrent_finish": "First world compare-and-set relocates Lena; every eligible player independently receives one reward.",
+        "late_player": "Receives a short recap and may claim the reward without replaying the hundred-line monologue."
+      },
+      "generation_blockers": [
+        "Choose exact house, interior-safe, exterior-safe, Hank, and Lena markers.",
+        "Verify the Miracle Seed item id and Minecraft 1.21.1 item component syntax.",
+        "Implement a serialized world compare-and-set and idempotent actor relocation action.",
+        "Decide whether to implement the optional Patient Listener cosmetic; abrupt-close counting is not represented."
+      ],
+      "progression_field_refs": [
+        "quest.evt_pallet_crushed_house.stage",
+        "quest.evt_pallet_crushed_house.dialogue_cursor",
+        "quest.evt_pallet_crushed_house.reward_claimed",
+        "quest.evt_pallet_crushed_house.house_state"
+      ]
+    }
+  ]
+}
