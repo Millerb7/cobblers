@@ -243,23 +243,30 @@ def main(argv=None):
     grade = drop / max(total, 1)
     cmds = ["# tunnel from the cave mouth (%d, %d, y%d) to the cavern (%d, %d, y%d): %d blocks, grade %.3f"
             % (mouth[0], mouth[1], mouth_y, arrival[0], arrival[1], arr_y, total, grade)]
-    prev_y, cover = None, []
-    for s, (x, z) in enumerate(pts):
+    stations = []
+    for s in range(len(pts)):
+        x, z = pts[s]
         y = int(round(mouth_y - drop * s / max(total, 1)))
-        xi, zi = int(round(x)), int(round(z))
         j0 = min(len(pts) - 1, s + 1)
         dx, dz = pts[j0][0] - x, pts[j0][1] - z
         facing = ("east" if dx > 0 else "west") if abs(dx) >= abs(dz) else ("south" if dz > 0 else "north")
-        back = {"east": "west", "west": "east", "north": "south", "south": "north"}[facing]
+        stations.append((int(round(x)), y, int(round(z)), {"east": "west", "west": "east", "north": "south", "south": "north"}[facing]))
+    # 1: seal water around the corridor, 2: carve every station's air, 3: lay floor and stairs, so a later
+    # station's carve cannot take out an earlier station's floor
+    for xi, y, zi, _ in stations[::4]:
+        cmds.append("fill %d %d %d %d %d %d minecraft:stone replace minecraft:water" % (xi - 4, y - 2, zi - 4, xi + 4, y + 7, zi + 4))
+    for xi, y, zi, _ in stations:
         cmds.append("fill %d %d %d %d %d %d minecraft:air" % (xi - 2, y + 1, zi - 2, xi + 2, y + 5, zi + 2))
-        cmds.append("fill %d %d %d %d %d %d minecraft:stone_bricks" % (xi - 2, y, zi - 2, xi + 2, y, zi + 2))
+    prev_y = None
+    for xi, y, zi, back in stations:
+        cmds.append("fill %d %d %d %d %d %d minecraft:stone_bricks replace #minecraft:replaceable" % (xi - 2, y, zi - 2, xi + 2, y, zi + 2))
         if prev_y is not None and y < prev_y:
-            cmds.append("fill %d %d %d %d %d %d minecraft:stone_brick_stairs[facing=%s]" % (xi - 2, y + 1, zi - 2, xi + 2, y + 1, zi + 2, back))
-        if s % 20 == 0:
-            cmds.append("setblock %d %d %d minecraft:light[level=15] keep" % (xi, y + 3, zi))
-        if 2 < s < total - 2:
-            cover.append((s, ground(xi, zi) - (y + 5)))
+            cmds.append("fill %d %d %d %d %d %d minecraft:stone_brick_stairs[facing=%s] replace #minecraft:replaceable" % (xi - 2, y + 1, zi - 2, xi + 2, y + 1, zi + 2, back))
         prev_y = y
+    for s in range(0, len(stations), 20):
+        xi, y, zi, _ = stations[s]
+        cmds.append("setblock %d %d %d minecraft:light[level=15] keep" % (xi, y + 3, zi))
+    cover = [(s, ground(stations[s][0], stations[s][2]) - (stations[s][1] + 5)) for s in range(3, len(stations) - 3)]
     fn["50_tunnel"] = cmds
     report["tunnel"] = {"mouth": [mouth[0], mouth_y, mouth[1]], "arrival": [arrival[0], arr_y, arrival[1]], "waypoints": waypoints,
                         "length_blocks": total, "drop": drop, "grade": round(grade, 3), "max_grade": 0.25,
