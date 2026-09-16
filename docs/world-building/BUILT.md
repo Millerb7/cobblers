@@ -83,20 +83,38 @@ samples inside rock, where light 0 is correct.
 
 ## The trees
 
-### Foothill Woods: three sizes, 12 trees
+### Foothill Woods: three sizes, and the world tree
 
 | Tier | Count | Height | Crown radius | Trunk | Limb storeys |
 | --- | ---: | ---: | ---: | --- | --- |
-| giant (already standing) | 7 | 45 | 14 | 5×5 | 1, at +16 |
-| elder | 4 | 81 | 19 | 7×7 | 2, at +20 and +38 |
-| **world tree** | 1 | **119** | **26** | 13×13 | **3, at +24, +48 and +72** |
+| giant (already standing) | 7 | 45 | 14 | 5x5 | 1, at +16 |
+| elder | 4 | 81 | 19 | 7x7 | 2, at +20 and +38 |
+| **world tree** | 1 | **418** | **78** | **35x35** | **8, at +56 to +322** |
 
-The world tree is at **(2016, 2280)**, ground y116, crown top **y235**. Closest pair in the grove is 30.0 blocks,
-and the canopies never collide because they are stacked in height: giant crowns occupy ground+30..45, elders
-+56..81, the world tree +84..119.
+An elder is a world tree's sapling and takes the species of the wood it lands in, which is why there are seven
+species of them. There is one grown world tree and nothing else on the map is its scale.
 
-**Verified:** trunk continuous through every storey to the crown base, crown at the top, air above it, and **0 of
-365 trunk columns with air beneath them**.
+**The world tree stands at (2016, 2280)**, ground y116, trunk to y457 and crown **y457-535**. The giants' crowns
+top out at y162, so its canopy is a second sky over them rather than anything they touch. Two numbers are not free
+choices: the first limb storey is at +56 to clear every giant crown below it, and the roots reach 26 rather than
+the 60 the tree could carry, because the nearest giant trunk is 34.7 blocks away.
+
+**It needs the raised build limit.** `modpack/datapacks/cobblers_height` takes the overworld to **y-64..y575**
+(`height: 640`, `min_y` unchanged). Values came from the server jar's own datagen, not from memory. Verified live
+after the restart: y575 accepts a block, y576 is "out of this world", y-65 still is.
+
+**It is built from fill commands, not a template.** At 1,264,724 blocks it is far too large for one
+`place template`, so `fill_runs` emits it as run-length fills split across 4 functions (118,234 commands), the same
+mechanism that moved 1.94M blocks into the cavern. The split is needed because `maxCommandChainLength` is 65536.
+
+**The old 119-block tree was removed exactly, not box-filled.** A bounding-box clear would have taken the crowns
+of the giants 35 blocks away. The tree is seeded from sha256 of its name, so rebuilding it with the geometry it was
+generated from reproduces its block set exactly; those 55,860 positions and only those were cleared, in 11,792
+commands, 0 failures.
+
+**Verified after the build:** trunk continuous from y116 to y455, canopy present to y534, air above, trunk 35 wide
+at the base and no trunk at 19 out, canopy reaching 70 blocks from the centre, and every one of the 7 giants and
+4 elders still standing at its true trunk centre.
 
 ### 48 elders over 20 forested sub-regions
 
