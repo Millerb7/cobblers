@@ -21,13 +21,14 @@ routes, the Rift, or the League. Detailed prototypes live in `events/`.
 6. A joke may be long because the player chooses to stay with it. Leaving and
    returning must preserve progress rather than restarting a long monologue.
 
-## First three event packages
+## Detailed event packages
 
-| Event | Place | State | Detailed design |
+| Scope | Place | State | Detailed design |
 | --- | --- | --- | --- |
 | `EVT-PALLET-CRUSHED-HOUSE` | `hometown`, centre (1462, 5293) | Approved concept; exact house coordinate and ruin layout needed | [`events/PALLET_CRUSHED_HOUSE.md`](events/PALLET_CRUSHED_HOUSE.md) |
 | `EVT-ROUTE1-GASTLY-FAMILY` | Pallet-to-Brock route, (1462, 5293) to (1743, 3628) | Mansion site needed; donor candidates identified | [`events/ROUTE1_GASTLY_MANSION.md`](events/ROUTE1_GASTLY_MANSION.md) |
 | `EVT-ROUTE1-THIRSTY-STRANGER` | Pallet-to-Brock route, (1462, 5293) to (1743, 3628) | Hut site and accepted item IDs needed | [`events/ROUTE1_THIRSTY_STRANGER.md`](events/ROUTE1_THIRSTY_STRANGER.md) |
+| Pallet through Gym 3 | Pallet, Routes 1–3, Brock, Misty, and Surge | Fourteen-event package designed; placement and technical proofs needed | [`events/EARLY_GAME_ENCOUNTERS.md`](events/EARLY_GAME_ENCOUNTERS.md) |
 
 ## Pallet damage cluster
 
@@ -98,6 +99,21 @@ anchors, not final NPC positions.
 - **`EVT-G3-KITE-LINE`: Higher Than the Signal.** A resident wants to fly a kite
   above the instruments without tangling the array. Choose a safe launch wind.
   Reward: mountain-weather notes and a cosmetic kite token.
+
+## Route events through Gym 3
+
+Detailed flows, rewards, reset behavior, and multiplayer rules are in
+[`events/EARLY_GAME_ENCOUNTERS.md`](events/EARLY_GAME_ENCOUNTERS.md).
+
+- **`EVT-ROUTE2-ROLLAWAY-GEODUDE`: Downhill From Here.** Follow an escaped
+  handcart downhill and discover that the missing Geodude stopped it before it
+  reached Lake Viltri.
+- **`EVT-ROUTE3-CREEK-WOOPER`: The Dry Crossing.** Recover a supply crate
+  without trampling a Wooper feeding patch. The controlled Wooper encounter is
+  an intentional optional Ground-type answer before Surge.
+- **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** Repair trail signs that
+  rotate during signal pulses while a Nosepass points toward Mt Vessu's
+  equipment instead of north.
 
 ### `gym4_town` — Erika’s town (4309, 1555)
 

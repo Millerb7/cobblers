@@ -63,7 +63,7 @@ measurement is not consent. Repeated use also causes remote effects, false
 readings, and larger unstable boundaries.
 
 Pallet is the Compact's largest apparent success before the story begins. It is
-also evidence that the method failed: Pallet arrived intact, while an occupied
+also evidence that the method failed: Pallet arrived largely intact, while an occupied
 native settlement disappeared.
 
 ## Hoopa

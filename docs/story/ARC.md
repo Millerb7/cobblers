@@ -175,22 +175,26 @@ No one explains the premise.
 The break happens only when the player leaves the settled part of Pallet. The
 route remembered by Pallet's residents is absent. A native trail runs north
 through unfamiliar plains, the skyline is wrong, and expected Kanto landmarks
-cannot be found. The town itself is intact, but its edge does not join the land
-its residents remember.
+cannot be found. Most of the town survived intact, but a small cluster of homes at the exchanged
+edge was crushed by falling and compressed material. Beyond that localized
+damage, Pallet's edge does not join the land its residents remember.
 
 Residents offer incompatible interpretations in short, uncertain fragments:
 storm, attack, earthquake, dream, mass displacement. Oak admits that his maps
 and field knowledge no longer fit. He does not give a formal investigation
-quest. The player's clue is the mismatch itself: Pallet has not been damaged or
-rebuilt; it has been joined cleanly to the wrong ground.
+quest. The player's clue is the mismatch itself: Pallet has not been rebuilt
+into an imitation. Its surviving streets and buildings are the real town,
+joined to the wrong ground, with localized damage where the exchange boundary
+closed badly.
 
 The only useful action is to take the starter and follow the real northbound
 trail toward the nearest critical settlement.
 
 **Knowledge state on departure**
 
-- **Knows:** Pallet is intact; the surrounding terrain is not Kanto; local
-  memories conflict with physical evidence.
+- **Knows:** Pallet survived largely intact; its exchanged edge suffered
+  localized damage; the surrounding terrain is not Kanto; local memories
+  conflict with physical evidence.
 - **Believes:** a single event moved or transformed the town.
 - **Suspects:** someone outside Pallet may have seen what happened.
 - **Does not know:** that this was an exchange, that a native settlement was
@@ -652,7 +656,7 @@ safer, but refusing or missing them cannot block progression.
 
 | Stage | New required fact |
 | --- | --- |
-| Pallet | The town is intact in the wrong geography |
+| Pallet | The town is largely intact, with localized edge damage, in the wrong geography |
 | Brock | Pallet replaced a native settlement |
 | Misty | The faction rescues people from collapsing worlds |
 | Surge | Exchanges can be triggered and steered |
