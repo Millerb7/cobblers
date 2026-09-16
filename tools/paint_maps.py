@@ -63,14 +63,21 @@ TREE_LAYERS = ("allowed",)
 # Plant names are WorldPainter's (org.pepsoft.worldpainter.layers.plants.Plants). "Short Grass" is avoided:
 # WorldPainter 2.27.1 writes it as minecraft:grass, the pre-1.20.3 name. Minecraft upgrades it on chunk load (the
 # chunks carry DataVersion 2860), but Distant Horizons reads region files raw and warns, so the sets stay clear of it.
+# Two-block plants (Tall Grass, Large Fern, Peony, Lilac) are the eye-level wall: a player's eye is at 1.62, so a
+# one-block plant is under it and a two-block plant is in it. Measured on the exported world, Pallet meadows had a
+# tall plant in 1 column in 4.1 -- a 4.1-block sightline, the view a player walks out of the hometown into. The target
+# is 1 in 8 (an 8-block sightline), so the open-ground sets below carry half the tall weight they did, and the
+# difference goes to ferns and flowers, which are one block tall. Halving works whether WorldPainter treats
+# occurrence as a share of the layer or as an absolute chance: either way the tall count halves.
+# Forest-floor sets are left as they were; the forests measured 1 in 11 to 1 in 20 already.
 PLANT_SETS = {
-    "grassland": {"Tall Grass": 12, "Fern": 2, "Dandelion": 1, "Poppy": 1},
-    "meadow_flowers": {"Tall Grass": 6, "Oxeye Daisy": 3, "Cornflower": 3, "Azure Bluet": 2, "Allium": 1, "Dandelion": 2, "Poppy": 2},
-    "blossom": {"Pink Tulip": 4, "Peony": 3, "Lilac": 3, "Tall Grass": 4, "White Tulip": 1},
-    "shrub": {"Sweet Berry Bush": 5, "Azalea": 4, "Flowering Azalea": 2, "Large Fern": 3, "Tall Grass": 6, "Dead Shrub": 1},
+    "grassland": {"Tall Grass": 6, "Fern": 6, "Dandelion": 2, "Poppy": 1, "Oxeye Daisy": 1},
+    "meadow_flowers": {"Tall Grass": 3, "Oxeye Daisy": 4, "Cornflower": 4, "Azure Bluet": 3, "Allium": 1, "Dandelion": 2, "Poppy": 2},
+    "blossom": {"Pink Tulip": 6, "Peony": 1, "Lilac": 2, "Tall Grass": 2, "White Tulip": 3},
+    "shrub": {"Sweet Berry Bush": 5, "Azalea": 4, "Flowering Azalea": 2, "Large Fern": 2, "Tall Grass": 3, "Dead Shrub": 1, "Fern": 4},
     "fern_floor": {"Fern": 8, "Large Fern": 4, "Tall Grass": 2, "Sweet Berry Bush": 1},
-    "dry_scrub": {"Dead Shrub": 6, "Tall Grass": 3},
-    "swamp_floor": {"Blue Orchid": 2, "Fern": 4, "Tall Grass": 4, "Brown Mushroom": 1},
+    "dry_scrub": {"Dead Shrub": 7, "Tall Grass": 1},
+    "swamp_floor": {"Blue Orchid": 3, "Fern": 5, "Tall Grass": 2, "Brown Mushroom": 1},
     "mushrooms": {"Red Mushroom": 1, "Brown Mushroom": 1},
     # forest understory (data/foliage.json types), by how deep inside the forest a column is
     "forest_floor_sparse": {"Fern": 3, "Large Fern": 1, "Brown Mushroom": 1},
