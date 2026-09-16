@@ -36,15 +36,29 @@ SPACING = 36
 MOVE = 8
 # Bigger trees for the same town. `giant` is what the grove is built from and is never regenerated: its prefabs are
 # already standing in the world. `elder` and `world` are additions, built by big_tree below.
+#
+# They are meant to read as the same thing at two ages. An elder is a world tree's sapling -- it takes the species
+# of the wood it lands in, which is why there are seven of them, and it has the same trunk-and-storeys shape at a
+# fifth of the size. There is one grown world tree, at Foothill Woods, and nothing else on the map is its scale.
+#
 #   storeys   limb tiers a town can floor over, `gap` apart; `room` is the clear trunk above the last one
-#   crown     stacked balls from crown_base, (rise, radius, half-depth)
+#   crown     stacked solid balls from crown_base, (rise, radius, half-depth). Fine up to about radius 20; a solid
+#             ellipsoid grows as r^2*h, so a radius-45 one is 135,000 leaves on its own
+#   clusters  the world tree's canopy instead: (rise, ring radius, count, ball radius) rings of balls hung off
+#             branches, which gets a 46-block crown for a third of the blocks and looks like foliage, not a dome
+# The world tree is 418 blocks tall and needs the raised build limit (modpack/datapacks/cobblers_height, y575). At
+# Foothill Woods, ground y116, its crown sits y456-534. Two numbers are not free choices: the first limb storey is
+# at +56 so it clears every giant crown below it (those top out at ground+45), and the roots reach only 26 even
+# though the tree could carry 60 -- the nearest giant trunk is 34.7 blocks away and roots at 60 would plough
+# straight through its base.
 TIERS = {
     "elder": {"floor": 20, "gap": 18, "storeys": 2, "room": 14, "trunk_r": 3, "reach": 17, "limb_r": 2.0,
               "limbs": (7, 10), "root_r": 13, "root_n": 10, "root_top": 6,
               "crown": [(12, 19, 8), (20, 12, 5)]},
-    "world": {"floor": 24, "gap": 24, "storeys": 3, "room": 8, "trunk_r": 6, "reach": 24, "limb_r": 3.0,
-              "limbs": (8, 11), "root_r": 25, "root_n": 16, "root_top": 9,
-              "crown": [(12, 26, 11), (22, 19, 8), (30, 11, 5)]},
+    "world": {"floor": 56, "gap": 38, "storeys": 8, "room": 14, "trunk_r": 17, "reach": 58, "limb_r": 5.0,
+              "limbs": (9, 12), "root_r": 26, "root_n": 32, "root_top": 20,
+              "core": (32, 38, 23),
+              "clusters": [(4, 78, 13, 23), (26, 70, 15, 21), (48, 55, 13, 19), (66, 30, 9, 15)]},
 }
 SPECIES = {"foothill_mixed": "oak", "birch_shore": "birch", "riparian_woods": "oak", "birch_plateau": "birch",
            "drowned_swamp": "mangrove", "broken_oakwood": "dark_oak"}
@@ -116,17 +130,33 @@ def big_tree(kind, variant, tier):
             tip = (c + math.cos(ang) * reach, y0 + rng.uniform(1, 3), c + math.sin(ang) * reach)
             _limb(b, (c, y0, c), tip, t["limb_r"], log_kind)
         tiers_out.append([int(sy), int(sy) + 4])
-    for k in range(t["limbs"][0]):                                    # upper limbs carrying the crown
-        ang = 2 * math.pi * k / t["limbs"][0] + rng.uniform(-0.3, 0.3)
-        r0 = t["crown"][0][1] * 0.7
-        tip = (c + math.cos(ang) * r0, crown_base + rng.uniform(4, 9), c + math.sin(ang) * r0)
-        _limb(b, (c, crown_base - 3, c), tip, t["limb_r"] * 0.6, log_kind)
-        _ball(b, *tip, rng.uniform(6, 8), rng.uniform(4, 5), rng.uniform(6, 8), _leaves(log_kind), rng)
-    for rise, rad, half in t["crown"]:                                # stacked canopy
-        _ball(b, c, crown_base + rise, c, rad, half, rad, _leaves(log_kind), rng, ragged=0.22)
-    top = crown_base + t["crown"][-1][0] + t["crown"][-1][2]
+    if "clusters" in t:                                               # the world tree: a canopy of hung masses
+        cr, ch, cd = t["core"]
+        _ball(b, c, crown_base + cr, c, ch, cd, ch, _leaves(log_kind), rng, ragged=0.2)
+        top = crown_base + cr + cd
+        for rise, ring, count, brad in t["clusters"]:
+            for k in range(count):
+                ang = 2 * math.pi * k / count + rng.uniform(-0.22, 0.22) + rise * 0.11
+                rr = ring * rng.uniform(0.86, 1.06)
+                bx, bz = c + math.cos(ang) * rr, c + math.sin(ang) * rr
+                by = crown_base + rise + rng.uniform(-3, 3)
+                _limb(b, (c, crown_base - 8, c), (bx, by - brad * 0.4, bz), t["limb_r"] * 0.55, log_kind)
+                rx, rz = brad * rng.uniform(0.88, 1.12), brad * rng.uniform(0.88, 1.12)
+                _ball(b, bx, by, bz, rx, brad * 0.62, rz, _leaves(log_kind), rng, ragged=0.26)
+                top = max(top, int(by + brad * 0.62))
+    else:
+        for k in range(t["limbs"][0]):                                # upper limbs carrying the crown
+            ang = 2 * math.pi * k / t["limbs"][0] + rng.uniform(-0.3, 0.3)
+            r0 = t["crown"][0][1] * 0.7
+            tip = (c + math.cos(ang) * r0, crown_base + rng.uniform(4, 9), c + math.sin(ang) * r0)
+            _limb(b, (c, crown_base - 3, c), tip, t["limb_r"] * 0.6, log_kind)
+            _ball(b, *tip, rng.uniform(6, 8), rng.uniform(4, 5), rng.uniform(6, 8), _leaves(log_kind), rng)
+        for rise, rad, half in t["crown"]:                            # stacked canopy
+            _ball(b, c, crown_base + rise, c, rad, half, rad, _leaves(log_kind), rng, ragged=0.22)
+        top = crown_base + t["crown"][-1][0] + t["crown"][-1][2]
     return b, {"tier": tier, "floor_tier_y": tiers_out, "room_clear_y": [storeys[-1] + 5, crown_base - 1],
-               "crown_y": [crown_base, int(top)], "crown_radius": t["crown"][0][1], "limb_reach": t["reach"],
+               "crown_y": [crown_base, int(top)], "crown_radius": (t["clusters"][0][1] if "clusters" in t else t["crown"][0][1]),
+               "limb_reach": t["reach"],
                "trunk": [2 * R + 1, 2 * R + 1], "height": int(top)}
 
 
@@ -195,6 +225,34 @@ def footprint(px, pz, sx, sz, rot):
     xs = [px + c[0] for c in corners]
     zs = [pz + c[1] for c in corners]
     return min(xs), min(zs), max(xs), max(zs)
+
+
+def fill_runs(blocks, origin, comment, limit=30000):
+    """A Builder's blocks as run-length `fill` commands along x, split into functions.
+
+    The world tree is 1.26 million blocks. That is too many for one `place template`: the structure loads its whole
+    block list into memory and places it in a single tick, and the NBT alone runs to several megabytes. The cavern
+    moved 1.94 million blocks as function fills without trouble, so this does the same. Runs are split at `limit`
+    because maxCommandChainLength is 65536 by default and a function over it simply stops partway.
+    """
+    ox, oy, oz = origin
+    runs = {}
+    for (x, y, z), st in blocks.items():
+        runs.setdefault((y, z, st), []).append(x)
+    cmds = []
+    for (y, z, st), xs in sorted(runs.items(), key=lambda kv: (kv[0][0], kv[0][1])):
+        name, props = st
+        spec = name + ("[%s]" % ",".join("%s=%s" % kv for kv in sorted(props)) if props else "")
+        xs.sort()
+        i = 0
+        while i < len(xs):
+            j = i
+            while j + 1 < len(xs) and xs[j + 1] == xs[j] + 1:
+                j += 1
+            cmds.append("fill %d %d %d %d %d %d %s" % (ox + xs[i], oy + y, oz + z, ox + xs[j], oy + y, oz + z, spec))
+            i = j + 1
+    parts = [cmds[i:i + limit] for i in range(0, len(cmds), limit)]
+    return [["# %s (part %d of %d)" % (comment, k + 1, len(parts))] + p for k, p in enumerate(parts)]
 
 
 def _pad(ground, x, z, half, x0, z0):
