@@ -30,6 +30,7 @@ routes, the Rift, or the League. Detailed prototypes live in `events/`.
 | `EVT-ROUTE1-THIRSTY-STRANGER` | Pallet-to-Brock route, (1462, 5293) to (1743, 3628) | Hut site and accepted item IDs needed | [`events/ROUTE1_THIRSTY_STRANGER.md`](events/ROUTE1_THIRSTY_STRANGER.md) |
 | Pallet through Gym 3 | Pallet, Routes 1–3, Brock, Misty, and Surge | Fourteen-event package designed; placement and technical proofs needed | [`events/EARLY_GAME_ENCOUNTERS.md`](events/EARLY_GAME_ENCOUNTERS.md) |
 | Expanded early event bank | Same early-game path | Twenty-eight additional small scenes designed; total is 42 through Gym 3 | [`events/EARLY_GAME_EVENT_BANK.md`](events/EARLY_GAME_EVENT_BANK.md) |
+| Gyms 4–6 event bank | Surge-to-Erika through Sabrina | Thirty-six route and town events designed; placement and technical proofs needed | [`events/MIDGAME_EVENT_BANK.md`](events/MIDGAME_EVENT_BANK.md) |
 
 ## Pallet damage cluster
 
@@ -198,6 +199,16 @@ expanded small-event specifications are in
   rejects new hive sites. The player tests shade, flowers, and distance from
   foot traffic. Reward: honey and an encounter lead.
 
+- **`EVT-G4-SEED-LIBRARY`: Same Name, Different Plant.** Sort native and
+  Compact seed packets by plant and origin without declaring one shared name
+  correct.
+- **`EVT-G4-ROSERIA-RIBBONS`: Pollinator's Route.** Follow Roselia's moved
+  survey ribbons to map the garden's real pollination path.
+- **`EVT-G4-SEWADDLE-CANOPY`: Hemmed In.** Add a proper cloth anchor so Sewaddle
+  stop stitching a refugee canopy shut.
+- **`EVT-G4-TANGELA-FOOTPATH`: Preferred Shortcut.** Move a little-used service
+  path around the damp patch Tangela keep reclaiming.
+
 ### `gym5_town` — Koga’s town (4646, 2446)
 
 - **`EVT-G5-CROAGUNK-CURE`: Bad Medicine Face.** A Croagunk keeps stealing
@@ -207,6 +218,15 @@ expanded small-event specifications are in
   trace one abandoned Compact anchor boundary. Reward: tracker supplies and a
   small piece of nonessential lore.
 
+- **`EVT-G5-GRIMER-FILTER`: The Clean Side.** Clear upstream cloth from a reed
+  filter instead of blaming the Grimer sunning beside it.
+- **`EVT-G5-VENONAT-LANTERNS`: Purple Glass.** Spread Venonat away from a
+  medicine path by adding purple covers to safer lamps.
+- **`EVT-G5-WOOPER-SLUICE`: Mud Where It Belongs.** Open a side basin so Wooper
+  move their excellent pond away from an herb-drying yard.
+- **`EVT-G5-SKORUPI-BASKET`: Handle With Gloves.** Use fragrant herbs to coax
+  Skorupi out from beneath a moving gathering basket.
+
 ### `gym6_town` — Sabrina’s town (6196, 3398)
 
 - **`EVT-G6-SLOWPOKE-FERRY`: The Ferry Is Thinking.** A Slowpoke chosen as a
@@ -215,6 +235,65 @@ expanded small-event specifications are in
 - **`EVT-G6-DREAM-SKETCH`: Someone Else’s Party.** A child sketches one of the
   player’s party Pokémon before seeing it. Sabrina treats it as ordinary local
   sensitivity rather than prophecy. Reward: a personalized sketch cosmetic.
+
+- **`EVT-G6-ABRA-QUEUE`: Back of the Line.** Rearrange one service turn around
+  an Abra that teleports backward whenever its number is called.
+- **`EVT-G6-MIME-JR-CROSSING`: The Wall Is Real Enough.** Turn Mime Jr.'s
+  invisible traffic warning into a real cart-stop signal.
+- **`EVT-G6-CHIMECHO-BELL`: One Note Underwater.** Follow Chimecho harmonics to
+  a hand bell beneath the dock.
+- **`EVT-G6-ASTER-LANTERN`: A Window for Home.** Help Jo Aster place a family
+  lantern where the refugee lodging and lakeshore can both see it.
+
+## Route events for Gyms 4–6
+
+Detailed specifications are in
+[`events/MIDGAME_EVENT_BANK.md`](events/MIDGAME_EVENT_BANK.md).
+
+### Route 4 — Surge to Erika
+
+- **`EVT-R4-MERIAN-DELIBIRD`: Wrong Hut Again.** Correct the trail marker for
+  a parcel labeled only with an unfamiliar three-arch symbol.
+- **`EVT-R4-ABSOL-WARNING`: Before the Wind.** Read the bent grass and secure
+  a travel camp before the gust that an Absol came to warn about.
+- **`EVT-R4-DEERLING-CROSSING`: Six Seasons at Once.** Give a mixed Deerling
+  herd a neutral crossing instead of forcing one habitat label onto it.
+- **`EVT-R4-APPLIN-CART`: One Apple Too Heavy.** Find the Applin shifting among
+  produce crates and offer it a safe basket.
+- **`EVT-R4-GREEDENT-CACHE`: Emergency Means Later.** Redirect Greedent's cache
+  away from the sealed public ration shelf.
+- **`EVT-R4-MAP-SEAM`: Both Maps Are Right.** Mark shared physical landmarks on
+  a native map and a Compact survey without declaring either false.
+
+### Route 5 — Erika to Koga
+
+- **`EVT-R5-SHROOMISH-RING`: Back Where You Started.** Use moss and slope to
+  restore trail arrows moved inward around a Shroomish ring.
+- **`EVT-R5-ARIADOS-WEB`: High Bridge.** Raise one loose Ariados strand while
+  preserving the web catching branches above the path.
+- **`EVT-R5-PARAS-BARK`: The Correct Dead Tree.** Harvest medicinal fungus from
+  a fallen, unoccupied log rather than a Paras habitat.
+- **`EVT-R5-VENIPEDE-LOG`: Queue Underneath.** Build a human crossing beside the
+  hollow log used by a line of Venipede.
+- **`EVT-R5-HERB-MARKERS`: Wrong Red Ribbon.** Reidentify medicinal plants after
+  an apprentice marks every candidate as important.
+- **`EVT-R5-ZORUA-TRACKS`: Too Many Walkers.** Follow multiplying footprints
+  only far enough to offer a curious Zorua a harmless cloth marker.
+
+### Route 6 — Koga to Sabrina
+
+- **`EVT-R6-BERGMITE-REFLECTION`: False Trail Light.** Add a second reflector
+  color so Bergmite reflections do not appear to continue onto the ice.
+- **`EVT-R6-SNORUNT-CAIRN`: Snowball Offering.** Build Snorunt their own cairn
+  beside the stone travel marker they keep rebuilding with snowballs.
+- **`EVT-R6-QUAGSIRE-BOARDWALK`: Missing Board, Present Quagsire.** Repair a
+  boardwalk gap beside the Quagsire currently filling it.
+- **`EVT-R6-GLACIER-BELL`: Ice in the Mouth.** Thaw a weather bell's clapper
+  with a controlled heat panel.
+- **`EVT-R6-DRIFBLIM-BALLOON`: Tether Dispute.** Secure a weather balloon while
+  letting Drifblim keep the bright spare ribbon.
+- **`EVT-R6-MUNNA-REST`: Somebody Else's Nap.** Separate three resting travelers
+  from Munna after they report the same unfamiliar dream.
 
 ### `gym7_town` — Blaine’s town (6074, 4995)
 
@@ -297,9 +376,8 @@ expanded small-event specifications are in
 
 ### `merian_hut` (2813, 1102)
 
-- **`EVT-MERIAN-DELIBIRD`: Wrong Hut Again.** A Delibird repeatedly delivers a
-  package intended for the Displaced City. Reward: alpine supplies and a later
-  city callback.
+Merian hut's Delibird parcel scene is cataloged under Route 4 and specified
+in the Gym 4–6 event bank.
 
 ### `gorge_hamlet` (6814, 4367)
 
