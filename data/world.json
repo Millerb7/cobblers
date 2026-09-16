@@ -6,21 +6,33 @@
   "source_root": null,
 
   "heightmap": {
-    "path": "land_8k_16_eroded_rivers.png",
+    "path": "land_8k_16_rescaled_b145.png",
     "width": 8192,
     "height": 8192,
     "channel": "gray",
     "bit_depth": 16,
-    "sha256": "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
     "status": "ok",
+    "rescaled_from": {
+      "path": "land_8k_16_sculpted_relief.png",
+      "sha256": "fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81",
+      "generator": "python tools/rescale.py --apply",
+      "note": "Vertical rescale, option B: identity at or below y145, gain rising to 5 over a 55-block blend, so the peak goes y200 to y310 and the world tree reads 1.73x the tallest mountain instead of 2.67x. The gain is applied to the smoothed LANDFORM, not per column: per column it multiplies local relief too, and the largest adjacent step went 22.8 to 96.8 blocks, one-column walls rather than mountains. Quantisation is floor-preserving, so 0 columns at or below y145 change integer elevation; the nearest-value quantiser moved 48,568 of them. docs/world-building/VERTICAL_RESCALE.md"
+    },
+    "sculpted_from": {
+      "path": "land_8k_16_eroded_rivers.png",
+      "sha256": "f5ff054ee340a34a861d1790abe5824e22e5c9541c62563b06fc24d7d0c92afd",
+      "generator": "python tools/sculpt.py apply (data/sculpt.json)",
+      "note": "Local brushes on the river cut: coasts by class, massif asymmetry and summits, volcano cones, hillside relief against contour rings. Protected sites, river channels and lake basins keep their columns (checked: lake basins 0 changed, river water under 0.003 blocks, settlement footprints 0). docs/world-building/SCULPT.md"
+    },
     "derived_from": {
       "path": "land_8k_16_eroded.png",
       "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
       "generator": "python tools/grade_rivers.py plan && python tools/grade_rivers.py cut --replace",
       "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
     },
-    "previous_sha256": ["526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6", "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7", "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1"],
-    "revision_note": "2026-09-14 (third): the tarn at the head of the ravine above Peak Pond became a lake (level 127) with a graded outflow to the north coast; 2,786 columns changed, nothing raised. The previous cut file is in cobblers-server-retired/2026-09-14-tarn/. 2026-09-14 (second):the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
+    "previous_sha256": ["fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81", "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6", "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7", "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1", "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161", "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5", "217d411c6ce31c8385b5797ac4e12cc764d3f46f0d78016622033ba62098b735", "924253ad30e088ba4e18ea4c7b585e2bb6d3313e67cc80e833d28706cc7ac736"],
+    "revision_note": "2026-09-16 (vertical rescale, option B): mountains raised without moving anything built. The elevation curve is the identity at or below y145 and gains to 5x over a 55-block blend, taking the peak y200 to y310, relief above y145 from 55 to 165 blocks, and massif slope above y145 from p90 0.390 to 0.854 (7.5 percent of that ground now over 45 degrees, from 0). y145 is where six independent constraints sit: the highest elder tree y144.4, the highest water y127.0, the cavern surface y134.7, the grove y114.9-118.1, the ridge governing the Pallet sightline y139.0, and the p90 of land elevation y144.14. 0 columns at or below y145 change integer elevation. 2026-09-15 (fourth, not exported): the major river starts where its path first runs between valley walls (10 blocks within 250 on both sides, three samples 48 apart), 817 blocks down the path at (3136, 1636) on the Glacial Tear trough floor, restoring the trough creek; the lower river keeps its original course (within 2 blocks) and reaches. Rivers cut f5ff054e. Previous files in cobblers-server-retired/2026-09-15-valley-head-files/. 2026-09-15 (third): the major river starts where its path first drains 0.13 km2, in the Glacial Tear valley at (3732, 2232), not 1,661 blocks higher on the flank above Merian, where the cut ran along the mountainside and straight across the plain (tools/grade_rivers.py HEAD_KM2); rivers re-cut (6b6352bc) and the sculpt re-applied; relief noise now normalised independently of terrain so edits stay local. Previous files in cobblers-server-retired/2026-09-15-river-head/. 2026-09-15 (second): hillside relief added to the sculpt (data/sculpt.json relief): amplitude 10 x regional grade, capped at 2.5 blocks, stretched down the fall line, so contour rings break into spurs and gullies; largest change 4.9 blocks; footprints, basins, channels and the hometown area unchanged. The previous sculpt file land_8k_16_sculpted.png stays beside it. 2026-09-15: the import is the sculpted derivative of the river cut: coasts by class, massif asymmetry and summits, volcano cones (tools/sculpt.py).2026-09-14 (third): the tarn at the head of the ravine above Peak Pond became a lake (level 127) with a graded outflow to the north coast; 2,786 columns changed, nothing raised. The previous cut file is in cobblers-server-retired/2026-09-14-tarn/. 2026-09-14 (second): the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
   },
 
   "import": {
@@ -28,7 +40,7 @@
     "low_in": 0.0,
     "high_in": 0.996078431,
     "low_out": 10.093458,
-    "high_out": 200,
+    "high_out": 310,
     "water_level": 62,
     "clamp_low": true,
     "clamp_high": true,
@@ -38,31 +50,31 @@
 
   "bounds": { "min_x": 0, "min_z": 0, "max_x": 8191, "max_z": 8191 },
 
-  "vertical": { "min_y": 10, "max_y": 200, "sea_level": 62 },
+  "vertical": { "min_y": 10, "max_y": 310, "sea_level": 62 },
 
   "export": {
     "tool": "WorldPainter 2.27.1 via tools/reexport.py and tools/worldpainter/export_world.js",
     "map_format": "org.pepsoft.anvil.1.20.5",
     "name": "cobblers-10240",
     "worldpainter_levels": {
-      "image_low": -32.125,
+      "image_low": -20.342,
       "image_high": 65278,
       "world_low": 10,
-      "world_high": 200,
-      "note": "WorldPainter world levels are whole numbers, so 10.093458 is written as image level -32.125 -> y10. Same line."
+      "world_high": 310,
+      "note": "WorldPainter world levels are whole numbers, so low_out 10.093458 is written as an image level below zero. The line is now 0 -> y10.093458, 65278 -> y310, i.e. 0.004594373 blocks an image level, so y10 falls at image level -20.342 (it was -32.125 when the line topped out at y200). Same construction, new slope."
     },
     "export_margin_blocks": 1280,
     "canvas": { "min_x": -1280, "min_z": -1280, "max_x": 9471, "max_z": 9471 },
     "border": { "centre": 4096, "size": 10240, "min_x": -1024, "min_z": -1024, "max_x": 9215, "max_z": 9215 },
     "buffer_note": "1024 blocks of ocean inside the border plus a 256-block ring outside it. The ring is never reachable; it exists so chunks loaded within view distance of the border are already written and nothing generates outside the border.",
-    "spawn": [3400, 3400],
+    "spawn": [1461, 5306],
     "seed_policy": "Carried from the previous world's level.dat. Not committed: the public repo records only its sha256.",
     "seed_sha256": "48202407c92bc5d07cd215b93f631b384a5f7dde58e993e7bc9f7365e03563f3",
     "worldpainter_project": "cobblers-10240.world",
-    "worldpainter_project_sha256": "a2d8e09ec7ec7ad8c1546bb01192fcd4517b085a181bb1bbe04114e79bb34a46",
-    "painted": {"date": "2026-09-14", "maps": "tools/paint_maps.py from data/regions.json paint_presets, data/landmarks.json water bodies and ravines, and data/rivers.json graded courses (per-column water levels, bed material, river biome)", "note": "Preview paint on the river-cut heightmap. See docs/world-building/REEXPORT.md for the export and its known issues."},
+    "worldpainter_project_sha256": "cd6439ea2a2ae3f519803b1bdbd0da1ed44dee213e360e027f70414ba7317e77",
+    "painted": {"date": "2026-09-15", "maps": "tools/paint_maps.py from data/regions.json paint_presets (with scree), data/landmarks.json water bodies and ravines, data/rivers.json graded courses (per-column water levels, bed material, river biome), shore materials by coast class (build/sculpt/coast_class.png), and data/foliage.json forests: 77,750 custom objects from kits/structures/foliage at computed positions, including five landmark trees", "note": "Paint on the sculpted heightmap. See docs/world-building/REEXPORT.md for the export and its known issues."},
     "worldpainter_project_note": "Beside the heightmap under source_root. Painting starts from this file; its hash changes when it is saved again.",
-    "exported": "2026-09-14",
+    "exported": "2026-09-15",
     "carried_from_previous_level_dat": ["WorldGenSettings", "DataPacks", "GameRules", "Difficulty", "DifficultyLocked", "GameType", "allowCommands", "hardcore"],
     "measured_ceiling_y": 201,
     "measured_ceiling_note": "WorldPainter does not clamp at the top of the line: source values above 65406 reach y200.75 and round to y201 (0.88% of land). The design clamp stays 200."

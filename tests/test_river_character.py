@@ -755,7 +755,7 @@ def _paint_setup(tmp_path, monkeypatch, sha=PAINT_SHA, courses_cut=("flows",)):
     biome = np.full((PN, PN), WARM_ID, np.uint8)
     biome[:, 64:] = COLD_ID
     terr = np.full((PN, PN), PP.TERRAIN_CODES["GRASS"], np.uint8)
-    trees = {k: np.full((PN, PN), 9, np.uint8) for k in PP.TREE_LAYERS}
+    trees = {k: np.ones((PN, PN), np.uint8) for k in PP.TREE_LAYERS}   # the "allowed" mask starts at 1
     plants = {k: np.ones((PN, PN), bool) for k in PP.PLANT_SETS}
     frost = np.ones((PN, PN), bool)
     out = tmp_path / "paint"
@@ -839,12 +839,14 @@ def test_bed_banks_and_biome_follow_reaches(painted_rivers):
     assert t[5, 20] == PP.TERRAIN_CODES["GRASS"] and b[5, 20] == WARM_ID
 
 
-# removing this lets trees stand in the river and snow sit on moving water
+# removing this lets trees stand in the river or on its banks, and snow sit on moving water
 def test_trees_plants_and_frost_cleared_on_the_water(painted_rivers):
     _, _, wet = _paint_oracle(painted_rivers["doc"]["courses"][0], painted_rivers["heights"])
+    assert list(painted_rivers["trees"]) == ["allowed"]
     for k, layer in painted_rivers["trees"].items():
         assert (layer[wet] == 0).all(), k
-        assert layer[5, 5] == 9, "trees away from the river are kept"
+        assert layer[30 - 4, 20] == 0 and layer[30 - 5, 100] == 0, "a trunk may not stand on the bank either"
+        assert layer[5, 5] == 1, "ground away from the river stays allowed"
     for k, layer in painted_rivers["plants"].items():
         assert not layer[wet].any(), k
     assert not painted_rivers["frost"][wet].any()
@@ -855,7 +857,7 @@ def test_trees_plants_and_frost_cleared_on_the_water(painted_rivers):
 def test_courses_not_cut_are_not_painted(painted_rivers):
     assert not (painted_rivers["out"] / "river_uncut.png").exists()
     assert (painted_rivers["terr"][80:100, :] == PP.TERRAIN_CODES["GRASS"]).all()
-    assert (painted_rivers["trees"]["PineForest"][80:100, :] == 9).all()
+    assert (painted_rivers["trees"]["allowed"][80:100, :] == 1).all()
 
 
 # removing this lets river water be painted on a heightmap that does not have the channels cut into it
@@ -866,6 +868,20 @@ def test_paint_rivers_refuses_a_cut_that_is_not_the_imported_heightmap(tmp_path,
         PP.paint_rivers(rp, heights, biome, terr, trees, plants, frost, out)
     assert np.array_equal(terr, before)
     assert not list(out.glob("river_*.png"))
+
+
+# removing this lets paint_rivers refuse the sculpted import (whose river channels the sculpt keeps) or paint rivers on
+# a sculpt made from a different cut
+def test_paint_rivers_accepts_the_cut_a_sculpt_was_made_from(tmp_path, monkeypatch):
+    rp, heights, biome, terr, trees, plants, frost, out, _ = _paint_setup(tmp_path, monkeypatch)
+    wp = tmp_path / "data" / "world.json"
+    wp.write_text(json.dumps({"heightmap": {"sha256": "9" * 64, "sculpted_from": {"sha256": PAINT_SHA}}}),
+                  encoding="utf-8")
+    assert [m["name"] for m in PP.paint_rivers(rp, heights, biome, terr, trees, plants, frost, out)] == ["flows"]
+    wp.write_text(json.dumps({"heightmap": {"sha256": PAINT_SHA, "sculpted_from": {"sha256": "9" * 64}}}),
+                  encoding="utf-8")
+    with pytest.raises(SystemExit):
+        PP.paint_rivers(rp, heights, biome, terr, trees, plants, frost, out)
 
 
 # ================================================================ validate_data rivers
@@ -938,6 +954,254 @@ def test_check_rivers_without_derived_from_compares_to_the_heightmap(tmp_path):
     assert not _river_findings(_rivers_ctx(tmp_path, hm, doc))
     errs = _river_findings(_rivers_ctx(tmp_path, hm, _derived_doc(computed_from_sha256=CUT_SHA)))
     assert len(errs) == 1 and "computed from" in errs[0]
+
+
+# ---------------------------------------------------------------- the major river's head: valley walls
+#
+# grade_rivers.walled_stations and valley_head run on synthetic heights below. plan() applies the head inline: it
+# truncates the graded stations at the head, characterises the whole path (_trunk_full), drops the reaches above the
+# head chainage and shifts the rest, and counts the removed upper path in the sizing drainage (_trunk_upper). That
+# slicing lives inside plan(), which needs the whole planning context, so it is not unit-tested here: the validator
+# checks what plan records in rivers.json instead.
+
+WALL_N = 600
+COURSE_Z = 300
+SURFACE = 80.0
+
+
+def _course(x0=20, x1=580, z=COURSE_Z):
+    """A straight dense course along x, one station per block, water at SURFACE."""
+    st = [(x, z, SURFACE - 3, -1) for x in range(x0, x1)]
+    return st, [SURFACE] * len(st)
+
+
+def _walls(north=True, south=True, rise=15.0, gap=100, x_from=0, x_to=WALL_N):
+    """Ground at SURFACE everywhere, raised by `rise` beyond `gap` blocks from the course on the chosen sides."""
+    h = np.full((WALL_N, WALL_N), SURFACE, np.float32)
+    if north:
+        h[:COURSE_Z - gap, x_from:x_to] += rise
+    if south:
+        h[COURSE_Z + gap + 1:, x_from:x_to] += rise
+    return h
+
+
+# removing this lets a trough with valley walls on both sides read as open ground, so the head never moves off the
+# hillside onto the confined valley floor
+def test_walled_stations_trough_with_two_walls_is_walled():
+    st, surf = _course()
+    rows = G.walled_stations(_walls(), st, surf)
+    assert rows and all(len(r) == 5 for r in rows), "(chainage, x, z, walled, station index)"
+    assert all(r[3] for r in rows)
+    assert [r[0] for r in rows] == [G.WALL_STEP * k for k in range(len(rows))], "one sample every WALL_STEP blocks"
+    assert (rows[0][1], rows[0][2]) == (20, COURSE_Z)
+    assert all(st[r[4]][:2] == (r[1], r[2]) for r in rows), "each row's index is the station it sampled"
+
+
+# removing this lets a hillside with ground rising on one side only count as a valley (the rule needs both sides)
+@pytest.mark.parametrize("north,south", [(True, False), (False, True)])
+def test_walled_stations_one_wall_is_not_walled(north, south):
+    st, surf = _course()
+    assert not any(r[3] for r in G.walled_stations(_walls(north=north, south=south), st, surf))
+
+
+# removing this lets a wall just under WALL_RISE, or one beyond WALL_REACH, count (and a wall exactly at the rise, or
+# inside the reach, fail to count)
+@pytest.mark.parametrize("rise,gap,walled", [
+    (G.WALL_RISE - 0.1, 100, False), (G.WALL_RISE, 100, True),
+    (15.0, G.WALL_REACH + 2, False), (15.0, G.WALL_REACH - 12, True),
+])
+def test_walled_stations_rise_and_reach_thresholds(rise, gap, walled):
+    st, surf = _course()
+    rows = G.walled_stations(_walls(rise=rise, gap=gap), st, surf)
+    assert rows and all(r[3] is walled for r in rows), (rise, gap, [r[3] for r in rows][:5])
+
+
+# removing this lets the head start at the first walled sample (or a run of two) instead of the first of WALL_RUN
+# consecutive walled samples, so a short confined gap on the hillside becomes the river's head
+def test_valley_head_needs_consecutive_walled_samples():
+    st, surf = _course()
+    h = np.full((WALL_N, WALL_N), SURFACE, np.float32)
+    gap = 100
+    for x_from, x_to in ((100, 170), (300, WALL_N)):         # samples x 116 and 164 walled, then x 308 onward
+        h[:COURSE_Z - gap, x_from:x_to] += 15
+        h[COURSE_Z + gap + 1:, x_from:x_to] += 15
+    i, d, rows = G.valley_head(h, st, surf)
+    walled = [r[1] for r in rows if r[3]]
+    assert walled[:2] == [116, 164] and 212 not in walled, "the fixture has a run of two before the real head"
+    assert d == 288 and st[i][:2] == (308, COURSE_Z)
+    assert G.WALL_RUN == 3
+
+
+# removing this lets a course that never runs between walls report a head (and move it)
+def test_valley_head_is_none_when_never_walled():
+    st, surf = _course()
+    i, d, rows = G.valley_head(_walls(north=False), st, surf)
+    assert (i, d) == (None, None) and rows and not any(r[3] for r in rows)
+
+
+# removing this lets valley_head return a station other than the one it sampled: the station after it where the
+# chainage rounds up (a diagonal course), or index 1 for a course walled from its first station, which plan's
+# `if i_head:` would treat as a move and cut one station off the trunk while recording 0 blocks moved
+@pytest.mark.parametrize("case", ["walled_from_start", "diagonal"])
+def test_valley_head_index_is_the_station_of_the_walled_sample(case):
+    if case == "walled_from_start":
+        st, surf = _course()
+        h = _walls()
+    else:
+        n = 900
+        zz, xx = np.mgrid[0:n, 0:n]
+        across = (zz - xx) / np.sqrt(2)
+        h = np.where((np.abs(across) > 100) & (xx + zz >= 500), SURFACE + 15, SURFACE).astype(np.float32)
+        st = [(k, k, SURFACE - 3, -1) for k in range(20, 860)]
+        surf = [SURFACE] * len(st)
+    i, d, rows = G.valley_head(h, st, surf)
+    first = next(r for k, r in enumerate(rows) if all(q[3] for q in rows[k:k + G.WALL_RUN]))
+    assert st[i][:2] == (first[1], first[2]), (case, i, st[i][:2], first)
+    assert (i, d) == (first[4], first[0])
+    if case == "walled_from_start":
+        assert (i, d) == (0, 0), "a head at the first station is index 0 at chainage 0: no move, nothing cut"
+    else:
+        assert i > 0 and d > 0
+
+
+# ---------------------------------------------------------------- validate_data: the recorded head rule
+
+WALLS = {"wall_rise_blocks": 10.0, "wall_reach_blocks": 250, "consecutive_stations": 3, "station_spacing_blocks": 48}
+
+
+def _head_doc(**rule):
+    trunk = _course_row("major_river_trunk", poly=[[3136, 1636, 104.12, 101.32], [3162, 1662, 102.53, 99.73]])
+    trunk.update(river="major_river", source={"kind": "system_head", "x": 3136, "z": 1636},
+                 reaches=[{"from_m": 0, "to_m": 65, "catchment_km2": 1.037}])
+    shrews = _course_row("shrews", poly=[[100, 100, 90.0, 87.0], [110, 100, 89.0, 86.0]])
+    shrews["source"] = {"kind": "inland_end"}
+    outflow = _course_row("lake_outflow", poly=[[200, 100, 90.0, 87.0], [210, 100, 89.0, 86.0]])
+    outflow["source"] = {"kind": "lake_outflow"}
+    head_rule = dict(WALLS, rule="valley_walls", path_head={"x": 2504, "z": 1444, "ground_y": 170.9},
+                     moved_blocks_along_path=817)
+    head_rule.update(rule)
+    survey = [{"course": "shrews", "source_kind": "inland_end", "walled_from_start": True,
+               "rule_would_move_head_blocks": 0, "walled_samples": 24, "samples": 38}]
+    return _derived_doc(parameters={"grid_blocks": 4, "valley_head": {"wall_rise": 10.0, "wall_reach": 250, "run": 3,
+                                                                      "step": 48}},
+                        courses=[trunk, shrews, outflow],
+                        major_river={"courses": ["major_river_trunk"], "head_rule": head_rule,
+                                     "head_rule_survey_other_courses": survey})
+
+
+def _head_errors(tmp_path, doc, severity=V.ERROR):
+    return _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, doc), severity)
+
+
+# removing this lets every head-rule breaking case below pass on a fixture that was already failing
+def test_head_rule_baseline_passes(tmp_path):
+    findings = _rivers_ctx(tmp_path, DERIVED_HM, _head_doc())
+    assert _river_findings(findings) == [] and _river_findings(findings, V.WARNING) == []
+
+
+# removing this lets the fixture's wall values drift from tools/grade_rivers.py, so the cases below test other numbers
+def test_head_rule_fixture_values_are_the_codes():
+    code = ROOT / "tools" / "grade_rivers.py"
+    assert {k: V._module_constant(code, c) for k, (c, _) in V.HEAD_RULE_CONSTANTS.items()} == WALLS
+    assert (G.WALL_RISE, G.WALL_REACH, G.WALL_RUN, G.WALL_STEP) == (10.0, 250, 3, 48)
+
+
+# removing this lets the real plan lose its head rule, record other wall values than the code's, or start the trunk
+# somewhere other than its first graded station
+def test_real_rivers_head_rule_passes():
+    ctx = V.Context(ROOT / "data", None, V.Report())
+    V.check_schema(ctx)
+    V.check_rivers(ctx)
+    bad = [f.message for f in ctx.report.findings if f.check == "rivers" and f.severity in (V.ERROR, V.WARNING)]
+    assert bad == []
+
+
+# removing this lets a plan record a head it did not choose by the valley-wall rule, with other wall values than the
+# code's or the plan parameters', a negative move, a trunk source off its first station, or a malformed survey
+@pytest.mark.parametrize("change,needle", [
+    (lambda d: d["major_river"].pop("head_rule"), "head_rule is missing"),
+    (lambda d: d["major_river"]["head_rule"].update(rule="catchment"), 'is \'catchment\', not "valley_walls"'),
+    (lambda d: d["major_river"]["head_rule"].update(wall_rise_blocks=12.0), "wall_rise_blocks 12.0 is not tools/grade_rivers.py WALL_RISE 10.0"),
+    (lambda d: d["major_river"]["head_rule"].update(wall_reach_blocks=200), "wall_reach_blocks 200 is not tools/grade_rivers.py WALL_REACH 250"),
+    (lambda d: d["major_river"]["head_rule"].update(consecutive_stations=2), "consecutive_stations 2 is not tools/grade_rivers.py WALL_RUN 3"),
+    (lambda d: d["major_river"]["head_rule"].update(station_spacing_blocks=64), "station_spacing_blocks 64 is not tools/grade_rivers.py WALL_STEP 48"),
+    (lambda d: d["major_river"]["head_rule"].pop("wall_reach_blocks"), "wall_reach_blocks must be a number > 0"),
+    (lambda d: d["parameters"]["valley_head"].update(run=4), "is not parameters.valley_head.run 4"),
+    (lambda d: d["parameters"].pop("valley_head"), "parameters.valley_head is missing"),
+    (lambda d: d["major_river"]["head_rule"].update(moved_blocks_along_path=-48), "moved_blocks_along_path must be a number >= 0"),
+    (lambda d: d["major_river"]["head_rule"].pop("path_head"), "path_head needs x and z"),
+    (lambda d: d["courses"][0]["source"].update(x=3140), "is not its first graded station (3136, 1636)"),
+    (lambda d: d["courses"][0].update(source={"kind": "system_head", "x": 2504, "z": 1444}), "is not its first graded station"),
+    (lambda d: d["major_river"].update(courses=["nowhere"]), "does not name a trunk course"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(course="ghost"), "names course 'ghost', which is not in courses"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(course="major_river_trunk"), "surveys the trunk itself"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(course="lake_outflow"), "a lake outflow"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"].append(dict(d["major_river"]["head_rule_survey_other_courses"][0])), 'lists "shrews" twice'),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(walled_samples=40), "needs integer samples >= walled_samples"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(walled_from_start="yes"), "walled_from_start must be true or false"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(rule_would_move_head_blocks=96), "walled from its start but the rule would move its head 96"),
+    (lambda d: d["major_river"]["head_rule_survey_other_courses"][0].update(rule_would_move_head_blocks=-1), "rule_would_move_head_blocks must be null or a number >= 0"),
+])
+def test_head_rule_breaks_are_errors(tmp_path, change, needle):
+    doc = _head_doc()
+    change(doc)
+    errs = _head_errors(tmp_path, doc)
+    assert any(needle in e for e in errs), errs
+
+
+# removing this lets a trunk source a few blocks off its first station, inside the same grid cell (the head is chosen
+# on the 4-block routing grid), be reported as broken
+def test_head_rule_source_within_one_grid_cell_passes(tmp_path):
+    doc = _head_doc()
+    doc["courses"][0]["source"].update(x=3139, z=1633)
+    assert _head_errors(tmp_path, doc) == []
+
+
+# removing this lets a plan that found no walled stretch pass silently (it keeps the path head): it is a warning
+def test_head_rule_without_a_walled_stretch_warns(tmp_path):
+    doc = _head_doc(moved_blocks_along_path=None)
+    assert _head_errors(tmp_path, doc) == []
+    assert any("found no walled stretch" in w for w in _head_errors(tmp_path, doc, V.WARNING))
+
+
+# removing this lets rivers.json keep wall values the code no longer uses (plan not rerun after a constant changed)
+def test_head_rule_values_must_match_the_code_constants(tmp_path, monkeypatch):
+    code = tmp_path / "grade_rivers.py"
+    code.write_text("FACTOR = 4\nWALL_RISE = 12.0\nWALL_REACH = 250\nWALL_RUN = 3\nWALL_STEP = 48\n", encoding="utf-8")
+    monkeypatch.setattr(V, "GRADE_RIVERS", code)
+    errs = _head_errors(tmp_path, _head_doc())
+    assert errs == ["major_river.head_rule.wall_rise_blocks 10.0 is not tools/grade_rivers.py WALL_RISE 12.0; rerun "
+                    "tools/grade_rivers.py plan"], errs
+
+
+# removing this lets a plan without a major river be reported as breaking the head rule
+def test_no_major_river_no_head_rule_findings(tmp_path):
+    assert _river_findings(_rivers_ctx(tmp_path, DERIVED_HM, _derived_doc())) == []
+
+
+SCULPT_SHA = "d" * 64
+SCULPTED_HM = {"sha256": SCULPT_SHA, "derived_from": {"path": "base.png", "sha256": BASE_SHA},
+               "sculpted_from": {"path": "cut.png", "sha256": CUT_SHA}}
+
+
+# removing this lets the validator reject the sculpt chain (authored -> river cut -> sculpt -> import) that
+# paint_maps accepts, or accept a sculpt made from something other than the recorded cut
+def test_check_rivers_follows_the_sculpt_chain(tmp_path):
+    assert not _river_findings(_rivers_ctx(tmp_path, SCULPTED_HM, _derived_doc()))
+    stale = dict(SCULPTED_HM, sculpted_from={"path": "cut.png", "sha256": "e" * 64})
+    errs = _river_findings(_rivers_ctx(tmp_path, stale, _derived_doc()))
+    assert len(errs) == 1 and "sculpted_from" in errs[0] and "not the river cut" in errs[0]
+
+
+# removing this lets a sculpted world pass when the cut output is the imported (sculpted) file itself, which would
+# mean the sculpt input and the cut disagree
+def test_check_rivers_with_a_sculpt_does_not_accept_the_import_as_the_cut(tmp_path):
+    doc = _derived_doc()
+    doc["cut"]["output"]["sha256"] = SCULPT_SHA
+    errs = _river_findings(_rivers_ctx(tmp_path, SCULPTED_HM, doc))
+    assert len(errs) == 1 and "sculpted_from" in errs[0]
+    broken = dict(SCULPTED_HM, sculpted_from={"path": "cut.png"})
+    assert len(_river_findings(_rivers_ctx(tmp_path, broken, _derived_doc()))) == 1
 
 
 # removing this lets a stored course that rises, or whose water is under the sea, pass validation

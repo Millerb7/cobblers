@@ -6080,117 +6080,37 @@
   {
    "id": "major_river",
    "kind": "river",
-   "name": "Major river (unnamed): Merian to the east coast",
+   "name": "Major river (unnamed): the Glacial Tear to the east coast",
    "status": "built",
-   "status_basis": "Chosen by catchment: the Tilpey system drains 14.0 km2, the largest on the map, with the longest descending path (3389 blocks) and the most tributaries (8). Its trunk runs from the flank above Merian down the Glacial Tear into Lake Tilpey and out to the east coast. Graded, incised, with floodplain and terraces where it is at least 16 blocks wide.",
+   "status_basis": "Chosen by catchment: the Tilpey system drains 14.0 km2, the largest on the map, with the longest descending path and the most tributaries. The trunk starts where that path first runs between valley walls (ground 10 blocks above the water within 250 blocks on both sides, at three samples 48 blocks apart; tools/grade_rivers.py WALL_*): (3135, 1635) on the floor of the Glacial Tear trough. From there a 5-6-block meltwater creek runs about 780 blocks down the trough, then the river widens to 18-28 with floodplain and terraces into Lake Tilpey and out to the east coast. The first 817 blocks of the path, cut along the mountainside above Merian with no bank on the downhill side, are not a river.",
    "water": "allowed",
    "anchor": {
-    "x": 3214,
-    "z": 1714
+    "x": 4066,
+    "z": 2574
    },
    "axes": [
     {
      "id": "channel",
      "polyline": [
       [
-       2506,
-       1446
-      ],
-      [
-       2530,
-       1406
-      ],
-      [
-       2562,
-       1350
-      ],
-      [
-       2626,
-       1346
-      ],
-      [
-       2682,
-       1346
-      ],
-      [
-       2738,
-       1374
-      ],
-      [
-       2784,
-       1394
-      ],
-      [
-       2831,
-       1427
-      ],
-      [
-       2910,
-       1506
-      ],
-      [
-       2990,
-       1586
-      ],
-      [
-       3038,
-       1618
-      ],
-      [
-       3118,
-       1618
-      ],
-      [
-       3157,
-       1657
-      ],
-      [
-       3214,
-       1714
-      ],
-      [
-       3681,
-       2181
-      ],
-      [
-       3728,
-       2228
-      ],
-      [
-       3773,
-       2273
+       3135,
+       1635
       ],
       [
        3819,
        2319
       ],
       [
-       3865,
-       2365
-      ],
-      [
-       4066,
-       2566
-      ],
-      [
        4150,
        2666
       ],
       [
-       4184,
-       2700
+       4746,
+       3198
       ],
       [
-       4302,
-       2818
-      ],
-      [
-       4526,
-       3026
-      ],
-      [
-       4574,
-       3026
+       4746,
+       3198
       ],
       [
        4746,
@@ -6218,17 +6138,17 @@
       ]
      ],
      "section_width": 400,
-     "from": "above Merian",
+     "from": "the Glacial Tear trough floor, where the path first runs between valley walls",
      "to": "east coast",
      "basis": "graded courses major_river_trunk, lake_tilpey_outflow"
     }
    ],
    "measured": {
-    "length_blocks": 3437,
+    "length_blocks": 2618,
     "high_end": {
-     "x": 2506,
-     "z": 1446,
-     "bed": 168.8
+     "x": 3135,
+     "z": 1635,
+     "bed": 101.4
     },
     "low_end": {
      "x": 6970,
@@ -6236,15 +6156,15 @@
      "bed": 53.0
     },
     "surface_y": [
-     169.9,
+     104.2,
      62.0
     ],
     "width_blocks": [
-     3,
+     5,
      32
     ],
     "centre_depth_blocks": [
-     1.1,
+     2.8,
      9.0
     ],
     "drains_end_to_end": true,

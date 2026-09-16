@@ -1514,7 +1514,8 @@
    "centre": {
     "x": 1092,
     "z": 5532,
-    "ground_y": 35.3
+    "ground_y": 68.0,
+    "ground_note": "Was recorded as 35.3, which is SEABED: 26.7 blocks under the sea. The site search read a level sea floor as level ground (its own footprint says slope mean 0.0, max 0.0). Nothing within 103 blocks is an islet, so the island is built by tools/islet.py: 2,628 columns, 1,413 of them above water, crown y70, about 72,900 blocks. Ground is now y63-70, median 65."
    },
    "footprint": {
     "shape": "square",
@@ -1582,11 +1583,11 @@
    "working_name": "The Scar (Mt Vessu summit)",
    "display_name": null,
    "for": "The empty footprint where the Displaced City stood: a bare flat summit with foundations and a road that ends at nothing.",
-   "why_here": "Mt Vessu's summit is already a flat bare plateau (the terrain is clipped at y200), which is exactly the spec's 'bare flat footprint'. It is 408 blocks above Surge's town, so the gym 3 town sees it, and 900 blocks from the Displaced City's entrance across the Merian cirque.",
+   "why_here": "Mt Vessu's old clipped summit plateau is kept as one deliberate flat: the sculpt pass (tools/sculpt.py) presses the Scar to y194 as a scraped table just below the true summit (y200, 330 blocks north-west), and breaks the rest of the plateau into ridges. It is 408 blocks above Surge's town, so the gym 3 town sees it, and 900 blocks from the Displaced City's entrance across the Merian cirque.",
    "centre": {
     "x": 2110,
     "z": 950,
-    "ground_y": 200.0
+    "ground_y": 194.0
    },
    "footprint": {
     "shape": "square",
@@ -1597,8 +1598,8 @@
     "max_x": 2260,
     "max_z": 1100,
     "ground_y": [
-     200.0,
-     200.0
+     194.0,
+     194.0
     ],
     "slope_degrees": {
      "mean": 0.0,
@@ -1929,6 +1930,346 @@
     "distance_blocks": 1757
    },
    "buildability": "301-block square under 8 degrees, 14 blocks of relief: ruins sit on it as found"
+  },
+  {
+   "id": "great_oak_pallet",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "The Great Oak (Pallet Meadows)",
+   "display_name": null,
+   "for": "A giant oak alone in open meadow: the first thing a new trainer can see from the first leg and walk off the path toward.",
+   "why_here": "Pallet Meadows is open plains, so a 40-block oak with a crown 46 across reads for more than a kilometre. It stands east of the first leg, near enough to the hometown to be seen from the edge of town and far enough (over 300 blocks) that reaching it is a choice.",
+   "kind": "landmark_tree",
+   "centre": {
+    "x": 1800,
+    "z": 5184,
+    "ground_y": 103.5
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 61,
+    "min_x": 1770,
+    "min_z": 5154,
+    "max_x": 1830,
+    "max_z": 5214,
+    "ground_y": [
+     102.4,
+     105.6
+    ],
+    "slope_degrees": {
+     "mean": 2.1,
+     "max": 5.1
+    },
+    "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
+   },
+   "subregion": "pallet_meadows",
+   "region": "pallet_fields",
+   "nearby": [
+    {
+     "landmark": "river_of_shrews",
+     "distance_blocks": 473
+    },
+    {
+     "landmark": "arrow_lake",
+     "distance_blocks": 930
+    },
+    {
+     "landmark": "watering_hole",
+     "distance_blocks": 1050
+    }
+   ],
+   "distance_from_critical_path_blocks": 339,
+   "nearest_leg": {
+    "from": "hometown",
+    "to": "gym1_town",
+    "at_fraction": 0.1
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "hometown",
+    "distance_blocks": 355
+   },
+   "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_great_oak.nbt); the glade is left open",
+   "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
+  },
+  {
+   "id": "sentinel_spruce_tarn",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "The Sentinel (tarn clearing, Peak Pond Hollow)",
+   "display_name": null,
+   "for": "A 75-block spruce in a clearing of the old growth, beside the hidden tarn at the head of the dry ravine.",
+   "why_here": "Inside the old growth nothing else stands above 50 blocks, so the Sentinel's spire shows over the canopy from the gym 3 to 4 and 4 to 5 legs; the clearing, the tarn and the ravine head are found only by walking in under the trees.",
+   "kind": "landmark_tree",
+   "centre": {
+    "x": 3264,
+    "z": 1008,
+    "ground_y": 129.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 57,
+    "min_x": 3236,
+    "min_z": 980,
+    "max_x": 3292,
+    "max_z": 1036,
+    "ground_y": [
+     126.5,
+     134.0
+    ],
+    "slope_degrees": {
+     "mean": 5.5,
+     "max": 9.8
+    },
+    "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
+   },
+   "subregion": "peak_pond_hollow",
+   "region": "northern_downs",
+   "nearby": [
+    {
+     "landmark": "ravine_head_tarn",
+     "distance_blocks": 23
+    },
+    {
+     "landmark": "peak_pond_creek",
+     "distance_blocks": 144
+    },
+    {
+     "landmark": "merian",
+     "distance_blocks": 188
+    }
+   ],
+   "distance_from_critical_path_blocks": 396,
+   "nearest_leg": {
+    "from": "gym3_town",
+    "to": "gym4_town",
+    "at_fraction": 0.41
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "merian_hut",
+    "distance_blocks": 461
+   },
+   "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_sentinel_spruce.nbt); the glade is left open",
+   "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
+  },
+  {
+   "id": "patriarch_wedge",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "The Patriarch (Wedge ridge)",
+   "display_name": null,
+   "for": "An enormous flat-crowned dark oak on the crest of the Wedge, standing over the Rift.",
+   "why_here": "The Wedge is the dark-forested ridge between the Rift and the glacier trough. From Victory Road on the Rift floor and rim the ridge line is the skyline, and a crown 43 across breaks it; the climb up out of the Rift to reach it is the discovery.",
+   "kind": "landmark_tree",
+   "centre": {
+    "x": 4272,
+    "z": 3600,
+    "ground_y": 146.7
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 61,
+    "min_x": 4242,
+    "min_z": 3570,
+    "max_x": 4302,
+    "max_z": 3630,
+    "ground_y": [
+     142.8,
+     148.0
+    ],
+    "slope_degrees": {
+     "mean": 3.6,
+     "max": 7.5
+    },
+    "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
+   },
+   "subregion": "wedge_south",
+   "region": "the_wedge",
+   "nearby": [
+    {
+     "landmark": "rift",
+     "distance_blocks": 54
+    },
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 488
+    },
+    {
+     "landmark": "major_river",
+     "distance_blocks": 622
+    }
+   ],
+   "distance_from_critical_path_blocks": 266,
+   "nearest_leg": {
+    "from": "gym8_town",
+    "to": "league",
+    "at_fraction": 0.6
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "rift_rim_stop",
+    "distance_blocks": 642
+   },
+   "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_patriarch_dark_oak.nbt); the glade is left open",
+   "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
+  },
+  {
+   "id": "cherry_elder_shrew",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "The Cherry Elder (above Shrew Lake)",
+   "display_name": null,
+   "for": "An ancient leaning cherry with a pink crown 42 across on the shoulder above Shrew Lake, petals under it.",
+   "why_here": "Cherry country around Shrew Lake is groves in lawns; this one tree on the rise above the lake is pink against the plateau from the first legs and from Victory Road's climb, a colour landmark rather than a height one.",
+   "kind": "landmark_tree",
+   "centre": {
+    "x": 3408,
+    "z": 3840,
+    "ground_y": 143.5
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 57,
+    "min_x": 3380,
+    "min_z": 3812,
+    "max_x": 3436,
+    "max_z": 3868,
+    "ground_y": [
+     140.7,
+     144.6
+    ],
+    "slope_degrees": {
+     "mean": 3.8,
+     "max": 7.5
+    },
+    "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
+   },
+   "subregion": "shrew_lake_shores",
+   "region": "shrew_lakes",
+   "nearby": [
+    {
+     "landmark": "rift",
+     "distance_blocks": 193
+    },
+    {
+     "landmark": "shrew_lake",
+     "distance_blocks": 246
+    },
+    {
+     "landmark": "river_of_shrews",
+     "distance_blocks": 700
+    }
+   ],
+   "distance_from_critical_path_blocks": 523,
+   "nearest_leg": {
+    "from": "gym8_town",
+    "to": "league",
+    "at_fraction": 0.69
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "rift_rim_stop",
+    "distance_blocks": 344
+   },
+   "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_cherry_elder.nbt); the glade is left open",
+   "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
+  },
+  {
+   "id": "weeping_elder_tilpey",
+   "order": null,
+   "role": "outpost",
+   "tier": "outpost",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "The Weeping Elder (island in Lake Tilpey)",
+   "display_name": null,
+   "for": "A domed giant with curtains of leaves on the flat island in Lake Tilpey, reached only across water.",
+   "why_here": "The island (about 240 by 135 blocks, y81) rises out of the region's largest lake, so the tree has open water on every side and is seen across the lake from the gym 5 to 6, 6 to 7 and 7 to 8 legs; getting there needs a boat or a surfing Pokemon.",
+   "kind": "landmark_tree",
+   "centre": {
+    "x": 5640,
+    "z": 4176,
+    "ground_y": 81.1
+   },
+   "footprint": {
+    "shape": "square",
+    "class": "single_site",
+    "size_blocks": 61,
+    "min_x": 5610,
+    "min_z": 4146,
+    "max_x": 5670,
+    "max_z": 4206,
+    "ground_y": [
+     80.9,
+     81.1
+    ],
+    "slope_degrees": {
+     "mean": 0.2,
+     "max": 1.3
+    },
+    "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
+   },
+   "subregion": "tilpey_waters",
+   "region": "tilpey_lakeland",
+   "nearby": [
+    {
+     "landmark": "lake_tilpey",
+     "distance_blocks": 376
+    },
+    {
+     "landmark": "glacial_tear",
+     "distance_blocks": 436
+    },
+    {
+     "landmark": "tilpey_south_west_outlet",
+     "distance_blocks": 605
+    }
+   ],
+   "distance_from_critical_path_blocks": 762,
+   "nearest_leg": {
+    "from": "gym6_town",
+    "to": "gym7_town",
+    "at_fraction": 0.79
+   },
+   "waystone": {
+    "kind": "none"
+   },
+   "gates": [],
+   "nearest_settlement": {
+    "id": "gym7_town",
+    "distance_blocks": 927
+   },
+   "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_weeping_elder.nbt); the glade is left open",
+   "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
   }
  ],
  "not_placed": "Nothing is built. Waystone positions in data/progression.json stay null until the towns are built; each gymN_town id here is the town those flags name.",

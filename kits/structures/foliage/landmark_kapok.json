@@ -1,0 +1,10 @@
+{
+ "group": "landmark_kapok",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  19,
+  2,
+  21
+ ]
+}

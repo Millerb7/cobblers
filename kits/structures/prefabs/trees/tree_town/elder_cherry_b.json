@@ -1,0 +1,55 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/tree_town/elder_cherry_b",
+ "kind": "trees",
+ "set": "tree_town",
+ "name": "elder_cherry_b",
+ "author": "tools/tree_grove.py",
+ "source": {
+  "file": "generated",
+  "imported": "2026-09-15",
+  "size": [
+   40,
+   83,
+   41
+  ],
+  "blocks": 19917
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  16,
+  2,
+  17
+ ],
+ "tier": "elder",
+ "habitat": {
+  "tier": "elder",
+  "floor_tier_y": [
+   [
+    20,
+    24
+   ],
+   [
+    38,
+    42
+   ]
+  ],
+  "room_clear_y": [
+   43,
+   55
+  ],
+  "crown_y": [
+   56,
+   81
+  ],
+  "crown_radius": 19,
+  "limb_reach": 17,
+  "trunk": [
+   7,
+   7
+  ],
+  "height": 81
+ },
+ "notes": "trunk base at template (trunk_origin); the 7x7 trunk spans +0..+6 in x and z from it"
+}

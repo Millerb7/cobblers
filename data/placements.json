@@ -1,0 +1,656 @@
+{
+ "schema": "cobblers.placements/1",
+ "status": "draft",
+ "note": "Structure instances placed by command. tools/place_town.py turns a settlement's entries into a datapack function (pads, /place template with rotation, jigsaw blocks replaced by their final state, donor loot removed, paths, waystone, world spawn), so a placement can be repeated exactly after a re-export. Positions are the minimum corner of each building's footprint after rotation; y comes from the terrain (the median ground under the footprint, levelled into a pad). Templates are the MIT CobblemonCityTowns donors copied under cobblers: (docs/world-building/STRUCTURE_CATALOG.md).",
+ "settlements": {
+  "hometown": {
+   "centre": [
+    1462,
+    5293
+   ],
+   "footprint_from": "data/towns.json hometown",
+   "composition": "A small coastal town on Pallet Meadows' upper bench. The main street runs north-south and leaves the town north as the first route toward gym 1; it crosses the east-west street at the Pallet sign's crossroads, the town centre. The Pokemon Center and Poke Mart face each other across the main street just north of the crossroads, where a returning trainer arrives. Five family houses line the cross street's western arm, on the lower ground that looks out over the sea. Oak's Lab stands apart on its own lane on the higher south-east corner. The waystone is beside the crossroads; players spawn on the main street south of the sign.",
+   "status": "proposed: composition for a human to accept or rework in Axiom",
+   "roads": [
+    {
+     "id": "main_street",
+     "width": 3,
+     "surface": "minecraft:dirt_path",
+     "polyline": [
+      [
+       1461,
+       5226
+      ],
+      [
+       1461,
+       5352
+      ]
+     ]
+    },
+    {
+     "id": "cross_street",
+     "width": 3,
+     "surface": "minecraft:dirt_path",
+     "polyline": [
+      [
+       1403,
+       5292
+      ],
+      [
+       1522,
+       5292
+      ]
+     ]
+    },
+    {
+     "id": "lab_lane",
+     "width": 3,
+     "surface": "minecraft:dirt_path",
+     "polyline": [
+      [
+       1461,
+       5318
+      ],
+      [
+       1486,
+       5318
+      ]
+     ]
+    },
+    {
+     "id": "route_north",
+     "width": 3,
+     "surface": "minecraft:dirt_path",
+     "follow_leg": "hometown->gym1_town",
+     "from": [
+      1461,
+      5226
+     ],
+     "length_blocks": 220
+    }
+   ],
+   "waystone": {
+    "position": [
+     1467,
+     5286
+    ],
+    "facing": "west",
+    "unlock": "not yet: placed unactivated; the flag-driven lock (EXP-020) is not wired for the hometown"
+   },
+   "spawn": [
+    1461,
+    5306
+   ]
+  },
+  "gym1_town": {
+   "centre": [
+    1743,
+    3628
+   ],
+   "footprint_from": "data/towns.json gym1_town",
+   "status": "proposed: plan data for a human to compose from in Axiom; nothing built",
+   "plan": {
+    "reading": "From the hometown the route climbs onto the Viltri Plateau and enters from the south-west. The approach street rises gently NE straight into the plaza, so the Pokemon Center is the first building ahead (west side, door facing the plaza) and the Mart faces it across the square. The gym stands alone on the south-east knoll, the highest ground in town (y141-142): seen from the plaza over its lane, reached by climbing to it. The route leaves due north up the avenue toward Lake Viltri and Misty.",
+    "entries": [
+     {
+      "from": "hometown",
+      "at": [
+       1654,
+       3736
+      ],
+      "street": "approach_sw"
+     }
+    ],
+    "exits": [
+     {
+      "to": "gym2_town",
+      "at": [
+       1756,
+       3520
+      ],
+      "street": "north_avenue"
+     }
+    ],
+    "streets": [
+     {
+      "id": "approach_sw",
+      "polyline": [
+       [
+        1654,
+        3736
+       ],
+       [
+        1700,
+        3676
+       ],
+       [
+        1736,
+        3640
+       ]
+      ],
+      "width": 5,
+      "surface": "minecraft:polished_andesite",
+      "max_grade": 0.08
+     },
+     {
+      "id": "north_avenue",
+      "polyline": [
+       [
+        1756,
+        3600
+       ],
+       [
+        1756,
+        3520
+       ]
+      ],
+      "width": 5,
+      "surface": "minecraft:polished_andesite",
+      "max_grade": 0.08
+     },
+     {
+      "id": "gym_lane",
+      "polyline": [
+       [
+        1776,
+        3632
+       ],
+       [
+        1800,
+        3644
+       ],
+       [
+        1826,
+        3650
+       ]
+      ],
+      "width": 4,
+      "surface": "minecraft:cobblestone",
+      "max_grade": 0.12
+     },
+     {
+      "id": "west_lane",
+      "polyline": [
+       [
+        1736,
+        3596
+       ],
+       [
+        1662,
+        3596
+       ]
+      ],
+      "width": 3,
+      "surface": "minecraft:cobblestone",
+      "max_grade": 0.1
+     }
+    ],
+    "plaza": {
+     "rect": [
+      1736,
+      3600,
+      1776,
+      3640
+     ],
+     "y": 138,
+     "surface": "minecraft:stone_bricks"
+    },
+    "anchors": [
+     {
+      "id": "gym1_pokecenter",
+      "role": "pokecenter",
+      "template": "cobblers:f4/services/pokecenter",
+      "rect": [
+       1711,
+       3612,
+       1732,
+       3634
+      ],
+      "facing": "east",
+      "why": "first building ahead of a player walking in from the hometown; its door opens onto the plaza"
+     },
+     {
+      "id": "gym1_pokemart",
+      "role": "pokemart",
+      "template": "cobblers:f4/services/structure_pokemart",
+      "rect": [
+       1778,
+       3602,
+       1800,
+       3623
+      ],
+      "facing": "west",
+      "why": "faces the Center across the plaza, so the two services read as a pair"
+     },
+     {
+      "id": "gym1_gym",
+      "role": "gym",
+      "template": null,
+      "rect": [
+       1806,
+       3656,
+       1845,
+       3703
+      ],
+      "facing": "north",
+      "level": 141,
+      "why": "the knoll is the highest ground in town: a rock gym on the rock, visible from the plaza, reached up its own lane"
+     }
+    ],
+    "house_lots": {
+     "along": [
+      "approach_sw",
+      "north_avenue",
+      "west_lane"
+     ],
+     "size": [
+      12,
+      14
+     ],
+     "setback": 3,
+     "gap": 4,
+     "max_lot_relief": 4
+    },
+    "waystone": {
+     "position": [
+      1756,
+      3606
+     ],
+     "facing": "south",
+     "note": "flag gym1_cleared (data/progression.json); plaza north edge, on the way out"
+    },
+    "paving": {
+     "main": "minecraft:polished_andesite",
+     "lanes": "minecraft:cobblestone",
+     "plaza": "minecraft:stone_bricks",
+     "why": "a rock-gym town paved in worked stone: grey andesite streets, rough cobble lanes, a dressed-stone square. Spawn consequences, read from the loaded data: of 4,892 Cobblemon spawn entries only 17 need a base block (quartz in Nether quartz biomes, sand in beach biomes, concrete for Varoom and Revavroom in every overworld biome), and the Cobbleverse datapack repeats Varoom and Revavroom on all 16 concrete colours and adds Terapagos on amethyst in caves. So streets never use concrete. Stone, andesite, cobblestone, mud and prismarine carry no base-block spawn condition: wild Pokemon spawn on them as on any ground in the biome. Hostile mobs need block light 0, so the plan's lamps keep every street block within 14 blocks of a light. Note: the Pokemon Center and Mart donors have white and blue concrete in their roofs and walls, where Varoom can spawn in any town."
+    }
+   }
+  },
+  "gym2_town": {
+   "centre": [
+    1605,
+    2801
+   ],
+   "footprint_from": "data/towns.json gym2_town",
+   "status": "proposed: plan data for a human to compose from in Axiom; nothing built",
+   "plan": {
+    "reading": "The route comes down off the plateau along Lake Viltri's north shore and enters from the south-east with the water on the left. A shore street leads into the plaza; the Pokemon Center stands at its north-west corner facing the square and the Mart across the avenue. South of the plaza a short link reaches the lakeside promenade, and the gym stands on the waterfront between the two piers, facing the town with its back to the lake, so the water is the gym's backdrop and its arena can reach out over it. The route leaves due north up the avenue toward Surge.",
+    "entries": [
+     {
+      "from": "gym1_town",
+      "at": [
+       1664,
+       2846
+      ],
+      "street": "shore_approach"
+     }
+    ],
+    "exits": [
+     {
+      "to": "gym3_town",
+      "at": [
+       1620,
+       2742
+      ],
+      "street": "north_avenue"
+     }
+    ],
+    "streets": [
+     {
+      "id": "shore_approach",
+      "polyline": [
+       [
+        1664,
+        2846
+       ],
+       [
+        1644,
+        2828
+       ],
+       [
+        1636,
+        2820
+       ]
+      ],
+      "width": 5,
+      "surface": "minecraft:mud_bricks",
+      "max_grade": 0.08
+     },
+     {
+      "id": "north_avenue",
+      "polyline": [
+       [
+        1620,
+        2794
+       ],
+       [
+        1620,
+        2742
+       ]
+      ],
+      "width": 5,
+      "surface": "minecraft:mud_bricks",
+      "max_grade": 0.08
+     },
+     {
+      "id": "west_street",
+      "polyline": [
+       [
+        1602,
+        2812
+       ],
+       [
+        1554,
+        2812
+       ]
+      ],
+      "width": 3,
+      "surface": "minecraft:mud_bricks",
+      "max_grade": 0.1
+     },
+     {
+      "id": "promenade_link",
+      "polyline": [
+       [
+        1612,
+        2830
+       ],
+       [
+        1612,
+        2852
+       ]
+      ],
+      "width": 3,
+      "surface": "minecraft:prismarine_bricks",
+      "max_grade": 0.1
+     },
+     {
+      "id": "promenade",
+      "polyline": [
+       [
+        1552,
+        2856
+       ],
+       [
+        1660,
+        2856
+       ]
+      ],
+      "width": 5,
+      "surface": "minecraft:prismarine_bricks",
+      "max_grade": 0.06
+     }
+    ],
+    "plaza": {
+     "rect": [
+      1604,
+      2796,
+      1636,
+      2828
+     ],
+     "y": 107,
+     "surface": "minecraft:prismarine_bricks"
+    },
+    "anchors": [
+     {
+      "id": "gym2_pokecenter",
+      "role": "pokecenter",
+      "template": "cobblers:f4/services/pokecenter",
+      "rect": [
+       1578,
+       2772,
+       1600,
+       2793
+      ],
+      "facing": "south",
+      "why": "on the plaza's north-west corner, its door toward the square a player crosses on arrival"
+     },
+     {
+      "id": "gym2_pokemart",
+      "role": "pokemart",
+      "template": "cobblers:f4/services/structure_pokemart",
+      "rect": [
+       1626,
+       2766,
+       1648,
+       2787
+      ],
+      "facing": "west",
+      "why": "across the avenue from the Center, on the way out north"
+     },
+     {
+      "id": "gym2_gym",
+      "role": "waterfront_gym",
+      "template": null,
+      "rect": [
+       1592,
+       2862,
+       1631,
+       2891
+      ],
+      "facing": "north",
+      "why": "the town's reason to be here is the lake: the gym fronts the promenade and backs onto the water, its south edge at the shoreline"
+     },
+     {
+      "id": "gym2_pier_west",
+      "role": "pier",
+      "template": null,
+      "rect": [
+       1560,
+       2862,
+       1567,
+       2904
+      ],
+      "facing": "south",
+      "why": "a jetty out past the shallows; composition in Axiom, no prep"
+     },
+     {
+      "id": "gym2_pier_east",
+      "role": "pier",
+      "template": null,
+      "rect": [
+       1648,
+       2862,
+       1655,
+       2904
+      ],
+      "facing": "south",
+      "why": "the second jetty frames the gym between the two"
+     }
+    ],
+    "house_lots": {
+     "along": [
+      "north_avenue",
+      "west_street",
+      "shore_approach"
+     ],
+     "size": [
+      10,
+      12
+     ],
+     "setback": 3,
+     "gap": 3,
+     "max_lot_relief": 3
+    },
+    "waystone": {
+     "position": [
+      1620,
+      2800
+     ],
+     "facing": "south",
+     "note": "flag gym2_cleared (data/progression.json); plaza north edge at the avenue"
+    },
+    "paving": {
+     "main": "minecraft:mud_bricks",
+     "promenade_and_plaza": "minecraft:prismarine_bricks",
+     "why": "mud brick streets from the lakeshore clay; prismarine where the town meets the water. Sand is only a spawn condition in beach biomes, and this is not one, but a sand town reads as a beach. Spawn consequences, read from the loaded data: of 4,892 Cobblemon spawn entries only 17 need a base block (quartz in Nether quartz biomes, sand in beach biomes, concrete for Varoom and Revavroom in every overworld biome), and the Cobbleverse datapack repeats Varoom and Revavroom on all 16 concrete colours and adds Terapagos on amethyst in caves. So streets never use concrete. Stone, andesite, cobblestone, mud and prismarine carry no base-block spawn condition: wild Pokemon spawn on them as on any ground in the biome. Hostile mobs need block light 0, so the plan's lamps keep every street block within 14 blocks of a light. Note: the Pokemon Center and Mart donors have white and blue concrete in their roofs and walls, where Varoom can spawn in any town."
+    }
+   }
+  }
+ },
+ "placements": [
+  {
+   "id": "hometown_sign",
+   "settlement": "hometown",
+   "template": "cobblers:f4/pallet/town_centers/sign",
+   "file": "kits/structures/campaign/f4/pallet/town_centers/sign.nbt",
+   "cell": "F2",
+   "kind": "town_centre",
+   "position": {
+    "x": 1456,
+    "z": 5287
+   },
+   "facing": "west",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "none",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_pokecenter",
+   "settlement": "hometown",
+   "template": "cobblers:f4/services/pokecenter",
+   "file": "kits/structures/campaign/f4/services/pokecenter.nbt",
+   "cell": "F2",
+   "kind": "service",
+   "position": {
+    "x": 1432,
+    "z": 5238
+   },
+   "facing": "east",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "180",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_pokemart",
+   "settlement": "hometown",
+   "template": "cobblers:f4/services/structure_pokemart",
+   "file": "kits/structures/campaign/f4/services/structure_pokemart.nbt",
+   "cell": "F2",
+   "kind": "service",
+   "position": {
+    "x": 1467,
+    "z": 5239
+   },
+   "facing": "west",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "180",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_oaks_lab",
+   "settlement": "hometown",
+   "template": "cobblers:f4/pallet/rare_structures/lab",
+   "file": "kits/structures/campaign/f4/pallet/rare_structures/lab.nbt",
+   "cell": "F2",
+   "kind": "lab",
+   "position": {
+    "x": 1487,
+    "z": 5309
+   },
+   "facing": "west",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "none",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_house_1",
+   "settlement": "hometown",
+   "template": "cobblers:f4/pallet/buildings/large2",
+   "file": "kits/structures/campaign/f4/pallet/buildings/large2.nbt",
+   "cell": "F2",
+   "kind": "house",
+   "position": {
+    "x": 1409,
+    "z": 5275
+   },
+   "facing": "south",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "counterclockwise_90",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_house_2",
+   "settlement": "hometown",
+   "template": "cobblers:f4/pallet/buildings/small1",
+   "file": "kits/structures/campaign/f4/pallet/buildings/small1.nbt",
+   "cell": "F2",
+   "kind": "house",
+   "position": {
+    "x": 1426,
+    "z": 5278
+   },
+   "facing": "south",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "counterclockwise_90",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_house_3",
+   "settlement": "hometown",
+   "template": "cobblers:f4/pallet/buildings/small2",
+   "file": "kits/structures/campaign/f4/pallet/buildings/small2.nbt",
+   "cell": "F2",
+   "kind": "house",
+   "position": {
+    "x": 1411,
+    "z": 5297
+   },
+   "facing": "north",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "clockwise_90",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_house_4",
+   "settlement": "hometown",
+   "template": "cobblers:f4/pallet/buildings/small3",
+   "file": "kits/structures/campaign/f4/pallet/buildings/small3.nbt",
+   "cell": "F2",
+   "kind": "house",
+   "position": {
+    "x": 1425,
+    "z": 5297
+   },
+   "facing": "north",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "clockwise_90",
+   "mirror": "none",
+   "status": "planned"
+  },
+  {
+   "id": "hometown_house_5",
+   "settlement": "hometown",
+   "template": "cobblers:f4/pallet/buildings/large1",
+   "file": "kits/structures/campaign/f4/pallet/buildings/large1.nbt",
+   "cell": "F2",
+   "kind": "house",
+   "position": {
+    "x": 1444,
+    "z": 5308
+   },
+   "facing": "east",
+   "anchor_mode": "corner",
+   "y_mode": "surface",
+   "rotation": "180",
+   "mirror": "none",
+   "status": "planned"
+  }
+ ]
+}

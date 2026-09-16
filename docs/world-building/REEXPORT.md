@@ -1,6 +1,164 @@
 # Re-export: cobblers-10240
 
+## 2026-09-16: the Glacial Tear creek, and the first built interiors
+
+**Status: exported, built in, checked, pregenerated.**
+
+| Step | Result |
+| --- | --- |
+| Heightmap | `fd0db59b…` on river cut `f5ff054e…`: the major river starts on the trough floor, so the creek is back (see [`RIVERS.md`](RIVERS.md#the-major-river)) |
+| Retired | `cobblers-server-retired/2026-09-16-pre-creek/` |
+| Export | 2,255 s (tests were running beside it), `seed_match: true`, 484 region files |
+| Hometown | **re-placed, not copied across.** The templates changed (concrete substituted), so placing again applies the fix and seats the buildings on the new ground: 0 gaps in 36 corners and 1,670 columns |
+| Mods | WorldEdit 7.3.8 added and loading beside Axiom 6.0.5 |
+| Built | the Displaced City cavern, the Foothill Woods grove, and terrain prep for gym towns 1 and 2: [`BUILT.md`](BUILT.md) |
+| Distant Horizons | pregen over the whole border |
+
+**The town's buildings are no longer donor-concrete.** `data/spawn_block_policy.json` records the substitution;
+the placed Pokémon Center and Mart now carry `moarconcrete:*_concrete_texture`, so Varoom and Revavroom no longer
+have a base block in any town.
+
+## 2026-09-15 (second and third): hillside relief, seated hometown, major river head
+
+**Status: exported twice, both checked in the region files and over RCON.** Each export was followed by a
+Distant Horizons pregen.
+
+| Step | Relief export | River-head export |
+| --- | --- | --- |
+| Heightmap | `217d411c…` (relief) | `924253ad…` on river cut `6b6352bc…` |
+| Corruption check (`heightmap_check.py`) | ok: 0 tears, 0.39% multiples of 257, 0 duplicate rows | ok, same |
+| Retired | `cobblers-server-retired/2026-09-15-pre-relief/` | `cobblers-server-retired/2026-09-15-river-head/`, with the previous cut and relief files and `rivers.json.before` |
+| Export | 865 s, `seed_match: true`, `.world` `f825eded…` | 878 s, `seed_match: true`, `.world` `25b74090…` |
+| Hometown | copied in (312 chunks) | copied in from the re-seated town (312 chunks) |
+| World checks | tread CV in 2048-block crops: 0.31 → 0.56 (north mountains), 0.23 → 0.43 (Pallet) | no water above y100 within 500 blocks of (2583, 1546) except the lake at y119; 508 river stations at 16-block spacing, 0 bed or water rises |
+| Distant Horizons | pregen complete in 7 minutes | pregen started |
+
+**The hometown between the two exports.**
+- **Restoring the ground:** the placed town was wiped back to pristine terrain by copying chunks from the sculpted
+  export kept before its first copy (`2026-09-15-pre-sculpt/sculpted-export-before-transplant`). Terrain in the
+  hometown rectangle is identical in every export since the sculpt.
+- **The seam:** outside the rectangle, the two exports differ by 457 blocks in the 8-block strips around it. About
+  170 are leaves or logs of a few trees; the rest is underground water pockets.
+- **Re-placing:** the town was placed again with the seating placer. `waystones.dat` was cleared of hometown
+  entries before boot. The original files are `2026-09-15-pre-relief/waystones.dat.before-*`.
+
+**Distant Horizons.**
+- **After the cache move:** the white terrain and hard-edged coloured wedge seen on the flight were Distant
+  Horizons rebuilding. The client cache had been moved away at 08:03. A new one was created at 08:12 and was
+  343.5 MB at its last write (08:28), against the server's 626 MB of LOD data, so the client had received about
+  half of it.
+- **This time:** the client cache was moved again after the relief export. None existed at the river-head export,
+  so the next join rebuilds from scratch again.
+
+## 2026-09-15: sculpted coasts and massifs, the hometown placed
+
+**Status: exported, hometown carried across, checked over RCON, pregenerated.** Nobody had built in the
+hometown, so the copied chunks are the placement as the script left it.
+
+| Step | Result |
+| --- | --- |
+| Retire | Server stopped (0 players). World and `.world` moved to `cobblers-server-retired/2026-09-15-pre-sculpt/` |
+| Export | `reexport.py` with an absolute `--out-dir`; 887 s; 484 region files; `seed_match: true`; spawn (1461, 5306); `.world` sha256 `cd6439ea…` |
+| Hometown | `transplant_chunks.py` over x1376-1567, z4976-5391: 312 region chunks, 37 entity chunks, 12 poi chunks. The untransplanted export is kept beside the retired world (`sculpted-export-before-transplant/`) |
+| Server | Boots, no chunk load errors. `level.dat` spawn is 1461 118 5306 |
+| Checked over RCON | Waystone halves at (1467, 118/119, 5286); main-street path at spawn; donor roof slab at (1482, 129, 5244) |
+| Surface against the heightmap | Caldera floor y104 against 104.0; great-cone crater 178 against 177.7; Mt Vessu 201 against 200.0; NE dome 197 against 197.5; Scar pad 195 against 194.0; spawn 117 against 116.6. The top block sits on the heightmap value, rounded up |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320`, complete in 7.5 minutes |
+| Client LOD cache | `local+ho` moved to `…/2026-09-15-pre-sculpt/client-distant-horizons-cache/` (the client was closed) |
+
+**Found:** the donor Pokémon Center carries its own `waystones:mossy_waystone` at (1449, 122-123, 5256). It is a
+second, unlocked waystone in the hometown.
+
+**Not checked:** how the coasts, cliffs, cones and town read in game. That is the flight.
+
+The preparation notes follow.
+
+**What is ready:**
+- **Heightmap:** `land_8k_16_sculpted.png` (`19abdd39…`), a sculpt of the river cut (`60b241d1…`). Design and
+  numbers: [`SCULPT.md`](SCULPT.md).
+- **Measurements:** cells and regions re-measured.
+- **Paint:** repainted on the sculpted terrain. Shore materials follow the coast class, cold shallows take
+  gravel, and scree bands are painted. 77,750 objects.
+- **Checks on the repaint:** spawn tags 98.85% and 98.17%. Landmark sightlines: Great Oak 21/37, Sentinel 33/81,
+  Patriarch 66/155, Cherry Elder 61/160, Weeping Elder 29/144.
+- **Spawn:** `world.json` `export.spawn` is (1461, 5306), the hometown's main street.
+
+**The live world already has the hometown and its spawn** (`place_town.py`, run on the `6ca95bdc` export).
+
+**Plan when approved:**
+1. Stop the server. Retire the world to `cobblers-server-retired/2026-09-15-pre-sculpt/`.
+2. Run `python tools/reexport.py … --out-dir <absolute server dir>` (a relative path resolves against
+   WorldPainter's folder).
+3. Carry the hometown across. The sculpt left the built area untouched, so its chunks fit the new terrain:
+   ```
+   python tools/transplant_chunks.py --from <retired world> --to <new world> --blocks 1376 4976 1567 5391
+   ```
+   The box is 1376-1567 by 4976-5391, which is 12 by 26 chunks. The tool copies region, entities and poi byte for
+   byte. It was byte-verified on retired worlds, but it has not been boot-tested.
+4. Boot, check the town blocks and spawn in game, run the Distant Horizons pregen, and retire the client LOD cache
+   if the client is closed.
+
+## 2026-09-14 (fifth): foliage pass
+
+**Status: exported, checked in the region files and in game, and pregenerated.** Same heightmap
+(`60b241d1…`), rivers and lakes as the export below; the paint changed.
+
+**Exported twice.** A separate test author found five placement faults in the first export. It was retired
+unplayed to `cobblers-server-retired/2026-09-14-foliage-first-pass/`:
+1. understory was mapped over water (the export itself had none there, because plant layers skip flooded
+   columns);
+2. the 3-block water clearance was only enforced on the 4-block grid;
+3. long objects (fallen logs, boulders) had only four columns checked;
+4. random rotation was not covered: 2x2 trunks turn about the painted column, so three quarters could stand
+   on unchecked columns;
+5. landmark-tree outposts added a 16-block settlement margin on top of their glades.
+
+All five are fixed. The table and checks below are the second export: 78,887 objects, 102 fewer. The sample
+windows and landmark sightlines came out the same.
+
+**Why.** The paint's forests were too packed and too uniform: WorldPainter tree layers at one density per
+preset. They are now placed per forest type as custom objects at computed positions, with five landmark
+trees. Design, method and numbers: [`FOLIAGE.md`](FOLIAGE.md).
+
+| Step | Result |
+| --- | --- |
+| Objects | `tools/foliage_objects.py`: 148 vanilla captures (19 groups) and 53 generated objects (17 groups) in `kits/structures/foliage/` |
+| Paint | 35 object layers, 78,887 objects; understory, floor and `old_growth_pine_taiga` by forest type; spawn tags still 98.85% and 98.17% inside the Craters |
+| Landmark sightlines | `tools/landmark_trees.py check` over terrain and the planned canopy: Great Oak seen from 21 of 37 first-leg points, Sentinel 27 of 81, Patriarch 66 of 155 on Victory Road, Cherry Elder 58 of 160, Weeping Elder 31 of 144 |
+| Export | `reexport.py`. The pre-foliage world is in `cobblers-server-retired/2026-09-14-foliage/`, and the first foliage export (seed carried from it) in `…-foliage-first-pass/`. Second export 1,690 s; 484 region files, 2.28 GB; `seed_match: true`; `.world` sha256 `6ca95bdc…` |
+| Rotation | 120 sampled 2x2 trunks (mega spruce, mega pine, ancient spruce) landed in all four quadrants around their painted column, every one inside the checked 3x3 |
+| Server | boots; border 10240; `cobblers_spawn_tags` enabled |
+| Distant Horizons | `dh pregen start minecraft:overworld 4096 4096 320`, complete; `data/DistantHorizons*` 602 MB |
+| Client LOD cache | `local+ho` moved to the retirement folder again (the client had rejoined since the last export and was closed) |
+
+**Checked in the region files: before and after, in 256 x 256 windows.** "Trunks/ha" counts connected log
+columns two blocks above the ground. "Eye blocked" is the share of columns with a log or leaves at that
+height.
+
+| Window | Trunks/ha before | after | Eye blocked before | after |
+| --- | ---: | ---: | ---: | ---: |
+| Old growth (Peak Pond Hollow, densest giants) | 510 | 24 | 5.1% | 2.2% |
+| Thicket (Northgate Isle) | 534 | 137 | 5.3% | 12.7% |
+| Dark wood (the Wedge) | 960 | 66 | 9.9% | 3.0% |
+| Birch plateau | 518 | 60 | 6.6% | 0.8% |
+| Mossy broadleaf (Long Isle) | 397 | 51 | 5.7% | 3.1% |
+| Foothill mixed | 294 | 61 | 5.1% | 3.7% |
+
+- **Landmark trees:** all five are in place with every log and leaf block of their templates. Crown tops are
+  at y143, 205, 177, 170 and 116.
+- **Old-growth floor sample:** podzol, coarse dirt and moss, no grass block.
+
+**Checked in game:**
+- `minecraft:leaf_litter` survives chunk load (VanillaBackport);
+- the Sentinel's trunk is at (3264, 130, 1008);
+- `execute if biome … minecraft:old_growth_pine_taiga` passes at two old-growth positions.
+
+**Not checked:** how the forests read from inside and at distance. That is the flight.
+
 ## 2026-09-14 (fourth): the missing tarn
+
+> Superseded by the export above (same terrain, repainted forests). That world is in
+> `cobblers-server-retired/2026-09-14-foliage/`.
 
 **Status: exported, checked in the region files and in game, and pregenerated.**
 

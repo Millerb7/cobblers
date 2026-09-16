@@ -1,0 +1,10 @@
+{
+ "group": "landmark_weeping_elder",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  16,
+  2,
+  16
+ ]
+}

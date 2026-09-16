@@ -170,6 +170,49 @@ the terrain:
 | South coast (2584, 6492), the Watering Hole system | 4.73 | 2,862 | 4 |
 | North-west coast (676, 1848), Viltri's Path | 3.36 | 2,550 | 3 |
 
+**2026-09-15: the head moved down 1,661 blocks.** From the air, a channel ran across a mountain near (2583, 1546).
+- **Neither the GIMP river layer nor erosion made it.** The authored `land_8k_16_eroded.png` has no trench there:
+  no column sits more than 4 blocks below its 10-block surroundings within 700 blocks. The cut file lowered up to
+  6 blocks there.
+- **The channel came from `tools/grade_rivers.py`.** It started the trunk at the far end of the longest descending
+  path, where the catchment is 0.009 km².
+- **The first 720 blocks were cut along the mountainside.** Within 250 blocks, the downhill side never rises 10
+  blocks. The uphill side rises 22–57 blocks within 14–44 blocks.
+- **Below that, a 3–6-block creek ran on the floor of the Glacial Tear trough.** Its walls are 19–57 blocks high,
+  92–184 blocks either side, and its catchment stayed at 0.06–0.12 km².
+
+**First rule, since replaced.** The trunk started where its path first drained 0.13 km², the smallest catchment
+feeding any lake outflow. That also removed the trough-floor creek, so it was replaced the next day.
+
+**The rule now: valley walls (2026-09-16, not exported yet).** The trunk starts at the first station that begins
+three consecutive samples, 48 blocks apart, where the authored ground on both sides rises at least 10 blocks above the
+water within 250 blocks. The constants are `WALL_RISE`, `WALL_REACH`, `WALL_RUN` and `WALL_STEP` in
+`tools/grade_rivers.py`.
+- **Where it starts:** (3135, 1635), 817 blocks down the path, on the Glacial Tear trough floor. The flank channel
+  stays gone and the meltwater creek comes back.
+- **Below the head, nothing else moves.** The course is kept as routed from the path head, and sized from the whole
+  path with the hillside above counted in its drainage.
+  - Routing again from the head moved the lower valley 11–23 blocks sideways. Re-binning the reaches shifted
+    widths by up to 6 blocks. Both were tried and dropped.
+  - The lower river matches the original course within 2 blocks. Its reaches are identical but for one depth
+    (7.5 against 7.6).
+  - Against the original cut, about 1,200 columns change by half a block or more, the most by 3 blocks.
+- **The creek:** 5–6 wide and 2.8–2.9 deep for about 780 blocks, then the river widens to 18–28 with floodplain and
+  terraces.
+- **Other courses: none affected.** The survey (`major_river.head_rule_survey_other_courses`) found the only other
+  non-lake heads, River of Shrews and the south-west creek into Tilpey, walled from their first sample. The rule
+  would move neither.
+- **A sizing fix that came with it:** the major-river scale now ignores stations within `VALLEY_CLEAR` (150 blocks)
+  of a lake. One reach at Lake Tilpey's edge, where tributaries converge, had shrunk the whole lower river to 9–16
+  wide.
+- **Over the cavern:** the creek crosses the Displaced City cavern footprint with its graded floor at y95.9–97.6.
+  In 8 columns that leaves 23 blocks of rock over a y72 ceiling, so the cavern ceiling drops to y71 there.
+
+**Checked on every cut course.** 581 stations at 16-block spacing, excluding lake basins, on the graded floor, the
+heightmap bed, the world bed and the world water surface: no rise anywhere, before or after the change.
+
+**Original selection text** (the head it describes is the old one):
+
 **All three measures agree.** The trunk runs from the farthest ground that falls, without any
 rise, to Lake Tilpey:
 - it starts at (2504, 1444), y171, on the flank above Merian;

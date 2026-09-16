@@ -1,0 +1,10 @@
+{
+ "group": "boulder",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  1,
+  0,
+  1
+ ]
+}
