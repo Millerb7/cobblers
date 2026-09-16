@@ -29,7 +29,7 @@ y72, headroom 17 to 45 blocks.
 | Light against spawning | **every one of those cells** has block light 1 or more at spawn height |
 | Trees | 40 of 40 placed |
 | Biome | cherry grove at 70 of 70 sampled points |
-| Tunnel | 68 of 68 stations: solid floor, 5 blocks of clear height, no water |
+| Tunnel | 68 of 68 stations: solid floor, 5 blocks of clear height, no water. Lit: 0 of 57 sampled stations at block light 0, measured at the floor |
 
 **The light lattice needed repair.** The planned diamond lattice (800 blocks, 10 apart at floor+3) left 218 of
 4,489 sampled cells under light 9, because the floor is graded and crowns absorb light. Two repair passes added
@@ -64,9 +64,32 @@ Ground level and below only, and measured: **0 solid blocks 2 above any street s
 Brock's 250 × 250 box is 272 chunks, so every fill in the first two runs silently did nothing. The box has to be
 split, and the chunks need time to load before the commands run.
 
-## What is not done
+## The growth test, in the cavern itself
 
-- **Cherry growth from light** still has no in-world proof: random ticks need a player nearby. The test chamber at
-  (-810..-790, -42..-16, -810..-790) is still there with its 12 saplings.
+**The earlier test chamber is gone.** It was built in the world the creek export replaced, so the export wiped it.
+The test now lives in the cavern, under the real lattice and the real cherry-grove biome.
+
+| Sapling | At | Light above it |
+| --- | --- | ---: |
+| dim (light 9) | (3255, 34, 1690) | 9 |
+| dim (light 9) | (3255, 34, 1830) | 9 |
+| dim (light 9) | (3262, 36, 1753) | 9 |
+| dim (light 9) | (3290, 35, 1655) | 9 |
+| dim (light 9) | (3297, 41, 1711) | 9 |
+| dim (light 9) | (3297, 40, 1802) | 9 |
+| dim (light 9) | (3318, 51, 1753) | 9 |
+| dim (light 9) | (3339, 41, 1676) | 9 |
+| bright | (3255, 35, 1655) | 14 |
+| bright | (3255, 35, 1704) | 13 |
+| bright | (3255, 36, 1753) | 12 |
+| bright | (3255, 35, 1802) | 11 |
+| control, sealed dark niche | (3244, 41, 1840) | 0 |
+
+- **The eight at light 9** sit exactly on the growth threshold: those are the test.
+- **The four brighter ones** show the normal case.
+- **The control** is a sealed niche cut into the rock west of the cavern wall, at light 0. It should never grow.
+- **What finishes it:** a player within range for about 20 minutes, since random ticks need one.
+
+## What is not done
 - **Axiom in game** has not been used yet.
 - **The towns themselves** are unbuilt, by design.
