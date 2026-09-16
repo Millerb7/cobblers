@@ -48,9 +48,9 @@ A persistent completion flag, not prop position, decides reward eligibility.
 
 # Route 4 — Surge to Erika
 
-**Route context:** Approximately 2,640 blocks east along the north of the
-massif. The path crosses the Northern Downs, passes near Merian's hut, and
-approaches Peak Pond Hollow. The major river is still a crossable headwater.
+**Route context:** Approximately 2,907 blocks through Mt Clay, Merian
+Cirque, the Crags, Upper Trough, and Peak Pond Hollow. The path passes near Merian's hut
+and has no water crossing.
 
 ## `EVT-R4-MERIAN-DELIBIRD` — Wrong Hut Again
 
@@ -239,7 +239,7 @@ remain available regardless of completion.
 
 # Route 5 — Erika to Koga
 
-**Route context:** Approximately 1,027 blocks south through forest. The ground
+**Route context:** Approximately 1,038 blocks south through forest. The ground
 becomes wetter toward Glacier Foot Fields and Marsh Country. There is no
 required water crossing.
 
@@ -422,9 +422,9 @@ Skorupi remains a wild ambient actor.
 
 # Route 6 — Koga to Sabrina
 
-**Route context:** Approximately 1,946 blocks east along the north side of the
-Glacial Tear's mouth. The route passes the marsh-to-lake transition and reaches
-Lake Tilpey's north terrace without a required crossing.
+**Route context:** Approximately 1,944 blocks through Glacier Foot Fields and
+Marsh Creek. The route passes the marsh-to-lake transition and reaches Lake Tilpey's north
+terrace without a required water crossing.
 
 ## `EVT-R6-BERGMITE-REFLECTION` — False Trail Light
 

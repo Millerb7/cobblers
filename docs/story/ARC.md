@@ -29,9 +29,9 @@ and `rift_crisis_resolved` after Hoopa is released at the Rift. This document
 defines their meaning; a later schema pass must add their concrete setters and
 chapter dependencies to `data/progression.json`.
 
-Victory Road is **4,953 blocks**, measured along the Rift. The 4,038-block
-Giovanni-to-League approach in `data/towns.json` is a stale straight-line
-measurement and needs correction by the terrain owner.
+Victory Road is **5,157 blocks**, measured along the terrain-derived path
+through the Rift. `data/routes.json` and `data/towns.json` now use the same
+computed length.
 
 ## Fixed path
 
@@ -124,7 +124,7 @@ Rift confrontation releases Hoopa before the League challenge begins.
 
 The terrain data supplies the League footprint and nearby Rift, but no chamber
 or exact underground Y coordinate. That required build is recorded as a
-geography gap. Its entrance must lie on the 4,953-block Victory Road and cannot
+geography gap. Its entrance must lie on the 5,157-block Victory Road and cannot
 require an optional settlement.
 
 ## Gym-leader reconciliation
@@ -211,7 +211,7 @@ required at Brock's town.
 **Ground truth**
 
 - Centre: (1743, 138, 3628), in `viltri_plateau` / `viltri_woods`.
-- Route from Pallet: 1,780 blocks; no water crossing.
+- Route from Pallet: 1,792 blocks; no water crossing.
 - Nearby: `viltri_ravine` 455 blocks, `lake_viltri` 573 blocks, and
   `viltris_path` 664 blocks.
 - Defeating Brock sets `gym1_cleared`.
@@ -253,7 +253,7 @@ aid through Lake Viltri. This is a practical lead, not a lore assignment.
 **Ground truth**
 
 - Centre: (1605, 107, 2801), in `lake_viltri_hollow` / `viltri_woods`.
-- Route from Brock: 908 blocks, with no water crossing.
+- Route from Brock: 946 blocks, with no water crossing.
 - `lake_viltri` is 86 blocks away; `viltri_ravine` is 195 blocks away;
   `viltris_path` is 242 blocks away.
 - Defeating Misty sets `gym2_cleared`.
@@ -277,8 +277,8 @@ player can act under pressure without turning frightened people into enemies.
 
 After `gym2_cleared`, evidence from the lake records points north: the same
 distinct pulse seen when Pallet arrived has been detected around Mt Vessu. The
-route to Surge follows the actual 1,643-block climb and crosses the creek west
-of Mt Clay at (1824, 1888).
+route to Surge follows the terrain-derived 1,989-block path through Foothill Woods, Mt Clay,
+and Mt Vessu without a water crossing.
 
 **Knowledge state after the gym**
 
@@ -296,7 +296,8 @@ This is the sympathy beat. Opposition comes later.
 **Ground truth**
 
 - Centre: (1847, 190, 1262), in `mt_vessu` / `tri_peaks`.
-- Route from Misty: 1,643 blocks; a small creek crossing at (1824, 1888).
+- Route from Misty: 1,989 blocks through Foothill Woods, Mt Clay, and Mt
+  Vessu; no water crossing.
 - `tri_peaks` is 35 blocks away and `mt_vessu` 47 blocks away.
 - Optional `the_scar` is 408 blocks from town.
 - Defeating Surge sets `gym3_cleared`.
@@ -339,7 +340,8 @@ Players who skip it learn the same required fact later.
 
 - Centre: (4309, 110, 1555), in `peak_pond_hollow` /
   `northern_downs`.
-- Route from Surge: 2,640 blocks east along the north of the massif.
+- Route from Surge: 2,907 blocks through Mt Clay, Merian Cirque, the Crags,
+  Upper Trough, and Peak Pond Hollow.
 - `peak_pond` is 129 blocks away; `peak_pond_creek` is 297 blocks away.
 - The major river is still a crossable headwater in this northern leg.
 - Defeating Erika sets `gym4_cleared`.
@@ -391,7 +393,8 @@ Marsh Country.
 
 - Centre: (4646, 118, 2446), in `glacier_foot_fields` /
   `marsh_country`.
-- Route from Erika: 1,027 blocks south through forest.
+- Route from Erika: 1,038 blocks south through the North-East Downs to
+  Glacier Foot Fields.
 - `glacial_tear` and `marshy_marsh` are each 311 blocks away;
   `major_river` is 507 blocks away.
 - Defeating Koga sets `gym5_cleared`.
@@ -433,8 +436,8 @@ river, and lake can be compared.
 
 - Centre: (6196, 95, 3398), in `tilpey_north_shore` /
   `tilpey_lakeland`.
-- Route from Koga: 1,946 blocks along the north side of the Glacial Tear's
-  mouth.
+- Route from Koga: 1,944 blocks through Glacier Foot Fields and Marsh Creek
+  to Tilpey's north shore.
 - `marsh_to_tilpey` is 252 blocks away; `lake_tilpey` 256 blocks away;
   `glacial_tear` 609 blocks away.
 - Defeating Sabrina sets `gym6_cleared`.
@@ -479,8 +482,8 @@ major river and Lake Tilpey's outflow gorge at about (6632, 3904).
 
 - Centre: (6074, 108, 4995), in `crater_rim_north_west` /
   `the_craters`.
-- Route from Sabrina: 2,021 blocks by the intended gorge crossing.
-- Avoiding river and lake water would require a 9,496-block detour.
+- Route from Sabrina: 2,053 blocks through Tilpey's east and south shores.
+- It crosses Lake Tilpey and its outflow at the required (6632, 3904) bridge.
 - `craters` begins 27 blocks from town; `lake_tilpey` is 423 blocks away.
 - Defeating Blaine sets `gym7_cleared`.
 
@@ -526,7 +529,7 @@ people do not stop being worth saving.
 
 - Centre: (3647, 112, 6497), in `south_strand` /
   `southern_coast`.
-- Route from Blaine: 3,055 blocks west, with no water crossing.
+- Route from Blaine: 3,049 blocks west, with no water crossing.
 - `arrow_lake_south_east_branch` is 358 blocks away;
   `arrow_lake_south` 680 blocks away; `rift` 1,122 blocks away.
 - Defeating Giovanni sets `gym8_cleared`.
@@ -572,8 +575,7 @@ the route from Giovanni to the League must remain traversable without them.
 - The League plateau is 178 blocks from `rift`, 447 blocks from
   `glacial_tear`, and 571 blocks from `major_river`.
 - Victory Road follows the Rift's south-west arm, fork, trunk, and apex.
-- Victory Road is 4,953 blocks along the Rift. The 4,038 value in the League
-  approach record is stale.
+- Victory Road is 5,157 blocks along the terrain-derived Rift path.
 - The League is in the Overworld. End access is post-game.
 - Defeating the champion sets `champion_cleared`.
 
@@ -673,10 +675,8 @@ safer, but refusing or missing them cannot block progression.
 1. Add `crater_operation_stopped` and `rift_crisis_resolved` to the existing
    progression flag ledger during the approved schema pass. Do not create a
    parallel quest-state system.
-2. Correct the stale 4,038-block League approach value in `data/towns.json` to
-   the authoritative 4,953-block Victory Road measurement.
-3. Author a Haven Compact containment chamber beneath the League plateau at
+2. Author a Haven Compact containment chamber beneath the League plateau at
    (3297, 2603), with an entrance on Victory Road. Its exact Y, footprint, and
    structure ID do not exist in current geography data.
-4. Maren and the named Haven Compact members need trainer or NPC IDs before
+3. Maren and the named Haven Compact members need trainer or NPC IDs before
    dialogue and implementation.
