@@ -448,7 +448,12 @@ def main(argv=None):
         record = Path(a.coast_class).with_suffix(".json")
         if record.exists():
             made_for = json.loads(record.read_text(encoding="utf-8")).get("heightmap_sha256")
-            if made_for != world["heightmap"]["sha256"]:
+            # A coast map built for the heightmap the imported one was RESCALED from is still correct. The rescale
+            # (tools/rescale.py) is the identity at or below y145 -- measured, 0 of 62,789,211 columns there change
+            # integer elevation -- and every coast class lives a few blocks either side of sea level, far below it.
+            # Anything else is genuinely stale and still refused.
+            parent = (world["heightmap"].get("rescaled_from") or {}).get("sha256")
+            if made_for != world["heightmap"]["sha256"] and made_for != parent:
                 raise SystemExit("coast class map %s was made for heightmap %s, not the imported %s: re-run sculpt.py apply"
                                  % (a.coast_class, str(made_for)[:12], world["heightmap"]["sha256"][:12]))
         if coast_class.shape != (N, N):
