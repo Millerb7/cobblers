@@ -18,13 +18,17 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import shutil
 from pathlib import Path
 
 import numpy as np
 
 import terrain as T
+from place_town import rotate
 
 ROOT = Path(__file__).resolve().parent.parent
+LIBRARY = ROOT / "kits" / "structures" / "foliage"
+TILE = 200                               # 200x200 is 169 chunks, under forceload's 256-chunk limit
 BOX = (1180, 4300, 1820, 5060)          # x0, z0, x1, z1
 SAPLING = (1380, 4628)
 MAZE_SPACING = 2.0                       # in the maze band: 1,427 stems/ha, a 7.0-block sightline
@@ -36,6 +40,7 @@ MAZE_BAND = 80                           # how far the dense pack reaches from t
 CLEARING_R = 20                          # open ground around the sapling
 EDGE_FEATHER = 3                         # blocks over which density ramps back up at a corridor edge
 SEED = 20260916
+SURFACE_WORLD = "C:/Users/wnd/Documents/github/cobblers-server/cobblers-10240"
 
 # The network. Every corridor is a polyline of nodes plus a width; the gap is the path, so width is what the
 # player walks. `kind` is only for the report.
@@ -146,6 +151,8 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
     p.add_argument("--apply", action="store_true")
+    p.add_argument("--surface-world", default=None)
+    p.add_argument("--install", default=None)
     a = p.parse_args(argv)
     heights, world = T.load_from_args(a)
     x0, z0, x1, z1 = BOX
@@ -229,11 +236,59 @@ def main(argv=None):
            "dead_ends": [list(c["nodes"][-1]) for c in dead],
            "loops": [[list(c["nodes"][0]), list(c["nodes"][-1])] for c in loops],
            "sapling": list(SAPLING), "mansion": list(MANSION), "big_trees": len(bigpts)}
+
+    # Seat every trunk on the world's own ground and write the placement in TILES. A 200x200 tile is 169 chunks,
+    # under the 256 a single forceload box accepts -- a limit whose failure shows only in the command's reply, and
+    # which silently swallowed two earlier town-prep runs.
+    import world_heights as WH
+    ground, _, _ = WH.extract(a.surface_world or SURFACE_WORLD, BOX)
+    rng2 = np.random.default_rng(SEED + 11)
+    tiles, placed = {}, 0
+    for pts, pool in ((maze, body), (outer, body), (bigpts, big)):
+        for (wx, wz) in pts:
+            o = pool[int(rng2.integers(len(pool)))]
+            rot = ("none", "clockwise_90", "180", "counterclockwise_90")[int(rng2.integers(4))]
+            ox, oy, oz = o["origin"]
+            rx, rz = rotate(ox, oz, rot)
+            gy = int(ground[wz - BOX[1], wx - BOX[0]])
+            key = ((wx - BOX[0]) // TILE, (wz - BOX[1]) // TILE)
+            tiles.setdefault(key, []).append(
+                "place template cobblers:route1/foliage/%s %d %d %d %s none 1.0 0"
+                % (o["file"][:-4], wx - rx, gy + 1 - oy, wz - rz, rot))
+            placed += 1
+    print("\nplacement: %d objects over %d tiles of %d blocks" % (placed, len(tiles), TILE))
+
+    out = ROOT / "build" / "datapacks" / "cobblers_route1"
+    if out.exists():
+        shutil.rmtree(out)
+    used = set()
+    for key, cmds in sorted(tiles.items()):
+        f = out / "data" / "cobblers" / "function" / "route1" / ("tile_%d_%d.mcfunction" % key)
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("\n".join(["# Route 1 forest tile %d %d" % key] + cmds) + "\n", encoding="utf-8")
+        for c in cmds:
+            used.add(c.split()[2].rsplit("/", 1)[-1] + ".nbt")
+    for o in lib:
+        if o["file"] in used:
+            dest = out / "data" / "cobblers" / "structure" / "route1" / "foliage" / o["file"]
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(LIBRARY / o["file"], dest)
+    (out / "pack.mcmeta").write_text(json.dumps(
+        {"pack": {"pack_format": 48, "description": "Cobblers: the Route 1 maze forest (tools/maze_forest.py)"}},
+        indent=2) + "\n", encoding="utf-8")
+    print("wrote %s (%d tile functions, %d distinct objects)" % (out.relative_to(ROOT), len(tiles), len(used)))
+    rep["tiles"] = {"%d_%d" % k: len(v) for k, v in sorted(tiles.items())}
+    rep["objects_placed"] = placed
+
     (ROOT / "derived" / "sites").mkdir(parents=True, exist_ok=True)
     (ROOT / "derived" / "sites" / "route1_forest.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
-    print("\nwrote derived/sites/route1_forest.json")
-    if not a.apply:
-        print("(nothing placed -- this is the mask and the network, for review)")
+    print("wrote derived/sites/route1_forest.json")
+    if a.install:
+        dest = Path(a.install) / out.name
+        if dest.exists():
+            shutil.rmtree(dest)
+        shutil.copytree(out, dest)
+        print("installed %s" % dest)
 
 
 if __name__ == "__main__":
