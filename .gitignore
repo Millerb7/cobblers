@@ -138,3 +138,6 @@ experiments/*/runs/*/
 # RCON password for the local server. Never commit.
 .rcon-password
 **/.rcon-password
+
+# Templates copied from all-rights-reserved packs (Lumyverse/Cobbleverse datapacks): usable locally, never published.
+kits/structures/prefabs/gyms/**/*.nbt

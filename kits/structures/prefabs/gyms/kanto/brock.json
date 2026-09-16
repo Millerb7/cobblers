@@ -1,0 +1,42 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/gyms/kanto/brock",
+ "kind": "gyms",
+ "set": "kanto",
+ "name": "brock",
+ "author": "Cobbleverse (COBBLEVERSE-DP-v31.zip data/cobbleverse/structure/brock.nbt)",
+ "source": {
+  "file": "brock.nbt",
+  "imported": "2026-09-16",
+  "format": "structure",
+  "data_version": 3955,
+  "size": [
+   27,
+   17,
+   24
+  ],
+  "blocks": 10097,
+  "block_entities": 20,
+  "entities": 1,
+  "namespaces": {
+   "cobblefurnies": 16,
+   "cobblemon": 10,
+   "cobblemonbattlepositions": 3,
+   "cozyhome": 7,
+   "lumymon": 1,
+   "minecraft": 10058,
+   "rctmod": 1,
+   "sophisticatedstorage": 1
+  }
+ },
+ "entrance": {
+  "pos": [
+   13,
+   1,
+   20
+  ],
+  "facing": "south"
+ },
+ "grade_layer": 1,
+ "notes": "Kanto gym 1. Entrance on +z at x13 with a porch to z21. Carries its own rctmod:trainer_spawner (powered, at 6,1,12) and a command-block intro chain started from a light weighted pressure plate (EXP-013 EXP-C). Concrete substituted at template level (data/spawn_block_policy.json)."
+}
