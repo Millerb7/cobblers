@@ -29,6 +29,7 @@ routes, the Rift, or the League. Detailed prototypes live in `events/`.
 | `EVT-ROUTE1-GASTLY-FAMILY` | Pallet-to-Brock route, (1462, 5293) to (1743, 3628) | Mansion site needed; donor candidates identified | [`events/ROUTE1_GASTLY_MANSION.md`](events/ROUTE1_GASTLY_MANSION.md) |
 | `EVT-ROUTE1-THIRSTY-STRANGER` | Pallet-to-Brock route, (1462, 5293) to (1743, 3628) | Hut site and accepted item IDs needed | [`events/ROUTE1_THIRSTY_STRANGER.md`](events/ROUTE1_THIRSTY_STRANGER.md) |
 | Pallet through Gym 3 | Pallet, Routes 1–3, Brock, Misty, and Surge | Fourteen-event package designed; placement and technical proofs needed | [`events/EARLY_GAME_ENCOUNTERS.md`](events/EARLY_GAME_ENCOUNTERS.md) |
+| Expanded early event bank | Same early-game path | Twenty-eight additional small scenes designed; total is 42 through Gym 3 | [`events/EARLY_GAME_EVENT_BANK.md`](events/EARLY_GAME_EVENT_BANK.md) |
 
 ## Pallet damage cluster
 
@@ -68,19 +69,37 @@ anchors, not final NPC positions.
 - **`EVT-PALLET-SALVAGE-LINE`: Not Everything Is Lore.** Help residents sort a
   kettle, fishing rod, child’s drawing, and Poké Ball case recovered from House
   B. Reward: early supplies and one local character callback later.
-- **`EVT-PALLET-CORNER-MON`: Familiar Smell.** Bring the correct ordinary food
-  from Pallet to coax a frightened small Pokémon from House C. Species waits
-  for encounter balance. Reward: friendship-style encounter or berry bundle.
+- **`EVT-PALLET-CORNER-MON`: Familiar Smell.** Bring familiar food from
+  Pallet to coax an owned Lillipup from House C. Reward: a berry bundle; the
+  rescued Lillipup remains with its owner.
+
+- **`EVT-PALLET-FENCE-LINE`: Property Damage.** Rebuild a displaced fence while
+  two neighbors agree about everything except whose problem it is.
+- **`EVT-PALLET-LOST-LAUNDRY`: Not Ours.** Return familiar laundry and preserve
+  one unexplained shirt from outside Pallet.
+- **`EVT-PALLET-PIDGEY-POST`: Same Roof, Wrong Sky.** Add colored roof markers
+  so a courier Pidgey can relearn its route against the changed horizon.
+- **`EVT-PALLET-BULBASAUR-BOX`: Wrong Side of the Sun.** Help an owned Bulbasaur
+  move a familiar planter out of the town's new shadow.
 
 ### `gym1_town` — Brock’s town (1743, 3628)
 
 - **`EVT-G1-MACHOP-SHIFT`: One More Beam.** A Machop helping Brock’s crews will
-  not stop working after the humans take a break. The player battles it gently
-  or demonstrates a safer carrying method. Reward: building supplies and a
+  not stop working after the humans take a break. Restore the missing support
+  brace and ring the work bell again. Reward: building supplies and a separate
   Machop encounter lead.
 - **`EVT-G1-PEBBLE-LEAGUE`: Little League.** Children use tame Roggenrola as a
   precision rolling game. The player joins a short target challenge. Reward: a
   local ribbon cosmetic and rematch score.
+
+- **`EVT-G1-SANDSHREW-BATH`: Reserved Pile.** Build a second dust bath so
+  Sandshrew voluntarily leaves the masons' mortar sand.
+- **`EVT-G1-ONIX-SHADE`: Twenty Feet of Break Time.** Extend a work tarp over a
+  crew Onix without blocking the quarry road.
+- **`EVT-G1-FOSSIL-CASTS`: Extremely Ancient Plaster.** Separate museum casts
+  from ordinary rocks and one very suspicious mug handle.
+- **`EVT-G1-SHUCKLE-PRESS`: Do Not Rush It.** Select the berry batch that has
+  actually rested long enough instead of forcing Shuckle's process.
 
 ### `gym2_town` — Misty’s town (1605, 2801)
 
@@ -91,6 +110,15 @@ anchors, not final NPC positions.
   counting one fewer Poliwag after every circuit. The missing one is asleep in
   a boat. Reward: a curated Poliwag encounter and a funny class photo item.
 
+- **`EVT-G2-AZURILL-ECHO`: One Echo Too Many.** Use Azurill's bounce echoes
+  to locate a washed-out void beneath the town square.
+- **`EVT-G2-CORPHISH-TOOLS`: Borrowed Forever.** Trade shiny washers for the
+  mechanic's neatly sorted tools.
+- **`EVT-G2-FINNEON-LAMPS`: Lights Below.** Aim reflectors so Finneon's glow
+  reaches shaded dock markers.
+- **`EVT-G2-SHELLOS-PAINT`: Fresh Coat.** Follow colored Shellos tracks
+  through a pottery yard to identify glaze for a public fountain sign.
+
 ### `gym3_town` — Surge’s town (1847, 1262)
 
 - **`EVT-G3-MAGNEMITE-BOLTS`: Magnetic Personality.** Magnemite keep carrying
@@ -100,20 +128,66 @@ anchors, not final NPC positions.
   above the instruments without tangling the array. Choose a safe launch wind.
   Reward: mountain-weather notes and a cosmetic kite token.
 
+- **`EVT-G3-PLUSLE-MINUN-GRID`: Same Time, Please.** Synchronize paired switches
+  so Plusle and Minun stop undoing each other's work.
+- **`EVT-G3-SKIDDO-ROOF`: Rooftop Grazing.** Build a lower herb rack so an
+  owned Skiddo leaves a terrace garden's dangerous edge.
+- **`EVT-G3-ELECTRIKE-CABLE`: Inspection Run.** Follow Electrike's repeated lap
+  to find a cable tag reacting to the signal pulses.
+- **`EVT-G3-EMOLGA-WINDSOCK`: Unauthorized Upgrade.** Trade safe glide markers
+  for the bright strips Emolga took from the town windsock.
+
 ## Route events through Gym 3
 
-Detailed flows, rewards, reset behavior, and multiplayer rules are in
-[`events/EARLY_GAME_ENCOUNTERS.md`](events/EARLY_GAME_ENCOUNTERS.md).
+Detailed core flows are in
+[`events/EARLY_GAME_ENCOUNTERS.md`](events/EARLY_GAME_ENCOUNTERS.md). The
+expanded small-event specifications are in
+[`events/EARLY_GAME_EVENT_BANK.md`](events/EARLY_GAME_EVENT_BANK.md).
+
+### Route 1 — Pallet to Brock
+
+- **`EVT-ROUTE1-GASTLY-FAMILY`: Lost in the House.** Lead a frightened Gastly
+  through an abandoned mansion to find its parent.
+- **`EVT-ROUTE1-THIRSTY-STRANGER`: The Thirsty Stranger.** Bring water to a
+  familiar-looking man who is definitely not Tupac.
+- **`EVT-ROUTE1-CATERPIE-CROSSING`: Green Traffic.** Create a leaf-covered
+  crossing beside the road for a slow Caterpie line.
+- **`EVT-ROUTE1-RATTATA-PICNIC`: Lunch Tax.** Follow crumbs to recover a neatly
+  unwrapped picnic lunch.
+- **`EVT-ROUTE1-BUG-NET`: Catch and Release the Net.** Free a Metapod from a net
+  that appears to be moving by itself.
+- **`EVT-ROUTE1-SENTRET-WATCH`: The Second Lookout.** Follow the mirrored signals from two Sentret to a dropped satchel.
+
+### Route 2 — Brock to Misty
 
 - **`EVT-ROUTE2-ROLLAWAY-GEODUDE`: Downhill From Here.** Follow an escaped
   handcart downhill and discover that the missing Geodude stopped it before it
   reached Lake Viltri.
+- **`EVT-ROUTE2-BONSLY-MILESTONE`: Very Convincing Tree.** Recover the real
+  route marker after a Bonsly imitates it and walks away.
+- **`EVT-ROUTE2-BELLSPROUT-GAUGE`: Chance of Plants.** Move Bellsprout from a
+  rain gauge into a better damp-soil patch.
+- **`EVT-ROUTE2-NINCADA-ROAD`: Quiet Underfoot.** Mark a hollow side path so
+  traffic stops crossing a Nincada burrow.
+- **`EVT-ROUTE2-MUDBRAY-BOOT`: Keep the Other One.** Use a mud patch to remove a
+  hiker's boot from Mudbray without frightening it.
+
+### Route 3 — Misty to Surge
+
 - **`EVT-ROUTE3-CREEK-WOOPER`: The Dry Crossing.** Recover a supply crate
   without trampling a Wooper feeding patch. The controlled Wooper encounter is
   an intentional optional Ground-type answer before Surge.
 - **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** Repair trail signs that
   rotate during signal pulses while a Nosepass points toward Mt Vessu's
   equipment instead of north.
+- **`EVT-ROUTE3-MAREEP-SHELTER`: Static in the Rain.** Clear a safe route from a
+  metal trail frame to stone cover.
+- **`EVT-ROUTE3-SPOINK-PEARL`: Do Not Stop Bouncing.** Recover Spoink's pearl
+  while giving it a safe place to keep moving.
+- **`EVT-ROUTE3-SWABLU-NEST`: Blue Thread.** Exchange soft nesting fiber for a
+  route flag the Swablu used to reinforce their nest.
+- **`EVT-ROUTE3-SABLEYE-REFLECTORS`: Shiny Way Down.** Trade polished stones for
+  stolen trail reflectors and re-mark the descent.
 
 ### `gym4_town` — Erika’s town (4309, 1555)
 
@@ -285,10 +359,11 @@ Detailed flows, rewards, reset behavior, and multiplayer rules are in
 1. Place three damaged Pallet homes inside the accepted town layout and assign
    exact house, husband, wife, salvage, and Pokémon coordinates.
 2. Choose a mansion site on the Pallet-to-Brock route. `minecraft:mansion` is
-   the strongest functional donor because Cobblemon already associates it with
-   mansion spawn presets; `repurposed_structures:mansion_birch` is a visual
-   donor candidate for the birch plateau. Verify whichever placement method is
-   chosen preserves or replaces the desired spawn behavior.
+   an unverified functional donor candidate; whether the active Cobblemon 1.8
+   pack associates it with usable mansion spawn presets must be tested.
+   `repurposed_structures:mansion_birch` is a visual donor candidate for the
+   birch plateau. Verify whichever placement method is chosen preserves or
+   replaces the desired spawn behavior.
 3. Choose a small hut site on the same route and a reusable donor structure.
 4. Verify static Pokémon actors, follow behavior, per-player dialogue state,
    once-per-player rewards, and shared scenery before implementing event data.
