@@ -1,0 +1,86 @@
+{
+  "name": "cobblers.habitat.marshy_marsh_basin.name",
+  "type": "cobblemon:natural",
+  "spawns": [
+    {
+      "species": "Wooper",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 18.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Quagsire",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Totodile",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 24.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Croagunk",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 12.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Gulpin",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 9.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Swalot",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Carnivine",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Tympole",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Barboach",
+      "bucket": "rare",
+      "spawnablePositionType": "grounded",
+      "weight": 2.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    },
+    {
+      "species": "Foongus",
+      "bucket": "ultra-rare",
+      "spawnablePositionType": "grounded",
+      "weight": 1.0,
+      "levelRange": "35-43",
+      "phases": "1-25"
+    }
+  ]
+}

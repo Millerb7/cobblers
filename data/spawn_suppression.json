@@ -1,0 +1,34 @@
+{
+  "schema": "cobblers.spawn-suppression/1",
+  "status": "policy_compiled_runtime_unverified",
+  "critical_route_boxes": {
+    "policy": "suppress inherited/default pools and use compiled route pools",
+    "box_count": 1269,
+    "native_expression": "requires overrides adding matching coordinate anticonditions to inherited entries",
+    "generated": false,
+    "reason": "the current pack-complete inherited pool set is runtime input; generating partial overrides would make a false suppression claim",
+    "experiment": "EXP-012 bounded default suppression"
+  },
+  "habitat_blocks": {
+    "policy": "ReplaceSpawns=true inside each placed Natural Habitat Block influence",
+    "pool_count": 9,
+    "native_support": "selection behavior only: HabitatBlockEntity ReplaceSpawns filtering and RangeOfInfluence fields verified in Cobblemon 1.8.0 bytecode",
+    "runtime_status": "pool loading, block placement, influence geometry, persistence and fishing behavior need functional test",
+    "schema_evidence": [
+      "Cobblemon-fabric-1.8.0+1.21.1.jar!/data/cobblemon/habitat_pools/abandoned_fortress.json",
+      "Cobblemon-fabric-1.8.0+1.21.1.jar!/data/cobblemon/habitat_pools/abandoned_village_house.json",
+      "HabitatPool.class",
+      "HabitatSpawn.class",
+      "HabitatBlockEntity.class"
+    ]
+  },
+  "retain_defaults": [
+    "off-route wilderness",
+    "optional islands",
+    "open ocean outside authored sites",
+    "unauthored caves",
+    "Nether",
+    "End",
+    "postgame unless later progression policy changes it"
+  ]
+}

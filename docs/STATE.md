@@ -25,6 +25,7 @@
 - **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted landmark trees exist; the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 0 trainers, 0 production side events, and 0 boss encounters are placed in the world.
+- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters, 9 of 9 route files cover 1,269 coordinate boxes, and 9 of 9 distinctive places have native Habitat pool JSON; 0 pools are installed and 0 placed Habitat Blocks are verified in-world.
 - **Quest data:** 3 dialogue conversations and 2 quests exist as proposed source data; 0 have been compiled into or proven through a runtime dialogue system.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
 - **Tooling:** 54 Python tools, 2 PowerShell server scripts, 35 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
@@ -33,6 +34,8 @@
 ## What is decided
 
 - **Base and target:** preserve the Cobbleverse experience through an overlay while targeting Cobblemon 1.8.x on Minecraft 1.21.1 Fabric.
+- **Live-world isolation:** agents check process/port and acquire `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock` before any server-runtime access; agents never read `cobblers-server/cobblers-10240/`, and disposable worlds are seeded only from designated offline snapshots.
+- **Spawn philosophy:** use curated exclusive pools on critical-path route corridors and keep the default Cobbleverse pool open in wilderness and postgame areas.
 - **Map geometry:** use 1,024-block square planning cells, terrain-following region polygons, and no hex grid.
 - **Vertical scale:** use the Option B rescale above `y145`, with authored terrain capped at `y310` and the runtime ceiling raised to `y575`.
 - **World source:** commit reproducible heightmaps, WorldPainter sources, templates, data, and tools; do not treat the live save as source code.
@@ -50,7 +53,6 @@
 
 ## What is open
 
-- **Spawn philosophy:** choose curated, full-dex, or hybrid availability; this blocks final ambient pools, suppression scope, and the availability curve.
 - **Pallet relocation:** decide whether the already composed Hometown/Pallet moves farther north; this blocks final town coordinates, Route 1's origin, and nearby event sites.
 - **Route 1 middle feature:** choose and site the unnamed middle feature; this blocks the final Route 1 composition and side-event spacing.
 - **Leg 3 compression:** decide whether and how the third critical leg is shortened after rerouting on the rescaled terrain; this blocks acceptance of Route 3 geometry and quoted distances.
@@ -61,10 +63,10 @@
 ## What is blocked
 
 - **Cell terrain metrics:** all 64 `cells.json` records predate the canonical rescale; full terrain validation reports 192 drift/hash errors and terrain-dependent cell selection is blocked on regeneration.
-- **Region coverage:** 29 unassigned route intervals remain between `regions.json` polygons; spawn compilation is blocked until the terrain owner closes them.
+- **Region coverage:** 29 unassigned route intervals remain between `regions.json` polygons; candidate pools use documented nearest-interval fallbacks, while exact production sub-region compilation is blocked until the terrain owner closes them.
 - **Route geometry:** all 9 routes were derived from pre-rescale heightmaps; final distances, elevations, crossings, and affected town/rest-stop references are blocked on rerouting against the canonical heightmap.
-- **Habitat replacement:** distinctive-place encounter rosters are blocked until Habitat Block `replace_spawns` behavior and persistence through placement/export are proven in game.
-- **Bounded suppression:** curated route pools are blocked until EXP-012 proves default Cobblemon spawns can be suppressed inside a coordinate-bounded area without suppressing the outside world.
+- **Habitat replacement:** 9 native roster files are compiled, but runtime enforcement is blocked until Habitat Block placement, influence and persistence are proven in game.
+- **Bounded suppression:** runtime exclusivity for curated route pools is blocked until EXP-012 proves default Cobblemon spawns can be suppressed inside a coordinate-bounded area without suppressing the outside world.
 - **Dialogue delivery:** the 3 authored conversations and 2 quests are blocked on a compiler/runtime adapter from campaign JSON to native Cobblemon dialogue, commands, and persistent cursors.
 - **Navigation runtime:** flag-driven waystones are blocked on an in-game proof of activation, locked-touch rollback, reconnect reconciliation, and Xaero behavior.
 - **Generated gym copies:** the overworld Blaine/League decision is blocked from enforcement until the exact datapack overrides that suppress Nether/End copies are proven.
@@ -93,7 +95,8 @@
 | `data/checks/` | `test-author` | Store machine-checkable data validation outputs only. |
 | `data/notes/` | `content-architect` | Store bounded source notes; promote settled state into this file. |
 | `data/README.md` | `content-architect` | Keep the data index aligned with files that actually exist. |
-| Future `data/events.json`, `data/trainers.json`, `data/spawns.json`, `data/gyms.json` | `datapack-content-dev` | Create only after the corresponding schema/mechanism is accepted. |
+| `data/spawns.json`, `data/spawn_suppression.json`, `data/cobblemon/` | `datapack-content-dev` | Keep source rosters, generated native pools and suppression proof status synchronized; installation requires the named runtime proofs. |
+| Future `data/events.json`, `data/trainers.json`, `data/gyms.json` | `datapack-content-dev` | Create only after the corresponding schema/mechanism is accepted. |
 | `kits/` | `world-content-dev` | Source-controlled templates, schematics, and structure assets only; the live save never enters this path. |
 | `derived/`, `build/` | `world-content-dev` | Regenerated outputs and their indexes only; do not hand-edit generated artifacts. |
 | `modpack/datapacks/` | `datapack-content-dev` | Implement only accepted data formats and mechanisms. |

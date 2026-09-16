@@ -1,0 +1,70 @@
+{
+  "name": "cobblers.habitat.glacial_tear_deep_valley.name",
+  "type": "cobblemon:natural",
+  "spawns": [
+    {
+      "species": "Bergmite",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 24.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    },
+    {
+      "species": "Snom",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 24.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    },
+    {
+      "species": "Snorunt",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 12.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    },
+    {
+      "species": "Cubchoo",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 12.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    },
+    {
+      "species": "Cryogonal",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    },
+    {
+      "species": "Spheal",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    },
+    {
+      "species": "Piplup",
+      "bucket": "rare",
+      "spawnablePositionType": "grounded",
+      "weight": 2.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    },
+    {
+      "species": "Swinub",
+      "bucket": "rare",
+      "spawnablePositionType": "grounded",
+      "weight": 2.0,
+      "levelRange": "27-36",
+      "phases": "1-25"
+    }
+  ]
+}

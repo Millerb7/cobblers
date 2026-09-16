@@ -17,6 +17,26 @@ without adding history; if no state category changed, report that it was
 reviewed and remains current. Follow its file-ownership table when making the
 update.
 
+## Live server safety (hard gate)
+
+Before any command that could access the local `cobblers-server` runtime, make
+a process/port check the first server-related action and acquire the shared
+external lock at `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`.
+Create the lock atomically outside the server tree and record the owning
+agent/task and timestamp. If port 25565, a Minecraft Java process, or the
+coordination lock is active, stop without enumerating the runtime. Do not
+assume an existing coordination lock is stale merely because the server is
+down; resolve ownership with the user or other agent first.
+
+Claude Code and Codex must never enumerate, read, copy, hash, inspect, or back
+up the live world directory at
+`C:\Users\wnd\Documents\github\cobblers-server\cobblers-10240`. This includes
+`session.lock`, region, entity, POI, player, data, and dimension files. Seed a
+disposable test world only from a designated offline snapshot made while the
+server was stopped. If no suitable snapshot exists, stop and ask for one.
+Never delete `session.lock`; a persistent lock error requires identifying the
+owning process or handle before recovery.
+
 ## Baseline and target (verified)
 
 - **Reference/base experience:** the COBBLEVERSE modpack (Modrinth slug
