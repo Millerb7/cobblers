@@ -7,6 +7,36 @@ server. `docs/vision/GAME_VISION.md` is the design source of truth and
 document and the repository disagree, say so — the disagreement is a finding,
 never something to paper over silently.
 
+## Session state (required)
+
+Read `docs/STATE.md` before doing any work. It is the operational record of
+what is built, decided, open and blocked; when another document disagrees,
+verify reality and correct the state rather than rediscovering the question.
+Before ending every session, reconcile every affected line in `docs/STATE.md`
+without adding history; if no state category changed, report that it was
+reviewed and remains current. Follow its file-ownership table when making the
+update.
+
+## Live server safety (hard gate)
+
+Before any command that could access the local `cobblers-server` runtime, make
+a process/port check the first server-related action and acquire the shared
+external lock at `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`.
+Create the lock atomically outside the server tree and record the owning
+agent/task and timestamp. If port 25565, a Minecraft Java process, or the
+coordination lock is active, stop without enumerating the runtime. Do not
+assume an existing coordination lock is stale merely because the server is
+down; resolve ownership with the user or other agent first.
+
+Claude Code and Codex must never enumerate, read, copy, hash, inspect, or back
+up the live world directory at
+`C:\Users\wnd\Documents\github\cobblers-server\cobblers-10240`. This includes
+`session.lock`, region, entity, POI, player, data, and dimension files. Seed a
+disposable test world only from a designated offline snapshot made while the
+server was stopped. If no suitable snapshot exists, stop and ask for one.
+Never delete `session.lock`; a persistent lock error requires identifying the
+owning process or handle before recovery.
+
 ## Baseline and target (verified)
 
 - **Reference/base experience:** the COBBLEVERSE modpack (Modrinth slug
@@ -151,6 +181,11 @@ does not grade its own work.
 
 ## Git and commit hygiene
 
+- **Only MIT-style sources may be committed.** Anything else (All Rights Reserved, no-redistribution,
+  unknown) is used locally and gitignored. Provenance is mandatory for every structure template: a
+  `kits/PROVENANCE.json` record with source and licence, plus a committed notice file for third-party
+  permissive donors. `python tools/validate.py --only template_provenance` enforces it (pre-commit hook in
+  `.githooks/`, enable with `git config core.hooksPath .githooks`; CI workflow `provenance`).
 - `one issue = one branch = one worktree = one implementation session`.
   Verify `git branch --show-current` before the first edit; never edit another
   session's worktree. Mechanics: `parallel-work` skill.
