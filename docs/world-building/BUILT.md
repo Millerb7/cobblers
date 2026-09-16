@@ -154,6 +154,63 @@ Ground level and below only, and measured: **0 solid blocks 2 above any street s
 **A trap worth remembering:** `forceload add` refuses a box over 256 chunks and the failure is only in its reply.
 Brock's 250 × 250 box is 272 chunks, so every fill in the first two runs silently did nothing.
 
+## Eye-level grass, and the Route 1 forest from play (2026-09-17)
+
+**The grass was a wall.** A player's eye is at 1.62, so a one-block plant sits under it and a two-block plant sits in
+it. Pallet meadows measured one tall plant in every 4.1 columns: a 4.1-block sightline, the first view out of the
+hometown. The cause was a deliberate trade-off. The plant sets avoid WorldPainter's "Short Grass", which 2.27.1
+writes under the pre-1.20.3 name, so the grassland set leaned 12 of 16 on two-block Tall Grass. The open-ground sets
+now carry half the tall weight, and ferns and flowers make up the difference. It was re-exported, and measured in
+the world:
+
+| Area | Before | After |
+| --- | ---: | ---: |
+| Pallet meadows | 1 per 4.1 | **1 per 7.6** |
+| Forest south edge | 1 per 4.8 | **1 per 8.8** |
+| River of Shrews vale | 1 per 12.5 | 1 per 17.7 |
+| Foothill Woods (forest floor, unchanged) | 1 per 19.9 | 1 per 20.0 |
+
+**A miss this caught.** The rescale export used paint maps generated from the pre-rescale heightmap, so snow, rock
+and altitude biomes were painted at the old elevations. Regenerated, 99.3% of the terrain-paint changes and 100% of
+the biome changes sit above y145. `paint_maps.py` refused at first, because its coast map is keyed to a heightmap
+hash. It now also accepts the heightmap recorded as `rescaled_from`, since the rescale is the identity below y145
+and every coast class lives near sea level.
+
+### The forest, revised from a first play
+
+The first cut felt right but read too narrow and too uniform, the south entrance was a gap between two birches
+behind tall grass, and there was nowhere to discover. Paths now signal how much they want to be found:
+
+| Tier | Width | Ground | Light | Used for |
+| --- | ---: | --- | --- | --- |
+| obvious | 8 | worn: coarse dirt, dirt path, podzol | lantern at every fork | the through route |
+| ordinary | 5 | lightly worn | none | the loop, the mansion spur |
+| quiet | 3 | grass | none | the two dead ends |
+| hidden | 2 | nothing | none | three squeeze paths to secret glades |
+
+- **South entrance:** 16 wide, narrowing to 8 over 40 blocks, with a lantern post on each side.
+- **Openings:** the sapling clearing, the mansion clearing, three glades and three secret glades. The hidden paths
+  leave the middle of a corridor segment, not a fork, so they are thinner patches of trees rather than one more
+  visible way out.
+
+**Verified in the world:** 48,433 trees; entrance clear at eye height 15 of 15; main path clear at eye height 35 of
+35 and worn at 86% against a designed 85%; all 6 lantern posts standing.
+
+**The world-tree sapling was never built before now.** It had been sized in an earlier session and reported, but not
+placed: the clearing at (1380, 4628) was empty. It is now a `sapling` tier in `tools/tree_grove.py`, 40 blocks tall
+with a 5x5 trunk, and `maze_forest.py` places it. Trunk and crown are verified in the world.
+
+**The cavern after this rebuild:** floor 40,000/40,000, air under the roof 40,000/40,000, 0 fluid inside. The roof
+cap was 4 blocks solid in only 39,588 columns on the first pass, because water was still seeping through natural
+voids just after the dig. A second cap pass after the drain brought it to 40,000.
+
+**A measurement trap, again.** Two failures in this check came from the probe, not the build. The main path read
+48 of 103 clear and one lantern read missing; both points were in chunks the probe had not loaded, and
+`execute if block` on an unloaded chunk answers "That position is not loaded", which was scored as a fail.
+
+**Not in this export:** `data/regions.json` is being edited in another session (29 polygon holes), so these paint
+maps come from this branch's copy. The next export after that lands will include it.
+
 ## What is not done
 
 - **Axiom in game** has not been used yet.
