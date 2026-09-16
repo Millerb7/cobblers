@@ -1,0 +1,59 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/tree_town/world_oak_a",
+ "kind": "trees",
+ "set": "tree_town",
+ "name": "world_oak_a",
+ "author": "tools/tree_grove.py",
+ "source": {
+  "file": "generated",
+  "imported": "2026-09-15",
+  "size": [
+   51,
+   122,
+   53
+  ],
+  "blocks": 55860
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  19,
+  2,
+  20
+ ],
+ "tier": "world",
+ "habitat": {
+  "tier": "world",
+  "floor_tier_y": [
+   [
+    24,
+    28
+   ],
+   [
+    48,
+    52
+   ],
+   [
+    72,
+    76
+   ]
+  ],
+  "room_clear_y": [
+   77,
+   83
+  ],
+  "crown_y": [
+   84,
+   119
+  ],
+  "crown_radius": 26,
+  "limb_reach": 24,
+  "trunk": [
+   13,
+   13
+  ],
+  "height": 119
+ },
+ "notes": "trunk base at template (trunk_origin); the 13x13 trunk spans +0..+12 in x and z from it"
+}

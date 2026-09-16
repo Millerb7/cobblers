@@ -28,11 +28,24 @@ import numpy as np
 import terrain as T
 import structure_nbt as S
 from landmark_trees import _ball, _leaves, _limb, _log, _rng, _roots
+from place_town import rotate
 
 ROOT = Path(__file__).resolve().parent.parent
 FLOOR_Y, ROOM, CROWN_R, LIMB_REACH = 16, 10, 14, 12
 SPACING = 36
 MOVE = 8
+# Bigger trees for the same town. `giant` is what the grove is built from and is never regenerated: its prefabs are
+# already standing in the world. `elder` and `world` are additions, built by big_tree below.
+#   storeys   limb tiers a town can floor over, `gap` apart; `room` is the clear trunk above the last one
+#   crown     stacked balls from crown_base, (rise, radius, half-depth)
+TIERS = {
+    "elder": {"floor": 20, "gap": 18, "storeys": 2, "room": 14, "trunk_r": 3, "reach": 17, "limb_r": 2.0,
+              "limbs": (7, 10), "root_r": 13, "root_n": 10, "root_top": 6,
+              "crown": [(12, 19, 8), (20, 12, 5)]},
+    "world": {"floor": 24, "gap": 24, "storeys": 3, "room": 8, "trunk_r": 6, "reach": 24, "limb_r": 3.0,
+              "limbs": (8, 11), "root_r": 25, "root_n": 16, "root_top": 9,
+              "crown": [(12, 26, 11), (22, 19, 8), (30, 11, 5)]},
+}
 SPECIES = {"foothill_mixed": "oak", "birch_shore": "birch", "riparian_woods": "oak", "birch_plateau": "birch",
            "drowned_swamp": "mangrove", "broken_oakwood": "dark_oak"}
 
@@ -67,8 +80,58 @@ def habitat_giant(kind, variant):
                "crown_y": [crown_base, crown_base + 15], "crown_radius": CROWN_R, "limb_reach": LIMB_REACH, "trunk": [5, 5]}
 
 
-def write_prefab(kind, variant, b, dims):
-    name = "giant_%s_%s" % (kind, variant)
+def big_tree(kind, variant, tier):
+    """An `elder` or `world` tree: the same habitat idea as habitat_giant, scaled up and given more limb storeys.
+
+    habitat_giant is deliberately not routed through here. Its prefabs are already standing in the world, and
+    regenerating them with different geometry would leave the placed trees and the files disagreeing.
+    """
+    t = TIERS[tier]
+    rng = _rng("habitat_%s_%s_%s" % (tier, kind, variant))
+    b = S.Builder()
+    log_kind = {"birch": "birch", "mangrove": "mangrove", "dark_oak": "dark_oak", "spruce": "spruce",
+                "cherry": "cherry", "jungle": "jungle", "acacia": "acacia"}.get(kind, "oak")
+    R = t["trunk_r"]
+    c = R                                                             # trunk spans 0..2R in x and z
+    storeys = [t["floor"] + i * t["gap"] for i in range(t["storeys"])]
+    crown_base = storeys[-1] + 4 + t["room"]
+    for y in range(-2, crown_base + 3):                               # trunk, tapering above the first storey
+        span = max(crown_base - storeys[0], 1)
+        f = 1.0 if y <= storeys[0] else 1 - 0.45 * min(1.0, (y - storeys[0]) / span)
+        rr = R * f
+        for dx in range(-R, R + 1):
+            for dz in range(-R, R + 1):
+                if dx * dx + dz * dz > rr * rr + rr:                  # rounded, not a square column
+                    continue
+                b.set(c + dx, y, c + dz, *_log(log_kind))
+    _roots(b, c, c, t["root_r"], t["root_n"], log_kind, rng, top=t["root_top"])
+    tiers_out = []
+    for si, sy in enumerate(storeys):                                 # near-level limbs: what a storey rests on
+        n_limbs = int(rng.integers(*t["limbs"]))
+        twist = rng.uniform(0, math.pi)
+        for k in range(n_limbs):
+            ang = 2 * math.pi * k / n_limbs + twist + rng.uniform(-0.15, 0.15)
+            reach = t["reach"] * rng.uniform(0.82, 1.05) * (1 - 0.12 * si)
+            y0 = sy + rng.uniform(0, 2)
+            tip = (c + math.cos(ang) * reach, y0 + rng.uniform(1, 3), c + math.sin(ang) * reach)
+            _limb(b, (c, y0, c), tip, t["limb_r"], log_kind)
+        tiers_out.append([int(sy), int(sy) + 4])
+    for k in range(t["limbs"][0]):                                    # upper limbs carrying the crown
+        ang = 2 * math.pi * k / t["limbs"][0] + rng.uniform(-0.3, 0.3)
+        r0 = t["crown"][0][1] * 0.7
+        tip = (c + math.cos(ang) * r0, crown_base + rng.uniform(4, 9), c + math.sin(ang) * r0)
+        _limb(b, (c, crown_base - 3, c), tip, t["limb_r"] * 0.6, log_kind)
+        _ball(b, *tip, rng.uniform(6, 8), rng.uniform(4, 5), rng.uniform(6, 8), _leaves(log_kind), rng)
+    for rise, rad, half in t["crown"]:                                # stacked canopy
+        _ball(b, c, crown_base + rise, c, rad, half, rad, _leaves(log_kind), rng, ragged=0.22)
+    top = crown_base + t["crown"][-1][0] + t["crown"][-1][2]
+    return b, {"tier": tier, "floor_tier_y": tiers_out, "room_clear_y": [storeys[-1] + 5, crown_base - 1],
+               "crown_y": [crown_base, int(top)], "crown_radius": t["crown"][0][1], "limb_reach": t["reach"],
+               "trunk": [2 * R + 1, 2 * R + 1], "height": int(top)}
+
+
+def write_prefab(kind, variant, b, dims, tier="giant"):
+    name = "giant_%s_%s" % (kind, variant) if tier == "giant" else "%s_%s_%s" % (tier, kind, variant)
     d = ROOT / "kits" / "structures" / "prefabs" / "trees" / "tree_town"
     d.mkdir(parents=True, exist_ok=True)
     data, shift = b.to_bytes()
@@ -79,7 +142,9 @@ def write_prefab(kind, variant, b, dims):
             "source": {"file": "generated", "imported": datetime.date.today().isoformat(), "size": (hi - lo + 1).tolist(),
                        "blocks": len(b.blocks)},
             "entrance": None, "grade_layer": None, "trunk_origin": [int(shift[0]), int(shift[1]), int(shift[2])],
-            "habitat": dims, "notes": "trunk base at template (trunk_origin); the 5x5 trunk spans +0..+4 in x and z from it"}
+            "tier": tier, "habitat": dims,
+            "notes": "trunk base at template (trunk_origin); the %dx%d trunk spans +0..+%d in x and z from it"
+                     % (dims["trunk"][0], dims["trunk"][1], dims["trunk"][0] - 1)}
     (d / (name + ".json")).write_text(json.dumps(side, indent=1) + "\n", encoding="utf-8")
     return side
 
@@ -118,14 +183,163 @@ def grove(heights, water, site, rng):
     return trees, gaps
 
 
+def footprint(px, pz, sx, sz, rot):
+    """World box a template covers when placed at (px, pz) with `rot`.
+
+    `place template` rotates about the placement position, so for 180 and the two 90s the template extends in the
+    NEGATIVE direction. Taking min(px, px + sx) assumed it never did, which left the forceload box covering a
+    corner of the tree instead of the tree -- the exact "That position is not loaded" failure the forceload exists
+    to prevent.
+    """
+    corners = [rotate(dx, dz, rot) for dx in (0, sx) for dz in (0, sz)]
+    xs = [px + c[0] for c in corners]
+    zs = [pz + c[1] for c in corners]
+    return min(xs), min(zs), max(xs), max(zs)
+
+
+def _pad(ground, x, z, half, x0, z0):
+    """Relief over a (2*half+1) square of real world ground, centred on (x, z). None if it runs off the extract."""
+    a, b_ = z - half - z0, x - half - x0
+    if a < 0 or b_ < 0 or a + 2 * half + 1 > ground.shape[0] or b_ + 2 * half + 1 > ground.shape[1]:
+        return None
+    pad = ground[a:a + 2 * half + 1, b_:b_ + 2 * half + 1].astype(float)
+    return float(pad.max() - pad.min())
+
+
+def augment(site_id, world_dir, want_elders=4):
+    """Add the world tree and a ring of elders to a grove that is already standing.
+
+    The giants keep their positions: they are in the world. Clearances are horizontal only where the canopies
+    share height. A giant's crown is ground+30..45 and an elder's is ground+56..81, so they never meet; what has
+    to clear is trunk against limb tip. The world tree's first limb storey is ground+24 reaching 24, so it passes
+    over a giant's clear trunk (its own crown starts at +30) as long as the trunks are well apart.
+    """
+    rep = json.loads((ROOT / "derived" / "sites" / ("tree_grove_%s.json" % site_id)).read_text(encoding="utf-8"))
+    # a giant's record stores the trunk's MIN CORNER, not its centre: the 5x5 trunk spans +0..+4 from it. Spacing
+    # and pad relief have to be measured centre to centre, or a 13-wide world tree is judged 6 blocks off where it
+    # will stand, and is seated on the ground under its corner. The trees added here store the centre.
+    giants = [dict(g, x=g["x"] + 2, z=g["z"] + 2) for g in rep["giants"]]
+    cx, cz = rep["site"]["x"], rep["site"]["z"]
+    import world_heights
+    box = (cx - 140, cz - 140, cx + 140, cz + 140)
+    ground, water_top, _ = world_heights.extract(world_dir, box)
+    x0, z0 = box[0], box[1]
+    wet = water_top != world_heights.NONE
+
+    def dry(x, z, r):
+        a, b_ = z - r - z0, x - r - x0
+        if a < 0 or b_ < 0 or a + 2 * r + 1 > wet.shape[0] or b_ + 2 * r + 1 > wet.shape[1]:
+            return False
+        return not wet[a:a + 2 * r + 1, b_:b_ + 2 * r + 1].any()
+
+    def gy(x, z):
+        return int(ground[z - z0, x - x0])
+
+    # the world tree: the flattest dry 15x15 near the grove's empty centre that keeps 28 blocks off every giant
+    best = None
+    for dz in range(-24, 25, 2):
+        for dx in range(-24, 25, 2):
+            x, z = cx + dx, cz + dz
+            near = min(math.hypot(x - t["x"], z - t["z"]) for t in giants)
+            if near < 28 or not dry(x, z, 30):
+                continue
+            r = _pad(ground, x, z, 7, x0, z0)
+            if r is None or r > 2.0:
+                continue
+            score = near - 2 * r                                   # far from the giants, and level
+            if best is None or score > best[0]:
+                best = (score, x, z, r, near)
+    world_tree = None
+    if best is not None:
+        _, x, z, r, near = best
+        world_tree = {"x": x, "z": z, "ground_y": gy(x, z), "pad_relief": round(r, 1),
+                      "nearest_giant": round(near, 1), "tier": "world"}
+
+    # elders on two rings outside the giants, taking the ones that are level, dry and clear
+    placed = [(t["x"], t["z"], 14) for t in giants]
+    if world_tree:
+        placed.append((world_tree["x"], world_tree["z"], 26))
+    elders = []
+    cands = []
+    for radius in (56, 74):
+        for k in range(12):
+            ang = 2 * math.pi * k / 12 + (0.26 if radius == 74 else 0)
+            cands.append((cx + radius * math.cos(ang), cz + radius * math.sin(ang)))
+    for fx, fz in cands:
+        if len(elders) >= want_elders:
+            break
+        best = None
+        for dz in range(-10, 11, 2):
+            for dx in range(-10, 11, 2):
+                x, z = int(round(fx + dx)), int(round(fz + dz))
+                if any(math.hypot(x - px, z - pz) < 30 for px, pz, _ in placed):
+                    continue
+                if any(math.hypot(x - e["x"], z - e["z"]) < 44 for e in elders):
+                    continue
+                if not dry(x, z, 22):
+                    continue
+                r = _pad(ground, x, z, 4, x0, z0)
+                if r is None or r > 2.5:
+                    continue
+                if best is None or r < best[0]:
+                    best = (r, x, z)
+        if best is not None:
+            r, x, z = best
+            elders.append({"x": x, "z": z, "ground_y": gy(x, z), "pad_relief": round(r, 1), "tier": "elder"})
+    return rep, world_tree, elders
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
     p.add_argument("--site", default=None)
     p.add_argument("--id", default=None)
+    p.add_argument("--augment", default=None, help="grove id: add the world tree and elders to a grove already placed")
+    p.add_argument("--elders", type=int, default=4)
     p.add_argument("--all-shortlisted", action="store_true")
     p.add_argument("--surface-world", default=None, help="stopped world: trunk bases seated on the ground the world has")
     a = p.parse_args(argv)
+    if a.augment:
+        if not a.surface_world:
+            p.error("--augment needs --surface-world: the trees are seated on the ground the world actually has")
+        rep, wt, elders = augment(a.augment, a.surface_world, a.elders)
+        kind = SPECIES.get(rep["site"].get("forest"), "oak")
+        from place_town import rotate
+        rng = _rng("augment_" + a.augment)
+        cmds = ["# %s: the world tree and elders added to the standing grove (tools/tree_grove.py --augment)" % a.augment]
+        out = []
+        for t in ([wt] if wt else []) + elders:
+            tier = t["tier"]
+            variant = "a" if tier == "world" else "abc"[len(out) % 3]
+            b, dims = big_tree(kind, variant, tier)
+            side = write_prefab(kind, variant, b, dims, tier)
+            ox, oy, oz = side["trunk_origin"]
+            rot = "none" if tier == "world" else ["none", "clockwise_90", "180", "counterclockwise_90"][int(rng.integers(4))]
+            rx, rz = rotate(ox, oz, rot)
+            sx, sy, sz = side["source"]["size"]
+            # t["x"], t["z"] is the trunk centre; builder (a, b) lands at (origin + rotate(a, b, rot)), so the
+            # origin has to be pulled back by the rotated half-trunk for the centre to land where it was sited
+            c = dims["trunk"][0] // 2
+            cdx, cdz = rotate(c, c, rot)
+            px, pz = t["x"] - cdx - rx, t["z"] - cdz - rz
+            lo_x, lo_z, hi_x, hi_z = footprint(px, pz, sx, sz, rot)
+            t.update({"object": side["template_id"], "rotation": rot, "height": dims["height"], "position": "trunk centre",
+                      "crown_radius": dims["crown_radius"], "trunk": dims["trunk"], "top_y": t["ground_y"] + dims["height"]})
+            cmds.append("forceload add %d %d %d %d" % (lo_x - 8, lo_z - 8, hi_x + 8, hi_z + 8))
+            cmds.append("place template %s %d %d %d %s none 1.0 0" % (side["template_id"], px, t["ground_y"] + 1 - oy, pz, rot))
+            # a skirt so the trunk meets the ground on the low side of a pad that is not perfectly level
+            cmds.append("fill %d %d %d %d %d %d minecraft:grass_block replace #minecraft:air"
+                        % (t["x"] - c - 1, t["ground_y"], t["z"] - c - 1, t["x"] + c + 1, t["ground_y"], t["z"] + c + 1))
+            cmds.append("forceload remove %d %d %d %d" % (lo_x - 8, lo_z - 8, hi_x + 8, hi_z + 8))
+            out.append(t)
+        rep["world_tree"], rep["elders"] = wt, elders
+        (ROOT / "derived" / "sites" / ("tree_grove_%s.json" % a.augment)).write_text(json.dumps(rep, indent=1), encoding="utf-8")
+        fn = ROOT / "build" / "grove" / ("grove_%s_augment.mcfunction" % a.augment)
+        fn.parent.mkdir(parents=True, exist_ok=True)
+        fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+        print(json.dumps({"site": a.augment, "species": kind, "added": out,
+                          "giants_kept": len(rep["giants"]), "function": str(fn.relative_to(ROOT))}, indent=1))
+        return
     heights, world = T.load_from_args(a)
     from PIL import Image
     man = json.loads((ROOT / "build" / "paint" / "manifest.json").read_text(encoding="utf-8"))
@@ -149,7 +363,7 @@ def main(argv=None):
     out = []
     for s in sites:
         kind = SPECIES.get(s["forest"], "oak")
-        rng = np.random.default_rng(abs(hash(s["id"])) % (2 ** 32))
+        rng = _rng("grove_" + s["id"])
         variants = []
         for v in "abc":
             key = (kind, v)
@@ -175,10 +389,10 @@ def main(argv=None):
             t.update({"object": side["template_id"], "rotation": rot})
             sx, sy, sz = side["source"]["size"]
             px, pz = t["x"] - rx, t["z"] - rz
-            lo_x, lo_z = min(px, px + sx), min(pz, pz + sz)
-            cmds.append("forceload add %d %d %d %d" % (lo_x - 8, lo_z - 8, lo_x + sx + 8, lo_z + sz + 8))
+            lo_x, lo_z, hi_x, hi_z = footprint(px, pz, sx, sz, rot)
+            cmds.append("forceload add %d %d %d %d" % (lo_x - 8, lo_z - 8, hi_x + 8, hi_z + 8))
             cmds.append("place template %s %d %d %d %s none 1.0 0" % (side["template_id"], px, t["ground_y"] + 1 - oy, pz, rot))
-            cmds.append("forceload remove %d %d %d %d" % (lo_x - 8, lo_z - 8, lo_x + sx + 8, lo_z + sz + 8))
+            cmds.append("forceload remove %d %d %d %d" % (lo_x - 8, lo_z - 8, hi_x + 8, hi_z + 8))
         rep = {"site": s, "species": kind, "giants": trees, "nearest_neighbour_blocks": [round(g, 1) if g else None for g in gaps],
                "limb_tip_gap_blocks": [round(g - 2 * LIMB_REACH - 5, 1) if g else None for g in gaps],
                "crown_overlap_blocks": [round(2 * CROWN_R - g, 1) if g else None for g in gaps],

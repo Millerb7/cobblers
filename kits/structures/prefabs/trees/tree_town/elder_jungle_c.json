@@ -1,0 +1,55 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/tree_town/elder_jungle_c",
+ "kind": "trees",
+ "set": "tree_town",
+ "name": "elder_jungle_c",
+ "author": "tools/tree_grove.py",
+ "source": {
+  "file": "generated",
+  "imported": "2026-09-15",
+  "size": [
+   40,
+   84,
+   39
+  ],
+  "blocks": 20327
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  16,
+  2,
+  16
+ ],
+ "tier": "elder",
+ "habitat": {
+  "tier": "elder",
+  "floor_tier_y": [
+   [
+    20,
+    24
+   ],
+   [
+    38,
+    42
+   ]
+  ],
+  "room_clear_y": [
+   43,
+   55
+  ],
+  "crown_y": [
+   56,
+   81
+  ],
+  "crown_radius": 19,
+  "limb_reach": 17,
+  "trunk": [
+   7,
+   7
+  ],
+  "height": 81
+ },
+ "notes": "trunk base at template (trunk_origin); the 7x7 trunk spans +0..+6 in x and z from it"
+}
