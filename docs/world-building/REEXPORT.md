@@ -1,5 +1,23 @@
 # Re-export: cobblers-10240
 
+## 2026-09-16: the Glacial Tear creek, and the first built interiors
+
+**Status: exported, built in, checked, pregenerated.**
+
+| Step | Result |
+| --- | --- |
+| Heightmap | `fd0db59b…` on river cut `f5ff054e…`: the major river starts on the trough floor, so the creek is back (see [`RIVERS.md`](RIVERS.md#the-major-river)) |
+| Retired | `cobblers-server-retired/2026-09-16-pre-creek/` |
+| Export | 2,255 s (tests were running beside it), `seed_match: true`, 484 region files |
+| Hometown | **re-placed, not copied across.** The templates changed (concrete substituted), so placing again applies the fix and seats the buildings on the new ground: 0 gaps in 36 corners and 1,670 columns |
+| Mods | WorldEdit 7.3.8 added and loading beside Axiom 6.0.5 |
+| Built | the Displaced City cavern, the Foothill Woods grove, and terrain prep for gym towns 1 and 2: [`BUILT.md`](BUILT.md) |
+| Distant Horizons | pregen over the whole border |
+
+**The town's buildings are no longer donor-concrete.** `data/spawn_block_policy.json` records the substitution;
+the placed Pokémon Center and Mart now carry `moarconcrete:*_concrete_texture`, so Varoom and Revavroom no longer
+have a base block in any town.
+
 ## 2026-09-15 (second and third): hillside relief, seated hometown, major river head
 
 **Status: exported twice, both checked in the region files and over RCON.** Each export was followed by a
