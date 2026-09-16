@@ -54,27 +54,57 @@ SURFACE_WORLD = "C:/Users/wnd/Documents/github/cobblers-server/cobblers-10240"
 # Played first-cut feedback: corridors read too narrow and too alike, the south entrance was a gap between two
 # birches behind tall grass, and there was nowhere to discover.
 NETWORK = [
-    {"id": "main", "kind": "through route", "tier": "obvious", "width": 8,
-     "nodes": [(1468, 5052), (1436, 4944), (1504, 4856), (1396, 4768), (1380, 4648),
-               (1472, 4556), (1540, 4444), (1572, 4300)]},
-    {"id": "loop_east", "kind": "loop, rejoins main", "tier": "ordinary", "width": 5,
-     "nodes": [(1504, 4856), (1616, 4812), (1664, 4688), (1600, 4592), (1472, 4556)]},
-    # dead ends are short on purpose: a wrong turn has to cost seconds. At 4.3 blocks a second, 70-80 blocks in and
-    # back out is about 35 seconds. The first cut ran 175 and 169, which was 80 seconds of being punished.
-    {"id": "spur_west", "kind": "dead end", "tier": "quiet", "width": 3,
-     "nodes": [(1436, 4944), (1388, 4922), (1368, 4908)]},
-    {"id": "spur_northwest", "kind": "dead end", "tier": "quiet", "width": 3,
-     "nodes": [(1396, 4768), (1348, 4750), (1330, 4728)]},
+    # Played second cut: better, but the main path still read as one straight line -- its legs ran 110-150 blocks,
+    # so inside an 8-wide corridor you looked down a long tunnel, and there were four decisions in 900 blocks. The
+    # route is now BRAIDED: short obvious stretches, then a split into two comparable ordinary paths that rejoin.
+    # Both sides of a braid are the same width and the same ground on purpose, so a split is a real choice rather than
+    # a highway with a side road; neither is wrong, and each passes something the other does not.
+    #
+    #   entrance -> A  obvious
+    #   A => B         braid 1: west past the bend, east past a spur to the fern glade
+    #   B -> C -> D    obvious, a dead end off C
+    #   D => E         braid 2: west through the sapling clearing, east past a dead end
+    #   E -> F         obvious
+    #   F => G         braid 3: north-west short and direct, north-east longer with a dead end
+    #   G -> H -> exit obvious
+    # NETWORK[0] is the entrance stretch: the flare narrows to its width.
+    {"id": "entry", "kind": "entrance stretch", "tier": "obvious", "width": 8,
+     "nodes": [(1468, 5052), (1460, 5010)]},
+    {"id": "braid1_west", "kind": "braid", "tier": "ordinary", "width": 5,
+     "nodes": [(1460, 5010), (1420, 4980), (1400, 4935), (1460, 4895)]},
+    {"id": "braid1_east", "kind": "braid", "tier": "ordinary", "width": 5,
+     "nodes": [(1460, 5010), (1500, 4975), (1515, 4930), (1460, 4895)]},
+    {"id": "mid_1", "kind": "obvious stretch", "tier": "obvious", "width": 7,
+     "nodes": [(1460, 4895), (1440, 4850), (1470, 4800)]},
+    {"id": "braid2_west", "kind": "braid, through the sapling", "tier": "ordinary", "width": 5,
+     "nodes": [(1470, 4800), (1410, 4770), (1385, 4700), (1380, 4648), (1420, 4590)]},
+    {"id": "braid2_east", "kind": "braid", "tier": "ordinary", "width": 5,
+     "nodes": [(1470, 4800), (1510, 4760), (1500, 4690), (1470, 4640), (1420, 4590)]},
+    {"id": "mid_2", "kind": "obvious stretch", "tier": "obvious", "width": 7,
+     "nodes": [(1420, 4590), (1470, 4550)]},
+    {"id": "braid3_northwest", "kind": "braid", "tier": "ordinary", "width": 5,
+     "nodes": [(1470, 4550), (1480, 4500), (1510, 4460), (1540, 4420)]},
+    {"id": "braid3_northeast", "kind": "braid", "tier": "ordinary", "width": 5,
+     "nodes": [(1470, 4550), (1540, 4540), (1580, 4490), (1540, 4420)]},
+    {"id": "exit", "kind": "exit stretch", "tier": "obvious", "width": 8,
+     "nodes": [(1540, 4420), (1560, 4370), (1572, 4300)]},
+    # dead ends: short on purpose -- 70-75 blocks in and back out is about 35 seconds at 4.3 blocks a second
+    {"id": "dead_c", "kind": "dead end", "tier": "quiet", "width": 3,
+     "nodes": [(1440, 4850), (1390, 4838), (1370, 4825)]},
+    {"id": "dead_braid2", "kind": "dead end", "tier": "quiet", "width": 3,
+     "nodes": [(1500, 4690), (1550, 4700), (1570, 4712)]},
+    {"id": "dead_braid3", "kind": "dead end", "tier": "quiet", "width": 3,
+     "nodes": [(1580, 4490), (1630, 4482), (1650, 4478)]},
     {"id": "spur_mansion", "kind": "side path to the mansion", "tier": "ordinary", "width": 5,
-     "nodes": [(1468, 5036), (1552, 5028), (1628, 5032)]},
-    # hidden: each leaves the MIDDLE of a corridor segment, not a fork -- start one at a fork and it is just a
-    # fourth visible way out. From mid-segment it is a slightly thinner patch of trees you have to decide to push into.
+     "nodes": [(1466, 5036), (1552, 5028), (1628, 5032)]},
+    # hidden: each leaves the MIDDLE of a corridor segment, never a fork, so it is a thinner patch of trees you
+    # decide to push into rather than one more visible way out
     {"id": "hidden_fern_glade", "kind": "hidden path", "tier": "hidden", "width": 2,
-     "nodes": [(1470, 4900), (1540, 4918), (1590, 4940)]},
+     "nodes": [(1508, 4952), (1560, 4945), (1600, 4940)]},
     {"id": "hidden_west_hollow", "kind": "hidden path", "tier": "hidden", "width": 2,
-     "nodes": [(1388, 4708), (1320, 4776), (1260, 4840)]},
+     "nodes": [(1398, 4735), (1320, 4770), (1260, 4800)]},
     {"id": "hidden_north_ring", "kind": "hidden path", "tier": "hidden", "width": 2,
-     "nodes": [(1556, 4372), (1612, 4376), (1660, 4380)]},
+     "nodes": [(1556, 4390), (1612, 4386), (1660, 4380)]},
 ]
 MANSION = (1630, 5034)
 MANSION_CLEARING_R = 22
@@ -88,11 +118,12 @@ ENTRANCE = {"mouth": (1468, 5058), "into": (1466, 5018), "mouth_width": 16}
 CLEARINGS = [
     {"id": "sapling", "at": SAPLING, "r": 20, "kind": "centre"},
     {"id": "mansion", "at": MANSION, "r": MANSION_CLEARING_R, "kind": "set piece"},
-    {"id": "loop_glade", "at": (1664, 4688), "r": 12, "kind": "glade"},
-    {"id": "bend_glade", "at": (1436, 4944), "r": 10, "kind": "glade"},
-    {"id": "north_glade", "at": (1540, 4444), "r": 11, "kind": "glade"},
-    {"id": "fern_glade", "at": (1590, 4940), "r": 9, "kind": "secret"},
-    {"id": "west_hollow", "at": (1260, 4840), "r": 9, "kind": "secret"},
+    # small glades where the braids rejoin, so each decision has a room on the far side of it
+    {"id": "braid1_join", "at": (1460, 4895), "r": 10, "kind": "glade"},
+    {"id": "braid2_join", "at": (1420, 4590), "r": 11, "kind": "glade"},
+    {"id": "braid3_join", "at": (1540, 4420), "r": 10, "kind": "glade"},
+    {"id": "fern_glade", "at": (1600, 4940), "r": 9, "kind": "secret"},
+    {"id": "west_hollow", "at": (1260, 4800), "r": 9, "kind": "secret"},
     {"id": "north_ring", "at": (1660, 4380), "r": 8, "kind": "secret"},
 ]
 GROUND = {                                   # what the ground says, by tier (weights of a per-column mix)
@@ -206,19 +237,37 @@ def path_dressing(ground, box, seed=SEED):
         put(px, pz, "setblock %d %d %d minecraft:lantern[hanging=false]" % (px, gy + 2, pz))
         counts["lanterns"] += 1
 
-    main = NETWORK[0]
-    shared = {n for c in NETWORK[1:] if c["tier"] != "hidden" for n in c["nodes"]}
-    for i, n in enumerate(main["nodes"]):
-        if n not in shared:
+    # A post at every fork -- a node two or more visible corridors share -- just off the edge of the most obvious
+    # corridor through it. Both perpendicular sides are tried and the post goes on whichever is further from every
+    # corridor, so it marks the fork without landing in the mouth of a branch. The network is braided, so there is no
+    # single "main" polyline to hang these off any more.
+    visible = [c for c in NETWORK if c["tier"] != "hidden"]
+    from collections import Counter
+    uses = Counter(n for c in visible for n in c["nodes"])
+    rank_of = {"obvious": 3, "ordinary": 2, "quiet": 1}
+    for node, k in sorted(uses.items()):
+        if k < 2:
             continue
-        # a post just off the path's edge, on the side away from the branch, so it marks the fork without blocking it
-        a = main["nodes"][max(0, i - 1)]
-        b = main["nodes"][min(len(main["nodes"]) - 1, i + 1)]
-        tx, tz = b[0] - a[0], b[1] - a[1]
+        host = max((c for c in visible if node in c["nodes"]), key=lambda c: (rank_of[c["tier"]], c["width"]))
+        i = host["nodes"].index(node)
+        a_ = host["nodes"][max(0, i - 1)]
+        b_ = host["nodes"][min(len(host["nodes"]) - 1, i + 1)]
+        tx, tz = b_[0] - a_[0], b_[1] - a_[1]
         L = math.hypot(tx, tz) or 1.0
         nx, nz = -tz / L, tx / L
-        off = main["width"] / 2.0 + 1.5
-        post(int(round(n[0] + nx * off)), int(round(n[1] + nz * off)))
+        off = host["width"] / 2.0 + 1.5
+        best_pt, best_clear = None, -1.0
+        for sgn in (1, -1):
+            px = int(round(node[0] + sgn * nx * off))
+            pz = int(round(node[1] + sgn * nz * off))
+            if not (x0 <= px <= x1 and z0 <= pz <= z1):
+                continue
+            clear = min(polyline_distance((1, 1), (px, pz, px, pz), c["nodes"])[0, 0] - c["width"] / 2.0
+                        for c in visible)
+            if clear > best_clear:
+                best_pt, best_clear = (px, pz), clear
+        if best_pt:
+            post(*best_pt)
     half_mouth = ENTRANCE["mouth_width"] / 2.0 + 1.5
     post(int(round(mx - half_mouth)), mz)
     post(int(round(mx + half_mouth)), mz)
@@ -346,7 +395,7 @@ def main(argv=None):
         print("      %s  %s" % (f, " + ".join(who)))
     dead = [c for c in NETWORK if c["kind"] == "dead end"]
     print("   dead ends: %d  %s" % (len(dead), [c["nodes"][-1] for c in dead]))
-    loops = [c for c in NETWORK if "loop" in c["kind"]]
+    loops = [c for c in NETWORK if "loop" in c["kind"] or c["kind"].startswith("braid")]
     print("   loops: %d  %s" % (len(loops), [(c["nodes"][0], c["nodes"][-1]) for c in loops]))
 
     # big trees, scattered through the pack, well clear of the corridors
