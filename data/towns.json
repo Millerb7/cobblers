@@ -1097,7 +1097,7 @@
    },
    "gates": [],
    "underground": {
-    "entrance": "the surface site: a meltwater cave mouth on the trough flank, 426 blocks off the Surge to Erika leg",
+    "entrance": "the surface site: a meltwater cave mouth on the trough flank, 290 blocks off the Surge to Erika leg",
     "cavern_centre": {
      "x": 3350,
      "z": 1750
@@ -1146,7 +1146,7 @@
    "working_name": "Tea town (Shrew Lake shores)",
    "display_name": null,
    "for": "A town built on one industry: tea terraces and a tea house in the cherry-blossom country above Shrew Lake, the set piece for Poltchageist and Sinistcha.",
-   "why_here": "The only cherry-grove country on the map (the blossom preset), with Shrew Lake 390 blocks south; the tea house was already the recommended home for Poltchageist (STRUCTURE_DATA_FALLOUT.md). 702 blocks off Victory Road and 911 from Brock, so it is found by wandering, not passed.",
+   "why_here": "The only cherry-grove country on the map (the blossom preset), with Shrew Lake 390 blocks south; the tea house was already the recommended home for Poltchageist (STRUCTURE_DATA_FALLOUT.md). 898 blocks off the Brock-to-Misty route and 911 from Brock, so it is found by wandering, not passed.",
    "centre": {
     "x": 2654,
     "z": 3605,
@@ -1291,7 +1291,7 @@
    "working_name": "Gorge hamlet (Tilpey outflow)",
    "display_name": null,
    "for": "A bridge-keepers' hamlet above the Tilpey outflow gorge: a Center, two houses, and the NPC who knows the river.",
-   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits 330 blocks south-east of the bridge on the far bank, visible from it but not on the way.",
+   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits about 498 blocks south-east of the bridge and 305 blocks off route_07_sabrina_to_blaine at fraction 0.606, visible from the crossing but not on the way.",
    "centre": {
     "x": 6814,
     "z": 4367,
@@ -1656,7 +1656,7 @@
    "working_name": "Viltri Light (Mouth of Viltri)",
    "display_name": null,
    "for": "A lighthouse marking the Mouth of Viltri: an estuary no river uses any more.",
-   "why_here": "The annotated mouth of Viltri's Path now ends dry at Viltri Ravine while the real river runs north-west; a light still keeping watch over the old mouth is a story the terrain already tells. The coast here is low (y68), so the tower is the landmark, 928 blocks off the first leg.",
+   "why_here": "The annotated mouth of Viltri's Path now ends dry at Viltri Ravine while the real river runs north-west; a light still keeping watch over the old mouth is a story the terrain already tells. The coast here is low (y68), so the tower is the landmark, 930 blocks off the first leg.",
    "centre": {
     "x": 550,
     "z": 4518,
@@ -1727,7 +1727,7 @@
    "working_name": "Rift dig camp (west spur)",
    "display_name": null,
    "for": "An archaeologists' camp excavating the anomalous steel chamber in the Rift's dead-end west spur (Registeel).",
-   "why_here": "The west spur branches off the trunk and leads nowhere on Victory Road; the camp is 250 blocks off the route and gives the spur its reason. Registeel's chamber was already planned in the Rift.",
+   "why_here": "The west spur branches off the trunk and leads nowhere on Victory Road; the camp is 491 blocks off Victory Road and gives the spur its reason. Registeel's chamber was already planned in the Rift.",
    "centre": {
     "x": 3106,
     "z": 3314,
@@ -1798,7 +1798,7 @@
    "working_name": "Frostpeak shrine",
    "display_name": null,
    "for": "A shrine on the lone summit of Frostpeak Point, reached over the low neck from the massif.",
-   "why_here": "The most remote corner of the mainland (1,458 blocks off the path): a summit worth climbing needs something on it.",
+   "why_here": "The most remote corner of the mainland (1,461 blocks off the path): a summit worth climbing needs something on it.",
    "centre": {
     "x": 682,
     "z": 380,
@@ -1869,7 +1869,7 @@
    "working_name": "Jungle Isle ruins",
    "display_name": null,
    "for": "Overgrown ruins on the jungle island off the south coast: exploration, a cache, no services.",
-   "why_here": "The jungle island has no other purpose and is 1,736 blocks off the path; a ruin rewards the boat trip without adding another town.",
+   "why_here": "The jungle island has no other purpose and is 1,739 blocks off the path; a ruin rewards the boat trip without adding another town.",
    "centre": {
     "x": 5160,
     "z": 7463,
