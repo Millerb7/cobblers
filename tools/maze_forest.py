@@ -44,23 +44,63 @@ SURFACE_WORLD = "C:/Users/wnd/Documents/github/cobblers-server/cobblers-10240"
 
 # The network. Every corridor is a polyline of nodes plus a width; the gap is the path, so width is what the
 # player walks. `kind` is only for the report.
+# Paths are not all the same, on purpose. Some should feel obvious and some should not, so width, ground and light
+# all say how much a path wants to be found:
+#   obvious   the through route: 8 wide, trodden ground, lanterns at every fork. You can always get back to it.
+#   ordinary  the loop and the mansion spur: 5 wide, lightly worn ground, no light
+#   quiet     the dead ends: 3 wide, grass underfoot. Nothing says go here, which is what makes them a choice.
+#   hidden    squeeze paths to secret glades: 2 wide, no ground change, no light, and they leave the corridors
+#             where the pack is thickest, so you find one by pushing into the trees, not by following anything.
+# Played first-cut feedback: corridors read too narrow and too alike, the south entrance was a gap between two
+# birches behind tall grass, and there was nowhere to discover.
 NETWORK = [
-    {"id": "main", "kind": "through route", "width": 6,
+    {"id": "main", "kind": "through route", "tier": "obvious", "width": 8,
      "nodes": [(1468, 5052), (1436, 4944), (1504, 4856), (1396, 4768), (1380, 4648),
                (1472, 4556), (1540, 4444), (1572, 4300)]},
-    {"id": "loop_east", "kind": "loop, rejoins main", "width": 5,
+    {"id": "loop_east", "kind": "loop, rejoins main", "tier": "ordinary", "width": 5,
      "nodes": [(1504, 4856), (1616, 4812), (1664, 4688), (1600, 4592), (1472, 4556)]},
-    # dead ends are short on purpose: a wrong turn has to cost seconds. At 4.3 blocks a second, 70 blocks in and
-    # back out is about 33 seconds. The first cut ran 175 and 169 blocks, which is 80 seconds of being punished.
-    {"id": "spur_west", "kind": "dead end", "width": 4,
+    # dead ends are short on purpose: a wrong turn has to cost seconds. At 4.3 blocks a second, 70-80 blocks in and
+    # back out is about 35 seconds. The first cut ran 175 and 169, which was 80 seconds of being punished.
+    {"id": "spur_west", "kind": "dead end", "tier": "quiet", "width": 3,
      "nodes": [(1436, 4944), (1388, 4922), (1368, 4908)]},
-    {"id": "spur_northwest", "kind": "dead end", "width": 4,
+    {"id": "spur_northwest", "kind": "dead end", "tier": "quiet", "width": 3,
      "nodes": [(1396, 4768), (1348, 4750), (1330, 4728)]},
-    {"id": "spur_mansion", "kind": "side path to the mansion", "width": 5,
+    {"id": "spur_mansion", "kind": "side path to the mansion", "tier": "ordinary", "width": 5,
      "nodes": [(1468, 5036), (1552, 5028), (1628, 5032)]},
+    # hidden: each leaves the MIDDLE of a corridor segment, not a fork -- start one at a fork and it is just a
+    # fourth visible way out. From mid-segment it is a slightly thinner patch of trees you have to decide to push into.
+    {"id": "hidden_fern_glade", "kind": "hidden path", "tier": "hidden", "width": 2,
+     "nodes": [(1470, 4900), (1540, 4918), (1590, 4940)]},
+    {"id": "hidden_west_hollow", "kind": "hidden path", "tier": "hidden", "width": 2,
+     "nodes": [(1388, 4708), (1320, 4776), (1260, 4840)]},
+    {"id": "hidden_north_ring", "kind": "hidden path", "tier": "hidden", "width": 2,
+     "nodes": [(1556, 4372), (1612, 4376), (1660, 4380)]},
 ]
 MANSION = (1630, 5034)
 MANSION_CLEARING_R = 22
+
+# The south entrance is a flared mouth, 16 wide, narrowing to the 8-wide main path over 40 blocks, with lantern posts
+# either side. The first cut entered through a 6-wide gap that read as a gap between two trees.
+ENTRANCE = {"mouth": (1468, 5058), "into": (1466, 5018), "mouth_width": 16}
+
+# Openings: the sapling clearing is the centre you orient by; glades are small rooms off the corridors;
+# the secret glades are where the hidden paths end.
+CLEARINGS = [
+    {"id": "sapling", "at": SAPLING, "r": 20, "kind": "centre"},
+    {"id": "mansion", "at": MANSION, "r": MANSION_CLEARING_R, "kind": "set piece"},
+    {"id": "loop_glade", "at": (1664, 4688), "r": 12, "kind": "glade"},
+    {"id": "bend_glade", "at": (1436, 4944), "r": 10, "kind": "glade"},
+    {"id": "north_glade", "at": (1540, 4444), "r": 11, "kind": "glade"},
+    {"id": "fern_glade", "at": (1590, 4940), "r": 9, "kind": "secret"},
+    {"id": "west_hollow", "at": (1260, 4840), "r": 9, "kind": "secret"},
+    {"id": "north_ring", "at": (1660, 4380), "r": 8, "kind": "secret"},
+]
+GROUND = {                                   # what the ground says, by tier (weights of a per-column mix)
+    "obvious": {"minecraft:coarse_dirt": 40, "minecraft:dirt_path": 30, "minecraft:podzol": 15, None: 15},
+    "ordinary": {"minecraft:coarse_dirt": 25, "minecraft:podzol": 20, None: 55},
+    "quiet": {None: 100},
+    "hidden": {None: 100},
+}
 
 
 def polyline_distance(shape, box, nodes):
@@ -85,9 +125,19 @@ def build_fields(box, seed=SEED):
         d = polyline_distance(shape, box, c["nodes"])
         half = c["width"] / 2.0
         corridor = np.maximum(corridor, np.clip((half + EDGE_FEATHER - d) / EDGE_FEATHER, 0.0, 1.0))
-    for centre, r in ((SAPLING, CLEARING_R), (MANSION, MANSION_CLEARING_R)):
-        d = polyline_distance(shape, box, [centre, centre])
-        corridor = np.maximum(corridor, np.clip((r + EDGE_FEATHER - d) / EDGE_FEATHER, 0.0, 1.0))
+    for cl in CLEARINGS:
+        d = polyline_distance(shape, box, [cl["at"], cl["at"]])
+        corridor = np.maximum(corridor, np.clip((cl["r"] + EDGE_FEATHER - d) / EDGE_FEATHER, 0.0, 1.0))
+    # the entrance: a mouth that narrows from mouth_width to the main path's width over its length
+    (mx, mz), (ix, iz) = ENTRANCE["mouth"], ENTRANCE["into"]
+    zz, xx = np.mgrid[0:shape[0], 0:shape[1]].astype(np.float32)
+    wx, wz = xx + x0, zz + z0
+    vx, vz = ix - mx, iz - mz
+    L2 = float(vx * vx + vz * vz)
+    t = np.clip(((wx - mx) * vx + (wz - mz) * vz) / L2, 0.0, 1.0)
+    d = np.hypot(wx - (mx + vx * t), wz - (mz + vz * t))
+    half = (ENTRANCE["mouth_width"] + (NETWORK[0]["width"] - ENTRANCE["mouth_width"]) * t) / 2.0
+    corridor = np.maximum(corridor, np.clip((half + EDGE_FEATHER - d) / EDGE_FEATHER, 0.0, 1.0))
     # how far each cell is from the network, so the dense pack can be bounded and the maze has an edge
     near = np.full(shape, 1e9, np.float32)
     for c in NETWORK:
@@ -194,9 +244,15 @@ def main(argv=None):
     for c in NETWORK:
         L = sum(math.hypot(b[0] - a_[0], b[1] - a_[1]) for a_, b in zip(c["nodes"], c["nodes"][1:]))
         total_len += L
-        print("   %-16s %-28s %d wide, %4.0f blocks, %d nodes  %s -> %s"
-              % (c["id"], c["kind"], c["width"], L, len(c["nodes"]), c["nodes"][0], c["nodes"][-1]))
+        print("   %-19s %-9s %-26s %d wide, %4.0f blocks  %s -> %s"
+              % (c["id"], c["tier"], c["kind"], c["width"], L, c["nodes"][0], c["nodes"][-1]))
     print("   total corridor length %.0f blocks" % total_len)
+    print("\n   entrance: %d-wide mouth at %s narrowing to %d over %.0f blocks"
+          % (ENTRANCE["mouth_width"], ENTRANCE["mouth"], NETWORK[0]["width"],
+             math.hypot(ENTRANCE["into"][0] - ENTRANCE["mouth"][0], ENTRANCE["into"][1] - ENTRANCE["mouth"][1])))
+    print("   openings:")
+    for cl in CLEARINGS:
+        print("      %-12s %-9s at %s radius %d" % (cl["id"], cl["kind"], cl["at"], cl["r"]))
 
     # forks: nodes shared by more than one corridor
     from collections import Counter
