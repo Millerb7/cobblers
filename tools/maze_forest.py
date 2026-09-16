@@ -146,6 +146,85 @@ def build_fields(box, seed=SEED):
     return 1.0 - corridor, band                      # density: 1 in the pack, 0 on the path
 
 
+def path_dressing(ground, box, seed=SEED):
+    """Ground, cleared plants and lanterns that say which paths want to be found. Commands keyed by tile.
+
+    obvious and ordinary paths are cleared of two-block plants at eye height and given worn ground; quiet and hidden
+    paths are left exactly as the forest grew them, which is the point. Lanterns go at every fork on the through
+    route and either side of the south entrance, on posts placed unconditionally -- the tunnel taught that `keep`
+    silently skips a cell something else already occupies.
+    """
+    x0, z0, x1, z1 = box
+    shape = (z1 - z0 + 1, x1 - x0 + 1)
+    rank = {"hidden": 0, "quiet": 1, "ordinary": 2, "obvious": 3}
+    best = np.full(shape, -1, np.int8)                # the most obvious tier covering each cell
+    for c in NETWORK:
+        d = polyline_distance(shape, box, c["nodes"])
+        inside = d <= c["width"] / 2.0
+        best = np.where(inside & (rank[c["tier"]] > best), rank[c["tier"]], best)
+    # the entrance flare counts as obvious
+    (mx, mz), (ix, iz) = ENTRANCE["mouth"], ENTRANCE["into"]
+    zz, xx = np.mgrid[0:shape[0], 0:shape[1]].astype(np.float32)
+    wx, wz = xx + x0, zz + z0
+    vx, vz = ix - mx, iz - mz
+    t = np.clip(((wx - mx) * vx + (wz - mz) * vz) / float(vx * vx + vz * vz), 0.0, 1.0)
+    dd = np.hypot(wx - (mx + vx * t), wz - (mz + vz * t))
+    half = (ENTRANCE["mouth_width"] + (NETWORK[0]["width"] - ENTRANCE["mouth_width"]) * t) / 2.0
+    best = np.where(dd <= half, rank["obvious"], best)
+
+    inv = {v: k for k, v in rank.items()}
+    rng = np.random.default_rng(seed + 29)
+    roll = rng.random(shape)
+    tiles = {}
+    counts = {"cleared": 0, "ground": 0, "lanterns": 0}
+
+    def put(wxv, wzv, cmd):
+        key = ((wxv - x0) // TILE, (wzv - z0) // TILE)
+        tiles.setdefault(key, []).append(cmd)
+
+    zs, xs = np.where(best >= rank["ordinary"])
+    for zi, xi in zip(zs, xs):
+        wxv, wzv = int(x0 + xi), int(z0 + zi)
+        gy = int(ground[zi, xi])
+        tier = inv[int(best[zi, xi])]
+        # clear eye height: two-block plants are the wall; this also takes short plants off a worn path
+        put(wxv, wzv, "fill %d %d %d %d %d %d minecraft:air replace #minecraft:replaceable"
+            % (wxv, gy + 1, wzv, wxv, gy + 2, wzv))
+        counts["cleared"] += 1
+        acc, r = 0.0, roll[zi, xi] * 100
+        for block, w in GROUND[tier].items():
+            acc += w
+            if r < acc:
+                if block:
+                    put(wxv, wzv, "setblock %d %d %d %s" % (wxv, gy, wzv, block))
+                    counts["ground"] += 1
+                break
+
+    def post(px, pz):
+        gy = int(ground[pz - z0, px - x0])
+        put(px, pz, "setblock %d %d %d minecraft:oak_fence" % (px, gy + 1, pz))
+        put(px, pz, "setblock %d %d %d minecraft:lantern[hanging=false]" % (px, gy + 2, pz))
+        counts["lanterns"] += 1
+
+    main = NETWORK[0]
+    shared = {n for c in NETWORK[1:] if c["tier"] != "hidden" for n in c["nodes"]}
+    for i, n in enumerate(main["nodes"]):
+        if n not in shared:
+            continue
+        # a post just off the path's edge, on the side away from the branch, so it marks the fork without blocking it
+        a = main["nodes"][max(0, i - 1)]
+        b = main["nodes"][min(len(main["nodes"]) - 1, i + 1)]
+        tx, tz = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(tx, tz) or 1.0
+        nx, nz = -tz / L, tx / L
+        off = main["width"] / 2.0 + 1.5
+        post(int(round(n[0] + nx * off)), int(round(n[1] + nz * off)))
+    half_mouth = ENTRANCE["mouth_width"] / 2.0 + 1.5
+    post(int(round(mx - half_mouth)), mz)
+    post(int(round(mx + half_mouth)), mz)
+    return tiles, counts
+
+
 def poisson(density, spacing, rng, box):
     """Dart throwing at `spacing`, weighted by density."""
     h, w = density.shape
@@ -313,6 +392,12 @@ def main(argv=None):
                 % (o["file"][:-4], wx - rx, gy + 1 - oy, wz - rz, rot))
             placed += 1
     print("\nplacement: %d objects over %d tiles of %d blocks" % (placed, len(tiles), TILE))
+    # path dressing runs after the trees in each tile, so a tree cannot land on a lantern post
+    dress, dcounts = path_dressing(ground, BOX)
+    for key, cmds in dress.items():
+        tiles.setdefault(key, []).extend(cmds)
+    print("path dressing: %d columns cleared at eye height, %d given worn ground, %d lantern posts"
+          % (dcounts["cleared"], dcounts["ground"], dcounts["lanterns"]))
 
     out = ROOT / "build" / "datapacks" / "cobblers_route1"
     if out.exists():
@@ -323,7 +408,8 @@ def main(argv=None):
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text("\n".join(["# Route 1 forest tile %d %d" % key] + cmds) + "\n", encoding="utf-8")
         for c in cmds:
-            used.add(c.split()[2].rsplit("/", 1)[-1] + ".nbt")
+            if c.startswith("place template"):        # dressing commands share the tile but are not objects
+                used.add(c.split()[2].rsplit("/", 1)[-1] + ".nbt")
     for o in lib:
         if o["file"] in used:
             dest = out / "data" / "cobblers" / "structure" / "route1" / "foliage" / o["file"]
