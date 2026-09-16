@@ -1,0 +1,62 @@
+{
+  "name": "cobblers.habitat.northgate_old_growth_grove.name",
+  "type": "cobblemon:natural",
+  "spawns": [
+    {
+      "species": "Pineco",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 24.0,
+      "levelRange": "25-45",
+      "phases": "1-25"
+    },
+    {
+      "species": "Teddiursa",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 24.0,
+      "levelRange": "25-45",
+      "phases": "1-25"
+    },
+    {
+      "species": "Stantler",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 12.0,
+      "levelRange": "25-45",
+      "phases": "1-25"
+    },
+    {
+      "species": "Hoothoot",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 9.0,
+      "levelRange": "25-45",
+      "phases": "1-25"
+    },
+    {
+      "species": "Noctowl",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 3.0,
+      "levelRange": "25-45",
+      "phases": "1-25"
+    },
+    {
+      "species": "Phantump",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "25-45",
+      "phases": "1-25"
+    },
+    {
+      "species": "Sneasel",
+      "bucket": "rare",
+      "spawnablePositionType": "grounded",
+      "weight": 2.0,
+      "levelRange": "25-45",
+      "phases": "1-25"
+    }
+  ]
+}

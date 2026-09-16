@@ -1,0 +1,5295 @@
+{
+  "enabled": true,
+  "neededInstalledMods": [],
+  "neededUninstalledMods": [],
+  "spawns": [
+    {
+      "id": "r02_b0001_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1663,
+        "minZ": 2744,
+        "maxZ": 2751,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0001_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1663,
+        "minZ": 2744,
+        "maxZ": 2751,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0001_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1663,
+        "minZ": 2744,
+        "maxZ": 2751,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0001_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1663,
+        "minZ": 2744,
+        "maxZ": 2751,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0001_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1663,
+        "minZ": 2744,
+        "maxZ": 2751,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0001_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1663,
+        "minZ": 2744,
+        "maxZ": 2751,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0001_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1663,
+        "minZ": 2744,
+        "maxZ": 2751,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0002_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1679,
+        "minZ": 2752,
+        "maxZ": 2759,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0002_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1679,
+        "minZ": 2752,
+        "maxZ": 2759,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0002_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1679,
+        "minZ": 2752,
+        "maxZ": 2759,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0002_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1679,
+        "minZ": 2752,
+        "maxZ": 2759,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0002_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1679,
+        "minZ": 2752,
+        "maxZ": 2759,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0002_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1679,
+        "minZ": 2752,
+        "maxZ": 2759,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0002_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1679,
+        "minZ": 2752,
+        "maxZ": 2759,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0003_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1687,
+        "minZ": 2760,
+        "maxZ": 2767,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0003_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1687,
+        "minZ": 2760,
+        "maxZ": 2767,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0003_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1687,
+        "minZ": 2760,
+        "maxZ": 2767,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0003_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1687,
+        "minZ": 2760,
+        "maxZ": 2767,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0003_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1687,
+        "minZ": 2760,
+        "maxZ": 2767,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0003_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1687,
+        "minZ": 2760,
+        "maxZ": 2767,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0003_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1687,
+        "minZ": 2760,
+        "maxZ": 2767,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0004_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1695,
+        "minZ": 2768,
+        "maxZ": 2775,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0004_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1695,
+        "minZ": 2768,
+        "maxZ": 2775,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0004_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1695,
+        "minZ": 2768,
+        "maxZ": 2775,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0004_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1695,
+        "minZ": 2768,
+        "maxZ": 2775,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0004_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1695,
+        "minZ": 2768,
+        "maxZ": 2775,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0004_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1695,
+        "minZ": 2768,
+        "maxZ": 2775,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0004_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1695,
+        "minZ": 2768,
+        "maxZ": 2775,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0005_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1703,
+        "minZ": 2776,
+        "maxZ": 2783,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0005_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1703,
+        "minZ": 2776,
+        "maxZ": 2783,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0005_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1703,
+        "minZ": 2776,
+        "maxZ": 2783,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0005_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1703,
+        "minZ": 2776,
+        "maxZ": 2783,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0005_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1703,
+        "minZ": 2776,
+        "maxZ": 2783,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0005_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1703,
+        "minZ": 2776,
+        "maxZ": 2783,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0005_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1703,
+        "minZ": 2776,
+        "maxZ": 2783,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0006_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1711,
+        "minZ": 2784,
+        "maxZ": 2791,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0006_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1711,
+        "minZ": 2784,
+        "maxZ": 2791,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0006_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1711,
+        "minZ": 2784,
+        "maxZ": 2791,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0006_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1711,
+        "minZ": 2784,
+        "maxZ": 2791,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0006_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1711,
+        "minZ": 2784,
+        "maxZ": 2791,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0006_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1711,
+        "minZ": 2784,
+        "maxZ": 2791,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0006_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1711,
+        "minZ": 2784,
+        "maxZ": 2791,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0007_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1719,
+        "minZ": 2792,
+        "maxZ": 2799,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0007_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1719,
+        "minZ": 2792,
+        "maxZ": 2799,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0007_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1719,
+        "minZ": 2792,
+        "maxZ": 2799,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0007_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1719,
+        "minZ": 2792,
+        "maxZ": 2799,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0007_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1719,
+        "minZ": 2792,
+        "maxZ": 2799,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0007_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1719,
+        "minZ": 2792,
+        "maxZ": 2799,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0007_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1719,
+        "minZ": 2792,
+        "maxZ": 2799,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0008_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1727,
+        "minZ": 2800,
+        "maxZ": 2807,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0008_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1727,
+        "minZ": 2800,
+        "maxZ": 2807,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0008_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1727,
+        "minZ": 2800,
+        "maxZ": 2807,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0008_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1727,
+        "minZ": 2800,
+        "maxZ": 2807,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0008_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1727,
+        "minZ": 2800,
+        "maxZ": 2807,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0008_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1727,
+        "minZ": 2800,
+        "maxZ": 2807,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0008_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1727,
+        "minZ": 2800,
+        "maxZ": 2807,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0009_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1735,
+        "minZ": 2808,
+        "maxZ": 2815,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0009_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1735,
+        "minZ": 2808,
+        "maxZ": 2815,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0009_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1735,
+        "minZ": 2808,
+        "maxZ": 2815,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0009_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1735,
+        "minZ": 2808,
+        "maxZ": 2815,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0009_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1735,
+        "minZ": 2808,
+        "maxZ": 2815,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0009_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1735,
+        "minZ": 2808,
+        "maxZ": 2815,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0009_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1544,
+        "maxX": 1735,
+        "minZ": 2808,
+        "maxZ": 2815,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0010_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1743,
+        "minZ": 2816,
+        "maxZ": 2823,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0010_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1743,
+        "minZ": 2816,
+        "maxZ": 2823,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0010_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1743,
+        "minZ": 2816,
+        "maxZ": 2823,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0010_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1743,
+        "minZ": 2816,
+        "maxZ": 2823,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0010_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1743,
+        "minZ": 2816,
+        "maxZ": 2823,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0010_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1743,
+        "minZ": 2816,
+        "maxZ": 2823,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0010_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1743,
+        "minZ": 2816,
+        "maxZ": 2823,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0011_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1751,
+        "minZ": 2824,
+        "maxZ": 2831,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0011_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1751,
+        "minZ": 2824,
+        "maxZ": 2831,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0011_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1751,
+        "minZ": 2824,
+        "maxZ": 2831,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0011_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1751,
+        "minZ": 2824,
+        "maxZ": 2831,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0011_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1751,
+        "minZ": 2824,
+        "maxZ": 2831,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0011_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1751,
+        "minZ": 2824,
+        "maxZ": 2831,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0011_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1552,
+        "maxX": 1751,
+        "minZ": 2824,
+        "maxZ": 2831,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0012_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1560,
+        "maxX": 1759,
+        "minZ": 2832,
+        "maxZ": 2839,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0012_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1560,
+        "maxX": 1759,
+        "minZ": 2832,
+        "maxZ": 2839,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0012_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1560,
+        "maxX": 1759,
+        "minZ": 2832,
+        "maxZ": 2839,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0012_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1560,
+        "maxX": 1759,
+        "minZ": 2832,
+        "maxZ": 2839,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0012_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1560,
+        "maxX": 1759,
+        "minZ": 2832,
+        "maxZ": 2839,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0012_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1560,
+        "maxX": 1759,
+        "minZ": 2832,
+        "maxZ": 2839,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0012_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1560,
+        "maxX": 1759,
+        "minZ": 2832,
+        "maxZ": 2839,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0013_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1568,
+        "maxX": 1767,
+        "minZ": 2840,
+        "maxZ": 2847,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0013_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1568,
+        "maxX": 1767,
+        "minZ": 2840,
+        "maxZ": 2847,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0013_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1568,
+        "maxX": 1767,
+        "minZ": 2840,
+        "maxZ": 2847,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0013_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1568,
+        "maxX": 1767,
+        "minZ": 2840,
+        "maxZ": 2847,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0013_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1568,
+        "maxX": 1767,
+        "minZ": 2840,
+        "maxZ": 2847,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0013_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1568,
+        "maxX": 1767,
+        "minZ": 2840,
+        "maxZ": 2847,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0013_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1568,
+        "maxX": 1767,
+        "minZ": 2840,
+        "maxZ": 2847,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0014_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1584,
+        "maxX": 1775,
+        "minZ": 2848,
+        "maxZ": 2855,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0014_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1584,
+        "maxX": 1775,
+        "minZ": 2848,
+        "maxZ": 2855,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0014_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1584,
+        "maxX": 1775,
+        "minZ": 2848,
+        "maxZ": 2855,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0014_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1584,
+        "maxX": 1775,
+        "minZ": 2848,
+        "maxZ": 2855,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0014_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1584,
+        "maxX": 1775,
+        "minZ": 2848,
+        "maxZ": 2855,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0014_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1584,
+        "maxX": 1775,
+        "minZ": 2848,
+        "maxZ": 2855,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0014_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1584,
+        "maxX": 1775,
+        "minZ": 2848,
+        "maxZ": 2855,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0015_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1783,
+        "minZ": 2856,
+        "maxZ": 2863,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0015_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1783,
+        "minZ": 2856,
+        "maxZ": 2863,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0015_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1783,
+        "minZ": 2856,
+        "maxZ": 2863,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0015_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1783,
+        "minZ": 2856,
+        "maxZ": 2863,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0015_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1783,
+        "minZ": 2856,
+        "maxZ": 2863,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0015_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1783,
+        "minZ": 2856,
+        "maxZ": 2863,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0015_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1600,
+        "maxX": 1783,
+        "minZ": 2856,
+        "maxZ": 2863,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0016_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1632,
+        "maxX": 1791,
+        "minZ": 2864,
+        "maxZ": 2871,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0016_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1632,
+        "maxX": 1791,
+        "minZ": 2864,
+        "maxZ": 2871,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0016_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1632,
+        "maxX": 1791,
+        "minZ": 2864,
+        "maxZ": 2871,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0016_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1632,
+        "maxX": 1791,
+        "minZ": 2864,
+        "maxZ": 2871,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0016_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1632,
+        "maxX": 1791,
+        "minZ": 2864,
+        "maxZ": 2871,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0016_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1632,
+        "maxX": 1791,
+        "minZ": 2864,
+        "maxZ": 2871,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0016_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1632,
+        "maxX": 1791,
+        "minZ": 2864,
+        "maxZ": 2871,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0017_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1640,
+        "maxX": 1799,
+        "minZ": 2872,
+        "maxZ": 2879,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0017_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1640,
+        "maxX": 1799,
+        "minZ": 2872,
+        "maxZ": 2879,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0017_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1640,
+        "maxX": 1799,
+        "minZ": 2872,
+        "maxZ": 2879,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0017_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1640,
+        "maxX": 1799,
+        "minZ": 2872,
+        "maxZ": 2879,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0017_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1640,
+        "maxX": 1799,
+        "minZ": 2872,
+        "maxZ": 2879,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0017_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1640,
+        "maxX": 1799,
+        "minZ": 2872,
+        "maxZ": 2879,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0017_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1640,
+        "maxX": 1799,
+        "minZ": 2872,
+        "maxZ": 2879,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0018_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1648,
+        "maxX": 1807,
+        "minZ": 2880,
+        "maxZ": 2887,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0018_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1648,
+        "maxX": 1807,
+        "minZ": 2880,
+        "maxZ": 2887,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0018_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1648,
+        "maxX": 1807,
+        "minZ": 2880,
+        "maxZ": 2887,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0018_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1648,
+        "maxX": 1807,
+        "minZ": 2880,
+        "maxZ": 2887,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0018_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1648,
+        "maxX": 1807,
+        "minZ": 2880,
+        "maxZ": 2887,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0018_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1648,
+        "maxX": 1807,
+        "minZ": 2880,
+        "maxZ": 2887,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0018_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1648,
+        "maxX": 1807,
+        "minZ": 2880,
+        "maxZ": 2887,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0019_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1656,
+        "maxX": 1815,
+        "minZ": 2888,
+        "maxZ": 2895,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0019_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1656,
+        "maxX": 1815,
+        "minZ": 2888,
+        "maxZ": 2895,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0019_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1656,
+        "maxX": 1815,
+        "minZ": 2888,
+        "maxZ": 2895,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0019_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1656,
+        "maxX": 1815,
+        "minZ": 2888,
+        "maxZ": 2895,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0019_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1656,
+        "maxX": 1815,
+        "minZ": 2888,
+        "maxZ": 2895,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0019_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1656,
+        "maxX": 1815,
+        "minZ": 2888,
+        "maxZ": 2895,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0019_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1656,
+        "maxX": 1815,
+        "minZ": 2888,
+        "maxZ": 2895,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0020_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1664,
+        "maxX": 1823,
+        "minZ": 2896,
+        "maxZ": 2903,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0020_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1664,
+        "maxX": 1823,
+        "minZ": 2896,
+        "maxZ": 2903,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0020_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1664,
+        "maxX": 1823,
+        "minZ": 2896,
+        "maxZ": 2903,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0020_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1664,
+        "maxX": 1823,
+        "minZ": 2896,
+        "maxZ": 2903,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0020_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1664,
+        "maxX": 1823,
+        "minZ": 2896,
+        "maxZ": 2903,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0020_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1664,
+        "maxX": 1823,
+        "minZ": 2896,
+        "maxZ": 2903,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0020_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1664,
+        "maxX": 1823,
+        "minZ": 2896,
+        "maxZ": 2903,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0021_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1672,
+        "maxX": 1831,
+        "minZ": 2904,
+        "maxZ": 2911,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0021_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1672,
+        "maxX": 1831,
+        "minZ": 2904,
+        "maxZ": 2911,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0021_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1672,
+        "maxX": 1831,
+        "minZ": 2904,
+        "maxZ": 2911,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0021_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1672,
+        "maxX": 1831,
+        "minZ": 2904,
+        "maxZ": 2911,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0021_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1672,
+        "maxX": 1831,
+        "minZ": 2904,
+        "maxZ": 2911,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0021_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1672,
+        "maxX": 1831,
+        "minZ": 2904,
+        "maxZ": 2911,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0021_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1672,
+        "maxX": 1831,
+        "minZ": 2904,
+        "maxZ": 2911,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0022_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1680,
+        "maxX": 1831,
+        "minZ": 2912,
+        "maxZ": 2919,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0022_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1680,
+        "maxX": 1831,
+        "minZ": 2912,
+        "maxZ": 2919,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0022_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1680,
+        "maxX": 1831,
+        "minZ": 2912,
+        "maxZ": 2919,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0022_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1680,
+        "maxX": 1831,
+        "minZ": 2912,
+        "maxZ": 2919,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0022_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1680,
+        "maxX": 1831,
+        "minZ": 2912,
+        "maxZ": 2919,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0022_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1680,
+        "maxX": 1831,
+        "minZ": 2912,
+        "maxZ": 2919,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0022_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1680,
+        "maxX": 1831,
+        "minZ": 2912,
+        "maxZ": 2919,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0023_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1839,
+        "minZ": 2920,
+        "maxZ": 2927,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0023_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1839,
+        "minZ": 2920,
+        "maxZ": 2927,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0023_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1839,
+        "minZ": 2920,
+        "maxZ": 2927,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0023_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1839,
+        "minZ": 2920,
+        "maxZ": 2927,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0023_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1839,
+        "minZ": 2920,
+        "maxZ": 2927,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0023_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1839,
+        "minZ": 2920,
+        "maxZ": 2927,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0023_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1839,
+        "minZ": 2920,
+        "maxZ": 2927,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0024_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 2928,
+        "maxZ": 2935,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0024_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 2928,
+        "maxZ": 2935,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0024_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 2928,
+        "maxZ": 2935,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0024_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 2928,
+        "maxZ": 2935,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0024_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 2928,
+        "maxZ": 2935,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0024_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 2928,
+        "maxZ": 2935,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0024_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 2928,
+        "maxZ": 2935,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0025_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 2936,
+        "maxZ": 2943,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0025_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 2936,
+        "maxZ": 2943,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0025_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 2936,
+        "maxZ": 2943,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0025_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 2936,
+        "maxZ": 2943,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0025_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 2936,
+        "maxZ": 2943,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0025_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 2936,
+        "maxZ": 2943,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0025_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 2936,
+        "maxZ": 2943,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0026_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 2944,
+        "maxZ": 2951,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0026_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 2944,
+        "maxZ": 2951,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0026_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 2944,
+        "maxZ": 2951,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0026_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 2944,
+        "maxZ": 2951,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0026_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 2944,
+        "maxZ": 2951,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0026_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 2944,
+        "maxZ": 2951,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0026_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 2944,
+        "maxZ": 2951,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0027_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 2952,
+        "maxZ": 2959,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0027_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 2952,
+        "maxZ": 2959,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0027_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 2952,
+        "maxZ": 2959,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0027_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 2952,
+        "maxZ": 2959,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0027_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 2952,
+        "maxZ": 2959,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0027_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 2952,
+        "maxZ": 2959,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0027_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 2952,
+        "maxZ": 2959,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_lake_viltri_hollow_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0028_lake_viltri_hollow_lotad",
+      "pokemon": "lotad",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 18.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_lake_viltri_hollow_lombre",
+      "pokemon": "lombre",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_lake_viltri_hollow_surskit",
+      "pokemon": "surskit",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_lake_viltri_hollow_corphish",
+      "pokemon": "corphish",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_lake_viltri_hollow_volbeat",
+      "pokemon": "volbeat",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_lake_viltri_hollow_illumise",
+      "pokemon": "illumise",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0028_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0028_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1728,
+        "maxX": 1847,
+        "minZ": 2960,
+        "maxZ": 3151,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0029_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 3152,
+        "maxZ": 3159,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0029_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 3152,
+        "maxZ": 3159,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0029_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 3152,
+        "maxZ": 3159,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0029_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 3152,
+        "maxZ": 3159,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0029_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1720,
+        "maxX": 1847,
+        "minZ": 3152,
+        "maxZ": 3159,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0030_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 3160,
+        "maxZ": 3167,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0030_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 3160,
+        "maxZ": 3167,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0030_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 3160,
+        "maxZ": 3167,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0030_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 3160,
+        "maxZ": 3167,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0030_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1712,
+        "maxX": 1847,
+        "minZ": 3160,
+        "maxZ": 3167,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0031_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 3168,
+        "maxZ": 3183,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0031_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 3168,
+        "maxZ": 3183,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0031_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 3168,
+        "maxZ": 3183,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0031_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 3168,
+        "maxZ": 3183,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0031_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1704,
+        "maxX": 1847,
+        "minZ": 3168,
+        "maxZ": 3183,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0032_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 3184,
+        "maxZ": 3191,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0032_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 3184,
+        "maxZ": 3191,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0032_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 3184,
+        "maxZ": 3191,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0032_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 3184,
+        "maxZ": 3191,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0032_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1839,
+        "minZ": 3184,
+        "maxZ": 3191,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0033_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1831,
+        "minZ": 3192,
+        "maxZ": 3207,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0033_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1831,
+        "minZ": 3192,
+        "maxZ": 3207,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0033_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1831,
+        "minZ": 3192,
+        "maxZ": 3207,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0033_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1831,
+        "minZ": 3192,
+        "maxZ": 3207,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0033_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1831,
+        "minZ": 3192,
+        "maxZ": 3207,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0034_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1823,
+        "minZ": 3208,
+        "maxZ": 3215,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0034_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1823,
+        "minZ": 3208,
+        "maxZ": 3215,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0034_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1823,
+        "minZ": 3208,
+        "maxZ": 3215,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0034_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1823,
+        "minZ": 3208,
+        "maxZ": 3215,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0034_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1823,
+        "minZ": 3208,
+        "maxZ": 3215,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0035_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1815,
+        "minZ": 3216,
+        "maxZ": 3599,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0035_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1815,
+        "minZ": 3216,
+        "maxZ": 3599,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0035_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1815,
+        "minZ": 3216,
+        "maxZ": 3599,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0035_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1815,
+        "minZ": 3216,
+        "maxZ": 3599,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0035_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1696,
+        "maxX": 1815,
+        "minZ": 3216,
+        "maxZ": 3599,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0036_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1815,
+        "minZ": 3600,
+        "maxZ": 3623,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0036_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1815,
+        "minZ": 3600,
+        "maxZ": 3623,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0036_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1815,
+        "minZ": 3600,
+        "maxZ": 3623,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0036_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1815,
+        "minZ": 3600,
+        "maxZ": 3623,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0036_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1815,
+        "minZ": 3600,
+        "maxZ": 3623,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0037_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1807,
+        "minZ": 3624,
+        "maxZ": 3631,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0037_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1807,
+        "minZ": 3624,
+        "maxZ": 3631,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0037_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1807,
+        "minZ": 3624,
+        "maxZ": 3631,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0037_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1807,
+        "minZ": 3624,
+        "maxZ": 3631,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0037_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1688,
+        "maxX": 1807,
+        "minZ": 3624,
+        "maxZ": 3631,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0038_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1799,
+        "minZ": 3632,
+        "maxZ": 3647,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0038_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1799,
+        "minZ": 3632,
+        "maxZ": 3647,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0038_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1799,
+        "minZ": 3632,
+        "maxZ": 3647,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0038_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1799,
+        "minZ": 3632,
+        "maxZ": 3647,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0038_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1799,
+        "minZ": 3632,
+        "maxZ": 3647,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0039_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1791,
+        "minZ": 3648,
+        "maxZ": 3655,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0039_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1791,
+        "minZ": 3648,
+        "maxZ": 3655,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0039_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1791,
+        "minZ": 3648,
+        "maxZ": 3655,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0039_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1791,
+        "minZ": 3648,
+        "maxZ": 3655,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0039_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1791,
+        "minZ": 3648,
+        "maxZ": 3655,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0040_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1783,
+        "minZ": 3656,
+        "maxZ": 3663,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0040_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1783,
+        "minZ": 3656,
+        "maxZ": 3663,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0040_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1783,
+        "minZ": 3656,
+        "maxZ": 3663,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0040_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1783,
+        "minZ": 3656,
+        "maxZ": 3663,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0040_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1783,
+        "minZ": 3656,
+        "maxZ": 3663,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0041_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1775,
+        "minZ": 3664,
+        "maxZ": 3671,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0041_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1775,
+        "minZ": 3664,
+        "maxZ": 3671,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0041_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1775,
+        "minZ": 3664,
+        "maxZ": 3671,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0041_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1775,
+        "minZ": 3664,
+        "maxZ": 3671,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0041_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1775,
+        "minZ": 3664,
+        "maxZ": 3671,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0042_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1759,
+        "minZ": 3672,
+        "maxZ": 3679,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0042_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1759,
+        "minZ": 3672,
+        "maxZ": 3679,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0042_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1759,
+        "minZ": 3672,
+        "maxZ": 3679,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0042_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1759,
+        "minZ": 3672,
+        "maxZ": 3679,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0042_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1759,
+        "minZ": 3672,
+        "maxZ": 3679,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0043_viltri_plateau_hoothoot",
+      "pokemon": "hoothoot",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1751,
+        "minZ": 3680,
+        "maxZ": 3687,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ],
+        "timeRange": "night"
+      }
+    },
+    {
+      "id": "r02_b0043_viltri_plateau_combee",
+      "pokemon": "combee",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 24.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1751,
+        "minZ": 3680,
+        "maxZ": 3687,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0043_viltri_plateau_fomantis",
+      "pokemon": "fomantis",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1751,
+        "minZ": 3680,
+        "maxZ": 3687,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0043_viltri_plateau_gossifleur",
+      "pokemon": "gossifleur",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "common",
+      "level": "12-15",
+      "weight": 12.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1751,
+        "minZ": 3680,
+        "maxZ": 3687,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    },
+    {
+      "id": "r02_b0043_viltri_plateau_applin",
+      "pokemon": "applin",
+      "type": "pokemon",
+      "spawnablePositionType": "grounded",
+      "bucket": "uncommon",
+      "level": "12-15",
+      "weight": 6.0,
+      "condition": {
+        "minX": 1736,
+        "maxX": 1751,
+        "minZ": 3680,
+        "maxZ": 3687,
+        "canSeeSky": true,
+        "biomes": [
+          "minecraft:old_growth_birch_forest"
+        ]
+      }
+    }
+  ]
+}
