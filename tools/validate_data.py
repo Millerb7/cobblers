@@ -1924,6 +1924,222 @@ def check_sculpt(ctx: Context):
         len(massifs), len((v or {}).get("cones") or []) if isinstance(v, dict) else 0, len(pads)), file=rel)
 
 
+KITS = ("kits", "structures")                       # relative to the data directory's parent
+PREFABS = KITS + ("prefabs",)
+SPAWN_BLOCKS = "spawn_blocks.json"
+SPAWN_POLICY = "spawn_block_policy.json"
+
+
+def _palette(path):
+    """Block names in a structure template's palette (tools/nbt.py is standard library only)."""
+    tools = str(Path(__file__).resolve().parent)
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    import nbt
+    _, doc = nbt.load(path)
+    return [p.get("Name") for p in (doc.get("palette") or []) if isinstance(p, dict)]
+
+
+def _templates_naming(root, names):
+    """name -> [template paths whose bytes hold it as an NBT string]. Matching the length-prefixed string is exact
+    (no prefix hits: red_concrete does not match red_concrete_powder) and costs a decompression, not a full parse."""
+    import gzip
+    import struct
+    needles = {n: struct.pack(">H", len(n.encode("utf-8"))) + n.encode("utf-8") for n in names}
+    out = {n: [] for n in names}
+    for path in sorted(Path(root).rglob("*.nbt")):
+        try:
+            raw = path.read_bytes()
+            body = gzip.decompress(raw) if raw[:2] == bytes([0x1f, 0x8b]) else raw
+        except (OSError, EOFError, gzip.BadGzipFile):
+            continue
+        for n, needle in needles.items():
+            if needle in body:
+                out[n].append(path)
+    return out
+
+
+def _resolve_template_id(tid, kits_dir):
+    """cobblers:kits/trees/tree_town/oak -> kits/structures/prefabs/trees/tree_town/oak.nbt;
+    cobblers:f4/services/pokecenter -> kits/structures/campaign/f4/services/pokecenter.nbt. None when nothing matches."""
+    if not isinstance(tid, str) or not tid:
+        return None
+    rel = tid.split(":", 1)[1] if ":" in tid else tid
+    parts = rel.split("/")
+    cands = [Path(kits_dir, *(("prefabs",) + tuple(parts[1:])) if parts[0] == "kits" else ("campaign",) + tuple(parts))]
+    cands.append(Path(kits_dir, *parts))
+    for c in cands:
+        p = c.with_suffix(".nbt")
+        if p.is_file():
+            return p
+    hits = [p for p in Path(kits_dir).rglob(parts[-1] + ".nbt") if str(p).replace("\\", "/").endswith(rel + ".nbt")]
+    return hits[0] if len(hits) == 1 else None
+
+
+def check_spawn_blocks(ctx: Context):
+    """No placed template decides encounters by accident: a template a placement or plan names, and every prefab, may
+    contain a block from data/spawn_blocks.json only when data/spawn_block_policy.json whitelists it with a reason.
+    Substitutions must replace triggers with non-triggers, must be gone from the kits, and must match the files on
+    disk. A missing or empty spawn-block list makes the check SKIPPED, never a pass."""
+    rep = ctx.report
+    C = "spawn-blocks"
+    rel_b, rel_p = "data/" + SPAWN_BLOCKS, "data/" + SPAWN_POLICY
+    kits_dir = ctx.data_dir.parent.joinpath(*KITS)
+    bpath, ppath = ctx.data_dir / SPAWN_BLOCKS, ctx.data_dir / SPAWN_POLICY
+    if not bpath.is_file():
+        rep.skip(C, "%s is absent; placed templates were not checked for spawn-triggering blocks (rerun "
+                 "tools/spawn_blocks.py blocks)" % rel_b, file=rel_b)
+        return
+    bf = _load_json_for(C, bpath, rel_b, rep)
+    if not bf:
+        return
+    triggers = bf.doc.get("blocks") if isinstance(bf.doc, dict) else None
+    if not isinstance(triggers, dict) or not triggers:
+        rep.skip(C, "%s lists no blocks, so nothing could be checked against it; rerun tools/spawn_blocks.py blocks "
+                 "against the server" % rel_b, file=rel_b)
+        return
+    if not ppath.is_file():
+        rep.error(C, "%s is absent, so no template may be checked against the %d spawn-triggering blocks"
+                  % (rel_p, len(triggers)), file=rel_b)
+        return
+    pf = _load_json_for(C, ppath, rel_p, rep)
+    if not pf or not isinstance(pf.doc, dict):
+        if pf:
+            rep.error(C, "top level must be an object", file=rel_p, line=1)
+        return
+    policy = pf.doc
+
+    def perr(msg, key=None, where=None):
+        rep.error(C, msg, file=rel_p, line=pf.line_of_key(key) if key else None, where=where)
+
+    # whitelist
+    allowed = set()
+    wl = policy.get("whitelist")
+    if not isinstance(wl, list):
+        perr("whitelist must be a list", "whitelist")
+        wl = []
+    for i, w in enumerate(wl):
+        if not isinstance(w, dict):
+            perr("whitelist[%d] must be an object" % i, "whitelist")
+            continue
+        blocks = w.get("blocks")
+        if not (isinstance(blocks, list) and blocks and all(isinstance(b, str) and b for b in blocks)):
+            perr("whitelist[%d] needs a non-empty blocks list, got %r" % (i, blocks), "whitelist")
+            continue
+        if not (isinstance(w.get("why"), str) and w["why"].strip()):
+            perr("whitelist entry %s needs a why: an allowed trigger block is a deliberate encounter"
+                 % ", ".join(blocks[:3]), "whitelist", blocks[0])
+            continue
+        allowed.update(blocks)
+
+    if not kits_dir.is_dir():
+        rep.skip(C, "%s is absent; no template could be read" % "/".join(KITS), file=rel_p)
+        return
+
+    # substitutions
+    subs = policy.get("substitutions")
+    if not isinstance(subs, list):
+        perr("substitutions must be a list", "substitutions")
+        subs = []
+    froms = []
+    for i, s in enumerate(subs):
+        if not isinstance(s, dict) or not isinstance(s.get("from"), str) or not isinstance(s.get("to"), str):
+            perr("substitutions[%d] needs from and to block names" % i, "substitutions")
+            continue
+        if s["to"] in triggers:
+            perr('substitution %s -> %s replaces a spawn-triggering block with another one (%s)'
+                 % (s["from"], s["to"], _spawn_example(triggers, s["to"])), "substitutions", s["to"])
+        froms.append(s["from"])
+    for name, left in sorted(_templates_naming(kits_dir, froms).items()):
+        if left:
+            to = next(s["to"] for s in subs if isinstance(s, dict) and s.get("from") == name)
+            perr("substitution %s -> %s is not applied: %s still contains %s (%d template(s) under %s)"
+                 % (name, to, left[0].name, name, len(left), "/".join(KITS)), "substitutions", name)
+
+    applied = (policy.get("applied") or {}).get("templates")
+    if applied is not None and not isinstance(applied, list):
+        perr("applied.templates must be a list", "applied")
+        applied = []
+    for i, row in enumerate(applied or []):
+        if not isinstance(row, dict) or not isinstance(row.get("template"), str):
+            perr("applied.templates[%d] needs a template path" % i, "applied")
+            continue
+        path = ctx.data_dir.parent / row["template"]
+        if not path.is_file():
+            perr("applied.templates %s is not in the repository" % row["template"], "applied", row["template"])
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if row.get("sha256_after") != digest:
+            perr("applied.templates %s hashes to %s, not the recorded sha256_after %s: the template changed after the "
+                 "substitution, or it was never applied"
+                 % (row["template"], digest[:12], str(row.get("sha256_after"))[:12]), "applied", row["template"])
+
+    # the templates a placement or plan names, plus every prefab
+    placed, skipped = {}, []
+    plf = ctx.files.get("placements.json")
+    doc = plf.doc if plf else None
+    if doc is None and (ctx.data_dir / "placements.json").is_file():
+        f = _load_json_for(C, ctx.data_dir / "placements.json", "data/placements.json", rep)
+        doc = f.doc if f else None
+    if doc is None:
+        rep.skip(C, "data/placements.json is absent; only the prefabs were checked", file=rel_p)
+    elif isinstance(doc, dict):
+        for p in doc.get("placements") or []:
+            if not isinstance(p, dict):
+                continue
+            path = ctx.data_dir.parent / p["file"] if isinstance(p.get("file"), str) else None
+            if path is None or not path.is_file():
+                rep.error(C, 'placement "%s" names template file %r, which is not in the repository'
+                          % (p.get("id"), p.get("file")), file="data/placements.json", where=p.get("id"))
+                continue
+            placed.setdefault(path.resolve(), []).append("placement %s" % p.get("id"))
+        for sid, s in (doc.get("settlements") or {}).items():
+            anchors = ((s or {}).get("plan") or {}).get("anchors") or []
+            for a in anchors if isinstance(anchors, list) else []:
+                tid = a.get("template") if isinstance(a, dict) else None
+                if tid is None:
+                    continue
+                path = _resolve_template_id(tid, kits_dir)
+                if path is None:
+                    skipped.append("%s (%s)" % (tid, sid))
+                    continue
+                placed.setdefault(path.resolve(), []).append("%s anchor %s" % (sid, a.get("id", tid)))
+    if skipped:
+        rep.skip(C, "template ids that do not resolve to a file under %s were not checked: %s"
+                 % ("/".join(KITS), ", ".join(sorted(set(skipped)))), file=rel_p)
+    for path in sorted(ctx.data_dir.parent.joinpath(*PREFABS).rglob("*.nbt")):
+        placed.setdefault(path.resolve(), []).append("prefab")
+    kits_resolved = kits_dir.resolve()
+    checked = 0
+    for path, why in sorted(placed.items()):
+        if kits_resolved not in path.parents:
+            rep.error(C, "%s (%s) is outside %s, so its palette was not checked"
+                      % (path.name, why[0], "/".join(KITS)), file=rel_p)
+            continue
+        try:
+            pal = _palette(path)
+        except Exception as exc:                 # a template that cannot be read is not a template without triggers
+            rep.error(C, "cannot read template %s (%s): %s: %s" % (path.name, why[0], type(exc).__name__, exc),
+                      file=rel_p)
+            continue
+        checked += 1
+        for block in sorted({b for b in pal if b in triggers and b not in allowed}):
+            rep.error(C, '%s (%s) contains %s, which decides encounters wherever it is placed: %s. Substitute it '
+                      "(tools/spawn_blocks.py substitute) or whitelist it with a reason in %s"
+                      % (path.name, why[0], block, _spawn_example(triggers, block), rel_p),
+                      file=str(Path(*path.parts[-4:])), where=block)
+    rep.info(C, "checked %d placed templates and prefabs against %d spawn-triggering blocks (%d whitelisted)"
+             % (checked, len(triggers), len(allowed)), file=rel_p)
+
+
+def _spawn_example(triggers, block):
+    """One spawn that names the block, as data/spawn_blocks.json records it."""
+    uses = triggers.get(block)
+    if isinstance(uses, list) and uses:
+        return "%s%s" % (uses[0], "" if len(uses) == 1 else " and %d more" % (len(uses) - 1))
+    return "a loaded spawn condition"
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -1934,6 +2150,7 @@ CHECKS = [
     ("towns", check_towns),
     ("foliage", check_foliage),
     ("sculpt", check_sculpt),
+    ("spawn-blocks", check_spawn_blocks),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
 ]
