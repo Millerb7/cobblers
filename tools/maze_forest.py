@@ -392,6 +392,22 @@ def main(argv=None):
                 % (o["file"][:-4], wx - rx, gy + 1 - oy, wz - rz, rot))
             placed += 1
     print("\nplacement: %d objects over %d tiles of %d blocks" % (placed, len(tiles), TILE))
+    # The centrepiece: one world-tree sapling in the sapling clearing, trunk centred on SAPLING. It had been sized
+    # but never placed -- the clearing stood empty -- so the forest now places its own. The prefab comes from
+    # tools/tree_grove.py (tier "sapling") through the kits datapack, which must be installed first.
+    side = json.loads((ROOT / "kits/structures/prefabs/trees/tree_town/sapling_oak_a.json").read_text(encoding="utf-8"))
+    sox, soy, soz = side["trunk_origin"]
+    c = side["habitat"]["trunk"][0] // 2
+    sgy = int(ground[SAPLING[1] - BOX[1], SAPLING[0] - BOX[0]])
+    sx, sz = SAPLING[0] - c - sox, SAPLING[1] - c - soz            # rotation none: builder (c, c) lands on SAPLING
+    skey = ((SAPLING[0] - BOX[0]) // TILE, (SAPLING[1] - BOX[1]) // TILE)
+    tiles.setdefault(skey, []).append("place template %s %d %d %d none none 1.0 0"
+                                      % (side["template_id"], sx, sgy + 1 - soy, sz))
+    rep["sapling_placed"] = {"at": list(SAPLING), "ground_y": sgy, "height": side["habitat"]["height"],
+                             "top_y": sgy + 1 + side["habitat"]["height"]}
+    print("sapling: %s at %s, ground y%d, top y%d"
+          % (side["template_id"], SAPLING, sgy, sgy + 1 + side["habitat"]["height"]))
+
     # path dressing runs after the trees in each tile, so a tree cannot land on a lantern post
     dress, dcounts = path_dressing(ground, BOX)
     for key, cmds in dress.items():

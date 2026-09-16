@@ -1,0 +1,51 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/tree_town/sapling_oak_a",
+ "kind": "trees",
+ "set": "tree_town",
+ "name": "sapling_oak_a",
+ "author": "tools/tree_grove.py",
+ "source": {
+  "file": "generated",
+  "imported": "2026-09-16",
+  "size": [
+   33,
+   43,
+   34
+  ],
+  "blocks": 5718
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  13,
+  2,
+  14
+ ],
+ "tier": "sapling",
+ "habitat": {
+  "tier": "sapling",
+  "floor_tier_y": [
+   [
+    16,
+    20
+   ]
+  ],
+  "room_clear_y": [
+   21,
+   27
+  ],
+  "crown_y": [
+   28,
+   40
+  ],
+  "crown_radius": 12,
+  "limb_reach": 11,
+  "trunk": [
+   5,
+   5
+  ],
+  "height": 40
+ },
+ "notes": "trunk base at template (trunk_origin); the 5x5 trunk spans +0..+4 in x and z from it"
+}

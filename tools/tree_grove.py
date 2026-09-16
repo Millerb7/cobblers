@@ -55,6 +55,12 @@ TIERS = {
     "elder": {"floor": 20, "gap": 18, "storeys": 2, "room": 14, "trunk_r": 3, "reach": 17, "limb_r": 2.0,
               "limbs": (7, 10), "root_r": 13, "root_n": 10, "root_top": 6,
               "crown": [(12, 19, 8), (20, 12, 5)]},
+    # A world tree's sapling, at the centre of Route 1's forest. The same shape language as the parent -- rounded
+    # tapering trunk, hung cluster canopy -- at a tenth the size, and a little stockier (1:8 against the parent's
+    # 1:12), which is how young trees read. One of them, alone, near Pallet: out of place on purpose.
+    "sapling": {"floor": 16, "gap": 0, "storeys": 1, "room": 8, "trunk_r": 2, "reach": 11, "limb_r": 1.4,
+                "limbs": (5, 7), "root_r": 8, "root_n": 8, "root_top": 3,
+                "core": (6, 8, 5), "clusters": [(1, 12, 6, 6), (7, 7, 4, 5)]},
     "world": {"floor": 56, "gap": 38, "storeys": 8, "room": 14, "trunk_r": 17, "reach": 58, "limb_r": 5.0,
               "limbs": (9, 12), "root_r": 26, "root_n": 32, "root_top": 20,
               "core": (32, 38, 23),
