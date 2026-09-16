@@ -1456,7 +1456,8 @@
    "centre": {
     "x": 1092,
     "z": 5532,
-    "ground_y": 35.3
+    "ground_y": 68.0,
+    "ground_note": "Was recorded as 35.3, which is SEABED: 26.7 blocks under the sea. The site search read a level sea floor as level ground (its own footprint says slope mean 0.0, max 0.0). Nothing within 103 blocks is an islet, so the island is built by tools/islet.py: 2,628 columns, 1,413 of them above water, crown y70, about 72,900 blocks. Ground is now y63-70, median 65."
    },
    "footprint": {
     "shape": "square",

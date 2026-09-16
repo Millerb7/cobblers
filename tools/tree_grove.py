@@ -366,7 +366,12 @@ def main(argv=None):
         rng = _rng("augment_" + a.augment)
         cmds = ["# %s: the world tree and elders added to the standing grove (tools/tree_grove.py --augment)" % a.augment]
         out = []
-        for t in ([wt] if wt else []) + elders:
+        # the world tree is deliberately NOT placed here. At 1.26M blocks it is past what `place template` can
+        # carry, so tools/world_tree.py emits it as fill functions; writing it as a prefab too put a stale
+        # 198-block tree inside the real one, and clearing that cost 61,678 commands.
+        if wt:
+            wt.update({"object": "cobblers:worldtree/* (fill functions, tools/world_tree.py)", "rotation": "none"})
+        for t in elders:
             tier = t["tier"]
             variant = "a" if tier == "world" else "abc"[len(out) % 3]
             b, dims = big_tree(kind, variant, tier)

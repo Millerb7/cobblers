@@ -215,7 +215,11 @@ def main(argv=None):
     # not know the difference between a buried pocket and a river: it turned 900 columns of the Glacial Tear creek
     # into stone at y98-100. Stop 4 blocks under the real ground, every column.
     cmds = ["# seal underground water and lava, from y%d to 4 under the ground, per column" % seal_lo]
-    seal_top = np.minimum(ceiling + 10, top - 4)
+    # The whole rock column, not just 10 blocks over the roof. Stopping at ceiling+10 left pockets higher in the
+    # rock, and natural voids let them drain into the chamber: 1,458 fluid cells inside it on the first rebuild.
+    # `top` is the top SOLID block, so for a creek column it is the BED (y95-97), not the water surface (y98-100)
+    # -- stopping 4 under it still leaves the Glacial Tear alone, which is what narrowing the seal was protecting.
+    seal_top = top - 4
     for fluid in ("minecraft:water", "minecraft:lava"):
         for j in range(n):
             i = 0
@@ -480,6 +484,22 @@ def main(argv=None):
                                                    "median": float(np.median([c for _, c in cover])) if cover else None,
                                                    "open_cut_blocks_from_mouth": next((s_ for s_, c in cover if c >= 3), None),
                                                    "every_20": [[s_, int(c)] for s_, c in cover[::20]]}}
+
+    # 70 drain. Sealing happens before digging, so anything that seeps in while the chamber is being carved is
+    # still there afterwards: 91 cells spread over the whole floor, not one leak. With the shell sealed and the
+    # roof capped nothing new arrives, so one pass of air-for-water at the end finishes it.
+    cmds = ["# drain: clear anything that seeped in during the dig"]
+    for j in range(n):
+        i = 0
+        while i < n:
+            lo, hi = floor[j, i] + 1, ceiling[j, i] - 2
+            k = i
+            while k + 1 < n and floor[j, k + 1] + 1 == lo and ceiling[j, k + 1] - 2 == hi:
+                k += 1
+            if hi >= lo:
+                cmds.append("fill %d %d %d %d %d %d minecraft:air replace minecraft:water" % (x0 + i, lo, z0 + j, x0 + k, hi, z0 + j))
+            i = k + 1
+    fn["70_drain"] = cmds
 
     # 60 biome (separate)
     cmds = ["# cherry grove biome over the cavern volume"]
