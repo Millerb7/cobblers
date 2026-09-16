@@ -1,0 +1,14 @@
+name: provenance
+on:
+  push:
+  pull_request:
+jobs:
+  template-provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Every structure template has a permissive provenance record
+        run: python tools/validate.py --only template_provenance
