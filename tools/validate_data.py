@@ -202,7 +202,16 @@ SCHEMAS = {
         {"role": {"hometown", "gym_town", "league", "major_town", "rest_stop", "outpost"},
          "tier": {"critical", "major", "rest_stop", "outpost"}, "status": {"proposed", "accepted", "built"}},
     ),
-    "routes.json": ("cobblers.routes/1", "routes", ["id", "from", "to"], {}),
+    "routes.json": ("cobblers.routes/1", "routes", ["id", "from_town", "to_town"], {}),
+    "dialogue.json": (
+        "cobblers.dialogue/1", "conversations",
+        ["id", "quest_id", "npc_id", "scope", "cursor", "entry_rules", "nodes"], {},
+    ),
+    "quests.json": (
+        "cobblers.quests/1", "quests",
+        ["id", "source", "scope", "optional", "progression_field_refs",
+         "availability", "objectives", "transitions", "multiplayer"], {},
+    ),
 }
 
 REQUIRED_FILES = {"world.json"}
@@ -563,6 +572,153 @@ def check_referential(ctx: Context):
                               % (rec.get("id"), ref),
                               file=f.rel, line=f.line_of_id(rec.get("id")),
                               where=rec.get("id"))
+
+
+def check_quest_dialogue(ctx: Context):
+    """Quest/dialogue contracts resolve through the authoritative quest-field registry."""
+    rep = ctx.report
+    pf = ctx.files.get("progression.json")
+    qf = ctx.files.get("quests.json")
+    df = ctx.files.get("dialogue.json")
+    if not (pf and qf and df):
+        return
+
+    fields = {}
+    for field in pf.doc.get("quest_fields") or []:
+        if not isinstance(field, dict):
+            continue
+        fid = field.get("id")
+        qid = field.get("quest_id")
+        short = field.get("field")
+        line = pf.line_of_id(fid)
+        if not fid:
+            rep.error("quest-dialogue", "quest field has no id", file=pf.rel)
+            continue
+        if fid in fields:
+            rep.error("quest-dialogue", 'duplicate quest field "%s"' % fid,
+                      file=pf.rel, line=line, where=fid)
+        fields[fid] = field
+        expected = "quest.%s.%s" % (qid, short)
+        if fid != expected:
+            rep.error("quest-dialogue", 'quest field "%s" must be named "%s"' % (fid, expected),
+                      file=pf.rel, line=line, where=fid)
+        if field.get("scope") not in ("player", "world"):
+            rep.error("quest-dialogue", 'quest field "%s" has invalid scope' % fid,
+                      file=pf.rel, line=line, where=fid)
+        if field.get("type") not in ("boolean", "enum", "integer"):
+            rep.error("quest-dialogue", 'quest field "%s" has invalid type' % fid,
+                      file=pf.rel, line=line, where=fid)
+
+    quests = {}
+    transitions = {}
+    rewards = {}
+    for quest in qf.doc.get("quests") or []:
+        if not isinstance(quest, dict):
+            continue
+        qid = quest.get("id")
+        quests[qid] = quest
+        line = qf.line_of_id(qid)
+        refs = quest.get("progression_field_refs")
+        if not isinstance(refs, list) or len(refs) != len(set(refs)):
+            rep.error("quest-dialogue", 'quest "%s" needs unique progression_field_refs' % qid,
+                      file=qf.rel, line=line, where=qid)
+            refs = refs or []
+        for fid in refs:
+            field = fields.get(fid)
+            if not field:
+                rep.error("quest-dialogue", 'quest "%s" references undeclared field "%s"' % (qid, fid),
+                          file=qf.rel, line=line, where=qid)
+            elif field.get("quest_id") != qid:
+                rep.error("quest-dialogue", 'quest "%s" references field owned by "%s"' %
+                          (qid, field.get("quest_id")), file=qf.rel, line=line, where=qid)
+        tlist = quest.get("transitions") or []
+        tids = [t.get("id") for t in tlist if isinstance(t, dict)]
+        if len(tids) != len(set(tids)):
+            rep.error("quest-dialogue", 'quest "%s" has duplicate transition ids' % qid,
+                      file=qf.rel, line=line, where=qid)
+        transitions[qid] = set(tids)
+        rewards[qid] = {r.get("id") for r in quest.get("rewards") or [] if isinstance(r, dict)}
+
+        def walk_quest(value):
+            if isinstance(value, dict):
+                fid = value.get("field")
+                if isinstance(fid, str) and fid.startswith("quest."):
+                    if fid not in fields:
+                        rep.error("quest-dialogue", 'quest "%s" uses undeclared field "%s"' % (qid, fid),
+                                  file=qf.rel, line=line, where=qid)
+                    elif fid not in refs:
+                        rep.error("quest-dialogue", 'quest "%s" uses unlisted field "%s"' % (qid, fid),
+                                  file=qf.rel, line=line, where=qid)
+                if value.get("kind") == "grant_reward_once":
+                    reward = value.get("reward")
+                    claim = value.get("claim_field")
+                    if reward not in rewards[qid]:
+                        rep.error("quest-dialogue", 'quest "%s" grants unknown reward "%s"' % (qid, reward),
+                                  file=qf.rel, line=line, where=qid)
+                    claim_def = fields.get(claim)
+                    if not claim_def or claim_def.get("type") != "boolean" or claim_def.get("scope") != "player":
+                        rep.error("quest-dialogue", 'grant_reward_once in "%s" needs a player boolean claim_field' % qid,
+                                  file=qf.rel, line=line, where=qid)
+                    if not value.get("idempotency_key"):
+                        rep.error("quest-dialogue", 'grant_reward_once in "%s" needs an idempotency_key' % qid,
+                                  file=qf.rel, line=line, where=qid)
+                for child in value.values():
+                    walk_quest(child)
+            elif isinstance(value, list):
+                for child in value:
+                    walk_quest(child)
+        walk_quest(quest)
+
+    for conv in df.doc.get("conversations") or []:
+        if not isinstance(conv, dict):
+            continue
+        cid = conv.get("id")
+        qid = conv.get("quest_id")
+        line = df.line_of_id(cid)
+        if qid not in quests:
+            rep.error("quest-dialogue", 'conversation "%s" references unknown quest "%s"' % (cid, qid),
+                      file=df.rel, line=line, where=cid)
+            continue
+        refs = set(quests[qid].get("progression_field_refs") or [])
+        cursor = (conv.get("cursor") or {}).get("progression_field")
+        cdef = fields.get(cursor)
+        if not cdef or cdef.get("scope") != "player":
+            rep.error("quest-dialogue", 'conversation "%s" needs a registered player cursor field' % cid,
+                      file=df.rel, line=line, where=cid)
+        elif cursor not in refs:
+            rep.error("quest-dialogue", 'conversation "%s" cursor is not listed by quest "%s"' % (cid, qid),
+                      file=df.rel, line=line, where=cid)
+        nodes = [n for n in (conv.get("nodes") or []) if isinstance(n, dict)]
+        node_ids = [n.get("id") for n in nodes]
+        node_set = set(node_ids)
+        if len(node_ids) != len(node_set):
+            rep.error("quest-dialogue", 'conversation "%s" has duplicate node ids' % cid,
+                      file=df.rel, line=line, where=cid)
+        initial = (conv.get("cursor") or {}).get("initial_node")
+        if initial not in node_set:
+            rep.error("quest-dialogue", 'conversation "%s" has unknown initial node "%s"' % (cid, initial),
+                      file=df.rel, line=line, where=cid)
+
+        def walk_dialogue(value, key=None):
+            if isinstance(value, dict):
+                fid = value.get("field")
+                if isinstance(fid, str) and fid.startswith("quest.") and fid not in fields:
+                    rep.error("quest-dialogue", 'conversation "%s" uses undeclared field "%s"' % (cid, fid),
+                              file=df.rel, line=line, where=cid)
+                if value.get("kind") == "quest_transition":
+                    tid = value.get("transition")
+                    if tid not in transitions.get(qid, set()):
+                        rep.error("quest-dialogue", 'conversation "%s" calls unknown transition "%s"' % (cid, tid),
+                                  file=df.rel, line=line, where=cid)
+                for child_key, child in value.items():
+                    if child_key in ("next", "node") and isinstance(child, str) and child != "$cursor" and child not in node_set:
+                        rep.error("quest-dialogue", 'conversation "%s" targets unknown node "%s"' % (cid, child),
+                                  file=df.rel, line=line, where=cid)
+                    walk_dialogue(child, child_key)
+            elif isinstance(value, list):
+                for child in value:
+                    walk_dialogue(child, key)
+        walk_dialogue(conv)
 
 
 def check_progression(ctx: Context):
@@ -2146,6 +2302,7 @@ CHECKS = [
     ("integrity", check_integrity),
     ("referential", check_referential),
     ("progression", check_progression),
+    ("quest-dialogue", check_quest_dialogue),
     ("rivers", check_rivers),
     ("towns", check_towns),
     ("foliage", check_foliage),
