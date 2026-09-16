@@ -9,51 +9,59 @@
   "file": "generated",
   "imported": "2026-09-15",
   "size": [
-   51,
-   122,
-   53
+   117,
+   202,
+   117
   ],
-  "blocks": 55860
+  "blocks": 276567
  },
  "entrance": null,
  "grade_layer": null,
  "trunk_origin": [
-  19,
+  49,
   2,
-  20
+  48
  ],
  "tier": "world",
  "habitat": {
   "tier": "world",
   "floor_tier_y": [
    [
-    24,
-    28
+    30,
+    34
    ],
    [
-    48,
-    52
+    56,
+    60
    ],
    [
-    72,
-    76
+    82,
+    86
+   ],
+   [
+    108,
+    112
+   ],
+   [
+    134,
+    138
    ]
   ],
   "room_clear_y": [
-   77,
-   83
+   139,
+   147
   ],
   "crown_y": [
-   84,
-   119
+   148,
+   198
   ],
-  "crown_radius": 26,
-  "limb_reach": 24,
+  "crown_radius": 46,
+  "limb_reach": 34,
   "trunk": [
-   13,
-   13
+   21,
+   21
   ],
-  "height": 119
+  "height": 198
  },
- "notes": "trunk base at template (trunk_origin); the 13x13 trunk spans +0..+12 in x and z from it"
+ "notes": "trunk base at template (trunk_origin); the 21x21 trunk spans +0..+20 in x and z from it"
 }
