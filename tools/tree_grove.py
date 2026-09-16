@@ -124,6 +124,7 @@ def main(argv=None):
     p.add_argument("--site", default=None)
     p.add_argument("--id", default=None)
     p.add_argument("--all-shortlisted", action="store_true")
+    p.add_argument("--surface-world", default=None, help="stopped world: trunk bases seated on the ground the world has")
     a = p.parse_args(argv)
     heights, world = T.load_from_args(a)
     from PIL import Image
@@ -133,6 +134,10 @@ def main(argv=None):
         key = "levels" if "levels" in w else "mask"
         m = np.asarray(Image.open(ROOT / "build" / "paint" / w[key])) > 0
         water[w["z"]:w["z"] + m.shape[0], w["x"]:w["x"] + m.shape[1]] |= m
+    ground_at = None
+    if a.surface_world:
+        import world_heights
+        ground_at = world_heights
     sites = []
     if a.site:
         x, z = [int(v) for v in a.site.split(",")]
@@ -153,6 +158,13 @@ def main(argv=None):
                 written[key] = write_prefab(kind, v, b, dims)
             variants.append(written[key])
         trees, gaps = grove(heights, water, (s["x"], s["z"]), rng)
+        if ground_at is not None:                            # seat each trunk on the world's own ground
+            xs = [t["x"] for t in trees]; zs = [t["z"] for t in trees]
+            b = (min(xs) - 8, min(zs) - 8, max(xs) + 8, max(zs) + 8)
+            g, _, _ = ground_at.extract(a.surface_world, b)
+            for t in trees:
+                t["heightmap_ground_y"] = t["ground_y"]
+                t["ground_y"] = int(g[t["z"] + 2 - b[1], t["x"] + 2 - b[0]])
         cmds = ["# grove for a tree town at %s (%d, %d): giants only, nothing built (tools/tree_grove.py)" % (s["id"], s["x"], s["z"])]
         for i, t in enumerate(trees):
             side = variants[i % 3]
@@ -161,9 +173,12 @@ def main(argv=None):
             from place_town import rotate
             rx, rz = rotate(ox, oz, rot)
             t.update({"object": side["template_id"], "rotation": rot})
-            cmds.append("forceload add %d %d" % (t["x"], t["z"]))
-            cmds.append("place template %s %d %d %d %s none 1.0 0" % (side["template_id"], t["x"] - rx, t["ground_y"] + 1 - oy, t["z"] - rz, rot))
-            cmds.append("forceload remove %d %d" % (t["x"], t["z"]))
+            sx, sy, sz = side["source"]["size"]
+            px, pz = t["x"] - rx, t["z"] - rz
+            lo_x, lo_z = min(px, px + sx), min(pz, pz + sz)
+            cmds.append("forceload add %d %d %d %d" % (lo_x - 8, lo_z - 8, lo_x + sx + 8, lo_z + sz + 8))
+            cmds.append("place template %s %d %d %d %s none 1.0 0" % (side["template_id"], px, t["ground_y"] + 1 - oy, pz, rot))
+            cmds.append("forceload remove %d %d %d %d" % (lo_x - 8, lo_z - 8, lo_x + sx + 8, lo_z + sz + 8))
         rep = {"site": s, "species": kind, "giants": trees, "nearest_neighbour_blocks": [round(g, 1) if g else None for g in gaps],
                "limb_tip_gap_blocks": [round(g - 2 * LIMB_REACH - 5, 1) if g else None for g in gaps],
                "crown_overlap_blocks": [round(2 * CROWN_R - g, 1) if g else None for g in gaps],

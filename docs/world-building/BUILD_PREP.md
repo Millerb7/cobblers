@@ -1,12 +1,7 @@
 # Build prep: creek, tooling, cavern, tree town, gym towns 1 and 2, kits (2026-09-16)
 
-**Status.** Everything below is data, tools and commands. The only things done on the live server:
-- Axiom installed on the server;
-- a sealed light test chamber at (-810..-790, -42..-16, -810..-790) under the border ocean;
-- two kit and one giant test placements in empty sky, each removed.
-
-**Waiting on the next export:** the Glacial Tear creek. The rivers are re-cut and the sculpt re-applied (heightmap
-`fd0db59b…`), but the export is held.
+**Status: built.** This was the plan; the creek world is exported and everything in it has been built and checked.
+What was run and what each check measured is in [`BUILT.md`](BUILT.md).
 
 ## Glacial Tear creek
 
