@@ -1,0 +1,7 @@
+#!/bin/sh
+# Refuse a commit that would publish a structure template without a permissive provenance record.
+# Enable once per clone: git config core.hooksPath .githooks
+python tools/validate.py --only template_provenance || {
+  echo "pre-commit: template provenance check failed (see kits/PROVENANCE.json)." >&2
+  exit 1
+}

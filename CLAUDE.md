@@ -181,6 +181,11 @@ does not grade its own work.
 
 ## Git and commit hygiene
 
+- **Only MIT-style sources may be committed.** Anything else (All Rights Reserved, no-redistribution,
+  unknown) is used locally and gitignored. Provenance is mandatory for every structure template: a
+  `kits/PROVENANCE.json` record with source and licence, plus a committed notice file for third-party
+  permissive donors. `python tools/validate.py --only template_provenance` enforces it (pre-commit hook in
+  `.githooks/`, enable with `git config core.hooksPath .githooks`; CI workflow `provenance`).
 - `one issue = one branch = one worktree = one implementation session`.
   Verify `git branch --show-current` before the first edit; never edit another
   session's worktree. Mechanics: `parallel-work` skill.

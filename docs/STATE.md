@@ -39,6 +39,7 @@
 - **Map geometry:** use 1,024-block square planning cells, terrain-following region polygons, and no hex grid.
 - **Vertical scale:** use the Option B rescale above `y145`, with authored terrain capped at `y310` and the runtime ceiling raised to `y575`.
 - **World source:** commit reproducible heightmaps, WorldPainter sources, templates, data, and tools; do not treat the live save as source code.
+- **Licensing:** only MIT-style (permissive) sources may be committed; anything else is used locally and gitignored, and every structure template needs a `kits/PROVENANCE.json` record, enforced by `python tools/validate.py --only template_provenance`.
 - **Structure placement:** place campaign structures deliberately and do not enable donor packs as uncontrolled natural world generation.
 - **Recognizable towns:** use CobblemonCityTowns first, then compatible licensed donor libraries, with minimal custom connectors and a donor manifest.
 - **Navigation:** use waystones only for fast travel, with gym-clear progression flags controlling gym-town activation.
