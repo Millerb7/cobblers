@@ -1,0 +1,94 @@
+{
+  "name": "cobblers.habitat.route_1_ghost_mansion.name",
+  "type": "cobblemon:natural",
+  "spawns": [
+    {
+      "species": "Gastly",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 24.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Misdreavus",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 24.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Shuppet",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 12.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Duskull",
+      "bucket": "common",
+      "spawnablePositionType": "grounded",
+      "weight": 12.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Litwick",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Phantump",
+      "bucket": "uncommon",
+      "spawnablePositionType": "grounded",
+      "weight": 6.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Sinistea",
+      "bucket": "rare",
+      "spawnablePositionType": "grounded",
+      "weight": 2.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Greavard",
+      "bucket": "rare",
+      "spawnablePositionType": "grounded",
+      "weight": 2.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Murkrow",
+      "bucket": "ultra-rare",
+      "spawnablePositionType": "grounded",
+      "weight": 1.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Sableye",
+      "bucket": "ultra-rare",
+      "spawnablePositionType": "grounded",
+      "weight": 1.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    },
+    {
+      "species": "Zorua",
+      "bucket": "ultra-rare",
+      "spawnablePositionType": "grounded",
+      "weight": 1.0,
+      "levelRange": "6-15",
+      "phases": "1-25"
+    }
+  ]
+}

@@ -24,14 +24,15 @@ matters.
 | `events.json` | Authored event definitions with anchors and terrain requirements | not written yet |
 | `structures.json` | Every structure the loaded pack generates, with an authored class (PROGRESSION, LEGENDARY, NAMED, SCATTER) and disposition | **draft**, schema `cobblers.structures/1` proposed. Report in `docs/world-building/STRUCTURE_INVENTORY.md` |
 | `trainers.json` | Trainer teams, AI, gating, rewards | not written yet |
-| `spawns.json` | Curated encounter tables | not written yet |
+| `spawns.json` | Weighted and leveled source rosters for 62 sub-regions and 9 Habitat places, plus compilation provenance | **compiled candidate**, schema `cobblers.spawns/1`; native outputs are under `data/cobblemon/`, uninstalled and runtime-unproven |
+| `spawn_suppression.json` | Hybrid default-pool policy and the boundary between generated data and runtime proofs | **policy compiled**; route suppression awaits EXP-012 and Habitat replacement awaits a functional test |
+| `cobblemon/` | Generated Cobblemon 1.8 route spawn pools and Habitat pool rosters | 9 route files covering 1,269 boxes and 9 Habitat files; not a server-installed datapack |
 | `gyms.json` | The eight gyms and the Elite Four | not written yet |
 | `progression.json` | Chapters, flags (one per gym: badge ledger and waystone unlock), trainer ids per RCT series, waystone towns | **draft**: 8 gym flags and the champion flag with kanto/johto/hoenn/sinnoh ids; waystone positions null until towns are placed. `tools/progression_pack.py` builds the datapack. Design in `docs/world-building/NAVIGATION.md` |
-| `routes.json` | Authored route polylines | not written yet |
+| `routes.json` | Terrain-derived critical-route polylines, elevation/crossing evidence, geography intervals and 1,269 spawn boxes | **derived candidate**, schema `cobblers.routes/1`; pre-rescale and must be regenerated before production use |
 | `notes/` | Plain markdown. Not validated, not read by tooling |
 
-The absent files are absent on purpose. Regions come first; towns, routes, events and
-trainers are authored against them once the region layout is approved.
+Missing files remain intentional. Candidate routes and encounter data now exist; events, trainers and gyms still wait on accepted mechanisms and upstream geometry.
 
 ## Rules
 
