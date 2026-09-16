@@ -77,5 +77,105 @@
     {"id": "chapter_8", "order": 8, "unlocked_by": ["gym7_cleared"], "unlocks": ["gym8_cleared"]},
     {"id": "league", "order": 9, "unlocked_by": ["gym8_cleared"], "unlocks": ["champion_cleared"]},
     {"id": "postgame", "order": 10, "unlocked_by": ["champion_cleared"], "unlocks": []}
+  ],
+  "state_namespaces": {
+    "progression": {
+      "container": "flags",
+      "id_format": "<gate_id>",
+      "purpose": "Game-gating state such as gym, route, League, and chapter unlocks."
+    },
+    "quest": {
+      "container": "quest_fields",
+      "id_format": "quest.<quest_id>.<field>",
+      "purpose": "Side-quest state. Fields may be boolean, enum, or integer and explicitly declare player or world scope."
+    }
+  },
+  "quest_fields": [
+    {
+      "id": "quest.evt_route1_thirsty_stranger.started",
+      "quest_id": "evt_route1_thirsty_stranger",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_thirsty_stranger.water_delivered",
+      "quest_id": "evt_route1_thirsty_stranger",
+      "field": "water_delivered",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_thirsty_stranger.reward_claimed",
+      "quest_id": "evt_route1_thirsty_stranger",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_thirsty_stranger.completed",
+      "quest_id": "evt_route1_thirsty_stranger",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
+      "quest_id": "evt_route1_thirsty_stranger",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t001",
+      "allowed_values": "node ids from dlg_route1_thirsty_stranger"
+    },
+    {
+      "id": "quest.evt_pallet_crushed_house.stage",
+      "quest_id": "evt_pallet_crushed_house",
+      "field": "stage",
+      "type": "enum",
+      "scope": "player",
+      "initial": "not_started",
+      "allowed_values": [
+        "not_started",
+        "listening",
+        "check_house",
+        "lena_dialogue",
+        "shared_rescue_recap",
+        "complete"
+      ]
+    },
+    {
+      "id": "quest.evt_pallet_crushed_house.dialogue_cursor",
+      "quest_id": "evt_pallet_crushed_house",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h001",
+      "allowed_values": "node ids from dlg_pallet_crushed_house_hank or dlg_pallet_crushed_house_lena"
+    },
+    {
+      "id": "quest.evt_pallet_crushed_house.reward_claimed",
+      "quest_id": "evt_pallet_crushed_house",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_pallet_crushed_house.house_state",
+      "quest_id": "evt_pallet_crushed_house",
+      "field": "house_state",
+      "type": "enum",
+      "scope": "world",
+      "initial": "blocked",
+      "allowed_values": [
+        "blocked",
+        "lena_relocated"
+      ]
+    }
   ]
 }

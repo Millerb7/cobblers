@@ -1,0 +1,1500 @@
+{
+  "schema": "cobblers.dialogue/1",
+  "status": "proposed",
+  "mechanism": {
+    "runtime": "cobblemon_native_dialogue",
+    "source_format": "campaign_design",
+    "generated_target": "Cobblemon dialogue JSON",
+    "state_backend": "data/progression.json",
+    "notes": [
+      "This file is authored campaign data. A generator will translate it to Cobblemon native dialogue pages, Molang predicates, and server actions.",
+      "Dialogue never owns mutable quest state. Conditions and actions reference progression fields declared by the quest contract.",
+      "The dialogue cursor is a first-class per-player progression field, not transient UI state."
+    ]
+  },
+  "schema_definition": {
+    "conversation_required": [
+      "id",
+      "quest_id",
+      "npc_id",
+      "scope",
+      "cursor",
+      "entry_rules",
+      "nodes"
+    ],
+    "node_required": [
+      "id",
+      "kind"
+    ],
+    "node_kinds": [
+      "line",
+      "choice",
+      "router"
+    ],
+    "condition_kinds": [
+      "all",
+      "always",
+      "any",
+      "held_item",
+      "not",
+      "progression_equals",
+      "progression_in"
+    ],
+    "action_kinds": [
+      "quest_transition",
+      "set_cursor",
+      "close_dialogue"
+    ],
+    "cursor_semantics": {
+      "scope": "player",
+      "value": "stable id of the next unread node",
+      "save_timing": "after every acknowledged line or completed short segment",
+      "restore_timing": "before selecting a normal entry node",
+      "disconnect_behavior": "resume from the persisted next unread node; replaying the last unacknowledged line is allowed",
+      "terminal_behavior": "store the stable repeat-dialogue node rather than clearing the cursor"
+    }
+  },
+  "conversations": [
+    {
+      "id": "dlg_route1_thirsty_stranger",
+      "quest_id": "evt_route1_thirsty_stranger",
+      "npc_id": "npc_route1_thirsty_stranger",
+      "source": "docs/story/events/ROUTE1_THIRSTY_STRANGER.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
+        "initial_node": "t001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_thirsty_stranger.completed",
+                "value": true
+              },
+              {
+                "kind": "held_item",
+                "hand": "main",
+                "item": "minecraft:water_bucket"
+              }
+            ]
+          },
+          "node": "repeat_prepared"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_thirsty_stranger.completed",
+            "value": true
+          },
+          "node": "repeat_beekeeper"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_thirsty_stranger.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_thirsty_stranger.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "t001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Before you ask: no.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "No what? Exactly.",
+          "next": "t003"
+        },
+        {
+          "id": "t003",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I am just a traveler with a familiar face.",
+          "next": "t004"
+        },
+        {
+          "id": "t004",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "People see the bandana and lose all judgment.",
+          "next": "t005"
+        },
+        {
+          "id": "t005",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "All eyes on me. Constant problem.",
+          "next": "t006"
+        },
+        {
+          "id": "t006",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "You got any supplies?",
+          "next": "t007"
+        },
+        {
+          "id": "t007",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Something clear. Cool. Life-supporting.",
+          "next": "t008"
+        },
+        {
+          "id": "t008",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Not that I need water.",
+          "next": "t009"
+        },
+        {
+          "id": "t009",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I could stop being thirsty whenever I want.",
+          "next": "t010"
+        },
+        {
+          "id": "t010",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I am choosing not to.",
+          "next": "t011"
+        },
+        {
+          "id": "t011",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Builds character.",
+          "next": "t012"
+        },
+        {
+          "id": "t012",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Also headaches.",
+          "next": "t013"
+        },
+        {
+          "id": "t013",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Things change when you have not had a drink all day.",
+          "next": "t014"
+        },
+        {
+          "id": "t014",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Keep your head up. Mine is pounding.",
+          "next": "t015"
+        },
+        {
+          "id": "t015",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Again: I am not asking for water.",
+          "next": "t016"
+        },
+        {
+          "id": "t016",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I am creating an opportunity for generosity.",
+          "next": "t017"
+        },
+        {
+          "id": "t017",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Different thing.",
+          "next": "t018"
+        },
+        {
+          "id": "t018",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "And I am not Tupac.",
+          "next": "t019"
+        },
+        {
+          "id": "t019",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Never heard of him.",
+          "next": "t020"
+        },
+        {
+          "id": "t020",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Water first. Questions never.",
+          "next": "offer_water"
+        },
+        {
+          "id": "offer_water",
+          "kind": "choice",
+          "speaker": "stranger",
+          "text": "Well?",
+          "responses": [
+            {
+              "id": "offer_bucket",
+              "text": "Hand over the water bucket.",
+              "visible_when": {
+                "kind": "held_item",
+                "hand": "main",
+                "item": "minecraft:water_bucket"
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "submit_water_bucket"
+                }
+              ],
+              "next": "tb01"
+            },
+            {
+              "id": "no_water",
+              "text": "I do not have water.",
+              "actions": [
+                {
+                  "kind": "set_cursor",
+                  "node": "repeat_t006"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "repeat_t006",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "You got any supplies?",
+          "next": "repeat_t009"
+        },
+        {
+          "id": "repeat_t009",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I could stop being thirsty whenever I want.",
+          "next": "repeat_t015"
+        },
+        {
+          "id": "repeat_t015",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Again: I am not asking for water.",
+          "next": "repeat_t020"
+        },
+        {
+          "id": "repeat_t020",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Water first. Questions never.",
+          "next": "offer_water"
+        },
+        {
+          "id": "tb01",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "A whole bucket.",
+          "next": "tb02"
+        },
+        {
+          "id": "tb02",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I asked for water, not municipal infrastructure.",
+          "next": "tb03"
+        },
+        {
+          "id": "tb03",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Still counts.",
+          "next": "tb04"
+        },
+        {
+          "id": "tb04",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Here. Take your bucket back.",
+          "next": "ta01"
+        },
+        {
+          "id": "ta01",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "All right. You helped me. I respect that.",
+          "next": "ta02"
+        },
+        {
+          "id": "ta02",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "You want the truth?",
+          "next": "ta03"
+        },
+        {
+          "id": "ta03",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Fine. People used to call me Pac.",
+          "next": "ta04"
+        },
+        {
+          "id": "ta04",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "That is all you are getting.",
+          "next": "ta05"
+        },
+        {
+          "id": "ta05",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Tell nobody where this hut is.",
+          "next": "ta06"
+        },
+        {
+          "id": "ta06",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Especially anybody carrying a camera.",
+          "next": "ta07"
+        },
+        {
+          "id": "ta07",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I have had enough eyes on me.",
+          "next": "ta08"
+        },
+        {
+          "id": "ta08",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Take these. Payment for the water and the silence.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ],
+          "next": "ta09"
+        },
+        {
+          "id": "ta09",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "If anyone asks, you met a handsome beekeeper.",
+          "next": "ta10"
+        },
+        {
+          "id": "ta10",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "I do not own bees. That helps the story.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ],
+          "next": "repeat_beekeeper"
+        },
+        {
+          "id": "repeat_beekeeper",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Handsome beekeeper. Remember the story.",
+          "next": "repeat_beekeeper"
+        },
+        {
+          "id": "repeat_prepared",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Prepared now, huh? Growth.",
+          "next": "repeat_prepared"
+        }
+      ]
+    },
+    {
+      "id": "dlg_pallet_crushed_house_hank",
+      "quest_id": "evt_pallet_crushed_house",
+      "npc_id": "npc_pallet_crushed_house_hank",
+      "source": "docs/story/events/PALLET_CRUSHED_HOUSE.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+        "initial_node": "h001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "value": "complete"
+          },
+          "node": "post_hank_1"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pallet_crushed_house.house_state",
+            "value": "lena_relocated"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "enter_shared_rescue_recap"
+            }
+          ],
+          "node": "late_hank_recap"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "values": [
+              "listening",
+              "check_house"
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "value": "not_started"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "h001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "My wife is in there.",
+          "next": "h002"
+        },
+        {
+          "id": "h002",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I woke up outside. Just outside. No idea how.",
+          "next": "h003"
+        },
+        {
+          "id": "h003",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "One second, kitchen. Next second, grass in my mouth.",
+          "next": "h004"
+        },
+        {
+          "id": "h004",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "And my chud wife is still inside.",
+          "next": "h005"
+        },
+        {
+          "id": "h005",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Lena! If you hear me, yell something rude!",
+          "next": "h006"
+        },
+        {
+          "id": "h006",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Nothing. That is actually unusual.",
+          "next": "h007"
+        },
+        {
+          "id": "h007",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She normally has something ready.",
+          "next": "h008"
+        },
+        {
+          "id": "h008",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "We were fighting when it happened.",
+          "next": "h009"
+        },
+        {
+          "id": "h009",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Not a serious fight.",
+          "next": "h010"
+        },
+        {
+          "id": "h010",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Well. It had become serious to her.",
+          "next": "h011"
+        },
+        {
+          "id": "h011",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "It started with a spoon.",
+          "next": "h012"
+        },
+        {
+          "id": "h012",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "A completely normal spoon.",
+          "next": "h013"
+        },
+        {
+          "id": "h013",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I put it in the wrong drawer.",
+          "next": "h014"
+        },
+        {
+          "id": "h014",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Apparently we have a correct spoon drawer.",
+          "next": "h015"
+        },
+        {
+          "id": "h015",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She was being a total fungus about it.",
+          "next": "h016"
+        },
+        {
+          "id": "h016",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Very fungal behavior.",
+          "next": "h017"
+        },
+        {
+          "id": "h017",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The chud heard me say that.",
+          "next": "h018"
+        },
+        {
+          "id": "h018",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She always hears me say that.",
+          "next": "h019"
+        },
+        {
+          "id": "h019",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "My chud wife loves rules nobody voted on.",
+          "next": "h020"
+        },
+        {
+          "id": "h020",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Forks left. Spoons right. I get tires sometimes...",
+          "next": "h021"
+        },
+        {
+          "id": "h021",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Then she brought up the boots.",
+          "next": "h022"
+        },
+        {
+          "id": "h022",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The boots were by the door.",
+          "next": "h023"
+        },
+        {
+          "id": "h023",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "\"Doors are where boots go.\" chud ahhhh shit yk twin.",
+          "next": "h024"
+        },
+        {
+          "id": "h024",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The chud says boots go under the bench.",
+          "next": "h025"
+        },
+        {
+          "id": "h025",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The bench is also by the door.",
+          "next": "h026"
+        },
+        {
+          "id": "h026",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "We agree geographically.",
+          "next": "h027"
+        },
+        {
+          "id": "h027",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Philosophically, we are enemies.",
+          "next": "h028"
+        },
+        {
+          "id": "h028",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Then the windows flashed purple.",
+          "next": "h029"
+        },
+        {
+          "id": "h029",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I thought the chud had finally become psychic.",
+          "next": "h030"
+        },
+        {
+          "id": "h030",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She said, “Hank, that is not me.”",
+          "next": "h031"
+        },
+        {
+          "id": "h031",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Very calm for a fungus. Suspiciously calm.",
+          "next": "h032"
+        },
+        {
+          "id": "h032",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The floor pulled sideways.",
+          "next": "h033"
+        },
+        {
+          "id": "h033",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Not down. Sideways.",
+          "next": "h034"
+        },
+        {
+          "id": "h034",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Floors should pick one direction.",
+          "next": "h035"
+        },
+        {
+          "id": "h035",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The cupboard opened.",
+          "next": "h036"
+        },
+        {
+          "id": "h036",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Every correct spoon became airborne.",
+          "next": "h037"
+        },
+        {
+          "id": "h037",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I was struck by her entire argument.",
+          "next": "h038"
+        },
+        {
+          "id": "h038",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Three spoons. Maybe four.",
+          "next": "h039"
+        },
+        {
+          "id": "h039",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She laughed.",
+          "next": "h040"
+        },
+        {
+          "id": "h040",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "During a disaster, the chud laughed at me. Crazy work.",
+          "next": "h041"
+        },
+        {
+          "id": "h041",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "That is my chud, though.",
+          "next": "h042"
+        },
+        {
+          "id": "h042",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She finds the exact wrong moment delightful.",
+          "next": "h043"
+        },
+        {
+          "id": "h043",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I tried to grab the table.",
+          "next": "h044"
+        },
+        {
+          "id": "h044",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The table left first.",
+          "next": "h045"
+        },
+        {
+          "id": "h045",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "If you find it, the left leg wobbles.",
+          "next": "h046"
+        },
+        {
+          "id": "h046",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Do not let that chud pretend it does not.",
+          "next": "h047"
+        },
+        {
+          "id": "h047",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She has denied that wobble for six years.",
+          "next": "h048"
+        },
+        {
+          "id": "h048",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "We put folded paper under it.",
+          "next": "h049"
+        },
+        {
+          "id": "h049",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Her idea.",
+          "next": "h050"
+        },
+        {
+          "id": "h050",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Good idea, honestly.",
+          "next": "h051"
+        },
+        {
+          "id": "h051",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Then the roof made a sound like thunder eating gravel.",
+          "next": "h052"
+        },
+        {
+          "id": "h052",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I called her name.",
+          "next": "h053"
+        },
+        {
+          "id": "h053",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The chud called me a turnip.",
+          "next": "h054"
+        },
+        {
+          "id": "h054",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "That means she was scared.",
+          "next": "h055"
+        },
+        {
+          "id": "h055",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Usually that fungus says “moldy turnip.”",
+          "next": "h056"
+        },
+        {
+          "id": "h056",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Plain turnip is serious.",
+          "next": "h057"
+        },
+        {
+          "id": "h057",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I remember reaching for her.",
+          "next": "h058"
+        },
+        {
+          "id": "h058",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I remember the green necklace my chud always wears.",
+          "next": "h059"
+        },
+        {
+          "id": "h059",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Then I remember dirt.",
+          "next": "h060"
+        },
+        {
+          "id": "h060",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Wet dirt. New dirt.",
+          "next": "h061"
+        },
+        {
+          "id": "h061",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The sky looked wrong.",
+          "next": "h062"
+        },
+        {
+          "id": "h062",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The hills looked worse.",
+          "next": "h063"
+        },
+        {
+          "id": "h063",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Our chimney landed over there.",
+          "next": "h064"
+        },
+        {
+          "id": "h064",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The neighbor’s fence landed over here.",
+          "next": "h065"
+        },
+        {
+          "id": "h065",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The neighbor has not stopped mentioning it.",
+          "next": "h066"
+        },
+        {
+          "id": "h066",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Fair, I suppose.",
+          "next": "h067"
+        },
+        {
+          "id": "h067",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I dug at the front door.",
+          "next": "h068"
+        },
+        {
+          "id": "h068",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The frame shifted when I touched it.",
+          "next": "h069"
+        },
+        {
+          "id": "h069",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I stopped. I am irritating, not stupid.",
+          "next": "h070"
+        },
+        {
+          "id": "h070",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "My chud would dispute both parts.",
+          "next": "h071"
+        },
+        {
+          "id": "h071",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She knows houses better than I do.",
+          "next": "h072"
+        },
+        {
+          "id": "h072",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She fixed the pantry shelf herself.",
+          "next": "h073"
+        },
+        {
+          "id": "h073",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I offered help.",
+          "next": "h074"
+        },
+        {
+          "id": "h074",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The fungus asked me to stand farther away.",
+          "next": "h075"
+        },
+        {
+          "id": "h075",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "It has held for four years.",
+          "next": "h076"
+        },
+        {
+          "id": "h076",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The shelf, I mean.",
+          "next": "h077"
+        },
+        {
+          "id": "h077",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I hope the room around it held too.",
+          "next": "h078"
+        },
+        {
+          "id": "h078",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The chud keeps tea behind the blue tin.",
+          "next": "h079"
+        },
+        {
+          "id": "h079",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Emergency money under the flour.",
+          "next": "h080"
+        },
+        {
+          "id": "h080",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Spare key inside the ugly planter.",
+          "next": "h081"
+        },
+        {
+          "id": "h081",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The fungus says the planter is rustic.",
+          "next": "h082"
+        },
+        {
+          "id": "h082",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "It is shaped like a screaming Bellsprout.",
+          "next": "h083"
+        },
+        {
+          "id": "h083",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I bought it for her.",
+          "next": "h084"
+        },
+        {
+          "id": "h084",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "That is not the point.",
+          "next": "h085"
+        },
+        {
+          "id": "h085",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The point is my chud cannot be gone.",
+          "next": "h086"
+        },
+        {
+          "id": "h086",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "We still have not settled the spoon question.",
+          "next": "h087"
+        },
+        {
+          "id": "h087",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "And I called her a fungus. Which she was being.",
+          "next": "h088"
+        },
+        {
+          "id": "h088",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Quietly. Mostly quietly.",
+          "next": "h089"
+        },
+        {
+          "id": "h089",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "The chud called me worse.",
+          "next": "h090"
+        },
+        {
+          "id": "h090",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Better, too. She is creative.",
+          "next": "h091"
+        },
+        {
+          "id": "h091",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I should have grabbed my chud instead of the table.",
+          "next": "h092"
+        },
+        {
+          "id": "h092",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I knew the table was unreliable.",
+          "next": "h093"
+        },
+        {
+          "id": "h093",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I knew she was right there.",
+          "next": "h094"
+        },
+        {
+          "id": "h094",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I keep thinking she yelled after I landed.",
+          "next": "h095"
+        },
+        {
+          "id": "h095",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Or maybe that was somebody else.",
+          "next": "h096"
+        },
+        {
+          "id": "h096",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "I cannot move the front wall safely.",
+          "next": "h097"
+        },
+        {
+          "id": "h097",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "There may be a gap around the side.",
+          "next": "h098"
+        },
+        {
+          "id": "h098",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "You look less likely to collapse it than I am.",
+          "next": "h099"
+        },
+        {
+          "id": "h099",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "If the chud insults you, that means she is fine.",
+          "next": "h100"
+        },
+        {
+          "id": "h100",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "Please check on my chud wife.",
+          "next": "check_house_objective",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_monologue"
+            }
+          ]
+        },
+        {
+          "id": "check_house_objective",
+          "kind": "line",
+          "speaker": "narrator",
+          "text": "Check the crushed house for Lena. Look for a safe opening rather than breaking the front wall.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "close_dialogue"
+            }
+          ],
+          "next": "check_house_objective"
+        },
+        {
+          "id": "late_hank_recap",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She is alive. She is furious. Beautiful day.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "close_dialogue"
+            }
+          ],
+          "next": "late_hank_recap"
+        },
+        {
+          "id": "post_hank_1",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "She is alive. She is furious. Beautiful day.",
+          "next": "post_hank_2"
+        },
+        {
+          "id": "post_hank_2",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "It is a historic dispute now.",
+          "next": "post_hank_3"
+        },
+        {
+          "id": "post_hank_3",
+          "kind": "line",
+          "speaker": "hank",
+          "text": "See? Completely recovered.",
+          "next": "post_hank_1"
+        }
+      ]
+    },
+    {
+      "id": "dlg_pallet_crushed_house_lena",
+      "quest_id": "evt_pallet_crushed_house",
+      "npc_id": "npc_pallet_crushed_house_lena",
+      "source": "docs/story/events/PALLET_CRUSHED_HOUSE.md",
+      "scope": "mixed",
+      "cursor": {
+        "progression_field": "quest.evt_pallet_crushed_house.dialogue_cursor",
+        "initial_node": "l001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "value": "complete"
+          },
+          "node": "post_lena_1"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_pallet_crushed_house.house_state",
+                "value": "lena_relocated"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_pallet_crushed_house.reward_claimed",
+                "value": false
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "enter_shared_rescue_recap"
+            }
+          ],
+          "node": "late_lena_recap"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pallet_crushed_house.stage",
+            "value": "lena_dialogue"
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_pallet_crushed_house.stage",
+                "value": "check_house"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_pallet_crushed_house.house_state",
+                "value": "blocked"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start_lena_dialogue"
+            }
+          ],
+          "node": "l001"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "always"
+          },
+          "node": "lena_unavailable"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "l001",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Hello? If that is Hank, the spoon drawer is still wrong.",
+          "next": "l002"
+        },
+        {
+          "id": "l002",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Oh. You are not Hank.",
+          "next": "l003"
+        },
+        {
+          "id": "l003",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Good. You look useful.",
+          "next": "l004"
+        },
+        {
+          "id": "l004",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "The beam missed me. The cupboard did not.",
+          "next": "l005"
+        },
+        {
+          "id": "l005",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "I am bruised, trapped, and extremely alive.",
+          "next": "l006"
+        },
+        {
+          "id": "l006",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Did he make you listen to the whole hundred?",
+          "next": "l007"
+        },
+        {
+          "id": "l007",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Of course he did.",
+          "next": "l008"
+        },
+        {
+          "id": "l008",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "That man panics in paragraphs.",
+          "next": "l009"
+        },
+        {
+          "id": "l009",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "He called me his chud wife, did he not?",
+          "next": "l010"
+        },
+        {
+          "id": "l010",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Tell him this fungus heard everything.",
+          "next": "l011"
+        },
+        {
+          "id": "l011",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Help me past this beam, then take this.",
+          "next": "l012"
+        },
+        {
+          "id": "l012",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "You earned it long before you opened the door.",
+          "next": "post_lena_1",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "finish_rescue_and_reward"
+            }
+          ]
+        },
+        {
+          "id": "late_lena_recap",
+          "kind": "line",
+          "speaker": "narrator",
+          "text": "Lena is already safe outside. She offers you the matching Pallet charm kept with the rescued belongings.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "claim_reward_after_shared_rescue"
+            }
+          ],
+          "next": "post_lena_1"
+        },
+        {
+          "id": "post_lena_1",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "He told a stranger about the spoon drawer.",
+          "next": "post_lena_2"
+        },
+        {
+          "id": "post_lena_2",
+          "kind": "line",
+          "speaker": "lena",
+          "text": "Put one spoon wrong and I will bury you in the new dirt.",
+          "next": "post_lena_1"
+        },
+        {
+          "id": "lena_unavailable",
+          "kind": "line",
+          "speaker": "narrator",
+          "text": "The safe opening is still hidden behind the crushed side of the house.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "close_dialogue"
+            }
+          ],
+          "next": "lena_unavailable"
+        }
+      ]
+    }
+  ]
+}
