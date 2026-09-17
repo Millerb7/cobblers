@@ -1,0 +1,2435 @@
+{
+  "schema_version": 1,
+  "purpose": "Human-editable trainer difficulty, boss roster and route-population rules. Run generate_trainers.py after editing.",
+  "difficulty": {
+    "profile": "campaign_hard",
+    "relative_level_cap": 0,
+    "gym_ace_levels": [
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55
+    ],
+    "league_ace_levels": [
+      60,
+      60,
+      60,
+      60,
+      62
+    ],
+    "knobs": {
+      "boss_level_offsets": "Per-member offsets from each configured ace.",
+      "member_counts": "Length of each boss members array and route archetype member_count.",
+      "items": "heldItem and max_item_uses fields.",
+      "ai": "ai_profiles values; maxSelectMargin must stay positive.",
+      "route_density": "Route placements arrays; coordinates must remain existing polyline vertices."
+    }
+  },
+  "ai_profiles": {
+    "route_standard": {
+      "moveBias": 1.0,
+      "switchBias": 0.35,
+      "statusMoveBias": 0.75,
+      "itemBias": 0.6,
+      "maxSelectMargin": 0.35
+    },
+    "gym_standard": {
+      "moveBias": 1.15,
+      "switchBias": 0.65,
+      "statusMoveBias": 0.95,
+      "itemBias": 0.9,
+      "maxSelectMargin": 0.18
+    },
+    "league_standard": {
+      "moveBias": 1.25,
+      "switchBias": 0.8,
+      "statusMoveBias": 1.05,
+      "itemBias": 1.0,
+      "maxSelectMargin": 0.12
+    },
+    "league_aggressive": {
+      "moveBias": 1.35,
+      "switchBias": 0.7,
+      "statusMoveBias": 0.8,
+      "itemBias": 1.0,
+      "maxSelectMargin": 0.1
+    },
+    "league_control": {
+      "moveBias": 1.2,
+      "switchBias": 0.9,
+      "statusMoveBias": 1.25,
+      "itemBias": 1.0,
+      "maxSelectMargin": 0.1
+    },
+    "champion": {
+      "moveBias": 1.35,
+      "switchBias": 1.0,
+      "statusMoveBias": 1.0,
+      "itemBias": 1.0,
+      "maxSelectMargin": 0.08
+    }
+  },
+  "route_archetypes": {
+    "one_pokemon": {
+      "member_count": 1,
+      "pool": "ambient_pool"
+    },
+    "specialist": {
+      "member_count": 2,
+      "pool": "specialist_pool"
+    },
+    "observer": {
+      "member_count": 2,
+      "pool": "ambient_pool"
+    },
+    "strategist": {
+      "member_count": 3,
+      "pool": "ambient_pool"
+    },
+    "gym_prep": {
+      "member_count": 3,
+      "pool": "specialist_pool"
+    }
+  },
+  "species_kits": {
+    "pidgey": {
+      "species": "pidgey",
+      "moveset": [
+        "gust",
+        "sandattack",
+        "quickattack"
+      ]
+    },
+    "rattata": {
+      "species": "rattata",
+      "moveset": [
+        "quickattack",
+        "focusenergy",
+        "bite"
+      ]
+    },
+    "mareep": {
+      "species": "mareep",
+      "moveset": [
+        "thundershock",
+        "growl",
+        "cottonspore"
+      ]
+    },
+    "wingull": {
+      "species": "wingull",
+      "moveset": [
+        "watergun",
+        "wingattack",
+        "supersonic"
+      ]
+    },
+    "fomantis": {
+      "species": "fomantis",
+      "moveset": [
+        "leafage",
+        "furycutter",
+        "growth"
+      ]
+    },
+    "lotad": {
+      "species": "lotad",
+      "moveset": [
+        "bubblebeam",
+        "absorb",
+        "astonish"
+      ]
+    },
+    "lombre": {
+      "species": "lombre",
+      "moveset": [
+        "fakeout",
+        "megadrain",
+        "bubblebeam"
+      ]
+    },
+    "corphish": {
+      "species": "corphish",
+      "moveset": [
+        "bubblebeam",
+        "knockoff",
+        "harden"
+      ]
+    },
+    "volbeat": {
+      "species": "volbeat",
+      "moveset": [
+        "strugglebug",
+        "quickattack",
+        "confuseray"
+      ]
+    },
+    "bunnelby": {
+      "species": "bunnelby",
+      "moveset": [
+        "mudshot",
+        "quickattack",
+        "takedown"
+      ]
+    },
+    "heracross": {
+      "species": "heracross",
+      "moveset": [
+        "brickbreak",
+        "aerialace",
+        "bulldoze"
+      ]
+    },
+    "rockruff": {
+      "species": "rockruff",
+      "moveset": [
+        "rocktomb",
+        "bite",
+        "howl"
+      ]
+    },
+    "machop": {
+      "species": "machop",
+      "moveset": [
+        "lowkick",
+        "knockoff",
+        "bulldoze"
+      ]
+    },
+    "skiddo": {
+      "species": "skiddo",
+      "moveset": [
+        "razorleaf",
+        "bulldoze",
+        "synthesis"
+      ]
+    },
+    "sneasel": {
+      "species": "sneasel",
+      "moveset": [
+        "iceshard",
+        "metalclaw",
+        "quickattack"
+      ]
+    },
+    "bergmite": {
+      "species": "bergmite",
+      "moveset": [
+        "icefang",
+        "rapidspin",
+        "protect"
+      ]
+    },
+    "swablu": {
+      "species": "swablu",
+      "moveset": [
+        "pluck",
+        "round",
+        "sing"
+      ]
+    },
+    "smoochum": {
+      "species": "smoochum",
+      "moveset": [
+        "icywind",
+        "confusion",
+        "sing"
+      ]
+    },
+    "cryogonal": {
+      "species": "cryogonal",
+      "moveset": [
+        "aurorabeam",
+        "rapidspin",
+        "recover"
+      ]
+    },
+    "aron": {
+      "species": "aron",
+      "moveset": [
+        "headbutt",
+        "metalclaw",
+        "rocktomb"
+      ]
+    },
+    "stunky": {
+      "species": "stunky",
+      "moveset": [
+        "bite",
+        "smokescreen",
+        "acidspray"
+      ]
+    },
+    "bronzor": {
+      "species": "bronzor",
+      "moveset": [
+        "confusion",
+        "hypnosis",
+        "payback"
+      ]
+    },
+    "wooper": {
+      "species": "wooper",
+      "moveset": [
+        "mudshot",
+        "slam",
+        "yawn"
+      ]
+    },
+    "toxel": {
+      "species": "toxel",
+      "moveset": [
+        "nuzzle",
+        "growl",
+        "flail"
+      ]
+    },
+    "emolga": {
+      "species": "emolga",
+      "moveset": [
+        "spark",
+        "aerialace",
+        "encore"
+      ]
+    },
+    "hattrem": {
+      "species": "hattrem",
+      "moveset": [
+        "confusion",
+        "lifedew",
+        "disarmingvoice"
+      ]
+    },
+    "staravia": {
+      "species": "staravia",
+      "moveset": [
+        "wingattack",
+        "quickattack",
+        "endeavor"
+      ]
+    },
+    "barboach": {
+      "species": "barboach",
+      "moveset": [
+        "mudbomb",
+        "waterpulse",
+        "amnesia"
+      ]
+    },
+    "skuntank": {
+      "species": "skuntank",
+      "moveset": [
+        "nightslash",
+        "toxic",
+        "suckerpunch"
+      ]
+    },
+    "golduck": {
+      "species": "golduck",
+      "moveset": [
+        "waterpulse",
+        "confusion",
+        "disable"
+      ]
+    },
+    "swanna": {
+      "species": "swanna",
+      "moveset": [
+        "airslash",
+        "waterpulse",
+        "tailwind"
+      ]
+    },
+    "seismitoad": {
+      "species": "seismitoad",
+      "moveset": [
+        "muddywater",
+        "bulldoze",
+        "supersonic"
+      ]
+    },
+    "slugma": {
+      "species": "slugma",
+      "moveset": [
+        "incinerate",
+        "rockthrow",
+        "yawn"
+      ]
+    },
+    "centiskorch": {
+      "species": "centiskorch",
+      "moveset": [
+        "flamewheel",
+        "bugbite",
+        "coil"
+      ]
+    },
+    "nuzleaf": {
+      "species": "nuzleaf",
+      "moveset": [
+        "razorleaf",
+        "fakeout",
+        "torment"
+      ]
+    },
+    "cacturne": {
+      "species": "cacturne",
+      "moveset": [
+        "needlearm",
+        "suckerpunch",
+        "leechseed"
+      ]
+    },
+    "skorupi": {
+      "species": "skorupi",
+      "moveset": [
+        "poisonfang",
+        "bite",
+        "toxicspikes"
+      ]
+    },
+    "toxapex": {
+      "species": "toxapex",
+      "moveset": [
+        "venoshock",
+        "recover",
+        "toxicspikes"
+      ]
+    },
+    "kilowattrel": {
+      "species": "kilowattrel",
+      "moveset": [
+        "spark",
+        "airslash",
+        "tailwind"
+      ]
+    },
+    "nidorina": {
+      "species": "nidorina",
+      "moveset": [
+        "poisonsting",
+        "bite",
+        "doublekick"
+      ]
+    },
+    "drapion": {
+      "species": "drapion",
+      "moveset": [
+        "nightslash",
+        "poisonfang",
+        "toxicspikes"
+      ]
+    },
+    "boldore": {
+      "species": "boldore",
+      "moveset": [
+        "rockslide",
+        "bulldoze",
+        "irondefense"
+      ]
+    },
+    "gligar": {
+      "species": "gligar",
+      "moveset": [
+        "bulldoze",
+        "acrobatics",
+        "quickattack"
+      ]
+    },
+    "klang": {
+      "species": "klang",
+      "moveset": [
+        "geargrind",
+        "chargebeam",
+        "shiftgear"
+      ]
+    },
+    "scraggy": {
+      "species": "scraggy",
+      "moveset": [
+        "lowkick",
+        "feintattack",
+        "headbutt"
+      ]
+    }
+  },
+  "bosses": [
+    {
+      "id": "gym_01_brock",
+      "category": "gym",
+      "order": 1,
+      "name": "Brock",
+      "theme": "Rock",
+      "ace_level": 20,
+      "strategy": "Geodude establishes rocks and speed control; Cranidos breaks; Onix converts a super-effective hit into a Weakness Policy counterattack.",
+      "ace_math_change": "Sturdy guarantees one action; Weakness Policy turns the expected Water or Grass hit into a damage race.",
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Wingull",
+          "Krabby",
+          "Staryu",
+          "Surskit",
+          "Buizel",
+          "Fomantis",
+          "Gossifleur"
+        ]
+      },
+      "ai_profile": "gym_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_gym_01_brock_pre",
+        "win": "dlg_trainer_gym_01_brock_win",
+        "loss": "dlg_trainer_gym_01_brock_loss"
+      },
+      "members": [
+        {
+          "species": "geodude",
+          "level_offset": -2,
+          "moveset": [
+            "stealthrock",
+            "rocktomb",
+            "bulldoze",
+            "protect"
+          ],
+          "ability": "sturdy",
+          "heldItem": "oran_berry",
+          "nature": "impish"
+        },
+        {
+          "species": "bonsly",
+          "level_offset": -2,
+          "moveset": [
+            "rocktomb",
+            "bulldoze",
+            "lowkick",
+            "tearfullook"
+          ],
+          "ability": "rockhead",
+          "heldItem": "eviolite",
+          "nature": "careful"
+        },
+        {
+          "species": "cranidos",
+          "level_offset": -1,
+          "moveset": [
+            "headbutt",
+            "rocktomb",
+            "bulldoze",
+            "scaryface"
+          ],
+          "ability": "moldbreaker",
+          "heldItem": "muscle_band",
+          "nature": "adamant"
+        },
+        {
+          "species": "onix",
+          "level_offset": 0,
+          "moveset": [
+            "rockslide",
+            "bulldoze",
+            "bodypress",
+            "dragonbreath"
+          ],
+          "ability": "sturdy",
+          "heldItem": "weakness_policy",
+          "nature": "impish",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "gym_02_misty",
+      "category": "gym",
+      "order": 2,
+      "name": "Misty",
+      "theme": "Water",
+      "ace_level": 25,
+      "strategy": "Horsea starts rain; Lombre exploits it; Lightning Rod Goldeen disrupts a single Electric sweep; Starmie closes with broad special coverage.",
+      "ace_math_change": "Life Orb makes Starmie's neutral coverage materially stronger while rain changes Water damage and turn order.",
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Mareep",
+          "Pawmi",
+          "Fomantis",
+          "Gossifleur",
+          "Lotad"
+        ]
+      },
+      "ai_profile": "gym_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_gym_02_misty_pre",
+        "win": "dlg_trainer_gym_02_misty_win",
+        "loss": "dlg_trainer_gym_02_misty_loss"
+      },
+      "members": [
+        {
+          "species": "horsea",
+          "level_offset": -3,
+          "moveset": [
+            "raindance",
+            "waterpulse",
+            "dragonbreath",
+            "smokescreen"
+          ],
+          "ability": "swiftswim",
+          "heldItem": "damp_rock",
+          "nature": "timid"
+        },
+        {
+          "species": "lombre",
+          "level_offset": -2,
+          "moveset": [
+            "fakeout",
+            "megadrain",
+            "bubblebeam",
+            "protect"
+          ],
+          "ability": "swiftswim",
+          "heldItem": "mystic_water",
+          "nature": "modest"
+        },
+        {
+          "species": "goldeen",
+          "level_offset": -1,
+          "moveset": [
+            "waterfall",
+            "peck",
+            "knockoff",
+            "agility"
+          ],
+          "ability": "lightningrod",
+          "heldItem": "rindo_berry",
+          "nature": "jolly"
+        },
+        {
+          "species": "starmie",
+          "level_offset": 0,
+          "moveset": [
+            "waterpulse",
+            "psybeam",
+            "icywind",
+            "recover"
+          ],
+          "ability": "analytic",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "gym_03_surge",
+      "category": "gym",
+      "order": 3,
+      "name": "Lt. Surge",
+      "theme": "Electric",
+      "ace_level": 30,
+      "strategy": "Electabuzz establishes paralysis and a screen; Magnezone pivots; Boltund attacks the resistance core; Air Balloon Raichu denies the first Ground line.",
+      "ace_math_change": "Air Balloon forces the player to spend a turn breaking the ace's Ground immunity before cashing in the route's main answer.",
+      "availability_contract": {
+        "status": "thin",
+        "answers": [
+          "Diggersby",
+          "Skiddo",
+          "Hariyama",
+          "Lycanroc"
+        ],
+        "failure": "Only Bunnelby/Diggersby is a dependable ambient Ground family; the proposed Route 2 Geodude quarry is not implemented."
+      },
+      "ai_profile": "gym_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_gym_03_surge_pre",
+        "win": "dlg_trainer_gym_03_surge_win",
+        "loss": "dlg_trainer_gym_03_surge_loss"
+      },
+      "members": [
+        {
+          "species": "electabuzz",
+          "level_offset": -3,
+          "moveset": [
+            "thunderwave",
+            "lightscreen",
+            "voltswitch",
+            "lowkick"
+          ],
+          "ability": "static",
+          "heldItem": "eviolite",
+          "nature": "timid"
+        },
+        {
+          "species": "magnezone",
+          "level_offset": -2,
+          "moveset": [
+            "flashcannon",
+            "discharge",
+            "voltswitch",
+            "triattack"
+          ],
+          "ability": "sturdy",
+          "heldItem": "magnet",
+          "nature": "modest"
+        },
+        {
+          "species": "boltund",
+          "level_offset": -1,
+          "moveset": [
+            "thunderfang",
+            "firefang",
+            "playrough",
+            "psychicfangs"
+          ],
+          "ability": "strongjaw",
+          "heldItem": "muscle_band",
+          "nature": "jolly"
+        },
+        {
+          "species": "raichu",
+          "level_offset": 0,
+          "moveset": [
+            "nastyplot",
+            "thunderbolt",
+            "grassknot",
+            "encore"
+          ],
+          "ability": "lightningrod",
+          "heldItem": "air_balloon",
+          "nature": "timid",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "gym_04_erika",
+      "category": "gym",
+      "order": 4,
+      "name": "Erika",
+      "theme": "Grass",
+      "ace_level": 35,
+      "strategy": "Bellossom starts sun and sleep pressure; Roserade lays hazards; Victreebel breaks under sun; Coba Berry Vileplume survives one Flying answer and sets up.",
+      "ace_math_change": "Coba Berry removes the certainty of a one-hit Flying knockout and gives Growth a plausible opening.",
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Scyther",
+          "Noctowl",
+          "Altaria",
+          "Bergmite",
+          "Cryogonal",
+          "Jynx"
+        ]
+      },
+      "ai_profile": "gym_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_gym_04_erika_pre",
+        "win": "dlg_trainer_gym_04_erika_win",
+        "loss": "dlg_trainer_gym_04_erika_loss"
+      },
+      "members": [
+        {
+          "species": "bellossom",
+          "level_offset": -2,
+          "moveset": [
+            "sunnyday",
+            "sleeppowder",
+            "gigadrain",
+            "moonblast"
+          ],
+          "ability": "chlorophyll",
+          "heldItem": "heat_rock",
+          "nature": "calm"
+        },
+        {
+          "species": "roserade",
+          "level_offset": -2,
+          "moveset": [
+            "toxicspikes",
+            "gigadrain",
+            "sludgebomb",
+            "dazzlinggleam"
+          ],
+          "ability": "naturalcure",
+          "heldItem": "focus_sash",
+          "nature": "timid"
+        },
+        {
+          "species": "victreebel",
+          "level_offset": -1,
+          "moveset": [
+            "leafblade",
+            "poisonjab",
+            "knockoff",
+            "suckerpunch"
+          ],
+          "ability": "chlorophyll",
+          "heldItem": "life_orb",
+          "nature": "adamant"
+        },
+        {
+          "species": "vileplume",
+          "level_offset": 0,
+          "moveset": [
+            "growth",
+            "gigadrain",
+            "sludgebomb",
+            "moonblast"
+          ],
+          "ability": "effectspore",
+          "heldItem": "coba_berry",
+          "nature": "modest",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "gym_05_koga",
+      "category": "gym",
+      "order": 5,
+      "name": "Koga",
+      "theme": "Poison",
+      "ace_level": 40,
+      "strategy": "Crobat creates Tailwind; Weezing blocks easy Ground lines; Drapion lays poison hazards; Toxtricity breaks; Venomoth snowballs through Tinted Lens.",
+      "ace_math_change": "Tinted Lens makes normal Bug resists unreliable after Quiver Dance, demanding speed control or priority rather than type alone.",
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Ampharos",
+          "Jynx",
+          "Diggersby",
+          "Bronzong",
+          "Quagsire",
+          "Lycanroc"
+        ]
+      },
+      "ai_profile": "gym_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_gym_05_koga_pre",
+        "win": "dlg_trainer_gym_05_koga_win",
+        "loss": "dlg_trainer_gym_05_koga_loss"
+      },
+      "members": [
+        {
+          "species": "crobat",
+          "level_offset": -2,
+          "moveset": [
+            "tailwind",
+            "uturn",
+            "toxic",
+            "airslash"
+          ],
+          "ability": "infiltrator",
+          "heldItem": "focus_sash",
+          "nature": "timid"
+        },
+        {
+          "species": "weezing",
+          "level_offset": -2,
+          "moveset": [
+            "willowisp",
+            "sludgebomb",
+            "flamethrower",
+            "painsplit"
+          ],
+          "ability": "levitate",
+          "heldItem": "rocky_helmet",
+          "nature": "bold"
+        },
+        {
+          "species": "drapion",
+          "level_offset": -1,
+          "moveset": [
+            "toxicspikes",
+            "knockoff",
+            "poisonjab",
+            "earthquake"
+          ],
+          "ability": "battlearmor",
+          "heldItem": "shuca_berry",
+          "nature": "adamant"
+        },
+        {
+          "species": "toxtricity",
+          "level_offset": -1,
+          "moveset": [
+            "overdrive",
+            "sludgebomb",
+            "boomburst",
+            "voltswitch"
+          ],
+          "ability": "punkrock",
+          "heldItem": "throat_spray",
+          "nature": "modest"
+        },
+        {
+          "species": "venomoth",
+          "level_offset": 0,
+          "moveset": [
+            "quiverdance",
+            "bugbuzz",
+            "psychic",
+            "sludgebomb"
+          ],
+          "ability": "tintedlens",
+          "heldItem": "black_sludge",
+          "nature": "timid",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "gym_06_sabrina",
+      "category": "gym",
+      "order": 6,
+      "name": "Sabrina",
+      "theme": "Psychic",
+      "ace_level": 45,
+      "strategy": "Hatterene reverses speed with Trick Room; Mr. Mime disrupts; Bronzong sustains the room; Rapidash breaks; Magic Guard Alakazam ignores passive damage.",
+      "ace_math_change": "Magic Guard removes Life Orb recoil, so Alakazam gets the damage increase without the usual clock.",
+      "availability_contract": {
+        "status": "conditional",
+        "answers": [
+          "Skuntank",
+          "Bronzong",
+          "Scyther",
+          "Heracross",
+          "Toxtricity"
+        ],
+        "failure": "A second broad answer depends on the unproven haunted-mansion Habitat; do not count it until runtime-proven."
+      },
+      "ai_profile": "gym_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_gym_06_sabrina_pre",
+        "win": "dlg_trainer_gym_06_sabrina_win",
+        "loss": "dlg_trainer_gym_06_sabrina_loss"
+      },
+      "members": [
+        {
+          "species": "hatterene",
+          "level_offset": -3,
+          "moveset": [
+            "trickroom",
+            "psychic",
+            "mysticalfire",
+            "drainingkiss"
+          ],
+          "ability": "magicbounce",
+          "heldItem": "colbur_berry",
+          "nature": "quiet"
+        },
+        {
+          "species": "mrmime",
+          "level_offset": -2,
+          "moveset": [
+            "fakeout",
+            "encore",
+            "psychic",
+            "dazzlinggleam"
+          ],
+          "ability": "filter",
+          "heldItem": "focus_sash",
+          "nature": "timid"
+        },
+        {
+          "species": "bronzong",
+          "level_offset": -2,
+          "moveset": [
+            "gyroball",
+            "bodypress",
+            "hypnosis",
+            "trickroom"
+          ],
+          "ability": "levitate",
+          "heldItem": "leftovers",
+          "nature": "sassy"
+        },
+        {
+          "species": "rapidash",
+          "level_offset": -1,
+          "moveset": [
+            "megahorn",
+            "zenheadbutt",
+            "playrough",
+            "highhorsepower"
+          ],
+          "ability": "pastelveil",
+          "heldItem": "choice_band",
+          "nature": "jolly",
+          "aspects": [
+            "galarian"
+          ]
+        },
+        {
+          "species": "alakazam",
+          "level_offset": 0,
+          "moveset": [
+            "nastyplot",
+            "psychic",
+            "dazzlinggleam",
+            "shadowball"
+          ],
+          "ability": "magicguard",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "gym_07_blaine",
+      "category": "gym",
+      "order": 7,
+      "name": "Blaine",
+      "theme": "Fire",
+      "ace_level": 50,
+      "strategy": "Drought Torkoal sets hazards and sun; Arcanine pressures physical answers; Magcargo punishes passivity; Magmortar and Typhlosion break; Charizard exploits sun.",
+      "ace_math_change": "Solar Power plus sun changes damage thresholds, while Power Herb lets Charizard fire one immediate Solar Beam even if weather is displaced.",
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Whiscash",
+          "Lycanroc",
+          "Floatzel",
+          "Crawdaunt",
+          "Golduck"
+        ]
+      },
+      "ai_profile": "gym_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_gym_07_blaine_pre",
+        "win": "dlg_trainer_gym_07_blaine_win",
+        "loss": "dlg_trainer_gym_07_blaine_loss"
+      },
+      "members": [
+        {
+          "species": "torkoal",
+          "level_offset": -3,
+          "moveset": [
+            "stealthrock",
+            "yawn",
+            "lavaplume",
+            "bodypress"
+          ],
+          "ability": "drought",
+          "heldItem": "heat_rock",
+          "nature": "bold"
+        },
+        {
+          "species": "arcanine",
+          "level_offset": -2,
+          "moveset": [
+            "flareblitz",
+            "wildcharge",
+            "closecombat",
+            "extremespeed"
+          ],
+          "ability": "intimidate",
+          "heldItem": "sitrus_berry",
+          "nature": "jolly"
+        },
+        {
+          "species": "magcargo",
+          "level_offset": -2,
+          "moveset": [
+            "shellsmash",
+            "flamethrower",
+            "ancientpower",
+            "earthpower"
+          ],
+          "ability": "flamebody",
+          "heldItem": "white_herb",
+          "nature": "modest"
+        },
+        {
+          "species": "magmortar",
+          "level_offset": -1,
+          "moveset": [
+            "flamethrower",
+            "thunderbolt",
+            "psychic",
+            "focusblast"
+          ],
+          "ability": "vitalspirit",
+          "heldItem": "assault_vest",
+          "nature": "modest"
+        },
+        {
+          "species": "typhlosion",
+          "level_offset": -1,
+          "moveset": [
+            "eruption",
+            "flamethrower",
+            "focusblast",
+            "shadowball"
+          ],
+          "ability": "blaze",
+          "heldItem": "choice_scarf",
+          "nature": "timid"
+        },
+        {
+          "species": "charizard",
+          "level_offset": 0,
+          "moveset": [
+            "solarbeam",
+            "flamethrower",
+            "airslash",
+            "dragonpulse"
+          ],
+          "ability": "solarpower",
+          "heldItem": "power_herb",
+          "nature": "timid",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "gym_08_giovanni",
+      "category": "gym",
+      "order": 8,
+      "name": "Giovanni",
+      "theme": "Open",
+      "status": "held",
+      "ace_level": 55,
+      "strategy": "Roster intentionally withheld until the singles-versus-doubles decision is settled.",
+      "blocked_by": "Giovanni battle-format decision",
+      "dialogue": {
+        "pre": "dlg_trainer_gym_08_giovanni_pre",
+        "win": "dlg_trainer_gym_08_giovanni_win",
+        "loss": "dlg_trainer_gym_08_giovanni_loss"
+      }
+    },
+    {
+      "id": "elite_01_lorelei",
+      "category": "elite_four",
+      "order": 1,
+      "name": "Lorelei",
+      "theme": "Ice",
+      "ace_level": 60,
+      "strategy": "Snow, hazards and speed denial make resource preservation matter across the whole fight.",
+      "ace_math_change": "Assault Vest turns Lapras into a special sponge while Freeze-Dry reverses the usual Water counter.",
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Fire",
+          "Fighting",
+          "Rock",
+          "Steel",
+          "physical pressure"
+        ]
+      },
+      "ai_profile": "league_standard",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_elite_01_lorelei_pre",
+        "win": "dlg_trainer_elite_01_lorelei_win",
+        "loss": "dlg_trainer_elite_01_lorelei_loss"
+      },
+      "members": [
+        {
+          "species": "froslass",
+          "level_offset": -3,
+          "moveset": [
+            "snowscape",
+            "spikes",
+            "icywind",
+            "destinybond"
+          ],
+          "ability": "cursedbody",
+          "heldItem": "focus_sash",
+          "nature": "timid"
+        },
+        {
+          "species": "mamoswine",
+          "level_offset": -2,
+          "moveset": [
+            "iciclecrash",
+            "earthquake",
+            "iceshard",
+            "knockoff"
+          ],
+          "ability": "thickfat",
+          "heldItem": "life_orb",
+          "nature": "adamant"
+        },
+        {
+          "species": "jynx",
+          "level_offset": -2,
+          "moveset": [
+            "icebeam",
+            "psychic",
+            "focusblast",
+            "lovelykiss"
+          ],
+          "ability": "dryskin",
+          "heldItem": "colbur_berry",
+          "nature": "timid"
+        },
+        {
+          "species": "weavile",
+          "level_offset": -1,
+          "moveset": [
+            "icespinner",
+            "knockoff",
+            "iceshard",
+            "lowkick"
+          ],
+          "ability": "pressure",
+          "heldItem": "choice_band",
+          "nature": "jolly"
+        },
+        {
+          "species": "walrein",
+          "level_offset": -1,
+          "moveset": [
+            "surf",
+            "icebeam",
+            "encore",
+            "protect"
+          ],
+          "ability": "thickfat",
+          "heldItem": "leftovers",
+          "nature": "bold"
+        },
+        {
+          "species": "lapras",
+          "level_offset": 0,
+          "moveset": [
+            "freezedry",
+            "surf",
+            "thunderbolt",
+            "iceshard"
+          ],
+          "ability": "waterabsorb",
+          "heldItem": "assault_vest",
+          "nature": "modest",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "elite_02_bruno",
+      "category": "elite_four",
+      "order": 2,
+      "name": "Bruno",
+      "theme": "Fighting",
+      "ace_level": 60,
+      "strategy": "Fake Out, removal, priority and mixed physical pressure punish a team that reaches the League without tempo tools.",
+      "ace_math_change": "White Herb restores the defense drops from Close Combat and consumes itself to activate Unburden.",
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Flying",
+          "Psychic",
+          "Fairy",
+          "burn",
+          "physical walls"
+        ]
+      },
+      "ai_profile": "league_aggressive",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_elite_02_bruno_pre",
+        "win": "dlg_trainer_elite_02_bruno_win",
+        "loss": "dlg_trainer_elite_02_bruno_loss"
+      },
+      "members": [
+        {
+          "species": "hitmontop",
+          "level_offset": -3,
+          "moveset": [
+            "fakeout",
+            "rapidspin",
+            "closecombat",
+            "tripleaxel"
+          ],
+          "ability": "intimidate",
+          "heldItem": "heavy_duty_boots",
+          "nature": "jolly"
+        },
+        {
+          "species": "machamp",
+          "level_offset": -2,
+          "moveset": [
+            "closecombat",
+            "knockoff",
+            "facade",
+            "icepunch"
+          ],
+          "ability": "guts",
+          "heldItem": "flame_orb",
+          "nature": "adamant"
+        },
+        {
+          "species": "hariyama",
+          "level_offset": -2,
+          "moveset": [
+            "fakeout",
+            "closecombat",
+            "knockoff",
+            "heavyslam"
+          ],
+          "ability": "thickfat",
+          "heldItem": "assault_vest",
+          "nature": "adamant"
+        },
+        {
+          "species": "lucario",
+          "level_offset": -1,
+          "moveset": [
+            "nastyplot",
+            "aurasphere",
+            "flashcannon",
+            "vacuumwave"
+          ],
+          "ability": "innerfocus",
+          "heldItem": "life_orb",
+          "nature": "timid"
+        },
+        {
+          "species": "heracross",
+          "level_offset": -1,
+          "moveset": [
+            "closecombat",
+            "megahorn",
+            "stoneedge",
+            "earthquake"
+          ],
+          "ability": "moxie",
+          "heldItem": "choice_scarf",
+          "nature": "jolly"
+        },
+        {
+          "species": "hitmonlee",
+          "level_offset": 0,
+          "moveset": [
+            "closecombat",
+            "stoneedge",
+            "poisonjab",
+            "knockoff"
+          ],
+          "ability": "unburden",
+          "heldItem": "white_herb",
+          "nature": "jolly",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "elite_03_agatha",
+      "category": "elite_four",
+      "order": 3,
+      "name": "Agatha",
+      "theme": "Ghost",
+      "ace_level": 60,
+      "strategy": "Burns, Taunt, Trick and priority deny clean setup and force the player to manage status across six different Ghost patterns.",
+      "ace_math_change": "Focus Sash guarantees Gengar a response and makes priority or prior hazard control part of the answer.",
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Dark",
+          "Ghost",
+          "priority",
+          "status immunity",
+          "hazards"
+        ]
+      },
+      "ai_profile": "league_control",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_elite_03_agatha_pre",
+        "win": "dlg_trainer_elite_03_agatha_win",
+        "loss": "dlg_trainer_elite_03_agatha_loss"
+      },
+      "members": [
+        {
+          "species": "mismagius",
+          "level_offset": -3,
+          "moveset": [
+            "taunt",
+            "willowisp",
+            "hex",
+            "painsplit"
+          ],
+          "ability": "levitate",
+          "heldItem": "colbur_berry",
+          "nature": "timid"
+        },
+        {
+          "species": "spiritomb",
+          "level_offset": -2,
+          "moveset": [
+            "willowisp",
+            "foulplay",
+            "painsplit",
+            "shadowsneak"
+          ],
+          "ability": "pressure",
+          "heldItem": "leftovers",
+          "nature": "careful"
+        },
+        {
+          "species": "banette",
+          "level_offset": -2,
+          "moveset": [
+            "shadowclaw",
+            "suckerpunch",
+            "gunkshot",
+            "trick"
+          ],
+          "ability": "frisk",
+          "heldItem": "choice_band",
+          "nature": "adamant"
+        },
+        {
+          "species": "dusknoir",
+          "level_offset": -1,
+          "moveset": [
+            "shadowpunch",
+            "earthquake",
+            "icepunch",
+            "shadowsneak"
+          ],
+          "ability": "pressure",
+          "heldItem": "assault_vest",
+          "nature": "adamant"
+        },
+        {
+          "species": "chandelure",
+          "level_offset": -1,
+          "moveset": [
+            "shadowball",
+            "flamethrower",
+            "energyball",
+            "trick"
+          ],
+          "ability": "flashfire",
+          "heldItem": "choice_scarf",
+          "nature": "timid"
+        },
+        {
+          "species": "gengar",
+          "level_offset": 0,
+          "moveset": [
+            "nastyplot",
+            "shadowball",
+            "sludgebomb",
+            "focusblast"
+          ],
+          "ability": "cursedbody",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "elite_04_lance",
+      "category": "elite_four",
+      "order": 4,
+      "name": "Lance",
+      "theme": "Dragon",
+      "ace_level": 60,
+      "strategy": "Aerodactyl sets the pace, each midgame member attacks a different Dragon answer, and Dragonite is the only dedicated setup closer.",
+      "ace_math_change": "Multiscale plus Weakness Policy punishes an undisciplined super-effective first hit and changes priority damage thresholds.",
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Ice",
+          "Fairy",
+          "Dragon",
+          "Stealth Rock",
+          "phazing"
+        ]
+      },
+      "ai_profile": "league_aggressive",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_elite_04_lance_pre",
+        "win": "dlg_trainer_elite_04_lance_win",
+        "loss": "dlg_trainer_elite_04_lance_loss"
+      },
+      "members": [
+        {
+          "species": "aerodactyl",
+          "level_offset": -3,
+          "moveset": [
+            "stealthrock",
+            "taunt",
+            "tailwind",
+            "rockslide"
+          ],
+          "ability": "unnerve",
+          "heldItem": "focus_sash",
+          "nature": "jolly"
+        },
+        {
+          "species": "gyarados",
+          "level_offset": -2,
+          "moveset": [
+            "dragondance",
+            "waterfall",
+            "icefang",
+            "earthquake"
+          ],
+          "ability": "intimidate",
+          "heldItem": "lum_berry",
+          "nature": "jolly"
+        },
+        {
+          "species": "flygon",
+          "level_offset": -2,
+          "moveset": [
+            "dragonclaw",
+            "earthquake",
+            "uturn",
+            "stoneedge"
+          ],
+          "ability": "levitate",
+          "heldItem": "choice_scarf",
+          "nature": "jolly"
+        },
+        {
+          "species": "baxcalibur",
+          "level_offset": -1,
+          "moveset": [
+            "swordsdance",
+            "iciclecrash",
+            "glaiverush",
+            "earthquake"
+          ],
+          "ability": "thermalexchange",
+          "heldItem": "loaded_dice",
+          "nature": "adamant"
+        },
+        {
+          "species": "dragalge",
+          "level_offset": -1,
+          "moveset": [
+            "dracometeor",
+            "sludgebomb",
+            "hydropump",
+            "thunderbolt"
+          ],
+          "ability": "adaptability",
+          "heldItem": "assault_vest",
+          "nature": "modest"
+        },
+        {
+          "species": "dragonite",
+          "level_offset": 0,
+          "moveset": [
+            "dragondance",
+            "dragonclaw",
+            "firepunch",
+            "extremespeed"
+          ],
+          "ability": "multiscale",
+          "heldItem": "weakness_policy",
+          "nature": "adamant",
+          "ace": true
+        }
+      ]
+    },
+    {
+      "id": "champion_blue",
+      "category": "champion",
+      "order": 1,
+      "name": "Blue",
+      "theme": "Mixed",
+      "ace_level": 62,
+      "strategy": "Blue recombines the campaign's lessons: tempo lead, sleep, hazards, Intimidate, speed, and a setup ace with no single type shortcut.",
+      "ace_math_change": "White Herb erases Shell Smash's defensive cost, forcing the player to stop the setup or answer a full-speed mixed-coverage closer.",
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "balanced six-member team",
+          "speed control",
+          "priority",
+          "hazard control",
+          "sacrificial pivot"
+        ]
+      },
+      "ai_profile": "champion",
+      "max_item_uses": 0,
+      "dialogue": {
+        "pre": "dlg_trainer_champion_blue_pre",
+        "win": "dlg_trainer_champion_blue_win",
+        "loss": "dlg_trainer_champion_blue_loss"
+      },
+      "members": [
+        {
+          "species": "pidgeot",
+          "level_offset": -4,
+          "moveset": [
+            "tailwind",
+            "uturn",
+            "hurricane",
+            "heatwave"
+          ],
+          "ability": "keeneye",
+          "heldItem": "focus_sash",
+          "nature": "timid"
+        },
+        {
+          "species": "exeggutor",
+          "level_offset": -3,
+          "moveset": [
+            "hypnosis",
+            "gigadrain",
+            "psychic",
+            "leechseed"
+          ],
+          "ability": "harvest",
+          "heldItem": "sitrus_berry",
+          "nature": "modest"
+        },
+        {
+          "species": "rhydon",
+          "level_offset": -2,
+          "moveset": [
+            "stealthrock",
+            "earthquake",
+            "rockslide",
+            "megahorn"
+          ],
+          "ability": "lightningrod",
+          "heldItem": "eviolite",
+          "nature": "adamant"
+        },
+        {
+          "species": "arcanine",
+          "level_offset": -2,
+          "moveset": [
+            "flareblitz",
+            "wildcharge",
+            "closecombat",
+            "extremespeed"
+          ],
+          "ability": "intimidate",
+          "heldItem": "assault_vest",
+          "nature": "jolly"
+        },
+        {
+          "species": "alakazam",
+          "level_offset": -1,
+          "moveset": [
+            "nastyplot",
+            "psychic",
+            "dazzlinggleam",
+            "shadowball"
+          ],
+          "ability": "magicguard",
+          "heldItem": "life_orb",
+          "nature": "timid"
+        },
+        {
+          "species": "blastoise",
+          "level_offset": 0,
+          "moveset": [
+            "shellsmash",
+            "hydropump",
+            "icebeam",
+            "darkpulse"
+          ],
+          "ability": "torrent",
+          "heldItem": "white_herb",
+          "nature": "modest",
+          "ace": true
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route_01_pallet_to_brock",
+      "order": 1,
+      "expected_count": 4,
+      "pool_rotation": 0,
+      "ambient_pool": [
+        "pidgey",
+        "rattata",
+        "mareep",
+        "wingull",
+        "fomantis"
+      ],
+      "specialist_pool": [
+        "wingull",
+        "fomantis",
+        "mareep"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 285,
+          "expected_coordinate": [
+            1468,
+            5018
+          ],
+          "role": "one_pokemon",
+          "name": "Trail Novice",
+          "lesson": "A single weak opponent introduces trainer sight lines."
+        },
+        {
+          "at_distance_blocks": 733,
+          "expected_coordinate": [
+            1385,
+            4714
+          ],
+          "role": "specialist",
+          "name": "Bug Catcher",
+          "lesson": "Flying pressure is discoverable before Brock."
+        },
+        {
+          "at_distance_blocks": 1247,
+          "expected_coordinate": [
+            1581,
+            4291
+          ],
+          "role": "observer",
+          "name": "River Angler",
+          "lesson": "Water species telegraph the first gym's cleanest answer."
+        },
+        {
+          "at_distance_blocks": 1677,
+          "expected_coordinate": [
+            1594,
+            3867
+          ],
+          "role": "gym_prep",
+          "name": "Plateau Guide",
+          "lesson": "Mixed Rock coverage teaches that super-effective attacks still need a plan."
+        }
+      ]
+    },
+    {
+      "id": "route_02_brock_to_misty",
+      "order": 2,
+      "expected_count": 3,
+      "pool_rotation": 1,
+      "ambient_pool": [
+        "lotad",
+        "lombre",
+        "corphish",
+        "volbeat",
+        "mareep"
+      ],
+      "specialist_pool": [
+        "mareep",
+        "lotad",
+        "lombre"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 268,
+          "expected_coordinate": [
+            1762,
+            3372
+          ],
+          "role": "one_pokemon",
+          "name": "Young Hiker",
+          "lesson": "A sturdy solo battler teaches setup windows."
+        },
+        {
+          "at_distance_blocks": 486,
+          "expected_coordinate": [
+            1773,
+            3159
+          ],
+          "role": "specialist",
+          "name": "Power-Line Worker",
+          "lesson": "Electric pressure previews Misty's weakness."
+        },
+        {
+          "at_distance_blocks": 723,
+          "expected_coordinate": [
+            1774,
+            2926
+          ],
+          "role": "gym_prep",
+          "name": "Lake Surveyor",
+          "lesson": "Rain and Grass coverage rehearse the Water matchup."
+        }
+      ]
+    },
+    {
+      "id": "route_03_misty_to_surge",
+      "order": 3,
+      "expected_count": 5,
+      "pool_rotation": 2,
+      "ambient_pool": [
+        "bunnelby",
+        "heracross",
+        "rockruff",
+        "machop",
+        "skiddo"
+      ],
+      "specialist_pool": [
+        "bunnelby",
+        "skiddo",
+        "machop"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 247,
+          "expected_coordinate": [
+            1747,
+            2613
+          ],
+          "role": "one_pokemon",
+          "name": "Climbing Novice",
+          "lesson": "A Ground-capable Bunnelby is shown before Surge."
+        },
+        {
+          "at_distance_blocks": 607,
+          "expected_coordinate": [
+            1876,
+            2306
+          ],
+          "role": "observer",
+          "name": "Mountaineer",
+          "lesson": "Rock and Fighting coverage teaches safe switches."
+        },
+        {
+          "at_distance_blocks": 1029,
+          "expected_coordinate": [
+            2034,
+            1950
+          ],
+          "role": "specialist",
+          "name": "Groundkeeper",
+          "lesson": "Ground damage is demonstrated explicitly."
+        },
+        {
+          "at_distance_blocks": 1314,
+          "expected_coordinate": [
+            2231,
+            1746
+          ],
+          "role": "strategist",
+          "name": "Signal Watcher",
+          "lesson": "Speed control and pivoting preview Surge's tempo."
+        },
+        {
+          "at_distance_blocks": 1690,
+          "expected_coordinate": [
+            1978,
+            1606
+          ],
+          "role": "gym_prep",
+          "name": "Vessu Ranger",
+          "lesson": "A resistance core is shown as the fallback to Ground immunity."
+        }
+      ]
+    },
+    {
+      "id": "route_04_surge_to_erika",
+      "order": 4,
+      "expected_count": 6,
+      "pool_rotation": 3,
+      "ambient_pool": [
+        "bergmite",
+        "swablu",
+        "smoochum",
+        "bronzor",
+        "cryogonal",
+        "aron"
+      ],
+      "specialist_pool": [
+        "bergmite",
+        "swablu",
+        "smoochum"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 348,
+          "expected_coordinate": [
+            1900,
+            1571
+          ],
+          "role": "one_pokemon",
+          "name": "Snowfield Novice",
+          "lesson": "One Ice attacker previews Grass pressure."
+        },
+        {
+          "at_distance_blocks": 942,
+          "expected_coordinate": [
+            2370,
+            1301
+          ],
+          "role": "observer",
+          "name": "Alpine Ranger",
+          "lesson": "Ice and Flying coverage are combined."
+        },
+        {
+          "at_distance_blocks": 1772,
+          "expected_coordinate": [
+            3072,
+            1368
+          ],
+          "role": "specialist",
+          "name": "Campfire Keeper",
+          "lesson": "Fire attacks preview Erika's weaknesses."
+        },
+        {
+          "at_distance_blocks": 2029,
+          "expected_coordinate": [
+            3226,
+            1561
+          ],
+          "role": "strategist",
+          "name": "Ridge Scout",
+          "lesson": "Hazards punish careless switching."
+        },
+        {
+          "at_distance_blocks": 2551,
+          "expected_coordinate": [
+            3570,
+            1886
+          ],
+          "role": "observer",
+          "name": "Bird Watcher",
+          "lesson": "Flying offense is made visible before Erika."
+        },
+        {
+          "at_distance_blocks": 3017,
+          "expected_coordinate": [
+            3993,
+            1844
+          ],
+          "role": "gym_prep",
+          "name": "Naturalist",
+          "lesson": "Sun interaction previews Erika's central mechanic."
+        }
+      ]
+    },
+    {
+      "id": "route_05_erika_to_koga",
+      "order": 5,
+      "expected_count": 4,
+      "pool_rotation": 4,
+      "ambient_pool": [
+        "stunky",
+        "wooper",
+        "toxel",
+        "emolga",
+        "hattrem",
+        "staravia"
+      ],
+      "specialist_pool": [
+        "hattrem",
+        "wooper",
+        "emolga"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 288,
+          "expected_coordinate": [
+            4383,
+            1812
+          ],
+          "role": "one_pokemon",
+          "name": "Field Hand",
+          "lesson": "A single Poison-type introduces status."
+        },
+        {
+          "at_distance_blocks": 448,
+          "expected_coordinate": [
+            4358,
+            1962
+          ],
+          "role": "observer",
+          "name": "Field Medic",
+          "lesson": "Recovery and status management become explicit."
+        },
+        {
+          "at_distance_blocks": 622,
+          "expected_coordinate": [
+            4366,
+            2133
+          ],
+          "role": "specialist",
+          "name": "Mind Reader",
+          "lesson": "Psychic attacks preview one Koga answer."
+        },
+        {
+          "at_distance_blocks": 734,
+          "expected_coordinate": [
+            4434,
+            2217
+          ],
+          "role": "gym_prep",
+          "name": "Trail Warden",
+          "lesson": "Levitate and mixed Poison typings block a one-button Ground sweep."
+        }
+      ]
+    },
+    {
+      "id": "route_06_koga_to_sabrina",
+      "order": 6,
+      "expected_count": 5,
+      "pool_rotation": 5,
+      "ambient_pool": [
+        "barboach",
+        "golduck",
+        "hattrem",
+        "swanna",
+        "seismitoad",
+        "stunky"
+      ],
+      "specialist_pool": [
+        "stunky",
+        "hattrem",
+        "swanna"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 378,
+          "expected_coordinate": [
+            4923,
+            2689
+          ],
+          "role": "one_pokemon",
+          "name": "Marsh Novice",
+          "lesson": "A Dark attacker previews Sabrina's weakness."
+        },
+        {
+          "at_distance_blocks": 671,
+          "expected_coordinate": [
+            5146,
+            2860
+          ],
+          "role": "observer",
+          "name": "Marsh Ranger",
+          "lesson": "Dark and Steel resistances are combined."
+        },
+        {
+          "at_distance_blocks": 1012,
+          "expected_coordinate": [
+            5453,
+            2942
+          ],
+          "role": "specialist",
+          "name": "Night Courier",
+          "lesson": "Priority Dark damage is demonstrated."
+        },
+        {
+          "at_distance_blocks": 1371,
+          "expected_coordinate": [
+            5754,
+            3080
+          ],
+          "role": "strategist",
+          "name": "Lake Pathfinder",
+          "lesson": "Trick Room speed inversion is introduced."
+        },
+        {
+          "at_distance_blocks": 1636,
+          "expected_coordinate": [
+            5962,
+            3219
+          ],
+          "role": "gym_prep",
+          "name": "Displaced Archivist",
+          "lesson": "Mixed Psychic/Fairy coverage rehearses Sabrina's team shape."
+        }
+      ]
+    },
+    {
+      "id": "route_07_sabrina_to_blaine",
+      "order": 7,
+      "expected_count": 6,
+      "pool_rotation": 6,
+      "ambient_pool": [
+        "golduck",
+        "swanna",
+        "slugma",
+        "centiskorch",
+        "nuzleaf"
+      ],
+      "specialist_pool": [
+        "golduck",
+        "swanna",
+        "nuzleaf"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 170,
+          "expected_coordinate": [
+            6248,
+            3546
+          ],
+          "role": "one_pokemon",
+          "name": "Expedition Novice",
+          "lesson": "A solo Water attacker previews Blaine."
+        },
+        {
+          "at_distance_blocks": 413,
+          "expected_coordinate": [
+            6423,
+            3711
+          ],
+          "role": "observer",
+          "name": "Bridge Hand",
+          "lesson": "Water and Ground offense are paired."
+        },
+        {
+          "at_distance_blocks": 907,
+          "expected_coordinate": [
+            6585,
+            4056
+          ],
+          "role": "specialist",
+          "name": "Shore Battler",
+          "lesson": "Fast Water pressure is made visible."
+        },
+        {
+          "at_distance_blocks": 1232,
+          "expected_coordinate": [
+            6531,
+            4358
+          ],
+          "role": "strategist",
+          "name": "Crater Geologist",
+          "lesson": "Rock pressure previews Charizard."
+        },
+        {
+          "at_distance_blocks": 1520,
+          "expected_coordinate": [
+            6433,
+            4606
+          ],
+          "role": "observer",
+          "name": "Ash-Path Ranger",
+          "lesson": "Sun and coverage punish a single Water answer."
+        },
+        {
+          "at_distance_blocks": 1841,
+          "expected_coordinate": [
+            6215,
+            4833
+          ],
+          "role": "gym_prep",
+          "name": "Prospector",
+          "lesson": "Weather control and priority rehearse Blaine's closing turns."
+        }
+      ]
+    },
+    {
+      "id": "route_08_blaine_to_giovanni",
+      "order": 8,
+      "expected_count": 7,
+      "pool_rotation": 7,
+      "ambient_pool": [
+        "cacturne",
+        "drapion",
+        "skorupi",
+        "toxapex",
+        "kilowattrel",
+        "nidorina"
+      ],
+      "specialist_pool": [
+        "cacturne",
+        "drapion",
+        "kilowattrel"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 259,
+          "expected_coordinate": [
+            5853,
+            5087
+          ],
+          "role": "one_pokemon",
+          "name": "Crater Novice",
+          "lesson": "A solo Ground attacker opens the final leg."
+        },
+        {
+          "at_distance_blocks": 492,
+          "expected_coordinate": [
+            5661,
+            5186
+          ],
+          "role": "observer",
+          "name": "Crater Scout",
+          "lesson": "Mixed terrain types discourage a monotype answer."
+        },
+        {
+          "at_distance_blocks": 899,
+          "expected_coordinate": [
+            5295,
+            5285
+          ],
+          "role": "specialist",
+          "name": "Grassland Keeper",
+          "lesson": "Grass offense answers Rock and Ground bodies."
+        },
+        {
+          "at_distance_blocks": 1218,
+          "expected_coordinate": [
+            5018,
+            5387
+          ],
+          "role": "strategist",
+          "name": "Sand Runner",
+          "lesson": "Weather and Ground immunity create a positioning check."
+        },
+        {
+          "at_distance_blocks": 1712,
+          "expected_coordinate": [
+            4615,
+            5607
+          ],
+          "role": "observer",
+          "name": "Plateau Ranger",
+          "lesson": "Fighting and Dark coverage broaden the lesson."
+        },
+        {
+          "at_distance_blocks": 2351,
+          "expected_coordinate": [
+            4158,
+            6045
+          ],
+          "role": "strategist",
+          "name": "Rift Surveyor",
+          "lesson": "Tailwind and split offense preview a possible doubles identity."
+        },
+        {
+          "at_distance_blocks": 2700,
+          "expected_coordinate": [
+            3894,
+            6250
+          ],
+          "role": "gym_prep",
+          "name": "Final Warden",
+          "lesson": "A balanced three-member core tests preparation without defining Giovanni's format."
+        }
+      ]
+    },
+    {
+      "id": "victory_road",
+      "order": 9,
+      "expected_count": 9,
+      "pool_rotation": 8,
+      "ambient_pool": [
+        "boldore",
+        "gligar",
+        "heracross",
+        "klang",
+        "toxapex",
+        "scraggy"
+      ],
+      "specialist_pool": [
+        "klang",
+        "heracross",
+        "gligar"
+      ],
+      "placements": [
+        {
+          "at_distance_blocks": 307,
+          "expected_coordinate": [
+            3643,
+            6214
+          ],
+          "role": "one_pokemon",
+          "name": "League Applicant",
+          "lesson": "A strong solo attacker sets the new baseline."
+        },
+        {
+          "at_distance_blocks": 950,
+          "expected_coordinate": [
+            3601,
+            5591
+          ],
+          "role": "observer",
+          "name": "Rift Hiker",
+          "lesson": "Hazards and removal introduce resource carryover thinking."
+        },
+        {
+          "at_distance_blocks": 1773,
+          "expected_coordinate": [
+            3839,
+            4895
+          ],
+          "role": "specialist",
+          "name": "Steel Specialist",
+          "lesson": "Steel resistance checks shallow coverage."
+        },
+        {
+          "at_distance_blocks": 2310,
+          "expected_coordinate": [
+            4174,
+            4496
+          ],
+          "role": "strategist",
+          "name": "Rift Cartographer",
+          "lesson": "Speed control and pivoting punish static play."
+        },
+        {
+          "at_distance_blocks": 2780,
+          "expected_coordinate": [
+            4293,
+            4076
+          ],
+          "role": "observer",
+          "name": "Trench Climber",
+          "lesson": "Priority exposes fragile sweepers."
+        },
+        {
+          "at_distance_blocks": 3375,
+          "expected_coordinate": [
+            3952,
+            3623
+          ],
+          "role": "strategist",
+          "name": "Field Medic",
+          "lesson": "Recovery denial tests long-fight planning."
+        },
+        {
+          "at_distance_blocks": 3885,
+          "expected_coordinate": [
+            3615,
+            3259
+          ],
+          "role": "gym_prep",
+          "name": "Veteran Tactician",
+          "lesson": "A three-member strategy demands role recognition."
+        },
+        {
+          "at_distance_blocks": 4408,
+          "expected_coordinate": [
+            3541,
+            2766
+          ],
+          "role": "gym_prep",
+          "name": "Ace Trainer",
+          "lesson": "A four-member balanced team checks roster depth."
+        },
+        {
+          "at_distance_blocks": 4623,
+          "expected_coordinate": [
+            3598,
+            2575
+          ],
+          "role": "gym_prep",
+          "name": "League Examiner",
+          "lesson": "The final exam combines hazards, speed and an item-bearing closer."
+        }
+      ]
+    }
+  ],
+  "player_team_snapshots": [
+    {
+      "gym": 1,
+      "ace": 20,
+      "plausible_team": [
+        "Wingull",
+        "Krabby",
+        "Fomantis",
+        "Mareep",
+        "Pidgey",
+        "Bidoof"
+      ],
+      "fairness": "Multiple common Water/Grass answers; players can still bring neutral utility."
+    },
+    {
+      "gym": 2,
+      "ace": 25,
+      "plausible_team": [
+        "Flaaffy",
+        "Pawmo",
+        "Lombre",
+        "Fomantis",
+        "Corphish",
+        "Noctowl"
+      ],
+      "fairness": "Electric and Grass families are both present before the lake gym."
+    },
+    {
+      "gym": 3,
+      "ace": 30,
+      "plausible_team": [
+        "Diggersby",
+        "Hariyama",
+        "Skiddo",
+        "Lycanroc",
+        "Drampa",
+        "Lombre"
+      ],
+      "fairness": "One dependable immunity core exists; a second broad Ground family is missing."
+    },
+    {
+      "gym": 4,
+      "ace": 35,
+      "plausible_team": [
+        "Scyther",
+        "Noctowl",
+        "Altaria",
+        "Bergmite",
+        "Cryogonal",
+        "Magby"
+      ],
+      "fairness": "Independent Flying, Ice and Fire lines exist."
+    },
+    {
+      "gym": 5,
+      "ace": 40,
+      "plausible_team": [
+        "Ampharos",
+        "Jynx",
+        "Diggersby",
+        "Bronzong",
+        "Quagsire",
+        "Lycanroc"
+      ],
+      "fairness": "Split Electric/Psychic/Ground offense answers Koga's immunity coverage."
+    },
+    {
+      "gym": 6,
+      "ace": 45,
+      "plausible_team": [
+        "Skuntank",
+        "Bronzong",
+        "Heracross",
+        "Scyther",
+        "Toxtricity",
+        "Quagsire"
+      ],
+      "fairness": "One ambient Dark/Steel/Bug plan exists; mansion Ghosts remain optional and unproven."
+    },
+    {
+      "gym": 7,
+      "ace": 50,
+      "plausible_team": [
+        "Whiscash",
+        "Lycanroc",
+        "Floatzel",
+        "Crawdaunt",
+        "Golduck",
+        "Altaria"
+      ],
+      "fairness": "Water, Ground and Rock answers are independently established."
+    },
+    {
+      "gym": 8,
+      "ace": 55,
+      "plausible_team": [
+        "Swanna",
+        "Seismitoad",
+        "Gogoat",
+        "Hariyama",
+        "Drapion",
+        "Cacturne"
+      ],
+      "fairness": "Availability is broad, but fairness cannot be judged until Giovanni's format and roster are decided."
+    }
+  ]
+}
