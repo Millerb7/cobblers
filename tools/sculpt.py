@@ -699,6 +699,8 @@ def run(heights, world, cfg, regions, rivers, towns, foliage_doc, landmarks, see
     by_id = {tw["id"]: tw for tw in towns.get("towns") or []}
     report["pads"] = {}
     for pd in cfg.get("pads") or []:
+        if pd.get("pressed_y") is not None:
+            continue        # a shelf authored on the rescaled terrain: tools/press_pads.py presses it after the rescale
         tw = by_id[pd["site"]]
         cx, cz = tw["centre"]["x"], tw["centre"]["z"]
         R, F = pd["radius"], pd["feather"]

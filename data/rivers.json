@@ -6260,7 +6260,7 @@
     }
   },
   "canonical_check": {
-    "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "date": "2026-09-16",
     "result": "unchanged: rivers are planned on the authored heightmap (computed_from_sha256) and cut into the import by design; the rescale is the identity at or below y145, the highest water is y127, and every column under a course (width + 8) or lake basin differs from the pre-rescale import by at most 0.0043 blocks.",
     "source_grounds_above_y145": [
