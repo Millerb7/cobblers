@@ -69,6 +69,8 @@
 - **Snapshot cleanup:** the user runs the delete commands for the non-retained snapshots and boot-check copies (about 42.5 GiB); this blocks nothing technical.
 - **Hometown waystone:** decide whether it starts unlocked or is earned; this blocks its final progression trigger.
 - **Midpoint waystones:** decide whether routes receive none, post-gym unlocks, or discovery unlocks; this blocks final navigation data and retreat rules.
+- **Nosepass mast clearance:** the canopy margin at the signs is 1.5 blocks and binds 43 blocks out, so a taller mast barely helps (20 blocks gives 2.2); extending the tree-free clearing along the sightline does (60 blocks gives 4.3, 80 gives 5.8 at the 12-block mast; 5.3 and 7.3 at 20); decide mast height and clearing length; this blocks building the sign event.
+- **Weeping Elder:** seen from 16.9% of its three legs (9% of Blaine to Giovanni); the best Lake Tilpey candidates reach 29-38% but all are dry shore sites that lose the island identity, and a re-site needs a repaint and re-export; decide re-site or demotion to an ordinary feature; this blocks the landmark-tree set.
 - **Gastly mansion details:** choose the donor/site, actors, rewards, levels, and final roster; this blocks implementation of that optional quest.
 
 ## What is blocked

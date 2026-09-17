@@ -864,7 +864,7 @@
     "route_length_source": "route_05_erika_to_koga",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
-   "route_role": "Poison beside the marsh. The Glacial Tear and the major river's valley lie 311-507 blocks south-west: visible from town, not yet in the way.",
+   "route_role": "Poison beside the marsh. The Glacial Tear and the major river lie 311-507 blocks south-west, not yet in the way. Part of the Tear is visible from town (30 of its 213 extent samples); the river itself is not (none of the 16 trunk course points within 1,200 blocks).",
    "tier": "critical",
    "critical_path": true,
    "waystone": {
@@ -1675,7 +1675,7 @@
    "working_name": "Gorge hamlet (Tilpey outflow)",
    "display_name": null,
    "for": "A bridge-keepers' hamlet above the Tilpey outflow gorge: a Center, two houses, and the NPC who knows the river.",
-   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits about 498 blocks south-east of the bridge and 283 blocks off route_07_sabrina_to_blaine at fraction 0.598, visible from the crossing but not on the way.",
+   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits about 498 blocks south-east of the bridge and 283 blocks off route_07_sabrina_to_blaine at fraction 0.598, not on the way. It is NOT visible from the crossing: no route point within 60 blocks of either water crossing sees its roofline, and over the planned canopy only 2 of 209 sampled route 7 points do (1,120-1,145 blocks along).",
    "centre": {
     "x": 6814,
     "z": 4367,
@@ -2408,7 +2408,7 @@
    "working_name": "The Sentinel (tarn clearing, Peak Pond Hollow)",
    "display_name": null,
    "for": "A 75-block spruce in a clearing of the old growth, beside the hidden tarn at the head of the dry ravine.",
-   "why_here": "Inside the old growth nothing else stands above 50 blocks, so the Sentinel's spire shows over the canopy from the gym 3 to 4 and 4 to 5 legs; the clearing, the tarn and the ravine head are found only by walking in under the trees.",
+   "why_here": "Inside the old growth nothing else stands above 50 blocks, so the Sentinel's spire shows over the canopy from the gym 3 to 4 leg (it is not seen from any point of the 4 to 5 leg, which is no longer listed); the clearing, the tarn and the ravine head are found only by walking in under the trees.",
    "kind": "landmark_tree",
    "centre": {
     "x": 3264,
@@ -2554,7 +2554,7 @@
    "working_name": "The Cherry Elder (above Shrew Lake)",
    "display_name": null,
    "for": "An ancient leaning cherry with a pink crown 42 across on the shoulder above Shrew Lake, petals under it.",
-   "why_here": "Cherry country around Shrew Lake is groves in lawns; this one tree on the rise above the lake is pink against the plateau from the first legs and from Victory Road's climb, a colour landmark rather than a height one.",
+   "why_here": "Cherry country around Shrew Lake is groves in lawns; this one tree on the rise above the lake is pink against the plateau from the first leg and from Victory Road's climb (not from the Brock to Misty leg, which is no longer listed), a colour landmark rather than a height one.",
    "kind": "landmark_tree",
    "centre": {
     "x": 3408,

@@ -37,36 +37,51 @@ the tree cannot hide itself.
 | Landmark | Tree | Seen from | Share | Nearest / farthest seen |
 | --- | --- | ---: | ---: | ---: |
 | `great_oak_pallet` | 40 tall, ground y103.5 | 26 of 42 leg points | 61.9% | 340 / 1,146 |
-| `sentinel_spruce_tarn` | 75 tall, ground y129.7 | 34 of 94 leg points; 22 of 24 on the 60-block ring | 36.2%; 91.7% | 391 / 1,532 |
+| `sentinel_spruce_tarn` | 75 tall, ground y129.7 | 34 of 72 leg points; 22 of 24 on the 60-block ring | 47.2%; 91.7% | 391 / 1,532 |
 | `patriarch_wedge` | 30 tall, ground y146.7 | 58 of 164 leg points | 35.4% | 248 / 2,964 |
-| `cherry_elder_shrew` | 26 tall, ground y143.5 | 71 of 172 leg points | 41.3% | 619 / 2,668 |
+| `cherry_elder_shrew` | 26 tall, ground y143.5 | 71 of 152 leg points | 46.7% | 619 / 2,668 |
 | `weeping_elder_tilpey` | 35 tall, ground y81.1 | 25 of 148 leg points | 16.9% | 863 / 1,510 |
 
 ### Per leg
 
-The tool adds a landmark's legs together; split out, two legs contribute nothing. These are the same inputs, each
-leg cast as its own `seen_from` entry.
+The tool adds a landmark's legs together. These are the same inputs, each leg cast as its own `seen_from` entry. The
+two legs that saw nothing (`gym4→gym5` for the Sentinel, `gym1→gym2` for the Cherry Elder, 0 of 22 and 0 of 20) were
+removed from `data/foliage.json`, so they are no longer listed.
 
 | Landmark | Leg | Points | Seen | Share |
 | --- | --- | ---: | ---: | ---: |
 | `great_oak_pallet` | `hometown→gym1_town` | 42 | 26 | 62% |
 | `sentinel_spruce_tarn` | `gym3_town→gym4_town` | 72 | 34 | 47% |
-| `sentinel_spruce_tarn` | `gym4_town→gym5_town` | 22 | **0** | 0% |
 | `patriarch_wedge` | `gym8_town→league` | 164 | 58 | 35% |
 | `cherry_elder_shrew` | `hometown→gym1_town` | 42 | 25 | 60% |
-| `cherry_elder_shrew` | `gym1_town→gym2_town` | 20 | **0** | 0% |
 | `cherry_elder_shrew` | `gym8_town→league` | 110 | 46 | 42% |
 | `weeping_elder_tilpey` | `gym5_town→gym6_town` | 41 | 10 | 24% |
 | `weeping_elder_tilpey` | `gym6_town→gym7_town` | 43 | 9 | 21% |
 | `weeping_elder_tilpey` | `gym7_town→gym8_town` | 64 | 6 | 9% |
 
 **Observations, not decisions:**
-- **Two `seen_from` legs never see their tree.** The Sentinel is invisible from all of `gym4→gym5`, and the Cherry
-  Elder from all of `gym1→gym2`. Both entries make the aggregate share understate the legs that do work.
+- **No listed leg measures zero** now that the two legs that never saw their tree are gone.
 - **The Weeping Elder is the weakest site:** 16.9% overall, and 9% from the Blaine-to-Giovanni leg. Whether that
   is enough for a lake-island landmark reached by boat is a siting question for
   `landmark_trees.py candidates --kind headland`, not something this survey decides.
 - **The Sentinel's ring (22 of 24)** still reads once a player reaches the clearing.
+
+## Other visibility claims in `data/`, measured
+
+The same cast (eye 1.62, terrain, and the planned canopy where noted) against every other claim in `data/` that
+something can be seen from somewhere. A claim that measured false was corrected in the record.
+
+| Claim | Where recorded | Measured | Record |
+| --- | --- | --- | --- |
+| Mt Vessu's summit is in view from Surge's town | `towns.json` gym3_town | the summit top is seen from 73 of 144 points on a 5-block grid over the footprint; from the exact centre the line grazes by 0.02 blocks | stands |
+| The Glacial Tear is visible from Koga's town | `towns.json` gym5_town | 30 of 213 extent samples | stands |
+| The major river's valley is visible from Koga's town | `towns.json` gym5_town | 0 of the 16 trunk course points within 1,200 blocks | **corrected** |
+| Route 5 has the major river's valley in view | `routes.json` route_05 | no sampled route point (56) sees any trunk course point | **corrected** |
+| The gorge hamlet is visible from the crossing | `towns.json` gorge_hamlet | 0 of 138 route points within 60 blocks of the crossings, terrain only | **corrected** |
+| Rest stops are visible from their leg | `SETTLEMENTS.md` | roof +8, over terrain / over canopy: Merian hut 140 / 61 of 355, gorge hamlet 92 / 2 of 209, Tableland stop 144 / 8 of 304, Rift rim post 110 / 2 of 558 | stands, but three are barely visible over the canopy; `SETTLEMENTS.md` now says so |
+| Relic Island is visible from the hometown's coast | `towns.json` relic_island | the coast point toward the island sees the islet crown plus an 8-block house | stands |
+| The Great Oak is seen from the edge of town | `towns.json` great_oak_pallet | 34 of 34 points on the hometown's east and north edges, over canopy with the glade lowered | stands |
+| The array mast is visible from the Nosepass sign site | `landmarks.json` surge_signal_array | see `nosepass_sightline.py`: canopy margin 1.5 at the signs | stands |
 
 ## Why the rescale barely touches these sites
 
