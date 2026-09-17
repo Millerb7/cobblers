@@ -1,22 +1,68 @@
 # Re-export: cobblers-10240
 
-## After every export: re-apply authored content
+## The export procedure
 
-An export regenerates every region file from the WorldPainter project. Nothing built in game survives it, so every
-item below must be carried across (transplanted chunks) or re-applied from data. The dated records further down
-show how each one was actually done.
+An export regenerates every region file from the WorldPainter project and the canonical heightmap. **Nothing built in
+game survives it**, and neither do the datapacks that live inside the world folder. Everything below is either carried
+by the export or has to be re-applied, in this order, with the check beside it. Anything not in this list is content
+the next export erases silently: add it here the day it is first built.
 
-| Content | Source | Re-apply | Check |
+Run the whole sequence against a staging export first (see "Dry run" below). Never re-apply straight into the live
+world before the dry run passes.
+
+### Carried by the export
+
+| # | Content | Carried because |
+| --- | --- | --- |
+| C1 | Terrain, coasts, massifs, river cuts, the vertical rescale | the canonical heightmap is the export input (`data/world.json` sha256) |
+| C2 | Pads: the Scar y280, Frostpeak shrine y310, Surge's shelf y174.4 | pressed into the canonical heightmap by `tools/press_pads.py` |
+| C3 | Biomes, surface materials, snow and scree, the thinned grass | the paint manifest passed with `--paint` |
+| C4 | 77,750 foliage objects, including the painted landmark trees | WorldPainter custom-object layers from the same manifest |
+| C5 | Lakes, rivers and water levels | paint |
+| C6 | Seed, world settings, border, spawn, the enabled-datapack **list** | `tools/reexport.py` copies them from the old level.dat |
+
+Ores and underground water pockets are re-rolled by WorldPainter on every export; they are not authored.
+
+### Re-applied, in order
+
+Every step needs the source root (the out-of-repo heightmap) and, where noted, a **stopped copy** of the new export as
+`--surface-world`. Regenerate the gitignored derived inputs first: they are not in the repository.
+
+| # | Step | Command | Check |
 | --- | --- | --- | --- |
-| Pads (Scar, Frostpeak shrine, Surge shelf) | pressed into the canonical heightmap (`data/sculpt.json`) | nothing: the export carries them, provided it used the canonical heightmap | heightmap sha256 in `data/world.json` |
-| Hometown | `data/placements.json` | `tools/place_town.py hometown --surface-world <stopped world> --install <server>/datapacks`, then `/reload`, `/function cobblers:towns/hometown`; or `tools/transplant_chunks.py` when the terrain under it is unchanged | `tools/place_town.py hometown --verify --server-dir <server>` |
-| Displaced City cavern | `tools/cavern_plan.py` | `tools/cavern_plan.py --source-root <root> --surface-world <stopped world> --install <server>/datapacks`, then `/function cobblers:cavern/00_seal` … `50_tunnel` | [`BUILT.md`](BUILT.md) counts |
-| World tree | `tools/world_tree.py` (sha256-seeded) | `tools/world_tree.py --surface-world <stopped world>`, install, `/function cobblers:worldtree/00_tree` … `03_tree`, `90_foundation` | [`BUILT.md`](BUILT.md) |
-| Relic Island islet | `tools/islet.py` | `tools/islet.py --source-root <root> --apply` | `data/towns.json` `built_ground` (validator `town-ground`) |
-| **Habitat Blocks** | `data/habitat_blocks.json` | `tools/habitat_blocks.py function`, install `build/datapacks/cobblers_habitats`, `/reload`, `/function cobblers:habitats/place` with no player near the blocks, then **restart the server**: a block placed by command stays inert until its chunk reloads (EXP-021) | `tools/habitat_blocks.py verify --rcon <server>`, or `tools/validate_data.py --world-save <stopped copy>` |
-| Route pools and inherited-spawn suppression | `data/spawns.json`, `data/routes.json` (datapacks, not world blocks) | regenerate only if routes or mods changed: `tools/compile_spawns.py`, `tools/suppress_inherited_spawns.py --server <server> --world <disposable world>` (grid 16) | EXP-012 |
+| R0 | Derived inputs | `python tools/critical_legs.py --source-root <root>`; `python tools/paint_maps.py` if the paint changed | `derived/routes/critical_legs.json` and `build/paint/manifest.json` exist |
+| R1 | World datapacks back into the world folder | copy `modpack/datapacks/cobblers_height` and the generated `build/datapacks/cobblers_worldtree` into `<world>/datapacks/` | `/datapack list enabled` names both. **cobblers_height raises the build limit to y575; without it the world tree's crown (y457-535) will not build** |
+| R2 | Displaced City cavern | `python tools/cavern_plan.py --source-root <root> --surface-world <stopped world> --install <server>/datapacks`, then `/function cobblers:cavern/00_seal`, `05_reset`, `10_excavate`, `20_surfaces`, `30_trees`, `40_light`, `50_tunnel`, `70_drain`, then `15_cap` last (water seeps until the drain runs), then `60_biome` | floor and air counts in [`BUILT.md`](BUILT.md); `execute if biome <inside> minecraft:cherry_grove` |
+| R3 | World tree | `python tools/world_tree.py --surface-world <stopped world>`, install, `/function cobblers:worldtree/00_tree` … `03_tree`, then `90_foundation` | crown reaches y535 (`execute if block 2016 535 2280`), trunk at (2016, 2280) |
+| R4 | Foothill grove: giants and elders | `python tools/tree_grove.py --source-root <root> --site 2016,2272 --id foothill_woods --surface-world <stopped world>`, then its placement function; `--augment foothill_woods` for the elders | 7 giants and 4 elders in the grove box ([`BUILT.md`](BUILT.md)) |
+| R5 | The 48 elders | `python tools/elder_trees.py --source-root <root> --surface-world <stopped world>`, then `build/elders/elders.mcfunction` | the run report lists 48 placed; the tool re-picks sites, so compare with `derived/sites/elder_trees.json` from the previous run and record any that moved |
+| R6 | Route 1 maze forest and the world-tree sapling | `python tools/maze_forest.py --source-root <root> --surface-world <stopped world> --install <server>/datapacks`, then `/function cobblers:route1/tile_*` (16 tiles) | the run report's object count; corridor clearance at eye height; the sapling's trunk at (1380, 4628) and crown top |
+| R7 | Hometown | `python tools/place_town.py hometown --surface-world <stopped world> --install <server>/datapacks`, `/reload`, `/function cobblers:towns/hometown` | `python tools/place_town.py hometown --verify --server-dir <server>`: 0 gaps |
+| R8 | Gym-town prep (gym1, gym2) | `python tools/town_plan.py gym1_town --source-root <root> --surface-world <stopped world>` (and `gym2_town`), then the prep functions. Brock's box is 272 chunks, over forceload's 256 limit, so run it in halves | street, plaza and lot levels in [`BUILT.md`](BUILT.md) |
+| R9 | Brock's gym | `python tools/place_donor.py function`, install, `/function cobblers:structures/place_gym1_brock_gym` | `python tools/place_donor.py verify --world <stopped copy>`: 2,712 blocks, 20 block entities, substituted counts as recorded |
+| R10 | Relic Island islet | `python tools/islet.py --source-root <root> --apply --server <server>` under the coordination lock | `data/towns.json` `built_ground`, checked by the validator's `town-ground` |
+| R11 | Habitat Blocks | `python tools/habitat_blocks.py function`, install, `/function cobblers:habitats/place` with no player near them, then **restart**: a block placed by command is inert until its chunk reloads (EXP-021) | `python tools/habitat_blocks.py verify --rcon <server>` |
+| R12 | Waystones | re-registered by R7; clear stale entries from `waystones.dat` before the first boot | the hometown waystone is claimable and no duplicate appears |
+| R13 | Spawn pools and suppression (datapacks, not blocks) | regenerate if routes or the mod set changed: `python tools/compile_spawns.py`; `python tools/suppress_inherited_spawns.py --server <server> --world <world>` (grid 16) | EXP-012: `/checkspawn` on a corridor shows the authored roster only |
 
-A block or build missing from this table is authored content that the next export will silently erase. Add it here when it is first built.
+### Known dependencies that are not in the repository
+
+- **The canonical heightmap and the WorldPainter project** live outside git (`data/world.json` pins the heightmap by sha256).
+- **`derived/` and `build/` are gitignored**: R0 regenerates what later steps read.
+- **Donor templates under licence.** The Pokémon Center and Mart (`kits/structures/campaign/f4/services/*.nbt`) are
+  local-only processed copies of `bca:default/one_off/pokecenter` and `…/structure_pokemart` from the installed
+  COBBLEVERSE datapack; the other seven hometown templates are committed MIT donors. Brock's gym needs no local file at
+  all: `data/placements.json` records it as `pack_template: cobbleverse:brock` and `tools/place_donor.py` places it from
+  the installed pack and applies the recorded substitutions.
+- **The staging directory must already exist** before `tools/reexport.py` runs; WorldPainter refuses to create it.
+
+### Dry run
+
+Before touching the live world:
+1. Export to a staging directory outside the server (`tools/reexport.py --out-dir <staging> --name <name>`).
+2. Boot it as a disposable universe (`--universe <staging> --world <name>`), under the coordination lock.
+3. Run R0-R13 against it and record every check.
+4. Only then retire the live world and repeat on the real export.
 
 ## 2026-09-16: the Glacial Tear creek, and the first built interiors
 

@@ -2678,6 +2678,11 @@ def check_spawn_blocks(ctx: Context):
         for p in doc.get("placements") or []:
             if not isinstance(p, dict):
                 continue
+            if p.get("pack_template") and not p.get("file"):
+                # a donor structure placed by resource id from an installed pack: the template is never in the
+                # repository (licence), so its blocks cannot be checked here. tools/place_donor.py verifies it in a world.
+                skipped.append("%s (placement %s, placed from the installed pack)" % (p["pack_template"], p.get("id")))
+                continue
             path = ctx.data_dir.parent / p["file"] if isinstance(p.get("file"), str) else None
             if path is None or not path.is_file():
                 rep.error(C, 'placement "%s" names template file %r, which is not in the repository'
