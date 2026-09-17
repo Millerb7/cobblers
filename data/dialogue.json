@@ -1546,6 +1546,383 @@
           "next": "lena_unavailable"
         }
       ]
+    },
+    {
+      "id": "dlg_main_pallet_oak",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_pallet_oak",
+      "source": "docs/story/ARC.md#settlement-1-hometown--pallet-town",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+        "initial_node": "oak_001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "oak_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Your partner is ready. Route 1 begins north of town, just beyond the last houses.",
+          "next": "oak_002"
+        },
+        {
+          "id": "oak_002",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Follow it toward Viridian. Keep the coast on your left and you cannot miss it.",
+          "next": "oak_003"
+        },
+        {
+          "id": "oak_003",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Come back if the field guide raises questions. A map is useful only while the land agrees with it.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_oak_sendoff"
+            }
+          ],
+          "next": "oak_repeat_before_mismatch"
+        },
+        {
+          "id": "oak_repeat_before_mismatch",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "North through the houses, then Route 1. That road has been there longer than either of us.",
+          "next": "oak_repeat_before_mismatch"
+        },
+        {
+          "id": "oak_return_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "There is no road to Viridian? Show me where your map stops matching the ground.",
+          "next": "oak_return_002"
+        },
+        {
+          "id": "oak_return_002",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "No. This is not an old map. The coastline, the river, even the distant ridge are wrong.",
+          "next": "oak_return_003"
+        },
+        {
+          "id": "oak_return_003",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Pallet is here. I know these streets and these buildings. But the land outside town is not Kanto.",
+          "next": "oak_return_004"
+        },
+        {
+          "id": "oak_return_004",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Follow the trail that actually exists. Someone beyond Pallet may have seen what happened from the outside.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_oak_admission"
+            }
+          ],
+          "next": "oak_repeat_after_mismatch"
+        },
+        {
+          "id": "oak_repeat_after_mismatch",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Trust the ground before the map. Bring back an account from someone who was outside Pallet.",
+          "next": "oak_repeat_after_mismatch"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_pallet_mina",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_pallet_mina",
+      "source": "docs/story/ARC.md#settlement-1-hometown--pallet-town",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.pallet_mina_cursor",
+        "initial_node": "mina_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "mina_locked",
+          "kind": "line",
+          "speaker": "mina",
+          "text": "Oak is looking for you. Talk to him before you leave town.",
+          "next": "mina_locked"
+        },
+        {
+          "id": "mina_001",
+          "kind": "line",
+          "speaker": "mina",
+          "text": "Route 1 used to begin here. I walked it enough times to know every bend.",
+          "next": "mina_002"
+        },
+        {
+          "id": "mina_002",
+          "kind": "line",
+          "speaker": "mina",
+          "text": "Now the Pallet road stops and a narrow trail keeps going through fields I have never seen.",
+          "next": "mina_003"
+        },
+        {
+          "id": "mina_003",
+          "kind": "line",
+          "speaker": "mina",
+          "text": "Some people say earthquake. Some say a storm. Storms do not replace the horizon.",
+          "next": "mina_004"
+        },
+        {
+          "id": "mina_004",
+          "kind": "line",
+          "speaker": "mina",
+          "text": "Look where the packed town soil meets the field. No shoulder, no drainage, no years of wear. Just a join.",
+          "next": "mina_005"
+        },
+        {
+          "id": "mina_005",
+          "kind": "line",
+          "speaker": "mina",
+          "text": "Tell Oak his map is not the problem. The place around it is.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_boundary_mismatch"
+            }
+          ],
+          "next": "mina_repeat"
+        },
+        {
+          "id": "mina_repeat",
+          "kind": "line",
+          "speaker": "mina",
+          "text": "The old road is gone. Whatever happened, Pallet did not land cleanly.",
+          "next": "mina_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_pallet_maren",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_pallet_maren",
+      "source": "docs/story/ARC.md#maren",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.pallet_maren_cursor",
+        "initial_node": "maren_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "maren_locked",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Oak is comparing maps. I am waiting until he says which one he trusts.",
+          "next": "maren_locked"
+        },
+        {
+          "id": "maren_001",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "My map agrees with Oak's. That only proves both maps remember the same world.",
+          "next": "maren_002"
+        },
+        {
+          "id": "maren_002",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Someone from my family was outside Pallet when this happened. If the town moved, they did not move with it.",
+          "next": "maren_003"
+        },
+        {
+          "id": "maren_003",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "I will take the coast. You take the north trail.",
+          "next": "maren_004"
+        },
+        {
+          "id": "maren_004",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "Find someone who watched Pallet arrive. We need a witness who did not wake up inside the mystery.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_pallet_reveal"
+            }
+          ],
+          "next": "maren_repeat"
+        },
+        {
+          "id": "maren_repeat",
+          "kind": "line",
+          "speaker": "maren",
+          "text": "North trail for you. Coast for me. We compare witnesses when we meet again.",
+          "next": "maren_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_brock_witness",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_brock_witness",
+      "source": "docs/story/ARC.md#settlement-2-gym1_town--brock-on-viltri-plateau",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.brock_cursor",
+        "initial_node": "brock_001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "pallet_complete"
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "brock_locked"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "brock_locked",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "Compare Pallet's maps with the ground before we speak. You need the first half of this account.",
+          "next": "brock_locked"
+        },
+        {
+          "id": "brock_001",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "You came from the town in Pallet Meadows. I watched it arrive.",
+          "next": "brock_002"
+        },
+        {
+          "id": "brock_002",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "The western horizon folded. For a moment the ground looked doubled, like two places were trying to occupy it.",
+          "next": "brock_003"
+        },
+        {
+          "id": "brock_003",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "When our crews reached the meadow, Pallet stood where a native settlement had been.",
+          "next": "brock_004"
+        },
+        {
+          "id": "brock_004",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "Homes, gardens, and the people living there were gone. Your town did not arrive on empty land.",
+          "next": "brock_005"
+        },
+        {
+          "id": "brock_005",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "I do not blame Pallet. You look stranded, not victorious.",
+          "next": "brock_006"
+        },
+        {
+          "id": "brock_006",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "But I will not call it random. We have found straight seams, displaced stone, and roads aligned to places that no longer exist.",
+          "next": "brock_007"
+        },
+        {
+          "id": "brock_007",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "At the Pallet boundary, native plateau shale presses directly against Pallet soil, with no layer between them.",
+          "next": "brock_008"
+        },
+        {
+          "id": "brock_008",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "That makes Pallet one event in a larger pattern. It does not tell me who caused it.",
+          "next": "brock_009"
+        },
+        {
+          "id": "brock_009",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "Show the local trainers you can handle the road ahead, then face me.",
+          "next": "brock_010"
+        },
+        {
+          "id": "brock_010",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "If you earn the badge, go to Misty's lake town. Her people keep records of unusual arrivals and move aid through Lake Viltri.",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_brock_account"
+            }
+          ],
+          "next": "brock_repeat"
+        },
+        {
+          "id": "brock_repeat",
+          "kind": "line",
+          "speaker": "brock",
+          "text": "The sample proves two grounds were joined. The missing settlement proves what the join cost.",
+          "next": "brock_repeat"
+        }
+      ]
     }
   ]
 }

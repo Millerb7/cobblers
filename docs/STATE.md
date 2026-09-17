@@ -26,7 +26,7 @@
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 0 trainers, 0 production side events, and 0 boss encounters are placed in the world.
 - **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); they and the generated suppression pack are proven on the disposable test world only (EXP-012, EXP-021), and 0 pools or Habitat Blocks are installed in the live world.
-- **Quest data:** 3 dialogue conversations and 2 quests exist as source data; 1 (the Route 1 thirsty stranger, 44 nodes) compiles through `tools/compile_dialogue.py` and ran on the disposable world (EXP-022); 0 are placed in the live world.
+- **Quest data:** 7 dialogue conversations and 3 quests exist as source data; 1 (the Route 1 thirsty stranger, 44 nodes) ran on the disposable world (EXP-022), the 4 Pallet/Brock mainline conversations compile but are not runtime-tested, and 0 are placed in the live world.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
 - **Tooling:** 67 Python tools, 2 PowerShell server scripts, 42 pytest modules, and 18 experiment directories exist; each experiment's own result file defines what has actually run.
 - **Stale inventory:** landmark-tree sightlines in `docs/world-building/FOLIAGE.md` and `LANDMARK_SIGHTLINES_POST_RESCALE.md` are a reproducible survey on `data/routes.json` legs and the canopy `tools/paint_maps.py` writes (sha256 `ce7da822…`); a different canopy hash means they are stale. Dated records (`TERRAIN_2026-09-14.md`, `SCULPT.md`, `VERTICAL_RESCALE.md`, `REEXPORT.md`, `TOWN_CANDIDATES.md`) keep pre-rescale levels and are labelled as such.
@@ -46,6 +46,7 @@
 - **Navigation:** use waystones only for fast travel, with gym-clear progression flags controlling gym-town activation.
 - **Dialogue:** native Cobblemon dialogue rather than KantoNPCs, compiled from campaign data by `tools/compile_dialogue.py`; quest fields and the cursor live in Cobblemon player data (`q.player.data()`, persisted per player); item checks use the vanilla item predicate run as the server; every give reports success and a reward claim depends on it (EXP-022: disconnect restore, bucket and bottle hand-over, reward once all pass single-player).
 - **Dialogue cursors:** store long-sequence position as first-class per-player state and persist it after each line or short segment.
+- **Legendary side content:** paste a compatible structure into a fitting biome and gate it by badge count; only the authored Regis/Regigigas/Groudon/Lugia encounters and the mainline Celebi sapling receive bespoke treatment.
 - **Quest namespaces:** reserve progression gates as `flags.<id>` and side-quest fields as `quest.<quest_id>.<field>`.
 - **Gastly escort:** each player owns and advances an independent Gastly escort; there is no shared-party quest state.
 - **Crushed house:** house completion is shared world state, dialogue cursors and rewards are per-player, and Lena relocates after rescue.
@@ -84,6 +85,7 @@
 
 - **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap only; the live world and the WorldPainter project predate them, so in-world flats and Surge's town site are blocked on the next re-export.
 - **Dialogue delivery:** per-player dialogue is proven single-player (EXP-022); the two-player run is blocked on a second account, and the crushed-house conversations are blocked on a design for world-scoped quest fields, which the compiler refuses.
+- **Mainline reveal placement:** Pallet and Brock source conversations compile, but safe NPC standing blocks, Pallet's boundary evidence, the crushed-home cluster, and Brock's geology object are not recorded as placed; the proven compiler also cannot read advancement-backed gym flags directly.
 - **Navigation runtime:** flag-driven waystones are blocked on an in-game proof of activation, locked-touch rollback, reconnect reconciliation, and Xaero behavior.
 - **Generated gym copies:** the overworld Blaine/League decision is blocked from enforcement until the exact datapack overrides that suppress Nether/End copies are proven.
 - **Pack foundation:** EXP-000 has server boot and one-client connection evidence but is blocked from completion on multiplayer and remaining world-critical/gameplay-critical functional tests.

@@ -176,6 +176,58 @@
         "blocked",
         "lena_relocated"
       ]
+    },
+    {
+      "id": "quest.main_worldshift_reveal.stage",
+      "quest_id": "main_worldshift_reveal",
+      "field": "stage",
+      "type": "enum",
+      "scope": "player",
+      "initial": "not_started",
+      "allowed_values": [
+        "not_started",
+        "oak_sendoff",
+        "mismatch_seen",
+        "oak_admitted",
+        "pallet_complete",
+        "brock_account_heard"
+      ]
+    },
+    {
+      "id": "quest.main_worldshift_reveal.pallet_oak_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "pallet_oak_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "oak_001",
+      "allowed_values": "node ids from dlg_main_pallet_oak"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.pallet_mina_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "pallet_mina_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "mina_locked",
+      "allowed_values": "node ids from dlg_main_pallet_mina"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.pallet_maren_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "pallet_maren_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "maren_locked",
+      "allowed_values": "node ids from dlg_main_pallet_maren"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.brock_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "brock_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "brock_001",
+      "allowed_values": "node ids from dlg_main_brock_witness"
     }
   ]
 }

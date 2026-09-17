@@ -670,6 +670,332 @@
         "quest.evt_pallet_crushed_house.reward_claimed",
         "quest.evt_pallet_crushed_house.house_state"
       ]
+    },
+    {
+      "id": "main_worldshift_reveal",
+      "external_event_id": "MAIN-WORLDSHIFT-REVEAL",
+      "source": "docs/story/ARC.md",
+      "scope": "player",
+      "optional": false,
+      "dialogue_ids": [
+        "dlg_main_pallet_oak",
+        "dlg_main_pallet_mina",
+        "dlg_main_pallet_maren",
+        "dlg_main_brock_witness"
+      ],
+      "beats": [
+        {
+          "id": "pallet",
+          "order": 1,
+          "required_fact": "Pallet survived in the wrong geography with localized exchange-boundary damage.",
+          "completion_stage": "pallet_complete"
+        },
+        {
+          "id": "brock",
+          "order": 2,
+          "requires_stage": "pallet_complete",
+          "required_fact": "Pallet replaced an occupied native settlement.",
+          "completion_stage": "brock_account_heard"
+        }
+      ],
+      "progression_gate": [],
+      "existing_progression_links": [
+        {
+          "flag": "gym1_cleared",
+          "relationship": "set by the Brock battle after this account; unlocks chapter_2 and the gym1 town waystone",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        }
+      ],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npcs_remain_after_completion": true
+      },
+      "actors": [
+        {
+          "npc_id": "npc_main_pallet_oak",
+          "role": "ordinary send-off, then map admission",
+          "placement_anchor": "hometown_oaks_lab",
+          "recorded_position_xz": [
+            1487,
+            5309
+          ],
+          "stand_marker": null,
+          "status": "Oak's Lab is verified; an interior safe standing block is not recorded"
+        },
+        {
+          "npc_id": "npc_main_pallet_mina",
+          "role": "resident who makes the route mismatch explicit",
+          "placement_anchor": "hometown_sign",
+          "recorded_position_xz": [
+            1456,
+            5287
+          ],
+          "stand_marker": null,
+          "status": "the sign is verified; exact surface Y and NPC standing block are not recorded"
+        },
+        {
+          "npc_id": "npc_main_pallet_maren",
+          "role": "rival who splits the witness search",
+          "placement_anchor": "hometown.lab_lane",
+          "recorded_polyline_xz": [
+            [
+              1461,
+              5318
+            ],
+            [
+              1486,
+              5318
+            ]
+          ],
+          "stand_marker": null,
+          "status": "the lane exists in placement data; Maren has no accepted NPC marker or stable runtime actor yet"
+        },
+        {
+          "npc_id": "npc_main_brock_witness",
+          "role": "native eyewitness and gym leader",
+          "placement_anchor": "built Brock gym prefab",
+          "recorded_position_xyz": [
+            1838,
+            140,
+            3690
+          ],
+          "stand_marker": null,
+          "status": "the prefab is built; its recorded coordinate is the structure anchor, not a verified safe NPC block"
+        }
+      ],
+      "physical_evidence": [
+        {
+          "id": "pallet_exchange_boundary",
+          "kind": "terrain_and_road_mismatch",
+          "status": "staging_anchor_recorded_runtime_evidence_unverified",
+          "anchors": [
+            "hometown_sign",
+            "hometown.route_north"
+          ],
+          "description": "Pallet's constructed road and settled soil meet a foreign northbound trail, wrong skyline, and unfamiliar surrounding geography.",
+          "runtime_evidence_check": "The proven schema has no coordinate or object-inspection predicate; Mina's dialogue is the simplest compilable version."
+        },
+        {
+          "id": "pallet_edge_damage_cluster",
+          "kind": "crushed_homes",
+          "status": "required_but_unbuilt",
+          "coordinate": null,
+          "description": "Three localized damaged homes show that the exchange boundary closed badly without making optional rescue content carry the main reveal."
+        },
+        {
+          "id": "brock_boundary_sample",
+          "kind": "paired_geology_sample",
+          "status": "required_object_not_built",
+          "site": "inside the built Brock gym",
+          "coordinate": null,
+          "description": "A labeled sample pairs native plateau shale directly against Pallet soil with no intervening layer; it makes Brock's claim inspectable without inventing new terrain."
+        }
+      ],
+      "objectives": [
+        {
+          "id": "receive_oaks_sendoff",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "not_started"
+          },
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "oak_sendoff"
+          },
+          "text": "Take Oak's directions to the Route 1 he remembers."
+        },
+        {
+          "id": "hear_minas_boundary_account",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "oak_sendoff"
+          },
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "mismatch_seen"
+          },
+          "text": "Speak to Mina at the Pallet sign and compare her account with the recorded road boundary."
+        },
+        {
+          "id": "return_to_oak",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "mismatch_seen"
+          },
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "oak_admitted"
+          },
+          "text": "Tell Oak the land, not the map, is wrong."
+        },
+        {
+          "id": "split_the_witness_search",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "oak_admitted"
+          },
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "pallet_complete"
+          },
+          "text": "Speak with Maren before taking the real northbound trail."
+        },
+        {
+          "id": "hear_brocks_native_account",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "pallet_complete"
+          },
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "brock_account_heard"
+          },
+          "text": "Hear what Brock saw from Viltri Plateau when Pallet arrived."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "record_oak_sendoff",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "not_started"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "oak_sendoff"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.pallet_mina_cursor",
+              "value": "mina_001"
+            }
+          ]
+        },
+        {
+          "id": "record_boundary_mismatch",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "oak_sendoff"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "mismatch_seen"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+              "value": "oak_return_001"
+            }
+          ]
+        },
+        {
+          "id": "record_oak_admission",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "mismatch_seen"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "oak_admitted"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.pallet_maren_cursor",
+              "value": "maren_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_pallet_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "oak_admitted"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "pallet_complete"
+            }
+          ]
+        },
+        {
+          "id": "complete_brock_account",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "pallet_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "brock_account_heard"
+            }
+          ]
+        }
+      ],
+      "world_changes": [
+        {
+          "kind": "none",
+          "result": "The reveal records per-player knowledge only; Pallet's exchange and damage predate play."
+        },
+        {
+          "kind": "existing_progression_flag",
+          "flag": "gym1_cleared",
+          "fires": "after the separately owned Brock trainer battle",
+          "effects": [
+            "chapter_2 becomes available",
+            "gym1_town waystone should activate"
+          ],
+          "runtime_status": "the advancement generator exists; waystone behavior is not yet proven and progression.json still has a null position"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "npcs": "shared_static_actors",
+        "concurrent_players": "each player advances one independent reveal-ladder stage and independent NPC cursors",
+        "world_mutation": "only the separately owned advancement-backed gym1_cleared effects after Brock's battle"
+      },
+      "generation_blockers": [
+        "Pallet relocation remains open, so all actor anchors are current staging anchors rather than final coordinates.",
+        "Record safe standing markers and Y values for Oak, Mina, and Maren before emitting placement commands.",
+        "Build and record the localized three-home damage cluster; it is required physical corroboration but not a quest gate.",
+        "The proven compiler cannot assert that this beat completed before the advancement-backed gym1_cleared flag; world staging currently supplies that order.",
+        "No proven location/object predicate can require a player to inspect the road boundary; this version advances through Mina's account.",
+        "Define the short pre-gym local trainer set; exact trainer IDs do not exist.",
+        "Reconcile the authored gym_01_brock roster ID with progression's runtime trainer ID kanto_brock before replacing the current trainer.",
+        "Record a safe Brock dialogue marker inside the built gym and place the paired boundary sample.",
+        "The proven dialogue compiler cannot read advancement-backed flags, so the account and Misty lead are delivered before battle; gym1_cleared remains the separate authoritative world change."
+      ],
+      "progression_field_refs": [
+        "quest.main_worldshift_reveal.stage",
+        "quest.main_worldshift_reveal.pallet_oak_cursor",
+        "quest.main_worldshift_reveal.pallet_mina_cursor",
+        "quest.main_worldshift_reveal.pallet_maren_cursor",
+        "quest.main_worldshift_reveal.brock_cursor"
+      ]
     }
   ]
 }
