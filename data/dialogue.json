@@ -80,9 +80,21 @@
                 "value": true
               },
               {
-                "kind": "held_item",
-                "hand": "main",
-                "item": "minecraft:water_bucket"
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "held_item",
+                    "hand": "main",
+                    "item": "minecraft:water_bucket",
+                    "item_predicate": "minecraft:water_bucket"
+                  },
+                  {
+                    "kind": "held_item",
+                    "hand": "main",
+                    "item": "minecraft:potion",
+                    "item_predicate": "minecraft:potion[potion_contents={potion:\"minecraft:water\"}]"
+                  }
+                ]
               }
             ]
           },
@@ -275,7 +287,8 @@
               "visible_when": {
                 "kind": "held_item",
                 "hand": "main",
-                "item": "minecraft:water_bucket"
+                "item": "minecraft:water_bucket",
+                "item_predicate": "minecraft:water_bucket"
               },
               "actions": [
                 {
@@ -284,6 +297,23 @@
                 }
               ],
               "next": "tb01"
+            },
+            {
+              "id": "offer_bottle",
+              "text": "Hand over the water bottle.",
+              "visible_when": {
+                "kind": "held_item",
+                "hand": "main",
+                "item": "minecraft:potion",
+                "item_predicate": "minecraft:potion[potion_contents={potion:\"minecraft:water\"}]"
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "submit_water_bottle"
+                }
+              ],
+              "next": "tf01"
             },
             {
               "id": "no_water",
@@ -354,6 +384,27 @@
           "kind": "line",
           "speaker": "stranger",
           "text": "Here. Take your bucket back.",
+          "next": "ta01"
+        },
+        {
+          "id": "tf01",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "That is exactly what I was not asking for.",
+          "next": "tf02"
+        },
+        {
+          "id": "tf02",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Hand it over.",
+          "next": "tf03"
+        },
+        {
+          "id": "tf03",
+          "kind": "line",
+          "speaker": "stranger",
+          "text": "Finally.",
           "next": "ta01"
         },
         {

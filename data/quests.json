@@ -112,13 +112,20 @@
           "return_item": {
             "item": "minecraft:bucket",
             "count": 1
-          }
-        }
-      ],
-      "deferred_offerings": [
+          },
+          "item_predicate": "minecraft:water_bucket"
+        },
         {
-          "id": "approved_bottled_water",
-          "reason": "The pack's Fresh Water or Pokémon water-bottle item id has not been verified. Add it only after verification."
+          "id": "water_bottle",
+          "item": "minecraft:potion",
+          "item_predicate": "minecraft:potion[potion_contents={potion:\"minecraft:water\"}]",
+          "verified": true,
+          "verification": "2026-09-17 disposable-world dialogue probe (experiments/EXP-022-native-dialogue-runtime): `execute if items entity <player> weapon.mainhand <predicate>` run from a dialogue action matched a water bottle and did not match a Potion of Swiftness; Molang is_of cannot tell potions apart",
+          "consume": 1,
+          "return_item": {
+            "item": "minecraft:glass_bottle",
+            "count": 1
+          }
         }
       ],
       "objectives": [
@@ -193,12 +200,14 @@
             {
               "kind": "held_item",
               "hand": "main",
-              "item": "minecraft:water_bucket"
+              "item": "minecraft:water_bucket",
+              "item_predicate": "minecraft:water_bucket"
             },
             {
               "kind": "inventory_contains",
               "item": "minecraft:water_bucket",
-              "count": 1
+              "count": 1,
+              "item_predicate": "minecraft:water_bucket"
             }
           ],
           "effects": [
@@ -207,7 +216,8 @@
               "hand": "main",
               "item": "minecraft:water_bucket",
               "count": 1,
-              "target": "triggering_player"
+              "target": "triggering_player",
+              "item_predicate": "minecraft:water_bucket"
             },
             {
               "kind": "give_item",
@@ -224,6 +234,48 @@
               "kind": "set_progression",
               "field": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
               "value": "tb01"
+            }
+          ]
+        },
+        {
+          "id": "submit_water_bottle",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+              "value": false
+            },
+            {
+              "kind": "held_item",
+              "hand": "main",
+              "item": "minecraft:potion",
+              "item_predicate": "minecraft:potion[potion_contents={potion:\"minecraft:water\"}]"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "consume_held_item",
+              "hand": "main",
+              "item": "minecraft:potion",
+              "item_predicate": "minecraft:potion[potion_contents={potion:\"minecraft:water\"}]",
+              "count": 1,
+              "target": "triggering_player"
+            },
+            {
+              "kind": "give_item",
+              "item": "minecraft:glass_bottle",
+              "count": 1,
+              "target": "triggering_player"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.water_delivered",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_thirsty_stranger.dialogue_cursor",
+              "value": "tf01"
             }
           ]
         },
@@ -283,13 +335,30 @@
       "rewards": [
         {
           "id": "reward_route1_thirsty_stranger",
-          "status": "item_ids_pending_verification",
+          "status": "item_ids_verified_quantities_provisional",
           "intended_contents": [
             "Black Glasses held-item candidate",
             "one approved Minecraft music disc",
             "small pre-Brock capture-supply bundle"
           ],
-          "implementation_rule": "Do not emit a runtime reward table until every item id and quantity is verified and approved for early-game balance."
+          "implementation_rule": "Item ids are verified. Quantities and the disc choice are provisional for the runtime proof and still need approval for early-game balance before the event ships.",
+          "contents": [
+            {
+              "item": "cobblemon:black_glasses",
+              "count": 1,
+              "verification": "Cobblemon-fabric-1.8.0+1.21.1.jar assets/cobblemon/models/item/black_glasses.json and lang item.cobblemon.black_glasses"
+            },
+            {
+              "item": "minecraft:music_disc_cat",
+              "count": 1,
+              "verification": "vanilla Minecraft 1.21.1 item"
+            },
+            {
+              "item": "cobblemon:poke_ball",
+              "count": 5,
+              "verification": "Cobblemon-fabric-1.8.0+1.21.1.jar assets/cobblemon/models/item/poke_ball.json"
+            }
+          ]
         }
       ],
       "repeat_dialogue": {
@@ -311,7 +380,7 @@
         "concurrent_players": "independent transitions; no player may read or write another player's fields"
       },
       "generation_blockers": [
-        "Verify the final reward item ids and quantities.",
+        "Approve the reward quantities and the music disc (ids are verified).",
         "Choose the hut coordinate and place npc_route1_thirsty_stranger."
       ],
       "progression_field_refs": [
@@ -320,6 +389,9 @@
         "quest.evt_route1_thirsty_stranger.reward_claimed",
         "quest.evt_route1_thirsty_stranger.completed",
         "quest.evt_route1_thirsty_stranger.dialogue_cursor"
+      ],
+      "offering_notes": [
+        "The pack has no dedicated Fresh Water item (item model and lang search of every mod jar, 2026-09-17). The bottle offering is the vanilla water bottle, matched exactly by its potion_contents; other potions are refused."
       ]
     },
     {
