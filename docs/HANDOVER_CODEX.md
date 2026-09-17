@@ -49,7 +49,8 @@ rather than copying a distance.
   stretch above the treeline.
 - **`EVT-ROUTE3-NOSEPASS-SIGNS`:** the Nosepass turns toward **Surge's signal array**, not the summit. The signs belong
   at the one stretch of leg 3 where the array's 12-block mast is visible over the forest canopy: **1,464-1,505 blocks
-  along the leg (69-71%), (2203, 1609) to (2163, 1606), y124**, below Mt Clay. Suggested sign site **(2203, 1609)**.
+  along the leg (69-71%), (2203, 1609) to (2163, 1606), y124**, below Mt Clay. Suggested sign site **(2203, 1609)**,
+  since moved to **(2186, 1606)** to keep a built elder outside the clearing (`data/landmarks.json` sign_site).
   The keeper's shelter and signs need a 40-block clearing there, and the line north-west to the array must stay free of
   the tallest Foothill Woods trees: the margin over the canopy is 0.4-4 blocks. Recorded in
   `landmarks.json` `surge_signal_array.site.nosepass_view.canopy_clear`. Its reward ("a marked shelter location on the

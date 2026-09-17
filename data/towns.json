@@ -1909,23 +1909,23 @@
    "footprint": {
     "shape": "square",
     "class": "single_site",
-    "size_blocks": 40,
-    "min_x": 1072,
-    "min_z": 5512,
-    "max_x": 1111,
-    "max_z": 5551,
+    "size_blocks": 20,
+    "min_x": 1082,
+    "min_z": 5522,
+    "max_x": 1101,
+    "max_z": 5541,
     "ground_y": [
-     38.3,
+     63.0,
      70.0
     ],
     "slope_degrees": {
-     "mean": 32.0,
-     "max": 86.2
+     "mean": 39.4,
+     "max": 68.2
     },
-    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks; that search read flat seabed. Heights and slope are now measured with the tools/islet.py islet laid over the seabed (built_ground)",
+    "basis": "the dry core of the tools/islet.py islet: the largest square centred on the site whose every column is above sea level (400 of 400). The first search read flat seabed and recorded a 40-block square (1072-1111, 5512-5551); with the islet laid over it, 348 of that square's 1,600 columns were still sea, so the record was shrunk rather than the island rebuilt (user decision 2026-09-16)",
     "heightmap_seabed_y": [
-     33.7,
-     39.3
+     34.4,
+     37.0
     ]
    },
    "subregion": null,
@@ -1959,7 +1959,7 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "built island: the seabed here is y34-39, so tools/islet.py raises a 61-block islet over it (2,628 columns, 1,413 above water, crown y70, about 72,900 blocks). The islet does not fill the recorded 40-block square: its corners are still sea, and the per-column relief is rough, so the Ash House needs a levelled pad",
+   "buildability": "built island: tools/islet.py raises the islet over y34-39 seabed (2,628 columns, 1,413 above water, crown y70, about 72,900 blocks). The recorded footprint is its dry 20-block core, y63-70, enough for the one Ash House; the surface is rough per column, so the house seats on a foundation course rather than a levelled pad (no islet re-run, no re-export)",
    "sea_site": true,
    "nearest_settlement": {
     "id": "hometown",

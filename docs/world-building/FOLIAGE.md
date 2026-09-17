@@ -137,15 +137,16 @@ no other stem enters.
 
 | Landmark | Tree | Site | What it does | Off the path | Seen from | Farthest seen |
 | --- | --- | --- | --- | ---: | --- | ---: |
-| The Great Oak | 40 tall, crown 46 across | (1800, 5184) Pallet Meadows | **Visible from a route.** The first giant a new trainer sees, in open meadow east of the first leg, 355 blocks from the hometown | 339 | 21 of 37 points on the first leg | 1,157 |
-| The Sentinel | 75-block spruce | (3264, 1008) Peak Pond Hollow | **A clearing worth finding.** Its spire shows over the old growth from two legs. The clearing, the hidden tarn 142 blocks away and the ravine head are found only by walking in | 390 | 27 of 81 points on legs 3-4 and 4-5; 23 of 24 directions from the clearing's edge at 60 blocks | 1,348 |
-| The Patriarch | dark oak, crown 43 across | (4272, 3600) the Wedge ridge | **On a ridge.** Breaks the skyline above the Rift; climbing out of Victory Road to reach it is the discovery | 247 | 66 of 155 points on Victory Road | 2,964 |
-| The Cherry Elder | leaning cherry, crown 42 across | (3408, 3840) above Shrew Lake | A colour landmark: pink against the plateau from the first legs and Victory Road's climb | 531 | 58 of 160 points on three legs | 2,668 |
-| The Weeping Elder | domed oak with leaf curtains | (5640, 4176) island in Lake Tilpey | **A headland in water.** Open water on every side, seen across the lake; reached by boat or surf | 861 | 31 of 144 points on legs 5-6, 6-7, 7-8 | 1,398 |
+| The Great Oak | 40 tall, crown 46 across | (1800, 5184) Pallet Meadows | **Visible from a route.** The first giant a new trainer sees, in open meadow east of the first leg, 355 blocks from the hometown | 339 | 26 of 42 points on the first leg | 1,146 |
+| The Sentinel | 75-block spruce | (3264, 1008) Peak Pond Hollow | **A clearing worth finding.** Its spire shows over the old growth from two legs. The clearing, the hidden tarn 142 blocks away and the ravine head are found only by walking in | 390 | 34 of 94 points on legs 3-4 and 4-5 (all 34 from 3-4); 22 of 24 directions from the clearing's edge at 60 blocks | 1,532 |
+| The Patriarch | dark oak, crown 43 across | (4272, 3600) the Wedge ridge | **On a ridge.** Breaks the skyline above the Rift; climbing out of Victory Road to reach it is the discovery | 247 | 58 of 164 points on Victory Road | 2,964 |
+| The Cherry Elder | leaning cherry, crown 42 across | (3408, 3840) above Shrew Lake | A colour landmark: pink against the plateau from the first legs and Victory Road's climb | 531 | 71 of 172 points on three legs (none from 1-2) | 2,668 |
+| The Weeping Elder | domed oak with leaf curtains | (5640, 4176) island in Lake Tilpey | **A headland in water.** Open water on every side, seen across the lake; reached by boat or surf | 861 | 25 of 148 points on legs 5-6, 6-7, 7-8 | 1,510 |
 
-*Off the path* is measured on the regenerated `data/routes.json` (2026-09-16). *Seen from* and *Farthest seen*
-are from the 2026-09-14 legs, which no longer exist; `LANDMARK_SIGHTLINES_POST_RESCALE.md` has the same-inputs
-comparison on the new legs, and a re-run against the current canopy is still owed.
+*Off the path* is measured on the regenerated `data/routes.json`. *Seen from* and *Farthest seen* are the
+reproducible 2026-09-16 survey: `data/routes.json` legs, the canonical heightmap, and the canopy that
+`tools/paint_maps.py` writes (sha256 `ce7da822…`). Inputs, per-leg figures and the reproduction check are in
+`LANDMARK_SIGHTLINES_POST_RESCALE.md`. Earlier counts in this table could not be regenerated and were replaced.
 
 A sixth design, a jungle kapok, is in the library unused. No jungle headland had useful sightlines: the
 best was seen from 11% of its route.

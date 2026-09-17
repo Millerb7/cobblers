@@ -89,7 +89,9 @@ creek bed. Excavating before the export would be lost, or copying its chunks acr
 - **Discoverable:** 388 blocks off the leg from Misty to Surge, and seen from 89% of that leg's points within
   900 blocks. Both figures are on the 2026-09-14 legs. On the regenerated `route_03_misty_to_surge` the grove
   centre is about 92 blocks from the road, and its nearest built elder about 33: the grove now flanks the road
-  rather than standing off it.
+  rather than standing off it. That is intentional (decided 2026-09-16): players pass the world tree close enough
+  to see it properly. No trunk or crown reaches the road centreline; the measurements are recorded on
+  `route_03_misty_to_surge`'s `foothill_woods_grove` landmark in `data/routes.json`.
 - **Clear of Peak Pond Hollow** by 1,624 blocks.
 
 **Marshy Marsh is the only swamp.** It is barely 600 blocks from Peak Pond Hollow, and its grove ground measured dry:
