@@ -208,6 +208,11 @@ SCHEMAS = {
         ["id", "claim", "recorded_in", "expect", "observers", "target", "surface", "measured", "fragile"],
         {"expect": {"visible", "not_visible"}, "surface": {"terrain", "canopy", "canopy_model"}},
     ),
+    "habitat_blocks.json": (
+        "cobblers.habitat-blocks/1", "blocks",
+        ["id", "pool", "style", "replace_spawns", "range_of_influence", "position", "status"],
+        {"style": {"natural"}, "status": {"planned", "placed", "verified"}},
+    ),
     "dialogue.json": (
         "cobblers.dialogue/1", "conversations",
         ["id", "quest_id", "npc_id", "scope", "cursor", "entry_rules", "nodes"], {},
@@ -226,9 +231,10 @@ REQUIRED_FILES = {"world.json"}
 
 
 class Context:
-    def __init__(self, data_dir: Path, source_root, report: Report):
+    def __init__(self, data_dir: Path, source_root, report: Report, world_save=None):
         self.data_dir = data_dir
         self.source_root = source_root
+        self.world_save = world_save
         self.report = report
         self.files = {}
         self.world = None
@@ -2725,6 +2731,39 @@ def _spawn_example(triggers, block):
     return "a loaded spawn condition"
 
 
+def check_habitat_blocks(ctx: Context):
+    """Every Habitat Block in data/habitat_blocks.json can be re-applied after a re-export: its pool exists, its style
+    is the proven natural one, and no two ReplaceSpawns ranges overlap (EXP-021). With --world-save (a stopped world
+    copy, never the live world) every placed or verified block must be present in that world with its recorded
+    settings; without it, presence is SKIPPED, never passed."""
+    rep = ctx.report
+    C = "habitat-blocks"
+    f = ctx.files.get("habitat_blocks.json")
+    if not f:
+        return
+    import habitat_blocks as HB
+    for bid, msg in HB.static_problems(f.doc, ctx.doc("spawns.json")):
+        rep.error(C, msg, file=f.rel, line=f.line_of_id(bid) if bid else None, where=bid)
+    blocks = [b for b in f.doc.get("blocks") or [] if isinstance(b, dict)]
+    placed = [b for b in blocks if b.get("status") in HB.PLACED]
+    if not placed:
+        rep.info(C, "%d blocks recorded, none placed; nothing to find in a world" % len(blocks), file=f.rel)
+        return
+    if not ctx.world_save:
+        rep.skip(C, "%d placed blocks were not checked against a world; pass --world-save <stopped world copy> "
+                 "(or tools/habitat_blocks.py verify --rcon on a running server)" % len(placed), file=f.rel)
+        return
+    try:
+        problems = HB.world_problems(f.doc, ctx.world_save)
+    except SystemExit as exc:
+        rep.error(C, str(exc), file=f.rel)
+        return
+    for bid, msg in problems:
+        rep.error(C, msg, file=f.rel, line=f.line_of_id(bid), where=bid)
+    if not problems:
+        rep.info(C, "%d placed blocks present in %s" % (len(placed), ctx.world_save), file=f.rel)
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -2741,6 +2780,7 @@ CHECKS = [
     ("spatial", check_spatial),
     ("town-ground", check_town_ground),
     ("visibility", check_visibility),
+    ("habitat-blocks", check_habitat_blocks),
 ]
 
 
@@ -2778,6 +2818,8 @@ def main(argv=None):
     p.add_argument("--data", default=str(ROOT / "data"), help="data directory")
     p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"),
                    help="root of the out-of-repo source/ tree")
+    p.add_argument("--world-save", default=os.environ.get("COBBLERS_WORLD_SAVE"),
+                   help="a stopped world copy to check placed Habitat Blocks against (never the live world)")
     p.add_argument("--only", nargs="*", metavar="CHECK", help="run only these checks")
     p.add_argument("--list", action="store_true", help="list checks and exit")
     p.add_argument("--json", action="store_true", dest="as_json", help="JSON output")
@@ -2790,7 +2832,7 @@ def main(argv=None):
 
     data_dir = Path(args.data)
     report = Report()
-    ctx = Context(data_dir, args.source_root, report)
+    ctx = Context(data_dir, args.source_root, report, args.world_save)
 
     if not data_dir.is_dir():
         report.error("schema", "data directory not found: %s" % data_dir)

@@ -360,7 +360,7 @@ Other towns inherit their surrounding sub-region roster until their architecture
 
 | Scope | Policy | Reason |
 | --- | --- | --- |
-| Mandatory route coordinate boxes | **Exclusive curated pool; suppression transform waits on EXP-012** | The campaign spine needs 10–20 authored choices and stable scouting information. |
+| Mandatory route coordinate boxes | **Exclusive curated pool; inherited pools excluded by generated `anticonditions` (EXP-012)** | The campaign spine needs 10–20 authored choices and stable scouting information. |
 | Habitat Block influence areas | **Replace ambient pool** | The place roster is the point of the mansion, cavern, mine or puzzle room. |
 | Town signature paving | **Suppress natural/wild entries; enable town entries** | Streets should read as settlements and the paving is the reliable local selector. |
 | Optional islands and off-route wilderness | **Retain defaults; listed species are a signature overlay** | Preserves Cobbleverse's broad discovery feel outside the campaign spine. |
@@ -426,8 +426,8 @@ Repetition is useful where adjacent places should feel connected. It becomes a p
 
 1. All 62 authored sub-region rosters resolve against the installed Cobblemon 1.8.0 species data; all 1,269 route boxes compile to native coordinate conditions.
 2. The 29 `regions.json` polygon holes remain. Compilation samples the simplified route centreline, gives multi-subregion boxes separate biome-constrained interval rosters, and uses nearest-segment assignment for outer raster boxes the simplification misses; samples inside a recorded polygon hole use the nearest adjacent sub-region. Close the holes before claiming exact boundaries.
-3. The critical-route pools exist, but inherited/default-pool suppression is not generated until EXP-012 proves the full override transform against the complete installed pack.
-4. Nine native Habitat pool files exist. Habitat placement, `ReplaceSpawns` persistence, influence geometry and fishing behavior still need a functional test.
+3. The critical-route pools exist, and `tools/suppress_inherited_spawns.py` generates the inherited-pool exclusion; EXP-012 proved it against the complete installed pack on a disposable world (not installed live).
+4. Nine native Habitat pool files exist. EXP-021 proved replacement, the influence edge, persistence and that overlapping ranges cancel; vertical reach and fishing behavior are still untested.
 5. Town paving blocks and tags remain undecided, so town-ground pools are design-only.
 6. Tree Town still lacks a canonical location; its roster compiles as a reusable pool but cannot be placed.
 7. Route geometry is pre-rescale and must be regenerated before these candidate box files can become production data.

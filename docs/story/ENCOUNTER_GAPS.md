@@ -39,8 +39,8 @@ The installed Cobblemon jar contains 1,025 base species records. 455 have a surf
 ## Cobblemon format limits and unproven behavior
 
 - Normal spawn JSON expresses coordinate cuboids, level ranges, weights, rarity buckets, time, weather and light; it does not express arbitrary polygons.
-- A standalone custom route file cannot suppress every inherited Cobbleverse spawn. Doing that requires full-pack overrides/anticonditions; EXP-012 must prove the transform before generation.
-- Natural Habitat Block `ReplaceSpawns` exists in Cobblemon 1.8 bytecode, but influence shape, vertical reach, persistence through world placement and fishing replacement remain runtime-unverified.
+- A standalone custom route file cannot suppress every inherited Cobbleverse spawn. Doing that requires full-pack overrides with `anticonditions`, which EXP-012 proved and `tools/suppress_inherited_spawns.py` generates.
+- Natural Habitat Block `ReplaceSpawns` exists in Cobblemon 1.8 bytecode, and EXP-021 proved replacement, a horizontal edge at the configured range, persistence and that overlapping ranges cancel; vertical reach and fishing replacement remain runtime-unverified.
 - Spawn JSON cannot gate one shared wild entity to each player's badge state. The compilation therefore uses static geographic bands.
 - Habitat phases are local block phases, not campaign progression flags; early-place evolved forms are omitted rather than assuming phases follow gym progress.
 - Town paving pools cannot compile until each town kit chooses its signature block tag.

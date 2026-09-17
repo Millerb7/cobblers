@@ -25,10 +25,10 @@
 - **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted giants exist (4 landmark trees and the demoted Weeping Elder); the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 0 trainers, 0 production side events, and 0 boss encounters are placed in the world.
-- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); 0 pools are installed and 0 placed Habitat Blocks are verified in-world.
-- **Quest data:** 3 dialogue conversations and 2 quests exist as proposed source data; 0 have been compiled into or proven through a runtime dialogue system.
+- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); they and the generated suppression pack are proven on the disposable test world only (EXP-012, EXP-021), and 0 pools or Habitat Blocks are installed in the live world.
+- **Quest data:** 3 dialogue conversations and 2 quests exist as source data; 1 (the Route 1 thirsty stranger, 44 nodes) compiles through `tools/compile_dialogue.py` and ran on the disposable world (EXP-022); 0 are placed in the live world.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
-- **Tooling:** 64 Python tools, 2 PowerShell server scripts, 40 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
+- **Tooling:** 67 Python tools, 2 PowerShell server scripts, 42 pytest modules, and 18 experiment directories exist; each experiment's own result file defines what has actually run.
 - **Stale inventory:** landmark-tree sightlines in `docs/world-building/FOLIAGE.md` and `LANDMARK_SIGHTLINES_POST_RESCALE.md` are a reproducible survey on `data/routes.json` legs and the canopy `tools/paint_maps.py` writes (sha256 `ce7da822…`); a different canopy hash means they are stale. Dated records (`TERRAIN_2026-09-14.md`, `SCULPT.md`, `VERTICAL_RESCALE.md`, `REEXPORT.md`, `TOWN_CANDIDATES.md`) keep pre-rescale levels and are labelled as such.
 - **Retired snapshots:** the retained recovery anchors `2026-09-16-pre-rescale` and `2026-09-17-pre-grass` both boot from copies (Done, clean save; all 43 error lines per anchor classified and also present in a live-world boot); retention, per-line classification and the user's delete commands are in `docs/world-building/SNAPSHOTS.md`.
 
@@ -44,7 +44,7 @@
 - **Structure placement:** place campaign structures deliberately and do not enable donor packs as uncontrolled natural world generation.
 - **Recognizable towns:** use CobblemonCityTowns first, then compatible licensed donor libraries, with minimal custom connectors and a donor manifest.
 - **Navigation:** use waystones only for fast travel, with gym-clear progression flags controlling gym-town activation.
-- **Dialogue:** target native Cobblemon dialogue rather than KantoNPCs, with quest state stored in the progression registry.
+- **Dialogue:** native Cobblemon dialogue rather than KantoNPCs, compiled from campaign data by `tools/compile_dialogue.py`; quest fields and the cursor live in Cobblemon player data (`q.player.data()`, persisted per player); item checks use the vanilla item predicate run as the server; every give reports success and a reward claim depends on it (EXP-022: disconnect restore, bucket and bottle hand-over, reward once all pass single-player).
 - **Dialogue cursors:** store long-sequence position as first-class per-player state and persist it after each line or short segment.
 - **Quest namespaces:** reserve progression gates as `flags.<id>` and side-quest fields as `quest.<quest_id>.<field>`.
 - **Gastly escort:** each player owns and advances an independent Gastly escort; there is no shared-party quest state.
@@ -65,9 +65,12 @@
 - **Weeping Elder:** demoted from landmark to an ordinary feature; it stays painted on its Lake Tilpey island with its glade, and is not an outpost or a viewpoint claim.
 - **Visibility claims:** every claim that something can or cannot be seen is a measured record in `data/visibility.json`, re-measured by `tools/validate_data.py` and cited in its stating record as `visibility:<id>`; claims on 10 or fewer points or under 5% are marked fragile in the record.
 - **Compiled spawn pools:** generated build output from `tools/compile_spawns.py` into `build/datapacks/cobblers_spawns/`; no compiled pool is committed; each route's species list is authored in `data/spawns.json` `route_species_selection`.
+- **Route corridor exclusivity:** bounded exclusion, not global off: every inherited spawn file (1,729 paths, 5,195 entries) is re-emitted at its path with the route boxes snapped to a 16-block grid (637 boxes) as `anticonditions` by `tools/suppress_inherited_spawns.py` into `build/` (168 MB, never committed); Cobbleverse defaults stay live outside the corridors. EXP-012 (settled): corridor sample 54% → 97.6% curated with weights as authored, no measurable tick cost; at grid 16 about +3 s boot, +690 MB heap, +5 s `/reload`.
+- **Habitat Blocks:** carry place identity: natural `ReplaceSpawns` replaces the ambient pool within `RangeOfInfluence` (edge measured at the configured 24); ranges must not overlap (overlap spawns nothing); blocks are placed from data by `setblock` + `data merge` and become active after one chunk reload; they survive restarts but not a re-export, so every campaign block is recorded in `data/habitat_blocks.json` (0 recorded), re-applied by `tools/habitat_blocks.py function` plus a restart in the post-export table in `docs/world-building/REEXPORT.md`, and checked by the validator's `habitat-blocks` check (overlap, pool, and presence in a stopped world copy via `--world-save`) (EXP-021).
 
 ## What is open
 
+- **Spawn installation:** installing the route pools, the suppression pack and recorded Habitat Blocks in the live world waits on a server build step that regenerates the pack on mod, Cobbleverse or route changes, sited Habitat Blocks in `data/habitat_blocks.json`, and an independent review of `tools/suppress_inherited_spawns.py` and `tools/habitat_blocks.py`; this blocks live encounter content.
 - **Pallet relocation:** decide whether the already composed Hometown/Pallet moves farther north; this blocks final town coordinates, Route 1's origin, and nearby event sites.
 - **Route 1 middle feature:** choose and site the unnamed middle feature; this blocks the final Route 1 composition and side-event spacing.
 - **Snapshot cleanup:** the user runs the delete commands for the non-retained snapshots and boot-check copies (about 42.5 GiB); this blocks nothing technical.
@@ -80,9 +83,7 @@
 ## What is blocked
 
 - **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap only; the live world and the WorldPainter project predate them, so in-world flats and Surge's town site are blocked on the next re-export.
-- **Habitat replacement:** 9 native roster files are compiled, but runtime enforcement is blocked until Habitat Block placement, influence and persistence are proven in game.
-- **Bounded suppression:** runtime exclusivity for curated route pools is blocked until EXP-012 proves default Cobblemon spawns can be suppressed inside a coordinate-bounded area without suppressing the outside world.
-- **Dialogue delivery:** the 3 authored conversations and 2 quests are blocked on a compiler/runtime adapter from campaign JSON to native Cobblemon dialogue, commands, and persistent cursors.
+- **Dialogue delivery:** per-player dialogue is proven single-player (EXP-022); the two-player run is blocked on a second account, and the crushed-house conversations are blocked on a design for world-scoped quest fields, which the compiler refuses.
 - **Navigation runtime:** flag-driven waystones are blocked on an in-game proof of activation, locked-touch rollback, reconnect reconciliation, and Xaero behavior.
 - **Generated gym copies:** the overworld Blaine/League decision is blocked from enforcement until the exact datapack overrides that suppress Nether/End copies are proven.
 - **Pack foundation:** EXP-000 has server boot and one-client connection evidence but is blocked from completion on multiplayer and remaining world-critical/gameplay-critical functional tests.
@@ -110,6 +111,7 @@
 | `data/checks/` | `test-author` | Store machine-checkable data validation outputs only. |
 | `data/notes/` | `content-architect` | Store bounded source notes; promote settled state into this file. |
 | `data/README.md` | `content-architect` | Keep the data index aligned with files that actually exist. |
+| `data/habitat_blocks.json` | `world-content-dev` | Every placed Habitat Block has a record; placements are re-applied after every export and checked by `habitat-blocks`. |
 | `data/spawns.json`, `data/spawn_suppression.json` | `datapack-content-dev` | Keep source rosters, per-route species selection and suppression proof status synchronized; native pools are generated by `tools/compile_spawns.py` into `build/`, never committed; installation requires the named runtime proofs. |
 | Future `data/events.json`, `data/trainers.json`, `data/gyms.json` | `datapack-content-dev` | Create only after the corresponding schema/mechanism is accepted. |
 | `kits/` | `world-content-dev` | Source-controlled templates, schematics, and structure assets only; the live save never enters this path. |

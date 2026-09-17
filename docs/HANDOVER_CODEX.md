@@ -121,6 +121,13 @@ Spot-check the code and the tests against real data, and report disagreements ra
    actually claims, the fragility rule, and the citation rule. Tests: `tests/test_visibility_claims.py`.
 5. **`measure_nearest_settlement`** (in `check_towns` and `measure_towns.py`) and the foliage check's handling of a
    demoted tree (`landmark: false`).
+6. **`tools/suppress_inherited_spawns.py`** (EXP-012): per-path precedence (mods, then global, then world packs), the
+   singular-to-plural anticondition move, and `merge_boxes` snapping outward on a coarser grid without losing a box.
+7. **`tools/habitat_blocks.py` and the `habitat-blocks` check** (EXP-021): the overlap rule, the region-file reader
+   (blockstate index order and block-entity match), and the RCON parser. Tests: `tests/test_habitat_blocks.py`,
+   written in the same session.
+8. **`tools/compile_dialogue.py`** (EXP-022): entry-rule order, the cursor/`set_page` flow, the give success guard
+   and the refusal of unsupported constructs. Tests: `tests/test_compile_dialogue.py`, written in the same session.
 
 ## What Codex can resume
 
