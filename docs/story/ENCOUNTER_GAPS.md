@@ -33,8 +33,8 @@ The installed Cobblemon jar contains 1,025 base species records. 455 have a surf
 
 ## Gym answer gaps
 
-- Gym 3 Electric remains thin after the regeneration. The re-derived availability table is unchanged, because the returning River of Shrews vale and mountain species were already present when the table was first compiled. Bunnelby, whose evolution Diggersby is Normal/Ground, is still the only dependable common Ground family before Surge. It lives in Foothill Woods and must remain ungated. Skiddo, Lotad, Fomantis and Gossifleur resist Electric but are not immune. The optional `EVT-ROUTE3-CREEK-WOOPER` controlled encounter remains the intended second Ground answer.
-- Gyms 1, 2 and 4–8 have at least three common, ungated type answers in the compiled critical-path availability table.
+- Gym 3 remains thin in the compiled ambient pool: Bunnelby, whose evolution Diggersby is Normal/Ground, is the only dependable common Ground family before Surge. Skiddo, Fomantis and Gossifleur resist Electric; Lotad and Lombre are neutral because their Water weakness cancels their Grass resistance. The pond-shore Wooper is an optional controlled encounter whose delivery mechanism and level remain unproven, so it is not yet counted as dependable access.
+- The broader sufficiency audit in `GYM_SUFFICIENCY_AUDIT.md` finds the same structural problem at Gyms 5, 6 and 8 once evolution gates, learned moves, coverage, mixed rosters and battle format are considered. No species or roster change is selected by that report.
 
 ## Cobblemon format limits and unproven behavior
 

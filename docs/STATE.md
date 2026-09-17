@@ -57,6 +57,7 @@
 - **Leg 4 waypoint:** passes west of the Merian cirque at `(2640, 1180)` so the Displaced City stays at least 250 and the Merian hut 100-450 blocks off the critical path.
 - **Flat pads:** the Scar and the Frostpeak shrine are re-pressed at their authored levels carried through the rescale curve (y280, y310), and Surge's shelf is authored directly on the rescaled terrain (`pressed_y` 174.4), all by `tools/press_pads.py`.
 - **Surge's signal array:** landmark `surge_signal_array` on a Mt Vessu shoulder at `(1928, 1248)`, y284; the Route 3 Nosepass signs aim at it from `(2186, 1606)`, inside the only stretch of leg 3 that sees its mast over the canopy (moved 18 blocks west of `(2203, 1609)` so the built elder at `(2236, 1622)` stands outside the 40-block clearing; mast margin 1.5 blocks, about 638 blocks of route remaining). The summit reveal at the shelf lip carries no quest beat.
+- **Route 3 pond stop:** place `EVT-ROUTE3-CREEK-WOOPER` on the pond shore at `(2204, 1580)`, about 32 blocks from the relocated Nosepass signs; `SQ-G3-02` is cut and players are not sent back to this pond.
 - **Measured town records:** off-path distance and `nearest_leg` (on `data/routes.json`) and every town's centre and footprint heights and slope (on the canonical heightmap, plus `built_ground` such as Relic Island's islet) are checked by `tools/validate_data.py` and rewritten only by `tools/measure_towns.py`, never trusted from records; landmark trees (sited to be seen from a leg) may stand 200 or more off the path, other outposts 250.
 - **Route 3 and the Foothill grove:** leg 3 deliberately brushes the built grove and world tree (nearest trunk edge 29.5 blocks, no trunk or crown over the centreline), recorded on `route_03_misty_to_surge`'s `foothill_woods_grove` landmark; it is not a clearance fault.
 - **Relic Island footprint:** the record is the islet's dry 20-block core `(1082-1101, 5522-5541)`, y63-70, all 400 columns above sea; the islet is not re-run or levelled.
@@ -74,6 +75,7 @@
 - **Midpoint waystones:** decide whether routes receive none, post-gym unlocks, or discovery unlocks; this blocks final navigation data and retreat rules.
 - **Route 8 landmark:** whether Blaine to Giovanni gets a landmark tree; the candidate on file is (5216, 5024), seen from 38.5% of legs 5-8 (`data/foliage.json` `landmark_candidates`), a new decision, not a Weeping Elder rescue; this blocks nothing.
 - **Gastly mansion details:** choose the donor/site, actors, rewards, levels, and final roster; this blocks implementation of that optional quest.
+- **Gym matchup sufficiency:** the coordinated audit is complete in `docs/story/GYM_SUFFICIENCY_AUDIT.md`; decide the proposed `20/25/30/35/40/45/50/55` leader curve, cap offset zero, and minimal placement/roster package before changing encounters or trainers.
 
 ## What is blocked
 
