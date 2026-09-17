@@ -116,6 +116,11 @@ Spot-check the code and the tests against real data, and report disagreements ra
 3. **`tools/nosepass_sightline.py`**, the Route 3 sign-site margins (terrain, the canopy_clear model, the planned
    paint canopy). It has no pytest suite; its only check so far is that it reproduced the exploratory run (82 points,
    no difference).
+4. **`tools/visibility_claims.py` and the `visibility` check in `tools/validate_data.py`**, which measure every
+   visibility claim in `data/visibility.json`. Check the observer and target semantics against what each stating record
+   actually claims, the fragility rule, and the citation rule. Tests: `tests/test_visibility_claims.py`.
+5. **`measure_nearest_settlement`** (in `check_towns` and `measure_towns.py`) and the foliage check's handling of a
+   demoted tree (`landmark: false`).
 
 ## What Codex can resume
 

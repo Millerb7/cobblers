@@ -100,7 +100,8 @@ def main(argv=None):
     p.add_argument("--canopy", default=str(ROOT / "build" / "paint" / "canopy.npz"))
     p.add_argument("--from", dest="lo", type=float, default=1440)
     p.add_argument("--to", dest="hi", type=float, default=1530)
-    p.add_argument("--clearing", type=float, default=40)
+    p.add_argument("--clearing", type=float, default=None,
+                   help="blocks along the line kept free of canopy; default: the sign site's clearing along_sightline_blocks")
     p.add_argument("--mast", type=float, default=None, help="mast height to test instead of site.mast_blocks")
     p.add_argument("--near", action="append", default=[], help="x,z of a point to report distance to (repeatable)")
     a = p.parse_args(argv)
@@ -111,6 +112,10 @@ def main(argv=None):
     arr = next(l for l in json.loads((D / "landmarks.json").read_text(encoding="utf-8"))["landmarks"] if l["id"] == "surge_signal_array")
     ax, az = arr["anchor"]["x"], arr["anchor"]["z"]
     mast = a.mast if a.mast is not None else arr["site"]["mast_blocks"]
+    if a.clearing is None:
+        clearing = (arr["site"]["nosepass_view"]["canopy_clear"]["sign_site"].get("clearing") or {})
+        a.clearing = float(clearing.get("along_sightline_blocks", 40))
+    print("clearing %g blocks along the line" % a.clearing)
     top_y = float(heights[az, ax]) + mast
     print("mast %g blocks, top y%.1f" % (mast, top_y))
     model = model_canopy(heights, json.loads((D / "regions.json").read_text(encoding="utf-8")),

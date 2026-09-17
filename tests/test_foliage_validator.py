@@ -335,6 +335,25 @@ def test_landmark_trees_pair_with_outposts(tmp_path, mutate, needle):
     assert any(needle in m for m in errs), errs
 
 
+# removing this lets a demoted giant keep making viewpoint claims, lose its reason, or stay listed as a place
+@pytest.mark.parametrize("mutate,needle", [
+    (lambda f, t: (f["landmark_trees"][0].update(landmark=False, demoted={"why": "test"}), t["towns"].pop()), None),
+    (lambda f, t: (f["landmark_trees"][0].update(landmark=False, demoted={"why": "test"}), t["towns"].pop(),
+                   f["landmark_trees"][0].pop("seen_from")), None),
+    (lambda f, t: (f["landmark_trees"][0].update(landmark=False, demoted={"why": "test"}),
+                   f["landmark_trees"][0].pop("seen_from")), "must not be a place in data/towns.json"),
+    (lambda f, t: (f["landmark_trees"][0].update(landmark=False), f["landmark_trees"][0].pop("seen_from"), t["towns"].pop()),
+     "needs a demoted record with a why"),
+])
+def test_demoted_trees(tmp_path, mutate, needle):
+    errs = errors_for(tmp_path, mutate)
+    if needle is None:
+        # the first case still has seen_from, which a demoted tree may not claim; the second is the clean demotion
+        assert errs in ([], ['landmark_trees.giant_oak has landmark false, so it makes no seen_from claim']), errs
+    else:
+        assert any(needle in m for m in errs), errs
+
+
 # removing this lets a library row without ground_radius through: placement then treats the object as one column
 # (group_stats defaults to 0), so a fallen log or boulder lands on unchecked ground
 @pytest.mark.parametrize("value", ["missing", -1, 1.5, True, None])

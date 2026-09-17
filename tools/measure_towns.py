@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """Re-measure the derived numbers on every town in data/towns.json.
 
-Off-path places get distance_from_critical_path_blocks and nearest_leg measured on data/routes.json polylines. With a
+Off-path places get distance_from_critical_path_blocks and nearest_leg measured on data/routes.json polylines, and
+every place with a nearest_settlement gets it re-measured by centre distance. With a
 source root, every town also gets centre.ground_y, footprint.ground_y and footprint.slope_degrees measured on the
 canonical heightmap (plus any built_ground, e.g. Relic Island's islet). Positions, footprints, statuses and prose are
 never touched: siting is an authored decision. The measurements are the same functions tools/validate_data.py checks
@@ -29,6 +30,11 @@ def refresh(towns_doc, routes_doc, heights=None, world=None):
     changes = []
     for t in towns_doc["towns"]:
         tid = t["id"]
+        if "nearest_settlement" in t:
+            ns = V.measure_nearest_settlement(towns_doc["towns"], t)
+            if ns is not None and t["nearest_settlement"] != ns:
+                changes.append((tid, "nearest_settlement", t["nearest_settlement"], ns))
+                t["nearest_settlement"] = ns
         if not t.get("critical_path"):
             m = V.measure_nearest_leg(routes_doc, t.get("centre"))
             if m is not None:

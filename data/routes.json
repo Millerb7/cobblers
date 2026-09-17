@@ -8305,7 +8305,7 @@
         },
         {
           "id": "major_river",
-          "relation": "not crossed, and not in view: no sampled point of the route sees the trunk's course (terrain cast, 56 points)"
+          "relation": "not crossed, and not in view from the road (visibility:major_river_not_from_route_05)"
         }
       ],
       "spawn_scope": {

@@ -6285,7 +6285,7 @@
        "distance_along_leg": 1482,
        "share_of_leg_at": 0.699,
        "remaining_to_surge_blocks": 638,
-       "margin_over_canopy_blocks": 1.5,
+       "margin_over_canopy_blocks": 4.3,
        "margin_over_planned_paint_canopy_blocks": 7.7,
        "elder_clearance": {
         "elder": [
@@ -6309,7 +6309,7 @@
         "why": "the elder at (2236, 1622), built by tools/elder_trees.py, stood 35.5 blocks from the first site, inside the 40-block clearing; 18 blocks west along the road it is 52.5 away and the mast still clears the canopy"
        },
        "method": "python tools/nosepass_sightline.py --source-root <root> --near 2236,1622: every dense leg-3 point (build/routes/paths.json) cast to the mast top; model margin is the canopy_clear method above, the planned-paint margin uses build/paint/canopy.npz from python tools/paint_maps.py --source-root <root> --out build/paint (sha256 ce7da822...)",
-       "build_note": "the three Nosepass signs and the trail keeper's shelter stand in a 40-block clearing here; keep the tallest Foothill Woods trees (mega spruce) out of the line north-west to the array, because the margin over the canopy is 1.5 blocks at the signs and 0.4-4 along the stretch",
+       "build_note": "the three Nosepass signs and the trail keeper's shelter stand in a 40-block clearing that extends 60 blocks north-west along the line to the mast, 16 blocks wide; with the 12-block mast the line clears the modelled canopy by 4.3 blocks. Keep the tallest Foothill Woods trees (mega spruce) out of the line beyond that too.",
        "terrain_clearance": {
         "least_blocks": 1.8,
         "at_blocks_from_observer": 1,
@@ -6339,6 +6339,18 @@
          "80": 7.3
         },
         "measured": "2026-09-16, tools/nosepass_sightline.py --mast and the same cast with the clearing radius varied"
+       },
+       "clearing": {
+        "decided": "2026-09-16 (user): a directional clearing toward the array, not a taller mast; the mast stays 12 blocks",
+        "radius_blocks": 40,
+        "along_sightline_blocks": 60,
+        "corridor_half_width_blocks": 8,
+        "bearing": "from the signs toward the mast at (1928, 1248), north-west",
+        "constraint": "HARD BUILD CONSTRAINT: no tree within 40 blocks of the signs, and no tree trunk within 8 blocks either side of the line from the signs toward the mast for the first 60 blocks of that line. 8 blocks covers the widest crown that grows here (fancy_oak 7.6, mega_spruce 5.1, krummholz 4.1). Beyond 60 blocks the normal forest resumes.",
+        "why": "the canopy margin binds just past the clearing edge, 43 blocks out, where ground rises under the canopy; extending the clearing along the line moves the binding point out to where the line has risen, while a taller mast lifts the line there by only a tenth of the added height. 60 gives 4.3 blocks at the 12-block mast; 80 would give 5.8 but reads as a felled corridor",
+        "model_margin_blocks": 4.3,
+        "planned_paint_canopy_margin_blocks": 7.7,
+        "measure": "python tools/nosepass_sightline.py --source-root <root> (reads this clearing by default)"
        }
       },
       "only_stretch": true

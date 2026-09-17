@@ -145,9 +145,18 @@ In `data/towns.json` `decisions` and
 ## Rest stops
 
 **All four are optional.** Each is roughly 120–390 blocks off its leg (the validator's range is
-100–450): visible from the route, but not on it. Measured to an 8-block roofline, over the planned canopy, the Merian hut
-is seen from 61 of 355 sampled points of its leg, the gorge hamlet from 2 of 209, the Tableland stop from 8 of 304 and the
-Rift rim post from 2 of 558. The last three need a tall marker, or kept sightlines, to read from the road. A player who walks past loses only the convenience.
+100–450): visible from the route, but not on it. Measured claims (`data/visibility.json`, an 8-block roofline from
+leg points every 16 blocks; re-measured by `tools/validate_data.py`):
+
+| Rest stop | Over bare terrain | Over the planned canopy |
+| --- | --- | --- |
+| Merian hut | 86 of 216 points (visibility:merian_hut_from_its_leg_terrain) | 35 of 216 points (visibility:merian_hut_from_its_leg_canopy) |
+| Gorge hamlet | 55 of 129 points (visibility:gorge_hamlet_from_its_leg_terrain) | **fragile:** 1 of 129 points (visibility:gorge_hamlet_from_its_leg_canopy) |
+| Tableland stop | 88 of 191 points (visibility:tableland_stop_from_its_leg_terrain) | **fragile:** 5 of 191 points (visibility:tableland_stop_from_its_leg_canopy) |
+| Rift rim post | 60 of 328 points (visibility:rift_rim_stop_from_its_leg_terrain) | **fragile:** 2 of 328 points (visibility:rift_rim_stop_from_its_leg_canopy) |
+
+The fragile three hold over the canopy on a handful of points, so a foliage pass can break them silently; each
+needs a tall marker or a kept sightline to read from the road, and the validator fails if the count moves. A player who walks past loses only the convenience.
 
 | Rest stop | Centre | Site | Leg (how far along) | Off path | Nearest | Waystone |
 | --- | --- | --- | --- | ---: | --- | --- |
@@ -185,7 +194,7 @@ start Victory Road at the Rift's south-west tip, 1,122 blocks from Giovanni. Not
 
 ### Landmark trees (outposts added by the foliage pass)
 
-Five giant trees are outposts too (`kind: landmark_tree`). They are discovery sites with nothing built, no waystone
+Four giant trees are outposts too (`kind: landmark_tree`). They are discovery sites with nothing built, no waystone
 and no gate. The foliage paint places them; each keeps a glade clear. Sites, what each does and sightlines:
 [`FOLIAGE.md`](FOLIAGE.md) §4.
 
@@ -195,9 +204,9 @@ and no gate. The foliage paint places them; each keeps a glade clear. Sites, wha
 | The Sentinel | (3264, 1008) | a clearing worth finding | 390 | Merian hut 461 |
 | The Patriarch | (4272, 3600) | ridge | 247 | Rift rim stop 642 |
 | The Cherry Elder | (3408, 3840) | vale | 531 | Rift rim stop 344 |
-| The Weeping Elder | (5640, 4176) | lake island (headland) | 861 | gym 7's town 927 |
 
-With them the outposts number 11, and the map has 30 places.
+With them the outposts number 10, and the map has 29 places. A fifth giant, the Weeping Elder on its Lake Tilpey
+island, still stands but was demoted to an ordinary feature on 2026-09-16: it is not a place.
 
 **Buildability, honestly:**
 
