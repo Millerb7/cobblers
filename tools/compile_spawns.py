@@ -185,6 +185,10 @@ def build(spawns, routes):
         if sel:
             # an authored species the corridor no longer reaches (its sub-region left the route) compiles to nothing
             summ["selected_species_not_reached"] = sorted(set(sel["species"]) - set(summ["route_species"]))
+            outside = set(summ["route_species"]) - set(sel["species"])
+            if outside or set(summ["route_species"]) | set(summ["selected_species_not_reached"]) != set(sel["species"]):
+                raise SystemExit("route %s compiled species outside its authored selection: %s" % (r["id"], sorted(outside)))
+            summ["selection_reproduced"] = "exact: compiled species plus unreached species equal the authored list, nothing outside it"
         files["data/cobblers/spawn_pool_world/routes/%s.json" % r["id"]] = dumps(doc)
         route_summaries.append(summ)
     for h in spawns["habitats"]:
