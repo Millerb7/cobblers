@@ -1,5 +1,23 @@
 # Re-export: cobblers-10240
 
+## After every export: re-apply authored content
+
+An export regenerates every region file from the WorldPainter project. Nothing built in game survives it, so every
+item below must be carried across (transplanted chunks) or re-applied from data. The dated records further down
+show how each one was actually done.
+
+| Content | Source | Re-apply | Check |
+| --- | --- | --- | --- |
+| Pads (Scar, Frostpeak shrine, Surge shelf) | pressed into the canonical heightmap (`data/sculpt.json`) | nothing: the export carries them, provided it used the canonical heightmap | heightmap sha256 in `data/world.json` |
+| Hometown | `data/placements.json` | `tools/place_town.py hometown --surface-world <stopped world> --install <server>/datapacks`, then `/reload`, `/function cobblers:towns/hometown`; or `tools/transplant_chunks.py` when the terrain under it is unchanged | `tools/place_town.py hometown --verify --server-dir <server>` |
+| Displaced City cavern | `tools/cavern_plan.py` | `tools/cavern_plan.py --source-root <root> --surface-world <stopped world> --install <server>/datapacks`, then `/function cobblers:cavern/00_seal` … `50_tunnel` | [`BUILT.md`](BUILT.md) counts |
+| World tree | `tools/world_tree.py` (sha256-seeded) | `tools/world_tree.py --surface-world <stopped world>`, install, `/function cobblers:worldtree/00_tree` … `03_tree`, `90_foundation` | [`BUILT.md`](BUILT.md) |
+| Relic Island islet | `tools/islet.py` | `tools/islet.py --source-root <root> --apply` | `data/towns.json` `built_ground` (validator `town-ground`) |
+| **Habitat Blocks** | `data/habitat_blocks.json` | `tools/habitat_blocks.py function`, install `build/datapacks/cobblers_habitats`, `/reload`, `/function cobblers:habitats/place` with no player near the blocks, then **restart the server**: a block placed by command stays inert until its chunk reloads (EXP-021) | `tools/habitat_blocks.py verify --rcon <server>`, or `tools/validate_data.py --world-save <stopped copy>` |
+| Route pools and inherited-spawn suppression | `data/spawns.json`, `data/routes.json` (datapacks, not world blocks) | regenerate only if routes or mods changed: `tools/compile_spawns.py`, `tools/suppress_inherited_spawns.py --server <server> --world <disposable world>` (grid 16) | EXP-012 |
+
+A block or build missing from this table is authored content that the next export will silently erase. Add it here when it is first built.
+
 ## 2026-09-16: the Glacial Tear creek, and the first built interiors
 
 **Status: exported, built in, checked, pregenerated.**

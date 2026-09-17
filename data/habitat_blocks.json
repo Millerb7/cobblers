@@ -1,0 +1,16 @@
+{
+  "schema": "cobblers.habitat-blocks/1",
+  "status": "manifest_ready_no_blocks_placed",
+  "note": "Every Habitat Block the campaign places. A re-export erases blocks placed in game (EXP-021), so this manifest is the source: tools/habitat_blocks.py function writes the placement function, and the post-export procedure in docs/world-building/REEXPORT.md re-applies it and restarts the server so each block's chunk reloads. tools/validate_data.py checks the static rules, and checks presence in a stopped world passed with --world-save. Blocks placed on the disposable proof world for EXP-021 are not campaign blocks and are not listed.",
+  "fields": {
+    "id": "stable id",
+    "place": "what the block gives its identity to",
+    "pool": "cobblers:<habitat id> from data/spawns.json habitats",
+    "style": "natural (the only style proven)",
+    "replace_spawns": "true replaces the ambient pool inside the range (EXP-021)",
+    "range_of_influence": "blocks; the measured edge is this value, horizontally. Ranges of ReplaceSpawns blocks must not overlap",
+    "position": "{x, y, z} of the block",
+    "status": "planned (not in the world), placed (placed by the function), verified (presence and behaviour checked in game)"
+  },
+  "blocks": []
+}
