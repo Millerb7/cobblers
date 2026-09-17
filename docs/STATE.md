@@ -72,7 +72,7 @@
 - **Elder inside the Nosepass clearing:** a built elder at `(2236, 1622)` stands about 35 blocks from the sign site `(2203, 1609)`, inside the 40-block clearing the sign event's hard build constraint requires (it is south-east of the signs, not in the north-west sightline); decide whether the elder or the signs move; this blocks building that event.
 - **Relic Island footprint:** the built islet leaves 348 of the recorded 40-block square's 1,600 columns under the sea and its surface rough (footprint ground y38-70); decide whether to shrink the footprint to the dry 20-block core (y63-70) or level a pad; this blocks the Ash House placement.
 - **Gastly mansion details:** choose the donor/site, actors, rewards, levels, and final roster; this blocks implementation of that optional quest.
-- **Gym matchup sufficiency:** decide the final trainer rosters, level-cap relationship, and a second dependable pre-Surge strategy; Gyms 3, 5, 6 and 8 need full composition checks before encounter availability is treated as sufficient.
+- **Gym matchup sufficiency:** the coordinated audit is complete in `docs/story/GYM_SUFFICIENCY_AUDIT.md`; decide the proposed `20/25/30/35/40/45/50/55` leader curve, cap offset zero, and minimal placement/roster package before changing encounters or trainers.
 
 ## What is blocked
 
