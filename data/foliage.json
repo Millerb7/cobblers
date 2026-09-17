@@ -1602,8 +1602,7 @@
     {
      "kind": "legs",
      "legs": [
-      "gym3_town->gym4_town",
-      "gym4_town->gym5_town"
+      "gym3_town->gym4_town"
      ],
      "spacing": 48
     },
@@ -1649,7 +1648,6 @@
      "kind": "legs",
      "legs": [
       "hometown->gym1_town",
-      "gym1_town->gym2_town",
       "gym8_town->league"
      ],
      "spacing": 48

@@ -145,7 +145,9 @@ In `data/towns.json` `decisions` and
 ## Rest stops
 
 **All four are optional.** Each is roughly 120–390 blocks off its leg (the validator's range is
-100–450): visible from the route, but not on it. A player who walks past loses only the convenience.
+100–450): visible from the route, but not on it. Measured to an 8-block roofline, over the planned canopy, the Merian hut
+is seen from 61 of 355 sampled points of its leg, the gorge hamlet from 2 of 209, the Tableland stop from 8 of 304 and the
+Rift rim post from 2 of 558. The last three need a tall marker, or kept sightlines, to read from the road. A player who walks past loses only the convenience.
 
 | Rest stop | Centre | Site | Leg (how far along) | Off path | Nearest | Waystone |
 | --- | --- | --- | --- | ---: | --- | --- |

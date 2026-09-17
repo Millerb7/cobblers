@@ -6308,8 +6308,38 @@
         "by": "user decision: move the signs, not the built elder",
         "why": "the elder at (2236, 1622), built by tools/elder_trees.py, stood 35.5 blocks from the first site, inside the 40-block clearing; 18 blocks west along the road it is 52.5 away and the mast still clears the canopy"
        },
-       "method": "python tools/nosepass_sightline.py --source-root <root> --near 2236,1622: every dense leg-3 point (build/routes/paths.json) cast to the mast top; model margin is the canopy_clear method above, the planned-paint margin uses build/paint/canopy.npz from python tools/paint_maps.py --source-root <root> --out build/paint (sha256 ce7da822...); the line's least clearance over bare terrain anywhere, clearing included, is 1.8 blocks",
-       "build_note": "the three Nosepass signs and the trail keeper's shelter stand in a 40-block clearing here; keep the tallest Foothill Woods trees (mega spruce) out of the line north-west to the array, because the margin over the canopy is 1.5 blocks at the signs and 0.4-4 along the stretch"
+       "method": "python tools/nosepass_sightline.py --source-root <root> --near 2236,1622: every dense leg-3 point (build/routes/paths.json) cast to the mast top; model margin is the canopy_clear method above, the planned-paint margin uses build/paint/canopy.npz from python tools/paint_maps.py --source-root <root> --out build/paint (sha256 ce7da822...)",
+       "build_note": "the three Nosepass signs and the trail keeper's shelter stand in a 40-block clearing here; keep the tallest Foothill Woods trees (mega spruce) out of the line north-west to the array, because the margin over the canopy is 1.5 blocks at the signs and 0.4-4 along the stretch",
+       "terrain_clearance": {
+        "least_blocks": 1.8,
+        "at_blocks_from_observer": 1,
+        "beyond_10_blocks": 4.0,
+        "note": "the 1.8 is the eye height over the rising ground one block from the observer's feet, not an occluder; the line clears bare terrain by 4.0 or more beyond 10 blocks"
+       },
+       "mast_height_sensitivity": {
+        "note": "the canopy margin binds 43 blocks out, just past the clearing edge, where ground rises from y130 under the alpine-preset canopy (10.1); a taller mast raises the line there by only about a tenth of the added height",
+        "model_margin_by_mast_blocks": {
+         "12": 1.5,
+         "16": 1.8,
+         "20": 2.2,
+         "24": 2.6,
+         "30": 3.2,
+         "40": 4.2
+        },
+        "model_margin_by_clearing_blocks_mast_12": {
+         "40": 1.5,
+         "50": 2.8,
+         "60": 4.3,
+         "80": 5.8
+        },
+        "model_margin_by_clearing_blocks_mast_20": {
+         "40": 2.2,
+         "50": 3.7,
+         "60": 5.3,
+         "80": 7.3
+        },
+        "measured": "2026-09-16, tools/nosepass_sightline.py --mast and the same cast with the clearing radius varied"
+       }
       },
       "only_stretch": true
      }

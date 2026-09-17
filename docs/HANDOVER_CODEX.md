@@ -103,6 +103,20 @@ species).
 8. **`docs/world-building/TOWNS.md` 62-108 and `SETTLEMENTS.md` 45-161**: still on pre-sculpt numbers (1,780, 908, 1,643,
    2,640, 1,027, 1,946, 2,021, 3,055, 4,953); use the tables above.
 
+## Independent review requested (Codex)
+
+Claude wrote each of these together with its own tests in one session, so none has had an independent reviewer.
+Spot-check the code and the tests against real data, and report disagreements rather than editing the checks:
+
+1. **`tools/validate_data.py` town checks:** `measure_nearest_leg` and `_nearest_leg_problems` (called from
+   `check_towns`), and `measure_town_ground` with `check_town_ground` (the `town-ground` check, including
+   `built_ground` for `tools/islet.py`). Tests: `tests/test_town_measures.py`.
+2. **`tools/measure_towns.py`**, which writes the same measurements back into `data/towns.json`. Check that `--write`
+   changes only derived numbers, never positions, footprints or prose.
+3. **`tools/nosepass_sightline.py`**, the Route 3 sign-site margins (terrain, the canopy_clear model, the planned
+   paint canopy). It has no pytest suite; its only check so far is that it reproduced the exploratory run (82 points,
+   no difference).
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.
