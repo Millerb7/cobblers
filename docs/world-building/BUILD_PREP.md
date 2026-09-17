@@ -14,7 +14,7 @@ affected.
 | --- | --- |
 | Axiom 6.0.5 on the server | **Installed and loading.** It is the same jar for server and client (`environment: *`); sha256 `fd443dd7…`. The boot shows "Initializing Axiom/6.0.5", with no new errors against the previous boot (43 error lines, 44 before) and no mixin failures |
 | Axiom on your client | **Already installed** in the Modrinth profile "Fabric 1.21.10": `Axiom-6.0.5-for-MC1.21.1.jar` with Fabric API 0.116.14 and Sodium 0.8.12. Axiom's metadata marks Sodium 0.5.0 and older as incompatible |
-| Axiom permissions | **The server has no permissions mod**, so Axiom falls back to operator status. Its server class checks for the Fabric Permissions API and otherwise uses `isOp`. You (`ExpiredWhippets`) are an operator at level 4 in `ops.json`. Join, press the Axiom editor key, and the server should grant everything. **Not tested yet:** that needs you in game |
+| Axiom permissions | **The server has no permissions mod**, so Axiom falls back to operator status. Its server class checks for the Fabric Permissions API and otherwise uses `isOp`. Your account is an operator at level 4 in `ops.json`. Join, press the Axiom editor key, and the server should grant everything. **Not tested yet:** that needs you in game |
 | WorldEdit | **Not installed.** It needs a download; the build for Fabric 1.21.1 on Modrinth is `worldedit-mod-7.3.8.jar` (6,222,854 bytes, sha512 `e039492d…`). **Waiting on your yes.** No client mod is needed: WorldEdit's commands run server-side. WorldEdit CUI is an optional client visualiser |
 
 ## Displaced City cavern

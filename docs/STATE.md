@@ -25,10 +25,10 @@
 - **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted giants exist (4 landmark trees and the demoted Weeping Elder); the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 0 trainers, 0 production side events, and 0 boss encounters are placed in the world.
-- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); 0 pools are installed and 0 placed Habitat Blocks are verified in-world.
+- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); they and the generated suppression pack are proven on the disposable test world only (EXP-012, EXP-021), and 0 pools or Habitat Blocks are installed in the live world.
 - **Quest data:** 3 dialogue conversations and 2 quests exist as proposed source data; 0 have been compiled into or proven through a runtime dialogue system.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
-- **Tooling:** 64 Python tools, 2 PowerShell server scripts, 40 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
+- **Tooling:** 65 Python tools, 2 PowerShell server scripts, 40 pytest modules, and 17 experiment directories exist; each experiment's own result file defines what has actually run.
 - **Stale inventory:** landmark-tree sightlines in `docs/world-building/FOLIAGE.md` and `LANDMARK_SIGHTLINES_POST_RESCALE.md` are a reproducible survey on `data/routes.json` legs and the canopy `tools/paint_maps.py` writes (sha256 `ce7da822…`); a different canopy hash means they are stale. Dated records (`TERRAIN_2026-09-14.md`, `SCULPT.md`, `VERTICAL_RESCALE.md`, `REEXPORT.md`, `TOWN_CANDIDATES.md`) keep pre-rescale levels and are labelled as such.
 - **Retired snapshots:** the retained recovery anchors `2026-09-16-pre-rescale` and `2026-09-17-pre-grass` both boot from copies (Done, clean save; all 43 error lines per anchor classified and also present in a live-world boot); retention, per-line classification and the user's delete commands are in `docs/world-building/SNAPSHOTS.md`.
 
@@ -64,9 +64,12 @@
 - **Weeping Elder:** demoted from landmark to an ordinary feature; it stays painted on its Lake Tilpey island with its glade, and is not an outpost or a viewpoint claim.
 - **Visibility claims:** every claim that something can or cannot be seen is a measured record in `data/visibility.json`, re-measured by `tools/validate_data.py` and cited in its stating record as `visibility:<id>`; claims on 10 or fewer points or under 5% are marked fragile in the record.
 - **Compiled spawn pools:** generated build output from `tools/compile_spawns.py` into `build/datapacks/cobblers_spawns/`; no compiled pool is committed; each route's species list is authored in `data/spawns.json` `route_species_selection`.
+- **Route corridor exclusivity:** bounded exclusion, not global off: every inherited spawn file (1,729 paths, 5,195 entries) is re-emitted at its path with the 1,408 route boxes as `anticonditions` by `tools/suppress_inherited_spawns.py` into `build/` (368 MB, never committed); Cobbleverse defaults stay live outside the corridors. EXP-012: corridor sample 54% → 97.6% curated, +8 s boot, +1.5 GB heap, +8.5 s `/reload`, no measurable tick cost.
+- **Habitat Blocks:** carry place identity: natural `ReplaceSpawns` replaces the ambient pool within `RangeOfInfluence` (edge measured at the configured 24); ranges must not overlap (overlap spawns nothing); blocks are placed from data by `setblock` + `data merge` and become active after one chunk reload; they survive restarts but not a re-export unless the chunk is transplanted or they are re-placed (EXP-021).
 
 ## What is open
 
+- **Spawn installation:** installing the route pools, the suppression pack and recorded Habitat Blocks in the live world waits on a server build step that regenerates the pack on mod, Cobbleverse or route changes, a placement record for Habitat Blocks with an overlap check, and an independent review of `tools/suppress_inherited_spawns.py`; this blocks live encounter content.
 - **Pallet relocation:** decide whether the already composed Hometown/Pallet moves farther north; this blocks final town coordinates, Route 1's origin, and nearby event sites.
 - **Route 1 middle feature:** choose and site the unnamed middle feature; this blocks the final Route 1 composition and side-event spacing.
 - **Snapshot cleanup:** the user runs the delete commands for the non-retained snapshots and boot-check copies (about 42.5 GiB); this blocks nothing technical.
@@ -78,8 +81,6 @@
 ## What is blocked
 
 - **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap only; the live world and the WorldPainter project predate them, so in-world flats and Surge's town site are blocked on the next re-export.
-- **Habitat replacement:** 9 native roster files are compiled, but runtime enforcement is blocked until Habitat Block placement, influence and persistence are proven in game.
-- **Bounded suppression:** runtime exclusivity for curated route pools is blocked until EXP-012 proves default Cobblemon spawns can be suppressed inside a coordinate-bounded area without suppressing the outside world.
 - **Dialogue delivery:** the 3 authored conversations and 2 quests are blocked on a compiler/runtime adapter from campaign JSON to native Cobblemon dialogue, commands, and persistent cursors.
 - **Navigation runtime:** flag-driven waystones are blocked on an in-game proof of activation, locked-touch rollback, reconnect reconciliation, and Xaero behavior.
 - **Generated gym copies:** the overworld Blaine/League decision is blocked from enforcement until the exact datapack overrides that suppress Nether/End copies are proven.

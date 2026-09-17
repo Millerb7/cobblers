@@ -43,6 +43,7 @@ detected rather than trusted.
 | `cavern_plan.py` | The Displaced City cavern as numbered functions: seal water, excavate between a graded floor and a ceiling kept 24 blocks under the ground, false sky, light lattice, trees, tunnel, biome (separate) | `build/datapacks/cobblers_cavern/`, `derived/cavern/` |
 | `tree_town_sites.py` | Candidate tree-town sites: off-path, spacing, distance from Peak Pond Hollow, forest density, grove ground, wet ground, sightlines from the legs (candidates only) | `derived/sites/tree_town.json` |
 | `tree_grove.py` | Habitat giants (kit prefabs) and grove layouts at candidate sites, with a placement function (not run) | `kits/structures/prefabs/trees/tree_town/`, `derived/sites/`, `build/grove/` |
+| `suppress_inherited_spawns.py` | Re-emits every inherited spawn file the server loads (jars, global and world datapacks, highest priority per path) with the route boxes as `anticonditions` on every entry (EXP-012); `--boxes merged` re-cuts the union. Output is upstream data: never commit | `build/datapacks/cobblers_suppress/` |
 | `transplant_chunks.py` | Copy whole chunks (region, entities, poi) from one closed world into another, to carry a build across a re-export | (in place) |
 | `critical_legs.py` | Route the critical path legs (Victory Road along the Rift axes) and tally blocks per sub-region | `derived/routes/critical_legs.json` |
 | `slope_masks.py` | Exports slope, aspect and land masks as PNG | `derived/slope/` |

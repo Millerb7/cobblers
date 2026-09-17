@@ -24,8 +24,8 @@ from, this tool reproduces its Habitat files and pack.mcmeta byte for byte and 6
 rest are 15 of 1,269 boxes on sub-region boundaries, a sampling detail that was never recorded). Each route's species
 list (at most 20) is authored in spawns.json route_species_selection; this tool never chooses species.
 
-Not installed, not runtime-proven. Inherited-pool suppression is deliberately omitted (it needs EXP-012). Habitat files
-define rosters only; placing Habitat Blocks and their ReplaceSpawns NBT is world work.
+Not installed live. Inherited-pool suppression is a separate generator, tools/suppress_inherited_spawns.py (EXP-012). Habitat
+files define rosters only; placing Habitat Blocks and their ReplaceSpawns NBT is world work (EXP-021).
 
 Schema evidence: the route key set was checked against Cobblemon 1.8 SpawningCondition.class and stock
 data/cobblemon/spawn_pool_world/*.json; the Habitat key set against stock data/cobblemon/habitat_pools/abandoned_fortress.json,

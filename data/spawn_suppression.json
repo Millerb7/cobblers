@@ -1,26 +1,29 @@
 {
   "schema": "cobblers.spawn-suppression/1",
-  "status": "policy_compiled_runtime_unverified",
+  "status": "mechanisms_proven_on_disposable_world_not_installed_live",
   "critical_route_boxes": {
     "policy": "suppress inherited/default pools and use compiled route pools",
-    "box_count": 1269,
-    "native_expression": "requires overrides adding matching coordinate anticonditions to inherited entries",
-    "generated": false,
-    "reason": "the current pack-complete inherited pool set is runtime input; generating partial overrides would make a false suppression claim",
-    "experiment": "EXP-012 bounded default suppression"
+    "box_count": 1408,
+    "native_expression": "every inherited spawn_pool_world file overridden at its resource path; each spawn detail gains one {minX,maxX,minZ,maxZ} entry per route box in \"anticonditions\" (plural key; singular \"anticondition\" with an array aborts the reload)",
+    "generated": true,
+    "experiment": "experiments/EXP-012-bounded-default-suppression",
+    "generator": "tools/suppress_inherited_spawns.py (output build/datapacks/cobblers_suppress/, upstream data, never committed)",
+    "runtime_status": "proven 2026-09-17 on a disposable world: corridor sample 54% -> 97.6% curated, outside unchanged; 1,729 files, 368 MB, +8 s boot, +1.5 GB heap, +8.5 s reload, no measurable tick cost"
   },
   "habitat_blocks": {
     "policy": "ReplaceSpawns=true inside each placed Natural Habitat Block influence",
     "pool_count": 9,
-    "native_support": "selection behavior only: HabitatBlockEntity ReplaceSpawns filtering and RangeOfInfluence fields verified in Cobblemon 1.8.0 bytecode",
-    "runtime_status": "pool loading, block placement, influence geometry, persistence and fishing behavior need functional test",
+    "native_support": "HabitatBlockEntity natural style: ReplaceSpawns, RangeOfInfluence, PoolId; found by the vanilla POI manager",
+    "runtime_status": "proven 2026-09-17 (EXP-021): replaces the ambient pool; edge at the configured range; survives chunk reload and restart; lost on re-export unless the chunk is transplanted or the block re-placed; overlapping ReplaceSpawns ranges spawn nothing; command-placed blocks activate after one chunk reload; vertical reach and fishing untested",
     "schema_evidence": [
       "Cobblemon-fabric-1.8.0+1.21.1.jar!/data/cobblemon/habitat_pools/abandoned_fortress.json",
       "Cobblemon-fabric-1.8.0+1.21.1.jar!/data/cobblemon/habitat_pools/abandoned_village_house.json",
       "HabitatPool.class",
       "HabitatSpawn.class",
       "HabitatBlockEntity.class"
-    ]
+    ],
+    "placement": "setblock cobblemon:habitat_block[cancels_regular_spawns=true,activated_style=false] then data merge {SpawningStyle:\"cobblemon:natural\",ReplaceSpawns:1b,RangeOfInfluence:N,PoolId:\"cobblers:<pool>\"}",
+    "experiment": "experiments/EXP-021-habitat-block-influence"
   },
   "retain_defaults": [
     "off-route wilderness",
