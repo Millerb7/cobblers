@@ -7,8 +7,8 @@
 - **Planning grid:** 8 × 8 square cells (`A1`–`H8`) at 1,024 blocks per cell; hexes are retired.
 - **Vertical bands:** authored terrain is `y10..310`, sea level is `y62`, and the runtime overworld build range is `y-64..575`.
 - **Current peaks:** terrain reaches `y310` (`data/world.json` `measured_ceiling_y`); the built world tree reaches `y535`, recorded separately as `built_ceiling`.
-- **Canonical heightmap:** `land_8k_16_rescaled_b145_pads.png`, 8,192 × 8,192 16-bit grayscale, SHA-256 `a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313`: the rescaled `3eb0edee…` with the Scar and Frostpeak shrine pads re-pressed; every other column is bit-identical.
-- **WorldPainter source:** `cobblers-10240.world`, SHA-256 `3906dc77352eadc385293ce43d307b963853ac9ef2ebfe753dd4e219c6b72490` (saved after the thinned-grass paint); it and the live world predate the pad re-press.
+- **Canonical heightmap:** `land_8k_16_rescaled_b145_pads.png`, 8,192 × 8,192 16-bit grayscale, SHA-256 `5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb`: the rescaled `3eb0edee…` with three `data/sculpt.json` pads pressed by `tools/press_pads.py` (the Scar y280, the Frostpeak shrine y310, Surge's shelf y174.4); every other column is bit-identical.
+- **WorldPainter source:** `cobblers-10240.world`, SHA-256 `3906dc77352eadc385293ce43d307b963853ac9ef2ebfe753dd4e219c6b72490` (saved after the thinned-grass paint); it and the live world predate all three pads.
 - **Live world:** `cobblers-10240` under the local `cobblers-server` runtime; `level.dat` reports spawn `(1461, 118, 5306)`, 484 overworld region files, and a matching 10,240-block border.
 - **Runtime:** Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0+1.21.1, and Java 21; the latest live log reached `Done (2.659s)`.
 - **Seed:** retained in the live `level.dat`, deliberately uncommitted, and identified only by SHA-256 `48202407c92bc5d07cd215b93f631b384a5f7dde58e993e7bc9f7365e03563f3`.
@@ -18,19 +18,19 @@
 - **World export:** 1 disposable/authoring overworld exists and is pregenerated as 484 region files; the live save is runtime state, not repository source.
 - **Towns:** 1 of 30 planned towns is composed in blocks: Hometown/Pallet has 9 donor structures, roads, spawn, and 1 waystone, all 9 placements `verified` in `placements.json`.
 - **Gyms:** 1 of 8 gym buildings exists: Brock's (a local-only Cobbleverse template) on gym1_town's prepared lot; Brock and Misty have ground-level street/plaza preparation.
-- **Routes:** 0 of 9 critical routes is built as a finished road or event chain; all 9 exist as candidate polylines and 1,349 spawn boxes in `data/routes.json`, routed by `tools/build_routes.py` on the canonical heightmap with 0 sub-region holes.
+- **Routes:** 0 of 9 critical routes is built as a finished road or event chain; all 9 exist as candidate polylines and 1,408 spawn boxes in `data/routes.json`, routed by `tools/build_routes.py` on the canonical heightmap with 0 sub-region holes and no step over 35 degrees on any leg.
 - **Regions:** 21 regions and 62 sub-regions exist as authored data and WorldPainter paint inputs; they are not gameplay boundaries at runtime.
 - **Terrain landmarks:** 27 are tracked in data with 22 marked built, 4 partial, and 1 planned; summits are re-measured on the canonical heightmap and water bodies are checked unchanged by the rescale, but the status labels themselves have not been re-judged.
 - **Displaced City cavern:** 1 of 1 planned test caverns is excavated at `x3250..3449, z1650..1849`, with 1,940,550 blocks removed; the city inside it is 0 built.
 - **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted landmark trees exist; the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 0 trainers, 0 production side events, and 0 boss encounters are placed in the world.
-- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,349 boxes (6,866 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`; 0 pools are installed and 0 placed Habitat Blocks are verified in-world. Of the authored per-route species lists, 8 species on Route 3 and 1 on Route 4 now have no sub-region on their route, because Route 3 no longer crosses Mt Clay or Mt Vessu.
+- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); 0 pools are installed and 0 placed Habitat Blocks are verified in-world.
 - **Quest data:** 3 dialogue conversations and 2 quests exist as proposed source data; 0 have been compiled into or proven through a runtime dialogue system.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
 - **Tooling:** 61 Python tools, 2 PowerShell server scripts, 37 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
 - **Stale inventory:** `docs/world-building/BUILT.md`, `NAVIGATION.md`, `TOWNS.md` and `SETTLEMENTS.md`, and the `docs/story/` documents listed in `docs/HANDOVER_CODEX.md`, still quote pre-rescale or pre-sculpt geometry.
-- **Retired snapshots:** the retained recovery anchors `2026-09-16-pre-rescale` and `2026-09-17-pre-grass` both boot (copies booted 2026-09-16: Done, clean save, no errors beyond a live boot's); unique provenance heightmaps are kept in `cobblers-server-retired/2026-09-17-provenance-heightmaps/`.
+- **Retired snapshots:** the retained recovery anchors `2026-09-16-pre-rescale` and `2026-09-17-pre-grass` both boot from copies (Done, clean save; all 43 error lines per anchor classified and also present in a live-world boot); retention, per-line classification and the user's delete commands are in `docs/world-building/SNAPSHOTS.md`.
 
 ## What is decided
 
@@ -52,18 +52,18 @@
 - **Villain:** Giovanni remains gym 8 and a civil defender; the campaign villain is original rather than Giovanni or another existing Kanto villain.
 - **Blaine:** place Blaine's gym in the overworld at the Craters, not in the Nether.
 - **League:** place the League in the overworld at the Rift head, disable generated End copies, and reserve End access for postgame.
-- **Surge's town:** re-sited off Mt Vessu to the foot of the Vessu-Clay saddle at `(2347, 1956)`, y124-133; Mt Vessu stays the landmark.
+- **Surge's town:** on a shelf pressed into the Tri Peaks - Mt Vessu south flank at `(1688, 1410)`, y174.4, sub-region `the_tri_peaks`; leg 3 climbs 81 blocks with no step over 35 degrees; Mt Vessu's summit is visible from town; site D `(2347, 1956)` is superseded.
 - **Route 1:** pinned through the built maze forest's main path (17 waypoints in `routes.json` `routing.mandatory_waypoints`), so it passes River of Shrews vale.
 - **Leg 4 waypoint:** passes west of the Merian cirque at `(2640, 1180)` so the Displaced City stays at least 250 and the Merian hut 100-450 blocks off the critical path.
-- **Flat pads:** the Scar and the Frostpeak shrine are re-pressed at their authored levels carried through the rescale curve (y280, y310) by `tools/press_pads.py`, not re-sited.
+- **Flat pads:** the Scar and the Frostpeak shrine are re-pressed at their authored levels carried through the rescale curve (y280, y310), and Surge's shelf is authored directly on the rescaled terrain (`pressed_y` 174.4), all by `tools/press_pads.py`.
+- **Surge's signal array:** landmark `surge_signal_array` on a Mt Vessu shoulder at `(1928, 1248)`, y284; the Route 3 Nosepass signs aim at it from `(2203, 1609)`, the only stretch of leg 3 that sees its mast over the canopy. The summit reveal at the shelf lip carries no quest beat.
+- **Off-path distances:** measured by `tools/validate_data.py` on `data/routes.json`, never trusted from records; landmark trees (sited to be seen from a leg) may stand 200 or more off the path, other outposts 250.
 - **Compiled spawn pools:** generated build output from `tools/compile_spawns.py` into `build/datapacks/cobblers_spawns/`; no compiled pool is committed; each route's species list is authored in `data/spawns.json` `route_species_selection`.
 
 ## What is open
 
 - **Pallet relocation:** decide whether the already composed Hometown/Pallet moves farther north; this blocks final town coordinates, Route 1's origin, and nearby event sites.
 - **Route 1 middle feature:** choose and site the unnamed middle feature; this blocks the final Route 1 composition and side-event spacing.
-- **Route 3 species:** re-author `route_species_selection` for Route 3, which now reaches only Lake Viltri Hollow and Foothill Woods; this blocks the chapter-3 availability curve.
-- **Surge's view of the Scar:** decide whether the re-sited town must see the Scar (1,034 blocks away, unchecked); this blocks the Scar's narrative framing from Surge's town.
 - **Snapshot cleanup:** the user runs the delete commands for the non-retained snapshots and boot-check copies (about 42.5 GiB); this blocks nothing technical.
 - **Hometown waystone:** decide whether it starts unlocked or is earned; this blocks its final progression trigger.
 - **Midpoint waystones:** decide whether routes receive none, post-gym unlocks, or discovery unlocks; this blocks final navigation data and retreat rules.
@@ -71,7 +71,7 @@
 
 ## What is blocked
 
-- **Pads in the world:** the Scar and Frostpeak shrine re-press exists in the canonical heightmap only; the live world and the WorldPainter project predate it, so in-world flats are blocked on the next re-export.
+- **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap only; the live world and the WorldPainter project predate them, so in-world flats and Surge's town site are blocked on the next re-export.
 - **Codex's documents:** `docs/story/` and `docs/world-building/TOWNS.md`/`SETTLEMENTS.md` quote pre-sculpt distances and the old Surge site; narrative acceptance of the new geometry is blocked on the revisions listed in `docs/HANDOVER_CODEX.md`.
 - **Habitat replacement:** 9 native roster files are compiled, but runtime enforcement is blocked until Habitat Block placement, influence and persistence are proven in game.
 - **Bounded suppression:** runtime exclusivity for curated route pools is blocked until EXP-012 proves default Cobblemon spawns can be suppressed inside a coordinate-bounded area without suppressing the outside world.
