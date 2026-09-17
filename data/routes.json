@@ -8305,7 +8305,7 @@
         },
         {
           "id": "major_river",
-          "relation": "valley in view but not crossed"
+          "relation": "not crossed, and not in view from the road (visibility:major_river_not_from_route_05)"
         }
       ],
       "spawn_scope": {

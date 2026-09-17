@@ -5,7 +5,8 @@ For every dense leg-3 point in a range, casts the line from eye height (1.62) to
 (data/landmarks.json surge_signal_array: anchor ground + site.mast_blocks) and reports, beyond a clearing radius
 around the observer:
 
-  terrain_margin   the least clearance over the heightmap along the whole line
+  terrain_margin   the least clearance over the heightmap along the whole line, observer's end included (so it can be
+                   just the eye height over rising ground at the observer's feet: see terrain_tightest_from_observer)
   model_margin     the recorded canopy_clear model: over forested ground the line must clear the p90 object height of
                    the forest type data/foliage.json assigns the sub-region (below that preset's treeline)
   paint_margin     the same line over build/paint/canopy.npz (tools/paint_maps.py), the planned canopy top
@@ -13,7 +14,7 @@ around the observer:
 
 Reads build/routes/paths.json (tools/build_routes.py, the dense paths data/routes.json is simplified from).
 
-  python tools/nosepass_sightline.py --source-root <root> [--from 1440 --to 1530] [--near 2236,1622]
+  python tools/nosepass_sightline.py --source-root <root> [--from 1440 --to 1530] [--near 2236,1622] [--mast 20]
 """
 from __future__ import annotations
 
@@ -84,7 +85,9 @@ def margins(heights, model, paint, grid, x, z, ax, az, top_y, clearing):
     inside = (xs >= x0) & (xs < x1) & (zs >= z0) & (zs < z1)
     cap = np.zeros(len(xs), np.float32)
     cap[inside] = model[(zs[inside] - z0) // 4, (xs[inside] - x0) // 4]
-    out = {"terrain_margin": float(ground.min()), "model_margin": float((ground[beyond] - cap[beyond]).min())}
+    k = int(ground.argmin())
+    out = {"terrain_margin": float(ground.min()), "terrain_tightest_from_observer": float(dist * f[k]),
+           "model_margin": float((ground[beyond] - cap[beyond]).min())}
     if paint is not None:
         out["paint_margin"] = float((line[beyond] - np.maximum(heights[zs, xs], paint[zs // grid, xs // grid])[beyond]).min())
     return out
@@ -97,7 +100,9 @@ def main(argv=None):
     p.add_argument("--canopy", default=str(ROOT / "build" / "paint" / "canopy.npz"))
     p.add_argument("--from", dest="lo", type=float, default=1440)
     p.add_argument("--to", dest="hi", type=float, default=1530)
-    p.add_argument("--clearing", type=float, default=40)
+    p.add_argument("--clearing", type=float, default=None,
+                   help="blocks along the line kept free of canopy; default: the sign site's clearing along_sightline_blocks")
+    p.add_argument("--mast", type=float, default=None, help="mast height to test instead of site.mast_blocks")
     p.add_argument("--near", action="append", default=[], help="x,z of a point to report distance to (repeatable)")
     a = p.parse_args(argv)
     heights, world = T.load_from_args(a)
@@ -106,7 +111,13 @@ def main(argv=None):
     cums = B.cumulative(leg)
     arr = next(l for l in json.loads((D / "landmarks.json").read_text(encoding="utf-8"))["landmarks"] if l["id"] == "surge_signal_array")
     ax, az = arr["anchor"]["x"], arr["anchor"]["z"]
-    top_y = float(heights[az, ax]) + arr["site"]["mast_blocks"]
+    mast = a.mast if a.mast is not None else arr["site"]["mast_blocks"]
+    if a.clearing is None:
+        clearing = (arr["site"]["nosepass_view"]["canopy_clear"]["sign_site"].get("clearing") or {})
+        a.clearing = float(clearing.get("along_sightline_blocks", 40))
+    print("clearing %g blocks along the line" % a.clearing)
+    top_y = float(heights[az, ax]) + mast
+    print("mast %g blocks, top y%.1f" % (mast, top_y))
     model = model_canopy(heights, json.loads((D / "regions.json").read_text(encoding="utf-8")),
                          json.loads((D / "foliage.json").read_text(encoding="utf-8")),
                          json.loads((ROOT / "kits" / "structures" / "foliage" / "library.json").read_text(encoding="utf-8")))

@@ -37,42 +37,79 @@ the tree cannot hide itself.
 | Landmark | Tree | Seen from | Share | Nearest / farthest seen |
 | --- | --- | ---: | ---: | ---: |
 | `great_oak_pallet` | 40 tall, ground y103.5 | 26 of 42 leg points | 61.9% | 340 / 1,146 |
-| `sentinel_spruce_tarn` | 75 tall, ground y129.7 | 34 of 94 leg points; 22 of 24 on the 60-block ring | 36.2%; 91.7% | 391 / 1,532 |
+| `sentinel_spruce_tarn` | 75 tall, ground y129.7 | 34 of 72 leg points; 22 of 24 on the 60-block ring | 47.2%; 91.7% | 391 / 1,532 |
 | `patriarch_wedge` | 30 tall, ground y146.7 | 58 of 164 leg points | 35.4% | 248 / 2,964 |
-| `cherry_elder_shrew` | 26 tall, ground y143.5 | 71 of 172 leg points | 41.3% | 619 / 2,668 |
-| `weeping_elder_tilpey` | 35 tall, ground y81.1 | 25 of 148 leg points | 16.9% | 863 / 1,510 |
+| `cherry_elder_shrew` | 26 tall, ground y143.5 | 71 of 152 leg points | 46.7% | 619 / 2,668 |
 
 ### Per leg
 
-The tool adds a landmark's legs together; split out, two legs contribute nothing. These are the same inputs, each
-leg cast as its own `seen_from` entry.
+The tool adds a landmark's legs together. These are the same inputs, each leg cast as its own `seen_from` entry. The
+two legs that saw nothing (`gym4→gym5` for the Sentinel, `gym1→gym2` for the Cherry Elder, 0 of 22 and 0 of 20) were
+removed from `data/foliage.json`, so they are no longer listed.
 
 | Landmark | Leg | Points | Seen | Share |
 | --- | --- | ---: | ---: | ---: |
 | `great_oak_pallet` | `hometown→gym1_town` | 42 | 26 | 62% |
 | `sentinel_spruce_tarn` | `gym3_town→gym4_town` | 72 | 34 | 47% |
-| `sentinel_spruce_tarn` | `gym4_town→gym5_town` | 22 | **0** | 0% |
 | `patriarch_wedge` | `gym8_town→league` | 164 | 58 | 35% |
 | `cherry_elder_shrew` | `hometown→gym1_town` | 42 | 25 | 60% |
-| `cherry_elder_shrew` | `gym1_town→gym2_town` | 20 | **0** | 0% |
 | `cherry_elder_shrew` | `gym8_town→league` | 110 | 46 | 42% |
-| `weeping_elder_tilpey` | `gym5_town→gym6_town` | 41 | 10 | 24% |
-| `weeping_elder_tilpey` | `gym6_town→gym7_town` | 43 | 9 | 21% |
-| `weeping_elder_tilpey` | `gym7_town→gym8_town` | 64 | 6 | 9% |
 
 **Observations, not decisions:**
-- **Two `seen_from` legs never see their tree.** The Sentinel is invisible from all of `gym4→gym5`, and the Cherry
-  Elder from all of `gym1→gym2`. Both entries make the aggregate share understate the legs that do work.
-- **The Weeping Elder is the weakest site:** 16.9% overall, and 9% from the Blaine-to-Giovanni leg. Whether that
-  is enough for a lake-island landmark reached by boat is a siting question for
-  `landmark_trees.py candidates --kind headland`, not something this survey decides.
+- **No listed leg measures zero** now that the two legs that never saw their tree are gone.
+- **The Weeping Elder is no longer a landmark.** It measured 25 of 148 leg points (16.9%; 9% from Blaine to
+  Giovanni), and every Lake Tilpey site that measures better (29–38%) is dry shore, which loses the island it exists
+  for. It was demoted on 2026-09-16: it still stands, painted on its island with its glade, but makes no viewpoint
+  claim and is not an outpost (`data/foliage.json` `landmark: false`). The best of those shore sites, (5216, 5024)
+  at 38.5%, is on file in `landmark_candidates` as a possible future Route 8 landmark, not a replacement.
 - **The Sentinel's ring (22 of 24)** still reads once a player reaches the clearing.
+
+## Other visibility claims in `data/`, measured
+
+Every claim in the data that something can or cannot be seen from somewhere is now a measured record in
+`data/visibility.json`, re-measured by `tools/validate_data.py` (check `visibility`) and refreshed by
+`tools/visibility_claims.py --write`. The check fails when a count drifts, when a claim measures false, when the
+planned canopy's hash changes, or when the record that states a claim does not cite it as `visibility:<id>`
+(and say "fragile" if it is). The table below is that registry at this revision; the validator, not this table,
+is the authority.
+
+Three claims measured false and were corrected in their records before the registry existed: the major river from
+Koga's town, the major river from Route 5, and the gorge hamlet from the Tilpey crossing. Each now records the
+negative, so a future change that makes it visible also fails the check.
+
+| Claim | Surface | Measured | Fragile |
+| --- | --- | --- | --- |
+| `great_oak_from_route_01`: The Great Oak's crown is seen from the first leg. | canopy | 26 of 42 observer points | no |
+| `great_oak_from_hometown_edges`: The Great Oak is seen from the edge of the hometown. | canopy | 34 of 34 observer points | no |
+| `sentinel_from_route_04`: The Sentinel's spire shows over the old growth from the Surge-to-Erika leg. | canopy | 34 of 72 observer points | no |
+| `sentinel_from_clearing_ring`: The Sentinel reads from the edge of its clearing. | canopy | 22 of 24 observer points | no |
+| `patriarch_from_victory_road`: The Patriarch breaks the skyline above Victory Road. | canopy | 58 of 164 observer points | no |
+| `cherry_elder_from_route_01`: The Cherry Elder is pink against the plateau from the first leg. | canopy | 25 of 42 observer points | no |
+| `cherry_elder_from_victory_road`: The Cherry Elder is seen from Victory Road's climb. | canopy | 46 of 110 observer points | no |
+| `mt_vessu_summit_from_surge_town`: Mt Vessu's summit is in view from Surge's town. | terrain | 73 of 144 observer points | no |
+| `glacial_tear_from_koga_town`: Part of the Glacial Tear is visible from Koga's town. | terrain | 30 of 213 target samples | no |
+| `major_river_not_from_koga_town`: The major river is not visible from Koga's town. | terrain | 0 of 16 target samples | no |
+| `major_river_not_from_route_05`: Route 5 does not have the major river in view. | terrain | 0 of 66 observer points | no |
+| `gorge_hamlet_not_from_crossing`: The gorge hamlet is not visible from the Tilpey crossing. | terrain | 0 of 41 observer points | no |
+| `relic_island_from_hometown_coast`: Relic Island's house is visible from the hometown's coast. | terrain | 1 of 1 observer points | **yes** |
+| `array_mast_from_nosepass_signs`: The array mast clears the modelled canopy from the Nosepass signs. | canopy model | margin 4.3 blocks | no |
+| `merian_hut_from_its_leg_terrain`: The merian hut is visible from its leg (8-block roofline, over bare terrain). | terrain | 86 of 216 observer points | no |
+| `merian_hut_from_its_leg_canopy`: The merian hut is visible from its leg (8-block roofline, over the planned canopy). | canopy | 35 of 216 observer points | no |
+| `gorge_hamlet_from_its_leg_terrain`: The gorge hamlet is visible from its leg (8-block roofline, over bare terrain). | terrain | 55 of 129 observer points | no |
+| `gorge_hamlet_from_its_leg_canopy`: The gorge hamlet is visible from its leg (8-block roofline, over the planned canopy). | canopy | 1 of 129 observer points | **yes** |
+| `tableland_stop_from_its_leg_terrain`: The tableland stop is visible from its leg (8-block roofline, over bare terrain). | terrain | 88 of 191 observer points | no |
+| `tableland_stop_from_its_leg_canopy`: The tableland stop is visible from its leg (8-block roofline, over the planned canopy). | canopy | 5 of 191 observer points | **yes** |
+| `rift_rim_stop_from_its_leg_terrain`: The rift rim stop is visible from its leg (8-block roofline, over bare terrain). | terrain | 60 of 328 observer points | no |
+| `rift_rim_stop_from_its_leg_canopy`: The rift rim stop is visible from its leg (8-block roofline, over the planned canopy). | canopy | 2 of 328 observer points | **yes** |
+
+A claim is fragile when it holds on 10 or fewer points or under 5% of them (a sightline margin: under 2 blocks).
+Relic Island's is fragile because it is measured from a single coast point, not because the view is poor.
 
 ## Why the rescale barely touches these sites
 
 This section depends only on the heightmaps, not on the lost counts. The pre-rescale column reads `land_8k_16_sculpted_relief.png` (`fd0db59b…`) under the import line in `data/world.json` at `41c736c^`; the canonical column reads the current heightmap. Both were re-measured for this revision.
 
-**All five trees stand at or below y146.7,** where the rescale curve is flat (gain 1.00 at y145), so their own ground
+**All five giants (four landmarks and the demoted Weeping Elder) stand at or below y146.7,** where the rescale curve is flat (gain 1.00 at y145), so their own ground
 did not move. The curve rises slowly and then steeply:
 
 | Old ground | New ground | Rise | Local gain |
