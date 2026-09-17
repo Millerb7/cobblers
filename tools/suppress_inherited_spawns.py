@@ -146,8 +146,8 @@ def main(argv=None):
     p.add_argument("--server", required=True, help="server directory holding mods/ and datapacks/")
     p.add_argument("--world", required=True, help="a DISPOSABLE world directory (its datapacks/ are read)")
     p.add_argument("--routes", default=str(ROOT / "data" / "routes.json"))
-    p.add_argument("--boxes", choices=("raw", "merged"), default="raw")
-    p.add_argument("--grid", type=int, default=GRID, help="merged only: snap the union outward to this grid (8 = exact)")
+    p.add_argument("--boxes", choices=("raw", "merged"), default="merged")
+    p.add_argument("--grid", type=int, default=16, help="merged only: snap the union outward to this grid (8 = exact; 16 is the EXP-012 choice)")
     p.add_argument("--out", default=str(DEFAULT_OUT))
     a = p.parse_args(argv)
     if "cobblers-10240" in Path(a.world).as_posix():

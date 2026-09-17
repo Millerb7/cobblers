@@ -7,7 +7,7 @@
     "native_expression": "every inherited spawn_pool_world file overridden at its resource path; each spawn detail gains one {minX,maxX,minZ,maxZ} entry per route box in \"anticonditions\" (plural key; singular \"anticondition\" with an array aborts the reload)",
     "generated": true,
     "experiment": "experiments/EXP-012-bounded-default-suppression",
-    "generator": "tools/suppress_inherited_spawns.py (output build/datapacks/cobblers_suppress/, upstream data, never committed)",
+    "generator": "tools/suppress_inherited_spawns.py --boxes merged --grid 16 (637 boxes; output build/datapacks/cobblers_suppress/, upstream data, never committed)",
     "runtime_status": "proven 2026-09-17 on a disposable world: corridor sample 54% -> 97.6% curated, outside unchanged; 1,729 files, 368 MB, +8 s boot, +1.5 GB heap, +8.5 s reload, no measurable tick cost"
   },
   "habitat_blocks": {
