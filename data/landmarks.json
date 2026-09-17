@@ -196,8 +196,8 @@
      "z": 1352
     },
     "anchor_ground_y": 156.1,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -211,7 +211,7 @@
    "anchor": {
     "x": 2154,
     "z": 682,
-    "y": 225.1
+    "y": 227.7
    },
    "extent": {
     "polygons": [
@@ -318,9 +318,9 @@
      "x": 1864,
      "z": 760
     },
-    "anchor_ground_y": 225.1,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "anchor_ground_y": 227.7,
+    "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -402,8 +402,8 @@
      "z": 1480
     },
     "anchor_ground_y": 251.6,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -4803,8 +4803,8 @@
      "z": 5128
     },
     "anchor_ground_y": 288.3,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -6227,8 +6227,8 @@
   }
  ],
  "canonical_check": {
-  "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-  "date": "2026-09-17",
-  "method": "Water bodies, basins, rivers and ravines stay measured on the authored heightmap (computed_from_sha256), where they are planned. Against the canonical rescaled heightmap, every column under a graded river course (width + 8) or a lake basin polygon differs by at most 0.0043 blocks (2,095,235 columns, 0 over 0.01), because the rescale is the identity at or below y145 and the highest water is y127. Summits (mountain and volcano anchors and outlines) are above y145 and are re-measured here: see measured_summit."
+  "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+  "date": "2026-09-16",
+  "method": "Water bodies, basins, rivers and ravines stay measured on the authored heightmap (computed_from_sha256), where they are planned. Against the canonical rescaled heightmap, every column under a graded river course (width + 8) or a lake basin polygon differs by at most 0.0043 blocks (2,095,235 columns, 0 over 0.01), because the rescale is the identity at or below y145 and the highest water is y127. Summits (mountain and volcano anchors and outlines) are above y145 and are re-measured here: see measured_summit. The pad re-press (tools/press_pads.py) changes no water column: both pads are summits."
  }
 }

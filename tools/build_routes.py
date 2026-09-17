@@ -178,6 +178,8 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
     p.add_argument("--geography-only", action="store_true", help="reuse build/routes/paths.json; recompute membership")
+    p.add_argument("--reroute", nargs="*", default=None, metavar="ROUTE_ID",
+                   help="route only these legs again and reuse the cached paths for the rest (same heightmap required)")
     p.add_argument("--date", default=datetime.date.today().isoformat())
     p.add_argument("--out-dir", default=None, help="write routes.json, towns.json and the path cache here instead of data/ and build/")
     a = p.parse_args(argv)
@@ -246,8 +248,15 @@ def main(argv=None):
     else:
         router = Router(heights, sea, water_mask)
         paths = {}
+        if a.reroute:
+            cache = json.loads(cache_path.read_text(encoding="utf-8"))
+            if cache["heightmap_sha256"] != world["heightmap"]["sha256"]:
+                raise SystemExit("cached paths were routed on another heightmap: route every leg")
+            paths = {k: [tuple(q) for q in v] for k, v in cache["paths"].items() if k not in a.reroute}
         for r in old["routes"]:
             rid = r["id"]
+            if rid in paths:
+                continue
             start = (town_by[r["from_town"]]["centre"]["x"], town_by[r["from_town"]]["centre"]["z"])
             goal = (town_by[r["to_town"]]["centre"]["x"], town_by[r["to_town"]]["centre"]["z"])
             pts = [start] + waypoints.get(rid, []) + [goal]
