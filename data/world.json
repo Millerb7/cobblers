@@ -162,7 +162,7 @@
     "exported": "2026-09-15",
     "carried_from_previous_level_dat": ["WorldGenSettings", "DataPacks", "GameRules", "Difficulty", "DifficultyLocked", "GameType", "allowCommands", "hardcore"],
     "measured_ceiling_y": 310,
-    "measured_ceiling_note": "Terrain only, measured 2026-09-16 on the canonical heightmap (sha256 3eb0edee) through worldpainter_levels: the highest value is 65276, under image_high 65278, so it maps to y309.99 and 0 columns exceed the top of the line. The pre-rescale value was y201 (source values above 65406 overshooting a y200 line). Built structures are not terrain and are measured separately: see built_ceiling.",
+    "measured_ceiling_note": "Terrain only, measured 2026-09-16. On the rescaled heightmap (sha256 3eb0edee) through worldpainter_levels the highest value is 65276, under image_high 65278, so it maps to y309.99 and 0 columns exceed the top of the line. On the canonical heightmap (sha256 5b963567, the same terrain plus the tools/press_pads.py pads) the highest ground is y310.0: the Frostpeak shrine pad, 9,886 columns pressed exactly to the top of the line; nothing exceeds it. The pre-rescale value was y201 (source values above 65406 overshooting a y200 line). Built structures are not terrain and are measured separately: see built_ceiling.",
     "built_ceiling": {
       "top_y": 535,
       "what": "the world tree at Foothill Woods, trunk centre (2016, 2280), ground y116, 418 blocks tall",

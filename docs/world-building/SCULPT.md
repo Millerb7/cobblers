@@ -3,6 +3,11 @@
 **Status: sculpted and repainted 2026-09-15; not exported.** The design is `data/sculpt.json` and the tool
 `tools/sculpt.py`.
 
+> **Levels below are pre-rescale (2026-09-15).** The vertical rescale (`VERTICAL_RESCALE.md`) later raised everything
+> above y145: the y200 summits now reach y300 (Mt Vessu) and y304 (the great cone), and the Scar and Frostpeak pads are re-pressed at y280 and
+> y310 by `tools/press_pads.py`. Surge's town no longer uses the protected shoulder named below; it moved to a shelf
+> at (1688, 1410), y174 (`TOWNS.md`). `data/landmarks.json` and `data/towns.json` hold the current measurements.
+
 ## How it was done
 
 These are local brushes on the current terrain, not a regenerated heightmap.

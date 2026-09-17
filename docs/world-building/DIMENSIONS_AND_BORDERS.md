@@ -213,7 +213,7 @@ hand-placed.
 | --- | --- | --- | --- | --- |
 | 1 | Brock | plains | overworld, hand-placed: Viltri Plateau | start |
 | 2 | Misty | lukewarm_ocean | overworld, hand-placed: Lake Viltri north shore | early |
-| 3 | Lt. Surge | savanna_plateau | overworld, hand-placed: Mt Vessu shoulder | |
+| 3 | Lt. Surge | savanna_plateau | overworld, hand-placed: Tri Peaks shelf below Mt Vessu (1688, 1410) | |
 | 4 | Erika | flower_forest | overworld, hand-placed: Peak Pond Hollow | |
 | 5 | Koga | swamp | overworld, hand-placed: Glacier Foot Fields | |
 | 6 | Sabrina | dark_forest | overworld, hand-placed: Tilpey North Shore | |

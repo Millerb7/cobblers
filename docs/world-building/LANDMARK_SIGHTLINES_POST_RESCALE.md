@@ -1,5 +1,13 @@
 # Landmark sightlines after the vertical rescale (2026-09-16)
 
+> **The legs in this report are the retired 8-block candidates** (`derived/routes/critical_legs.json`, 2026-09-14),
+> not the regenerated `data/routes.json`, and leg 3-4 starts from Surge's old shoulder site. `tools/landmark_trees.py
+> check` now reads `data/routes.json` by default. A same-inputs comparison (the one available canopy, the canonical
+> heightmap, only the legs changed) moves the counts as follows: the Great Oak 24 → 27 of 37 → 42 points, the Sentinel
+> 26 → 31 of 81 → 94, the Patriarch 66 → 53 of 155 → 164, the Cherry Elder 54 → 67 of 160 → 172, the Weeping Elder
+> 37 → 27 of 144 → 148. Those baseline counts do not reproduce the table below, because the canopy this report used is
+> not the one available, so the absolute figures need a re-run against the current paint's canopy.
+
 **Verdict: all five sites stand. The rescale cost two sightlines in total, both of them the Sentinel's, and the
 other four surveys came back identical line for line.** The costing in `VERTICAL_RESCALE.md` §7 expected the
 Sentinel to be the casualty. It is the casualty, but the bill was 2 lines, not the 56 the risk column implied.

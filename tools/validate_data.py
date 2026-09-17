@@ -1264,6 +1264,91 @@ def _distance_to_routes(segs, centre):
     return round(best)
 
 
+NEAREST_LEG_ALONG_BLOCKS = 4  # plus half a thousandth of the leg: at_fraction is stored to three decimals
+
+
+def _route_lines(routes_doc):
+    """[(route, [(x, z, at_distance_blocks)], length)] in file order, for routes with a usable polyline."""
+    out = []
+    for r in (routes_doc or {}).get("routes") or []:
+        pts = [(p["x"], p["z"], p["at_distance_blocks"]) for p in ((r.get("corridor") or {}).get("polyline") or [])
+               if isinstance(p, dict) and _num(p.get("x")) and _num(p.get("z")) and _num(p.get("at_distance_blocks"))]
+        if len(pts) >= 2 and pts[-1][2] > 0:
+            out.append((r, pts, pts[-1][2]))
+    return out
+
+
+def _project(pts, x, z):
+    """(distance, along, qx, qz): the nearest point on one polyline to (x, z) and how far along the polyline it lies."""
+    best = None
+    for (ax, az, aa), (bx, bz, ba) in zip(pts, pts[1:]):
+        dx, dz = bx - ax, bz - az
+        den = dx * dx + dz * dz
+        t = 0.0 if not den else max(0.0, min(1.0, ((x - ax) * dx + (z - az) * dz) / den))
+        qx, qz = ax + t * dx, az + t * dz
+        d = math.hypot(x - qx, z - qz)
+        if best is None or d < best[0]:
+            best = (d, aa + t * (ba - aa), qx, qz)
+    return best
+
+
+def measure_nearest_leg(routes_doc, centre):
+    """(distance, nearest_leg record) for the route point nearest a centre, measured on data/routes.json polylines.
+
+    A tie (a town shared by two legs) goes to the first route in file order. None when either input is missing."""
+    lines = _route_lines(routes_doc)
+    if not lines or not isinstance(centre, dict) or not (_num(centre.get("x")) and _num(centre.get("z"))):
+        return None
+    best = None
+    for r, pts, length in lines:
+        d, along, qx, qz = _project(pts, centre["x"], centre["z"])
+        if best is None or d < best[0] - 1e-9:
+            best = (d, r, along, length, qx, qz)
+    d, r, along, length, qx, qz = best
+    return d, {"route_id": r.get("id"), "from": r.get("from_town"), "to": r.get("to_town"),
+               "at_fraction": round(along / length, 3), "nearest_point": {"x": round(qx), "z": round(qz)}}
+
+
+def _nearest_leg_problems(routes_doc, centre, recorded):
+    """Why a recorded nearest_leg disagrees with data/routes.json, as a list of strings (empty when it agrees).
+
+    A record agrees when its route is one of the nearest (within OFF_PATH_STALE_BLOCKS of the measured distance), its
+    from/to are that route's towns, its nearest_point lies on that route at that distance, and its at_fraction puts
+    the point where the nearest_point projects along the route."""
+    m = measure_nearest_leg(routes_doc, centre)
+    if m is None:
+        return []
+    dist, _ = m
+    if not isinstance(recorded, dict):
+        return ["has no nearest_leg record"]
+    route = next(((r, pts, length) for r, pts, length in _route_lines(routes_doc) if r.get("id") == recorded.get("route_id")),
+                 None)
+    if route is None:
+        return ["names route %r, which has no polyline in data/routes.json" % recorded.get("route_id")]
+    r, pts, length = route
+    out = []
+    if (recorded.get("from"), recorded.get("to")) != (r.get("from_town"), r.get("to_town")):
+        out.append("records %s->%s but %s runs %s->%s" % (recorded.get("from"), recorded.get("to"), r.get("id"),
+                                                         r.get("from_town"), r.get("to_town")))
+    d_route = _project(pts, centre["x"], centre["z"])[0]
+    if d_route - dist > OFF_PATH_STALE_BLOCKS:
+        out.append("names %s, %d blocks away, but the nearest leg is %d blocks away" % (r.get("id"), round(d_route), round(dist)))
+        return out
+    p = recorded.get("nearest_point") or {}
+    frac = recorded.get("at_fraction")
+    if not (_num(p.get("x")) and _num(p.get("z"))) or not _num(frac):
+        return out + ["needs nearest_point x/z and a numeric at_fraction"]
+    on_route, along, _, _ = _project(pts, p["x"], p["z"])
+    if on_route > OFF_PATH_STALE_BLOCKS or abs(math.hypot(centre["x"] - p["x"], centre["z"] - p["z"]) - dist) > OFF_PATH_STALE_BLOCKS:
+        m_point = _project(pts, centre["x"], centre["z"])
+        out.append("nearest_point (%s, %s) is not the nearest point on %s; measured (%d, %d)"
+                   % (p["x"], p["z"], r.get("id"), round(m_point[2]), round(m_point[3])))
+    elif abs(frac * length - along) > NEAREST_LEG_ALONG_BLOCKS + 0.0005 * length:
+        out.append("at_fraction %s puts the point %d blocks along %s, but nearest_point lies %d along (fraction %.3f)"
+                   % (frac, round(frac * length), r.get("id"), round(along), along / length))
+    return out
+
+
 def check_towns(ctx: Context):
     """Settlements: unique ids; exactly ten on the critical path (hometown, eight gym towns, the League) with
     unique orders; everything else off the path, ungated and named by no progression flag; footprints inside
@@ -1316,6 +1401,10 @@ def check_towns(ctx: Context):
             if measured is not None and (not isinstance(recorded, (int, float)) or abs(recorded - measured) > OFF_PATH_STALE_BLOCKS):
                 rep.error("towns", '"%s" records distance_from_critical_path_blocks %s but measures %s on data/routes.json: the '
                           "record is stale" % (tid, recorded, measured), file=f.rel, line=line, where=tid)
+            if measured is not None and "nearest_leg" in t:
+                for why in _nearest_leg_problems(ctx.doc("routes.json"), t.get("centre"), t.get("nearest_leg")):
+                    rep.error("towns", '"%s" nearest_leg is stale: %s (tools/measure_towns.py --write refreshes it)'
+                              % (tid, why), file=f.rel, line=line, where=tid)
         fp, c = t.get("footprint") or {}, t.get("centre") or {}
         try:
             if not (fp["min_x"] <= c["x"] <= fp["max_x"] and fp["min_z"] <= c["z"] <= fp["max_z"]):
@@ -2146,6 +2235,101 @@ SPAWN_BLOCKS = "spawn_blocks.json"
 SPAWN_POLICY = "spawn_block_policy.json"
 
 
+TOWN_GROUND_TOLERANCE = 0.1  # recorded heights and slopes are rounded to one decimal
+
+
+def _islet_ground(win, x0, z0, world):
+    """Lay tools/islet.py's Relic Island surface over a height window whose [0, 0] is block (x0, z0), in place."""
+    import numpy as np
+    import terrain as T
+    import islet
+    cx, cz = islet.CENTRE
+    r = islet.RADIUS
+    top, _ = islet.island_top(None, int(T.sea_level(world)))
+    for j in range(top.shape[0]):
+        for i in range(top.shape[1]):
+            wz, wx = cz - r + j - z0, cx - r + i - x0
+            if not np.isnan(top[j, i]) and 0 <= wz < win.shape[0] and 0 <= wx < win.shape[1]:
+                win[wz, wx] = max(win[wz, wx], top[j, i])
+
+
+# built_ground names a tool that raises terrain in the world that the heightmap does not carry; the town's recorded
+# heights are measured on the heightmap with that tool's surface laid over it
+BUILT_GROUND = {"tools/islet.py": _islet_ground}
+
+
+def measure_town_ground(heights, world, town, tools_dir=None):
+    """{centre_ground_y, footprint_ground_y, slope_mean, slope_max} for a town, on the canonical heightmap plus any
+    declared built ground; slope is find_sites' (terrain.slope_degrees) over the footprint. Raises KeyError for an
+    unknown built_ground."""
+    import numpy as np
+    tools_dir = Path(tools_dir or Path(__file__).resolve().parent)
+    if str(tools_dir) not in sys.path:
+        sys.path.insert(0, str(tools_dir))
+    import terrain as T
+    fp, c = town["footprint"], town["centre"]
+    pad = 2
+    z0, z1 = max(0, fp["min_z"] - pad), min(heights.shape[0], fp["max_z"] + 1 + pad)
+    x0, x1 = max(0, fp["min_x"] - pad), min(heights.shape[1], fp["max_x"] + 1 + pad)
+    lo_z, lo_x = min(z0, c["z"]), min(x0, c["x"])
+    hi_z, hi_x = max(z1, c["z"] + 1), max(x1, c["x"] + 1)
+    win = np.array(heights[lo_z:hi_z, lo_x:hi_x], dtype=np.float64)
+    if town.get("built_ground"):
+        BUILT_GROUND[town["built_ground"]](win, lo_x, lo_z, world)
+    sl = T.slope_degrees(win)
+    fz0, fz1 = fp["min_z"] - lo_z, fp["max_z"] + 1 - lo_z
+    fx0, fx1 = fp["min_x"] - lo_x, fp["max_x"] + 1 - lo_x
+    ground, slope = win[fz0:fz1, fx0:fx1], sl[fz0:fz1, fx0:fx1]
+    return {"centre_ground_y": float(win[c["z"] - lo_z, c["x"] - lo_x]),
+            "footprint_ground_y": [float(ground.min()), float(ground.max())],
+            "slope_mean": float(slope.mean()), "slope_max": float(slope.max())}
+
+
+def check_town_ground(ctx: Context):
+    """Every town's recorded centre.ground_y, footprint.ground_y and footprint.slope_degrees against the canonical
+    heightmap (plus any built_ground), so a re-press, rescale or build cannot leave them stale silently."""
+    rep = ctx.report
+    f, towns = ctx.records("towns.json")
+    if not f:
+        return
+    terrain = load_terrain(ctx)
+    if terrain is None:
+        rep.skip("town-ground", "town heights not measured (%s)" % (ctx.terrain_reason or "terrain unavailable"), file=f.rel)
+        return
+    heights, world = terrain["heights"], terrain["world"]
+    tol = TOWN_GROUND_TOLERANCE + 1e-6
+    checked = 0
+    for t in towns:
+        tid = t.get("id")
+        line = f.line_of_id(tid)
+        fp, c = t.get("footprint") or {}, t.get("centre") or {}
+        if not all(_int(fp.get(k)) for k in ("min_x", "max_x", "min_z", "max_z")) or not (_int(c.get("x")) and _int(c.get("z"))):
+            continue
+        if t.get("built_ground") and t["built_ground"] not in BUILT_GROUND:
+            rep.error("town-ground", '"%s" built_ground %r is not a known builder (%s)'
+                      % (tid, t["built_ground"], ", ".join(sorted(BUILT_GROUND))), file=f.rel, line=line, where=tid)
+            continue
+        m = measure_town_ground(heights, world, t)
+        checked += 1
+        stale = []
+        if _num(c.get("ground_y")) and abs(c["ground_y"] - m["centre_ground_y"]) > tol:
+            stale.append("centre.ground_y %s, measured %.1f" % (c["ground_y"], m["centre_ground_y"]))
+        g = fp.get("ground_y")
+        if isinstance(g, list) and len(g) == 2 and all(_num(v) for v in g):
+            if abs(g[0] - m["footprint_ground_y"][0]) > tol or abs(g[1] - m["footprint_ground_y"][1]) > tol:
+                stale.append("footprint.ground_y %s, measured [%.1f, %.1f]" % (g, *m["footprint_ground_y"]))
+        s = fp.get("slope_degrees") or {}
+        if _num(s.get("mean")) and _num(s.get("max")):
+            if abs(s["mean"] - m["slope_mean"]) > tol or abs(s["max"] - m["slope_max"]) > tol:
+                stale.append("footprint.slope_degrees mean %s max %s, measured mean %.1f max %.1f"
+                             % (s["mean"], s["max"], m["slope_mean"], m["slope_max"]))
+        if stale:
+            rep.error("town-ground", '"%s" records stale heights: %s (tools/measure_towns.py --write refreshes them)'
+                      % (tid, "; ".join(stale)), file=f.rel, line=line, where=tid)
+    rep.info("town-ground", "measured %d town centres and footprints on heightmap %s"
+             % (checked, str((world.get("heightmap") or {}).get("sha256") or "")[:12]), file=f.rel)
+
+
 def _palette(path):
     """Block names in a structure template's palette (tools/nbt.py is standard library only)."""
     tools = str(Path(__file__).resolve().parent)
@@ -2372,6 +2556,7 @@ CHECKS = [
     ("spawn-blocks", check_spawn_blocks),
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
+    ("town-ground", check_town_ground),
 ]
 
 

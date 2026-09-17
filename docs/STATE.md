@@ -28,8 +28,8 @@
 - **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); 0 pools are installed and 0 placed Habitat Blocks are verified in-world.
 - **Quest data:** 3 dialogue conversations and 2 quests exist as proposed source data; 0 have been compiled into or proven through a runtime dialogue system.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
-- **Tooling:** 61 Python tools, 2 PowerShell server scripts, 37 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
-- **Stale inventory:** `docs/world-building/BUILT.md`, `NAVIGATION.md`, `TOWNS.md` and `SETTLEMENTS.md`, and the `docs/story/` documents listed in `docs/HANDOVER_CODEX.md`, still quote pre-rescale or pre-sculpt geometry.
+- **Tooling:** 62 Python tools, 2 PowerShell server scripts, 39 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
+- **Stale inventory:** the landmark-tree sightline counts in `docs/world-building/FOLIAGE.md` and `LANDMARK_SIGHTLINES_POST_RESCALE.md` were cast from the retired 2026-09-14 legs; `tools/landmark_trees.py check` now reads `data/routes.json`, but an absolute re-run needs the current paint's `build/paint/canopy.npz`. Dated records (`TERRAIN_2026-09-14.md`, `SCULPT.md`, `VERTICAL_RESCALE.md`, `REEXPORT.md`, `TOWN_CANDIDATES.md`) keep pre-rescale levels and are labelled as such.
 - **Retired snapshots:** the retained recovery anchors `2026-09-16-pre-rescale` and `2026-09-17-pre-grass` both boot from copies (Done, clean save; all 43 error lines per anchor classified and also present in a live-world boot); retention, per-line classification and the user's delete commands are in `docs/world-building/SNAPSHOTS.md`.
 
 ## What is decided
@@ -57,7 +57,7 @@
 - **Leg 4 waypoint:** passes west of the Merian cirque at `(2640, 1180)` so the Displaced City stays at least 250 and the Merian hut 100-450 blocks off the critical path.
 - **Flat pads:** the Scar and the Frostpeak shrine are re-pressed at their authored levels carried through the rescale curve (y280, y310), and Surge's shelf is authored directly on the rescaled terrain (`pressed_y` 174.4), all by `tools/press_pads.py`.
 - **Surge's signal array:** landmark `surge_signal_array` on a Mt Vessu shoulder at `(1928, 1248)`, y284; the Route 3 Nosepass signs aim at it from `(2203, 1609)`, the only stretch of leg 3 that sees its mast over the canopy. The summit reveal at the shelf lip carries no quest beat.
-- **Off-path distances:** measured by `tools/validate_data.py` on `data/routes.json`, never trusted from records; landmark trees (sited to be seen from a leg) may stand 200 or more off the path, other outposts 250.
+- **Measured town records:** off-path distance and `nearest_leg` (on `data/routes.json`) and every town's centre and footprint heights and slope (on the canonical heightmap, plus `built_ground` such as Relic Island's islet) are checked by `tools/validate_data.py` and rewritten only by `tools/measure_towns.py`, never trusted from records; landmark trees (sited to be seen from a leg) may stand 200 or more off the path, other outposts 250.
 - **Compiled spawn pools:** generated build output from `tools/compile_spawns.py` into `build/datapacks/cobblers_spawns/`; no compiled pool is committed; each route's species list is authored in `data/spawns.json` `route_species_selection`.
 
 ## What is open
@@ -67,12 +67,14 @@
 - **Snapshot cleanup:** the user runs the delete commands for the non-retained snapshots and boot-check copies (about 42.5 GiB); this blocks nothing technical.
 - **Hometown waystone:** decide whether it starts unlocked or is earned; this blocks its final progression trigger.
 - **Midpoint waystones:** decide whether routes receive none, post-gym unlocks, or discovery unlocks; this blocks final navigation data and retreat rules.
+- **Foothill grove beside Route 3:** the regenerated leg 3 passes the built grove, with its nearest elder about 33 blocks and giants 49 and 62 blocks from the road (it was 388 off the 2026-09-14 leg); decide whether the road keeps that line or is pinned away; this blocks Route 3's road composition there.
+- **Elder inside the Nosepass clearing:** a built elder at `(2236, 1622)` stands about 35 blocks from the sign site `(2203, 1609)`, inside the 40-block clearing the sign event's hard build constraint requires (it is south-east of the signs, not in the north-west sightline); decide whether the elder or the signs move; this blocks building that event.
+- **Relic Island footprint:** the built islet leaves 348 of the recorded 40-block square's 1,600 columns under the sea and its surface rough (footprint ground y38-70); decide whether to shrink the footprint to the dry 20-block core (y63-70) or level a pad; this blocks the Ash House placement.
 - **Gastly mansion details:** choose the donor/site, actors, rewards, levels, and final roster; this blocks implementation of that optional quest.
 
 ## What is blocked
 
 - **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap only; the live world and the WorldPainter project predate them, so in-world flats and Surge's town site are blocked on the next re-export.
-- **Codex's documents:** `docs/story/` and `docs/world-building/TOWNS.md`/`SETTLEMENTS.md` quote pre-sculpt distances and the old Surge site; narrative acceptance of the new geometry is blocked on the revisions listed in `docs/HANDOVER_CODEX.md`.
 - **Habitat replacement:** 9 native roster files are compiled, but runtime enforcement is blocked until Habitat Block placement, influence and persistence are proven in game.
 - **Bounded suppression:** runtime exclusivity for curated route pools is blocked until EXP-012 proves default Cobblemon spawns can be suppressed inside a coordinate-bounded area without suppressing the outside world.
 - **Dialogue delivery:** the 3 authored conversations and 2 quests are blocked on a compiler/runtime adapter from campaign JSON to native Cobblemon dialogue, commands, and persistent cursors.
@@ -104,7 +106,6 @@
 | `data/notes/` | `content-architect` | Store bounded source notes; promote settled state into this file. |
 | `data/README.md` | `content-architect` | Keep the data index aligned with files that actually exist. |
 | `data/spawns.json`, `data/spawn_suppression.json` | `datapack-content-dev` | Keep source rosters, per-route species selection and suppression proof status synchronized; native pools are generated by `tools/compile_spawns.py` into `build/`, never committed; installation requires the named runtime proofs. |
-| Codex, 2026-09-16 | — | Codex paused all `data/` work while the canonical data was regenerated (branch `data/post-rescale-regeneration`). It can resume `docs/story/`, the world-building documents and `data/spawns.json` rosters now, and the rest of `data/` once that branch merges; the revision list is `docs/HANDOVER_CODEX.md`. |
 | Future `data/events.json`, `data/trainers.json`, `data/gyms.json` | `datapack-content-dev` | Create only after the corresponding schema/mechanism is accepted. |
 | `kits/` | `world-content-dev` | Source-controlled templates, schematics, and structure assets only; the live save never enters this path. |
 | `derived/`, `build/` | `world-content-dev` | Regenerated outputs and their indexes only; do not hand-edit generated artifacts. |

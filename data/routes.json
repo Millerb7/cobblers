@@ -3477,32 +3477,40 @@
       "water_crossings": [],
       "barriers": [
         {
-          "id": "mt_vessu_climb",
+          "id": "tri_peaks_shelf_climb",
           "kind": "mountain_ascent",
           "at": {
-            "x": 1880,
-            "y": 137.21,
-            "z": 1585
+            "x": 1726,
+            "y": 160.94,
+            "z": 1529
           },
-          "note": "Climbs to the exposed south shoulder of Mt Vessu.",
+          "note": "The Tri Peaks grade up the Tri Peaks - Mt Vessu south flank to Surge's shelf: about 30 blocks of ascent in under 200 blocks of road, the steepest stretch of the leg, before the level shelf lip.",
           "source_coordinate": {
-            "x": 1880,
-            "z": 1488
+            "x": 1726,
+            "z": 1529
           }
         }
       ],
       "landmarks": [
         {
           "id": "pond_west_of_mt_clay",
-          "relation": "its outflow creates the crossing"
+          "relation": "passes about 100 blocks north of the pond; its outflow runs west, away from the road, and is not crossed"
         },
         {
-          "id": "tri_peaks",
-          "relation": "enters the massif foothills"
+          "id": "surge_signal_array",
+          "relation": "its mast is visible over the Foothill Woods canopy only from the Nosepass sign site, 69-71% along the leg"
+        },
+        {
+          "id": "mt_clay",
+          "relation": "crosses its western foot"
         },
         {
           "id": "mt_vessu",
-          "relation": "Gym 3 destination shoulder"
+          "relation": "skirts the edge of its south-western slope; the town sits at its foot, not on it"
+        },
+        {
+          "id": "tri_peaks",
+          "relation": "climbs the south flank to Surge's shelf"
         }
       ],
       "spawn_scope": {
@@ -6310,7 +6318,7 @@
             "y": 107.44,
             "z": 1237
           },
-          "note": "Runs east along the north side of the massif; no recorded water crossing.",
+          "note": "After leaving Surge's shelf back across the Mt Vessu and Mt Clay slopes, runs east along the north side of the massif; no recorded water crossing.",
           "source_coordinate": {
             "x": 3000,
             "z": 1020
@@ -6320,7 +6328,7 @@
       "landmarks": [
         {
           "id": "merian",
-          "relation": "skirts the cirque's northern ground"
+          "relation": "crosses the cirque's southern ground past the waypoint west of it (2640, 1180); the Merian hut is 120 blocks north of the road"
         },
         {
           "id": "ravine_head_tarn",
@@ -12118,7 +12126,7 @@
             "y": 76.7,
             "z": 3904
           },
-          "note": "Without it the terrain route is 9,496 blocks back past the river head.",
+          "note": "Without it the terrain route is 9,496 blocks back past the river head (2026-09-14 routing on 8-block cells; not re-measured on the canonical heightmap).",
           "source_coordinate": {
             "x": 6632,
             "z": 3904
@@ -23356,7 +23364,7 @@
     "Victory Road is computed between measured Rift arm, fork, trunk and apex waypoints.",
     "Every polyline point includes sampled elevation; route elevation records climb, grade and slope-limit exceedances.",
     "Spawn rectangles exactly cover the 8-block corridor raster, keeping overspill below the 15% requirement.",
-    "Unassigned path intervals are explicit polygon holes and remain blockers for spawn compilation."
+    "Every dense path sample lies inside a sub-region polygon (subregion_holes count 0), so no hole blocks spawn compilation."
   ],
   "derivation_record": {
     "executed_command": "python tools/build_routes.py --source-root <root> --geography-only",

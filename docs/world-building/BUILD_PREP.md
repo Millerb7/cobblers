@@ -87,7 +87,9 @@ creek bed. Excavating before the export would be lost, or copying its chunks acr
 **Recommended: Foothill Woods.**
 - **The densest wood on the list** (80 stems per hectare), so the giants read as the forest's elders.
 - **Discoverable:** 388 blocks off the leg from Misty to Surge, and seen from 89% of that leg's points within
-  900 blocks.
+  900 blocks. Both figures are on the 2026-09-14 legs. On the regenerated `route_03_misty_to_surge` the grove
+  centre is about 92 blocks from the road, and its nearest built elder about 33: the grove now flanks the road
+  rather than standing off it.
 - **Clear of Peak Pond Hollow** by 1,624 blocks.
 
 **Marshy Marsh is the only swamp.** It is barely 600 blocks from Peak Pond Hollow, and its grove ground measured dry:

@@ -369,14 +369,14 @@
    "y": 194,
    "radius": 150,
    "feather": 140,
-   "why": "Mt Vessu keeps one deliberate flat: the Scar, where the Displaced City was torn away, pressed flat at y194 as a scraped table just below the true summit (y200, north-west of it). The rest of the old clipped plateau is broken into ridges and saddles."
+   "why": "Mt Vessu keeps one deliberate flat: the Scar, where the Displaced City was torn away, pressed flat at y194 as a scraped table just below the true summit (y200, north-west of it). These are pre-rescale levels: tools/press_pads.py carries y194 through the rescale curve and presses the Scar at y280, 20 blocks under the rescaled y300 summit. The rest of the old clipped plateau is broken into ridges and saddles."
   },
   {
    "site": "frostpeak_shrine",
    "y": 200,
    "radius": 55,
    "feather": 70,
-   "why": "The shrine keeps a small levelled summit platform; the rest of Frostpeak's clipped top is broken up."
+   "why": "The shrine keeps a small levelled summit platform; the rest of Frostpeak's clipped top is broken up. y200 is the pre-rescale level; tools/press_pads.py carries it through the rescale curve and presses the platform at y310."
   },
   {
    "site": "gym3_town",
