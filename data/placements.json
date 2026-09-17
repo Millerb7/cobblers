@@ -80,7 +80,8 @@
    "spawn": [
     1461,
     5306
-   ]
+   ],
+   "built": "placed and verified 2026-09-16 on the rescaled world; the composition itself is still a proposal for a human to accept or rework"
   },
   "gym1_town": {
    "centre": [
@@ -88,7 +89,7 @@
     3628
    ],
    "footprint_from": "data/towns.json gym1_town",
-   "status": "proposed: plan data for a human to compose from in Axiom; nothing built",
+   "status": "proposed: plan data for a human to compose from in Axiom. Built: street, plaza and gym-lot prep (gym lot flattened to y141), and Brock's gym prefab at (1838, 140, 3690) rotation 180; no other building",
    "plan": {
     "reading": "From the hometown the route climbs onto the Viltri Plateau and enters from the south-west. The approach street rises gently NE straight into the plaza, so the Pokemon Center is the first building ahead (west side, door facing the plaza) and the Mart faces it across the square. The gym stands alone on the south-east knoll, the highest ground in town (y141-142): seen from the plaza over its lane, reached by climbing to it. The route leaves due north up the avenue toward Lake Viltri and Misty.",
     "entries": [
@@ -273,7 +274,7 @@
     2801
    ],
    "footprint_from": "data/towns.json gym2_town",
-   "status": "proposed: plan data for a human to compose from in Axiom; nothing built",
+   "status": "proposed: plan data for a human to compose from in Axiom. Built: street and plaza prep only; the waterfront gym lot is not levelled",
    "plan": {
     "reading": "The route comes down off the plateau along Lake Viltri's north shore and enters from the south-east with the water on the left. A shore street leads into the plaza; the Pokemon Center stands at its north-west corner facing the square and the Mart across the avenue. South of the plaza a short link reaches the lakeside promenade, and the gym stands on the waterfront between the two piers, facing the town with its back to the lake, so the water is the gym's backdrop and its arena can reach out over it. The route leaves due north up the avenue toward Surge.",
     "entries": [
@@ -506,7 +507,12 @@
    "y_mode": "surface",
    "rotation": "none",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_pokecenter",
@@ -524,7 +530,12 @@
    "y_mode": "surface",
    "rotation": "180",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_pokemart",
@@ -542,7 +553,12 @@
    "y_mode": "surface",
    "rotation": "180",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_oaks_lab",
@@ -560,7 +576,12 @@
    "y_mode": "surface",
    "rotation": "none",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_house_1",
@@ -578,7 +599,12 @@
    "y_mode": "surface",
    "rotation": "counterclockwise_90",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_house_2",
@@ -596,7 +622,12 @@
    "y_mode": "surface",
    "rotation": "counterclockwise_90",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_house_3",
@@ -614,7 +645,12 @@
    "y_mode": "surface",
    "rotation": "clockwise_90",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_house_4",
@@ -632,7 +668,12 @@
    "y_mode": "surface",
    "rotation": "clockwise_90",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   },
   {
    "id": "hometown_house_5",
@@ -650,7 +691,12 @@
    "y_mode": "surface",
    "rotation": "180",
    "mirror": "none",
-   "status": "planned"
+   "status": "verified",
+   "verified": {
+    "date": "2026-09-16",
+    "by": "tools/place_town.py --verify over RCON on the rescaled world",
+    "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+   }
   }
  ]
 }

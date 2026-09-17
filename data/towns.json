@@ -2,7 +2,7 @@
  "schema": "cobblers.towns/1",
  "schema_status": "proposed",
  "status": "proposed",
- "computed_from_sha256": "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1",
+ "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
  "coordinates": "Block x, z. A1 origin at 0,0; x east, z south.",
  "decisions": [
   {
@@ -75,7 +75,7 @@
    "centre": {
     "x": 1462,
     "z": 5293,
-    "ground_y": 116.2
+    "ground_y": 116.8
    },
    "footprint": {
     "shape": "square",
@@ -143,7 +143,7 @@
    "centre": {
     "x": 1743,
     "z": 3628,
-    "ground_y": 137.7
+    "ground_y": 138.2
    },
    "footprint": {
     "shape": "square",
@@ -159,7 +159,7 @@
     ],
     "slope_degrees": {
      "mean": 2.7,
-     "max": 8.0
+     "max": 8.1
     },
     "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
    },
@@ -216,7 +216,7 @@
    "centre": {
     "x": 1605,
     "z": 2801,
-    "ground_y": 107.2
+    "ground_y": 107.5
    },
    "footprint": {
     "shape": "square",
@@ -289,7 +289,7 @@
    "centre": {
     "x": 1847,
     "z": 1262,
-    "ground_y": 190.4
+    "ground_y": 257.5
    },
    "footprint": {
     "shape": "square",
@@ -300,12 +300,12 @@
     "max_x": 1888,
     "max_z": 1303,
     "ground_y": [
-     186.3,
-     193.6
+     234.0,
+     275.2
     ],
     "slope_degrees": {
-     "mean": 3.9,
-     "max": 8.0
+     "mean": 20.5,
+     "max": 33.5
     },
     "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
    },
@@ -334,7 +334,7 @@
     "route_length_source": "route_03_misty_to_surge",
     "route_length_method": "full-resolution A* on pinned authored heightmap"
    },
-   "route_role": "An exposed high town for the electric gym, the highest on the route (y186-194). Box F's plateau is the clipped y200 ceiling, flat only because it is cut off; this shoulder is real ground 47 blocks from the summit. It is also the tightest site (83 blocks square): a small town.",
+   "route_role": "An exposed high town for the electric gym on Mt Vessu's shoulder, 47 blocks from the summit. Before the vertical rescale this was the highest site on the route (y186-194) and the tightest (83 blocks square).",
    "tier": "critical",
    "critical_path": true,
    "waystone": {
@@ -345,6 +345,12 @@
    "nearest_settlement": {
     "id": "the_scar",
     "distance_blocks": 408
+   },
+   "site_review": {
+    "status": "needs re-siting (a human decision)",
+    "measured": "2026-09-17",
+    "finding": "The rescale lifted the shoulder from y186-194 to y234-275 and its slope from mean 3.9 / max 8.0 to mean 20.5 / max 33.5 degrees. The footprint no longer meets its basis (slope under 8 degrees): it is a mountainside, not a town site.",
+    "blocks": "route_03_misty_to_surge and route_04_surge_to_erika both end or start at this centre"
    }
   },
   {
@@ -362,7 +368,7 @@
    "centre": {
     "x": 4309,
     "z": 1555,
-    "ground_y": 110.0
+    "ground_y": 110.9
    },
    "footprint": {
     "shape": "square",
@@ -435,7 +441,7 @@
    "centre": {
     "x": 4646,
     "z": 2446,
-    "ground_y": 117.5
+    "ground_y": 116.8
    },
    "footprint": {
     "shape": "square",
@@ -447,7 +453,7 @@
     "max_z": 2561,
     "ground_y": [
      114.5,
-     123.2
+     123.1
     ],
     "slope_degrees": {
      "mean": 2.5,
@@ -508,7 +514,7 @@
    "centre": {
     "x": 6196,
     "z": 3398,
-    "ground_y": 94.8
+    "ground_y": 93.8
    },
    "footprint": {
     "shape": "square",
@@ -581,7 +587,7 @@
    "centre": {
     "x": 6074,
     "z": 4995,
-    "ground_y": 107.8
+    "ground_y": 107.3
    },
    "footprint": {
     "shape": "square",
@@ -667,7 +673,7 @@
    "centre": {
     "x": 3647,
     "z": 6497,
-    "ground_y": 112.4
+    "ground_y": 112.8
    },
    "footprint": {
     "shape": "square",
@@ -738,7 +744,7 @@
    "centre": {
     "x": 3297,
     "z": 2603,
-    "ground_y": 118.2
+    "ground_y": 118.0
    },
    "footprint": {
     "shape": "square",
@@ -811,7 +817,7 @@
    "centre": {
     "x": 1716,
     "z": 7298,
-    "ground_y": 114.8
+    "ground_y": 114.4
    },
    "footprint": {
     "shape": "square",
@@ -886,7 +892,7 @@
    "centre": {
     "x": 7265,
     "z": 1556,
-    "ground_y": 115.7
+    "ground_y": 116.5
    },
    "footprint": {
     "shape": "square",
@@ -961,7 +967,7 @@
    "centre": {
     "x": 6633,
     "z": 5716,
-    "ground_y": 137.3
+    "ground_y": 138.1
    },
    "footprint": {
     "shape": "square",
@@ -1043,7 +1049,7 @@
    "centre": {
     "x": 2969,
     "z": 1710,
-    "ground_y": 122.0
+    "ground_y": 122.7
    },
    "footprint": {
     "shape": "square",
@@ -1059,7 +1065,7 @@
     ],
     "slope_degrees": {
      "mean": 3.5,
-     "max": 8.0
+     "max": 8.1
     },
     "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
    },
@@ -1150,7 +1156,7 @@
    "centre": {
     "x": 2654,
     "z": 3605,
-    "ground_y": 112.1
+    "ground_y": 112.3
    },
    "footprint": {
     "shape": "square",
@@ -1166,7 +1172,7 @@
     ],
     "slope_degrees": {
      "mean": 2.4,
-     "max": 8.0
+     "max": 8.1
     },
     "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
    },
@@ -1222,7 +1228,7 @@
    "centre": {
     "x": 2813,
     "z": 1102,
-    "ground_y": 107.4
+    "ground_y": 107.3
    },
    "footprint": {
     "shape": "square",
@@ -1295,7 +1301,7 @@
    "centre": {
     "x": 6814,
     "z": 4367,
-    "ground_y": 112.7
+    "ground_y": 113.1
    },
    "footprint": {
     "shape": "square",
@@ -1364,11 +1370,11 @@
    "working_name": "Tableland stop (Scorched Plateau)",
    "display_name": null,
    "for": "A waystation on the badlands tableland: a Center, a prospector's house and a lookout over the Craters and the Rift.",
-   "why_here": "The computed Blaine-to-Giovanni leg is 3,049 blocks; this flat y158-162 tableland site is 233 blocks from route_08_blaine_to_giovanni at fraction 0.524.",
+   "why_here": "The computed Blaine-to-Giovanni leg is 3,049 blocks; this flat y158-164 tableland site is 233 blocks from route_08_blaine_to_giovanni at fraction 0.524.",
    "centre": {
     "x": 4876,
     "z": 5729,
-    "ground_y": 160.7
+    "ground_y": 161.6
    },
    "footprint": {
     "shape": "square",
@@ -1379,12 +1385,12 @@
     "max_x": 4975,
     "max_z": 5828,
     "ground_y": [
-     157.8,
-     162.4
+     158.1,
+     163.7
     ],
     "slope_degrees": {
-     "mean": 1.5,
-     "max": 5.0
+     "mean": 1.8,
+     "max": 5.8
     },
     "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
    },
@@ -1425,7 +1431,11 @@
     "id": "gym7_town",
     "distance_blocks": 1405
    },
-   "buildability": "198-block square under 5 degrees on the plateau top"
+   "buildability": "198-block square under 5 degrees on the plateau top",
+   "site_review": {
+    "status": "minor: max slope 5.8 degrees against its under-5 basis",
+    "measured": "2026-09-17"
+   }
   },
   {
    "id": "rift_rim_stop",
@@ -1441,7 +1451,7 @@
    "centre": {
     "x": 3734,
     "z": 3951,
-    "ground_y": 139.5
+    "ground_y": 138.8
    },
    "footprint": {
     "shape": "square",
@@ -1515,7 +1525,8 @@
     "x": 1092,
     "z": 5532,
     "ground_y": 68.0,
-    "ground_note": "Was recorded as 35.3, which is SEABED: 26.7 blocks under the sea. The site search read a level sea floor as level ground (its own footprint says slope mean 0.0, max 0.0). Nothing within 103 blocks is an islet, so the island is built by tools/islet.py: 2,628 columns, 1,413 of them above water, crown y70, about 72,900 blocks. Ground is now y63-70, median 65."
+    "ground_note": "Was recorded as 35.3, which is SEABED: 26.7 blocks under the sea. The site search read a level sea floor as level ground (its own footprint says slope mean 0.0, max 0.0). Nothing within 103 blocks is an islet, so the island is built by tools/islet.py: 2,628 columns, 1,413 of them above water, crown y70, about 72,900 blocks. Ground is now y63-70, median 65.",
+    "heightmap_seabed_y": 35.3
    },
    "footprint": {
     "shape": "square",
@@ -1533,7 +1544,11 @@
      "mean": 0.0,
      "max": 0.0
     },
-    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks",
+    "heightmap_seabed_y": [
+     33.7,
+     39.3
+    ]
    },
    "subregion": null,
    "region": null,
@@ -1587,7 +1602,7 @@
    "centre": {
     "x": 2110,
     "z": 950,
-    "ground_y": 194.0
+    "ground_y": 277.4
    },
    "footprint": {
     "shape": "square",
@@ -1598,12 +1613,12 @@
     "max_x": 2260,
     "max_z": 1100,
     "ground_y": [
-     194.0,
-     194.0
+     241.2,
+     277.5
     ],
     "slope_degrees": {
-     "mean": 0.0,
-     "max": 3.7
+     "mean": 4.2,
+     "max": 44.4
     },
     "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
    },
@@ -1638,13 +1653,17 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "flat because the heightmap is clipped at y200, the top of the terrain band: fine for a scar, which is meant to look scraped flat; nothing is built above it",
+   "buildability": "was a flat table: the sculpt pass pressed it to y194 under the old y200 ceiling. The rescale's gain applies above y145, so the table is now y241-278 with slopes to 44 degrees and no longer reads as scraped flat.",
    "linked": [
     "displaced_city"
    ],
    "nearest_settlement": {
     "id": "gym3_town",
     "distance_blocks": 408
+   },
+   "site_review": {
+    "status": "needs a sculpt decision (re-press the table at its new height, or accept the ridge)",
+    "measured": "2026-09-17"
    }
   },
   {
@@ -1661,7 +1680,7 @@
    "centre": {
     "x": 550,
     "z": 4518,
-    "ground_y": 67.7
+    "ground_y": 67.9
    },
    "footprint": {
     "shape": "square",
@@ -1732,7 +1751,7 @@
    "centre": {
     "x": 3106,
     "z": 3314,
-    "ground_y": 91.7
+    "ground_y": 91.0
    },
    "footprint": {
     "shape": "square",
@@ -1748,7 +1767,7 @@
     ],
     "slope_degrees": {
      "mean": 6.2,
-     "max": 9.3
+     "max": 9.4
     },
     "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
    },
@@ -1803,7 +1822,7 @@
    "centre": {
     "x": 682,
     "z": 380,
-    "ground_y": 200.0
+    "ground_y": 310.0
    },
    "footprint": {
     "shape": "square",
@@ -1814,12 +1833,12 @@
     "max_x": 737,
     "max_z": 435,
     "ground_y": [
-     199.8,
-     200.0
+     292.0,
+     310.0
     ],
     "slope_degrees": {
-     "mean": 0.0,
-     "max": 10.0
+     "mean": 8.9,
+     "max": 46.4
     },
     "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
    },
@@ -1854,10 +1873,14 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "the summit square is flat because it is clipped at y200; the shrine stands on it",
+   "buildability": "was flat only because the summit was clipped at y200; after the rescale the summit square spans y292-310 with slopes to 46 degrees, so the shrine has no flat top to stand on",
    "nearest_settlement": {
     "id": "gym3_town",
     "distance_blocks": 1461
+   },
+   "site_review": {
+    "status": "needs a platform or a new summit site (a human decision)",
+    "measured": "2026-09-17"
    }
   },
   {
@@ -1874,7 +1897,7 @@
    "centre": {
     "x": 5160,
     "z": 7463,
-    "ground_y": 127.4
+    "ground_y": 128.5
    },
    "footprint": {
     "shape": "square",
@@ -1958,7 +1981,7 @@
     "max_z": 5214,
     "ground_y": [
      102.4,
-     105.6
+     105.7
     ],
     "slope_degrees": {
      "mean": 2.1,
@@ -2166,7 +2189,7 @@
     ],
     "slope_degrees": {
      "mean": 3.8,
-     "max": 7.5
+     "max": 7.6
     },
     "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
    },
@@ -2272,7 +2295,7 @@
    "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
   }
  ],
- "not_placed": "Nothing is built. Waystone positions in data/progression.json stay null until the towns are built; each gymN_town id here is the town those flags name.",
+ "not_placed": "Built as of 2026-09-17 (docs/world-building/BUILT.md): the hometown's nine placements, re-placed and verified with 0 gaps; gym1_town and gym2_town street, plaza and gym-lot prep at and below ground level; Brock's gym prefab (cobblers:kits/gyms/kanto/brock, a local-only template) at (1838, 140, 3690), rotation 180, on gym1_town's gym lot. No other town has anything built. Waystone positions in data/progression.json stay null until each town is built.",
  "tiers": {
   "critical": "the ten places the route requires: hometown, eight gym towns, the League",
   "major": "full off-path towns with their own identity and services; destinations",
@@ -2289,5 +2312,6 @@
   "legs": "full-resolution terrain-weighted A* between consecutive critical towns; required bridge crossings are mandatory waypoints; Victory Road is A* between the Rift arm, fork, trunk and apex waypoints",
   "victory_road_blocks": 5157,
   "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
- }
+ },
+ "measurement_note": "2026-09-17: every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees re-measured on the canonical rescaled heightmap 3eb0edee with find_sites' own slope (terrain.slope_degrees), at the recorded footprints. Sites were NOT re-searched: siting is an authored decision. Previously computed from 3eb0edee. On ground below y145 the method reproduces the recorded ranges exactly; three sites above it no longer meet their footprint basis and carry site_review."
 }

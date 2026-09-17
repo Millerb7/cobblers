@@ -35,12 +35,12 @@
    "kind": "mountain",
    "name": "The Tri Peaks",
    "status": "built",
-   "status_basis": "Three summits present inside the outline; the highest reach the y200 ceiling and are clipped flat.",
+   "status_basis": "Three summits inside the outline. Before the vertical rescale the highest were clipped flat at y200; on the canonical heightmap the outline tops out at y287.",
    "water": "allowed",
    "anchor": {
     "x": 1310,
     "z": 882,
-    "y": 200.0
+    "y": 156.1
    },
    "extent": {
     "polygons": [
@@ -188,6 +188,17 @@
      ]
     ],
     "basis": "stroke-enclosed area of the annotation outline, gaps up to 24 blocks bridged, simplified to 8 blocks"
+   },
+   "measured_summit": {
+    "highest_in_outline": {
+     "y": 287.2,
+     "x": 1848,
+     "z": 1352
+    },
+    "anchor_ground_y": 156.1,
+    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "measured": "2026-09-17",
+    "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
   {
@@ -195,12 +206,12 @@
    "kind": "mountain",
    "name": "Mt Vessu",
    "status": "built",
-   "status_basis": "The massif's largest summit. Its top is a clipped plateau at y200 of about 0.1 km2, and a town box is drawn on it.",
+   "status_basis": "The massif's largest summit. It was a clipped plateau at y200 of about 0.1 km2; after the rescale the outline tops out at y300 and the plateau is gone.",
    "water": "allowed",
    "anchor": {
     "x": 2154,
     "z": 682,
-    "y": 200.0
+    "y": 225.1
    },
    "extent": {
     "polygons": [
@@ -300,6 +311,17 @@
      ]
     ],
     "basis": "stroke-enclosed area of the annotation outline, gaps up to 32 blocks bridged, simplified to 8 blocks"
+   },
+   "measured_summit": {
+    "highest_in_outline": {
+     "y": 300.0,
+     "x": 1864,
+     "z": 760
+    },
+    "anchor_ground_y": 225.1,
+    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "measured": "2026-09-17",
+    "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
   {
@@ -307,12 +329,12 @@
    "kind": "mountain",
    "name": "Mt Clay",
    "status": "built",
-   "status_basis": "A single summit south-east of Vessu, inside a closed outline.",
+   "status_basis": "A single summit south-east of Vessu, inside a closed outline; it tops out at y263 on the canonical heightmap.",
    "water": "allowed",
    "anchor": {
     "x": 2614,
     "z": 1510,
-    "y": 200.0
+    "y": 251.6
    },
    "extent": {
     "polygons": [
@@ -372,6 +394,17 @@
      ]
     ],
     "basis": "stroke-enclosed area of the annotation outline, gaps up to 8 blocks bridged, simplified to 8 blocks"
+   },
+   "measured_summit": {
+    "highest_in_outline": {
+     "y": 263.3,
+     "x": 2621,
+     "z": 1480
+    },
+    "anchor_ground_y": 251.6,
+    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "measured": "2026-09-17",
+    "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
   {
@@ -379,7 +412,7 @@
    "kind": "basin",
    "name": "Merian",
    "status": "partial",
-   "status_basis": "A smooth, flat-floored cirque at the glacier's head, ground y107-181 (median 122). It is not a closed hollow: no basin holds water inside the outline, it opens down the Glacial Tear.",
+   "status_basis": "A smooth, flat-floored cirque at the glacier's head, ground y107-210 (median 122). It is not a closed hollow: no basin holds water inside the outline, it opens down the Glacial Tear.",
    "water": "allowed",
    "anchor": {
     "x": 2754,
@@ -495,8 +528,8 @@
    "measured": {
     "ground_in_outline": {
      "min": 107.3,
-     "median": 121.5,
-     "max": 181.2
+     "median": 122.1,
+     "max": 209.5
     }
    }
   },
@@ -4622,12 +4655,12 @@
    "kind": "volcano",
    "name": "The Craters",
    "status": "partial",
-   "status_basis": "Three cones inside the outline. The great cone's top is clipped flat at y200; only the eastern cone has a bowl (7 blocks deep, floor y127). The other two read as rings in the local relief but hold no crater.",
+   "status_basis": "Three cones inside the outline. The great cone's top was clipped flat at y200 before the rescale and now reaches y304; only the eastern cone has a bowl (7 blocks deep, floor y127). The other two read as rings in the local relief but hold no crater.",
    "water": "allowed",
    "anchor": {
     "x": 6454,
     "z": 5078,
-    "y": 200.0
+    "y": 288.3
    },
    "extent": {
     "polygons": [
@@ -4762,6 +4795,17 @@
      "z": 5508,
      "y": 126.8
     }
+   },
+   "measured_summit": {
+    "highest_in_outline": {
+     "y": 303.6,
+     "x": 6408,
+     "z": 5128
+    },
+    "anchor_ground_y": 288.3,
+    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "measured": "2026-09-17",
+    "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
   {
@@ -6181,5 +6225,10 @@
    },
    "name_status": "working name; naming is yours"
   }
- ]
+ ],
+ "canonical_check": {
+  "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+  "date": "2026-09-17",
+  "method": "Water bodies, basins, rivers and ravines stay measured on the authored heightmap (computed_from_sha256), where they are planned. Against the canonical rescaled heightmap, every column under a graded river course (width + 8) or a lake basin polygon differs by at most 0.0043 blocks (2,095,235 columns, 0 over 0.01), because the rescale is the identity at or below y145 and the highest water is y127. Summits (mountain and volcano anchors and outlines) are above y145 and are re-measured here: see measured_summit."
+ }
 }

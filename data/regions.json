@@ -2,7 +2,7 @@
  "schema": "cobblers.regions/3",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81",
+ "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
  "landmarks": "data/landmarks.json",
  "geometry": {
   "raster_cell_blocks": 8,
@@ -2398,12 +2398,12 @@
      "p10": 79.2,
      "median": 108.7,
      "p90": 145.3,
-     "max": 188.2
+     "max": 238.6
     },
     "slope_degrees": {
-     "mean": 10.2,
-     "p90": 21.9,
-     "flat_under_5_pct": 34.9
+     "mean": 10.7,
+     "p90": 23.1,
+     "flat_under_5_pct": 34.6
     }
    },
    "biomes": [
@@ -2620,14 +2620,14 @@
     },
     "elevation": {
      "p10": 122.1,
-     "median": 160.6,
-     "p90": 191.5,
-     "max": 200.0
+     "median": 161.4,
+     "p90": 261.6,
+     "max": 299.4
     },
     "slope_degrees": {
-     "mean": 13.2,
-     "p90": 26.2,
-     "flat_under_5_pct": 17.8
+     "mean": 21.8,
+     "p90": 43.0,
+     "flat_under_5_pct": 9.9
     }
    },
    "biomes": [
@@ -2934,13 +2934,13 @@
     "elevation": {
      "p10": 116.0,
      "median": 143.8,
-     "p90": 181.2,
-     "max": 200.0
+     "p90": 209.7,
+     "max": 302.5
     },
     "slope_degrees": {
-     "mean": 11.4,
-     "p90": 26.2,
-     "flat_under_5_pct": 35.4
+     "mean": 16.7,
+     "p90": 47.1,
+     "flat_under_5_pct": 33.9
     }
    },
    "biomes": [
@@ -3032,13 +3032,13 @@
     "elevation": {
      "p10": 141.4,
      "median": 152.6,
-     "p90": 162.6,
-     "max": 170.1
+     "p90": 164.0,
+     "max": 176.9
     },
     "slope_degrees": {
-     "mean": 4.6,
-     "p90": 8.7,
-     "flat_under_5_pct": 64.7
+     "mean": 5.0,
+     "p90": 9.2,
+     "flat_under_5_pct": 60.2
     }
    },
    "biomes": [
@@ -3170,13 +3170,13 @@
     "elevation": {
      "p10": 77.7,
      "median": 106.4,
-     "p90": 162.8,
-     "max": 200.0
+     "p90": 164.3,
+     "max": 310.0
     },
     "slope_degrees": {
-     "mean": 16.2,
-     "p90": 27.2,
-     "flat_under_5_pct": 9.6
+     "mean": 18.8,
+     "p90": 33.4,
+     "flat_under_5_pct": 8.5
     }
    },
    "biomes": [
@@ -4588,12 +4588,12 @@
      "p10": 68.6,
      "median": 124.3,
      "p90": 147.8,
-     "max": 157.0
+     "max": 157.3
     },
     "slope_degrees": {
      "mean": 10.2,
      "p90": 23.7,
-     "flat_under_5_pct": 38.7
+     "flat_under_5_pct": 38.6
     }
    },
    "biomes": [
@@ -6101,13 +6101,13 @@
     "elevation": {
      "p10": 107.4,
      "median": 124.7,
-     "p90": 160.1,
-     "max": 188.2
+     "p90": 160.7,
+     "max": 238.6
     },
     "slope_degrees": {
-     "mean": 9.9,
-     "p90": 21.1,
-     "flat_under_5_pct": 34.0
+     "mean": 11.1,
+     "p90": 23.8,
+     "flat_under_5_pct": 33.7
     }
    },
    "boundaries": [
@@ -6246,13 +6246,13 @@
     "elevation": {
      "p10": 109.4,
      "median": 141.4,
-     "p90": 167.0,
-     "max": 185.2
+     "p90": 170.5,
+     "max": 215.4
     },
     "slope_degrees": {
-     "mean": 13.4,
-     "p90": 23.5,
-     "flat_under_5_pct": 13.3
+     "mean": 15.3,
+     "p90": 27.6,
+     "flat_under_5_pct": 11.5
     }
    },
    "boundaries": [
@@ -6721,13 +6721,13 @@
     "elevation": {
      "p10": 99.2,
      "median": 143.7,
-     "p90": 178.1,
-     "max": 192.0
+     "p90": 199.1,
+     "max": 253.8
     },
     "slope_degrees": {
-     "mean": 16.0,
-     "p90": 28.0,
-     "flat_under_5_pct": 9.6
+     "mean": 20.8,
+     "p90": 42.0,
+     "flat_under_5_pct": 7.9
     }
    },
    "boundaries": [
@@ -6875,14 +6875,14 @@
     },
     "elevation": {
      "p10": 142.8,
-     "median": 183.6,
-     "p90": 194.0,
-     "max": 200.0
+     "median": 222.1,
+     "p90": 277.2,
+     "max": 299.4
     },
     "slope_degrees": {
-     "mean": 11.8,
-     "p90": 27.7,
-     "flat_under_5_pct": 27.3
+     "mean": 25.2,
+     "p90": 44.7,
+     "flat_under_5_pct": 12.0
     }
    },
    "boundaries": [
@@ -7007,13 +7007,13 @@
     "elevation": {
      "p10": 133.3,
      "median": 148.2,
-     "p90": 182.1,
-     "max": 193.0
+     "p90": 212.7,
+     "max": 262.9
     },
     "slope_degrees": {
-     "mean": 11.3,
-     "p90": 19.7,
-     "flat_under_5_pct": 11.9
+     "mean": 16.1,
+     "p90": 38.7,
+     "flat_under_5_pct": 8.9
     }
    },
    "boundaries": [
@@ -7696,10 +7696,10 @@
      "p10": 107.3,
      "median": 119.2,
      "p90": 138.8,
-     "max": 180.0
+     "max": 190.8
     },
     "slope_degrees": {
-     "mean": 6.6,
+     "mean": 6.7,
      "p90": 15.3,
      "flat_under_5_pct": 54.5
     }
@@ -7813,13 +7813,13 @@
     "elevation": {
      "p10": 138.1,
      "median": 149.7,
-     "p90": 185.3,
-     "max": 200.0
+     "p90": 224.5,
+     "max": 301.0
     },
     "slope_degrees": {
-     "mean": 12.3,
-     "p90": 27.1,
-     "flat_under_5_pct": 29.3
+     "mean": 19.7,
+     "p90": 49.5,
+     "flat_under_5_pct": 27.2
     }
    },
    "boundaries": [
@@ -7939,13 +7939,13 @@
     "elevation": {
      "p10": 133.3,
      "median": 144.3,
-     "p90": 185.0,
-     "max": 200.0
+     "p90": 231.6,
+     "max": 302.5
     },
     "slope_degrees": {
-     "mean": 13.4,
-     "p90": 29.3,
-     "flat_under_5_pct": 30.0
+     "mean": 19.6,
+     "p90": 55.0,
+     "flat_under_5_pct": 28.1
     }
    },
    "boundaries": [
@@ -8053,13 +8053,13 @@
     "elevation": {
      "p10": 140.9,
      "median": 150.4,
-     "p90": 161.2,
-     "max": 166.6
+     "p90": 162.2,
+     "max": 169.8
     },
     "slope_degrees": {
-     "mean": 4.0,
-     "p90": 7.4,
-     "flat_under_5_pct": 70.5
+     "mean": 4.2,
+     "p90": 7.5,
+     "flat_under_5_pct": 68.3
     }
    },
    "boundaries": [
@@ -8191,14 +8191,14 @@
     },
     "elevation": {
      "p10": 144.1,
-     "median": 155.9,
-     "p90": 164.5,
-     "max": 170.1
+     "median": 156.0,
+     "p90": 166.7,
+     "max": 176.9
     },
     "slope_degrees": {
-     "mean": 5.2,
-     "p90": 11.5,
-     "flat_under_5_pct": 63.5
+     "mean": 5.8,
+     "p90": 12.2,
+     "flat_under_5_pct": 55.6
     }
    },
    "boundaries": [
@@ -8328,13 +8328,13 @@
     "elevation": {
      "p10": 139.5,
      "median": 147.2,
-     "p90": 158.2,
-     "max": 164.0
+     "p90": 158.6,
+     "max": 165.9
     },
     "slope_degrees": {
-     "mean": 6.6,
-     "p90": 10.2,
-     "flat_under_5_pct": 29.6
+     "mean": 6.8,
+     "p90": 10.4,
+     "flat_under_5_pct": 27.7
     }
    },
    "boundaries": [
@@ -8412,13 +8412,13 @@
     "elevation": {
      "p10": 82.5,
      "median": 117.3,
-     "p90": 174.3,
-     "max": 200.0
+     "p90": 187.9,
+     "max": 310.0
     },
     "slope_degrees": {
-     "mean": 15.6,
-     "p90": 26.7,
-     "flat_under_5_pct": 10.6
+     "mean": 19.2,
+     "p90": 38.2,
+     "flat_under_5_pct": 9.0
     }
    },
    "boundaries": [
@@ -9631,7 +9631,7 @@
     "slope_degrees": {
      "mean": 5.0,
      "p90": 8.7,
-     "flat_under_5_pct": 57.1
+     "flat_under_5_pct": 57.0
     }
    },
    "boundaries": [
@@ -11308,7 +11308,7 @@
     "slope_degrees": {
      "mean": 3.5,
      "p90": 6.3,
-     "flat_under_5_pct": 77.9
+     "flat_under_5_pct": 78.0
     }
    },
    "boundaries": [
@@ -11924,7 +11924,7 @@
     "slope_degrees": {
      "mean": 6.5,
      "p90": 15.0,
-     "flat_under_5_pct": 53.3
+     "flat_under_5_pct": 53.4
     }
    },
    "boundaries": [
@@ -12060,7 +12060,7 @@
     "slope_degrees": {
      "mean": 6.9,
      "p90": 16.5,
-     "flat_under_5_pct": 53.3
+     "flat_under_5_pct": 53.2
     }
    },
    "boundaries": [
@@ -12766,7 +12766,7 @@
      "p10": 68.9,
      "median": 113.2,
      "p90": 142.4,
-     "max": 157.0
+     "max": 157.3
     },
     "slope_degrees": {
      "mean": 10.2,
@@ -12903,7 +12903,7 @@
      "p10": 69.5,
      "median": 134.5,
      "p90": 148.6,
-     "max": 157.0
+     "max": 157.2
     },
     "slope_degrees": {
      "mean": 10.2,
