@@ -10,7 +10,7 @@ own kits/structures, and for the families a town could use:
            -> build/structure_renders/<source>/<namespace>/<path>.png
   html     the browsable catalogue -> build/structure_renders/index.html
 
-  python tools/town_templates.py scan --server-dir ../cobblers-server
+  python tools/town_templates.py scan --server-dir <server-dir, under the lock>
   python tools/town_templates.py render
   python tools/town_templates.py html
 
@@ -110,7 +110,7 @@ def source_slug(label):
     return "server-" + base.replace(".zip", "").replace(" ", "_")
 
 
-def ordered_sources(server_dir):
+def ordered_sources(server_dir, level_dat=None):
     """spawn_blocks.read_sources, reordered so a later entry overrides an earlier one as the game does: vanilla,
     mods, then datapacks in level.dat's Enabled order. Disabled datapacks are dropped."""
     import level_dat as L
@@ -120,7 +120,7 @@ def ordered_sources(server_dir):
     for line in props.read_text(encoding="utf-8", errors="replace").splitlines():
         if line.startswith("level-name="):
             levelname = line.split("=", 1)[1].strip()
-    dp = L.summary(Path(server_dir) / levelname / "level.dat")["datapacks"]
+    dp = L.summary(Path(level_dat) if level_dat else Path(server_dir) / levelname / "level.dat")["datapacks"]
     enabled = [e.replace("file/", "") for e in dp["Enabled"]]
     jars = [s for s in srcs if ".jar" in s[0]]
     packs = [s for s in srcs if ".jar" not in s[0]]
@@ -463,7 +463,7 @@ def group_variants(ids, geos, threshold=0.85):
 # ---------------------------------------------------------------- scan
 
 def cmd_scan(a):
-    sources, load_info = ordered_sources(a.server_dir)
+    sources, load_info = ordered_sources(a.server_dir, getattr(a, "level_dat", None))
     effective, shadowed, family_counts = {}, defaultdict(list), Counter()
     total_files = 0
     for tid, label, read, name in iter_templates(sources):
@@ -593,6 +593,8 @@ class Assets:
     """blockstate -> model -> texture lookups across the client jar and the mod jars."""
 
     def __init__(self, client_jar, server_dir):
+        import runtime_guard
+        server_dir = runtime_guard.check(server_dir, "read the server directory")
         self.readers = {}
         zips = []
         if client_jar and Path(client_jar).exists():
@@ -1516,19 +1518,20 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("scan")
     s.add_argument("--server-dir", required=True)
+    s.add_argument("--level-dat", default=None, help="level.dat of an offline snapshot, for the datapack load order")
     s = sub.add_parser("classify")
     s.add_argument("--threshold", type=float, default=0.85)
     s = sub.add_parser("render")
     s.add_argument("--only", default=None, help="regex on template id")
     s.add_argument("--client-jar", default=None)
     s.add_argument("--force", action="store_true", help="re-render PNGs that already exist")
-    s.add_argument("--server-dir", default=str(ROOT.parent.parent / "cobblers-server"))
+    s.add_argument("--server-dir", required=True)
     s = sub.add_parser("blocks")
     s.add_argument("--client-jar", default=None)
     s.add_argument("--force", action="store_true")
-    s.add_argument("--server-dir", default=str(ROOT.parent.parent / "cobblers-server"))
+    s.add_argument("--server-dir", required=True)
     s = sub.add_parser("html")
-    s.add_argument("--server-dir", default=str(ROOT.parent.parent / "cobblers-server"))
+    s.add_argument("--server-dir", required=True)
     a = p.parse_args(argv)
     {"scan": cmd_scan, "classify": cmd_classify, "render": cmd_render, "blocks": cmd_blocks, "html": cmd_html}[a.cmd](a)
 

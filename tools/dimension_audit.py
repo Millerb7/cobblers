@@ -13,7 +13,7 @@ region files alone (the server must be stopped):
      the structures the campaign needs (by class) are listed as present or
      missing
 
-  python tools/dimension_audit.py --world ../cobblers-server/erosion-land-8k \\
+  python tools/dimension_audit.py --world <offline-snapshot-world> \\
       --dimension the_nether --min-x -2048 --min-z -2048 --max-x 2047 --max-z 2047 \\
       --require-classes PROGRESSION,LEGENDARY --out derived/audit/nether.json
 
@@ -109,7 +109,8 @@ def main(argv=None):
     p.add_argument("--fail-on-incomplete", action="store_true", help="exit 1 when coverage_full is below 1.0")
     p.add_argument("--out", default=None)
     a = p.parse_args(argv)
-    world = Path(a.world)
+    import runtime_guard
+    world = runtime_guard.check(a.world, "read")
     sub = DIM_DIRS.get(a.dimension, a.dimension)
     dim_root = world / sub if sub else world
     if not dim_root.is_dir():

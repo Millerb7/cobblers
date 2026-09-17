@@ -12,8 +12,8 @@ structure templates the placer can use, check them, and pack them into a datapac
 
   python tools/kit.py import kits/structures/incoming/house.schem --kind buildings --set viltri --name cottage_a \\
       --entrance 4,1,0 --facing north --author you [--no-air]
-  python tools/kit.py index [--server-dir ../cobblers-server]
-  python tools/kit.py pack [--install ../cobblers-server/datapacks]
+  python tools/kit.py index [--server-dir <server-dir, under the lock>]
+  python tools/kit.py pack [--install <server-dir>/datapacks, under the lock]
 
 Entrance: the block in front of the door at ground level, in the build's own coordinates (0,0,0 is the minimum
 corner of the export). Its y is the ground layer: tools/place_town.py puts that layer at the ground in front of
@@ -210,7 +210,8 @@ def cmd_index(a):
     if a.server_dir:
         import zipfile
         loaded = {"minecraft"}
-        for jar in (Path(a.server_dir) / "mods").glob("*.jar"):
+        import runtime_guard
+        for jar in (runtime_guard.check(a.server_dir, "read the server directory") / "mods").glob("*.jar"):
             try:
                 with zipfile.ZipFile(jar) as z:
                     names = {n.split("/")[1] for n in z.namelist() if n.startswith(("assets/", "data/")) and n.count("/") >= 2}
@@ -263,7 +264,8 @@ def cmd_pack(a):
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: prefab kit (tools/kit.py pack)"}}, indent=2) + "\n", encoding="utf-8")
     print("packed %d prefabs into %s" % (n, out))
     if a.install:
-        dest = Path(a.install) / out.name
+        import runtime_guard
+        dest = runtime_guard.check(a.install, "install into") / out.name
         if dest.exists():
             shutil.rmtree(dest)
         shutil.copytree(out, dest)

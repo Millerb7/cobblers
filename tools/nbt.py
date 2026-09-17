@@ -95,7 +95,8 @@ def loads(data: bytes):
 
 
 def load(path):
-    return loads(Path(path).read_bytes())
+    import runtime_guard
+    return loads(runtime_guard.check(path, "read").read_bytes())
 
 
 def region_chunks(path, wanted=None):
@@ -103,7 +104,8 @@ def region_chunks(path, wanted=None):
 
     wanted: optional set of (chunk_x_in_region, chunk_z_in_region); other chunks are not decompressed.
     """
-    data = Path(path).read_bytes()
+    import runtime_guard
+    data = runtime_guard.check(path, "read").read_bytes()
     if len(data) < 8192:
         return
     for idx in range(1024):

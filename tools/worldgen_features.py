@@ -18,7 +18,7 @@ Each item is then summarised as worldgen-only, or also obtainable by loot or
 crafting. Mob drops, code-driven rewards and trades added in code are not
 visible to this tool and are called out as such.
 
-  python tools/worldgen_features.py --server-dir ../cobblers-server
+  python tools/worldgen_features.py --server-dir <server-dir, under the lock>
 """
 from __future__ import annotations
 

@@ -23,7 +23,7 @@ overlays), and each spawn entry is checked for reachability: some planned
 biome satisfies its condition biomes and none of its anticondition biomes.
 Non-biome conditions (light, Y, structures, nearby blocks) are not evaluated.
 
-  python tools/spawn_biomes.py --server-dir ../cobblers-server --regions data/regions.json \\
+  python tools/spawn_biomes.py --server-dir <server-dir, under the lock> --regions data/regions.json \\
       --markdown docs/world-building/BIOME_COVERAGE_MATRIX.md
 """
 from __future__ import annotations
@@ -108,7 +108,8 @@ def mod_ids(packs):
 
 
 def discover(server_dir, include_extra=False):
-    server_dir = Path(server_dir)
+    import runtime_guard
+    server_dir = runtime_guard.check(server_dir, "read the server directory")
     vanilla = sorted((server_dir / "versions").glob("*/server-*.jar"))
     if not vanilla:
         raise SystemExit("no vanilla server jar under %s/versions/*/server-*.jar" % server_dir)

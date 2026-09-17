@@ -108,7 +108,8 @@ def main(argv=None):
         if not all(r["ok"] for r in rows):
             rc = 1
     if a.install:
-        dest = Path(a.install) / PACK_NAME
+        import runtime_guard
+        dest = runtime_guard.check(a.install, "install into") / PACK_NAME
         if dest.exists():
             shutil.rmtree(dest)
         shutil.copytree(out, dest)

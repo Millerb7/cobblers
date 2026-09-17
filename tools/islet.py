@@ -55,7 +55,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
     p.add_argument("--apply", action="store_true")
-    p.add_argument("--server", default=r"C:\Users\wnd\Documents\github\cobblers-server")
+    p.add_argument("--server", default=None, help="server directory for --apply; needs the coordination lock")
     a = p.parse_args(argv)
     heights, world = T.load_from_args(a)
     sea = int(T.sea_level(world))
@@ -109,10 +109,9 @@ def main(argv=None):
     if not a.apply:
         print("(dry run -- pass --apply to build it)")
         return
-    import sys, time
-    sys.path.insert(0, a.server)
-    import rcon
-    PW = (Path(a.server) / ".rcon-password").read_text(encoding="utf8").strip()
+    import time
+    import runtime_guard
+    rcon, PW = runtime_guard.rcon(a.server)
     box = (cx - RADIUS - 8, cz - RADIUS - 8, cx + RADIUS + 8, cz + RADIUS + 8)
     print(rcon.run(["forceload add %d %d %d %d" % box], PW, timeout=600)[0].strip()[:70])
     time.sleep(20)

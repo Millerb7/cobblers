@@ -13,7 +13,7 @@ Two sources, one library (kits/structures/foliage/library.json):
              landmark giants.
   index      recompute library.json (size, height, crown radius, trunk footprint, sha256) from the .nbt files.
 
-  python tools/foliage_objects.py harvest --server ../cobblers-server
+  python tools/foliage_objects.py harvest --server <disposable-server-dir>
   python tools/foliage_objects.py generate
   python tools/foliage_objects.py index
 """
@@ -67,6 +67,8 @@ TOP = 48
 
 
 def rcon_module(server):
+    import runtime_guard
+    server = runtime_guard.check(server, "use RCON through")
     spec = importlib.util.spec_from_file_location("server_rcon", Path(server) / "rcon.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -412,7 +414,7 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
     h = sub.add_parser("harvest")
     h.add_argument("--server", required=True)
-    h.add_argument("--world-name", default="cobblers-10240")
+    h.add_argument("--world-name", required=True, help="world folder of a disposable harvest server")
     h.add_argument("--groups", nargs="*", default=list(VANILLA))
     sub.add_parser("generate")
     sub.add_parser("index")

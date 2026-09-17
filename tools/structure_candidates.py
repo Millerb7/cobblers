@@ -20,8 +20,8 @@ the java.util.Random LCG behind WorldgenRandom):
 Concentric-ring sets (strongholds) and Repurposed Structures'
 advanced_random_spread are reported as not modelled.
 
-  python tools/structure_candidates.py --server-dir ../cobblers-server \\
-      --level-dat ../cobblers-server/erosion-land-8k/level.dat --dimension end \\
+  python tools/structure_candidates.py --server-dir <server-dir, under the lock> \\
+      --level-dat <offline-snapshot-world>/level.dat --dimension end \\
       --min-x -4096 --min-z -4096 --max-x 4095 --max-z 4095 --classes PROGRESSION,LEGENDARY
 
 The world seed is read from level.dat at run time and never written out.

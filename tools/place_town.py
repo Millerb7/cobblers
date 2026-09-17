@@ -317,9 +317,8 @@ def verify(settlement, server_dir):
     """Floor against ground over RCON for every building placed by the last build of this settlement."""
     import sys
     rep = json.loads((ROOT / "derived" / "towns" / ("%s_placement.json" % settlement)).read_text(encoding="utf-8"))
-    sys.path.insert(0, str(server_dir))
-    import rcon
-    pw = (Path(server_dir) / ".rcon-password").read_text().strip()
+    import runtime_guard
+    rcon, pw = runtime_guard.rcon(server_dir)
 
     def solid(x, y, z):
         return "passed" in rcon.run(["execute unless block %d %d %d #minecraft:replaceable" % (x, y, z)], pw)[0]
@@ -405,7 +404,8 @@ def main(argv=None):
     print(json.dumps({"buildings": [{k: v for k, v in b.items() if k not in ("columns", "corners")} for b in report["buildings"]],
                       **{k: v for k, v in report.items() if k not in ("buildings", "route_points")}}, indent=1))
     if a.install:
-        dest = Path(a.install) / out.name
+        import runtime_guard
+        dest = runtime_guard.check(a.install, "install into") / out.name
         if dest.exists():
             shutil.rmtree(dest)
         shutil.copytree(out, dest)

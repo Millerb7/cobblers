@@ -40,7 +40,6 @@ MAZE_BAND = 80                           # how far the dense pack reaches from t
 CLEARING_R = 20                          # open ground around the sapling
 EDGE_FEATHER = 3                         # blocks over which density ramps back up at a corridor edge
 SEED = 20260916
-SURFACE_WORLD = "C:/Users/wnd/Documents/github/cobblers-server/cobblers-10240"
 
 # The network. Every corridor is a polyline of nodes plus a width; the gap is the path, so width is what the
 # player walks. `kind` is only for the report.
@@ -325,6 +324,10 @@ def ascii_map(density, box, cols=96):
     return out
 
 
+def _require(flag):
+    raise SystemExit("%s is required: an offline snapshot or disposable copy, never the live world" % flag)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
@@ -425,7 +428,7 @@ def main(argv=None):
     # under the 256 a single forceload box accepts -- a limit whose failure shows only in the command's reply, and
     # which silently swallowed two earlier town-prep runs.
     import world_heights as WH
-    ground, _, _ = WH.extract(a.surface_world or SURFACE_WORLD, BOX)
+    ground, _, _ = WH.extract(a.surface_world or _require("--surface-world"), BOX)
     rng2 = np.random.default_rng(SEED + 11)
     tiles, placed = {}, 0
     for pts, pool in ((maze, body), (outer, body), (bigpts, big)):
@@ -491,7 +494,8 @@ def main(argv=None):
     (ROOT / "derived" / "sites" / "route1_forest.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
     print("wrote derived/sites/route1_forest.json")
     if a.install:
-        dest = Path(a.install) / out.name
+        import runtime_guard
+        dest = runtime_guard.check(a.install, "install into") / out.name
         if dest.exists():
             shutil.rmtree(dest)
         shutil.copytree(out, dest)
