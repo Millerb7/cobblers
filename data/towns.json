@@ -316,7 +316,7 @@
     "route_length_source": "route_03_misty_to_surge",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
-   "route_role": "Surge's electric gym town on a shelf cut into the Tri Peaks - Mt Vessu south flank at y174: above the treeline, open to the prevailing wind, with Mt Vessu's summit in view from the town. Leg 3 is a real ascent (about 80 blocks of climb, nothing over 35 degrees). Surge's signal array stands on a Vessu shoulder above the town (landmarks.json surge_signal_array).",
+   "route_role": "Surge's electric gym town on a shelf cut into the Tri Peaks - Mt Vessu south flank at y174: above the treeline, open to the prevailing wind, with Mt Vessu's summit in view from about half the town (visibility:mt_vessu_summit_from_surge_town). Leg 3 is a real ascent (about 80 blocks of climb, nothing over 35 degrees). Surge's signal array stands on a Vessu shoulder above the town (landmarks.json surge_signal_array).",
    "tier": "critical",
    "critical_path": true,
    "waystone": {
@@ -864,7 +864,7 @@
     "route_length_source": "route_05_erika_to_koga",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
-   "route_role": "Poison beside the marsh. The Glacial Tear and the major river lie 311-507 blocks south-west, not yet in the way. Part of the Tear is visible from town (30 of its 213 extent samples); the river itself is not (none of the 16 trunk course points within 1,200 blocks).",
+   "route_role": "Poison beside the marsh. The Glacial Tear and the major river lie 311-507 blocks south-west, not yet in the way. Part of the Tear is visible from town (visibility:glacial_tear_from_koga_town); the river itself is not (visibility:major_river_not_from_koga_town).",
    "tier": "critical",
    "critical_path": true,
    "waystone": {
@@ -946,8 +946,8 @@
     "unlock": "defeating the town's leader (data/progression.json)"
    },
    "nearest_settlement": {
-    "id": "weeping_elder_tilpey",
-    "distance_blocks": 956
+    "id": "gorge_hamlet",
+    "distance_blocks": 1149
    }
   },
   {
@@ -1675,7 +1675,7 @@
    "working_name": "Gorge hamlet (Tilpey outflow)",
    "display_name": null,
    "for": "A bridge-keepers' hamlet above the Tilpey outflow gorge: a Center, two houses, and the NPC who knows the river.",
-   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits about 498 blocks south-east of the bridge and 283 blocks off route_07_sabrina_to_blaine at fraction 0.598, not on the way. It is NOT visible from the crossing: no route point within 60 blocks of either water crossing sees its roofline, and over the planned canopy only 2 of 209 sampled route 7 points do (1,120-1,145 blocks along).",
+   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits about 498 blocks south-east of the bridge and 283 blocks off route_07_sabrina_to_blaine at fraction 0.598, not on the way. It is NOT visible from the crossing (visibility:gorge_hamlet_not_from_crossing), and over the planned canopy its roofline shows from almost nowhere on the leg (docs/world-building/SETTLEMENTS.md, a fragile claim).",
    "centre": {
     "x": 6814,
     "z": 4367,
@@ -1898,7 +1898,7 @@
    "working_name": "Relic Island (Ash House)",
    "display_name": null,
    "for": "The F4 worldshift fragment: a Pallet starter home on a torn-off islet, one reward point, no services (events/F4_RELIC_ISLAND_ASH_HOUSE.md).",
-   "why_here": "The spec wants a house that reads as a displaced Pallet home, with its path pointing back toward town: 440 blocks west of the hometown in the sea, visible from its coast.",
+   "why_here": "The spec wants a house that reads as a displaced Pallet home, with its path pointing back toward town: 440 blocks west of the hometown in the sea, visible from its coast: fragile, measured from one coast point toward the island (visibility:relic_island_from_hometown_coast).",
    "centre": {
     "x": 1092,
     "z": 5532,
@@ -2335,7 +2335,7 @@
    "working_name": "The Great Oak (Pallet Meadows)",
    "display_name": null,
    "for": "A giant oak alone in open meadow: the first thing a new trainer can see from the first leg and walk off the path toward.",
-   "why_here": "Pallet Meadows is open plains, so a 40-block oak with a crown 46 across reads for more than a kilometre. It stands east of the first leg, near enough to the hometown to be seen from the edge of town and far enough (over 300 blocks) that reaching it is a choice.",
+   "why_here": "Pallet Meadows is open plains, so a 40-block oak with a crown 46 across reads for more than a kilometre. It stands east of the first leg, near enough to the hometown to be seen from the edge of town and far enough (over 300 blocks) that reaching it is a choice. Seen from every sampled point of the hometown's east and north edges (visibility:great_oak_from_hometown_edges).",
    "kind": "landmark_tree",
    "centre": {
     "x": 1800,
@@ -2615,79 +2615,6 @@
     "distance_blocks": 344
    },
    "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_cherry_elder.nbt); the glade is left open",
-   "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
-  },
-  {
-   "id": "weeping_elder_tilpey",
-   "order": null,
-   "role": "outpost",
-   "tier": "outpost",
-   "critical_path": false,
-   "status": "proposed",
-   "working_name": "The Weeping Elder (island in Lake Tilpey)",
-   "display_name": null,
-   "for": "A domed giant with curtains of leaves on the flat island in Lake Tilpey, reached only across water.",
-   "why_here": "The island (about 240 by 135 blocks, y81) rises out of the region's largest lake, so the tree has open water on every side and is seen across the lake from the gym 5 to 6, 6 to 7 and 7 to 8 legs; getting there needs a boat or a surfing Pokemon.",
-   "kind": "landmark_tree",
-   "centre": {
-    "x": 5640,
-    "z": 4176,
-    "ground_y": 81.1
-   },
-   "footprint": {
-    "shape": "square",
-    "class": "single_site",
-    "size_blocks": 61,
-    "min_x": 5610,
-    "min_z": 4146,
-    "max_x": 5670,
-    "max_z": 4206,
-    "ground_y": [
-     80.9,
-     81.1
-    ],
-    "slope_degrees": {
-     "mean": 0.2,
-     "max": 1.3
-    },
-    "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
-   },
-   "subregion": "tilpey_waters",
-   "region": "tilpey_lakeland",
-   "nearby": [
-    {
-     "landmark": "lake_tilpey",
-     "distance_blocks": 376
-    },
-    {
-     "landmark": "glacial_tear",
-     "distance_blocks": 436
-    },
-    {
-     "landmark": "tilpey_south_west_outlet",
-     "distance_blocks": 605
-    }
-   ],
-   "distance_from_critical_path_blocks": 861,
-   "nearest_leg": {
-    "route_id": "route_07_sabrina_to_blaine",
-    "from": "gym6_town",
-    "to": "gym7_town",
-    "at_fraction": 0.863,
-    "nearest_point": {
-     "x": 6249,
-     "z": 4785
-    }
-   },
-   "waystone": {
-    "kind": "none"
-   },
-   "gates": [],
-   "nearest_settlement": {
-    "id": "gym7_town",
-    "distance_blocks": 927
-   },
-   "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_weeping_elder.nbt); the glade is left open",
    "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
   }
  ],

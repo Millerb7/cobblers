@@ -16,19 +16,19 @@
 ## What is built
 
 - **World export:** 1 disposable/authoring overworld exists and is pregenerated as 484 region files; the live save is runtime state, not repository source.
-- **Towns:** 1 of 30 planned towns is composed in blocks: Hometown/Pallet has 9 donor structures, roads, spawn, and 1 waystone, all 9 placements `verified` in `placements.json`.
+- **Towns:** 1 of 29 planned places is composed in blocks: Hometown/Pallet has 9 donor structures, roads, spawn, and 1 waystone, all 9 placements `verified` in `placements.json`.
 - **Gyms:** 1 of 8 gym buildings exists: Brock's (a local-only Cobbleverse template) on gym1_town's prepared lot; Brock and Misty have ground-level street/plaza preparation.
 - **Routes:** 0 of 9 critical routes is built as a finished road or event chain; all 9 exist as candidate polylines and 1,408 spawn boxes in `data/routes.json`, routed by `tools/build_routes.py` on the canonical heightmap with 0 sub-region holes and no step over 35 degrees on any leg.
 - **Regions:** 21 regions and 62 sub-regions exist as authored data and WorldPainter paint inputs; they are not gameplay boundaries at runtime.
 - **Terrain landmarks:** 27 are tracked in data with 22 marked built, 4 partial, and 1 planned; summits are re-measured on the canonical heightmap and water bodies are checked unchanged by the rescale, but the status labels themselves have not been re-judged.
 - **Displaced City cavern:** 1 of 1 planned test caverns is excavated at `x3250..3449, z1650..1849`, with 1,940,550 blocks removed; the city inside it is 0 built.
-- **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted landmark trees exist; the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
+- **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted giants exist (4 landmark trees and the demoted Weeping Elder); the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 0 trainers, 0 production side events, and 0 boss encounters are placed in the world.
 - **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); 0 pools are installed and 0 placed Habitat Blocks are verified in-world.
 - **Quest data:** 3 dialogue conversations and 2 quests exist as proposed source data; 0 have been compiled into or proven through a runtime dialogue system.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
-- **Tooling:** 63 Python tools, 2 PowerShell server scripts, 39 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
+- **Tooling:** 64 Python tools, 2 PowerShell server scripts, 40 pytest modules, and 15 experiment directories exist; each experiment's own result file defines what has actually run.
 - **Stale inventory:** landmark-tree sightlines in `docs/world-building/FOLIAGE.md` and `LANDMARK_SIGHTLINES_POST_RESCALE.md` are a reproducible survey on `data/routes.json` legs and the canopy `tools/paint_maps.py` writes (sha256 `ce7da822…`); a different canopy hash means they are stale. Dated records (`TERRAIN_2026-09-14.md`, `SCULPT.md`, `VERTICAL_RESCALE.md`, `REEXPORT.md`, `TOWN_CANDIDATES.md`) keep pre-rescale levels and are labelled as such.
 - **Retired snapshots:** the retained recovery anchors `2026-09-16-pre-rescale` and `2026-09-17-pre-grass` both boot from copies (Done, clean save; all 43 error lines per anchor classified and also present in a live-world boot); retention, per-line classification and the user's delete commands are in `docs/world-building/SNAPSHOTS.md`.
 
@@ -60,6 +60,9 @@
 - **Measured town records:** off-path distance and `nearest_leg` (on `data/routes.json`) and every town's centre and footprint heights and slope (on the canonical heightmap, plus `built_ground` such as Relic Island's islet) are checked by `tools/validate_data.py` and rewritten only by `tools/measure_towns.py`, never trusted from records; landmark trees (sited to be seen from a leg) may stand 200 or more off the path, other outposts 250.
 - **Route 3 and the Foothill grove:** leg 3 deliberately brushes the built grove and world tree (nearest trunk edge 29.5 blocks, no trunk or crown over the centreline), recorded on `route_03_misty_to_surge`'s `foothill_woods_grove` landmark; it is not a clearance fault.
 - **Relic Island footprint:** the record is the islet's dry 20-block core `(1082-1101, 5522-5541)`, y63-70, all 400 columns above sea; the islet is not re-run or levelled.
+- **Nosepass sightline:** the mast stays 12 blocks; a clearing extends 60 blocks along the line toward the array, 16 blocks wide, giving a 4.3-block canopy margin (hard build constraint on the sign site and in `EVT-ROUTE3-NOSEPASS-SIGNS`).
+- **Weeping Elder:** demoted from landmark to an ordinary feature; it stays painted on its Lake Tilpey island with its glade, and is not an outpost or a viewpoint claim.
+- **Visibility claims:** every claim that something can or cannot be seen is a measured record in `data/visibility.json`, re-measured by `tools/validate_data.py` and cited in its stating record as `visibility:<id>`; claims on 10 or fewer points or under 5% are marked fragile in the record.
 - **Compiled spawn pools:** generated build output from `tools/compile_spawns.py` into `build/datapacks/cobblers_spawns/`; no compiled pool is committed; each route's species list is authored in `data/spawns.json` `route_species_selection`.
 
 ## What is open
@@ -69,8 +72,7 @@
 - **Snapshot cleanup:** the user runs the delete commands for the non-retained snapshots and boot-check copies (about 42.5 GiB); this blocks nothing technical.
 - **Hometown waystone:** decide whether it starts unlocked or is earned; this blocks its final progression trigger.
 - **Midpoint waystones:** decide whether routes receive none, post-gym unlocks, or discovery unlocks; this blocks final navigation data and retreat rules.
-- **Nosepass mast clearance:** the canopy margin at the signs is 1.5 blocks and binds 43 blocks out, so a taller mast barely helps (20 blocks gives 2.2); extending the tree-free clearing along the sightline does (60 blocks gives 4.3, 80 gives 5.8 at the 12-block mast; 5.3 and 7.3 at 20); decide mast height and clearing length; this blocks building the sign event.
-- **Weeping Elder:** seen from 16.9% of its three legs (9% of Blaine to Giovanni); the best Lake Tilpey candidates reach 29-38% but all are dry shore sites that lose the island identity, and a re-site needs a repaint and re-export; decide re-site or demotion to an ordinary feature; this blocks the landmark-tree set.
+- **Route 8 landmark:** whether Blaine to Giovanni gets a landmark tree; the candidate on file is (5216, 5024), seen from 38.5% of legs 5-8 (`data/foliage.json` `landmark_candidates`), a new decision, not a Weeping Elder rescue; this blocks nothing.
 - **Gastly mansion details:** choose the donor/site, actors, rewards, levels, and final roster; this blocks implementation of that optional quest.
 
 ## What is blocked

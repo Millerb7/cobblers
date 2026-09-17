@@ -388,25 +388,42 @@ shared scenery and may remain fixed after first world completion.
 visible from the signs, Nosepass actor, and the trail-keeper shelter.
 
 **Hard build constraint: array sightline.** This event depends on seeing the
-mast from the road. The mast clears the Foothill Woods canopy by only about 1.5
-blocks from the signs (0.4–4 along the stretch), and the road's only
+mast from the road. With the directional clearing below, the line from the signs
+clears the modelled canopy by 4.3 blocks; without it, by 1.5. The road's only
 canopy-clear view of the array is the roughly 40 blocks from (2203, 1609) to
-(2163, 1606), with the signs in the middle of it. Every build,
-foliage, and terrain pass must keep these true:
+(2163, 1606), with the signs in the middle of it. Every build, foliage, and
+terrain pass must keep these true:
 
 1. **Clearing.** The signs and the trail-keeper shelter stand in a clearing with
    no trees within 40 blocks of the signs. The built elder at (2236, 1622) is
    the nearest standing tree: its trunk is outside the radius and its crown
    passes high over the clearing's south-east edge, away from the sightline.
-2. **Corridor.** No tree may stand in the line running north-west from the sign
-   site to the array if it would reach that line. This applies especially to
-   the tallest Foothill Woods trees (mega spruce). The sightline analysis
-   assumed typical (p90) canopy heights; one taller tree in the corridor breaks
-   the view.
-3. **Mast.** The array mast stays at least as tall as the 12 blocks the
-   sightline was measured with, at the recorded anchor.
-4. **Recheck.** Recheck the line from eye height at the signs to the mast top
-   after any foliage or terrain change in the corridor. If the mast cannot be
+2. **Directional clearing.** For the first 60 blocks of the line from the signs
+   toward the mast (north-west), no tree trunk stands within 8 blocks either
+   side of the line: a 16-block-wide cleared strip that reads as a deliberate
+   view toward the array. 8 blocks covers the widest crown that grows here
+   (fancy oak 7.6, mega spruce 5.1, krummholz 4.1). Do not extend it to 80:
+   that starts to read as a felled corridor.
+3. **Corridor beyond the clearing.** Past 60 blocks, no tree may stand in the
+   line if it would reach it; this applies especially to the tallest Foothill
+   Woods trees (mega spruce). The analysis assumed typical (p90) canopy
+   heights, so one taller tree breaks the view.
+4. **Mast.** The array mast stays 12 blocks tall at the recorded anchor. A
+   taller mast was measured and rejected: the canopy margin binds just past
+   the clearing, where extra height barely lifts the line.
+
+   | Mast | Clearing 40 | 50 | 60 | 80 |
+   | --- | ---: | ---: | ---: | ---: |
+   | 12 blocks (chosen) | 1.5 | 2.8 | **4.3** | 5.8 |
+   | 20 blocks | 2.2 | 3.7 | 5.3 | 7.3 |
+   | 40 blocks | 4.2 | 6.0 | 8.1 | 10.9 |
+
+   Canopy margin in blocks at the signs for each mast height and clearing
+   length along the line (`data/landmarks.json`, sign_site clearing).
+5. **Recheck.** `tools/validate_data.py` re-measures this margin
+   (`visibility:array_mast_from_nosepass_signs` in `data/visibility.json`) and
+   fails if it drifts; still recheck after any foliage or terrain change in the
+   corridor. If the mast cannot be
    seen, the event is broken even though nothing reports an error.
 
 The measurement and method are recorded on `surge_signal_array` in

@@ -121,9 +121,9 @@ to full density.
 
 ## 4. Landmark trees
 
-Five giants, placed by hand from tool candidates and registered as outposts in `data/towns.json`
-(`kind: landmark_tree`, no waystone, nothing gated). They are discovery sites, not foliage. Each has a glade
-no other stem enters.
+Five giants, placed by hand from tool candidates. Four are landmarks, registered as outposts in `data/towns.json`
+(`kind: landmark_tree`, no waystone, nothing gated): discovery sites, not foliage. The fifth, the Weeping Elder, was
+demoted to an ordinary feature on 2026-09-16 (see its row). Each has a glade no other stem enters.
 
 - **Siting.** `tools/landmark_trees.py` and a candidate search filtered sites to:
   - at least 250 blocks off the critical path (the 2026-09-14 legs; the validator's rule for landmark trees is now
@@ -141,7 +141,7 @@ no other stem enters.
 | The Sentinel | 75-block spruce | (3264, 1008) Peak Pond Hollow | **A clearing worth finding.** Its spire shows over the old growth from the gym 3 to 4 leg. The clearing, the hidden tarn 142 blocks away and the ravine head are found only by walking in | 390 | 34 of 72 points on leg 3-4; 22 of 24 directions from the clearing's edge at 60 blocks | 1,532 |
 | The Patriarch | dark oak, crown 43 across | (4272, 3600) the Wedge ridge | **On a ridge.** Breaks the skyline above the Rift; climbing out of Victory Road to reach it is the discovery | 247 | 58 of 164 points on Victory Road | 2,964 |
 | The Cherry Elder | leaning cherry, crown 42 across | (3408, 3840) above Shrew Lake | A colour landmark: pink against the plateau from the first leg and Victory Road's climb | 531 | 71 of 152 points on two legs | 2,668 |
-| The Weeping Elder | domed oak with leaf curtains | (5640, 4176) island in Lake Tilpey | **A headland in water.** Open water on every side, seen across the lake; reached by boat or surf | 861 | 25 of 148 points on legs 5-6, 6-7, 7-8 | 1,510 |
+| The Weeping Elder | domed oak with leaf curtains | (5640, 4176) island in Lake Tilpey | **Demoted, still standing.** An isolated island tree reached by boat or surf, kept for what it is rather than moved to be seen; no longer a landmark, an outpost or a viewpoint claim (`landmark: false` in `data/foliage.json`) | 861 | 25 of 148 points on legs 5-6, 6-7, 7-8 when last surveyed as a landmark | 1,510 |
 
 *Off the path* is measured on the regenerated `data/routes.json`. *Seen from* and *Farthest seen* are the
 reproducible 2026-09-16 survey: `data/routes.json` legs, the canonical heightmap, and the canopy that

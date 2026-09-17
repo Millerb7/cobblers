@@ -30,6 +30,7 @@ detected rather than trusted.
 | `structure_nbt.py` | Write and read structure templates (`.nbt`); capture a box of blocks from a world's region files | (library) |
 | `landmark_trees.py` | Landmark giant designs; `check` sightlines from each tree's intended observers over terrain plus canopy, on `data/routes.json` legs | `derived/foliage/landmark_sightlines.json` |
 | `nosepass_sightline.py` | Route 3 Nosepass sign site: margins from each leg-3 point to the signal-array mast over terrain, the canopy_clear model and the planned paint canopy | stdout |
+| `visibility_claims.py` | Measures every claim in `data/visibility.json` that something can or cannot be seen (the `visibility` check in `validate_data.py` runs the same code); `--write` refreshes measured and fragile | `data/visibility.json` |
 | `measure_towns.py` | Re-measures `towns.json` off-path distance, `nearest_leg`, and centre/footprint heights and slope (the numbers `validate_data.py` checks); `--write` rewrites them | `data/towns.json` |
 | `sculpt.py` | Local terrain brushes from `data/sculpt.json`: coasts by class, massif asymmetry, summits and strata, volcano cones, flat pads; writes the sculpted heightmap, the coast class map and before/after previews | `<source root>/land_8k_16_sculpted.png`, `build/sculpt/`, `derived/sculpt/` |
 | `terrace_measure.py` | Contour terracing over the whole landmass: grade regimes, block treads and their variation in 64-block windows, the grade perturbation ratio rho, the source-side terrace index, shoreline flats and cliffs | `derived/terrace/` |
