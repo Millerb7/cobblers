@@ -21,7 +21,7 @@ should understand each problem by looking at the scene before reading dialogue.
 | Brock to Misty | `EVT-ROUTE2-ROLLAWAY-GEODUDE` | 5–8 min | Route chase; mining supplies |
 | Misty | `EVT-G2-PSYDUCK-LAUNCH` | 4–6 min | Environmental solution; water supplies |
 | Misty | `EVT-G2-POLIWAG-COUNT` | 3–5 min | Search scene; Poliwag encounter |
-| Misty to Surge | `EVT-ROUTE3-CREEK-WOOPER` | 6–10 min | Creek spur puzzle; Ground-type answer |
+| Misty to Surge | `EVT-ROUTE3-CREEK-WOOPER` | 6–10 min | Pond-shore puzzle; controlled Wooper encounter |
 | Misty to Surge | `EVT-ROUTE3-NOSEPASS-SIGNS` | 5–8 min | Trail navigation; signal-array foreshadowing |
 | Surge | `EVT-G3-MAGNEMITE-BOLTS` | 5–8 min | Town puzzle; electrical supplies |
 | Surge | `EVT-G3-KITE-LINE` | 3–6 min | Wind puzzle; cosmetic reward |
@@ -296,52 +296,52 @@ lip reveals the summits, is a pure arrival moment: no encounter is placed
 there. The route profile and the four smaller events are in
 `EARLY_GAME_EVENT_BANK.md`.
 
-## `EVT-ROUTE3-CREEK-WOOPER` — The Dry Crossing
+## `EVT-ROUTE3-CREEK-WOOPER` — The Pond's Edge
 
-**Placement:** a short marked spur west from the Foothill Woods road to the
-outflow of the pond west of Mt Clay (`pond_west_of_mt_clay_outflow` in
-`data/rivers.json`). The road no longer crosses this creek: it passes east of
-the pond. The creek comes closest to the road, roughly 150 blocks, near the
-middle of the leg, just below the pond. The earlier anchor (1824, 1888) is on
-the same creek but farther from the road, so it is superseded. The spur and
-crossing point are placed at build time on the graded outflow.
+**Placement:** on the east shore of `pond_west_of_mt_clay`, at the pond
+polygon's (2204, 1580) shore vertex. The pond is about 100 blocks off
+`route_03_misty_to_surge`, and this shore site is 29 blocks from the
+Nosepass sign site at (2203, 1609). The two encounters form one natural
+stopping place. There is no separate creek spur and no return trip from
+Surge's town.
 
-**Visible hook:** At a ford on the creek, a supply crate is stuck on a gravel
-bar. Several Wooper occupy the shallow channel between it and the bank. The
-courier's cart is visible from the road at the spur's start.
+**Visible hook:** A supply crate has washed into the shallows beside a Wooper
+feeding patch. The courier and cart are visible from the sign clearing, so the
+shore scene reads as part of the same stop rather than a hidden detour.
 
 **Flow**
 
 1. A courier asks for the crate but warns that chasing the Wooper will scatter
    them into deeper water.
-2. Inspect three stepping routes. One crosses their feeding patch, one is too
-   deep, and one uses dry stones along the upstream edge.
+2. Inspect three shoreline approaches. One crosses their feeding patch, one is
+   deep mud, and one follows dry stones around the bank.
 3. Mark or traverse the dry route without entering the feeding patch.
-4. Release the crate from the gravel bar and return it along the same path.
+4. Release the crate from the shallows and return it along the same path.
 5. The Wooper remain calm. One follows the player to a nearby muddy pool and
    offers a controlled encounter.
 
 **Readable solution:** Water bubbles and food particles mark the feeding patch;
-darker water marks the deep route; dry lichen marks the safe stones. The player
+dark mud marks the unstable route; dry lichen marks the safe stones. The player
 should not solve this by invisible collision rules.
 
 **Dialogue beats**
 
 - Courier: “They were here first. The crate can wait five minutes.”
-- After completion: “You brought the supplies back and left the creek where you
+- After completion: “You brought the supplies back and left the pond where you
   found it. That is the whole job.”
 
 **Reward:** One controlled Wooper encounter and a Soft Sand candidate. This is
-an intentional optional Ground-type answer available before Surge, subject to
-trainer-balance review.
+an optional team-building reward before Surge; whether it should count as the
+second dependable answer is left to trainer-balance review.
 
 **State and reset:** Route choice and reward are per player. Crossing the wrong
 patch resets the crate interaction but does not remove the Wooper or permanently
 fail the event.
 
-**Build needs:** Marked spur from the road, a ford on the graded outflow,
-three readable routes, gravel-bar crate, feeding particles or props, and an
-encounter pool.
+**Build needs:** A readable shore pocket at (2204, 1580), three approaches,
+shallows crate, feeding particles or props, and an encounter pool. Build it
+with the nearby Nosepass sign clearing so paths, foliage, and sightlines serve
+both scenes.
 
 ## `EVT-ROUTE3-NOSEPASS-SIGNS` — North Keeps Moving
 
@@ -487,16 +487,15 @@ off the shelf lip on the arrival road, which stays free of events.
 4. Author the downhill Geodude trail after the Brock-to-Misty road grade is
    final.
 5. Build Misty's dock scenes around the final shoreline and boat placement.
-6. Build the Wooper ford on the pond outflow and its spur before dressing the
-   rest of the climb.
-7. Build the Nosepass sign site at (2203, 1609) together with the array mast,
-   and verify the sightline before any foliage pass touches Foothill Woods
-   (hard constraint in `EVT-ROUTE3-NOSEPASS-SIGNS`). The signs show the array,
-   never the required story evidence.
-8. Fit Surge's two town events around the final gym footprint on the shelf.
+6. Build the Wooper shore at (2204, 1580) and the Nosepass sign site at
+   (2203, 1609) as one stopping place, together with the array mast. Verify the
+   sightline before any foliage pass touches Foothill Woods (hard constraint in
+   `EVT-ROUTE3-NOSEPASS-SIGNS`). The signs show the array, never the required
+   story evidence.
+7. Fit Surge's two town events around the final gym footprint on the shelf.
    The array is 290 blocks away on the shoulder, so town events refer to it but
    do not need to be built around it. Leave the shelf lip empty.
-9. Run a separate trainer-balance review on Machop, Poliwag, and Wooper access
+8. Run a separate trainer-balance review on Machop, Poliwag, and Wooper access
    before assigning levels, moves, held items, or capture counts.
 
 # Unverified technical needs
@@ -506,9 +505,8 @@ off the shelf lip on the arrival road, which stays free of events.
 - Per-player dialogue and submission state with shared scenery.
 - Replayable prop state for multiplayer and late joiners.
 - Exact item IDs and quantities for every reward.
-- Exact placement coordinates outside established town centres, the Nosepass
-  sign site, and the signal-array anchor. The Wooper ford on the pond outflow
-  has no coordinate yet.
+- Exact placement coordinates outside established town centres, the Wooper
+  shore site, the Nosepass sign site, and the signal-array anchor.
 - A repeatable check of the sign-site sightline to the array mast, so a foliage
   or terrain pass that blocks it is caught instead of breaking the event
   silently.

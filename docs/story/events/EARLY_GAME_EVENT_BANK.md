@@ -355,9 +355,9 @@ simplified route polyline and are approximate:
   event, NPC, prompt, or reward. Nothing in this bank may be placed on it.
 
 Event order along the leg is Spoink (woods), then Swablu (Mt Clay foot), then
-Mareep and Sableye (Tri Peaks grade). The two detailed encounters sit between
-them: the Wooper outflow spur near the middle and the Nosepass signs at about
-70% of the way.
+Mareep and Sableye (Tri Peaks grade). The two detailed encounters share one
+stop at the pond shore: the Wooper scene at (2204, 1580) sits 29 blocks from
+the Nosepass signs at (2203, 1609), about 70% of the way.
 
 ## `EVT-ROUTE3-SPOINK-PEARL` — Do Not Stop Bouncing
 

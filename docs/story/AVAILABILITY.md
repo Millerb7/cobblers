@@ -8,6 +8,8 @@ This table works outward from what players can actually encounter before each gy
 
 Wild level bands are static and spatial. A species listed on an earlier leg remains plausibly catchable and trainable for later gyms; the displayed range is where it first becomes available.
 
+The assessment lines below measure type availability only. They do not account for evolution gates, learned moves, coverage, held items, level gaps, mixed rosters, or battle format. `GYM_SUFFICIENCY_AUDIT.md` performs that second check and supersedes the sufficiency labels for Gyms 3, 5, 6, and 8.
+
 ## Gym 1: kanto_brock (Rock)
 
 | Species | First wild levels | Types | First/source corridor |

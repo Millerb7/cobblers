@@ -117,19 +117,6 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Reward:** A Scar map marker and a technical accessory from Surge's stores.
 - **Reveal:** A settlement once stood on Mt Vessu and vanished as a whole.
 
-### `SQ-G3-02` — The Pond Behind Clay
-
-- **Kind:** LOCAL PROBLEM
-- **Hook:** A mountain guide at (1688, 1410) has not heard from a regular field
-  researcher working at the pond the Route 3 road skirts below Mt Clay.
-- **Steps:** Go back down to `pond_west_of_mt_clay` (2110, 1706; floor 93.9),
-  about 100 blocks off `route_03_misty_to_surge`; find the research cache on
-  the far shore, away from the `EVT-ROUTE3-CREEK-WOOPER` ford on the outflow;
-  return to (1688, 1410).
-- **Reward:** Climbing supplies and an optional mountain encounter.
-- **Reveal:** The high massif contains sheltered living pockets, not only bare
-  peaks and story ruins.
-
 ## `gym4_town` — Erika's town
 
 ### `SQ-G4-01` — A Channel That Climbs

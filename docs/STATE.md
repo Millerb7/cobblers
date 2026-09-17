@@ -57,6 +57,7 @@
 - **Leg 4 waypoint:** passes west of the Merian cirque at `(2640, 1180)` so the Displaced City stays at least 250 and the Merian hut 100-450 blocks off the critical path.
 - **Flat pads:** the Scar and the Frostpeak shrine are re-pressed at their authored levels carried through the rescale curve (y280, y310), and Surge's shelf is authored directly on the rescaled terrain (`pressed_y` 174.4), all by `tools/press_pads.py`.
 - **Surge's signal array:** landmark `surge_signal_array` on a Mt Vessu shoulder at `(1928, 1248)`, y284; the Route 3 Nosepass signs aim at it from `(2203, 1609)`, the only stretch of leg 3 that sees its mast over the canopy. The summit reveal at the shelf lip carries no quest beat.
+- **Route 3 pond stop:** place `EVT-ROUTE3-CREEK-WOOPER` on the pond shore at `(2204, 1580)`, 29 blocks from the Nosepass signs; `SQ-G3-02` is cut and players are not sent back to this pond.
 - **Measured town records:** off-path distance and `nearest_leg` (on `data/routes.json`) and every town's centre and footprint heights and slope (on the canonical heightmap, plus `built_ground` such as Relic Island's islet) are checked by `tools/validate_data.py` and rewritten only by `tools/measure_towns.py`, never trusted from records; landmark trees (sited to be seen from a leg) may stand 200 or more off the path, other outposts 250.
 - **Compiled spawn pools:** generated build output from `tools/compile_spawns.py` into `build/datapacks/cobblers_spawns/`; no compiled pool is committed; each route's species list is authored in `data/spawns.json` `route_species_selection`.
 
@@ -71,6 +72,7 @@
 - **Elder inside the Nosepass clearing:** a built elder at `(2236, 1622)` stands about 35 blocks from the sign site `(2203, 1609)`, inside the 40-block clearing the sign event's hard build constraint requires (it is south-east of the signs, not in the north-west sightline); decide whether the elder or the signs move; this blocks building that event.
 - **Relic Island footprint:** the built islet leaves 348 of the recorded 40-block square's 1,600 columns under the sea and its surface rough (footprint ground y38-70); decide whether to shrink the footprint to the dry 20-block core (y63-70) or level a pad; this blocks the Ash House placement.
 - **Gastly mansion details:** choose the donor/site, actors, rewards, levels, and final roster; this blocks implementation of that optional quest.
+- **Gym matchup sufficiency:** decide the final trainer rosters, level-cap relationship, and a second dependable pre-Surge strategy; Gyms 3, 5, 6 and 8 need full composition checks before encounter availability is treated as sufficient.
 
 ## What is blocked
 

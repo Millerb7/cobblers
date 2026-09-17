@@ -176,10 +176,10 @@ expanded small-event specifications are in
 
 ### Route 3 — Misty to Surge
 
-- **`EVT-ROUTE3-CREEK-WOOPER`: The Dry Crossing.** On a spur to the pond
-  outflow west of the road, recover a supply crate without trampling a Wooper
-  feeding patch. The controlled Wooper encounter is
-  an intentional optional Ground-type answer before Surge.
+- **`EVT-ROUTE3-CREEK-WOOPER`: The Pond's Edge.** At the pond shore near
+  the Nosepass signs, recover a supply crate without trampling a Wooper feeding
+  patch. The controlled Wooper encounter is an optional team-building reward
+  before Surge.
 - **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** At (2203, 1609), repair
   trail signs that rotate during signal pulses while a Nosepass turns toward
   the mast of Surge's signal array instead of north. The array must stay
