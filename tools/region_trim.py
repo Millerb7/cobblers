@@ -17,7 +17,7 @@ file it will change there first, then:
 Distant Horizons keeps its own LOD database (data/DistantHorizons.sqlite)
 which this does not touch; it must be purged or rebuilt separately.
 
-  python tools/region_trim.py --world ../cobblers-server/erosion-land-8k \\
+  python tools/region_trim.py --world <offline-snapshot-world> \\
       --min-x -1024 --min-z -1024 --max-x 9215 --max-z 9215
 """
 from __future__ import annotations
@@ -139,7 +139,8 @@ def main(argv=None):
     p.add_argument("--no-starts", action="store_true", help="skip reading chunk data for structure starts")
     p.add_argument("--out", default=None, help="write the JSON report here")
     a = p.parse_args(argv)
-    world = Path(a.world)
+    import runtime_guard
+    world = runtime_guard.check(a.world, "trim")
     sub = DIM_DIRS.get(a.dimension, a.dimension)
     dim_root = world / sub if sub else world
     if not dim_root.is_dir():

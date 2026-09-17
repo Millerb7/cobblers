@@ -6258,5 +6258,17 @@
         }
       ]
     }
+  },
+  "canonical_check": {
+    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "date": "2026-09-17",
+    "result": "unchanged: rivers are planned on the authored heightmap (computed_from_sha256) and cut into the import by design; the rescale is the identity at or below y145, the highest water is y127, and every column under a course (width + 8) or lake basin differs from the pre-rescale import by at most 0.0043 blocks.",
+    "source_grounds_above_y145": [
+      {
+        "id": "major_river systems_ranked head",
+        "recorded_ground_y": 199.7
+      }
+    ],
+    "note": "Recorded ground heights at a source above y145 describe the authored heightmap, not the canonical one; water levels and beds are unaffected."
   }
 }

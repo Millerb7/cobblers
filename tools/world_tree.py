@@ -8,26 +8,31 @@ did, as run-length fills split across functions (`maxCommandChainLength` is 6553
 It needs the raised build limit: at Foothill Woods, ground y116, the crown reaches y535 against a vanilla ceiling
 of y319. See `modpack/datapacks/cobblers_height`.
 
-  python tools/world_tree.py
-  then: /reload, /function cobblers:worldtree/00_tree .. 03_tree, then 90_foundation
+  python tools/world_tree.py --surface-world <offline-snapshot-world> [--out build/datapacks/cobblers_worldtree]
+  then install the datapack (under the server lock), /reload, /function cobblers:worldtree/00_tree .. 03_tree, then 90_foundation
 
 This lives in the repo rather than only in a scratch directory because the datapack it writes sits INSIDE the world
 folder, and a terrain re-export would carry it off with the world. The tree is sha256-seeded, so regenerating it
 reproduces the same blocks exactly.
 """
-import sys, json, shutil
+import argparse, sys, json, shutil
 from pathlib import Path
 import numpy as np
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "tools"))
-SERVER_DP = Path(r"C:\Users\wnd\Documents\github\cobblers-server\cobblers-10240\datapacks\cobblers_worldtree")
 
 CENTRE = (2016, 2280)          # trunk centre, as recorded in the grove report
 GROUND = 116
 
 
-def main():
+def main(argv=None):
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--surface-world", required=True, help="offline snapshot or disposable copy, never the live world")
+    p.add_argument("--out", default=str(REPO / "build" / "datapacks" / "cobblers_worldtree"))
+    a = p.parse_args(argv)
+    import runtime_guard
+    SERVER_DP = runtime_guard.check(a.out, "write the datapack to")
     import tree_grove as TG
     import world_heights as WH
     b, dims = TG.big_tree("oak", "a", "world")
@@ -49,7 +54,7 @@ def main():
     for (x, y, z) in b.blocks:
         k = (ox + x, oz + z)
         low[k] = min(low.get(k, 10 ** 6), oy + y)
-    g, _, _ = WH.extract(r"C:\Users\wnd\Documents\github\cobblers-server\cobblers-10240",
+    g, _, _ = WH.extract(a.surface_world,
                          (min(k[0] for k in low), min(k[1] for k in low),
                           max(k[0] for k in low), max(k[1] for k in low)))
     gx0, gz0 = min(k[0] for k in low), min(k[1] for k in low)

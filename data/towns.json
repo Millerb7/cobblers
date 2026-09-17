@@ -2,7 +2,7 @@
  "schema": "cobblers.towns/1",
  "schema_status": "proposed",
  "status": "proposed",
- "computed_from_sha256": "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1",
+ "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
  "coordinates": "Block x, z. A1 origin at 0,0; x east, z south.",
  "decisions": [
   {
@@ -75,7 +75,7 @@
    "centre": {
     "x": 1462,
     "z": 5293,
-    "ground_y": 116.2
+    "ground_y": 116.8
    },
    "footprint": {
     "shape": "square",
@@ -143,7 +143,7 @@
    "centre": {
     "x": 1743,
     "z": 3628,
-    "ground_y": 137.7
+    "ground_y": 138.2
    },
    "footprint": {
     "shape": "square",
@@ -159,7 +159,7 @@
     ],
     "slope_degrees": {
      "mean": 2.7,
-     "max": 8.0
+     "max": 8.1
     },
     "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
    },
@@ -181,12 +181,12 @@
    ],
    "approach": {
     "from": "hometown",
-    "route_length_blocks": 1792,
+    "route_length_blocks": 1849,
     "straight_line_blocks": 1687,
     "water_crossings": [],
-    "text": "North from Pallet through Pallet Meadows, the west-shore edge and the River of Shrews vale, then up onto Viltri Plateau. Terrain-derived route length: 1,792 blocks; no water crossing.",
+    "text": "North from Pallet through Pallet Meadows and the west-shore edge, then up onto Viltri Plateau; since the sculpt pass the computed path no longer enters the River of Shrews vale. Terrain-derived route length: 1,849 blocks; no water crossing.",
     "route_length_source": "route_01_pallet_to_brock",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
    "route_role": "Rock gym on a birch upland, the first town north of the hometown as Pewter is north of Pallet. The Water and Grass answers to Brock are one leg ahead (Lake Viltri, 570 blocks) and on the plateau itself.",
    "tier": "critical",
@@ -216,7 +216,7 @@
    "centre": {
     "x": 1605,
     "z": 2801,
-    "ground_y": 107.2
+    "ground_y": 107.5
    },
    "footprint": {
     "shape": "square",
@@ -254,14 +254,14 @@
    ],
    "approach": {
     "from": "gym1_town",
-    "route_length_blocks": 946,
+    "route_length_blocks": 944,
     "straight_line_blocks": 835,
     "water_crossings": [],
-    "text": "Down from Viltri Plateau into Lake Viltri Hollow. Terrain-derived route length: 946 blocks; no water crossing.",
+    "text": "Down from Viltri Plateau into Lake Viltri Hollow. Terrain-derived route length: 944 blocks; no water crossing.",
     "route_length_source": "route_02_brock_to_misty",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
-   "route_role": "Misty on a real lake: the flattest site of the ten (under 5 degrees, 4 blocks of relief). The short leg from Brock (946 blocks) makes the first two towns a pair, as Pewter and Cerulean are close.",
+   "route_role": "Misty on a real lake: the flattest site of the ten (under 5 degrees, 4 blocks of relief). The short leg from Brock (944 blocks) makes the first two towns a pair, as Pewter and Cerulean are close.",
    "tier": "critical",
    "critical_path": true,
    "waystone": {
@@ -289,7 +289,7 @@
    "centre": {
     "x": 1847,
     "z": 1262,
-    "ground_y": 190.4
+    "ground_y": 257.5
    },
    "footprint": {
     "shape": "square",
@@ -300,12 +300,12 @@
     "max_x": 1888,
     "max_z": 1303,
     "ground_y": [
-     186.3,
-     193.6
+     234.0,
+     275.2
     ],
     "slope_degrees": {
-     "mean": 3.9,
-     "max": 8.0
+     "mean": 20.5,
+     "max": 33.5
     },
     "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
    },
@@ -327,14 +327,14 @@
    ],
    "approach": {
     "from": "gym2_town",
-    "route_length_blocks": 1989,
+    "route_length_blocks": 2058,
     "straight_line_blocks": 1563,
     "water_crossings": [],
-    "text": "North from Lake Viltri Hollow through Foothill Woods and around the Mt Clay and Mt Vessu slopes. Terrain-derived route length: 1,989 blocks; the earlier forced pond-outflow bridge is not on the computed walkable path.",
+    "text": "North from Lake Viltri Hollow through Foothill Woods and around the Mt Clay and Mt Vessu slopes. Terrain-derived route length: 2,058 blocks; the earlier forced pond-outflow bridge is not on the computed walkable path.",
     "route_length_source": "route_03_misty_to_surge",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
-   "route_role": "An exposed high town for the electric gym, the highest on the route (y186-194). Box F's plateau is the clipped y200 ceiling, flat only because it is cut off; this shoulder is real ground 47 blocks from the summit. It is also the tightest site (83 blocks square): a small town.",
+   "route_role": "An exposed high town for the electric gym on Mt Vessu's shoulder, 47 blocks from the summit. Before the vertical rescale this was the highest site on the route (y186-194) and the tightest (83 blocks square).",
    "tier": "critical",
    "critical_path": true,
    "waystone": {
@@ -345,6 +345,12 @@
    "nearest_settlement": {
     "id": "the_scar",
     "distance_blocks": 408
+   },
+   "site_review": {
+    "status": "needs re-siting (a human decision)",
+    "measured": "2026-09-17",
+    "finding": "The rescale lifted the shoulder from y186-194 to y234-275 and its slope from mean 3.9 / max 8.0 to mean 20.5 / max 33.5 degrees. The footprint no longer meets its basis (slope under 8 degrees): it is a mountainside, not a town site.",
+    "blocks": "route_03_misty_to_surge and route_04_surge_to_erika both end or start at this centre"
    }
   },
   {
@@ -362,7 +368,7 @@
    "centre": {
     "x": 4309,
     "z": 1555,
-    "ground_y": 110.0
+    "ground_y": 110.9
    },
    "footprint": {
     "shape": "square",
@@ -400,12 +406,12 @@
    ],
    "approach": {
     "from": "gym3_town",
-    "route_length_blocks": 2907,
+    "route_length_blocks": 3091,
     "straight_line_blocks": 2482,
     "water_crossings": [],
-    "text": "East from Mt Vessu through Mt Clay, Merian Cirque, the Crags, Upper Trough and Peak Pond Hollow. Terrain-derived route length: 2,907 blocks; the 25x water cost keeps it out of Peak Pond.",
+    "text": "East from Mt Vessu through Mt Clay, Merian Cirque, the Crags, Upper Trough and Peak Pond Hollow. Terrain-derived route length: 3,091 blocks; the 25x water cost keeps it out of Peak Pond.",
     "route_length_source": "route_04_surge_to_erika",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
    "route_role": "Erika in Peak Pond Hollow, 129 blocks from the pond, replacing the box that was in the sea. The sub-region is painted as dense taiga; Erika's own structure generates in flower forest, so the paint around the town is a candidate for a flower preset when Axiom work starts.",
    "tier": "critical",
@@ -435,7 +441,7 @@
    "centre": {
     "x": 4646,
     "z": 2446,
-    "ground_y": 117.5
+    "ground_y": 116.8
    },
    "footprint": {
     "shape": "square",
@@ -447,7 +453,7 @@
     "max_z": 2561,
     "ground_y": [
      114.5,
-     123.2
+     123.1
     ],
     "slope_degrees": {
      "mean": 2.5,
@@ -473,12 +479,12 @@
    ],
    "approach": {
     "from": "gym4_town",
-    "route_length_blocks": 1038,
+    "route_length_blocks": 1051,
     "straight_line_blocks": 949,
     "water_crossings": [],
-    "text": "South from Peak Pond Hollow through the North-East Downs to Glacier Foot Fields. Terrain-derived route length: 1,038 blocks; no water crossing.",
+    "text": "South from Peak Pond Hollow through the North-East Downs to Glacier Foot Fields. Terrain-derived route length: 1,051 blocks; no water crossing.",
     "route_length_source": "route_05_erika_to_koga",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
    "route_role": "Poison beside the marsh. The Glacial Tear and the major river's valley lie 311-507 blocks south-west: visible from town, not yet in the way.",
    "tier": "critical",
@@ -508,7 +514,7 @@
    "centre": {
     "x": 6196,
     "z": 3398,
-    "ground_y": 94.8
+    "ground_y": 93.8
    },
    "footprint": {
     "shape": "square",
@@ -551,7 +557,7 @@
     "water_crossings": [],
     "text": "East from Glacier Foot Fields through Marsh Creek to Tilpey's north shore. Terrain-derived route length: 1,944 blocks; no water crossing.",
     "route_length_source": "route_06_koga_to_sabrina",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
    "route_role": "The central hub, as Saffron is Kanto's centre: over the lake where the glacier and the major river end. It is the last town before the barrier.",
    "tier": "critical",
@@ -581,7 +587,7 @@
    "centre": {
     "x": 6074,
     "z": 4995,
-    "ground_y": 107.8
+    "ground_y": 107.3
    },
    "footprint": {
     "shape": "square",
@@ -619,7 +625,7 @@
    ],
    "approach": {
     "from": "gym6_town",
-    "route_length_blocks": 2053,
+    "route_length_blocks": 2061,
     "straight_line_blocks": 1604,
     "water_crossings": [
      {
@@ -635,9 +641,9 @@
       "z": 3920
      }
     ],
-    "text": "South from Tilpey's north shore across Lake Tilpey and its outflow gorge at the required (6632, 3904) bridge, then through the east and south shores to the Craters. Terrain-derived route length: 2,053 blocks.",
+    "text": "South from Tilpey's north shore across Lake Tilpey and its outflow gorge at the required (6632, 3904) bridge, then through the east and south shores to the Craters. Terrain-derived route length: 2,061 blocks.",
     "route_length_source": "route_07_sabrina_to_blaine",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
    "route_role": "Blaine at the Craters instead of the Nether. The town sits on the north-west rim, 27 blocks from the crater outline; the river crossing before it is the first real barrier of the game, placed between badges 6 and 7. (The East Cones flat once recorded as a caldera site for the gym now holds the Mining Town.)",
    "tier": "critical",
@@ -667,7 +673,7 @@
    "centre": {
     "x": 3647,
     "z": 6497,
-    "ground_y": 112.4
+    "ground_y": 112.8
    },
    "footprint": {
     "shape": "square",
@@ -705,12 +711,12 @@
    ],
    "approach": {
     "from": "gym7_town",
-    "route_length_blocks": 3049,
+    "route_length_blocks": 3050,
     "straight_line_blocks": 2859,
     "water_crossings": [],
-    "text": "West from the Craters through Tilpey's south shore, the southern coast, Rift Foot and the Scorched Plateau. Terrain-derived route length: 3,049 blocks; no water crossing.",
+    "text": "West from the Craters through Tilpey's south shore, the southern coast, Rift Foot and the Scorched Plateau. Terrain-derived route length: 3,050 blocks; no water crossing.",
     "route_length_source": "route_08_blaine_to_giovanni",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
    "route_role": "Giovanni back near the hometown for the finale, as Viridian's gym is beside Pallet and opens last. The Rift's south-west tip is 1,122 blocks north: the start of Victory Road.",
    "tier": "critical",
@@ -738,7 +744,7 @@
    "centre": {
     "x": 3297,
     "z": 2603,
-    "ground_y": 118.2
+    "ground_y": 118.0
    },
    "footprint": {
     "shape": "square",
@@ -776,12 +782,12 @@
    ],
    "approach": {
     "from": "gym8_town",
-    "route_length_blocks": 5157,
+    "route_length_blocks": 5248,
     "straight_line_blocks": 3911,
     "water_crossings": [],
-    "text": "North from Giovanni's town through Rift Foot and the south-east arm, then along the Rift's south-west arm, west spur, fork, trunk and apex to the League plateau. Terrain-derived Victory Road length: 5,157 blocks; no water crossing.",
+    "text": "North from Giovanni's town through Rift Foot and the south-east arm, then along the Rift's south-west arm, west spur, fork, trunk and apex to the League plateau. Terrain-derived Victory Road length: 5,248 blocks; no water crossing.",
     "route_length_source": "victory_road",
-    "route_length_method": "full-resolution A* on pinned authored heightmap"
+    "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
    "route_role": "The League on the Foothill Woods plateau 178 blocks from the Rift and 447 from the Glacial Tear, overlooking the major river. The Rift, a dry valley with its own custom biome still to come, is the approach. Proposed in the overworld: see the note on the End.",
    "note_on_the_end": "Decided 2026-09-14: the League is in the overworld; the End's cobbleverse:kanto_league copies are to be disabled and End access is post-game (DIMENSIONS_AND_BORDERS.md 4.2).",
@@ -811,7 +817,7 @@
    "centre": {
     "x": 1716,
     "z": 7298,
-    "ground_y": 114.8
+    "ground_y": 114.4
    },
    "footprint": {
     "shape": "square",
@@ -886,7 +892,7 @@
    "centre": {
     "x": 7265,
     "z": 1556,
-    "ground_y": 115.7
+    "ground_y": 116.5
    },
    "footprint": {
     "shape": "square",
@@ -961,7 +967,7 @@
    "centre": {
     "x": 6633,
     "z": 5716,
-    "ground_y": 137.3
+    "ground_y": 138.1
    },
    "footprint": {
     "shape": "square",
@@ -1043,7 +1049,7 @@
    "centre": {
     "x": 2969,
     "z": 1710,
-    "ground_y": 122.0
+    "ground_y": 122.7
    },
    "footprint": {
     "shape": "square",
@@ -1059,7 +1065,7 @@
     ],
     "slope_degrees": {
      "mean": 3.5,
-     "max": 8.0
+     "max": 8.1
     },
     "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
    },
@@ -1079,7 +1085,7 @@
      "distance_blocks": 172
     }
    ],
-   "distance_from_critical_path_blocks": 290,
+   "distance_from_critical_path_blocks": 286,
    "nearest_leg": {
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
@@ -1150,7 +1156,7 @@
    "centre": {
     "x": 2654,
     "z": 3605,
-    "ground_y": 112.1
+    "ground_y": 112.3
    },
    "footprint": {
     "shape": "square",
@@ -1166,7 +1172,7 @@
     ],
     "slope_degrees": {
      "mean": 2.4,
-     "max": 8.0
+     "max": 8.1
     },
     "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
    },
@@ -1186,7 +1192,7 @@
      "distance_blocks": 418
     }
    ],
-   "distance_from_critical_path_blocks": 898,
+   "distance_from_critical_path_blocks": 891,
    "nearest_leg": {
     "route_id": "route_02_brock_to_misty",
     "from": "gym1_town",
@@ -1218,11 +1224,11 @@
    "working_name": "Merian hut",
    "display_name": null,
    "for": "An alpine hut with a Pokémon Center in the Merian cirque, at the source of the major river.",
-   "why_here": "The computed Surge-to-Erika leg is 2,907 blocks; this cirque-floor site is 188 blocks from route_04_surge_to_erika at fraction 0.343, beside the major river source.",
+   "why_here": "The computed Surge-to-Erika leg is 3,091 blocks; this cirque-floor site is 175 blocks from route_04_surge_to_erika at fraction 0.362, beside the major river source.",
    "centre": {
     "x": 2813,
     "z": 1102,
-    "ground_y": 107.4
+    "ground_y": 107.3
    },
    "footprint": {
     "shape": "square",
@@ -1258,7 +1264,7 @@
      "distance_blocks": 277
     }
    ],
-   "distance_from_critical_path_blocks": 188,
+   "distance_from_critical_path_blocks": 175,
    "nearest_leg": {
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
@@ -1291,11 +1297,11 @@
    "working_name": "Gorge hamlet (Tilpey outflow)",
    "display_name": null,
    "for": "A bridge-keepers' hamlet above the Tilpey outflow gorge: a Center, two houses, and the NPC who knows the river.",
-   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits about 498 blocks south-east of the bridge and 305 blocks off route_07_sabrina_to_blaine at fraction 0.606, visible from the crossing but not on the way.",
+   "why_here": "The only crossing between Sabrina and Blaine is the gorge; the hamlet sits about 498 blocks south-east of the bridge and 283 blocks off route_07_sabrina_to_blaine at fraction 0.598, visible from the crossing but not on the way.",
    "centre": {
     "x": 6814,
     "z": 4367,
-    "ground_y": 112.7
+    "ground_y": 113.1
    },
    "footprint": {
     "shape": "square",
@@ -1331,7 +1337,7 @@
      "distance_blocks": 662
     }
    ],
-   "distance_from_critical_path_blocks": 305,
+   "distance_from_critical_path_blocks": 283,
    "nearest_leg": {
     "route_id": "route_07_sabrina_to_blaine",
     "from": "gym6_town",
@@ -1364,11 +1370,11 @@
    "working_name": "Tableland stop (Scorched Plateau)",
    "display_name": null,
    "for": "A waystation on the badlands tableland: a Center, a prospector's house and a lookout over the Craters and the Rift.",
-   "why_here": "The computed Blaine-to-Giovanni leg is 3,049 blocks; this flat y158-162 tableland site is 233 blocks from route_08_blaine_to_giovanni at fraction 0.524.",
+   "why_here": "The computed Blaine-to-Giovanni leg is 3,050 blocks; this flat y158-164 tableland site is 238 blocks from route_08_blaine_to_giovanni at fraction 0.525.",
    "centre": {
     "x": 4876,
     "z": 5729,
-    "ground_y": 160.7
+    "ground_y": 161.6
    },
    "footprint": {
     "shape": "square",
@@ -1379,12 +1385,12 @@
     "max_x": 4975,
     "max_z": 5828,
     "ground_y": [
-     157.8,
-     162.4
+     158.1,
+     163.7
     ],
     "slope_degrees": {
-     "mean": 1.5,
-     "max": 5.0
+     "mean": 1.8,
+     "max": 5.8
     },
     "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
    },
@@ -1404,7 +1410,7 @@
      "distance_blocks": 761
     }
    ],
-   "distance_from_critical_path_blocks": 233,
+   "distance_from_critical_path_blocks": 238,
    "nearest_leg": {
     "route_id": "route_08_blaine_to_giovanni",
     "from": "gym7_town",
@@ -1425,7 +1431,11 @@
     "id": "gym7_town",
     "distance_blocks": 1405
    },
-   "buildability": "198-block square under 5 degrees on the plateau top"
+   "buildability": "198-block square under 5 degrees on the plateau top",
+   "site_review": {
+    "status": "minor: max slope 5.8 degrees against its under-5 basis",
+    "measured": "2026-09-17"
+   }
   },
   {
    "id": "rift_rim_stop",
@@ -1437,11 +1447,11 @@
    "working_name": "Rift rim post",
    "display_name": null,
    "for": "A rangers' post with a Center on the Rift's east rim near the fork: the traditional stop before Victory Road, set off the road.",
-   "why_here": "Computed Victory Road is 5,157 blocks along the Rift waypoints; this rim post is 375 blocks from victory_road at fraction 0.630, so players climb out to rest.",
+   "why_here": "Computed Victory Road is 5,248 blocks along the Rift waypoints; this rim post is 386 blocks from victory_road at fraction 0.628, so players climb out to rest.",
    "centre": {
     "x": 3734,
     "z": 3951,
-    "ground_y": 139.5
+    "ground_y": 138.8
    },
    "footprint": {
     "shape": "square",
@@ -1477,7 +1487,7 @@
      "distance_blocks": 936
     }
    ],
-   "distance_from_critical_path_blocks": 375,
+   "distance_from_critical_path_blocks": 386,
    "nearest_leg": {
     "route_id": "victory_road",
     "from": "gym8_town",
@@ -1515,7 +1525,8 @@
     "x": 1092,
     "z": 5532,
     "ground_y": 68.0,
-    "ground_note": "Was recorded as 35.3, which is SEABED: 26.7 blocks under the sea. The site search read a level sea floor as level ground (its own footprint says slope mean 0.0, max 0.0). Nothing within 103 blocks is an islet, so the island is built by tools/islet.py: 2,628 columns, 1,413 of them above water, crown y70, about 72,900 blocks. Ground is now y63-70, median 65."
+    "ground_note": "Was recorded as 35.3, which is SEABED: 26.7 blocks under the sea. The site search read a level sea floor as level ground (its own footprint says slope mean 0.0, max 0.0). Nothing within 103 blocks is an islet, so the island is built by tools/islet.py: 2,628 columns, 1,413 of them above water, crown y70, about 72,900 blocks. Ground is now y63-70, median 65.",
+    "heightmap_seabed_y": 35.3
    },
    "footprint": {
     "shape": "square",
@@ -1533,7 +1544,11 @@
      "mean": 0.0,
      "max": 0.0
     },
-    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks",
+    "heightmap_seabed_y": [
+     33.7,
+     39.3
+    ]
    },
    "subregion": null,
    "region": null,
@@ -1587,7 +1602,7 @@
    "centre": {
     "x": 2110,
     "z": 950,
-    "ground_y": 194.0
+    "ground_y": 277.4
    },
    "footprint": {
     "shape": "square",
@@ -1598,12 +1613,12 @@
     "max_x": 2260,
     "max_z": 1100,
     "ground_y": [
-     194.0,
-     194.0
+     241.2,
+     277.5
     ],
     "slope_degrees": {
-     "mean": 0.0,
-     "max": 3.7
+     "mean": 4.2,
+     "max": 44.4
     },
     "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
    },
@@ -1623,7 +1638,7 @@
      "distance_blocks": 367
     }
    ],
-   "distance_from_critical_path_blocks": 316,
+   "distance_from_critical_path_blocks": 263,
    "nearest_leg": {
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
@@ -1638,13 +1653,17 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "flat because the heightmap is clipped at y200, the top of the terrain band: fine for a scar, which is meant to look scraped flat; nothing is built above it",
+   "buildability": "was a flat table: the sculpt pass pressed it to y194 under the old y200 ceiling. The rescale's gain applies above y145, so the table is now y241-278 with slopes to 44 degrees and no longer reads as scraped flat.",
    "linked": [
     "displaced_city"
    ],
    "nearest_settlement": {
     "id": "gym3_town",
     "distance_blocks": 408
+   },
+   "site_review": {
+    "status": "needs a sculpt decision (re-press the table at its new height, or accept the ridge)",
+    "measured": "2026-09-17"
    }
   },
   {
@@ -1661,7 +1680,7 @@
    "centre": {
     "x": 550,
     "z": 4518,
-    "ground_y": 67.7
+    "ground_y": 67.9
    },
    "footprint": {
     "shape": "square",
@@ -1697,7 +1716,7 @@
      "distance_blocks": 1016
     }
    ],
-   "distance_from_critical_path_blocks": 930,
+   "distance_from_critical_path_blocks": 838,
    "nearest_leg": {
     "route_id": "route_01_pallet_to_brock",
     "from": "hometown",
@@ -1732,7 +1751,7 @@
    "centre": {
     "x": 3106,
     "z": 3314,
-    "ground_y": 91.7
+    "ground_y": 91.0
    },
    "footprint": {
     "shape": "square",
@@ -1748,7 +1767,7 @@
     ],
     "slope_degrees": {
      "mean": 6.2,
-     "max": 9.3
+     "max": 9.4
     },
     "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
    },
@@ -1768,7 +1787,7 @@
      "distance_blocks": 767
     }
    ],
-   "distance_from_critical_path_blocks": 491,
+   "distance_from_critical_path_blocks": 495,
    "nearest_leg": {
     "route_id": "victory_road",
     "from": "gym8_town",
@@ -1803,7 +1822,7 @@
    "centre": {
     "x": 682,
     "z": 380,
-    "ground_y": 200.0
+    "ground_y": 310.0
    },
    "footprint": {
     "shape": "square",
@@ -1814,12 +1833,12 @@
     "max_x": 737,
     "max_z": 435,
     "ground_y": [
-     199.8,
-     200.0
+     292.0,
+     310.0
     ],
     "slope_degrees": {
-     "mean": 0.0,
-     "max": 10.0
+     "mean": 8.9,
+     "max": 46.4
     },
     "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
    },
@@ -1839,7 +1858,7 @@
      "distance_blocks": 1466
     }
    ],
-   "distance_from_critical_path_blocks": 1461,
+   "distance_from_critical_path_blocks": 1440,
    "nearest_leg": {
     "route_id": "route_03_misty_to_surge",
     "from": "gym2_town",
@@ -1854,10 +1873,14 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "the summit square is flat because it is clipped at y200; the shrine stands on it",
+   "buildability": "was flat only because the summit was clipped at y200; after the rescale the summit square spans y292-310 with slopes to 46 degrees, so the shrine has no flat top to stand on",
    "nearest_settlement": {
     "id": "gym3_town",
     "distance_blocks": 1461
+   },
+   "site_review": {
+    "status": "needs a platform or a new summit site (a human decision)",
+    "measured": "2026-09-17"
    }
   },
   {
@@ -1874,7 +1897,7 @@
    "centre": {
     "x": 5160,
     "z": 7463,
-    "ground_y": 127.4
+    "ground_y": 128.5
    },
    "footprint": {
     "shape": "square",
@@ -1910,7 +1933,7 @@
      "distance_blocks": 2295
     }
    ],
-   "distance_from_critical_path_blocks": 1739,
+   "distance_from_critical_path_blocks": 1715,
    "nearest_leg": {
     "route_id": "route_08_blaine_to_giovanni",
     "from": "gym7_town",
@@ -1958,7 +1981,7 @@
     "max_z": 5214,
     "ground_y": [
      102.4,
-     105.6
+     105.7
     ],
     "slope_degrees": {
      "mean": 2.1,
@@ -1982,7 +2005,7 @@
      "distance_blocks": 1050
     }
    ],
-   "distance_from_critical_path_blocks": 339,
+   "distance_from_critical_path_blocks": 344,
    "nearest_leg": {
     "from": "hometown",
     "to": "gym1_town",
@@ -2166,7 +2189,7 @@
     ],
     "slope_degrees": {
      "mean": 3.8,
-     "max": 7.5
+     "max": 7.6
     },
     "basis": "the landmark tree's glade (data/foliage.json landmark_trees glade_radius), kept clear of other trees"
    },
@@ -2272,7 +2295,7 @@
    "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
   }
  ],
- "not_placed": "Nothing is built. Waystone positions in data/progression.json stay null until the towns are built; each gymN_town id here is the town those flags name.",
+ "not_placed": "Built as of 2026-09-17 (docs/world-building/BUILT.md): the hometown's nine placements, re-placed and verified with 0 gaps; gym1_town and gym2_town street, plaza and gym-lot prep at and below ground level; Brock's gym prefab (cobblers:kits/gyms/kanto/brock, a local-only template) at (1838, 140, 3690), rotation 180, on gym1_town's gym lot. No other town has anything built. Waystone positions in data/progression.json stay null until each town is built.",
  "tiers": {
   "critical": "the ten places the route requires: hometown, eight gym towns, the League",
   "major": "full off-path towns with their own identity and services; destinations",
@@ -2287,7 +2310,8 @@
  ],
  "critical_path_geometry": {
   "legs": "full-resolution terrain-weighted A* between consecutive critical towns; required bridge crossings are mandatory waypoints; Victory Road is A* between the Rift arm, fork, trunk and apex waypoints",
-  "victory_road_blocks": 5157,
+  "victory_road_blocks": 5248,
   "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
- }
+ },
+ "measurement_note": "2026-09-17: every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees re-measured on the canonical rescaled heightmap 3eb0edee with find_sites' own slope (terrain.slope_degrees), at the recorded footprints. Sites were NOT re-searched: siting is an authored decision. Previously computed from 3eb0edee. On ground below y145 the method reproduces the recorded ranges exactly; three sites above it no longer meet their footprint basis and carry site_review."
 }

@@ -101,6 +101,8 @@ def main(argv=None):
     p.add_argument("--blocks", nargs=4, type=int, required=True, metavar=("MIN_X", "MIN_Z", "MAX_X", "MAX_Z"))
     p.add_argument("--dry-run", action="store_true")
     a = p.parse_args(argv)
+    import runtime_guard
+    runtime_guard.check(a.src, "read"), runtime_guard.check(a.dst, "write")
     t = time.time()
     rep = transplant(a.src, a.dst, a.blocks, a.dry_run)
     rep["seconds"] = round(time.time() - t, 1)

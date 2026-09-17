@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Re-export the canonical heightmap with WorldPainter, carrying the old world's seed and settings.
 
-  python tools/reexport.py --old-world ../cobblers-server/erosion-land-8k \\
-      --out-dir ../cobblers-server --name cobblers-10240 \\
+  python tools/reexport.py --old-world <offline-snapshot-world> \\
+      --out-dir <staging-dir> --name <new-world-name> \\
       --world-file C:/Users/wnd/Documents/cobblers-10240.world
 
 Reads the mapping, margin, border and spawn from data/world.json, the seed
@@ -62,6 +62,8 @@ def main(argv=None):
     p.add_argument("--log", default=None)
     p.add_argument("--paint", default=None, help="manifest.json from tools/paint_maps.py; paints biomes, terrain, vegetation and lakes")
     a = p.parse_args(argv)
+    import runtime_guard
+    runtime_guard.check(a.old_world, "read"), runtime_guard.check(a.out_dir, "export into")
 
     world = T.load_world(a.world)
     heightmap = T.resolve_heightmap(world, Path(a.world), a.source_root)  # checks sha256

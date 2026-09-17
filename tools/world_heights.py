@@ -14,7 +14,7 @@ load, so an export can be checked against what the heightmap predicted.
             mapping) and report drift: land elevation, seabed depth, clipped
             summits, the margin, and anything outside the expected canvas
 
-  python tools/world_heights.py extract --world ../cobblers-server/cobblers-10240 \\
+  python tools/world_heights.py extract --world <offline-snapshot-world> \\
       --min-x -1280 --min-z -1280 --max-x 9471 --max-z 9471 --out derived/world/heights.npz
   python tools/world_heights.py compare --heights derived/world/heights.npz --out derived/world/drift.json
 
@@ -134,7 +134,8 @@ def _region_job(args):
 
 
 def extract(world_dir, bounds, workers=None):
-    region = Path(world_dir) / "region"
+    import runtime_guard
+    region = runtime_guard.check(world_dir, "read") / "region"
     minx, minz, maxx, maxz = bounds
     W, H = maxx - minx + 1, maxz - minz + 1
     ground = np.full((H, W), NONE, np.int16)

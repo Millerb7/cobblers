@@ -139,7 +139,7 @@ def main(argv=None):
     samples = to_samples(h)
     png = write_png(out / "land_fixture.png", samples)
     cfg = world_config(png, samples)
-    (out / "world.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8")
+    (out / "world.json").write_text(json.dumps(cfg, indent=2), encoding="utf-8", newline="\n")
 
     print("wrote %s  (%dx%d, 16-bit)" % (png, samples.shape[1], samples.shape[0]))
     print("wrote %s" % (out / "world.json"))

@@ -19,8 +19,8 @@ starts found inside and outside the authored bounds from data/world.json.
 
 It classifies nothing. Classes are an authored decision recorded in the docs.
 
-  python tools/structure_inventory.py --server-dir ../cobblers-server \\
-      --world ../cobblers-server/erosion-land-8k --out derived/structures/inventory.json
+  python tools/structure_inventory.py --server-dir <server-dir, under the lock> \\
+      --world <offline-snapshot-world> --out derived/structures/inventory.json
 """
 from __future__ import annotations
 

@@ -10,8 +10,8 @@ the block list to data/spawn_blocks.json. `audit` then reports which structure t
   audit       scan kits/structures for templates containing any of them
   substitute  rewrite templates with data/spawn_block_policy.json substitutions, recording sha256 before and after
 
-  python tools/spawn_blocks.py blocks --server-dir ../cobblers-server
-  python tools/spawn_blocks.py audit [--server-dir ../cobblers-server]
+  python tools/spawn_blocks.py blocks --server-dir <server-dir, under the lock>
+  python tools/spawn_blocks.py audit [--server-dir <server-dir, under the lock>]
   python tools/spawn_blocks.py substitute [--dry-run]
 """
 from __future__ import annotations
@@ -36,7 +36,8 @@ ALIAS = {"#minecraft:water": ["minecraft:water", "minecraft:bubble_column"], "#c
 
 def read_sources(server_dir):
     """-> list of (label, open(path) -> bytes, namelist). Mod jars, enabled datapack zips and folders."""
-    server = Path(server_dir)
+    import runtime_guard
+    server = runtime_guard.check(server_dir, "read the server directory")
     out = []
 
     def add_zip(label, z):

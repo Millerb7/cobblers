@@ -92,15 +92,6 @@ SPECIES = {
 }
 
 
-def default_world():
-    """The live world sits beside the checkout - but a git worktree is one directory deeper, so try both."""
-    for base in (ROOT.parent, ROOT.parent.parent):
-        p = base / "cobblers-server" / "cobblers-10240"
-        if (p / "region").is_dir():
-            return str(p)
-    return None
-
-
 def seg_distance(px, pz, a, ab, ab2):
     """Distance from a point to the nearest of a precomputed set of segments (all legs concatenated)."""
     t = np.clip(((px - a[:, 0]) * ab[:, 0] + (pz - a[:, 1]) * ab[:, 1]) / ab2, 0, 1)
@@ -244,8 +235,8 @@ def pick(row, sub, ground, wet, inside, x0, z0, chosen, fixed, segs, towns, glad
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
-    p.add_argument("--surface-world", default=default_world(),
-                   help="stopped world: pads measured and trunks seated on the ground the world has")
+    p.add_argument("--surface-world", required=True,
+                   help="offline snapshot or disposable copy, never the live world: pads measured and trunks seated on the ground the world has")
     p.add_argument("--function", default=str(ROOT / "build" / "elders" / "elders.mcfunction"))
     a = p.parse_args(argv)
     if not a.surface_world or not (Path(a.surface_world) / "region").is_dir():

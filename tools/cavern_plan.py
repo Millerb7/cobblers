@@ -546,7 +546,8 @@ def main(argv=None):
     np.savez_compressed(rep.with_suffix(".npz"), floor=floor, ceiling=ceiling, top=top)
     print(json.dumps(report, indent=1, default=int))
     if a.install:
-        dest = Path(a.install) / out.name
+        import runtime_guard
+        dest = runtime_guard.check(a.install, "install into") / out.name
         if dest.exists():
             shutil.rmtree(dest)
         shutil.copytree(out, dest)
