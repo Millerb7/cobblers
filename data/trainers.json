@@ -1,0 +1,6947 @@
+{
+  "schema": "cobblers.trainers/1",
+  "schema_version": 1,
+  "generated_from": "docs/story/TRAINER_RULES.json",
+  "generator": "docs/story/generate_trainers.py",
+  "target": {
+    "minecraft": "1.21.1",
+    "cobblemon": "1.8.x",
+    "rctmod": "0.19.0-beta",
+    "rctapi": "0.16.0-beta"
+  },
+  "generation_contract": {
+    "relative_level_cap": 0,
+    "gym_ace_levels": [
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55
+    ],
+    "boss_slots": 13,
+    "authored_boss_rosters": 12,
+    "held_boss_slots": 1,
+    "route_trainers": 49,
+    "placement_status": "proposal_only",
+    "dialogue_ids": "campaign metadata; RCT sidecars require a future compiler"
+  },
+  "trainers": [
+    {
+      "id": "gym_01_brock",
+      "display_name": "Brock",
+      "class": "gym_leader",
+      "order": 1,
+      "theme": "Rock",
+      "status": "authored",
+      "strategy": "Geodude establishes rocks and speed control; Cranidos breaks; Onix converts a super-effective hit into a Weakness Policy counterattack.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "geodude",
+          "moveset": [
+            "stealthrock",
+            "rocktomb",
+            "bulldoze",
+            "protect"
+          ],
+          "ability": "sturdy",
+          "heldItem": "oran_berry",
+          "nature": "impish",
+          "level": 18
+        },
+        {
+          "species": "bonsly",
+          "moveset": [
+            "rocktomb",
+            "bulldoze",
+            "lowkick",
+            "tearfullook"
+          ],
+          "ability": "rockhead",
+          "heldItem": "eviolite",
+          "nature": "careful",
+          "level": 18
+        },
+        {
+          "species": "cranidos",
+          "moveset": [
+            "headbutt",
+            "rocktomb",
+            "bulldoze",
+            "scaryface"
+          ],
+          "ability": "moldbreaker",
+          "heldItem": "muscle_band",
+          "nature": "adamant",
+          "level": 19
+        },
+        {
+          "species": "onix",
+          "moveset": [
+            "rockslide",
+            "bulldoze",
+            "bodypress",
+            "dragonbreath"
+          ],
+          "ability": "sturdy",
+          "heldItem": "weakness_policy",
+          "nature": "impish",
+          "level": 20
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_01_brock_pre",
+        "win": "dlg_trainer_gym_01_brock_win",
+        "loss": "dlg_trainer_gym_01_brock_loss"
+      },
+      "ace_level": 20,
+      "ace_species": "onix",
+      "ace_math_change": "Sturdy guarantees one action; Weakness Policy turns the expected Water or Grass hit into a damage race.",
+      "member_count": 4,
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Wingull",
+          "Krabby",
+          "Staryu",
+          "Surskit",
+          "Buizel",
+          "Fomantis",
+          "Gossifleur"
+        ]
+      },
+      "rct": {
+        "identity": "gym_01_brock",
+        "name": {
+          "literal": "Brock"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.65,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "geodude",
+            "moveset": [
+              "stealthrock",
+              "rocktomb",
+              "bulldoze",
+              "protect"
+            ],
+            "ability": "sturdy",
+            "heldItem": "oran_berry",
+            "nature": "impish",
+            "level": 18
+          },
+          {
+            "species": "bonsly",
+            "moveset": [
+              "rocktomb",
+              "bulldoze",
+              "lowkick",
+              "tearfullook"
+            ],
+            "ability": "rockhead",
+            "heldItem": "eviolite",
+            "nature": "careful",
+            "level": 18
+          },
+          {
+            "species": "cranidos",
+            "moveset": [
+              "headbutt",
+              "rocktomb",
+              "bulldoze",
+              "scaryface"
+            ],
+            "ability": "moldbreaker",
+            "heldItem": "muscle_band",
+            "nature": "adamant",
+            "level": 19
+          },
+          {
+            "species": "onix",
+            "moveset": [
+              "rockslide",
+              "bulldoze",
+              "bodypress",
+              "dragonbreath"
+            ],
+            "ability": "sturdy",
+            "heldItem": "weakness_policy",
+            "nature": "impish",
+            "level": 20
+          }
+        ]
+      }
+    },
+    {
+      "id": "gym_02_misty",
+      "display_name": "Misty",
+      "class": "gym_leader",
+      "order": 2,
+      "theme": "Water",
+      "status": "authored",
+      "strategy": "Horsea starts rain; Lombre exploits it; Lightning Rod Goldeen disrupts a single Electric sweep; Starmie closes with broad special coverage.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "horsea",
+          "moveset": [
+            "raindance",
+            "waterpulse",
+            "dragonbreath",
+            "smokescreen"
+          ],
+          "ability": "swiftswim",
+          "heldItem": "damp_rock",
+          "nature": "timid",
+          "level": 22
+        },
+        {
+          "species": "lombre",
+          "moveset": [
+            "fakeout",
+            "megadrain",
+            "bubblebeam",
+            "protect"
+          ],
+          "ability": "swiftswim",
+          "heldItem": "mystic_water",
+          "nature": "modest",
+          "level": 23
+        },
+        {
+          "species": "goldeen",
+          "moveset": [
+            "waterfall",
+            "peck",
+            "knockoff",
+            "agility"
+          ],
+          "ability": "lightningrod",
+          "heldItem": "rindo_berry",
+          "nature": "jolly",
+          "level": 24
+        },
+        {
+          "species": "starmie",
+          "moveset": [
+            "waterpulse",
+            "psybeam",
+            "icywind",
+            "recover"
+          ],
+          "ability": "analytic",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "level": 25
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_02_misty_pre",
+        "win": "dlg_trainer_gym_02_misty_win",
+        "loss": "dlg_trainer_gym_02_misty_loss"
+      },
+      "ace_level": 25,
+      "ace_species": "starmie",
+      "ace_math_change": "Life Orb makes Starmie's neutral coverage materially stronger while rain changes Water damage and turn order.",
+      "member_count": 4,
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Mareep",
+          "Pawmi",
+          "Fomantis",
+          "Gossifleur",
+          "Lotad"
+        ]
+      },
+      "rct": {
+        "identity": "gym_02_misty",
+        "name": {
+          "literal": "Misty"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.65,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "horsea",
+            "moveset": [
+              "raindance",
+              "waterpulse",
+              "dragonbreath",
+              "smokescreen"
+            ],
+            "ability": "swiftswim",
+            "heldItem": "damp_rock",
+            "nature": "timid",
+            "level": 22
+          },
+          {
+            "species": "lombre",
+            "moveset": [
+              "fakeout",
+              "megadrain",
+              "bubblebeam",
+              "protect"
+            ],
+            "ability": "swiftswim",
+            "heldItem": "mystic_water",
+            "nature": "modest",
+            "level": 23
+          },
+          {
+            "species": "goldeen",
+            "moveset": [
+              "waterfall",
+              "peck",
+              "knockoff",
+              "agility"
+            ],
+            "ability": "lightningrod",
+            "heldItem": "rindo_berry",
+            "nature": "jolly",
+            "level": 24
+          },
+          {
+            "species": "starmie",
+            "moveset": [
+              "waterpulse",
+              "psybeam",
+              "icywind",
+              "recover"
+            ],
+            "ability": "analytic",
+            "heldItem": "life_orb",
+            "nature": "timid",
+            "level": 25
+          }
+        ]
+      }
+    },
+    {
+      "id": "gym_03_surge",
+      "display_name": "Lt. Surge",
+      "class": "gym_leader",
+      "order": 3,
+      "theme": "Electric",
+      "status": "authored",
+      "strategy": "Electabuzz establishes paralysis and a screen; Magnezone pivots; Boltund attacks the resistance core; Air Balloon Raichu denies the first Ground line.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "electabuzz",
+          "moveset": [
+            "thunderwave",
+            "lightscreen",
+            "voltswitch",
+            "lowkick"
+          ],
+          "ability": "static",
+          "heldItem": "eviolite",
+          "nature": "timid",
+          "level": 27
+        },
+        {
+          "species": "magnezone",
+          "moveset": [
+            "flashcannon",
+            "discharge",
+            "voltswitch",
+            "triattack"
+          ],
+          "ability": "sturdy",
+          "heldItem": "magnet",
+          "nature": "modest",
+          "level": 28
+        },
+        {
+          "species": "boltund",
+          "moveset": [
+            "thunderfang",
+            "firefang",
+            "playrough",
+            "psychicfangs"
+          ],
+          "ability": "strongjaw",
+          "heldItem": "muscle_band",
+          "nature": "jolly",
+          "level": 29
+        },
+        {
+          "species": "raichu",
+          "moveset": [
+            "nastyplot",
+            "thunderbolt",
+            "grassknot",
+            "encore"
+          ],
+          "ability": "lightningrod",
+          "heldItem": "air_balloon",
+          "nature": "timid",
+          "level": 30
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_03_surge_pre",
+        "win": "dlg_trainer_gym_03_surge_win",
+        "loss": "dlg_trainer_gym_03_surge_loss"
+      },
+      "ace_level": 30,
+      "ace_species": "raichu",
+      "ace_math_change": "Air Balloon forces the player to spend a turn breaking the ace's Ground immunity before cashing in the route's main answer.",
+      "member_count": 4,
+      "availability_contract": {
+        "status": "thin",
+        "answers": [
+          "Diggersby",
+          "Skiddo",
+          "Hariyama",
+          "Lycanroc"
+        ],
+        "failure": "Only Bunnelby/Diggersby is a dependable ambient Ground family; the proposed Route 2 Geodude quarry is not implemented."
+      },
+      "rct": {
+        "identity": "gym_03_surge",
+        "name": {
+          "literal": "Lt. Surge"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.65,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "electabuzz",
+            "moveset": [
+              "thunderwave",
+              "lightscreen",
+              "voltswitch",
+              "lowkick"
+            ],
+            "ability": "static",
+            "heldItem": "eviolite",
+            "nature": "timid",
+            "level": 27
+          },
+          {
+            "species": "magnezone",
+            "moveset": [
+              "flashcannon",
+              "discharge",
+              "voltswitch",
+              "triattack"
+            ],
+            "ability": "sturdy",
+            "heldItem": "magnet",
+            "nature": "modest",
+            "level": 28
+          },
+          {
+            "species": "boltund",
+            "moveset": [
+              "thunderfang",
+              "firefang",
+              "playrough",
+              "psychicfangs"
+            ],
+            "ability": "strongjaw",
+            "heldItem": "muscle_band",
+            "nature": "jolly",
+            "level": 29
+          },
+          {
+            "species": "raichu",
+            "moveset": [
+              "nastyplot",
+              "thunderbolt",
+              "grassknot",
+              "encore"
+            ],
+            "ability": "lightningrod",
+            "heldItem": "air_balloon",
+            "nature": "timid",
+            "level": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "gym_04_erika",
+      "display_name": "Erika",
+      "class": "gym_leader",
+      "order": 4,
+      "theme": "Grass",
+      "status": "authored",
+      "strategy": "Bellossom starts sun and sleep pressure; Roserade lays hazards; Victreebel breaks under sun; Coba Berry Vileplume survives one Flying answer and sets up.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "bellossom",
+          "moveset": [
+            "sunnyday",
+            "sleeppowder",
+            "gigadrain",
+            "moonblast"
+          ],
+          "ability": "chlorophyll",
+          "heldItem": "heat_rock",
+          "nature": "calm",
+          "level": 33
+        },
+        {
+          "species": "roserade",
+          "moveset": [
+            "toxicspikes",
+            "gigadrain",
+            "sludgebomb",
+            "dazzlinggleam"
+          ],
+          "ability": "naturalcure",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 33
+        },
+        {
+          "species": "victreebel",
+          "moveset": [
+            "leafblade",
+            "poisonjab",
+            "knockoff",
+            "suckerpunch"
+          ],
+          "ability": "chlorophyll",
+          "heldItem": "life_orb",
+          "nature": "adamant",
+          "level": 34
+        },
+        {
+          "species": "vileplume",
+          "moveset": [
+            "growth",
+            "gigadrain",
+            "sludgebomb",
+            "moonblast"
+          ],
+          "ability": "effectspore",
+          "heldItem": "coba_berry",
+          "nature": "modest",
+          "level": 35
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_04_erika_pre",
+        "win": "dlg_trainer_gym_04_erika_win",
+        "loss": "dlg_trainer_gym_04_erika_loss"
+      },
+      "ace_level": 35,
+      "ace_species": "vileplume",
+      "ace_math_change": "Coba Berry removes the certainty of a one-hit Flying knockout and gives Growth a plausible opening.",
+      "member_count": 4,
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Scyther",
+          "Noctowl",
+          "Altaria",
+          "Bergmite",
+          "Cryogonal",
+          "Jynx"
+        ]
+      },
+      "rct": {
+        "identity": "gym_04_erika",
+        "name": {
+          "literal": "Erika"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.65,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "bellossom",
+            "moveset": [
+              "sunnyday",
+              "sleeppowder",
+              "gigadrain",
+              "moonblast"
+            ],
+            "ability": "chlorophyll",
+            "heldItem": "heat_rock",
+            "nature": "calm",
+            "level": 33
+          },
+          {
+            "species": "roserade",
+            "moveset": [
+              "toxicspikes",
+              "gigadrain",
+              "sludgebomb",
+              "dazzlinggleam"
+            ],
+            "ability": "naturalcure",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 33
+          },
+          {
+            "species": "victreebel",
+            "moveset": [
+              "leafblade",
+              "poisonjab",
+              "knockoff",
+              "suckerpunch"
+            ],
+            "ability": "chlorophyll",
+            "heldItem": "life_orb",
+            "nature": "adamant",
+            "level": 34
+          },
+          {
+            "species": "vileplume",
+            "moveset": [
+              "growth",
+              "gigadrain",
+              "sludgebomb",
+              "moonblast"
+            ],
+            "ability": "effectspore",
+            "heldItem": "coba_berry",
+            "nature": "modest",
+            "level": 35
+          }
+        ]
+      }
+    },
+    {
+      "id": "gym_05_koga",
+      "display_name": "Koga",
+      "class": "gym_leader",
+      "order": 5,
+      "theme": "Poison",
+      "status": "authored",
+      "strategy": "Crobat creates Tailwind; Weezing blocks easy Ground lines; Drapion lays poison hazards; Toxtricity breaks; Venomoth snowballs through Tinted Lens.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "crobat",
+          "moveset": [
+            "tailwind",
+            "uturn",
+            "toxic",
+            "airslash"
+          ],
+          "ability": "infiltrator",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 38
+        },
+        {
+          "species": "weezing",
+          "moveset": [
+            "willowisp",
+            "sludgebomb",
+            "flamethrower",
+            "painsplit"
+          ],
+          "ability": "levitate",
+          "heldItem": "rocky_helmet",
+          "nature": "bold",
+          "level": 38
+        },
+        {
+          "species": "drapion",
+          "moveset": [
+            "toxicspikes",
+            "knockoff",
+            "poisonjab",
+            "earthquake"
+          ],
+          "ability": "battlearmor",
+          "heldItem": "shuca_berry",
+          "nature": "adamant",
+          "level": 39
+        },
+        {
+          "species": "toxtricity",
+          "moveset": [
+            "overdrive",
+            "sludgebomb",
+            "boomburst",
+            "voltswitch"
+          ],
+          "ability": "punkrock",
+          "heldItem": "throat_spray",
+          "nature": "modest",
+          "level": 39
+        },
+        {
+          "species": "venomoth",
+          "moveset": [
+            "quiverdance",
+            "bugbuzz",
+            "psychic",
+            "sludgebomb"
+          ],
+          "ability": "tintedlens",
+          "heldItem": "black_sludge",
+          "nature": "timid",
+          "level": 40
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_05_koga_pre",
+        "win": "dlg_trainer_gym_05_koga_win",
+        "loss": "dlg_trainer_gym_05_koga_loss"
+      },
+      "ace_level": 40,
+      "ace_species": "venomoth",
+      "ace_math_change": "Tinted Lens makes normal Bug resists unreliable after Quiver Dance, demanding speed control or priority rather than type alone.",
+      "member_count": 5,
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Ampharos",
+          "Jynx",
+          "Diggersby",
+          "Bronzong",
+          "Quagsire",
+          "Lycanroc"
+        ]
+      },
+      "rct": {
+        "identity": "gym_05_koga",
+        "name": {
+          "literal": "Koga"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.65,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "crobat",
+            "moveset": [
+              "tailwind",
+              "uturn",
+              "toxic",
+              "airslash"
+            ],
+            "ability": "infiltrator",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 38
+          },
+          {
+            "species": "weezing",
+            "moveset": [
+              "willowisp",
+              "sludgebomb",
+              "flamethrower",
+              "painsplit"
+            ],
+            "ability": "levitate",
+            "heldItem": "rocky_helmet",
+            "nature": "bold",
+            "level": 38
+          },
+          {
+            "species": "drapion",
+            "moveset": [
+              "toxicspikes",
+              "knockoff",
+              "poisonjab",
+              "earthquake"
+            ],
+            "ability": "battlearmor",
+            "heldItem": "shuca_berry",
+            "nature": "adamant",
+            "level": 39
+          },
+          {
+            "species": "toxtricity",
+            "moveset": [
+              "overdrive",
+              "sludgebomb",
+              "boomburst",
+              "voltswitch"
+            ],
+            "ability": "punkrock",
+            "heldItem": "throat_spray",
+            "nature": "modest",
+            "level": 39
+          },
+          {
+            "species": "venomoth",
+            "moveset": [
+              "quiverdance",
+              "bugbuzz",
+              "psychic",
+              "sludgebomb"
+            ],
+            "ability": "tintedlens",
+            "heldItem": "black_sludge",
+            "nature": "timid",
+            "level": 40
+          }
+        ]
+      }
+    },
+    {
+      "id": "gym_06_sabrina",
+      "display_name": "Sabrina",
+      "class": "gym_leader",
+      "order": 6,
+      "theme": "Psychic",
+      "status": "authored",
+      "strategy": "Hatterene reverses speed with Trick Room; Mr. Mime disrupts; Bronzong sustains the room; Rapidash breaks; Magic Guard Alakazam ignores passive damage.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "hatterene",
+          "moveset": [
+            "trickroom",
+            "psychic",
+            "mysticalfire",
+            "drainingkiss"
+          ],
+          "ability": "magicbounce",
+          "heldItem": "colbur_berry",
+          "nature": "quiet",
+          "level": 42
+        },
+        {
+          "species": "mrmime",
+          "moveset": [
+            "fakeout",
+            "encore",
+            "psychic",
+            "dazzlinggleam"
+          ],
+          "ability": "filter",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 43
+        },
+        {
+          "species": "bronzong",
+          "moveset": [
+            "gyroball",
+            "bodypress",
+            "hypnosis",
+            "trickroom"
+          ],
+          "ability": "levitate",
+          "heldItem": "leftovers",
+          "nature": "sassy",
+          "level": 43
+        },
+        {
+          "species": "rapidash",
+          "moveset": [
+            "megahorn",
+            "zenheadbutt",
+            "playrough",
+            "highhorsepower"
+          ],
+          "ability": "pastelveil",
+          "heldItem": "choice_band",
+          "nature": "jolly",
+          "aspects": [
+            "galarian"
+          ],
+          "level": 44
+        },
+        {
+          "species": "alakazam",
+          "moveset": [
+            "nastyplot",
+            "psychic",
+            "dazzlinggleam",
+            "shadowball"
+          ],
+          "ability": "magicguard",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "level": 45
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_06_sabrina_pre",
+        "win": "dlg_trainer_gym_06_sabrina_win",
+        "loss": "dlg_trainer_gym_06_sabrina_loss"
+      },
+      "ace_level": 45,
+      "ace_species": "alakazam",
+      "ace_math_change": "Magic Guard removes Life Orb recoil, so Alakazam gets the damage increase without the usual clock.",
+      "member_count": 5,
+      "availability_contract": {
+        "status": "conditional",
+        "answers": [
+          "Skuntank",
+          "Bronzong",
+          "Scyther",
+          "Heracross",
+          "Toxtricity"
+        ],
+        "failure": "A second broad answer depends on the unproven haunted-mansion Habitat; do not count it until runtime-proven."
+      },
+      "rct": {
+        "identity": "gym_06_sabrina",
+        "name": {
+          "literal": "Sabrina"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.65,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "hatterene",
+            "moveset": [
+              "trickroom",
+              "psychic",
+              "mysticalfire",
+              "drainingkiss"
+            ],
+            "ability": "magicbounce",
+            "heldItem": "colbur_berry",
+            "nature": "quiet",
+            "level": 42
+          },
+          {
+            "species": "mrmime",
+            "moveset": [
+              "fakeout",
+              "encore",
+              "psychic",
+              "dazzlinggleam"
+            ],
+            "ability": "filter",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 43
+          },
+          {
+            "species": "bronzong",
+            "moveset": [
+              "gyroball",
+              "bodypress",
+              "hypnosis",
+              "trickroom"
+            ],
+            "ability": "levitate",
+            "heldItem": "leftovers",
+            "nature": "sassy",
+            "level": 43
+          },
+          {
+            "species": "rapidash",
+            "moveset": [
+              "megahorn",
+              "zenheadbutt",
+              "playrough",
+              "highhorsepower"
+            ],
+            "ability": "pastelveil",
+            "heldItem": "choice_band",
+            "nature": "jolly",
+            "aspects": [
+              "galarian"
+            ],
+            "level": 44
+          },
+          {
+            "species": "alakazam",
+            "moveset": [
+              "nastyplot",
+              "psychic",
+              "dazzlinggleam",
+              "shadowball"
+            ],
+            "ability": "magicguard",
+            "heldItem": "life_orb",
+            "nature": "timid",
+            "level": 45
+          }
+        ]
+      }
+    },
+    {
+      "id": "gym_07_blaine",
+      "display_name": "Blaine",
+      "class": "gym_leader",
+      "order": 7,
+      "theme": "Fire",
+      "status": "authored",
+      "strategy": "Drought Torkoal sets hazards and sun; Arcanine pressures physical answers; Magcargo punishes passivity; Magmortar and Typhlosion break; Charizard exploits sun.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "torkoal",
+          "moveset": [
+            "stealthrock",
+            "yawn",
+            "lavaplume",
+            "bodypress"
+          ],
+          "ability": "drought",
+          "heldItem": "heat_rock",
+          "nature": "bold",
+          "level": 47
+        },
+        {
+          "species": "arcanine",
+          "moveset": [
+            "flareblitz",
+            "wildcharge",
+            "closecombat",
+            "extremespeed"
+          ],
+          "ability": "intimidate",
+          "heldItem": "sitrus_berry",
+          "nature": "jolly",
+          "level": 48
+        },
+        {
+          "species": "magcargo",
+          "moveset": [
+            "shellsmash",
+            "flamethrower",
+            "ancientpower",
+            "earthpower"
+          ],
+          "ability": "flamebody",
+          "heldItem": "white_herb",
+          "nature": "modest",
+          "level": 48
+        },
+        {
+          "species": "magmortar",
+          "moveset": [
+            "flamethrower",
+            "thunderbolt",
+            "psychic",
+            "focusblast"
+          ],
+          "ability": "vitalspirit",
+          "heldItem": "assault_vest",
+          "nature": "modest",
+          "level": 49
+        },
+        {
+          "species": "typhlosion",
+          "moveset": [
+            "eruption",
+            "flamethrower",
+            "focusblast",
+            "shadowball"
+          ],
+          "ability": "blaze",
+          "heldItem": "choice_scarf",
+          "nature": "timid",
+          "level": 49
+        },
+        {
+          "species": "charizard",
+          "moveset": [
+            "solarbeam",
+            "flamethrower",
+            "airslash",
+            "dragonpulse"
+          ],
+          "ability": "solarpower",
+          "heldItem": "power_herb",
+          "nature": "timid",
+          "level": 50
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_07_blaine_pre",
+        "win": "dlg_trainer_gym_07_blaine_win",
+        "loss": "dlg_trainer_gym_07_blaine_loss"
+      },
+      "ace_level": 50,
+      "ace_species": "charizard",
+      "ace_math_change": "Solar Power plus sun changes damage thresholds, while Power Herb lets Charizard fire one immediate Solar Beam even if weather is displaced.",
+      "member_count": 6,
+      "availability_contract": {
+        "status": "satisfied",
+        "answers": [
+          "Whiscash",
+          "Lycanroc",
+          "Floatzel",
+          "Crawdaunt",
+          "Golduck"
+        ]
+      },
+      "rct": {
+        "identity": "gym_07_blaine",
+        "name": {
+          "literal": "Blaine"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.65,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "torkoal",
+            "moveset": [
+              "stealthrock",
+              "yawn",
+              "lavaplume",
+              "bodypress"
+            ],
+            "ability": "drought",
+            "heldItem": "heat_rock",
+            "nature": "bold",
+            "level": 47
+          },
+          {
+            "species": "arcanine",
+            "moveset": [
+              "flareblitz",
+              "wildcharge",
+              "closecombat",
+              "extremespeed"
+            ],
+            "ability": "intimidate",
+            "heldItem": "sitrus_berry",
+            "nature": "jolly",
+            "level": 48
+          },
+          {
+            "species": "magcargo",
+            "moveset": [
+              "shellsmash",
+              "flamethrower",
+              "ancientpower",
+              "earthpower"
+            ],
+            "ability": "flamebody",
+            "heldItem": "white_herb",
+            "nature": "modest",
+            "level": 48
+          },
+          {
+            "species": "magmortar",
+            "moveset": [
+              "flamethrower",
+              "thunderbolt",
+              "psychic",
+              "focusblast"
+            ],
+            "ability": "vitalspirit",
+            "heldItem": "assault_vest",
+            "nature": "modest",
+            "level": 49
+          },
+          {
+            "species": "typhlosion",
+            "moveset": [
+              "eruption",
+              "flamethrower",
+              "focusblast",
+              "shadowball"
+            ],
+            "ability": "blaze",
+            "heldItem": "choice_scarf",
+            "nature": "timid",
+            "level": 49
+          },
+          {
+            "species": "charizard",
+            "moveset": [
+              "solarbeam",
+              "flamethrower",
+              "airslash",
+              "dragonpulse"
+            ],
+            "ability": "solarpower",
+            "heldItem": "power_herb",
+            "nature": "timid",
+            "level": 50
+          }
+        ]
+      }
+    },
+    {
+      "id": "gym_08_giovanni",
+      "display_name": "Giovanni",
+      "class": "gym_leader",
+      "order": 8,
+      "theme": "Open",
+      "status": "held",
+      "strategy": "Roster intentionally withheld until the singles-versus-doubles decision is settled.",
+      "format": "GEN_9_SINGLES",
+      "team": [],
+      "dialogue": {
+        "pre": "dlg_trainer_gym_08_giovanni_pre",
+        "win": "dlg_trainer_gym_08_giovanni_win",
+        "loss": "dlg_trainer_gym_08_giovanni_loss"
+      },
+      "blocked_by": "Giovanni battle-format decision"
+    },
+    {
+      "id": "elite_01_lorelei",
+      "display_name": "Lorelei",
+      "class": "elite_four",
+      "order": 1,
+      "theme": "Ice",
+      "status": "authored",
+      "strategy": "Snow, hazards and speed denial make resource preservation matter across the whole fight.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "froslass",
+          "moveset": [
+            "snowscape",
+            "spikes",
+            "icywind",
+            "destinybond"
+          ],
+          "ability": "cursedbody",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 57
+        },
+        {
+          "species": "mamoswine",
+          "moveset": [
+            "iciclecrash",
+            "earthquake",
+            "iceshard",
+            "knockoff"
+          ],
+          "ability": "thickfat",
+          "heldItem": "life_orb",
+          "nature": "adamant",
+          "level": 58
+        },
+        {
+          "species": "jynx",
+          "moveset": [
+            "icebeam",
+            "psychic",
+            "focusblast",
+            "lovelykiss"
+          ],
+          "ability": "dryskin",
+          "heldItem": "colbur_berry",
+          "nature": "timid",
+          "level": 58
+        },
+        {
+          "species": "weavile",
+          "moveset": [
+            "icespinner",
+            "knockoff",
+            "iceshard",
+            "lowkick"
+          ],
+          "ability": "pressure",
+          "heldItem": "choice_band",
+          "nature": "jolly",
+          "level": 59
+        },
+        {
+          "species": "walrein",
+          "moveset": [
+            "surf",
+            "icebeam",
+            "encore",
+            "protect"
+          ],
+          "ability": "thickfat",
+          "heldItem": "leftovers",
+          "nature": "bold",
+          "level": 59
+        },
+        {
+          "species": "lapras",
+          "moveset": [
+            "freezedry",
+            "surf",
+            "thunderbolt",
+            "iceshard"
+          ],
+          "ability": "waterabsorb",
+          "heldItem": "assault_vest",
+          "nature": "modest",
+          "level": 60
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_elite_01_lorelei_pre",
+        "win": "dlg_trainer_elite_01_lorelei_win",
+        "loss": "dlg_trainer_elite_01_lorelei_loss"
+      },
+      "ace_level": 60,
+      "ace_species": "lapras",
+      "ace_math_change": "Assault Vest turns Lapras into a special sponge while Freeze-Dry reverses the usual Water counter.",
+      "member_count": 6,
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Fire",
+          "Fighting",
+          "Rock",
+          "Steel",
+          "physical pressure"
+        ]
+      },
+      "rct": {
+        "identity": "elite_01_lorelei",
+        "name": {
+          "literal": "Lorelei"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.25,
+            "switchBias": 0.8,
+            "statusMoveBias": 1.05,
+            "itemBias": 1.0,
+            "maxSelectMargin": 0.12
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "froslass",
+            "moveset": [
+              "snowscape",
+              "spikes",
+              "icywind",
+              "destinybond"
+            ],
+            "ability": "cursedbody",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 57
+          },
+          {
+            "species": "mamoswine",
+            "moveset": [
+              "iciclecrash",
+              "earthquake",
+              "iceshard",
+              "knockoff"
+            ],
+            "ability": "thickfat",
+            "heldItem": "life_orb",
+            "nature": "adamant",
+            "level": 58
+          },
+          {
+            "species": "jynx",
+            "moveset": [
+              "icebeam",
+              "psychic",
+              "focusblast",
+              "lovelykiss"
+            ],
+            "ability": "dryskin",
+            "heldItem": "colbur_berry",
+            "nature": "timid",
+            "level": 58
+          },
+          {
+            "species": "weavile",
+            "moveset": [
+              "icespinner",
+              "knockoff",
+              "iceshard",
+              "lowkick"
+            ],
+            "ability": "pressure",
+            "heldItem": "choice_band",
+            "nature": "jolly",
+            "level": 59
+          },
+          {
+            "species": "walrein",
+            "moveset": [
+              "surf",
+              "icebeam",
+              "encore",
+              "protect"
+            ],
+            "ability": "thickfat",
+            "heldItem": "leftovers",
+            "nature": "bold",
+            "level": 59
+          },
+          {
+            "species": "lapras",
+            "moveset": [
+              "freezedry",
+              "surf",
+              "thunderbolt",
+              "iceshard"
+            ],
+            "ability": "waterabsorb",
+            "heldItem": "assault_vest",
+            "nature": "modest",
+            "level": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "elite_02_bruno",
+      "display_name": "Bruno",
+      "class": "elite_four",
+      "order": 2,
+      "theme": "Fighting",
+      "status": "authored",
+      "strategy": "Fake Out, removal, priority and mixed physical pressure punish a team that reaches the League without tempo tools.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "hitmontop",
+          "moveset": [
+            "fakeout",
+            "rapidspin",
+            "closecombat",
+            "tripleaxel"
+          ],
+          "ability": "intimidate",
+          "heldItem": "heavy_duty_boots",
+          "nature": "jolly",
+          "level": 57
+        },
+        {
+          "species": "machamp",
+          "moveset": [
+            "closecombat",
+            "knockoff",
+            "facade",
+            "icepunch"
+          ],
+          "ability": "guts",
+          "heldItem": "flame_orb",
+          "nature": "adamant",
+          "level": 58
+        },
+        {
+          "species": "hariyama",
+          "moveset": [
+            "fakeout",
+            "closecombat",
+            "knockoff",
+            "heavyslam"
+          ],
+          "ability": "thickfat",
+          "heldItem": "assault_vest",
+          "nature": "adamant",
+          "level": 58
+        },
+        {
+          "species": "lucario",
+          "moveset": [
+            "nastyplot",
+            "aurasphere",
+            "flashcannon",
+            "vacuumwave"
+          ],
+          "ability": "innerfocus",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "level": 59
+        },
+        {
+          "species": "heracross",
+          "moveset": [
+            "closecombat",
+            "megahorn",
+            "stoneedge",
+            "earthquake"
+          ],
+          "ability": "moxie",
+          "heldItem": "choice_scarf",
+          "nature": "jolly",
+          "level": 59
+        },
+        {
+          "species": "hitmonlee",
+          "moveset": [
+            "closecombat",
+            "stoneedge",
+            "poisonjab",
+            "knockoff"
+          ],
+          "ability": "unburden",
+          "heldItem": "white_herb",
+          "nature": "jolly",
+          "level": 60
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_elite_02_bruno_pre",
+        "win": "dlg_trainer_elite_02_bruno_win",
+        "loss": "dlg_trainer_elite_02_bruno_loss"
+      },
+      "ace_level": 60,
+      "ace_species": "hitmonlee",
+      "ace_math_change": "White Herb restores the defense drops from Close Combat and consumes itself to activate Unburden.",
+      "member_count": 6,
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Flying",
+          "Psychic",
+          "Fairy",
+          "burn",
+          "physical walls"
+        ]
+      },
+      "rct": {
+        "identity": "elite_02_bruno",
+        "name": {
+          "literal": "Bruno"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.35,
+            "switchBias": 0.7,
+            "statusMoveBias": 0.8,
+            "itemBias": 1.0,
+            "maxSelectMargin": 0.1
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "hitmontop",
+            "moveset": [
+              "fakeout",
+              "rapidspin",
+              "closecombat",
+              "tripleaxel"
+            ],
+            "ability": "intimidate",
+            "heldItem": "heavy_duty_boots",
+            "nature": "jolly",
+            "level": 57
+          },
+          {
+            "species": "machamp",
+            "moveset": [
+              "closecombat",
+              "knockoff",
+              "facade",
+              "icepunch"
+            ],
+            "ability": "guts",
+            "heldItem": "flame_orb",
+            "nature": "adamant",
+            "level": 58
+          },
+          {
+            "species": "hariyama",
+            "moveset": [
+              "fakeout",
+              "closecombat",
+              "knockoff",
+              "heavyslam"
+            ],
+            "ability": "thickfat",
+            "heldItem": "assault_vest",
+            "nature": "adamant",
+            "level": 58
+          },
+          {
+            "species": "lucario",
+            "moveset": [
+              "nastyplot",
+              "aurasphere",
+              "flashcannon",
+              "vacuumwave"
+            ],
+            "ability": "innerfocus",
+            "heldItem": "life_orb",
+            "nature": "timid",
+            "level": 59
+          },
+          {
+            "species": "heracross",
+            "moveset": [
+              "closecombat",
+              "megahorn",
+              "stoneedge",
+              "earthquake"
+            ],
+            "ability": "moxie",
+            "heldItem": "choice_scarf",
+            "nature": "jolly",
+            "level": 59
+          },
+          {
+            "species": "hitmonlee",
+            "moveset": [
+              "closecombat",
+              "stoneedge",
+              "poisonjab",
+              "knockoff"
+            ],
+            "ability": "unburden",
+            "heldItem": "white_herb",
+            "nature": "jolly",
+            "level": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "elite_03_agatha",
+      "display_name": "Agatha",
+      "class": "elite_four",
+      "order": 3,
+      "theme": "Ghost",
+      "status": "authored",
+      "strategy": "Burns, Taunt, Trick and priority deny clean setup and force the player to manage status across six different Ghost patterns.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "mismagius",
+          "moveset": [
+            "taunt",
+            "willowisp",
+            "hex",
+            "painsplit"
+          ],
+          "ability": "levitate",
+          "heldItem": "colbur_berry",
+          "nature": "timid",
+          "level": 57
+        },
+        {
+          "species": "spiritomb",
+          "moveset": [
+            "willowisp",
+            "foulplay",
+            "painsplit",
+            "shadowsneak"
+          ],
+          "ability": "pressure",
+          "heldItem": "leftovers",
+          "nature": "careful",
+          "level": 58
+        },
+        {
+          "species": "banette",
+          "moveset": [
+            "shadowclaw",
+            "suckerpunch",
+            "gunkshot",
+            "trick"
+          ],
+          "ability": "frisk",
+          "heldItem": "choice_band",
+          "nature": "adamant",
+          "level": 58
+        },
+        {
+          "species": "dusknoir",
+          "moveset": [
+            "shadowpunch",
+            "earthquake",
+            "icepunch",
+            "shadowsneak"
+          ],
+          "ability": "pressure",
+          "heldItem": "assault_vest",
+          "nature": "adamant",
+          "level": 59
+        },
+        {
+          "species": "chandelure",
+          "moveset": [
+            "shadowball",
+            "flamethrower",
+            "energyball",
+            "trick"
+          ],
+          "ability": "flashfire",
+          "heldItem": "choice_scarf",
+          "nature": "timid",
+          "level": 59
+        },
+        {
+          "species": "gengar",
+          "moveset": [
+            "nastyplot",
+            "shadowball",
+            "sludgebomb",
+            "focusblast"
+          ],
+          "ability": "cursedbody",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 60
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_elite_03_agatha_pre",
+        "win": "dlg_trainer_elite_03_agatha_win",
+        "loss": "dlg_trainer_elite_03_agatha_loss"
+      },
+      "ace_level": 60,
+      "ace_species": "gengar",
+      "ace_math_change": "Focus Sash guarantees Gengar a response and makes priority or prior hazard control part of the answer.",
+      "member_count": 6,
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Dark",
+          "Ghost",
+          "priority",
+          "status immunity",
+          "hazards"
+        ]
+      },
+      "rct": {
+        "identity": "elite_03_agatha",
+        "name": {
+          "literal": "Agatha"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.2,
+            "switchBias": 0.9,
+            "statusMoveBias": 1.25,
+            "itemBias": 1.0,
+            "maxSelectMargin": 0.1
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "mismagius",
+            "moveset": [
+              "taunt",
+              "willowisp",
+              "hex",
+              "painsplit"
+            ],
+            "ability": "levitate",
+            "heldItem": "colbur_berry",
+            "nature": "timid",
+            "level": 57
+          },
+          {
+            "species": "spiritomb",
+            "moveset": [
+              "willowisp",
+              "foulplay",
+              "painsplit",
+              "shadowsneak"
+            ],
+            "ability": "pressure",
+            "heldItem": "leftovers",
+            "nature": "careful",
+            "level": 58
+          },
+          {
+            "species": "banette",
+            "moveset": [
+              "shadowclaw",
+              "suckerpunch",
+              "gunkshot",
+              "trick"
+            ],
+            "ability": "frisk",
+            "heldItem": "choice_band",
+            "nature": "adamant",
+            "level": 58
+          },
+          {
+            "species": "dusknoir",
+            "moveset": [
+              "shadowpunch",
+              "earthquake",
+              "icepunch",
+              "shadowsneak"
+            ],
+            "ability": "pressure",
+            "heldItem": "assault_vest",
+            "nature": "adamant",
+            "level": 59
+          },
+          {
+            "species": "chandelure",
+            "moveset": [
+              "shadowball",
+              "flamethrower",
+              "energyball",
+              "trick"
+            ],
+            "ability": "flashfire",
+            "heldItem": "choice_scarf",
+            "nature": "timid",
+            "level": 59
+          },
+          {
+            "species": "gengar",
+            "moveset": [
+              "nastyplot",
+              "shadowball",
+              "sludgebomb",
+              "focusblast"
+            ],
+            "ability": "cursedbody",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "elite_04_lance",
+      "display_name": "Lance",
+      "class": "elite_four",
+      "order": 4,
+      "theme": "Dragon",
+      "status": "authored",
+      "strategy": "Aerodactyl sets the pace, each midgame member attacks a different Dragon answer, and Dragonite is the only dedicated setup closer.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "aerodactyl",
+          "moveset": [
+            "stealthrock",
+            "taunt",
+            "tailwind",
+            "rockslide"
+          ],
+          "ability": "unnerve",
+          "heldItem": "focus_sash",
+          "nature": "jolly",
+          "level": 57
+        },
+        {
+          "species": "gyarados",
+          "moveset": [
+            "dragondance",
+            "waterfall",
+            "icefang",
+            "earthquake"
+          ],
+          "ability": "intimidate",
+          "heldItem": "lum_berry",
+          "nature": "jolly",
+          "level": 58
+        },
+        {
+          "species": "flygon",
+          "moveset": [
+            "dragonclaw",
+            "earthquake",
+            "uturn",
+            "stoneedge"
+          ],
+          "ability": "levitate",
+          "heldItem": "choice_scarf",
+          "nature": "jolly",
+          "level": 58
+        },
+        {
+          "species": "baxcalibur",
+          "moveset": [
+            "swordsdance",
+            "iciclecrash",
+            "glaiverush",
+            "earthquake"
+          ],
+          "ability": "thermalexchange",
+          "heldItem": "loaded_dice",
+          "nature": "adamant",
+          "level": 59
+        },
+        {
+          "species": "dragalge",
+          "moveset": [
+            "dracometeor",
+            "sludgebomb",
+            "hydropump",
+            "thunderbolt"
+          ],
+          "ability": "adaptability",
+          "heldItem": "assault_vest",
+          "nature": "modest",
+          "level": 59
+        },
+        {
+          "species": "dragonite",
+          "moveset": [
+            "dragondance",
+            "dragonclaw",
+            "firepunch",
+            "extremespeed"
+          ],
+          "ability": "multiscale",
+          "heldItem": "weakness_policy",
+          "nature": "adamant",
+          "level": 60
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_elite_04_lance_pre",
+        "win": "dlg_trainer_elite_04_lance_win",
+        "loss": "dlg_trainer_elite_04_lance_loss"
+      },
+      "ace_level": 60,
+      "ace_species": "dragonite",
+      "ace_math_change": "Multiscale plus Weakness Policy punishes an undisciplined super-effective first hit and changes priority damage thresholds.",
+      "member_count": 6,
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "Ice",
+          "Fairy",
+          "Dragon",
+          "Stealth Rock",
+          "phazing"
+        ]
+      },
+      "rct": {
+        "identity": "elite_04_lance",
+        "name": {
+          "literal": "Lance"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.35,
+            "switchBias": 0.7,
+            "statusMoveBias": 0.8,
+            "itemBias": 1.0,
+            "maxSelectMargin": 0.1
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "aerodactyl",
+            "moveset": [
+              "stealthrock",
+              "taunt",
+              "tailwind",
+              "rockslide"
+            ],
+            "ability": "unnerve",
+            "heldItem": "focus_sash",
+            "nature": "jolly",
+            "level": 57
+          },
+          {
+            "species": "gyarados",
+            "moveset": [
+              "dragondance",
+              "waterfall",
+              "icefang",
+              "earthquake"
+            ],
+            "ability": "intimidate",
+            "heldItem": "lum_berry",
+            "nature": "jolly",
+            "level": 58
+          },
+          {
+            "species": "flygon",
+            "moveset": [
+              "dragonclaw",
+              "earthquake",
+              "uturn",
+              "stoneedge"
+            ],
+            "ability": "levitate",
+            "heldItem": "choice_scarf",
+            "nature": "jolly",
+            "level": 58
+          },
+          {
+            "species": "baxcalibur",
+            "moveset": [
+              "swordsdance",
+              "iciclecrash",
+              "glaiverush",
+              "earthquake"
+            ],
+            "ability": "thermalexchange",
+            "heldItem": "loaded_dice",
+            "nature": "adamant",
+            "level": 59
+          },
+          {
+            "species": "dragalge",
+            "moveset": [
+              "dracometeor",
+              "sludgebomb",
+              "hydropump",
+              "thunderbolt"
+            ],
+            "ability": "adaptability",
+            "heldItem": "assault_vest",
+            "nature": "modest",
+            "level": 59
+          },
+          {
+            "species": "dragonite",
+            "moveset": [
+              "dragondance",
+              "dragonclaw",
+              "firepunch",
+              "extremespeed"
+            ],
+            "ability": "multiscale",
+            "heldItem": "weakness_policy",
+            "nature": "adamant",
+            "level": 60
+          }
+        ]
+      }
+    },
+    {
+      "id": "champion_blue",
+      "display_name": "Blue",
+      "class": "champion",
+      "order": 1,
+      "theme": "Mixed",
+      "status": "authored",
+      "strategy": "Blue recombines the campaign's lessons: tempo lead, sleep, hazards, Intimidate, speed, and a setup ace with no single type shortcut.",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "pidgeot",
+          "moveset": [
+            "tailwind",
+            "uturn",
+            "hurricane",
+            "heatwave"
+          ],
+          "ability": "keeneye",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 58
+        },
+        {
+          "species": "exeggutor",
+          "moveset": [
+            "hypnosis",
+            "gigadrain",
+            "psychic",
+            "leechseed"
+          ],
+          "ability": "harvest",
+          "heldItem": "sitrus_berry",
+          "nature": "modest",
+          "level": 59
+        },
+        {
+          "species": "rhydon",
+          "moveset": [
+            "stealthrock",
+            "earthquake",
+            "rockslide",
+            "megahorn"
+          ],
+          "ability": "lightningrod",
+          "heldItem": "eviolite",
+          "nature": "adamant",
+          "level": 60
+        },
+        {
+          "species": "arcanine",
+          "moveset": [
+            "flareblitz",
+            "wildcharge",
+            "closecombat",
+            "extremespeed"
+          ],
+          "ability": "intimidate",
+          "heldItem": "assault_vest",
+          "nature": "jolly",
+          "level": 60
+        },
+        {
+          "species": "alakazam",
+          "moveset": [
+            "nastyplot",
+            "psychic",
+            "dazzlinggleam",
+            "shadowball"
+          ],
+          "ability": "magicguard",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "level": 61
+        },
+        {
+          "species": "blastoise",
+          "moveset": [
+            "shellsmash",
+            "hydropump",
+            "icebeam",
+            "darkpulse"
+          ],
+          "ability": "torrent",
+          "heldItem": "white_herb",
+          "nature": "modest",
+          "level": 62
+        }
+      ],
+      "dialogue": {
+        "pre": "dlg_trainer_champion_blue_pre",
+        "win": "dlg_trainer_champion_blue_win",
+        "loss": "dlg_trainer_champion_blue_loss"
+      },
+      "ace_level": 62,
+      "ace_species": "blastoise",
+      "ace_math_change": "White Herb erases Shell Smash's defensive cost, forcing the player to stop the setup or answer a full-speed mixed-coverage closer.",
+      "member_count": 6,
+      "availability_contract": {
+        "status": "post_victory_road",
+        "answers": [
+          "balanced six-member team",
+          "speed control",
+          "priority",
+          "hazard control",
+          "sacrificial pivot"
+        ]
+      },
+      "rct": {
+        "identity": "champion_blue",
+        "name": {
+          "literal": "Blue"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.35,
+            "switchBias": 1.0,
+            "statusMoveBias": 1.0,
+            "itemBias": 1.0,
+            "maxSelectMargin": 0.08
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "pidgeot",
+            "moveset": [
+              "tailwind",
+              "uturn",
+              "hurricane",
+              "heatwave"
+            ],
+            "ability": "keeneye",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 58
+          },
+          {
+            "species": "exeggutor",
+            "moveset": [
+              "hypnosis",
+              "gigadrain",
+              "psychic",
+              "leechseed"
+            ],
+            "ability": "harvest",
+            "heldItem": "sitrus_berry",
+            "nature": "modest",
+            "level": 59
+          },
+          {
+            "species": "rhydon",
+            "moveset": [
+              "stealthrock",
+              "earthquake",
+              "rockslide",
+              "megahorn"
+            ],
+            "ability": "lightningrod",
+            "heldItem": "eviolite",
+            "nature": "adamant",
+            "level": 60
+          },
+          {
+            "species": "arcanine",
+            "moveset": [
+              "flareblitz",
+              "wildcharge",
+              "closecombat",
+              "extremespeed"
+            ],
+            "ability": "intimidate",
+            "heldItem": "assault_vest",
+            "nature": "jolly",
+            "level": 60
+          },
+          {
+            "species": "alakazam",
+            "moveset": [
+              "nastyplot",
+              "psychic",
+              "dazzlinggleam",
+              "shadowball"
+            ],
+            "ability": "magicguard",
+            "heldItem": "life_orb",
+            "nature": "timid",
+            "level": 61
+          },
+          {
+            "species": "blastoise",
+            "moveset": [
+              "shellsmash",
+              "hydropump",
+              "icebeam",
+              "darkpulse"
+            ],
+            "ability": "torrent",
+            "heldItem": "white_herb",
+            "nature": "modest",
+            "level": 62
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_01_trainer_01",
+      "display_name": "Trail Novice",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "pidgey",
+          "moveset": [
+            "gust",
+            "sandattack",
+            "quickattack"
+          ],
+          "level": 7
+        }
+      ],
+      "route_id": "route_01_pallet_to_brock",
+      "route_order": 1,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A single weak opponent introduces trainer sight lines.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 285,
+        "progress_fraction": 0.1441,
+        "polyline_vertex_index": 9,
+        "x": 1468,
+        "z": 5018,
+        "sampled_y": 118.6,
+        "route_measured_blocks": 1978.143
+      },
+      "dialogue": {
+        "pre": "dlg_route_01_trainer_01_pre",
+        "win": "dlg_route_01_trainer_01_win",
+        "loss": "dlg_route_01_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_01_trainer_01",
+        "name": {
+          "literal": "Trail Novice"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "pidgey",
+            "moveset": [
+              "gust",
+              "sandattack",
+              "quickattack"
+            ],
+            "level": 7
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_01_trainer_02",
+      "display_name": "Bug Catcher",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "mareep",
+          "moveset": [
+            "thundershock",
+            "growl",
+            "cottonspore"
+          ],
+          "level": 9
+        },
+        {
+          "species": "wingull",
+          "moveset": [
+            "watergun",
+            "wingattack",
+            "supersonic"
+          ],
+          "level": 10
+        }
+      ],
+      "route_id": "route_01_pallet_to_brock",
+      "route_order": 1,
+      "trainer_order": 2,
+      "archetype": "specialist",
+      "lesson": "Flying pressure is discoverable before Brock.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 733,
+        "progress_fraction": 0.3706,
+        "polyline_vertex_index": 44,
+        "x": 1385,
+        "z": 4714,
+        "sampled_y": 124.35,
+        "route_measured_blocks": 1978.143
+      },
+      "dialogue": {
+        "pre": "dlg_route_01_trainer_02_pre",
+        "win": "dlg_route_01_trainer_02_win",
+        "loss": "dlg_route_01_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_01_trainer_02",
+        "name": {
+          "literal": "Bug Catcher"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "mareep",
+            "moveset": [
+              "thundershock",
+              "growl",
+              "cottonspore"
+            ],
+            "level": 9
+          },
+          {
+            "species": "wingull",
+            "moveset": [
+              "watergun",
+              "wingattack",
+              "supersonic"
+            ],
+            "level": 10
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_01_trainer_03",
+      "display_name": "River Angler",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "fomantis",
+          "moveset": [
+            "leafage",
+            "furycutter",
+            "growth"
+          ],
+          "level": 13
+        },
+        {
+          "species": "pidgey",
+          "moveset": [
+            "gust",
+            "sandattack",
+            "quickattack"
+          ],
+          "level": 14
+        }
+      ],
+      "route_id": "route_01_pallet_to_brock",
+      "route_order": 1,
+      "trainer_order": 3,
+      "archetype": "observer",
+      "lesson": "Water species telegraph the first gym's cleanest answer.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1247,
+        "progress_fraction": 0.6304,
+        "polyline_vertex_index": 80,
+        "x": 1581,
+        "z": 4291,
+        "sampled_y": 122.0,
+        "route_measured_blocks": 1978.143
+      },
+      "dialogue": {
+        "pre": "dlg_route_01_trainer_03_pre",
+        "win": "dlg_route_01_trainer_03_win",
+        "loss": "dlg_route_01_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_01_trainer_03",
+        "name": {
+          "literal": "River Angler"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "fomantis",
+            "moveset": [
+              "leafage",
+              "furycutter",
+              "growth"
+            ],
+            "level": 13
+          },
+          {
+            "species": "pidgey",
+            "moveset": [
+              "gust",
+              "sandattack",
+              "quickattack"
+            ],
+            "level": 14
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_01_trainer_04",
+      "display_name": "Plateau Guide",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "wingull",
+          "moveset": [
+            "watergun",
+            "wingattack",
+            "supersonic"
+          ],
+          "level": 15
+        },
+        {
+          "species": "fomantis",
+          "moveset": [
+            "leafage",
+            "furycutter",
+            "growth"
+          ],
+          "level": 16
+        },
+        {
+          "species": "mareep",
+          "moveset": [
+            "thundershock",
+            "growl",
+            "cottonspore"
+          ],
+          "level": 17
+        }
+      ],
+      "route_id": "route_01_pallet_to_brock",
+      "route_order": 1,
+      "trainer_order": 4,
+      "archetype": "gym_prep",
+      "lesson": "Mixed Rock coverage teaches that super-effective attacks still need a plan.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1677,
+        "progress_fraction": 0.8478,
+        "polyline_vertex_index": 85,
+        "x": 1594,
+        "z": 3867,
+        "sampled_y": 123.26,
+        "route_measured_blocks": 1978.143
+      },
+      "dialogue": {
+        "pre": "dlg_route_01_trainer_04_pre",
+        "win": "dlg_route_01_trainer_04_win",
+        "loss": "dlg_route_01_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_01_trainer_04",
+        "name": {
+          "literal": "Plateau Guide"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "wingull",
+            "moveset": [
+              "watergun",
+              "wingattack",
+              "supersonic"
+            ],
+            "level": 15
+          },
+          {
+            "species": "fomantis",
+            "moveset": [
+              "leafage",
+              "furycutter",
+              "growth"
+            ],
+            "level": 16
+          },
+          {
+            "species": "mareep",
+            "moveset": [
+              "thundershock",
+              "growl",
+              "cottonspore"
+            ],
+            "level": 17
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_02_trainer_01",
+      "display_name": "Young Hiker",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "lombre",
+          "moveset": [
+            "fakeout",
+            "megadrain",
+            "bubblebeam"
+          ],
+          "level": 18
+        }
+      ],
+      "route_id": "route_02_brock_to_misty",
+      "route_order": 2,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A sturdy solo battler teaches setup windows.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 268,
+        "progress_fraction": 0.2839,
+        "polyline_vertex_index": 15,
+        "x": 1762,
+        "z": 3372,
+        "sampled_y": 132.89,
+        "route_measured_blocks": 943.902
+      },
+      "dialogue": {
+        "pre": "dlg_route_02_trainer_01_pre",
+        "win": "dlg_route_02_trainer_01_win",
+        "loss": "dlg_route_02_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_02_trainer_01",
+        "name": {
+          "literal": "Young Hiker"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "lombre",
+            "moveset": [
+              "fakeout",
+              "megadrain",
+              "bubblebeam"
+            ],
+            "level": 18
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_02_trainer_02",
+      "display_name": "Power-Line Worker",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "mareep",
+          "moveset": [
+            "thundershock",
+            "growl",
+            "cottonspore"
+          ],
+          "level": 19
+        },
+        {
+          "species": "lotad",
+          "moveset": [
+            "bubblebeam",
+            "absorb",
+            "astonish"
+          ],
+          "level": 20
+        }
+      ],
+      "route_id": "route_02_brock_to_misty",
+      "route_order": 2,
+      "trainer_order": 2,
+      "archetype": "specialist",
+      "lesson": "Electric pressure previews Misty's weakness.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 486,
+        "progress_fraction": 0.5148,
+        "polyline_vertex_index": 18,
+        "x": 1773,
+        "z": 3159,
+        "sampled_y": 130.89,
+        "route_measured_blocks": 943.902
+      },
+      "dialogue": {
+        "pre": "dlg_route_02_trainer_02_pre",
+        "win": "dlg_route_02_trainer_02_win",
+        "loss": "dlg_route_02_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_02_trainer_02",
+        "name": {
+          "literal": "Power-Line Worker"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "mareep",
+            "moveset": [
+              "thundershock",
+              "growl",
+              "cottonspore"
+            ],
+            "level": 19
+          },
+          {
+            "species": "lotad",
+            "moveset": [
+              "bubblebeam",
+              "absorb",
+              "astonish"
+            ],
+            "level": 20
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_02_trainer_03",
+      "display_name": "Lake Surveyor",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "lombre",
+          "moveset": [
+            "fakeout",
+            "megadrain",
+            "bubblebeam"
+          ],
+          "level": 20
+        },
+        {
+          "species": "mareep",
+          "moveset": [
+            "thundershock",
+            "growl",
+            "cottonspore"
+          ],
+          "level": 21
+        },
+        {
+          "species": "lotad",
+          "moveset": [
+            "bubblebeam",
+            "absorb",
+            "astonish"
+          ],
+          "level": 22
+        }
+      ],
+      "route_id": "route_02_brock_to_misty",
+      "route_order": 2,
+      "trainer_order": 3,
+      "archetype": "gym_prep",
+      "lesson": "Rain and Grass coverage rehearse the Water matchup.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 723,
+        "progress_fraction": 0.7659,
+        "polyline_vertex_index": 26,
+        "x": 1774,
+        "z": 2926,
+        "sampled_y": 110.69,
+        "route_measured_blocks": 943.902
+      },
+      "dialogue": {
+        "pre": "dlg_route_02_trainer_03_pre",
+        "win": "dlg_route_02_trainer_03_win",
+        "loss": "dlg_route_02_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_02_trainer_03",
+        "name": {
+          "literal": "Lake Surveyor"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "lombre",
+            "moveset": [
+              "fakeout",
+              "megadrain",
+              "bubblebeam"
+            ],
+            "level": 20
+          },
+          {
+            "species": "mareep",
+            "moveset": [
+              "thundershock",
+              "growl",
+              "cottonspore"
+            ],
+            "level": 21
+          },
+          {
+            "species": "lotad",
+            "moveset": [
+              "bubblebeam",
+              "absorb",
+              "astonish"
+            ],
+            "level": 22
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_03_trainer_01",
+      "display_name": "Climbing Novice",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "rockruff",
+          "moveset": [
+            "rocktomb",
+            "bite",
+            "howl"
+          ],
+          "level": 21
+        }
+      ],
+      "route_id": "route_03_misty_to_surge",
+      "route_order": 3,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A Ground-capable Bunnelby is shown before Surge.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 247,
+        "progress_fraction": 0.1165,
+        "polyline_vertex_index": 6,
+        "x": 1747,
+        "z": 2613,
+        "sampled_y": 103.59,
+        "route_measured_blocks": 2120.199
+      },
+      "dialogue": {
+        "pre": "dlg_route_03_trainer_01_pre",
+        "win": "dlg_route_03_trainer_01_win",
+        "loss": "dlg_route_03_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_03_trainer_01",
+        "name": {
+          "literal": "Climbing Novice"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "rockruff",
+            "moveset": [
+              "rocktomb",
+              "bite",
+              "howl"
+            ],
+            "level": 21
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_03_trainer_02",
+      "display_name": "Mountaineer",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "skiddo",
+          "moveset": [
+            "razorleaf",
+            "bulldoze",
+            "synthesis"
+          ],
+          "level": 22
+        },
+        {
+          "species": "bunnelby",
+          "moveset": [
+            "mudshot",
+            "quickattack",
+            "takedown"
+          ],
+          "level": 23
+        }
+      ],
+      "route_id": "route_03_misty_to_surge",
+      "route_order": 3,
+      "trainer_order": 2,
+      "archetype": "observer",
+      "lesson": "Rock and Fighting coverage teaches safe switches.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 607,
+        "progress_fraction": 0.2863,
+        "polyline_vertex_index": 32,
+        "x": 1876,
+        "z": 2306,
+        "sampled_y": 112.99,
+        "route_measured_blocks": 2120.199
+      },
+      "dialogue": {
+        "pre": "dlg_route_03_trainer_02_pre",
+        "win": "dlg_route_03_trainer_02_win",
+        "loss": "dlg_route_03_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_03_trainer_02",
+        "name": {
+          "literal": "Mountaineer"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "skiddo",
+            "moveset": [
+              "razorleaf",
+              "bulldoze",
+              "synthesis"
+            ],
+            "level": 22
+          },
+          {
+            "species": "bunnelby",
+            "moveset": [
+              "mudshot",
+              "quickattack",
+              "takedown"
+            ],
+            "level": 23
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_03_trainer_03",
+      "display_name": "Groundkeeper",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "bunnelby",
+          "moveset": [
+            "mudshot",
+            "quickattack",
+            "takedown"
+          ],
+          "level": 23
+        },
+        {
+          "species": "skiddo",
+          "moveset": [
+            "razorleaf",
+            "bulldoze",
+            "synthesis"
+          ],
+          "level": 24
+        }
+      ],
+      "route_id": "route_03_misty_to_surge",
+      "route_order": 3,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Ground damage is demonstrated explicitly.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1029,
+        "progress_fraction": 0.4854,
+        "polyline_vertex_index": 48,
+        "x": 2034,
+        "z": 1950,
+        "sampled_y": 124.01,
+        "route_measured_blocks": 2120.199
+      },
+      "dialogue": {
+        "pre": "dlg_route_03_trainer_03_pre",
+        "win": "dlg_route_03_trainer_03_win",
+        "loss": "dlg_route_03_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_03_trainer_03",
+        "name": {
+          "literal": "Groundkeeper"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "bunnelby",
+            "moveset": [
+              "mudshot",
+              "quickattack",
+              "takedown"
+            ],
+            "level": 23
+          },
+          {
+            "species": "skiddo",
+            "moveset": [
+              "razorleaf",
+              "bulldoze",
+              "synthesis"
+            ],
+            "level": 24
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_03_trainer_04",
+      "display_name": "Signal Watcher",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "machop",
+          "moveset": [
+            "lowkick",
+            "knockoff",
+            "bulldoze"
+          ],
+          "level": 24
+        },
+        {
+          "species": "skiddo",
+          "moveset": [
+            "razorleaf",
+            "bulldoze",
+            "synthesis"
+          ],
+          "level": 25
+        },
+        {
+          "species": "bunnelby",
+          "moveset": [
+            "mudshot",
+            "quickattack",
+            "takedown"
+          ],
+          "level": 26
+        }
+      ],
+      "route_id": "route_03_misty_to_surge",
+      "route_order": 3,
+      "trainer_order": 4,
+      "archetype": "strategist",
+      "lesson": "Speed control and pivoting preview Surge's tempo.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1314,
+        "progress_fraction": 0.6198,
+        "polyline_vertex_index": 51,
+        "x": 2231,
+        "z": 1746,
+        "sampled_y": 124.96,
+        "route_measured_blocks": 2120.199
+      },
+      "dialogue": {
+        "pre": "dlg_route_03_trainer_04_pre",
+        "win": "dlg_route_03_trainer_04_win",
+        "loss": "dlg_route_03_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_03_trainer_04",
+        "name": {
+          "literal": "Signal Watcher"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "machop",
+            "moveset": [
+              "lowkick",
+              "knockoff",
+              "bulldoze"
+            ],
+            "level": 24
+          },
+          {
+            "species": "skiddo",
+            "moveset": [
+              "razorleaf",
+              "bulldoze",
+              "synthesis"
+            ],
+            "level": 25
+          },
+          {
+            "species": "bunnelby",
+            "moveset": [
+              "mudshot",
+              "quickattack",
+              "takedown"
+            ],
+            "level": 26
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_03_trainer_05",
+      "display_name": "Vessu Ranger",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "skiddo",
+          "moveset": [
+            "razorleaf",
+            "bulldoze",
+            "synthesis"
+          ],
+          "level": 25
+        },
+        {
+          "species": "machop",
+          "moveset": [
+            "lowkick",
+            "knockoff",
+            "bulldoze"
+          ],
+          "level": 26
+        },
+        {
+          "species": "bunnelby",
+          "moveset": [
+            "mudshot",
+            "quickattack",
+            "takedown"
+          ],
+          "level": 27
+        }
+      ],
+      "route_id": "route_03_misty_to_surge",
+      "route_order": 3,
+      "trainer_order": 5,
+      "archetype": "gym_prep",
+      "lesson": "A resistance core is shown as the fallback to Ground immunity.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1690,
+        "progress_fraction": 0.7972,
+        "polyline_vertex_index": 58,
+        "x": 1978,
+        "z": 1606,
+        "sampled_y": 132.89,
+        "route_measured_blocks": 2120.199
+      },
+      "dialogue": {
+        "pre": "dlg_route_03_trainer_05_pre",
+        "win": "dlg_route_03_trainer_05_win",
+        "loss": "dlg_route_03_trainer_05_loss"
+      },
+      "rct": {
+        "identity": "route_03_trainer_05",
+        "name": {
+          "literal": "Vessu Ranger"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "skiddo",
+            "moveset": [
+              "razorleaf",
+              "bulldoze",
+              "synthesis"
+            ],
+            "level": 25
+          },
+          {
+            "species": "machop",
+            "moveset": [
+              "lowkick",
+              "knockoff",
+              "bulldoze"
+            ],
+            "level": 26
+          },
+          {
+            "species": "bunnelby",
+            "moveset": [
+              "mudshot",
+              "quickattack",
+              "takedown"
+            ],
+            "level": 27
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_04_trainer_01",
+      "display_name": "Snowfield Novice",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "bronzor",
+          "moveset": [
+            "confusion",
+            "hypnosis",
+            "payback"
+          ],
+          "level": 26
+        }
+      ],
+      "route_id": "route_04_surge_to_erika",
+      "route_order": 4,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "One Ice attacker previews Grass pressure.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 348,
+        "progress_fraction": 0.1008,
+        "polyline_vertex_index": 12,
+        "x": 1900,
+        "z": 1571,
+        "sampled_y": 140.42,
+        "route_measured_blocks": 3452.592
+      },
+      "dialogue": {
+        "pre": "dlg_route_04_trainer_01_pre",
+        "win": "dlg_route_04_trainer_01_win",
+        "loss": "dlg_route_04_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_04_trainer_01",
+        "name": {
+          "literal": "Snowfield Novice"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "bronzor",
+            "moveset": [
+              "confusion",
+              "hypnosis",
+              "payback"
+            ],
+            "level": 26
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_04_trainer_02",
+      "display_name": "Alpine Ranger",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "aron",
+          "moveset": [
+            "headbutt",
+            "metalclaw",
+            "rocktomb"
+          ],
+          "level": 26
+        },
+        {
+          "species": "bergmite",
+          "moveset": [
+            "icefang",
+            "rapidspin",
+            "protect"
+          ],
+          "level": 27
+        }
+      ],
+      "route_id": "route_04_surge_to_erika",
+      "route_order": 4,
+      "trainer_order": 2,
+      "archetype": "observer",
+      "lesson": "Ice and Flying coverage are combined.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 942,
+        "progress_fraction": 0.2728,
+        "polyline_vertex_index": 39,
+        "x": 2370,
+        "z": 1301,
+        "sampled_y": 157.69,
+        "route_measured_blocks": 3452.592
+      },
+      "dialogue": {
+        "pre": "dlg_route_04_trainer_02_pre",
+        "win": "dlg_route_04_trainer_02_win",
+        "loss": "dlg_route_04_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_04_trainer_02",
+        "name": {
+          "literal": "Alpine Ranger"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "aron",
+            "moveset": [
+              "headbutt",
+              "metalclaw",
+              "rocktomb"
+            ],
+            "level": 26
+          },
+          {
+            "species": "bergmite",
+            "moveset": [
+              "icefang",
+              "rapidspin",
+              "protect"
+            ],
+            "level": 27
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_04_trainer_03",
+      "display_name": "Campfire Keeper",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "swablu",
+          "moveset": [
+            "pluck",
+            "round",
+            "sing"
+          ],
+          "level": 29
+        },
+        {
+          "species": "smoochum",
+          "moveset": [
+            "icywind",
+            "confusion",
+            "sing"
+          ],
+          "level": 30
+        }
+      ],
+      "route_id": "route_04_surge_to_erika",
+      "route_order": 4,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Fire attacks preview Erika's weaknesses.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1772,
+        "progress_fraction": 0.5132,
+        "polyline_vertex_index": 94,
+        "x": 3072,
+        "z": 1368,
+        "sampled_y": 107.3,
+        "route_measured_blocks": 3452.592
+      },
+      "dialogue": {
+        "pre": "dlg_route_04_trainer_03_pre",
+        "win": "dlg_route_04_trainer_03_win",
+        "loss": "dlg_route_04_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_04_trainer_03",
+        "name": {
+          "literal": "Campfire Keeper"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "swablu",
+            "moveset": [
+              "pluck",
+              "round",
+              "sing"
+            ],
+            "level": 29
+          },
+          {
+            "species": "smoochum",
+            "moveset": [
+              "icywind",
+              "confusion",
+              "sing"
+            ],
+            "level": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_04_trainer_04",
+      "display_name": "Ridge Scout",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "bronzor",
+          "moveset": [
+            "confusion",
+            "hypnosis",
+            "payback"
+          ],
+          "level": 28
+        },
+        {
+          "species": "cryogonal",
+          "moveset": [
+            "aurorabeam",
+            "rapidspin",
+            "recover"
+          ],
+          "level": 29
+        },
+        {
+          "species": "aron",
+          "moveset": [
+            "headbutt",
+            "metalclaw",
+            "rocktomb"
+          ],
+          "level": 30
+        }
+      ],
+      "route_id": "route_04_surge_to_erika",
+      "route_order": 4,
+      "trainer_order": 4,
+      "archetype": "strategist",
+      "lesson": "Hazards punish careless switching.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 2029,
+        "progress_fraction": 0.5876,
+        "polyline_vertex_index": 108,
+        "x": 3226,
+        "z": 1561,
+        "sampled_y": 104.26,
+        "route_measured_blocks": 3452.592
+      },
+      "dialogue": {
+        "pre": "dlg_route_04_trainer_04_pre",
+        "win": "dlg_route_04_trainer_04_win",
+        "loss": "dlg_route_04_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_04_trainer_04",
+        "name": {
+          "literal": "Ridge Scout"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "bronzor",
+            "moveset": [
+              "confusion",
+              "hypnosis",
+              "payback"
+            ],
+            "level": 28
+          },
+          {
+            "species": "cryogonal",
+            "moveset": [
+              "aurorabeam",
+              "rapidspin",
+              "recover"
+            ],
+            "level": 29
+          },
+          {
+            "species": "aron",
+            "moveset": [
+              "headbutt",
+              "metalclaw",
+              "rocktomb"
+            ],
+            "level": 30
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_04_trainer_05",
+      "display_name": "Bird Watcher",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "aron",
+          "moveset": [
+            "headbutt",
+            "metalclaw",
+            "rocktomb"
+          ],
+          "level": 31
+        },
+        {
+          "species": "bergmite",
+          "moveset": [
+            "icefang",
+            "rapidspin",
+            "protect"
+          ],
+          "level": 32
+        }
+      ],
+      "route_id": "route_04_surge_to_erika",
+      "route_order": 4,
+      "trainer_order": 5,
+      "archetype": "observer",
+      "lesson": "Flying offense is made visible before Erika.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 2551,
+        "progress_fraction": 0.7388,
+        "polyline_vertex_index": 145,
+        "x": 3570,
+        "z": 1886,
+        "sampled_y": 103.04,
+        "route_measured_blocks": 3452.592
+      },
+      "dialogue": {
+        "pre": "dlg_route_04_trainer_05_pre",
+        "win": "dlg_route_04_trainer_05_win",
+        "loss": "dlg_route_04_trainer_05_loss"
+      },
+      "rct": {
+        "identity": "route_04_trainer_05",
+        "name": {
+          "literal": "Bird Watcher"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "aron",
+            "moveset": [
+              "headbutt",
+              "metalclaw",
+              "rocktomb"
+            ],
+            "level": 31
+          },
+          {
+            "species": "bergmite",
+            "moveset": [
+              "icefang",
+              "rapidspin",
+              "protect"
+            ],
+            "level": 32
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_04_trainer_06",
+      "display_name": "Naturalist",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "swablu",
+          "moveset": [
+            "pluck",
+            "round",
+            "sing"
+          ],
+          "level": 31
+        },
+        {
+          "species": "smoochum",
+          "moveset": [
+            "icywind",
+            "confusion",
+            "sing"
+          ],
+          "level": 32
+        },
+        {
+          "species": "bergmite",
+          "moveset": [
+            "icefang",
+            "rapidspin",
+            "protect"
+          ],
+          "level": 33
+        }
+      ],
+      "route_id": "route_04_surge_to_erika",
+      "route_order": 4,
+      "trainer_order": 6,
+      "archetype": "gym_prep",
+      "lesson": "Sun interaction previews Erika's central mechanic.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 3017,
+        "progress_fraction": 0.8737,
+        "polyline_vertex_index": 169,
+        "x": 3993,
+        "z": 1844,
+        "sampled_y": 111.36,
+        "route_measured_blocks": 3452.592
+      },
+      "dialogue": {
+        "pre": "dlg_route_04_trainer_06_pre",
+        "win": "dlg_route_04_trainer_06_win",
+        "loss": "dlg_route_04_trainer_06_loss"
+      },
+      "rct": {
+        "identity": "route_04_trainer_06",
+        "name": {
+          "literal": "Naturalist"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "swablu",
+            "moveset": [
+              "pluck",
+              "round",
+              "sing"
+            ],
+            "level": 31
+          },
+          {
+            "species": "smoochum",
+            "moveset": [
+              "icywind",
+              "confusion",
+              "sing"
+            ],
+            "level": 32
+          },
+          {
+            "species": "bergmite",
+            "moveset": [
+              "icefang",
+              "rapidspin",
+              "protect"
+            ],
+            "level": 33
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_05_trainer_01",
+      "display_name": "Field Hand",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "hattrem",
+          "moveset": [
+            "confusion",
+            "lifedew",
+            "disarmingvoice"
+          ],
+          "level": 32
+        }
+      ],
+      "route_id": "route_05_erika_to_koga",
+      "route_order": 5,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A single Poison-type introduces status.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 288,
+        "progress_fraction": 0.274,
+        "polyline_vertex_index": 6,
+        "x": 4383,
+        "z": 1812,
+        "sampled_y": 114.08,
+        "route_measured_blocks": 1051.301
+      },
+      "dialogue": {
+        "pre": "dlg_route_05_trainer_01_pre",
+        "win": "dlg_route_05_trainer_01_win",
+        "loss": "dlg_route_05_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_05_trainer_01",
+        "name": {
+          "literal": "Field Hand"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "hattrem",
+            "moveset": [
+              "confusion",
+              "lifedew",
+              "disarmingvoice"
+            ],
+            "level": 32
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_05_trainer_02",
+      "display_name": "Field Medic",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "stunky",
+          "moveset": [
+            "bite",
+            "smokescreen",
+            "acidspray"
+          ],
+          "level": 33
+        },
+        {
+          "species": "wooper",
+          "moveset": [
+            "mudshot",
+            "slam",
+            "yawn"
+          ],
+          "level": 34
+        }
+      ],
+      "route_id": "route_05_erika_to_koga",
+      "route_order": 5,
+      "trainer_order": 2,
+      "archetype": "observer",
+      "lesson": "Recovery and status management become explicit.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 448,
+        "progress_fraction": 0.4263,
+        "polyline_vertex_index": 13,
+        "x": 4358,
+        "z": 1962,
+        "sampled_y": 115.08,
+        "route_measured_blocks": 1051.301
+      },
+      "dialogue": {
+        "pre": "dlg_route_05_trainer_02_pre",
+        "win": "dlg_route_05_trainer_02_win",
+        "loss": "dlg_route_05_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_05_trainer_02",
+        "name": {
+          "literal": "Field Medic"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "stunky",
+            "moveset": [
+              "bite",
+              "smokescreen",
+              "acidspray"
+            ],
+            "level": 33
+          },
+          {
+            "species": "wooper",
+            "moveset": [
+              "mudshot",
+              "slam",
+              "yawn"
+            ],
+            "level": 34
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_05_trainer_03",
+      "display_name": "Mind Reader",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "emolga",
+          "moveset": [
+            "spark",
+            "aerialace",
+            "encore"
+          ],
+          "level": 34
+        },
+        {
+          "species": "hattrem",
+          "moveset": [
+            "confusion",
+            "lifedew",
+            "disarmingvoice"
+          ],
+          "level": 35
+        }
+      ],
+      "route_id": "route_05_erika_to_koga",
+      "route_order": 5,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Psychic attacks preview one Koga answer.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 622,
+        "progress_fraction": 0.5918,
+        "polyline_vertex_index": 16,
+        "x": 4366,
+        "z": 2133,
+        "sampled_y": 113.86,
+        "route_measured_blocks": 1051.301
+      },
+      "dialogue": {
+        "pre": "dlg_route_05_trainer_03_pre",
+        "win": "dlg_route_05_trainer_03_win",
+        "loss": "dlg_route_05_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_05_trainer_03",
+        "name": {
+          "literal": "Mind Reader"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "emolga",
+            "moveset": [
+              "spark",
+              "aerialace",
+              "encore"
+            ],
+            "level": 34
+          },
+          {
+            "species": "hattrem",
+            "moveset": [
+              "confusion",
+              "lifedew",
+              "disarmingvoice"
+            ],
+            "level": 35
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_05_trainer_04",
+      "display_name": "Trail Warden",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "wooper",
+          "moveset": [
+            "mudshot",
+            "slam",
+            "yawn"
+          ],
+          "level": 34
+        },
+        {
+          "species": "emolga",
+          "moveset": [
+            "spark",
+            "aerialace",
+            "encore"
+          ],
+          "level": 35
+        },
+        {
+          "species": "hattrem",
+          "moveset": [
+            "confusion",
+            "lifedew",
+            "disarmingvoice"
+          ],
+          "level": 36
+        }
+      ],
+      "route_id": "route_05_erika_to_koga",
+      "route_order": 5,
+      "trainer_order": 4,
+      "archetype": "gym_prep",
+      "lesson": "Levitate and mixed Poison typings block a one-button Ground sweep.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 734,
+        "progress_fraction": 0.6984,
+        "polyline_vertex_index": 24,
+        "x": 4434,
+        "z": 2217,
+        "sampled_y": 112.91,
+        "route_measured_blocks": 1051.301
+      },
+      "dialogue": {
+        "pre": "dlg_route_05_trainer_04_pre",
+        "win": "dlg_route_05_trainer_04_win",
+        "loss": "dlg_route_05_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_05_trainer_04",
+        "name": {
+          "literal": "Trail Warden"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "wooper",
+            "moveset": [
+              "mudshot",
+              "slam",
+              "yawn"
+            ],
+            "level": 34
+          },
+          {
+            "species": "emolga",
+            "moveset": [
+              "spark",
+              "aerialace",
+              "encore"
+            ],
+            "level": 35
+          },
+          {
+            "species": "hattrem",
+            "moveset": [
+              "confusion",
+              "lifedew",
+              "disarmingvoice"
+            ],
+            "level": 36
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_06_trainer_01",
+      "display_name": "Marsh Novice",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "stunky",
+          "moveset": [
+            "bite",
+            "smokescreen",
+            "acidspray"
+          ],
+          "level": 37
+        }
+      ],
+      "route_id": "route_06_koga_to_sabrina",
+      "route_order": 6,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A Dark attacker previews Sabrina's weakness.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 378,
+        "progress_fraction": 0.1944,
+        "polyline_vertex_index": 18,
+        "x": 4923,
+        "z": 2689,
+        "sampled_y": 135.44,
+        "route_measured_blocks": 1944.331
+      },
+      "dialogue": {
+        "pre": "dlg_route_06_trainer_01_pre",
+        "win": "dlg_route_06_trainer_01_win",
+        "loss": "dlg_route_06_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_06_trainer_01",
+        "name": {
+          "literal": "Marsh Novice"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "stunky",
+            "moveset": [
+              "bite",
+              "smokescreen",
+              "acidspray"
+            ],
+            "level": 37
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_06_trainer_02",
+      "display_name": "Marsh Ranger",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "golduck",
+          "moveset": [
+            "waterpulse",
+            "confusion",
+            "disable"
+          ],
+          "level": 37
+        },
+        {
+          "species": "hattrem",
+          "moveset": [
+            "confusion",
+            "lifedew",
+            "disarmingvoice"
+          ],
+          "level": 38
+        }
+      ],
+      "route_id": "route_06_koga_to_sabrina",
+      "route_order": 6,
+      "trainer_order": 2,
+      "archetype": "observer",
+      "lesson": "Dark and Steel resistances are combined.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 671,
+        "progress_fraction": 0.3452,
+        "polyline_vertex_index": 25,
+        "x": 5146,
+        "z": 2860,
+        "sampled_y": 131.43,
+        "route_measured_blocks": 1944.331
+      },
+      "dialogue": {
+        "pre": "dlg_route_06_trainer_02_pre",
+        "win": "dlg_route_06_trainer_02_win",
+        "loss": "dlg_route_06_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_06_trainer_02",
+        "name": {
+          "literal": "Marsh Ranger"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "golduck",
+            "moveset": [
+              "waterpulse",
+              "confusion",
+              "disable"
+            ],
+            "level": 37
+          },
+          {
+            "species": "hattrem",
+            "moveset": [
+              "confusion",
+              "lifedew",
+              "disarmingvoice"
+            ],
+            "level": 38
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_06_trainer_03",
+      "display_name": "Night Courier",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "stunky",
+          "moveset": [
+            "bite",
+            "smokescreen",
+            "acidspray"
+          ],
+          "level": 39
+        },
+        {
+          "species": "hattrem",
+          "moveset": [
+            "confusion",
+            "lifedew",
+            "disarmingvoice"
+          ],
+          "level": 40
+        }
+      ],
+      "route_id": "route_06_koga_to_sabrina",
+      "route_order": 6,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Priority Dark damage is demonstrated.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1012,
+        "progress_fraction": 0.5206,
+        "polyline_vertex_index": 40,
+        "x": 5453,
+        "z": 2942,
+        "sampled_y": 123.66,
+        "route_measured_blocks": 1944.331
+      },
+      "dialogue": {
+        "pre": "dlg_route_06_trainer_03_pre",
+        "win": "dlg_route_06_trainer_03_win",
+        "loss": "dlg_route_06_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_06_trainer_03",
+        "name": {
+          "literal": "Night Courier"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "stunky",
+            "moveset": [
+              "bite",
+              "smokescreen",
+              "acidspray"
+            ],
+            "level": 39
+          },
+          {
+            "species": "hattrem",
+            "moveset": [
+              "confusion",
+              "lifedew",
+              "disarmingvoice"
+            ],
+            "level": 40
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_06_trainer_04",
+      "display_name": "Lake Pathfinder",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "stunky",
+          "moveset": [
+            "bite",
+            "smokescreen",
+            "acidspray"
+          ],
+          "level": 39
+        },
+        {
+          "species": "barboach",
+          "moveset": [
+            "mudbomb",
+            "waterpulse",
+            "amnesia"
+          ],
+          "level": 40
+        },
+        {
+          "species": "golduck",
+          "moveset": [
+            "waterpulse",
+            "confusion",
+            "disable"
+          ],
+          "level": 41
+        }
+      ],
+      "route_id": "route_06_koga_to_sabrina",
+      "route_order": 6,
+      "trainer_order": 4,
+      "archetype": "strategist",
+      "lesson": "Trick Room speed inversion is introduced.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1371,
+        "progress_fraction": 0.7052,
+        "polyline_vertex_index": 53,
+        "x": 5754,
+        "z": 3080,
+        "sampled_y": 104.68,
+        "route_measured_blocks": 1944.331
+      },
+      "dialogue": {
+        "pre": "dlg_route_06_trainer_04_pre",
+        "win": "dlg_route_06_trainer_04_win",
+        "loss": "dlg_route_06_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_06_trainer_04",
+        "name": {
+          "literal": "Lake Pathfinder"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "stunky",
+            "moveset": [
+              "bite",
+              "smokescreen",
+              "acidspray"
+            ],
+            "level": 39
+          },
+          {
+            "species": "barboach",
+            "moveset": [
+              "mudbomb",
+              "waterpulse",
+              "amnesia"
+            ],
+            "level": 40
+          },
+          {
+            "species": "golduck",
+            "moveset": [
+              "waterpulse",
+              "confusion",
+              "disable"
+            ],
+            "level": 41
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_06_trainer_05",
+      "display_name": "Displaced Archivist",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "hattrem",
+          "moveset": [
+            "confusion",
+            "lifedew",
+            "disarmingvoice"
+          ],
+          "level": 41
+        },
+        {
+          "species": "swanna",
+          "moveset": [
+            "airslash",
+            "waterpulse",
+            "tailwind"
+          ],
+          "level": 42
+        },
+        {
+          "species": "stunky",
+          "moveset": [
+            "bite",
+            "smokescreen",
+            "acidspray"
+          ],
+          "level": 43
+        }
+      ],
+      "route_id": "route_06_koga_to_sabrina",
+      "route_order": 6,
+      "trainer_order": 5,
+      "archetype": "gym_prep",
+      "lesson": "Mixed Psychic/Fairy coverage rehearses Sabrina's team shape.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1636,
+        "progress_fraction": 0.8416,
+        "polyline_vertex_index": 68,
+        "x": 5962,
+        "z": 3219,
+        "sampled_y": 95.29,
+        "route_measured_blocks": 1944.331
+      },
+      "dialogue": {
+        "pre": "dlg_route_06_trainer_05_pre",
+        "win": "dlg_route_06_trainer_05_win",
+        "loss": "dlg_route_06_trainer_05_loss"
+      },
+      "rct": {
+        "identity": "route_06_trainer_05",
+        "name": {
+          "literal": "Displaced Archivist"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "hattrem",
+            "moveset": [
+              "confusion",
+              "lifedew",
+              "disarmingvoice"
+            ],
+            "level": 41
+          },
+          {
+            "species": "swanna",
+            "moveset": [
+              "airslash",
+              "waterpulse",
+              "tailwind"
+            ],
+            "level": 42
+          },
+          {
+            "species": "stunky",
+            "moveset": [
+              "bite",
+              "smokescreen",
+              "acidspray"
+            ],
+            "level": 43
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_07_trainer_01",
+      "display_name": "Expedition Novice",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "swanna",
+          "moveset": [
+            "airslash",
+            "waterpulse",
+            "tailwind"
+          ],
+          "level": 41
+        }
+      ],
+      "route_id": "route_07_sabrina_to_blaine",
+      "route_order": 7,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A solo Water attacker previews Blaine.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 170,
+        "progress_fraction": 0.0825,
+        "polyline_vertex_index": 7,
+        "x": 6248,
+        "z": 3546,
+        "sampled_y": 94.0,
+        "route_measured_blocks": 2060.988
+      },
+      "dialogue": {
+        "pre": "dlg_route_07_trainer_01_pre",
+        "win": "dlg_route_07_trainer_01_win",
+        "loss": "dlg_route_07_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_07_trainer_01",
+        "name": {
+          "literal": "Expedition Novice"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "swanna",
+            "moveset": [
+              "airslash",
+              "waterpulse",
+              "tailwind"
+            ],
+            "level": 41
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_07_trainer_02",
+      "display_name": "Bridge Hand",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "centiskorch",
+          "moveset": [
+            "flamewheel",
+            "bugbite",
+            "coil"
+          ],
+          "level": 41
+        },
+        {
+          "species": "nuzleaf",
+          "moveset": [
+            "razorleaf",
+            "fakeout",
+            "torment"
+          ],
+          "level": 42
+        }
+      ],
+      "route_id": "route_07_sabrina_to_blaine",
+      "route_order": 7,
+      "trainer_order": 2,
+      "archetype": "observer",
+      "lesson": "Water and Ground offense are paired.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 413,
+        "progress_fraction": 0.2004,
+        "polyline_vertex_index": 12,
+        "x": 6423,
+        "z": 3711,
+        "sampled_y": 92.26,
+        "route_measured_blocks": 2060.988
+      },
+      "dialogue": {
+        "pre": "dlg_route_07_trainer_02_pre",
+        "win": "dlg_route_07_trainer_02_win",
+        "loss": "dlg_route_07_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_07_trainer_02",
+        "name": {
+          "literal": "Bridge Hand"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "centiskorch",
+            "moveset": [
+              "flamewheel",
+              "bugbite",
+              "coil"
+            ],
+            "level": 41
+          },
+          {
+            "species": "nuzleaf",
+            "moveset": [
+              "razorleaf",
+              "fakeout",
+              "torment"
+            ],
+            "level": 42
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_07_trainer_03",
+      "display_name": "Shore Battler",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "swanna",
+          "moveset": [
+            "airslash",
+            "waterpulse",
+            "tailwind"
+          ],
+          "level": 43
+        },
+        {
+          "species": "nuzleaf",
+          "moveset": [
+            "razorleaf",
+            "fakeout",
+            "torment"
+          ],
+          "level": 44
+        }
+      ],
+      "route_id": "route_07_sabrina_to_blaine",
+      "route_order": 7,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Fast Water pressure is made visible.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 907,
+        "progress_fraction": 0.4401,
+        "polyline_vertex_index": 53,
+        "x": 6585,
+        "z": 4056,
+        "sampled_y": 90.91,
+        "route_measured_blocks": 2060.988
+      },
+      "dialogue": {
+        "pre": "dlg_route_07_trainer_03_pre",
+        "win": "dlg_route_07_trainer_03_win",
+        "loss": "dlg_route_07_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_07_trainer_03",
+        "name": {
+          "literal": "Shore Battler"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "swanna",
+            "moveset": [
+              "airslash",
+              "waterpulse",
+              "tailwind"
+            ],
+            "level": 43
+          },
+          {
+            "species": "nuzleaf",
+            "moveset": [
+              "razorleaf",
+              "fakeout",
+              "torment"
+            ],
+            "level": 44
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_07_trainer_04",
+      "display_name": "Crater Geologist",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "slugma",
+          "moveset": [
+            "incinerate",
+            "rockthrow",
+            "yawn"
+          ],
+          "level": 43
+        },
+        {
+          "species": "centiskorch",
+          "moveset": [
+            "flamewheel",
+            "bugbite",
+            "coil"
+          ],
+          "level": 44
+        },
+        {
+          "species": "nuzleaf",
+          "moveset": [
+            "razorleaf",
+            "fakeout",
+            "torment"
+          ],
+          "level": 45
+        }
+      ],
+      "route_id": "route_07_sabrina_to_blaine",
+      "route_order": 7,
+      "trainer_order": 4,
+      "archetype": "strategist",
+      "lesson": "Rock pressure previews Charizard.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1232,
+        "progress_fraction": 0.5978,
+        "polyline_vertex_index": 69,
+        "x": 6531,
+        "z": 4358,
+        "sampled_y": 106.65,
+        "route_measured_blocks": 2060.988
+      },
+      "dialogue": {
+        "pre": "dlg_route_07_trainer_04_pre",
+        "win": "dlg_route_07_trainer_04_win",
+        "loss": "dlg_route_07_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_07_trainer_04",
+        "name": {
+          "literal": "Crater Geologist"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "slugma",
+            "moveset": [
+              "incinerate",
+              "rockthrow",
+              "yawn"
+            ],
+            "level": 43
+          },
+          {
+            "species": "centiskorch",
+            "moveset": [
+              "flamewheel",
+              "bugbite",
+              "coil"
+            ],
+            "level": 44
+          },
+          {
+            "species": "nuzleaf",
+            "moveset": [
+              "razorleaf",
+              "fakeout",
+              "torment"
+            ],
+            "level": 45
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_07_trainer_05",
+      "display_name": "Ash-Path Ranger",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "nuzleaf",
+          "moveset": [
+            "razorleaf",
+            "fakeout",
+            "torment"
+          ],
+          "level": 46
+        },
+        {
+          "species": "golduck",
+          "moveset": [
+            "waterpulse",
+            "confusion",
+            "disable"
+          ],
+          "level": 47
+        }
+      ],
+      "route_id": "route_07_sabrina_to_blaine",
+      "route_order": 7,
+      "trainer_order": 5,
+      "archetype": "observer",
+      "lesson": "Sun and coverage punish a single Water answer.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1520,
+        "progress_fraction": 0.7375,
+        "polyline_vertex_index": 97,
+        "x": 6433,
+        "z": 4606,
+        "sampled_y": 105.33,
+        "route_measured_blocks": 2060.988
+      },
+      "dialogue": {
+        "pre": "dlg_route_07_trainer_05_pre",
+        "win": "dlg_route_07_trainer_05_win",
+        "loss": "dlg_route_07_trainer_05_loss"
+      },
+      "rct": {
+        "identity": "route_07_trainer_05",
+        "name": {
+          "literal": "Ash-Path Ranger"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "nuzleaf",
+            "moveset": [
+              "razorleaf",
+              "fakeout",
+              "torment"
+            ],
+            "level": 46
+          },
+          {
+            "species": "golduck",
+            "moveset": [
+              "waterpulse",
+              "confusion",
+              "disable"
+            ],
+            "level": 47
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_07_trainer_06",
+      "display_name": "Prospector",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "swanna",
+          "moveset": [
+            "airslash",
+            "waterpulse",
+            "tailwind"
+          ],
+          "level": 46
+        },
+        {
+          "species": "nuzleaf",
+          "moveset": [
+            "razorleaf",
+            "fakeout",
+            "torment"
+          ],
+          "level": 47
+        },
+        {
+          "species": "golduck",
+          "moveset": [
+            "waterpulse",
+            "confusion",
+            "disable"
+          ],
+          "level": 48
+        }
+      ],
+      "route_id": "route_07_sabrina_to_blaine",
+      "route_order": 7,
+      "trainer_order": 6,
+      "archetype": "gym_prep",
+      "lesson": "Weather control and priority rehearse Blaine's closing turns.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1841,
+        "progress_fraction": 0.8933,
+        "polyline_vertex_index": 103,
+        "x": 6215,
+        "z": 4833,
+        "sampled_y": 102.58,
+        "route_measured_blocks": 2060.988
+      },
+      "dialogue": {
+        "pre": "dlg_route_07_trainer_06_pre",
+        "win": "dlg_route_07_trainer_06_win",
+        "loss": "dlg_route_07_trainer_06_loss"
+      },
+      "rct": {
+        "identity": "route_07_trainer_06",
+        "name": {
+          "literal": "Prospector"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "swanna",
+            "moveset": [
+              "airslash",
+              "waterpulse",
+              "tailwind"
+            ],
+            "level": 46
+          },
+          {
+            "species": "nuzleaf",
+            "moveset": [
+              "razorleaf",
+              "fakeout",
+              "torment"
+            ],
+            "level": 47
+          },
+          {
+            "species": "golduck",
+            "moveset": [
+              "waterpulse",
+              "confusion",
+              "disable"
+            ],
+            "level": 48
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_08_trainer_01",
+      "display_name": "Crater Novice",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "drapion",
+          "moveset": [
+            "nightslash",
+            "poisonfang",
+            "toxicspikes"
+          ],
+          "level": 46
+        }
+      ],
+      "route_id": "route_08_blaine_to_giovanni",
+      "route_order": 8,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A solo Ground attacker opens the final leg.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 259,
+        "progress_fraction": 0.0849,
+        "polyline_vertex_index": 16,
+        "x": 5853,
+        "z": 5087,
+        "sampled_y": 114.71,
+        "route_measured_blocks": 3049.735
+      },
+      "dialogue": {
+        "pre": "dlg_route_08_trainer_01_pre",
+        "win": "dlg_route_08_trainer_01_win",
+        "loss": "dlg_route_08_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_08_trainer_01",
+        "name": {
+          "literal": "Crater Novice"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "drapion",
+            "moveset": [
+              "nightslash",
+              "poisonfang",
+              "toxicspikes"
+            ],
+            "level": 46
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_08_trainer_02",
+      "display_name": "Crater Scout",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "toxapex",
+          "moveset": [
+            "venoshock",
+            "recover",
+            "toxicspikes"
+          ],
+          "level": 45
+        },
+        {
+          "species": "kilowattrel",
+          "moveset": [
+            "spark",
+            "airslash",
+            "tailwind"
+          ],
+          "level": 46
+        }
+      ],
+      "route_id": "route_08_blaine_to_giovanni",
+      "route_order": 8,
+      "trainer_order": 2,
+      "archetype": "observer",
+      "lesson": "Mixed terrain types discourage a monotype answer.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 492,
+        "progress_fraction": 0.1613,
+        "polyline_vertex_index": 34,
+        "x": 5661,
+        "z": 5186,
+        "sampled_y": 120.8,
+        "route_measured_blocks": 3049.735
+      },
+      "dialogue": {
+        "pre": "dlg_route_08_trainer_02_pre",
+        "win": "dlg_route_08_trainer_02_win",
+        "loss": "dlg_route_08_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_08_trainer_02",
+        "name": {
+          "literal": "Crater Scout"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "toxapex",
+            "moveset": [
+              "venoshock",
+              "recover",
+              "toxicspikes"
+            ],
+            "level": 45
+          },
+          {
+            "species": "kilowattrel",
+            "moveset": [
+              "spark",
+              "airslash",
+              "tailwind"
+            ],
+            "level": 46
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_08_trainer_03",
+      "display_name": "Grassland Keeper",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "kilowattrel",
+          "moveset": [
+            "spark",
+            "airslash",
+            "tailwind"
+          ],
+          "level": 47
+        },
+        {
+          "species": "cacturne",
+          "moveset": [
+            "needlearm",
+            "suckerpunch",
+            "leechseed"
+          ],
+          "level": 48
+        }
+      ],
+      "route_id": "route_08_blaine_to_giovanni",
+      "route_order": 8,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Grass offense answers Rock and Ground bodies.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 899,
+        "progress_fraction": 0.2948,
+        "polyline_vertex_index": 68,
+        "x": 5295,
+        "z": 5285,
+        "sampled_y": 134.84,
+        "route_measured_blocks": 3049.735
+      },
+      "dialogue": {
+        "pre": "dlg_route_08_trainer_03_pre",
+        "win": "dlg_route_08_trainer_03_win",
+        "loss": "dlg_route_08_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_08_trainer_03",
+        "name": {
+          "literal": "Grassland Keeper"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "kilowattrel",
+            "moveset": [
+              "spark",
+              "airslash",
+              "tailwind"
+            ],
+            "level": 47
+          },
+          {
+            "species": "cacturne",
+            "moveset": [
+              "needlearm",
+              "suckerpunch",
+              "leechseed"
+            ],
+            "level": 48
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_08_trainer_04",
+      "display_name": "Sand Runner",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "drapion",
+          "moveset": [
+            "nightslash",
+            "poisonfang",
+            "toxicspikes"
+          ],
+          "level": 47
+        },
+        {
+          "species": "skorupi",
+          "moveset": [
+            "poisonfang",
+            "bite",
+            "toxicspikes"
+          ],
+          "level": 48
+        },
+        {
+          "species": "toxapex",
+          "moveset": [
+            "venoshock",
+            "recover",
+            "toxicspikes"
+          ],
+          "level": 49
+        }
+      ],
+      "route_id": "route_08_blaine_to_giovanni",
+      "route_order": 8,
+      "trainer_order": 4,
+      "archetype": "strategist",
+      "lesson": "Weather and Ground immunity create a positioning check.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1218,
+        "progress_fraction": 0.3993,
+        "polyline_vertex_index": 82,
+        "x": 5018,
+        "z": 5387,
+        "sampled_y": 146.46,
+        "route_measured_blocks": 3049.735
+      },
+      "dialogue": {
+        "pre": "dlg_route_08_trainer_04_pre",
+        "win": "dlg_route_08_trainer_04_win",
+        "loss": "dlg_route_08_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_08_trainer_04",
+        "name": {
+          "literal": "Sand Runner"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "drapion",
+            "moveset": [
+              "nightslash",
+              "poisonfang",
+              "toxicspikes"
+            ],
+            "level": 47
+          },
+          {
+            "species": "skorupi",
+            "moveset": [
+              "poisonfang",
+              "bite",
+              "toxicspikes"
+            ],
+            "level": 48
+          },
+          {
+            "species": "toxapex",
+            "moveset": [
+              "venoshock",
+              "recover",
+              "toxicspikes"
+            ],
+            "level": 49
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_08_trainer_05",
+      "display_name": "Plateau Ranger",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "toxapex",
+          "moveset": [
+            "venoshock",
+            "recover",
+            "toxicspikes"
+          ],
+          "level": 49
+        },
+        {
+          "species": "kilowattrel",
+          "moveset": [
+            "spark",
+            "airslash",
+            "tailwind"
+          ],
+          "level": 50
+        }
+      ],
+      "route_id": "route_08_blaine_to_giovanni",
+      "route_order": 8,
+      "trainer_order": 5,
+      "archetype": "observer",
+      "lesson": "Fighting and Dark coverage broaden the lesson.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1712,
+        "progress_fraction": 0.5613,
+        "polyline_vertex_index": 110,
+        "x": 4615,
+        "z": 5607,
+        "sampled_y": 156.21,
+        "route_measured_blocks": 3049.735
+      },
+      "dialogue": {
+        "pre": "dlg_route_08_trainer_05_pre",
+        "win": "dlg_route_08_trainer_05_win",
+        "loss": "dlg_route_08_trainer_05_loss"
+      },
+      "rct": {
+        "identity": "route_08_trainer_05",
+        "name": {
+          "literal": "Plateau Ranger"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "toxapex",
+            "moveset": [
+              "venoshock",
+              "recover",
+              "toxicspikes"
+            ],
+            "level": 49
+          },
+          {
+            "species": "kilowattrel",
+            "moveset": [
+              "spark",
+              "airslash",
+              "tailwind"
+            ],
+            "level": 50
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_08_trainer_06",
+      "display_name": "Rift Surveyor",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "nidorina",
+          "moveset": [
+            "poisonsting",
+            "bite",
+            "doublekick"
+          ],
+          "level": 50
+        },
+        {
+          "species": "cacturne",
+          "moveset": [
+            "needlearm",
+            "suckerpunch",
+            "leechseed"
+          ],
+          "level": 51
+        },
+        {
+          "species": "drapion",
+          "moveset": [
+            "nightslash",
+            "poisonfang",
+            "toxicspikes"
+          ],
+          "level": 52
+        }
+      ],
+      "route_id": "route_08_blaine_to_giovanni",
+      "route_order": 8,
+      "trainer_order": 6,
+      "archetype": "strategist",
+      "lesson": "Tailwind and split offense preview a possible doubles identity.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 2351,
+        "progress_fraction": 0.7708,
+        "polyline_vertex_index": 115,
+        "x": 4158,
+        "z": 6045,
+        "sampled_y": 124.68,
+        "route_measured_blocks": 3049.735
+      },
+      "dialogue": {
+        "pre": "dlg_route_08_trainer_06_pre",
+        "win": "dlg_route_08_trainer_06_win",
+        "loss": "dlg_route_08_trainer_06_loss"
+      },
+      "rct": {
+        "identity": "route_08_trainer_06",
+        "name": {
+          "literal": "Rift Surveyor"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "nidorina",
+            "moveset": [
+              "poisonsting",
+              "bite",
+              "doublekick"
+            ],
+            "level": 50
+          },
+          {
+            "species": "cacturne",
+            "moveset": [
+              "needlearm",
+              "suckerpunch",
+              "leechseed"
+            ],
+            "level": 51
+          },
+          {
+            "species": "drapion",
+            "moveset": [
+              "nightslash",
+              "poisonfang",
+              "toxicspikes"
+            ],
+            "level": 52
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_08_trainer_07",
+      "display_name": "Final Warden",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "drapion",
+          "moveset": [
+            "nightslash",
+            "poisonfang",
+            "toxicspikes"
+          ],
+          "level": 51
+        },
+        {
+          "species": "kilowattrel",
+          "moveset": [
+            "spark",
+            "airslash",
+            "tailwind"
+          ],
+          "level": 52
+        },
+        {
+          "species": "cacturne",
+          "moveset": [
+            "needlearm",
+            "suckerpunch",
+            "leechseed"
+          ],
+          "level": 53
+        }
+      ],
+      "route_id": "route_08_blaine_to_giovanni",
+      "route_order": 8,
+      "trainer_order": 7,
+      "archetype": "gym_prep",
+      "lesson": "A balanced three-member core tests preparation without defining Giovanni's format.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 2700,
+        "progress_fraction": 0.8852,
+        "polyline_vertex_index": 126,
+        "x": 3894,
+        "z": 6250,
+        "sampled_y": 101.01,
+        "route_measured_blocks": 3049.735
+      },
+      "dialogue": {
+        "pre": "dlg_route_08_trainer_07_pre",
+        "win": "dlg_route_08_trainer_07_win",
+        "loss": "dlg_route_08_trainer_07_loss"
+      },
+      "rct": {
+        "identity": "route_08_trainer_07",
+        "name": {
+          "literal": "Final Warden"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "drapion",
+            "moveset": [
+              "nightslash",
+              "poisonfang",
+              "toxicspikes"
+            ],
+            "level": 51
+          },
+          {
+            "species": "kilowattrel",
+            "moveset": [
+              "spark",
+              "airslash",
+              "tailwind"
+            ],
+            "level": 52
+          },
+          {
+            "species": "cacturne",
+            "moveset": [
+              "needlearm",
+              "suckerpunch",
+              "leechseed"
+            ],
+            "level": 53
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_01",
+      "display_name": "League Applicant",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "heracross",
+          "moveset": [
+            "brickbreak",
+            "aerialace",
+            "bulldoze"
+          ],
+          "level": 51
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 1,
+      "archetype": "one_pokemon",
+      "lesson": "A strong solo attacker sets the new baseline.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 307,
+        "progress_fraction": 0.0585,
+        "polyline_vertex_index": 10,
+        "x": 3643,
+        "z": 6214,
+        "sampled_y": 106.18,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_01_pre",
+        "win": "dlg_route_09_trainer_01_win",
+        "loss": "dlg_route_09_trainer_01_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_01",
+        "name": {
+          "literal": "League Applicant"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "heracross",
+            "moveset": [
+              "brickbreak",
+              "aerialace",
+              "bulldoze"
+            ],
+            "level": 51
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_02",
+      "display_name": "Rift Hiker",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "toxapex",
+          "moveset": [
+            "venoshock",
+            "recover",
+            "toxicspikes"
+          ],
+          "level": 51
+        },
+        {
+          "species": "scraggy",
+          "moveset": [
+            "lowkick",
+            "feintattack",
+            "headbutt"
+          ],
+          "level": 52
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 2,
+      "archetype": "observer",
+      "lesson": "Hazards and removal introduce resource carryover thinking.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 950,
+        "progress_fraction": 0.181,
+        "polyline_vertex_index": 24,
+        "x": 3601,
+        "z": 5591,
+        "sampled_y": 107.05,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_02_pre",
+        "win": "dlg_route_09_trainer_02_win",
+        "loss": "dlg_route_09_trainer_02_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_02",
+        "name": {
+          "literal": "Rift Hiker"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "toxapex",
+            "moveset": [
+              "venoshock",
+              "recover",
+              "toxicspikes"
+            ],
+            "level": 51
+          },
+          {
+            "species": "scraggy",
+            "moveset": [
+              "lowkick",
+              "feintattack",
+              "headbutt"
+            ],
+            "level": 52
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_03",
+      "display_name": "Steel Specialist",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "klang",
+          "moveset": [
+            "geargrind",
+            "chargebeam",
+            "shiftgear"
+          ],
+          "level": 52
+        },
+        {
+          "species": "heracross",
+          "moveset": [
+            "brickbreak",
+            "aerialace",
+            "bulldoze"
+          ],
+          "level": 53
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Steel resistance checks shallow coverage.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 1773,
+        "progress_fraction": 0.3378,
+        "polyline_vertex_index": 115,
+        "x": 3839,
+        "z": 4895,
+        "sampled_y": 84.01,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_03_pre",
+        "win": "dlg_route_09_trainer_03_win",
+        "loss": "dlg_route_09_trainer_03_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_03",
+        "name": {
+          "literal": "Steel Specialist"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "klang",
+            "moveset": [
+              "geargrind",
+              "chargebeam",
+              "shiftgear"
+            ],
+            "level": 52
+          },
+          {
+            "species": "heracross",
+            "moveset": [
+              "brickbreak",
+              "aerialace",
+              "bulldoze"
+            ],
+            "level": 53
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_04",
+      "display_name": "Rift Cartographer",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "heracross",
+          "moveset": [
+            "brickbreak",
+            "aerialace",
+            "bulldoze"
+          ],
+          "level": 52
+        },
+        {
+          "species": "klang",
+          "moveset": [
+            "geargrind",
+            "chargebeam",
+            "shiftgear"
+          ],
+          "level": 53
+        },
+        {
+          "species": "toxapex",
+          "moveset": [
+            "venoshock",
+            "recover",
+            "toxicspikes"
+          ],
+          "level": 54
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 4,
+      "archetype": "strategist",
+      "lesson": "Speed control and pivoting punish static play.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 2310,
+        "progress_fraction": 0.4402,
+        "polyline_vertex_index": 155,
+        "x": 4174,
+        "z": 4496,
+        "sampled_y": 84.82,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_04_pre",
+        "win": "dlg_route_09_trainer_04_win",
+        "loss": "dlg_route_09_trainer_04_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_04",
+        "name": {
+          "literal": "Rift Cartographer"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "heracross",
+            "moveset": [
+              "brickbreak",
+              "aerialace",
+              "bulldoze"
+            ],
+            "level": 52
+          },
+          {
+            "species": "klang",
+            "moveset": [
+              "geargrind",
+              "chargebeam",
+              "shiftgear"
+            ],
+            "level": 53
+          },
+          {
+            "species": "toxapex",
+            "moveset": [
+              "venoshock",
+              "recover",
+              "toxicspikes"
+            ],
+            "level": 54
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_05",
+      "display_name": "Trench Climber",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "toxapex",
+          "moveset": [
+            "venoshock",
+            "recover",
+            "toxicspikes"
+          ],
+          "level": 54
+        },
+        {
+          "species": "scraggy",
+          "moveset": [
+            "lowkick",
+            "feintattack",
+            "headbutt"
+          ],
+          "level": 55
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 5,
+      "archetype": "observer",
+      "lesson": "Priority exposes fragile sweepers.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 2780,
+        "progress_fraction": 0.5297,
+        "polyline_vertex_index": 257,
+        "x": 4293,
+        "z": 4076,
+        "sampled_y": 87.17,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_05_pre",
+        "win": "dlg_route_09_trainer_05_win",
+        "loss": "dlg_route_09_trainer_05_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_05",
+        "name": {
+          "literal": "Trench Climber"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "toxapex",
+            "moveset": [
+              "venoshock",
+              "recover",
+              "toxicspikes"
+            ],
+            "level": 54
+          },
+          {
+            "species": "scraggy",
+            "moveset": [
+              "lowkick",
+              "feintattack",
+              "headbutt"
+            ],
+            "level": 55
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_06",
+      "display_name": "Field Medic",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "boldore",
+          "moveset": [
+            "rockslide",
+            "bulldoze",
+            "irondefense"
+          ],
+          "level": 54
+        },
+        {
+          "species": "gligar",
+          "moveset": [
+            "bulldoze",
+            "acrobatics",
+            "quickattack"
+          ],
+          "level": 55
+        },
+        {
+          "species": "heracross",
+          "moveset": [
+            "brickbreak",
+            "aerialace",
+            "bulldoze"
+          ],
+          "level": 56
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 6,
+      "archetype": "strategist",
+      "lesson": "Recovery denial tests long-fight planning.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 3375,
+        "progress_fraction": 0.6431,
+        "polyline_vertex_index": 392,
+        "x": 3952,
+        "z": 3623,
+        "sampled_y": 85.3,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_06_pre",
+        "win": "dlg_route_09_trainer_06_win",
+        "loss": "dlg_route_09_trainer_06_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_06",
+        "name": {
+          "literal": "Field Medic"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "boldore",
+            "moveset": [
+              "rockslide",
+              "bulldoze",
+              "irondefense"
+            ],
+            "level": 54
+          },
+          {
+            "species": "gligar",
+            "moveset": [
+              "bulldoze",
+              "acrobatics",
+              "quickattack"
+            ],
+            "level": 55
+          },
+          {
+            "species": "heracross",
+            "moveset": [
+              "brickbreak",
+              "aerialace",
+              "bulldoze"
+            ],
+            "level": 56
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_07",
+      "display_name": "Veteran Tactician",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "gligar",
+          "moveset": [
+            "bulldoze",
+            "acrobatics",
+            "quickattack"
+          ],
+          "level": 55
+        },
+        {
+          "species": "klang",
+          "moveset": [
+            "geargrind",
+            "chargebeam",
+            "shiftgear"
+          ],
+          "level": 56
+        },
+        {
+          "species": "heracross",
+          "moveset": [
+            "brickbreak",
+            "aerialace",
+            "bulldoze"
+          ],
+          "level": 57
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 7,
+      "archetype": "gym_prep",
+      "lesson": "A three-member strategy demands role recognition.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 3885,
+        "progress_fraction": 0.7403,
+        "polyline_vertex_index": 410,
+        "x": 3615,
+        "z": 3259,
+        "sampled_y": 82.27,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_07_pre",
+        "win": "dlg_route_09_trainer_07_win",
+        "loss": "dlg_route_09_trainer_07_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_07",
+        "name": {
+          "literal": "Veteran Tactician"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "gligar",
+            "moveset": [
+              "bulldoze",
+              "acrobatics",
+              "quickattack"
+            ],
+            "level": 55
+          },
+          {
+            "species": "klang",
+            "moveset": [
+              "geargrind",
+              "chargebeam",
+              "shiftgear"
+            ],
+            "level": 56
+          },
+          {
+            "species": "heracross",
+            "moveset": [
+              "brickbreak",
+              "aerialace",
+              "bulldoze"
+            ],
+            "level": 57
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_08",
+      "display_name": "Ace Trainer",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "heracross",
+          "moveset": [
+            "brickbreak",
+            "aerialace",
+            "bulldoze"
+          ],
+          "level": 56
+        },
+        {
+          "species": "gligar",
+          "moveset": [
+            "bulldoze",
+            "acrobatics",
+            "quickattack"
+          ],
+          "level": 57
+        },
+        {
+          "species": "klang",
+          "moveset": [
+            "geargrind",
+            "chargebeam",
+            "shiftgear"
+          ],
+          "level": 58
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 8,
+      "archetype": "gym_prep",
+      "lesson": "A four-member balanced team checks roster depth.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 4408,
+        "progress_fraction": 0.8399,
+        "polyline_vertex_index": 477,
+        "x": 3541,
+        "z": 2766,
+        "sampled_y": 83.92,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_08_pre",
+        "win": "dlg_route_09_trainer_08_win",
+        "loss": "dlg_route_09_trainer_08_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_08",
+        "name": {
+          "literal": "Ace Trainer"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "heracross",
+            "moveset": [
+              "brickbreak",
+              "aerialace",
+              "bulldoze"
+            ],
+            "level": 56
+          },
+          {
+            "species": "gligar",
+            "moveset": [
+              "bulldoze",
+              "acrobatics",
+              "quickattack"
+            ],
+            "level": 57
+          },
+          {
+            "species": "klang",
+            "moveset": [
+              "geargrind",
+              "chargebeam",
+              "shiftgear"
+            ],
+            "level": 58
+          }
+        ]
+      }
+    },
+    {
+      "id": "route_09_trainer_09",
+      "display_name": "League Examiner",
+      "class": "route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "klang",
+          "moveset": [
+            "geargrind",
+            "chargebeam",
+            "shiftgear"
+          ],
+          "level": 56
+        },
+        {
+          "species": "heracross",
+          "moveset": [
+            "brickbreak",
+            "aerialace",
+            "bulldoze"
+          ],
+          "level": 57
+        },
+        {
+          "species": "gligar",
+          "moveset": [
+            "bulldoze",
+            "acrobatics",
+            "quickattack"
+          ],
+          "level": 58
+        }
+      ],
+      "route_id": "victory_road",
+      "route_order": 9,
+      "trainer_order": 9,
+      "archetype": "gym_prep",
+      "lesson": "The final exam combines hazards, speed and an item-bearing closer.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 4623,
+        "progress_fraction": 0.8809,
+        "polyline_vertex_index": 540,
+        "x": 3598,
+        "z": 2575,
+        "sampled_y": 84.99,
+        "route_measured_blocks": 5247.976
+      },
+      "dialogue": {
+        "pre": "dlg_route_09_trainer_09_pre",
+        "win": "dlg_route_09_trainer_09_win",
+        "loss": "dlg_route_09_trainer_09_loss"
+      },
+      "rct": {
+        "identity": "route_09_trainer_09",
+        "name": {
+          "literal": "League Examiner"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "klang",
+            "moveset": [
+              "geargrind",
+              "chargebeam",
+              "shiftgear"
+            ],
+            "level": 56
+          },
+          {
+            "species": "heracross",
+            "moveset": [
+              "brickbreak",
+              "aerialace",
+              "bulldoze"
+            ],
+            "level": 57
+          },
+          {
+            "species": "gligar",
+            "moveset": [
+              "bulldoze",
+              "acrobatics",
+              "quickattack"
+            ],
+            "level": 58
+          }
+        ]
+      }
+    }
+  ]
+}
