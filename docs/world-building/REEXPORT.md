@@ -64,6 +64,26 @@ Before touching the live world:
 3. Run R0-R13 against it and record every check.
 4. Only then retire the live world and repeat on the real export.
 
+## 2026-09-17: dry run of the whole procedure on a staging export
+
+**Status: proven on staging; the live world is untouched.** Full record: `experiments/EXP-024-reexport-dry-run/`.
+
+| Step | Result |
+| --- | --- |
+| Export | to `cobblers-runtime-proof/dryrun/cobblers-dryrun`, 484 region files, `seed_match: true`, spawn (1461, 5306). The staging directory must exist first |
+| R1 | `cobblers_height` and `cobblers_worldtree` re-installed into the world folder and enabled |
+| R2 | cavern rebuilt; the cherry-grove biome applied on a fresh export for the first time |
+| R3 | world tree: column top y512, above the vanilla 319, so the height pack is loading |
+| R4-R5 | grove (33,545 oak logs) and the 48 elders |
+| R6 | 16 maze tiles; 157 of 158 corridor points clear at eye height; sapling seated at ground y124 as recorded |
+| R7 | hometown re-placed: 0 gaps in 1,670 columns, one waystone |
+| R8-R9 | gym1 and gym2 prep; **Brock's gym re-placed from the installed pack** (2,712 blocks, 20 block entities, substitutions exact) |
+| R10 | islet: 400 columns, y63-70, all above sea |
+| Not covered | Distant Horizons pregen, a client flight, spawn-pool installation, and any Habitat Block (none recorded) |
+
+**Two blockers are gone:** Brock's gym now has a rebuild path that needs no local template, and the braided maze
+forest has been re-applied after an export and checked.
+
 ## 2026-09-16: the Glacial Tear creek, and the first built interiors
 
 **Status: exported, built in, checked, pregenerated.**
