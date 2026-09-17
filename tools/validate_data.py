@@ -203,6 +203,11 @@ SCHEMAS = {
          "tier": {"critical", "major", "rest_stop", "outpost"}, "status": {"proposed", "accepted", "built"}},
     ),
     "routes.json": ("cobblers.routes/1", "routes", ["id", "from_town", "to_town"], {}),
+    "visibility.json": (
+        "cobblers.visibility/1", "claims",
+        ["id", "claim", "recorded_in", "expect", "observers", "target", "surface", "measured", "fragile"],
+        {"expect": {"visible", "not_visible"}, "surface": {"terrain", "canopy", "canopy_model"}},
+    ),
     "dialogue.json": (
         "cobblers.dialogue/1", "conversations",
         ["id", "quest_id", "npc_id", "scope", "cursor", "entry_rules", "nodes"], {},
@@ -1349,6 +1354,22 @@ def _nearest_leg_problems(routes_doc, centre, recorded):
     return out
 
 
+def measure_nearest_settlement(towns, town):
+    """{id, distance_blocks} of the nearest other place in towns.json by centre distance, or None."""
+    c = town.get("centre") or {}
+    if not (_num(c.get("x")) and _num(c.get("z"))):
+        return None
+    best = None
+    for o in towns:
+        oc = o.get("centre") or {}
+        if o is town or o.get("id") == town.get("id") or not (_num(oc.get("x")) and _num(oc.get("z"))):
+            continue
+        d = math.hypot(oc["x"] - c["x"], oc["z"] - c["z"])
+        if best is None or d < best[0]:
+            best = (d, o.get("id"))
+    return None if best is None else {"id": best[1], "distance_blocks": round(best[0])}
+
+
 def check_towns(ctx: Context):
     """Settlements: unique ids; exactly ten on the critical path (hometown, eight gym towns, the League) with
     unique orders; everything else off the path, ungated and named by no progression flag; footprints inside
@@ -1405,6 +1426,14 @@ def check_towns(ctx: Context):
                 for why in _nearest_leg_problems(ctx.doc("routes.json"), t.get("centre"), t.get("nearest_leg")):
                     rep.error("towns", '"%s" nearest_leg is stale: %s (tools/measure_towns.py --write refreshes it)'
                               % (tid, why), file=f.rel, line=line, where=tid)
+        if "nearest_settlement" in t:
+            m = measure_nearest_settlement(towns, t)
+            rec = t.get("nearest_settlement") or {}
+            if m is not None and (rec.get("id") != m["id"] or not _num(rec.get("distance_blocks"))
+                                  or abs(rec["distance_blocks"] - m["distance_blocks"]) > OFF_PATH_STALE_BLOCKS):
+                rep.error("towns", '"%s" nearest_settlement is stale: records %s %s, measures %s %s (tools/measure_towns.py '
+                          "--write refreshes it)" % (tid, rec.get("id"), rec.get("distance_blocks"), m["id"], m["distance_blocks"]),
+                          file=f.rel, line=line, where=tid)
         fp, c = t.get("footprint") or {}, t.get("centre") or {}
         try:
             if not (fp["min_x"] <= c["x"] <= fp["max_x"] and fp["min_z"] <= c["z"] <= fp["max_z"]):
@@ -1755,7 +1784,15 @@ def check_foliage(ctx: Context):
         if not isinstance(lt.get("kind"), str) or not lt["kind"]:
             rep.error(C, "%s needs a kind" % lw, file=rel, line=line_id, where=lid)
         seen = lt.get("seen_from")
-        if not isinstance(seen, list) or not seen:
+        if lt.get("landmark", True) is False:
+            # a demoted giant: still painted with its glade, but no landmark, no outpost, no viewpoint claim
+            if seen:
+                rep.error(C, "%s has landmark false, so it makes no seen_from claim" % lw, file=rel, line=line_id, where=lid)
+            if not isinstance(lt.get("demoted"), dict) or not lt["demoted"].get("why"):
+                rep.error(C, "%s has landmark false and needs a demoted record with a why" % lw, file=rel, line=line_id,
+                          where=lid)
+            seen = []
+        elif not isinstance(seen, list) or not seen:
             rep.error(C, "%s seen_from must be a non-empty list" % lw, file=rel, line=line_id, where=lid)
             seen = []
         for o in seen:
@@ -1856,6 +1893,11 @@ def check_foliage(ctx: Context):
             for lid, lt in lt_ids.items():
                 t = by_id.get(lid)
                 line = f.line_of_id(lid)
+                if lt.get("landmark", True) is False:
+                    if t is not None:
+                        rep.error(C, 'demoted tree "%s" (landmark false) must not be a place in data/towns.json' % lid,
+                                  file=rel, line=line, where=lid)
+                    continue
                 if t is None:
                     rep.error(C, 'landmark tree "%s" has no outpost in data/towns.json' % lid, file=rel, line=line,
                               where=lid)
@@ -2330,6 +2372,147 @@ def check_town_ground(ctx: Context):
              % (checked, str((world.get("heightmap") or {}).get("sha256") or "")[:12]), file=f.rel)
 
 
+def _resolve_field(record, field):
+    """A dotted field path into a record; a list step picks the item whose id is that segment."""
+    cur = record
+    for seg in field.split("."):
+        if isinstance(cur, list):
+            cur = next((x for x in cur if isinstance(x, dict) and x.get("id") == seg), None)
+        elif isinstance(cur, dict):
+            cur = cur.get(seg)
+        else:
+            return None
+        if cur is None:
+            return None
+    return cur
+
+
+def _records_by_id(doc):
+    for key in ("towns", "routes", "landmarks", "landmark_trees"):
+        if isinstance(doc, dict) and isinstance(doc.get(key), list):
+            return {r.get("id"): r for r in doc[key] if isinstance(r, dict)}
+    return {}
+
+
+def check_visibility(ctx: Context):
+    """Every visibility claim in data/visibility.json re-measured on the canonical heightmap (and the planned canopy):
+    fails when a count drifts from its record, a claim measures false, a fragility flag does not match the rule, the
+    record that states a claim does not cite it (or hides that it is fragile), or a landmark tree's seen_from has no
+    claim. Nothing about what can be seen is trusted from a record."""
+    C = "visibility"
+    rep = ctx.report
+    f, claims = ctx.records("visibility.json")
+    if not f:
+        return
+    terrain = load_terrain(ctx)
+    if terrain is None:
+        rep.skip(C, "visibility claims not measured (%s)" % (ctx.terrain_reason or "terrain unavailable"), file=f.rel)
+        return
+    tools = str(Path(__file__).resolve().parent)
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    import visibility_claims as VC
+    doc = f.doc
+    repo = ctx.data_dir.parent
+    heights, world = terrain["heights"], terrain["world"]
+    if doc.get("heightmap_sha256") != (world.get("heightmap") or {}).get("sha256"):
+        rep.error(C, "claims were measured on heightmap %s, not the canonical %s; re-measure with tools/visibility_claims.py "
+                  "--write" % (doc.get("heightmap_sha256"), (world.get("heightmap") or {}).get("sha256")), file=f.rel)
+    canopy_rec = doc.get("canopy") or {}
+    canopy_path = repo / (canopy_rec.get("path") or "build/paint/canopy.npz")
+    inp = VC.Inputs(ctx.data_dir, heights, world, canopy_path)
+    canopy_ok = inp.canopy_sha256 is not None and inp.canopy_sha256 == canopy_rec.get("sha256")
+    if inp.canopy_sha256 is None:
+        rep.skip(C, "%s is absent (python tools/paint_maps.py --out build/paint); canopy claims were not measured"
+                 % canopy_path, file=f.rel)
+    elif not canopy_ok:
+        rep.error(C, "the planned canopy changed (sha256 %s, claims measured on %s): a foliage or paint change can break "
+                  "canopy claims; re-measure with tools/visibility_claims.py --write and review every change"
+                  % (inp.canopy_sha256[:12], str(canopy_rec.get("sha256"))[:12]), file=f.rel)
+    rules = doc.get("rules") or {}
+    if (rules.get("fragile_max_seen"), rules.get("fragile_max_share"), rules.get("fragile_min_margin_blocks")) != (
+            VC.FRAGILE_MAX_SEEN, VC.FRAGILE_MAX_SHARE, VC.FRAGILE_MIN_MARGIN):
+        rep.error(C, "rules in visibility.json do not match tools/visibility_claims.py's fragility rule", file=f.rel)
+    loaded, seen_ids, measured_n, fragile_n = {}, set(), 0, 0
+    for c in claims:
+        cid = c.get("id")
+        line = f.line_of_id(cid)
+        if cid in seen_ids:
+            rep.error(C, 'duplicate claim "%s"' % cid, file=f.rel, line=line, where=cid)
+        seen_ids.add(cid)
+        rin = c.get("recorded_in") or {}
+        rel = rin.get("file")
+        stated = None
+        if not rel or not (repo / rel).is_file():
+            rep.error(C, 'claim "%s" is recorded in %r, which does not exist' % (cid, rel), file=f.rel, line=line, where=cid)
+        elif rel.endswith(".json"):
+            if rel not in loaded:
+                loaded[rel] = json.loads((repo / rel).read_text(encoding="utf-8"))
+            rec = _records_by_id(loaded[rel]).get(rin.get("record"))
+            val = _resolve_field(rec, rin.get("field") or "") if rec is not None else None
+            if val is None:
+                rep.error(C, 'claim "%s" names %s %s.%s, which does not exist' % (cid, rel, rin.get("record"), rin.get("field")),
+                          file=f.rel, line=line, where=cid)
+            elif isinstance(val, str):
+                stated = [val]
+        else:
+            stated = [ln for ln in (repo / rel).read_text(encoding="utf-8").splitlines() if "visibility:%s" % cid in ln]
+            if not stated:
+                rep.error(C, 'claim "%s" is recorded in %s, but no line there cites visibility:%s' % (cid, rel, cid),
+                          file=f.rel, line=line, where=cid)
+                stated = None
+        if stated is not None and not any("visibility:%s" % cid in t for t in stated):
+            rep.error(C, 'claim "%s": the stating text in %s does not cite visibility:%s' % (cid, rel, cid),
+                      file=f.rel, line=line, where=cid)
+        if c.get("surface") == "canopy" and not canopy_ok:
+            continue
+        try:
+            m = VC.measure(c, inp)
+        except Exception as exc:  # a malformed claim must not hide the others
+            rep.error(C, 'claim "%s" could not be measured: %s: %s' % (cid, type(exc).__name__, exc), file=f.rel, line=line, where=cid)
+            continue
+        measured_n += 1
+        fr = bool(VC.is_fragile(c, m))
+        fragile_n += fr
+        if not VC.holds(c, m):
+            rep.error(C, 'claim "%s" is false: expects %s, measures %s' % (cid, c.get("expect"), json.dumps(m)),
+                      file=f.rel, line=line, where=cid)
+        if c.get("measured") != m:
+            rep.error(C, 'claim "%s" drifted: records %s, measures %s (tools/visibility_claims.py --write, then review)'
+                      % (cid, json.dumps(c.get("measured")), json.dumps(m)), file=f.rel, line=line, where=cid)
+        if c.get("fragile") is not fr:
+            rep.error(C, 'claim "%s" fragile is %s but the rule gives %s for %s' % (cid, c.get("fragile"), fr, json.dumps(m)),
+                      file=f.rel, line=line, where=cid)
+        if fr and stated is not None and not any("fragile" in t.lower() for t in stated):
+            rep.error(C, 'claim "%s" is fragile (%s) but the text that states it in %s does not say so'
+                      % (cid, json.dumps(m), rel), file=f.rel, line=line, where=cid)
+    # every landmark tree's seen_from entry is a measured claim
+    fol = ctx.doc("foliage.json") or {}
+    for lt in fol.get("landmark_trees") or []:
+        if not isinstance(lt, dict) or lt.get("landmark", True) is False:
+            continue
+        mine = [c for c in claims if (c.get("target") or {}).get("type") == "landmark_tree" and c["target"].get("id") == lt.get("id")]
+        for o in lt.get("seen_from") or []:
+            if o.get("kind") == "legs":
+                for leg in o.get("legs") or []:
+                    if not any(c["observers"].get("type") == "leg" and c["observers"].get("leg") == leg
+                               and c["observers"].get("spacing", 48) == o.get("spacing", 48) for c in mine):
+                        rep.error(C, 'landmark tree "%s" claims leg %s in data/foliage.json with no measured claim'
+                                  % (lt.get("id"), leg), file=f.rel, where=lt.get("id"))
+            elif o.get("kind") == "ring":
+                if not any(c["observers"].get("type") == "ring" and c["observers"].get("radius") == o.get("radius") for c in mine):
+                    rep.error(C, 'landmark tree "%s" claims a %s-block ring with no measured claim' % (lt.get("id"), o.get("radius")),
+                              file=f.rel, where=lt.get("id"))
+            elif o.get("kind") == "points":
+                if not any(c["observers"].get("type") == "points" and c["observers"].get("points") == o.get("points") for c in mine):
+                    rep.error(C, 'landmark tree "%s" claims seen_from points with no measured claim' % lt.get("id"),
+                              file=f.rel, where=lt.get("id"))
+            else:
+                rep.error(C, 'landmark tree "%s" seen_from kind %r has no claim type' % (lt.get("id"), o.get("kind")),
+                          file=f.rel, where=lt.get("id"))
+    rep.info(C, "measured %d of %d visibility claims (%d fragile)" % (measured_n, len(claims), fragile_n), file=f.rel)
+
+
 def _palette(path):
     """Block names in a structure template's palette (tools/nbt.py is standard library only)."""
     tools = str(Path(__file__).resolve().parent)
@@ -2557,6 +2740,7 @@ CHECKS = [
     ("cell-terrain", check_cell_terrain_recorded),
     ("spatial", check_spatial),
     ("town-ground", check_town_ground),
+    ("visibility", check_visibility),
 ]
 
 

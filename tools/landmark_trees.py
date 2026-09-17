@@ -336,6 +336,8 @@ def check(foliage_doc, heights, surface, legs_doc, library):
     heights_by_obj = {r["name"]: r["height"] for r in library["objects"]}
     rows = []
     for spec in foliage_doc.get("landmark_trees") or []:
+        if spec.get("landmark", True) is False:
+            continue            # a demoted giant makes no viewpoint claim
         h = heights_by_obj.get(spec["object"])
         x, z = spec["site"]
         # the tree's own crown and glade are in the canopy surface; they must not hide the tree

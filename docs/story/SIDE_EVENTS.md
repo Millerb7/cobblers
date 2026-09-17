@@ -180,7 +180,7 @@ expanded small-event specifications are in
   the Nosepass signs, recover a supply crate without trampling a Wooper feeding
   patch. The controlled Wooper encounter is an optional team-building reward
   before Surge.
-- **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** At (2203, 1609), repair
+- **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** At (2186, 1606), repair
   trail signs that rotate during signal pulses while a Nosepass turns toward
   the mast of Surge's signal array instead of north. The array must stay
   visible from the signs; the build constraint is in the detailed spec.

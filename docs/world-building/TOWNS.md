@@ -104,7 +104,8 @@ pinned through the Route 1 maze forest).
 **4 → 5, Erika to Koga** (`route_05_erika_to_koga`, roughly 1,050 blocks, no crossings).
 - **Koga is at the foot of the Glacial Tear,** 311 blocks from Marshy Marsh: poison beside the
   marsh.
-- **The major river's valley** is 311–507 blocks south-west, in view but not yet in the way.
+- **The major river's valley** is 311–507 blocks south-west, not yet in the way. Part of the Glacial Tear is visible
+  from town; the river itself is not (`LANDMARK_SIGHTLINES_POST_RESCALE.md`).
 
 **5 → 6, Koga to Sabrina** (`route_06_koga_to_sabrina`, roughly 1,950 blocks, no crossings).
 - **Sabrina is on the terrace over Lake Tilpey,** where the glacier and the major river end.

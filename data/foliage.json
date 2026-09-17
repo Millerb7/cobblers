@@ -1602,8 +1602,7 @@
     {
      "kind": "legs",
      "legs": [
-      "gym3_town->gym4_town",
-      "gym4_town->gym5_town"
+      "gym3_town->gym4_town"
      ],
      "spacing": 48
     },
@@ -1649,7 +1648,6 @@
      "kind": "legs",
      "legs": [
       "hometown->gym1_town",
-      "gym1_town->gym2_town",
       "gym8_town->league"
      ],
      "spacing": 48
@@ -1666,18 +1664,36 @@
    ],
    "kind": "headland",
    "glade_radius": 30,
-   "seen_from": [
-    {
-     "kind": "legs",
-     "legs": [
-      "gym5_town->gym6_town",
-      "gym6_town->gym7_town",
-      "gym7_town->gym8_town"
-     ],
-     "spacing": 48
-    }
+   "for": "A domed giant with curtains of leaves on the flat island in Lake Tilpey, reached only across water.",
+   "landmark": false,
+   "demoted": {
+    "date": "2026-09-16",
+    "by": "user decision",
+    "to": "an ordinary feature: the tree stays painted on its island with its glade, but it is not a landmark, an outpost or a viewpoint claim",
+    "why": "seen from 25 of 148 leg points (16.9%), 9% from Blaine to Giovanni; every Lake Tilpey site that measures better (29-38%) is dry shore, which loses the island it exists for. A genuinely isolated, hard-to-see tree is kept rather than moved to be like the others."
+   }
+  }
+ ],
+ "landmark_candidates": [
+  {
+   "site": [
+    5216,
+    5024
    ],
-   "for": "A domed giant with curtains of leaves on the flat island in Lake Tilpey, reached only across water."
+   "for": "a possible future Route 8 landmark (Blaine to Giovanni); on file, not decided, and not a replacement for the Weeping Elder",
+   "measured": {
+    "date": "2026-09-16",
+    "height_blocks": 35,
+    "leg_points_seen": {
+     "gym5_town->gym6_town": "16/41",
+     "gym6_town->gym7_town": "11/43",
+     "gym7_town->gym8_town": "30/64"
+    },
+    "share": 0.385,
+    "off_path_blocks": 273,
+    "nearest_place": "tableland_stop, 782 blocks",
+    "method": "landmark_trees.visibility over build/paint/canopy.npz (sha256 ce7da822...), legs at 48-block spacing, glade 30 lowered"
+   }
   }
  ]
 }
