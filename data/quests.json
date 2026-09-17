@@ -681,7 +681,16 @@
         "dlg_main_pallet_oak",
         "dlg_main_pallet_mina",
         "dlg_main_pallet_maren",
-        "dlg_main_brock_witness"
+        "dlg_main_brock_witness",
+        "dlg_main_misty_relief_clerk",
+        "dlg_main_surge_signal_clerk",
+        "dlg_main_erika_survey_archivist",
+        "dlg_main_koga_marsh_tracker",
+        "dlg_main_sabrina_pattern",
+        "dlg_main_blaine_crater_analyst",
+        "dlg_main_giovanni_watch",
+        "dlg_main_rift_surveyor",
+        "dlg_main_league_steward"
       ],
       "beats": [
         {
@@ -694,15 +703,132 @@
           "id": "brock",
           "order": 2,
           "requires_stage": "pallet_complete",
+          "requires_existing_flag": null,
+          "world_change_flag": "gym1_cleared",
           "required_fact": "Pallet replaced an occupied native settlement.",
           "completion_stage": "brock_account_heard"
+        },
+        {
+          "id": "misty",
+          "order": 3,
+          "requires_stage": "brock_account_heard",
+          "requires_existing_flag": "gym1_cleared",
+          "world_change_flag": "gym2_cleared",
+          "required_fact": "The Haven Compact rescues people from collapsing worlds, and Pallet carries the same exchange signature.",
+          "completion_stage": "misty_reveal_complete"
+        },
+        {
+          "id": "surge",
+          "order": 4,
+          "requires_stage": "misty_reveal_complete",
+          "requires_existing_flag": "gym2_cleared",
+          "world_change_flag": "gym3_cleared",
+          "required_fact": "Exchange pulses contain corrections showing they can be deliberately triggered and steered.",
+          "completion_stage": "surge_reveal_complete"
+        },
+        {
+          "id": "erika",
+          "order": 5,
+          "requires_stage": "surge_reveal_complete",
+          "requires_existing_flag": "gym3_cleared",
+          "world_change_flag": "gym4_cleared",
+          "required_fact": "Every transfer exchanges occupied volume; an earlier settled summit was exchanged too.",
+          "completion_stage": "erika_reveal_complete"
+        },
+        {
+          "id": "koga",
+          "order": 6,
+          "requires_stage": "erika_reveal_complete",
+          "requires_existing_flag": "gym4_cleared",
+          "world_change_flag": "gym5_cleared",
+          "required_fact": "Repeated forced use destabilises Hoopa and widens exchange damage.",
+          "completion_stage": "koga_reveal_complete"
+        },
+        {
+          "id": "sabrina",
+          "order": 7,
+          "requires_stage": "koga_reveal_complete",
+          "requires_existing_flag": "gym5_cleared",
+          "world_change_flag": "gym6_cleared",
+          "required_fact": "Hoopa is being compelled and a mass rescue is imminent.",
+          "completion_stage": "sabrina_reveal_complete"
+        },
+        {
+          "id": "blaine",
+          "order": 8,
+          "requires_stage": "sabrina_reveal_complete",
+          "requires_existing_flag": "gym6_cleared",
+          "world_change_flag": "gym7_cleared",
+          "missing_story_flag": "crater_operation_stopped",
+          "required_fact": "Compact leadership knowingly selects an occupied destination and proceeds anyway.",
+          "completion_stage": "blaine_reveal_complete"
+        },
+        {
+          "id": "giovanni",
+          "order": 9,
+          "requires_stage": "blaine_reveal_complete",
+          "requires_existing_flag": "gym7_cleared",
+          "world_change_flag": "gym8_cleared",
+          "required_fact": "The final forced exchange will be attempted through the Rift, and Compact dissenters will help stop it.",
+          "completion_stage": "giovanni_reveal_complete"
+        },
+        {
+          "id": "league",
+          "order": 10,
+          "requires_stage": "giovanni_reveal_complete",
+          "requires_existing_flag": "gym8_cleared",
+          "world_change_flag": "champion_cleared",
+          "missing_story_flag": "rift_crisis_resolved",
+          "required_fact": "Forced use ends, Hoopa is released, the world remains changed, and the region opens the League in recognition.",
+          "prelude_stage": "rift_crisis_pending",
+          "completion_stage": "league_recognized"
         }
       ],
       "progression_gate": [],
       "existing_progression_links": [
         {
           "flag": "gym1_cleared",
-          "relationship": "set by the Brock battle after this account; unlocks chapter_2 and the gym1 town waystone",
+          "relationship": "authoritative battle/route gate between reveal beats 2 and 3; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "gym2_cleared",
+          "relationship": "authoritative battle/route gate between reveal beats 3 and 4; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "gym3_cleared",
+          "relationship": "authoritative battle/route gate between reveal beats 4 and 5; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "gym4_cleared",
+          "relationship": "authoritative battle/route gate between reveal beats 5 and 6; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "gym5_cleared",
+          "relationship": "authoritative battle/route gate between reveal beats 6 and 7; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "gym6_cleared",
+          "relationship": "authoritative battle/route gate between reveal beats 7 and 8; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "gym7_cleared",
+          "relationship": "authoritative battle/route gate between reveal beats 8 and 9; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "gym8_cleared",
+          "relationship": "authoritative battle/route gate between reveal beats 9 and 10; dialogue cannot read it yet",
+          "runtime_owner": "data/progression.json and tools/progression_pack.py"
+        },
+        {
+          "flag": "champion_cleared",
+          "relationship": "authoritative campaign-completion record after League recognition",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         }
       ],
@@ -762,6 +888,111 @@
           ],
           "stand_marker": null,
           "status": "the prefab is built; its recorded coordinate is the structure anchor, not a verified safe NPC block"
+        },
+        {
+          "npc_id": "npc_main_misty_relief_clerk",
+          "role": "lake-relief clerk who presents refugee testimony and Misty's comparison file",
+          "placement_anchor": "gym2_town",
+          "recorded_position_xz": [
+            1605,
+            2801
+          ],
+          "stand_marker": null,
+          "status": "town site is proposed and unbuilt; no safe NPC marker exists"
+        },
+        {
+          "npc_id": "npc_main_surge_signal_clerk",
+          "role": "signal technician who explains the array record",
+          "placement_anchor": "gym3_town",
+          "recorded_position_xz": [
+            1688,
+            1410
+          ],
+          "related_landmark_xyz": [
+            1928,
+            284,
+            1248
+          ],
+          "stand_marker": null,
+          "status": "town and signal array are planned, not built"
+        },
+        {
+          "npc_id": "npc_main_erika_survey_archivist",
+          "role": "survey archivist who compares the ledger with the impossible channel",
+          "placement_anchor": "gym4_town",
+          "recorded_position_xz": [
+            4309,
+            1555
+          ],
+          "stand_marker": null,
+          "status": "town and survey object are unbuilt; the dry channel exists as terrain"
+        },
+        {
+          "npc_id": "npc_main_koga_marsh_tracker",
+          "role": "field tracker who has compared successive anchor sites",
+          "placement_anchor": "gym5_town",
+          "recorded_position_xz": [
+            4646,
+            2446
+          ],
+          "stand_marker": null,
+          "status": "town and recovered anchor display are unbuilt"
+        },
+        {
+          "npc_id": "npc_main_sabrina_pattern",
+          "role": "Sabrina speaking as the only approved witness to Hoopa's emotional fragments; no battle dialogue is included",
+          "placement_anchor": "gym6_town",
+          "recorded_position_xz": [
+            6196,
+            3398
+          ],
+          "stand_marker": null,
+          "status": "town and convergence-record display are unbuilt"
+        },
+        {
+          "npc_id": "npc_main_blaine_crater_analyst",
+          "role": "crater analyst who verifies the occupied destination and acknowledged warning",
+          "placement_anchor": "gym7_town",
+          "recorded_position_xz": [
+            6074,
+            4995
+          ],
+          "stand_marker": null,
+          "status": "town and destination-model display are unbuilt; Craters terrain is partial"
+        },
+        {
+          "npc_id": "npc_main_giovanni_watch",
+          "role": "southern watch officer relaying observed retreat and dissenter intelligence",
+          "placement_anchor": "gym8_town",
+          "recorded_position_xz": [
+            3647,
+            6497
+          ],
+          "stand_marker": null,
+          "status": "town and dissenter evidence carrier are unbuilt"
+        },
+        {
+          "npc_id": "npc_main_rift_surveyor",
+          "role": "Victory Road surveyor who frames the Rift terrain and active operation",
+          "placement_anchor": "victory_road_entry",
+          "recorded_position_xyz": [
+            3738,
+            86.46,
+            5082
+          ],
+          "stand_marker": null,
+          "status": "Rift terrain exists; a safe actor marker is not recorded"
+        },
+        {
+          "npc_id": "npc_main_league_steward",
+          "role": "League steward who recognizes the player after Hoopa's release",
+          "placement_anchor": "league",
+          "recorded_position_xz": [
+            3297,
+            2603
+          ],
+          "stand_marker": null,
+          "status": "League and containment cradle are accepted but unbuilt"
         }
       ],
       "physical_evidence": [
@@ -790,6 +1021,93 @@
           "site": "inside the built Brock gym",
           "coordinate": null,
           "description": "A labeled sample pairs native plateau shale directly against Pallet soil with no intervening layer; it makes Brock's claim inspectable without inventing new terrain."
+        },
+        {
+          "id": "misty_refugee_ledger",
+          "kind": "relief_ledger_and_household_belongings",
+          "status": "required_object_and_staging_unbuilt",
+          "site": "gym2_town near Lake Viltri",
+          "coordinate": null,
+          "description": "A relief ledger and a compact group of ordinary belongings make the rescued families concrete without assigning a named faction arc."
+        },
+        {
+          "id": "surge_signal_record",
+          "kind": "signal_array_and_comparison_record",
+          "status": "array_planned_record_object_unbuilt",
+          "site": "gym3_town with source array at (1928, 284, 1248)",
+          "coordinate": null,
+          "description": "A waveform or timestamp record shows repeated timing and direction corrections; the array supplies the measured source."
+        },
+        {
+          "id": "erika_exchange_survey_ledger",
+          "kind": "pre_event_survey_ledger",
+          "status": "required_object_unbuilt",
+          "site": "gym4_town",
+          "coordinate": null,
+          "description": "A tangible ledger on a lectern compares the former descending channel profile and settled western summit with the present impossible dry channel from (3786, 1182) to (3376, 921)."
+        },
+        {
+          "id": "koga_recovered_anchor",
+          "kind": "recovered_exchange_anchor_and_control_plate",
+          "status": "required_object_unbuilt",
+          "site": "gym5_town or its marsh approach",
+          "coordinate": null,
+          "description": "Successive destination marks visibly drift; one control plate carries the Hoopa ring symbol and name."
+        },
+        {
+          "id": "sabrina_convergence_table",
+          "kind": "correlated_observation_records",
+          "status": "required_object_unbuilt",
+          "site": "gym6_town",
+          "coordinate": null,
+          "description": "Water, glacier, memory, Pokemon-behavior, and signal records share aligned activation peaks; the table corroborates Sabrina without pretending to record Hoopa's thoughts."
+        },
+        {
+          "id": "blaine_occupied_destination_model",
+          "kind": "destination_model_and_acknowledged_warning",
+          "status": "required_object_unbuilt",
+          "site": "gym7_town at the Craters",
+          "coordinate": null,
+          "description": "The model visibly marks roads, homes, heat, and moving life; an attached acknowledgment shows leadership received the warning before ordering the activation."
+        },
+        {
+          "id": "giovanni_dissenter_route_packet",
+          "kind": "intercepted_route_and_shutdown_message",
+          "status": "required_evidence_carrier_unbuilt",
+          "site": "gym8_town southern watch",
+          "coordinate": null,
+          "description": "A route packet supports the claim that loyalists are moving to the Rift and that dissenters supplied an approach, without introducing a named faction character arc."
+        },
+        {
+          "id": "rift_victory_road_damage",
+          "kind": "terrain_sequence",
+          "status": "rift_terrain_built_runtime_sequence_unverified",
+          "anchors_xyz": [
+            [
+              3738,
+              86.46,
+              5082
+            ],
+            [
+              4174,
+              87.69,
+              3882
+            ],
+            [
+              3686,
+              87.11,
+              2442
+            ]
+          ],
+          "description": "Straight scars, displaced material, and worsening effects along the Rift provide the final environmental exposition."
+        },
+        {
+          "id": "rift_containment_cradle",
+          "kind": "containment_structure",
+          "status": "required_but_unbuilt",
+          "site": "beneath or adjacent to the League plateau at (3297, 2603)",
+          "coordinate": null,
+          "description": "The final activation and Hoopa release require a containment cradle; exact Y, entrance, footprint, and structure ID do not exist."
         }
       ],
       "objectives": [
@@ -852,6 +1170,123 @@
             "equals": "brock_account_heard"
           },
           "text": "Hear what Brock saw from Viltri Plateau when Pallet arrived."
+        },
+        {
+          "id": "hear_misty_relief_record",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "brock_account_heard"
+          },
+          "design_gate_flag": "gym1_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "misty_reveal_complete"
+          },
+          "text": "Review the Lake Viltri rescue ledger and the exchange signature with the relief clerk."
+        },
+        {
+          "id": "compare_surges_signal",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "misty_reveal_complete"
+          },
+          "design_gate_flag": "gym2_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "surge_reveal_complete"
+          },
+          "text": "Compare the Pallet pulse with the Mt Vessu signal record."
+        },
+        {
+          "id": "read_erikas_survey",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "surge_reveal_complete"
+          },
+          "design_gate_flag": "gym3_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "erika_reveal_complete"
+          },
+          "text": "Compare the pre-event survey ledger with the impossible dry channel."
+        },
+        {
+          "id": "inspect_kogas_anchor_record",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "erika_reveal_complete"
+          },
+          "design_gate_flag": "gym4_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "koga_reveal_complete"
+          },
+          "text": "Review Koga's sequence of drifting exchange anchors and the recovered Hoopa control plate."
+        },
+        {
+          "id": "hear_sabrinas_convergence",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "koga_reveal_complete"
+          },
+          "design_gate_flag": "gym5_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "sabrina_reveal_complete"
+          },
+          "text": "Compare the environmental records and hear the fragments Sabrina perceives from Hoopa."
+        },
+        {
+          "id": "verify_blaines_destination",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "sabrina_reveal_complete"
+          },
+          "design_gate_flag": "gym6_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "blaine_reveal_complete"
+          },
+          "text": "Verify that the Craters operation targets an occupied destination and that leadership acknowledged the warning."
+        },
+        {
+          "id": "receive_giovannis_rift_route",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "blaine_reveal_complete"
+          },
+          "design_gate_flag": "gym7_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "giovanni_reveal_complete"
+          },
+          "text": "Review the southern watch report and the dissenters' route to the final Rift operation."
+        },
+        {
+          "id": "cross_victory_road",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "giovanni_reveal_complete"
+          },
+          "design_gate_flag": "gym8_cleared",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "rift_crisis_pending"
+          },
+          "text": "Follow the Rift from its south-west arm to the containment cradle."
+        },
+        {
+          "id": "end_forced_use_and_open_league",
+          "active_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "rift_crisis_pending"
+          },
+          "missing_gate_flag": "rift_crisis_resolved",
+          "complete_when": {
+            "field": "quest.main_worldshift_reveal.stage",
+            "equals": "league_recognized"
+          },
+          "text": "End the forced activation, release Hoopa, and receive the League's recognition."
         }
       ],
       "transitions": [
@@ -935,6 +1370,11 @@
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "pallet_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.brock_cursor",
+              "value": "brock_001"
             }
           ]
         },
@@ -952,49 +1392,355 @@
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "brock_account_heard"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.misty_cursor",
+              "value": "misty_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_misty_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "brock_account_heard"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "misty_reveal_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.surge_cursor",
+              "value": "surge_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_surge_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "misty_reveal_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "surge_reveal_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.erika_cursor",
+              "value": "erika_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_erika_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "surge_reveal_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "erika_reveal_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.koga_cursor",
+              "value": "koga_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_koga_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "erika_reveal_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "koga_reveal_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.sabrina_cursor",
+              "value": "sabrina_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_sabrina_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "koga_reveal_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "sabrina_reveal_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.blaine_cursor",
+              "value": "blaine_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_blaine_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "sabrina_reveal_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "blaine_reveal_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.giovanni_cursor",
+              "value": "giovanni_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_giovanni_reveal",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "blaine_reveal_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "giovanni_reveal_complete"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.rift_cursor",
+              "value": "rift_001"
+            }
+          ]
+        },
+        {
+          "id": "record_rift_crisis_pending",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "giovanni_reveal_complete"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "rift_crisis_pending"
+            }
+          ]
+        },
+        {
+          "id": "unlock_league_after_rift_resolution",
+          "external_trigger_contract": "Invoke only after the authoritative rift_crisis_resolved setter commits successfully; no current dialogue node invokes this transition.",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "rift_crisis_pending"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "rift_released"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.league_cursor",
+              "value": "league_001"
+            }
+          ]
+        },
+        {
+          "id": "complete_league_recognition",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "rift_released"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "league_recognized"
             }
           ]
         }
       ],
       "world_changes": [
         {
+          "beat": "pallet",
           "kind": "none",
           "result": "The reveal records per-player knowledge only; Pallet's exchange and damage predate play."
         },
         {
+          "beat": "brock",
           "kind": "existing_progression_flag",
           "flag": "gym1_cleared",
-          "fires": "after the separately owned Brock trainer battle",
-          "effects": [
-            "chapter_2 becomes available",
-            "gym1_town waystone should activate"
-          ],
-          "runtime_status": "the advancement generator exists; waystone behavior is not yet proven and progression.json still has a null position"
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 2 and the gym1 town waystone become eligible.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "misty",
+          "kind": "existing_progression_flag",
+          "flag": "gym2_cleared",
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 3 and the gym2 town waystone become eligible.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "surge",
+          "kind": "existing_progression_flag",
+          "flag": "gym3_cleared",
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 4 and the gym3 town waystone become eligible.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "erika",
+          "kind": "existing_progression_flag",
+          "flag": "gym4_cleared",
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 5 and the gym4 town waystone become eligible.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "koga",
+          "kind": "existing_progression_flag",
+          "flag": "gym5_cleared",
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 6 and the gym5 town waystone become eligible.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "sabrina",
+          "kind": "existing_progression_flag",
+          "flag": "gym6_cleared",
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 7 and the gym6 town waystone become eligible.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "blaine",
+          "kind": "existing_progression_flag",
+          "flag": "gym7_cleared",
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 8 and the gym7 town waystone become eligible; this does not record the crater shutdown.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "giovanni",
+          "kind": "existing_progression_flag",
+          "flag": "gym8_cleared",
+          "fires": "after the separately owned leader battle",
+          "result": "Chapter 9 and the gym8 town waystone become eligible; current progression also opens the League too early.",
+          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+        },
+        {
+          "beat": "blaine",
+          "kind": "missing_progression_flag",
+          "flag": "crater_operation_stopped",
+          "result": "Should record defeat of the Craters activation separately from Blaine's badge.",
+          "runtime_status": "approved in ARC.md but absent from data/progression.json; no setter is invented here"
+        },
+        {
+          "beat": "league",
+          "kind": "missing_progression_flag",
+          "flag": "rift_crisis_resolved",
+          "result": "Should release Hoopa, stop the forced activation, and unlock the League steward and League access.",
+          "runtime_status": "approved in ARC.md but absent from data/progression.json; the handoff transition is defined but has no authoritative setter or caller"
+        },
+        {
+          "beat": "league",
+          "kind": "existing_progression_flag",
+          "flag": "champion_cleared",
+          "fires": "after the separately owned champion battle",
+          "result": "Records campaign completion and begins postgame repair work.",
+          "runtime_status": "flag exists; no champion dialogue or battle content is authored in this pass"
         }
       ],
       "multiplayer": {
         "state": "per_player",
         "npcs": "shared_static_actors",
         "concurrent_players": "each player advances one independent reveal-ladder stage and independent NPC cursors",
-        "world_mutation": "only the separately owned advancement-backed gym1_cleared effects after Brock's battle"
+        "world_mutation": "gym1_cleared through gym8_cleared and champion_cleared remain separately owned advancement-backed effects; the two missing crisis flags require authoritative shared setters"
       },
       "generation_blockers": [
-        "Pallet relocation remains open, so all actor anchors are current staging anchors rather than final coordinates.",
-        "Record safe standing markers and Y values for Oak, Mina, and Maren before emitting placement commands.",
-        "Build and record the localized three-home damage cluster; it is required physical corroboration but not a quest gate.",
-        "The proven compiler cannot assert that this beat completed before the advancement-backed gym1_cleared flag; world staging currently supplies that order.",
-        "No proven location/object predicate can require a player to inspect the road boundary; this version advances through Mina's account.",
-        "Define the short pre-gym local trainer set; exact trainer IDs do not exist.",
-        "Reconcile the authored gym_01_brock roster ID with progression's runtime trainer ID kanto_brock before replacing the current trainer.",
-        "Record a safe Brock dialogue marker inside the built gym and place the paired boundary sample.",
-        "The proven dialogue compiler cannot read advancement-backed flags, so the account and Misty lead are delivered before battle; gym1_cleared remains the separate authoritative world change."
+        "Pallet relocation remains open, so all Pallet actor anchors are staging anchors rather than final coordinates.",
+        "Build and verify the Gym 1 actor markers, Pallet boundary, localized damaged-house cluster, and Brock geology display specified in docs/story/MAINLINE_REVEAL_IMPLEMENTATION.md.",
+        "The dialogue compiler cannot read advancement-backed gym flags; each beat records its intended existing flag gate, but current compiled dialogue enforces story order only.",
+        "Every later town actor needs a verified safe standing marker after its town exists; proposed town centres are not placement coordinates.",
+        "Misty needs a relief ledger and belongings display; Surge needs the planned signal array and a comparison record.",
+        "Erika needs a tangible survey ledger; do not claim the current dry tarn contains water.",
+        "Koga needs an abandoned anchor/control-plate display; Sabrina needs a convergence-record table.",
+        "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is approved in ARC.md but absent from the progression ledger.",
+        "Giovanni needs an approved dissenter evidence carrier; the route packet is a content requirement, not a placed object.",
+        "The containment cradle beneath the League plateau has no Y, entrance, footprint, structure ID, or build.",
+        "rift_crisis_resolved is approved in ARC.md but absent from the progression ledger; unlock_league_after_rift_resolution defines the required per-player handoff, but no authoritative setter invokes it or corrects the current early League gate.",
+        "Physical evidence is visible corroboration only because no proven coordinate, proximity, block-interaction, or object-inspection predicate exists.",
+        "The compiled mechanism remains single-player proven only; two-player independent cursors are not runtime verified."
       ],
       "progression_field_refs": [
         "quest.main_worldshift_reveal.stage",
         "quest.main_worldshift_reveal.pallet_oak_cursor",
         "quest.main_worldshift_reveal.pallet_mina_cursor",
         "quest.main_worldshift_reveal.pallet_maren_cursor",
-        "quest.main_worldshift_reveal.brock_cursor"
+        "quest.main_worldshift_reveal.brock_cursor",
+        "quest.main_worldshift_reveal.misty_cursor",
+        "quest.main_worldshift_reveal.surge_cursor",
+        "quest.main_worldshift_reveal.erika_cursor",
+        "quest.main_worldshift_reveal.koga_cursor",
+        "quest.main_worldshift_reveal.sabrina_cursor",
+        "quest.main_worldshift_reveal.blaine_cursor",
+        "quest.main_worldshift_reveal.giovanni_cursor",
+        "quest.main_worldshift_reveal.rift_cursor",
+        "quest.main_worldshift_reveal.league_cursor"
       ]
     }
   ]

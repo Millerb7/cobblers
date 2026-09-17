@@ -190,7 +190,17 @@
         "mismatch_seen",
         "oak_admitted",
         "pallet_complete",
-        "brock_account_heard"
+        "brock_account_heard",
+        "misty_reveal_complete",
+        "surge_reveal_complete",
+        "erika_reveal_complete",
+        "koga_reveal_complete",
+        "sabrina_reveal_complete",
+        "blaine_reveal_complete",
+        "giovanni_reveal_complete",
+        "rift_crisis_pending",
+        "rift_released",
+        "league_recognized"
       ]
     },
     {
@@ -226,8 +236,89 @@
       "field": "brock_cursor",
       "type": "enum",
       "scope": "player",
-      "initial": "brock_001",
+      "initial": "brock_locked",
       "allowed_values": "node ids from dlg_main_brock_witness"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.misty_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "misty_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "misty_locked",
+      "allowed_values": "node ids from dlg_main_misty_relief_clerk"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.surge_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "surge_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "surge_locked",
+      "allowed_values": "node ids from dlg_main_surge_signal_clerk"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.erika_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "erika_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "erika_locked",
+      "allowed_values": "node ids from dlg_main_erika_survey_archivist"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.koga_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "koga_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "koga_locked",
+      "allowed_values": "node ids from dlg_main_koga_marsh_tracker"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.sabrina_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "sabrina_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "sabrina_locked",
+      "allowed_values": "node ids from dlg_main_sabrina_pattern"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.blaine_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "blaine_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "blaine_locked",
+      "allowed_values": "node ids from dlg_main_blaine_crater_analyst"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.giovanni_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "giovanni_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "giovanni_locked",
+      "allowed_values": "node ids from dlg_main_giovanni_watch"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.rift_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "rift_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "rift_locked",
+      "allowed_values": "node ids from dlg_main_rift_surveyor"
+    },
+    {
+      "id": "quest.main_worldshift_reveal.league_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "league_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "league_locked",
+      "allowed_values": "node ids from dlg_main_league_steward"
     }
   ]
 }

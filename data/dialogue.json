@@ -1808,7 +1808,7 @@
       "scope": "player",
       "cursor": {
         "progression_field": "quest.main_worldshift_reveal.brock_cursor",
-        "initial_node": "brock_001",
+        "initial_node": "brock_locked",
         "persist": "after_each_node",
         "restore": "on_every_interaction",
         "cursor_is": "next_unread_node"
@@ -1817,18 +1817,9 @@
         {
           "priority": 10,
           "when": {
-            "kind": "progression_equals",
-            "field": "quest.main_worldshift_reveal.stage",
-            "value": "pallet_complete"
-          },
-          "node": "$cursor"
-        },
-        {
-          "priority": 20,
-          "when": {
             "kind": "always"
           },
-          "node": "brock_locked"
+          "node": "$cursor"
         }
       ],
       "nodes": [
@@ -1921,6 +1912,873 @@
           "speaker": "brock",
           "text": "The sample proves two grounds were joined. The missing settlement proves what the join cost.",
           "next": "brock_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_misty_relief_clerk",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_misty_relief_clerk",
+      "source": "docs/story/ARC.md#settlement-3-gym2_town--misty-at-lake-viltri",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.misty_cursor",
+        "initial_node": "misty_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "misty_locked",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "The lake office is still sorting arrivals. Brock's account comes first.",
+          "next": "misty_locked"
+        },
+        {
+          "id": "misty_001",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "The families in this ledger did not travel here. Their streets folded under white light, and they woke beside Lake Viltri.",
+          "next": "misty_002"
+        },
+        {
+          "id": "misty_002",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "They arrived with medicine, work bags, children's toys, and Pokémon still guarding doorways that no longer existed.",
+          "next": "misty_003"
+        },
+        {
+          "id": "misty_003",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "The Haven Compact brought them out of worlds that were already collapsing. Whatever else is true, those rescues saved lives.",
+          "next": "misty_004"
+        },
+        {
+          "id": "misty_004",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "Pallet's arrival carries the same pulse in our lake instruments, only cleaner and much larger.",
+          "next": "misty_005"
+        },
+        {
+          "id": "misty_005",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "That resemblance does not prove the Compact moved Pallet, and it does not tell us what vanished from either destination.",
+          "next": "misty_006"
+        },
+        {
+          "id": "misty_006",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "Misty compared our file with a reading relayed from Surge's town. The timing matches closely enough that he needs to see the original.",
+          "next": "misty_007"
+        },
+        {
+          "id": "misty_007",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "When the lake challenge is settled, take the sealed copy north. Surge's array can tell us whether this was weather or a controlled signal.",
+          "next": "misty_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_misty_reveal"
+            }
+          ]
+        },
+        {
+          "id": "misty_repeat",
+          "kind": "line",
+          "speaker": "relief clerk",
+          "text": "The rescues were real. So is the unanswered question of what each rescue displaced.",
+          "next": "misty_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_surge_signal_clerk",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_surge_signal_clerk",
+      "source": "docs/story/ARC.md#settlement-4-gym3_town--surge-below-mt-vessu",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.surge_cursor",
+        "initial_node": "surge_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "surge_locked",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "I cannot compare an unlogged sample. The Viltri office has the file we need.",
+          "next": "surge_locked"
+        },
+        {
+          "id": "surge_001",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "The shoulder array recorded Pallet's pulse as a train of bursts, not a single impact.",
+          "next": "surge_002"
+        },
+        {
+          "id": "surge_002",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "Each burst changed bearing by a measured amount. Natural noise does not correct its own direction.",
+          "next": "surge_003"
+        },
+        {
+          "id": "surge_003",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "The spacing changes too: fire, wait, correct, fire again. Someone was steering the exchange while it happened.",
+          "next": "surge_004"
+        },
+        {
+          "id": "surge_004",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "A team tried to remove these records before we finished the comparison. They withdrew when the town noticed them.",
+          "next": "surge_005"
+        },
+        {
+          "id": "surge_005",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "The recovered pages match Misty's lake file and Brock's timestamp. Pallet was part of the same controlled system.",
+          "next": "surge_006"
+        },
+        {
+          "id": "surge_006",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "The record cannot tell us whether that system was used as a weapon, a rescue beacon, or both.",
+          "next": "surge_007"
+        },
+        {
+          "id": "surge_007",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "The next source lies east of the massif, toward Peak Pond Hollow. Its signal is older and buried under altered ground.",
+          "next": "surge_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_surge_reveal"
+            }
+          ]
+        },
+        {
+          "id": "surge_repeat",
+          "kind": "line",
+          "speaker": "signal technician",
+          "text": "Repeated timing, corrected bearing, controlled bursts. Someone steered the exchange.",
+          "next": "surge_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_erika_survey_archivist",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_erika_survey_archivist",
+      "source": "docs/story/ARC.md#settlement-5-gym4_town--erika-at-peak-pond-hollow",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.erika_cursor",
+        "initial_node": "erika_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "erika_locked",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "The survey ledger is sealed until the signal comparison from Mt Vessu arrives.",
+          "next": "erika_locked"
+        },
+        {
+          "id": "erika_001",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "This ledger is older than the exchange. Its stakes show the channel descending from the western tarn toward Peak Pond.",
+          "next": "erika_002"
+        },
+        {
+          "id": "erika_002",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "Walk the channel now and it rises twenty-two to twenty-nine blocks toward its recorded head. Water could never have carved the course we see.",
+          "next": "erika_003"
+        },
+        {
+          "id": "erika_003",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "The paper and the land cannot both describe the same terrain. The paper is dated, witnessed, and repeated across three surveys.",
+          "next": "erika_004"
+        },
+        {
+          "id": "erika_004",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "The western summit entry matters more. It lists homes, roads, gardens, and a full settled district where the Scar now stands.",
+          "next": "erika_005"
+        },
+        {
+          "id": "erika_005",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "That settlement did not erode. Its occupied volume was exchanged for the place that arrived here.",
+          "next": "erika_006"
+        },
+        {
+          "id": "erika_006",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "Pallet did not simply appear on new ground. Every transfer puts one place where another place was.",
+          "next": "erika_007"
+        },
+        {
+          "id": "erika_007",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "Some Compact workers want all forced transfers stopped. Others believe careful measurements can still save communities without repeating this loss.",
+          "next": "erika_008"
+        },
+        {
+          "id": "erika_008",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "The ledger proves the cost exists. It does not prove that anyone can measure every life at a destination.",
+          "next": "erika_009"
+        },
+        {
+          "id": "erika_009",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "Equipment and concealed crews have moved south toward Glacier Foot Fields. Koga has been tracking what they leave behind.",
+          "next": "erika_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_erika_reveal"
+            }
+          ]
+        },
+        {
+          "id": "erika_repeat",
+          "kind": "line",
+          "speaker": "survey archivist",
+          "text": "The old survey slopes down. The channel on the ground slopes up. A settled summit was exchanged.",
+          "next": "erika_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_koga_marsh_tracker",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_koga_marsh_tracker",
+      "source": "docs/story/ARC.md#settlement-6-gym5_town--koga-at-glacier-foot-fields",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.koga_cursor",
+        "initial_node": "koga_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "koga_locked",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "The marsh marks mean little without the Peak Pond survey. Bring the exchange record south.",
+          "next": "koga_locked"
+        },
+        {
+          "id": "koga_001",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "The first anchor sites were neat circles. Each later site drifted farther from its own destination marks.",
+          "next": "koga_002"
+        },
+        {
+          "id": "koga_002",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "Now reeds bend and Pokémon panic well beyond the equipment. The effect remains after the crews leave.",
+          "next": "koga_003"
+        },
+        {
+          "id": "koga_003",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "These marks are not random failures. Every forced exchange makes the next boundary wider and less exact.",
+          "next": "koga_004"
+        },
+        {
+          "id": "koga_004",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "One recovered control plate carries the same ring symbol and a name: Hoopa.",
+          "next": "koga_005"
+        },
+        {
+          "id": "koga_005",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "The frightened Pokémon gather before an activation and scatter afterward. Whatever carries the exchange is alive and unwilling.",
+          "next": "koga_006"
+        },
+        {
+          "id": "koga_006",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "The Rift may not be a natural scar. It may be damage accumulated from every forced use.",
+          "next": "koga_007"
+        },
+        {
+          "id": "koga_007",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "Sabrina's town has the glacier, lake, signal, and memory reports. She can compare what no single tracker can see.",
+          "next": "koga_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_koga_reveal"
+            }
+          ]
+        },
+        {
+          "id": "koga_repeat",
+          "kind": "line",
+          "speaker": "marsh tracker",
+          "text": "The anchors drift farther each time, and the living thing behind them is called Hoopa.",
+          "next": "koga_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_sabrina_pattern",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_sabrina_pattern",
+      "source": "docs/story/ARC.md#settlement-7-gym6_town--sabrina-at-tilpey-north-shore",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.sabrina_cursor",
+        "initial_node": "sabrina_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sabrina_locked",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "The reports do not form a pattern until Koga's anchor record joins them.",
+          "next": "sabrina_locked"
+        },
+        {
+          "id": "sabrina_001",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "The water records, glacier fractures, memory gaps, Pokémon behavior, and signal peaks all rise around the same exchanges.",
+          "next": "sabrina_002"
+        },
+        {
+          "id": "sabrina_002",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "They are separate measurements of one forced event, not five unrelated disasters.",
+          "next": "sabrina_003"
+        },
+        {
+          "id": "sabrina_003",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "When I reach for the mind at the center, I do not receive words. I receive fear before activation.",
+          "next": "sabrina_004"
+        },
+        {
+          "id": "sabrina_004",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "During the steering there is pain. Afterward there is confusion, as if the world has changed faster than Hoopa can understand it.",
+          "next": "sabrina_005"
+        },
+        {
+          "id": "sabrina_005",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "A large Compact community is running out of time. Without relocation, people will die when their world fails.",
+          "next": "sabrina_006"
+        },
+        {
+          "id": "sabrina_006",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "Another forced use may save them. It may also break Hoopa, widen the Rift, and exchange another occupied place.",
+          "next": "sabrina_007"
+        },
+        {
+          "id": "sabrina_007",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "That is why their argument cannot be dismissed as simple cruelty, and why their method cannot be accepted as harmless.",
+          "next": "sabrina_008"
+        },
+        {
+          "id": "sabrina_008",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "The preparations point south toward a major energy source at the Craters. Cross Tilpey's outflow and find what destination they chose.",
+          "next": "sabrina_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_sabrina_reveal"
+            }
+          ]
+        },
+        {
+          "id": "sabrina_repeat",
+          "kind": "line",
+          "speaker": "Sabrina",
+          "text": "Hoopa feels fear before the exchange, pain during it, and confusion after. The next activation is already being prepared.",
+          "next": "sabrina_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_blaine_crater_analyst",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_blaine_crater_analyst",
+      "source": "docs/story/ARC.md#settlement-8-gym7_town--blaine-at-the-craters",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.blaine_cursor",
+        "initial_node": "blaine_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "blaine_locked",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "The destination model means nothing without Sabrina's convergence record.",
+          "next": "blaine_locked"
+        },
+        {
+          "id": "blaine_001",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "The Craters can power the Compact's next mass exchange. The energy source is not the discovery that stopped us.",
+          "next": "blaine_002"
+        },
+        {
+          "id": "blaine_002",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "This destination model contains roads, occupied homes, active heat, and moving life at the selected coordinates.",
+          "next": "blaine_003"
+        },
+        {
+          "id": "blaine_003",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "Our warning was received. The attached acknowledgment orders the activation to proceed anyway.",
+          "next": "blaine_004"
+        },
+        {
+          "id": "blaine_004",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "Leadership no longer claims the destination is empty or that displacement can be avoided.",
+          "next": "blaine_005"
+        },
+        {
+          "id": "blaine_005",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "They chose their own endangered community over the people already living there.",
+          "next": "blaine_006"
+        },
+        {
+          "id": "blaine_006",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "Stopping the crater operation prevents this activation. It does not make the waiting refugees safe.",
+          "next": "blaine_007"
+        },
+        {
+          "id": "blaine_007",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "The remaining loyalists are withdrawing west. Their equipment is being routed toward the Rift's southern approach.",
+          "next": "blaine_008"
+        },
+        {
+          "id": "blaine_008",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "Blaine's challenge remains separate. The badge opens the southern road; shutting down the operation needs its own authoritative record.",
+          "next": "blaine_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_blaine_reveal"
+            }
+          ]
+        },
+        {
+          "id": "blaine_repeat",
+          "kind": "line",
+          "speaker": "crater analyst",
+          "text": "The warning was received, the destination was occupied, and the order still said proceed.",
+          "next": "blaine_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_giovanni_watch",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_giovanni_watch",
+      "source": "docs/story/ARC.md#settlement-9-gym8_town--giovanni-on-south-strand",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.giovanni_cursor",
+        "initial_node": "giovanni_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "giovanni_locked",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "The southern watch has no reason to open its Rift file before the crater evidence arrives.",
+          "next": "giovanni_locked"
+        },
+        {
+          "id": "giovanni_001",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "We watched the crater crews retreat west with equipment they did not destroy.",
+          "next": "giovanni_002"
+        },
+        {
+          "id": "giovanni_002",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "A message from Compact dissenters confirms the loyalists intend one final mass transfer through the Rift.",
+          "next": "giovanni_003"
+        },
+        {
+          "id": "giovanni_003",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "The dissenters refuse to trade another population for their own. They gave us the operation's route and shutdown approach.",
+          "next": "giovanni_004"
+        },
+        {
+          "id": "giovanni_004",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "They did not give us a way to save everyone. The refugees still face a collapsing world if the transfer ends.",
+          "next": "giovanni_005"
+        },
+        {
+          "id": "giovanni_005",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "Giovanni kept this gym closed while the southern settlements prepared for another disappearance.",
+          "next": "giovanni_006"
+        },
+        {
+          "id": "giovanni_006",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "His challenge is the region's last test before the Rift road: whether you can carry a decision whose cost cannot be hidden.",
+          "next": "giovanni_007"
+        },
+        {
+          "id": "giovanni_007",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "After the badge, follow the Rift's south-west arm to its fork, then the trunk toward the head. The final operation lies above the containment cradle.",
+          "next": "giovanni_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_giovanni_reveal"
+            }
+          ]
+        },
+        {
+          "id": "giovanni_repeat",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "The loyalists are going to the Rift. The dissenters supplied a route, not a painless answer.",
+          "next": "giovanni_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_rift_surveyor",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_rift_surveyor",
+      "source": "docs/story/ARC.md#settlement-10-league--the-rift-head",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.rift_cursor",
+        "initial_node": "rift_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "rift_locked",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "Victory Road remains sealed until Giovanni clears the regional approach.",
+          "next": "rift_locked"
+        },
+        {
+          "id": "rift_001",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "Victory Road is the Rift itself. The straight scars and displaced material are records left in the ground.",
+          "next": "rift_002"
+        },
+        {
+          "id": "rift_002",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The effects worsen from the south-west arm to the fork, then along the trunk toward the head.",
+          "next": "rift_003"
+        },
+        {
+          "id": "rift_003",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The Compact has begun its final activation above the containment cradle.",
+          "next": "rift_004"
+        },
+        {
+          "id": "rift_004",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "If it succeeds, their remaining community may survive by displacing another population and forcing Hoopa through one more exchange.",
+          "next": "rift_005"
+        },
+        {
+          "id": "rift_005",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "If it stops, the refugees do not receive a miracle. That cost remains even if the method is indefensible.",
+          "next": "rift_006"
+        },
+        {
+          "id": "rift_006",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "Reach the cradle, end the forced steering, and release Hoopa. The League will not open while the activation remains live.",
+          "next": "rift_007"
+        },
+        {
+          "id": "rift_007",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The world will not reset when this ends. Pallet, the missing settlement, and every stranded refugee will still be here.",
+          "next": "rift_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_rift_crisis_pending"
+            }
+          ]
+        },
+        {
+          "id": "rift_repeat",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The operation is active above the cradle. End the steering and release Hoopa before approaching the League.",
+          "next": "rift_repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_league_steward",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_league_steward",
+      "source": "docs/story/ARC.md#settlement-10-league--the-rift-head",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.league_cursor",
+        "initial_node": "league_locked",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "league_locked",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "The League remains closed while the forced activation is unresolved.",
+          "next": "league_locked"
+        },
+        {
+          "id": "league_001",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "The steering mechanism is silent. Hoopa is free, and the immediate widening of the Rift has stopped.",
+          "next": "league_002"
+        },
+        {
+          "id": "league_002",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "Nothing has snapped back. Pallet remains here, and the native settlement it replaced remains missing.",
+          "next": "league_003"
+        },
+        {
+          "id": "league_003",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "The rescued families remain people who need homes. The dissenters remain responsible for the rescues and the displacements they enabled.",
+          "next": "league_004"
+        },
+        {
+          "id": "league_004",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "No one here will promise a safe reversal before one exists. Repair begins with consent, evidence, and care for everyone stranded by the exchanges.",
+          "next": "league_005"
+        },
+        {
+          "id": "league_005",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "Opening the League is not another crisis. It is the region recognizing what you carried across it.",
+          "next": "league_006"
+        },
+        {
+          "id": "league_006",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "The trainers ahead will test the team that crossed the continent. The champion's record will mark the end of this campaign and the start of the repair.",
+          "next": "league_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete_league_recognition"
+            }
+          ]
+        },
+        {
+          "id": "league_repeat",
+          "kind": "line",
+          "speaker": "League steward",
+          "text": "The crisis is over. The League is open, and the work after victory will still be waiting.",
+          "next": "league_repeat"
         }
       ]
     }
