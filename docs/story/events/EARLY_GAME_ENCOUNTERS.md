@@ -345,11 +345,14 @@ encounter pool.
 
 ## `EVT-ROUTE3-NOSEPASS-SIGNS` — North Keeps Moving
 
-**Placement:** the sign site at (2203, 1609), ground y124, on the Foothill Woods
-road below Mt Clay. It is about 70% of the way along the leg (69–71%). From here
-the mast of Surge's signal array (`surge_signal_array`, (1928, 284, 1248), on a
-Mt Vessu shoulder) is visible to the north-west over the forest. The road has
-roughly 615 blocks left to Surge's town, most of the climb still ahead.
+**Placement:** the sign site at (2186, 1606), ground y124, on the Foothill Woods
+road below Mt Clay. It is about 70% of the way along the leg, inside the only
+canopy-clear stretch (69–71%). From here the mast of Surge's signal array
+(`surge_signal_array`, (1928, 284, 1248), on a Mt Vessu shoulder) is visible to
+the north-west over the forest. The road has roughly 640 blocks left to Surge's
+town, most of the climb still ahead. The site moved 18 blocks west from
+(2203, 1609) so that the built elder tree at (2236, 1622) stands outside the
+clearing (its trunk is about 52 blocks from the signs).
 
 **Visible hook:** Three trail signs point in different directions. A Nosepass
 beside them keeps turning away from geographic north toward the array mast
@@ -385,13 +388,16 @@ shared scenery and may remain fixed after first world completion.
 visible from the signs, Nosepass actor, and the trail-keeper shelter.
 
 **Hard build constraint: array sightline.** This event depends on seeing the
-mast from the road. The mast clears the Foothill Woods canopy by only 0.4–4
-blocks along this sightline, and the road's only canopy-clear view of the array
-is the roughly 40 blocks from the sign site toward (2163, 1606). Every build,
+mast from the road. The mast clears the Foothill Woods canopy by only about 1.5
+blocks from the signs (0.4–4 along the stretch), and the road's only
+canopy-clear view of the array is the roughly 40 blocks from (2203, 1609) to
+(2163, 1606), with the signs in the middle of it. Every build,
 foliage, and terrain pass must keep these true:
 
 1. **Clearing.** The signs and the trail-keeper shelter stand in a clearing with
-   no trees within 40 blocks of the signs.
+   no trees within 40 blocks of the signs. The built elder at (2236, 1622) is
+   the nearest standing tree: its trunk is outside the radius and its crown
+   passes high over the clearing's south-east edge, away from the sightline.
 2. **Corridor.** No tree may stand in the line running north-west from the sign
    site to the array if it would reach that line. This applies especially to
    the tallest Foothill Woods trees (mega spruce). The sightline analysis
@@ -489,7 +495,7 @@ off the shelf lip on the arrival road, which stays free of events.
 5. Build Misty's dock scenes around the final shoreline and boat placement.
 6. Build the Wooper ford on the pond outflow and its spur before dressing the
    rest of the climb.
-7. Build the Nosepass sign site at (2203, 1609) together with the array mast,
+7. Build the Nosepass sign site at (2186, 1606) together with the array mast,
    and verify the sightline before any foliage pass touches Foothill Woods
    (hard constraint in `EVT-ROUTE3-NOSEPASS-SIGNS`). The signs show the array,
    never the required story evidence.

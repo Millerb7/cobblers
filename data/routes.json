@@ -3497,6 +3497,29 @@
           "relation": "passes about 100 blocks north of the pond; its outflow runs west, away from the road, and is not crossed"
         },
         {
+          "id": "foothill_woods_grove",
+          "relation": "brushes the built grove and the world tree about a third of the way along (0.32-0.33): intentional, not a clearance fault (user decision 2026-09-16), so players see the world tree up close rather than as a silhouette",
+          "intentional_proximity": {
+            "decided": "2026-09-16",
+            "measured_on": "build/routes/paths.json dense leg-3 path, trunk and crown sizes from derived/sites/tree_grove_foothill_woods.json",
+            "world_tree_centre": [
+              2016,
+              2280
+            ],
+            "nearest_trunk_edge_blocks": {
+              "grove elder (1961, 2231)": 29.5,
+              "giant (1972, 2266)": 46.7,
+              "world tree": 77.6
+            },
+            "nearest_crown_edge_blocks": {
+              "world tree (crown y457-535)": 17.1,
+              "grove elder (1961, 2231)": 14.0,
+              "giant (1972, 2266)": 23.2
+            },
+            "in_road": "no trunk or crown reaches the road centreline; a grove elder and a giant stand inside the 112-block spawn-influence corridor, which is not a road width"
+          }
+        },
+        {
           "id": "surge_signal_array",
           "relation": "its mast is visible over the Foothill Woods canopy only from the Nosepass sign site, 69-71% along the leg"
         },

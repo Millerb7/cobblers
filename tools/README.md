@@ -28,7 +28,9 @@ detected rather than trusted.
 | `foliage.py` | Forest placement for `paint_maps.py`: density fields (edge, ragged boundary, glades, clumping, slope, treeline, water) and exact object positions with class spacing, lone trees, debris, canopy and per-type stats (`docs/world-building/FOLIAGE.md`) | (library) |
 | `foliage_objects.py` | The foliage object library: `harvest` vanilla trees over RCON into `.nbt`, `generate` seeded objects and landmark giants, `index` sizes, crowns, eye-level widths and hashes | `kits/structures/foliage/` |
 | `structure_nbt.py` | Write and read structure templates (`.nbt`); capture a box of blocks from a world's region files | (library) |
-| `landmark_trees.py` | Landmark giant designs; `check` sightlines from each tree's intended observers over terrain plus canopy | `derived/foliage/landmark_sightlines.json` |
+| `landmark_trees.py` | Landmark giant designs; `check` sightlines from each tree's intended observers over terrain plus canopy, on `data/routes.json` legs | `derived/foliage/landmark_sightlines.json` |
+| `nosepass_sightline.py` | Route 3 Nosepass sign site: margins from each leg-3 point to the signal-array mast over terrain, the canopy_clear model and the planned paint canopy | stdout |
+| `measure_towns.py` | Re-measures `towns.json` off-path distance, `nearest_leg`, and centre/footprint heights and slope (the numbers `validate_data.py` checks); `--write` rewrites them | `data/towns.json` |
 | `sculpt.py` | Local terrain brushes from `data/sculpt.json`: coasts by class, massif asymmetry, summits and strata, volcano cones, flat pads; writes the sculpted heightmap, the coast class map and before/after previews | `<source root>/land_8k_16_sculpted.png`, `build/sculpt/`, `derived/sculpt/` |
 | `terrace_measure.py` | Contour terracing over the whole landmass: grade regimes, block treads and their variation in 64-block windows, the grade perturbation ratio rho, the source-side terrace index, shoreline flats and cliffs | `derived/terrace/` |
 | `heightmap_check.py` | Checks a heightmap file for silent corruption before use: decode and size, sha256, rails, 8-bit data scaled up, tears and duplicated rows against the predecessor, changes outside allowed boxes. Non-zero exit on failure | (report) |
@@ -137,7 +139,7 @@ ridge with zero climb rather than over it.
 
 | Tool | Does |
 | --- | --- |
-| `validate_data.py` | Schema, referential, integrity and progression checks on `data/`. With a verified heightmap it also recomputes every `cells.json` terrain block (`cell-terrain`, fails on drift) and checks landmark anchors, region and marine polygons and the export border geometry (`spatial`) |
+| `validate_data.py` | Schema, referential, integrity and progression checks on `data/`. With a verified heightmap it also recomputes every `cells.json` terrain block (`cell-terrain`, fails on drift) and checks landmark anchors, region and marine polygons and the export border geometry (`spatial`) and every town's recorded heights and slope (`town-ground`); `towns` measures off-path distance and `nearest_leg` on `data/routes.json` |
 | `validate.py` | File-level structural checks: JSON parses, `pack.mcmeta` present, duplicate basenames |
 | `pack_manifest.py` | Base manifest and overlay: `generate`, `resolve-overlay`, `plan`, `verify`, `download` |
 | `assemble_client.py` | Builds the client instance from the manifest |
