@@ -13,6 +13,11 @@ depends on worldgen scatter. This document is the inventory that decision needs.
 > - **EXP-013 answered the placement-method question:** no method writes structure data.
 >
 > The sections below are corrected where they said otherwise.
+>
+> **Added 2026-09-16: [Part 2](#part-2-what-a-town-can-be-built-from-2026-09-16)** is a different inventory: every
+> structure *template* a town could be built from, rendered and browsable in `build/structure_renders/index.html`,
+> with design-variant counts, the authoring gaps, the spawn-block audit, and the decorative blocks the pack already
+> registers.
 
 The data behind this report:
 
@@ -437,3 +442,339 @@ Where each item stands after the 2026-09-13 decisions:
 6. **Worldgen features.** Decided: in scope, ahead of scatter (`WORLDGEN_FEATURES.md`).
 7. **Placement method.** Answered by EXP-013 A: no method writes structure data, so paste
    templates at an explicit Y and replace structure-keyed systems.
+
+
+---
+
+# Part 2: what a town can be built from (2026-09-16)
+
+The question this part answers is narrower than the one above. Part 1 asked which structures the pack *generates*.
+This asks which structure templates a builder can **drop into a town whole**, what each one actually is, how many
+genuinely different buildings there are, and what they would do to spawns. Nothing was placed and the server was
+not touched.
+
+**Look, don't read.** The catalogue is `build/structure_renders/index.html`: every town-relevant template rendered
+from two opposite corners, grouped by type and by design, with its flags. `build/` is gitignored; regenerate with:
+
+```
+python tools/town_templates.py scan --server-dir ../cobblers-server
+python tools/town_templates.py classify
+python tools/town_templates.py render
+python tools/town_templates.py blocks
+python tools/town_templates.py html
+```
+
+Data: `derived/town_templates/templates.json` (one row per template) and `derived/town_templates/blocks.json`.
+
+## The counts, reconciled
+
+Three numbers have been in circulation. They count different things, and none of them is wrong about its own thing.
+
+| Number | What it counts | Where it came from |
+| --- | --- | --- |
+| **72** "structure ids in the kit library" | **36 manifest entries, each with two ids.** `structure-dependencies.json` has 26 `verified_structures` (each a `catalog_id` and a `structure_id`) and 10 `campaign_structures` (each an `id` and a `structure_id`): 52 + 20 = 72 strings. | the restructure commit message, `kits/README.md` |
+| **223** templates scanned | **Our own `.nbt` files under `kits/structures/`**, on 2026-09-15 at 19:21: 201 foliage objects, 12 giant trees, 10 campaign templates. `spawn_blocks.py audit` reads nothing else. | `derived/spawn_audit.json` |
+| **6,253** | Template files the server can load today: `server.jar`, 101 mod jars and their nested jars, and the datapacks `level.dat` enables. | this tool |
+
+**A correction to the brief this work started from:** `spawn_blocks.py` does not scan the jars for templates. Its
+`blocks` command reads the jars for *spawn conditions and tags*; its `audit` command reads only `kits/structures`.
+The 223 were all ours.
+
+Today's numbers:
+
+| | Count |
+| --- | ---: |
+| Template files the server loads | 6,253 |
+| … distinct ids after overrides | **6,113** (140 overridden: Cobbleverse replaces 121 BCA templates with its own copies, PokeCenterPCs replaces 19 Cobblemon Centers) |
+| … in the families a town could use, parsed and classified | 2,272 |
+| … the rest (mansions, ancient cities, mineshafts, habitats, ruins, fossils, trial chambers …) | 3,841, counted by family, not parsed |
+| Templates in the **disabled** Hoenn, Johto and Sinnoh datapacks | 52, parsed and marked disabled |
+| `.nbt` files in `kits/structures` now | **246**: 201 foliage, 34 trees, 10 campaign, 1 Brock gym prefab |
+
+Of the 72 manifest ids, 6 name worldgen jigsaw structures, not templates, and 3 (`sky_pillar`, `bell_tower`,
+`team_galactic_hq`) live in the disabled regional packs, so `/place template` cannot reach them on this world.
+`campaign:f4/pallet_house_large2` and `campaign:f4/pallet/buildings/large2` are the same bytes.
+
+## Standalone or piece
+
+**STANDALONE** means `/place template` drops in the whole thing. **PIECE** means the template is incomplete by
+itself: a street, road, path, igloo basement or ladder shaft. Of the 2,272 loaded candidates, 1,571 are standalone
+and 701 are pieces.
+
+A building whose jigsaws reach *outward* is still standalone. BCA's department store and Academy are village start
+pieces that grow paths and houses around themselves, but the building is whole. What `/place template` does not do
+is fill the jigsaw slots, and that matters more than it sounds:
+
+- **A BCA Center or Mart placed by template has no staff.** The clerks are separate 1×2×1 templates holding one
+  entity: a CobbleDollars merchant for the Mart and the markets, a villager for Nurse Joy. They are in
+  `bca:stores/*`, 71 of them, and they can be placed on their own. That is what "functional Marts" means in this
+  pack.
+- **Our converted Mart points its clerk slot at `cobblemoncitytowns:store_workers`**, a pool this server does not
+  have. The hometown Mart has no clerk. Not verified in game.
+- **Our converted Mart contains 2 `gachamachine:gacha_machine_2` blocks.** No loaded mod provides that namespace.
+  `structure-dependencies.json` lists the Mart's requirement as `cobblemon-additions`, which is wrong; the donor
+  manifest had it right. What the game does with the unknown block on placement is not verified.
+
+## What there is, by type
+
+Counts are over standalone templates with blocks, excluding the 638 decayed zombie-village copies and the
+entity-only NPC boxes. A **design** is a set of templates whose occupied cells match at 85% or more under some
+rotation or mirror, with up to 4 blocks of vertical offset. The same building in other materials is one design.
+
+| Type | Distinct designs | Placeable templates | Designs by source |
+| --- | ---: | ---: | --- |
+| Pokemon Center | 10 | 26 | Cobblemon village Centers (PokeCenterPCs) 7, BCA 3 |
+| Poke Mart | **1** | 3 | BCA (our converted copy is the same building) |
+| Gym | **2** | 12 | Cobbleverse Kanto |
+| House | 180 | 405 | vanilla villages 77, Repurposed Structures 64, BCA 29, our kits 5, Beautify 3, Cobbleverse 1 (Ash's house), vanilla igloo 1 |
+| Shop / market | 56 | 115 | vanilla villages 27, Repurposed Structures 20, BCA 9 |
+| Civic building | 35 | 67 | vanilla and Repurposed temples and libraries 29, BCA 3, Oak's lab 1, Kanto League 1, Mega Showdown observatory 1 |
+| Fence | **0** | 0 | none |
+| Lamp / lighting | 15 | 34 | vanilla villages 6, BCA 5, Repurposed Structures 4 |
+| Signage | **1** | 2 | our Pallet Town sign |
+| Prop / decoration | 152 | 373 | vanilla villages 49, Cobblemon 45, Repurposed Structures 35, BCA 21, Waystones 2 |
+
+Classes were set by rules on what a template contains (trainer spawners, healing machines, beds, size), then
+checked against contact sheets of every render and pinned where the picture disagreed with the name. The rules are
+in `RULES` in the tool, each with the reason. Three were wrong until the pictures showed it: BCA's "centers" are
+village centrepieces (a market hall, a tavern, a department store, an academy), not Pokemon Centers; two BCA
+"lodges" are Pokemon Centers, with a healing machine, PC, waystone and 40 to 60 beds; and Cobblemon's
+`habitats/village_*` are nests for wild Pokemon, not buildings.
+
+### Houses: 180 designs is not 180 houses for a Pokemon region
+
+The owner's worry is one house repeated across 25 towns. The designs are real, but most are Minecraft villages:
+
+| House source | Designs | Extra templates repeating one of them |
+| --- | ---: | ---: |
+| vanilla villages (5 biomes) | 77 | 160 |
+| Repurposed Structures villages | 64 | 44 |
+| BCA (Cobblemon Additions) | 29 | 12 |
+| our kits (CobbleTowns Pallet houses) | 5 | 7, all byte-identical installed copies or `pallet_house_large2` |
+| Beautify botanist house | 3 | 2 |
+| Cobbleverse (Ash's house) | 1 | 0 |
+| vanilla igloo | 1 | 0 |
+
+- **Repurposed Structures is mostly vanilla in other wood.** Its birch, oak, dark forest, mushroom, crimson and
+  warped villages reuse the plains layouts: the plains small-house design appears 13 times, `plains_medium_house_1`
+  8 times. Its own designs are mostly the badlands, ocean and swamp villages.
+- **Vanilla repeats itself too.** `plains_small_house_1`, `_2` and `_3` are one cube with a hip roof and different
+  walls; the savanna small houses are the same trick.
+- **The houses that read as a Pokemon region number 38:** 29 BCA, 5 Pallet, 3 Beautify, Ash's. BCA's are large (20
+  to 32 blocks across, 9 to 30 tall, each on its own landscaped plot) and 12 of its 41 house templates repeat
+  another, mostly as `-plains` or `_dark` re-materialings.
+- **So for 25 towns there are about 38 characterful houses, 8 of them small enough for a village lot** (the 5 Pallet
+  houses and the 3 Beautify botanist houses), plus 141 Minecraft village house designs that would need re-skinning
+  to belong.
+
+### Gyms: which leader, and how many buildings
+
+| Leader | Template | Exterior |
+| --- | --- | --- |
+| Brock (Pewter, Rock) | `cobbleverse:brock` | Kanto shell, brown roof |
+| Misty (Cerulean, Water) | `cobbleverse:misty`, `misty_shiny` | **own building** on a floating island, 36×40×32 |
+| Lt. Surge (Vermilion, Electric) | `cobbleverse:ltsurge` | Kanto shell, yellow |
+| Erika (Celadon, Grass) | `cobbleverse:erika` | Kanto shell, lime |
+| Koga (Fuchsia, Poison) | `cobbleverse:koga` | Kanto shell, purple |
+| Sabrina (Saffron, Psychic) | `cobbleverse:sabrina`, `sabrina_shiny` | Kanto shell, pink |
+| Blaine (Cinnabar, Fire) | `cobbleverse:blaine` | Kanto shell, red |
+| Giovanni (Viridian, Ground) | `cobbleverse:giovanni` | Kanto shell, black |
+
+The leader was read from each template's `rctmod:trainer_spawner` (`TrainerIds`), not from the id. **Seven of the
+eight gyms are one 27×17×23/24 building recoloured.** The geometry test split it in two, because three are 23 deep
+and four 24; the renders show one building, and the tool merges them explicitly (`SAME_DESIGN`).
+
+The disabled regional packs hold 24 more gyms, 8 per region, under the Italian leader names Cobbleverse uses
+(Hoenn `petra` is Roxanne, Johto `valerio` is Falkner, Sinnoh `pedro` is Roark). Each region is again one shell
+recoloured; Hoenn adds a floating-island gym (`adriano`) and a mossy one (`alice`). That is 4 more exteriors, all
+unreachable until those packs are enabled.
+
+### Authoring gaps: types with nothing to place
+
+- **Fences: none.** No fence template exists anywhere. Fence *blocks* are plentiful (below); the runs have to be
+  built.
+- **Signage: none but ours.** The Pallet Town sign is the only sign template, and it is our converted copy.
+- **Poke Mart: one building.** Every town that wants a Mart from the pack gets the same blue BCA Mart.
+- **Gym exteriors: two on this world.** Seven recolours and Misty's island.
+- **Civic buildings missing entirely:** museum, town hall, school smaller than BCA's 49×60×73 Academy, harbour
+  office, Game Corner, Safari Zone gate, Pokemon Fan Club, radio tower. What exists: one lab (Oak's), one academy,
+  one church, one observatory, one League, one battle arena, and the Minecraft temples and libraries.
+- **A red-roof Pokemon Center: one design.** BCA's Center, which is also the CobbleTowns donor our kit copied. The
+  seven village Centers are Minecraft village houses with a healer inside, and the two lodges are inns.
+
+## Spawn blocks
+
+A template carries a spawn block if any loaded spawn condition names it, directly or through a tag. The tool
+rebuilt that list from the server (259 blocks, identical to `data/spawn_blocks.json`) and checked every
+town-relevant template against it, then against `data/spawn_block_policy.json` as it stands now.
+
+### (a) Concrete: substituted in our copies, not in anything upstream
+
+The Varoom and Revavroom condition is `neededBaseBlocks`: the Pokemon spawns standing on concrete, so a roof or
+paved floor counts and a wall face does not. It comes from Cobblemon's own `#cobblemon:concrete_blocks` tag as
+well as the Cobbleverse datapack.
+
+**Confirmed for what the hometown actually placed.** The Center it placed is
+`cobblers:towns/stripped/cobblers/f4/services/pokecenter` and the Mart `cobblers:f4/services/structure_pokemart`:
+0 vanilla concrete, 293 and 272 `moarconcrete:*_concrete_texture`. The repository copies and the installed
+`cobblers_campaign` copies are byte-identical to those sources (sha256 `e1228d27…`, `77f79c87…`).
+
+**Licence, found while this was being written:** commit `78a044e` removed the Center and Mart `.nbt` from git as
+All Rights Reserved BCA copies and gitignored the paths. The local files are unchanged (same sha256) and still
+installed, so everything here about them still holds on this machine. It agrees with the geometry: the design test
+puts our Center in the same design as `bca:default/one_off/pokecenter`, and our Mart with BCA's Mart.
+
+**Refuted for the donors as the server loads them.** BCA's Center and Mart, which Cobbleverse overrides with its own
+copies, still carry red 199, white 92, black 2 and blue 212, white 60. The substitution was applied to our copies
+only.
+
+**Refuted for every Cobbleverse gym and the League.** Only our Brock copy is fixed (`kits/structures/prefabs/gyms/kanto/brock.nbt`,
+installed in `cobblers_kits` as `cobblers:kits/gyms/kanto/brock`: 967 moarconcrete, 0 vanilla).
+
+| Template (loaded) | Vanilla concrete | Colours with no policy rule |
+| --- | --- | --- |
+| `cobbleverse:brock` | brown 566, white 274, black 127 | none (brown added 2026-09-16) |
+| `cobbleverse:ltsurge` | yellow 546, white 279, black 127 | **yellow** |
+| `cobbleverse:erika` | lime 564, white 274, black 125 | **lime** |
+| `cobbleverse:koga` | purple 564, white 269, black 127 | **purple** |
+| `cobbleverse:sabrina`, `sabrina_shiny` | pink 566, white 274, black 153 | **pink** |
+| `cobbleverse:blaine` | red 563, white 220, black 125 | none |
+| `cobbleverse:giovanni` | black 682, white 246 | none |
+| `cobbleverse:misty`, `misty_shiny` | light blue 564, white 274, black 120 | **light blue** |
+| `cobbleverse:kanto_league` | purple 1980, black 716, red 700, blue 629, light blue 236, orange 109, yellow 61, light gray 16 | **purple, light blue, orange, yellow, light gray** |
+| `bca:default/one_off/pokecenter` | red 199, white 92, black 2 | none |
+| `bca:default/one_off/structure_pokemart` | blue 212, white 60 | none |
+| `bca:default/centers/center_department_store` | black 865, white 5 | none |
+| `bca:default/centers/center_the_academy` | white 524 | none |
+| `bca:dark/structures/dark_hollows_nest` | gray 235 | **gray** |
+| 11 other BCA houses and centres | white only, 2 to 338 | none |
+
+The policy has rules for 5 colours: red, white, blue, black, brown. **The loaded Kanto content needs 7 more:
+yellow, lime, purple, pink, light blue, orange, light gray; BCA adds gray.** The disabled regional gyms and leagues
+add cyan, magenta and green, which makes all 11 colours without a rule. All 11 missing
+colours have a Moar Concrete `*_concrete_texture` block whose texture is byte-identical to vanilla's and whose model
+is `cube_all`, checked file by file against the 1.21.1 client jar. So the gap is policy entries, not a missing
+block. The Sinnoh gyms already use about 2,470 moarconcrete blocks each: Cobbleverse's own builders reached for it.
+
+**A record was lost on the way.** `spawn_blocks.py substitute` replaces the policy's `applied` block on every run.
+The Brock run on 2026-09-16 overwrote the 2026-09-15 record of the Center and Mart substitutions. The substitutions
+are still in the files, and git history still has the record, but the working policy no longer says they happened.
+
+### (b) Waystones: stripped at place time, not from the template
+
+`tools/place_town.py` never edits `kits/structures`. `strip_waystones` writes a stripped copy into the output
+datapack, `cobblers_towns`, and the function places that copy, then sets its own waystone at (1467, 118, 5286).
+
+**So the waystone is still in the template.** `kits/structures/campaign/f4/services/pokecenter.nbt` and its
+installed copy `cobblers:f4/services/pokecenter` both hold one `waystones:mossy_waystone` (upper and lower half).
+The stripped copy has 1,776 blocks to the source's 1,778. Anyone who places `cobblers:f4/services/pokecenter` by
+hand, without the tool, gets a waystone registered where it lands.
+
+Other templates that carry one:
+
+| Template | Waystone |
+| --- | --- |
+| `bca:default/one_off/pokecenter` | mossy |
+| `bca:default/centers/center_the_academy` | mossy |
+| `bca:default/one_off/the_lodge`, `the_lodge-fixed` | mossy |
+| `bca:fighting/centers/center-wyrms-rest` | mossy |
+| `cobbleverse:giovanni` | **blackstone**, in a gym |
+| `waystones:village/common/waystone`, `…_waterlogged`, `waystones:village/desert/waystone` | the village plinths |
+
+### Every other spawn block in a placeable town template
+
+Over the 1,025 placeable town templates on this world (our server-side copies not counted twice), ignoring concrete
+and foliage. Leaves and flowers appear in
+168 templates; the policy whitelists them for foliage objects and gardens, a scope that does not strictly include a
+house's flower boxes.
+
+| Block | Templates | Draws | Condition | Policy |
+| --- | ---: | --- | --- | --- |
+| `minecraft:water` | 227 | 42 species: Psyduck, Poliwag, Wooper, Squirtle line, Froakie line … | nearby | not covered |
+| `minecraft:wheat` | 94 | Elgyem, Beheeyem | nearby | not covered |
+| `minecraft:bell` | 84 | Chingling, Chimecho | nearby | not covered |
+| berries (Cobblemon, 72 kinds) | 69 | Morpeko | nearby | not covered |
+| `cobblemon:healing_machine` | 38 | Rotom | nearby | whitelisted, service buildings |
+| `minecraft:sand` | 37 | Sandygast, Palossand | base | not covered |
+| `minecraft:lava` | 35 | Magby line, Magcargo, Salandit | nearby | not covered |
+| `minecraft:white_carpet` | 32 | Milcery, Alcremie | nearby | not covered |
+| `minecraft:redstone_torch` | 31 | Rotom | nearby | not covered |
+| `minecraft:white_bed` | 29 | Munna, Musharna | nearby | not covered |
+| `cobblemon:pc` | 29 | Porygon line, Rotom | nearby | whitelisted, service buildings |
+| `minecraft:cake` | 20 | Milcery, Alcremie, Swirlix, Slurpuff | nearby | not covered |
+| wool (black, gray, yellow, brown, green, orange, light gray, light blue, blue) | 19 each at most | Smeargle | nearby | not covered |
+| `minecraft:seagrass` | 19 | Pincurchin | nearby | not covered |
+| `minecraft:quartz_block` | 19 | Carbink, Duraludon line, Galarian Corsola line | base, Nether-quartz biomes only | whitelisted, overworld |
+| `minecraft:cobweb` | 17 | Spinarak, Ariados | nearby | not covered |
+| `minecraft:lightning_rod` | 17 | Magnemite line, Joltik, Galvantula, Electrode … | nearby | not covered |
+| `minecraft:pumpkin`, `carved_pumpkin` | 16 | Pumpkaboo, Gourgeist | nearby | not covered |
+| `minecraft:yellow_carpet`, `lime_carpet`, `magenta_carpet` | 14 | Smeargle, Milcery | nearby | not covered |
+| `minecraft:redstone_block`, `redstone_lamp`, `daylight_detector`, `repeater`, `comparator` | 14 | Rotom | nearby | not covered |
+| `minecraft:kelp_plant`, corals and coral blocks, dead corals | 8 | Corsola (both forms), Cursola, Skrelp, Dragalge | nearby | not covered |
+| `minecraft:lily_pad` | 5 | Lotad line, Poliwag line | nearby | not covered |
+| `minecraft:iron_ore`, `deepslate_coal_ore` | 5 | Aron line, Alolan Geodude line, Rolycoly line, Torkoal | nearby | not covered |
+| `minecraft:iron_block` | 5 | Meltan | nearby | not covered |
+| `cobblemon:monitor`, `cobblemon:restoration_tank` | 5, 3 | Rotom | nearby | **not covered**, though they are the same machines the policy whitelists |
+| `minecraft:amethyst_block` | 4 | Sableye, Glimmet line, Terapagos | base and nearby | whitelisted, conditional |
+| `cobblemon:*_apricorn` | 3 | Hisuian Voltorb, Electrode | nearby | whitelisted, gardens |
+| `minecraft:red_sand`, `suspicious_sand` | 4, 1 | Sandygast, Palossand | base | not covered |
+| `minecraft:bubble_column`, `magma_block`, `sugar_cane`, `rail`, `budding_amethyst`, `medicinal_leek` | 1 to 3 | Tympole line; Gible line, Magmar; Milcery; Rolycoly; Glimmet; Farfetch'd | nearby | not covered |
+
+Per-template flags are on each card in the catalogue. **Water is the one to decide on first:** any fountain, well
+or pond in a town makes it a water-type spawn point, and 227 of the templates have one.
+
+## Decorative blocks we already own
+
+The owner's framing: town dressing we already have. Every block with a blockstate in the server's mod jars that the
+vanilla client jar lacks, 6,128 of them, grouped by use and folded so that 16 colours of one sofa are one card.
+Thumbnails are drawn from each block's own item or block model.
+
+| Group | Cards | Blocks | Mostly from |
+| --- | ---: | ---: | --- |
+| furniture | 151 | 665 | CobbleFurnies 262, Cozy Home 175, Handcrafted 164, Comforts 32 |
+| Pokemon-themed decor | 314 | 349 | Pokeblocks 297 (Pokedolls, gigantic Pokedolls, figurines), CobbleFurnies 38 (Poke Ball desk and chair, poke wool) |
+| statues, fountains and monuments | 87 | 87 | Cozy Home 36 (fountains), Handcrafted 19, LumyMon 14, Pokeblocks 12, CobbleFurnies 6 (Bulbasaur, Charmander, Squirtle, Pikachu statues) |
+| plants and planters | 111 | 135 | Cobblemon 96 (berries, apricorns), Handcrafted 16 |
+| market and shop fixtures | 12 | 77 | Cozy Home 33 (counters), Handcrafted 22 (counters, shelves), CobbleFurnies 21 (cabinetry, fridges, TV) |
+| lighting | 13 | 53 | Beautify 20 (candelabras, lamps), Cozy Home 17, CobbleFurnies 16 |
+| signage | 11 | 39 | Cobblemon 24 (apricorn and saccharine signs, plaques), Beautify 11 (picture frames) |
+| fences and walls | 12 | 23 | Beautify 10 (trellises), Cobblemon 4 |
+| service machines | 8 | 8 | Cobblemon PC, healing machine, monitor, display case; TM and ticket machines |
+| floors and paving | 4 | 4 | CobbleFurnies lab, kitchen and wood floors; tatami |
+| building materials | 2,697 | 4,293 | Rechiseled 3,627, Carved Wood 322, Moar Concrete 160 |
+| not dressing | 335 | 364 | storage, ores, altars, gem blocks, waystones, portal blocks |
+
+**Only Cobblemon's own blocks, and three flowers Vanilla Backport adds, carry spawn conditions.** No CobbleFurnies,
+Pokeblocks, Cozy Home, Handcrafted or Beautify block is named by one. The ones that are: berries (Morpeko), apricorns (Hisuian Voltorb), the saccharine
+log and leaves (Applin, Milcery lines), the pep-up flower and new flowers, the gem blocks (Sableye, Glimmet), and
+the machines (Rotom, Porygon), and Vanilla Backport's cactus flower, eyeblossoms and wildflowers (the flower
+feeders). Dressing a town with furniture is spawn-neutral; planting berries is not.
+
+**Not verified:** that every blockstate file is a registered, placeable block (the lang name was found for most),
+and 440 blocks got no thumbnail because their model has no elements this reader resolves.
+
+## Shipped by Cobbleverse, not used by us
+
+`data/placements.json` places nine templates, all our converted Pallet set. Nothing below is placed.
+
+| What | Templates | Loaded | Kind |
+| --- | ---: | --- | --- |
+| Kanto gyms, 8 leaders | 10 (with Misty's and Sabrina's shiny variants; our Brock copy is an eleventh, not placed) | yes | standalone, one per gym |
+| Hoenn, Johto, Sinnoh gyms | 24 | **no**, datapacks disabled | standalone |
+| League buildings | 4 | Kanto only | standalone |
+| Functional Centers and Marts | 24 with blocks | yes | standalone; the staff are separate entity templates |
+| Shop clerks, Nurse Joy | 71 | yes | entity-only templates |
+| BCA custom villages | 9 worldgen structures, 41 house templates | yes | worldgen jigsaw; every house is standalone |
+
+## How the renders are made, and what they cannot show
+
+Each block is coloured by the average of its own texture, resolved blockstate to model to texture from the 1.21.1
+client jar and the mod jars; foliage and water are tinted. Stairs and doors are drawn as cubes, slabs as half
+blocks, fences, lamps and flowers as posts, carpets flat. Glass is opaque, so interiors are hidden. That is enough to
+judge silhouette, roofline, size and colour, which is what choosing a building needs. It is not enough to judge
+interiors or detailing; place it in a test world for that.
+
+**Not verified:** anything in game. No template was placed for this report. Classes on the 1,096 rendered
+templates were checked by eye on contact sheets; the rest (pieces without a render, decayed copies) carry their
+family's class. The 85% design threshold merges some genuinely different small cottages and misses some
+re-materialings where one copy added a pond or a garden, so read the design counts as close, not exact.

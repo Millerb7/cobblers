@@ -30,6 +30,13 @@
    "why": "as above",
    "visually": "byte-identical texture, cube_all model",
    "dependency": "moarconcrete"
+  },
+  {
+   "from": "minecraft:brown_concrete",
+   "to": "moarconcrete:brown_concrete_texture",
+   "why": "as above",
+   "visually": "the mod's texture file is byte-identical to the vanilla one (sha256 c5c9faa80b7d..., both), and its model is minecraft:block/cube_all, so nothing changes on screen. Added 2026-09-17 for the Cobbleverse Brock gym, which is mostly brown concrete (566 blocks).",
+   "dependency": "moarconcrete"
   }
  ],
  "whitelist": [
@@ -140,44 +147,28 @@
   "result": "none of these appears in data/spawn_blocks.json; the grove's leaves are covered by the foliage entry above"
  },
  "applied": {
-  "date": "2026-09-15",
+  "date": "2026-09-16",
   "by": "tools/spawn_blocks.py substitute",
   "templates": [
    {
-    "template": "kits/structures/campaign/f4/services/pokecenter.nbt",
+    "template": "kits/structures/prefabs/gyms/kanto/brock.nbt",
     "palette_entries_changed": 3,
     "blocks": {
      "minecraft:black_concrete": {
-      "count": 2,
+      "count": 127,
       "to": "moarconcrete:black_concrete_texture"
      },
-     "minecraft:red_concrete": {
-      "count": 199,
-      "to": "moarconcrete:red_concrete_texture"
+     "minecraft:brown_concrete": {
+      "count": 566,
+      "to": "moarconcrete:brown_concrete_texture"
      },
      "minecraft:white_concrete": {
-      "count": 92,
+      "count": 274,
       "to": "moarconcrete:white_concrete_texture"
      }
     },
-    "sha256_before": "2e7df15b045d6997f2330b4b86e838ef6bd93de72df02ff7d880d0e47ffe5736",
-    "sha256_after": "e1228d277839977f9a653044be7849a4ab897e1e55d4d6144b800b297c89de58"
-   },
-   {
-    "template": "kits/structures/campaign/f4/services/structure_pokemart.nbt",
-    "palette_entries_changed": 2,
-    "blocks": {
-     "minecraft:blue_concrete": {
-      "count": 212,
-      "to": "moarconcrete:blue_concrete_texture"
-     },
-     "minecraft:white_concrete": {
-      "count": 60,
-      "to": "moarconcrete:white_concrete_texture"
-     }
-    },
-    "sha256_before": "ff54fac60c5193b0495cfcf4d316bc2639b5f456e5effc5abbb9e7f1943f9e08",
-    "sha256_after": "77f79c8724179789182e98813430cbdcd3edb529fda1e2e6eabdd556a98de115"
+    "sha256_before": "344a782f63a3af03c2b282e168f9824302cc35f92087203eecbbbb69404a7bde",
+    "sha256_after": "9820c8f3db0095c63efe6f6357169e8d59b217e3775ee26dea1320d77b24d5d0"
    }
   ]
  }
