@@ -196,8 +196,8 @@
      "z": 1352
     },
     "anchor_ground_y": 156.1,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -211,7 +211,7 @@
    "anchor": {
     "x": 2154,
     "z": 682,
-    "y": 225.1
+    "y": 227.7
    },
    "extent": {
     "polygons": [
@@ -318,9 +318,9 @@
      "x": 1864,
      "z": 760
     },
-    "anchor_ground_y": 225.1,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "anchor_ground_y": 227.7,
+    "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -402,8 +402,8 @@
      "z": 1480
     },
     "anchor_ground_y": 251.6,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -4803,8 +4803,8 @@
      "z": 5128
     },
     "anchor_ground_y": 288.3,
-    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-    "measured": "2026-09-17",
+    "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+    "measured": "2026-09-16",
     "note": "The anchor keeps its authored x, z. Its ground and the outline's highest column are measured on the canonical heightmap."
    }
   },
@@ -6224,11 +6224,77 @@
     "note": "20-32 blocks of water up to 9 deep, set 6-8 blocks under its floodplain in the lower Glacial Tear: players cross by bridge or boat"
    },
    "name_status": "working name; naming is yours"
+  },
+  {
+   "id": "surge_signal_array",
+   "kind": "installation",
+   "name": "Surge's signal array",
+   "status": "planned",
+   "status_basis": "An authored site, not terrain: Surge's power, signal and storm-facing equipment on a Mt Vessu shoulder above his shelf town. Chosen so the Route 3 Nosepass signs can see it; nothing is built.",
+   "water": "never",
+   "anchor": {
+    "x": 1928,
+    "z": 1248,
+    "y": 283.9
+   },
+   "site": {
+    "on": "mt_vessu",
+    "chosen": "2026-09-16",
+    "why": "storm-facing Mt Vessu shoulder: 91 blocks above the ground 150-500 blocks around, windward horizon -12.5 degrees toward the prevailing wind (250), a 9-block pad averaging 11.5 degrees; 349 blocks from the Scar's centre (outside its pad brush), about 480 from the summit, 290 from Surge's town",
+    "mast_blocks": 12,
+    "access_from_town": "a maintenance climb of about 510 blocks and 127 of ascent; the router's best line has 20 steps over 35 degrees (steepest 37.3), so the path needs authored stairs or terracing",
+    "nosepass_view": {
+     "leg": "route_03_misty_to_surge",
+     "leg_blocks": 2120,
+     "method": "12-block mast seen from eye height 1.62 at every 4th dense point of the final leg 3 (tools/sightlines.py cast)",
+     "terrain_only": {
+      "note": "the mast is terrain-visible from this much of leg 3; forest canopy is not counted",
+      "visible_blocks_total": 1557,
+      "stretches": [
+       [
+        0,
+        1585
+       ]
+      ]
+     },
+     "canopy_clear": {
+      "method": "beyond a 40-block clearing around the signs, the line to the mast top clears the ground by the p90 object height of the forest type data/foliage.json gives each sub-region where the ground is forested (Foothill Woods 26.1, Lake Viltri Hollow 15.1, the alpine presets 10.1 below their y150 treeline, 0 above it)",
+      "stretch": {
+       "from_distance": 1464,
+       "to_distance": 1505,
+       "blocks": 41,
+       "share_of_leg_at": [
+        0.69,
+        0.71
+       ],
+       "from": [
+        2203,
+        1609
+       ],
+       "to": [
+        2163,
+        1606
+       ]
+      },
+      "sign_site": {
+       "at": [
+        2203,
+        1609
+       ],
+       "y": 123.5,
+       "distance_along_leg": 1464,
+       "margin_over_canopy_blocks": 4.1,
+       "build_note": "the three Nosepass signs and the trail keeper's shelter stand in a 40-block clearing here; keep the tallest Foothill Woods trees (mega spruce) out of the line north-west to the array, because the margin over the canopy is only 0.4-4 blocks"
+      },
+      "only_stretch": true
+     }
+    }
+   }
   }
  ],
  "canonical_check": {
-  "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-  "date": "2026-09-17",
-  "method": "Water bodies, basins, rivers and ravines stay measured on the authored heightmap (computed_from_sha256), where they are planned. Against the canonical rescaled heightmap, every column under a graded river course (width + 8) or a lake basin polygon differs by at most 0.0043 blocks (2,095,235 columns, 0 over 0.01), because the rescale is the identity at or below y145 and the highest water is y127. Summits (mountain and volcano anchors and outlines) are above y145 and are re-measured here: see measured_summit."
+  "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+  "date": "2026-09-16",
+  "method": "Water bodies, basins, rivers and ravines stay measured on the authored heightmap (computed_from_sha256), where they are planned. Against the canonical rescaled heightmap, every column under a graded river course (width + 8) or a lake basin polygon differs by at most 0.0043 blocks (2,095,235 columns, 0 over 0.01), because the rescale is the identity at or below y145 and the highest water is y127. Summits (mountain and volcano anchors and outlines) are above y145 and are re-measured here: see measured_summit. The pad re-press (tools/press_pads.py) changes no water column: both pads are summits. The Surge shelf pad (tools/press_pads.py) is on a dry flank and changes no water column."
  }
 }

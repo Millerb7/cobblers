@@ -2,7 +2,7 @@
  "schema": "cobblers.towns/1",
  "schema_status": "proposed",
  "status": "proposed",
- "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+ "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
  "coordinates": "Block x, z. A1 origin at 0,0; x east, z south.",
  "decisions": [
   {
@@ -124,8 +124,8 @@
     "unlock": "open question: given at start or earned (progression.json hometown_waystone)"
    },
    "nearest_settlement": {
-    "id": "relic_island",
-    "distance_blocks": 440
+    "id": "great_oak_pallet",
+    "distance_blocks": 355
    }
   },
   {
@@ -181,10 +181,10 @@
    ],
    "approach": {
     "from": "hometown",
-    "route_length_blocks": 1849,
+    "route_length_blocks": 1978,
     "straight_line_blocks": 1687,
     "water_crossings": [],
-    "text": "North from Pallet through Pallet Meadows and the west-shore edge, then up onto Viltri Plateau; since the sculpt pass the computed path no longer enters the River of Shrews vale. Terrain-derived route length: 1,849 blocks; no water crossing.",
+    "text": "North from Pallet through Pallet Meadows, the west-shore edge and the River of Shrews vale, then through the Route 1 maze forest along its main path and up onto Viltri Plateau. Terrain-derived route length: 1,978 blocks; no water crossing.",
     "route_length_source": "route_01_pallet_to_brock",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
@@ -285,56 +285,56 @@
     "kanto": "kanto_ltsurge"
    },
    "leader_type": "electric",
-   "annotation_box": "F (Mt Vessu), moved off the clipped summit",
+   "annotation_box": "F (Mt Vessu); on a shelf cut into the south flank, facing the summit",
    "centre": {
-    "x": 1847,
-    "z": 1262,
-    "ground_y": 257.5
+    "x": 1688,
+    "z": 1410,
+    "ground_y": 174.4
    },
    "footprint": {
     "shape": "square",
     "class": "small",
-    "size_blocks": 83,
-    "min_x": 1806,
-    "min_z": 1221,
-    "max_x": 1888,
-    "max_z": 1303,
+    "size_blocks": 56,
+    "min_x": 1660,
+    "min_z": 1382,
+    "max_x": 1715,
+    "max_z": 1437,
     "ground_y": [
-     234.0,
-     275.2
+     174.4,
+     174.4
     ],
     "slope_degrees": {
-     "mean": 20.5,
-     "max": 33.5
+     "mean": 0.0,
+     "max": 0.0
     },
-    "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+    "basis": "a shelf pressed into the Tri Peaks - Mt Vessu south flank at y174.4 (data/sculpt.json pad, tools/press_pads.py): flat within 40 blocks of the centre, feathered over 60; the footprint is the square inside the flat. Re-measured after the press."
    },
-   "subregion": "mt_vessu",
+   "subregion": "the_tri_peaks",
    "region": "tri_peaks",
    "nearby": [
     {
-     "landmark": "tri_peaks",
-     "distance_blocks": 35
-    },
-    {
-     "landmark": "mt_vessu",
-     "distance_blocks": 47
+     "landmark": "surge_signal_array",
+     "distance_blocks": 290
     },
     {
      "landmark": "pond_west_of_mt_clay",
-     "distance_blocks": 387
+     "distance_blocks": 515
+    },
+    {
+     "landmark": "tri_peaks",
+     "distance_blocks": 649
     }
    ],
    "approach": {
     "from": "gym2_town",
-    "route_length_blocks": 2058,
+    "route_length_blocks": 2120,
     "straight_line_blocks": 1563,
     "water_crossings": [],
-    "text": "North from Lake Viltri Hollow through Foothill Woods and around the Mt Clay and Mt Vessu slopes. Terrain-derived route length: 2,058 blocks; the earlier forced pond-outflow bridge is not on the computed walkable path.",
+    "text": "North from Lake Viltri Hollow through Foothill Woods and up across the Mt Clay and Mt Vessu slopes to Surge's shelf on the Tri Peaks flank. Terrain-derived route length: 2,120 blocks; about 81 blocks of climb, nothing steeper than 23.5 degrees; no water crossing.",
     "route_length_source": "route_03_misty_to_surge",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
-   "route_role": "An exposed high town for the electric gym on Mt Vessu's shoulder, 47 blocks from the summit. Before the vertical rescale this was the highest site on the route (y186-194) and the tightest (83 blocks square).",
+   "route_role": "Surge's electric gym town on a shelf cut into the Tri Peaks - Mt Vessu south flank at y174: above the treeline, open to the prevailing wind, with Mt Vessu's summit in view from the town. Leg 3 is a real ascent (about 80 blocks of climb, nothing over 35 degrees). Surge's signal array stands on a Vessu shoulder above the town (landmarks.json surge_signal_array).",
    "tier": "critical",
    "critical_path": true,
    "waystone": {
@@ -344,14 +344,410 @@
    },
    "nearest_settlement": {
     "id": "the_scar",
-    "distance_blocks": 408
+    "distance_blocks": 624
    },
-   "site_review": {
-    "status": "needs re-siting (a human decision)",
-    "measured": "2026-09-17",
-    "finding": "The rescale lifted the shoulder from y186-194 to y234-275 and its slope from mean 3.9 / max 8.0 to mean 20.5 / max 33.5 degrees. The footprint no longer meets its basis (slope under 8 degrees): it is a mountainside, not a town site.",
-    "blocks": "route_03_misty_to_surge and route_04_surge_to_erika both end or start at this centre"
-   }
+   "site_history": [
+    {
+     "date": "2026-09-16",
+     "from": {
+      "centre": [
+       1847,
+       1262
+      ],
+      "footprint": [
+       1806,
+       1221,
+       1888,
+       1303
+      ],
+      "ground_y": [
+       234.0,
+       275.2
+      ],
+      "slope_degrees": {
+       "mean": 20.5,
+       "max": 33.5
+      }
+     },
+     "why": "after the vertical rescale the shoulder site measured y234-275 with a 33.5-degree maximum slope, and legs 3 and 4 climbed 181 blocks with 19 steps over 35 degrees",
+     "candidates": {
+      "A_vessu_south_foot": {
+       "centre": [
+        1904,
+        1740
+       ],
+       "square": 112,
+       "ground_y": [
+        119.9,
+        126.8
+       ],
+       "slope": [
+        3.4,
+        8.1
+       ],
+       "water_within_24": true,
+       "overlaps_settlement": [],
+       "leg3": {
+        "blocks": 1297,
+        "max_y": 123.4,
+        "climb": 26.9,
+        "descent": 11.0,
+        "max_grade": 27.76,
+        "segments_over_35": 0
+       },
+       "leg4": {
+        "blocks": 3071,
+        "max_y": 133.0,
+        "climb": 40.4,
+        "descent": 52.8,
+        "max_grade": 12.63,
+        "segments_over_35": 0
+       }
+      },
+      "B_tri_peaks_southwest_foot": {
+       "centre": [
+        1370,
+        1730
+       ],
+       "square": 141,
+       "ground_y": [
+        110.7,
+        115.6
+       ],
+       "slope": [
+        2.0,
+        7.9
+       ],
+       "water_within_24": false,
+       "overlaps_settlement": [],
+       "leg3": {
+        "blocks": 1845,
+        "max_y": 122.3,
+        "climb": 26.7,
+        "descent": 22.8,
+        "max_grade": 27.76,
+        "segments_over_35": 0
+       },
+       "leg4": {
+        "blocks": 3642,
+        "max_y": 133.0,
+        "climb": 53.3,
+        "descent": 53.7,
+        "max_grade": 12.63,
+        "segments_over_35": 0
+       }
+      },
+      "C_merian_cirque": {
+       "centre": [
+        2728,
+        1111
+       ],
+       "square": 145,
+       "ground_y": [
+        107.3,
+        110.6
+       ],
+       "slope": [
+        1.0,
+        8.0
+       ],
+       "water_within_24": false,
+       "overlaps_settlement": [
+        "merian_hut"
+       ],
+       "leg3": {
+        "blocks": 2179,
+        "max_y": 162.5,
+        "climb": 63.1,
+        "descent": 63.2,
+        "max_grade": 29.9,
+        "segments_over_35": 0
+       },
+       "leg4": {
+        "blocks": 2131,
+        "max_y": 111.5,
+        "climb": 23.3,
+        "descent": 19.7,
+        "max_grade": 13.34,
+        "segments_over_35": 0
+       }
+      },
+      "D_vessu_clay_saddle_south": {
+       "centre": [
+        2347,
+        1956
+       ],
+       "square": 247,
+       "ground_y": [
+        123.8,
+        132.6
+       ],
+       "slope": [
+        2.4,
+        7.9
+       ],
+       "water_within_24": false,
+       "overlaps_settlement": [],
+       "leg3": {
+        "blocks": 1152,
+        "max_y": 129.4,
+        "climb": 27.8,
+        "descent": 8.4,
+        "max_grade": 11.03,
+        "segments_over_35": 0
+       },
+       "leg4": {
+        "blocks": 2439,
+        "max_y": 129.2,
+        "climb": 26.1,
+        "descent": 42.1,
+        "max_grade": 12.63,
+        "segments_over_35": 0
+       }
+      },
+      "E_north_east_tarn_bench": {
+       "centre": [
+        3165,
+        887
+       ],
+       "square": 204,
+       "ground_y": [
+        125.6,
+        132.1
+       ],
+       "slope": [
+        2.3,
+        8.3
+       ],
+       "water_within_24": true,
+       "overlaps_settlement": [
+        "sentinel_spruce_tarn"
+       ],
+       "leg3": {
+        "blocks": 2812,
+        "max_y": 130.6,
+        "climb": 52.4,
+        "descent": 29.3,
+        "max_grade": 19.25,
+        "segments_over_35": 0
+       },
+       "leg4": {
+        "blocks": 1564,
+        "max_y": 139.8,
+        "climb": 24.7,
+        "descent": 44.4,
+        "max_grade": 21.78,
+        "segments_over_35": 0
+       }
+      }
+     },
+     "chosen": "D_vessu_clay_saddle_south",
+     "chosen_why": "the only candidate clear of water and of other settlements with the shortest and gentlest legs: 1,152 + 2,439 blocks, max grade 11.0 / 12.6 degrees"
+    },
+    {
+     "date": "2026-09-16",
+     "from": {
+      "centre": [
+       2347,
+       1956
+      ],
+      "footprint": [
+       2224,
+       1833,
+       2470,
+       2079
+      ],
+      "ground_y": [
+       123.8,
+       132.6
+      ],
+      "status": "superseded 2026-09-16 (committed on PR #17 as 7fb6fd2, kept as the fallback)",
+      "why_superseded": "legs were fixed but Mt Vessu's summit is hidden, leg 3 climbs only 28 blocks, and the town sits in Foothill Woods: the climb, wind-puzzle and mountain-species beats all fail"
+     },
+     "search": {
+      "option_3_funnel": {
+       "flats": 140,
+       "dry": 102,
+       "+no overlap": 92,
+       "+spacing": 44,
+       "+summit visible": 9,
+       "+exposed": 0
+      },
+      "option_3_result": "no flat site passes: the only summit-visible flats outside the Scar pad are a sheltered west-flank bench (7-41 blocks below their surroundings, windward horizon 15-27 degrees)",
+      "option_2_shelves": [
+       {
+        "centre": [
+         1480,
+         1170
+        ],
+        "centre_y": 190.7,
+        "leg3": {
+         "blocks": 2113,
+         "climb": 99.4,
+         "max_y": 190.7,
+         "over35": 5,
+         "steepest": 35.46
+        },
+        "beats": {
+         "climb_60_100": false,
+         "nosepass_signs": true,
+         "wind_puzzle": true,
+         "mountain_species_segment": true
+        },
+        "leg4_via_merian": {
+         "blocks": 3831,
+         "climb": 66.7,
+         "max_y": 190.7,
+         "over35": 0,
+         "steepest": 32.98
+        }
+       },
+       {
+        "centre": [
+         1688,
+         1410
+        ],
+        "centre_y": 174.4,
+        "leg3": {
+         "blocks": 2120,
+         "climb": 81.2,
+         "max_y": 174.4,
+         "over35": 0,
+         "steepest": 23.52
+        },
+        "beats": {
+         "climb_60_100": true,
+         "nosepass_signs": false,
+         "wind_puzzle": true,
+         "mountain_species_segment": true
+        },
+        "leg4_via_merian": {
+         "blocks": 3453,
+         "climb": 54.5,
+         "max_y": 174.4,
+         "over35": 0,
+         "steepest": 24.15
+        }
+       }
+      ],
+      "offsets_50_blocks": [
+       {
+        "name": "centre",
+        "centre": [
+         1688,
+         1410
+        ],
+        "level": 174.4,
+        "leg3": {
+         "blocks": 2120,
+         "climb": 81.2,
+         "over35": 0,
+         "steepest": 23.52
+        },
+        "summit_view_starts_blocks_before_town": 72
+       },
+       {
+        "name": "N",
+        "centre": [
+         1688,
+         1360
+        ],
+        "level": 158.3,
+        "leg3": {
+         "blocks": 1839,
+         "climb": 63.6,
+         "over35": 0,
+         "steepest": 27.76
+        },
+        "summit_view_starts_blocks_before_town": 97
+       },
+       {
+        "name": "E",
+        "centre": [
+         1738,
+         1410
+        ],
+        "level": 236.3,
+        "leg3": {
+         "blocks": 2210,
+         "climb": 157.9,
+         "over35": 17,
+         "steepest": 39.86
+        },
+        "summit_view_starts_blocks_before_town": 4
+       },
+       {
+        "name": "S",
+        "centre": [
+         1688,
+         1460
+        ],
+        "level": 168.8,
+        "leg3": {
+         "blocks": 2070,
+         "climb": 75.4,
+         "over35": 0,
+         "steepest": 25.1
+        },
+        "summit_view_starts_blocks_before_town": 2
+       },
+       {
+        "name": "SW",
+        "centre": [
+         1653,
+         1445
+        ],
+        "level": 154.0,
+        "leg3": {
+         "blocks": 1729,
+         "climb": 58.5,
+         "over35": 0,
+         "steepest": 27.76
+        },
+        "summit_view_starts_blocks_before_town": 50
+       },
+       {
+        "name": "W",
+        "centre": [
+         1638,
+         1410
+        ],
+        "level": 154.6,
+        "leg3": {
+         "blocks": 1778,
+         "climb": 59.2,
+         "over35": 0,
+         "steepest": 27.76
+        },
+        "summit_view_starts_blocks_before_town": 62
+       },
+       {
+        "name": "NW",
+        "centre": [
+         1653,
+         1375
+        ],
+        "level": 152.1,
+        "leg3": {
+         "blocks": 1813,
+         "climb": 58.1,
+         "over35": 0,
+         "steepest": 27.76
+        },
+        "summit_view_starts_blocks_before_town": 92
+       }
+      ]
+     },
+     "chosen": {
+      "centre": [
+       1688,
+       1410
+      ],
+      "level": 174.4,
+      "why": "the only candidate meeting every hard criterion: summit visible from town, leg 3 climb 81 with 0 steps over 35 degrees (steepest 23.5), exposed, spacing and off-path rules met with leg 4's Merian waypoint. The summit is visible from leg 3 only on the last 72 blocks, the shelf lip: an arrival reveal, not a quest location; the Nosepass signs aim at the signal array instead."
+     }
+    }
+   ]
   },
   {
    "id": "gym4_town",
@@ -406,10 +802,10 @@
    ],
    "approach": {
     "from": "gym3_town",
-    "route_length_blocks": 3091,
+    "route_length_blocks": 3453,
     "straight_line_blocks": 2482,
     "water_crossings": [],
-    "text": "East from Mt Vessu through Mt Clay, Merian Cirque, the Crags, Upper Trough and Peak Pond Hollow. Terrain-derived route length: 3,091 blocks; the 25x water cost keeps it out of Peak Pond.",
+    "text": "East from Surge's shelf down the Tri Peaks flank, past the west side of the Merian cirque, then through the Crags and up the Upper Trough to Peak Pond Hollow. Terrain-derived route length: 3,453 blocks; no water crossing.",
     "route_length_source": "route_04_surge_to_erika",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
@@ -568,8 +964,8 @@
     "unlock": "defeating the town's leader (data/progression.json)"
    },
    "nearest_settlement": {
-    "id": "gorge_hamlet",
-    "distance_blocks": 1149
+    "id": "weeping_elder_tilpey",
+    "distance_blocks": 956
    }
   },
   {
@@ -1085,7 +1481,7 @@
      "distance_blocks": 172
     }
    ],
-   "distance_from_critical_path_blocks": 286,
+   "distance_from_critical_path_blocks": 287,
    "nearest_leg": {
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
@@ -1224,7 +1620,7 @@
    "working_name": "Merian hut",
    "display_name": null,
    "for": "An alpine hut with a Pokémon Center in the Merian cirque, at the source of the major river.",
-   "why_here": "The computed Surge-to-Erika leg is 3,091 blocks; this cirque-floor site is 175 blocks from route_04_surge_to_erika at fraction 0.362, beside the major river source.",
+   "why_here": "The computed Surge-to-Erika leg is 3,453 blocks; this cirque-floor site is 120 blocks from route_04_surge_to_erika at fraction 0.421, beside the major river source.",
    "centre": {
     "x": 2813,
     "z": 1102,
@@ -1264,7 +1660,7 @@
      "distance_blocks": 277
     }
    ],
-   "distance_from_critical_path_blocks": 175,
+   "distance_from_critical_path_blocks": 120,
    "nearest_leg": {
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
@@ -1282,8 +1678,8 @@
    },
    "gates": [],
    "nearest_settlement": {
-    "id": "displaced_city",
-    "distance_blocks": 628
+    "id": "sentinel_spruce_tarn",
+    "distance_blocks": 461
    },
    "buildability": "237-block square under 5 degrees; far more than a hut needs"
   },
@@ -1370,7 +1766,7 @@
    "working_name": "Tableland stop (Scorched Plateau)",
    "display_name": null,
    "for": "A waystation on the badlands tableland: a Center, a prospector's house and a lookout over the Craters and the Rift.",
-   "why_here": "The computed Blaine-to-Giovanni leg is 3,050 blocks; this flat y158-164 tableland site is 238 blocks from route_08_blaine_to_giovanni at fraction 0.525.",
+   "why_here": "The computed Blaine-to-Giovanni leg is 3,050 blocks; this flat y158-164 tableland site is 238 blocks from route_08_blaine_to_giovanni at fraction 0.525",
    "centre": {
     "x": 4876,
     "z": 5729,
@@ -1434,7 +1830,7 @@
    "buildability": "198-block square under 5 degrees on the plateau top",
    "site_review": {
     "status": "minor: max slope 5.8 degrees against its under-5 basis",
-    "measured": "2026-09-17"
+    "measured": "2026-09-16"
    }
   },
   {
@@ -1505,8 +1901,8 @@
    },
    "gates": [],
    "nearest_settlement": {
-    "id": "rift_dig_camp",
-    "distance_blocks": 895
+    "id": "cherry_elder_shrew",
+    "distance_blocks": 344
    },
    "buildability": "123-block square under 5 degrees"
   },
@@ -1598,11 +1994,11 @@
    "working_name": "The Scar (Mt Vessu summit)",
    "display_name": null,
    "for": "The empty footprint where the Displaced City stood: a bare flat summit with foundations and a road that ends at nothing.",
-   "why_here": "Mt Vessu's old clipped summit plateau is kept as one deliberate flat: the sculpt pass (tools/sculpt.py) presses the Scar to y194 as a scraped table just below the true summit (y200, 330 blocks north-west), and breaks the rest of the plateau into ridges. It is 408 blocks above Surge's town, so the gym 3 town sees it, and 900 blocks from the Displaced City's entrance across the Merian cirque.",
+   "why_here": "Mt Vessu's old clipped summit plateau is kept as one deliberate flat: the sculpt pass (tools/sculpt.py) pressed the Scar to y194 below the old y200 summit; after the vertical rescale it is re-pressed at y280, 20 blocks under the y300 summit, and breaks the rest of the plateau into ridges. It is 624 blocks from Surge's shelf town and cannot be seen from it; Surge's side quest marks it on the map instead.",
    "centre": {
     "x": 2110,
     "z": 950,
-    "ground_y": 277.4
+    "ground_y": 280.3
    },
    "footprint": {
     "shape": "square",
@@ -1613,12 +2009,12 @@
     "max_x": 2260,
     "max_z": 1100,
     "ground_y": [
-     241.2,
-     277.5
+     264.0,
+     280.3
     ],
     "slope_degrees": {
-     "mean": 4.2,
-     "max": 44.4
+     "mean": 1.1,
+     "max": 38.9
     },
     "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
    },
@@ -1638,7 +2034,7 @@
      "distance_blocks": 367
     }
    ],
-   "distance_from_critical_path_blocks": 263,
+   "distance_from_critical_path_blocks": 437,
    "nearest_leg": {
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
@@ -1653,17 +2049,13 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "was a flat table: the sculpt pass pressed it to y194 under the old y200 ceiling. The rescale's gain applies above y145, so the table is now y241-278 with slopes to 44 degrees and no longer reads as scraped flat.",
+   "buildability": "a scraped-flat table, re-pressed 2026-09-16 at y280 (the authored y194 carried through the rescale curve, 20 blocks under Mt Vessu's y300 summit): flat within 150 blocks of the centre, feathered over 140; the recorded 301-block square spans y264-280 because its corners reach into the feather",
    "linked": [
     "displaced_city"
    ],
    "nearest_settlement": {
     "id": "gym3_town",
-    "distance_blocks": 408
-   },
-   "site_review": {
-    "status": "needs a sculpt decision (re-press the table at its new height, or accept the ridge)",
-    "measured": "2026-09-17"
+    "distance_blocks": 624
    }
   },
   {
@@ -1716,7 +2108,7 @@
      "distance_blocks": 1016
     }
    ],
-   "distance_from_critical_path_blocks": 838,
+   "distance_from_critical_path_blocks": 840,
    "nearest_leg": {
     "route_id": "route_01_pallet_to_brock",
     "from": "hometown",
@@ -1833,12 +2225,12 @@
     "max_x": 737,
     "max_z": 435,
     "ground_y": [
-     292.0,
+     305.5,
      310.0
     ],
     "slope_degrees": {
-     "mean": 8.9,
-     "max": 46.4
+     "mean": 1.0,
+     "max": 30.9
     },
     "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
    },
@@ -1873,14 +2265,10 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "was flat only because the summit was clipped at y200; after the rescale the summit square spans y292-310 with slopes to 46 degrees, so the shrine has no flat top to stand on",
+   "buildability": "the summit platform, re-pressed 2026-09-16 at y310 (the authored y200 carried through the rescale curve): flat within 55 blocks of the centre, feathered over 70; the shrine stands on it",
    "nearest_settlement": {
     "id": "gym3_town",
-    "distance_blocks": 1461
-   },
-   "site_review": {
-    "status": "needs a platform or a new summit site (a human decision)",
-    "measured": "2026-09-17"
+    "distance_blocks": 1440
    }
   },
   {
@@ -2005,7 +2393,7 @@
      "distance_blocks": 1050
     }
    ],
-   "distance_from_critical_path_blocks": 344,
+   "distance_from_critical_path_blocks": 339,
    "nearest_leg": {
     "from": "hometown",
     "to": "gym1_town",
@@ -2073,7 +2461,7 @@
      "distance_blocks": 188
     }
    ],
-   "distance_from_critical_path_blocks": 396,
+   "distance_from_critical_path_blocks": 390,
    "nearest_leg": {
     "from": "gym3_town",
     "to": "gym4_town",
@@ -2141,7 +2529,7 @@
      "distance_blocks": 622
     }
    ],
-   "distance_from_critical_path_blocks": 266,
+   "distance_from_critical_path_blocks": 247,
    "nearest_leg": {
     "from": "gym8_town",
     "to": "league",
@@ -2209,7 +2597,7 @@
      "distance_blocks": 700
     }
    ],
-   "distance_from_critical_path_blocks": 523,
+   "distance_from_critical_path_blocks": 531,
    "nearest_leg": {
     "from": "gym8_town",
     "to": "league",
@@ -2277,7 +2665,7 @@
      "distance_blocks": 605
     }
    ],
-   "distance_from_critical_path_blocks": 762,
+   "distance_from_critical_path_blocks": 861,
    "nearest_leg": {
     "from": "gym6_town",
     "to": "gym7_town",
@@ -2295,7 +2683,7 @@
    "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
   }
  ],
- "not_placed": "Built as of 2026-09-17 (docs/world-building/BUILT.md): the hometown's nine placements, re-placed and verified with 0 gaps; gym1_town and gym2_town street, plaza and gym-lot prep at and below ground level; Brock's gym prefab (cobblers:kits/gyms/kanto/brock, a local-only template) at (1838, 140, 3690), rotation 180, on gym1_town's gym lot. No other town has anything built. Waystone positions in data/progression.json stay null until each town is built.",
+ "not_placed": "Built as of 2026-09-16 (docs/world-building/BUILT.md): the hometown's nine placements, re-placed and verified with 0 gaps; gym1_town and gym2_town street, plaza and gym-lot prep at and below ground level; Brock's gym prefab (cobblers:kits/gyms/kanto/brock, a local-only template) at (1838, 140, 3690), rotation 180, on gym1_town's gym lot. No other town has anything built. Waystone positions in data/progression.json stay null until each town is built.",
  "tiers": {
   "critical": "the ten places the route requires: hometown, eight gym towns, the League",
   "major": "full off-path towns with their own identity and services; destinations",
@@ -2313,5 +2701,5 @@
   "victory_road_blocks": 5248,
   "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
  },
- "measurement_note": "2026-09-17: every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees re-measured on the canonical rescaled heightmap 3eb0edee with find_sites' own slope (terrain.slope_degrees), at the recorded footprints. Sites were NOT re-searched: siting is an authored decision. Previously computed from 3eb0edee. On ground below y145 the method reproduces the recorded ranges exactly; three sites above it no longer meet their footprint basis and carry site_review."
+ "measurement_note": "2026-09-16: every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees re-measured on the canonical rescaled heightmap a69df9e3 with find_sites' own slope (terrain.slope_degrees), at the recorded footprints. Sites were NOT re-searched: siting is an authored decision. Previously computed from a69df9e3. On ground below y145 the method reproduces the recorded ranges exactly; three sites above it no longer meet their footprint basis and carry site_review. Re-measured on a69df9e3 after tools/press_pads.py re-pressed the Scar and the Frostpeak shrine. Re-measured on 5b963567 after the Surge shelf was pressed (tools/press_pads.py)."
 }

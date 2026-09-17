@@ -77,7 +77,10 @@ Everything the game loads is **generated** from these tables by a tool in
 `tools/` into `build/datapack/`. Nothing under `build/` is hand-edited; if
 something cannot be generated, that is a missing field in `data/`. Keeping the
 authored table and the emitted format apart lets the mod-specific format change
-without rewriting the design.
+without rewriting the design. Native Cobblemon spawn and Habitat pools are one
+such output: `tools/compile_spawns.py` builds them from `data/spawns.json` and
+`data/routes.json` into `build/datapacks/cobblers_spawns/`; no compiled pool is
+committed under `data/`.
 
 `data/world.json` is the only place import parameters and the heightmap path
 live. No tool carries its own copy of 40, 200, 62 or 8192. The input mapping is

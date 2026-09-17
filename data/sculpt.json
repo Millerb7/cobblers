@@ -335,17 +335,32 @@
   "arithmetic": "rho = (2*pi*A/L)/g with A = k*g gives rho = 2*pi*k/L, independent of grade. Calibrated on 2048-block crops (north mountains, Pallet lowland): k=10 took rho median 0.18/0.16 to 0.46/0.45 and tread CV median 0.31/0.23 to 0.58/0.48, largest change 4.7 blocks. A long-wavelength grade wander (3 blocks at 160-block spacing) was tried and dropped: it added up to 5 blocks of change and less ring breaking than 2 more points of k.",
   "regional_sigma_blocks": 24,
   "octaves": [
-   {"spacing_blocks": 12, "weight": 0.5},
-   {"spacing_blocks": 24, "weight": 1.0},
-   {"spacing_blocks": 48, "weight": 0.7}
+   {
+    "spacing_blocks": 12,
+    "weight": 0.5
+   },
+   {
+    "spacing_blocks": 24,
+    "weight": 1.0
+   },
+   {
+    "spacing_blocks": 48,
+    "weight": 0.7
+   }
   ],
   "fall_line_stretch_blocks": 16,
   "fall_line_taps": 9,
   "amplitude_per_grade": 10,
   "max_amplitude_blocks": 2.5,
   "noise_soft_clip_sigma": 2.0,
-  "low_fade_above_sea": [4, 12],
-  "steep_fade_grade": [0.7, 1.0],
+  "low_fade_above_sea": [
+   4,
+   12
+  ],
+  "steep_fade_grade": [
+   0.7,
+   1.0
+  ],
   "protect_feather_blocks": 24
  },
  "pads": [
@@ -362,6 +377,13 @@
    "radius": 55,
    "feather": 70,
    "why": "The shrine keeps a small levelled summit platform; the rest of Frostpeak's clipped top is broken up."
+  },
+  {
+   "site": "gym3_town",
+   "pressed_y": 174.4,
+   "radius": 40,
+   "feather": 60,
+   "why": "Surge's town shelf, cut into the Tri Peaks - Mt Vessu south flank after the vertical rescale (so authored as pressed_y, not pre-rescale y). Level is the centre's own ground, so cut and fill balance; up to about 60 blocks of cut reads as terracing."
   }
  ]
 }

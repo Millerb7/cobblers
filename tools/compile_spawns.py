@@ -17,6 +17,20 @@ Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the 
   python tools/compile_spawns.py                          # write build/datapacks/cobblers_spawns
   python tools/compile_spawns.py --out <dir>              # write elsewhere
   python tools/compile_spawns.py --routes <routes.json> --check <dir>   # compare with an existing compilation
+
+Ownership: the output is generated and lives in build/ (gitignored); data/spawns.json and data/routes.json are the
+source. Until 2026-09-16 a hand-committed copy lived in data/cobblemon/ with no generator; on the routes it was built
+from, this tool reproduces its Habitat files and pack.mcmeta byte for byte and 6,479 of its 6,526 route entries (the
+rest are 15 of 1,269 boxes on sub-region boundaries, a sampling detail that was never recorded). Each route's species
+list (at most 20) is authored in spawns.json route_species_selection; this tool never chooses species.
+
+Not installed, not runtime-proven. Inherited-pool suppression is deliberately omitted (it needs EXP-012). Habitat files
+define rosters only; placing Habitat Blocks and their ReplaceSpawns NBT is world work.
+
+Schema evidence: the route key set was checked against Cobblemon 1.8 SpawningCondition.class and stock
+data/cobblemon/spawn_pool_world/*.json; the Habitat key set against stock data/cobblemon/habitat_pools/abandoned_fortress.json,
+abandoned_village_house.json, HabitatPool.class and HabitatSpawn.class in Cobblemon-fabric-1.8.0+1.21.1.jar (sha256
+a6228f3291c70ed6348b9a47beadabc79cb241b6522312e7e2b56d428dc9ec31). That verifies field names, not loading or behaviour.
 """
 from __future__ import annotations
 
@@ -168,6 +182,13 @@ def build(spawns, routes):
     for r in routes["routes"]:
         sel = (spawns.get("route_species_selection") or {}).get(r["id"])
         doc, summ = compile_route(r, by_scope, set(sel["species"]) if sel else None)
+        if sel:
+            # an authored species the corridor no longer reaches (its sub-region left the route) compiles to nothing
+            summ["selected_species_not_reached"] = sorted(set(sel["species"]) - set(summ["route_species"]))
+            outside = set(summ["route_species"]) - set(sel["species"])
+            if outside or set(summ["route_species"]) | set(summ["selected_species_not_reached"]) != set(sel["species"]):
+                raise SystemExit("route %s compiled species outside its authored selection: %s" % (r["id"], sorted(outside)))
+            summ["selection_reproduced"] = "exact: compiled species plus unreached species equal the authored list, nothing outside it"
         files["data/cobblers/spawn_pool_world/routes/%s.json" % r["id"]] = dumps(doc)
         route_summaries.append(summ)
     for h in spawns["habitats"]:

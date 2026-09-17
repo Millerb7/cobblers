@@ -15,14 +15,14 @@
    },
    "terrain": {
     "min_y": 13.2,
-    "max_y": 309.99,
-    "mean_y": 110.4,
+    "max_y": 310.0,
+    "mean_y": 110.73,
     "land_fraction": 0.7858,
     "water_fraction": 0.2142,
     "void_fraction": 0.0,
-    "mean_slope": 18.276,
-    "max_slope": 85.182,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "mean_slope": 18.125,
+    "max_slope": 85.349,
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -39,13 +39,13 @@
    "terrain": {
     "min_y": 11.42,
     "max_y": 300.01,
-    "mean_y": 104.66,
+    "mean_y": 105.04,
     "land_fraction": 0.6917,
     "water_fraction": 0.3083,
     "void_fraction": 0.0,
-    "mean_slope": 17.732,
+    "mean_slope": 17.586,
     "max_slope": 88.423,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -61,14 +61,14 @@
    },
    "terrain": {
     "min_y": 10.61,
-    "max_y": 277.42,
-    "mean_y": 97.5,
+    "max_y": 280.27,
+    "mean_y": 98.23,
     "land_fraction": 0.558,
     "water_fraction": 0.442,
     "void_fraction": 0.0,
-    "mean_slope": 13.803,
+    "mean_slope": 13.685,
     "max_slope": 83.167,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -91,7 +91,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.643,
     "max_slope": 63.374,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -114,7 +114,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.454,
     "max_slope": 61.251,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -137,7 +137,7 @@
     "void_fraction": 0.0,
     "mean_slope": 11.359,
     "max_slope": 63.098,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -160,7 +160,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.733,
     "max_slope": 38.977,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -183,7 +183,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.571,
     "max_slope": 60.959,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -206,7 +206,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.762,
     "max_slope": 81.326,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -223,13 +223,13 @@
    "terrain": {
     "min_y": 60.5,
     "max_y": 287.16,
-    "mean_y": 142.78,
+    "mean_y": 142.93,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 14.405,
+    "mean_slope": 14.295,
     "max_slope": 81.082,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -245,14 +245,14 @@
    },
    "terrain": {
     "min_y": 93.9,
-    "max_y": 277.42,
-    "mean_y": 147.84,
+    "max_y": 280.27,
+    "mean_y": 148.21,
     "land_fraction": 1.0,
     "water_fraction": 0.0,
     "void_fraction": 0.0,
-    "mean_slope": 13.287,
+    "mean_slope": 13.256,
     "max_slope": 63.341,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -275,7 +275,7 @@
     "void_fraction": 0.0,
     "mean_slope": 10.44,
     "max_slope": 63.395,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -298,7 +298,7 @@
     "void_fraction": 0.0,
     "mean_slope": 5.572,
     "max_slope": 62.527,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -321,7 +321,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.827,
     "max_slope": 63.393,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -344,7 +344,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.522,
     "max_slope": 40.671,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -367,7 +367,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.218,
     "max_slope": 40.125,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -390,7 +390,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.918,
     "max_slope": 58.158,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -413,7 +413,7 @@
     "void_fraction": 0.0,
     "mean_slope": 4.652,
     "max_slope": 59.39,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -436,7 +436,7 @@
     "void_fraction": 0.0,
     "mean_slope": 3.986,
     "max_slope": 30.462,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -459,7 +459,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.423,
     "max_slope": 58.812,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -482,7 +482,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.066,
     "max_slope": 61.483,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -505,7 +505,7 @@
     "void_fraction": 0.0,
     "mean_slope": 5.85,
     "max_slope": 36.061,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -528,7 +528,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.513,
     "max_slope": 38.401,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -551,7 +551,7 @@
     "void_fraction": 0.0,
     "mean_slope": 1.907,
     "max_slope": 20.312,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -574,7 +574,7 @@
     "void_fraction": 0.0,
     "mean_slope": 9.412,
     "max_slope": 45.76,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -597,7 +597,7 @@
     "void_fraction": 0.0,
     "mean_slope": 4.562,
     "max_slope": 34.253,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -620,7 +620,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.347,
     "max_slope": 35.551,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -643,7 +643,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.758,
     "max_slope": 43.633,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -666,7 +666,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.734,
     "max_slope": 55.686,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -689,7 +689,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.581,
     "max_slope": 60.635,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -712,7 +712,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.821,
     "max_slope": 63.816,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -735,7 +735,7 @@
     "void_fraction": 0.0,
     "mean_slope": 3.768,
     "max_slope": 42.201,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -758,7 +758,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.685,
     "max_slope": 43.481,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -781,7 +781,7 @@
     "void_fraction": 0.0,
     "mean_slope": 4.064,
     "max_slope": 35.68,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -804,7 +804,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.804,
     "max_slope": 62.771,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -827,7 +827,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.196,
     "max_slope": 34.414,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -850,7 +850,7 @@
     "void_fraction": 0.0,
     "mean_slope": 7.972,
     "max_slope": 62.676,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -873,7 +873,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.775,
     "max_slope": 68.774,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -896,7 +896,7 @@
     "void_fraction": 0.0,
     "mean_slope": 9.836,
     "max_slope": 76.072,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -919,7 +919,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.939,
     "max_slope": 43.617,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -942,7 +942,7 @@
     "void_fraction": 0.0,
     "mean_slope": 12.335,
     "max_slope": 47.735,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -965,7 +965,7 @@
     "void_fraction": 0.0,
     "mean_slope": 9.235,
     "max_slope": 47.083,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -988,7 +988,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.246,
     "max_slope": 59.281,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1011,7 +1011,7 @@
     "void_fraction": 0.0,
     "mean_slope": 5.129,
     "max_slope": 59.372,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1034,7 +1034,7 @@
     "void_fraction": 0.0,
     "mean_slope": 4.424,
     "max_slope": 25.333,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1057,7 +1057,7 @@
     "void_fraction": 0.0,
     "mean_slope": 9.549,
     "max_slope": 83.836,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1080,7 +1080,7 @@
     "void_fraction": 0.0,
     "mean_slope": 13.339,
     "max_slope": 79.982,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1103,7 +1103,7 @@
     "void_fraction": 0.0,
     "mean_slope": 12.491,
     "max_slope": 42.765,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1126,7 +1126,7 @@
     "void_fraction": 0.0,
     "mean_slope": 5.384,
     "max_slope": 47.44,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1149,7 +1149,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.088,
     "max_slope": 41.531,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1172,7 +1172,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.372,
     "max_slope": 63.2,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1195,7 +1195,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.995,
     "max_slope": 43.068,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1218,7 +1218,7 @@
     "void_fraction": 0.0,
     "mean_slope": 11.061,
     "max_slope": 45.488,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1241,7 +1241,7 @@
     "void_fraction": 0.0,
     "mean_slope": 11.391,
     "max_slope": 45.782,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1264,7 +1264,7 @@
     "void_fraction": 0.0,
     "mean_slope": 9.232,
     "max_slope": 45.569,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1287,7 +1287,7 @@
     "void_fraction": 0.0,
     "mean_slope": 13.064,
     "max_slope": 65.454,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1310,7 +1310,7 @@
     "void_fraction": 0.0,
     "mean_slope": 5.288,
     "max_slope": 66.996,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1333,7 +1333,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.042,
     "max_slope": 57.523,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1356,7 +1356,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.781,
     "max_slope": 37.103,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1379,7 +1379,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.998,
     "max_slope": 41.673,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1402,7 +1402,7 @@
     "void_fraction": 0.0,
     "mean_slope": 8.845,
     "max_slope": 46.145,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1425,7 +1425,7 @@
     "void_fraction": 0.0,
     "mean_slope": 10.055,
     "max_slope": 39.865,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1448,7 +1448,7 @@
     "void_fraction": 0.0,
     "mean_slope": 6.52,
     "max_slope": 59.115,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   },
@@ -1471,7 +1471,7 @@
     "void_fraction": 0.0,
     "mean_slope": 10.974,
     "max_slope": 48.821,
-    "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "computed_from_import": "4492769140df9c3d"
    }
   }

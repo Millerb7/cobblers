@@ -2,7 +2,7 @@
 """Close the sub-region polygon gaps that route corridors cross, so every route sample has a sub-region.
 
 The sub-region polygons were simplified at a 24-block tolerance, which leaves slivers of land between neighbours
-(about 2.9% of land on the 2026-09-17 heightmap). A route crossing a sliver has a stretch with no sub-region, and
+(about 2.9% of land on the 2026-09-16 heightmap). A route crossing a sliver has a stretch with no sub-region, and
 coordinate-box spawns cannot be compiled for it. This tool fills only the slivers inside route corridors:
 
   - land (above sea level) within a --band-wide strip along a route's dense path that no sub-region polygon covers is a gap pixel
@@ -11,7 +11,7 @@ coordinate-box spawns cannot be compiled for it. This tool fills only the sliver
   - each sub-region's new pixels are merged into CELL-block squares and then into rectangles (row runs merged
     vertically), and appended to its polygons as axis-aligned rings
 
-Existing polygons are never moved or removed. Every added ring is recorded in regions.json geometry.gap_closure.
+Existing polygons are never moved or removed. Every run is recorded in regions.json geometry.gap_closures.
 
   python tools/close_route_gaps.py --source-root <root> --paths build/routes/paths.json [--write]
 """
@@ -165,7 +165,11 @@ def main(argv=None):
         for s in subs:
             if s["id"] in added:
                 s["polygons"].extend(added[s["id"]])
-        regions["geometry"]["gap_closure"] = {
+        runs = regions["geometry"].pop("gap_closures", None) or []
+        if "gap_closure" in regions["geometry"]:              # the first run's single record
+            runs.insert(0, regions["geometry"].pop("gap_closure"))
+        regions["geometry"]["gap_closures"] = runs
+        runs.append({
             "date": datetime.date.today().isoformat(), "generator": "tools/close_route_gaps.py",
             "heightmap_sha256": world["heightmap"]["sha256"],
             "method": "land within a %d-block band along each dense route path covered by no sub-region polygon, assigned to the nearest covering sub-region by "
@@ -173,7 +177,7 @@ def main(argv=None):
                       "was moved" % (a.band, CELL),
             "gap_pixels": int(gap.sum()), "unfilled_pixels_enclosed_by_sea": unfilled, "subregions": record,
             "note": "Rings appended after each sub-region's original polygons are the closures; measured blocks are re-derived by tools/region_measure.py.",
-        }
+        })
         Path(a.regions).write_text(json.dumps(regions, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         print("wrote", a.regions)
     return 0

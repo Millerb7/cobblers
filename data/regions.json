@@ -2,148 +2,263 @@
  "schema": "cobblers.regions/3",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+ "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
  "landmarks": "data/landmarks.json",
  "geometry": {
   "raster_cell_blocks": 8,
   "polygon_tolerance_blocks": 24,
   "method": "Hard regions from terrain and the annotation (massif above y138, glacier trough and crags, the Rift outline, Tilpey's basin, the Craters outline, the SE plateau above y140, islands); the rest grown from seeds by terrain-weighted distance (climb and carved-channel crossings cost extra, water impassable). Sub-regions grown the same way inside each region. Details in docs/world-building/REGIONS.md.",
-  "gap_closure": {
-   "date": "2026-09-16",
-   "generator": "tools/close_route_gaps.py",
-   "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-   "method": "land within a 16-block band along each dense route path covered by no sub-region polygon, assigned to the nearest covering sub-region by 4-connected growth, merged into 4-block rectangles and appended to that sub-region's polygons; no existing ring was moved",
-   "gap_pixels": 8202,
-   "unfilled_pixels_enclosed_by_sea": 0,
-   "subregions": [
-    {
-     "subregion": "merian_cirque",
-     "gap_pixels": 193,
-     "rings_added": 6
-    },
-    {
-     "subregion": "the_crags",
-     "gap_pixels": 195,
-     "rings_added": 6
-    },
-    {
-     "subregion": "upper_trough",
-     "gap_pixels": 163,
-     "rings_added": 7
-    },
-    {
-     "subregion": "mt_vessu",
-     "gap_pixels": 164,
-     "rings_added": 9
-    },
-    {
-     "subregion": "mt_clay",
-     "gap_pixels": 289,
-     "rings_added": 17
-    },
-    {
-     "subregion": "rift_trunk",
-     "gap_pixels": 589,
-     "rings_added": 27
-    },
-    {
-     "subregion": "rift_west_spur",
-     "gap_pixels": 653,
-     "rings_added": 30
-    },
-    {
-     "subregion": "rift_south_west_arm",
-     "gap_pixels": 144,
-     "rings_added": 7
-    },
-    {
-     "subregion": "rift_south_east_arm",
-     "gap_pixels": 165,
-     "rings_added": 6
-    },
-    {
-     "subregion": "crater_rim_north_west",
-     "gap_pixels": 224,
-     "rings_added": 11
-    },
-    {
-     "subregion": "plateau_west",
-     "gap_pixels": 246,
-     "rings_added": 8
-    },
-    {
-     "subregion": "tilpey_north_shore",
-     "gap_pixels": 878,
-     "rings_added": 18
-    },
-    {
-     "subregion": "tilpey_south_shore",
-     "gap_pixels": 357,
-     "rings_added": 16
-    },
-    {
-     "subregion": "tilpey_east_shore",
-     "gap_pixels": 65,
-     "rings_added": 5
-    },
-    {
-     "subregion": "peak_pond_hollow",
-     "gap_pixels": 104,
-     "rings_added": 6
-    },
-    {
-     "subregion": "north_east_downs",
-     "gap_pixels": 135,
-     "rings_added": 6
-    },
-    {
-     "subregion": "marsh_creek",
-     "gap_pixels": 2170,
-     "rings_added": 20
-    },
-    {
-     "subregion": "glacier_foot_fields",
-     "gap_pixels": 163,
-     "rings_added": 5
-    },
-    {
-     "subregion": "lake_viltri_hollow",
-     "gap_pixels": 110,
-     "rings_added": 6
-    },
-    {
-     "subregion": "foothill_woods",
-     "gap_pixels": 217,
-     "rings_added": 12
-    },
-    {
-     "subregion": "viltri_plateau",
-     "gap_pixels": 201,
-     "rings_added": 8
-    },
-    {
-     "subregion": "pallet_meadows",
-     "gap_pixels": 62,
-     "rings_added": 6
-    },
-    {
-     "subregion": "west_shore",
-     "gap_pixels": 217,
-     "rings_added": 13
-    },
-    {
-     "subregion": "south_strand",
-     "gap_pixels": 181,
-     "rings_added": 10
-    },
-    {
-     "subregion": "rift_foot",
-     "gap_pixels": 317,
-     "rings_added": 18
-    }
-   ],
-   "note": "Rings appended after each sub-region's original polygons are the closures; measured blocks are re-derived by tools/region_measure.py."
-  }
+  "gap_closures": [
+   {
+    "date": "2026-09-16",
+    "generator": "tools/close_route_gaps.py",
+    "heightmap_sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "method": "land within a 16-block band along each dense route path covered by no sub-region polygon, assigned to the nearest covering sub-region by 4-connected growth, merged into 4-block rectangles and appended to that sub-region's polygons; no existing ring was moved",
+    "gap_pixels": 8202,
+    "unfilled_pixels_enclosed_by_sea": 0,
+    "subregions": [
+     {
+      "subregion": "merian_cirque",
+      "gap_pixels": 193,
+      "rings_added": 6
+     },
+     {
+      "subregion": "the_crags",
+      "gap_pixels": 195,
+      "rings_added": 6
+     },
+     {
+      "subregion": "upper_trough",
+      "gap_pixels": 163,
+      "rings_added": 7
+     },
+     {
+      "subregion": "mt_vessu",
+      "gap_pixels": 164,
+      "rings_added": 9
+     },
+     {
+      "subregion": "mt_clay",
+      "gap_pixels": 289,
+      "rings_added": 17
+     },
+     {
+      "subregion": "rift_trunk",
+      "gap_pixels": 589,
+      "rings_added": 27
+     },
+     {
+      "subregion": "rift_west_spur",
+      "gap_pixels": 653,
+      "rings_added": 30
+     },
+     {
+      "subregion": "rift_south_west_arm",
+      "gap_pixels": 144,
+      "rings_added": 7
+     },
+     {
+      "subregion": "rift_south_east_arm",
+      "gap_pixels": 165,
+      "rings_added": 6
+     },
+     {
+      "subregion": "crater_rim_north_west",
+      "gap_pixels": 224,
+      "rings_added": 11
+     },
+     {
+      "subregion": "plateau_west",
+      "gap_pixels": 246,
+      "rings_added": 8
+     },
+     {
+      "subregion": "tilpey_north_shore",
+      "gap_pixels": 878,
+      "rings_added": 18
+     },
+     {
+      "subregion": "tilpey_south_shore",
+      "gap_pixels": 357,
+      "rings_added": 16
+     },
+     {
+      "subregion": "tilpey_east_shore",
+      "gap_pixels": 65,
+      "rings_added": 5
+     },
+     {
+      "subregion": "peak_pond_hollow",
+      "gap_pixels": 104,
+      "rings_added": 6
+     },
+     {
+      "subregion": "north_east_downs",
+      "gap_pixels": 135,
+      "rings_added": 6
+     },
+     {
+      "subregion": "marsh_creek",
+      "gap_pixels": 2170,
+      "rings_added": 20
+     },
+     {
+      "subregion": "glacier_foot_fields",
+      "gap_pixels": 163,
+      "rings_added": 5
+     },
+     {
+      "subregion": "lake_viltri_hollow",
+      "gap_pixels": 110,
+      "rings_added": 6
+     },
+     {
+      "subregion": "foothill_woods",
+      "gap_pixels": 217,
+      "rings_added": 12
+     },
+     {
+      "subregion": "viltri_plateau",
+      "gap_pixels": 201,
+      "rings_added": 8
+     },
+     {
+      "subregion": "pallet_meadows",
+      "gap_pixels": 62,
+      "rings_added": 6
+     },
+     {
+      "subregion": "west_shore",
+      "gap_pixels": 217,
+      "rings_added": 13
+     },
+     {
+      "subregion": "south_strand",
+      "gap_pixels": 181,
+      "rings_added": 10
+     },
+     {
+      "subregion": "rift_foot",
+      "gap_pixels": 317,
+      "rings_added": 18
+     }
+    ],
+    "note": "Rings appended after each sub-region's original polygons are the closures; measured blocks are re-derived by tools/region_measure.py."
+   },
+   {
+    "date": "2026-09-16",
+    "generator": "tools/close_route_gaps.py",
+    "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "method": "land within a 16-block band along each dense route path covered by no sub-region polygon, assigned to the nearest covering sub-region by 4-connected growth, merged into 4-block rectangles and appended to that sub-region's polygons; no existing ring was moved",
+    "gap_pixels": 1161,
+    "unfilled_pixels_enclosed_by_sea": 0,
+    "subregions": [
+     {
+      "subregion": "the_crags",
+      "gap_pixels": 127,
+      "rings_added": 3
+     },
+     {
+      "subregion": "upper_trough",
+      "gap_pixels": 464,
+      "rings_added": 14
+     },
+     {
+      "subregion": "peak_pond_hollow",
+      "gap_pixels": 64,
+      "rings_added": 5
+     },
+     {
+      "subregion": "lake_viltri_hollow",
+      "gap_pixels": 18,
+      "rings_added": 2
+     },
+     {
+      "subregion": "foothill_woods",
+      "gap_pixels": 96,
+      "rings_added": 6
+     },
+     {
+      "subregion": "viltri_plateau",
+      "gap_pixels": 48,
+      "rings_added": 3
+     },
+     {
+      "subregion": "river_of_shrews_vale",
+      "gap_pixels": 149,
+      "rings_added": 7
+     },
+     {
+      "subregion": "pallet_meadows",
+      "gap_pixels": 50,
+      "rings_added": 4
+     },
+     {
+      "subregion": "west_shore",
+      "gap_pixels": 145,
+      "rings_added": 9
+     }
+    ],
+    "note": "Rings appended after each sub-region's original polygons are the closures; measured blocks are re-derived by tools/region_measure.py. Second run, after Route 1 was pinned through the built forest and Surge's town re-sited."
+   },
+   {
+    "date": "2026-09-16",
+    "generator": "tools/close_route_gaps.py",
+    "heightmap_sha256": "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "method": "land within a 16-block band along each dense route path covered by no sub-region polygon, assigned to the nearest covering sub-region by 4-connected growth, merged into 4-block rectangles and appended to that sub-region's polygons; no existing ring was moved",
+    "gap_pixels": 187,
+    "unfilled_pixels_enclosed_by_sea": 0,
+    "subregions": [
+     {
+      "subregion": "merian_cirque",
+      "gap_pixels": 96,
+      "rings_added": 9
+     },
+     {
+      "subregion": "the_crags",
+      "gap_pixels": 11,
+      "rings_added": 1
+     },
+     {
+      "subregion": "mt_clay",
+      "gap_pixels": 80,
+      "rings_added": 3
+     }
+    ],
+    "note": "Rings appended after each sub-region's original polygons are the closures; measured blocks are re-derived by tools/region_measure.py."
+   },
+   {
+    "date": "2026-09-16",
+    "generator": "tools/close_route_gaps.py",
+    "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+    "method": "land within a 16-block band along each dense route path covered by no sub-region polygon, assigned to the nearest covering sub-region by 4-connected growth, merged into 4-block rectangles and appended to that sub-region's polygons; no existing ring was moved",
+    "gap_pixels": 431,
+    "unfilled_pixels_enclosed_by_sea": 0,
+    "subregions": [
+     {
+      "subregion": "merian_cirque",
+      "gap_pixels": 83,
+      "rings_added": 4
+     },
+     {
+      "subregion": "the_tri_peaks",
+      "gap_pixels": 82,
+      "rings_added": 6
+     },
+     {
+      "subregion": "mt_vessu",
+      "gap_pixels": 125,
+      "rings_added": 11
+     },
+     {
+      "subregion": "mt_clay",
+      "gap_pixels": 141,
+      "rings_added": 10
+     }
+    ],
+    "note": "Rings appended after each sub-region's original polygons are the closures; measured blocks are re-derived by tools/region_measure.py."
+   }
+  ]
  },
  "design_basis": "Terrain character and visual distinction. Biome coverage is no longer a constraint: spawns will be curated per sub-region.",
  "sub_region_schema": {
@@ -2756,14 +2871,14 @@
     },
     "elevation": {
      "p10": 122.1,
-     "median": 161.4,
-     "p90": 261.6,
+     "median": 161.8,
+     "p90": 269.7,
      "max": 299.4
     },
     "slope_degrees": {
-     "mean": 21.8,
-     "p90": 43.0,
-     "flat_under_5_pct": 9.9
+     "mean": 21.6,
+     "p90": 43.3,
+     "flat_under_5_pct": 11.5
     }
    },
    "biomes": [
@@ -3310,9 +3425,9 @@
      "max": 310.0
     },
     "slope_degrees": {
-     "mean": 18.8,
-     "p90": 33.4,
-     "flat_under_5_pct": 8.5
+     "mean": 18.6,
+     "p90": 33.1,
+     "flat_under_5_pct": 9.1
     }
    },
    "biomes": [
@@ -6241,7 +6356,7 @@
      "max": 238.6
     },
     "slope_degrees": {
-     "mean": 11.1,
+     "mean": 11.0,
      "p90": 23.8,
      "flat_under_5_pct": 33.7
     }
@@ -6472,6 +6587,240 @@
       3108,
       1444
      ]
+    ],
+    [
+     [
+      2472,
+      1312
+     ],
+     [
+      2476,
+      1312
+     ],
+     [
+      2476,
+      1316
+     ],
+     [
+      2472,
+      1316
+     ]
+    ],
+    [
+     [
+      2472,
+      1316
+     ],
+     [
+      2480,
+      1316
+     ],
+     [
+      2480,
+      1320
+     ],
+     [
+      2472,
+      1320
+     ]
+    ],
+    [
+     [
+      2472,
+      1320
+     ],
+     [
+      2484,
+      1320
+     ],
+     [
+      2484,
+      1324
+     ],
+     [
+      2472,
+      1324
+     ]
+    ],
+    [
+     [
+      2476,
+      1324
+     ],
+     [
+      2484,
+      1324
+     ],
+     [
+      2484,
+      1328
+     ],
+     [
+      2476,
+      1328
+     ]
+    ],
+    [
+     [
+      2480,
+      1328
+     ],
+     [
+      2484,
+      1328
+     ],
+     [
+      2484,
+      1332
+     ],
+     [
+      2480,
+      1332
+     ]
+    ],
+    [
+     [
+      3108,
+      1408
+     ],
+     [
+      3112,
+      1408
+     ],
+     [
+      3112,
+      1412
+     ],
+     [
+      3108,
+      1412
+     ]
+    ],
+    [
+     [
+      3108,
+      1412
+     ],
+     [
+      3116,
+      1412
+     ],
+     [
+      3116,
+      1416
+     ],
+     [
+      3108,
+      1416
+     ]
+    ],
+    [
+     [
+      3112,
+      1416
+     ],
+     [
+      3120,
+      1416
+     ],
+     [
+      3120,
+      1420
+     ],
+     [
+      3112,
+      1420
+     ]
+    ],
+    [
+     [
+      3116,
+      1420
+     ],
+     [
+      3120,
+      1420
+     ],
+     [
+      3120,
+      1424
+     ],
+     [
+      3116,
+      1424
+     ]
+    ],
+    [
+     [
+      2456,
+      1252
+     ],
+     [
+      2460,
+      1252
+     ],
+     [
+      2460,
+      1256
+     ],
+     [
+      2456,
+      1256
+     ]
+    ],
+    [
+     [
+      2456,
+      1256
+     ],
+     [
+      2472,
+      1256
+     ],
+     [
+      2472,
+      1260
+     ],
+     [
+      2456,
+      1260
+     ]
+    ],
+    [
+     [
+      2460,
+      1260
+     ],
+     [
+      2472,
+      1260
+     ],
+     [
+      2472,
+      1264
+     ],
+     [
+      2460,
+      1264
+     ]
+    ],
+    [
+     [
+      2464,
+      1264
+     ],
+     [
+      2472,
+      1264
+     ],
+     [
+      2472,
+      1272
+     ],
+     [
+      2464,
+      1272
+     ]
     ]
    ]
   },
@@ -6480,7 +6829,7 @@
    "display_name": "The Crags",
    "parent": "glacial_tear",
    "measured": {
-    "area_km2": 0.414,
+    "area_km2": 0.415,
     "bounds": {
      "min_x": 3088,
      "min_z": 944,
@@ -6488,15 +6837,15 @@
      "max_z": 1727
     },
     "elevation": {
-     "p10": 109.3,
-     "median": 141.4,
+     "p10": 109.2,
+     "median": 141.3,
      "p90": 170.5,
      "max": 215.4
     },
     "slope_degrees": {
      "mean": 15.3,
      "p90": 27.6,
-     "flat_under_5_pct": 11.6
+     "flat_under_5_pct": 11.7
     }
    },
    "boundaries": [
@@ -6700,6 +7049,78 @@
       3248,
       1636
      ]
+    ],
+    [
+     [
+      3164,
+      1616
+     ],
+     [
+      3180,
+      1616
+     ],
+     [
+      3180,
+      1620
+     ],
+     [
+      3164,
+      1620
+     ]
+    ],
+    [
+     [
+      3168,
+      1620
+     ],
+     [
+      3204,
+      1620
+     ],
+     [
+      3204,
+      1624
+     ],
+     [
+      3168,
+      1624
+     ]
+    ],
+    [
+     [
+      3188,
+      1624
+     ],
+     [
+      3204,
+      1624
+     ],
+     [
+      3204,
+      1628
+     ],
+     [
+      3188,
+      1628
+     ]
+    ],
+    [
+     [
+      3116,
+      1416
+     ],
+     [
+      3120,
+      1416
+     ],
+     [
+      3120,
+      1424
+     ],
+     [
+      3116,
+      1424
+     ]
     ]
    ]
   },
@@ -6708,7 +7129,7 @@
    "display_name": "Upper Trough",
    "parent": "glacial_tear",
    "measured": {
-    "area_km2": 0.83,
+    "area_km2": 0.831,
     "bounds": {
      "min_x": 2936,
      "min_z": 1616,
@@ -6724,7 +7145,7 @@
     "slope_degrees": {
      "mean": 8.7,
      "p90": 20.5,
-     "flat_under_5_pct": 43.4
+     "flat_under_5_pct": 43.5
     }
    },
    "boundaries": [
@@ -7006,6 +7427,258 @@
       3872,
       1856
      ]
+    ],
+    [
+     [
+      3140,
+      1616
+     ],
+     [
+      3168,
+      1616
+     ],
+     [
+      3168,
+      1620
+     ],
+     [
+      3140,
+      1620
+     ]
+    ],
+    [
+     [
+      3136,
+      1620
+     ],
+     [
+      3180,
+      1620
+     ],
+     [
+      3180,
+      1624
+     ],
+     [
+      3136,
+      1624
+     ]
+    ],
+    [
+     [
+      3152,
+      1624
+     ],
+     [
+      3208,
+      1624
+     ],
+     [
+      3208,
+      1628
+     ],
+     [
+      3152,
+      1628
+     ]
+    ],
+    [
+     [
+      3188,
+      1628
+     ],
+     [
+      3208,
+      1628
+     ],
+     [
+      3208,
+      1632
+     ],
+     [
+      3188,
+      1632
+     ]
+    ],
+    [
+     [
+      2968,
+      1780
+     ],
+     [
+      2976,
+      1780
+     ],
+     [
+      2976,
+      1784
+     ],
+     [
+      2968,
+      1784
+     ]
+    ],
+    [
+     [
+      2968,
+      1784
+     ],
+     [
+      2980,
+      1784
+     ],
+     [
+      2980,
+      1788
+     ],
+     [
+      2968,
+      1788
+     ]
+    ],
+    [
+     [
+      2972,
+      1788
+     ],
+     [
+      2984,
+      1788
+     ],
+     [
+      2984,
+      1792
+     ],
+     [
+      2972,
+      1792
+     ]
+    ],
+    [
+     [
+      2976,
+      1792
+     ],
+     [
+      2984,
+      1792
+     ],
+     [
+      2984,
+      1796
+     ],
+     [
+      2976,
+      1796
+     ]
+    ],
+    [
+     [
+      2976,
+      1796
+     ],
+     [
+      2980,
+      1796
+     ],
+     [
+      2980,
+      1800
+     ],
+     [
+      2976,
+      1800
+     ]
+    ],
+    [
+     [
+      3880,
+      1856
+     ],
+     [
+      3888,
+      1856
+     ],
+     [
+      3888,
+      1860
+     ],
+     [
+      3880,
+      1860
+     ]
+    ],
+    [
+     [
+      3884,
+      1860
+     ],
+     [
+      3892,
+      1860
+     ],
+     [
+      3892,
+      1864
+     ],
+     [
+      3884,
+      1864
+     ]
+    ],
+    [
+     [
+      3888,
+      1864
+     ],
+     [
+      3896,
+      1864
+     ],
+     [
+      3896,
+      1868
+     ],
+     [
+      3888,
+      1868
+     ]
+    ],
+    [
+     [
+      3892,
+      1868
+     ],
+     [
+      3900,
+      1868
+     ],
+     [
+      3900,
+      1872
+     ],
+     [
+      3892,
+      1872
+     ]
+    ],
+    [
+     [
+      3896,
+      1872
+     ],
+     [
+      3900,
+      1872
+     ],
+     [
+      3900,
+      1876
+     ],
+     [
+      3896,
+      1876
+     ]
     ]
    ]
   },
@@ -7193,19 +7866,19 @@
     "bounds": {
      "min_x": 888,
      "min_z": 664,
-     "max_x": 1895,
+     "max_x": 1903,
      "max_z": 1663
     },
     "elevation": {
      "p10": 99.2,
-     "median": 143.7,
-     "p90": 199.1,
+     "median": 144.0,
+     "p90": 197.6,
      "max": 253.8
     },
     "slope_degrees": {
-     "mean": 20.8,
-     "p90": 42.0,
-     "flat_under_5_pct": 7.9
+     "mean": 20.6,
+     "p90": 41.1,
+     "flat_under_5_pct": 8.6
     }
    },
    "boundaries": [
@@ -7336,6 +8009,114 @@
       1096,
       728
      ]
+    ],
+    [
+     [
+      1872,
+      1564
+     ],
+     [
+      1880,
+      1564
+     ],
+     [
+      1880,
+      1568
+     ],
+     [
+      1872,
+      1568
+     ]
+    ],
+    [
+     [
+      1876,
+      1568
+     ],
+     [
+      1884,
+      1568
+     ],
+     [
+      1884,
+      1572
+     ],
+     [
+      1876,
+      1572
+     ]
+    ],
+    [
+     [
+      1888,
+      1576
+     ],
+     [
+      1892,
+      1576
+     ],
+     [
+      1892,
+      1580
+     ],
+     [
+      1888,
+      1580
+     ]
+    ],
+    [
+     [
+      1884,
+      1580
+     ],
+     [
+      1892,
+      1580
+     ],
+     [
+      1892,
+      1588
+     ],
+     [
+      1884,
+      1588
+     ]
+    ],
+    [
+     [
+      1884,
+      1588
+     ],
+     [
+      1896,
+      1588
+     ],
+     [
+      1896,
+      1592
+     ],
+     [
+      1884,
+      1592
+     ]
+    ],
+    [
+     [
+      1884,
+      1592
+     ],
+     [
+      1892,
+      1592
+     ],
+     [
+      1892,
+      1596
+     ],
+     [
+      1884,
+      1596
+     ]
     ]
    ]
   },
@@ -7344,23 +8125,23 @@
    "display_name": "Mt Vessu",
    "parent": "tri_peaks",
    "measured": {
-    "area_km2": 0.727,
+    "area_km2": 0.728,
     "bounds": {
      "min_x": 1512,
      "min_z": 504,
      "max_x": 2759,
-     "max_z": 1591
+     "max_z": 1599
     },
     "elevation": {
-     "p10": 142.8,
-     "median": 222.1,
-     "p90": 277.2,
+     "p10": 142.7,
+     "median": 222.7,
+     "p90": 280.3,
      "max": 299.4
     },
     "slope_degrees": {
-     "mean": 25.2,
-     "p90": 44.7,
-     "flat_under_5_pct": 12.0
+     "mean": 24.9,
+     "p90": 45.9,
+     "flat_under_5_pct": 15.0
     }
    },
    "boundaries": [
@@ -7628,6 +8409,204 @@
      [
       2136,
       1412
+     ]
+    ],
+    [
+     [
+      1876,
+      1564
+     ],
+     [
+      1880,
+      1564
+     ],
+     [
+      1880,
+      1568
+     ],
+     [
+      1876,
+      1568
+     ]
+    ],
+    [
+     [
+      1916,
+      1564
+     ],
+     [
+      1924,
+      1564
+     ],
+     [
+      1924,
+      1568
+     ],
+     [
+      1916,
+      1568
+     ]
+    ],
+    [
+     [
+      1876,
+      1568
+     ],
+     [
+      1884,
+      1568
+     ],
+     [
+      1884,
+      1572
+     ],
+     [
+      1876,
+      1572
+     ]
+    ],
+    [
+     [
+      1912,
+      1568
+     ],
+     [
+      1920,
+      1568
+     ],
+     [
+      1920,
+      1572
+     ],
+     [
+      1912,
+      1572
+     ]
+    ],
+    [
+     [
+      1880,
+      1572
+     ],
+     [
+      1888,
+      1572
+     ],
+     [
+      1888,
+      1576
+     ],
+     [
+      1880,
+      1576
+     ]
+    ],
+    [
+     [
+      1908,
+      1572
+     ],
+     [
+      1916,
+      1572
+     ],
+     [
+      1916,
+      1576
+     ],
+     [
+      1908,
+      1576
+     ]
+    ],
+    [
+     [
+      1888,
+      1576
+     ],
+     [
+      1892,
+      1576
+     ],
+     [
+      1892,
+      1580
+     ],
+     [
+      1888,
+      1580
+     ]
+    ],
+    [
+     [
+      1900,
+      1576
+     ],
+     [
+      1912,
+      1576
+     ],
+     [
+      1912,
+      1580
+     ],
+     [
+      1900,
+      1580
+     ]
+    ],
+    [
+     [
+      1888,
+      1580
+     ],
+     [
+      1908,
+      1580
+     ],
+     [
+      1908,
+      1584
+     ],
+     [
+      1888,
+      1584
+     ]
+    ],
+    [
+     [
+      1888,
+      1584
+     ],
+     [
+      1904,
+      1584
+     ],
+     [
+      1904,
+      1588
+     ],
+     [
+      1888,
+      1588
+     ]
+    ],
+    [
+     [
+      1892,
+      1588
+     ],
+     [
+      1900,
+      1588
+     ],
+     [
+      1900,
+      1592
+     ],
+     [
+      1892,
+      1592
      ]
     ]
    ]
@@ -8069,6 +9048,240 @@
      [
       2232,
       1544
+     ]
+    ],
+    [
+     [
+      2472,
+      1312
+     ],
+     [
+      2476,
+      1312
+     ],
+     [
+      2476,
+      1316
+     ],
+     [
+      2472,
+      1316
+     ]
+    ],
+    [
+     [
+      2468,
+      1316
+     ],
+     [
+      2476,
+      1316
+     ],
+     [
+      2476,
+      1320
+     ],
+     [
+      2468,
+      1320
+     ]
+    ],
+    [
+     [
+      2472,
+      1320
+     ],
+     [
+      2480,
+      1320
+     ],
+     [
+      2480,
+      1336
+     ],
+     [
+      2472,
+      1336
+     ]
+    ],
+    [
+     [
+      2456,
+      1252
+     ],
+     [
+      2460,
+      1252
+     ],
+     [
+      2460,
+      1256
+     ],
+     [
+      2456,
+      1256
+     ]
+    ],
+    [
+     [
+      2456,
+      1256
+     ],
+     [
+      2464,
+      1256
+     ],
+     [
+      2464,
+      1264
+     ],
+     [
+      2456,
+      1264
+     ]
+    ],
+    [
+     [
+      2460,
+      1264
+     ],
+     [
+      2468,
+      1264
+     ],
+     [
+      2468,
+      1272
+     ],
+     [
+      2460,
+      1272
+     ]
+    ],
+    [
+     [
+      1920,
+      1564
+     ],
+     [
+      1924,
+      1564
+     ],
+     [
+      1924,
+      1568
+     ],
+     [
+      1920,
+      1568
+     ]
+    ],
+    [
+     [
+      1916,
+      1568
+     ],
+     [
+      1920,
+      1568
+     ],
+     [
+      1920,
+      1572
+     ],
+     [
+      1916,
+      1572
+     ]
+    ],
+    [
+     [
+      1912,
+      1572
+     ],
+     [
+      1916,
+      1572
+     ],
+     [
+      1916,
+      1576
+     ],
+     [
+      1912,
+      1576
+     ]
+    ],
+    [
+     [
+      1900,
+      1580
+     ],
+     [
+      1912,
+      1580
+     ],
+     [
+      1912,
+      1584
+     ],
+     [
+      1900,
+      1584
+     ]
+    ],
+    [
+     [
+      1896,
+      1584
+     ],
+     [
+      1908,
+      1584
+     ],
+     [
+      1908,
+      1588
+     ],
+     [
+      1896,
+      1588
+     ]
+    ],
+    [
+     [
+      1892,
+      1588
+     ],
+     [
+      1904,
+      1588
+     ],
+     [
+      1904,
+      1592
+     ],
+     [
+      1892,
+      1592
+     ]
+    ],
+    [
+     [
+      1892,
+      1592
+     ],
+     [
+      1900,
+      1592
+     ],
+     [
+      1900,
+      1596
+     ],
+     [
+      1892,
+      1596
      ]
     ]
    ]
@@ -10964,9 +12177,9 @@
      "max": 310.0
     },
     "slope_degrees": {
-     "mean": 19.2,
-     "p90": 38.2,
-     "flat_under_5_pct": 9.0
+     "mean": 19.0,
+     "p90": 37.7,
+     "flat_under_5_pct": 9.9
     }
    },
    "boundaries": [
@@ -13298,6 +14511,96 @@
       4528,
       2328
      ]
+    ],
+    [
+     [
+      3884,
+      1856
+     ],
+     [
+      3892,
+      1856
+     ],
+     [
+      3892,
+      1860
+     ],
+     [
+      3884,
+      1860
+     ]
+    ],
+    [
+     [
+      3888,
+      1860
+     ],
+     [
+      3896,
+      1860
+     ],
+     [
+      3896,
+      1864
+     ],
+     [
+      3888,
+      1864
+     ]
+    ],
+    [
+     [
+      3892,
+      1864
+     ],
+     [
+      3900,
+      1864
+     ],
+     [
+      3900,
+      1868
+     ],
+     [
+      3892,
+      1868
+     ]
+    ],
+    [
+     [
+      3896,
+      1868
+     ],
+     [
+      3904,
+      1868
+     ],
+     [
+      3904,
+      1872
+     ],
+     [
+      3896,
+      1872
+     ]
+    ],
+    [
+     [
+      3900,
+      1872
+     ],
+     [
+      3904,
+      1872
+     ],
+     [
+      3904,
+      1876
+     ],
+     [
+      3900,
+      1876
+     ]
     ]
    ]
   },
@@ -14623,7 +15926,7 @@
     "slope_degrees": {
      "mean": 5.1,
      "p90": 11.5,
-     "flat_under_5_pct": 68.1
+     "flat_under_5_pct": 68.2
     }
    },
    "boundaries": [
@@ -14822,6 +16125,42 @@
       1768,
       3148
      ]
+    ],
+    [
+     [
+      1820,
+      2520
+     ],
+     [
+      1824,
+      2520
+     ],
+     [
+      1824,
+      2524
+     ],
+     [
+      1820,
+      2524
+     ]
+    ],
+    [
+     [
+      1816,
+      2524
+     ],
+     [
+      1824,
+      2524
+     ],
+     [
+      1824,
+      2528
+     ],
+     [
+      1816,
+      2528
+     ]
     ]
    ]
   },
@@ -14962,7 +16301,7 @@
    "display_name": "Foothill Woods",
    "parent": "viltri_woods",
    "measured": {
-    "area_km2": 1.944,
+    "area_km2": 1.945,
     "bounds": {
      "min_x": 1232,
      "min_z": 1528,
@@ -15391,6 +16730,114 @@
      [
       3356,
       2612
+     ]
+    ],
+    [
+     [
+      2964,
+      1784
+     ],
+     [
+      2972,
+      1784
+     ],
+     [
+      2972,
+      1788
+     ],
+     [
+      2964,
+      1788
+     ]
+    ],
+    [
+     [
+      2964,
+      1788
+     ],
+     [
+      2976,
+      1788
+     ],
+     [
+      2976,
+      1792
+     ],
+     [
+      2964,
+      1792
+     ]
+    ],
+    [
+     [
+      2968,
+      1792
+     ],
+     [
+      2980,
+      1792
+     ],
+     [
+      2980,
+      1796
+     ],
+     [
+      2968,
+      1796
+     ]
+    ],
+    [
+     [
+      2972,
+      1796
+     ],
+     [
+      2980,
+      1796
+     ],
+     [
+      2980,
+      1800
+     ],
+     [
+      2972,
+      1800
+     ]
+    ],
+    [
+     [
+      2724,
+      1920
+     ],
+     [
+      2732,
+      1920
+     ],
+     [
+      2732,
+      1924
+     ],
+     [
+      2724,
+      1924
+     ]
+    ],
+    [
+     [
+      1820,
+      2520
+     ],
+     [
+      1828,
+      2520
+     ],
+     [
+      1828,
+      2528
+     ],
+     [
+      1820,
+      2528
      ]
     ]
    ]
@@ -15835,6 +17282,60 @@
      [
       1460,
       4124
+     ]
+    ],
+    [
+     [
+      1596,
+      4076
+     ],
+     [
+      1604,
+      4076
+     ],
+     [
+      1604,
+      4080
+     ],
+     [
+      1596,
+      4080
+     ]
+    ],
+    [
+     [
+      1584,
+      4080
+     ],
+     [
+      1604,
+      4080
+     ],
+     [
+      1604,
+      4084
+     ],
+     [
+      1584,
+      4084
+     ]
+    ],
+    [
+     [
+      1584,
+      4084
+     ],
+     [
+      1592,
+      4084
+     ],
+     [
+      1592,
+      4088
+     ],
+     [
+      1584,
+      4088
      ]
     ]
    ]
@@ -16284,6 +17785,132 @@
       1936,
       3968
      ]
+    ],
+    [
+     [
+      1592,
+      4080
+     ],
+     [
+      1604,
+      4080
+     ],
+     [
+      1604,
+      4084
+     ],
+     [
+      1592,
+      4084
+     ]
+    ],
+    [
+     [
+      1584,
+      4084
+     ],
+     [
+      1600,
+      4084
+     ],
+     [
+      1600,
+      4088
+     ],
+     [
+      1584,
+      4088
+     ]
+    ],
+    [
+     [
+      1584,
+      4088
+     ],
+     [
+      1588,
+      4088
+     ],
+     [
+      1588,
+      4092
+     ],
+     [
+      1584,
+      4092
+     ]
+    ],
+    [
+     [
+      1508,
+      4448
+     ],
+     [
+      1512,
+      4448
+     ],
+     [
+      1512,
+      4452
+     ],
+     [
+      1508,
+      4452
+     ]
+    ],
+    [
+     [
+      1504,
+      4452
+     ],
+     [
+      1512,
+      4452
+     ],
+     [
+      1512,
+      4464
+     ],
+     [
+      1504,
+      4464
+     ]
+    ],
+    [
+     [
+      1508,
+      4464
+     ],
+     [
+      1512,
+      4464
+     ],
+     [
+      1512,
+      4472
+     ],
+     [
+      1508,
+      4472
+     ]
+    ],
+    [
+     [
+      1508,
+      4472
+     ],
+     [
+      1516,
+      4472
+     ],
+     [
+      1516,
+      4480
+     ],
+     [
+      1508,
+      4480
+     ]
     ]
    ]
   },
@@ -16308,7 +17935,7 @@
     "slope_degrees": {
      "mean": 6.5,
      "p90": 15.0,
-     "flat_under_5_pct": 53.4
+     "flat_under_5_pct": 53.3
     }
    },
    "boundaries": [
@@ -16527,6 +18154,78 @@
      [
       1372,
       4784
+     ]
+    ],
+    [
+     [
+      1404,
+      4740
+     ],
+     [
+      1416,
+      4740
+     ],
+     [
+      1416,
+      4744
+     ],
+     [
+      1404,
+      4744
+     ]
+    ],
+    [
+     [
+      1400,
+      4744
+     ],
+     [
+      1408,
+      4744
+     ],
+     [
+      1408,
+      4748
+     ],
+     [
+      1400,
+      4748
+     ]
+    ],
+    [
+     [
+      1396,
+      4748
+     ],
+     [
+      1408,
+      4748
+     ],
+     [
+      1408,
+      4752
+     ],
+     [
+      1396,
+      4752
+     ]
+    ],
+    [
+     [
+      1396,
+      4752
+     ],
+     [
+      1404,
+      4752
+     ],
+     [
+      1404,
+      4756
+     ],
+     [
+      1396,
+      4756
      ]
     ]
    ]
@@ -16893,6 +18592,168 @@
      [
       1372,
       4780
+     ]
+    ],
+    [
+     [
+      1504,
+      4452
+     ],
+     [
+      1508,
+      4452
+     ],
+     [
+      1508,
+      4456
+     ],
+     [
+      1504,
+      4456
+     ]
+    ],
+    [
+     [
+      1500,
+      4456
+     ],
+     [
+      1508,
+      4456
+     ],
+     [
+      1508,
+      4464
+     ],
+     [
+      1500,
+      4464
+     ]
+    ],
+    [
+     [
+      1504,
+      4464
+     ],
+     [
+      1508,
+      4464
+     ],
+     [
+      1508,
+      4472
+     ],
+     [
+      1504,
+      4472
+     ]
+    ],
+    [
+     [
+      1504,
+      4472
+     ],
+     [
+      1512,
+      4472
+     ],
+     [
+      1512,
+      4480
+     ],
+     [
+      1504,
+      4480
+     ]
+    ],
+    [
+     [
+      1508,
+      4480
+     ],
+     [
+      1512,
+      4480
+     ],
+     [
+      1512,
+      4484
+     ],
+     [
+      1508,
+      4484
+     ]
+    ],
+    [
+     [
+      1404,
+      4736
+     ],
+     [
+      1412,
+      4736
+     ],
+     [
+      1412,
+      4740
+     ],
+     [
+      1404,
+      4740
+     ]
+    ],
+    [
+     [
+      1400,
+      4740
+     ],
+     [
+      1412,
+      4740
+     ],
+     [
+      1412,
+      4744
+     ],
+     [
+      1400,
+      4744
+     ]
+    ],
+    [
+     [
+      1396,
+      4744
+     ],
+     [
+      1408,
+      4744
+     ],
+     [
+      1408,
+      4748
+     ],
+     [
+      1396,
+      4748
+     ]
+    ],
+    [
+     [
+      1396,
+      4748
+     ],
+     [
+      1404,
+      4748
+     ],
+     [
+      1404,
+      4752
+     ],
+     [
+      1396,
+      4752
      ]
     ]
    ]

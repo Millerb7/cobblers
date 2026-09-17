@@ -140,7 +140,7 @@ SCHEMAS = {
         "landmarks",
         ["id", "name", "kind", "anchor", "status"],
         {
-            "kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass",
+            "kind": {"rift", "mountain", "volcano", "island_chain", "coast", "lake", "pass", "installation",
                      "glacier", "moraine", "river", "basin", "marsh", "estuary", "ravine"},
             # built: in the terrain as intended; partial: present but under-delivered;
             # planned: a spec only. Nothing drops silently when terrain falls short.
@@ -1232,7 +1232,36 @@ def _check_major_head(rep, f, courses):
 
 CRITICAL_ROLES = {"hometown": 1, "gym_town": 8, "league": 1}
 OFF_PATH_RANGE = {"rest_stop": (100, 450), "major_town": (250, None), "outpost": (250, None)}
+# Landmark trees are outposts sited to be SEEN from a leg (data/foliage.json landmark_trees seen_from); the climb to them is the
+# discovery, so they may stand closer to the path than a settlement. The Patriarch is 247 blocks from Victory Road, painted into
+# the exported world, and sited on its Wedge crest for the Rift skyline: the rule relaxes rather than the tree moving.
+OFF_PATH_RANGE_BY_KIND = {"landmark_tree": (200, None)}
 SPACING = {"settlement": 600, "outpost": 300}
+OFF_PATH_STALE_BLOCKS = 2     # a recorded off-path distance further than this from the measured one is stale
+
+
+def _route_segments(routes_doc):
+    """Every (x0, z0, x1, z1) segment of every route polyline in data/routes.json, or None when there are none."""
+    segs = []
+    for r in (routes_doc or {}).get("routes") or []:
+        pts = [(p.get("x"), p.get("z")) for p in ((r.get("corridor") or {}).get("polyline") or [])
+               if isinstance(p, dict) and _num(p.get("x")) and _num(p.get("z"))]
+        segs += [(a[0], a[1], b[0], b[1]) for a, b in zip(pts, pts[1:])]
+    return segs or None
+
+
+def _distance_to_routes(segs, centre):
+    """Whole blocks from a centre to the nearest route polyline segment, or None when either is missing."""
+    if not segs or not isinstance(centre, dict) or not (_num(centre.get("x")) and _num(centre.get("z"))):
+        return None
+    x, z = centre["x"], centre["z"]
+    best = float("inf")
+    for ax, az, bx, bz in segs:
+        dx, dz = bx - ax, bz - az
+        den = dx * dx + dz * dz
+        t = 0.0 if not den else max(0.0, min(1.0, ((x - ax) * dx + (z - az) * dz) / den))
+        best = min(best, math.hypot(x - ax - t * dx, z - az - t * dz))
+    return round(best)
 
 
 def check_towns(ctx: Context):
@@ -1249,6 +1278,10 @@ def check_towns(ctx: Context):
         rep.skip("towns", "world.json has no export.border; town footprints were not checked against the border",
                  file=f.rel)
     seen, orders, counts = set(), set(), {}
+    route_segments = _route_segments(ctx.doc("routes.json"))
+    if route_segments is None:
+        rep.skip("towns", "data/routes.json has no route polylines; off-path distances were read from their records, not measured",
+                 file=f.rel)
     for t in towns:
         tid = t.get("id")
         line = f.line_of_id(tid)
@@ -1271,12 +1304,18 @@ def check_towns(ctx: Context):
             if t.get("gates"):
                 rep.error("towns", 'off-path "%s" gates progression (%s)' % (tid, t.get("gates")),
                           file=f.rel, line=line, where=tid)
-            lo, hi = OFF_PATH_RANGE.get(role, (250, None))
-            d = t.get("distance_from_critical_path_blocks")
+            lo, hi = OFF_PATH_RANGE_BY_KIND.get(t.get("kind"), OFF_PATH_RANGE.get(role, (250, None)))
+            recorded = t.get("distance_from_critical_path_blocks")
+            measured = _distance_to_routes(route_segments, t.get("centre"))
+            d = measured if measured is not None else recorded
             if not isinstance(d, (int, float)) or isinstance(d, bool) or d < lo or (hi is not None and d > hi):
-                rep.error("towns", '"%s" (%s) is %s blocks from the critical path; expected %s'
-                          % (tid, role, d, "%d-%d" % (lo, hi) if hi else "at least %d" % lo),
+                rep.error("towns", '"%s" (%s) is %s blocks from the critical path (%s); expected %s'
+                          % (tid, role, d, "measured on data/routes.json" if measured is not None else "recorded",
+                             "%d-%d" % (lo, hi) if hi else "at least %d" % lo),
                           file=f.rel, line=line, where=tid)
+            if measured is not None and (not isinstance(recorded, (int, float)) or abs(recorded - measured) > OFF_PATH_STALE_BLOCKS):
+                rep.error("towns", '"%s" records distance_from_critical_path_blocks %s but measures %s on data/routes.json: the '
+                          "record is stale" % (tid, recorded, measured), file=f.rel, line=line, where=tid)
         fp, c = t.get("footprint") or {}, t.get("centre") or {}
         try:
             if not (fp["min_x"] <= c["x"] <= fp["max_x"] and fp["min_z"] <= c["z"] <= fp["max_z"]):
@@ -2037,15 +2076,20 @@ def check_sculpt(ctx: Context):
         if not isinstance(pd, dict) or not isinstance(pd.get("site"), str) or not pd["site"]:
             err("%s needs a site (a data/towns.json id)" % w, "pads")
             continue
-        need(pd, {"y": "num", "radius": "nonneg", "feather": "pos"}, "pads.%s" % pd["site"], pd["site"])
+        # a pad is either pre-rescale (y, pressed by sculpt.py and carried through the rescale by press_pads.py) or
+        # post-rescale (pressed_y, pressed only by press_pads.py); exactly one of the two
+        level_key = "pressed_y" if pd.get("pressed_y") is not None else "y"
+        if pd.get("pressed_y") is not None and pd.get("y") is not None:
+            err("pads.%s has both y and pressed_y; a pad is either pre-rescale (y) or post-rescale (pressed_y)" % pd["site"], pd["site"], pd["site"])
+        need(pd, {level_key: "num", "radius": "nonneg", "feather": "pos"}, "pads.%s" % pd["site"], pd["site"])
         if pd["site"] in pad_sites:
             err('pad site "%s" is listed twice' % pd["site"], None, pd["site"])
         pad_sites.append(pd["site"])
         imp = (world or {}).get("import") if isinstance(world, dict) else None
-        if isinstance(imp, dict) and _num(pd.get("y")) and _num(imp.get("low_out")) and _num(imp.get("high_out")) \
-                and not imp["low_out"] <= pd["y"] <= imp["high_out"]:
-            err("pads.%s.y %s is outside the import range %s..%s" % (pd["site"], pd["y"], imp["low_out"],
-                                                                     imp["high_out"]), pd["site"], pd["site"])
+        if isinstance(imp, dict) and _num(pd.get(level_key)) and _num(imp.get("low_out")) and _num(imp.get("high_out")) \
+                and not imp["low_out"] <= pd[level_key] <= imp["high_out"]:
+            err("pads.%s.%s %s is outside the import range %s..%s" % (pd["site"], level_key, pd[level_key], imp["low_out"],
+                                                                      imp["high_out"]), pd["site"], pd["site"])
 
     # references: regions and sub-regions
     reg_path = ctx.data_dir / "regions.json"
