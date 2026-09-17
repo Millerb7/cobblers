@@ -247,12 +247,12 @@ trough 396 blocks wide rim to rim, with a floor that falls without counter-slope
 | **All ten cut courses** | **1,601,157 blocks**, 281,347 columns | 19.7 | |
 
 **A landmark and a barrier** (`major_river`, working name only; naming is yours).
-- **Sabrina to Blaine** is 2,021 blocks with a bridge over the outflow gorge at about
-  (6632, 3904).
-- **Without crossing** the river or the lake, the same leg is 9,496 blocks, back around the
-  river's head.
-- **Upstream it is a creek,** so the northern route (Surge → Erika) crosses it freely. The
-  barrier exists only where it is big.
+- **Sabrina to Blaine** (`route_07_sabrina_to_blaine`, roughly 2,050 blocks on the canonical routes) crosses at
+  the mandatory bridge waypoint (6632, 3904). It was 2,021 blocks in the 2026-09-14 routing.
+- **Without crossing** the river or the lake, the same leg was 9,496 blocks, back around the
+  river's head (2026-09-14 routing on 8-block cells; not re-measured).
+- **Upstream it is a creek.** The northern route (Surge → Erika, `route_04_surge_to_erika`) now passes
+  the river's head and records no water crossing at all. The barrier exists only where it is big.
 - **Not a hard wall:** 30 blocks of still water can be swum. What makes it a barrier is the
   detour and the drop to the water; a bridge or boat is the intended crossing.
 

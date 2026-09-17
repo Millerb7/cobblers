@@ -40,27 +40,9 @@
    "by": "user",
    "date": "2026-09-14",
    "text": "The League stays at the head of the Rift, in the overworld."
-  },
-  {
-   "id": "end_league_copies_disabled",
-   "by": "user",
-   "date": "2026-09-14",
-   "text": "Disable the Cobbleverse-generated League copies (cobbleverse:kanto_league) in the End."
-  },
-  {
-   "id": "end_access_post_game",
-   "by": "user",
-   "date": "2026-09-14",
-   "text": "End access is post-game."
-  },
-  {
-   "id": "critical_path_is_ten",
-   "by": "user",
-   "date": "2026-09-14",
-   "text": "The critical path stays at ten settlements; everything added is off the route and optional."
   }
  ],
- "method": "Sites from tools/find_sites.py's largest-square search on the river-cut heightmap, with lake and river water and a 24-block setback excluded; legs from a terrain-weighted route on 8-block cells (docs/world-building/TOWNS.md). Tools produce candidates; these are proposals for a human to accept.",
+ "method": "Sites from tools/find_sites.py's largest-square search on the river-cut heightmap, with lake and river water and a 24-block setback excluded; legs are the full-resolution terrain-weighted A* routes in data/routes.json (tools/build_routes.py); off-path distances, nearest_leg and every recorded height and slope are re-measured by tools/measure_towns.py and checked by tools/validate_data.py. Tools produce candidates; these are proposals for a human to accept.",
  "towns": [
   {
    "id": "hometown",
@@ -1329,10 +1311,10 @@
     "route_id": "route_06_koga_to_sabrina",
     "from": "gym5_town",
     "to": "gym6_town",
-    "at_fraction": 0.788,
+    "at_fraction": 0.798,
     "nearest_point": {
-     "x": 5887,
-     "z": 3149
+     "x": 5901,
+     "z": 3161
     }
    },
    "waystone": {
@@ -1441,7 +1423,7 @@
    "working_name": "The Displaced City",
    "display_name": null,
    "for": "A summit town the Worldshift moved into a cherry-grove cavern beneath the Glacial Tear: streets still laid out for a mountaintop, trees living on light that is not the sun. The region's great mystery; Regigigas is sealed beside it.",
-   "why_here": "Beneath the glacier rather than off a Rift side-chamber: the Rift now has a purpose (Victory Road to the League), while the glacier head has none on the path; Regigigas was already planned beneath the glacier; ice above a blossoming city below is the absurdity the spec asks for; and the Scar on Mt Vessu is 900 blocks away across the Merian cirque, so the two can be connected by sight and story. The surface site is the entrance on the trough's south-west flank.",
+   "why_here": "Beneath the glacier rather than off a Rift side-chamber: the Rift now has a purpose (Victory Road to the League), while the glacier head has none on the path; Regigigas was already planned beneath the glacier; ice above a blossoming city below is the absurdity the spec asks for; and the Scar on Mt Vessu is about 1,150 blocks away across the Merian cirque, so the two can be connected by sight and story. The surface site is the entrance on the trough's south-west flank.",
    "centre": {
     "x": 2969,
     "z": 1710,
@@ -1486,10 +1468,10 @@
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
     "to": "gym4_town",
-    "at_fraction": 0.497,
+    "at_fraction": 0.566,
     "nearest_point": {
-     "x": 3174,
-     "z": 1505
+     "x": 3172,
+     "z": 1507
     }
    },
    "waystone": {
@@ -1499,7 +1481,7 @@
    },
    "gates": [],
    "underground": {
-    "entrance": "the surface site: a meltwater cave mouth on the trough flank, 290 blocks off the Surge to Erika leg",
+    "entrance": "the surface site: a meltwater cave mouth on the trough flank, 287 blocks off the Surge to Erika leg",
     "cavern_centre": {
      "x": 3350,
      "z": 1750
@@ -1593,10 +1575,10 @@
     "route_id": "route_02_brock_to_misty",
     "from": "gym1_town",
     "to": "gym2_town",
-    "at_fraction": 0.065,
+    "at_fraction": 0.128,
     "nearest_point": {
-     "x": 1757,
-     "z": 3572
+     "x": 1767,
+     "z": 3517
     }
    },
    "waystone": {
@@ -1665,10 +1647,10 @@
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
     "to": "gym4_town",
-    "at_fraction": 0.343,
+    "at_fraction": 0.421,
     "nearest_point": {
      "x": 2813,
-     "z": 1290
+     "z": 1222
     }
    },
    "waystone": {
@@ -1738,10 +1720,10 @@
     "route_id": "route_07_sabrina_to_blaine",
     "from": "gym6_town",
     "to": "gym7_town",
-    "at_fraction": 0.606,
+    "at_fraction": 0.598,
     "nearest_point": {
-     "x": 6509,
-     "z": 4367
+     "x": 6531,
+     "z": 4358
     }
    },
    "waystone": {
@@ -1811,10 +1793,10 @@
     "route_id": "route_08_blaine_to_giovanni",
     "from": "gym7_town",
     "to": "gym8_town",
-    "at_fraction": 0.524,
+    "at_fraction": 0.525,
     "nearest_point": {
-     "x": 4711,
-     "z": 5564
+     "x": 4708,
+     "z": 5561
     }
    },
    "waystone": {
@@ -1888,10 +1870,10 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.63,
+    "at_fraction": 0.628,
     "nearest_point": {
-     "x": 4000,
-     "z": 3686
+     "x": 4007,
+     "z": 3678
     }
    },
    "waystone": {
@@ -1933,14 +1915,14 @@
     "max_x": 1111,
     "max_z": 5551,
     "ground_y": [
-     35.0,
-     36.0
+     38.3,
+     70.0
     ],
     "slope_degrees": {
-     "mean": 0.0,
-     "max": 0.0
+     "mean": 32.0,
+     "max": 86.2
     },
-    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks",
+    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks; that search read flat seabed. Heights and slope are now measured with the tools/islet.py islet laid over the seabed (built_ground)",
     "heightmap_seabed_y": [
      33.7,
      39.3
@@ -1977,12 +1959,13 @@
     "kind": "none"
    },
    "gates": [],
-   "buildability": "built island: the seabed here is y35, so about 35 blocks of fill for a 40-block islet (about 50,000 blocks); the spec's own function builds it",
+   "buildability": "built island: the seabed here is y34-39, so tools/islet.py raises a 61-block islet over it (2,628 columns, 1,413 above water, crown y70, about 72,900 blocks). The islet does not fill the recorded 40-block square: its corners are still sea, and the per-column relief is rough, so the Ash House needs a levelled pad",
    "sea_site": true,
    "nearest_settlement": {
     "id": "hometown",
     "distance_blocks": 440
-   }
+   },
+   "built_ground": "tools/islet.py"
   },
   {
    "id": "the_scar",
@@ -1991,9 +1974,9 @@
    "tier": "outpost",
    "critical_path": false,
    "status": "proposed",
-   "working_name": "The Scar (Mt Vessu summit)",
+   "working_name": "The Scar (Mt Vessu)",
    "display_name": null,
-   "for": "The empty footprint where the Displaced City stood: a bare flat summit with foundations and a road that ends at nothing.",
+   "for": "The empty footprint where the Displaced City stood: a bare scraped-flat table high on Mt Vessu, below its summit, with foundations and a road that ends at nothing.",
    "why_here": "Mt Vessu's old clipped summit plateau is kept as one deliberate flat: the sculpt pass (tools/sculpt.py) pressed the Scar to y194 below the old y200 summit; after the vertical rescale it is re-pressed at y280, 20 blocks under the y300 summit, and breaks the rest of the plateau into ridges. It is 624 blocks from Surge's shelf town and cannot be seen from it; Surge's side quest marks it on the map instead.",
    "centre": {
     "x": 2110,
@@ -2039,10 +2022,10 @@
     "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
     "to": "gym4_town",
-    "at_fraction": 0.091,
+    "at_fraction": 0.273,
     "nearest_point": {
-     "x": 2110,
-     "z": 1266
+     "x": 2370,
+     "z": 1301
     }
    },
    "waystone": {
@@ -2113,10 +2096,10 @@
     "route_id": "route_01_pallet_to_brock",
     "from": "hometown",
     "to": "gym1_town",
-    "at_fraction": 0.365,
+    "at_fraction": 0.405,
     "nearest_point": {
-     "x": 1470,
-     "z": 4651
+     "x": 1380,
+     "z": 4647
     }
    },
    "waystone": {
@@ -2184,10 +2167,10 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.741,
+    "at_fraction": 0.759,
     "nearest_point": {
-     "x": 3596,
-     "z": 3282
+     "x": 3581,
+     "z": 3175
     }
    },
    "waystone": {
@@ -2210,7 +2193,7 @@
    "working_name": "Frostpeak shrine",
    "display_name": null,
    "for": "A shrine on the lone summit of Frostpeak Point, reached over the low neck from the massif.",
-   "why_here": "The most remote corner of the mainland (1,461 blocks off the path): a summit worth climbing needs something on it.",
+   "why_here": "The most remote corner of the mainland (1,440 blocks off the path): a summit worth climbing needs something on it.",
    "centre": {
     "x": 682,
     "z": 380,
@@ -2257,8 +2240,8 @@
     "to": "gym3_town",
     "at_fraction": 1.0,
     "nearest_point": {
-     "x": 1847,
-     "z": 1262
+     "x": 1688,
+     "z": 1410
     }
    },
    "waystone": {
@@ -2326,10 +2309,10 @@
     "route_id": "route_08_blaine_to_giovanni",
     "from": "gym7_town",
     "to": "gym8_town",
-    "at_fraction": 0.871,
+    "at_fraction": 0.825,
     "nearest_point": {
-     "x": 3931,
-     "z": 6233
+     "x": 4043,
+     "z": 6161
     }
    },
    "waystone": {
@@ -2395,9 +2378,14 @@
    ],
    "distance_from_critical_path_blocks": 339,
    "nearest_leg": {
+    "route_id": "route_01_pallet_to_brock",
     "from": "hometown",
     "to": "gym1_town",
-    "at_fraction": 0.1
+    "at_fraction": 0.095,
+    "nearest_point": {
+     "x": 1468,
+     "z": 5116
+    }
    },
    "waystone": {
     "kind": "none"
@@ -2463,9 +2451,14 @@
    ],
    "distance_from_critical_path_blocks": 390,
    "nearest_leg": {
+    "route_id": "route_04_surge_to_erika",
     "from": "gym3_town",
     "to": "gym4_town",
-    "at_fraction": 0.41
+    "at_fraction": 0.479,
+    "nearest_point": {
+     "x": 2988,
+     "z": 1284
+    }
    },
    "waystone": {
     "kind": "none"
@@ -2531,9 +2524,14 @@
    ],
    "distance_from_critical_path_blocks": 247,
    "nearest_leg": {
+    "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.6
+    "at_fraction": 0.609,
+    "nearest_point": {
+     "x": 4076,
+     "z": 3751
+    }
    },
    "waystone": {
     "kind": "none"
@@ -2599,9 +2597,14 @@
    ],
    "distance_from_critical_path_blocks": 531,
    "nearest_leg": {
+    "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.69
+    "at_fraction": 0.688,
+    "nearest_point": {
+     "x": 3784,
+     "z": 3464
+    }
    },
    "waystone": {
     "kind": "none"
@@ -2667,9 +2670,14 @@
    ],
    "distance_from_critical_path_blocks": 861,
    "nearest_leg": {
+    "route_id": "route_07_sabrina_to_blaine",
     "from": "gym6_town",
     "to": "gym7_town",
-    "at_fraction": 0.79
+    "at_fraction": 0.863,
+    "nearest_point": {
+     "x": 6249,
+     "z": 4785
+    }
    },
    "waystone": {
     "kind": "none"
@@ -2701,5 +2709,5 @@
   "victory_road_blocks": 5248,
   "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
  },
- "measurement_note": "2026-09-16: every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees re-measured on the canonical rescaled heightmap a69df9e3 with find_sites' own slope (terrain.slope_degrees), at the recorded footprints. Sites were NOT re-searched: siting is an authored decision. Previously computed from a69df9e3. On ground below y145 the method reproduces the recorded ranges exactly; three sites above it no longer meet their footprint basis and carry site_review. Re-measured on a69df9e3 after tools/press_pads.py re-pressed the Scar and the Frostpeak shrine. Re-measured on 5b963567 after the Surge shelf was pressed (tools/press_pads.py)."
+ "measurement_note": "Every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees are measured on the canonical heightmap 5b963567 (the rescale plus the three tools/press_pads.py pads) with find_sites' own slope (terrain.slope_degrees), at the recorded footprints, by tools/measure_towns.py; a town with built_ground is measured with that tool's surface laid over the heightmap. Sites were NOT re-searched: siting is an authored decision. A site that no longer meets its footprint basis carries site_review (tableland_stop, max slope 5.8 against under 5)."
 }

@@ -5,7 +5,8 @@ designs()  the giants as structure builders, one per landmark (seeded, so they r
            tools/foliage_objects.py generate writes them to kits/structures/foliage/.
 check      for each site in data/foliage.json landmark_trees, cast sightlines to the crown from the points it
            is meant to draw people from (critical-path legs, a clearing edge, the sea), over terrain plus the
-           planned canopy (build/paint/canopy.npz from tools/paint_maps.py), and report what can see it.
+           planned canopy (build/paint/canopy.npz from tools/paint_maps.py), and report what can see it. Legs are
+           the data/routes.json polylines unless --legs names another file of {"legs": [{from, to, polyline}]}.
 candidates rank sites for a kind (route, clearing, ridge, headland) by how much of the target they are
            seen from. A human picks: the chosen sites are written into data/foliage.json by hand.
 
@@ -309,6 +310,12 @@ def leg_points(legs_doc, names, spacing=48):
     return pts
 
 
+def legs_from_routes(routes_doc):
+    """data/routes.json as a legs document: one {from, to, polyline [[x, z], ...]} per critical route."""
+    return {"legs": [{"from": r["from_town"], "to": r["to_town"],
+                      "polyline": [[p["x"], p["z"]] for p in r["corridor"]["polyline"]]} for r in routes_doc["routes"]]}
+
+
 def ring_points(site, radius, n=24):
     return [(site[0] + math.cos(2 * math.pi * k / n) * radius, site[1] + math.sin(2 * math.pi * k / n) * radius) for k in range(n)]
 
@@ -390,7 +397,7 @@ def main(argv=None):
         s = sub.add_parser(name)
         T.add_common_args(s)
         s.add_argument("--foliage", default=str(ROOT / "data" / "foliage.json"))
-        s.add_argument("--legs", default=str(ROOT / "derived" / "routes" / "critical_legs.json"))
+        s.add_argument("--legs", default=None, help="legs file; default: the data/routes.json polylines")
         s.add_argument("--canopy", default=str(ROOT / "build" / "paint" / "canopy.npz"))
         s.add_argument("--library", default=str(ROOT / "kits" / "structures" / "foliage" / "library.json"))
         if name == "candidates":
@@ -403,13 +410,17 @@ def main(argv=None):
     a = p.parse_args(argv)
     heights, world = T.load_from_args(a)
     surface = _surface(heights, a.canopy)
-    legs_doc = json.loads(Path(a.legs).read_text(encoding="utf-8"))
+    if a.legs:
+        legs_doc = json.loads(Path(a.legs).read_text(encoding="utf-8"))
+    else:
+        legs_doc = legs_from_routes(json.loads((ROOT / "data" / "routes.json").read_text(encoding="utf-8")))
     if a.cmd == "check":
         doc = json.loads(Path(a.foliage).read_text(encoding="utf-8"))
         lib = json.loads(Path(a.library).read_text(encoding="utf-8"))
         rows = check(doc, heights, surface, legs_doc, lib)
         out = a.out or str(ROOT / "derived" / "foliage" / "landmark_sightlines.json")
         T.write_json(out, {"generator": "tools/landmark_trees.py check", "canopy": a.canopy if Path(a.canopy).exists() else None,
+                           "legs": a.legs or "data/routes.json",
                            "provenance": T.provenance(world, Path(a.world)), "landmarks": rows})
         print(json.dumps(rows, indent=1))
     else:

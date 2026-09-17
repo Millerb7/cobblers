@@ -216,6 +216,19 @@ does not grade its own work.
 - Never push or merge to `main`, never force-push, never amend a pushed
   commit. Hand over with a draft PR (`open-pr` skill); marking it ready is a
   human act.
+- **A reported PR's branch is frozen.** Once a PR is reported to the user or is
+  open for merging, push nothing more to its branch: further work goes on a new
+  branch (stacked on it if it depends on it) with its own PR. Before any push,
+  check the branch's PR state (`gh pr view --json state`); if it is open or
+  merged, branch off instead. (2026-09-16: PR #17 merged while six more commits
+  were still being pushed to its branch, and main silently lacked them.)
+- **Pin every merge to the reported head.** Report each PR with its full head
+  SHA and the command `gh pr merge <N> --match-head-commit <sha>`, so a merge
+  cannot pick up commits the report did not cover.
+- **Verify main before dependent work.** Before starting work that depends on a
+  merged PR, confirm the expected commit is on main
+  (`git fetch` then `git merge-base --is-ancestor <sha> origin/main`); a PR
+  marked merged is not proof that main has its final commits.
 
 ## Verify before claiming
 
