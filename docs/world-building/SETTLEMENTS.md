@@ -1,6 +1,6 @@
 # Settlements off the critical path
 
-**Status: proposed, 2026-09-14.**
+**Status: proposed, 2026-09-14; distances re-measured on the regenerated routes 2026-09-16.**
 - **Data:** `data/towns.json`, alongside the ten critical towns ([`TOWNS.md`](TOWNS.md)).
 - **Nothing is built.**
 - **Validated by `tools/validate_data.py`:**
@@ -39,27 +39,32 @@ In `data/towns.json` `decisions` and
 - **Sites:** `tools/find_sites.py`'s largest-square search on the imported river-cut
   heightmap, at least 24 blocks from lake and river water. The slope limit is 5° where a big
   enough square exists, otherwise 8°, and 10° for outposts.
-- **Distance from the critical path:** measured to the routed legs, the terrain-weighted
-  paths between consecutive critical towns (the same routing as `TOWNS.md`), not to straight
-  lines. Giovanni → League is measured along Victory Road as authored: up the Rift's
-  south-west arm and trunk, 4,953 blocks. The shortest route (4,038) crosses the plains
-  beside the Rift instead, and measuring against it would have put the Rift rim post on top of
-  Victory Road.
+- **Distance from the critical path:** measured to the routed legs in `data/routes.json`, the
+  full-resolution terrain-weighted paths between consecutive critical towns, not to straight
+  lines. `tools/validate_data.py` re-measures every recorded off-path distance against those
+  polylines and fails when a record is more than 2 blocks stale. Giovanni → League is measured
+  along Victory Road as authored (`victory_road`, roughly 5,200 blocks up the Rift's south-west
+  arm and trunk). The shortest route crosses the plains beside the Rift instead; it was 4,038
+  blocks in the 2026-09-14 routing. Measuring against it would have put the Rift rim post on top
+  of Victory Road.
+- **Figures below** are rounded from `data/towns.json` at the 2026-09-16 regeneration. Leg
+  lengths are approximate and name their route ID.
 - **Spacing rules** (enforced by the validator):
   - towns and rest stops at least 600 blocks apart;
   - an outpost at least 300 from anything.
-  - **Closest pairs:** the Displaced City to Merian hut at 628; Surge's town to the Scar at 408
-    and the hometown to Relic Island at 440, both on purpose, as sightlines.
+  - **Closest pairs:** the Displaced City to Merian hut at 628; the hometown to Relic Island at
+    440, on purpose, as a sightline. Surge's town to the Scar was 408 and a sightline; since
+    Surge moved to the shelf it is 624, and the Scar cannot be seen from the town.
 
 ## Major non-gym towns
 
 | Town | Centre | Site | Off path | Nearest | Waystone |
 | --- | --- | --- | ---: | --- | --- |
-| **Sunset West** (harbour) | (1716, 7298) | 408², y104–123, ≤8° | 2,022 | Relic Island 1,873 | discovery |
-| **Northlight** (South Pine Isle) | (7265, 1556) | 231², y111–124, ≤8° | 2,108 | Sabrina's town 2,130 | discovery |
-| **Mining Town** (East Cones) | (6633, 5716) | 227², y132–144, ≤8° | 903 | Blaine's town 912 | none |
-| **The Displaced City** (entrance) | (2969, 1710) | 132², y117–127, ≤8° | 426 | Merian hut 628 | discovery, inside the city |
-| **Tea town** (Shrew Lake shores) | (2654, 3605) | 248², y107–116, ≤8° | 898 | Rift dig camp 538 | none |
+| **Sunset West** (harbour) | (1716, 7298) | 408², y104–123, ≤8° | 2,021 | Relic Island 1,873 | discovery |
+| **Northlight** (South Pine Isle) | (7265, 1556) | 231², y111–124, ≤8° | 2,106 | Sabrina's town 2,130 | discovery |
+| **Mining Town** (East Cones) | (6633, 5716) | 227², y132–144, ≤8° | 905 | Blaine's town 912 | none |
+| **The Displaced City** (entrance) | (2969, 1710) | 132², y117–127, ≤8° | 287 | Merian hut 628 | discovery, inside the city |
+| **Tea town** (Shrew Lake shores) | (2654, 3605) | 248², y107–116, ≤8° | 891 | Rift dig camp 538 | none |
 
 **Sunset West: the region's harbour.**
 - **What it is for:** a fishing and boat-building port where players charter boats to the outer
@@ -110,8 +115,8 @@ In `data/towns.json` `decisions` and
     it had nowhere to go.
   - **Regigigas** was already planned beneath the glacier.
   - **The absurdity:** ice above, a blossoming city below.
-  - **The Scar** (below) is 900 blocks away across the Merian cirque, so the two connect by
-    sight and story.
+  - **The Scar** (below) is about 1,150 blocks away in a straight line, across the Merian
+    cirque, so the two connect by sight and story.
 - **Entrance:** a meltwater cave on the trough's south-west flank, at the site above.
 - **Cavern:** centred on (3350, 1750), 200 × 200 blocks, y32–72.
   - The ground above is y96 or higher, and the major river's bed nearby is about y98, so at
@@ -134,45 +139,47 @@ In `data/towns.json` `decisions` and
   - it is the only cherry-grove country on the map;
   - the tea house was already the recommended home for Poltchageist
     (`STRUCTURE_DATA_FALLOUT.md`);
-  - it is 898 blocks off Victory Road and 911 from Brock, so found by wandering.
+  - it is about 890 blocks off the Brock-to-Misty road (`route_02_brock_to_misty`) and 911 from
+    Brock, so found by wandering.
 
 ## Rest stops
 
-**All four are optional.** Each is 180–365 blocks off its leg: visible from the route, but
-not on it. A player who walks past loses only the convenience.
+**All four are optional.** Each is roughly 120–390 blocks off its leg (the validator's range is
+100–450): visible from the route, but not on it. A player who walks past loses only the convenience.
 
 | Rest stop | Centre | Site | Leg (how far along) | Off path | Nearest | Waystone |
 | --- | --- | --- | --- | ---: | --- | --- |
-| **Merian hut** | (2813, 1102) | 237², y107–109, ≤5° | Surge → Erika, 2,640 (39%) | 182 | Displaced City 628 | discovery |
-| **Gorge hamlet** | (6814, 4367) | 181², y109–115, ≤5° | Sabrina → Blaine, 2,021 (60%) | 330 | Blaine's town 971 | discovery |
-| **Tableland stop** | (4876, 5729) | 198², y158–162, ≤5° | Blaine → Giovanni, 3,055 (56%) | 235 | Blaine's town 1,405 | discovery |
-| **Rift rim post** | (3734, 3951) | 123², y138–143, ≤5° | Giovanni → League, Victory Road 4,953 | 365 | Rift dig camp 895 | discovery |
+| **Merian hut** | (2813, 1102) | 237², y107–109, ≤5° | Surge → Erika, `route_04_surge_to_erika` (42%) | 120 | Displaced City 628 | discovery |
+| **Gorge hamlet** | (6814, 4367) | 181², y109–115, ≤5° | Sabrina → Blaine, `route_07_sabrina_to_blaine` (60%) | 283 | Blaine's town 971 | discovery |
+| **Tableland stop** | (4876, 5729) | 198², y158–164, ≤5° | Blaine → Giovanni, `route_08_blaine_to_giovanni` (53%) | 238 | Blaine's town 1,405 | discovery |
+| **Rift rim post** | (3734, 3951) | 123², y138–143, ≤5° | Giovanni → League, `victory_road` (63%) | 386 | Rift dig camp 895 | discovery |
 
 - **Merian hut:** an alpine hut in the cirque at the major river's source.
-- **Gorge hamlet:** bridge-keepers above the Tilpey outflow gorge, on the far bank, 330 blocks
-  from the crossing. Its NPC knows the river.
+- **Gorge hamlet:** bridge-keepers above the Tilpey outflow gorge, on the far bank, about 500
+  blocks in a straight line from the bridge waypoint at (6632, 3904). Its NPC knows the river.
 - **Tableland stop:** a waystation, prospector's house and lookout on the badlands plateau top,
   high enough to be seen from below.
 - **Rift rim post:** a rangers' post on the rim above the fork. It is the traditional Center
   before Victory Road, but placed off the road, so players climb out to rest and Victory Road
   stays unbroken.
 
-**Is any leg too long to play without a stop? No.** The longest is Giovanni → League: 4,038
-blocks by the shortest route, or 4,953 up the Rift as Victory Road. That length is Victory
-Road itself. At a sprint (about 5.6 blocks per second) it is about 15 minutes, less on a
-ridden Pokémon. If it plays too long, the fix is the route:
+**Is any leg too long to play without a stop? No.** The longest is Giovanni → League: Victory
+Road (`victory_road`), roughly 5,200 blocks up the Rift. That length is Victory Road itself.
+At a sprint (about 5.6 blocks per second) it is about 16 minutes, less on a ridden Pokémon. The
+longest gym leg, `route_04_surge_to_erika`, is roughly 3,500 blocks, about 10 minutes, with the
+Merian hut on it. If it plays too long, the fix is the route:
 start Victory Road at the Rift's south-west tip, 1,122 blocks from Giovanni. Not a town.
 
 ## Outposts
 
 | Outpost | Centre | Site | Off path | Nearest | What it is for |
 | --- | --- | --- | ---: | --- | --- |
-| **Relic Island** (Ash House) | (1092, 5532) | sea, seabed y35 | 439 | hometown 440 | The F4 worldshift fragment: a Pallet starter home on a torn-off islet, visible from the hometown's coast |
-| **The Scar** | (2110, 950) | 301², y200, flat | 310 | Surge's town 408 | Where the Displaced City stood: foundations and a road that ends at nothing, on Mt Vessu's summit above Surge's town |
-| **Viltri Light** | (550, 4518) | 12², y66–70 | 928 | Relic Island 1,150 | A lighthouse over the Mouth of Viltri, an estuary no river uses any more |
-| **Rift dig camp** | (3106, 3314) | 121², y87–102, ≤9° | 491 | tea town 538 | Archaeologists excavating the steel chamber (Registeel) in the Rift's dead-end west spur |
-| **Frostpeak shrine** | (682, 380) | 111², y200, flat | 1,458 | Surge's town 1,461 | A shrine on the lone summit of the most remote corner of the mainland |
-| **Jungle Isle ruins** | (5160, 7463) | 301², y120–134, ≤8° | 1,736 | Tableland stop 1,757 | Overgrown ruins and a cache that reward the boat trip without adding a town |
+| **Relic Island** (Ash House) | (1092, 5532) | built islet, ground y63–70 over seabed y35 | 440 | hometown 440 | The F4 worldshift fragment: a Pallet starter home on a torn-off islet, visible from the hometown's coast |
+| **The Scar** | (2110, 950) | 301², pressed pad y280 (ground y264–280) | 437 | Surge's town 624 | Where the Displaced City stood: foundations and a road that ends at nothing, high on Mt Vessu. It cannot be seen from Surge's town; his road survey points to it |
+| **Viltri Light** | (550, 4518) | 12², y66–70 | 840 | Relic Island 1,150 | A lighthouse over the Mouth of Viltri, an estuary no river uses any more |
+| **Rift dig camp** | (3106, 3314) | 121², y87–102, ≤9° | 495 | tea town 538 | Archaeologists excavating the steel chamber (Registeel) in the Rift's dead-end west spur |
+| **Frostpeak shrine** | (682, 380) | 111², pressed pad y310 (ground y306–310) | 1,440 | Surge's town 1,440 | A shrine on the lone summit of the most remote corner of the mainland |
+| **Jungle Isle ruins** | (5160, 7463) | 301², y120–134, ≤8° | 1,715 | Tableland stop 1,757 | Overgrown ruins and a cache that reward the boat trip without adding a town |
 
 ### Landmark trees (outposts added by the foliage pass)
 
@@ -183,10 +190,10 @@ and no gate. The foliage paint places them; each keeps a glade clear. Sites, wha
 | Landmark tree | Centre | Kind | Off path | Nearest |
 | --- | --- | --- | ---: | --- |
 | The Great Oak | (1800, 5184) | visible from a route | 339 | hometown 355 |
-| The Sentinel | (3264, 1008) | a clearing worth finding | 396 | Merian hut 461 |
-| The Patriarch | (4272, 3600) | ridge | 266 | Rift rim stop 642 |
-| The Cherry Elder | (3408, 3840) | vale | 523 | Rift rim stop 344 |
-| The Weeping Elder | (5640, 4176) | lake island (headland) | 762 | gym 7's town 927 |
+| The Sentinel | (3264, 1008) | a clearing worth finding | 390 | Merian hut 461 |
+| The Patriarch | (4272, 3600) | ridge | 247 | Rift rim stop 642 |
+| The Cherry Elder | (3408, 3840) | vale | 531 | Rift rim stop 344 |
+| The Weeping Elder | (5640, 4176) | lake island (headland) | 861 | gym 7's town 927 |
 
 With them the outposts number 11, and the map has 30 places.
 
@@ -194,8 +201,8 @@ With them the outposts number 11, and the map has 30 places.
 
 | Site | Condition | What it means |
 | --- | --- | --- |
-| Relic Island | built in the sea | about 35 blocks of fill from the seabed for a 40-block islet, roughly 50,000 blocks; the F4 spec's own function builds it |
-| The Scar, Frostpeak shrine | summits flat because the terrain is clipped at y200 | right for a scar that should look scraped flat; fine for a shrine |
+| Relic Island | built in the sea | `tools/islet.py` builds the islet: 2,628 columns, 1,413 above water, crown y70, about 72,900 blocks (`data/towns.json` ground note) |
+| The Scar, Frostpeak shrine | the rescale removed the clipped y200 flats; both are now pads pressed by `tools/press_pads.py` (Scar y280, shrine y310), feathered at the edges | right for a scar that should look scraped flat; fine for a shrine. The pads are on the canonical heightmap, not yet in the live world |
 | Viltri Light | the coast here is low and falls to the sea (to 19° across its pad) | a small raised platform for the tower |
 | Rift dig camp | 15 blocks of relief where the spur floor meets its wall | a camp that terraces |
 | Mining Town, Northlight | 12–13 blocks of relief | terracing, which suits both |

@@ -1,6 +1,6 @@
 # Narrative Arc
 
-**Status:** Approved arc, revised 2026-09-15. Main-story dialogue and quest
+**Status:** Approved arc, revised 2026-09-16 against the regenerated data. Main-story dialogue and quest
 schemas remain on hold. Side-content proposals are in `SIDEQUESTS.md` and
 `SIDE_EVENTS.md`.
 
@@ -29,23 +29,24 @@ and `rift_crisis_resolved` after Hoopa is released at the Rift. This document
 defines their meaning; a later schema pass must add their concrete setters and
 chapter dependencies to `data/progression.json`.
 
-Victory Road is **5,157 blocks**, measured along the terrain-derived path
-through the Rift. `data/routes.json` and `data/towns.json` now use the same
-computed length.
+Route lengths in this document are approximate and named by route ID.
+`data/routes.json` holds the measured figure for every leg; when prose and data
+disagree, the data wins. Victory Road (`victory_road`) runs roughly 5,200
+blocks along the terrain-derived path through the Rift.
 
 ## Fixed path
 
 | Order | Stable ID | Working place | Centre | Required progression |
 | ---: | --- | --- | --- | --- |
-| 0 | `hometown` | Pallet Town | (1462, 116, 5293) | Start |
+| 0 | `hometown` | Pallet Town | (1462, 117, 5293) | Start |
 | 1 | `gym1_town` | Brock's town, Viltri Plateau | (1743, 138, 3628) | Sets `gym1_cleared` |
-| 2 | `gym2_town` | Misty's town, Lake Viltri Hollow | (1605, 107, 2801) | Sets `gym2_cleared` |
-| 3 | `gym3_town` | Surge's town, Mt Vessu | (1847, 190, 1262) | Sets `gym3_cleared` |
-| 4 | `gym4_town` | Erika's town, Peak Pond Hollow | (4309, 110, 1555) | Sets `gym4_cleared` |
-| 5 | `gym5_town` | Koga's town, Glacier Foot Fields | (4646, 118, 2446) | Sets `gym5_cleared` |
-| 6 | `gym6_town` | Sabrina's town, Tilpey North Shore | (6196, 95, 3398) | Sets `gym6_cleared` |
-| 7 | `gym7_town` | Blaine's town, Crater north-west rim | (6074, 108, 4995) | Sets `crater_operation_stopped`, then `gym7_cleared` |
-| 8 | `gym8_town` | Giovanni's town, South Strand | (3647, 112, 6497) | Sets `gym8_cleared` |
+| 2 | `gym2_town` | Misty's town, Lake Viltri Hollow | (1605, 108, 2801) | Sets `gym2_cleared` |
+| 3 | `gym3_town` | Surge's town, Tri Peaks shelf below Mt Vessu | (1688, 174, 1410) | Sets `gym3_cleared` |
+| 4 | `gym4_town` | Erika's town, Peak Pond Hollow | (4309, 111, 1555) | Sets `gym4_cleared` |
+| 5 | `gym5_town` | Koga's town, Glacier Foot Fields | (4646, 117, 2446) | Sets `gym5_cleared` |
+| 6 | `gym6_town` | Sabrina's town, Tilpey North Shore | (6196, 94, 3398) | Sets `gym6_cleared` |
+| 7 | `gym7_town` | Blaine's town, Crater north-west rim | (6074, 107, 4995) | Sets `crater_operation_stopped`, then `gym7_cleared` |
+| 8 | `gym8_town` | Giovanni's town, South Strand | (3647, 113, 6497) | Sets `gym8_cleared` |
 | 9 | `league` | Pokemon League, Rift head | (3297, 118, 2603) | Requires `rift_crisis_resolved`; sets `champion_cleared` |
 
 Coordinates are rounded from the measured town centres for readability. They
@@ -124,7 +125,7 @@ Rift confrontation releases Hoopa before the League challenge begins.
 
 The terrain data supplies the League footprint and nearby Rift, but no chamber
 or exact underground Y coordinate. That required build is recorded as a
-geography gap. Its entrance must lie on the 5,157-block Victory Road and cannot
+geography gap. Its entrance must lie on Victory Road (`victory_road`) and cannot
 require an optional settlement.
 
 ## Gym-leader reconciliation
@@ -144,7 +145,9 @@ Their proposed civic roles support the geography and arc:
 
 - Brock is a plateau builder and practical emergency coordinator.
 - Misty manages a lake town accustomed to rescues and water travel.
-- Surge maintains power, signals, and storm-facing equipment on Mt Vessu.
+- Surge maintains power, signals, and storm-facing equipment. His town sits
+  on a shelf at the foot of Mt Vessu; his signal array stands on a Vessu
+  shoulder above it.
 - Erika protects Peak Pond Hollow and mediates between residents and arrivals.
 - Koga tracks covert movement through the marsh and glacier-foot country.
 - Sabrina studies the Rift's effects on memory, perception, and Pokémon.
@@ -160,7 +163,7 @@ These roles are story proposals. They do not change trainer teams or structures.
 
 **Ground truth**
 
-- Centre: (1462, 116, 5293), in `pallet_meadows` / `pallet_fields`.
+- Centre: (1462, 117, 5293), in `pallet_meadows` / `pallet_fields`.
 - The first route runs north through the plains toward `gym1_town`.
 - The coast lies nearby. `river_of_shrews` is 605 blocks away.
 - Optional `relic_island` is the nearest settlement, 440 blocks away, but it
@@ -211,7 +214,8 @@ required at Brock's town.
 **Ground truth**
 
 - Centre: (1743, 138, 3628), in `viltri_plateau` / `viltri_woods`.
-- Route from Pallet: 1,792 blocks; no water crossing.
+- Route from Pallet: `route_01_pallet_to_brock`, roughly 2,000 blocks, pinned
+  through the Route 1 maze forest; no water crossing.
 - Nearby: `viltri_ravine` 455 blocks, `lake_viltri` 573 blocks, and
   `viltris_path` 664 blocks.
 - Defeating Brock sets `gym1_cleared`.
@@ -252,8 +256,9 @@ aid through Lake Viltri. This is a practical lead, not a lore assignment.
 
 **Ground truth**
 
-- Centre: (1605, 107, 2801), in `lake_viltri_hollow` / `viltri_woods`.
-- Route from Brock: 946 blocks, with no water crossing.
+- Centre: (1605, 108, 2801), in `lake_viltri_hollow` / `viltri_woods`.
+- Route from Brock: `route_02_brock_to_misty`, roughly 950 blocks, with no
+  water crossing.
 - `lake_viltri` is 86 blocks away; `viltri_ravine` is 195 blocks away;
   `viltris_path` is 242 blocks away.
 - Defeating Misty sets `gym2_cleared`.
@@ -275,10 +280,11 @@ Misty treats the arrivals as people in danger while keeping control of her
 shore. She does not ask the player to choose a side. Her gym tests whether the
 player can act under pressure without turning frightened people into enemies.
 
-After `gym2_cleared`, evidence from the lake records points north: the same
-distinct pulse seen when Pallet arrived has been detected around Mt Vessu. The
-route to Surge follows the terrain-derived 1,989-block path through Foothill Woods, Mt Clay,
-and Mt Vessu without a water crossing.
+After `gym2_cleared`, evidence from the lake records points north: Surge's
+signal array on Mt Vessu has logged the same distinct pulse seen when Pallet
+arrived, and his relayed readings sit in Misty's files. The route to Surge
+(`route_03_misty_to_surge`, roughly 2,100 blocks) climbs through Foothill Woods,
+Mt Clay, Mt Vessu, and the Tri Peaks without a water crossing.
 
 **Knowledge state after the gym**
 
@@ -291,21 +297,32 @@ and Mt Vessu without a water crossing.
 
 This is the sympathy beat. Opposition comes later.
 
-## Settlement 4: `gym3_town` — Surge on Mt Vessu
+## Settlement 4: `gym3_town` — Surge below Mt Vessu
 
 **Ground truth**
 
-- Centre: (1847, 190, 1262), in `mt_vessu` / `tri_peaks`.
-- Route from Misty: 1,989 blocks through Foothill Woods, Mt Clay, and Mt
-  Vessu; no water crossing.
-- `tri_peaks` is 35 blocks away and `mt_vessu` 47 blocks away.
-- Optional `the_scar` is 408 blocks from town.
+- Centre: (1688, 174, 1410), in `the_tri_peaks` / `tri_peaks`: a shelf on the
+  south flank where the Tri Peaks meet Mt Vessu. The town is at the mountain's
+  foot, not on it.
+- Route from Misty: `route_03_misty_to_surge`, roughly 2,100 blocks through
+  Foothill Woods, Mt Clay, Mt Vessu, and the Tri Peaks; no water crossing. It
+  is a sustained ascent of roughly 80 blocks with no step steeper than 35
+  degrees.
+- Surge's signal array (`surge_signal_array`, planned) stands at
+  (1928, 284, 1248) on a Mt Vessu shoulder, roughly 290 blocks from town and
+  about 110 blocks above it. Its maintenance climb is not on the critical path
+  and needs authored stairs or terracing.
+- Arrival: over the last stretch of the route, the shelf lip opens onto the
+  summits. This is a scenery moment with no beat attached.
+- Optional `the_scar` is roughly 620 blocks from town and cannot be seen from
+  it.
 - Defeating Surge sets `gym3_cleared`.
 
 **Required sequence**
 
 Surge's instruments establish the next fact without explaining the whole
-system: the transfer pulse is not natural noise. It contains repeated timing
+system. The array on the shoulder above town feeds its readings down to his
+records: the transfer pulse is not natural noise. It contains repeated timing
 and direction changes. Someone is triggering and steering it.
 
 A faction team in town attempts to recover or disable records before Surge can
@@ -329,7 +346,7 @@ rescue beacon, or both.
 
 **Optional echo**
 
-`the_scar` at (2110, 200, 950) is not required. Players who climb there see
+`the_scar` at (2110, 280, 950) is not required. Players who climb there see
 the empty summit footprint and a road ending at nothing. That discovery lets
 them infer a second town-scale exchange before the critical path confirms it.
 Players who skip it learn the same required fact later.
@@ -338,12 +355,14 @@ Players who skip it learn the same required fact later.
 
 **Ground truth**
 
-- Centre: (4309, 110, 1555), in `peak_pond_hollow` /
+- Centre: (4309, 111, 1555), in `peak_pond_hollow` /
   `northern_downs`.
-- Route from Surge: 2,907 blocks through Mt Clay, Merian Cirque, the Crags,
-  Upper Trough, and Peak Pond Hollow.
+- Route from Surge: `route_04_surge_to_erika`, roughly 3,500 blocks back
+  across Mt Vessu and Mt Clay, then through Merian Cirque, the Crags, Upper
+  Trough, and Peak Pond Hollow; no water crossing.
 - `peak_pond` is 129 blocks away; `peak_pond_creek` is 297 blocks away.
-- The major river is still a crossable headwater in this northern leg.
+- The major river is still only a headwater in this northern leg; the measured
+  route records no water crossing.
 - Defeating Erika sets `gym4_cleared`.
 
 **Required sequence**
@@ -391,10 +410,10 @@ Marsh Country.
 
 **Ground truth**
 
-- Centre: (4646, 118, 2446), in `glacier_foot_fields` /
+- Centre: (4646, 117, 2446), in `glacier_foot_fields` /
   `marsh_country`.
-- Route from Erika: 1,038 blocks south through the North-East Downs to
-  Glacier Foot Fields.
+- Route from Erika: `route_05_erika_to_koga`, roughly 1,050 blocks south
+  through the North-East Downs to Glacier Foot Fields.
 - `glacial_tear` and `marshy_marsh` are each 311 blocks away;
   `major_river` is 507 blocks away.
 - Defeating Koga sets `gym5_cleared`.
@@ -434,10 +453,10 @@ river, and lake can be compared.
 
 **Ground truth**
 
-- Centre: (6196, 95, 3398), in `tilpey_north_shore` /
+- Centre: (6196, 94, 3398), in `tilpey_north_shore` /
   `tilpey_lakeland`.
-- Route from Koga: 1,944 blocks through Glacier Foot Fields and Marsh Creek
-  to Tilpey's north shore.
+- Route from Koga: `route_06_koga_to_sabrina`, roughly 1,950 blocks through
+  Glacier Foot Fields and Marsh Creek to Tilpey's north shore.
 - `marsh_to_tilpey` is 252 blocks away; `lake_tilpey` 256 blocks away;
   `glacial_tear` 609 blocks away.
 - Defeating Sabrina sets `gym6_cleared`.
@@ -480,9 +499,10 @@ major river and Lake Tilpey's outflow gorge at about (6632, 3904).
 
 **Ground truth**
 
-- Centre: (6074, 108, 4995), in `crater_rim_north_west` /
+- Centre: (6074, 107, 4995), in `crater_rim_north_west` /
   `the_craters`.
-- Route from Sabrina: 2,053 blocks through Tilpey's east and south shores.
+- Route from Sabrina: `route_07_sabrina_to_blaine`, roughly 2,050 blocks
+  through Tilpey's east and south shores.
 - It crosses Lake Tilpey and its outflow at the required (6632, 3904) bridge.
 - `craters` begins 27 blocks from town; `lake_tilpey` is 423 blocks away.
 - Defeating Blaine sets `gym7_cleared`.
@@ -527,9 +547,10 @@ people do not stop being worth saving.
 
 **Ground truth**
 
-- Centre: (3647, 112, 6497), in `south_strand` /
+- Centre: (3647, 113, 6497), in `south_strand` /
   `southern_coast`.
-- Route from Blaine: 3,049 blocks west, with no water crossing.
+- Route from Blaine: `route_08_blaine_to_giovanni`, roughly 3,050 blocks
+  west, with no water crossing.
 - `arrow_lake_south_east_branch` is 358 blocks away;
   `arrow_lake_south` 680 blocks away; `rift` 1,122 blocks away.
 - Defeating Giovanni sets `gym8_cleared`.
@@ -575,7 +596,8 @@ the route from Giovanni to the League must remain traversable without them.
 - The League plateau is 178 blocks from `rift`, 447 blocks from
   `glacial_tear`, and 571 blocks from `major_river`.
 - Victory Road follows the Rift's south-west arm, fork, trunk, and apex.
-- Victory Road is 5,157 blocks along the terrain-derived Rift path.
+- Victory Road (`victory_road`) is roughly 5,200 blocks along the
+  terrain-derived Rift path.
 - The League is in the Overworld. End access is post-game.
 - Defeating the champion sets `champion_cleared`.
 
@@ -639,16 +661,16 @@ the minimum fact needed by players who skipped it.
 
 | Optional place | Real centre | Contribution | Must never gate |
 | --- | --- | --- | --- |
-| `relic_island` | (1092, 35, 5532) | Shows a Pallet fragment separated from the main exchange | Leaving Pallet or reaching Brock |
+| `relic_island` | (1092, 68, 5532) | Shows a Pallet fragment separated from the main exchange | Leaving Pallet or reaching Brock |
 | `viltri_light` | (550, 68, 4518) | Shows an old estuary whose river no longer arrives | Brock or Misty |
-| `the_scar` | (2110, 200, 950) | Shows the summit footprint of the displaced city | Surge or Erika |
-| `displaced_city` | (2969, 122, 1710) | Gives the deepest human account of a complete town exchange | Any gym or the League |
+| `the_scar` | (2110, 280, 950) | Shows the summit footprint of the displaced city | Surge or Erika |
+| `displaced_city` | (2969, 123, 1710) | Gives the deepest human account of a complete town exchange | Any gym or the League |
 | `tea_town` | (2654, 112, 3605) | Shows how ordinary culture continues beside impossible geography | Victory Road |
-| `rift_dig_camp` | (3106, 92, 3314) | Documents older anomalous material in the Rift's west spur | The League |
-| `mining_town` | (6633, 137, 5716) | Connects crater geology, fossil layers, and deep-world history | Blaine or Giovanni |
-| `sunset_west` | (1716, 115, 7298) | Post-game port and stories from the outer sea | Main story |
+| `rift_dig_camp` | (3106, 91, 3314) | Documents older anomalous material in the Rift's west spur | The League |
+| `mining_town` | (6633, 138, 5716) | Connects crater geology, fossil layers, and deep-world history | Blaine or Giovanni |
+| `sunset_west` | (1716, 114, 7298) | Post-game port and stories from the outer sea | Main story |
 | `northlight` | (7265, 116, 1556) | Post-game research on weather and distant instability | Main story |
-| `jungle_ruins` | (5160, 127, 7463) | Evidence that world anomalies predate the current faction | Main story |
+| `jungle_ruins` | (5160, 128, 7463) | Evidence that world anomalies predate the current faction | Main story |
 
 `merian_hut`, `gorge_hamlet`, `tableland_stop`, and
 `rift_rim_stop` are optional rest stops. Their services may make long routes

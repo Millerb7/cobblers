@@ -120,13 +120,14 @@ anchors, not final NPC positions.
 - **`EVT-G2-SHELLOS-PAINT`: Fresh Coat.** Follow colored Shellos tracks
   through a pottery yard to identify glaze for a public fountain sign.
 
-### `gym3_town` — Surge’s town (1847, 1262)
+### `gym3_town` — Surge’s town (1688, 1410)
 
 - **`EVT-G3-MAGNEMITE-BOLTS`: Magnetic Personality.** Magnemite keep carrying
   Surge’s loose fasteners to the same roof. Redirect them with scrap metal.
   Reward: electrical crafting supplies.
 - **`EVT-G3-KITE-LINE`: Higher Than the Signal.** A resident wants to fly a kite
-  above the instruments without tangling the array. Choose a safe launch wind.
+  from the exposed shelf without sending it toward Surge's signal array on the
+  Vessu shoulder above town. Choose a safe launch wind.
   Reward: mountain-weather notes and a cosmetic kite token.
 
 - **`EVT-G3-PLUSLE-MINUN-GRID`: Same Time, Please.** Synchronize paired switches
@@ -175,20 +176,27 @@ expanded small-event specifications are in
 
 ### Route 3 — Misty to Surge
 
-- **`EVT-ROUTE3-CREEK-WOOPER`: The Dry Crossing.** Recover a supply crate
-  without trampling a Wooper feeding patch. The controlled Wooper encounter is
+- **`EVT-ROUTE3-CREEK-WOOPER`: The Dry Crossing.** On a spur to the pond
+  outflow west of the road, recover a supply crate without trampling a Wooper
+  feeding patch. The controlled Wooper encounter is
   an intentional optional Ground-type answer before Surge.
-- **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** Repair trail signs that
-  rotate during signal pulses while a Nosepass points toward Mt Vessu's
-  equipment instead of north.
-- **`EVT-ROUTE3-MAREEP-SHELTER`: Static in the Rain.** Clear a safe route from a
-  metal trail frame to stone cover.
+- **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** At (2203, 1609), repair
+  trail signs that rotate during signal pulses while a Nosepass turns toward
+  the mast of Surge's signal array instead of north. The array must stay
+  visible from the signs; the build constraint is in the detailed spec.
+- **`EVT-ROUTE3-MAREEP-SHELTER`: Static in the Rain.** On an exposed switchback
+  of the Tri Peaks grade, clear a safe route from a metal trail frame to stone
+  cover.
 - **`EVT-ROUTE3-SPOINK-PEARL`: Do Not Stop Bouncing.** Recover Spoink's pearl
   while giving it a safe place to keep moving.
 - **`EVT-ROUTE3-SWABLU-NEST`: Blue Thread.** Exchange soft nesting fiber for a
   route flag the Swablu used to reinforce their nest.
-- **`EVT-ROUTE3-SABLEYE-REFLECTORS`: Shiny Way Down.** Trade polished stones for
-  stolen trail reflectors and re-mark the descent.
+- **`EVT-ROUTE3-SABLEYE-REFLECTORS`: Shiny Way Up.** Trade polished stones for
+  stolen trail reflectors and re-mark the switchbacks through a rock cut on the
+  climb.
+
+The last stretch into Surge's town, where the shelf lip reveals the summits, is
+kept free of events.
 
 ### `gym4_town` — Erika’s town (4309, 1555)
 

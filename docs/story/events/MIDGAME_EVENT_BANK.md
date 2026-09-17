@@ -48,9 +48,11 @@ A persistent completion flag, not prop position, decides reward eligibility.
 
 # Route 4 — Surge to Erika
 
-**Route context:** Approximately 2,907 blocks through Mt Clay, Merian
-Cirque, the Crags, Upper Trough, and Peak Pond Hollow. The path passes near Merian's hut
-and has no water crossing.
+**Route context:** `route_04_surge_to_erika`, roughly 3,500 blocks (approximate;
+`data/routes.json` holds the measured length). It leaves Surge's shelf across
+the Tri Peaks flank, Mt Vessu and Mt Clay, then runs through Merian Cirque, the
+Crags, Upper Trough, and Peak Pond Hollow. The path passes near Merian's hut and
+has no water crossing.
 
 ## `EVT-R4-MERIAN-DELIBIRD` — Wrong Hut Again
 
@@ -239,7 +241,8 @@ remain available regardless of completion.
 
 # Route 5 — Erika to Koga
 
-**Route context:** Approximately 1,038 blocks south through forest. The ground
+**Route context:** `route_05_erika_to_koga`, roughly 1,050 blocks (approximate)
+south through forest. The ground
 becomes wetter toward Glacier Foot Fields and Marsh Country. There is no
 required water crossing.
 
@@ -422,8 +425,8 @@ Skorupi remains a wild ambient actor.
 
 # Route 6 — Koga to Sabrina
 
-**Route context:** Approximately 1,944 blocks through Glacier Foot Fields and
-Marsh Creek. The route passes the marsh-to-lake transition and reaches Lake Tilpey's north
+**Route context:** `route_06_koga_to_sabrina`, roughly 1,950 blocks
+(approximate) through Glacier Foot Fields and Marsh Creek. The route passes the marsh-to-lake transition and reaches Lake Tilpey's north
 terrace without a required water crossing.
 
 ## `EVT-R6-BERGMITE-REFLECTION` — False Trail Light
