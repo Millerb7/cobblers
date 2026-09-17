@@ -1099,6 +1099,22 @@ HEAD_RULE_CONSTANTS = {"wall_rise_blocks": ("WALL_RISE", "wall_rise"), "wall_rea
                        "consecutive_stations": ("WALL_RUN", "run"), "station_spacing_blocks": ("WALL_STEP", "step")}
 
 
+def _local_only_template(repo_root, rel):
+    """True when kits/PROVENANCE.json marks this template local_only: its licence forbids committing it."""
+    import re
+    prov = Path(repo_root) / "kits" / "PROVENANCE.json"
+    if not prov.is_file():
+        return False
+    for rec in json.loads(prov.read_text(encoding="utf-8")).get("records") or []:
+        if not rec.get("local_only"):
+            continue
+        for g in rec.get("paths") or []:
+            rx = re.escape(g).replace(r"\*\*/", "(?:.*/)?").replace(r"\*", "[^/]*")
+            if re.fullmatch(rx, rel):
+                return True
+    return False
+
+
 def _module_constant(path, name):
     """A module-level numeric literal read with ast (no import), or None when the file or name is absent."""
     import ast
@@ -2222,6 +2238,8 @@ def check_spawn_blocks(ctx: Context):
             continue
         path = ctx.data_dir.parent / row["template"]
         if not path.is_file():
+            if _local_only_template(ctx.data_dir.parent, row["template"]):
+                continue  # licence forbids committing it (kits/PROVENANCE.json local_only); checked where it exists
             perr("applied.templates %s is not in the repository" % row["template"], "applied", row["template"])
             continue
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
