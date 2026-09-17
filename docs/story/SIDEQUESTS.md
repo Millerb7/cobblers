@@ -42,7 +42,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** A resident at (1462, 5293) spots a familiar roof offshore that does
   not appear on the old Pallet map.
 - **Steps:** Leave Pallet at (1462, 5293); reach `relic_island` at
-  (1092, 5532; ground 35.3); inspect the separated Pallet house; return to
+  (1092, 5532; ground 68.0); inspect the separated Pallet house; return to
   (1462, 5293) with any account of what remains.
 - **Reward:** A one-time useful encounter on the island and a small keepsake
   from Pallet; exact species and item await encounter design.
@@ -58,7 +58,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
   no longer reaches the sea.
 - **Steps:** Enter `viltri_ravine` at its anchor (1100, 3600); follow the dry
   landform to `mouth_of_viltri` (613, 4306); report to `viltri_light`
-  (550, 4518; ground 67.7).
+  (550, 4518; ground 67.9).
 - **Reward:** A lighthouse map marker, fishing supplies, and a decorative
   river-stone token.
 - **Reveal:** Viltri Ravine is an old watercourse whose elevation no longer
@@ -107,21 +107,25 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 ### `SQ-G3-01` — Road to Nothing
 
 - **Kind:** PLACE DISCOVERY
-- **Hook:** Surge's crew at (1847, 1262) has a road survey whose final segment
-  ends in open air.
-- **Steps:** Climb from (1847, 1262) to `the_scar`
-  (2110, 950; ground 200); inspect the bare footprint and ended road; copy the
-  orientation of the remaining foundations.
+- **Hook:** Surge's crew at (1688, 1410) has a road survey whose final segment
+  ends in open air, somewhere high on Mt Vessu. The Scar cannot be seen from
+  the shelf town, so the survey sheet is the player's only pointer to it.
+- **Steps:** Climb from (1688, 1410) to `the_scar`
+  (2110, 950; ground 280), roughly 620 blocks away and about 100 blocks higher;
+  inspect the bare footprint and ended road; copy the orientation of the
+  remaining foundations.
 - **Reward:** A Scar map marker and a technical accessory from Surge's stores.
 - **Reveal:** A settlement once stood on Mt Vessu and vanished as a whole.
 
 ### `SQ-G3-02` — The Pond Behind Clay
 
 - **Kind:** LOCAL PROBLEM
-- **Hook:** A mountain guide at (1847, 1262) has not heard from a regular field
-  researcher working behind Mt Clay.
-- **Steps:** Reach `pond_west_of_mt_clay` (2110, 1706; floor 93.9); find the
-  research cache; return to (1847, 1262).
+- **Hook:** A mountain guide at (1688, 1410) has not heard from a regular field
+  researcher working at the pond the Route 3 road skirts below Mt Clay.
+- **Steps:** Go back down to `pond_west_of_mt_clay` (2110, 1706; floor 93.9),
+  about 100 blocks off `route_03_misty_to_surge`; find the research cache on
+  the far shore, away from the `EVT-ROUTE3-CREEK-WOOPER` ford on the outflow;
+  return to (1688, 1410).
 - **Reward:** Climbing supplies and an optional mountain encounter.
 - **Reveal:** The high massif contains sheltered living pockets, not only bare
   peaks and story ruins.
@@ -186,7 +190,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** A glacial worker at (4646, 2446) reports warm air emerging from the
   direction of the Glacial Tear.
 - **Steps:** Reach `glacial_tear` at (4380, 2640); follow the safe approach to
-  the `displaced_city` surface entrance (2969, 1710; ground 122); return or
+  the `displaced_city` surface entrance (2969, 1710; ground 123); return or
   continue into the optional city once its entrance is built.
 - **Reward:** The Displaced City map marker and cold-weather supplies.
 - **Reveal:** The vanished summit city did not cease to exist; it survives
@@ -212,7 +216,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** A ferrier at (6196, 3398) asks the player to carry a roster to the
   people who maintain the southern gorge crossing.
 - **Steps:** Travel from (6196, 3398) to `gorge_hamlet`
-  (6814, 4367; ground 112.7); deliver the roster; help the keepers update the
+  (6814, 4367; ground 113.1); deliver the roster; help the keepers update the
   crossing schedule at the same anchor.
 - **Reward:** The hamlet's rest services and a bridge-keeper map marker.
 - **Reveal:** Long routes remain usable because small communities maintain
@@ -225,8 +229,8 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Kind:** PLACE DISCOVERY
 - **Hook:** A crater researcher at (6074, 4995) asks who keeps extracting ore
   from the eastern cone during the evacuation crisis.
-- **Steps:** Inspect `craters` at (6454, 5078; summit 200); continue to
-  `mining_town` (6633, 5716; ground 137.3); deliver Blaine's safety notice.
+- **Steps:** Inspect `craters` at (6454, 5078; summit 304); continue to
+  `mining_town` (6633, 5716; ground 138.1); deliver Blaine's safety notice.
 - **Reward:** The Mining Town marker, ore-processing access, and a fossil lead.
 - **Reveal:** The Craters support ordinary industry as well as catastrophic
   story machinery.
@@ -275,7 +279,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Kind:** PLACE DISCOVERY
 - **Hook:** After the crisis, a League archivist at (3297, 2603) finds notes
   from archaeologists who were studying the Rift before the final operation.
-- **Steps:** Travel to `rift_dig_camp` (3106, 3314; ground 91.7); inspect the
+- **Steps:** Travel to `rift_dig_camp` (3106, 3314; ground 91.0); inspect the
   nearby `rift` anchor (4160, 3920) through the camp's recorded measurements;
   return to (3297, 2603).
 - **Reward:** Dig-camp access, an archaeology supply bundle, and a Registeel
@@ -306,7 +310,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
   willing to make the first post-Worldshift charting run.
 - **Steps:** Complete a navigation and battle-readiness check at
   (1716, 7298); make an optional survey leg to `relic_island`
-  (1092, 5532; ground 35.3); return to harbour.
+  (1092, 5532; ground 68.0); return to harbour.
 - **Reward:** Chartered travel from the harbour and a nautical cosmetic.
 - **Reveal:** Sunset West reconnects isolated places through skill and trade,
   without world-changing machinery.
@@ -317,7 +321,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** A fisher at (1716, 7298) brings back a leaf that does not grow on
   the harbour island.
 - **Steps:** Sail from (1716, 7298) to `jungle_ruins`
-  (5160, 7463; ground 127.4); identify the overgrown site; return with a rubbing
+  (5160, 7463; ground 128.5); identify the overgrown site; return with a rubbing
   rather than removing a ruin block.
 - **Reward:** Jungle Ruins marker and a tropical encounter lead.
 - **Reveal:** The southern islands hold cultures and anomalies older than the
@@ -356,7 +360,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** The fossil lab at (6633, 5716) has two samples that cannot belong to
   adjacent layers.
 - **Steps:** Compare the mine record at (6633, 5716) with the Craters anchor
-  (6454, 5078; summit 200); identify the sample carrying the exchange signature.
+  (6454, 5078; summit 304); identify the sample carrying the exchange signature.
 - **Reward:** One fossil restoration service or equivalent fossil reward,
   exact fossil deferred to encounter balance.
 - **Reveal:** World exchanges can splice geological history as well as towns.
@@ -367,7 +371,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** A mine cart ledger at (6633, 5716) includes deliveries to a
   waystation that no current worker recognizes.
 - **Steps:** Follow the overland line to `tableland_stop`
-  (4876, 5729; ground 160.7); return the surviving ledger page to
+  (4876, 5729; ground 161.6); return the surviving ledger page to
   (6633, 5716).
 - **Reward:** Tableland marker and access to optional ore trades.
 - **Reveal:** Small rest stops bind the region's industries together.
@@ -380,7 +384,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** At the surface entrance (2969, 1710), a city surveyor asks why the
   underground streets all drain toward a sky that is no longer above them.
 - **Steps:** Enter through (2969, 1710) once the city is built; compare the
-  street orientation with `the_scar` (2110, 950; ground 200); return to the
+  street orientation with `the_scar` (2110, 950; ground 280); return to the
   entrance record at (2969, 1710).
 - **Reward:** A city history volume and an optional cherry-grove encounter.
 - **Reveal:** The cavern did not grow around the city; the complete summit plan
@@ -417,7 +421,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Hook:** A tea courier at (2654, 3605) has an undelivered parcel for the dig
   crew in the Rift's west spur.
 - **Steps:** Carry it to `rift_dig_camp`
-  (3106, 3314; ground 91.7); return the crew's stamped field note to
+  (3106, 3314; ground 91.0); return the crew's stamped field note to
   (2654, 3605).
 - **Reward:** Rift Dig Camp marker and a mineral-infused tea recipe.
 - **Reveal:** Scholarship and ordinary trade continue around the Rift.
@@ -513,7 +517,7 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 - **Kind:** PLACE DISCOVERY
 - **Hook:** A ranger at (3734, 3951) keeps a sealed tea tin addressed to a maker
   they have never visited.
-- **Steps:** Carry it to `tea_town` (2654, 3605; ground 112.1); return a fresh
+- **Steps:** Carry it to `tea_town` (2654, 3605; ground 112.3); return a fresh
   blend to (3734, 3951).
 - **Reward:** A shared rest recipe and both settlements' optional map notes.
 - **Reveal:** Small personal routes cross boundaries the main campaign treats
@@ -620,10 +624,10 @@ Kinds are **LOCAL PROBLEM**, **WORLD PUZZLE**, **PLACE DISCOVERY**, and
 ### `SQ-FROST-01` — One Summit, Three Shadows
 
 - **Kind:** WORLD PUZZLE
-- **Hook:** The shrine at (682, 380; ground 200) casts a morning shadow that
+- **Hook:** The shrine at (682, 380; ground 310) casts a morning shadow that
   seems to point toward all three northern peaks in turn.
 - **Steps:** Observe from (682, 380); compare the bearing with `tri_peaks`
-  (1310, 882; summit 200); record the result without moving shrine blocks.
+  (1310, 882; summit 287); record the result without moving shrine blocks.
 - **Reward:** A summit charm cosmetic and an alpine encounter lead.
 - **Reveal:** The shrine's builders understood the massif as one connected
   landscape.

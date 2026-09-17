@@ -334,39 +334,56 @@ materials. The Shellos remain harmless workshop visitors.
 
 # Misty-to-Surge climb
 
-## `EVT-ROUTE3-MAREEP-SHELTER` — Static in the Rain
+`route_03_misty_to_surge` is a long approach followed by a real ascent. Read
+the current figures from `data/routes.json`; at the 2026-09-16 regeneration the
+leg ran roughly 2,100 blocks and climbed roughly 80, with no step steeper than
+35 degrees. The shape matters more than the numbers. Parts below come from the
+simplified route polyline and are approximate:
 
-**Visible hook:** A shepherd has moved the flock under rock cover, but one Mareep
-stands beneath a metal trail frame with its wool sparking.
+- **Lake Viltri Hollow and Foothill Woods, about the first 70%.** Near-level
+  lakeside road, then a long forest rise of roughly 20 blocks spread over more
+  than a kilometre. The Nosepass signs sit at the end of this stretch.
+- **The pond, Mt Clay's western foot, and the edge of Mt Vessu, about the next
+  20%.** The trees thin and the road gains roughly another 20 blocks.
+- **The Tri Peaks grade, under 10% of the length.** Roughly 30 blocks of ascent
+  in under 200 blocks of road: the steepest and most exposed part of the leg,
+  a graded switchback line up the south flank to Surge's shelf. It is a
+  sustained climb on a built trail, not a scramble. Players should feel the
+  height without needing ladders, jumps, or hands.
+- **The shelf lip, roughly the final 70 blocks.** Level ground; the summits come
+  into view on arrival. This is a scenery moment and deliberately carries no
+  event, NPC, prompt, or reward. Nothing in this bank may be placed on it.
 
-**Interaction:** Lower a nearby rope gate to create a path toward the stone
-shelter, then remove the loose metal bell from the destination fence. Mareep
-walks across once the route is clear.
-
-**Character beat:** The shepherd is calm about the sparks and furious about who
-put a metal bell on a mountain storm route.
-
-**Reward and aftermath:** Wool, weather supplies, and a Mareep encounter lead
-away from the owned flock, pending balance review.
+Event order along the leg is Spoink (woods), then Swablu (Mt Clay foot), then
+Mareep and Sableye (Tri Peaks grade). The two detailed encounters sit between
+them: the Wooper outflow spur near the middle and the Nosepass signs at about
+70% of the way.
 
 ## `EVT-ROUTE3-SPOINK-PEARL` — Do Not Stop Bouncing
 
-**Visible hook:** A Spoink bounces in one tiny circle beside a pearl wedged under
-a flat rock.
+**Placement:** a camper's clearing beside the Foothill Woods road, before the
+Nosepass signs. Keep it out of the signs' 40-block clearing and out of the
+sightline corridor to the array (see `EVT-ROUTE3-NOSEPASS-SIGNS`).
 
-**Interaction:** Place a soft bedroll beside Spoink, lift the rock with the
+**Visible hook:** A Spoink bounces in one tiny circle beside a pearl wedged under
+a flat root.
+
+**Interaction:** Place a soft bedroll beside Spoink, lift the root with the
 visible lever branch, and roll the pearl back without forcing Spoink to stop.
 
-**Character beat:** The nearby camper gives increasingly useless advice while
-refusing to touch the bouncing Pokémon.
+**Character beat:** The camper, resting before the real climb starts, gives
+increasingly useless advice while refusing to touch the bouncing Pokémon.
 
 **Reward and aftermath:** A small Psychic-type utility item candidate and the
 camper's spare supplies. Spoink leaves with its pearl.
 
 ## `EVT-ROUTE3-SWABLU-NEST` — Blue Thread
 
-**Visible hook:** Blue fibers trail from a torn route flag into a low cliff nest.
-Swablu have used the cloth to reinforce it before a storm.
+**Placement:** a low cut bank where the road leaves the woods at Mt Clay's
+western foot, the first place the climb becomes visible ahead.
+
+**Visible hook:** Blue fibers trail from a torn route flag into a nest in the cut
+bank. Swablu have used the cloth to reinforce it before a storm.
 
 **Interaction:** Gather three pieces of soft fallen plant fiber and place them
 near the nest. The Swablu exchange the route cloth for the safer material.
@@ -374,26 +391,49 @@ near the nest. The Swablu exchange the route cloth for the safer material.
 **Character beat:** The guide wants the flag back but admits the birds improved
 its stitching.
 
-**Reward and aftermath:** The repaired route flag makes an optional sheltered
-viewpoint easier to see; the player receives feathers and climbing supplies.
-The viewpoint has a bench but no healing, PC, progression flag, or route unlock.
-Equivalent route access remains unchanged on the main path.
+**Reward and aftermath:** The repaired flag marks an optional sheltered rest
+bench a short way up the grade; the player receives feathers and climbing
+supplies. The bench has no healing, PC, progression flag, or route unlock, and
+it must not be the shelf lip. Route access is unchanged.
 
-## `EVT-ROUTE3-SABLEYE-REFLECTORS` — Shiny Way Down
+## `EVT-ROUTE3-MAREEP-SHELTER` — Static in the Rain
 
-**Visible hook:** Every reflective trail marker has vanished from a dim rock
-cut. Glints appear from a shallow side cavity.
+**Placement:** a switchback on the Tri Peaks grade, above the tree cover, where
+the road is exposed to weather.
+
+**Visible hook:** A shepherd has moved the flock under an overhang at the
+switchback, but one Mareep stands beneath a metal trail frame on the outer bend
+with its wool sparking.
+
+**Interaction:** Lower a nearby rope gate to open the inside of the bend toward
+the stone shelter, then remove the loose metal bell from the shelter fence.
+Mareep walks across once the route is clear.
+
+**Character beat:** The shepherd is calm about the sparks and furious about who
+put a metal bell on an exposed storm grade.
+
+**Reward and aftermath:** Wool, weather supplies, and a Mareep encounter lead
+away from the owned flock, pending balance review.
+
+## `EVT-ROUTE3-SABLEYE-REFLECTORS` — Shiny Way Up
+
+**Placement:** a rock cut on the upper Tri Peaks grade, below the shelf lip and
+out of sight of it.
+
+**Visible hook:** Every reflective marker has vanished from the switchbacks
+through a dim rock cut, the stretch climbers use after dark. Glints appear from
+a shallow side cavity.
 
 **Interaction:** Offer three ordinary polished stones from a maintenance box in
-exchange for the reflectors. Place the recovered markers along the correct side
-of the descent.
+exchange for the reflectors. Place the recovered markers on the inside edge of
+each switchback, where the grade is safe.
 
 **Character beat:** Sableye examines each replacement like a jeweler and rejects
 one chipped stone until the player turns its polished face outward.
 
-**Reward and aftermath:** A marked safe descent and a small mineral cache.
-Sableye remains a rare noncapture actor; this event does not grant early access
-to it.
+**Reward and aftermath:** A marked night line up the cut and a small mineral
+cache. The road is walkable without the markers. Sableye remains a rare
+noncapture actor; this event does not grant early access to it.
 
 # Surge's town
 

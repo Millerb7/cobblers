@@ -2,6 +2,8 @@
 
 **Status:** compiled design audit; generated spawn pools are not installed or runtime-proven.
 
+**Re-derived 2026-09-16** from the regenerated pools: `tools/compile_spawns.py` output in `build/datapacks/cobblers_spawns/`, 1,408 route boxes and 7,066 route entries. The earlier pools had 1,269 boxes and 6,526 entries. Every table and assessment below came out identical to the previous derivation. The regeneration temporarily lost the River of Shrews vale on Route 1 and the mountain species on Route 3, and has restored both, so no species' first appearance, level band or source corridor changed. The shelf's `the_tri_peaks` boxes are new on Route 3, but their ambient species (Swablu, Skiddo) already appear earlier on that leg.
+
 This table works outward from what players can actually encounter before each gym. It includes only ambient species emitted by the curated critical-route compilation. Authored rewards, optional Habitat sites, player-only evolutions and open wilderness defaults do not carry a required matchup.
 
 Wild level bands are static and spatial. A species listed on an earlier leg remains plausibly catchable and trainable for later gyms; the displayed range is where it first becomes available.

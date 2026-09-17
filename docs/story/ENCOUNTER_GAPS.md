@@ -27,13 +27,13 @@ The installed Cobblemon jar contains 1,025 base species records. 455 have a surf
 - `arrow_lake_shores`: 4 ambient entries across 4 families; deferred/authored: Marill, Azumarill, Roselia, Roserade, Togetic, Togekiss.
 - `pallet_meadows`: 4 ambient entries across 4 families; deferred/authored: Pidgeotto, Pidgeot, Raticate, Flaaffy, Ampharos, Dubwool.
 - `east_coast_dunes`: 4 ambient entries across 4 families; deferred/authored: Krokorok, Krookodile, Vibrava, Flygon, Sandaconda, Cacturne.
-- `mt_vessu`: pseudo-legendary lines are authored-only; Skiddo was added so the mandatory mountain segment retains four ordinary families.
+- `mt_vessu`: pseudo-legendary lines are authored-only; Skiddo keeps four ordinary families. The mountain segment is back on the critical path: `route_03_misty_to_surge` now climbs past Mt Clay's western foot and the edge of Mt Vessu onto the Tri Peaks grade, and its pool compiles all 20 authored species, the Mt Vessu ones included. Mt Vessu's share of that route is small, though: 2 of the leg's 142 boxes, where Mt Clay, Mt Vessu and the Tri Peaks meet. Meditite and Drampa, found only there, are reachable but scarce. Skiddo is also on `the_tri_peaks` (19 boxes on Route 3), which carries most of its critical-path presence. Figures are from the build manifest of `tools/compile_spawns.py`.
 - `the_crags`: Beldum remains authored-only; Nosepass was added to preserve ordinary mountain diversity.
 - `marsh_creek` and `rift_trunk`: ten written species collapse into four evolutionary families; they remain coherent but offer less team-building breadth than their row count suggests.
 
 ## Gym answer gaps
 
-- Gym 3 Electric remains thin: Bunnelby is the only dependable common Ground family before Surge. It was added to Foothill Woods and must remain ungated.
+- Gym 3 Electric remains thin after the regeneration. The re-derived availability table is unchanged, because the returning River of Shrews vale and mountain species were already present when the table was first compiled. Bunnelby, whose evolution Diggersby is Normal/Ground, is still the only dependable common Ground family before Surge. It lives in Foothill Woods and must remain ungated. Skiddo, Lotad, Fomantis and Gossifleur resist Electric but are not immune. The optional `EVT-ROUTE3-CREEK-WOOPER` controlled encounter remains the intended second Ground answer.
 - Gyms 1, 2 and 4–8 have at least three common, ungated type answers in the compiled critical-path availability table.
 
 ## Cobblemon format limits and unproven behavior
@@ -45,39 +45,9 @@ The installed Cobblemon jar contains 1,025 base species records. 455 have a surf
 - Habitat phases are local block phases, not campaign progression flags; early-place evolved forms are omitted rather than assuming phases follow gym progress.
 - Town paving pools cannot compile until each town kit chooses its signature block tag.
 - Tree Town's pool compiles, but no placement can be generated until the town has a canonical ID and coordinates.
-- All route boxes are pre-rescale candidates; regenerate routes from the canonical heightmap before production installation.
-- The stored polyline is simplified: 138 of 1,269 outer corridor raster boxes require nearest-segment assignment. Preserve the dense route-to-box membership when routes are regenerated so production compilation does not need this fallback.
+- Route boxes are now derived from the regenerated routes on the canonical heightmap. Pools are generated build output (`tools/compile_spawns.py` into `build/datapacks/cobblers_spawns/`, 1,408 route boxes and 7,066 route entries at this revision), not committed data. They are still uninstalled and runtime-unproven.
+- The stored polyline is simplified: 147 of 1,408 route boxes still need nearest-segment assignment (the manifest's `simplified_centreline_fallback_boxes`). Storing the dense route-to-box membership would remove this fallback.
 
-## regions.json polygon holes (29)
+## regions.json polygon holes
 
-These holes no longer prevent candidate JSON generation: centreline samples inside a recorded gap use the nearest adjacent route sub-region, and the affected boxes are counted in `data/spawns.json`. They still block a claim of exact sub-region compilation. The 29 figure counts path intervals; those samples touch 36 merged coordinate boxes, so the two counts use different units.
-
-- `route_01_pallet_to_brock`: (1470, 4714) at 591.43 → (1470, 4708) at 597.43 (6.0 blocks).
-- `route_01_pallet_to_brock`: (1533, 4525) at 806.52 → (1533, 4515) at 816.52 (10.0 blocks).
-- `route_01_pallet_to_brock`: (1591, 4086) at 1271.2 → (1591, 4082) at 1275.2 (4.0 blocks).
-- `route_02_brock_to_misty`: (1790, 3145) at 502.47 → (1790, 3138) at 509.47 (7.0 blocks).
-- `route_03_misty_to_surge`: (1813, 2521) at 366.16 → (1816, 2518) at 370.4 (4.24 blocks).
-- `route_03_misty_to_surge`: (2192, 1567) at 1517.74 → (2185, 1560) at 1527.64 (9.9 blocks).
-- `route_03_misty_to_surge`: (2084, 1459) at 1670.47 → (2075, 1450) at 1683.2 (12.73 blocks).
-- `route_04_surge_to_erika`: (2348, 1244) at 511.77 → (2354, 1244) at 517.77 (6.0 blocks).
-- `route_04_surge_to_erika`: (2455, 1244) at 618.77 → (2468, 1249) at 633.84 (15.07 blocks).
-- `route_04_surge_to_erika`: (3107, 1438) at 1351.13 → (3114, 1445) at 1361.03 (9.9 blocks).
-- `route_04_surge_to_erika`: (3276, 1631) at 1614.13 → (3280, 1639) at 1623.79 (9.66 blocks).
-- `route_04_surge_to_erika`: (3871, 1848) at 2347.75 → (3878, 1848) at 2354.75 (7.0 blocks).
-- `route_05_erika_to_koga`: (4612, 2395) at 972.96 → (4619, 2402) at 982.86 (9.9 blocks).
-- `route_06_koga_to_sabrina`: (5436, 2920) at 986.34 → (5442, 2920) at 992.34 (6.0 blocks).
-- `route_06_koga_to_sabrina`: (5808, 3089) at 1428.34 → (5819, 3100) at 1443.9 (15.56 blocks).
-- `route_07_sabrina_to_blaine`: (6301, 4735) at 1699.35 → (6296, 4740) at 1706.42 (7.07 blocks).
-- `route_07_sabrina_to_blaine`: (6211, 4847) at 1848.63 → (6211, 4848) at 1849.63 (1.0 blocks).
-- `route_08_blaine_to_giovanni`: (5636, 5185) at 516.7 → (5623, 5190) at 531.77 (15.07 blocks).
-- `route_08_blaine_to_giovanni`: (5152, 5325) at 1058.69 → (5142, 5326) at 1069.1 (10.41 blocks).
-- `route_08_blaine_to_giovanni`: (4225, 5939) at 2240.02 → (4218, 5946) at 2249.92 (9.9 blocks).
-- `route_08_blaine_to_giovanni`: (3885, 6259) at 2712.57 → (3881, 6263) at 2718.22 (5.66 blocks).
-- `victory_road`: (3599, 6016) at 519.11 → (3600, 6001) at 534.52 (15.41 blocks).
-- `victory_road`: (3650, 5383) at 1179.03 → (3650, 5382) at 1180.03 (1.0 blocks).
-- `victory_road`: (4090, 4692) at 2052.29 → (4095, 4687) at 2059.36 (7.07 blocks).
-- `victory_road`: (4105, 3809) at 3084.82 → (4101, 3805) at 3090.47 (5.66 blocks).
-- `victory_road`: (3663, 3349) at 3727.9 → (3653, 3339) at 3742.04 (14.14 blocks).
-- `victory_road`: (3596, 3232) at 3872.65 → (3596, 3225) at 3879.65 (7.0 blocks).
-- `victory_road`: (3441, 2603) at 5013.28 → (3417, 2603) at 5037.28 (24.0 blocks).
-- `victory_road`: (3377, 2603) at 5077.28 → (3361, 2603) at 5093.28 (16.0 blocks).
+None. The 29 path intervals that once fell between sub-region polygons were closed during the 2026-09-16 regeneration. `data/routes.json` now records `subregion_holes.count` 0, and the build manifest reports no recorded gap boxes on any route.

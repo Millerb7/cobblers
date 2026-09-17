@@ -21,8 +21,8 @@ should understand each problem by looking at the scene before reading dialogue.
 | Brock to Misty | `EVT-ROUTE2-ROLLAWAY-GEODUDE` | 5–8 min | Route chase; mining supplies |
 | Misty | `EVT-G2-PSYDUCK-LAUNCH` | 4–6 min | Environmental solution; water supplies |
 | Misty | `EVT-G2-POLIWAG-COUNT` | 3–5 min | Search scene; Poliwag encounter |
-| Misty to Surge | `EVT-ROUTE3-CREEK-WOOPER` | 6–10 min | Creek puzzle; Ground-type answer |
-| Misty to Surge | `EVT-ROUTE3-NOSEPASS-SIGNS` | 5–8 min | Mountain navigation; signal foreshadowing |
+| Misty to Surge | `EVT-ROUTE3-CREEK-WOOPER` | 6–10 min | Creek spur puzzle; Ground-type answer |
+| Misty to Surge | `EVT-ROUTE3-NOSEPASS-SIGNS` | 5–8 min | Trail navigation; signal-array foreshadowing |
 | Surge | `EVT-G3-MAGNEMITE-BOLTS` | 5–8 min | Town puzzle; electrical supplies |
 | Surge | `EVT-G3-KITE-LINE` | 3–6 min | Wind puzzle; cosmetic reward |
 
@@ -289,11 +289,26 @@ line, photo marker, and separate encounter pool.
 
 # Misty-to-Surge climb
 
+`route_03_misty_to_surge` is a long forest approach, then a real ascent up the
+Tri Peaks flank to Surge's shelf; `data/routes.json` holds the current length
+and climb. The route has no water crossing. The last stretch, where the shelf
+lip reveals the summits, is a pure arrival moment: no encounter is placed
+there. The route profile and the four smaller events are in
+`EARLY_GAME_EVENT_BANK.md`.
+
 ## `EVT-ROUTE3-CREEK-WOOPER` — The Dry Crossing
 
-**Visible hook:** At the creek crossing near (1824, 1888), a supply crate is
-stuck on a gravel bar. Several Wooper occupy the shallow channel between it and
-the road.
+**Placement:** a short marked spur west from the Foothill Woods road to the
+outflow of the pond west of Mt Clay (`pond_west_of_mt_clay_outflow` in
+`data/rivers.json`). The road no longer crosses this creek: it passes east of
+the pond. The creek comes closest to the road, roughly 150 blocks, near the
+middle of the leg, just below the pond. The earlier anchor (1824, 1888) is on
+the same creek but farther from the road, so it is superseded. The spur and
+crossing point are placed at build time on the graded outflow.
+
+**Visible hook:** At a ford on the creek, a supply crate is stuck on a gravel
+bar. Several Wooper occupy the shallow channel between it and the bank. The
+courier's cart is visible from the road at the spur's start.
 
 **Flow**
 
@@ -324,14 +339,21 @@ trainer-balance review.
 patch resets the crate interaction but does not remove the Wooper or permanently
 fail the event.
 
-**Build needs:** Authored creek crossing at the known anchor, three readable
-routes, gravel-bar crate, feeding particles or props, and encounter pool.
+**Build needs:** Marked spur from the road, a ford on the graded outflow,
+three readable routes, gravel-bar crate, feeding particles or props, and an
+encounter pool.
 
 ## `EVT-ROUTE3-NOSEPASS-SIGNS` — North Keeps Moving
 
-**Visible hook:** Three mountain trail signs point in different directions. A
-Nosepass beside them repeatedly turns toward Surge's signal equipment instead
-of geographic north.
+**Placement:** the sign site at (2203, 1609), ground y124, on the Foothill Woods
+road below Mt Clay. It is about 70% of the way along the leg (69–71%). From here
+the mast of Surge's signal array (`surge_signal_array`, (1928, 284, 1248), on a
+Mt Vessu shoulder) is visible to the north-west over the forest. The road has
+roughly 615 blocks left to Surge's town, most of the climb still ahead.
+
+**Visible hook:** Three trail signs point in different directions. A Nosepass
+beside them keeps turning away from geographic north toward the array mast
+just clearing the trees.
 
 **Flow**
 
@@ -339,25 +361,50 @@ of geographic north.
 2. Inspect three sign bases. Metal fasteners vibrate when the signal pulses.
 3. Use nonmetal wedges supplied by the keeper to lock the signs to their painted
    ground marks.
-4. Wait through one visible pulse. Two signs hold; the third reveals a second
-   loose bracket.
-5. Fix the final bracket. Nosepass still turns toward the equipment, proving
-   the compass problem is not ordinary magnetism.
+4. Wait through one visible pulse at the mast. Two signs hold; the third
+   reveals a second loose bracket.
+5. Fix the final bracket. Nosepass still turns toward the mast, pulse after
+   pulse. The signs were never the problem: whatever the array is receiving or
+   sending is strong enough to pull a living compass.
 
 **Dialogue beats**
 
-- Keeper: “I trust Nosepass. I do not trust a mountain that can argue with one.”
+- Keeper: “I trust Nosepass. I do not trust whatever Surge has up on that
+  shoulder.”
 - After the pulse: “The signs are fixed. The direction is not.”
 
 **Reward:** Climbing supplies and a marked shelter location on the remaining
 route to Surge. The scene foreshadows the directed signal without providing the
-main-story proof early.
+main-story proof early. The player learns that the array reacts to something,
+not what the pulse contains.
 
 **State and reset:** Brackets are per-player interactions. Corrected signs are
 shared scenery and may remain fixed after first world completion.
 
-**Build needs:** Three signs with ground marks, pulse cue tied visually to the
-mountain equipment, Nosepass actor, and trail-keeper shelter.
+**Build needs:** Three signs with ground marks, a pulse cue on the array mast
+visible from the signs, Nosepass actor, and the trail-keeper shelter.
+
+**Hard build constraint: array sightline.** This event depends on seeing the
+mast from the road. The mast clears the Foothill Woods canopy by only 0.4–4
+blocks along this sightline, and the road's only canopy-clear view of the array
+is the roughly 40 blocks from the sign site toward (2163, 1606). Every build,
+foliage, and terrain pass must keep these true:
+
+1. **Clearing.** The signs and the trail-keeper shelter stand in a clearing with
+   no trees within 40 blocks of the signs.
+2. **Corridor.** No tree may stand in the line running north-west from the sign
+   site to the array if it would reach that line. This applies especially to
+   the tallest Foothill Woods trees (mega spruce). The sightline analysis
+   assumed typical (p90) canopy heights; one taller tree in the corridor breaks
+   the view.
+3. **Mast.** The array mast stays at least as tall as the 12 blocks the
+   sightline was measured with, at the recorded anchor.
+4. **Recheck.** Recheck the line from eye height at the signs to the mast top
+   after any foliage or terrain change in the corridor. If the mast cannot be
+   seen, the event is broken even though nothing reports an error.
+
+The measurement and method are recorded on `surge_signal_array` in
+`data/landmarks.json`.
 
 # Surge's town
 
@@ -397,27 +444,28 @@ grounded board, safe test switch, and several Magnemite actors.
 ## `EVT-G3-KITE-LINE` — Higher Than the Signal
 
 **Visible hook:** A resident holds a bright kite beside three launch flags. The
-kite is already tangled around their boots, and Surge's antenna array occupies
-the obvious windy ledge.
+kite is already tangled around their boots. The obvious launch line runs
+straight up toward Surge's signal array on the Vessu shoulder above town.
 
 **Flow**
 
-1. Read the three flags: one points toward the antenna, one into a cliff rotor,
-   and one along an open shoulder away from equipment.
-2. Choose the open-shoulder launch marker.
+1. Read the three flags on the shelf's exposed edge: one points up the flank
+   toward the array, one into a cliff rotor, and one out along the open shelf
+   away from equipment.
+2. Choose the open-shelf launch marker.
 3. Hold the line through three short wind cues by stepping between marked line
    lengths or selecting loosen/hold/reel.
 4. The kite clears the ridge and remains visible over town for the completion
    scene.
 
-**Wrong choices:** The antenna approach produces an immediate refusal from the
-resident. The rotor tangles the kite in a low, reachable bush and resets the
+**Wrong choices:** The line toward the array produces an immediate refusal from
+the resident. The rotor tangles the kite in a low, reachable bush and resets the
 launch. No choice damages equipment.
 
 **Dialogue beats**
 
 - Resident: “Surge said I could fly it anywhere that is not expensive.”
-- Looking at the antenna: “That direction looks extremely expensive.”
+- Looking up at the array: “That direction looks extremely expensive.”
 - After completion: “There. Higher than the signal and cheaper than a repair.”
 
 **Reward:** A kite-token cosmetic and mountain-weather notes that identify
@@ -426,8 +474,10 @@ visual wind cues elsewhere. No mechanical travel advantage is required.
 **State and reset:** Launch result and reward are per player. The completed kite
 may appear as shared town ambience after first completion.
 
-**Build needs:** Three launch markers, readable flags, safe snag bush, kite prop
-or particle effect, and a clear view back toward town.
+**Build needs:** Three launch markers on the shelf's exposed edge, readable
+flags, safe snag bush, kite prop or particle effect, a clear view back toward
+town, and the array visible above town as the wrong direction. Keep the launch
+off the shelf lip on the arrival road, which stays free of events.
 
 # Implementation order
 
@@ -437,11 +487,15 @@ or particle effect, and a clear view back toward town.
 4. Author the downhill Geodude trail after the Brock-to-Misty road grade is
    final.
 5. Build Misty's dock scenes around the final shoreline and boat placement.
-6. Build the Wooper creek event at the measured crossing before dressing the
-   rest of the mountain route.
-7. Place the Nosepass signs where the player can see Mt Vessu equipment but not
-   the required story evidence.
-8. Fit Surge's two town events around the final gym and signal-array footprints.
+6. Build the Wooper ford on the pond outflow and its spur before dressing the
+   rest of the climb.
+7. Build the Nosepass sign site at (2203, 1609) together with the array mast,
+   and verify the sightline before any foliage pass touches Foothill Woods
+   (hard constraint in `EVT-ROUTE3-NOSEPASS-SIGNS`). The signs show the array,
+   never the required story evidence.
+8. Fit Surge's two town events around the final gym footprint on the shelf.
+   The array is 290 blocks away on the shoulder, so town events refer to it but
+   do not need to be built around it. Leave the shelf lip empty.
 9. Run a separate trainer-balance review on Machop, Poliwag, and Wooper access
    before assigning levels, moves, held items, or capture counts.
 
@@ -452,5 +506,9 @@ or particle effect, and a clear view back toward town.
 - Per-player dialogue and submission state with shared scenery.
 - Replayable prop state for multiplayer and late joiners.
 - Exact item IDs and quantities for every reward.
-- Exact placement coordinates outside established town centres and the creek
-  anchor.
+- Exact placement coordinates outside established town centres, the Nosepass
+  sign site, and the signal-array anchor. The Wooper ford on the pond outflow
+  has no coordinate yet.
+- A repeatable check of the sign-site sightline to the array mast, so a foliage
+  or terrain pass that blocks it is caught instead of breaking the event
+  silently.
