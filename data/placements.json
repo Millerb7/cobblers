@@ -535,6 +535,13 @@
         "date": "2026-09-16",
         "by": "tools/place_town.py --verify over RCON on the rescaled world",
         "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+      },
+      "donor_source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/default/one_off/pokecenter.nbt",
+        "licence": "Cobbleverse, no redistribution: the processed copy under kits/ is gitignored and local only",
+        "processing": "imported, waystones stripped (tools/place_town.py strip_waystones) and concrete substituted (data/spawn_block_policy.json)",
+        "if_lost": "re-extract from the installed pack and repeat the processing; the file is never committed"
       }
     },
     {
@@ -558,6 +565,13 @@
         "date": "2026-09-16",
         "by": "tools/place_town.py --verify over RCON on the rescaled world",
         "result": "0 gaps in 36 corners and 1,670 columns (docs/world-building/BUILT.md)"
+      },
+      "donor_source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/default/one_off/structure_pokemart.nbt",
+        "licence": "Cobbleverse, no redistribution: the processed copy under kits/ is gitignored and local only",
+        "processing": "imported, waystones stripped (tools/place_town.py strip_waystones) and concrete substituted (data/spawn_block_policy.json)",
+        "if_lost": "re-extract from the installed pack and repeat the processing; the file is never committed"
       }
     },
     {
