@@ -198,10 +198,10 @@ def compile_subregion(sub, entries, exclude, grid):
     """
     boxes = subregion_boxes.boxes_for(sub["polygons"], grid, exclude)
     spawns = []
-    for b in boxes:
+    for n, b in enumerate(boxes):
         for e in entries:
             cond = box_condition(b[0], b[1], b[2], b[3], e)
-            spawns.append({"id": "%s_%s" % (sub["id"], e["species"].replace(" ", "_")), "pokemon": e["species"],
+            spawns.append({"id": "%s_b%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],
                            "type": "pokemon", "spawnablePositionType": position_type(e),
                            "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
@@ -245,10 +245,10 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID):
         spawns_out, boxes = [], 0
         for i, frac, bs in waterways_mod.boxes_by_segment(w["polyline"], w["half_width"], grid):
             mult = waterways_mod.ramp(w["weight_ramp"], frac)
-            for b in bs:
+            for n, b in enumerate(bs):
                 boxes += 1
                 for e in ents:
-                    spawns_out.append({"id": "%s_s%03d_%s" % (w["id"], i, e["species"].replace(" ", "_")),
+                    spawns_out.append({"id": "%s_s%03d_b%02d_%s" % (w["id"], i, n, e["species"].replace(" ", "_")),
                                        "pokemon": e["species"], "type": "pokemon",
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"],
