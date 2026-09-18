@@ -41,9 +41,27 @@ Every step needs the source root (the out-of-repo heightmap) and, where noted, a
 | R8 | Gym-town prep (gym1, gym2) | `python tools/town_plan.py gym1_town --source-root <root> --surface-world <stopped world>` (and `gym2_town`), then the prep functions. Brock's box is 272 chunks, over forceload's 256 limit, so run it in halves | street, plaza and lot levels in [`BUILT.md`](BUILT.md) |
 | R9 | Brock's gym | `python tools/place_donor.py function`, install, `/function cobblers:structures/place_gym1_brock_gym` | `python tools/place_donor.py verify --world <stopped copy>`: 2,712 blocks, 20 block entities, substituted counts as recorded |
 | R10 | Relic Island islet | `python tools/islet.py --source-root <root> --apply --server <server>` under the coordination lock | `data/towns.json` `built_ground`, checked by the validator's `town-ground` |
-| R11 | Habitat Blocks | `python tools/habitat_blocks.py function`, install, `/function cobblers:habitats/place` with no player near them, then **restart**: a block placed by command is inert until its chunk reloads (EXP-021) | `python tools/habitat_blocks.py verify --rcon <server>` |
+| R11 | Habitat Blocks | `python tools/habitat_blocks.py function`, install, `/function cobblers:habitats/place` with no player near them, then **restart the server**, and only then verify. See the three rules below | `python tools/habitat_blocks.py verify --rcon <server>` **after the restart** |
 | R12 | Waystones | re-registered by R7; clear stale entries from `waystones.dat` before the first boot | the hometown waystone is claimable and no duplicate appears |
 | R13 | Spawn pools and suppression (datapacks, not blocks) | regenerate if routes or the mod set changed: `python tools/compile_spawns.py`; `python tools/suppress_inherited_spawns.py --server <server> --world <world>` (grid 16) | EXP-012: `/checkspawn` on a corridor shows the authored roster only |
+
+#### Habitat Blocks: three rules R11 depends on
+
+Measured on the disposable world on 2026-09-17, with the crater pool in a block inside route
+suppression box `r01_b0080` and a control block in open forest outside every box.
+
+1. **Re-application is `setblock`, `data merge`, restart — and the validator runs after the restart.**
+   A block placed by command carries its NBT but stays inert until its chunk loads *from disk*. An
+   unload/reload cycle with `forceload remove` was not enough; the server restart was.
+2. **`data merge` on a live habitat block silently deactivates it.** Editing `RangeOfInfluence` on a
+   block that was already working left it cancelling nothing and spawning nothing — route Pokémon
+   spawned 9 blocks from it — with no error anywhere. A restart brought it back with no other change.
+   So a placement is never verified in the same session it was edited in.
+3. **A habitat block beats the suppression pack, and `RangeOfInfluence` is honoured well past 24.**
+   Inside `r01_b0080`, five minutes with the area cleared first gave 8 Pokémon in range, every one
+   from the block's pool at its pool levels (44-49), out to 58 blocks, and not one corridor spawn
+   survived inside the radius. A control block at range 64 spawned its pool at 63 blocks. Habitat
+   blocks and corridors compose: the corridor table runs everywhere except inside a block's range.
 
 ### Known dependencies that are not in the repository
 
@@ -63,6 +81,51 @@ Before touching the live world:
 2. Boot it as a disposable universe (`--universe <staging> --world <name>`), under the coordination lock.
 3. Run R0-R13 against it and record every check.
 4. Only then retire the live world and repeat on the real export.
+
+## The next live re-export: plan (awaiting approval)
+
+Everything below is proven on staging (EXP-024). Times are from that run on this machine.
+
+**What it delivers.** The three pads land in the world (the Scar y280, the Frostpeak shrine y310, Surge's shelf
+y174.4), so Surge's town site and the two flats become buildable; the braided Route 1 forest and Brock's gym stop
+being one machine failure from unrecoverable; and every authored thing is rebuilt from committed data.
+
+**Before the day**
+1. Decide the snapshot to retire to and free the disk for it (the world is about 2.5 GiB; the staging copy can be
+   deleted once the live one is verified).
+2. `python tools/heightmap_check.py` on the canonical heightmap: it must report 0 tears.
+3. Regenerate the paint if it has changed, and `python tools/critical_legs.py`.
+4. Confirm nobody is playing and take the coordination lock.
+
+**The run** (about 90 minutes, most of it unattended)
+
+| # | Step | Time |
+| --- | --- | --- |
+| 1 | Stop the server; retire the world and the `.world` file to `cobblers-server-retired/<date>-pre-<name>/` | 5 min |
+| 2 | `tools/reexport.py --old-world <retired> --out-dir <server dir> --name cobblers-10240 --paint build/paint/manifest.json` (the output directory must exist) | 20-40 min |
+| 3 | Check the export: 484 region files, `seed_match: true`, spawn (1461, 5306), border 10,240 | 2 min |
+| 4 | Phase A with the server stopped: regenerate every datapack against the new world (R0-R9 of the procedure above) | 5 min |
+| 5 | Install the packs, including `cobblers_height` and `cobblers_worldtree` **into the world folder** | 2 min |
+| 6 | Boot, then run R2-R10 in order, checking each | 15 min |
+| 7 | `tools/place_town.py hometown --verify`, `tools/place_donor.py verify`, and the read-only checks from EXP-024 | 10 min |
+| 8 | Distant Horizons pregen over the border, then retire the client LOD cache | 10-60 min |
+| 9 | A flight: the pads, Surge's shelf, the forest corridors, the gym, the cavern | you |
+
+**Checkpoints that stop the run**
+- The export reports `seed_match: false`, or fewer than 484 regions.
+- The world tree's crown does not reach above y319 (means `cobblers_height` is not in the world folder).
+- `place_town --verify` reports any gap.
+- `place_donor verify` reports a substitution mismatch.
+
+**Rollback.** Nothing is deleted: the retired world folder is a complete, bootable copy. If a step fails, stop the
+server, move the new world aside and put the retired one back.
+
+**Known costs of doing it**
+- Ore and underground-water placement is re-rolled, so any ore survey is stale afterwards.
+- Elder and grove sites are re-picked deterministically from the new world; individual trees may move.
+- Player inventories and Pokédex data carry in `playerdata/`, but anything a player built by hand is lost. Nobody
+  has built anything by hand yet.
+- The Distant Horizons client cache has to be cleared, or players see the old terrain at distance.
 
 ## 2026-09-17: dry run of the whole procedure on a staging export
 
