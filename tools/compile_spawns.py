@@ -40,14 +40,29 @@ import json
 import math
 from pathlib import Path
 
+import subregion_boxes
+
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_spawns"
 PACK_MCMETA = {"pack": {"pack_format": 48, "description": "Cobblers compiled encounter candidates (not runtime-proven)"}}
 SAMPLE_STEP = 4.0
+SUBREGION_GRID = 32
 
 
 def dumps(doc):
     return json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
+
+
+def position_type(entry):
+    """Where the spawn is allowed to stand.
+
+    Until 2026-09-17 every compiled entry said "grounded", so the 28 authored species that never
+    spawn on dry land upstream (Magikarp, Gyarados, Basculin, Goldeen, Barboach, Whiscash, Shellder,
+    Surskit and the rest) were asked to stand on the ground and never appeared. The value is authored
+    per entry in data/spawns.json as spawnable_position; tools/position_types.py derives it from the
+    installed Cobblemon jar.
+    """
+    return entry.get("spawnable_position") or "grounded"
 
 
 def interval_subregions(route):
@@ -147,7 +162,7 @@ def compile_route(route, entries_by_scope, allowed=None):
                         "biomes": list(e["biomes"])}
                 cond.update(e.get("conditions") or {})
                 spawns.append({"id": "%s_%s_%s" % (b["id"], s, e["species"]), "pokemon": e["species"], "type": "pokemon",
-                               "spawnablePositionType": "grounded", "bucket": e["bucket"], "level": e["level"],
+                               "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
                                "weight": e["weight"], "condition": cond})
                 species.add(e["species"])
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
@@ -160,11 +175,38 @@ def compile_route(route, entries_by_scope, allowed=None):
     return doc, summary
 
 
+def compile_subregion(sub, entries, exclude, grid):
+    """A sub-region's roster over its own polygon, minus the route corridor boxes.
+
+    Until 2026-09-17 a roster reached the world only where a route corridor passed through it, so 35
+    of 71 sub-regions compiled to nothing. The corridor cells are excluded rather than overlaid: both
+    tables would otherwise spawn in the same place and double the weights.
+    """
+    boxes = subregion_boxes.boxes_for(sub["polygons"], grid, exclude)
+    spawns = []
+    for b in boxes:
+        for e in entries:
+            cond = {"minX": b[0], "maxX": b[1], "minZ": b[2], "maxZ": b[3], "canSeeSky": True,
+                    "biomes": list(e["biomes"])}
+            cond.update(e.get("conditions") or {})
+            spawns.append({"id": "%s_%s" % (sub["id"], e["species"].replace(" ", "_")), "pokemon": e["species"],
+                           "type": "pokemon", "spawnablePositionType": position_type(e),
+                           "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
+    doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
+    summary = {"subregion_id": sub["id"], "box_count": len(boxes), "compiled_entry_count": len(spawns),
+               "species": sorted({e["species"] for e in entries}),
+               "covered_blocks": subregion_boxes.area(boxes),
+               "corridor_blocks_excluded": subregion_boxes.area(subregion_boxes.boxes_for(sub["polygons"], grid)) - subregion_boxes.area(boxes),
+               "output": "spawn_pool_world/subregions/%s.json" % sub["id"]}
+    return doc, summary
+
+
 def compile_habitat(h, entries):
     display = {e["pokemon"]: e["species"] for e in h["entries"]}
     compiled = [e for e in entries if e["ambient"] and e["weight"] > 0]
     doc = {"name": "cobblers.habitat.%s.name" % h["id"], "type": "cobblemon:natural",
-           "spawns": [{"species": display.get(e["species"], e["species"]), "bucket": e["bucket"], "spawnablePositionType": "grounded",
+           "spawns": [{"species": display.get(e["species"], e["species"]), "bucket": e["bucket"],
+                       "spawnablePositionType": position_type(e),
                        "weight": e["weight"], "levelRange": e["level"], "phases": "1-25"} for e in compiled]}
     compiled_names = {display.get(e["species"], e["species"]) for e in compiled}
     summary = {"habitat_id": h["id"], "authored_species_count": len(h["entries"]), "compiled_species_count": len(compiled),
@@ -199,16 +241,50 @@ def build(spawns, routes):
     return files, route_summaries, habitat_summaries
 
 
+def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID):
+    """The sub-region half of the pack: every authored roster over its own polygon.
+
+    Kept separate from build() so the route compilation keeps its shape; a sub-region file and a
+    route file never cover the same block, because the corridor cells are excluded here.
+    """
+    by_scope = {}
+    for e in spawns["entries"]:
+        if e["mechanism"] == "spawn_json_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
+            by_scope.setdefault(e["scope"], []).append(e)
+    corridor = subregion_boxes.route_boxes(routes)
+    files, summaries = {}, []
+    for sub in regions["subregions"]:
+        ents = by_scope.get(sub["id"], [])
+        if not ents:
+            continue
+        doc, summ = compile_subregion(sub, ents, corridor, grid)
+        if not doc["spawns"]:
+            continue
+        files["data/cobblers/spawn_pool_world/subregions/%s.json" % sub["id"]] = dumps(doc)
+        summaries.append(summ)
+    return files, summaries
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--spawns", default=str(ROOT / "data" / "spawns.json"))
     p.add_argument("--routes", default=str(ROOT / "data" / "routes.json"))
     p.add_argument("--out", default=str(DEFAULT_OUT))
+    p.add_argument("--regions", default=str(ROOT / "data" / "regions.json"))
+    p.add_argument("--grid", type=int, default=SUBREGION_GRID,
+                   help="grid the sub-region polygons are rasterised on before being merged into boxes")
+    p.add_argument("--no-subregions", action="store_true",
+                   help="compile route corridors only, as before 2026-09-17")
     p.add_argument("--check", default=None, help="compare with the compilation in this directory instead of writing")
     a = p.parse_args(argv)
     spawns = json.loads(Path(a.spawns).read_text(encoding="utf-8"))
     routes = json.loads(Path(a.routes).read_text(encoding="utf-8"))
     files, rs, hs = build(spawns, routes)
+    ss = []
+    if not a.no_subregions:
+        regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
+        subfiles, ss = build_subregions(spawns, routes, regions, a.grid)
+        files.update(subfiles)
     if a.check:
         base = Path(a.check)
         same = diff = missing = 0
@@ -233,10 +309,15 @@ def main(argv=None):
     manifest = {"generator": "tools/compile_spawns.py",
                 "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))},
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
-                "route_files": rs, "habitat_files": hs,
+                "route_files": rs, "habitat_files": hs, "subregion_files": ss,
+                "subregion_grid": a.grid,
+                "subregion_box_count": sum(q["box_count"] for q in ss),
+                "subregion_spawn_entry_count": sum(q["compiled_entry_count"] for q in ss),
                 "route_box_count": sum(r["source_box_count"] for r in rs), "route_spawn_entry_count": sum(r["compiled_entry_count"] for r in rs)}
     (out / "manifest.json").write_text(dumps(manifest), encoding="utf-8", newline="\n")
-    print("wrote %d files to %s: %d route boxes, %d route entries" % (len(files), out, manifest["route_box_count"], manifest["route_spawn_entry_count"]))
+    print("wrote %d files to %s: %d route boxes, %d route entries, %d sub-regions, %d sub-region boxes, %d sub-region entries"
+          % (len(files), out, manifest["route_box_count"], manifest["route_spawn_entry_count"],
+             len(ss), manifest["subregion_box_count"], manifest["subregion_spawn_entry_count"]))
     return 0
 
 
