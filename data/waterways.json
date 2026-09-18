@@ -1,0 +1,32 @@
+{
+  "schema": "cobblers.waterways/1",
+  "status": "authored 2026-09-18; the Mt Clay outflow only",
+  "purpose": "Named rivers and creeks that carry a roster of their own. A waterway is a centreline with a half width, not a polygon: the spawn boxes follow it, and the entries scoped to it carry neededNearbyBlocks water so the spawns stay at the water's edge and the banks stay forest.",
+  "note": "A habitat block is the wrong tool for a river. It is a sphere: covering the Mt Clay outflow at range 48 would take about fourteen blocks, each turning a 96-block-wide disc of forest into river country for the creek's whole length.",
+  "waterways": [
+    {
+      "id": "mt_clay_outflow",
+      "display_name": "The Wooper creek",
+      "character": "The creek that leaves the pond west of Mt Clay at its south-west corner and runs 1,300 blocks down to the western lake, losing fifty blocks of height on the way. Wooper country: thick where it leaves the pond, thinning as the water widens and cools downstream.",
+      "half_width": 24,
+      "weight_ramp": {
+        "head": 1.0,
+        "mouth": 0.3
+      },
+      "water_level": {
+        "head": 118,
+        "mouth": 68
+      },
+      "traced_from": "the staging export cobblers-dryrun, 2026-09-17: the connected water body that touches the pond's south-west corner, sampled every 40 blocks of x along its centre. The pond itself (x 1987-2212, z 1621-1793, y 119) is a separate body and keeps its default spawns.",
+      "polyline": [
+        [1996, 1770], [1956, 1808], [1916, 1832], [1876, 1872], [1836, 1890],
+        [1796, 1890], [1756, 1890], [1716, 1890], [1676, 1890], [1636, 1890],
+        [1596, 1890], [1556, 1890], [1516, 1890], [1476, 1890], [1436, 1912],
+        [1396, 1922], [1356, 1922], [1316, 1936], [1276, 1954], [1236, 1954],
+        [1196, 1970], [1156, 1984], [1116, 2024], [1076, 2034], [1036, 2050],
+        [996, 2050], [956, 2105], [916, 2085], [876, 2065], [836, 2040],
+        [796, 1968], [756, 1928], [716, 1888], [700, 1872]
+      ]
+    }
+  ]
+}

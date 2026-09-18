@@ -11601,6 +11601,78 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.wooper",
+      "species": "wooper",
+      "bucket": "common",
+      "level": "24-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.wooper_paldean",
+      "species": "wooper paldean",
+      "bucket": "common",
+      "level": "24-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "base stage; a regional form is a plain aspect on a spawn_pool_world entry (Cobblemon 1.8 ships 12 of them), unlike a habitat pool, whose species field takes a bare id and throws on a space",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.quagsire",
+      "species": "quagsire",
+      "bucket": "uncommon",
+      "level": "24-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "evolves from Wooper at 20; the band begins at 24",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.clodsire",
+      "species": "clodsire",
+      "bucket": "rare",
+      "level": "24-30",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "evolves from Paldean Wooper at 20; the band begins at 24",
+      "biomes": [],
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [

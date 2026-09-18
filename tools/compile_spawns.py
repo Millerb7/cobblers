@@ -41,16 +41,31 @@ import math
 from pathlib import Path
 
 import subregion_boxes
+import waterways as waterways_mod
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_spawns"
 PACK_MCMETA = {"pack": {"pack_format": 48, "description": "Cobblers compiled encounter candidates (not runtime-proven)"}}
 SAMPLE_STEP = 4.0
 SUBREGION_GRID = 32
+WATERWAY_GRID = 16
 
 
 def dumps(doc):
     return json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
+
+
+def box_condition(min_x, max_x, min_z, max_z, entry):
+    """The spawn condition for one box: the box, the entry's biomes, then whatever it authored.
+
+    An entry with no biomes leaves the key out rather than sending an empty list, which would match
+    no biome at all. The waterway rosters rely on that: a creek is defined by its water, not its biome.
+    """
+    cond = {"minX": min_x, "maxX": max_x, "minZ": min_z, "maxZ": max_z, "canSeeSky": True}
+    if entry.get("biomes"):
+        cond["biomes"] = list(entry["biomes"])
+    cond.update(entry.get("conditions") or {})
+    return cond
 
 
 def position_type(entry):
@@ -158,8 +173,7 @@ def compile_route(route, entries_by_scope, allowed=None):
             for e in entries_by_scope.get(s, []):
                 if allowed is not None and e["species"] not in allowed:
                     continue
-                cond = {"minX": b["min_x"], "maxX": b["max_x"], "minZ": b["min_z"], "maxZ": b["max_z"], "canSeeSky": True,
-                        "biomes": list(e["biomes"])}
+                cond = box_condition(b["min_x"], b["max_x"], b["min_z"], b["max_z"], e)
                 cond.update(e.get("conditions") or {})
                 spawns.append({"id": "%s_%s_%s" % (b["id"], s, e["species"]), "pokemon": e["species"], "type": "pokemon",
                                "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
@@ -186,9 +200,7 @@ def compile_subregion(sub, entries, exclude, grid):
     spawns = []
     for b in boxes:
         for e in entries:
-            cond = {"minX": b[0], "maxX": b[1], "minZ": b[2], "maxZ": b[3], "canSeeSky": True,
-                    "biomes": list(e["biomes"])}
-            cond.update(e.get("conditions") or {})
+            cond = box_condition(b[0], b[1], b[2], b[3], e)
             spawns.append({"id": "%s_%s" % (sub["id"], e["species"].replace(" ", "_")), "pokemon": e["species"],
                            "type": "pokemon", "spawnablePositionType": position_type(e),
                            "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
@@ -213,6 +225,43 @@ def compile_habitat(h, entries):
                "deferred_species": [e["species"] for e in h["entries"] if e["species"] not in compiled_names and e.get("bucket") == "authored-only"],
                "output": "habitat_pools/%s.json" % h["id"]}
     return doc, summary
+
+
+def build_waterways(spawns, waterways, grid=WATERWAY_GRID):
+    """A named river's roster along its centreline, thinning by the authored weight ramp.
+
+    Boxes come from tools/waterways.py, which gives each segment its own disjoint rectangles, so a
+    block is never covered twice and a weight is never doubled.
+    """
+    by_scope = {}
+    for e in spawns["entries"]:
+        if e["mechanism"] == "waterway_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
+            by_scope.setdefault(e["scope"], []).append(e)
+    files, summaries = {}, []
+    for w in waterways["waterways"]:
+        ents = by_scope.get(w["id"], [])
+        if not ents:
+            continue
+        spawns_out, boxes = [], 0
+        for i, frac, bs in waterways_mod.boxes_by_segment(w["polyline"], w["half_width"], grid):
+            mult = waterways_mod.ramp(w["weight_ramp"], frac)
+            for b in bs:
+                boxes += 1
+                for e in ents:
+                    spawns_out.append({"id": "%s_s%03d_%s" % (w["id"], i, e["species"].replace(" ", "_")),
+                                       "pokemon": e["species"], "type": "pokemon",
+                                       "spawnablePositionType": position_type(e),
+                                       "bucket": e["bucket"], "level": e["level"],
+                                       "weight": round(e["weight"] * mult, 3),
+                                       "condition": box_condition(b[0], b[1], b[2], b[3], e)})
+        doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
+        files["data/cobblers/spawn_pool_world/waterways/%s.json" % w["id"]] = dumps(doc)
+        summaries.append({"waterway_id": w["id"], "box_count": boxes, "compiled_entry_count": len(spawns_out),
+                          "species": sorted({e["species"] for e in ents}),
+                          "weight_multiplier": [round(waterways_mod.ramp(w["weight_ramp"], 0.0), 3),
+                                                round(waterways_mod.ramp(w["weight_ramp"], 1.0), 3)],
+                          "output": "spawn_pool_world/waterways/%s.json" % w["id"]})
+    return files, summaries
 
 
 def build(spawns, routes):
@@ -273,6 +322,7 @@ def main(argv=None):
     p.add_argument("--regions", default=str(ROOT / "data" / "regions.json"))
     p.add_argument("--grid", type=int, default=SUBREGION_GRID,
                    help="grid the sub-region polygons are rasterised on before being merged into boxes")
+    p.add_argument("--waterways", default=str(ROOT / "data" / "waterways.json"))
     p.add_argument("--no-subregions", action="store_true",
                    help="compile route corridors only, as before 2026-09-17")
     p.add_argument("--check", default=None, help="compare with the compilation in this directory instead of writing")
@@ -285,6 +335,11 @@ def main(argv=None):
         regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
         subfiles, ss = build_subregions(spawns, routes, regions, a.grid)
         files.update(subfiles)
+    ws = []
+    if Path(a.waterways).is_file():
+        waterdoc = json.loads(Path(a.waterways).read_text(encoding="utf-8"))
+        waterfiles, ws = build_waterways(spawns, waterdoc)
+        files.update(waterfiles)
     if a.check:
         base = Path(a.check)
         same = diff = missing = 0
@@ -309,7 +364,7 @@ def main(argv=None):
     manifest = {"generator": "tools/compile_spawns.py",
                 "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))},
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
-                "route_files": rs, "habitat_files": hs, "subregion_files": ss,
+                "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
                 "subregion_grid": a.grid,
                 "subregion_box_count": sum(q["box_count"] for q in ss),
                 "subregion_spawn_entry_count": sum(q["compiled_entry_count"] for q in ss),
@@ -318,6 +373,9 @@ def main(argv=None):
     print("wrote %d files to %s: %d route boxes, %d route entries, %d sub-regions, %d sub-region boxes, %d sub-region entries"
           % (len(files), out, manifest["route_box_count"], manifest["route_spawn_entry_count"],
              len(ss), manifest["subregion_box_count"], manifest["subregion_spawn_entry_count"]))
+    for q in ws:
+        print("  waterway %s: %d boxes, %d entries, weight x%.2f at the head to x%.2f at the mouth"
+              % (q["waterway_id"], q["box_count"], q["compiled_entry_count"], *q["weight_multiplier"]))
     return 0
 
 
