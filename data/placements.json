@@ -750,6 +750,708 @@
         "result": "2,712 non-air blocks, 20 block entities including rctmod:trainer_spawner, 9 command blocks, cobblemon:healing_machine; substituted counts identical to data/spawn_block_policy.json applied record"
       },
       "template": "cobbleverse:brock"
+    },
+    {
+      "id": "gym1_house_01",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/small_farm_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_farm_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "approach_sw_lot_01",
+      "position": {
+        "x": 1640,
+        "z": 3724
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the first thing you pass coming up from the south-west: a smallholding, not a house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/small_farm_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_02",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/meeting_point_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/meeting_point_5.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "approach_sw_lot_02",
+      "position": {
+        "x": 1659,
+        "z": 3697
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the wide lot on the approach; an open gathering place before the street proper",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/meeting_point_5.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_03",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/animal_pen_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/animal_pen_2.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "approach_sw_lot_03",
+      "position": {
+        "x": 1679,
+        "z": 3672
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "still the edge of town, and the deep lot takes a pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/animal_pen_2.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_04",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_7",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_7.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "approach_sw_lot_04",
+      "position": {
+        "x": 1702,
+        "z": 3649
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the approach tightens into housing as it meets the avenue",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/small_house_7.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_05",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/big_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/big_house_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_05",
+      "position": {
+        "x": 1740,
+        "z": 3578
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the tallest house on the main street, at its southern end",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/big_house_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_06",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/fletcher_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/fletcher_house_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_06",
+      "position": {
+        "x": 1763,
+        "z": 3578
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working frontage opposite the big house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/fletcher_house_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_07",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/masons_house_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_07",
+      "position": {
+        "x": 1740,
+        "z": 3563
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a stoneworker on the rock town's main street",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/masons_house_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_08",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/tool_smith_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/tool_smith_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_08",
+      "position": {
+        "x": 1763,
+        "z": 3562
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the deep lot suits the tool smith's yard",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/tool_smith_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_09",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/butcher_shop_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/butcher_shop_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_09",
+      "position": {
+        "x": 1738,
+        "z": 3546
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the widest building on the widest part of the avenue",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/butcher_shop_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_10",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/cartographer_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/cartographer_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_10",
+      "position": {
+        "x": 1763,
+        "z": 3548
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "shallow, so the street keeps its line where the lot is short",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/cartographer_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_11",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/armorer_house_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_11",
+      "position": {
+        "x": 1739,
+        "z": 3532
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the second workshop, facing the mason across the street: the weaponsmith was swapped out because its forge carries open lava, which would spawn fire types inside the town",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/armorer_house_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_12",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/library_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/library_2.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "north_avenue_lot_12",
+      "position": {
+        "x": 1764,
+        "z": 3531
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the avenue ends on something civic rather than another house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/library_2.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_13",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "west_lane_lot_13",
+      "position": {
+        "x": 1716,
+        "z": 3581
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the back lane starts plain",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/small_house_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_14",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_5.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "west_lane_lot_14",
+      "position": {
+        "x": 1699,
+        "z": 3580
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the one two-storey house on the lane, to break its roofline",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/small_house_5.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_15",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/temple_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/temple_3.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "west_lane_lot_15",
+      "position": {
+        "x": 1684,
+        "z": 3601
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the lane's one landmark, on the north side where it is seen from the avenue",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/temple_3.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_16",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_3.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "west_lane_lot_16",
+      "position": {
+        "x": 1684,
+        "z": 3581
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "plain again after the temple",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/small_house_3.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_17",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/tannery_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/tannery_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "west_lane_lot_17",
+      "position": {
+        "x": 1667,
+        "z": 3603
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "trade at the quiet end, away from the main street",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/tannery_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_house_18",
+      "settlement": "gym1_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_8",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_8.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "west_lane_lot_18",
+      "position": {
+        "x": 1667,
+        "z": 3581
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the last lot before the lane leaves town",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/birch/houses/small_house_8.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "birch: the town stands on the birch upland of the Viltri Plateau",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_01",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/fisher_cottage_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/fisher_cottage_1.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "north_avenue_lot_01",
+      "position": {
+        "x": 1603,
+        "z": 2750
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the water town's signature building, on its widest lot",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/fisher_cottage_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_02",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/cartographer_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/cartographer_1.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "north_avenue_lot_02",
+      "position": {
+        "x": 1626,
+        "z": 2751
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "shallow, opposite the cottage, so the avenue stays open",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/cartographer_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_03",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/small_house_5.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "west_street_lot_03",
+      "position": {
+        "x": 1584,
+        "z": 2817
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "two storeys at the top of the street",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/small_house_5.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_04",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/masons_house_1.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "west_street_lot_04",
+      "position": {
+        "x": 1571,
+        "z": 2818
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working house mid-street",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/masons_house_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_05",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/small_house_8",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/small_house_8.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "west_street_lot_05",
+      "position": {
+        "x": 1558,
+        "z": 2818
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "plain, between two busier neighbours",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/small_house_8.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_06",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/library_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/library_2.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "west_street_lot_06",
+      "position": {
+        "x": 1558,
+        "z": 2798
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the one civic building, facing the others across the street",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/library_2.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_07",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/small_farm_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/small_farm_1.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "shore_approach_lot_07",
+      "position": {
+        "x": 1642,
+        "z": 2842
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a smallholding where the town gives out onto the shore",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/small_farm_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym2_house_08",
+      "settlement": "gym2_town",
+      "template": "repurposed_structures:villages/ocean/houses/tannery_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/tannery_1.nbt",
+      "cell": "D5",
+      "kind": "house",
+      "lot": "shore_approach_lot_08",
+      "position": {
+        "x": 1647,
+        "z": 2817
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "trade by the water, on the south side of the shore approach",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "path": "data/repurposed_structures/structure/villages/ocean/houses/tannery_1.nbt",
+        "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
+        "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
+        "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
     }
   ]
 }

@@ -16,7 +16,7 @@
 ## What is built
 
 - **World export:** 1 disposable/authoring overworld exists and is pregenerated as 484 region files; the live save is runtime state, not repository source.
-- **Towns:** 1 of 29 planned places is composed in blocks: Hometown/Pallet has 9 donor structures, roads, spawn, and 1 waystone, all 9 placements `verified` in `placements.json`.
+- **Towns:** 3 of 29 planned places are composed in blocks. Hometown/Pallet has 9 donor structures, roads, spawn and 1 waystone, all 9 placements `verified`. Brock's town has 18 houses and Misty's 8, each a different design from Repurposed Structures' birch and ocean village sets, placed on the lots `tools/town_plan.py` cut and built on the disposable world: Misty 0 gaps in 419 columns, Brock 0 structural gaps in 969 with 7 footprint corners that carry no floor block because the template is open there (a pavilion, a farm plot). They are `planned` in `placements.json`, not verified in the live world. 26 of 29 settlements still have no layout plan at all.
 - **Gyms:** 1 of 8 gym buildings exists: Brock's (a local-only Cobbleverse template) on gym1_town's prepared lot; Brock and Misty have ground-level street/plaza preparation.
 - **Routes:** 0 of 9 critical routes is built as a finished road or event chain; all 9 exist as candidate polylines and 1,408 spawn boxes in `data/routes.json`, routed by `tools/build_routes.py` on the canonical heightmap with 0 sub-region holes and no step over 35 degrees on any leg.
 - **Regions:** 21 regions and 62 sub-regions exist as authored data and WorldPainter paint inputs; they are not gameplay boundaries at runtime.
@@ -25,7 +25,8 @@
 - **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted giants exist (4 landmark trees and the demoted Weeping Elder); the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 0 trainers, 0 production side events, and 0 boss encounters are placed in the world.
-- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`; `tools/compile_spawns.py` generates 9 route pool files over 1,408 boxes (7,066 entries) and 9 Habitat pool files into `build/datapacks/cobblers_spawns/`, reproducing every authored per-route species list exactly (no unreached species); they and the generated suppression pack are proven on the disposable test world only (EXP-012, EXP-021), and 0 pools or Habitat Blocks are installed in the live world.
+- **Encounter data:** 62 of 62 sub-regions have weighted/leveled source rosters in `data/spawns.json`. `tools/compile_spawns.py` generates 9 route pool files (1,408 boxes, 7,066 entries), 62 sub-region files (2,033 boxes, 14,488 entries over 43.0 million blocks), 1 waterway file and 9 Habitat pool files. Until 2026-09-17 only the route corridors compiled, so 35 sub-regions reached nothing; and every entry said `grounded`, so 25 water species never appeared. Both are fixed and the sub-region rosters are observed in game at Lake Tilpey (EXP-025). Suppression now covers the sub-region polygons too, at 926 boxes and 3,841 MB of heap. 0 pools, blocks or suppression are installed in the live world.
+- **Size variance:** two layers, no mod. Cobblemon's own intrinsic roll is widened to 0.8-1.2 in `modpack/config/cobblemon/main.json`, and `data/sizes.json` with `tools/size_outliers.py` makes roughly 1 wild Pokemon in 200 a notable individual, gated on headroom because collision boxes scale with `ScaleModifier` (EXP-025). Proven on the disposable world; whether a captured outlier keeps its size is not tested.
 - **Quest data:** 3 dialogue conversations and 2 quests exist as source data; 1 (the Route 1 thirsty stranger, 44 nodes) compiles through `tools/compile_dialogue.py` and ran on the disposable world (EXP-022); 0 are placed in the live world.
 - **Structure catalog:** 254 structure records exist in `data/structures.json`; catalog presence does not mean a structure is placed.
 - **Tooling:** 68 Python tools, 2 PowerShell server scripts, 42 pytest modules, and 20 experiment directories exist; each experiment's own result file defines what has actually run.
@@ -86,6 +87,7 @@
 - **Navigation runtime:** flag-driven waystones are blocked on an in-game proof of activation, locked-touch rollback, reconnect reconciliation, and Xaero behavior.
 - **Generated gym copies:** the overworld Blaine/League decision is blocked from enforcement until the exact datapack overrides that suppress Nether/End copies are proven.
 - **Pack foundation:** EXP-000 has server boot and one-client connection evidence but is blocked from completion on multiplayer and remaining world-critical/gameplay-critical functional tests.
+- **Every spawn test needs a player.** Cobblemon spawns around players only: with nobody connected, no Pokemon spawn anywhere, however long a world runs. An agent can place, resize, read and verify entities over RCON, but it cannot make the world produce a natural spawn. Plan a spawn observation as an appointment with somebody in game, five minutes standing still per site, rather than discovering the dependency mid-test. `/tp` the player, clear the area first, and census over RCON.
 
 ## File ownership
 
