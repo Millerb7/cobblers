@@ -231,10 +231,11 @@ REQUIRED_FILES = {"world.json"}
 
 
 class Context:
-    def __init__(self, data_dir: Path, source_root, report: Report, world_save=None):
+    def __init__(self, data_dir: Path, source_root, report: Report, world_save=None, spawn_pack=None):
         self.data_dir = data_dir
         self.source_root = source_root
         self.world_save = world_save
+        self.spawn_pack = spawn_pack
         self.report = report
         self.files = {}
         self.world = None
@@ -2769,6 +2770,55 @@ def check_habitat_blocks(ctx: Context):
         rep.info(C, "%d placed blocks present in %s" % (len(placed), ctx.world_save), file=f.rel)
 
 
+def check_spawn_pack(ctx: Context):
+    """Every spawn detail in a compiled pack has an id of its own.
+
+    A Cobblemon spawn file whose details share an id parses, loads without a word in the log, and is
+    impossible to tell from a working one by reading it. On 2026-09-18 the sub-region files carried
+    14,366 details under 439 ids and the waterway file 320 under 132, because the generator put the
+    sub-region or segment in the id but not the box. It cost a five-minute in-game test run to find.
+
+    Pass --pack <compiled dir> to check one; without it this is SKIPPED, never passed.
+    """
+    C = "spawn-pack"
+    rep = ctx.report
+    pack = getattr(ctx, "spawn_pack", None)
+    if not pack:
+        rep.skip(C, "no compiled pack checked; pass --pack <dir> (build/datapacks/cobblers_spawns)")
+        return
+    root = Path(pack)
+    if not root.is_dir():
+        rep.error(C, "not a directory: %s" % pack)
+        return
+    files = sorted(root.glob("data/*/spawn_pool_world/**/*.json"))
+    if not files:
+        rep.error(C, "no spawn_pool_world files under %s" % pack)
+        return
+    total = dupes = 0
+    for f in files:
+        try:
+            doc = json.loads(f.read_text(encoding="utf-8"))
+        except ValueError as exc:
+            rep.error(C, "does not parse: %s" % exc, file=f.name)
+            continue
+        seen = {}
+        for entry in (doc.get("spawns") or []):
+            total += 1
+            sid = entry.get("id")
+            if sid is None:
+                rep.error(C, "a spawn detail has no id", file=f.name)
+                continue
+            seen[sid] = seen.get(sid, 0) + 1
+        repeated = {k: v for k, v in seen.items() if v > 1}
+        if repeated:
+            dupes += sum(v - 1 for v in repeated.values())
+            worst = max(repeated.items(), key=lambda kv: kv[1])
+            rep.error(C, "%d spawn ids are used more than once (%s appears %d times); a detail's id must "
+                         "identify its box" % (len(repeated), worst[0], worst[1]), file=f.name)
+    if not dupes:
+        rep.info(C, "%d spawn details across %d files, every id its own" % (total, len(files)))
+
+
 CHECKS = [
     ("schema", check_schema),
     ("world", check_world_config),
@@ -2786,6 +2836,7 @@ CHECKS = [
     ("town-ground", check_town_ground),
     ("visibility", check_visibility),
     ("habitat-blocks", check_habitat_blocks),
+    ("spawn-pack", check_spawn_pack),
 ]
 
 
@@ -2825,6 +2876,8 @@ def main(argv=None):
                    help="root of the out-of-repo source/ tree")
     p.add_argument("--world-save", default=os.environ.get("COBBLERS_WORLD_SAVE"),
                    help="a stopped world copy to check placed Habitat Blocks against (never the live world)")
+    p.add_argument("--pack", default=os.environ.get("COBBLERS_SPAWN_PACK"),
+                   help="a compiled spawn pack (build/datapacks/cobblers_spawns) to check for duplicate spawn ids")
     p.add_argument("--only", nargs="*", metavar="CHECK", help="run only these checks")
     p.add_argument("--list", action="store_true", help="list checks and exit")
     p.add_argument("--json", action="store_true", dest="as_json", help="JSON output")
@@ -2837,7 +2890,7 @@ def main(argv=None):
 
     data_dir = Path(args.data)
     report = Report()
-    ctx = Context(data_dir, args.source_root, report, args.world_save)
+    ctx = Context(data_dir, args.source_root, report, args.world_save, args.pack)
 
     if not data_dir.is_dir():
         report.error("schema", "data directory not found: %s" % data_dir)

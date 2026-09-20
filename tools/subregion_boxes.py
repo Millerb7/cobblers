@@ -58,14 +58,25 @@ def rasterise(polygons, grid):
     return cells, x0, z0, nx, nz
 
 
-def covered_by(cells, x0, z0, grid, boxes):
-    """Cells whose centre falls inside one of the given world-space boxes."""
+def covered_by(cells, x0, z0, grid, boxes, whole_cell=False):
+    """Cells the given world-space boxes cover.
+
+    By centre for a wide exclusion like a route corridor, where a cell that merely clips the edge
+    should stay with the sub-region. By any overlap for a narrow one like a waterway: a 16-block
+    river inside a 32-block cell never contains the centre, so on 2026-09-20 forty-six sub-region
+    boxes still covered the creek and its roster was diluted by the forest around it.
+    """
     out = set()
     for ix, iz in cells:
-        cx = x0 + ix * grid + grid / 2.0
-        cz = z0 + iz * grid + grid / 2.0
+        cx0, cz0 = x0 + ix * grid, z0 + iz * grid
+        cx1, cz1 = cx0 + grid - 1, cz0 + grid - 1
+        mx, mz = cx0 + grid / 2.0, cz0 + grid / 2.0
         for b in boxes:
-            if b[0] <= cx <= b[1] and b[2] <= cz <= b[3]:
+            if whole_cell:
+                hit = not (b[1] < cx0 or cx1 < b[0] or b[3] < cz0 or cz1 < b[2])
+            else:
+                hit = b[0] <= mx <= b[1] and b[2] <= mz <= b[3]
+            if hit:
                 out.add((ix, iz))
                 break
     return out
@@ -90,11 +101,13 @@ def merge_rectangles(cells):
     return out
 
 
-def boxes_for(polygons, grid=DEFAULT_GRID, exclude=()):
+def boxes_for(polygons, grid=DEFAULT_GRID, exclude=(), exclude_whole_cell=()):
     """World-space [(minX, maxX, minZ, maxZ)] covering the polygons, minus the excluded boxes."""
     cells, x0, z0, _, _ = rasterise(polygons, grid)
     if exclude:
         cells -= covered_by(cells, x0, z0, grid, exclude)
+    if exclude_whole_cell:
+        cells -= covered_by(cells, x0, z0, grid, exclude_whole_cell, whole_cell=True)
     out = []
     for ix0, ix1, iz0, iz1 in merge_rectangles(cells):
         out.append((int(x0 + ix0 * grid), int(x0 + (ix1 + 1) * grid - 1),

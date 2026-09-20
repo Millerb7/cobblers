@@ -189,14 +189,14 @@ def compile_route(route, entries_by_scope, allowed=None):
     return doc, summary
 
 
-def compile_subregion(sub, entries, exclude, grid):
+def compile_subregion(sub, entries, exclude, grid, waterways=()):
     """A sub-region's roster over its own polygon, minus the route corridor boxes.
 
     Until 2026-09-17 a roster reached the world only where a route corridor passed through it, so 35
     of 71 sub-regions compiled to nothing. The corridor cells are excluded rather than overlaid: both
     tables would otherwise spawn in the same place and double the weights.
     """
-    boxes = subregion_boxes.boxes_for(sub["polygons"], grid, exclude)
+    boxes = subregion_boxes.boxes_for(sub["polygons"], grid, exclude, waterways)
     spawns = []
     for n, b in enumerate(boxes):
         for e in entries:
@@ -290,11 +290,13 @@ def build(spawns, routes):
     return files, route_summaries, habitat_summaries
 
 
-def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID):
+def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=()):
     """The sub-region half of the pack: every authored roster over its own polygon.
 
     Kept separate from build() so the route compilation keeps its shape; a sub-region file and a
-    route file never cover the same block, because the corridor cells are excluded here.
+    route file never cover the same block, because the corridor cells are excluded here. A waterway's
+    cells are excluded the same way, so the water's edge belongs to the river's roster alone and the
+    forest around it does not dilute it.
     """
     by_scope = {}
     for e in spawns["entries"]:
@@ -306,7 +308,7 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID):
         ents = by_scope.get(sub["id"], [])
         if not ents:
             continue
-        doc, summ = compile_subregion(sub, ents, corridor, grid)
+        doc, summ = compile_subregion(sub, ents, corridor, grid, waterways)
         if not doc["spawns"]:
             continue
         files["data/cobblers/spawn_pool_world/subregions/%s.json" % sub["id"]] = dumps(doc)
@@ -330,16 +332,19 @@ def main(argv=None):
     spawns = json.loads(Path(a.spawns).read_text(encoding="utf-8"))
     routes = json.loads(Path(a.routes).read_text(encoding="utf-8"))
     files, rs, hs = build(spawns, routes)
-    ss = []
-    if not a.no_subregions:
-        regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
-        subfiles, ss = build_subregions(spawns, routes, regions, a.grid)
-        files.update(subfiles)
-    ws = []
+    ws, water_boxes = [], []
     if Path(a.waterways).is_file():
         waterdoc = json.loads(Path(a.waterways).read_text(encoding="utf-8"))
         waterfiles, ws = build_waterways(spawns, waterdoc)
         files.update(waterfiles)
+        for wdef in waterdoc["waterways"]:
+            for _, _, bs in waterways_mod.boxes_by_segment(wdef["polyline"], wdef["half_width"], WATERWAY_GRID):
+                water_boxes.extend(bs)
+    ss = []
+    if not a.no_subregions:
+        regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
+        subfiles, ss = build_subregions(spawns, routes, regions, a.grid, water_boxes)
+        files.update(subfiles)
     if a.check:
         base = Path(a.check)
         same = diff = missing = 0
@@ -356,6 +361,16 @@ def main(argv=None):
         extra = [q.relative_to(base).as_posix() for q in base.rglob("*.json") if q.relative_to(base).as_posix() not in files]
         print("identical %d, different %d, missing %d, extra %s" % (same, diff, missing, extra))
         return 0 if not diff and not missing and not extra else 1
+    for rel, text in sorted(files.items()):
+        if "/spawn_pool_world/" not in rel:
+            continue
+        ids = [q.get("id") for q in json.loads(text).get("spawns") or []]
+        repeated = {i for i in ids if ids.count(i) > 1}
+        if repeated:
+            # a file whose details share an id parses and loads in silence; it cost an in-game test
+            # run on 2026-09-18 to notice. tools/validate_data.py --pack checks a written pack too.
+            raise SystemExit("%s: %d spawn ids are used more than once, e.g. %s"
+                             % (rel, len(repeated), sorted(repeated)[0]))
     out = Path(a.out)
     for rel, text in files.items():
         f = out / rel

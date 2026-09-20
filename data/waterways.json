@@ -3,12 +3,14 @@
   "status": "authored 2026-09-18; the Mt Clay outflow only",
   "purpose": "Named rivers and creeks that carry a roster of their own. A waterway is a centreline with a half width, not a polygon: the spawn boxes follow it, and the entries scoped to it carry neededNearbyBlocks water so the spawns stay at the water's edge and the banks stay forest.",
   "note": "A habitat block is the wrong tool for a river. It is a sphere: covering the Mt Clay outflow at range 48 would take about fourteen blocks, each turning a 96-block-wide disc of forest into river country for the creek's whole length.",
+  "exclusion": "tools/compile_spawns.py cuts a waterway's cells out of the sub-region boxes around it, the same way it cuts out the route corridors. Without that the forest roster spawns at the water's edge too and dilutes the river: measured at the creek head on 2026-09-18, Wooper and Quagsire were 2 of 28 spawns within 64 blocks, against foothill_woods at 21-23.",
   "waterways": [
     {
       "id": "mt_clay_outflow",
       "display_name": "The Wooper creek",
       "character": "The creek that leaves the pond west of Mt Clay at its south-west corner and runs 1,300 blocks down to the western lake, losing fifty blocks of height on the way. Wooper country: thick where it leaves the pond, thinning as the water widens and cools downstream.",
-      "half_width": 24,
+      "half_width": 8,
+      "half_width_basis": "a 16-block strip, nearly all of which is water-adjacent, so cutting it out of the sub-region rosters leaves no dead forest behind. At the 24 it was first authored with, the strip was 48 wide and its outer thirds carried nothing.",
       "weight_ramp": {
         "head": 1.0,
         "mouth": 0.3
