@@ -1,0 +1,93 @@
+{
+  "schema": "cobblers.sizes/1",
+  "status": "authored 2026-09-20; tested on the disposable world, not installed live",
+  "purpose": "Two layers of size variance. The ambient layer is Cobblemon's own intrinsic roll, widened in modpack/config/cobblemon/main.json. This file is the second layer: the rare individual worth telling someone about.",
+  "mechanism": {
+    "how": "A datapack function sweeps wild Pokemon that have not been rolled yet and writes Pokemon.ScaleModifier on the few that win the roll. tools/size_outliers.py generates it.",
+    "why_not_a_mod": "Cobblemon 1.8 already carries the field, the config and the network packet for it (ScaleModifierUpdatePacket). Cobblemon Size Variations 1.4.0 calls the same setScaleModifier, targets Cobblemon 1.7.0, and Modrinth lists it as needed on the client as well.",
+    "marker": "Pokemon.PersistentData.cobblers_sized. It lives on the Pokemon rather than the entity, so it travels into the ball and back out and the roll never repeats on a Pokemon somebody owns.",
+    "wild_only": "the sweep skips anything with Pokemon.PokemonOwnerId, so a player's Pokemon is never resized when it is sent out",
+    "headroom": "an upward roll is only applied where the Pokemon has that many open blocks above it. Measured on the disposable world on 2026-09-20: a collision box scales with ScaleModifier, and a Gyarados at 2.0 stands 5 blocks high and 4 wide against 4 by 2.5 at its normal size. So a giant is never created inside a cave, a corridor under canopy or the cavern, where it could not fit."
+  },
+  "ambient": {
+    "config_file": "modpack/config/cobblemon/main.json",
+    "pokemonIntrinsicSizeMin": 0.8,
+    "pokemonIntrinsicSizeMax": 1.2,
+    "was": [
+      0.95,
+      1.05
+    ],
+    "basis": "the roll is uniform across the band: 40 Bidoof at the stock 0.95-1.05 came out evenly spread from 0.951 to 1.049. At 0.8-1.2 two of a species side by side differ by 13 per cent on average and by up to 40 per cent, which reads as variation without any individual looking wrong."
+  },
+  "roll": {
+    "per": 2000,
+    "basis": "one roll per wild Pokemon; the tiers below total 10 in 2000, so roughly one Pokemon in 200 is a notable individual"
+  },
+  "tiers": [
+    {
+      "id": "giant",
+      "window": [
+        1,
+        1
+      ],
+      "rate": "1 in 2000",
+      "scales": [
+        1.45,
+        1.5,
+        1.55,
+        1.6
+      ],
+      "note": "the one you tell someone about. Rarer than the runt on purpose: a big one reads at distance and from any angle, so at equal rates giants would feel commoner than they are, and scarcity is what makes it a story.",
+      "headroom_blocks": 5
+    },
+    {
+      "id": "large",
+      "window": [
+        2,
+        4
+      ],
+      "rate": "1 in 667",
+      "scales": [
+        1.25,
+        1.3,
+        1.35,
+        1.4
+      ],
+      "note": "remarkably large rather than a monster",
+      "headroom_blocks": 4
+    },
+    {
+      "id": "small",
+      "window": [
+        5,
+        8
+      ],
+      "rate": "1 in 500",
+      "scales": [
+        0.72,
+        0.75,
+        0.78,
+        0.82
+      ],
+      "note": "the commonest outlier: a small one is only noticed close up, and nothing can go wrong with it"
+    },
+    {
+      "id": "runt",
+      "window": [
+        9,
+        10
+      ],
+      "rate": "1 in 1000",
+      "scales": [
+        0.55,
+        0.6,
+        0.64,
+        0.68
+      ]
+    }
+  ],
+  "sweep": {
+    "interval_ticks": 20,
+    "basis": "the sweep is one selector pass over loaded Pokemon entities that carry no marker yet. Everything already rolled is excluded by the nbt test, so the work per pass is proportional to what has just spawned."
+  }
+}

@@ -10,8 +10,12 @@ applies it to every inherited file:
     global datapacks (<server>/datapacks) and world datapacks (<world>/datapacks), in load order
   - per resource path take the effective file (the highest-priority source); skip our own cobblers_* packs and
     files already "enabled": false
-  - add one coordinate anticondition per route box to every spawn detail, keeping any anticondition it already has
+  - add one coordinate anticondition per box to every spawn detail, keeping any anticondition it already has
     (a singular "anticondition" object moves into the plural list)
+
+With --subregions the box set is the route corridors plus every sub-region polygon from data/regions.json. Without it,
+only the corridors are suppressed, so the 43 million blocks the sub-region rosters cover keep their inherited spawns
+and our rosters merely add to them: the regions read as vanilla with sprinkles.
 
 Box sets (--boxes):
   raw     the 1,408 data/routes.json spawn_scope boxes as they are
@@ -32,6 +36,8 @@ import json
 import re
 import zipfile
 from pathlib import Path
+
+import subregion_boxes
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_suppress"
@@ -146,6 +152,13 @@ def main(argv=None):
     p.add_argument("--server", required=True, help="server directory holding mods/ and datapacks/")
     p.add_argument("--world", required=True, help="a DISPOSABLE world directory (its datapacks/ are read)")
     p.add_argument("--routes", default=str(ROOT / "data" / "routes.json"))
+    p.add_argument("--regions", default=str(ROOT / "data" / "regions.json"))
+    p.add_argument("--subregions", action="store_true",
+                   help="suppress inside every sub-region polygon too, not only the route corridors: without this, "
+                        "the 43 million blocks the sub-region rosters cover keep their inherited spawns and our "
+                        "rosters only add to them")
+    p.add_argument("--subregion-grid", type=int, default=32,
+                   help="grid the sub-region polygons are rasterised on (must match tools/compile_spawns.py --grid)")
     p.add_argument("--boxes", choices=("raw", "merged"), default="merged")
     p.add_argument("--grid", type=int, default=16, help="merged only: snap the union outward to this grid (8 = exact; 16 is the EXP-012 choice)")
     p.add_argument("--out", default=str(DEFAULT_OUT))
@@ -153,6 +166,11 @@ def main(argv=None):
     if "cobblers-10240" in Path(a.world).as_posix():
         raise SystemExit("refusing to read the live world")
     boxes = route_boxes(json.loads(Path(a.routes).read_text(encoding="utf-8")))
+    route_box_count = len(boxes)
+    if a.subregions:
+        regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
+        for sub in regions["subregions"]:
+            boxes.extend(subregion_boxes.boxes_for(sub["polygons"], a.subregion_grid))
     if a.boxes == "merged":
         boxes = merge_boxes(boxes, a.grid)
     conds = [{"minX": x0, "maxX": x1, "minZ": z0, "maxZ": z1} for x0, x1, z0, z1 in boxes]
@@ -162,7 +180,9 @@ def main(argv=None):
         effective.setdefault(path, []).append(src)
         effective[path + "\0raw"] = raw
     out = Path(a.out)
-    stats = {"box_set": a.boxes, "grid": a.grid if a.boxes == "merged" else None, "boxes": len(boxes), "source_files": len(sources), "paths": 0, "written": 0,
+    stats = {"box_set": a.boxes, "grid": a.grid if a.boxes == "merged" else None, "boxes": len(boxes),
+             "route_boxes": route_box_count, "subregions": bool(a.subregions),
+             "subregion_grid": a.subregion_grid if a.subregions else None, "source_files": len(sources), "paths": 0, "written": 0,
              "skipped_disabled": 0, "details": 0, "bytes": 0, "multi_source_paths": 0, "unparsed": []}
     for key in sorted(k for k in effective if "\0" not in k):
         stats["paths"] += 1

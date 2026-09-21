@@ -25,6 +25,7 @@ import numpy as np
 
 import terrain as T
 from place_town import rotate
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 LIBRARY = ROOT / "kits" / "structures" / "foliage"
@@ -332,9 +333,13 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
     p.add_argument("--apply", action="store_true")
-    p.add_argument("--surface-world", default=None)
+    p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
     p.add_argument("--install", default=None)
     a = p.parse_args(argv)
+    if a.surface_world:
+        # trunks were seated on ground read from a world; re-run over a world that already has the forest,
+        # that ground is the last forest's roots and leaf litter
+        raise SystemExit("--surface-world is gone: trunks are seated on the heightmap's ground (tools/ground.py)")
     heights, world = T.load_from_args(a)
     x0, z0, x1, z1 = BOX
     rng = np.random.default_rng(SEED)
@@ -424,11 +429,11 @@ def main(argv=None):
            "loops": [[list(c["nodes"][0]), list(c["nodes"][-1])] for c in loops],
            "sapling": list(SAPLING), "mansion": list(MANSION), "big_trees": len(bigpts)}
 
-    # Seat every trunk on the world's own ground and write the placement in TILES. A 200x200 tile is 169 chunks,
+    # Seat every trunk on the heightmap's ground (tools/ground.py) and write the placement in TILES. A 200x200 tile is 169 chunks,
     # under the 256 a single forceload box accepts -- a limit whose failure shows only in the command's reply, and
     # which silently swallowed two earlier town-prep runs.
-    import world_heights as WH
-    ground, _, _ = WH.extract(a.surface_world or _require("--surface-world"), BOX)
+    import ground as G
+    ground = G.load(a.source_root).box(*BOX)
     rng2 = np.random.default_rng(SEED + 11)
     tiles, placed = {}, 0
     for pts, pool in ((maze, body), (outer, body), (bigpts, big)):
@@ -474,7 +479,7 @@ def main(argv=None):
     for key, cmds in sorted(tiles.items()):
         f = out / "data" / "cobblers" / "function" / "route1" / ("tile_%d_%d.mcfunction" % key)
         f.parent.mkdir(parents=True, exist_ok=True)
-        f.write_text("\n".join(["# Route 1 forest tile %d %d" % key] + cmds) + "\n", encoding="utf-8")
+        f.write_text("\n".join(function_limits.ensure_loaded(["# Route 1 forest tile %d %d" % key] + cmds)) + "\n", encoding="utf-8")
         for c in cmds:
             if c.startswith("place template"):        # dressing commands share the tile but are not objects
                 used.add(c.split()[2].rsplit("/", 1)[-1] + ".nbt")

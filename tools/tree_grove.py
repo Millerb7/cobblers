@@ -29,6 +29,7 @@ import terrain as T
 import structure_nbt as S
 from landmark_trees import _ball, _leaves, _limb, _log, _rng, _roots
 from place_town import rotate
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 FLOOR_Y, ROOM, CROWN_R, LIMB_REACH = 16, 10, 14, 12
@@ -270,7 +271,7 @@ def _pad(ground, x, z, half, x0, z0):
     return float(pad.max() - pad.min())
 
 
-def augment(site_id, world_dir, want_elders=4):
+def augment(site_id, source_root=None, want_elders=4):
     """Add the world tree and a ring of elders to a grove that is already standing.
 
     The giants keep their positions: they are in the world. Clearances are horizontal only where the canopies
@@ -284,11 +285,16 @@ def augment(site_id, world_dir, want_elders=4):
     # will stand, and is seated on the ground under its corner. The trees added here store the centre.
     giants = [dict(g, x=g["x"] + 2, z=g["z"] + 2) for g in rep["giants"]]
     cx, cz = rep["site"]["x"], rep["site"]["z"]
-    import world_heights
+    # ground and water from the heightmap and the painted water model, never the world: augment runs over
+    # a grove that is already standing, so the world's ground here is the last grove's roots and trunks
+    import ground as G
+    from elder_trees import painted_water
     box = (cx - 140, cz - 140, cx + 140, cz + 140)
-    ground, water_top, _ = world_heights.extract(world_dir, box)
+    g_src = G.load(source_root)
+    ground = g_src.box(*box)
     x0, z0 = box[0], box[1]
-    wet = water_top != world_heights.NONE
+    wet_full = painted_water(g_src.heights, g_src.world)
+    wet = wet_full[z0 - g_src.oz:box[3] - g_src.oz + 1, x0 - g_src.ox:box[2] - g_src.ox + 1]
 
     def dry(x, z, r):
         a, b_ = z - r - z0, x - r - x0
@@ -361,12 +367,13 @@ def main(argv=None):
     p.add_argument("--augment", default=None, help="grove id: add the world tree and elders to a grove already placed")
     p.add_argument("--elders", type=int, default=4)
     p.add_argument("--all-shortlisted", action="store_true")
-    p.add_argument("--surface-world", default=None, help="stopped world: trunk bases seated on the ground the world has")
+    p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
     a = p.parse_args(argv)
+    if a.surface_world:
+        raise SystemExit("--surface-world is gone: trunks are seated on the heightmap's ground (tools/ground.py), "
+                         "never on a world, which holds the last grove")
     if a.augment:
-        if not a.surface_world:
-            p.error("--augment needs --surface-world: the trees are seated on the ground the world actually has")
-        rep, wt, elders = augment(a.augment, a.surface_world, a.elders)
+        rep, wt, elders = augment(a.augment, a.source_root, a.elders)
         kind = SPECIES.get(rep["site"].get("forest"), "oak")
         from place_town import rotate
         rng = _rng("augment_" + a.augment)
@@ -405,7 +412,7 @@ def main(argv=None):
         (ROOT / "derived" / "sites" / ("tree_grove_%s.json" % a.augment)).write_text(json.dumps(rep, indent=1), encoding="utf-8")
         fn = ROOT / "build" / "grove" / ("grove_%s_augment.mcfunction" % a.augment)
         fn.parent.mkdir(parents=True, exist_ok=True)
-        fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+        fn.write_text("\n".join(function_limits.ensure_loaded(cmds)) + "\n", encoding="utf-8")
         print(json.dumps({"site": a.augment, "species": kind, "added": out,
                           "giants_kept": len(rep["giants"]), "function": str(fn.relative_to(ROOT))}, indent=1))
         return
@@ -417,10 +424,8 @@ def main(argv=None):
         key = "levels" if "levels" in w else "mask"
         m = np.asarray(Image.open(ROOT / "build" / "paint" / w[key])) > 0
         water[w["z"]:w["z"] + m.shape[0], w["x"]:w["x"] + m.shape[1]] |= m
-    ground_at = None
-    if a.surface_world:
-        import world_heights
-        ground_at = world_heights
+    import ground as G
+    ground_of = G.load(a.source_root)
     sites = []
     if a.site:
         x, z = [int(v) for v in a.site.split(",")]
@@ -441,13 +446,10 @@ def main(argv=None):
                 written[key] = write_prefab(kind, v, b, dims)
             variants.append(written[key])
         trees, gaps = grove(heights, water, (s["x"], s["z"]), rng)
-        if ground_at is not None:                            # seat each trunk on the world's own ground
-            xs = [t["x"] for t in trees]; zs = [t["z"] for t in trees]
-            b = (min(xs) - 8, min(zs) - 8, max(xs) + 8, max(zs) + 8)
-            g, _, _ = ground_at.extract(a.surface_world, b)
-            for t in trees:
-                t["heightmap_ground_y"] = t["ground_y"]
-                t["ground_y"] = int(g[t["z"] + 2 - b[1], t["x"] + 2 - b[0]])
+        # seat each trunk on the heightmap's ground, rounded (tools/ground.py): the ground a fresh export has
+        for t in trees:
+            t["heightmap_ground_y"] = t["ground_y"]
+            t["ground_y"] = ground_of(t["x"] + 2, t["z"] + 2)
         cmds = ["# grove for a tree town at %s (%d, %d): giants only, nothing built (tools/tree_grove.py)" % (s["id"], s["x"], s["z"])]
         for i, t in enumerate(trees):
             side = variants[i % 3]
@@ -470,7 +472,7 @@ def main(argv=None):
         path.write_text(json.dumps(rep, indent=1), encoding="utf-8")
         fn = ROOT / "build" / "grove" / ("grove_%s.mcfunction" % s["id"])
         fn.parent.mkdir(parents=True, exist_ok=True)
-        fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+        fn.write_text("\n".join(function_limits.ensure_loaded(cmds)) + "\n", encoding="utf-8")
         out.append({"id": s["id"], "species": kind, "giants": len(trees), "nearest_neighbour": [min(g for g in gaps if g), max(g for g in gaps if g)] if trees else None,
                     "pad_relief_max": max(t["pad_relief"] for t in trees) if trees else None})
     print(json.dumps(out, indent=1))
