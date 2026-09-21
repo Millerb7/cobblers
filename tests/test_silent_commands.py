@@ -66,6 +66,19 @@ def test_ensure_loaded_leaves_a_sound_function_alone():
     assert FL.ensure_loaded(ok) == ok
 
 
+def test_a_function_that_releases_then_writes_again_is_held_whole():
+    # Sunset West's town function held each building's box and released it before the next; the Mart's box overlapped
+    # the Centre's and its `place template` landed 6 of 1,731 blocks on one rebuild of two (2026-09-21)
+    churn = ["forceload add 0 0 47 47", "place template cobblers:centre 10 60 10 none none 1.0 0", "forceload remove 0 0 47 47",
+             "forceload add 32 32 79 79", "place template cobblers:mart 40 60 40 none none 1.0 0", "forceload remove 32 32 79 79"]
+    assert FL.releases_mid_run(churn)
+    out = FL.ensure_loaded(churn)
+    assert not FL.releases_mid_run(out)
+    assert FL.check_lines(out) == []
+    first_remove = next(i for i, l in enumerate(out) if l.startswith("forceload remove"))
+    assert all(not l.startswith("place") for l in out[first_remove:])
+
+
 def test_every_forceload_ensure_loaded_writes_stays_under_the_chunk_limit():
     out = FL.ensure_loaded(["fill 0 60 0 %d 60 0 minecraft:stone" % (16 * 300)])
     assert FL.check_lines(out) == []

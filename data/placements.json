@@ -4025,6 +4025,58 @@
             ],
             "facing": "west",
             "why": "on the square's east side"
+          },
+          {
+            "id": "sunset_pier_west",
+            "role": "pier",
+            "template": null,
+            "rect": [
+              2578,
+              6519,
+              2630,
+              6523
+            ],
+            "facing": "west",
+            "why": "the west pier into the river mouth's lee (earthwork sunset_pier_west); held here so no lot is drawn across it"
+          },
+          {
+            "id": "sunset_pier_south",
+            "role": "pier",
+            "template": null,
+            "rect": [
+              2699,
+              6590,
+              2703,
+              6640
+            ],
+            "facing": "south",
+            "why": "the south pier towards the isle (earthwork sunset_pier_south)"
+          },
+          {
+            "id": "sunset_footbridge",
+            "role": "landmark",
+            "template": null,
+            "rect": [
+              2617,
+              6446,
+              2641,
+              6450
+            ],
+            "facing": "west",
+            "why": "the footbridge over the river (earthwork sunset_footbridge)"
+          },
+          {
+            "id": "sunset_slipway",
+            "role": "landmark",
+            "template": null,
+            "rect": [
+              2610,
+              6469,
+              2626,
+              6474
+            ],
+            "facing": "west",
+            "why": "the slipway down to the river (earthwork sunset_slipway)"
           }
         ],
         "house_lots": {
@@ -11185,37 +11237,38 @@
     {
       "id": "displaced_house_08",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/farm_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/farm_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fisher_cottage.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "upper_street_lot_08",
       "position": {
-        "x": 3297,
-        "z": 1711
+        "x": 3296,
+        "z": 1710
       },
       "facing": "east",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "180",
+      "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "dry": true
     },
     {
       "id": "displaced_house_09",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/farm_2",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/farm_2.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/fletcher_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fletcher_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "upper_street_lot_02",
       "position": {
-        "x": 3373,
-        "z": 1778
+        "x": 3374,
+        "z": 1777
       },
       "facing": "south",
       "anchor_mode": "corner",
@@ -11231,13 +11284,13 @@
     {
       "id": "displaced_house_10",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fisher_cottage.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_34",
       "position": {
-        "x": 3270,
+        "x": 3269,
         "z": 1758
       },
       "facing": "east",
@@ -11249,20 +11302,19 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      },
-      "dry": true
+      }
     },
     {
       "id": "displaced_house_11",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/fletcher_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fletcher_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_2.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_33",
       "position": {
         "x": 3271,
-        "z": 1773
+        "z": 1772
       },
       "facing": "east",
       "anchor_mode": "corner",
@@ -11278,19 +11330,19 @@
     {
       "id": "displaced_house_12",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_35",
       "position": {
-        "x": 3267,
-        "z": 1745
+        "x": 3268,
+        "z": 1746
       },
       "facing": "east",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "counterclockwise_90",
+      "rotation": "none",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -11301,14 +11353,14 @@
     {
       "id": "displaced_house_13",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_2.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_3.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_32",
       "position": {
-        "x": 3274,
-        "z": 1786
+        "x": 3276,
+        "z": 1787
       },
       "facing": "east",
       "anchor_mode": "corner",
@@ -11324,19 +11376,19 @@
     {
       "id": "displaced_house_14",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/shepherds_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_36",
       "position": {
-        "x": 3267,
-        "z": 1732
+        "x": 3266,
+        "z": 1731
       },
       "facing": "east",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "none",
+      "rotation": "180",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -11347,8 +11399,8 @@
     {
       "id": "displaced_house_15",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_3",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_3.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_31",
@@ -11359,7 +11411,7 @@
       "facing": "east",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "180",
+      "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -11370,19 +11422,19 @@
     {
       "id": "displaced_house_16",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/shepherds_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_2.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_37",
       "position": {
-        "x": 3269,
-        "z": 1715
+        "x": 3270,
+        "z": 1716
       },
       "facing": "east",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "180",
+      "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -11393,14 +11445,14 @@
     {
       "id": "displaced_house_17",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_3.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_30",
       "position": {
         "x": 3294,
-        "z": 1815
+        "z": 1814
       },
       "facing": "north",
       "anchor_mode": "corner",
@@ -11416,8 +11468,8 @@
     {
       "id": "displaced_house_18",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_2",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_2.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_4.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_29",
@@ -11426,29 +11478,6 @@
         "z": 1821
       },
       "facing": "north",
-      "anchor_mode": "corner",
-      "y_mode": "surface",
-      "rotation": "none",
-      "mirror": "none",
-      "status": "planned",
-      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
-      "donor_source": {
-        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
-    },
-    {
-      "id": "displaced_house_19",
-      "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_3",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_3.nbt",
-      "cell": "B4",
-      "kind": "house",
-      "lot": "upper_street_lot_01",
-      "position": {
-        "x": 3383,
-        "z": 1714
-      },
-      "facing": "west",
       "anchor_mode": "corner",
       "y_mode": "surface",
       "rotation": "clockwise_90",
@@ -11460,10 +11489,33 @@
       }
     },
     {
+      "id": "displaced_house_19",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_5.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "upper_street_lot_01",
+      "position": {
+        "x": 3383,
+        "z": 1715
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
       "id": "displaced_house_20",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_4.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_6",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_6.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_27",
@@ -11485,14 +11537,14 @@
     {
       "id": "displaced_house_21",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_5",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_5.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_7",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_7.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_38",
       "position": {
-        "x": 3276,
-        "z": 1702
+        "x": 3277,
+        "z": 1701
       },
       "facing": "east",
       "anchor_mode": "corner",
@@ -11508,14 +11560,14 @@
     {
       "id": "displaced_house_22",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_6",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_6.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_8",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_8.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_26",
       "position": {
-        "x": 3350,
-        "z": 1824
+        "x": 3351,
+        "z": 1825
       },
       "facing": "north",
       "anchor_mode": "corner",
@@ -11531,14 +11583,14 @@
     {
       "id": "displaced_house_23",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_7",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_7.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/tannery_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/tannery_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_13",
       "position": {
-        "x": 3347,
-        "z": 1681
+        "x": 3346,
+        "z": 1680
       },
       "facing": "north",
       "anchor_mode": "corner",
@@ -11554,14 +11606,14 @@
     {
       "id": "displaced_house_24",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_8",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_8.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/tool_smith_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/tool_smith_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_19",
       "position": {
-        "x": 3403,
-        "z": 1734
+        "x": 3402,
+        "z": 1733
       },
       "facing": "east",
       "anchor_mode": "corner",
@@ -11577,8 +11629,8 @@
     {
       "id": "displaced_house_25",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/tannery_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/tannery_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/animal_pen_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_22",
@@ -11600,36 +11652,37 @@
     {
       "id": "displaced_house_26",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/tool_smith_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/tool_smith_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/animal_pen_2.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_25",
       "position": {
-        "x": 3363,
+        "x": 3362,
         "z": 1826
       },
       "facing": "north",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "clockwise_90",
+      "rotation": "none",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "dry": true
     },
     {
       "id": "displaced_house_27",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/animal_pen_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_09",
       "position": {
-        "x": 3302,
+        "x": 3303,
         "z": 1672
       },
       "facing": "south",
@@ -11646,14 +11699,14 @@
     {
       "id": "displaced_house_28",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_2",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/animal_pen_2.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_2.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "old_road_lot_41",
       "position": {
         "x": 3270,
-        "z": 1684
+        "z": 1685
       },
       "facing": "east",
       "anchor_mode": "corner",
@@ -11664,66 +11717,19 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      },
-      "dry": true
+      }
     },
     {
       "id": "displaced_house_29",
-      "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_1.nbt",
-      "cell": "B4",
-      "kind": "house",
-      "lot": "lower_street_lot_10",
-      "position": {
-        "x": 3317,
-        "z": 1662
-      },
-      "facing": "south",
-      "anchor_mode": "corner",
-      "y_mode": "surface",
-      "rotation": "counterclockwise_90",
-      "mirror": "none",
-      "status": "planned",
-      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
-      "donor_source": {
-        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
-    },
-    {
-      "id": "displaced_house_30",
-      "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_2",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_2.nbt",
-      "cell": "B4",
-      "kind": "house",
-      "lot": "lower_street_lot_16",
-      "position": {
-        "x": 3395,
-        "z": 1693
-      },
-      "facing": "west",
-      "anchor_mode": "corner",
-      "y_mode": "surface",
-      "rotation": "counterclockwise_90",
-      "mirror": "none",
-      "status": "planned",
-      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
-      "donor_source": {
-        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
-    },
-    {
-      "id": "displaced_house_31",
       "settlement": "displaced_city",
       "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/butcher_shop_1.nbt",
       "cell": "B4",
       "kind": "house",
-      "lot": "lower_street_lot_11",
+      "lot": "lower_street_lot_10",
       "position": {
-        "x": 3330,
-        "z": 1657
+        "x": 3317,
+        "z": 1661
       },
       "facing": "south",
       "anchor_mode": "corner",
@@ -11737,16 +11743,63 @@
       }
     },
     {
-      "id": "displaced_house_32",
+      "id": "displaced_house_30",
       "settlement": "displaced_city",
       "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/butcher_shop_2.nbt",
       "cell": "B4",
       "kind": "house",
+      "lot": "lower_street_lot_16",
+      "position": {
+        "x": 3394,
+        "z": 1694
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "displaced_house_31",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fisher_cottage.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "lower_street_lot_11",
+      "position": {
+        "x": 3329,
+        "z": 1658
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      },
+      "dry": true
+    },
+    {
+      "id": "displaced_house_32",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/fletcher_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fletcher_house_1.nbt",
+      "cell": "B4",
+      "kind": "house",
       "lot": "lower_street_lot_15",
       "position": {
         "x": 3377,
-        "z": 1673
+        "z": 1672
       },
       "facing": "west",
       "anchor_mode": "corner",
@@ -11762,19 +11815,19 @@
     {
       "id": "displaced_house_33",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/farm_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/farm_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_17",
       "position": {
-        "x": 3412,
-        "z": 1710
+        "x": 3411,
+        "z": 1708
       },
       "facing": "south",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "counterclockwise_90",
+      "rotation": "none",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -11785,14 +11838,14 @@
     {
       "id": "displaced_house_34",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/farm_2",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/farm_2.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_2.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_12",
       "position": {
         "x": 3346,
-        "z": 1656
+        "z": 1655
       },
       "facing": "south",
       "anchor_mode": "corner",
@@ -11808,37 +11861,36 @@
     {
       "id": "displaced_house_35",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fisher_cottage.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_14",
       "position": {
-        "x": 3364,
+        "x": 3365,
         "z": 1661
       },
       "facing": "south",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "none",
+      "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      },
-      "dry": true
+      }
     },
     {
       "id": "displaced_house_36",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/fletcher_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fletcher_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_3.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_24",
       "position": {
-        "x": 3416,
+        "x": 3418,
         "z": 1797
       },
       "facing": "west",
@@ -11855,14 +11907,37 @@
     {
       "id": "displaced_house_37",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/shepherds_house_1.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_18",
       "position": {
         "x": 3422,
         "z": 1721
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "displaced_house_38",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_1.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "lower_street_lot_23",
+      "position": {
+        "x": 3429,
+        "z": 1769
       },
       "facing": "west",
       "anchor_mode": "corner",
@@ -11876,33 +11951,10 @@
       }
     },
     {
-      "id": "displaced_house_38",
-      "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_2.nbt",
-      "cell": "B4",
-      "kind": "house",
-      "lot": "lower_street_lot_23",
-      "position": {
-        "x": 3427,
-        "z": 1768
-      },
-      "facing": "west",
-      "anchor_mode": "corner",
-      "y_mode": "surface",
-      "rotation": "none",
-      "mirror": "none",
-      "status": "planned",
-      "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
-      "donor_source": {
-        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
-    },
-    {
       "id": "displaced_house_39",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_2.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_20",
@@ -11913,7 +11965,7 @@
       "facing": "west",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "180",
+      "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -11924,19 +11976,19 @@
     {
       "id": "displaced_house_40",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_3",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_3.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_3.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "lower_street_lot_21",
       "position": {
-        "x": 3431,
+        "x": 3430,
         "z": 1753
       },
       "facing": "west",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "none",
+      "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -11947,14 +11999,14 @@
     {
       "id": "displaced_house_41",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/shepherds_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_4.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "old_road_lot_40",
       "position": {
-        "x": 3277,
-        "z": 1658
+        "x": 3278,
+        "z": 1659
       },
       "facing": "south",
       "anchor_mode": "corner",
@@ -11970,19 +12022,19 @@
     {
       "id": "displaced_house_42",
       "settlement": "displaced_city",
-      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
-      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_1.nbt",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_5.nbt",
       "cell": "B4",
       "kind": "house",
       "lot": "old_road_lot_39",
       "position": {
-        "x": 3252,
-        "z": 1667
+        "x": 3253,
+        "z": 1666
       },
       "facing": "north",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "180",
+      "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
@@ -12152,8 +12204,8 @@
       "kind": "house",
       "lot": "strand_lot_02",
       "position": {
-        "x": 2618,
-        "z": 6517
+        "x": 2626,
+        "z": 6531
       },
       "facing": "east",
       "anchor_mode": "corner",
@@ -12268,13 +12320,13 @@
       "kind": "house",
       "lot": "strand_lot_07",
       "position": {
-        "x": 2705,
-        "z": 6598
+        "x": 2728,
+        "z": 6584
       },
-      "facing": "north",
+      "facing": "south",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "clockwise_90",
+      "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a fisherman's house on the strand, facing the water",
@@ -12291,13 +12343,13 @@
       "kind": "house",
       "lot": "strand_lot_08",
       "position": {
-        "x": 2727,
-        "z": 6583
+        "x": 2733,
+        "z": 6610
       },
-      "facing": "south",
+      "facing": "north",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "counterclockwise_90",
+      "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a fisherman's house on the strand, facing the water",
@@ -12314,13 +12366,13 @@
       "kind": "house",
       "lot": "strand_lot_09",
       "position": {
-        "x": 2733,
-        "z": 6611
+        "x": 2757,
+        "z": 6597
       },
-      "facing": "north",
+      "facing": "south",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "clockwise_90",
+      "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a fisherman's house on the strand, facing the water",
@@ -12337,13 +12389,13 @@
       "kind": "house",
       "lot": "strand_lot_10",
       "position": {
-        "x": 2758,
-        "z": 6597
+        "x": 2750,
+        "z": 6618
       },
-      "facing": "south",
+      "facing": "north",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "counterclockwise_90",
+      "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a fisherman's house on the strand, facing the water",
@@ -12360,13 +12412,13 @@
       "kind": "house",
       "lot": "strand_lot_11",
       "position": {
-        "x": 2749,
-        "z": 6617
+        "x": 2787,
+        "z": 6609
       },
-      "facing": "north",
+      "facing": "south",
       "anchor_mode": "corner",
       "y_mode": "surface",
-      "rotation": "clockwise_90",
+      "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
       "chosen_because": "a fisherman's house on the strand, facing the water",
@@ -12383,31 +12435,8 @@
       "kind": "house",
       "lot": "strand_lot_12",
       "position": {
-        "x": 2789,
-        "z": 6608
-      },
-      "facing": "south",
-      "anchor_mode": "corner",
-      "y_mode": "surface",
-      "rotation": "counterclockwise_90",
-      "mirror": "none",
-      "status": "planned",
-      "chosen_because": "a fisherman's house on the strand, facing the water",
-      "donor_source": {
-        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
-    },
-    {
-      "id": "sunset_house_13",
-      "settlement": "sunset_west",
-      "template": "minecraft:village/plains/houses/plains_temple_4",
-      "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_temple_4.nbt",
-      "cell": "G3",
-      "kind": "house",
-      "lot": "strand_lot_13",
-      "position": {
         "x": 2780,
-        "z": 6629
+        "z": 6628
       },
       "facing": "north",
       "anchor_mode": "corner",
@@ -12421,13 +12450,13 @@
       }
     },
     {
-      "id": "sunset_house_14",
+      "id": "sunset_house_13",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_1.nbt",
       "cell": "G3",
       "kind": "house",
-      "lot": "west_lane_lot_14",
+      "lot": "west_lane_lot_13",
       "position": {
         "x": 2597,
         "z": 6430
@@ -12444,13 +12473,13 @@
       }
     },
     {
-      "id": "sunset_house_15",
+      "id": "sunset_house_14",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_2.nbt",
       "cell": "G3",
       "kind": "house",
-      "lot": "west_lane_lot_15",
+      "lot": "west_lane_lot_14",
       "position": {
         "x": 2576,
         "z": 6447
@@ -12467,13 +12496,13 @@
       }
     },
     {
-      "id": "sunset_house_16",
+      "id": "sunset_house_15",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_3",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_3.nbt",
       "cell": "G3",
       "kind": "house",
-      "lot": "west_lane_lot_16",
+      "lot": "west_lane_lot_15",
       "position": {
         "x": 2581,
         "z": 6426
@@ -12490,13 +12519,13 @@
       }
     },
     {
-      "id": "sunset_house_17",
+      "id": "sunset_house_16",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_4",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_4.nbt",
       "cell": "G3",
       "kind": "house",
-      "lot": "west_lane_lot_17",
+      "lot": "west_lane_lot_16",
       "position": {
         "x": 2560,
         "z": 6441
@@ -12513,13 +12542,13 @@
       }
     },
     {
-      "id": "sunset_house_18",
+      "id": "sunset_house_17",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_5",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_5.nbt",
       "cell": "G3",
       "kind": "house",
-      "lot": "west_lane_lot_18",
+      "lot": "west_lane_lot_17",
       "position": {
         "x": 2552,
         "z": 6414

@@ -10,7 +10,8 @@ import place_town as PT  # noqa: E402
 
 def test_snow_layers_plants_and_carpets_are_not_floor():
     for name in ("minecraft:snow", "minecraft:fern", "minecraft:short_grass", "minecraft:tall_grass",
-                 "minecraft:large_fern", "minecraft:white_carpet", "minecraft:air", "minecraft:jigsaw"):
+                 "minecraft:large_fern", "minecraft:white_carpet", "minecraft:air", "minecraft:jigsaw",
+                 "minecraft:wheat", "minecraft:poppy", "minecraft:oak_sapling", "minecraft:torch"):
         assert not PT.is_floor(name), name
 
 

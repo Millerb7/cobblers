@@ -56,13 +56,18 @@ PLANTS = ["minecraft:short_grass", "minecraft:tall_grass", "minecraft:fern", "mi
 NOT_FLOOR = {"minecraft:" + b for b in (
     "air", "cave_air", "void_air", "structure_void", "jigsaw", "water", "lava", "short_grass", "tall_grass", "fern",
     "large_fern", "dead_bush", "seagrass", "tall_seagrass", "fire", "soul_fire", "snow", "vine", "glow_lichen", "light",
-    "crimson_roots", "warped_roots", "nether_sprouts", "hanging_roots", "bush", "leaf_litter")}
+    "crimson_roots", "warped_roots", "nether_sprouts", "hanging_roots", "bush", "leaf_litter",
+    # crops and flowers stand on the floor rather than being it; a template's wheat also pops off dry farmland
+    "wheat", "carrots", "potatoes", "beetroots", "sugar_cane", "sweet_berry_bush", "dandelion", "poppy", "blue_orchid",
+    "allium", "azure_bluet", "red_tulip", "orange_tulip", "white_tulip", "pink_tulip", "oxeye_daisy", "cornflower",
+    "lily_of_the_valley", "torchflower", "sunflower", "lilac", "rose_bush", "peony", "pink_petals", "torch", "wall_torch",
+    "rail", "redstone_wire")}
 
 
 def is_floor(name):
     """True when a template block at the ground layer is floor a verify can stand on, not a plant, a snow layer,
     a carpet or anything else in #minecraft:replaceable."""
-    return name not in NOT_FLOOR and not name.endswith("_carpet")
+    return name not in NOT_FLOOR and not name.endswith(("_carpet", "_sapling", "_button", "_pressure_plate"))
 
 
 def rotate(x, z, rot):
@@ -526,9 +531,30 @@ def verify(settlement, server_dir):
         return None
     out = {"buildings": [], "gaps": 0, "columns_checked": 0}
     fb = rep["buildings"]
+    if not fb:
+        # a place with no templated building (Viltri Light is a platform and an authored tower): nothing to seat, and
+        # its earthworks are checked by tools/town_audit.py
+        return out
     xs = [b["footprint"][0] for b in fb] + [b["footprint"][2] for b in fb]
     zs = [b["footprint"][1] for b in fb] + [b["footprint"][3] for b in fb]
-    rcon.run(["forceload add %d %d %d %d" % (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)], pw)
+    # split under the 256-chunk limit: one command over it is refused whole, and Sunset West's 272-chunk box
+    # loaded nothing (2026-09-21)
+    held = (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)
+    rcon.run(forceload_commands(held, "add"), pw)
+    # Wait for the chunks. A forced chunk loads over the next ticks, and a block test in one not yet loaded fails as if
+    # the block were missing: Sunset West's first verify (240 chunks) read every corner of every building as a gap
+    # while the world held all of them (2026-09-21).
+    import time
+    pending = [(cx, cz) for cx in range((min(xs) - 4) >> 4, ((max(xs) + 4) >> 4) + 1)
+               for cz in range((min(zs) - 4) >> 4, ((max(zs) + 4) >> 4) + 1)]
+    deadline = time.time() + 120
+    while pending and time.time() < deadline:
+        replies = rcon.run(["execute if loaded %d 0 %d" % (cx * 16, cz * 16) for cx, cz in pending], pw)
+        pending = [c for c, r in zip(pending, replies) if "passed" not in r]
+        if pending:
+            time.sleep(1)
+    if pending:
+        raise SystemExit("%d chunks were still not loaded after two minutes; a verify now would report false gaps" % len(pending))
     for b in fb:
         rows = []
         for c in b["corners"]:
@@ -550,7 +576,7 @@ def verify(settlement, server_dir):
         out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
         out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
                                  "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
-    rcon.run(["forceload remove %d %d %d %d" % (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)], pw)
+    rcon.run(forceload_commands(held, "remove"), pw)
     return out
 
 
