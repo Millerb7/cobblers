@@ -247,18 +247,6 @@
     },
     {
       "blocks": [
-        "minecraft:blue_wool",
-        "minecraft:light_blue_wool",
-        "minecraft:red_sand",
-        "minecraft:lily_pad"
-      ],
-      "scope": "the Kanto League building (cobbleverse:kanto_league), placed by resource id",
-      "why": "the League's own decoration: 104 wool, 562 red sand and 16 lily pads inside a building we place whole and do not edit. There is no identical block that names no spawn condition, and the League plateau is the one place the region's wild encounters matter least.",
-      "consequence": "Smeargle may appear near its wool, Sandygast and Palossand on its red sand, Lotad's line and Politoed near its lily pads, on the League plateau only",
-      "decided": "2026-09-21, by the implementing session; the owner may veto"
-    },
-    {
-      "blocks": [
         "minecraft:sunflower",
         "minecraft:cobweb",
         "cobblemon:monitor"
@@ -266,7 +254,7 @@
       "scope": "Sabrina's observatory (mega_showdown:observatory) and department store (bca:default/centers/center_department_store)",
       "why": "one of each inside the two civic buildings, placed whole by resource id. A Rotom drawn to the observatory's monitor in the psychic town is flavour, not a leak",
       "consequence": "a Rotom by the monitor, a Spinarak or Ariados by the web, garden Pokemon by the flower, in those two buildings",
-      "decided": "2026-09-21, by the implementing session; the owner may veto"
+      "decided": "2026-09-21, approved by the owner: a Rotom in the monitor room and a Spinarak in the cobweb are features"
     }
   ],
   "checked_paving": {

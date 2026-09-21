@@ -254,10 +254,22 @@ def expected_buildings(settlement, placements, server_dir=None):
         if not server_dir:
             out.append((q["id"], None, None, "a pack donor: pass --server-dir to read its template from the installed pack"))
             continue
-        import traders
-        _, doc = nbt.loads(traders.find_template(server_dir, q["pack_template"]))
+        import place_donor
+        _, doc = place_donor.load_template(server_dir, q["pack_template"])
         pos = q["position"]
         expand(q["id"], doc, (pos["x"], pos["y"], pos["z"]), q.get("rotation", "none"), 0)
+        # the record's own substitutions and removals are what should stand, not the template's blocks
+        own = {s["from"]: s["to"] for s in place_donor.own_substitutions(q)}
+        own.update({b: "minecraft:air" for b in q.get("remove_blocks") or []})
+        if own:
+            bid, solid, rooms, note = out.pop()
+            for p, n in list(solid.items()):
+                if n in own:
+                    if own[n] == "minecraft:air":
+                        del solid[p]
+                    else:
+                        solid[p] = own[n]
+            out.append((bid, solid, rooms, note))
     return out
 
 

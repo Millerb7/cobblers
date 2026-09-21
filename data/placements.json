@@ -5962,7 +5962,29 @@
       "source": {
         "pack": "installed",
         "licence": "placed by resource id from the installed pack; never copied into the repo"
-      }
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:red_sand",
+          "to": "minecraft:red_concrete_powder",
+          "why": "red sand draws Sandygast and Palossand; the powder is the same colour and falls the same way"
+        },
+        {
+          "from": "minecraft:blue_wool",
+          "to": "minecraft:blue_terracotta",
+          "why": "wool draws Smeargle; terracotta of the same colour"
+        },
+        {
+          "from": "minecraft:light_blue_wool",
+          "to": "minecraft:light_blue_terracotta",
+          "why": "as the blue wool"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:lily_pad"
+      ],
+      "remove_blocks_why": "lily pads draw Lotad's line and Politoed, and nothing else floats on water",
+      "decided": "2026-09-21 by the owner: nothing wanders the champion's processional"
     },
     {
       "id": "league_pokecenter",
