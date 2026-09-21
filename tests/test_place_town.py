@@ -141,15 +141,21 @@ def test_build_lays_no_pads(built):
 
 # removing this lets the floor be seated anywhere but the ground in front of the door, so the entrance steps up or
 # down from the street
-def test_build_floor_is_the_median_ground_in_front_of_the_entrance(built):
+# Changed 2026-09-20 with the rule it protects, after houses in Brock's town came out a block into
+# the hill: the floor is the door's grade unless that would bury the uphill side, and then it is the
+# highest ground the building covers. Without this a building on any fall is partly underground.
+def test_build_floor_is_the_door_grade_but_never_below_the_ground_it_covers(built):
     cmds, b, out = built
     info = P.template_info(ROOT / POKECENTER)
     ex, ez = 1000 + info["entrance_pos"][0], 1000 + info["entrance_pos"][2]     # rotation none: facing west
     front = sorted(ground_at(ex - k, ez + j) for k in (1, 2) for j in (-1, 0, 1))
-    floor = int(np.median(front))
-    assert front[0] < floor < front[-1], ("the samples differ, so min, max and median disagree", front)
+    x0, z0, x1, z1 = b["center"]["footprint"]
+    under = [ground_at(xx, zz) for zz in range(z0, z1 + 1) for xx in range(x0, x1 + 1)]
+    floor = max(int(np.median(front)), max(under))
+    assert front[0] < int(np.median(front)) < front[-1], ("the samples differ", front)
     assert b["center"]["rotation"] == "none"
     assert b["center"]["floor_y"] == floor and b["center"]["origin_y"] == floor - 3
+    assert floor >= max(under), "no part of the building may sit below the ground it stands on"
     assert "place template cobblers:towns/stripped/cobblers/f4/services/pokecenter 1000 %d 1000 none none 1.0 0" % (floor - 3) in cmds
 
 

@@ -71,6 +71,21 @@ def commands(rec, subs):
             y1 = min(y0 + layers - 1, hi[1])
             out.append("fill %d %d %d %d %d %d %s replace %s"
                        % (lo[0], y0, lo[2], hi[0], y1, hi[2], s["to"], s["from"]))
+    # A building that straddles a bank needs something under it, or the template's own ground shows as
+    # a mound: Misty's gym stands with its back to the water and its floor at the promenade, so the
+    # lake side is carried on a quay rather than on dirt.
+    plinth = rec.get("plinth")
+    if plinth:
+        top = y - 1
+        base = int(plinth.get("from_y", top - 8))
+        material = plinth.get("material", "minecraft:stone_bricks")
+        area = (hi[0] - lo[0] + 1) * (hi[2] - lo[2] + 1)
+        layers = max(1, min(top - base + 1, 32768 // max(area, 1)))
+        for y0 in range(base, top + 1, layers):
+            y1 = min(y0 + layers - 1, top)
+            for gone in ("minecraft:water", "minecraft:air"):
+                out.append("fill %d %d %d %d %d %d %s replace %s"
+                           % (lo[0], y0, lo[2], hi[0], y1, hi[2], material, gone))
     out.append("forceload remove %d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16))
     return out
 
