@@ -59,8 +59,16 @@ def commands(rec, subs):
     out = ["# %s: %s at (%d, %d, %d) rotation %s" % (rec["id"], rec["pack_template"], x, y, z, rec.get("rotation", "none")),
            "forceload add %d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16),
            "place template %s %d %d %d %s %s 1.0 0" % (rec["pack_template"], x, y, z, rec.get("rotation", "none"), rec.get("mirror", "none"))]
+    # /fill refuses more than 32,768 blocks, and it refuses the whole command rather than part of it.
+    # Brock's gym is 11,016 and fitted; Misty's is 46,080 and every substitution silently did nothing
+    # until this was split (found 2026-09-20 by place_donor.py verify, 958 blocks left unsubstituted).
+    area = (hi[0] - lo[0] + 1) * (hi[2] - lo[2] + 1)
+    layers = max(1, min(hi[1] - lo[1] + 1, 32768 // max(area, 1)))
     for s in subs:
-        out.append("fill %d %d %d %d %d %d %s replace %s" % (lo[0], lo[1], lo[2], hi[0], hi[1], hi[2], s["to"], s["from"]))
+        for y0 in range(lo[1], hi[1] + 1, layers):
+            y1 = min(y0 + layers - 1, hi[1])
+            out.append("fill %d %d %d %d %d %d %s replace %s"
+                       % (lo[0], y0, lo[2], hi[0], y1, hi[2], s["to"], s["from"]))
     out.append("forceload remove %d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16))
     return out
 

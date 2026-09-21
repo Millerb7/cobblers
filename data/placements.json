@@ -428,12 +428,13 @@
             "template": null,
             "rect": [
               1592,
-              2862,
+              2858,
               1631,
               2891
             ],
             "facing": "north",
-            "why": "the town's reason to be here is the lake: the gym fronts the promenade and backs onto the water, its south edge at the shoreline"
+            "why": "the town's reason to be here is the lake: the gym fronts the promenade and backs onto the water, its south edge at the shoreline",
+            "rect_note": "deepened inland by 4 on 2026-09-20: cobbleverse:misty is 32 deep and the lot was 30. The south edge stays on the shoreline."
           },
           {
             "id": "gym2_pier_west",
@@ -1931,6 +1932,46 @@
         "path": "data/cobblemoncitytowns/structure/cherrygrove_city/buildings/mart",
         "licence": "MIT with notice (kits/structures/licenses/CobbleTowns-NOTICE.md); copied unmodified and committed, unlike the Cobbleverse pair in Pallet",
         "if_lost": "re-extract from the pinned archive recorded in kits/structures/manifests/"
+      }
+    },
+    {
+      "id": "gym2_misty_gym",
+      "settlement": "gym2_town",
+      "pack_template": "cobbleverse:misty",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/misty.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id and the campaign's substitutions are applied afterwards."
+      },
+      "cell": "D5",
+      "kind": "gym",
+      "position": {
+        "x": 1594,
+        "y": 108,
+        "z": 2859
+      },
+      "size": [
+        36,
+        40,
+        32
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "substitutions": "data/spawn_block_policy.json",
+      "status": "verified",
+      "chosen_because": "the town's reason to be here is the lake, and the gym fronts the promenade with its back to the water. Cobbleverse's own Misty, as Brock's gym is Cobbleverse's own Brock.",
+      "template": "cobbleverse:misty",
+      "expect_substituted": {
+        "moarconcrete:white_concrete_texture": 274,
+        "moarconcrete:black_concrete_texture": 120,
+        "moarconcrete:light_blue_concrete_texture": 564
+      },
+      "verified": {
+        "date": "2026-09-20",
+        "by": "tools/place_donor.py verify on the disposable world",
+        "result": "16,065 non-air blocks, 10 block entities including rctmod:trainer_spawner, cobblemon:healing_machine and a pokeblocks magikarp fishbowl; 0 blocks left unsubstituted"
       }
     }
   ]
