@@ -571,40 +571,44 @@ def verify(settlement, server_dir):
     # loaded nothing (2026-09-21)
     held = (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)
     rcon.run(forceload_commands(held, "add"), pw)
-    # Wait for the chunks. A forced chunk loads over the next ticks, and a block test in one not yet loaded fails as if
-    # the block were missing: Sunset West's first verify (240 chunks) read every corner of every building as a gap
-    # while the world held all of them (2026-09-21).
-    import time
-    pending = [(cx, cz) for cx in range((min(xs) - 4) >> 4, ((max(xs) + 4) >> 4) + 1)
-               for cz in range((min(zs) - 4) >> 4, ((max(zs) + 4) >> 4) + 1)]
-    deadline = time.time() + 120
-    while pending and time.time() < deadline:
-        replies = rcon.run(["execute if loaded %d 0 %d" % (cx * 16, cz * 16) for cx, cz in pending], pw)
-        pending = [c for c, r in zip(pending, replies) if "passed" not in r]
+    # released whatever happens: a verify that stopped part way used to leave its chunks held (392 of them round
+    # Northlight on the disposable world, found 2026-09-21)
+    try:
+        # Wait for the chunks. A forced chunk loads over the next ticks, and a block test in one not yet loaded fails as if
+        # the block were missing: Sunset West's first verify (240 chunks) read every corner of every building as a gap
+        # while the world held all of them (2026-09-21).
+        import time
+        pending = [(cx, cz) for cx in range((min(xs) - 4) >> 4, ((max(xs) + 4) >> 4) + 1)
+                   for cz in range((min(zs) - 4) >> 4, ((max(zs) + 4) >> 4) + 1)]
+        deadline = time.time() + 120
+        while pending and time.time() < deadline:
+            replies = rcon.run(["execute if loaded %d 0 %d" % (cx * 16, cz * 16) for cx, cz in pending], pw)
+            pending = [c for c, r in zip(pending, replies) if "passed" not in r]
+            if pending:
+                time.sleep(1)
         if pending:
-            time.sleep(1)
-    if pending:
-        raise SystemExit("%d chunks were still not loaded after two minutes; a verify now would report false gaps" % len(pending))
-    for b in fb:
-        rows = []
-        for c in b["corners"]:
-            x, z = c["column"]
-            Y = c["floor_y"]
-            floor = solid(x, Y, z)
-            support = top_solid(x, z, Y - 1, Y - 40)
-            ox, oz = c["outside"]
-            grade = top_solid(ox, oz, Y + 12, Y - 40, skip_trees=True)
-            rows.append({"column": [x, z], "floor_y": Y, "floor_block_present": floor, "support_y": support,
-                         "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
-                         "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
-        # every column the building stands on: the block under its lowest block is solid
-        below = [(x, bottom - 1, z) for x, z, bottom in b["columns"]]
-        gaps = [list(c) for c, ok in zip(below, solid_many(below)) if not ok]
-        out["columns_checked"] += len(b["columns"])
-        out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
-        out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
-                                 "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
-    rcon.run(forceload_commands(held, "remove"), pw)
+            raise SystemExit("%d chunks were still not loaded after two minutes; a verify now would report false gaps" % len(pending))
+        for b in fb:
+            rows = []
+            for c in b["corners"]:
+                x, z = c["column"]
+                Y = c["floor_y"]
+                floor = solid(x, Y, z)
+                support = top_solid(x, z, Y - 1, Y - 40)
+                ox, oz = c["outside"]
+                grade = top_solid(ox, oz, Y + 12, Y - 40, skip_trees=True)
+                rows.append({"column": [x, z], "floor_y": Y, "floor_block_present": floor, "support_y": support,
+                             "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
+                             "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
+            # every column the building stands on: the block under its lowest block is solid
+            below = [(x, bottom - 1, z) for x, z, bottom in b["columns"]]
+            gaps = [list(c) for c, ok in zip(below, solid_many(below)) if not ok]
+            out["columns_checked"] += len(b["columns"])
+            out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
+            out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
+                                     "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
+    finally:
+        rcon.run(forceload_commands(held, "remove"), pw)
     return out
 
 
