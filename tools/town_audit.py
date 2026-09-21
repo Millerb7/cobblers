@@ -350,9 +350,19 @@ def plan_audit(settlement, world, server_dir=None):
 
     # roads and the plaza
     lamp_cells = {(x, z) for x, _, z in lamps}
+    # A cell an authored earthwork covers is where that earthwork was meant to stand: the summit cairn on the
+    # Displaced City's square, a stair's foot. It is checked as part of the earthwork, not as road. Only the
+    # columns an earthwork writes at or above the paving level count; one that only digs below does not hide a cell.
+    earth_ids = {q["id"] for q in placements["placements"] if q.get("settlement") == settlement and q.get("kind") == "earthwork"}
+    covered = {}
+    for bid, solid, _, _ in buildings:
+        if bid in earth_ids and solid:
+            for (x, y, z) in solid:
+                covered[(x, z)] = max(covered.get((x, z), y), y)
+    exempt = {c for c, (y, _, _) in paving.items() if any(covered.get(c, -10 ** 6) >= y + d for d in (0, 1))}
     roads = {}
     for (x, z), (y, block, what) in paving.items():
-        if (x, z) in lamp_cells:
+        if (x, z) in lamp_cells or (x, z) in exempt:
             continue
         r = roads.setdefault(what, {"cells": 0, "paved": 0, "off_level": 0, "wrong": Counter(), "blocked_above": Counter()})
         r["cells"] += 1

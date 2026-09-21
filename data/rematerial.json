@@ -127,24 +127,23 @@
       "minecraft:azure_bluet": "minecraft:azalea",
       "minecraft:allium": "minecraft:azalea"
     },
-    "displaced_walls": {
-      "minecraft:smooth_quartz": "minecraft:mossy_stone_bricks",
-      "minecraft:smooth_quartz_stairs": "minecraft:mossy_stone_brick_stairs",
-      "minecraft:smooth_quartz_slab": "minecraft:mossy_stone_brick_slab",
-      "minecraft:quartz_block": "minecraft:stone_bricks",
-      "minecraft:chiseled_quartz_block": "minecraft:chiseled_stone_bricks",
-      "minecraft:gray_terracotta": "minecraft:purple_terracotta",
-      "minecraft:white_terracotta": "minecraft:magenta_terracotta"
+    "sunset_walls": {
+      "minecraft:smooth_quartz": "minecraft:bricks",
+      "minecraft:smooth_quartz_stairs": "minecraft:brick_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:brick_slab",
+      "minecraft:quartz_block": "minecraft:oak_planks",
+      "minecraft:chiseled_quartz_block": "minecraft:polished_granite",
+      "minecraft:gray_terracotta": "minecraft:red_terracotta",
+      "minecraft:white_terracotta": "minecraft:yellow_terracotta"
     },
-    "displaced_garden": {
-      "minecraft:rose_bush": "minecraft:large_fern",
-      "minecraft:red_tulip": "minecraft:fern",
-      "minecraft:orange_tulip": "minecraft:fern",
-      "minecraft:white_tulip": "minecraft:fern",
-      "minecraft:pink_tulip": "minecraft:fern",
-      "minecraft:azure_bluet": "minecraft:fern",
-      "minecraft:allium": "minecraft:fern",
-      "minecraft:grass_block": "minecraft:moss_block"
+    "sunset_garden": {
+      "minecraft:rose_bush": "minecraft:tall_grass",
+      "minecraft:red_tulip": "minecraft:short_grass",
+      "minecraft:orange_tulip": "minecraft:short_grass",
+      "minecraft:white_tulip": "minecraft:short_grass",
+      "minecraft:pink_tulip": "minecraft:short_grass",
+      "minecraft:azure_bluet": "minecraft:short_grass",
+      "minecraft:allium": "minecraft:short_grass"
     }
   },
   "templates": [
@@ -307,24 +306,24 @@
       "why": "the tea town: bamboo walls and a bamboo-mosaic base with lime terracotta, the flower beds turned to azalea bushes, the tea plant"
     },
     {
-      "out": "kits/structures/campaign/f4/services/towns/displaced_center.nbt",
-      "id": "cobblers:f4/services/towns/displaced_center",
-      "base": "kits/structures/campaign/f4/services/towns/lavender_center.nbt",
+      "out": "kits/structures/campaign/f4/services/towns/sunset_center.nbt",
+      "id": "cobblers:f4/services/towns/sunset_center",
+      "base": "kits/structures/campaign/f4/services/towns/lentimas_center.nbt",
       "maps": [
-        "displaced_walls",
-        "displaced_garden"
+        "sunset_walls",
+        "sunset_garden"
       ],
-      "why": "the summit town under the ice: mossy stone brick walls grown over in the cavern's damp, purple and magenta trim, ferns on moss"
+      "why": "the harbour: brick walls on an oak base course, polished granite trim, red and yellow terracotta for the sunset; seaside grass for a garden"
     },
     {
-      "out": "kits/structures/campaign/f4/services/towns/displaced_mart.nbt",
-      "id": "cobblers:f4/services/towns/displaced_mart",
-      "base": "kits/structures/campaign/f4/services/towns/floaroma_mart.nbt",
+      "out": "kits/structures/campaign/f4/services/towns/sunset_mart.nbt",
+      "id": "cobblers:f4/services/towns/sunset_mart",
+      "base": "kits/structures/campaign/f4/services/towns/lavender_mart.nbt",
       "maps": [
-        "displaced_walls",
-        "displaced_garden"
+        "sunset_walls",
+        "sunset_garden"
       ],
-      "why": "the summit town under the ice: mossy stone brick walls grown over in the cavern's damp, purple and magenta trim, ferns on moss"
+      "why": "the harbour: brick walls on an oak base course, polished granite trim, red and yellow terracotta for the sunset; seaside grass for a garden"
     }
   ]
 }

@@ -110,8 +110,8 @@
         "kits/structures/campaign/f4/services/towns/mining_mart.nbt",
         "kits/structures/campaign/f4/services/towns/tea_center.nbt",
         "kits/structures/campaign/f4/services/towns/tea_mart.nbt",
-        "kits/structures/campaign/f4/services/towns/displaced_center.nbt",
-        "kits/structures/campaign/f4/services/towns/displaced_mart.nbt"
+        "kits/structures/campaign/f4/services/towns/sunset_center.nbt",
+        "kits/structures/campaign/f4/services/towns/sunset_mart.nbt"
       ],
       "licence": "MIT",
       "source": "CobblemonCityTowns 1.0 (CurseForge file 7692448) town Centres and Marts, re-materialed by tools/rematerial.py from the committed bases per data/rematerial.json",

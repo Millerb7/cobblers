@@ -356,12 +356,11 @@
     },
     {
       "blocks": [
-        "minecraft:redstone_torch",
         "cobblemon:restoration_tank"
       ],
       "scope": "Giovanni's gym (cobbleverse:giovanni)",
-      "why": "the gym's own interior, placed whole by resource id: a redstone torch and two restoration tanks, the fossil machine. Hidden until the spawn audit counted exactly what a rotated template writes (2026-09-21)",
-      "consequence": "whatever a redstone torch or a restoration tank draws, inside Giovanni's gym",
+      "why": "the gym's own interior, placed whole by resource id: two restoration tanks, half of the fossil machine (with its analyzer and monitor). The redstone torch that was here is swapped for a plain torch (placements.json gym8_gym_building), because it drew Rotom into a Ground gym (2026-09-21)",
+      "consequence": "Rotom, drawn by the fossil machine's restoration tank; the analyzer, the monitor and a redstone block in the same gym draw it too (on the review list: keep the fossil machine and accept Rotom, or make the gym's interior spawn-free)",
       "decided": "2026-09-21, by the implementing session, following the owner's approval of Sabrina's exceptions; on the review list"
     }
   ],

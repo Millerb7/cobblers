@@ -49,6 +49,22 @@ PLANTS = ["minecraft:short_grass", "minecraft:tall_grass", "minecraft:fern", "mi
           "minecraft:azalea", "minecraft:flowering_azalea"]
 
 
+# Blocks in vanilla's #minecraft:replaceable tag (1.21.1) and the other non-floor blocks a template's ground layer
+# holds. They are not floor: the verify reads a corner as missing its floor when its block is replaceable, so a
+# corner standing on one of these reported a gap that was not there (Northlight's snowy houses' snow layers and the
+# tea town's bamboo-house ferns, 80 false gaps on 2026-09-21). Corners are chosen from floor blocks only.
+NOT_FLOOR = {"minecraft:" + b for b in (
+    "air", "cave_air", "void_air", "structure_void", "jigsaw", "water", "lava", "short_grass", "tall_grass", "fern",
+    "large_fern", "dead_bush", "seagrass", "tall_seagrass", "fire", "soul_fire", "snow", "vine", "glow_lichen", "light",
+    "crimson_roots", "warped_roots", "nether_sprouts", "hanging_roots", "bush", "leaf_litter")}
+
+
+def is_floor(name):
+    """True when a template block at the ground layer is floor a verify can stand on, not a plant, a snow layer,
+    a carpet or anything else in #minecraft:replaceable."""
+    return name not in NOT_FLOOR and not name.endswith("_carpet")
+
+
 def rotate(x, z, rot):
     return {"none": (x, z), "clockwise_90": (-z, x), "180": (-x, -z), "counterclockwise_90": (z, -x)}[rot]
 
@@ -94,8 +110,7 @@ def template_info(path):
         nm = pal[b["state"]]["Name"]
         if y <= grade and nm not in ("minecraft:air", "minecraft:structure_void", "minecraft:cave_air"):
             base[(x, z)] = min(base.get((x, z), y), y)
-    grade_cols = {(b["pos"][0], b["pos"][2]) for b in doc["blocks"] if b["pos"][1] == grade
-                  and pal[b["state"]]["Name"] not in ("minecraft:air", "minecraft:structure_void", "minecraft:cave_air", "minecraft:jigsaw")}
+    grade_cols = {(b["pos"][0], b["pos"][2]) for b in doc["blocks"] if b["pos"][1] == grade and is_floor(pal[b["state"]]["Name"])}
     return {"grade_cols": grade_cols, "size": size, "jigsaws": jigsaws, "loot": loot, "entrance": entrance, "entrance_pos": entrance_pos,
             "grade_layer": grade, "base": base, "waystones": waystones}
 
