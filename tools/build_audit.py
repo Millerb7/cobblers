@@ -192,12 +192,39 @@ def cavern(world):
                 open_ok += 1
             else:
                 bad["filled at mid-height with " + mid] += 1
+    # the shell (cavern_plan 02): no void within 24 blocks of the chamber, over the roof or round the walls, except
+    # where the tunnel is dug through it and the town builds (its gate)
+    shell_voids, shell_cols = Counter(), 0
+    if "shell_hi" in arr.files:
+        import town_audit
+        dug = set(town_audit._command_columns(
+            (BUILD / "datapacks" / "cobblers_cavern" / "data" / "cobblers" / "function" / "cavern" / "50_tunnel.mcfunction")
+            .read_text(encoding="utf-8").splitlines()))
+        dug = {(x + dx, z + dz) for x, z in dug for dx in (-1, 0, 1) for dz in (-1, 0, 1)}
+        lo_a, hi_a = arr["shell_lo"], arr["shell_hi"]
+        m = (lo_a.shape[0] - floor.shape[0]) // 2
+        for j in range(lo_a.shape[0]):
+            for i in range(lo_a.shape[1]):
+                x, z = x0 - m + i, z0 - m + j
+                inside = 0 <= i - m < floor.shape[1] and 0 <= j - m < floor.shape[0]
+                if (x, z) in dug or (not inside and (x, z) in town):      # the town builds under the roof, not in it
+                    continue
+                shell_cols += 1
+                for y in range(int(lo_a[j, i]), int(hi_a[j, i]) + 1):
+                    b = base(world.block(x, y, z))
+                    if b in AIR or b in FLUID:
+                        shell_voids["%s %s" % ("over the roof," if inside else "in the walls,", b.split(":")[-1])] += 1
+                        break
     problems = []
+    if sum(shell_voids.values()):
+        problems.append("cavern shell: %d columns with a void within 24 blocks of the chamber (%s)"
+                        % (sum(shell_voids.values()), dict(shell_voids)))
     for what, got, total, need in (("floor", floor_ok, n_ground, FLOOR_OK), ("roof cap", roof_ok, n, ROOF_OK),
                                    ("open interior", open_ok, n_ground, COLUMNS_OK)):
         if got < need * total:
             problems.append("cavern %s: %d of %d columns (%.2f%%), needs %.0f%%" % (what, got, total, 100 * got / max(total, 1), 100 * need))
     return {"columns": n, "rebuilt_by_the_town": n - n_ground, "floor_ok": floor_ok, "roof_ok": roof_ok, "open_ok": open_ok,
+            "shell_columns": shell_cols, "shell_voids": dict(shell_voids),
             "worst": bad.most_common(5), "problems": problems}
 
 

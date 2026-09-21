@@ -14,8 +14,10 @@ writes a datapack of numbered functions plus a plan report. Nothing runs until t
             the tunnel's arrival has a lit apron. The wild floor is left at block light 0 deliberately: hostiles
             need exactly that, so the dark is an encounter area and the lit ground is the safe ground. The city's
             own lanterns come with the city, which is composed by hand.
-  seal      water pockets in the rock (WorldPainter's underground water) inside the cavern and a 2-block shell are
-            replaced with stone before anything is dug, so nothing floods.
+  seal      water, lava and falling blocks in the rock over the cavern's footprint are replaced with stone before
+            anything is dug, so nothing floods.
+  shell     then every void (air, fluid, falling block) within 24 blocks of the chamber, over the roof and in a
+            24-block ring round the walls, is made rock, never above the ground: a hidden place with no back door.
   trees     cherry_vale's classes (cherry, birch, azalea) from the foliage object library, placed by spacing on a
             density field that thins on the benches and summit (the town's ground) and clears the arrival.
   tunnel    dug, not built: a bore that wanders in width, height and centre, walls left as cut rock, a rubble floor
@@ -243,7 +245,7 @@ def main(argv=None):
               "rock_over_ceiling_min": int((top - ceiling).min()), "surface_above": [int(top.min()), int(top.max())]}
     fn = {}
 
-    # 00 seal water and lava pockets: the cavern plus a 2-block shell, over the range the NEW floor and roof
+    # 00 seal water and lava pockets over the cavern's footprint (the shell round it is 02), over the range the NEW floor and roof
     # actually span. data/towns.json still says y32-72; the floor now bottoms at 22 and the roof reaches 110, and
     # sealing the old range would leave live water in the 8 blocks of new floor below it.
     # +10 over the roof, not +2: the rock above the north-east roof carries an aquifer at y113-117, and the roof
@@ -276,8 +278,48 @@ def main(argv=None):
                                 % (x0 + i, seal_lo, z0 + j, x0 + k, t_, z0 + j, fluid))
                 i = k + 1
     fn["00_seal"] = cmds
-    report["seal_range"] = {"from": seal_lo, "to": "per column, min(ceiling+10, ground-4)",
+    report["seal_range"] = {"from": seal_lo, "to": "per column, ground-4",
                             "top_min": int(seal_top.min()), "top_max": int(seal_top.max())}
+
+    # 02 the shell: every void within SHELL blocks of the chamber made rock, before anything is dug. The seal above
+    # replaces fluids and falling blocks but not air, and only inside the box, so the rock round a hidden place kept
+    # the export's natural caves: on the disposable world (2026-09-21) 224 of 40,000 roof columns had a void within 24
+    # blocks of the ceiling, 217 of them resting on the 4-block cap, one a surface-open cave at the west rim
+    # (x3252-3261, z1745) -- a back door -- and the side walls are the box edge itself, so a void one block outside it
+    # is a hole in the wall: a water pocket at x3249 ran down the west wall. Over the roof, from the ceiling up; round
+    # the sides, a SHELL-wide ring outside the box from the seal's floor up to the nearest edge column's ceiling +
+    # SHELL. Never above the ground: every column stops one block under the heightmap's ground, so nothing on the
+    # surface changes. The tunnel (50) and the town's gate are dug and built after this, through it.
+    SHELL = ROCK_OVER_CEILING
+    cmds = ["# the shell: every void within %d blocks of the chamber, over the roof and round the walls, made rock"
+            % SHELL]
+    shell_n = 0
+    shell_lo = np.zeros((n + 2 * SHELL, n + 2 * SHELL), int)
+    shell_hi = np.zeros_like(shell_lo)
+    for z in range(z0 - SHELL, z1 + SHELL + 1):
+        row = []
+        for x in range(x0 - SHELL, x1 + SHELL + 1):
+            ei, ej = min(max(x - x0, 0), n - 1), min(max(z - z0, 0), n - 1)
+            c = int(ceiling[ej, ei])
+            inside = x0 <= x <= x1 and z0 <= z <= z1
+            t = int(top[ej, ei]) if inside else int(ground(x, z))
+            row.append((c if inside else seal_lo, min(c + SHELL - 1, t - 1)))
+            shell_lo[z - z0 + SHELL, x - x0 + SHELL], shell_hi[z - z0 + SHELL, x - x0 + SHELL] = row[-1]
+        i = 0
+        while i < len(row):
+            k = i
+            while k + 1 < len(row) and row[k + 1] == row[i]:
+                k += 1
+            lo, hi = row[i]
+            if hi >= lo:
+                cmds.append("fill %d %d %d %d %d %d minecraft:stone replace #cobblers:cavern_void"
+                            % (x0 - SHELL + i, lo, z, x0 - SHELL + k, hi, z))
+                shell_n += (k - i + 1) * (hi - lo + 1)
+            i = k + 1
+    fn["02_shell"] = cmds
+    report["shell"] = {"blocks": SHELL, "volume_checked": shell_n,
+                       "over_roof": "ceiling to min(ceiling+%d, ground-1)" % (SHELL - 1),
+                       "round_walls": "a %d-block ring, y%d to min(edge ceiling+%d, ground-1)" % (SHELL, seal_lo, SHELL - 1)}
 
     # 05 reset what the previous cut of this cavern left behind. Its glowing false sky was sea lanterns behind
     # light blue glass at y71-72; where the new roof is higher those blocks fall inside the excavation and become
@@ -591,11 +633,17 @@ def main(argv=None):
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(LIBRARY / o["file"], dest)
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: Displaced City cavern (tools/cavern_plan.py)"}}, indent=2) + "\n", encoding="utf-8")
+    # what the shell (02) turns to rock: open space, fluids, and blocks that fall
+    tag = out / "data" / "cobblers" / "tags" / "block" / "cavern_void.json"
+    tag.parent.mkdir(parents=True, exist_ok=True)
+    tag.write_text(json.dumps({"values": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water",
+                                          "minecraft:lava", "minecraft:gravel", "minecraft:sand", "minecraft:red_sand"]},
+                              indent=1) + "\n", encoding="utf-8")
     report["functions"] = {k: len(v) for k, v in fn.items()}
     rep = ROOT / "derived" / "cavern" / "plan.json"
     rep.parent.mkdir(parents=True, exist_ok=True)
     rep.write_text(json.dumps(dict(report, tree_positions=trees), indent=1, default=int), encoding="utf-8")
-    np.savez_compressed(rep.with_suffix(".npz"), floor=floor, ceiling=ceiling, top=top)
+    np.savez_compressed(rep.with_suffix(".npz"), floor=floor, ceiling=ceiling, top=top, shell_lo=shell_lo, shell_hi=shell_hi)
     print(json.dumps(report, indent=1, default=int))
     if a.install:
         import runtime_guard
