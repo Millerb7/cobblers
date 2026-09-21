@@ -132,8 +132,14 @@ UNDERWATER_ONLY = {"minecraft:water", "minecraft:seagrass", "minecraft:tall_seag
 CORALS = ("tube", "brain", "bubble", "fire", "horn")
 
 
-def rewrite_template(src, dest, dry=False):
-    """Copy a structure template without its waystones and, with dry=True, without its sea.
+def rewrite_template(src, dest, dry=False, materials=None):
+    """Copy a structure template without its waystones and, with dry=True, without its sea; with `materials` (a
+    {block: block} map, like for like), in other materials.
+
+    The copy is written into the build pack, never into kits/: the Repurposed Structures houses it is used on are not
+    ours to commit, so the re-materialed house exists only in the pack that places it, rebuilt from the installed
+    mod every time. The Displaced City re-materials its repeated designs this way, and Surge's town builds its houses
+    in the flank's own stone.
 
     Repurposed Structures' ocean village is an underwater village: its houses are full of water, which is
     their air. Set down on land, Misty's eight houses held 35 to 101 water blocks each, up to eight blocks
@@ -167,6 +173,12 @@ def rewrite_template(src, dest, dry=False):
                 dried += new == nm
             if new != nm:
                 e["Name"] = (L.STRING, new)
+                dried += 1
+    if materials:
+        for e in pal:
+            nm = L.plain(e["Name"])
+            if nm in materials:
+                e["Name"] = (L.STRING, materials[nm])
                 dried += 1
     Path(dest).parent.mkdir(parents=True, exist_ok=True)
     Path(dest).write_bytes(L.dumps(name, root))
@@ -307,12 +319,21 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
                 cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (fluid,)))
         template_id = p["template"]
         ns, path_ = template_id.split(":")
-        if info["waystones"] or p.get("dry"):
+        materials = p.get("materials") or {}
+        if isinstance(materials, str):
+            # a named set in data/rematerial.json house_sets
+            sets = json.loads((ROOT / "data" / "rematerial.json").read_text(encoding="utf-8")).get("house_sets") or {}
+            if materials not in sets:
+                raise SystemExit("%s names material set %r, which data/rematerial.json house_sets does not have" % (p["id"], materials))
+            materials = sets[materials]["map"]
+        if info["waystones"] or p.get("dry") or materials:
             if out_dir is None:
                 raise SystemExit("%s needs a rewritten template copy; building it needs an output datapack to hold it" % p["id"])
-            template_id = "cobblers:towns/stripped/%s/%s" % (ns, path_)
-            rewrite_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + ".nbt"),
-                             dry=bool(p.get("dry")))
+            # a re-materialed copy is this building's own: two houses of one design in two materials are two templates
+            suffix = ("__" + p["id"]) if materials else ""
+            template_id = "cobblers:towns/stripped/%s/%s%s" % (ns, path_, suffix)
+            rewrite_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + suffix + ".nbt"),
+                             dry=bool(p.get("dry")), materials=materials)
         elif ns == "cobblers" and out_dir is not None:
             # our own templates travel in the pack that places them. The town Centres and Marts were never
             # installed anywhere, so every `place template` for them failed without a word (found by
@@ -324,6 +345,8 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         for (jx, jy, jz), final, _ in info["jigsaws"]:
             wx, wz = world_xz(jx, jz)
             state = final if final != "minecraft:structure_void" else "minecraft:air"
+            if state.split("[")[0] in materials:
+                state = materials[state.split("[")[0]] + state[len(state.split("[")[0]):]
             cmds.append("setblock %d %d %d %s" % (wx, oy + jy, wz, state))
         for (lx, ly, lz) in info["loot"]:
             wx, wz = world_xz(lx, lz)

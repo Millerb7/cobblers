@@ -11648,7 +11648,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_26",
@@ -11672,7 +11674,9 @@
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
       },
-      "dry": true
+      "dry": true,
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_27",
@@ -11695,7 +11699,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_28",
@@ -11718,7 +11724,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_29",
@@ -11741,7 +11749,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_30",
@@ -11764,7 +11774,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_31",
@@ -11788,7 +11800,9 @@
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
       },
-      "dry": true
+      "dry": true,
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_32",
@@ -11811,7 +11825,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_33",
@@ -11834,7 +11850,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_34",
@@ -11857,7 +11875,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_35",
@@ -11880,7 +11900,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_36",
@@ -11903,7 +11925,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_37",
@@ -11926,7 +11950,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_38",
@@ -11949,7 +11975,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_39",
@@ -11972,7 +12000,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_40",
@@ -11995,7 +12025,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_41",
@@ -12018,7 +12050,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_cherry",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_house_42",
@@ -12041,7 +12075,9 @@
       "chosen_because": "a summit town's house on a terrace levelled at its own median ground: giant taiga spruce and mossy cobble",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "displaced_dark",
+      "materials_why": "the second house of this design in the town: re-materialed so the repeat is not what you notice"
     },
     {
       "id": "displaced_gate",
@@ -13022,7 +13058,9 @@
       "chosen_because": "a stone house on the shelf: the mountains set, stone for a rock ledge",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "surge_flank",
+      "materials_why": "Surge's own stone, not Sabrina's: the shelf town is cut from the flank"
     },
     {
       "id": "gym3_house_02",
@@ -13045,7 +13083,9 @@
       "chosen_because": "a stone house on the shelf: the mountains set, stone for a rock ledge",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "surge_flank",
+      "materials_why": "Surge's own stone, not Sabrina's: the shelf town is cut from the flank"
     },
     {
       "id": "gym3_house_03",
@@ -13068,7 +13108,9 @@
       "chosen_because": "a stone house on the shelf: the mountains set, stone for a rock ledge",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "surge_flank",
+      "materials_why": "Surge's own stone, not Sabrina's: the shelf town is cut from the flank"
     },
     {
       "id": "gym3_house_04",
@@ -13091,7 +13133,9 @@
       "chosen_because": "a stone house on the shelf: the mountains set, stone for a rock ledge",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "surge_flank",
+      "materials_why": "Surge's own stone, not Sabrina's: the shelf town is cut from the flank"
     },
     {
       "id": "scar_foundations",
