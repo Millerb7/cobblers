@@ -9,7 +9,7 @@ with a check after each, and audit the result. docs/world-building/REEXPORT.md i
         with the server STOPPED: copy the packs into <server>/datapacks, and cobblers_height and cobblers_worldtree
         into the world folder's own datapacks (they raise the build limit the world tree's crown needs)
   python tools/reapply.py run --server-dir <server> [--from R8] [--only R8] [--with-spawns]
-        with the server running and the coordination lock held: R2 to R14 in order, timed, each function's reply
+        with the server running and the coordination lock held: R2 to R16 in order, timed, each function's reply
         checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
   python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
         with the server STOPPED: build_audit (cavern, forest, world tree, islet), town_audit for every place, the
@@ -40,6 +40,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = ROOT / "tools"
+sys.path.insert(0, str(TOOLS))
+import runtime_guard  # noqa: E402
 BUILD = ROOT / "build"
 PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
@@ -127,7 +129,9 @@ def install(a):
     s.close()
     if busy:
         raise SystemExit("port 25565 is in use: install with the server stopped")
-    dp = Path(a.server_dir) / "datapacks"
+    # the port says the server is down; only the lock says nobody else is using the runtime
+    dp = runtime_guard.check(Path(a.server_dir) / "datapacks", "install packs into")
+    runtime_guard.check(a.world_dir, "install world packs into")
     # cobblers_restore puts ground back to the heightmap: a disposable-world tool that must never be installed
     # beside the live world, where one mistyped function would flatten a town
     if (dp / "cobblers_restore").exists():
@@ -188,8 +192,6 @@ def steps(with_spawns=False):
 
 
 def run(a):
-    if not os.environ.get("COBBLERS_SERVER_LOCK"):
-        os.environ["COBBLERS_SERVER_LOCK"] = str(Path(a.server_dir).parent / ".cobblers-server-agent.lock")
     rc = Rcon(a.server_dir)
     OUT.mkdir(parents=True, exist_ok=True)
     rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": []}
@@ -328,6 +330,9 @@ def main(argv=None):
             print("%-4s %-60s %4d functions" % (sid, title, sum(1 for k, _ in actions if k == "fn")))
         print("places:", ", ".join(places()))
         return 0
+    # Every subcommand but `plan` reads or writes the server or a world (prepare reads the installed packs' donor
+    # templates; install writes the packs; run drives RCON; audit reads a world): the lock first, before anything.
+    runtime_guard.require_lock("reapply %s" % a.cmd)
     return {"prepare": prepare, "install": install, "run": run, "audit": audit}[a.cmd](a) or 0
 
 
