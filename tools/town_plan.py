@@ -187,6 +187,9 @@ def main(argv=None):
     # overwrites one. Flush, because the spots are on the centreline and a post there blocks the road.
     # Until 2026-09-21 the spots were computed and nothing lit them: Brock's 23 were all dark.
     lamp = (plan.get("paving") or {}).get("lamp", "minecraft:sea_lantern")
+    if lamp == "none":
+        # a place meant to be dark: the Scar's ruins are lit by nothing
+        report["lamps"] = []
     report["lamp_block"] = lamp
     for L in report["lamps"]:
         lx, ly, lz = L["at"]

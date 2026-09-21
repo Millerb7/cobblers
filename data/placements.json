@@ -1865,6 +1865,748 @@
         },
         "prep_note": "The forecourt and way are on the plateau's flat at y118-119, and the approach climbs two blocks from the lip. The League's lot is the real work: it spans y113 to y120, lowest at its west end outside the footprint, and is levelled to y118, cutting the east and filling up to five blocks on the west."
       }
+    },
+    "merian_hut": {
+      "centre": [
+        2813,
+        1102
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "plan": {
+        "reading": "Route 4 crosses the cirque's open mouth, and from the road the hut is a speck at the far end of a floor so flat it looks swept. The path leaves the road and simply walks north, two hundred blocks of it, while the walls rise on three sides until they are most of the sky. It ends at the hut's door. There is no yard: the stable, the hut and the woodshed stand in one row with their backs against the cliff, looking down the cirque the way you came. The keeper knows where the river starts. The walk in is the point.",
+        "entries": [
+          {
+            "from": "route_04_surge_to_erika",
+            "at": [
+              2813,
+              1222
+            ],
+            "street": "cirque_path"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "cirque_path",
+            "polyline": [
+              [
+                2813,
+                1222
+              ],
+              [
+                2813,
+                1040
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:gravel",
+            "max_grade": 0.08
+          }
+        ],
+        "plaza": {
+          "rect": [
+            2779,
+            1032,
+            2847,
+            1038
+          ],
+          "y": 107,
+          "surface": "minecraft:cobblestone",
+          "why": "a cobbled apron along the front of the row, not a yard"
+        },
+        "anchors": [
+          {
+            "id": "merian_hut_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblemon:villages/mountains/pokecenter",
+            "rect": [
+              2803,
+              1010,
+              2823,
+              1030
+            ],
+            "facing": "south",
+            "why": "the hut itself: the mountain village Center, stone and dark wood, its door onto the yard and down the cirque"
+          },
+          {
+            "id": "merian_woodshed",
+            "role": "building",
+            "template": null,
+            "rect": [
+              2831,
+              1012,
+              2847,
+              1030
+            ],
+            "facing": "south",
+            "why": "the woodshed, east of the hut in the row under the wall; mountains village set"
+          },
+          {
+            "id": "merian_stable",
+            "role": "building",
+            "template": null,
+            "rect": [
+              2779,
+              1012,
+              2795,
+              1030
+            ],
+            "facing": "south",
+            "why": "the stable, west of the hut in the row; mountains village set"
+          }
+        ],
+        "house_lots": {
+          "along": [],
+          "why": "a couple of buildings, not a village"
+        },
+        "waystone": {
+          "position": [
+            2800,
+            1034
+          ],
+          "facing": "south",
+          "note": "discovery: first visit activates it"
+        },
+        "npc": {
+          "at": [
+            2813,
+            1036
+          ],
+          "who": "the hut keeper, who knows where the river starts"
+        },
+        "paving": {
+          "main": "minecraft:gravel",
+          "plaza": "minecraft:cobblestone",
+          "lamp": "minecraft:shroomlight",
+          "lamp_why": "a warm light in a cold place, flush in the path so the walk in can be found at night",
+          "why": "gravel and cobble, a mountain hut's materials; neither is a spawn condition"
+        },
+        "prep_note": "The floor is flat to a block; nothing to cut but the yard."
+      }
+    },
+    "gorge_hamlet": {
+      "centre": [
+        6814,
+        4367
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "plan": {
+        "reading": "The trail comes in from Route 7 across the dunes, and the hamlet shows as a single blank wall with a gate in it: the buildings stand shoulder to shoulder round a sheltered yard, backs to the sea wind. Through the gate the yard is quiet, the Center on its far side, two houses on the others, a well in the middle. From the yard's east corner a gap opens on the drop to the coast. The bridge-keepers live here; one of them knows the river.",
+        "entries": [
+          {
+            "from": "route_07_sabrina_to_blaine",
+            "at": [
+              6531,
+              4358
+            ],
+            "street": "dune_trail"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "dune_trail",
+            "polyline": [
+              [
+                6531,
+                4358
+              ],
+              [
+                6640,
+                4362
+              ],
+              [
+                6796,
+                4367
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:smooth_sandstone",
+            "max_grade": 0.1
+          }
+        ],
+        "plaza": {
+          "rect": [
+            6798,
+            4353,
+            6828,
+            4381
+          ],
+          "y": 113,
+          "surface": "minecraft:cut_sandstone",
+          "why": "the yard inside the ring, with a well at its centre"
+        },
+        "anchors": [
+          {
+            "id": "gorge_hamlet_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblemon:village_desert/village_desert_pokecenter",
+            "rect": [
+              6808,
+              4335,
+              6822,
+              4351
+            ],
+            "facing": "south",
+            "why": "on the yard's north side, facing the gate across it: the desert village Center, for a dune settlement"
+          },
+          {
+            "id": "gorge_house_east",
+            "role": "building",
+            "template": null,
+            "rect": [
+              6830,
+              4357,
+              6846,
+              4377
+            ],
+            "facing": "west",
+            "why": "the seaward side, its back to the wind; desert village set"
+          },
+          {
+            "id": "gorge_house_south",
+            "role": "building",
+            "template": null,
+            "rect": [
+              6806,
+              4383,
+              6824,
+              4399
+            ],
+            "facing": "north",
+            "why": "the south side; desert village set"
+          }
+        ],
+        "house_lots": {
+          "along": [],
+          "why": "the ring is three buildings and a wall"
+        },
+        "waystone": {
+          "position": [
+            6800,
+            4356
+          ],
+          "facing": "east",
+          "note": "discovery: first visit activates it"
+        },
+        "npc": {
+          "at": [
+            6813,
+            4370
+          ],
+          "who": "a bridge-keeper, who knows the river"
+        },
+        "paving": {
+          "main": "minecraft:smooth_sandstone",
+          "plaza": "minecraft:cut_sandstone",
+          "lamp": "minecraft:glowstone",
+          "why": "sandstone for a dune hamlet; neither is a spawn condition (suspicious sand is, and is not used)"
+        },
+        "prep_note": "The shelf is flat within two blocks. A low sandstone wall closes the ring between the buildings, with the gate on the west; authored at placement."
+      }
+    },
+    "tableland_stop": {
+      "centre": [
+        4876,
+        5729
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "plan": {
+        "reading": "From Route 8 the tower is the only thing standing on the plateau's rim, and the trail goes up to it, taking the last few blocks of the brow at a slant. The lookout stands on the edge with the road below it, and behind it, back from the edge, the waystation and the prospector's house face each other across a yard of red stone. The waystation is the Center. The prospector will tell you what the plateau is made of.",
+        "entries": [
+          {
+            "from": "route_08_blaine_to_giovanni",
+            "at": [
+              4708,
+              5561
+            ],
+            "street": "brow_trail"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "brow_trail",
+            "polyline": [
+              [
+                4708,
+                5561
+              ],
+              [
+                4770,
+                5610
+              ],
+              [
+                4830,
+                5676
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:smooth_red_sandstone",
+            "max_grade": 0.12
+          }
+        ],
+        "plaza": {
+          "rect": [
+            4830,
+            5680,
+            4856,
+            5700
+          ],
+          "y": 161,
+          "surface": "minecraft:red_terracotta",
+          "why": "the yard between the waystation and the prospector's house"
+        },
+        "anchors": [
+          {
+            "id": "tableland_stop_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblemon:villages/badlands/pokecenter",
+            "rect": [
+              4832,
+              5702,
+              4848,
+              5718
+            ],
+            "facing": "north",
+            "why": "the waystation: the badlands village Center, facing the yard"
+          },
+          {
+            "id": "tableland_prospector",
+            "role": "building",
+            "template": null,
+            "rect": [
+              4858,
+              5680,
+              4874,
+              5698
+            ],
+            "facing": "west",
+            "why": "the prospector's house across the yard; badlands village set"
+          },
+          {
+            "id": "tableland_lookout",
+            "role": "landmark",
+            "template": "minecraft:pillager_outpost/watchtower",
+            "rect": [
+              4798,
+              5670,
+              4816,
+              5688
+            ],
+            "facing": "south",
+            "why": "the lookout on the brow: tall enough to be read from the road below, which the fragile canopy sightline needs (visibility:tableland_stop_from_its_leg_canopy). Candidate donor, the vanilla outpost watchtower without its banners; to confirm at placement"
+          }
+        ],
+        "house_lots": {
+          "along": [],
+          "why": "a waystation, a house and a tower"
+        },
+        "waystone": {
+          "position": [
+            4832,
+            5682
+          ],
+          "facing": "east",
+          "note": "discovery: first visit activates it"
+        },
+        "npc": {
+          "at": [
+            4850,
+            5690
+          ],
+          "who": "the prospector"
+        },
+        "paving": {
+          "main": "minecraft:smooth_red_sandstone",
+          "plaza": "minecraft:red_terracotta",
+          "lamp": "minecraft:ochre_froglight",
+          "why": "the badlands' own reds; none is a spawn condition"
+        },
+        "prep_note": "The trail climbs about six blocks at up to 1 in 8; the top is flat within three."
+      }
+    },
+    "rift_rim_stop": {
+      "centre": [
+        3734,
+        3951
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "plan": {
+        "reading": "Victory Road runs in the Rift, and the post is on its rim, out of sight until the stepped trail from the road has climbed out of the trench and into the trees. There is no square. The Center stands among the trunks with a narrow boardwalk running from its door straight to a railed terrace built out over the rim, where the Rift opens below and the road you left is a line in it. The two rangers' cabins are off in the trees to either side, not lined up with anything. It is the traditional Center before the League, placed off the road so Victory Road stays unbroken.",
+        "entries": [
+          {
+            "from": "victory_road",
+            "at": [
+              4007,
+              3678
+            ],
+            "street": "rim_trail"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "rim_trail",
+            "polyline": [
+              [
+                4007,
+                3678
+              ],
+              [
+                3900,
+                3790
+              ],
+              [
+                3830,
+                3880
+              ],
+              [
+                3766,
+                3947
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:coarse_dirt",
+            "max_grade": 0.5,
+            "why": "the climb out of the Rift is sixty blocks; graded as a road it cut a trench of 27,836 blocks, so it is a stepped path, one block up in two, which a player walks"
+          }
+        ],
+        "plaza": {
+          "rect": [
+            3746,
+            3948,
+            3772,
+            3956
+          ],
+          "y": 139,
+          "surface": "minecraft:spruce_planks",
+          "why": "a boardwalk from the Center's door to the overlook, not a square"
+        },
+        "anchors": [
+          {
+            "id": "rift_rim_stop_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblemon:village_taiga/village_taiga_pokecenter",
+            "rect": [
+              3726,
+              3942,
+              3744,
+              3962
+            ],
+            "facing": "east",
+            "why": "the Center on the clearing's west side, facing the terrace: the taiga village Center, for the woods"
+          },
+          {
+            "id": "rimpost_cabin_north",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3722,
+              3914,
+              3738,
+              3930
+            ],
+            "facing": "east",
+            "why": "a ranger's cabin; taiga village set"
+          },
+          {
+            "id": "rimpost_cabin_south",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3758,
+              3974,
+              3774,
+              3990
+            ],
+            "facing": "west",
+            "why": "the second cabin; taiga village set"
+          },
+          {
+            "id": "rimpost_overlook",
+            "role": "overlook",
+            "template": null,
+            "rect": [
+              3774,
+              3944,
+              3790,
+              3962
+            ],
+            "facing": "east",
+            "level": 141,
+            "surface": "minecraft:spruce_planks",
+            "why": "the railed terrace at the clearing's east edge, over the rim"
+          }
+        ],
+        "house_lots": {
+          "along": [],
+          "why": "a post, not a village"
+        },
+        "waystone": {
+          "position": [
+            3748,
+            3958
+          ],
+          "facing": "east",
+          "note": "discovery: first visit activates it"
+        },
+        "npc": {
+          "at": [
+            3780,
+            3952
+          ],
+          "who": "the ranger on the terrace, who watches the road"
+        },
+        "paving": {
+          "main": "minecraft:coarse_dirt",
+          "plaza": "minecraft:spruce_planks",
+          "lamp": "minecraft:shroomlight",
+          "why": "a forest trail and a boardwalk; neither is a spawn condition"
+        },
+        "prep_note": "The clearing rises four blocks towards the rim; the terrace is levelled at y141."
+      }
+    },
+    "rift_dig_camp": {
+      "centre": [
+        3106,
+        3314
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "plan": {
+        "reading": "The west spur is a dead end, and the camp is strung along the one track down its floor between walls twenty blocks high. Tents and a finds shed line the track, and at the very end, against the rock, the excavation: a cut into the spur's head with a scaffold over it, where the archaeologists are working towards the steel chamber. An outpost, so no Center and no waystone: you come here because you heard about it.",
+        "entries": [
+          {
+            "from": "rift spur mouth",
+            "at": [
+              3166,
+              3300
+            ],
+            "street": "camp_track"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "camp_track",
+            "polyline": [
+              [
+                3166,
+                3300
+              ],
+              [
+                3120,
+                3304
+              ],
+              [
+                3076,
+                3300
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:coarse_dirt",
+            "max_grade": 0.1
+          }
+        ],
+        "plaza": {
+          "rect": [
+            3100,
+            3290,
+            3116,
+            3316
+          ],
+          "y": 89,
+          "surface": "minecraft:gravel",
+          "why": "the camp's middle, by the finds shed"
+        },
+        "anchors": [
+          {
+            "id": "dig_excavation",
+            "role": "excavation",
+            "template": null,
+            "rect": [
+              3050,
+              3284,
+              3072,
+              3318
+            ],
+            "facing": "east",
+            "why": "the dig at the spur's head: a stepped cut with a scaffold, authored at placement; the steel chamber is behind it"
+          },
+          {
+            "id": "dig_finds_shed",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3120,
+              3276,
+              3134,
+              3292
+            ],
+            "facing": "south",
+            "why": "the finds shed on the track"
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "camp_track"
+          ],
+          "size": [
+            7,
+            7
+          ],
+          "setback": 2,
+          "gap": 3,
+          "max_lot_relief": 3,
+          "why": "tents: small pitches along the track, placed at layout from tent donors"
+        },
+        "waystone": null,
+        "npc": {
+          "at": [
+            3080,
+            3300
+          ],
+          "who": "the lead archaeologist"
+        },
+        "paving": {
+          "main": "minecraft:coarse_dirt",
+          "plaza": "minecraft:gravel",
+          "lamp": "minecraft:shroomlight",
+          "why": "a working camp's track; neither is a spawn condition"
+        },
+        "prep_note": "The spur floor is flat within three blocks along the track; the walls are left untouched."
+      }
+    },
+    "the_scar": {
+      "centre": [
+        2110,
+        950
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "plan": {
+        "reading": "The Scar is flat in the way nothing on a mountain is flat: a disc pressed out of Mt Vessu's shoulder, and on it what is left of a town that is not there. Roads of cracked stone brick cross it in a grid, and between them the foundations of houses, one course high, with nothing on them. One avenue runs north across the whole disc and stops at the cliff edge, in the air. No lamps, no people. This is where the Displaced City stood; the city is underground now, and this is the hole it left.",
+        "entries": [
+          {
+            "from": "the south slope",
+            "at": [
+              2110,
+              1098
+            ],
+            "street": "old_avenue"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "old_avenue",
+            "polyline": [
+              [
+                2110,
+                1098
+              ],
+              [
+                2110,
+                806
+              ]
+            ],
+            "width": 7,
+            "surface": "minecraft:cracked_stone_bricks",
+            "max_grade": 0.02
+          },
+          {
+            "id": "cross_road",
+            "polyline": [
+              [
+                2006,
+                950
+              ],
+              [
+                2214,
+                950
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:cracked_stone_bricks",
+            "max_grade": 0.02
+          },
+          {
+            "id": "north_road",
+            "polyline": [
+              [
+                2040,
+                880
+              ],
+              [
+                2180,
+                880
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:mossy_stone_bricks",
+            "max_grade": 0.02
+          },
+          {
+            "id": "south_road",
+            "polyline": [
+              [
+                2040,
+                1020
+              ],
+              [
+                2180,
+                1020
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:mossy_stone_bricks",
+            "max_grade": 0.02
+          }
+        ],
+        "plaza": {
+          "rect": [
+            2094,
+            934,
+            2126,
+            966
+          ],
+          "y": 280,
+          "surface": "minecraft:cracked_stone_bricks",
+          "why": "the old square, where the avenue and the cross road met"
+        },
+        "anchors": [],
+        "house_lots": {
+          "along": [
+            "cross_road",
+            "north_road",
+            "south_road"
+          ],
+          "size": [
+            11,
+            11
+          ],
+          "setback": 2,
+          "gap": 3,
+          "max_lot_relief": 2,
+          "as": "foundations",
+          "why": "foundations only: a course of stone brick tracing each house that stood here, no building on it"
+        },
+        "waystone": null,
+        "npc": null,
+        "paving": {
+          "main": "minecraft:cracked_stone_bricks",
+          "side": "minecraft:mossy_stone_bricks",
+          "lamp": "none",
+          "lamp_why": "nothing lights the Scar",
+          "why": "old broken stone; neither is a spawn condition"
+        },
+        "prep_note": "The pad is pressed flat at y280; nothing to cut. The avenue's north end is left open at the cliff."
+      }
     }
   },
   "placements": [
