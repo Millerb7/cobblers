@@ -48,9 +48,11 @@
 - **Navigation:** use waystones only for fast travel, with gym-clear progression flags controlling gym-town activation.
 - **Dialogue:** native Cobblemon dialogue rather than KantoNPCs, compiled from campaign data by `tools/compile_dialogue.py`; quest fields and the cursor live in Cobblemon player data (`q.player.data()`, persisted per player); item checks use the vanilla item predicate run as the server; every give reports success and a reward claim depends on it (EXP-022: disconnect restore, bucket and bottle hand-over, reward once all pass single-player).
 - **Dialogue cursors:** store long-sequence position as first-class per-player state and persist it after each line or short segment.
+- **Legendary side content:** paste a compatible structure into a fitting biome and gate it by badge count; only the authored Regis/Regigigas/Groudon/Lugia encounters and the mainline Celebi sapling receive bespoke treatment.
 - **Quest namespaces:** reserve progression gates as `flags.<id>` and side-quest fields as `quest.<quest_id>.<field>`.
 - **Gastly escort:** each player owns and advances an independent Gastly escort; there is no shared-party quest state.
 - **Crushed house:** house completion is shared world state, dialogue cursors and rewards are per-player, and Lena relocates after rescue.
+- **Mainline reveal:** Pallet, eight gyms, and the League are encoded as ten ordered beats in one per-player quest; the Rift crisis is the League prelude, and leader battle dialogue, further rival content, and named faction-member arcs remain deferred.
 - **Villain:** Giovanni remains gym 8 and a civil defender; the campaign villain is original rather than Giovanni or another existing Kanto villain.
 - **Blaine:** place Blaine's gym in the overworld at the Craters, not in the Nether.
 - **League:** place the League in the overworld at the Rift head, disable generated End copies, and reserve End access for postgame.
@@ -86,6 +88,7 @@
 
 - **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap only; the live world predates them, so in-world flats and Surge's town site are blocked on the next re-export. The export itself is no longer blocked: EXP-024 proved the rebuild of every authored thing on a staging export.
 - **Dialogue delivery:** per-player dialogue is proven single-player (EXP-022); the two-player run is blocked on a second account, and the crushed-house conversations are blocked on a design for world-scoped quest fields, which the compiler refuses.
+- **Mainline reveal runtime:** all 13 conversations compile, but 0 actors or evidence objects are placed; safe NPC markers and each beat's physical evidence remain world-build work, advancement-backed gym flags cannot gate dialogue, `crater_operation_stopped` and `rift_crisis_resolved` are absent from the progression ledger, and the defined Rift-to-League handoff has no setter while the League opens too early on `gym8_cleared`.
 - **Navigation runtime:** flag-driven waystones are blocked on an in-game proof of activation, locked-touch rollback, reconnect reconciliation, and Xaero behavior.
 - **Generated gym copies:** the overworld Blaine/League decision is blocked from enforcement until the exact datapack overrides that suppress Nether/End copies are proven.
 - **Pack foundation:** EXP-000 has server boot and one-client connection evidence but is blocked from completion on multiplayer and remaining world-critical/gameplay-critical functional tests.
