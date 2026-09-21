@@ -24,7 +24,7 @@ The most loaded place in the world, drawn again on the floor the cavern was grad
 | Stair foot | `/tp @s 3346 44 1756` | **R** The road ends at the foot of the crown and an eight-step stair climbs to the square. The alternative was a 9-block cut. |
 | Summit square | `/tp @s 3328 48 1757` | **R** The cairn on the true top (y46, flat within one block), the waystone. **No Centre, no Mart**: a decision made without you. Say if the city should have them. |
 | Upper street | `/tp @s 3366 40 1800` | The upper bench ring: houses on terraces cut level at their own median, facing out over the dark. Worst cut 5, worst fill 4 anywhere in the town. |
-| Lower street | `/tp @s 3373 30 1821` | The lower ring, where most of the 42 houses are. **R** Farms were taken out of the house pool (wheat will not grow in the dark), and 16 of the 42 houses repeat a design (none more than twice). |
+| Lower street | `/tp @s 3373 30 1821` | The lower ring, where most of the 42 houses are. **R** 18 houses repeat a design, and each second copy is re-materialed in cherry or dark oak: is repetition still what you notice? No farms: the slopes are at block light 0. |
 | From above | `/tp @s 3350 70 1750` | **R** The cavern keeps 17 cherry trees (it had 41) in its margins and the north-west, and 6 light strings. The slopes between the benches are bare, because the town's keep-clear buffer covers them. Too bare? |
 
 ### 2. Sunset West, re-sited (4 min)
@@ -45,7 +45,19 @@ the mainland: a river mouth on the strait, across from the isle.
 ### 4. Giovanni's gym (2 min)
 | Stop | `/tp` | Look at |
 | --- | --- | --- |
-| The square, then the gym on its west | `/tp @s 3605 115 6451` | **R** The redstone torch on the desk in the barred room is now a plain torch. **Decide:** the fossil machine (tank, analyser, monitor) and a redstone block in the same gym still draw Rotom, which is Electric/Ghost with Levitate (immune to Ground). Keep the machine and accept Rotom, or make the gym interior spawn-free? |
+| The square, then the gym on its west | `/tp @s 3605 115 6451` | The torch on the desk is a plain torch, and every gym interior is now spawn-free, so the fossil machine draws nothing. Nothing to decide. |
+
+### 4a. The Route 1 mansion (3 min)
+| Stop | `/tp` | Look at |
+| --- | --- | --- |
+| Route 1's mouth | `/tp @s 1466 122 5100` | **R** Leaving Pallet: can you see the manor's roof and chimneys over the forest to the north-east? The junction post (`the old manor / this way`) is at the spur. |
+| The front | `/tp @s 1629 117 5050` | The drive round to the south front, the double door. |
+| Inside | `/tp @s 1629 116 5041` | Foyer and stair; dining room west (long table, cups), library east (three aisles); the service corridor behind. Upstairs, the hall's five doors and the barred ballroom doors off the landing. |
+
+### 4b. A signpost (1 min)
+| Stop | `/tp` | Look at |
+| --- | --- | --- |
+| Route 1 leaving Pallet | `/tp @s 1466 121 5211` | **R** The first post: `Route 1 / to / Brock's town` on the front, `Pallet` on the back. The towns' names are working names from `data/signposts.json`. |
 
 ### 5. The two towers (3 min)
 | Stop | `/tp` | Look at |
@@ -82,5 +94,5 @@ the mainland: a river mouth on the strait, across from the isle.
 
 | Place | `/tp` | Look at |
 | --- | --- | --- |
-| Surge's town | `/tp @s 1676 177 1393` | **R** Drawn to the approved plan and never seen: the lip walk, the copper belvedere, the gym cut into the wall (the plan's one deep excavation, up to 38 blocks). Mountains houses: the only stone set left, and Sabrina's frontage uses it too. Surge's gym whitelists its four redstone torches and two lightning rods (Electric types in the Electric gym). |
+| Surge's town | `/tp @s 1676 177 1393` | **R** Drawn to the approved plan and never seen: the lip walk, the copper belvedere, the gym cut into the wall (the plan's one deep excavation, up to 38 blocks). Its houses are now the flank's deepslate brick and tuff, not Sabrina's stone. |
 | The Scar | `/tp @s 2110 283 950` | Foundations only, one course, on the 32 lots; no lamps. |

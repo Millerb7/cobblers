@@ -325,5 +325,67 @@
       ],
       "why": "the harbour: brick walls on an oak base course, polished granite trim, red and yellow terracotta for the sunset; seaside grass for a garden"
     }
-  ]
+  ],
+  "house_sets": {
+    "displaced_cherry": {
+      "why": "a summit house the cavern has grown into: its spruce is cherry, its cobble is stone brick, its diorite andesite",
+      "map": {
+        "minecraft:spruce_planks": "minecraft:cherry_planks",
+        "minecraft:spruce_slab": "minecraft:cherry_slab",
+        "minecraft:spruce_stairs": "minecraft:cherry_stairs",
+        "minecraft:spruce_door": "minecraft:cherry_door",
+        "minecraft:spruce_fence_gate": "minecraft:cherry_fence_gate",
+        "minecraft:spruce_fence": "minecraft:cherry_fence",
+        "minecraft:spruce_log": "minecraft:cherry_log",
+        "minecraft:spruce_trapdoor": "minecraft:cherry_trapdoor",
+        "minecraft:cobblestone": "minecraft:stone_bricks",
+        "minecraft:cobblestone_stairs": "minecraft:stone_brick_stairs",
+        "minecraft:cobblestone_wall": "minecraft:stone_brick_wall",
+        "minecraft:mossy_cobblestone": "minecraft:mossy_stone_bricks",
+        "minecraft:diorite": "minecraft:andesite",
+        "minecraft:diorite_slab": "minecraft:andesite_slab",
+        "minecraft:diorite_stairs": "minecraft:andesite_stairs",
+        "minecraft:diorite_wall": "minecraft:andesite_wall"
+      }
+    },
+    "displaced_dark": {
+      "why": "a summit house built darker: dark oak for spruce, cobbled deepslate for cobble, tuff for diorite and smooth stone",
+      "map": {
+        "minecraft:spruce_planks": "minecraft:dark_oak_planks",
+        "minecraft:spruce_slab": "minecraft:dark_oak_slab",
+        "minecraft:spruce_stairs": "minecraft:dark_oak_stairs",
+        "minecraft:spruce_door": "minecraft:dark_oak_door",
+        "minecraft:spruce_fence_gate": "minecraft:dark_oak_fence_gate",
+        "minecraft:spruce_fence": "minecraft:dark_oak_fence",
+        "minecraft:spruce_log": "minecraft:dark_oak_log",
+        "minecraft:spruce_trapdoor": "minecraft:dark_oak_trapdoor",
+        "minecraft:cobblestone": "minecraft:cobbled_deepslate",
+        "minecraft:cobblestone_stairs": "minecraft:cobbled_deepslate_stairs",
+        "minecraft:cobblestone_wall": "minecraft:cobbled_deepslate_wall",
+        "minecraft:mossy_cobblestone": "minecraft:mossy_stone_bricks",
+        "minecraft:diorite": "minecraft:tuff",
+        "minecraft:diorite_slab": "minecraft:tuff_slab",
+        "minecraft:diorite_stairs": "minecraft:tuff_stairs",
+        "minecraft:diorite_wall": "minecraft:tuff_wall",
+        "minecraft:smooth_stone": "minecraft:polished_tuff",
+        "minecraft:smooth_stone_slab": "minecraft:polished_tuff_slab"
+      }
+    },
+    "surge_flank": {
+      "why": "Surge's shelf is cut from Mt Vessu's flank, which is deepslate and tuff (the plan's paving is the same stone): stone brick becomes deepslate brick, stone becomes tuff; the spruce timber stays",
+      "map": {
+        "minecraft:stone_bricks": "minecraft:deepslate_bricks",
+        "minecraft:stone_brick_stairs": "minecraft:deepslate_brick_stairs",
+        "minecraft:stone_brick_wall": "minecraft:deepslate_brick_wall",
+        "minecraft:stone_brick_slab": "minecraft:deepslate_brick_slab",
+        "minecraft:mossy_stone_bricks": "minecraft:cracked_deepslate_bricks",
+        "minecraft:cobblestone": "minecraft:cobbled_deepslate",
+        "minecraft:cobblestone_stairs": "minecraft:cobbled_deepslate_stairs",
+        "minecraft:cobblestone_wall": "minecraft:cobbled_deepslate_wall",
+        "minecraft:stone": "minecraft:tuff",
+        "minecraft:stone_stairs": "minecraft:tuff_stairs",
+        "minecraft:stone_slab": "minecraft:tuff_slab"
+      }
+    }
+  }
 }

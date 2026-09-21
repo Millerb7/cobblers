@@ -170,6 +170,68 @@ Spot-check the code and the tests against real data, and report disagreements ra
    building, and the two scoped whitelist entries (the League's wool, red sand and lily pads; Sabrina's sunflower,
    cobweb and monitor), which the owner may veto.
 
+## Handover, 2026-09-21 (Claude, the placement and re-export sessions)
+
+For Codex to pick up. Claude has not edited any of the files named here.
+
+17. **Sunset West moved.** It is no longer on the Sunset isle, which has no bay or inlet anywhere: it is now a harbour
+    at a river mouth on the strait's mainland shore, centre **(2660, 6490)**, sub-region `south_strand` of
+    `southern_coast` (`data/towns.json`, whose `why_here` records the search). The story documents still place it at
+    **(1716, 7298)** on the isle: `docs/story/ARC.md` line 671, `docs/story/SIDEQUESTS.md` lines 291-305 and 651-652
+    (the rubbing to carry to it), `docs/story/SIDE_EVENTS.md` line 335. `docs/story/ENCOUNTERS.md` lines 49 and 147
+    describe the `sunset_west` **sub-region**, which is still the isle and is unchanged; the town simply is not in it
+    any more. The isle stays in view across the strait as the place the port's boats go.
+18. **The jungle ruins' cache needs a reward.** `jungle_ruins` is built (six vanilla ruin pieces half sunk on the
+    jungle island, `data/placements.json`), and its brief promises a cache. No container or reward exists: choose
+    what it holds and where, as event data.
+19. **Review debt: every tool and test written or changed this week by Claude in the same session as its tests or its
+    use.** None has had an independent reviewer. In priority order, by what a mistake would cost:
+
+    *First, the live re-export path.* These run against the live world when the owner starts the re-export.
+    - `tools/reapply.py` (the driver: step order, checkpoints, stale-file handling, the restore pack's removal).
+    - `tools/function_limits.py` (`ensure_loaded`, `releases_mid_run`, `split_fills`, the unloaded-write rule) and
+      `tests/test_silent_commands.py`. A mistake here silently drops blocks.
+    - `tools/place_town.py` (seating on levelled pads, `rewrite_template` with `dry` and `materials`, the verify's
+      corner rule, chunk wait, batching and `finally`) with `tests/test_place_town.py`, `tests/test_verify_floor.py`,
+      `tests/test_house_materials.py`.
+    - `tools/town_plan.py` (`clear_above`: 3 blocks of headroom and trees cleared over every street; `level_lots`,
+      `avoid_water`, plan footprints, refusal reasons).
+    - `tools/place_donor.py` (check-and-retry, `jigsaw_commands`, loot clearing) with `tests/test_donor_jigsaws.py`.
+    - `tools/cavern_plan.py` (the seal now turns gravel and sand to stone; `town_mask` keeps trees off the town).
+    - `tools/ground.py` (`for_settlement`: cavern floor, islet) with `tests/test_ground_rule.py` and
+      `tests/test_ground_overrides.py`.
+    - `tools/maze_forest.py`, `tools/world_tree.py`, `tools/tree_grove.py`, `tools/elder_trees.py`, `tools/islet.py`.
+    - `tools/signposts.py` with `tests/test_signposts.py`; `tools/route1_mansion.py`; `tools/traders.py` with
+      `tests/test_traders.py`; `tools/reexport.py`.
+
+    *Second, the audits the live run is judged by.* A blind spot here passes a bad build.
+    - `tools/town_audit.py`: the stray-paving control ring and its "not checkable" case, the earthwork exemption for
+      road cells, donors' grade layer, exact template-written positions.
+    - `tools/build_audit.py` (`built_over`, which leaves out what a later town rebuilds) with
+      `tests/test_build_audit.py`.
+    - `tools/signposts.py verify` and the floor verify in `tools/place_town.py` (above).
+
+    *Third, spawn data* (not installed in the live world yet): `tools/compile_spawns.py` (spawn-free zones, whole-cell
+    exclusion), `tools/suppress_inherited_spawns.py`, `tools/subregion_boxes.py`, `tools/spawn_blocks.py`,
+    `tools/habitat_blocks.py`, `tools/position_types.py`, `tools/size_outliers.py`, with
+    `tests/test_compile_spawns.py`, `tests/test_spawn_free_zones.py`, `tests/test_spawn_blocks_validator.py`,
+    `tests/test_habitat_blocks.py`. Check that the eight gym zones cover each gym as placed.
+
+    *Fourth, validation and measurement:* `tools/validate_data.py` (town, earthwork, trader, visibility checks),
+    `tools/measure_towns.py`, `tools/visibility_claims.py`, `tools/nosepass_sightline.py`, `tools/town_templates.py`,
+    `tools/rematerial.py`, `tools/runtime_guard.py`, `tools/restore_ground.py` (disposable worlds only), with
+    `tests/test_town_measures.py`, `tests/test_visibility_claims.py`, `tests/test_runtime_guard.py`,
+    `tests/test_template_provenance.py`.
+
+    *Last:* `tools/compile_dialogue.py` (with its test), `tools/kit.py`, `tools/close_route_gaps.py`,
+    `tools/build_routes.py`, `tools/press_pads.py`, `tools/rescale.py`, `tools/waterways.py`,
+    `tools/tree_town_sites.py`, `tools/place_vendors.py`.
+
+    **Not in the repository:** most placement records in `data/placements.json` (the batch 1-3 houses, donors and
+    earthworks, Sunset West, the Displaced City's terraces) were written by session scratch scripts. The records are
+    the source of truth and carry their reasons (`chosen_because`), but the scripts that chose them are not committed,
+    so the choice rule can only be reviewed from the records.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.

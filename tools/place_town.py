@@ -132,8 +132,14 @@ UNDERWATER_ONLY = {"minecraft:water", "minecraft:seagrass", "minecraft:tall_seag
 CORALS = ("tube", "brain", "bubble", "fire", "horn")
 
 
-def rewrite_template(src, dest, dry=False):
-    """Copy a structure template without its waystones and, with dry=True, without its sea.
+def rewrite_template(src, dest, dry=False, materials=None):
+    """Copy a structure template without its waystones and, with dry=True, without its sea; with `materials` (a
+    {block: block} map, like for like), in other materials.
+
+    The copy is written into the build pack, never into kits/: the Repurposed Structures houses it is used on are not
+    ours to commit, so the re-materialed house exists only in the pack that places it, rebuilt from the installed
+    mod every time. The Displaced City re-materials its repeated designs this way, and Surge's town builds its houses
+    in the flank's own stone.
 
     Repurposed Structures' ocean village is an underwater village: its houses are full of water, which is
     their air. Set down on land, Misty's eight houses held 35 to 101 water blocks each, up to eight blocks
@@ -167,6 +173,12 @@ def rewrite_template(src, dest, dry=False):
                 dried += new == nm
             if new != nm:
                 e["Name"] = (L.STRING, new)
+                dried += 1
+    if materials:
+        for e in pal:
+            nm = L.plain(e["Name"])
+            if nm in materials:
+                e["Name"] = (L.STRING, materials[nm])
                 dried += 1
     Path(dest).parent.mkdir(parents=True, exist_ok=True)
     Path(dest).write_bytes(L.dumps(name, root))
@@ -307,12 +319,21 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
                 cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (fluid,)))
         template_id = p["template"]
         ns, path_ = template_id.split(":")
-        if info["waystones"] or p.get("dry"):
+        materials = p.get("materials") or {}
+        if isinstance(materials, str):
+            # a named set in data/rematerial.json house_sets
+            sets = json.loads((ROOT / "data" / "rematerial.json").read_text(encoding="utf-8")).get("house_sets") or {}
+            if materials not in sets:
+                raise SystemExit("%s names material set %r, which data/rematerial.json house_sets does not have" % (p["id"], materials))
+            materials = sets[materials]["map"]
+        if info["waystones"] or p.get("dry") or materials:
             if out_dir is None:
                 raise SystemExit("%s needs a rewritten template copy; building it needs an output datapack to hold it" % p["id"])
-            template_id = "cobblers:towns/stripped/%s/%s" % (ns, path_)
-            rewrite_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + ".nbt"),
-                             dry=bool(p.get("dry")))
+            # a re-materialed copy is this building's own: two houses of one design in two materials are two templates
+            suffix = ("__" + p["id"]) if materials else ""
+            template_id = "cobblers:towns/stripped/%s/%s%s" % (ns, path_, suffix)
+            rewrite_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + suffix + ".nbt"),
+                             dry=bool(p.get("dry")), materials=materials)
         elif ns == "cobblers" and out_dir is not None:
             # our own templates travel in the pack that places them. The town Centres and Marts were never
             # installed anywhere, so every `place template` for them failed without a word (found by
@@ -324,6 +345,8 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         for (jx, jy, jz), final, _ in info["jigsaws"]:
             wx, wz = world_xz(jx, jz)
             state = final if final != "minecraft:structure_void" else "minecraft:air"
+            if state.split("[")[0] in materials:
+                state = materials[state.split("[")[0]] + state[len(state.split("[")[0]):]
             cmds.append("setblock %d %d %d %s" % (wx, oy + jy, wz, state))
         for (lx, ly, lz) in info["loot"]:
             wx, wz = world_xz(lx, lz)
@@ -548,40 +571,44 @@ def verify(settlement, server_dir):
     # loaded nothing (2026-09-21)
     held = (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)
     rcon.run(forceload_commands(held, "add"), pw)
-    # Wait for the chunks. A forced chunk loads over the next ticks, and a block test in one not yet loaded fails as if
-    # the block were missing: Sunset West's first verify (240 chunks) read every corner of every building as a gap
-    # while the world held all of them (2026-09-21).
-    import time
-    pending = [(cx, cz) for cx in range((min(xs) - 4) >> 4, ((max(xs) + 4) >> 4) + 1)
-               for cz in range((min(zs) - 4) >> 4, ((max(zs) + 4) >> 4) + 1)]
-    deadline = time.time() + 120
-    while pending and time.time() < deadline:
-        replies = rcon.run(["execute if loaded %d 0 %d" % (cx * 16, cz * 16) for cx, cz in pending], pw)
-        pending = [c for c, r in zip(pending, replies) if "passed" not in r]
+    # released whatever happens: a verify that stopped part way used to leave its chunks held (392 of them round
+    # Northlight on the disposable world, found 2026-09-21)
+    try:
+        # Wait for the chunks. A forced chunk loads over the next ticks, and a block test in one not yet loaded fails as if
+        # the block were missing: Sunset West's first verify (240 chunks) read every corner of every building as a gap
+        # while the world held all of them (2026-09-21).
+        import time
+        pending = [(cx, cz) for cx in range((min(xs) - 4) >> 4, ((max(xs) + 4) >> 4) + 1)
+                   for cz in range((min(zs) - 4) >> 4, ((max(zs) + 4) >> 4) + 1)]
+        deadline = time.time() + 120
+        while pending and time.time() < deadline:
+            replies = rcon.run(["execute if loaded %d 0 %d" % (cx * 16, cz * 16) for cx, cz in pending], pw)
+            pending = [c for c, r in zip(pending, replies) if "passed" not in r]
+            if pending:
+                time.sleep(1)
         if pending:
-            time.sleep(1)
-    if pending:
-        raise SystemExit("%d chunks were still not loaded after two minutes; a verify now would report false gaps" % len(pending))
-    for b in fb:
-        rows = []
-        for c in b["corners"]:
-            x, z = c["column"]
-            Y = c["floor_y"]
-            floor = solid(x, Y, z)
-            support = top_solid(x, z, Y - 1, Y - 40)
-            ox, oz = c["outside"]
-            grade = top_solid(ox, oz, Y + 12, Y - 40, skip_trees=True)
-            rows.append({"column": [x, z], "floor_y": Y, "floor_block_present": floor, "support_y": support,
-                         "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
-                         "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
-        # every column the building stands on: the block under its lowest block is solid
-        below = [(x, bottom - 1, z) for x, z, bottom in b["columns"]]
-        gaps = [list(c) for c, ok in zip(below, solid_many(below)) if not ok]
-        out["columns_checked"] += len(b["columns"])
-        out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
-        out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
-                                 "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
-    rcon.run(forceload_commands(held, "remove"), pw)
+            raise SystemExit("%d chunks were still not loaded after two minutes; a verify now would report false gaps" % len(pending))
+        for b in fb:
+            rows = []
+            for c in b["corners"]:
+                x, z = c["column"]
+                Y = c["floor_y"]
+                floor = solid(x, Y, z)
+                support = top_solid(x, z, Y - 1, Y - 40)
+                ox, oz = c["outside"]
+                grade = top_solid(ox, oz, Y + 12, Y - 40, skip_trees=True)
+                rows.append({"column": [x, z], "floor_y": Y, "floor_block_present": floor, "support_y": support,
+                             "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
+                             "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
+            # every column the building stands on: the block under its lowest block is solid
+            below = [(x, bottom - 1, z) for x, z, bottom in b["columns"]]
+            gaps = [list(c) for c, ok in zip(below, solid_many(below)) if not ok]
+            out["columns_checked"] += len(b["columns"])
+            out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
+            out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
+                                     "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
+    finally:
+        rcon.run(forceload_commands(held, "remove"), pw)
     return out
 
 

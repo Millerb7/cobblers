@@ -94,8 +94,11 @@ def main(argv=None):
     s = doc["settlements"][a.settlement]
     plan = s["plan"]
     towns = {t["id"]: t for t in json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]}
-    fp = towns[a.settlement]["footprint"]
+    # a place with no town record (the Route 1 mansion) must name its own footprint in its plan
+    fp = (towns.get(a.settlement) or {}).get("footprint") or {"min_x": 0, "min_z": 0, "max_x": 0, "max_z": 0}
     fbox = (fp["min_x"], fp["min_z"], fp["max_x"], fp["max_z"])
+    if a.settlement not in towns and not plan.get("footprint"):
+        raise SystemExit("%s has no data/towns.json record, so its plan must name its footprint" % a.settlement)
     if plan.get("footprint"):
         # a town that is not on its recorded site's ground: the Displaced City's record is the surface entrance, and
         # the town is on the cavern floor 350 blocks east, so its plan names the box it is built in

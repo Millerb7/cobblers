@@ -40,7 +40,8 @@ BUILD = ROOT / "build"
 PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
 OUT = ROOT / "derived" / "reapply"
-SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply")
+SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
+                "cobblers_signs")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -91,6 +92,7 @@ def prepare(a):
         py(TOOLS / "place_town.py", s, *src)
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
+    py(TOOLS / "signposts.py", "function", *src)
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
@@ -165,6 +167,7 @@ def steps(with_spawns=False):
     for s in places(doc):
         r8 += [("fn", "cobblers:reapply/prep_%s" % s), ("fn", "cobblers:towns/%s" % s)]
     out.append(("R8", "planned towns and places (%d)" % len(places(doc)), r8))
+    out.append(("R15", "route signposts", [("fn", "cobblers:signs/place")]))
     r9 = []
     for d in donors(doc):
         r9 += [("fn", "cobblers:structures/place_%s" % d), ("wait", 3)]
@@ -272,7 +275,11 @@ def audit(a):
         res["towns"][s] = {"exit": r.returncode, "clean": clean, "problems": problems, "not_checkable": notes}
         print("%-16s %s%s" % (s, "clean" if clean else "PROBLEMS: %s" % problems[:3],
                               "  (%s)" % "; ".join(n.replace("NOT CHECKABLE  ", "") for n in notes) if notes else ""), flush=True)
-    res["clean"] = res["build_audit"]["exit"] == 0 and all(v["clean"] for v in res["towns"].values())
+    r = subprocess.run([sys.executable, str(TOOLS / "signposts.py"), "verify", "--world", a.world], cwd=ROOT, capture_output=True, text=True)
+    res["signposts"] = {"exit": r.returncode, "tail": r.stdout.strip().splitlines()[-6:]}
+    print("signposts:", " | ".join(res["signposts"]["tail"]))
+    res["clean"] = (res["build_audit"]["exit"] == 0 and all(v["clean"] for v in res["towns"].values())
+                    and res["signposts"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")
     print("audit %s: %s" % ("CLEAN" if res["clean"] else "NOT CLEAN", path))

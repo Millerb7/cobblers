@@ -283,7 +283,7 @@
       ],
       "scope": "Erika's gym (cobbleverse:erika)",
       "why": "one spore blossom hanging in the grass gym's own planting, placed whole by resource id",
-      "consequence": "whatever a spore blossom draws, inside Erika's gym; the same call as Sabrina's approved exceptions",
+      "consequence": "none inside the gym: its interior is a spawn-free zone (data/spawn_suppression.json, the owner 2026-09-21), so the block draws nothing there. Before that: whatever a spore blossom draws, inside Erika's gym; the same call as Sabrina's approved exceptions",
       "decided": "2026-09-21, by the implementing session under the owner's standing instruction to decide and record; on the review list"
     },
     {
@@ -332,7 +332,7 @@
       ],
       "scope": "Brock's gym (cobbleverse:brock)",
       "why": "five blocks of ore set into the rock gym's own walls, placed whole by resource id; a rock gym's ore is its character",
-      "consequence": "whatever coal ore draws, inside Brock's gym",
+      "consequence": "none inside the gym: its interior is a spawn-free zone (data/spawn_suppression.json, the owner 2026-09-21), so the block draws nothing there. Before that: whatever coal ore draws, inside Brock's gym",
       "decided": "2026-09-21, by the implementing session; hidden until the spawn audit counted exactly; on the review list"
     },
     {
@@ -342,7 +342,7 @@
       ],
       "scope": "Koga's gym (cobbleverse:koga)",
       "why": "the gym's own interior, placed whole by resource id: its pond planting: 2 lily pads, 2 pitcher plants. Hidden until the spawn audit counted exactly what a rotated template writes (2026-09-21)",
-      "consequence": "Lotad's line or Politoed by the pond inside the poison gym",
+      "consequence": "none inside the gym: its interior is a spawn-free zone (data/spawn_suppression.json, the owner 2026-09-21), so the block draws nothing there. Before that: Lotad's line or Politoed by the pond inside the poison gym",
       "decided": "2026-09-21, by the implementing session, following the owner's approval of Sabrina's exceptions; on the review list"
     },
     {
@@ -351,7 +351,7 @@
       ],
       "scope": "Blaine's gym (cobbleverse:blaine)",
       "why": "the gym's own interior, placed whole by resource id: 23 magma blocks in the fire gym's floor. Hidden until the spawn audit counted exactly what a rotated template writes (2026-09-21)",
-      "consequence": "fire types drawn to magma, inside the fire gym",
+      "consequence": "none inside the gym: its interior is a spawn-free zone (data/spawn_suppression.json, the owner 2026-09-21), so the block draws nothing there. Before that: fire types drawn to magma, inside the fire gym",
       "decided": "2026-09-21, by the implementing session, following the owner's approval of Sabrina's exceptions; on the review list"
     },
     {
@@ -360,7 +360,7 @@
       ],
       "scope": "Giovanni's gym (cobbleverse:giovanni)",
       "why": "the gym's own interior, placed whole by resource id: two restoration tanks, half of the fossil machine (with its analyzer and monitor). The redstone torch that was here is swapped for a plain torch (placements.json gym8_gym_building), because it drew Rotom into a Ground gym (2026-09-21)",
-      "consequence": "Rotom, drawn by the fossil machine's restoration tank; the analyzer, the monitor and a redstone block in the same gym draw it too (on the review list: keep the fossil machine and accept Rotom, or make the gym's interior spawn-free)",
+      "consequence": "none inside the gym: its interior is a spawn-free zone (data/spawn_suppression.json, the owner 2026-09-21), so the block draws nothing there. Before that: Rotom, drawn by the fossil machine's restoration tank; the analyzer, the monitor and a redstone block in the same gym draw it too (on the review list: keep the fossil machine and accept Rotom, or make the gym's interior spawn-free)",
       "decided": "2026-09-21, by the implementing session, following the owner's approval of Sabrina's exceptions; on the review list"
     },
     {
@@ -370,7 +370,7 @@
       ],
       "scope": "Surge's gym (cobbleverse:ltsurge)",
       "why": "the gym's own interior, placed whole by resource id: four redstone torches and two lightning rods, the gym's electrics",
-      "consequence": "Electric types (Rotom among them) drawn inside the Electric gym, which is in keeping",
+      "consequence": "none inside the gym: its interior is a spawn-free zone (data/spawn_suppression.json, the owner 2026-09-21), so the block draws nothing there. Before that: Electric types (Rotom among them) drawn inside the Electric gym, which is in keeping",
       "decided": "2026-09-21, by the implementing session, following the owner's gym exceptions; on the review list"
     }
   ],
