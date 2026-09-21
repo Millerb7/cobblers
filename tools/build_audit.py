@@ -195,7 +195,18 @@ def cavern(world):
     # the shell (cavern_plan 02): no void within 24 blocks of the chamber, over the roof or round the walls, except
     # where the tunnel is dug through it and the town builds (its gate)
     shell_voids, shell_cols = Counter(), 0
-    if "shell_hi" in arr.files:
+    problems = []
+    # fail closed: the plan's own box is the expected set; a floor grid of another size, no column left for the floor
+    # check, or no shell data at all is a failure, not a pass (Codex review, 2026-09-21)
+    cx0, cz0, cx1, cz1 = plan["cavern"]
+    expected = (cx1 - cx0 + 1) * (cz1 - cz0 + 1)
+    if expected <= 0 or n != expected:
+        problems.append("cavern: the plan's box holds %d columns, its floor grid %d" % (expected, n))
+    if n_ground == 0:
+        problems.append("cavern: no column left to check the floor on (the town rebuilds all %d)" % n)
+    if "shell_hi" not in arr.files:
+        problems.append("cavern: no shell in the plan (derived/cavern/plan.npz): re-run tools/cavern_plan.py")
+    else:
         import town_audit
         dug = set(town_audit._command_columns(
             (BUILD / "datapacks" / "cobblers_cavern" / "data" / "cobblers" / "function" / "cavern" / "50_tunnel.mcfunction")
@@ -215,7 +226,8 @@ def cavern(world):
                     if b in AIR or b in FLUID:
                         shell_voids["%s %s" % ("over the roof," if inside else "in the walls,", b.split(":")[-1])] += 1
                         break
-    problems = []
+        if shell_cols == 0:
+            problems.append("cavern: no shell column left to check")
     if sum(shell_voids.values()):
         problems.append("cavern shell: %d columns with a void within 24 blocks of the chamber (%s)"
                         % (sum(shell_voids.values()), dict(shell_voids)))
@@ -264,10 +276,27 @@ def forest(world):
                 present += 1
             elif len(missing) < 5:
                 missing.append("%s at (%d, %d, %d): %s" % (tid.rsplit("/", 1)[-1], x + rx, y + off[1], z + rz, got))
+    # Fail closed: the expected count is the plan's (derived/sites/route1_forest.json, written by tools/maze_forest.py
+    # from data), never what the functions happen to contain. An empty or missing function set, or objects whose
+    # template has no trunk to look for, used to pass with nothing checked (Codex review, 2026-09-21).
+    plan = ROOT / "derived" / "sites" / "route1_forest.json"
+    rep = json.loads(plan.read_text(encoding="utf-8")) if plan.is_file() else {}
+    expected = int(rep.get("objects_placed") or 0)
+    # the world-tree sapling is one more object, from the kits pack, whose template the forest pack does not carry
+    sapling = 1 if rep.get("sapling_placed") else 0
     problems = []
-    if placed and present < TRUNKS_OK * placed:
-        problems.append("forest: %d of %d trunks stand (%.2f%%), needs %.0f%%" % (present, placed, 100 * present / placed, 100 * TRUNKS_OK))
-    return {"objects_with_trunks": placed, "trunks_present": present, "objects_without_trunks": no_trunk,
+    if expected <= 0:
+        problems.append("forest: the plan (%s) expects no trees: nothing to check is a failure" % plan.name)
+    if placed + no_trunk != expected + sapling:
+        problems.append("forest: the functions place %d objects, the plan %d and %d sapling"
+                        % (placed + no_trunk, expected, sapling))
+    if no_trunk != sapling:
+        problems.append("forest: %d placed objects have no trunk the audit can find (the plan allows %d, the sapling)"
+                        % (no_trunk, sapling))
+    if present < TRUNKS_OK * max(expected, 1):
+        problems.append("forest: %d of %d planned trunks stand (%.2f%%), needs %.0f%%"
+                        % (present, expected, 100 * present / max(expected, 1), 100 * TRUNKS_OK))
+    return {"planned": expected, "objects_with_trunks": placed, "trunks_present": present, "objects_without_trunks": no_trunk,
             "first_missing": missing, "problems": problems}
 
 
@@ -295,10 +324,19 @@ def world_tree(world):
                 top_at, top_blk = (x0, max(y0, y1), z0), base(m.group(7))
     got = base(world.block(*top_at)) if top_at else None
     problems = []
-    if n and ok < COLUMNS_OK * n:
+    # fail closed: nothing replayed, or no crown found in the functions, is a failure, and the crown must be where
+    # the plan (derived/sites/world_tree_foothill_woods.json top_y) says
+    if n == 0:
+        problems.append("world tree: the functions write nothing in the %d checked columns" % len(cols))
+    elif ok < COLUMNS_OK * n:
         problems.append("world tree: %d of %d replayed blocks match (%.2f%%)" % (ok, n, 100 * ok / n))
-    if top_at and got != top_blk:
-        problems.append("world tree: crown top %s holds %s, the function wrote %s" % (top_at, got, top_blk))
+    if top_at is None:
+        problems.append("world tree: no crown block in the functions")
+    else:
+        if top_at[1] != rep["top_y"]:
+            problems.append("world tree: the functions' crown top is y%d, the plan's y%d" % (top_at[1], rep["top_y"]))
+        if got != top_blk:
+            problems.append("world tree: crown top %s holds %s, the function wrote %s" % (top_at, got, top_blk))
     return {"columns": len(cols), "blocks_compared": n, "blocks_match": ok, "crown_top": [top_at, got],
             "first_mismatches": bad, "problems": problems}
 
@@ -319,9 +357,9 @@ def islet(world):
     wet_top = [c for c, col in dry.items()
                if base(world.block(c[0], max(y for y, b in col.items() if b not in AIR) + 1, c[1])) in FLUID]
     problems = []
-    if not dry:
-        problems.append("islet: the function raises no column of the core above the sea")
-    if n and ok < COLUMNS_OK * n:
+    if not dry or n == 0:
+        problems.append("islet: the function raises no column of the core above the sea: nothing to check")
+    elif ok < COLUMNS_OK * n:
         problems.append("islet: %d of %d replayed blocks match in the dry core (%.2f%%)" % (ok, n, 100 * ok / n))
     if wet_top:
         problems.append("islet: %d dry-core columns have water standing on them" % len(wet_top))
