@@ -102,6 +102,22 @@ def strip_waystones(src, dest):
     """Copy a structure template without its waystone blocks (type-preserving NBT, block entities and entities
     kept). Waystones registers a waystone the moment one is placed and does not forget it when the block is later
     replaced, so a donor's waystone has to be gone from the template itself."""
+    return rewrite_template(src, dest)[0]
+
+
+UNDERWATER_ONLY = {"minecraft:water", "minecraft:seagrass", "minecraft:tall_seagrass", "minecraft:kelp",
+                   "minecraft:kelp_plant", "minecraft:bubble_column"}
+CORALS = ("tube", "brain", "bubble", "fire", "horn")
+
+
+def rewrite_template(src, dest, dry=False):
+    """Copy a structure template without its waystones and, with dry=True, without its sea.
+
+    Repurposed Structures' ocean village is an underwater village: its houses are full of water, which is
+    their air. Set down on land, Misty's eight houses held 35 to 101 water blocks each, up to eight blocks
+    above their floors, and it ran out across her streets (the audit found 253 flooded road cells). A dried
+    copy turns the water into air, takes out the plants that only live in water, un-waterlogs every block
+    and lets the coral die as it would in air. -> (waystones removed, palette entries dried)."""
     import gzip
     import level_dat as L
     raw = Path(src).read_bytes()
@@ -113,9 +129,26 @@ def strip_waystones(src, dest):
     lt, blocks = root["blocks"][1]
     keep = [b for b in blocks if not names[L.plain(b["state"])].startswith("waystones:")]
     root["blocks"] = (root["blocks"][0], (lt, keep))
+    dried = 0
+    if dry:
+        for e in pal:
+            nm = L.plain(e["Name"])
+            new = nm
+            if nm in UNDERWATER_ONLY:
+                new = "minecraft:air"
+                e.pop("Properties", None)
+            elif nm.startswith("minecraft:") and any(nm[10:].startswith(c + "_coral") for c in CORALS):
+                new = "minecraft:dead_" + nm[10:]
+            props = e.get("Properties")
+            if props and props[1].get("waterlogged", (L.STRING, "false"))[1] == "true":
+                props[1]["waterlogged"] = (L.STRING, "false")
+                dried += new == nm
+            if new != nm:
+                e["Name"] = (L.STRING, new)
+                dried += 1
     Path(dest).parent.mkdir(parents=True, exist_ok=True)
     Path(dest).write_bytes(L.dumps(name, root))
-    return len(blocks) - len(keep)
+    return len(blocks) - len(keep), dried
 
 
 def rotation_for(entrance, facing):
@@ -243,12 +276,20 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
             for bx in fill_boxes(x0 - m, min(lo_clear, Y - 2), z0 - m, x1 + m, oy + H + 2, z1 + m):
                 cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (fluid,)))
         template_id = p["template"]
-        if info["waystones"]:
+        ns, path_ = template_id.split(":")
+        if info["waystones"] or p.get("dry"):
             if out_dir is None:
-                raise SystemExit("%s carries waystones; building it needs an output datapack to hold the stripped copy" % p["id"])
-            ns, path_ = template_id.split(":")
+                raise SystemExit("%s needs a rewritten template copy; building it needs an output datapack to hold it" % p["id"])
             template_id = "cobblers:towns/stripped/%s/%s" % (ns, path_)
-            strip_waystones(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + ".nbt"))
+            rewrite_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + ".nbt"),
+                             dry=bool(p.get("dry")))
+        elif ns == "cobblers" and out_dir is not None:
+            # our own templates travel in the pack that places them. The town Centres and Marts were never
+            # installed anywhere, so every `place template` for them failed without a word (found by
+            # tools/town_audit.py on 2026-09-21: 0.1 to 0.6% of their blocks in the world).
+            dest = Path(out_dir) / "data" / "cobblers" / "structure" / (path_ + ".nbt")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / p["file"], dest)
         cmds.append("place template %s %d %d %d %s none 1.0 0" % (template_id, px, oy, pz, rot))
         for (jx, jy, jz), final, _ in info["jigsaws"]:
             wx, wz = world_xz(jx, jz)
@@ -498,10 +539,15 @@ def main(argv=None):
             res["spawn_block_audit"] = town_audit.audit(a.settlement, a.world)
             bad = res["spawn_block_audit"]["unsubstituted"], res["spawn_block_audit"]["not_in_policy"]
             res["spawn_block_problems"] = sum(len(x) for x in bad)
+            # and the plan against the result: roads, paving, lamps, every building standing. A function's
+            # output is swallowed, so this is how a refused or unloaded command is found at all
+            res["plan_audit"] = town_audit.plan_audit(a.settlement, a.world, a.server_dir)
+            res["plan_problems"] = res["plan_audit"]["problems"]
         path = ROOT / "derived" / "towns" / ("%s_verify.json" % a.settlement)
         path.write_text(json.dumps(res, indent=1), encoding="utf-8")
         print(json.dumps(res, indent=1))
-        raise SystemExit(0 if (res["gaps"] == 0 and not res.get("spawn_block_problems")) else 1)
+        raise SystemExit(0 if (res["gaps"] == 0 and not res.get("spawn_block_problems")
+                               and not res.get("plan_problems")) else 1)
     if a.surface_world:
         raise SystemExit("--surface-world is gone: ground comes from the heightmap (tools/ground.py), never from "
                          "a world, because a world holds the last build and a town seated on it climbs its own "
@@ -518,6 +564,7 @@ def main(argv=None):
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: settlement placement functions (tools/place_town.py)"}}, indent=2) + "\n", encoding="utf-8")
     # a command the server would refuse is never written: a refused command reports nothing, and
     # a build that quietly did half its work is worse than one that failed outright
+    cmds = function_limits.ensure_loaded(cmds)
     refused = function_limits.check_lines(cmds, str(fn))
     if refused:
         for _n, _cmd, _why in refused:

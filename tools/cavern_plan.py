@@ -38,6 +38,7 @@ import numpy as np
 import terrain as T
 from place_town import rotate, fill_boxes
 from sculpt import unit_noise, smoothstep
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 LIBRARY = ROOT / "kits" / "structures" / "foliage"
@@ -532,7 +533,7 @@ def main(argv=None):
     for name, lines in fn.items():
         f = out / "data" / "cobblers" / "function" / "cavern" / (name + ".mcfunction")
         f.parent.mkdir(parents=True, exist_ok=True)
-        f.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        f.write_text("\n".join(function_limits.ensure_loaded(lines)) + "\n", encoding="utf-8")
     used = {t["object"] for t in trees}
     for o in lib:
         if o["name"] in used:

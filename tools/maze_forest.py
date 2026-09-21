@@ -25,6 +25,7 @@ import numpy as np
 
 import terrain as T
 from place_town import rotate
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 LIBRARY = ROOT / "kits" / "structures" / "foliage"
@@ -478,7 +479,7 @@ def main(argv=None):
     for key, cmds in sorted(tiles.items()):
         f = out / "data" / "cobblers" / "function" / "route1" / ("tile_%d_%d.mcfunction" % key)
         f.parent.mkdir(parents=True, exist_ok=True)
-        f.write_text("\n".join(["# Route 1 forest tile %d %d" % key] + cmds) + "\n", encoding="utf-8")
+        f.write_text("\n".join(function_limits.ensure_loaded(["# Route 1 forest tile %d %d" % key] + cmds)) + "\n", encoding="utf-8")
         for c in cmds:
             if c.startswith("place template"):        # dressing commands share the tile but are not objects
                 used.add(c.split()[2].rsplit("/", 1)[-1] + ".nbt")

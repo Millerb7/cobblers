@@ -28,6 +28,7 @@ from pathlib import Path
 import numpy as np
 
 import terrain as T
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 LIGHT_REACH = 14
@@ -130,6 +131,8 @@ def main(argv=None):
         by_row = {}
         for (cx, cz), y in cells.items():
             by_row.setdefault((cz, y), []).append(cx)
+        # every paved run, [z, y, x0, x1], so tools/town_audit.py can check the world against the plan cell by cell
+        report["streets"][r["id"]]["cells"] = runs = []
         for (cz, y), xs_ in sorted(by_row.items()):
             xs_.sort()
             run = [xs_[0]]
@@ -144,13 +147,16 @@ def main(argv=None):
                 if low < y - 1:
                     cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (run[0], low + 1, cz, run[-1], y - 1, cz))
                 cmds.append("fill %d %d %d %d %d %d %s" % (run[0], y, cz, run[-1], y, cz, r["surface"]))
+                runs.append([cz, int(y), run[0], run[-1]])
                 if xx is not None:
                     run = [xx]
         # lamps: every 2 * LIGHT_REACH - width blocks along the centreline
         spacing = 2 * LIGHT_REACH - r["width"] - 1
         for (x, z, c), y in zip(pts, target):
             if int(c) % spacing == 0:
-                report["lamps"].append({"street": r["id"], "at": [int(round(x)), int(y) + 1, int(round(z))]})
+                c = (int(round(x)), int(round(z)))
+                # the cell's own paving level, which can sit a block under this point's profile
+                report["lamps"].append({"street": r["id"], "at": [c[0], cells.get(c, int(y)) + 1, c[1]]})
 
     # plaza
     pz = plan.get("plaza")
@@ -176,6 +182,15 @@ def main(argv=None):
         for cx in range(x0, x1 + 1, 2 * LIGHT_REACH - 1):
             for cz in range(z0, z1 + 1, 2 * LIGHT_REACH - 1):
                 report["lamps"].append({"street": "plaza", "at": [cx, y + 1, cz]})
+
+    # lamps: a light set flush into the paving at each spot, after all the paving so no later street
+    # overwrites one. Flush, because the spots are on the centreline and a post there blocks the road.
+    # Until 2026-09-21 the spots were computed and nothing lit them: Brock's 23 were all dark.
+    lamp = (plan.get("paving") or {}).get("lamp", "minecraft:sea_lantern")
+    report["lamp_block"] = lamp
+    for L in report["lamps"]:
+        lx, ly, lz = L["at"]
+        cmds.append("setblock %d %d %d %s" % (lx, ly - 1, lz, lamp))
 
     # anchor lots: services, gym, piers (authored positions)
     for lot in plan["anchors"]:
@@ -260,7 +275,7 @@ def main(argv=None):
     out.write_text(json.dumps(report, indent=1), encoding="utf-8")
     fn = ROOT / "build" / "town_prep" / ("prep_%s.mcfunction" % a.settlement)
     fn.parent.mkdir(parents=True, exist_ok=True)
-    fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+    fn.write_text("\n".join(function_limits.ensure_loaded(cmds)) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in report.items() if k not in ("lots", "lamps")}, indent=1))
     print("house lots:", len(report["lots"]), "lamps:", len(report["lamps"]), "->", out, fn)
 

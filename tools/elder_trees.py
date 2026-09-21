@@ -49,6 +49,7 @@ import terrain as T
 from landmark_trees import _rng
 from place_town import rotate
 from tree_grove import TIERS, big_tree, write_prefab
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 TIER = "elder"
@@ -340,7 +341,7 @@ def main(argv=None):
 
     fn = Path(a.function)
     fn.parent.mkdir(parents=True, exist_ok=True)
-    fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+    fn.write_text("\n".join(function_limits.ensure_loaded(cmds)) + "\n", encoding="utf-8")
     spacings = [s["nearest_other"] for s in all_sites]
     doc = {"generator": "tools/elder_trees.py", "provenance": T.provenance(world, Path(a.world)),
            "ground_from": "heightmap, rounded (tools/ground.py)", "tier": TIER, "habitat": next(iter(written.values()))["habitat"],

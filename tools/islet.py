@@ -23,6 +23,7 @@ from pathlib import Path
 import numpy as np
 
 import terrain as T
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 CENTRE = (1092, 5532)
@@ -96,7 +97,7 @@ def main(argv=None):
             i = k + 1
     out = ROOT / "build" / "islet" / "relic_island.mcfunction"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+    out.write_text("\n".join(function_limits.ensure_loaded(cmds)) + "\n", encoding="utf-8")
     print("wrote %s (%d commands)" % (out.relative_to(ROOT), len(cmds) - 1))
 
     rep = {"centre": list(CENTRE), "radius": RADIUS, "sea_level": sea,

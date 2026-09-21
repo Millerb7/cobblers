@@ -18,6 +18,7 @@ reproduces the same blocks exactly.
 import argparse, sys, json, shutil
 from pathlib import Path
 import numpy as np
+import function_limits
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "tools"))
@@ -83,10 +84,10 @@ def main(argv=None):
     names = []
     for i, p in enumerate(parts):
         n = "%02d_tree" % i
-        (fdir / (n + ".mcfunction")).write_text("\n".join(p) + "\n", encoding="utf-8")
+        (fdir / (n + ".mcfunction")).write_text("\n".join(function_limits.ensure_loaded(p)) + "\n", encoding="utf-8")
         names.append(n)
     (fdir / "90_foundation.mcfunction").write_text(
-        "# pack the ground up to the tree where the pad falls away\n" + "\n".join(found) + "\n", encoding="utf-8")
+        "\n".join(function_limits.ensure_loaded(["# pack the ground up to the tree where the pad falls away"] + list(found))) + "\n", encoding="utf-8")
     names.append("90_foundation")
     print("installed %s" % SERVER_DP)
     print("functions: %s" % ", ".join("cobblers:worldtree/%s" % n for n in names))

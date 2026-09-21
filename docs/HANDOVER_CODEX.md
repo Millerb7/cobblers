@@ -153,6 +153,11 @@ Spot-check the code and the tests against real data, and report disagreements ra
    tests and the verifier. Check the de-duplication cannot kill the only trader (it kills only where a `new` one
    stands), that the stray sweep (same type and exact name within 48 blocks) cannot catch an unrelated entity, and
    that 40 ticks is a safe load wait on a busier server than the idle disposable one it was measured on.
+14. **`town_audit.plan_audit`, the unloaded-write rule and `ensure_loaded` in `tools/function_limits.py`,
+   `rewrite_template(dry=True)` in `tools/place_town.py`, and `tests/test_silent_commands.py`.** One session wrote
+   them. Check that `TEMPLATE_REACH` (32 blocks) covers every template the generators place (a giant tree or a gym
+   may be larger), that the 95% standing threshold cannot pass a building missing its roof, and that the passable
+   set used for "a block standing on the road" is not hiding anything.
 
 ## What Codex can resume
 

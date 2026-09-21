@@ -29,6 +29,7 @@ import terrain as T
 import structure_nbt as S
 from landmark_trees import _ball, _leaves, _limb, _log, _rng, _roots
 from place_town import rotate
+import function_limits
 
 ROOT = Path(__file__).resolve().parent.parent
 FLOOR_Y, ROOM, CROWN_R, LIMB_REACH = 16, 10, 14, 12
@@ -411,7 +412,7 @@ def main(argv=None):
         (ROOT / "derived" / "sites" / ("tree_grove_%s.json" % a.augment)).write_text(json.dumps(rep, indent=1), encoding="utf-8")
         fn = ROOT / "build" / "grove" / ("grove_%s_augment.mcfunction" % a.augment)
         fn.parent.mkdir(parents=True, exist_ok=True)
-        fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+        fn.write_text("\n".join(function_limits.ensure_loaded(cmds)) + "\n", encoding="utf-8")
         print(json.dumps({"site": a.augment, "species": kind, "added": out,
                           "giants_kept": len(rep["giants"]), "function": str(fn.relative_to(ROOT))}, indent=1))
         return
@@ -471,7 +472,7 @@ def main(argv=None):
         path.write_text(json.dumps(rep, indent=1), encoding="utf-8")
         fn = ROOT / "build" / "grove" / ("grove_%s.mcfunction" % s["id"])
         fn.parent.mkdir(parents=True, exist_ok=True)
-        fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+        fn.write_text("\n".join(function_limits.ensure_loaded(cmds)) + "\n", encoding="utf-8")
         out.append({"id": s["id"], "species": kind, "giants": len(trees), "nearest_neighbour": [min(g for g in gaps if g), max(g for g in gaps if g)] if trees else None,
                     "pad_relief_max": max(t["pad_relief"] for t in trees) if trees else None})
     print(json.dumps(out, indent=1))

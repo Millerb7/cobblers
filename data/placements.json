@@ -265,7 +265,9 @@
           "main": "minecraft:polished_andesite",
           "lanes": "minecraft:cobblestone",
           "plaza": "minecraft:stone_bricks",
-          "why": "a rock-gym town paved in worked stone: grey andesite streets, rough cobble lanes, a dressed-stone square. Spawn consequences, read from the loaded data: of 4,892 Cobblemon spawn entries only 17 need a base block (quartz in Nether quartz biomes, sand in beach biomes, concrete for Varoom and Revavroom in every overworld biome), and the Cobbleverse datapack repeats Varoom and Revavroom on all 16 concrete colours and adds Terapagos on amethyst in caves. So streets never use concrete. Stone, andesite, cobblestone, mud and prismarine carry no base-block spawn condition: wild Pokemon spawn on them as on any ground in the biome. Hostile mobs need block light 0, so the plan's lamps keep every street block within 14 blocks of a light. Note: the Pokemon Center and Mart donors have white and blue concrete in their roofs and walls, where Varoom can spawn in any town."
+          "why": "a rock-gym town paved in worked stone: grey andesite streets, rough cobble lanes, a dressed-stone square. Spawn consequences, read from the loaded data: of 4,892 Cobblemon spawn entries only 17 need a base block (quartz in Nether quartz biomes, sand in beach biomes, concrete for Varoom and Revavroom in every overworld biome), and the Cobbleverse datapack repeats Varoom and Revavroom on all 16 concrete colours and adds Terapagos on amethyst in caves. So streets never use concrete. Stone, andesite, cobblestone, mud and prismarine carry no base-block spawn condition: wild Pokemon spawn on them as on any ground in the biome. Hostile mobs need block light 0, so the plan's lamps keep every street block within 14 blocks of a light. Note: the Pokemon Center and Mart donors have white and blue concrete in their roofs and walls, where Varoom can spawn in any town.",
+          "lamp": "minecraft:ochre_froglight",
+          "lamp_why": "a warm light set flush into the worked stone, like a lamp let into a mine floor; not a spawn condition in the loaded data"
         }
       }
     },
@@ -488,7 +490,9 @@
         "paving": {
           "main": "minecraft:mud_bricks",
           "promenade_and_plaza": "minecraft:prismarine_bricks",
-          "why": "mud brick streets from the lakeshore clay; prismarine where the town meets the water. Sand is only a spawn condition in beach biomes, and this is not one, but a sand town reads as a beach. Spawn consequences, read from the loaded data: of 4,892 Cobblemon spawn entries only 17 need a base block (quartz in Nether quartz biomes, sand in beach biomes, concrete for Varoom and Revavroom in every overworld biome), and the Cobbleverse datapack repeats Varoom and Revavroom on all 16 concrete colours and adds Terapagos on amethyst in caves. So streets never use concrete. Stone, andesite, cobblestone, mud and prismarine carry no base-block spawn condition: wild Pokemon spawn on them as on any ground in the biome. Hostile mobs need block light 0, so the plan's lamps keep every street block within 14 blocks of a light. Note: the Pokemon Center and Mart donors have white and blue concrete in their roofs and walls, where Varoom can spawn in any town."
+          "why": "mud brick streets from the lakeshore clay; prismarine where the town meets the water. Sand is only a spawn condition in beach biomes, and this is not one, but a sand town reads as a beach. Spawn consequences, read from the loaded data: of 4,892 Cobblemon spawn entries only 17 need a base block (quartz in Nether quartz biomes, sand in beach biomes, concrete for Varoom and Revavroom in every overworld biome), and the Cobbleverse datapack repeats Varoom and Revavroom on all 16 concrete colours and adds Terapagos on amethyst in caves. So streets never use concrete. Stone, andesite, cobblestone, mud and prismarine carry no base-block spawn condition: wild Pokemon spawn on them as on any ground in the biome. Hostile mobs need block light 0, so the plan's lamps keep every street block within 14 blocks of a light. Note: the Pokemon Center and Mart donors have white and blue concrete in their roofs and walls, where Varoom can spawn in any town.",
+          "lamp": "minecraft:sea_lantern",
+          "lamp_why": "the lake town's light, set flush into its streets; not a spawn condition in the loaded data"
         }
       }
     },
@@ -1639,7 +1643,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym2_house_02",
@@ -1666,7 +1672,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym2_house_03",
@@ -1693,7 +1701,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym2_house_04",
@@ -1720,7 +1730,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym2_house_05",
@@ -1747,7 +1759,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym2_house_06",
@@ -1774,7 +1788,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym2_house_07",
@@ -1801,7 +1817,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym2_house_08",
@@ -1828,7 +1846,9 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
-      }
+      },
+      "dry": true,
+      "dry_why": "an underwater house from Repurposed Structures' ocean village, full of water; on land it is placed from a dried copy (tools/place_town.py rewrite_template) so the water does not run out into the street"
     },
     {
       "id": "gym1_pokecenter",
