@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.signposts/1",
-  "note": "What the route signposts say. tools/signposts.py places a post at every town exit (both ends of every route leg), every sub-region transition along a leg, and every junction where a place's own path leaves a route. The front of each sign faces the traveller going the way the text names; the back faces the other way. Names are working names until the towns have display names; change them here and re-run the tool.",
+  "note": "What the route signposts say. tools/signposts.py places a post at every town exit (both ends of every route leg), every sub-region transition along a leg, and every junction where a place's own path leaves a route. The front of each sign faces the traveller going the way the text names; the back faces the other way. Names are working names until the towns have display names (data/towns.json display_name, which wins once set); change them here and re-run the tool. The location titles (tools/location_titles.py) read the same names, so every titled settlement has one here, including the ones no sign names.",
   "route_labels": {
     "route_01_pallet_to_brock": "Route 1",
     "route_02_brock_to_misty": "Route 2",
@@ -28,7 +28,17 @@
     "gorge_hamlet": "Gorge hamlet",
     "rift_rim_stop": "Rift rim post",
     "rift_dig_camp": "Rift dig camp",
-    "route1_mansion": "the old manor"
+    "route1_mansion": "the old manor",
+    "sunset_west": "Sunset West",
+    "northlight": "Northlight",
+    "mining_town": "Mining Town",
+    "displaced_city": "The Displaced City",
+    "tea_town": "Tea town",
+    "relic_island": "Relic Island",
+    "the_scar": "The Scar",
+    "viltri_light": "Viltri Light",
+    "frostpeak_shrine": "Frostpeak shrine",
+    "jungle_ruins": "Jungle Isle ruins"
   },
   "sign_wood": "spruce",
   "offset_blocks": 4,

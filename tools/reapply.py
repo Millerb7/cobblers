@@ -12,8 +12,12 @@ with a check after each, and audit the result. docs/world-building/REEXPORT.md i
         with the server running and the coordination lock held: R2 to R14 in order, timed, each function's reply
         checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
   python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
-        with the server STOPPED: build_audit (cavern, forest, world tree, islet) and town_audit for every place;
-        writes derived/reapply/audit_<time>.json and exits non-zero on any mismatch
+        with the server STOPPED: build_audit (cavern, forest, world tree, islet), town_audit for every place, the
+        signposts, and the light check (tools/light_plan.py: nothing walkable under a roof or in the cavern at block
+        light 0); writes derived/reapply/audit_<time>.json and exits non-zero on any mismatch
+
+R16 runs each place's after-donor function (its lights, the cavern fields' crops) after the pack donors (R9), which
+are placed whole and would erase them.
 
 The order differs from the table in one place: the islet (R10) runs before the towns, because Relic Island's house
 stands on it. The Displaced City comes after the cavern (R2) for the same reason.
@@ -41,7 +45,7 @@ PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
 OUT = ROOT / "derived" / "reapply"
 SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
-                "cobblers_signs")
+                "cobblers_signs", "cobblers_titles")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -93,6 +97,7 @@ def prepare(a):
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "signposts.py", "function", *src)
+    py(TOOLS / "location_titles.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
@@ -172,6 +177,9 @@ def steps(with_spawns=False):
     for d in donors(doc):
         r9 += [("fn", "cobblers:structures/place_%s" % d), ("wait", 3)]
     out.append(("R9", "pack donors (%d)" % len(donors(doc)), r9))
+    # what must stand after the donors, which are placed whole and erase what was inside them: the lights
+    late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
+    out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -278,8 +286,17 @@ def audit(a):
     r = subprocess.run([sys.executable, str(TOOLS / "signposts.py"), "verify", "--world", a.world], cwd=ROOT, capture_output=True, text=True)
     res["signposts"] = {"exit": r.returncode, "tail": r.stdout.strip().splitlines()[-6:]}
     print("signposts:", " | ".join(res["signposts"]["tail"]))
+    # no walkable position under a roof, or anywhere in the cavern, at block light 0 (tools/light_plan.py check, from
+    # the saved world's own light arrays)
+    lp = [sys.executable, str(TOOLS / "light_plan.py"), "check", "hometown", *places(), "--world", a.world, "--server-dir", a.server_dir]
+    if getattr(a, "source_root", None):
+        lp += ["--source-root", a.source_root]
+    r = subprocess.run(lp, cwd=ROOT, capture_output=True, text=True)
+    res["lights"] = {"exit": r.returncode, "tail": [l[:200] for l in r.stdout.strip().splitlines()]}
+    print("lights:", "0 dark everywhere" if r.returncode == 0 else
+          "\n  ".join(l for l in res["lights"]["tail"] if " 0 at block light 0" not in l))
     res["clean"] = (res["build_audit"]["exit"] == 0 and all(v["clean"] for v in res["towns"].values())
-                    and res["signposts"]["exit"] == 0)
+                    and res["signposts"]["exit"] == 0 and res["lights"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")
     print("audit %s: %s" % ("CLEAN" if res["clean"] else "NOT CLEAN", path))
@@ -303,6 +320,7 @@ def main(argv=None):
     q = sub.add_parser("audit")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world", required=True)
+    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), help="heightmap root, for the light check")
     q = sub.add_parser("plan", help="print the steps and their commands without running anything")
     a = p.parse_args(argv)
     if a.cmd == "plan":

@@ -232,6 +232,19 @@ For Codex to pick up. Claude has not edited any of the files named here.
     the source of truth and carry their reasons (`chosen_because`), but the scripts that chose them are not committed,
     so the choice rule can only be reviewed from the records.
 
+    *Added 2026-09-21 (lighting and titles session), live re-export path:* `tools/light_plan.py` (the voxel light
+    model, its scope rules, `connected_air`, the world `check`) with `tests/test_light_plan.py`; the after-donor split
+    in `tools/place_town.py` and step R16 in `tools/reapply.py`; `tools/cavern_farms.py`; `tools/location_titles.py`
+    and `signposts.place_names` with `tests/test_location_titles.py`.
+20. **Every settlement needs a display name.** The route signposts and the location titles (`tools/location_titles.py`)
+    both read `signposts.place_names()`: a settlement's `display_name` in `data/towns.json` once set, until then its
+    working name in `data/signposts.json` `names` ("Brock's town", "Tea town", "the old manor"). All 29
+    `data/towns.json` entries have `display_name: null`: the 25 settlements, and the 4 landmark trees, which get no title.
+    The Route 1 mansion (`route1_mansion`), a settlement in `data/placements.json` but not in `data/towns.json`,
+    needs one too. Set `display_name` in `data/towns.json` (and add `route1_mansion` there, or give it a name in
+    `data/signposts.json`); then `python tools/signposts.py function` and `python tools/location_titles.py` pick it
+    up, and a re-export places the new signs. Names over 15 characters wrap across sign lines.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.

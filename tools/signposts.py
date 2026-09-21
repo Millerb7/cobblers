@@ -70,10 +70,21 @@ def lines(*texts):
     return (out + [""] * 4)[:4]
 
 
+def place_names():
+    """{settlement id: the name a player reads}. A settlement's display name in data/towns.json once it has one,
+    until then its working name in data/signposts.json `names`. Signposts and location titles
+    (tools/location_titles.py) both read this, so a real name lands on both at once."""
+    names = dict(load("signposts.json")["names"])
+    for t in load("towns.json")["towns"]:
+        if t.get("display_name"):
+            names[t["id"]] = t["display_name"]
+    return names
+
+
 def posts(ground, wet):
     """[{id, x, y, z, rotation, front, back, why}] for every post."""
     cfg = load("signposts.json")
-    names = cfg["names"]
+    names = place_names()
     label = cfg["route_labels"]
     towns = {t["id"]: t for t in load("towns.json")["towns"]}
     doc = load("placements.json")

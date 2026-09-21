@@ -6,9 +6,12 @@ review list of 2026-09-21 is at one of these stops (marked **R**).
 
 **Before you start.** Boot the disposable world (`--universe cobblers-runtime-proof --world spawnproof`) under the
 coordination lock. `/gamemode spectator` so a `/tp` into a wall or a tree is harmless, and `/time set noon` for the
-towns (the Displaced City is dark at any hour). Every coordinate is where you stand, a block or two above the ground.
+towns. **A location title should appear** as you arrive at each town and region (they are advancements that fire
+about once a second; `/tp` counts as arriving; if none shows in spectator, try one stop in survival). Say if one
+does not, or shows the wrong name. Every coordinate is where you stand, a block or two above the ground.
 
-Surge's town and the Scar are **not** on the disposable world, which predates their pads. They are built, and
+The Scar is **not** on the disposable world, which predates its pad; Surge's town now is, on ground restored from
+the heightmap for the light check (the feathered flank round it is still the old terrain). Both are built, and
 audited clean, on the staging export `cobblers-dryrun3` (`--universe cobblers-runtime-proof/dryrun3 --world
 cobblers-dryrun3`), which also holds every other place as the live re-export will build it: a fresh export with its
 natural foliage, not the restored ground of the disposable world. Their stops are at the end.
@@ -24,7 +27,9 @@ The most loaded place in the world, drawn again on the floor the cavern was grad
 | Stair foot | `/tp @s 3346 44 1756` | **R** The road ends at the foot of the crown and an eight-step stair climbs to the square. The alternative was a 9-block cut. |
 | Summit square | `/tp @s 3328 48 1757` | **R** The cairn on the true top (y46, flat within one block), the waystone. **No Centre, no Mart**: a decision made without you. Say if the city should have them. |
 | Upper street | `/tp @s 3366 40 1800` | The upper bench ring: houses on terraces cut level at their own median, facing out over the dark. Worst cut 5, worst fill 4 anywhere in the town. |
-| Lower street | `/tp @s 3373 30 1821` | The lower ring, where most of the 42 houses are. **R** 18 houses repeat a design, and each second copy is re-materialed in cherry or dark oak: is repetition still what you notice? No farms: the slopes are at block light 0. |
+| Lower street | `/tp @s 3373 30 1821` | The lower ring, where most of the 42 houses are. **R** 18 houses repeat a design, and each second copy is re-materialed in cherry or dark oak: is repetition still what you notice? |
+| Lit as a town | `/tp @s 3300 40 1740` | **R** 254 lantern posts: along the old road every 10 blocks, the ring streets every 16, the square's corners, and the rest filling the dark slopes. Nothing in the cavern is at block light 0. Does it read as a town that lights itself, or as a lantern field? |
+| A field | `/tp @s 3324 48 1766` | **R** One of six 5 x 5 plots on the slopes: carrots, potatoes, beetroots, young and uneven, a few failed cells, two lantern posts, a composter and hay. Small, struggling, tended? |
 | From above | `/tp @s 3350 70 1750` | **R** The cavern keeps 17 cherry trees (it had 41) in its margins and the north-west, and 6 light strings. The slopes between the benches are bare, because the town's keep-clear buffer covers them. Too bare? |
 
 ### 2. Sunset West, re-sited (4 min)
@@ -50,7 +55,7 @@ the mainland: a river mouth on the strait, across from the isle.
 ### 4a. The Route 1 mansion (3 min)
 | Stop | `/tp` | Look at |
 | --- | --- | --- |
-| Route 1's mouth | `/tp @s 1466 122 5100` | **R** Leaving Pallet: can you see the manor's roof and chimneys over the forest to the north-east? The junction post (`the old manor / this way`) is at the spur. |
+| North of Pallet | `/tp @s 1466 121 5211` | **R** Measured: the chimneys and ridge are on the skyline to the north-east at about 230 blocks (Distant Horizons range). From Route 1's mouth (`/tp @s 1466 122 5100`) the forest hides it at any height: measured, so not a question, unless you want a sightline cut. The junction post (`the old manor / this way`) is at the spur. |
 | The front | `/tp @s 1629 117 5050` | The drive round to the south front, the double door. |
 | Inside | `/tp @s 1629 116 5041` | Foyer and stair; dining room west (long table, cups), library east (three aisles); the service corridor behind. Upstairs, the hall's five doors and the barred ballroom doors off the landing. |
 

@@ -483,10 +483,17 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         cmds.append("setworldspawn %d %d %d" % (sx, sy, sz))
     # earthworks: authored commands a place carries beyond its templates (the gorge hamlet's courtyard wall, the
     # rim post's railing). tools/town_audit.py replays the same commands to check the result
+    # An earthwork marked `"after": "donors"` goes in a function of its own, towns/<settlement>_after_donors, which
+    # the re-export runs after the pack donors (tools/reapply.py): a donor is placed whole, air and all, and on
+    # 2026-09-21 it erased the lanterns tools/light_plan.py had set inside the tableland stop, the League and the
+    # mining town.
+    after = []
     for q in doc["placements"]:
         if q.get("settlement") == settlement and q.get("kind") == "earthwork":
-            cmds.append("# earthwork %s" % q["id"])
-            cmds += list(q.get("commands") or [])
+            dest = after if q.get("after") == "donors" else cmds
+            dest.append("# earthwork %s" % q["id"])
+            dest += list(q.get("commands") or [])
+    report["after_donors"] = after
     cmds += forceload_commands(force, "remove")
     if way:
         report["waystone"] = [wx, wy, wz]
@@ -668,6 +675,16 @@ def main(argv=None):
             print("   %s" % _cmd)
         raise SystemExit("%s: %d command(s) the server would refuse; not written" % (fn, len(refused)))
     fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
+    after = report.pop("after_donors")
+    fa = fn.with_name("%s_after_donors.mcfunction" % a.settlement)
+    if after:
+        after = function_limits.ensure_loaded(after)
+        refused = function_limits.check_lines(after, str(fa))
+        if refused:
+            raise SystemExit("%s: %d command(s) the server would refuse; not written" % (fa, len(refused)))
+        fa.write_text("\n".join(after) + "\n", encoding="utf-8")
+    elif fa.exists():
+        fa.unlink()
     rep = ROOT / "derived" / "towns" / ("%s_placement.json" % a.settlement)
     rep.parent.mkdir(parents=True, exist_ok=True)
     rep.write_text(json.dumps(dict(report, ground_from="heightmap (tools/ground.py, rounded)", ground_bounds=[bx0, bz0, bx1, bz1]), indent=1), encoding="utf-8")

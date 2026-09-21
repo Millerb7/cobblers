@@ -6,8 +6,9 @@ data/placements.json, so the re-application builds it with the towns (R8) and to
 every block it writes. It is not the vanilla woodland mansion: a manor house that was lived in and left.
 
   28 x 20, front to the south, towards Pallet and Route 1's mouth; the forest's mansion spur arrives from the west
-  and the drive walks round to the front door. Two floors and a steep gable roof whose chimneys clear the canopy, so
-  it is the first building a player sees leaving Pallet.
+  and the drive walks round to the front door. Two floors and a steep gable roof whose chimneys clear the canopy:
+  from just north of Pallet it is on the skyline at 220-240 blocks (Distant Horizons range), but from Route 1's
+  mouth and the spur junction the forest hides it at any height (measured, settlement `seen_from`).
 
   ground floor  foyer (centre) with the grand stair rising north to the landing; dining room (west wing) with a long
                 table; library (east wing), three aisles between two rows of shelves; the service corridor along the
@@ -215,14 +216,30 @@ def main(argv=None):
             "paving": {"main": "minecraft:mossy_cobblestone", "lamp": "none", "why": "an overgrown drive, unlit"},
             "no_services": "an abandoned house on a route, not a town",
         },
+        "seen_from": {
+            "measured": "2026-09-21, tools/sightlines.py cast over the heightmap, the painted canopy and every Route 1 "
+                        "maze-forest tree rastered from its template's size (the painted canopy alone does not hold them); "
+                        "targets the two chimney tops (y140) and the ridge (y136)",
+            "pallet_exit": "seen: 15 of 15 points north of Pallet (1462-1470, 5191-5231) see both chimneys and the ridge, "
+                           "at 219 to 241 blocks, past the 160 blocks a client draws itself: it reads through Distant "
+                           "Horizons' LOD, not the vanilla view distance",
+            "route1_mouth": "not seen: 0 of 15 points (1452-1468, 5052-5064); the forest between is taller than the line, "
+                            "and a top raised to y208 is still not seen, so no tower or belfry fixes it",
+            "spur_junction": "not seen: 0 of 9 points at (1466, 5036); the house is found by the spur's own clearing",
+        },
     }
-    doc["placements"] = [q for q in doc["placements"] if q.get("settlement") != SID]
-    doc["placements"].append({"id": "route1_mansion_house", "settlement": SID, "kind": "earthwork", "cell": "F2",
-                              "status": "planned", "chosen_because": "the Gastly escort's house (docs/story/events/ROUTE1_GASTLY_MANSION.md), "
-                              "authored because the vanilla woodland mansion is the wrong house; see tools/route1_mansion.py",
-                              "commands": build(g)})
+    # only the house, in its place: the settlement's other earthworks (its lights, tools/light_plan.py) are not this tool's
+    house = {"id": "route1_mansion_house", "settlement": SID, "kind": "earthwork", "cell": "F2",
+             "status": "planned", "chosen_because": "the Gastly escort's house (docs/story/events/ROUTE1_GASTLY_MANSION.md), "
+             "authored because the vanilla woodland mansion is the wrong house; see tools/route1_mansion.py",
+             "commands": build(g)}
+    at = next((i for i, q in enumerate(doc["placements"]) if q["id"] == house["id"]), None)
+    if at is None:
+        doc["placements"].append(house)
+    else:
+        doc["placements"][at] = house
     path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-    print("wrote %s: %d commands" % (SID, len(doc["placements"][-1]["commands"])))
+    print("wrote %s: %d commands" % (SID, len(house["commands"])))
 
 
 if __name__ == "__main__":
