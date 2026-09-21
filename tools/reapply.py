@@ -1,0 +1,317 @@
+#!/usr/bin/env python
+"""The re-application after an export, as one supervised run: regenerate, install, run every step in order over RCON
+with a check after each, and audit the result. docs/world-building/REEXPORT.md is the procedure; this runs it.
+
+  python tools/reapply.py prepare --source-root <root> --server-dir <server>
+        regenerate every function and pack from the heightmap and committed data (server not needed), assemble the
+        loose functions into build/datapacks/cobblers_reapply, and refuse to go on if any function would be refused
+  python tools/reapply.py install --server-dir <server> --world-dir <world folder>
+        with the server STOPPED: copy the packs into <server>/datapacks, and cobblers_height and cobblers_worldtree
+        into the world folder's own datapacks (they raise the build limit the world tree's crown needs)
+  python tools/reapply.py run --server-dir <server> [--from R8] [--only R8] [--with-spawns]
+        with the server running and the coordination lock held: R2 to R14 in order, timed, each function's reply
+        checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
+  python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
+        with the server STOPPED: build_audit (cavern, forest, world tree, islet) and town_audit for every place;
+        writes derived/reapply/audit_<time>.json and exits non-zero on any mismatch
+
+The order differs from the table in one place: the islet (R10) runs before the towns, because Relic Island's house
+stands on it. The Displaced City comes after the cavern (R2) for the same reason.
+
+Checkpoints that stop a run: a function that does not answer "Running function"; the world tree's crown block
+missing after R3 (cobblers_height is not in the world folder); a floor verify with any gap; a trader verify with any
+problem. Everything else is found by `audit`, which reads the saved world and compares it with what each step
+should have built.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+TOOLS = ROOT / "tools"
+BUILD = ROOT / "build"
+PACKS = BUILD / "datapacks"
+REAPPLY = PACKS / "cobblers_reapply"
+OUT = ROOT / "derived" / "reapply"
+SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
+                "cobblers_signs")
+WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
+CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
+CAVERN = ["00_seal", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
+UNPLACED = {"hometown"}                          # has roads, not a town plan: placed by R7
+
+
+def placements():
+    return json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+
+
+def places(doc=None):
+    """Every planned place, in build order: the Displaced City and Relic Island last, after their ground exists."""
+    doc = doc or placements()
+    ids = [s for s, v in doc["settlements"].items() if s not in UNPLACED and (v.get("plan") or {}).get("streets")]
+    late = [s for s in ("relic_island", "displaced_city") if s in ids]
+    return [s for s in ids if s not in late] + late
+
+
+def donors(doc=None):
+    doc = doc or placements()
+    return [q["id"] for q in doc["placements"] if q.get("pack_template") and q.get("kind") != "vendor"]
+
+
+def py(*args, cwd=ROOT):
+    print("  $ python %s" % " ".join(str(a) for a in args), flush=True)
+    r = subprocess.run([sys.executable] + [str(a) for a in args], cwd=cwd, capture_output=True, text=True)
+    if r.returncode:
+        print(r.stdout[-2000:], r.stderr[-3000:])
+        raise SystemExit("failed: %s" % " ".join(str(a) for a in args[:2]))
+    return r.stdout
+
+
+def prepare(a):
+    src = ["--source-root", a.source_root]
+    t0 = time.time()
+    py(TOOLS / "critical_legs.py", *src)
+    py(TOOLS / "cavern_plan.py", *src)
+    py(TOOLS / "world_tree.py", *src)
+    py(TOOLS / "tree_grove.py", *src, "--site", "2016,2272", "--id", "foothill_woods")
+    py(TOOLS / "tree_grove.py", *src, "--augment", "foothill_woods")
+    py(TOOLS / "elder_trees.py", *src)
+    py(TOOLS / "maze_forest.py", *src)
+    py(TOOLS / "islet.py", *src)
+    py(TOOLS / "rematerial.py")
+    py(TOOLS / "place_town.py", "hometown", *src)
+    for s in places():
+        py(TOOLS / "town_plan.py", s, *src)
+        py(TOOLS / "place_town.py", s, *src)
+    py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
+    py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
+    py(TOOLS / "signposts.py", "function", *src)
+    # the loose functions (town prep, elders, grove, islet) in one pack
+    if REAPPLY.exists():
+        shutil.rmtree(REAPPLY)
+    fn = REAPPLY / "data" / "cobblers" / "function" / "reapply"
+    fn.mkdir(parents=True)
+    (REAPPLY / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: loose re-application functions (tools/reapply.py)"}}) + "\n", encoding="utf-8")
+    loose = [(BUILD / "town_prep" / ("prep_%s.mcfunction" % s), "prep_%s" % s) for s in places()]
+    loose += [(BUILD / "elders" / "elders.mcfunction", "elders"), (BUILD / "grove" / "grove_foothill_woods.mcfunction", "grove"),
+              (BUILD / "grove" / "grove_foothill_woods_augment.mcfunction", "grove_augment"),
+              (BUILD / "islet" / "relic_island.mcfunction", "islet")]
+    for path, name in loose:
+        if not path.is_file():
+            raise SystemExit("missing %s" % path)
+        shutil.copyfile(path, fn / ("%s.mcfunction" % name))
+    out = py(TOOLS / "function_limits.py", *[PACKS / p for p in SERVER_PACKS + ("cobblers_worldtree",)])
+    last = out.strip().splitlines()[-1]
+    print(last)
+    if " 0 with problems" not in last:
+        raise SystemExit("function_limits found problems: nothing may be installed until it reports 0")
+    print("prepared in %.0f s: %d places, %d pack donors" % (time.time() - t0, len(places()), len(donors())))
+
+
+def install(a):
+    import socket
+    s = socket.socket()
+    busy = s.connect_ex(("127.0.0.1", 25565)) == 0
+    s.close()
+    if busy:
+        raise SystemExit("port 25565 is in use: install with the server stopped")
+    dp = Path(a.server_dir) / "datapacks"
+    # cobblers_restore puts ground back to the heightmap: a disposable-world tool that must never be installed
+    # beside the live world, where one mistyped function would flatten a town
+    if (dp / "cobblers_restore").exists():
+        shutil.rmtree(dp / "cobblers_restore")
+        print("removed", dp / "cobblers_restore", "(disposable worlds only)")
+    for name in SERVER_PACKS:
+        if (dp / name).exists():
+            shutil.rmtree(dp / name)
+        shutil.copytree(PACKS / name, dp / name)
+        print("installed", dp / name)
+    wdp = Path(a.world_dir) / "datapacks"
+    wdp.mkdir(exist_ok=True)
+    for src in WORLD_PACKS:
+        if (wdp / src.name).exists():
+            shutil.rmtree(wdp / src.name)
+        shutil.copytree(src, wdp / src.name)
+        print("installed into the world folder", wdp / src.name)
+
+
+class Rcon:
+    def __init__(self, server_dir):
+        sys.path.insert(0, str(TOOLS))
+        import runtime_guard
+        self.rcon, self.pw = runtime_guard.rcon(server_dir)
+
+    def __call__(self, cmd, timeout=3600):
+        return self.rcon.run([cmd], self.pw, timeout=timeout)[0].strip()
+
+
+def steps(with_spawns=False):
+    """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
+    doc = placements()
+    out = [("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
+           ("R3", "world tree", [("fn", "cobblers:worldtree/%02d_tree" % k) for k in range(4)]
+            + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
+           ("R4", "Foothill grove", [("fn", "cobblers:reapply/grove"), ("fn", "cobblers:reapply/grove_augment")]),
+           ("R5", "elders", [("fn", "cobblers:reapply/elders")]),
+           ("R6", "Route 1 maze forest", [("fn", "cobblers:route1/tile_%d_%d" % (i, j)) for i in range(4) for j in range(4)]),
+           ("R10", "Relic Island islet (before the towns: the house stands on it)", [("fn", "cobblers:reapply/islet")]),
+           ("R7", "hometown", [("fn", "cobblers:towns/hometown")])]
+    r8 = []
+    for s in places(doc):
+        r8 += [("fn", "cobblers:reapply/prep_%s" % s), ("fn", "cobblers:towns/%s" % s)]
+    out.append(("R8", "planned towns and places (%d)" % len(places(doc)), r8))
+    out.append(("R15", "route signposts", [("fn", "cobblers:signs/place")]))
+    r9 = []
+    for d in donors(doc):
+        r9 += [("fn", "cobblers:structures/place_%s" % d), ("wait", 3)]
+    out.append(("R9", "pack donors (%d)" % len(donors(doc)), r9))
+    trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
+    towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
+    out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
+    out.append(("V", "floor verify and trader verify", [("check", "verify")]))
+    return out
+
+
+def run(a):
+    if not os.environ.get("COBBLERS_SERVER_LOCK"):
+        os.environ["COBBLERS_SERVER_LOCK"] = str(Path(a.server_dir).parent / ".cobblers-server-agent.lock")
+    rc = Rcon(a.server_dir)
+    OUT.mkdir(parents=True, exist_ok=True)
+    rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": []}
+    path = OUT / ("run_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
+    todo = steps(a.with_spawns)
+    ids = [s[0] for s in todo]
+    if a.only:
+        todo = [s for s in todo if s[0] == a.only]
+    elif getattr(a, "from_step", None):
+        todo = todo[ids.index(a.from_step):]
+    print("reload:", rc("reload"))
+    for sid, title, actions in todo:
+        t0 = time.time()
+        print("== %s %s" % (sid, title), flush=True)
+        bad = []
+        for kind, v in actions:
+            if kind == "fn":
+                r = rc("function %s" % v)
+                if not r.startswith("Running function"):
+                    bad.append("%s: %s" % (v, r[:120]))
+                    print("   !! %s -> %s" % (v, r[:120]), flush=True)
+            elif kind == "wait":
+                time.sleep(v)
+            elif kind == "check" and v == "crown":
+                x, y, z = CROWN
+                # hold the crown's chunk: the tree's functions release theirs when they finish, and a block test in
+                # an unloaded chunk fails as if the block were missing (the first staging run stopped here on that)
+                rc("forceload add %d %d" % (x, z))
+                for _ in range(30):
+                    if "passed" in rc("execute if loaded %d 0 %d" % (x, z)):
+                        break
+                    time.sleep(1)
+                r = rc("execute unless block %d %d %d minecraft:air" % (x, y, z))
+                rc("forceload remove %d %d" % (x, z))
+                if "passed" not in r:
+                    bad.append("the world tree's crown block at %s is missing: cobblers_height is not in the world folder" % (CROWN,))
+            elif kind == "check" and v == "verify":
+                time.sleep(5)
+                print(rc("save-all flush", timeout=600))
+                for s in ["hometown"] + places():
+                    # the result file is removed first: a verify that fails leaves no file, and reading an old one
+                    # reported Sabrina's town at 9 gaps from a run before the corner rule changed (staging, 2026-09-21)
+                    vf = ROOT / "derived" / "towns" / ("%s_verify.json" % s)
+                    vf.unlink(missing_ok=True)
+                    r = subprocess.run([sys.executable, str(TOOLS / "place_town.py"), s, "--verify", "--server-dir", a.server_dir],
+                                       cwd=ROOT, capture_output=True, text=True)
+                    gaps = None
+                    if vf.is_file():
+                        gaps = json.loads(vf.read_text(encoding="utf-8"))["gaps"]
+                    elif r.returncode:
+                        print("   verify %s failed: %s" % (s, (r.stderr or r.stdout).strip().splitlines()[-1:]), flush=True)
+                    print("   verify %-16s gaps %s" % (s, gaps), flush=True)
+                    if gaps != 0:
+                        bad.append("%s: floor verify %s" % (s, "failed to run" if gaps is None else "%d gaps" % gaps))
+                r = subprocess.run([sys.executable, str(TOOLS / "traders.py"), "verify", "--rcon", a.server_dir],
+                                   cwd=ROOT, capture_output=True, text=True)
+                print("   traders verify exit %d" % r.returncode, flush=True)
+                if r.returncode:
+                    bad.append("traders verify: %s" % r.stdout[-400:])
+        dt = time.time() - t0
+        rec["steps"].append({"step": sid, "title": title, "seconds": round(dt, 1), "commands": sum(1 for k, _ in actions if k == "fn"),
+                             "problems": bad})
+        path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+        print("   %s done in %.0f s%s" % (sid, dt, "" if not bad else ", %d PROBLEM(S): stopping" % len(bad)), flush=True)
+        if bad:
+            rec["stopped_at"] = sid
+            path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+            raise SystemExit("stopped at %s. Re-run that step alone (--only %s) once, then continue with --from the next step"
+                             % (sid, sid))
+    print(rc("save-all flush", timeout=600))
+    rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+    print("run complete:", path)
+
+
+def audit(a):
+    OUT.mkdir(parents=True, exist_ok=True)
+    res = {"world": a.world, "started": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    r = subprocess.run([sys.executable, str(TOOLS / "build_audit.py"), "--world", a.world], cwd=ROOT, capture_output=True, text=True)
+    res["build_audit"] = {"exit": r.returncode, "tail": r.stdout.strip().splitlines()[-12:]}
+    print("build_audit exit", r.returncode)
+    print("\n".join(res["build_audit"]["tail"]))
+    res["towns"] = {}
+    for s in places():
+        r = subprocess.run([sys.executable, str(TOOLS / "town_audit.py"), s, "--world", a.world, "--server-dir", a.server_dir],
+                           cwd=ROOT, capture_output=True, text=True)
+        lines = r.stdout.strip().splitlines()
+        problems = [l.strip() for l in lines if "MISMATCH" in l or "NOT POLICIED" in l.upper() or "unpolicied" in l]
+        notes = [l.strip() for l in lines if "NOT CHECKABLE" in l]
+        clean = any("plan clean" in l for l in lines) and not problems
+        res["towns"][s] = {"exit": r.returncode, "clean": clean, "problems": problems, "not_checkable": notes}
+        print("%-16s %s%s" % (s, "clean" if clean else "PROBLEMS: %s" % problems[:3],
+                              "  (%s)" % "; ".join(n.replace("NOT CHECKABLE  ", "") for n in notes) if notes else ""), flush=True)
+    r = subprocess.run([sys.executable, str(TOOLS / "signposts.py"), "verify", "--world", a.world], cwd=ROOT, capture_output=True, text=True)
+    res["signposts"] = {"exit": r.returncode, "tail": r.stdout.strip().splitlines()[-6:]}
+    print("signposts:", " | ".join(res["signposts"]["tail"]))
+    res["clean"] = (res["build_audit"]["exit"] == 0 and all(v["clean"] for v in res["towns"].values())
+                    and res["signposts"]["exit"] == 0)
+    path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
+    path.write_text(json.dumps(res, indent=1), encoding="utf-8")
+    print("audit %s: %s" % ("CLEAN" if res["clean"] else "NOT CLEAN", path))
+    return 0 if res["clean"] else 1
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    sub = p.add_subparsers(dest="cmd", required=True)
+    q = sub.add_parser("prepare")
+    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--server-dir", required=True)
+    q = sub.add_parser("install")
+    q.add_argument("--server-dir", required=True)
+    q.add_argument("--world-dir", required=True)
+    q = sub.add_parser("run")
+    q.add_argument("--server-dir", required=True)
+    q.add_argument("--from", dest="from_step")
+    q.add_argument("--only")
+    q.add_argument("--with-spawns", action="store_true", help="not yet part of the run: spawn pools are a separate decision")
+    q = sub.add_parser("audit")
+    q.add_argument("--server-dir", required=True)
+    q.add_argument("--world", required=True)
+    q = sub.add_parser("plan", help="print the steps and their commands without running anything")
+    a = p.parse_args(argv)
+    if a.cmd == "plan":
+        for sid, title, actions in steps():
+            print("%-4s %-60s %4d functions" % (sid, title, sum(1 for k, _ in actions if k == "fn")))
+        print("places:", ", ".join(places()))
+        return 0
+    return {"prepare": prepare, "install": install, "run": run, "audit": audit}[a.cmd](a) or 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

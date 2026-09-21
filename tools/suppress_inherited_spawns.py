@@ -171,6 +171,9 @@ def main(argv=None):
         regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
         for sub in regions["subregions"]:
             boxes.extend(subregion_boxes.boxes_for(sub["polygons"], a.subregion_grid))
+    # a spawn-free zone is suppressed whatever covers it: our compiled pools stay out of it too, so nothing spawns there
+    import compile_spawns
+    boxes.extend(compile_spawns.spawn_free_zones())
     if a.boxes == "merged":
         boxes = merge_boxes(boxes, a.grid)
     conds = [{"minX": x0, "maxX": x1, "minZ": z0, "maxZ": z1} for x0, x1, z0, z1 in boxes]

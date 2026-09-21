@@ -51,7 +51,7 @@ def town_bounds(settlement, placements, margin=8):
     plan = s.get("plan") or {}
     xs, zs = [], []
     for q in placements["placements"]:
-        if q.get("settlement") != settlement:
+        if q.get("settlement") != settlement or not q.get("position"):
             continue
         pos = q["position"]
         size = q.get("size") or [24, 0, 24]
@@ -109,7 +109,7 @@ def town_y_range(settlement, placements, pad_below=4, pad_above=8):
     return min(floors) - pad_below, max(tops) + pad_above
 
 
-def audit(settlement, world, y_range=None):
+def audit(settlement, world, y_range=None, server_dir=None):
     import structure_nbt as SN
     placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     policy = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))
@@ -135,7 +135,7 @@ def audit(settlement, world, y_range=None):
                 floors[b["id"]] = b["floor_y"]
     ours = []
     for q in placements["placements"]:
-        if q.get("settlement") != settlement:
+        if q.get("settlement") != settlement or not q.get("position"):
             continue
         pos, size = q["position"], q.get("size") or [28, 24, 28]
         base = pos.get("y", floors.get(q["id"]))
@@ -146,8 +146,21 @@ def audit(settlement, world, y_range=None):
         ours.append((pos["x"], pos["x"] + size[0] - 1, base, base + size[1] - 1,
                      pos["z"], pos["z"] + size[2] - 1))
 
+    # where a placement's template is known, "ours" is exactly what it writes. A house record has no size, and the
+    # 28-block box it defaulted to took in 4,408 blocks of the Tableland plateau's own red sand as if we had put it
+    # there. A placement whose template cannot be read here (a donor without --server-dir) keeps its box.
+    known, written = set(), set()
+    for bid, solid, rooms, _ in expected_buildings(settlement, placements, server_dir):
+        if solid is not None:
+            known.add(bid)
+            written |= set(solid) | set(rooms)
+    mine = [q for q in placements["placements"] if q.get("settlement") == settlement and q.get("position")]
+    boxed = [box for q, box in zip(mine, ours) if q["id"] not in known]
+
     def placed(x, y, z):
-        return any(a <= x <= b and c <= y <= d and e <= z <= f for a, b, c, d, e, f in ours)
+        if (x, y, z) in written:
+            return True
+        return any(a <= x <= b and c <= y <= d and e <= z <= f for a, b, c, d, e, f in boxed)
 
     inside, outside = Counter(), Counter()
     for (x, y, z), v in cap.blocks.items():
@@ -204,6 +217,20 @@ def expected_paving(plan):
     return out
 
 
+def _command_columns(lines):
+    """Every (x, z) a list of fill and setblock commands writes."""
+    import re
+    out = set()
+    for l in lines:
+        m = re.match(r"(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))?", l.strip())
+        if not m:
+            continue
+        x0, z0 = int(m.group(2)), int(m.group(4))
+        x1, z1 = (int(m.group(5)), int(m.group(7))) if m.group(5) else (x0, z0)
+        out |= {(x, z) for x in range(min(x0, x1), max(x0, x1) + 1) for z in range(min(z0, z1), max(z0, z1) + 1)}
+    return out
+
+
 def expected_buildings(settlement, placements, server_dir=None):
     """[(id, {(x, y, z): block name}, {(x, y, z) of the template's rooms: air}, note)] for every building the town
     records: houses and services from the placement report and their local templates, donors from the installed
@@ -249,15 +276,38 @@ def expected_buildings(settlement, placements, server_dir=None):
         _, doc = nbt.load(src)
         expand(b["id"], doc, tuple(b["command_position"]), b["rotation"], b["grade_layer"])
     for q in by_id.values():
+        if q.get("kind") == "earthwork":
+            # the authored commands, replayed: what they write is what should stand
+            import build_audit
+            import function_limits
+            cols = {(x, z) for (x, z) in _command_columns(q.get("commands") or [])}
+            col = build_audit.replay(q.get("commands") or [], sorted(cols))
+            solid = {(x, y, z): b for (x, z), ys in col.items() for y, b in ys.items() if b not in ("minecraft:air",)}
+            out.append((q["id"], solid, {}, None))
+            continue
         if q.get("file") or not q.get("pack_template") or q.get("kind") == "vendor":
             continue
         if not server_dir:
             out.append((q["id"], None, None, "a pack donor: pass --server-dir to read its template from the installed pack"))
             continue
-        import traders
-        _, doc = nbt.loads(traders.find_template(server_dir, q["pack_template"]))
+        import place_donor
+        _, doc = place_donor.load_template(server_dir, q["pack_template"])
         pos = q["position"]
-        expand(q["id"], doc, (pos["x"], pos["y"], pos["z"]), q.get("rotation", "none"), 0)
+        # a donor whose ground layer is not its lowest (a bca building stands on two to five layers of its own
+        # terrain) records it, so the air below that layer is not read as rooms with ground in them
+        expand(q["id"], doc, (pos["x"], pos["y"], pos["z"]), q.get("rotation", "none"), int(q.get("grade_layer", 0)))
+        # the record's own substitutions and removals are what should stand, not the template's blocks
+        own = {s["from"]: s["to"] for s in place_donor.own_substitutions(q)}
+        own.update({b: "minecraft:air" for b in q.get("remove_blocks") or []})
+        if own:
+            bid, solid, rooms, note = out.pop()
+            for p, n in list(solid.items()):
+                if n in own:
+                    if own[n] == "minecraft:air":
+                        del solid[p]
+                    else:
+                        solid[p] = own[n]
+            out.append((bid, solid, rooms, note))
     return out
 
 
@@ -291,18 +341,29 @@ def plan_audit(settlement, world, server_dir=None):
     ys = [v[0] for v in paving.values()] + [p[1] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
     if plan.get("plaza"):                        # the ring the stray-paving check reads
         r = plan["plaza"]["rect"]
-        xs += [r[0] - 20, r[2] + 20]
-        zs += [r[1] - 20, r[3] + 20]
+        xs += [r[0] - 40, r[2] + 40]
+        zs += [r[1] - 40, r[3] + 40]
         ys += [plan["plaza"]["y"] - 3, plan["plaza"]["y"] + 3]
     cap = SN.capture(world, (min(xs), min(ys) - 2, min(zs)), (max(xs), max(ys) + 3, max(zs)))
     at = lambda x, y, z: cap.blocks.get((x, y, z), ("minecraft:air",))[0]
     problems = []
+    unchecked = []                                       # checks that could not run here, said so rather than passed
 
     # roads and the plaza
     lamp_cells = {(x, z) for x, _, z in lamps}
+    # A cell an authored earthwork covers is where that earthwork was meant to stand: the summit cairn on the
+    # Displaced City's square, a stair's foot. It is checked as part of the earthwork, not as road. Only the
+    # columns an earthwork writes at or above the paving level count; one that only digs below does not hide a cell.
+    earth_ids = {q["id"] for q in placements["placements"] if q.get("settlement") == settlement and q.get("kind") == "earthwork"}
+    covered = {}
+    for bid, solid, _, _ in buildings:
+        if bid in earth_ids and solid:
+            for (x, y, z) in solid:
+                covered[(x, z)] = max(covered.get((x, z), y), y)
+    exempt = {c for c, (y, _, _) in paving.items() if any(covered.get(c, -10 ** 6) >= y + d for d in (0, 1))}
     roads = {}
     for (x, z), (y, block, what) in paving.items():
-        if (x, z) in lamp_cells:
+        if (x, z) in lamp_cells or (x, z) in exempt:
             continue
         r = roads.setdefault(what, {"cells": 0, "paved": 0, "off_level": 0, "wrong": Counter(), "blocked_above": Counter()})
         r["cells"] += 1
@@ -342,15 +403,41 @@ def plan_audit(settlement, world, server_dir=None):
                 for dx in (-1, 0, 1):
                     for dz in (-1, 0, 1):
                         built.add((bx + dx, bz + dz))
-        for x in range(x0 - 20, x1 + 21):
-            for z in range(z0 - 20, z1 + 21):
-                if (x0 <= x <= x1 and z0 <= z <= z1) or (x, z) in paving or (x, z) in built:
+        for a in plan.get("anchors") or []:
+            if a.get("surface"):
+                # a lot the plan paves on purpose (Sabrina's market, the rim post's overlook)
+                built |= {(x, z) for x in range(a["rect"][0], a["rect"][2] + 1) for z in range(a["rect"][1], a["rect"][3] + 1)}
+        # Against a control. A fresh export paints its own surfaces, and some are a plaza's material: moss round
+        # Erika's green, cobble round the Merian hut, red terracotta on the Tableland, gravel at the dig camp (the
+        # staging run of 2026-09-21 flagged 1,499 to 3,135 columns at each). So the ring the paving could have run
+        # into (1 to 20 blocks out) is compared with a ring the town never touches (21 to 40 out), and only paving
+        # beyond what the landscape carries there anyway is reported.
+        near = far = near_n = far_n = 0
+        for x in range(x0 - 40, x1 + 41):
+            for z in range(z0 - 40, z1 + 41):
+                d = max(x0 - x, x - x1, z0 - z, z - z1)
+                if d <= 0 or (x, z) in paving or (x, z) in built:
                     continue
-                if any(at(x, y, z) == pzp["surface"] for y in range(pzp["y"] - 3, pzp["y"] + 4)):
-                    stray_paving += 1
-        if stray_paving:
-            problems.append("plaza paving outside the plan: %d columns round the plaza hold %s where nothing is planned"
-                            % (stray_paving, pzp["surface"]))
+                hit = any(at(x, y, z) == pzp["surface"] for y in range(pzp["y"] - 3, pzp["y"] + 4))
+                if d <= 20:
+                    near_n += 1
+                    near += hit
+                else:
+                    far_n += 1
+                    far += hit
+        expected = far / far_n * near_n if far_n else 0
+        stray_paving = int(round(near - expected))
+        density = far / far_n if far_n else 0
+        if density > 0.25:
+            # the landscape here is mostly the plaza's own stone (the Tableland's red terracotta is 41% of the ring
+            # 21 to 40 blocks out, the dig camp's gravel 74%): stray paving cannot be told from ground, so the check
+            # says it could not run rather than passing or failing
+            unchecked.append("plaza paving outside the plan: not checkable, %.0f%% of the landscape round the plaza is %s"
+                             % (100 * density, pzp["surface"]))
+        elif stray_paving > max(50, 0.05 * near_n):
+            problems.append("plaza paving outside the plan: %d columns round the plaza hold %s where nothing is planned "
+                            "(%d found within 20 blocks, %d expected from the landscape 21 to 40 blocks out)"
+                            % (stray_paving, pzp["surface"], near, round(expected)))
 
     # lamps
     dark =[(x, y - 1, z, at(x, y - 1, z)) for x, y, z in lamps if at(x, y - 1, z) != lamp_block]
@@ -377,7 +464,7 @@ def plan_audit(settlement, world, server_dir=None):
                                                                                for k, n in buried.most_common(4))))
     return {"roads": {k: dict(v, wrong=dict(v["wrong"]), blocked_above=dict(v["blocked_above"])) for k, v in roads.items()},
             "lamps": {"spots": len(lamps), "lit": len(lamps) - len(dark), "block": lamp_block},
-            "buildings": rows, "problems": problems}
+            "buildings": rows, "problems": problems, "not_checkable": unchecked}
 
 
 def main(argv=None):
@@ -399,7 +486,7 @@ def main(argv=None):
     out = []
     for name in names:
         try:
-            res = audit(name, a.world)
+            res = audit(name, a.world, server_dir=a.server_dir)
         except SystemExit as exc:
             print("%-12s skipped: %s" % (name, exc))
             continue
@@ -425,6 +512,8 @@ def main(argv=None):
                              "  GROUND IN ROOMS %s" % row["ground_in_rooms"] if row["ground_in_rooms"] else ""))
             for msg in pl["problems"]:
                 print("   PLAN MISMATCH  %s" % msg)
+            for msg in pl.get("not_checkable") or []:
+                print("   NOT CHECKABLE  %s" % msg)
         print("%-12s %s blocks read in %s, y %d to %d"
               % (name, format(res["blocks_read"], ","), res["bounds"], res["y_range"][0], res["y_range"][1]))
         for b, n in res["unsubstituted"].items():

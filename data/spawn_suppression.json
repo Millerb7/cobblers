@@ -33,5 +33,115 @@
     "Nether",
     "End",
     "postgame unless later progression policy changes it"
+  ],
+  "spawn_free_zones": [
+    {
+      "id": "league_plateau",
+      "box": [
+        3120,
+        2488,
+        3423,
+        2719
+      ],
+      "why": "the owner, 2026-09-21: nothing wanders the champion's processional. The box is the League precinct (the League's lot, the forecourt, the processional way and the Victory Road approach) with 16 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
+      "not_covered": "Pokemon a player sends out, and anything a trainer spawner or scripted event puts there"
+    },
+    {
+      "id": "gym_brock",
+      "box": [
+        1808,
+        3664,
+        1847,
+        3695
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Brock's gym (gym1_brock_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "gym_misty",
+      "box": [
+        1592,
+        2856,
+        1631,
+        2895
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Misty's gym (gym2_misty_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "gym_surge",
+      "box": [
+        1720,
+        1392,
+        1751,
+        1431
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Surge's gym (gym3_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "gym_erika",
+      "box": [
+        4288,
+        1472,
+        4327,
+        1511
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Erika's gym (gym4_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "gym_koga",
+      "box": [
+        4568,
+        2464,
+        4607,
+        2495
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Koga's gym (gym5_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "gym_sabrina",
+      "box": [
+        6176,
+        3304,
+        6215,
+        3335
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Sabrina's gym (gym6_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "gym_blaine",
+      "box": [
+        6152,
+        4976,
+        6183,
+        5015
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Blaine's gym (gym7_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "gym_giovanni",
+      "box": [
+        3552,
+        6400,
+        3591,
+        6431
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Giovanni's gym (gym8_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "mechanism": "as the League plateau's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    }
   ]
 }

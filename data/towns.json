@@ -1105,8 +1105,8 @@
     "unlock": "defeating the town's leader (data/progression.json)"
    },
    "nearest_settlement": {
-    "id": "tableland_stop",
-    "distance_blocks": 1449
+    "id": "sunset_west",
+    "distance_blocks": 987
    }
   },
   {
@@ -1188,35 +1188,35 @@
    "tier": "major",
    "critical_path": false,
    "status": "proposed",
-   "working_name": "Sunset West (harbour town)",
+   "working_name": "Sunset West (harbour town, the strait)",
    "display_name": null,
-   "for": "The region's harbour: a fishing and boat-building port on the south-western island, where players charter boats for the outer islands and the deep sea.",
-   "why_here": "The best building site on the map (408 blocks square under 8 degrees) on the largest island, 2,000 blocks from any gym. The sea crossing makes it a destination; its content is tuned for after the League.",
+   "for": "The region's harbour: a fishing and boat-building port at a river mouth on the strait, where players charter boats for the Sunset isle across the water, the outer islands and the deep sea.",
+   "why_here": "Re-sited 2026-09-21. The first site, in the middle of the Sunset isle, was 576 to 884 blocks from the sea its harbour brief needs. No bay or inlet exists anywhere on the isle: its painted shore is smooth all the way round, with an 80-block shallow shelf. The best natural harbour in the south-west is this river mouth: a three-block river crossing a broad low coastal plain (63 to 66) into the strait, which is 250 to 400 blocks wide and sheltered by the isle to the south; its only long fetch is east, out of the strait's mouth. The isle stays in view across the water as the place the boats go. It is on the mainland now, 970 blocks off the path and 1,000 from Giovanni's town.",
    "centre": {
-    "x": 1716,
-    "z": 7298,
-    "ground_y": 114.4
+    "x": 2660,
+    "z": 6490,
+    "ground_y": 64.6
    },
    "footprint": {
     "shape": "square",
     "class": "medium",
-    "size_blocks": 408,
-    "min_x": 1513,
-    "min_z": 7095,
-    "max_x": 1920,
-    "max_z": 7502,
+    "size_blocks": 271,
+    "min_x": 2530,
+    "min_z": 6380,
+    "max_x": 2800,
+    "max_z": 6650,
     "ground_y": [
-     104.1,
-     123.1
+     33.7,
+     78.2
     ],
     "slope_degrees": {
-     "mean": 2.5,
-     "max": 8.0
+     "mean": 7.0,
+     "max": 63.2
     },
-    "basis": "largest square near the chosen point with slope under 8 degrees, clear of water by 24 blocks"
+    "basis": "authored round the river mouth and its quay, beach and piers; it takes in the river and the strait's edge on purpose"
    },
-   "subregion": "sunset_west",
-   "region": "sunset_isle",
+   "subregion": "south_strand",
+   "region": "southern_coast",
    "nearby": [
     {
      "landmark": "arrow_lake_south",
@@ -1231,15 +1231,15 @@
      "distance_blocks": 2286
     }
    ],
-   "distance_from_critical_path_blocks": 2021,
+   "distance_from_critical_path_blocks": 935,
    "nearest_leg": {
-    "route_id": "route_01_pallet_to_brock",
-    "from": "hometown",
-    "to": "gym1_town",
+    "route_id": "victory_road",
+    "from": "gym8_town",
+    "to": "league",
     "at_fraction": 0.0,
     "nearest_point": {
-     "x": 1462,
-     "z": 5293
+     "x": 3593,
+     "z": 6426
     }
    },
    "waystone": {
@@ -1249,12 +1249,17 @@
    },
    "gates": [],
    "post_game_intent": true,
-   "access": "sea crossing from the south-west coast; not locked",
+   "access": "on foot along the southern coast, or by sea; not locked",
    "nearest_settlement": {
-    "id": "relic_island",
-    "distance_blocks": 1873
+    "id": "gym8_town",
+    "distance_blocks": 987
    },
-   "buildability": "408-block square under 8 degrees; no flattening needed for a medium town"
+   "buildability": "a coastal plain 63 to 66 along the shore rising to about 75 inland; the river is left as it runs",
+   "previous_centre": {
+    "x": 1716,
+    "z": 7298,
+    "note": "the first siting, on the isle, 2026-09-16 to 2026-09-21"
+   }
   },
   {
    "id": "northlight",

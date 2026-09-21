@@ -714,6 +714,118 @@
         "moarconcrete"
       ],
       "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lavender_mart per data/rematerial.json: Pokemon Mart for the League's town, to stand beside the League: its deepslate tiles and cyan terracotta"
+    },
+    {
+      "id": "campaign:f4/services/towns/northlight_center",
+      "structure_id": "cobblers:f4/services/towns/northlight_center",
+      "asset": "kits/structures/campaign/f4/services/towns/northlight_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lentimas_center per data/rematerial.json: Pokemon Centre for Northlight, a cold research station: spruce plank walls on a snow-block base course with packed-ice trim and blue terracotta, ferns on podzol for a garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/northlight_mart",
+      "structure_id": "cobblers:f4/services/towns/northlight_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/northlight_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from floaroma_mart per data/rematerial.json: Poke Mart for Northlight, a cold research station: spruce plank walls on a snow-block base course with packed-ice trim and blue terracotta, ferns on podzol for a garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/mining_center",
+      "structure_id": "cobblers:f4/services/towns/mining_center",
+      "asset": "kits/structures/campaign/f4/services/towns/mining_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from cherrygrove_center per data/rematerial.json: Pokemon Centre for the Mining Town, a working town on the cone: polished andesite walls, andesite base, brown terracotta trim, a gravel yard with grass for a garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/mining_mart",
+      "structure_id": "cobblers:f4/services/towns/mining_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/mining_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lavender_mart per data/rematerial.json: Poke Mart for the Mining Town, a working town on the cone: polished andesite walls, andesite base, brown terracotta trim, a gravel yard with grass for a garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/tea_center",
+      "structure_id": "cobblers:f4/services/towns/tea_center",
+      "asset": "kits/structures/campaign/f4/services/towns/tea_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from floaroma_center per data/rematerial.json: Pokemon Centre for the tea town, the tea town: bamboo walls and a bamboo-mosaic base with lime terracotta, the flower beds turned to azalea bushes, the tea plant"
+    },
+    {
+      "id": "campaign:f4/services/towns/tea_mart",
+      "structure_id": "cobblers:f4/services/towns/tea_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/tea_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from cherrygrove_mart per data/rematerial.json: Poke Mart for the tea town, the tea town: bamboo walls and a bamboo-mosaic base with lime terracotta, the flower beds turned to azalea bushes, the tea plant"
+    },
+    {
+      "id": "campaign:f4/services/towns/sunset_center",
+      "structure_id": "cobblers:f4/services/towns/sunset_center",
+      "asset": "kits/structures/campaign/f4/services/towns/sunset_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lentimas_center per data/rematerial.json: Pokemon Centre for Sunset West, the harbour: brick walls on an oak base course, polished granite trim, red and yellow terracotta for the sunset; seaside grass for a garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/sunset_mart",
+      "structure_id": "cobblers:f4/services/towns/sunset_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/sunset_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lavender_mart per data/rematerial.json: Poke Mart for Sunset West, the harbour: brick walls on an oak base course, polished granite trim, red and yellow terracotta for the sunset; seaside grass for a garden"
     }
   ]
 }

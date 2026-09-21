@@ -61,6 +61,23 @@ def graded_profile(ground, max_grade):
     return np.rint(y).astype(int)
 
 
+HEADROOM = 3            # blocks of air kept over every street and plaza cell, whatever the export put there
+CANOPY = 24             # how high a tree standing on a street or square is cleared
+
+
+def clear_above(x0, z0, x1, z1, y):
+    """Commands that leave a paved box walkable: air for HEADROOM blocks over it, and any tree over it gone.
+
+    A fresh export carries its natural foliage, and nothing cleared it from a street: the prep cut the ground down
+    to grade and paved it, and a tree or a flower standing on the old ground stayed standing on the new road. The
+    disposable world never showed it, because the ground restore there had already cleared everything. The staging
+    run of 2026-09-21 found trunks on three towns' streets and flowers on the Rift rim trail."""
+    out = ["fill %d %d %d %d %d %d minecraft:air" % (x0, y + 1, z0, x1, y + HEADROOM, z1)]
+    for tag in ("#minecraft:logs", "#minecraft:leaves"):
+        out.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (x0, y + 1, z0, x1, y + CANOPY, z1, tag))
+    return out
+
+
 def rect_overlap(a, b, pad=0):
     return not (a[2] + pad < b[0] or b[2] + pad < a[0] or a[3] + pad < b[1] or b[3] + pad < a[1])
 
@@ -77,8 +94,15 @@ def main(argv=None):
     s = doc["settlements"][a.settlement]
     plan = s["plan"]
     towns = {t["id"]: t for t in json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]}
-    fp = towns[a.settlement]["footprint"]
+    # a place with no town record (the Route 1 mansion) must name its own footprint in its plan
+    fp = (towns.get(a.settlement) or {}).get("footprint") or {"min_x": 0, "min_z": 0, "max_x": 0, "max_z": 0}
     fbox = (fp["min_x"], fp["min_z"], fp["max_x"], fp["max_z"])
+    if a.settlement not in towns and not plan.get("footprint"):
+        raise SystemExit("%s has no data/towns.json record, so its plan must name its footprint" % a.settlement)
+    if plan.get("footprint"):
+        # a town that is not on its recorded site's ground: the Displaced City's record is the surface entrance, and
+        # the town is on the cavern floor 350 blocks east, so its plan names the box it is built in
+        fbox = tuple(plan["footprint"]["rect"])
 
     if a.surface_world:
         raise SystemExit("--surface-world is gone: a plan's ground comes from the heightmap (tools/ground.py), "
@@ -87,7 +111,7 @@ def main(argv=None):
     # export, see tools/ground.py), which put every lot's measured ground range one block under the
     # ground WorldPainter actually writes.
     import ground as G
-    _g = G.load(a.source_root) if getattr(a, "source_root", None) else G.load()
+    _g = G.for_settlement(a.settlement, getattr(a, "source_root", None), doc)
 
     def ground(x, z):
         return _g(int(round(x)), int(round(z)))
@@ -147,6 +171,7 @@ def main(argv=None):
                 if low < y - 1:
                     cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (run[0], low + 1, cz, run[-1], y - 1, cz))
                 cmds.append("fill %d %d %d %d %d %d %s" % (run[0], y, cz, run[-1], y, cz, r["surface"]))
+                cmds += clear_above(run[0], cz, run[-1], cz, y)
                 runs.append([cz, int(y), run[0], run[-1]])
                 if xx is not None:
                     run = [xx]
@@ -175,6 +200,7 @@ def main(argv=None):
         if low < y - 1:
             cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (x0, low + 1, z0, x1, y - 1, z1))
         cmds.append("fill %d %d %d %d %d %d %s" % (x0, y, z0, x1, y, z1, pz["surface"]))
+        cmds += clear_above(x0, z0, x1, z1, y)
         we.append("plaza: //pos1 %d,%d,%d  //pos2 %d,%d,%d  //set air ; //pos1 %d,%d,%d //pos2 %d,%d,%d //set %s"
                   % (x0, y + 1, z0, x1, max(top, y + 1), z1, x0, y, z0, x1, y, z1, pz["surface"]))
         report["plaza"] = {"rect": pz["rect"], "y": y, "ground_range": [low, top], "cut_blocks": cut, "fill_blocks": fill,
@@ -231,8 +257,16 @@ def main(argv=None):
     # candidate house lots along streets
     lp = plan.get("house_lots") or {}
     lw, ld = lp.get("size", [12, 14])
+    wet = None
+    if lp.get("avoid_water") is not None:
+        # tools/place_town.py clears every fluid within two blocks of a house's footprint, so a lot at a river's edge
+        # would drain the river: a plan that asks refuses any lot with painted water within this many blocks
+        from elder_trees import painted_water
+        wet = painted_water(_g.heights, _g.world)
+        wm = int(lp["avoid_water"])
     setback, gap, max_relief = lp.get("setback", 3), lp.get("gap", 4), lp.get("max_lot_relief", 4)
     n = 0
+    refused = {}                                         # why candidate lots were refused, so a thin plan can be read
     for sid in lp.get("along", []):
         r = next(q for q in plan["streets"] if q["id"] == sid)
         half = r["width"] // 2
@@ -252,18 +286,46 @@ def main(argv=None):
                 w, d = (lw, ld) if along_x else (ld, lw)
                 box = (int(round(cx - w / 2)), int(round(cz - d / 2)), int(round(cx + w / 2)) - 1, int(round(cz + d / 2)) - 1)
                 if not (fbox[0] <= box[0] and fbox[1] <= box[1] and box[2] <= fbox[2] and box[3] <= fbox[3]):
+                    refused["outside the footprint"] = refused.get("outside the footprint", 0) + 1
                     continue
                 if any(rect_overlap(box, o[1], gap) for o in occupied if o[2] != "street"):
+                    refused["too close to another lot or anchor"] = refused.get("too close to another lot or anchor", 0) + 1
                     continue
                 if any(box[0] <= sx <= box[2] and box[1] <= sz <= box[3] for cells in street_cells.values() for (sx, sz) in cells):
+                    refused["on a street"] = refused.get("on a street", 0) + 1
+                    continue
+                if wet is not None and wet[box[1] - wm - _g.oz:box[3] + wm + 1 - _g.oz, box[0] - wm - _g.ox:box[2] + wm + 1 - _g.ox].any():
+                    refused["water within avoid_water"] = refused.get("water within avoid_water", 0) + 1
                     continue
                 gr = [ground(x, z) for x in range(box[0], box[2] + 1, 2) for z in range(box[1], box[3] + 1, 2)]
                 if max(gr) - min(gr) > max_relief:
+                    refused["relief over max_lot_relief"] = refused.get("relief over max_lot_relief", 0) + 1
                     continue
                 facing = ("north" if nz > 0 else "south") if along_x else ("west" if nx > 0 else "east")
+                row = {"along": sid, "rect": list(box), "facing": facing, "ground_range": [min(gr), max(gr)]}
+                if lp.get("level_lots"):
+                    # A terrace: the lot cut and filled level at its own median, held within a step of the street in
+                    # front of it so the door is reachable, and refused if that needs more than max_cut_fill blocks
+                    # of either anywhere. This is the Displaced City's summit terracing on a floor with +-3 of noise.
+                    full = [ground(x, z) for x in range(box[0], box[2] + 1) for z in range(box[1], box[3] + 1)]
+                    sy = street_cells[sid].get(min(street_cells[sid], key=lambda q: (q[0] - pts[i][0]) ** 2 + (q[1] - pts[i][1]) ** 2))
+                    yl = int(min(max(int(np.median(full)), sy - 1), sy + 2))
+                    worst_cut, worst_fill = max(full) - yl, yl - min(full)
+                    if max(worst_cut, worst_fill) > lp.get("max_cut_fill", 4):
+                        refused["cut or fill over max_cut_fill"] = refused.get("cut or fill over max_cut_fill", 0) + 1
+                        continue
+                    x0_, z0_, x1_, z1_ = box
+                    if worst_cut > 0:
+                        cmds.append("fill %d %d %d %d %d %d minecraft:air" % (x0_, yl + 1, z0_, x1_, max(full), z1_))
+                    if worst_fill > 0:
+                        cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (x0_, min(full) + 1, z0_, x1_, yl, z1_))
+                        cmds.append("fill %d %d %d %d %d %d minecraft:grass_block replace minecraft:dirt" % (x0_, yl, z0_, x1_, yl, z1_))
+                    cut_total += sum(max(0, q - yl) for q in full)
+                    fill_total += sum(max(0, yl - q) for q in full)
+                    row.update({"level": yl, "cut_max": worst_cut, "fill_max": worst_fill})
                 n += 1
                 lid = "%s_lot_%02d" % (sid, n)
-                report["lots"].append({"id": lid, "along": sid, "rect": list(box), "facing": facing, "ground_range": [min(gr), max(gr)]})
+                report["lots"].append(dict(row, id=lid))
                 occupied.append((lid, box, "lot"))
             c += (lw if abs(ux) >= abs(uz) else lw) + gap
 
@@ -271,7 +333,7 @@ def main(argv=None):
                         "anchors_outside_footprint": [r["id"] for r in report["anchors"] if not r["inside_footprint"] and r["role"] not in ("pier", "waterfront_gym")],
                         "anchors_on_street_blocks": {r["id"]: r["street_blocks_inside"] for r in report["anchors"] if r["street_blocks_inside"]},
                         "cut_blocks_total": cut_total, "fill_blocks_total": fill_total, "house_lots": len(report["lots"]),
-                        "lamps": len(report["lamps"]), "prep_commands": len(cmds)}
+                        "lamps": len(report["lamps"]), "prep_commands": len(cmds), "lots_refused": refused}
     for r in plan["streets"]:
         pts = r["polyline"]
         we.append("%s: WorldEdit has no graded-line brush; select each %d-block run from the prep function's fill boxes, "

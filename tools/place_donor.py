@@ -81,7 +81,76 @@ def sentinel(rec, template_doc, subs):
     return rec["position"]["x"] + rx, rec["position"]["y"] + ty, rec["position"]["z"] + rz, swap.get(name, name)
 
 
-def functions(rec, subs, check=None):
+def own_substitutions(rec):
+    """A record's own substitutions, when it lists them. Brock's and Misty's records carry the string
+    "data/spawn_block_policy.json" there, a pointer to the policy rather than a list of their own."""
+    subs = rec.get("substitutions")
+    return list(subs) if isinstance(subs, list) else []
+
+
+def load_template(server_dir, template_id):
+    """A template from the installed packs, or from the server jar for a vanilla one (minecraft:...)."""
+    import glob
+    import zipfile
+    import nbt
+    import traders
+    if template_id.startswith("minecraft:"):
+        name = "data/minecraft/structure/%s.nbt" % template_id.split(":", 1)[1]
+        for j in glob.glob(os.path.join(server_dir, "versions", "*", "*.jar")) + glob.glob(os.path.join(server_dir, "*.jar")):
+            try:
+                z = zipfile.ZipFile(j)
+            except Exception:
+                continue
+            if name in z.namelist():
+                return nbt.loads(z.read(name))
+        raise SystemExit("vanilla template not found in the server jar: %s" % template_id)
+    return nbt.loads(traders.find_template(server_dir, template_id))
+
+
+def loot_commands(rec, template_doc):
+    """`data remove` for every container the template fills from a loot table, when the record asks for it: a
+    pillager outpost's chest is crossbows and the like, which is not what a lookout keeps."""
+    if not rec.get("clear_loot"):
+        return []
+    import place_town
+    out = []
+    for b in template_doc["blocks"]:
+        if (b.get("nbt") or {}).get("LootTable"):
+            tx, ty, tz = b["pos"]
+            rx, rz = place_town.rotate(tx, tz, rec.get("rotation", "none"))
+            out.append("data remove block %d %d %d LootTable" % (rec["position"]["x"] + rx, rec["position"]["y"] + ty,
+                                                                   rec["position"]["z"] + rz))
+    return out
+
+
+def jigsaw_commands(rec, template_doc):
+    """A `setblock` of its own final state for every jigsaw the template holds, when the record asks for it.
+
+    `place template` leaves jigsaw blocks standing; worldgen would have resolved each into its final state. A bca
+    building's jigsaws are its floor, its berry soil and its decoration points (final state planks, dirt, stone or
+    nothing), so removing them all to air, as the watchtower's one jigsaw was, would hole the floor. This is what
+    tools/place_town.py does for a house, and what tools/town_audit.py already expects to find."""
+    if rec.get("jigsaws") != "final_state":
+        return []
+    import place_town
+    own = {s["from"]: s["to"] for s in own_substitutions(rec)}
+    own.update({b: "minecraft:air" for b in rec.get("remove_blocks") or []})
+    out = []
+    pal = template_doc["palette"]
+    for b in template_doc["blocks"]:
+        if pal[b["state"]]["Name"] != "minecraft:jigsaw":
+            continue
+        final = (b.get("nbt") or {}).get("final_state") or "minecraft:air"
+        if final.split("[")[0] == "minecraft:structure_void":
+            final = "minecraft:air"
+        final = own.get(final.split("[")[0], final)
+        tx, ty, tz = b["pos"]
+        rx, rz = place_town.rotate(tx, tz, rec.get("rotation", "none"))
+        out.append("setblock %d %d %d %s" % (rec["position"]["x"] + rx, rec["position"]["y"] + ty, rec["position"]["z"] + rz, final))
+    return out
+
+
+def functions(rec, subs, check=None, extra=None):
     """{function name: lines}. Force-load, wait SETTLE ticks, place and substitute, wait SETTLE ticks, and if the
     check block is missing place again, then release the box.
 
@@ -92,7 +161,7 @@ def functions(rec, subs, check=None):
     lo, hi = box(rec)
     fl = "%d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16)
     body = commands(rec, subs)
-    body = [l for l in body if not l.startswith("forceload")]
+    body = [l for l in body if not l.startswith("forceload")] + list(extra or [])
     held = "# chunks-loaded-by: cobblers:structures/%s" % name
     out = {name: [body[0], "forceload add %s" % fl, "schedule function %s:structures/%s_go %dt replace" % (NS, name, SETTLE)],
            name + "_go": [held] + body[1:] + ["schedule function %s:structures/%s_check %dt replace" % (NS, name, SETTLE)]}
@@ -116,7 +185,10 @@ def commands(rec, subs):
     # until this was split (found 2026-09-20 by place_donor.py verify, 958 blocks left unsubstituted).
     area = (hi[0] - lo[0] + 1) * (hi[2] - lo[2] + 1)
     layers = max(1, min(hi[1] - lo[1] + 1, 32768 // max(area, 1)))
-    for s in subs:
+    # the record's own changes after the policy's: blocks this one building must not carry (the League's red sand,
+    # wool and lily pads, 2026-09-21), and blocks it must lose (the watchtower's ominous banners)
+    own = own_substitutions(rec) + [{"from": b, "to": "minecraft:air"} for b in rec.get("remove_blocks") or []]
+    for s in list(subs) + own:
         for y0 in range(lo[1], hi[1] + 1, layers):
             y1 = min(y0 + layers - 1, hi[1])
             out.append("fill %d %d %d %d %d %d %s replace %s"
@@ -181,13 +253,15 @@ def main(argv=None):
     if a.cmd == "function":
         out = Path(a.out)
         for rec in recs:
-            check = None
+            check, extra = None, []
             if a.server_dir:
-                import nbt
-                import traders
-                _, tdoc = nbt.loads(traders.find_template(a.server_dir, rec["pack_template"]))
-                check = sentinel(rec, tdoc, subs)
-            for name, lines_out in functions(rec, subs, check).items():
+                _, tdoc = load_template(a.server_dir, rec["pack_template"])
+                own = {s["from"]: s["to"] for s in own_substitutions(rec)}
+                check = sentinel(rec, tdoc, list(subs) + [{"from": k, "to": v} for k, v in own.items()])
+                extra = loot_commands(rec, tdoc) + jigsaw_commands(rec, tdoc)
+            elif rec.get("clear_loot") or rec.get("jigsaws"):
+                raise SystemExit("%s clears loot or resolves jigsaws, which needs --server-dir to read its template" % rec["id"])
+            for name, lines_out in functions(rec, subs, check, extra).items():
                 fn = out / "data" / NS / "function" / "structures" / ("%s.mcfunction" % name)
                 fn.parent.mkdir(parents=True, exist_ok=True)
                 refused = function_limits.check_lines(lines_out, str(fn))

@@ -52,6 +52,8 @@ class Ground:
         self.heights, self.world = T.load(world_path, source_root)
         self.ox = self.world["grid"]["origin_x"]
         self.oz = self.world["grid"]["origin_z"]
+        self.kind = "heightmap"
+        self.ceiling = None
 
     def __call__(self, x, z):
         return int(np.round(self.heights[int(z) - self.oz, int(x) - self.ox]))
@@ -64,6 +66,62 @@ class Ground:
 
 def load(source_root=None, world_path=None):
     return Ground(source_root, world_path)
+
+
+# Two settlements do not stand on the heightmap. The Displaced City is on the cavern floor, 60 to 100 blocks under the
+# surface, and Relic Island is on an islet built over seabed. Their ground is still never read from a world: it is
+# the measured plan data the tool that builds them computes from the heightmap. A settlement names it in
+# data/placements.json as "ground": "cavern_floor" or "islet", and gets that ground inside its box and the
+# heightmap everywhere else.
+GROUND_KINDS = ("cavern_floor", "islet")
+
+
+def cavern_floor():
+    """(box, floor grid, ceiling grid) of the Displaced City cavern, from tools/cavern_plan.py's plan."""
+    plan = ROOT / "derived" / "cavern" / "plan.json"
+    grids = ROOT / "derived" / "cavern" / "plan.npz"
+    if not plan.is_file() or not grids.is_file():
+        raise SystemExit("no cavern plan: run python tools/cavern_plan.py --source-root <root> first")
+    import json
+    box = json.loads(plan.read_text(encoding="utf-8"))["cavern"]
+    g = np.load(grids)
+    return tuple(box), g["floor"].astype(int), g["ceiling"].astype(int)
+
+
+def islet_top(g):
+    """(box, top grid with NaN off the islet) of Relic Island's islet, as tools/islet.py builds it."""
+    import islet as I
+    import terrain as T_
+    sea = int(T_.sea_level(g.world))
+    cx, cz = I.CENTRE
+    r = I.RADIUS
+    bed = g.heights[cz - r - g.oz:cz + r + 1 - g.oz, cx - r - g.ox:cx + r + 1 - g.ox].astype(float)
+    top, _ = I.island_top(bed, sea)
+    return (cx - r, cz - r, cx + r, cz + r), top
+
+
+def for_settlement(settlement, source_root=None, placements=None, base=None):
+    """The ground for one settlement: the heightmap, with the settlement's own measured ground laid over its box."""
+    import json
+    g = base or Ground(source_root)
+    doc = placements or json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    kind = (doc.get("settlements", {}).get(settlement) or {}).get("ground")
+    if kind is None:
+        return g
+    if kind not in GROUND_KINDS:
+        raise SystemExit("%s: unknown ground %r (known: %s)" % (settlement, kind, ", ".join(GROUND_KINDS)))
+    h = g.heights.astype(np.float64, copy=True)
+    if kind == "cavern_floor":
+        (x0, z0, x1, z1), floor, ceiling = cavern_floor()
+        h[z0 - g.oz:z1 - g.oz + 1, x0 - g.ox:x1 - g.ox + 1] = floor
+        g.ceiling = {"box": (x0, z0, x1, z1), "grid": ceiling}
+    else:
+        (x0, z0, x1, z1), top = islet_top(g)
+        sub = h[z0 - g.oz:z1 - g.oz + 1, x0 - g.ox:x1 - g.ox + 1]
+        sub[~np.isnan(top)] = top[~np.isnan(top)]
+    g.heights = h
+    g.kind = kind
+    return g
 
 
 if __name__ == "__main__":

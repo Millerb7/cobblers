@@ -70,6 +70,80 @@
       "minecraft:chiseled_quartz_block": "minecraft:chiseled_deepslate",
       "minecraft:gray_terracotta": "minecraft:cyan_terracotta",
       "minecraft:white_terracotta": "minecraft:light_gray_terracotta"
+    },
+    "northlight_walls": {
+      "minecraft:smooth_quartz": "minecraft:spruce_planks",
+      "minecraft:smooth_quartz_stairs": "minecraft:spruce_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:spruce_slab",
+      "minecraft:quartz_block": "minecraft:snow_block",
+      "minecraft:chiseled_quartz_block": "minecraft:packed_ice",
+      "minecraft:gray_terracotta": "minecraft:blue_terracotta",
+      "minecraft:white_terracotta": "minecraft:light_blue_terracotta"
+    },
+    "northlight_garden": {
+      "minecraft:rose_bush": "minecraft:large_fern",
+      "minecraft:red_tulip": "minecraft:fern",
+      "minecraft:orange_tulip": "minecraft:fern",
+      "minecraft:white_tulip": "minecraft:fern",
+      "minecraft:pink_tulip": "minecraft:fern",
+      "minecraft:azure_bluet": "minecraft:fern",
+      "minecraft:allium": "minecraft:fern",
+      "minecraft:grass_block": "minecraft:podzol"
+    },
+    "mining_walls": {
+      "minecraft:smooth_quartz": "minecraft:polished_andesite",
+      "minecraft:smooth_quartz_stairs": "minecraft:polished_andesite_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:polished_andesite_slab",
+      "minecraft:quartz_block": "minecraft:andesite",
+      "minecraft:chiseled_quartz_block": "minecraft:chiseled_stone_bricks",
+      "minecraft:gray_terracotta": "minecraft:gray_terracotta",
+      "minecraft:white_terracotta": "minecraft:brown_terracotta"
+    },
+    "mining_garden": {
+      "minecraft:grass_block": "minecraft:gravel",
+      "minecraft:rose_bush": "minecraft:tall_grass",
+      "minecraft:red_tulip": "minecraft:short_grass",
+      "minecraft:orange_tulip": "minecraft:short_grass",
+      "minecraft:white_tulip": "minecraft:short_grass",
+      "minecraft:pink_tulip": "minecraft:short_grass",
+      "minecraft:azure_bluet": "minecraft:short_grass",
+      "minecraft:allium": "minecraft:short_grass"
+    },
+    "tea_walls": {
+      "minecraft:smooth_quartz": "minecraft:bamboo_planks",
+      "minecraft:smooth_quartz_stairs": "minecraft:bamboo_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:bamboo_slab",
+      "minecraft:quartz_block": "minecraft:bamboo_block",
+      "minecraft:chiseled_quartz_block": "minecraft:bamboo_mosaic",
+      "minecraft:gray_terracotta": "minecraft:lime_terracotta",
+      "minecraft:white_terracotta": "minecraft:white_terracotta"
+    },
+    "tea_garden": {
+      "minecraft:rose_bush": "minecraft:tall_grass",
+      "minecraft:red_tulip": "minecraft:azalea",
+      "minecraft:orange_tulip": "minecraft:azalea",
+      "minecraft:white_tulip": "minecraft:azalea",
+      "minecraft:pink_tulip": "minecraft:azalea",
+      "minecraft:azure_bluet": "minecraft:azalea",
+      "minecraft:allium": "minecraft:azalea"
+    },
+    "sunset_walls": {
+      "minecraft:smooth_quartz": "minecraft:bricks",
+      "minecraft:smooth_quartz_stairs": "minecraft:brick_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:brick_slab",
+      "minecraft:quartz_block": "minecraft:oak_planks",
+      "minecraft:chiseled_quartz_block": "minecraft:polished_granite",
+      "minecraft:gray_terracotta": "minecraft:red_terracotta",
+      "minecraft:white_terracotta": "minecraft:yellow_terracotta"
+    },
+    "sunset_garden": {
+      "minecraft:rose_bush": "minecraft:tall_grass",
+      "minecraft:red_tulip": "minecraft:short_grass",
+      "minecraft:orange_tulip": "minecraft:short_grass",
+      "minecraft:white_tulip": "minecraft:short_grass",
+      "minecraft:pink_tulip": "minecraft:short_grass",
+      "minecraft:azure_bluet": "minecraft:short_grass",
+      "minecraft:allium": "minecraft:short_grass"
     }
   },
   "templates": [
@@ -170,6 +244,148 @@
         "league_walls"
       ],
       "why": "to stand beside the League: its deepslate tiles and cyan terracotta"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/northlight_center.nbt",
+      "id": "cobblers:f4/services/towns/northlight_center",
+      "base": "kits/structures/campaign/f4/services/towns/lentimas_center.nbt",
+      "maps": [
+        "northlight_walls",
+        "northlight_garden"
+      ],
+      "why": "a cold research station: spruce plank walls on a snow-block base course with packed-ice trim and blue terracotta, ferns on podzol for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/northlight_mart.nbt",
+      "id": "cobblers:f4/services/towns/northlight_mart",
+      "base": "kits/structures/campaign/f4/services/towns/floaroma_mart.nbt",
+      "maps": [
+        "northlight_walls",
+        "northlight_garden"
+      ],
+      "why": "a cold research station: spruce plank walls on a snow-block base course with packed-ice trim and blue terracotta, ferns on podzol for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/mining_center.nbt",
+      "id": "cobblers:f4/services/towns/mining_center",
+      "base": "kits/structures/campaign/f4/services/towns/cherrygrove_center.nbt",
+      "maps": [
+        "mining_walls",
+        "mining_garden"
+      ],
+      "why": "a working town on the cone: polished andesite walls, andesite base, brown terracotta trim, a gravel yard with grass for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/mining_mart.nbt",
+      "id": "cobblers:f4/services/towns/mining_mart",
+      "base": "kits/structures/campaign/f4/services/towns/lavender_mart.nbt",
+      "maps": [
+        "mining_walls",
+        "mining_garden"
+      ],
+      "why": "a working town on the cone: polished andesite walls, andesite base, brown terracotta trim, a gravel yard with grass for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/tea_center.nbt",
+      "id": "cobblers:f4/services/towns/tea_center",
+      "base": "kits/structures/campaign/f4/services/towns/floaroma_center.nbt",
+      "maps": [
+        "tea_walls",
+        "tea_garden"
+      ],
+      "why": "the tea town: bamboo walls and a bamboo-mosaic base with lime terracotta, the flower beds turned to azalea bushes, the tea plant"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/tea_mart.nbt",
+      "id": "cobblers:f4/services/towns/tea_mart",
+      "base": "kits/structures/campaign/f4/services/towns/cherrygrove_mart.nbt",
+      "maps": [
+        "tea_walls",
+        "tea_garden"
+      ],
+      "why": "the tea town: bamboo walls and a bamboo-mosaic base with lime terracotta, the flower beds turned to azalea bushes, the tea plant"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/sunset_center.nbt",
+      "id": "cobblers:f4/services/towns/sunset_center",
+      "base": "kits/structures/campaign/f4/services/towns/lentimas_center.nbt",
+      "maps": [
+        "sunset_walls",
+        "sunset_garden"
+      ],
+      "why": "the harbour: brick walls on an oak base course, polished granite trim, red and yellow terracotta for the sunset; seaside grass for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/sunset_mart.nbt",
+      "id": "cobblers:f4/services/towns/sunset_mart",
+      "base": "kits/structures/campaign/f4/services/towns/lavender_mart.nbt",
+      "maps": [
+        "sunset_walls",
+        "sunset_garden"
+      ],
+      "why": "the harbour: brick walls on an oak base course, polished granite trim, red and yellow terracotta for the sunset; seaside grass for a garden"
     }
-  ]
+  ],
+  "house_sets": {
+    "displaced_cherry": {
+      "why": "a summit house the cavern has grown into: its spruce is cherry, its cobble is stone brick, its diorite andesite",
+      "map": {
+        "minecraft:spruce_planks": "minecraft:cherry_planks",
+        "minecraft:spruce_slab": "minecraft:cherry_slab",
+        "minecraft:spruce_stairs": "minecraft:cherry_stairs",
+        "minecraft:spruce_door": "minecraft:cherry_door",
+        "minecraft:spruce_fence_gate": "minecraft:cherry_fence_gate",
+        "minecraft:spruce_fence": "minecraft:cherry_fence",
+        "minecraft:spruce_log": "minecraft:cherry_log",
+        "minecraft:spruce_trapdoor": "minecraft:cherry_trapdoor",
+        "minecraft:cobblestone": "minecraft:stone_bricks",
+        "minecraft:cobblestone_stairs": "minecraft:stone_brick_stairs",
+        "minecraft:cobblestone_wall": "minecraft:stone_brick_wall",
+        "minecraft:mossy_cobblestone": "minecraft:mossy_stone_bricks",
+        "minecraft:diorite": "minecraft:andesite",
+        "minecraft:diorite_slab": "minecraft:andesite_slab",
+        "minecraft:diorite_stairs": "minecraft:andesite_stairs",
+        "minecraft:diorite_wall": "minecraft:andesite_wall"
+      }
+    },
+    "displaced_dark": {
+      "why": "a summit house built darker: dark oak for spruce, cobbled deepslate for cobble, tuff for diorite and smooth stone",
+      "map": {
+        "minecraft:spruce_planks": "minecraft:dark_oak_planks",
+        "minecraft:spruce_slab": "minecraft:dark_oak_slab",
+        "minecraft:spruce_stairs": "minecraft:dark_oak_stairs",
+        "minecraft:spruce_door": "minecraft:dark_oak_door",
+        "minecraft:spruce_fence_gate": "minecraft:dark_oak_fence_gate",
+        "minecraft:spruce_fence": "minecraft:dark_oak_fence",
+        "minecraft:spruce_log": "minecraft:dark_oak_log",
+        "minecraft:spruce_trapdoor": "minecraft:dark_oak_trapdoor",
+        "minecraft:cobblestone": "minecraft:cobbled_deepslate",
+        "minecraft:cobblestone_stairs": "minecraft:cobbled_deepslate_stairs",
+        "minecraft:cobblestone_wall": "minecraft:cobbled_deepslate_wall",
+        "minecraft:mossy_cobblestone": "minecraft:mossy_stone_bricks",
+        "minecraft:diorite": "minecraft:tuff",
+        "minecraft:diorite_slab": "minecraft:tuff_slab",
+        "minecraft:diorite_stairs": "minecraft:tuff_stairs",
+        "minecraft:diorite_wall": "minecraft:tuff_wall",
+        "minecraft:smooth_stone": "minecraft:polished_tuff",
+        "minecraft:smooth_stone_slab": "minecraft:polished_tuff_slab"
+      }
+    },
+    "surge_flank": {
+      "why": "Surge's shelf is cut from Mt Vessu's flank, which is deepslate and tuff (the plan's paving is the same stone): stone brick becomes deepslate brick, stone becomes tuff; the spruce timber stays",
+      "map": {
+        "minecraft:stone_bricks": "minecraft:deepslate_bricks",
+        "minecraft:stone_brick_stairs": "minecraft:deepslate_brick_stairs",
+        "minecraft:stone_brick_wall": "minecraft:deepslate_brick_wall",
+        "minecraft:stone_brick_slab": "minecraft:deepslate_brick_slab",
+        "minecraft:mossy_stone_bricks": "minecraft:cracked_deepslate_bricks",
+        "minecraft:cobblestone": "minecraft:cobbled_deepslate",
+        "minecraft:cobblestone_stairs": "minecraft:cobbled_deepslate_stairs",
+        "minecraft:cobblestone_wall": "minecraft:cobbled_deepslate_wall",
+        "minecraft:stone": "minecraft:tuff",
+        "minecraft:stone_stairs": "minecraft:tuff_stairs",
+        "minecraft:stone_slab": "minecraft:tuff_slab"
+      }
+    }
+  }
 }

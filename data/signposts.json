@@ -1,0 +1,50 @@
+{
+  "schema": "cobblers.signposts/1",
+  "note": "What the route signposts say. tools/signposts.py places a post at every town exit (both ends of every route leg), every sub-region transition along a leg, and every junction where a place's own path leaves a route. The front of each sign faces the traveller going the way the text names; the back faces the other way. Names are working names until the towns have display names; change them here and re-run the tool.",
+  "route_labels": {
+    "route_01_pallet_to_brock": "Route 1",
+    "route_02_brock_to_misty": "Route 2",
+    "route_03_misty_to_surge": "Route 3",
+    "route_04_surge_to_erika": "Route 4",
+    "route_05_erika_to_koga": "Route 5",
+    "route_06_koga_to_sabrina": "Route 6",
+    "route_07_sabrina_to_blaine": "Route 7",
+    "route_08_blaine_to_giovanni": "Route 8",
+    "victory_road": "Victory Road"
+  },
+  "names": {
+    "hometown": "Pallet",
+    "gym1_town": "Brock's town",
+    "gym2_town": "Misty's town",
+    "gym3_town": "Surge's town",
+    "gym4_town": "Erika's town",
+    "gym5_town": "Koga's town",
+    "gym6_town": "Sabrina's city",
+    "gym7_town": "Blaine's town",
+    "gym8_town": "Giovanni's town",
+    "league": "Pokemon League",
+    "tableland_stop": "Tableland stop",
+    "merian_hut": "Merian hut",
+    "gorge_hamlet": "Gorge hamlet",
+    "rift_rim_stop": "Rift rim post",
+    "rift_dig_camp": "Rift dig camp",
+    "route1_mansion": "the old manor"
+  },
+  "sign_wood": "spruce",
+  "offset_blocks": 4,
+  "why_offset": "beside the road, on the traveller's right, never on it",
+  "junctions": [
+    {
+      "route": "route_01_pallet_to_brock",
+      "at": [
+        1466,
+        5036
+      ],
+      "to": "route1_mansion",
+      "why": "the forest's mansion spur leaves Route 1 here (tools/maze_forest.py spur_mansion)"
+    }
+  ],
+  "no_sign": {
+    "displaced_city": "hidden on purpose: the waystone inside is the reward for finding it once"
+  }
+}

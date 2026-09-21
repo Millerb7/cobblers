@@ -150,17 +150,39 @@ def split_fills(lines):
     return out
 
 
+WRITES = re.compile(r"\s*(fill|setblock|place|clone|summon|data\s+(modify|merge|remove)\s+block)\b")
+
+
+def releases_mid_run(lines):
+    """True when the function releases force-loaded chunks and then writes again.
+
+    A `forceload remove` does not unload a chunk at once, and a `forceload add` straight after it for an
+    overlapping box finds the chunk half way out: `/place template` refuses a box with any chunk not loaded,
+    and says so only in its own return. tools/place_town.py held each building's box and released it before
+    the next, and on 2026-09-21 Sunset West's Mart, whose box overlapped the Centre's, failed to land on one
+    rebuild of two (6 of 1,731 blocks). A function is held whole instead."""
+    released = False
+    for raw in lines:
+        line = raw.strip()
+        if re.match(r"forceload\s+remove\b", line):
+            released = True
+        elif released and WRITES.match(line):
+            return True
+    return False
+
+
 def ensure_loaded(lines):
     """The same function, holding every chunk it writes for its whole run.
 
-    A function that already force-loads what it writes is returned unchanged. Otherwise its own forceload
+    A function that already force-loads what it writes, and never releases a chunk before a later write, is
+    returned unchanged. Otherwise its own forceload
     lines are dropped (a release half way through, as the hometown function had, unloads chunks a later
     write needs) and replaced by one set of `forceload add` commands before the first command and the
     matching `forceload remove` after the last, covering every chunk it writes or asked for: one per run of
     chunks along a chunk row, so each stays far under the 256-chunk limit. Fills over the block limit are split
     first (split_fills)."""
     lines = split_fills(lines)
-    if not unloaded_writes(lines):
+    if not unloaded_writes(lines) and not releases_mid_run(lines):
         return list(lines)
     chunks = written_chunks(lines)
     rows = {}

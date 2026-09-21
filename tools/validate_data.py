@@ -309,7 +309,11 @@ def check_schema(ctx: Context):
                 rep.error("schema", "record %d is not an object" % idx, file=f.rel)
                 continue
             line = f.line_of_id(rec.get("id"))
-            for field in required:
+            need = required
+            if coll_key == "placements" and rec.get("kind") == "earthwork":
+                # an earthwork is authored commands (a wall, a railing), not a template at a position
+                need = ["id", "cell", "commands"]
+            for field in need:
                 if field not in rec or rec[field] is None:
                     rep.error(
                         "schema",
@@ -2683,6 +2687,19 @@ def check_spawn_blocks(ctx: Context):
     elif isinstance(doc, dict):
         for p in doc.get("placements") or []:
             if not isinstance(p, dict):
+                continue
+            if p.get("kind") == "earthwork":
+                # its blocks are the ones its commands name: each must be no spawn condition, or be allowed
+                import re as _re
+                trig = set(json.loads((ctx.data_dir / "spawn_blocks.json").read_text(encoding="utf-8")).get("blocks") or [])
+                pol = json.loads((ctx.data_dir / "spawn_block_policy.json").read_text(encoding="utf-8"))
+                ok = {b for w in pol.get("whitelist") or [] for b in w.get("blocks") or []}
+                for cmd in p.get("commands") or []:
+                    m = _re.match(r"(?:fill -?\d+ -?\d+ -?\d+ -?\d+ -?\d+ -?\d+|setblock -?\d+ -?\d+ -?\d+) (\S+)", cmd.strip())
+                    blk = m.group(1).split("[")[0] if m else None
+                    if blk in trig and blk not in ok:
+                        rep.error(C, 'earthwork "%s" places %s, which decides spawns and nothing allows it'
+                                  % (p.get("id"), blk), file="data/placements.json", where=p.get("id"))
                 continue
             if p.get("pack_template") and not p.get("file"):
                 # a donor structure placed by resource id from an installed pack: the template is never in the

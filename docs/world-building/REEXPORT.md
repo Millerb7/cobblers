@@ -23,43 +23,92 @@ world before the dry run passes.
 
 Ores and underground water pockets are re-rolled by WorldPainter on every export; they are not authored.
 
+### Status, 2026-09-21
+
+**Rehearsed end to end on a fresh staging export, and clean by result** (EXP-026). EXP-024 (2026-09-17) was reported
+as a proof and was a proof that the commands run: most of its checks were command checks, and the builds they passed
+were missing 13,586 of Route 1's 46,052 trees and 165 cavern roof columns. Since then every function holds its own
+chunks, every step has a result check, and the whole sequence is driven by one tool, `tools/reapply.py`.
+
+Its first staging run (`cobblers-dryrun2`) stopped and failed audit on real defects the disposable world had hidden:
+trees and flowers standing on streets, and gravel falling from the cavern roof. Both are fixed at the source. The
+second, on a fresh export (`cobblers-dryrun3`), ran every step without a stop, verified 24 of 24 places at 0 floor
+gaps, and audited clean: cavern roof 40,000 of 40,000, forest 46,051 of 46,052, world tree 1,380 of 1,380, islet
+2,139 of 2,139, all 23 planned places plan-clean. **The live re-export has not been run.**
+
+### Which earlier "verified" results were command-checked
+
+A **result check** compares the world with what the step should have built, everywhere the step builds. A
+**command check** confirms the command ran, or samples a point, or reads a count with no expected number.
+
+| Step | EXP-024 said | What it actually checked | Kind | What it missed |
+| --- | --- | --- | --- | --- |
+| R1 | both packs enabled | `/datapack list enabled` | config, adequate | nothing |
+| R2 cavern | ok | air, floor and biome at sampled points | command (sample) | 165 roof-cap columns open; the roof was never read |
+| R3 world tree | 394 blocks, top y512 | one column, (2016, 2280) | command (sample) | anything off that column; its "crown top" check named a block the tree never reaches |
+| R4 grove | 33,545 oak logs | a count in the grove box | command (no expectation) | any shortfall: there was no number to compare with |
+| R5 elders | ok | 3 of 48 sites sampled | command (sample) | the other 45 |
+| R6 maze forest | 157 of 158 corridor points clear | eye-height clearance, the sapling | result, of the wrong property | 13,586 missing trees: a missing tree makes a corridor clearer, so the check passed more easily |
+| R7 hometown | 0 gaps in 1,670 columns | floor support at each building's corners | result, seating only | roads, paving, whether each building stands |
+| R8 gym-town prep | ok | one plaza block | command (sample) | Brock's streets laid a block off their plan (found 2026-09-21) |
+| R9 Brock's gym | 2,712 blocks, substitutions exact | block and block-entity counts in its box | result | nothing found since |
+| R10 islet | 400 columns, y63-70 | column tops against `data/towns.json` | result | nothing found since |
+| (BUILT.md) cavern | "1,940,550 blocks removed" | the excavation function's own count | command | whether they were removed |
+
+The town and trader checks added since (`town_audit.py`, `traders.py verify`) are result checks from the start.
+
 ### Re-applied, in order
 
 Every step takes its ground from the source root (the out-of-repo heightmap), never from the world being rebuilt:
 `--surface-world` is refused by every placement tool (CLAUDE.md, `tests/test_ground_rule.py`). Regenerate the
-gitignored derived inputs first: they are not in the repository.
+gitignored derived inputs first: they are not in the repository. Every generated function holds the chunks it writes
+and splits fills over the block limit; `python tools/function_limits.py build` must report 0 problems before
+anything is installed.
 
-| # | Step | Command | Check |
+| # | Step | Command | Result check |
 | --- | --- | --- | --- |
-| R0 | Derived inputs | `python tools/critical_legs.py --source-root <root>`; `python tools/paint_maps.py` if the paint changed | `derived/routes/critical_legs.json` and `build/paint/manifest.json` exist |
+| R0 | Derived inputs | `python tools/critical_legs.py --source-root <root>`; `python tools/paint_maps.py` if the paint changed | the files exist (inputs, not results) |
 | R1 | World datapacks back into the world folder | copy `modpack/datapacks/cobblers_height` and the generated `build/datapacks/cobblers_worldtree` into `<world>/datapacks/` | `/datapack list enabled` names both. **cobblers_height raises the build limit to y575; without it the world tree's crown (y457-535) will not build** |
-| R2 | Displaced City cavern | `python tools/cavern_plan.py --source-root <root> --install <server>/datapacks`, then `/function cobblers:cavern/00_seal`, `05_reset`, `10_excavate`, `20_surfaces`, `30_trees`, `40_light`, `50_tunnel`, `70_drain`, then `15_cap` last (water seeps until the drain runs), then `60_biome` | `python tools/build_audit.py --world <stopped copy> --only cavern`: grass at the planned floor in 98% of the 40,000 columns, the roof cap solid in all of them, the interior open; and `execute if biome <inside> minecraft:cherry_grove` |
-| R3 | World tree | `python tools/world_tree.py --source-root <root>`, install, `/function cobblers:worldtree/00_tree` … `03_tree`, then `90_foundation` | `python tools/build_audit.py --world <stopped copy> --only world_tree`: the trunk and crown columns match the functions block for block, and the crown's top block, at (2044, 535, 2282), is there. (This row used to check (2016, 535, 2280), a block the tree never reaches: the crown's top is 28 blocks east of the trunk) |
-| R4 | Foothill grove: giants and elders | `python tools/tree_grove.py --source-root <root> --site 2016,2272 --id foothill_woods`, then its placement function; `--augment foothill_woods` for the elders | 7 giants and 4 elders in the grove box ([`BUILT.md`](BUILT.md)) |
-| R5 | The 48 elders | `python tools/elder_trees.py --source-root <root>`, then `build/elders/elders.mcfunction` | the run report lists 48 placed; the tool re-picks sites, so compare with `derived/sites/elder_trees.json` from the previous run and record any that moved |
-| R6 | Route 1 maze forest and the world-tree sapling | `python tools/maze_forest.py --source-root <root> --install <server>/datapacks`, then `/function cobblers:route1/tile_*` (16 tiles) | `python tools/build_audit.py --world <stopped copy> --only forest`: a log where every placed tree puts its trunk, 98% or better (46,051 of 46,052 on 2026-09-21); corridor clearance at eye height; the sapling's trunk at (1380, 4628) |
-| R7 | Hometown | `python tools/place_town.py hometown --source-root <root> --install <server>/datapacks`, `/reload`, `/function cobblers:towns/hometown` | `python tools/place_town.py hometown --verify --server-dir <server>`: 0 gaps |
-| R8 | Gym towns and the League (gym1, gym2, gym5-gym8, league) | `python tools/rematerial.py` (the re-coloured Centres and Marts), then per town `python tools/town_plan.py <town> --source-root <root>` and its prep function (each force-loads its own ground, levels the donor lots, paves Sabrina's market and lights the lamps); then `python tools/place_town.py <town> --source-root <root> --install <server>/datapacks`, `/reload`, `/function cobblers:towns/<town>`. The town pack carries its own Centre and Mart templates and the dried copies of underwater houses. No traders in gym5-gym8 or the League until the badge-gated stock lands | `python tools/town_audit.py <town> --world <stopped copy> --server-dir <server>`: every road cell paved as planned, no plaza paving outside the plan, every lamp lit, every building standing, no spawn-block finding |
-| R9 | Pack donors: Brock's and Misty's gyms, gym5-gym8, the League, Sabrina's observatory, dojo and department store | `python tools/place_donor.py function --server-dir <server>`, install, `/function cobblers:structures/place_<id>` for each. Each force-loads its box, places 20 ticks later, checks a block of the template 20 ticks after that and places again if it is missing, then releases the box: allow 3 seconds before saving. Two of twenty placements failed in full rebuilds before the check was added, cause not found | the same `town_audit.py` run: every donor at 95% of its template or better (the League 159,486 of 159,487 on 2026-09-21) |
-| R10 | Relic Island islet | `python tools/islet.py --source-root <root> --apply --server <server>` under the coordination lock | `python tools/build_audit.py --world <stopped copy> --only islet`: the dry core matches the islet function block for block with no water on it; and `data/towns.json` `built_ground`, checked by the validator's `town-ground` |
+| R2 | Displaced City cavern | `python tools/cavern_plan.py --source-root <root> --install <server>/datapacks`, then `/function cobblers:cavern/00_seal`, `05_reset`, `10_excavate`, `20_surfaces`, `30_trees`, `40_light`, `50_tunnel`, `70_drain`, then `15_cap` last (water seeps until the drain runs), then `60_biome` | `python tools/build_audit.py --world <stopped copy> --only cavern`: every one of 40,000 columns read; grass at the planned floor in 98%, the 4-block roof cap solid in 100%, the interior open in 99%. Passed 2026-09-21: 39,996 / 40,000 / 40,000. Biome: `execute if biome <inside> minecraft:cherry_grove` |
+| R3 | World tree | `python tools/world_tree.py --source-root <root>`, install, `/function cobblers:worldtree/00_tree` … `03_tree`, then `90_foundation` | `python tools/build_audit.py --world <stopped copy> --only world_tree`: 13 trunk and crown columns replayed from the tree's own functions and compared block by block (99%), and the crown's highest block, (2044, 535, 2282), present. Passed 2026-09-21: 1,380 of 1,380 |
+| R4 | Foothill grove: giants and elders | `python tools/tree_grove.py --source-root <root> --site 2016,2272 --id foothill_woods`, then its placement function; `--augment foothill_woods` for the elders | **no result check yet**: a count of logs in the grove box, with no expected number. Add a replay check before relying on it |
+| R5 | The 48 elders | `python tools/elder_trees.py --source-root <root>`, then `build/elders/elders.mcfunction` | **no result check yet**: the run report lists 48 placed, which is the command's count. The tool re-picks sites, so compare with `derived/sites/elder_trees.json` from the previous run |
+| R6 | Route 1 maze forest and the world-tree sapling | `python tools/maze_forest.py --source-root <root> --install <server>/datapacks`, then `/function cobblers:route1/tile_*` (16 tiles) | `python tools/build_audit.py --world <stopped copy> --only forest`: a log where each of the 46,052 placed trees puts its trunk, 98% or better. Passed 2026-09-21: 46,051 (the one is under a lantern post's fence). Corridor clearance at eye height is a separate check of the maze, not of the build |
+| R7 | Hometown | `python tools/place_town.py hometown --source-root <root> --install <server>/datapacks`, `/reload`, `/function cobblers:towns/hometown` | `python tools/place_town.py hometown --verify --server-dir <server>`: 0 gaps. Seating only: the hometown has roads, not a town plan, so `town_audit.py`'s plan check does not cover it yet |
+| R8 | Planned towns and places, 24: gym1-gym8 (Surge's included: the export carries its pad), the League, the Route 1 mansion, the Merian hut, the gorge hamlet, the Tableland stop, the Rift rim post, the Rift dig camp, the Scar, Northlight, the Mining Town, the tea town, Viltri Light, the jungle ruins, Sunset West, Relic Island, the Displaced City. The Displaced City after the cavern step and Relic Island after the islet step: their ground is the cavern floor and the islet (`tools/ground.py` `for_settlement`), not the heightmap | `python tools/rematerial.py`, then per place `python tools/town_plan.py <id> --source-root <root>` and its prep function (force-loads its own ground, levels donor lots, paves open squares, lights the lamps); then `python tools/place_town.py <id> --source-root <root> --install <server>/datapacks`, `/reload`, `/function cobblers:towns/<id>` | `python tools/town_audit.py <id> --world <stopped copy> --server-dir <server>`: every road cell paved as planned, no plaza paving outside the plan, every lamp lit, every building (houses, services, earthworks) at 95% of what it should be, no ground in its rooms, and no spawn-deciding block a template writes that the policy does not allow. Passed 2026-09-21 for all 23 on the staging export `cobblers-dryrun3` |
+| R15 | Route signposts (runs after R8) | `python tools/signposts.py function --source-root <root>` (in `reapply.py prepare`), install `cobblers_signs`, `/function cobblers:signs/place` | `python tools/signposts.py verify --world <stopped copy>`: every post's fence and sign where it should be and both faces saying what they should. 51 of 51 on the disposable world and on `cobblers-dryrun3` (2026-09-21) |
+| R9 | Pack donors, 32: every gym, the League, Sabrina's observatory, dojo and department store, the Tableland lookout, the dig camp's excavation and tents, Northlight's field station, the Mining Town's assay office, the tea house and the six jungle ruins | `python tools/place_donor.py function --server-dir <server>`, install, `/function cobblers:structures/place_<id>` for each, then wait 3 seconds before saving (see "Pack placements that fail" below) | the same `town_audit.py` run: every donor at 95% of its template or better, with its own substitutions and removals applied (the League 159,470 of 159,471 on 2026-09-21) |
+| R10 | Relic Island islet | `python tools/islet.py --source-root <root> --apply --server <server>` under the coordination lock | `python tools/build_audit.py --world <stopped copy> --only islet`: the 700-column dry core replayed from the islet function block for block, with no water standing on it. Passed 2026-09-21: 4,450 of 4,450 |
 | R11 | Habitat Blocks | `python tools/habitat_blocks.py function`, install, `/function cobblers:habitats/place` with no player near them, then **restart the server**, and only then verify. See the three rules below | `python tools/habitat_blocks.py verify --rcon <server>` **after the restart** |
-| R12 | Waystones | re-registered by R7; clear stale entries from `waystones.dat` before the first boot | the hometown waystone is claimable and no duplicate appears |
-| R13 | Spawn pools and suppression (datapacks, not blocks) | regenerate if routes or the mod set changed: `python tools/compile_spawns.py`; `python tools/suppress_inherited_spawns.py --server <server> --world <world>` (grid 16) | EXP-012: `/checkspawn` on a corridor shows the authored roster only |
-| R14 | Town traders | `python tools/traders.py function --server-dir <server>`, install `build/datapacks/cobblers_vendors`, `/reload`, then `/function cobblers:towns/vendors_<settlement>` per town and wait 8 seconds (it runs over 140 ticks: load, summon, de-duplicate, release). Safe to re-run: it converges on one trader per stall. Never summon a trader by hand | `python tools/traders.py verify --rcon <server>`: every trader `1 tagged, 1 on its spot, 0 untagged copies` |
+| R12 | Waystones | re-registered by R7 and R8; clear stale entries from `waystones.dat` before the first boot | the hometown waystone is claimable and no duplicate appears (an in-game check; not automated) |
+| R13 | Spawn pools, suppression, spawn-free zones (datapacks, not blocks) | regenerate if routes or the mod set changed: `python tools/compile_spawns.py`; `python tools/suppress_inherited_spawns.py --server <server> --world <world> --subregions` (grid 16) | no compiled pool detail reaches a spawn-free zone, and every column of each zone is under the suppression boxes (`tests/test_spawn_free_zones.py` on the compiled pack). In game: EXP-012's `/checkspawn` on a corridor shows the authored roster only; nothing spawns on the League plateau (not yet tested with a player) |
+| R14 | Town traders | `python tools/traders.py function --server-dir <server>`, install `build/datapacks/cobblers_vendors`, `/reload`, then `/function cobblers:towns/vendors_<settlement>` per town and wait 8 seconds. Safe to re-run. Never summon a trader by hand. Regional stock only, and none in gym4-gym8, the League or the batch 2 places, until the badge-gated stock lands | `python tools/traders.py verify --rcon <server>`: every trader `1 tagged, 1 on its spot, 0 untagged copies`, withdrawn ones absent, and no withheld item for sale |
 
-#### What changed on 2026-09-21: the functions R2 to R10 run
+**The order the driver runs:** R2, R3, R4, R5, R6, then **R10 before R7 and R8** (Relic Island's house stands on the
+islet), then R7, R8 (the Displaced City and Relic Island last among the places), R15, R9, R14, and a verify pass.
+`tools/reapply.py plan` prints it. After the run, `tools/reapply.py audit` runs `build_audit.py` and `town_audit.py`
+for every place on the stopped world; any mismatch is a failed step.
 
-Every generated function now holds the chunks it writes (`tools/function_limits.py` `ensure_loaded`). Before, 39 of
-72 did not: they wrote into chunks nothing had loaded, which does nothing and reports nothing, and worked only where
-something else happened to hold the ground. The cavern, world tree, Route 1 and islet functions were regenerated
-with the fix, and each build now has a result check in `tools/build_audit.py`. Regenerating changed almost nothing
-they build (3 of 40,000 cavern roof columns a block lower, 22 seal columns a block lower, 1 to 5 commands per forest
-tile, all from ground now coming from the heightmap); what changed is that all of it lands. On the disposable world
-the builds made with the old functions were missing 13,586 of Route 1's 46,052 trees and 165 columns of the
-cavern's roof cap. Re-applied from the regenerated functions, every check passes.
+### Pack placements that fail
 
-So after R2 to R10, run `python tools/build_audit.py --world <stopped copy>` and `python tools/town_audit.py --all
---world <stopped copy> --server-dir <server>`, and treat any mismatch as a failed step.
+**What was seen.** In two full rebuilds of every town on the disposable world, 2 of 20 pack-donor placements did not
+land: Koga's gym in one run, Blaine's in the next, each with nothing placed at all. Run on their own, 0 of 10
+failed, and 8 back-to-back runs of the exact town-then-gym sequence all placed. The cause was not found.
+
+**What the function does now.** Each donor's function force-loads its box, waits 20 ticks, places the template and
+its substitutions, waits 20 ticks, and then checks one block of the template chosen so the ground cannot already hold
+it (a battle-position marker, a sea lantern, stone bricks, never dirt or stone). If that block is missing it places
+the template once more, then releases the box. In the rebuild after this change, every donor landed.
+
+**If a placement still fails in the live run.** The retry happens once, in the same run. Nothing in game reports a
+second failure, so the audit is what finds it: `town_audit.py` on the stopped world shows that donor far under 95%,
+or with ground in its rooms.
+1. Run that one donor's function again on its own (`/function cobblers:structures/place_<id>`): it is idempotent,
+   placing the template over whatever is there and substituting again.
+2. Save, stop, and audit again.
+3. If it fails a second time on its own, that is not the failure seen so far (which never repeated in isolation).
+   Stop the run, leave the retired world untouched, and treat it as a new problem to diagnose before continuing.
+   The retired world folder is a complete, bootable copy, so rolling back loses nothing.
 
 #### Habitat Blocks: three rules R11 depends on
 
@@ -95,57 +144,66 @@ suppression box `r01_b0080` and a control block in open forest outside every box
 Before touching the live world:
 1. Export to a staging directory outside the server (`tools/reexport.py --out-dir <staging> --name <name>`).
 2. Boot it as a disposable universe (`--universe <staging> --world <name>`), under the coordination lock.
-3. Run R0-R13 against it and record every check.
+3. Run R0-R14 against it and record every result check, not just that the commands ran.
 4. Only then retire the live world and repeat on the real export.
 
-## The next live re-export: plan (awaiting approval)
+## The next live re-export: runbook (ready; the owner starts it)
 
-Everything below is proven on staging (EXP-024). Times are from that run on this machine.
+Rehearsed twice on fresh staging exports on 2026-09-21 (EXP-026); the second run is the timing below. Every command
+is one line to type; the driver stops itself at a checkpoint and says what to re-run.
 
-**What it delivers.** The three pads land in the world (the Scar y280, the Frostpeak shrine y310, Surge's shelf
-y174.4), so Surge's town site and the two flats become buildable; the braided Route 1 forest and Brock's gym stop
-being one machine failure from unrecoverable; and every authored thing is rebuilt from committed data.
+**What it delivers.** The three pads land in the world, so Surge's town and the Scar are built with everything else;
+all 23 planned places, 32 pack donors, the cavern, the world tree, the grove, the elders, Route 1's forest and the
+islet are rebuilt from committed data; and every one of them is audited by result before anyone logs in.
 
-**Before the day**
-1. Decide the snapshot to retire to and free the disk for it (the world is about 2.5 GiB; the staging copy can be
-   deleted once the live one is verified).
-2. `python tools/heightmap_check.py` on the canonical heightmap: it must report 0 tears.
-3. Regenerate the paint if it has changed, and `python tools/critical_legs.py`.
-4. Confirm nobody is playing and take the coordination lock.
+**Before the day** (none of this touches the server)
+1. Free about 3 GiB for the retired world.
+2. `python tools/heightmap_check.py C:/Users/wnd/Documents/land_8k_16_rescaled_b145_pads.png`: 0 tears. Regenerate the paint if it changed (`tools/paint_maps.py`).
+3. `python tools/reapply.py prepare --source-root C:/Users/wnd/Documents --server-dir C:/Users/wnd/Documents/github/cobblers-server`
+   — 4 minutes; it must end `216 function file(s) checked, 0 with problems`.
+4. `python tools/reapply.py plan` to see the steps and the 23 places.
 
-**The run** (about 90 minutes, most of it unattended)
+**The run** (about 35 minutes to an audited world, then Distant Horizons)
 
-| # | Step | Time |
+| # | Step | Measured |
 | --- | --- | --- |
-| 1 | Stop the server; retire the world and the `.world` file to `cobblers-server-retired/<date>-pre-<name>/` | 5 min |
-| 2 | `tools/reexport.py --old-world <retired> --out-dir <server dir> --name cobblers-10240 --paint build/paint/manifest.json` (the output directory must exist) | 20-40 min |
-| 3 | Check the export: 484 region files, `seed_match: true`, spawn (1461, 5306), border 10,240 | 2 min |
-| 4 | Phase A with the server stopped: regenerate every datapack against the new world (R0-R9 of the procedure above) | 5 min |
-| 5 | Install the packs, including `cobblers_height` and `cobblers_worldtree` **into the world folder** | 2 min |
-| 6 | Boot, then run R2-R10 in order, checking each | 15 min |
-| 7 | `tools/place_town.py hometown --verify`, `tools/place_donor.py verify`, and the read-only checks from EXP-024 | 10 min |
-| 8 | Distant Horizons pregen over the border, then retire the client LOD cache | 10-60 min |
-| 9 | A flight: the pads, Surge's shelf, the forest corridors, the gym, the cavern | you |
+| 1 | Confirm nobody is playing; take the coordination lock; stop the server | 2 min |
+| 2 | Retire the world and the `.world` file to `cobblers-server-retired/<date>-pre-reexport/` | 3 min |
+| 3 | `python tools/reexport.py --source-root C:/Users/wnd/Documents --old-world <retired world> --out-dir C:/Users/wnd/Documents/github/cobblers-server --name cobblers-10240 --world-file C:/Users/wnd/Documents/cobblers-10240.world --paint build/paint/manifest.json` | 14 min |
+| 4 | Check: 484 region files, `seed_match: true` in its report | 1 min |
+| 5 | `python tools/reapply.py install --server-dir <server> --world-dir <server>/cobblers-10240` (server stopped): the packs, `cobblers_height` and `cobblers_worldtree` into the world folder, and the disposable-only restore pack removed | 1 min |
+| 6 | Boot the server | 30 s |
+| 7 | `python tools/reapply.py run --server-dir <server>` | 4.5 min |
+| 8 | Stop the server; copy the world folder (the audit tools refuse to read the live save) | 3 min |
+| 9 | `python tools/reapply.py audit --server-dir <server> --world <the copy>` | 2 min |
+| 10 | Boot; Distant Horizons pregen over the border; retire the client LOD cache | 10-60 min |
+| 11 | The audit tour (`docs/world-building/AUDIT_TOUR.md`) | you |
 
-**Checkpoints that stop the run**
-- The export reports `seed_match: false`, or fewer than 484 regions.
-- The world tree's crown does not reach above y319 (means `cobblers_height` is not in the world folder).
-- `place_town --verify` reports any gap.
-- `place_donor verify` reports a substitution mismatch.
+**If the run stops.** It names the step and why. Re-run that step alone once (`--only R8`), then continue
+(`--from R9`). Every step is idempotent. A pack donor that fails twice alone is a new problem: stop and diagnose (see
+"Pack placements that fail").
 
-**Rollback.** Nothing is deleted: the retired world folder is a complete, bootable copy. If a step fails, stop the
-server, move the new world aside and put the retired one back.
+**If the audit is not clean.** Re-run the named place's step on its own (`--only R8` rebuilds all places;
+`/function cobblers:towns/<id>` and `cobblers:reapply/prep_<id>` rebuild one), stop, copy, and audit again. If it
+does not clear, roll back.
+
+**Rollback.** Nothing is deleted: the retired folder is a complete, bootable world. Stop, move the new world aside, put
+the retired one back.
+
+**Not in the run, on purpose**
+- Spawn pools and suppression (R13): none are installed in the live world today; installing them is its own decision.
+- Habitat Blocks (R11): 0 recorded. Waystones (R12): a fresh export has no stale `waystones.dat`.
+- No traders beyond Brock's and Misty's regional stock (R14) until the badge-gated stock lands.
 
 **Known costs of doing it**
 - Ore and underground-water placement is re-rolled, so any ore survey is stale afterwards.
-- Elder and grove sites are re-picked deterministically from the new world; individual trees may move.
-- Player inventories and Pokédex data carry in `playerdata/`, but anything a player built by hand is lost. Nobody
-  has built anything by hand yet.
+- Elder and grove sites are re-picked deterministically; individual trees may move.
+- Player inventories and Pokédex data carry in `playerdata/`; anything built by hand is lost (nothing has been).
 - The Distant Horizons client cache has to be cleared, or players see the old terrain at distance.
 
 ## 2026-09-17: dry run of the whole procedure on a staging export
 
-**Status: proven on staging; the live world is untouched.** Full record: `experiments/EXP-024-reexport-dry-run/`.
+**Status: the commands ran on staging; the live world is untouched.** Full record: `experiments/EXP-024-reexport-dry-run/`. **Corrected 2026-09-21:** most of the checks below were command checks, and the builds they passed were missing 13,586 trees and 165 roof columns; see "Which earlier 'verified' results were command-checked" at the top.
 
 | Step | Result |
 | --- | --- |

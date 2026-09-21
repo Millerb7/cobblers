@@ -145,6 +145,44 @@ def poisson_positions(density, spacing, rng, tries=30):
     return pts
 
 
+def town_mask(n, x0, z0, placements=None):
+    """(n x n bool, keep-clear distance) of the cavern the Displaced City builds on, from its plan in
+    data/placements.json: every street buffered by half its width, the lot setback, the lot depth and the plan's
+    keep-clear distance, and the square and every anchor inside the cavern buffered by the keep-clear distance.
+
+    The trees were planted before the town was drawn, and on the first layout they took the benches the floor was
+    graded for, so the town came out five houses long (2026-09-21). The town is the point of this cavern: the
+    trees yield to it, and grow on the slopes between the benches and in the dark margins."""
+    doc = placements or json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    plan = ((doc.get("settlements") or {}).get("displaced_city") or {}).get("plan") or {}
+    mask = np.zeros((n, n), bool)
+    clear = int((plan.get("trees") or {}).get("keep_clear", 5))
+    lp = plan.get("house_lots") or {}
+    along = set(lp.get("along") or [])
+    depth = max(lp.get("size", [12, 14])) if along else 0
+    zz, xx = np.mgrid[0:n, 0:n]
+    for st in plan.get("streets") or []:
+        reach = st["width"] / 2 + clear + (lp.get("setback", 3) + depth if st["id"] in along else 0)
+        pts = st["polyline"]
+        r_ = int(math.ceil(reach))
+        for (ax, az), (bx, bz) in zip(pts, pts[1:]):
+            L = max(math.hypot(bx - ax, bz - az), 1e-9)
+            for k in range(int(L) + 1):
+                px, pz = ax + (bx - ax) * k / L - x0, az + (bz - az) * k / L - z0
+                i0, i1 = max(0, int(px) - r_), min(n, int(px) + r_ + 1)
+                j0, j1 = max(0, int(pz) - r_), min(n, int(pz) + r_ + 1)
+                if i0 >= i1 or j0 >= j1:
+                    continue
+                mask[j0:j1, i0:i1] |= (xx[j0:j1, i0:i1] - px) ** 2 + (zz[j0:j1, i0:i1] - pz) ** 2 <= reach * reach
+    rects = [a["rect"] for a in plan.get("anchors") or []] + ([plan["plaza"]["rect"]] if plan.get("plaza") else [])
+    for x_a, z_a, x_b, z_b in rects:
+        i0, i1 = max(0, x_a - x0 - clear), min(n, x_b - x0 + clear + 1)
+        j0, j1 = max(0, z_a - z0 - clear), min(n, z_b - z0 + clear + 1)
+        if i0 < i1 and j0 < j1:
+            mask[j0:j1, i0:i1] = True
+    return mask, clear
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
@@ -216,13 +254,16 @@ def main(argv=None):
     # reaches above the ground (the surface over this footprint runs y96-135), and "fill stone replace water" does
     # not know the difference between a buried pocket and a river: it turned 900 columns of the Glacial Tear creek
     # into stone at y98-100. Stop 4 blocks under the real ground, every column.
-    cmds = ["# seal underground water and lava, from y%d to 4 under the ground, per column" % seal_lo]
+    cmds = ["# seal underground water, lava and falling blocks, from y%d to 4 under the ground, per column" % seal_lo]
     # The whole rock column, not just 10 blocks over the roof. Stopping at ceiling+10 left pockets higher in the
     # rock, and natural voids let them drain into the chamber: 1,458 fluid cells inside it on the first rebuild.
     # `top` is the top SOLID block, so for a creek column it is the BED (y95-97), not the water surface (y98-100)
     # -- stopping 4 under it still leaves the Glacial Tear alone, which is what narrowing the seal was protecting.
     seal_top = top - 4
-    for fluid in ("minecraft:water", "minecraft:lava"):
+    # Falling blocks too. A fresh export re-rolls gravel pockets through the rock, and the ones at the roof line fall
+    # the moment the excavation or a later build updates them: on the staging run of 2026-09-21 they left 147 roof-cap
+    # columns open and 75 lumps of gravel on the Displaced City's streets. Stone in their place holds.
+    for fluid in ("minecraft:water", "minecraft:lava", "minecraft:gravel", "minecraft:sand", "minecraft:red_sand"):
         for j in range(n):
             i = 0
             while i < n:
@@ -312,6 +353,10 @@ def main(argv=None):
     density[ridge_d < 10] = 0.0
     density[:14, :14] = 0.0
     density[(ceiling - floor) < 16] = 0.0                               # no crowns in the low ceiling under the creek
+    town, _clear = town_mask(n, x0, z0)
+    density[town] = 0.0                                                 # the trees yield to the town
+    report["town_ground_kept_clear"] = {"columns": int(town.sum()), "keep_clear": _clear,
+                                        "from": "data/placements.json displaced_city plan"}
     weights = {c["group"]: c["core"] for c in fol["classes"]}
     spacing = {c["group"]: c["spacing"] for c in fol["classes"]}
     trees, cmds = [], ["# cherry vale trees from the foliage object library"]
@@ -363,6 +408,11 @@ def main(argv=None):
                        for j in range(len(nodes)) if j != i and degree[j] < 2
                        and 10 <= math.hypot(nodes[j][0] - nodes[i][0], nodes[j][1] - nodes[i][1]) <= 26
                        and tuple(sorted((i, j))) not in pairs))
+        # no string over the town: a chain hung between two trees either side of a street runs through its roofs
+        cand = [(d, j) for d, j in cand if not any(
+            town[min(n - 1, max(0, int(round(nodes[i][1] + (nodes[j][1] - nodes[i][1]) * q / 20)) - z0)),
+                 min(n - 1, max(0, int(round(nodes[i][0] + (nodes[j][0] - nodes[i][0]) * q / 20)) - x0))]
+            for q in range(21))]
         for d, j in cand[:2 - degree[i]]:
             pairs.append(tuple(sorted((i, j))))
             degree[i] += 1

@@ -49,6 +49,27 @@ PLANTS = ["minecraft:short_grass", "minecraft:tall_grass", "minecraft:fern", "mi
           "minecraft:azalea", "minecraft:flowering_azalea"]
 
 
+# Blocks in vanilla's #minecraft:replaceable tag (1.21.1) and the other non-floor blocks a template's ground layer
+# holds. They are not floor: the verify reads a corner as missing its floor when its block is replaceable, so a
+# corner standing on one of these reported a gap that was not there (Northlight's snowy houses' snow layers and the
+# tea town's bamboo-house ferns, 80 false gaps on 2026-09-21). Corners are chosen from floor blocks only.
+NOT_FLOOR = {"minecraft:" + b for b in (
+    "air", "cave_air", "void_air", "structure_void", "jigsaw", "water", "lava", "short_grass", "tall_grass", "fern",
+    "large_fern", "dead_bush", "seagrass", "tall_seagrass", "fire", "soul_fire", "snow", "vine", "glow_lichen", "light",
+    "crimson_roots", "warped_roots", "nether_sprouts", "hanging_roots", "bush", "leaf_litter",
+    # crops and flowers stand on the floor rather than being it; a template's wheat also pops off dry farmland
+    "wheat", "carrots", "potatoes", "beetroots", "sugar_cane", "sweet_berry_bush", "dandelion", "poppy", "blue_orchid",
+    "allium", "azure_bluet", "red_tulip", "orange_tulip", "white_tulip", "pink_tulip", "oxeye_daisy", "cornflower",
+    "lily_of_the_valley", "torchflower", "sunflower", "lilac", "rose_bush", "peony", "pink_petals", "torch", "wall_torch",
+    "rail", "redstone_wire")}
+
+
+def is_floor(name):
+    """True when a template block at the ground layer is floor a verify can stand on, not a plant, a snow layer,
+    a carpet or anything else in #minecraft:replaceable."""
+    return name not in NOT_FLOOR and not name.endswith(("_carpet", "_sapling", "_button", "_pressure_plate"))
+
+
 def rotate(x, z, rot):
     return {"none": (x, z), "clockwise_90": (-z, x), "180": (-x, -z), "counterclockwise_90": (z, -x)}[rot]
 
@@ -94,8 +115,7 @@ def template_info(path):
         nm = pal[b["state"]]["Name"]
         if y <= grade and nm not in ("minecraft:air", "minecraft:structure_void", "minecraft:cave_air"):
             base[(x, z)] = min(base.get((x, z), y), y)
-    grade_cols = {(b["pos"][0], b["pos"][2]) for b in doc["blocks"] if b["pos"][1] == grade
-                  and pal[b["state"]]["Name"] not in ("minecraft:air", "minecraft:structure_void", "minecraft:cave_air", "minecraft:jigsaw")}
+    grade_cols = {(b["pos"][0], b["pos"][2]) for b in doc["blocks"] if b["pos"][1] == grade and is_floor(pal[b["state"]]["Name"])}
     return {"grade_cols": grade_cols, "size": size, "jigsaws": jigsaws, "loot": loot, "entrance": entrance, "entrance_pos": entrance_pos,
             "grade_layer": grade, "base": base, "waystones": waystones}
 
@@ -112,8 +132,14 @@ UNDERWATER_ONLY = {"minecraft:water", "minecraft:seagrass", "minecraft:tall_seag
 CORALS = ("tube", "brain", "bubble", "fire", "horn")
 
 
-def rewrite_template(src, dest, dry=False):
-    """Copy a structure template without its waystones and, with dry=True, without its sea.
+def rewrite_template(src, dest, dry=False, materials=None):
+    """Copy a structure template without its waystones and, with dry=True, without its sea; with `materials` (a
+    {block: block} map, like for like), in other materials.
+
+    The copy is written into the build pack, never into kits/: the Repurposed Structures houses it is used on are not
+    ours to commit, so the re-materialed house exists only in the pack that places it, rebuilt from the installed
+    mod every time. The Displaced City re-materials its repeated designs this way, and Surge's town builds its houses
+    in the flank's own stone.
 
     Repurposed Structures' ocean village is an underwater village: its houses are full of water, which is
     their air. Set down on land, Misty's eight houses held 35 to 101 water blocks each, up to eight blocks
@@ -147,6 +173,12 @@ def rewrite_template(src, dest, dry=False):
                 dried += new == nm
             if new != nm:
                 e["Name"] = (L.STRING, new)
+                dried += 1
+    if materials:
+        for e in pal:
+            nm = L.plain(e["Name"])
+            if nm in materials:
+                e["Name"] = (L.STRING, materials[nm])
                 dried += 1
     Path(dest).parent.mkdir(parents=True, exist_ok=True)
     Path(dest).write_bytes(L.dumps(name, root))
@@ -200,11 +232,16 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     plan = s.get("plan") or {}
     # lot id -> the top of the ground range tools/town_plan.py measured for it, off the heightmap
     lot_ground = {}
+    levelled = set()
     _computed = ROOT / "derived" / "towns" / ("%s_plan.json" % settlement)
     if _computed.is_file():
         _doc = json.loads(_computed.read_text(encoding="utf-8"))
         for _l in (_doc.get("lots") or []) + (_doc.get("anchors") or []):
-            if _l.get("ground_range"):
+            if _l.get("level") is not None:
+                # a levelled lot is cut and filled to its level by the prep, so that is its ground
+                lot_ground[_l["id"]] = int(_l["level"])
+                levelled.add(_l["id"])
+            elif _l.get("ground_range"):
                 lot_ground[_l["id"]] = int(max(_l["ground_range"]))
     cmds = ["# Generated by tools/place_town.py from data/placements.json (%s). Re-run to rebuild." % settlement]
     report = {"buildings": [], "roads": {}, "placed_by_place_donor": []}
@@ -214,7 +251,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     # tools/place_donor.py from its resource id (Brock's gym is the first): its geometry cannot be
     # read here and its function is generated separately.
     skipped_donors = [q["id"] for q in doc["placements"]
-                      if q.get("settlement") == settlement and not q.get("file")]
+                      if q.get("settlement") == settlement and not q.get("file") and q.get("kind") != "earthwork"]
     for p in [q for q in doc["placements"] if q.get("settlement") == settlement and q.get("file")]:
         info = template_info(ROOT / p["file"])
         if info["entrance_pos"] is None:
@@ -255,6 +292,9 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         Y = int(np.median(front))
         if floor_floor is not None:
             Y = max(Y, floor_floor)
+        if p.get("lot") in levelled:
+            # on a levelled pad the floor is the pad, whatever the ground was before the prep cut it
+            Y = floor_floor
         oy = Y - G                                  # command Y of the template origin
         m = 2
         lo_clear = min(under) - 1
@@ -279,12 +319,21 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
                 cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (fluid,)))
         template_id = p["template"]
         ns, path_ = template_id.split(":")
-        if info["waystones"] or p.get("dry"):
+        materials = p.get("materials") or {}
+        if isinstance(materials, str):
+            # a named set in data/rematerial.json house_sets
+            sets = json.loads((ROOT / "data" / "rematerial.json").read_text(encoding="utf-8")).get("house_sets") or {}
+            if materials not in sets:
+                raise SystemExit("%s names material set %r, which data/rematerial.json house_sets does not have" % (p["id"], materials))
+            materials = sets[materials]["map"]
+        if info["waystones"] or p.get("dry") or materials:
             if out_dir is None:
                 raise SystemExit("%s needs a rewritten template copy; building it needs an output datapack to hold it" % p["id"])
-            template_id = "cobblers:towns/stripped/%s/%s" % (ns, path_)
-            rewrite_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + ".nbt"),
-                             dry=bool(p.get("dry")))
+            # a re-materialed copy is this building's own: two houses of one design in two materials are two templates
+            suffix = ("__" + p["id"]) if materials else ""
+            template_id = "cobblers:towns/stripped/%s/%s%s" % (ns, path_, suffix)
+            rewrite_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "stripped" / ns / (path_ + suffix + ".nbt"),
+                             dry=bool(p.get("dry")), materials=materials)
         elif ns == "cobblers" and out_dir is not None:
             # our own templates travel in the pack that places them. The town Centres and Marts were never
             # installed anywhere, so every `place template` for them failed without a word (found by
@@ -296,6 +345,8 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         for (jx, jy, jz), final, _ in info["jigsaws"]:
             wx, wz = world_xz(jx, jz)
             state = final if final != "minecraft:structure_void" else "minecraft:air"
+            if state.split("[")[0] in materials:
+                state = materials[state.split("[")[0]] + state[len(state.split("[")[0]):]
             cmds.append("setblock %d %d %d %s" % (wx, oy + jy, wz, state))
         for (lx, ly, lz) in info["loot"]:
             wx, wz = world_xz(lx, lz)
@@ -380,7 +431,9 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
 
     allx = [b[1] for b in boxes] + [b[3] for b in boxes]
     allz = [b[2] for b in boxes] + [b[4] for b in boxes]
-    force = (min(allx) - 40, min(allz) - 40, max(allx) + 40, max(allz) + 40)
+    # a place with no buildings of its own (Viltri Light is a platform and an authored tower) is held by its streets
+    force = ((min(allx) - 40, min(allz) - 40, max(allx) + 40, max(allz) + 40) if boxes
+             else settlement_bounds(settlement, doc, margin=40))
     cmds += forceload_commands(force, "add")
     # A planned town's streets carry the same three things a hometown road does: a polyline, a width
     # and a surface. The plaza is paved as a one-segment street across its own rectangle.
@@ -414,7 +467,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     # leaves the mod's registry entry: the stacking is in waystones.dat as well as in the world,
     # and that file is cleared separately (REEXPORT.md R12).
     _ys = list(seated.values()) or [64]
-    for _bx in fill_boxes(min(allx) - 24, min(_ys) - 8, min(allz) - 24,
+    for _bx in [] if not boxes else fill_boxes(min(allx) - 24, min(_ys) - 8, min(allz) - 24,
                           max(allx) + 24, max(_ys) + 40, max(allz) + 24):
         cmds.append("fill %d %d %d %d %d %d minecraft:air replace waystones:waystone" % _bx)
     way = s.get("waystone") or plan.get("waystone")
@@ -428,6 +481,12 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         sx, sz = s["spawn"]
         sy = surface(sx, sz) + 1
         cmds.append("setworldspawn %d %d %d" % (sx, sy, sz))
+    # earthworks: authored commands a place carries beyond its templates (the gorge hamlet's courtyard wall, the
+    # rim post's railing). tools/town_audit.py replays the same commands to check the result
+    for q in doc["placements"]:
+        if q.get("settlement") == settlement and q.get("kind") == "earthwork":
+            cmds.append("# earthwork %s" % q["id"])
+            cmds += list(q.get("commands") or [])
     cmds += forceload_commands(force, "remove")
     if way:
         report["waystone"] = [wx, wy, wz]
@@ -449,7 +508,7 @@ def settlement_bounds(settlement, doc, margin=64):
     plan = s.get("plan") or {}
     xs, zs = [], []
     for q in doc["placements"]:
-        if q.get("settlement") == settlement:
+        if q.get("settlement") == settlement and q.get("position"):
             xs.append(q["position"]["x"]); zs.append(q["position"]["z"])
     for r in s.get("roads") or []:
         for x, z in r.get("polyline") or []:
@@ -482,44 +541,74 @@ def verify(settlement, server_dir):
     import runtime_guard
     rcon, pw = runtime_guard.rcon(server_dir)
 
+    # Every question is asked in one batch over one connection. One connection per block test ran Windows out of
+    # client ports (WinError 10048) part way through a staging run of all 24 places: Sabrina's town alone is 1,888
+    # columns (2026-09-21).
+    def solid_many(cells):
+        replies = rcon.run(["execute unless block %d %d %d #minecraft:replaceable" % c for c in cells], pw) if cells else []
+        return ["passed" in r for r in replies]
+
     def solid(x, y, z):
-        return "passed" in rcon.run(["execute unless block %d %d %d #minecraft:replaceable" % (x, y, z)], pw)[0]
+        return solid_many([(x, y, z)])[0]
 
     def top_solid(x, z, start, stop, skip_trees=False):
-        for y in range(start, stop, -1):
-            if solid(x, y, z):
-                if skip_trees and any("passed" in r for r in rcon.run(
-                        ["execute if block %d %d %d #minecraft:%s" % (x, y, z, t) for t in ("leaves", "logs")], pw)):
-                    continue
-                return y
-        return None
+        ys = list(range(start, stop, -1))
+        hits = solid_many([(x, y, z) for y in ys])
+        cand = [y for y, h in zip(ys, hits) if h]
+        if skip_trees and cand:
+            tree = rcon.run(["execute if block %d %d %d #minecraft:%s" % (x, y, z, t) for y in cand for t in ("leaves", "logs")], pw)
+            cand = [y for k, y in enumerate(cand) if not any("passed" in r for r in tree[2 * k:2 * k + 2])]
+        return cand[0] if cand else None
     out = {"buildings": [], "gaps": 0, "columns_checked": 0}
     fb = rep["buildings"]
+    if not fb:
+        # a place with no templated building (Viltri Light is a platform and an authored tower): nothing to seat, and
+        # its earthworks are checked by tools/town_audit.py
+        return out
     xs = [b["footprint"][0] for b in fb] + [b["footprint"][2] for b in fb]
     zs = [b["footprint"][1] for b in fb] + [b["footprint"][3] for b in fb]
-    rcon.run(["forceload add %d %d %d %d" % (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)], pw)
-    for b in fb:
-        rows = []
-        for c in b["corners"]:
-            x, z = c["column"]
-            Y = c["floor_y"]
-            floor = solid(x, Y, z)
-            support = top_solid(x, z, Y - 1, Y - 40)
-            ox, oz = c["outside"]
-            grade = top_solid(ox, oz, Y + 12, Y - 40, skip_trees=True)
-            rows.append({"column": [x, z], "floor_y": Y, "floor_block_present": floor, "support_y": support,
-                         "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
-                         "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
-        # every column the building stands on: the block under its lowest block is solid
-        gaps = []
-        for x, z, bottom in b["columns"]:
-            if not solid(x, bottom - 1, z):
-                gaps.append([x, bottom - 1, z])
-        out["columns_checked"] += len(b["columns"])
-        out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
-        out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
-                                 "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
-    rcon.run(["forceload remove %d %d %d %d" % (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)], pw)
+    # split under the 256-chunk limit: one command over it is refused whole, and Sunset West's 272-chunk box
+    # loaded nothing (2026-09-21)
+    held = (min(xs) - 4, min(zs) - 4, max(xs) + 4, max(zs) + 4)
+    rcon.run(forceload_commands(held, "add"), pw)
+    # released whatever happens: a verify that stopped part way used to leave its chunks held (392 of them round
+    # Northlight on the disposable world, found 2026-09-21)
+    try:
+        # Wait for the chunks. A forced chunk loads over the next ticks, and a block test in one not yet loaded fails as if
+        # the block were missing: Sunset West's first verify (240 chunks) read every corner of every building as a gap
+        # while the world held all of them (2026-09-21).
+        import time
+        pending = [(cx, cz) for cx in range((min(xs) - 4) >> 4, ((max(xs) + 4) >> 4) + 1)
+                   for cz in range((min(zs) - 4) >> 4, ((max(zs) + 4) >> 4) + 1)]
+        deadline = time.time() + 120
+        while pending and time.time() < deadline:
+            replies = rcon.run(["execute if loaded %d 0 %d" % (cx * 16, cz * 16) for cx, cz in pending], pw)
+            pending = [c for c, r in zip(pending, replies) if "passed" not in r]
+            if pending:
+                time.sleep(1)
+        if pending:
+            raise SystemExit("%d chunks were still not loaded after two minutes; a verify now would report false gaps" % len(pending))
+        for b in fb:
+            rows = []
+            for c in b["corners"]:
+                x, z = c["column"]
+                Y = c["floor_y"]
+                floor = solid(x, Y, z)
+                support = top_solid(x, z, Y - 1, Y - 40)
+                ox, oz = c["outside"]
+                grade = top_solid(ox, oz, Y + 12, Y - 40, skip_trees=True)
+                rows.append({"column": [x, z], "floor_y": Y, "floor_block_present": floor, "support_y": support,
+                             "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
+                             "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
+            # every column the building stands on: the block under its lowest block is solid
+            below = [(x, bottom - 1, z) for x, z, bottom in b["columns"]]
+            gaps = [list(c) for c, ok in zip(below, solid_many(below)) if not ok]
+            out["columns_checked"] += len(b["columns"])
+            out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
+            out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
+                                     "columns": len(b["columns"]), "columns_with_gap_below": gaps[:10], "gap_count": len(gaps)})
+    finally:
+        rcon.run(forceload_commands(held, "remove"), pw)
     return out
 
 
@@ -543,7 +632,7 @@ def main(argv=None):
         # it catches (a refused substitution, a fluid the ground brought) both look fine from here
         if a.world:
             import town_audit
-            res["spawn_block_audit"] = town_audit.audit(a.settlement, a.world)
+            res["spawn_block_audit"] = town_audit.audit(a.settlement, a.world, server_dir=a.server_dir)
             bad = res["spawn_block_audit"]["unsubstituted"], res["spawn_block_audit"]["not_in_policy"]
             res["spawn_block_problems"] = sum(len(x) for x in bad)
             # and the plan against the result: roads, paving, lamps, every building standing. A function's
@@ -564,7 +653,7 @@ def main(argv=None):
     doc = json.loads(Path(a.placements).read_text(encoding="utf-8"))
     legs = json.loads(Path(a.legs).read_text(encoding="utf-8")) if Path(a.legs).exists() else None
     bx0, bz0, bx1, bz1 = settlement_bounds(a.settlement, doc)
-    ground_at = G.load(a.source_root)
+    ground_at = G.for_settlement(a.settlement, a.source_root, doc)
     cmds, report = build(a.settlement, doc, ground_at, legs, out)
     fn = out / "data" / "cobblers" / "function" / "towns" / ("%s.mcfunction" % a.settlement)
     fn.parent.mkdir(parents=True, exist_ok=True)
