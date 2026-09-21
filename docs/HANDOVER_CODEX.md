@@ -144,6 +144,11 @@ Spot-check the code and the tests against real data, and report disagreements ra
    otherwise the most-used water position. 32 species have no upstream spawn data at all and keep `grounded` by
    default — Starly, Staravia, Bidoof and Piplup among them, the last two because Cobblemon 1.8 only spawns them from
    fishing. No pytest suite yet.
+12. **`tests/test_ground_rule.py` and `tools/ground.py`.** Written by the session that converted the eight
+   placement tools. Check the detector's reach: it catches `world_heights` imports and `X.extract()`/`X.capture()`
+   calls, so a world read by another route (opening region files directly, a new reader module) would pass. Check
+   that `VERIFY_ONLY` functions really only verify, and that `round` rather than `floor` holds away from the 40
+   sampled windows.
 
 ## What Codex can resume
 
