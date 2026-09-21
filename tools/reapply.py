@@ -176,7 +176,6 @@ def steps(with_spawns=False):
     for s in places(doc):
         r8 += [("fn", "cobblers:reapply/prep_%s" % s), ("fn", "cobblers:towns/%s" % s)]
     out.append(("R8", "planned towns and places (%d)" % len(places(doc)), r8))
-    out.append(("R15", "route signposts", [("fn", "cobblers:signs/place")]))
     r9 = []
     for d in donors(doc):
         r9 += [("fn", "cobblers:structures/place_%s" % d), ("wait", 3)]
@@ -184,6 +183,9 @@ def steps(with_spawns=False):
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
+    # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
+    # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
+    out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))

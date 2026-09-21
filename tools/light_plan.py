@@ -76,6 +76,16 @@ def see_through(name):
     return s in SEE_THROUGH_EXACT or s.endswith(SEE_THROUGH_SUFFIX)
 
 
+PASSABLE = {"air", "cave_air", "void_air", "short_grass", "tall_grass", "fern", "large_fern", "snow", "dead_bush"}
+
+
+def passable(name):
+    """A monster can stand in it: air, or the plants and the snow layer that take no space. The model and the world
+    check use the same rule; the check used to want plain air, and skipped 44 positions at the Merian hut where snow
+    had settled (the staging run of 2026-09-21)."""
+    return short(name) in PASSABLE
+
+
 def spawn_surface(name):
     s = short(name)
     return not see_through(name) and not any(s == k or s.endswith(k) for k in NO_SPAWN_ON)
@@ -107,7 +117,7 @@ class Model:
         air = s in ("air", "cave_air", "void_air")
         self.opaque[t] = not see_through(name)
         self.surface[t] = spawn_surface(name)
-        self.solid_any[t] = not air and s not in ("short_grass", "tall_grass", "fern", "large_fern", "snow", "dead_bush")
+        self.solid_any[t] = not passable(name)
         self.emit[t] = EMIT.get(s, 0)
 
     def column(self, x, z, top, name_top="minecraft:dirt"):
@@ -215,6 +225,18 @@ def build_model(settlement, doc, source_root, server_dir, extra=None):
         for p, name in (solid or {}).items():
             m.set(*p, name)
             footprint.add((p[0], p[2]))
+    # the foundation course tools/place_town.py lays under every column a building stands on, down to the ground (and
+    # through the air a template stores under its lowest block): solid, so the model does not count spawn positions
+    # under a house floor that the world fills with stone (Relic Island: 58 of the model's 96, the staging run of
+    # 2026-09-21)
+    rep_path = ROOT / "derived" / "towns" / ("%s_placement.json" % settlement)
+    if rep_path.is_file():
+        for b in json.loads(rep_path.read_text(encoding="utf-8")).get("buildings") or []:
+            for x, z, bottom in b.get("columns") or []:
+                for y in range(m.y0, bottom):
+                    t = m.idx(x, y, z)
+                    if t and not m.solid_any[t]:
+                        m.set(x, y, z, "minecraft:stone_bricks")
     for p, name in (extra or {}).items():
         m.set(*p, name)
     # scope
@@ -504,7 +526,7 @@ def cmd_check(a):
         for (x, z), col in cols.items():
             for y in range(m.y0 + 1, m.y1 - 1):
                 prev, a1, a2 = col[y - 1 - m.y0], col[y - m.y0], col[y + 1 - m.y0]
-                if not (spawn_surface(prev) and short(a1) in ("air", "cave_air") and short(a2) in ("air", "cave_air")):
+                if not (spawn_surface(prev) and passable(a1) and passable(a2)):
                     continue
                 # the same scope the plan used, judged on the world's own blocks: in the cavern every position the
                 # cavern's own air reaches (a natural cave sealed off in the rock round it is not the cavern); in a

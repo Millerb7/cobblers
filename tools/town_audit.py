@@ -280,15 +280,24 @@ def expected_buildings(settlement, placements, server_dir=None):
             src = ROOT / "build" / "datapacks" / "cobblers_towns" / "data" / ns / "structure" / (rel + ".nbt")
         _, doc = nbt.load(src)
         expand(b["id"], doc, tuple(b["command_position"]), b["rotation"], b["grade_layer"])
+    # Earthworks, replayed in the order the re-application runs them (the town function's, then the after-donor
+    # function's), last write winning: a block a later earthwork replaces is that one's to answer for. Replayed each
+    # on its own, the Displaced City's fields were expected to show the coarse dirt the crops step turns to farmland
+    # (1,076 of 1,212, the staging run of 2026-09-21).
+    import build_audit
+    earth = [q for q in by_id.values() if q.get("kind") == "earthwork"]
+    earth = [q for q in earth if q.get("after") != "donors"] + [q for q in earth if q.get("after") == "donors"]
+    last = {}
+    for q in earth:
+        cols = sorted(_command_columns(q.get("commands") or []))
+        for (x, z), ys in build_audit.replay(q.get("commands") or [], cols).items():
+            for y, b in ys.items():
+                last[(x, y, z)] = (q["id"], b)
+    for q in earth:
+        solid = {p: b for p, (eid, b) in last.items() if eid == q["id"] and b != "minecraft:air"}
+        out.append((q["id"], solid, {}, None))
     for q in by_id.values():
         if q.get("kind") == "earthwork":
-            # the authored commands, replayed: what they write is what should stand
-            import build_audit
-            import function_limits
-            cols = {(x, z) for (x, z) in _command_columns(q.get("commands") or [])}
-            col = build_audit.replay(q.get("commands") or [], sorted(cols))
-            solid = {(x, y, z): b for (x, z), ys in col.items() for y, b in ys.items() if b not in ("minecraft:air",)}
-            out.append((q["id"], solid, {}, None))
             continue
         if q.get("file") or not q.get("pack_template") or q.get("kind") == "vendor":
             continue
