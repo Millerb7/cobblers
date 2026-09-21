@@ -142,11 +142,15 @@ def vendor_commands(rec, server_dir, surface=None):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--placements", default=str(ROOT / "data" / "placements.json"))
-    p.add_argument("--server-dir", default=r"C:\Users\wnd\Documents\github\cobblers-server")
+    p.add_argument("--server-dir", default=os.environ.get("COBBLERS_SERVER_ROOT"),
+                   help="the server whose packs hold the shopkeeper templates; "
+                        "defaults to $COBBLERS_SERVER_ROOT")
     p.add_argument("--surface-world", help="a STOPPED world copy, so traders stand on the paving that is there")
     p.add_argument("--out", default=str(DEFAULT_OUT))
     a = p.parse_args(argv)
     doc = json.loads(Path(a.placements).read_text(encoding="utf-8"))
+    if not a.server_dir:
+        raise SystemExit("no server directory: pass --server-dir, or set COBBLERS_SERVER_ROOT")
     surface = surface_reader(a.surface_world) if a.surface_world else None
     by_town = {}
     for rec in doc["placements"]:
