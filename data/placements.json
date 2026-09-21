@@ -490,6 +490,380 @@
           "why": "mud brick streets from the lakeshore clay; prismarine where the town meets the water. Sand is only a spawn condition in beach biomes, and this is not one, but a sand town reads as a beach. Spawn consequences, read from the loaded data: of 4,892 Cobblemon spawn entries only 17 need a base block (quartz in Nether quartz biomes, sand in beach biomes, concrete for Varoom and Revavroom in every overworld biome), and the Cobbleverse datapack repeats Varoom and Revavroom on all 16 concrete colours and adds Terapagos on amethyst in caves. So streets never use concrete. Stone, andesite, cobblestone, mud and prismarine carry no base-block spawn condition: wild Pokemon spawn on them as on any ground in the biome. Hostile mobs need block light 0, so the plan's lamps keep every street block within 14 blocks of a light. Note: the Pokemon Center and Mart donors have white and blue concrete in their roofs and walls, where Varoom can spawn in any town."
         }
       }
+    },
+    "gym3_town": {
+      "centre": [
+        1688,
+        1410
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-20; not laid out, not built",
+      "plan": {
+        "reading": "The climb from Lake Viltri tops out at the shelf's south-west corner, and the town appears sideways: a single walk running north along the lip with the whole flank falling away on the left. At the north end the walk opens into a belvedere, and that is where Mt Vessu's summit and Surge's signal array come into view together, up and to the right. From the belvedere a lane runs east along the foot of the wall to the gym, which is cut into the rock rather than standing on it. Nothing is more than one street from the drop.",
+        "entries": [
+          {
+            "from": "gym2_town",
+            "at": [
+              1674,
+              1437
+            ],
+            "street": "lip_walk"
+          }
+        ],
+        "exits": [
+          {
+            "to": "gym4_town",
+            "at": [
+              1700,
+              1378
+            ],
+            "street": "array_path"
+          }
+        ],
+        "streets": [
+          {
+            "id": "lip_walk",
+            "polyline": [
+              [
+                1674,
+                1437
+              ],
+              [
+                1674,
+                1402
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:polished_deepslate",
+            "max_grade": 0.08
+          },
+          {
+            "id": "wall_lane",
+            "polyline": [
+              [
+                1680,
+                1408
+              ],
+              [
+                1713,
+                1408
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:polished_deepslate",
+            "max_grade": 0.08
+          },
+          {
+            "id": "array_path",
+            "polyline": [
+              [
+                1676,
+                1384
+              ],
+              [
+                1700,
+                1378
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:tuff",
+            "max_grade": 0.12
+          }
+        ],
+        "plaza": {
+          "rect": [
+            1660,
+            1386,
+            1692,
+            1400
+          ],
+          "y": 174,
+          "surface": "minecraft:exposed_copper",
+          "why": "the belvedere. Copper because the town is Surge's and because it will weather; it names no spawn condition in the loaded data."
+        },
+        "anchors": [
+          {
+            "id": "gym3_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblers:f4/services/towns/lentimas_center",
+            "rect": [
+              1694,
+              1382,
+              1715,
+              1402
+            ],
+            "facing": "west",
+            "why": "off the belvedere's south-east corner, the first door on the right once the view has been had. The lentimas Centre carries bare podzol and dirt path, which is what this shelf is."
+          },
+          {
+            "id": "gym3_pokemart",
+            "role": "pokemart",
+            "template": "cobblers:f4/services/towns/floaroma_mart",
+            "rect": [
+              1674,
+              1442,
+              1697,
+              1465
+            ],
+            "facing": "north",
+            "why": "below the footprint at the top of the climb, on flat ground the pad still holds: the Mart is the first building reached, greeting the road before the town proper begins. Outside the footprint on purpose, so the shelf itself is left for houses"
+          },
+          {
+            "id": "gym3_gym",
+            "role": "gym",
+            "template": null,
+            "rect": [
+              1722,
+              1388,
+              1752,
+              1432
+            ],
+            "facing": "west",
+            "why": "against the wall at the shelf's east end and cut into it: an electric gym should read as workings in the rock, not a hall on a lawn. Its door faces back down the lane, so the town is behind you when you go in."
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "lip_walk",
+            "wall_lane"
+          ],
+          "size": [
+            9,
+            9
+          ],
+          "setback": 2,
+          "gap": 2,
+          "max_lot_relief": 2,
+          "why": "smaller and tighter than Brock's: there is no room to be generous on a shelf, and the cramped frontage is the point"
+        },
+        "waystone": {
+          "position": [
+            1662,
+            1388
+          ],
+          "facing": "east",
+          "note": "flag gym3_cleared (data/progression.json); the belvedere's north edge, so it is the last thing passed on the way to the array path"
+        },
+        "paving": {
+          "main": "minecraft:polished_deepslate",
+          "belvedere": "minecraft:exposed_copper",
+          "array_path": "minecraft:tuff",
+          "why": "deepslate and tuff are the flank's own stone; the copper belvedere is the one deliberate colour in the town. None of the three is named by any spawn condition in data/spawn_blocks.json."
+        },
+        "prep_note": "The pad is already pressed flat at y174.4 (data/sculpt.json), so the streets need almost no cut and fill; the work is the gym's bite into the wall east of x1730, which is the only real excavation in the town."
+      }
+    },
+    "gym4_town": {
+      "centre": [
+        4309,
+        1555
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-20; not laid out, not built",
+      "plan": {
+        "reading": "The road from the Trough comes in from the west and meets the garden before it meets a building: the plaza here is a green, not a square, and the streets run around it rather than through it. Every house faces the garden across a street. The Centre is on the green's west side, first door reached; the Mart is on the south. Erika's gym fronts the green from the north, glass to the south so the garden is what you see through it, and the lane from the green's west corner runs out to Peak Pond.",
+        "entries": [
+          {
+            "from": "gym3_town",
+            "at": [
+              4232,
+              1554
+            ],
+            "street": "pond_road"
+          }
+        ],
+        "exits": [
+          {
+            "to": "gym5_town",
+            "at": [
+              4392,
+              1554
+            ],
+            "street": "east_lane"
+          }
+        ],
+        "streets": [
+          {
+            "id": "pond_road",
+            "polyline": [
+              [
+                4232,
+                1554
+              ],
+              [
+                4276,
+                1554
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:packed_mud",
+            "max_grade": 0.06
+          },
+          {
+            "id": "ring_west",
+            "polyline": [
+              [
+                4276,
+                1518
+              ],
+              [
+                4276,
+                1594
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:packed_mud",
+            "max_grade": 0.06
+          },
+          {
+            "id": "ring_south",
+            "polyline": [
+              [
+                4276,
+                1594
+              ],
+              [
+                4344,
+                1594
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:packed_mud",
+            "max_grade": 0.06
+          },
+          {
+            "id": "ring_east",
+            "polyline": [
+              [
+                4344,
+                1594
+              ],
+              [
+                4344,
+                1518
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:packed_mud",
+            "max_grade": 0.06
+          },
+          {
+            "id": "ring_north",
+            "polyline": [
+              [
+                4344,
+                1518
+              ],
+              [
+                4276,
+                1518
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:packed_mud",
+            "max_grade": 0.06
+          },
+          {
+            "id": "east_lane",
+            "polyline": [
+              [
+                4344,
+                1554
+              ],
+              [
+                4392,
+                1554
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:packed_mud",
+            "max_grade": 0.06
+          }
+        ],
+        "plaza": {
+          "rect": [
+            4284,
+            1526,
+            4336,
+            1586
+          ],
+          "y": 110,
+          "surface": "minecraft:moss_block",
+          "why": "the green. Moss rather than stone, with the paving only where feet actually cross it, so the middle of the town is planting and not pavement. Moss names no spawn condition in the loaded data; the flowers that will go in it are already whitelisted in data/spawn_block_policy.json as garden planting."
+        },
+        "anchors": [
+          {
+            "id": "gym4_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblers:f4/services/towns/floaroma_center",
+            "rect": [
+              4248,
+              1524,
+              4270,
+              1545
+            ],
+            "facing": "east",
+            "why": "on the green's west side, facing the road in: the first door a player reaches. The floaroma Centre comes with tulips and pink petals, which is the town this is."
+          },
+          {
+            "id": "gym4_pokemart",
+            "role": "pokemart",
+            "template": "cobblers:f4/services/towns/floaroma_mart",
+            "rect": [
+              4296,
+              1600,
+              4319,
+              1625
+            ],
+            "facing": "north",
+            "why": "on the ring's south side, its door to the green"
+          },
+          {
+            "id": "gym4_gym",
+            "role": "gym",
+            "template": null,
+            "rect": [
+              4288,
+              1470,
+              4332,
+              1512
+            ],
+            "facing": "south",
+            "why": "fronting the green from the north with the whole garden in front of it. A grass gym should be looked into rather than entered from a street, and this is the only face of the ring with room for a wide building behind it."
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "ring_west",
+            "ring_south",
+            "ring_east",
+            "ring_north",
+            "pond_road"
+          ],
+          "size": [
+            13,
+            13
+          ],
+          "setback": 3,
+          "gap": 4,
+          "max_lot_relief": 2,
+          "why": "larger and further apart than either of the first two towns. The ground allows it, and a garden town should have gardens between the houses"
+        },
+        "waystone": {
+          "position": [
+            4276,
+            1554
+          ],
+          "facing": "east",
+          "note": "flag gym4_cleared (data/progression.json); where the pond road meets the ring, on the green's west corner"
+        },
+        "paving": {
+          "main": "minecraft:packed_mud",
+          "green": "minecraft:moss_block",
+          "why": "packed mud for the streets, the colour of a cart track rather than a pavement, and moss for the green itself. Neither is named by any spawn condition."
+        },
+        "prep_note": "The site moves three metres across 179 blocks, so the streets need grading rather than cutting. The green should not be levelled flat: let it keep the fall it has, which is about a metre across its width."
+      }
     }
   },
   "placements": [
