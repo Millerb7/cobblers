@@ -1058,7 +1058,7 @@
       "footprint_from": "data/towns.json",
       "status": "planned 2026-09-21; not laid out, not built",
       "plan": {
-        "reading": "Route 6 arrives from the west along the lakeshore flat and runs straight into a cross street, and at the crossing is the only true square in the region. From the square the whole town is visible at once: a white axis rising north up the slope between two regular rows of houses, and at its head, looking straight back down it, the gym. Everything is symmetrical, the Centre and the Mart face each other across the axis on the cross street, and the town is laid out like a thought. Route 7 leaves by the same axis south, down to the lake.",
+        "reading": "Route 6 arrives from the west along the lakeshore flat and runs straight into a cross street, and at the crossing is the only true square in the region. From the square the whole town is visible at once: a white axis rising north up the slope, and at its head, looking straight back down it, the gym, with the observatory beside it on the high ground and the dojo across the gym street. The four blocks the axis and the cross street make are not houses. South-west is the market square, south-east the commons, and the Centre and the Mart face each other across the axis on the cross street. The houses stand in two rows along the outer streets, and at the lake end the department store closes the view. Route 7 leaves by the axis, down to the lake.",
         "entries": [
           {
             "from": "gym5_town",
@@ -1231,24 +1231,88 @@
             ],
             "facing": "south",
             "why": "at the head of the axis on the highest ground, facing straight down it: visible from the square the moment you arrive. Cobbleverse's own Sabrina."
+          },
+          {
+            "id": "gym6_market",
+            "role": "market",
+            "template": null,
+            "rect": [
+              6152,
+              3418,
+              6188,
+              3464
+            ],
+            "facing": "north",
+            "why": "the south-west block, an open paved square off the cross street: the region's market. Its stalls are the traders, placed once the badge-gated stock lands; until then it is a square. Donor if a built market is wanted instead: bca:fighting/centers/center_the_farmers_market_fighting (48 by 49), which needs the block widened by six"
+          },
+          {
+            "id": "gym6_commons",
+            "role": "park",
+            "template": null,
+            "rect": [
+              6204,
+              3418,
+              6240,
+              3464
+            ],
+            "facing": "north",
+            "why": "the south-east block, left open: lawn, trees and a fountain (Cozy Home fountain blocks), the one green space in the region's biggest town and the view down to the lake"
+          },
+          {
+            "id": "gym6_observatory",
+            "role": "civic",
+            "template": "mega_showdown:observatory",
+            "rect": [
+              6154,
+              3344,
+              6176,
+              3364
+            ],
+            "facing": "south",
+            "why": "north-west of the axis on the high ground beside the gym: a psychic town's landmark, 16 by 16 and 23 tall. Mega Showdown's own, placed from the installed mod"
+          },
+          {
+            "id": "gym6_dojo",
+            "role": "civic",
+            "template": "bca:default/centers/center_battlepad",
+            "rect": [
+              6252,
+              3300,
+              6292,
+              3340
+            ],
+            "facing": "west",
+            "why": "beside the gym across the gym street's east end, as Kanto's Fighting Dojo stands next to Saffron's gym: BCA's battlepad centrepiece, 37 by 38, a trainers' arena"
+          },
+          {
+            "id": "gym6_department_store",
+            "role": "landmark",
+            "template": "bca:default/centers/center_department_store",
+            "rect": [
+              6202,
+              3476,
+              6276,
+              3518
+            ],
+            "facing": "north",
+            "why": "the lake end, east of the axis where Route 7 leaves: 40 by 72 and 41 tall, the region's one big city building, closing the view south from the square. BCA's, placed from the installed mod"
           }
         ],
         "house_lots": {
           "along": [
             "west_row",
             "east_row",
-            "lake_street",
-            "gym_street",
-            "cross_street"
+            "cross_street",
+            "lake_street"
           ],
           "size": [
             10,
             12
           ],
           "setback": 2,
-          "gap": 2,
+          "gap": 3,
           "max_lot_relief": 3,
-          "why": "a city's frontage: narrow, deep and regular, one house against the next"
+          "why": "about thirty houses in two rows along the outer streets, so the inner blocks hold the market, the commons, the Centre, the Mart and the observatory. Sixty houses from about 29 designs repeated visibly and read as sprawl"
         },
         "waystone": {
           "position": [

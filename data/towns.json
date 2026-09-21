@@ -1160,10 +1160,10 @@
    ],
    "approach": {
     "from": "gym8_town",
-    "route_length_blocks": 5248,
+    "route_length_blocks": 5174,
     "straight_line_blocks": 3911,
     "water_crossings": [],
-    "text": "North from Giovanni's town through Rift Foot and the south-east arm, then along the Rift's south-west arm, west spur, fork, trunk and apex to the League plateau. Terrain-derived Victory Road length: 5,248 blocks; no water crossing.",
+    "text": "North from Giovanni's town through Rift Foot and the south-east arm, then along the Rift's south-west arm, west spur, fork, trunk and apex to the League plateau. Terrain-derived Victory Road length: 5,174 blocks; no water crossing.",
     "route_length_source": "victory_road",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
@@ -1870,7 +1870,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.628,
+    "at_fraction": 0.623,
     "nearest_point": {
      "x": 4007,
      "z": 3678
@@ -2167,7 +2167,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.759,
+    "at_fraction": 0.755,
     "nearest_point": {
      "x": 3581,
      "z": 3175
@@ -2527,7 +2527,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.609,
+    "at_fraction": 0.603,
     "nearest_point": {
      "x": 4076,
      "z": 3751
@@ -2600,7 +2600,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.688,
+    "at_fraction": 0.683,
     "nearest_point": {
      "x": 3784,
      "z": 3464
@@ -2633,7 +2633,7 @@
  ],
  "critical_path_geometry": {
   "legs": "full-resolution terrain-weighted A* between consecutive critical towns; required bridge crossings are mandatory waypoints; Victory Road is A* between the Rift arm, fork, trunk and apex waypoints",
-  "victory_road_blocks": 5248,
+  "victory_road_blocks": 5174,
   "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
  },
  "measurement_note": "Every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees are measured on the canonical heightmap 5b963567 (the rescale plus the three tools/press_pads.py pads) with find_sites' own slope (terrain.slope_degrees), at the recorded footprints, by tools/measure_towns.py; a town with built_ground is measured with that tool's surface laid over the heightmap. Sites were NOT re-searched: siting is an authored decision. A site that no longer meets its footprint basis carries site_review (tableland_stop, max slope 5.8 against under 5)."

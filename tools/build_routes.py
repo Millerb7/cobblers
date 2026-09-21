@@ -195,6 +195,7 @@ def main(argv=None):
     landmarks = json.loads((D / "landmarks.json").read_text(encoding="utf-8"))
     towns = json.loads((D / "towns.json").read_text(encoding="utf-8"))
     waypoints = {k: [tuple(q) for q in v["points"]] for k, v in old["routing"]["mandatory_waypoints"].items()}
+    endpoints = {k: v for k, v in (old["routing"].get("endpoints") or {}).items()}
 
     sub_defs, sub_display, sub_parent = [], {}, {}
     for s in regions["subregions"]:
@@ -259,6 +260,11 @@ def main(argv=None):
                 continue
             start = (town_by[r["from_town"]]["centre"]["x"], town_by[r["from_town"]]["centre"]["z"])
             goal = (town_by[r["to_town"]]["centre"]["x"], town_by[r["to_town"]]["centre"]["z"])
+            # a town plan can put a road's end somewhere other than the town's centre: Victory Road leaves
+            # Giovanni's town from the gate square, past the gym, not from the middle of town
+            ends = endpoints.get(rid) or {}
+            start = tuple(ends.get("start") or start)
+            goal = tuple(ends.get("goal") or goal)
             pts = [start] + waypoints.get(rid, []) + [goal]
             print("route", rid, "via", waypoints.get(rid, []), flush=True)
             path = []
