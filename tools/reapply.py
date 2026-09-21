@@ -279,9 +279,12 @@ def audit(a):
         r = subprocess.run([sys.executable, str(TOOLS / "town_audit.py"), s, "--world", a.world, "--server-dir", a.server_dir],
                            cwd=ROOT, capture_output=True, text=True)
         lines = r.stdout.strip().splitlines()
-        problems = [l.strip() for l in lines if "MISMATCH" in l or "NOT POLICIED" in l.upper() or "unpolicied" in l]
+        problems = [l.strip() for l in lines if "MISMATCH" in l or "NOT POLICIED" in l.upper() or "unpolicied" in l
+                    or "NOT AUDITED" in l or "NOT IN POLICY" in l or "UNSUBSTITUTED" in l]
         notes = [l.strip() for l in lines if "NOT CHECKABLE" in l]
-        clean = any("plan clean" in l for l in lines) and not problems
+        # fail closed: clean only when the audit exits 0, says the plan is clean, and nothing was left unchecked. It
+        # used to ignore the exit code and pass "not checkable" (Codex review, 2026-09-21)
+        clean = r.returncode == 0 and any("plan clean" in l for l in lines) and not problems and not notes
         res["towns"][s] = {"exit": r.returncode, "clean": clean, "problems": problems, "not_checkable": notes}
         print("%-16s %s%s" % (s, "clean" if clean else "PROBLEMS: %s" % problems[:3],
                               "  (%s)" % "; ".join(n.replace("NOT CHECKABLE  ", "") for n in notes) if notes else ""), flush=True)
@@ -297,7 +300,9 @@ def audit(a):
     res["lights"] = {"exit": r.returncode, "tail": [l[:200] for l in r.stdout.strip().splitlines()]}
     print("lights:", "0 dark everywhere" if r.returncode == 0 else
           "\n  ".join(l for l in res["lights"]["tail"] if " 0 at block light 0" not in l))
-    res["clean"] = (res["build_audit"]["exit"] == 0 and all(v["clean"] for v in res["towns"].values())
+    # all() of nothing is True: the places audited must be every place the data plans, and there must be some
+    res["clean"] = (res["build_audit"]["exit"] == 0 and len(res["towns"]) == len(places()) > 0
+                    and all(v["clean"] for v in res["towns"].values())
                     and res["signposts"]["exit"] == 0 and res["lights"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")

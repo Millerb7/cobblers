@@ -125,6 +125,14 @@ def fake_world(monkeypatch, tmp_path, blocks):
     (tmp_path / "derived" / "towns" / "t_plan.json").write_text(json.dumps(PLAN), encoding="utf-8")
     (tmp_path / "data" / "placements.json").write_text(json.dumps({"placements": [], "settlements": {}}), encoding="utf-8")
     (tmp_path / "data" / "spawn_block_policy.json").write_text(json.dumps({"substitutions": []}), encoding="utf-8")
+    # the town's own functions, paving exactly the plan's cells: the paving check reads these (a town without them
+    # cannot be checked, and fails)
+    fdir = tmp_path / "build" / "datapacks" / "cobblers_towns" / "data" / "cobblers" / "function" / "towns"
+    fdir.mkdir(parents=True)
+    (tmp_path / "build" / "town_prep").mkdir(parents=True)
+    (tmp_path / "build" / "town_prep" / "prep_t.mcfunction").write_text(
+        "fill 0 64 0 9 64 1 minecraft:stone_bricks\nfill 20 65 0 23 65 3 minecraft:polished_andesite\n", encoding="utf-8")
+    (fdir / "t.mcfunction").write_text("setblock 5 64 0 minecraft:sea_lantern\n", encoding="utf-8")
 
 
 def as_built():

@@ -233,9 +233,13 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     # lot id -> the top of the ground range tools/town_plan.py measured for it, off the heightmap
     lot_ground = {}
     levelled = set()
+    street_cells = {}                                  # street id -> the plan's exact cells, when the plan has them
     _computed = ROOT / "derived" / "towns" / ("%s_plan.json" % settlement)
     if _computed.is_file():
         _doc = json.loads(_computed.read_text(encoding="utf-8"))
+        for _sid, _st in (_doc.get("streets") or {}).items():
+            if _st.get("cells"):
+                street_cells[_sid] = {(x, z) for z, _y, xa, xb in _st["cells"] for x in range(xa, xb + 1)}
         for _l in (_doc.get("lots") or []) + (_doc.get("anchors") or []):
             if _l.get("level") is not None:
                 # a levelled lot is cut and filled to its level by the prep, so that is its ground
@@ -399,6 +403,11 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
             # blocks past each of its short sides and paved a neighbouring house's yard (Sabrina, 2026-09-21)
             points = []
             cols = {(x, z) for x in range(rect[0], rect[2] + 1) for z in range(rect[1], rect[3] + 1)}
+        elif rid in street_cells:
+            # a planned street is paved on the plan's own cells, not re-drawn with a square brush: the brush ran
+            # 2 to 36 columns past the plan's cells in 17 of 24 places (the paving check, 2026-09-21)
+            points = []
+            cols = set(street_cells[rid])
         for (ax, az), (bx, bz) in zip(points, points[1:]):
             n = int(max(abs(bx - ax), abs(bz - az))) + 1
             for i in range(n):
