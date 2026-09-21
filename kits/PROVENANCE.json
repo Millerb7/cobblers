@@ -91,6 +91,23 @@
       "evidence": "kits/structures/licenses/CobbleTowns-NOTICE.md and CobblemonCityTowns-NOTICE.md; kits/structures/manifests/pokemon-town-donors.json records the archive sha256",
       "modifications": "copied unmodified, then tools/spawn_blocks.py substitute swapped the vanilla concrete of the Mart roofs and their jigsaw final states for the Moar Concrete equivalents, so the roof does not decide what spawns in the town (data/spawn_block_policy.json)",
       "notice": "kits/structures/licenses/CobbleTowns-NOTICE.md"
+    },
+    {
+      "paths": [
+        "kits/structures/campaign/f4/services/towns/koga_center.nbt",
+        "kits/structures/campaign/f4/services/towns/koga_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/sabrina_center.nbt",
+        "kits/structures/campaign/f4/services/towns/sabrina_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/blaine_center.nbt",
+        "kits/structures/campaign/f4/services/towns/blaine_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/giovanni_center.nbt",
+        "kits/structures/campaign/f4/services/towns/giovanni_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/league_center.nbt",
+        "kits/structures/campaign/f4/services/towns/league_mart.nbt"
+      ],
+      "licence": "MIT",
+      "source": "CobblemonCityTowns 1.0 (CurseForge file 7692448) town Centres and Marts, re-materialed by tools/rematerial.py from the committed bases per data/rematerial.json",
+      "notice": "kits/structures/licenses/CobblemonCityTowns-NOTICE.md"
     }
   ]
 }

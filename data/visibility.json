@@ -142,8 +142,8 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 58,
-    "of": 164,
+    "seen": 56,
+    "of": 162,
     "unit": "observer points"
    },
    "fragile": false
@@ -194,8 +194,8 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 46,
-    "of": 110,
+    "seen": 41,
+    "of": 108,
     "unit": "observer points"
    },
    "fragile": false
@@ -565,8 +565,8 @@
    },
    "surface": "terrain",
    "measured": {
-    "seen": 60,
-    "of": 328,
+    "seen": 56,
+    "of": 324,
     "unit": "observer points"
    },
    "fragile": false
@@ -590,8 +590,8 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 2,
-    "of": 328,
+    "seen": 1,
+    "of": 324,
     "unit": "observer points"
    },
    "fragile": true

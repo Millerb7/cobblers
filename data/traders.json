@@ -10,7 +10,8 @@
     "source": "where that template ships, and its licence: placed by resource id, never copied into the repo",
     "position": "{x, y, z}: the block the trader stands in, one above the plaza paving the town plan grades",
     "status": "planned (not in the campaign world), placed (re-applied by the function), verified (checked in game)",
-    "chosen_because": "why this trader, in this town"
+    "chosen_because": "why this trader, in this town",
+    "stock": "regional (sells what the stock policy leaves) or withdrawn (the policy leaves nothing, so the trader is not summoned and any copy standing is removed); tools/traders.py refuses to write a function if this disagrees with the policy"
   },
   "traders": [
     {
@@ -29,7 +30,8 @@
         "z": 3603
       },
       "status": "planned",
-      "chosen_because": "a mining town still has to eat, and apricorns are what a trainer buys"
+      "chosen_because": "a mining town still has to eat, and apricorns are what a trainer buys",
+      "stock": "regional"
     },
     {
       "id": "gym1_vendor_02",
@@ -47,7 +49,8 @@
         "z": 3603
       },
       "status": "planned",
-      "chosen_because": "the general stall, nearest the Mart side of the square"
+      "chosen_because": "the general stall, nearest the Mart side of the square",
+      "stock": "withdrawn"
     },
     {
       "id": "gym1_vendor_03",
@@ -65,7 +68,8 @@
         "z": 3603
       },
       "status": "planned",
-      "chosen_because": "herbs off the plateau's birch woods"
+      "chosen_because": "herbs off the plateau's birch woods",
+      "stock": "regional"
     },
     {
       "id": "gym1_vendor_04",
@@ -83,7 +87,8 @@
         "z": 3603
       },
       "status": "planned",
-      "chosen_because": "mulch, which is what the farm lots on the approach grow for"
+      "chosen_because": "mulch, which is what the farm lots on the approach grow for",
+      "stock": "regional"
     },
     {
       "id": "gym1_vendor_05",
@@ -101,7 +106,8 @@
         "z": 3603
       },
       "status": "planned",
-      "chosen_because": "game from the woods rather than fish: this town is nowhere near water"
+      "chosen_because": "game from the woods rather than fish: this town is nowhere near water",
+      "stock": "regional"
     },
     {
       "id": "gym1_vendor_06",
@@ -119,7 +125,8 @@
         "z": 3603
       },
       "status": "planned",
-      "chosen_because": "the one that matters before a gym"
+      "chosen_because": "the one that matters before a gym",
+      "stock": "withdrawn"
     },
     {
       "id": "gym2_vendor_01",
@@ -137,7 +144,8 @@
         "z": 2799
       },
       "status": "planned",
-      "chosen_because": "the catch, on a plaza a hundred blocks from the water"
+      "chosen_because": "the catch, on a plaza a hundred blocks from the water",
+      "stock": "regional"
     },
     {
       "id": "gym2_vendor_02",
@@ -155,7 +163,8 @@
         "z": 2799
       },
       "status": "planned",
-      "chosen_because": "and the part of the catch worth a detour"
+      "chosen_because": "and the part of the catch worth a detour",
+      "stock": "regional"
     },
     {
       "id": "gym2_vendor_03",
@@ -173,7 +182,8 @@
         "z": 2799
       },
       "status": "planned",
-      "chosen_because": "someone to cook it"
+      "chosen_because": "someone to cook it",
+      "stock": "regional"
     },
     {
       "id": "gym2_vendor_04",
@@ -191,7 +201,8 @@
         "z": 2799
       },
       "status": "planned",
-      "chosen_because": "dive balls and the rest, which is what a water town sells"
+      "chosen_because": "dive balls and the rest, which is what a water town sells",
+      "stock": "withdrawn"
     },
     {
       "id": "gym2_vendor_05",
@@ -209,7 +220,27 @@
         "z": 2799
       },
       "status": "planned",
-      "chosen_because": "the general stall"
+      "chosen_because": "the general stall",
+      "stock": "withdrawn"
     }
-  ]
+  ],
+  "stock_policy": {
+    "mode": "regional_only",
+    "status": "interim, 2026-09-21: until the badge-gated stock plan (Codex) replaces it",
+    "why": "The shopkeeper templates came stocked by BCA for a generic world: ultra balls, max revives, full restores and X items on a plaza in the first town. Until stock is gated by badges, a trader sells only what its town produces: seeds, herbs, mulch, fish, game, food. Anything that wins a battle or catches a Pokemon is withheld.",
+    "withhold_categories": [
+      "Pokéballs",
+      "Combat",
+      "Treatments",
+      "Remedies",
+      "Boosts"
+    ],
+    "withhold_items": [
+      "cobblemon:revival_herb",
+      "cobblemon:energy_root",
+      "cobblemon:heal_powder",
+      "cobblemon:big_root"
+    ],
+    "withhold_items_why": "the herbs that are cheap battle medicine or a held item: a revival herb is a revive for 400 against the Mart's 2,000, energy root and heal powder are a hyper potion and a full heal, big root is a held item"
+  }
 }

@@ -124,6 +124,32 @@ def written_chunks(lines):
     return out
 
 
+def _fill_boxes(x0, y0, z0, x1, y1, z1, limit=FILL_LIMIT):
+    x0, x1 = min(x0, x1), max(x0, x1)
+    y0, y1 = min(y0, y1), max(y0, y1)
+    z0, z1 = min(z0, z1), max(z0, z1)
+    area = (x1 - x0 + 1) * (z1 - z0 + 1)
+    if area > limit:
+        half = (x0 + x1) // 2
+        return _fill_boxes(x0, y0, z0, half, y1, z1, limit) + _fill_boxes(half + 1, y0, z0, x1, y1, z1, limit)
+    per = max(1, limit // area)
+    return [(x0, y, z0, x1, min(y1, y + per - 1), z1) for y in range(y0, y1 + 1, per)]
+
+
+def split_fills(lines):
+    """The same lines with every fill over the block limit split into fills under it, the rest of each command
+    (block, mode, filter) kept. A town lot levelled for the League came to 83,205 blocks in one fill."""
+    out = []
+    for raw in lines:
+        m = re.match(r"(\s*)fill\s+%s\s+%s\s+%s\s+%s\s+%s\s+%s(\s.*)$" % ((NUM,) * 6), raw)
+        if m and _volume(*m.groups()[1:7]) > FILL_LIMIT:
+            ind, rest = m.group(1), m.group(8)
+            out += ["%sfill %d %d %d %d %d %d%s" % ((ind,) + b + (rest,)) for b in _fill_boxes(*map(int, m.groups()[1:7]))]
+        else:
+            out.append(raw)
+    return out
+
+
 def ensure_loaded(lines):
     """The same function, holding every chunk it writes for its whole run.
 
@@ -131,7 +157,9 @@ def ensure_loaded(lines):
     lines are dropped (a release half way through, as the hometown function had, unloads chunks a later
     write needs) and replaced by one set of `forceload add` commands before the first command and the
     matching `forceload remove` after the last, covering every chunk it writes or asked for: one per run of
-    chunks along a chunk row, so each stays far under the 256-chunk limit."""
+    chunks along a chunk row, so each stays far under the 256-chunk limit. Fills over the block limit are split
+    first (split_fills)."""
+    lines = split_fills(lines)
     if not unloaded_writes(lines):
         return list(lines)
     chunks = written_chunks(lines)

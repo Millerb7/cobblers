@@ -29,7 +29,7 @@ def fake_entity(template):
 
 def rec(i, town="t1", x=0, y=100, z=0):
     return {"id": "%s_vendor_%02d" % (town, i), "settlement": town, "template": "bca:shop/s%d" % i,
-            "source": {}, "position": {"x": x + 5 * i, "y": y, "z": z}, "status": "planned"}
+            "source": {}, "position": {"x": x + 5 * i, "y": y, "z": z}, "status": "planned", "stock": "regional"}
 
 
 def functions(town="t1", n=3):
@@ -106,3 +106,37 @@ def test_static_rules_catch_the_mistakes():
 def test_counts_become_problems():
     p = dict(TR.problems_from_counts({"a": (0, 0, 0), "b": (2, 1, 0), "c": (1, 0, None), "d": (1, 1, 2), "e": (1, 1, 0)}))
     assert set(p) == {"a", "b", "c", "d"}
+
+
+# ------------------------------------------------------------------ stock policy (interim, until badge-gated stock)
+
+POLICY = {"withhold_categories": ["Boosts"], "withhold_items": ["cobblemon:revival_herb"]}
+
+
+def shop(*cats):
+    return {"CobbleMerchantShop": [{"Category": c, "Offers": [{"Item": {"id": i, "count": 1}, "Price": "1"} for i in items]}
+                                   for c, items in cats]}
+
+
+def test_withheld_categories_and_items_leave_the_shop():
+    data, kept, held = TR.apply_stock_policy(
+        shop(("Herbs", ["cobblemon:medicinal_leek", "cobblemon:revival_herb"]), ("Boosts", ["cobblemon:x_attack"])), POLICY)
+    assert kept == ["cobblemon:medicinal_leek"]
+    assert sorted(held) == ["cobblemon:revival_herb", "cobblemon:x_attack"]
+    assert [c["Category"] for c in data["CobbleMerchantShop"]] == ["Herbs"]
+
+
+def test_a_trader_without_a_shop_is_not_mistaken_for_an_empty_one():
+    assert TR.apply_stock_policy({"CustomName": '"x"'}, POLICY)[1] is None
+
+
+def test_a_trader_with_nothing_left_is_removed_not_summoned():
+    fake = lambda t: (KIND, shop(("Boosts", ["cobblemon:x_attack"])))
+    f = TR.town_functions("t1", [rec(1)], fake, POLICY)
+    assert not any(l.startswith("summon") for l in f["vendors_t1_place"])
+    assert "kill @e[tag=cobblers_vendor_t1_vendor_01]" in f["vendors_t1_done"]
+
+
+def test_counting_a_withdrawn_trader_expects_none():
+    assert TR.problems_from_counts({"a": (0, 0, 0)}, {"a"}) == []
+    assert TR.problems_from_counts({"a": (1, 1, 0)}, {"a"})

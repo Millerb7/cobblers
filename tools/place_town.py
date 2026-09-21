@@ -44,7 +44,9 @@ DIRS = ["north", "east", "south", "west"]
 ROT = ["none", "clockwise_90", "180", "counterclockwise_90"]
 ORIENT_DIR = {"west": "west", "east": "east", "north": "north", "south": "south"}
 PLANTS = ["minecraft:short_grass", "minecraft:tall_grass", "minecraft:fern", "minecraft:large_fern", "#minecraft:flowers",
-          "minecraft:sweet_berry_bush", "minecraft:dead_bush", "minecraft:leaf_litter", "minecraft:bush"]
+          "minecraft:sweet_berry_bush", "minecraft:dead_bush", "minecraft:leaf_litter", "minecraft:bush",
+          # the coast scrub's bushes: 47 of Giovanni's lane cells had one standing on them after the first build
+          "minecraft:azalea", "minecraft:flowering_azalea"]
 
 
 def rotate(x, z, rot):
@@ -338,9 +340,14 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     def surface(x, z):
         return seated.get((x, z), ground_at(x, z))
 
-    def lay(points, width, material, rid):
+    def lay(points, width, material, rid, rect=None):
         cols = set()
         half = width // 2
+        if rect:
+            # an area is paved exactly: laid as a street with a square brush half its width, a plaza ran 16
+            # blocks past each of its short sides and paved a neighbouring house's yard (Sabrina, 2026-09-21)
+            points = []
+            cols = {(x, z) for x in range(rect[0], rect[2] + 1) for z in range(rect[1], rect[3] + 1)}
         for (ax, az), (bx, bz) in zip(points, points[1:]):
             n = int(max(abs(bx - ax), abs(bz - az))) + 1
             for i in range(n):
@@ -385,7 +392,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
             x0, z0, x1, z1 = pz.get("rect") or pz["box"]
             ways.append({"id": pz.get("id", "plaza"),
                          "polyline": [[x0, (z0 + z1) // 2], [x1, (z0 + z1) // 2]],
-                         "width": z1 - z0 + 1,
+                         "width": z1 - z0 + 1, "rect": [x0, z0, x1, z1],
                          "surface": pz.get("surface", "minecraft:polished_andesite")})
     for r in ways:
         pts = r.get("polyline")
@@ -401,7 +408,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
                 if total >= r["length_blocks"]:
                     break
             report["route_points"] = pts
-        lay(pts, r["width"], r["surface"], r["id"])
+        lay(pts, r["width"], r["surface"], r["id"], r.get("rect"))
     # Clear any waystone already standing in the town before setting one. setblock places rather
     # than replaces, so every rebuild left another behind, and a waystone the player breaks still
     # leaves the mod's registry entry: the stacking is in waystones.dat as well as in the world,

@@ -187,6 +187,9 @@ def main(argv=None):
     # overwrites one. Flush, because the spots are on the centreline and a post there blocks the road.
     # Until 2026-09-21 the spots were computed and nothing lit them: Brock's 23 were all dark.
     lamp = (plan.get("paving") or {}).get("lamp", "minecraft:sea_lantern")
+    if lamp == "none":
+        # a place meant to be dark: the Scar's ruins are lit by nothing
+        report["lamps"] = []
     report["lamp_block"] = lamp
     for L in report["lamps"]:
         lx, ly, lz = L["at"]
@@ -217,6 +220,10 @@ def main(argv=None):
             if low < yl:
                 cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (x0, low + 1, z0, x1, yl, z1))
                 cmds.append("fill %d %d %d %d %d %d minecraft:grass_block replace minecraft:dirt" % (x0, yl, z0, x1, yl, z1))
+            if lot.get("surface"):
+                # an open lot that is a square, not a building plot: Sabrina's market is paved at its level
+                cmds.append("fill %d %d %d %d %d %d %s" % (x0, yl, z0, x1, yl, z1, lot["surface"]))
+                row["surface"] = lot["surface"]
             row.update({"level": yl, "cut_blocks": cut, "fill_blocks": fill})
         occupied.append((lot["id"], box, "anchor"))
         report["anchors"].append(row)

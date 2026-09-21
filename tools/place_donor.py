@@ -22,6 +22,7 @@ so a re-application can be checked without a player.
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import sys
 from collections import Counter
@@ -53,6 +54,55 @@ def box(rec):
     if rot == "counterclockwise_90":
         return (x, y, z - sx + 1), (x + sz - 1, y + sy - 1, z)
     raise SystemExit("unknown rotation %r" % rot)
+
+
+SETTLE = 20        # ticks between force-loading the box and placing, and between placing and checking
+NATURAL = {"minecraft:" + b for b in ("dirt", "grass_block", "coarse_dirt", "podzol", "rooted_dirt", "mud", "stone",
+                                      "andesite", "diorite", "granite", "deepslate", "tuff", "sand", "red_sand", "gravel",
+                                      "clay", "water", "lava", "short_grass", "tall_grass", "moss_block")}
+
+
+def sentinel(rec, template_doc, subs):
+    """(x, y, z, block) in the world: a solid block of the template's lowest layer, near its middle, named as it will
+    stand after the substitutions. The check step places the template again if this block is not there."""
+    import place_town
+    pal = template_doc["palette"]
+    sx, _, sz = template_doc["size"]
+    swap = {s["from"]: s["to"] for s in subs}
+    cands = [(b["pos"], pal[b["state"]]["Name"]) for b in template_doc["blocks"]
+             if pal[b["state"]]["Name"] not in ("minecraft:air", "minecraft:structure_void", "minecraft:cave_air", "minecraft:jigsaw")
+             and not pal[b["state"]]["Name"].endswith(("_door", "_carpet", "_slab", "_stairs"))
+             # a block the ground may already hold would pass the check with nothing placed
+             and pal[b["state"]]["Name"] not in NATURAL]
+    low = min(p[1] for p, _ in cands)
+    (tx, ty, tz), name = min(((p, n) for p, n in cands if p[1] == low),
+                             key=lambda q: (q[0][0] - sx / 2) ** 2 + (q[0][2] - sz / 2) ** 2)
+    rx, rz = place_town.rotate(tx, tz, rec.get("rotation", "none"))
+    return rec["position"]["x"] + rx, rec["position"]["y"] + ty, rec["position"]["z"] + rz, swap.get(name, name)
+
+
+def functions(rec, subs, check=None):
+    """{function name: lines}. Force-load, wait SETTLE ticks, place and substitute, wait SETTLE ticks, and if the
+    check block is missing place again, then release the box.
+
+    Two of twenty pack-donor placements failed in full rebuilds of the disposable world on 2026-09-21 (Koga's gym
+    in one run, Blaine's in the next) and none of ten failed when run on their own; the cause was not found. The
+    wait and the check make the placement not depend on it, and tools/town_audit.py checks the result."""
+    name = "place_%s" % rec["id"]
+    lo, hi = box(rec)
+    fl = "%d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16)
+    body = commands(rec, subs)
+    body = [l for l in body if not l.startswith("forceload")]
+    held = "# chunks-loaded-by: cobblers:structures/%s" % name
+    out = {name: [body[0], "forceload add %s" % fl, "schedule function %s:structures/%s_go %dt replace" % (NS, name, SETTLE)],
+           name + "_go": [held] + body[1:] + ["schedule function %s:structures/%s_check %dt replace" % (NS, name, SETTLE)]}
+    chk = [held]
+    if check:
+        cx, cy, cz, blk = check
+        chk.append("execute unless block %d %d %d %s run function %s:structures/%s_again" % (cx, cy, cz, blk, NS, name))
+        out[name + "_again"] = [held, "# the check block was missing: place it again"] + body[1:]
+    out[name + "_check"] = chk + ["forceload remove %s" % fl]
+    return out
 
 
 def commands(rec, subs):
@@ -116,6 +166,9 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("function")
     f.add_argument("--out", default=str(DEFAULT_OUT))
+    f.add_argument("--server-dir", default=os.environ.get("COBBLERS_SERVER_ROOT"),
+                   help="the server whose packs hold the templates, to choose each placement's check block; "
+                        "without it the function places without checking")
     v = sub.add_parser("verify")
     v.add_argument("--world", required=True, help="a stopped world copy; the live world is refused")
     a = p.parse_args(argv)
@@ -128,17 +181,23 @@ def main(argv=None):
     if a.cmd == "function":
         out = Path(a.out)
         for rec in recs:
-            fn = out / "data" / NS / "function" / "structures" / ("place_%s.mcfunction" % rec["id"])
-            fn.parent.mkdir(parents=True, exist_ok=True)
-            lines_out = commands(rec, subs)
-            refused = function_limits.check_lines(lines_out, str(fn))
-            if refused:
-                for _n, _cmd, _why in refused:
-                    print("REFUSED line %d: %s" % (_n, _why))
-                    print("   %s" % _cmd)
-                raise SystemExit("%s: %d command(s) the server would refuse; not written" % (fn, len(refused)))
-            fn.write_text("\n".join(commands(rec, subs)) + "\n", encoding="utf-8", newline="\n")
-            print("wrote", fn)
+            check = None
+            if a.server_dir:
+                import nbt
+                import traders
+                _, tdoc = nbt.loads(traders.find_template(a.server_dir, rec["pack_template"]))
+                check = sentinel(rec, tdoc, subs)
+            for name, lines_out in functions(rec, subs, check).items():
+                fn = out / "data" / NS / "function" / "structures" / ("%s.mcfunction" % name)
+                fn.parent.mkdir(parents=True, exist_ok=True)
+                refused = function_limits.check_lines(lines_out, str(fn))
+                if refused:
+                    for _n, _cmd, _why in refused:
+                        print("REFUSED line %d: %s" % (_n, _why))
+                        print("   %s" % _cmd)
+                    raise SystemExit("%s: %d command(s) the server would refuse; not written" % (fn, len(refused)))
+                fn.write_text("\n".join(lines_out) + "\n", encoding="utf-8", newline="\n")
+            print("wrote place_%s%s" % (rec["id"], " (checked at %s)" % (check,) if check else " (no check block)"))
         (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers donor structure placements (generated)"}}) + "\n", encoding="utf-8")
         return 0
     import runtime_guard

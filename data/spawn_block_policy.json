@@ -51,6 +51,69 @@
       "why": "as the other concrete colours: Cobbleverse spawns varoom and revavroom on all 16 vanilla concretes in every overworld biome. The CobbleTowns Mart roof uses this one.",
       "visually": "byte-identical texture, cube_all model",
       "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:orange_concrete",
+      "to": "moarconcrete:orange_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:magenta_concrete",
+      "to": "moarconcrete:magenta_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:yellow_concrete",
+      "to": "moarconcrete:yellow_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:lime_concrete",
+      "to": "moarconcrete:lime_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:pink_concrete",
+      "to": "moarconcrete:pink_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:gray_concrete",
+      "to": "moarconcrete:gray_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:light_gray_concrete",
+      "to": "moarconcrete:light_gray_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:purple_concrete",
+      "to": "moarconcrete:purple_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:green_concrete",
+      "to": "moarconcrete:green_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
     }
   ],
   "whitelist": [
@@ -181,6 +244,29 @@
       ],
       "why": "the decoration inside the ocean village houses Misty's town is built from: coral on a shelf, kelp in a jar, a redstone block in a workshop. The same argument as the brain coral already listed, and one of each: a water town that owns no coral would be odd.",
       "scope": "gym2_town houses only"
+    },
+    {
+      "blocks": [
+        "minecraft:blue_wool",
+        "minecraft:light_blue_wool",
+        "minecraft:red_sand",
+        "minecraft:lily_pad"
+      ],
+      "scope": "the Kanto League building (cobbleverse:kanto_league), placed by resource id",
+      "why": "the League's own decoration: 104 wool, 562 red sand and 16 lily pads inside a building we place whole and do not edit. There is no identical block that names no spawn condition, and the League plateau is the one place the region's wild encounters matter least.",
+      "consequence": "Smeargle may appear near its wool, Sandygast and Palossand on its red sand, Lotad's line and Politoed near its lily pads, on the League plateau only",
+      "decided": "2026-09-21, by the implementing session; the owner may veto"
+    },
+    {
+      "blocks": [
+        "minecraft:sunflower",
+        "minecraft:cobweb",
+        "cobblemon:monitor"
+      ],
+      "scope": "Sabrina's observatory (mega_showdown:observatory) and department store (bca:default/centers/center_department_store)",
+      "why": "one of each inside the two civic buildings, placed whole by resource id. A Rotom drawn to the observatory's monitor in the psychic town is flavour, not a leak",
+      "consequence": "a Rotom by the monitor, a Spinarak or Ariados by the web, garden Pokemon by the flower, in those two buildings",
+      "decided": "2026-09-21, by the implementing session; the owner may veto"
     }
   ],
   "checked_paving": {
