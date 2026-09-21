@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Turn a settlement's placements (data/placements.json) into a datapack function that builds it in the world.
 
-For each building, seated on the ground as the world has it (read from the region files of the stopped world,
---surface-world): the template's ground layer is the layer of its entrance jigsaw (the path block in front of
+For each building, seated on the ground the heightmap gives (tools/ground.py; never a world, which holds the
+last build): the template's ground layer is the layer of its entrance jigsaw (the path block in front of
 the door sits at grade), and that layer is placed at the ground height in front of the entrance, so the floor
 meets the street at grade. Trees and plants in the footprint are cleared; ground above the floor inside the
 building is replaced by the template's own air; where the ground falls away below the building, every column
@@ -21,13 +21,14 @@ Rotation follows Minecraft's StructureTemplate transform about the placement ori
   none (x, z) | clockwise_90 (-z, x) | 180 (-x, -z) | counterclockwise_90 (z, -x)
 so the command position is the requested footprint corner minus the rotated template's minimum corner.
 
-  python tools/place_town.py hometown --surface-world <stopped world> [--install <server>/datapacks]
+  python tools/place_town.py hometown --source-root <heightmap root> [--install <server>/datapacks]
   then in game or over RCON: /reload, /function cobblers:towns/hometown
   python tools/place_town.py hometown --verify --server-dir <server>
 """
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import math
 import shutil
@@ -479,7 +480,9 @@ def main(argv=None):
     p.add_argument("settlement")
     p.add_argument("--placements", default=str(ROOT / "data" / "placements.json"))
     p.add_argument("--legs", default=str(ROOT / "derived" / "routes" / "critical_legs.json"))
-    p.add_argument("--surface-world", default=None, help="stopped world folder whose region files give the ground")
+    p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
+    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"),
+                   help="heightmap root: the only source of ground (tools/ground.py)")
     p.add_argument("--out", default=None)
     p.add_argument("--install", default=None, help="copy the datapack into this datapacks folder")
     p.add_argument("--world", help="a STOPPED world copy; with --verify it also audits the town's blocks")
@@ -499,21 +502,16 @@ def main(argv=None):
         path.write_text(json.dumps(res, indent=1), encoding="utf-8")
         print(json.dumps(res, indent=1))
         raise SystemExit(0 if (res["gaps"] == 0 and not res.get("spawn_block_problems")) else 1)
-    if not a.surface_world:
-        raise SystemExit("--surface-world is required: buildings are seated on the ground as the world has it")
-    import world_heights
+    if a.surface_world:
+        raise SystemExit("--surface-world is gone: ground comes from the heightmap (tools/ground.py), never from "
+                         "a world, because a world holds the last build and a town seated on it climbs its own "
+                         "roofs. Pass --source-root, or set COBBLERS_SOURCE_ROOT.")
+    import ground as G
     out = Path(a.out or ROOT / "build" / "datapacks" / "cobblers_towns")
     doc = json.loads(Path(a.placements).read_text(encoding="utf-8"))
     legs = json.loads(Path(a.legs).read_text(encoding="utf-8")) if Path(a.legs).exists() else None
     bx0, bz0, bx1, bz1 = settlement_bounds(a.settlement, doc)
-    ground, _, meta = world_heights.extract(a.surface_world, (bx0, bz0, bx1, bz1))
-    if meta["columns_without_ground"]:
-        raise SystemExit("%d columns without ground in %s" % (meta["columns_without_ground"], a.surface_world))
-
-    def ground_at(x, z):
-        if not (bx0 <= x <= bx1 and bz0 <= z <= bz1):
-            raise SystemExit("(%d, %d) is outside the extracted ground %s" % (x, z, (bx0, bz0, bx1, bz1)))
-        return int(ground[z - bz0, x - bx0])
+    ground_at = G.load(a.source_root)
     cmds, report = build(a.settlement, doc, ground_at, legs, out)
     fn = out / "data" / "cobblers" / "function" / "towns" / ("%s.mcfunction" % a.settlement)
     fn.parent.mkdir(parents=True, exist_ok=True)
@@ -529,7 +527,7 @@ def main(argv=None):
     fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
     rep = ROOT / "derived" / "towns" / ("%s_placement.json" % a.settlement)
     rep.parent.mkdir(parents=True, exist_ok=True)
-    rep.write_text(json.dumps(dict(report, surface_world=str(a.surface_world), ground_bounds=[bx0, bz0, bx1, bz1]), indent=1), encoding="utf-8")
+    rep.write_text(json.dumps(dict(report, ground_from="heightmap (tools/ground.py, rounded)", ground_bounds=[bx0, bz0, bx1, bz1]), indent=1), encoding="utf-8")
     print(json.dumps({"buildings": [{k: v for k, v in b.items() if k not in ("columns", "corners")} for b in report["buildings"]],
                       **{k: v for k, v in report.items() if k not in ("buildings", "route_points")}}, indent=1))
     if a.install:

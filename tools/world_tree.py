@@ -8,7 +8,7 @@ did, as run-length fills split across functions (`maxCommandChainLength` is 6553
 It needs the raised build limit: at Foothill Woods, ground y116, the crown reaches y535 against a vanilla ceiling
 of y319. See `modpack/datapacks/cobblers_height`.
 
-  python tools/world_tree.py --surface-world <offline-snapshot-world> [--out build/datapacks/cobblers_worldtree]
+  python tools/world_tree.py --source-root <heightmap root> [--out build/datapacks/cobblers_worldtree]
   then install the datapack (under the server lock), /reload, /function cobblers:worldtree/00_tree .. 03_tree, then 90_foundation
 
 This lives in the repo rather than only in a scratch directory because the datapack it writes sits INSIDE the world
@@ -28,13 +28,18 @@ GROUND = 116
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--surface-world", required=True, help="offline snapshot or disposable copy, never the live world")
+    p.add_argument("--source-root", default=None, help="heightmap root: the tree's foundation is packed to its ground")
+    p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
     p.add_argument("--out", default=str(REPO / "build" / "datapacks" / "cobblers_worldtree"))
     a = p.parse_args(argv)
     import runtime_guard
     SERVER_DP = runtime_guard.check(a.out, "write the datapack to")
+    if a.surface_world:
+        # the foundation was packed to the ground read from a world. Re-run on a world that already holds the
+        # tree, that ground is the tree's own trunk, and the foundation it writes is none at all.
+        raise SystemExit("--surface-world is gone: the foundation is packed to the heightmap's ground (tools/ground.py)")
     import tree_grove as TG
-    import world_heights as WH
+    import ground as G
     b, dims = TG.big_tree("oak", "a", "world")
     c = dims["trunk"][0] // 2                       # builder trunk centre is at (c, ., c)
     ox = CENTRE[0] - c
@@ -54,9 +59,8 @@ def main(argv=None):
     for (x, y, z) in b.blocks:
         k = (ox + x, oz + z)
         low[k] = min(low.get(k, 10 ** 6), oy + y)
-    g, _, _ = WH.extract(a.surface_world,
-                         (min(k[0] for k in low), min(k[1] for k in low),
-                          max(k[0] for k in low), max(k[1] for k in low)))
+    g = G.load(a.source_root).box(min(k[0] for k in low), min(k[1] for k in low),
+                                  max(k[0] for k in low), max(k[1] for k in low))
     gx0, gz0 = min(k[0] for k in low), min(k[1] for k in low)
     found, gaps = [], 0
     for (x, z), y in sorted(low.items()):

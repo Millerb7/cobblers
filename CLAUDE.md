@@ -209,6 +209,23 @@ does not grade its own work.
   (`git fetch` then `git merge-base --is-ancestor <sha> origin/main`); a PR
   marked merged is not proof that main has its final commits.
 
+## Ground comes from the heightmap, never from a world
+
+Every tool that decides where something goes takes its ground from `tools/ground.py` (the canonical
+heightmap, rounded) or from measured plan data. It never reads the surface of a world save to decide a
+position. A world holds whatever was built into it last, and a tool that reads its own output as ground
+builds on top of itself. This has happened twice:
+
+- the Displaced City cavern plan was regenerated from a world the previous carve had damaged, and
+  followed the damage instead of the terrain;
+- `tools/place_town.py` seated Brock's houses on ground read from a world that already held the town,
+  and on a rebuild they climbed six to ten blocks above their own street.
+
+Rounded, not floored: against a fresh export `round(h)` matches the exported ground at 99.85% of
+columns and `floor(h)` at 52%. Reading a world to *check* a result (the verify passes,
+`tools/town_audit.py`) is different and still required. `tests/test_ground_rule.py` fails if a
+placement tool reads a world to decide.
+
 ## Verify before claiming
 
 A generated config, datapack or manifest is not proof that a feature works. A

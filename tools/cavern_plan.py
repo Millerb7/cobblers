@@ -22,7 +22,7 @@ writes a datapack of numbered functions plus a plan report. Nothing runs until t
             and rubble steps, alcoves where the diggers followed a seam, and a lantern every 8 blocks.
   biome     /fillbiome to minecraft:cherry_grove over the cavern volume, in its own function (not called by the others).
 
-  python tools/cavern_plan.py --source-root <root> [--surface-world <stopped world>] [--install <server>/datapacks]
+  python tools/cavern_plan.py --source-root <root> [--install <server>/datapacks]     # ground from the heightmap only
   then: /reload, /function cobblers:cavern/00_seal ... /function cobblers:cavern/50_tunnel (60_biome separately)
 """
 from __future__ import annotations
@@ -147,7 +147,7 @@ def poisson_positions(density, spacing, rng, tries=30):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
-    p.add_argument("--surface-world", default=None, help="stopped world: ground above the cavern read from region files")
+    p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
     p.add_argument("--install", default=None)
     p.add_argument("--seed", type=int, default=20260916)
     a = p.parse_args(argv)
@@ -164,14 +164,15 @@ def main(argv=None):
 
     # ground above the cavern and along the tunnel: region files if given, else the heightmap (conservative floor)
     bx0, bz0, bx1, bz1 = min(x0, city["footprint"]["min_x"]) - 40, min(z0, city["footprint"]["min_z"]) - 120, x1 + 40, z1 + 40
+    # Ground from the heightmap, never from a world. The cavern plan was the first tool to be bitten by
+    # this: regenerated from a world the previous carve had already damaged, it followed the damage
+    # instead of the terrain. And rounded, not floored: floor(h) is a block low across 48% of the map.
     if a.surface_world:
-        import world_heights
-        g, _, _ = world_heights.extract(a.surface_world, (bx0, bz0, bx1, bz1))
-        ground = lambda x, z: int(g[z - bz0, x - bx0])
-        basis = "region files of %s" % a.surface_world
-    else:
-        ground = lambda x, z: int(math.floor(float(heights[z, x])))
-        basis = "heightmap %s, floor(h): run again with --surface-world on the exported world before building" % world["heightmap"]["sha256"][:12]
+        raise SystemExit("--surface-world is gone: the cavern's ground comes from the heightmap (tools/ground.py), "
+                         "never from a world, which holds the last carve")
+    import ground as G
+    ground = G.load(a.source_root) if a.source_root else G.load()
+    basis = "heightmap %s, rounded (tools/ground.py)" % world["heightmap"]["sha256"][:12]
     top = np.array([[ground(x, z) for x in range(x0, x1 + 1)] for z in range(z0, z1 + 1)])
 
     # tunnel: mouth on the city's surface site facing the trough, around the creek's head, into the cavern's

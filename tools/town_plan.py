@@ -16,7 +16,7 @@ Center, Mart and gym, piers, entries and exits, paving) and computes:
              vanilla function (fill), plus the equivalent WorldEdit selections, NOT run.
   checks     overlaps, footprint bounds, steepest street grade before and after, cut and fill volumes
 
-  python tools/town_plan.py gym1_town --source-root <root> [--surface-world <stopped world>]
+  python tools/town_plan.py gym1_town --source-root <root>          # ground from the heightmap, never a world
 """
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ def main(argv=None):
     T.add_common_args(p)
     p.add_argument("settlement")
     p.add_argument("--placements", default=str(ROOT / "data" / "placements.json"))
-    p.add_argument("--surface-world", default=None)
+    p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
     a = p.parse_args(argv)
     heights, world = T.load_from_args(a)
     doc = json.loads(Path(a.placements).read_text(encoding="utf-8"))
@@ -80,17 +80,17 @@ def main(argv=None):
     fbox = (fp["min_x"], fp["min_z"], fp["max_x"], fp["max_z"])
 
     if a.surface_world:
-        import world_heights
-        m = 96
-        bx0, bz0, bx1, bz1 = fbox[0] - m, fbox[1] - m, fbox[2] + m, fbox[3] + m
-        g, _, _ = world_heights.extract(a.surface_world, (bx0, bz0, bx1, bz1))
-        def ground(x, z):
-            return int(g[int(z) - bz0, int(x) - bx0])
-        ground_basis = "world region files: %s" % a.surface_world
-    else:
-        def ground(x, z):
-            return int(math.floor(float(heights[int(round(z)), int(round(x))])))
-        ground_basis = "heightmap %s (floor); pass --surface-world before running any prep" % world["heightmap"]["sha256"][:12]
+        raise SystemExit("--surface-world is gone: a plan's ground comes from the heightmap (tools/ground.py), "
+                         "never from a world, which holds the last build")
+    # Rounded, not floored. floor(h) was a block low across 48% of the map (measured against a fresh
+    # export, see tools/ground.py), which put every lot's measured ground range one block under the
+    # ground WorldPainter actually writes.
+    import ground as G
+    _g = G.load(a.source_root) if getattr(a, "source_root", None) else G.load()
+
+    def ground(x, z):
+        return _g(int(round(x)), int(round(z)))
+    ground_basis = "heightmap %s, rounded (tools/ground.py)" % world["heightmap"]["sha256"][:12]
 
     report = {"settlement": a.settlement, "footprint": fbox, "ground_basis": ground_basis, "streets": {}, "lots": [],
               "anchors": [], "lamps": [], "checks": {}}

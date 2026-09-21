@@ -11,9 +11,9 @@ blocks: roughly twice a mega spruce and half a landmark. The foliage types it st
 hectare and top out around 20-50 blocks, so an elder clears its own canopy by 30-plus and reads as emergent from
 outside the wood. That only works if the ground holds it, so every site is measured:
 
-  pad       9x9 (the 7x7 trunk plus a block of margin), relief at most 2.0 blocks, measured on the ground the
-            world actually has (region files, tools/world_heights.py) and not on the heightmap. The trunk is a
-            solid column: on a sloped seat it either floats on the low side or buries its first storey
+  pad       9x9 (the 7x7 trunk plus a block of margin), relief at most 2.0 blocks, measured on the heightmap's
+            ground, rounded (tools/ground.py), never on a world, which holds whatever was built into it last. The
+            trunk is a solid column: on a sloped seat it either floats on the low side or buries its first storey
   dry       no water within 24 blocks of the trunk centre. The root flare reaches 13 and the crown 19; a trunk
             on a bank looks placed, a trunk in a pond looks like a mistake
   spacing   220 blocks between elders and from the landmark tree sites, and clear of every landmark's declared
@@ -31,7 +31,7 @@ Sites are picked by farthest-point sampling over a 16-block grid of cells that p
 to 8 blocks onto the flattest pad that still passes. Rotation per tree comes from a seeded RNG so the same
 three prefabs per species do not read as three prefabs.
 
-  python tools/elder_trees.py --source-root <root> [--surface-world <stopped world>]
+  python tools/elder_trees.py --source-root <root>
   writes kits/structures/prefabs/trees/tree_town/elder_<species>_<a|b|c>.nbt (+ .json),
   derived/sites/elder_trees.json and build/elders/elders.mcfunction (not run)
 """
@@ -235,16 +235,20 @@ def pick(row, sub, ground, wet, inside, x0, z0, chosen, fixed, segs, towns, glad
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
-    p.add_argument("--surface-world", required=True,
-                   help="offline snapshot or disposable copy, never the live world: pads measured and trunks seated on the ground the world has")
+    p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
     p.add_argument("--function", default=str(ROOT / "build" / "elders" / "elders.mcfunction"))
     a = p.parse_args(argv)
-    if not a.surface_world or not (Path(a.surface_world) / "region").is_dir():
-        raise SystemExit("--surface-world must point at a stopped world with a region/ directory: pads are "
-                         "measured on the ground the world has, not on the heightmap")
+    if a.surface_world:
+        # This tool used to require a world, on the grounds that pads were measured on the ground the
+        # world has rather than the heightmap. The canonical heightmap carries the pads now
+        # (land_8k_16_rescaled_b145_pads.png), and round(h) matches a fresh export at 99.85% of columns
+        # (tools/ground.py), so the world is no longer needed and is no longer safe: it holds what was
+        # built into it last.
+        raise SystemExit("--surface-world is gone: trunks are seated on the heightmap's ground (tools/ground.py)")
     heights, world = T.load_from_args(a)
     n = heights.shape[0]
-    import world_heights
+    import ground as G
+    ground_of = G.load(a.source_root) if a.source_root else G.load()
 
     subs = json.loads((ROOT / "data" / "regions.json").read_text(encoding="utf-8"))["subregions"]
     foliage = json.loads((ROOT / "data" / "foliage.json").read_text(encoding="utf-8"))
@@ -271,9 +275,14 @@ def main(argv=None):
         m = DRY + PAD + NUDGE + 8                                    # window margin for every box test above
         x0, z0 = b["min_x"] - m, b["min_z"] - m
         x1, z1 = b["max_x"] + m, b["max_z"] + m
-        ground, water, _ = world_heights.extract(a.surface_world, (x0, z0, x1, z1))
+        cx0, cz0 = max(0, x0), max(0, z0)
+        cx1, cz1 = min(n - 1, x1), min(n - 1, z1)
+        ground = np.full((z1 - z0 + 1, x1 - x0 + 1), -64, dtype=int)
+        ground[cz0 - z0:cz1 - z0 + 1, cx0 - x0:cx1 - x0 + 1] = ground_of.box(cx0, cz0, cx1, cz1)
         h, w = ground.shape
-        wet = water > world_heights.NONE                             # water the world actually has, plus painted
+        # water from the painted water model only: the world's own water was read here too, and the world
+        # holds whatever fluid a later build or a fluid clear put into it
+        wet = np.zeros((h, w), bool)
         px0, pz0 = max(0, x0), max(0, z0)
         px1, pz1 = min(n, x1 + 1), min(n, z1 + 1)
         if px1 > px0 and pz1 > pz0:
@@ -334,7 +343,7 @@ def main(argv=None):
     fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
     spacings = [s["nearest_other"] for s in all_sites]
     doc = {"generator": "tools/elder_trees.py", "provenance": T.provenance(world, Path(a.world)),
-           "surface_world": a.surface_world, "tier": TIER, "habitat": next(iter(written.values()))["habitat"],
+           "ground_from": "heightmap, rounded (tools/ground.py)", "tier": TIER, "habitat": next(iter(written.values()))["habitat"],
            "rules": {"pad_blocks": 2 * PAD + 1, "pad_relief_max": PAD_RELIEF, "dry_radius": DRY,
                      "spacing": SPACING, "glade_clear": GLADE_CLEAR, "off_town": OFF_TOWN, "off_leg": OFF_LEG,
                      "near_leg": NEAR_LEG, "region_inset": INSET, "grid": GRID, "per_km2": round(PER_KM2, 3)},
