@@ -107,8 +107,12 @@ def test_real_spawn_block_policy_passes():
     ctx = V.Context(ROOT / "data", None, V.Report())
     V.check_schema(ctx)
     V.check_spawn_blocks(ctx)
-    bad = [f.message for f in ctx.report.findings if f.check == "spawn-blocks" and f.severity in (V.ERROR, V.SKIPPED)]
+    bad = [f.message for f in ctx.report.findings if f.check == "spawn-blocks" and f.severity == V.ERROR]
     assert bad == []
+    # the only thing that may go unchecked is a donor structure placed from an installed pack: its template is under a
+    # licence that forbids committing it, so there is no file here to read. Anything else unchecked is a hole.
+    skipped = [f.message for f in ctx.report.findings if f.check == "spawn-blocks" and f.severity == V.SKIPPED]
+    assert len(skipped) == 1 and "placed from the installed pack" in skipped[0], skipped
 
 
 # ------------------------------------------------------------------ triggers in placed templates

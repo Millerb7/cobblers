@@ -128,6 +128,36 @@ Spot-check the code and the tests against real data, and report disagreements ra
    written in the same session.
 8. **`tools/compile_dialogue.py`** (EXP-022): entry-rule order, the cursor/`set_page` flow, the give success guard
    and the refusal of unsupported constructs. Tests: `tests/test_compile_dialogue.py`, written in the same session.
+9. **The roster audit tooling behind `docs/world-building/ROSTER_AUDIT.md`.** Not in `tools/`: it was written and run
+   in a scratch session on 2026-09-17, and its counts (35 unreachable sub-regions, 23 wrong-country, 28 needs-water,
+   42 milder mismatches, 45 weak-identity rosters) are in the report. It decides where a species belongs by resolving
+   Cobblemon's biome tags across every jar the server loads and reading the species' dry-land entries only. Two
+   mistakes were found and fixed while writing it — vanilla `#minecraft:` tags were not resolving at all, which
+   flagged 380 entries instead of 117; and counting a species' fishing entries made Krabby look like it lived in every
+   biome. Both suggest the remaining counts deserve a check. The two findings it produced are committed
+   (`tools/subregion_boxes.py`, `tools/position_types.py`), the report's judgements are not.
+10. **`tools/subregion_boxes.py` and `build_subregions` in `tools/compile_spawns.py`.** Check the polygon rasterising
+   and rectangle merge (cell-centre membership, so neighbouring sub-regions cannot both claim a cell), the exclusion
+   of route corridor cells, and whether a 32-block grid is the right trade between boundary slop and 14,366 entries.
+   No pytest suite yet.
+11. **`tools/position_types.py`.** Check the rule: fishing entries dropped, any dry-land entry keeps `grounded`,
+   otherwise the most-used water position. 32 species have no upstream spawn data at all and keep `grounded` by
+   default — Starly, Staravia, Bidoof and Piplup among them, the last two because Cobblemon 1.8 only spawns them from
+   fishing. No pytest suite yet.
+12. **`tests/test_ground_rule.py` and `tools/ground.py`.** Written by the session that converted the eight
+   placement tools. Check the detector's reach: it catches `world_heights` imports and `X.extract()`/`X.capture()`
+   calls, so a world read by another route (opening region files directly, a new reader module) would pass. Check
+   that `VERIFY_ONLY` functions really only verify, and that `round` rather than `floor` holds away from the 40
+   sampled windows.
+13. **`tools/traders.py`, `tests/test_traders.py` and the `traders` check.** One session wrote the function, its
+   tests and the verifier. Check the de-duplication cannot kill the only trader (it kills only where a `new` one
+   stands), that the stray sweep (same type and exact name within 48 blocks) cannot catch an unrelated entity, and
+   that 40 ticks is a safe load wait on a busier server than the idle disposable one it was measured on.
+14. **`town_audit.plan_audit`, the unloaded-write rule and `ensure_loaded` in `tools/function_limits.py`,
+   `rewrite_template(dry=True)` in `tools/place_town.py`, and `tests/test_silent_commands.py`.** One session wrote
+   them. Check that `TEMPLATE_REACH` (32 blocks) covers every template the generators place (a giant tree or a gym
+   may be larger), that the 95% standing threshold cannot pass a building missing its roof, and that the passable
+   set used for "a block standing on the road" is not hiding anything.
 
 ## What Codex can resume
 

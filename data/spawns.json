@@ -61,7 +61,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.forretress",
@@ -76,7 +77,8 @@
       "eligibility_reason": "evolution requires level 31; band begins at 25",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.teddiursa",
@@ -91,7 +93,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.ursaring",
@@ -106,7 +109,8 @@
       "eligibility_reason": "evolution requires level 30; band begins at 25",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.hoothoot",
@@ -123,7 +127,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.noctowl",
@@ -140,7 +145,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.spinarak",
@@ -155,7 +161,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.ariados",
@@ -170,7 +177,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.stantler",
@@ -185,7 +193,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_west.phantump",
@@ -202,7 +211,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.pineco",
@@ -217,7 +227,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.sentret",
@@ -232,7 +243,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.furret",
@@ -247,7 +259,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.deerling",
@@ -262,7 +275,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.sawsbuck",
@@ -277,7 +291,8 @@
       "eligibility_reason": "evolution requires level 34; band begins at 25",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.starly",
@@ -292,7 +307,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.staravia",
@@ -307,7 +323,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.pachirisu",
@@ -322,7 +339,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.skwovet",
@@ -337,7 +355,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.northgate_east.greedent",
@@ -352,7 +371,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.snover",
@@ -367,7 +387,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.abomasnow",
@@ -382,7 +403,8 @@
       "eligibility_reason": "evolution requires level 40; band begins at 25",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.snom",
@@ -397,7 +419,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.frosmoth",
@@ -412,7 +435,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.vulpix_alolan",
@@ -427,7 +451,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.sandshrew_alolan",
@@ -442,7 +467,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.stantler",
@@ -457,7 +483,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.wyrdeer",
@@ -472,7 +499,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.delibird",
@@ -487,7 +515,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_pine_isle.sneasel",
@@ -502,7 +531,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.snover",
@@ -517,7 +547,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.vulpix_alolan",
@@ -532,7 +563,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.ninetales_alolan",
@@ -547,7 +579,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.buneary",
@@ -562,7 +595,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.lopunny",
@@ -577,7 +611,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.zorua",
@@ -594,7 +629,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.zoroark",
@@ -611,7 +647,8 @@
       "eligibility_reason": "evolution requires level 30; band begins at 25",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.rowlet",
@@ -626,7 +663,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.dartrix",
@@ -641,7 +679,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_pine_isle.decidueye",
@@ -656,7 +695,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.shroomish",
@@ -671,7 +711,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.breloom",
@@ -686,7 +727,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.paras",
@@ -701,7 +743,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.parasect",
@@ -716,7 +759,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.foongus",
@@ -731,7 +775,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.amoonguss",
@@ -746,7 +791,8 @@
       "eligibility_reason": "evolution requires level 39; band begins at 25",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.morelull",
@@ -761,7 +807,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.shiinotic",
@@ -776,7 +823,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.toedscool",
@@ -791,7 +839,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_north.toedscruel",
@@ -806,7 +855,8 @@
       "eligibility_reason": "evolution requires level 30; band begins at 25",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.shroomish",
@@ -821,7 +871,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.poliwag",
@@ -836,7 +887,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.poliwhirl",
@@ -851,7 +903,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.politoed",
@@ -866,7 +919,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.wooper",
@@ -881,7 +935,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.quagsire",
@@ -896,7 +951,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.tympole",
@@ -911,7 +967,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.palpitoad",
@@ -926,7 +983,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.seismitoad",
@@ -941,7 +999,8 @@
       "eligibility_reason": "evolution requires level 36; band begins at 25",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.fungal_south.lechonk",
@@ -956,7 +1015,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:mushroom_fields"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.oricorio",
@@ -971,7 +1031,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.doduo",
@@ -986,7 +1047,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.dodrio",
@@ -1001,7 +1063,8 @@
       "eligibility_reason": "evolution requires level 31; band begins at 25",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.girafarig",
@@ -1016,7 +1079,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.farigiraf",
@@ -1031,7 +1095,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.litleo",
@@ -1046,7 +1111,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.pyroar",
@@ -1061,7 +1127,8 @@
       "eligibility_reason": "evolution requires level 35; band begins at 25",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.blitzle",
@@ -1076,7 +1143,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.zebstrika",
@@ -1091,7 +1159,8 @@
       "eligibility_reason": "evolution requires level 27; band begins at 25",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_west.mudbray",
@@ -1106,7 +1175,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.oricorio",
@@ -1121,7 +1191,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.cutiefly",
@@ -1136,7 +1207,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.ribombee",
@@ -1151,7 +1223,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.fomantis",
@@ -1166,7 +1239,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.lurantis",
@@ -1181,7 +1255,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.petilil",
@@ -1196,7 +1271,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.lilligant",
@@ -1211,7 +1287,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.comfey",
@@ -1226,7 +1303,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.smoliv",
@@ -1241,7 +1319,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.sunset_east.arboliva",
@@ -1256,7 +1335,8 @@
       "eligibility_reason": "evolution requires level 35; band begins at 25",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.pikipek",
@@ -1271,7 +1351,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.trumbeak",
@@ -1286,7 +1367,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.toucannon",
@@ -1301,7 +1383,8 @@
       "eligibility_reason": "evolution requires level 28; band begins at 25",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.aipom",
@@ -1316,7 +1399,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.ambipom",
@@ -1331,7 +1415,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.slakoth",
@@ -1346,7 +1431,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.vigoroth",
@@ -1361,7 +1447,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.kecleon",
@@ -1376,7 +1463,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.tropius",
@@ -1391,7 +1479,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_west.heracross",
@@ -1406,7 +1495,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.pikipek",
@@ -1421,7 +1511,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.hawlucha",
@@ -1436,7 +1527,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.passimian",
@@ -1451,7 +1543,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.oranguru",
@@ -1466,7 +1559,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.komala",
@@ -1481,7 +1575,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.jangmoo",
@@ -1496,7 +1591,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.hakamoo",
@@ -1511,7 +1607,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.kommoo",
@@ -1526,7 +1623,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.shroodle",
@@ -1541,7 +1639,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.jungle_east.grafaiai",
@@ -1556,7 +1655,8 @@
       "eligibility_reason": "evolution requires level 28; band begins at 25",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.deerling",
@@ -1571,7 +1671,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.sawsbuck",
@@ -1586,7 +1687,8 @@
       "eligibility_reason": "evolution requires level 34; band begins at 25",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.zigzagoon",
@@ -1601,7 +1703,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.linoone",
@@ -1616,7 +1719,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.nickit",
@@ -1633,7 +1737,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.thievul",
@@ -1650,7 +1755,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.rookidee",
@@ -1665,7 +1771,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.corvisquire",
@@ -1680,7 +1787,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.skwovet",
@@ -1695,7 +1803,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_north.greedent",
@@ -1710,7 +1819,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.deerling",
@@ -1725,7 +1835,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.nincada",
@@ -1740,7 +1851,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.ninjask",
@@ -1755,7 +1867,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.shedinja",
@@ -1770,7 +1883,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.seedot",
@@ -1785,7 +1899,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.nuzleaf",
@@ -1800,7 +1915,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.shiftry",
@@ -1815,7 +1931,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.applin",
@@ -1830,7 +1947,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.flapple",
@@ -1845,7 +1963,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_middle.appletun",
@@ -1860,7 +1979,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.deerling",
@@ -1875,7 +1995,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.chatot",
@@ -1890,7 +2011,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.fomantis",
@@ -1905,7 +2027,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.lurantis",
@@ -1920,7 +2043,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.bounsweet",
@@ -1935,7 +2059,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.steenee",
@@ -1950,7 +2075,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.tsareena",
@@ -1965,7 +2091,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.wimpod",
@@ -1980,7 +2107,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.golisopod",
@@ -1995,7 +2123,8 @@
       "eligibility_reason": "evolution requires level 30; band begins at 25",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.long_isle_south.squawkabilly",
@@ -2010,7 +2139,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sparse_jungle"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.bergmite",
@@ -2025,7 +2155,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.avalugg",
@@ -2040,7 +2171,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.smoochum",
@@ -2055,7 +2187,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.jynx",
@@ -2070,7 +2203,8 @@
       "eligibility_reason": "evolution requires level 30; band begins at 27",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.cryogonal",
@@ -2085,7 +2219,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.swablu",
@@ -2100,7 +2235,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.altaria",
@@ -2115,7 +2251,8 @@
       "eligibility_reason": "evolution requires level 35; band begins at 27",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.meditite",
@@ -2130,7 +2267,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.medicham",
@@ -2145,7 +2283,8 @@
       "eligibility_reason": "evolution requires level 37; band begins at 27",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.merian_cirque.drampa",
@@ -2160,7 +2299,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.bergmite",
@@ -2176,7 +2316,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.aron",
@@ -2192,7 +2333,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.lairon",
@@ -2208,7 +2350,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.aggron",
@@ -2224,7 +2367,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.beldum",
@@ -2240,7 +2384,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.metang",
@@ -2256,7 +2401,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.nosepass",
@@ -2272,7 +2418,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.bronzor",
@@ -2288,7 +2435,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.bronzong",
@@ -2304,7 +2452,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_crags.skarmory",
@@ -2320,7 +2469,8 @@
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.bergmite",
@@ -2336,7 +2486,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.vanillite",
@@ -2352,7 +2503,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.vanillish",
@@ -2368,7 +2520,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.vanilluxe",
@@ -2384,7 +2537,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.snom",
@@ -2400,7 +2554,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.frosmoth",
@@ -2416,7 +2571,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.snorunt",
@@ -2432,7 +2588,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.glalie",
@@ -2448,7 +2605,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.froslass",
@@ -2464,7 +2622,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.upper_trough.cubchoo",
@@ -2480,7 +2639,8 @@
       "biomes": [
         "minecraft:snowy_plains",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.bergmite",
@@ -2495,7 +2655,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.spheal",
@@ -2510,7 +2671,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.sealeo",
@@ -2525,7 +2687,8 @@
       "eligibility_reason": "evolution requires level 32; band begins at 27",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.walrein",
@@ -2540,7 +2703,8 @@
       "eligibility_reason": "evolution requires level 32; band begins at 27",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.piplup",
@@ -2555,7 +2719,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.prinplup",
@@ -2570,7 +2735,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.empoleon",
@@ -2585,7 +2751,8 @@
       "eligibility_reason": "evolution requires level 36; band begins at 27",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.buizel",
@@ -2600,7 +2767,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.floatzel",
@@ -2615,7 +2783,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lower_trough.bidoof",
@@ -2630,7 +2799,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.swablu",
@@ -2647,7 +2817,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.altaria",
@@ -2664,7 +2835,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.riolu",
@@ -2681,7 +2853,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.lucario",
@@ -2698,7 +2871,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.skiddo",
@@ -2715,7 +2889,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.gogoat",
@@ -2732,7 +2907,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.rookidee",
@@ -2749,7 +2925,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.corvisquire",
@@ -2766,7 +2943,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.corviknight",
@@ -2783,7 +2961,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.the_tri_peaks.absol",
@@ -2800,7 +2979,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.swablu",
@@ -2817,7 +2997,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.larvitar",
@@ -2834,7 +3015,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.pupitar",
@@ -2851,7 +3033,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.tyranitar",
@@ -2868,7 +3051,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.bagon",
@@ -2885,7 +3069,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.shelgon",
@@ -2902,7 +3087,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.skiddo",
@@ -2919,7 +3105,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.meditite",
@@ -2936,7 +3123,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.medicham",
@@ -2953,7 +3141,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_vessu.drampa",
@@ -2970,7 +3159,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.swablu",
@@ -2987,7 +3177,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.rockruff",
@@ -3004,7 +3195,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.lycanroc",
@@ -3021,7 +3213,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.makuhita",
@@ -3038,7 +3231,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.hariyama",
@@ -3055,7 +3249,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.machop",
@@ -3072,7 +3267,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.machoke",
@@ -3089,7 +3285,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.machamp",
@@ -3106,7 +3303,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.rufflet",
@@ -3123,7 +3321,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.mt_clay.braviary",
@@ -3140,7 +3339,8 @@
         "minecraft:grove",
         "minecraft:jagged_peaks",
         "minecraft:snowy_slopes"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.rolycoly",
@@ -3155,7 +3355,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.carkol",
@@ -3170,7 +3371,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.coalossal",
@@ -3185,7 +3387,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.roggenrola",
@@ -3200,7 +3403,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.boldore",
@@ -3215,7 +3419,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.gigalith",
@@ -3230,7 +3435,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.nacli",
@@ -3245,7 +3451,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.naclstack",
@@ -3260,7 +3467,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.garganacl",
@@ -3275,7 +3483,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_trunk.orthworm",
@@ -3290,7 +3499,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.rolycoly",
@@ -3305,7 +3515,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.klink",
@@ -3320,7 +3531,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.klang",
@@ -3335,7 +3547,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.klinklang",
@@ -3350,7 +3563,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.varoom",
@@ -3365,7 +3579,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.revavroom",
@@ -3380,7 +3595,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.bronzor",
@@ -3395,7 +3611,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.bronzong",
@@ -3410,7 +3627,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.pawniard",
@@ -3425,7 +3643,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_west_spur.bisharp",
@@ -3440,7 +3659,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.rolycoly",
@@ -3455,7 +3675,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.cubone",
@@ -3470,7 +3691,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.marowak",
@@ -3485,7 +3707,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.dwebble",
@@ -3500,7 +3723,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.crustle",
@@ -3515,7 +3739,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.scraggy",
@@ -3530,7 +3755,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.scrafty",
@@ -3545,7 +3771,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.glimmet",
@@ -3560,7 +3787,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.glimmora",
@@ -3575,7 +3803,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_west_arm.runerigus",
@@ -3590,7 +3819,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.rolycoly",
@@ -3605,7 +3835,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.gligar",
@@ -3620,7 +3851,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.gliscor",
@@ -3635,7 +3867,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.baltoy",
@@ -3650,7 +3883,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.claydol",
@@ -3665,7 +3899,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.golett",
@@ -3680,7 +3915,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.golurk",
@@ -3695,7 +3931,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.druddigon",
@@ -3710,7 +3947,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.solrock",
@@ -3725,7 +3963,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_south_east_arm.lunatone",
@@ -3740,7 +3979,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_gravelly_hills"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.slugma",
@@ -3755,7 +3995,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.sizzlipede",
@@ -3770,7 +4011,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.centiskorch",
@@ -3785,7 +4027,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.heatmor",
@@ -3800,7 +4043,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.salandit",
@@ -3815,7 +4059,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.salazzle",
@@ -3830,7 +4075,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.torkoal",
@@ -3845,7 +4091,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.turtonator",
@@ -3860,7 +4107,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.rhyhorn",
@@ -3875,7 +4123,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.crater_rim_north_west.rhydon",
@@ -3890,7 +4139,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna_plateau"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.slugma",
@@ -3905,7 +4155,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.magcargo",
@@ -3920,7 +4171,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.magby",
@@ -3935,7 +4187,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.magmar",
@@ -3950,7 +4203,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.magmortar",
@@ -3965,7 +4219,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.numel",
@@ -3980,7 +4235,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.camerupt",
@@ -3995,7 +4251,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.charmander",
@@ -4010,7 +4267,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.charmeleon",
@@ -4025,7 +4283,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.great_crater.charizard",
@@ -4040,7 +4299,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.slugma",
@@ -4055,7 +4315,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.rolycoly",
@@ -4070,7 +4331,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.carkol",
@@ -4085,7 +4347,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.coalossal",
@@ -4100,7 +4363,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.aron",
@@ -4115,7 +4379,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.lairon",
@@ -4130,7 +4395,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.aggron",
@@ -4145,7 +4411,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.gible",
@@ -4160,7 +4427,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.gabite",
@@ -4175,7 +4443,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_cones.garchomp",
@@ -4190,7 +4459,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:stony_peaks"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.cacnea",
@@ -4206,7 +4476,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.cacturne",
@@ -4222,7 +4493,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.skorupi",
@@ -4238,7 +4510,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.drapion",
@@ -4254,7 +4527,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.sandile",
@@ -4270,7 +4544,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.krokorok",
@@ -4286,7 +4561,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.krookodile",
@@ -4302,7 +4578,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.vullaby",
@@ -4318,7 +4595,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.mandibuzz",
@@ -4334,7 +4612,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_west.maractus",
@@ -4350,7 +4629,8 @@
       "biomes": [
         "minecraft:badlands",
         "minecraft:wooded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.cacnea",
@@ -4365,7 +4645,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.phanpy",
@@ -4380,7 +4661,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.donphan",
@@ -4395,7 +4677,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.mudbray",
@@ -4410,7 +4693,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.mudsdale",
@@ -4425,7 +4709,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.dwebble",
@@ -4440,7 +4725,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.crustle",
@@ -4455,7 +4741,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.bramblin",
@@ -4470,7 +4757,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.brambleghast",
@@ -4485,7 +4773,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_south.klawf",
@@ -4500,7 +4789,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.cacnea",
@@ -4515,7 +4805,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.houndour",
@@ -4530,7 +4821,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.houndoom",
@@ -4545,7 +4837,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.litleo",
@@ -4560,7 +4853,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.pyroar",
@@ -4575,7 +4869,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.larvesta",
@@ -4590,7 +4885,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.volcarona",
@@ -4605,7 +4901,8 @@
       "eligibility_reason": "evolution requires level 59; band begins at 47",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.durant",
@@ -4620,7 +4917,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.heatmor",
@@ -4635,7 +4933,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.plateau_east.orthworm",
@@ -4650,7 +4949,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:eroded_badlands"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.delibird",
@@ -4667,7 +4967,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.crabrawler",
@@ -4684,7 +4985,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.crabominable",
@@ -4701,7 +5003,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.sneasel",
@@ -4718,7 +5021,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.weavile",
@@ -4735,7 +5039,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.snorunt",
@@ -4752,7 +5057,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.glalie",
@@ -4769,7 +5075,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.froslass",
@@ -4786,7 +5093,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.absol",
@@ -4803,7 +5111,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak.drampa",
@@ -4820,7 +5129,8 @@
         "minecraft:frozen_peaks",
         "minecraft:snowy_slopes",
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.delibird",
@@ -4835,7 +5145,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.spheal",
@@ -4850,7 +5161,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.sealeo",
@@ -4865,7 +5177,8 @@
       "eligibility_reason": "evolution requires level 32; band begins at 25",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.walrein",
@@ -4880,7 +5193,8 @@
       "eligibility_reason": "evolution requires level 32; band begins at 25",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.vulpix_alolan",
@@ -4895,7 +5209,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.ninetales_alolan",
@@ -4910,7 +5225,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.sandshrew_alolan",
@@ -4925,7 +5241,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.sandslash_alolan",
@@ -4940,7 +5257,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.stantler",
@@ -4955,7 +5273,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.frostpeak_strand.wyrdeer",
@@ -4970,7 +5289,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:snowy_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.psyduck",
@@ -4985,7 +5305,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.golduck",
@@ -5000,7 +5321,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.ducklett",
@@ -5015,7 +5337,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.swanna",
@@ -5030,7 +5353,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.yanma",
@@ -5045,7 +5369,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "surface"
     },
     {
       "id": "surface.tilpey_north_shore.yanmega",
@@ -5060,7 +5385,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "surface"
     },
     {
       "id": "surface.tilpey_north_shore.bibarel",
@@ -5075,7 +5401,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.lotad",
@@ -5090,7 +5417,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.lombre",
@@ -5105,7 +5433,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_north_shore.ludicolo",
@@ -5120,7 +5449,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_waters.psyduck",
@@ -5135,7 +5465,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_waters.goldeen",
@@ -5150,7 +5481,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.seaking",
@@ -5165,7 +5497,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.magikarp",
@@ -5180,7 +5513,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.gyarados",
@@ -5195,7 +5529,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.basculin",
@@ -5210,7 +5545,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.basculegion",
@@ -5225,7 +5561,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.arrokuda",
@@ -5240,7 +5577,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.barraskewda",
@@ -5255,7 +5593,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_waters.tadbulb",
@@ -5270,7 +5609,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.psyduck",
@@ -5285,7 +5625,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.caterpie",
@@ -5300,7 +5641,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.metapod",
@@ -5315,7 +5657,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.butterfree",
@@ -5330,7 +5673,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.weedle",
@@ -5345,7 +5689,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.kakuna",
@@ -5360,7 +5705,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.beedrill",
@@ -5375,7 +5721,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.hoothoot",
@@ -5392,7 +5739,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.noctowl",
@@ -5409,7 +5757,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_south_shore.snorlax",
@@ -5424,7 +5773,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.psyduck",
@@ -5439,7 +5789,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.oddish",
@@ -5454,7 +5805,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.gloom",
@@ -5469,7 +5821,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.bellossom",
@@ -5484,7 +5837,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.cherubi",
@@ -5499,7 +5853,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.cherrim",
@@ -5514,7 +5869,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.petilil",
@@ -5529,7 +5885,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.lilligant",
@@ -5544,7 +5901,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.cutiefly",
@@ -5559,7 +5917,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_west_meadows.ribombee",
@@ -5574,7 +5933,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.psyduck",
@@ -5589,7 +5949,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.seedot",
@@ -5604,7 +5965,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.nuzleaf",
@@ -5619,7 +5981,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.shiftry",
@@ -5634,7 +5997,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.sewaddle",
@@ -5649,7 +6013,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.swadloon",
@@ -5664,7 +6029,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.leavanny",
@@ -5679,7 +6045,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.skwovet",
@@ -5694,7 +6061,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.greedent",
@@ -5709,7 +6077,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.tilpey_east_shore.bidoof",
@@ -5724,7 +6093,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.phantump",
@@ -5741,7 +6111,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.trevenant",
@@ -5758,7 +6129,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.gastly",
@@ -5775,7 +6147,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.haunter",
@@ -5792,7 +6165,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.gengar",
@@ -5809,7 +6183,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.murkrow",
@@ -5826,7 +6201,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.honchkrow",
@@ -5843,7 +6219,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.misdreavus",
@@ -5860,7 +6237,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.mismagius",
@@ -5877,7 +6255,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_north.impidimp",
@@ -5892,7 +6271,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:dark_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.phantump",
@@ -5909,7 +6289,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.zubat",
@@ -5924,7 +6305,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.golbat",
@@ -5939,7 +6321,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.crobat",
@@ -5954,7 +6337,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.venonat",
@@ -5969,7 +6353,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.venomoth",
@@ -5984,7 +6369,8 @@
       "eligibility_reason": "evolution requires level 31; band begins at 25",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.shuppet",
@@ -6001,7 +6387,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.banette",
@@ -6018,7 +6405,8 @@
       "eligibility_reason": "evolution requires level 37; band begins at 25",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.duskull",
@@ -6035,7 +6423,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.wedge_south.dusclops",
@@ -6052,7 +6441,8 @@
       "eligibility_reason": "evolution requires level 37; band begins at 25",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.wooloo",
@@ -6067,7 +6457,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.mareep",
@@ -6082,7 +6473,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.flaaffy",
@@ -6097,7 +6489,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.ampharos",
@@ -6112,7 +6505,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.pikachu",
@@ -6127,7 +6521,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.raichu",
@@ -6142,7 +6537,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.pichu",
@@ -6157,7 +6553,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.emolga",
@@ -6172,7 +6569,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.teddiursa",
@@ -6187,7 +6585,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.peak_pond_hollow.ursaring",
@@ -6202,7 +6601,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.wooloo",
@@ -6217,7 +6617,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.dubwool",
@@ -6232,7 +6633,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.hoppip",
@@ -6247,7 +6649,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.skiploom",
@@ -6262,7 +6665,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.jumpluff",
@@ -6277,7 +6681,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.buneary",
@@ -6292,7 +6697,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.lopunny",
@@ -6307,7 +6713,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.minccino",
@@ -6322,7 +6729,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.cinccino",
@@ -6337,7 +6745,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_shore_downs.fletchling",
@@ -6352,7 +6761,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.wooloo",
@@ -6367,7 +6777,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.sentret",
@@ -6382,7 +6793,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.furret",
@@ -6397,7 +6809,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.starly",
@@ -6412,7 +6825,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.staravia",
@@ -6427,7 +6841,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.staraptor",
@@ -6442,7 +6857,8 @@
       "eligibility_reason": "evolution requires level 34; band begins at 32",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.stunky",
@@ -6457,7 +6873,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.skuntank",
@@ -6472,7 +6889,8 @@
       "eligibility_reason": "evolution requires level 34; band begins at 32",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.nickit",
@@ -6489,7 +6907,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_east_downs.thievul",
@@ -6506,7 +6925,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:taiga"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.wooper",
@@ -6521,7 +6941,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.quagsire",
@@ -6536,7 +6957,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.totodile",
@@ -6551,7 +6973,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.croconaw",
@@ -6566,7 +6989,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.feraligatr",
@@ -6581,7 +7005,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.gulpin",
@@ -6596,7 +7021,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.swalot",
@@ -6611,7 +7037,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.croagunk",
@@ -6626,7 +7053,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.toxicroak",
@@ -6641,7 +7069,8 @@
       "eligibility_reason": "evolution requires level 37; band begins at 34",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marshy_marsh.carnivine",
@@ -6656,7 +7085,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.wooper",
@@ -6671,7 +7101,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.poliwag",
@@ -6686,7 +7117,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.poliwhirl",
@@ -6701,7 +7133,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.poliwrath",
@@ -6716,7 +7149,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.politoed",
@@ -6731,7 +7165,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.tympole",
@@ -6746,7 +7181,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.palpitoad",
@@ -6761,7 +7197,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.seismitoad",
@@ -6776,7 +7213,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.marsh_creek.barboach",
@@ -6791,7 +7229,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.marsh_creek.whiscash",
@@ -6806,7 +7245,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.eastern_moor.wooper",
@@ -6821,7 +7261,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.goomy",
@@ -6838,7 +7279,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.sliggoo",
@@ -6855,7 +7297,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.goodra",
@@ -6872,7 +7315,8 @@
       "eligibility_reason": "authored encounter family",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.foongus",
@@ -6887,7 +7331,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.amoonguss",
@@ -6902,7 +7347,8 @@
       "eligibility_reason": "evolution requires level 39; band begins at 34",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.karrablast",
@@ -6917,7 +7363,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.escavalier",
@@ -6932,7 +7379,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.shelmet",
@@ -6947,7 +7395,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.eastern_moor.accelgor",
@@ -6962,7 +7411,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:meadow"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.wooper",
@@ -6977,7 +7427,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.lechonk",
@@ -6992,7 +7443,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.oinkologne",
@@ -7007,7 +7459,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.tarountula",
@@ -7022,7 +7475,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.spidops",
@@ -7037,7 +7491,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.hatenna",
@@ -7052,7 +7507,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.hattrem",
@@ -7067,7 +7523,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.hatterene",
@@ -7082,7 +7539,8 @@
       "eligibility_reason": "evolution requires level 42; band begins at 34",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.toxel",
@@ -7097,7 +7555,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.glacier_foot_fields.toxtricity",
@@ -7112,7 +7571,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.hoothoot",
@@ -7129,7 +7589,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.lotad",
@@ -7144,7 +7605,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.lombre",
@@ -7159,7 +7621,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.ludicolo",
@@ -7174,7 +7637,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.surskit",
@@ -7189,7 +7653,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "surface"
     },
     {
       "id": "surface.lake_viltri_hollow.masquerain",
@@ -7204,7 +7669,8 @@
       "eligibility_reason": "evolution requires level 22; band begins at 18",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "surface"
     },
     {
       "id": "surface.lake_viltri_hollow.corphish",
@@ -7219,7 +7685,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.crawdaunt",
@@ -7234,7 +7701,8 @@
       "eligibility_reason": "evolution requires level 30; band begins at 18",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.volbeat",
@@ -7249,7 +7717,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.illumise",
@@ -7264,7 +7733,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.hoothoot",
@@ -7281,7 +7751,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.poochyena",
@@ -7296,7 +7767,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.mightyena",
@@ -7311,7 +7783,8 @@
       "eligibility_reason": "evolution requires level 18; band begins at 15",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.zigzagoon",
@@ -7326,7 +7799,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.linoone",
@@ -7341,7 +7815,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 15",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.patrat",
@@ -7356,7 +7831,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.watchog",
@@ -7371,7 +7847,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 15",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.bunnelby",
@@ -7386,7 +7863,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.diggersby",
@@ -7401,7 +7879,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 15",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltris_path_valley.fletchling",
@@ -7416,7 +7895,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.hoothoot",
@@ -7433,7 +7913,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.noctowl",
@@ -7450,7 +7931,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.heracross",
@@ -7465,7 +7947,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.scyther",
@@ -7480,7 +7963,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.bunnelby",
@@ -7495,7 +7979,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.teddiursa",
@@ -7510,7 +7995,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.ursaring",
@@ -7525,7 +8011,8 @@
       "eligibility_reason": "evolution requires level 30; band begins at 21",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.deerling",
@@ -7540,7 +8027,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.sawsbuck",
@@ -7555,7 +8043,8 @@
       "eligibility_reason": "evolution requires level 34; band begins at 21",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.foothill_woods.pachirisu",
@@ -7570,7 +8059,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.hoothoot",
@@ -7587,7 +8077,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.shellder",
@@ -7602,7 +8093,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "seafloor"
     },
     {
       "id": "surface.north_west_coast.cloyster",
@@ -7617,7 +8109,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "seafloor"
     },
     {
       "id": "surface.north_west_coast.krabby",
@@ -7632,7 +8125,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.kingler",
@@ -7647,7 +8141,8 @@
       "eligibility_reason": "evolution requires level 28; band begins at 15",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.wingull",
@@ -7662,7 +8157,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.pelipper",
@@ -7677,7 +8173,8 @@
       "eligibility_reason": "evolution requires level 25; band begins at 15",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.inkay",
@@ -7692,7 +8189,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.malamar",
@@ -7707,7 +8205,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.north_west_coast.binacle",
@@ -7722,7 +8221,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.hoothoot",
@@ -7739,7 +8239,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.combee",
@@ -7754,7 +8255,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.vespiquen",
@@ -7769,7 +8271,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.fomantis",
@@ -7784,7 +8287,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.lurantis",
@@ -7799,7 +8303,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.gossifleur",
@@ -7814,7 +8319,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.eldegoss",
@@ -7829,7 +8335,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 12",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.applin",
@@ -7844,7 +8351,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.flapple",
@@ -7859,7 +8367,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.viltri_plateau.appletun",
@@ -7874,7 +8383,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:old_growth_birch_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.surskit",
@@ -7889,7 +8399,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "surface"
     },
     {
       "id": "surface.shrew_lake_shores.cherubi",
@@ -7904,7 +8415,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.cherrim",
@@ -7919,7 +8431,8 @@
       "eligibility_reason": "evolution requires level 25; band begins at 10",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.poltchageist",
@@ -7934,7 +8447,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.sinistcha",
@@ -7949,7 +8463,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.ralts",
@@ -7964,7 +8479,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.kirlia",
@@ -7979,7 +8495,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 10",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.gardevoir",
@@ -7994,7 +8511,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 10",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.gallade",
@@ -8009,7 +8527,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 10",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.shrew_lake_shores.togepi",
@@ -8024,7 +8543,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.surskit",
@@ -8039,7 +8559,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "surface"
     },
     {
       "id": "surface.arrow_lake_shores.marill",
@@ -8054,7 +8575,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.azumarill",
@@ -8069,7 +8591,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.azurill",
@@ -8084,7 +8607,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.roselia",
@@ -8099,7 +8623,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.budew",
@@ -8114,7 +8639,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.roserade",
@@ -8129,7 +8655,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.togetic",
@@ -8144,7 +8671,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.togekiss",
@@ -8159,7 +8687,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_lake_shores.audino",
@@ -8174,7 +8703,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.surskit",
@@ -8189,7 +8719,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "surface"
     },
     {
       "id": "surface.river_of_shrews_vale.buizel",
@@ -8204,7 +8735,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.floatzel",
@@ -8219,7 +8751,8 @@
       "eligibility_reason": "evolution requires level 26; band begins at 9",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.bidoof",
@@ -8234,7 +8767,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.bibarel",
@@ -8249,7 +8783,8 @@
       "eligibility_reason": "evolution requires level 15; band begins at 9",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.pawmi",
@@ -8264,7 +8799,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.pawmo",
@@ -8279,7 +8815,8 @@
       "eligibility_reason": "evolution requires level 18; band begins at 9",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.pawmot",
@@ -8294,7 +8831,8 @@
       "eligibility_reason": "evolution requires level 18; band begins at 9",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.deerling",
@@ -8309,7 +8847,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.river_of_shrews_vale.sawsbuck",
@@ -8324,7 +8863,8 @@
       "eligibility_reason": "evolution requires level 34; band begins at 9",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.pidgey",
@@ -8339,7 +8879,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.pidgeotto",
@@ -8354,7 +8895,8 @@
       "eligibility_reason": "evolution requires level 18; band begins at 5",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.pidgeot",
@@ -8369,7 +8911,8 @@
       "eligibility_reason": "evolution requires level 18; band begins at 5",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.rattata",
@@ -8384,7 +8927,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.raticate",
@@ -8399,7 +8943,8 @@
       "eligibility_reason": "evolution requires level 20; band begins at 5",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.mareep",
@@ -8414,7 +8959,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.flaaffy",
@@ -8429,7 +8975,8 @@
       "eligibility_reason": "evolution requires level 15; band begins at 5",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.ampharos",
@@ -8444,7 +8991,8 @@
       "eligibility_reason": "evolution requires level 15; band begins at 5",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.wooloo",
@@ -8459,7 +9007,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.pallet_meadows.dubwool",
@@ -8474,7 +9023,8 @@
       "eligibility_reason": "evolution requires level 24; band begins at 5",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.pidgey",
@@ -8489,7 +9039,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.wingull",
@@ -8504,7 +9055,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.pelipper",
@@ -8519,7 +9071,8 @@
       "eligibility_reason": "evolution requires level 25; band begins at 7",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.krabby",
@@ -8534,7 +9087,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.kingler",
@@ -8549,7 +9103,8 @@
       "eligibility_reason": "evolution requires level 28; band begins at 7",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.staryu",
@@ -8564,7 +9119,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.starmie",
@@ -8579,7 +9135,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.west_shore.shellder",
@@ -8594,7 +9151,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "seafloor"
     },
     {
       "id": "surface.west_shore.cloyster",
@@ -8609,7 +9167,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "seafloor"
     },
     {
       "id": "surface.west_shore.wattrel",
@@ -8624,7 +9183,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.pidgey",
@@ -8639,7 +9199,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.caterpie",
@@ -8654,7 +9215,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.metapod",
@@ -8669,7 +9231,8 @@
       "eligibility_reason": "evolution requires level 7; band begins at 5",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.butterfree",
@@ -8684,7 +9247,8 @@
       "eligibility_reason": "evolution requires level 7; band begins at 5",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.hoppip",
@@ -8699,7 +9263,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.skiploom",
@@ -8714,7 +9279,8 @@
       "eligibility_reason": "evolution requires level 18; band begins at 5",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.jumpluff",
@@ -8729,7 +9295,8 @@
       "eligibility_reason": "evolution requires level 18; band begins at 5",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.cottonee",
@@ -8744,7 +9311,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.whimsicott",
@@ -8759,7 +9327,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_west_fields.smoliv",
@@ -8774,7 +9343,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:sunflower_plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.wattrel",
@@ -8789,7 +9359,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.doduo",
@@ -8804,7 +9375,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.dodrio",
@@ -8819,7 +9391,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.girafarig",
@@ -8834,7 +9407,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.farigiraf",
@@ -8849,7 +9423,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.phanpy",
@@ -8864,7 +9439,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.donphan",
@@ -8879,7 +9455,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.blitzle",
@@ -8894,7 +9471,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.zebstrika",
@@ -8909,7 +9487,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.arrow_creeks.flamigo",
@@ -8924,7 +9503,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_strand.wattrel",
@@ -8939,7 +9519,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_strand.kilowattrel",
@@ -8954,7 +9535,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_strand.mareanie",
@@ -8969,7 +9551,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_strand.toxapex",
@@ -8984,7 +9567,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_strand.wimpod",
@@ -8999,7 +9583,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_strand.golisopod",
@@ -9014,7 +9599,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_strand.clauncher",
@@ -9029,7 +9615,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "seafloor"
     },
     {
       "id": "surface.south_strand.clawitzer",
@@ -9044,7 +9631,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.south_strand.pincurchin",
@@ -9059,7 +9647,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "seafloor"
     },
     {
       "id": "surface.south_strand.crabrawler",
@@ -9074,7 +9663,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.wattrel",
@@ -9089,7 +9679,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.nidoranf",
@@ -9104,7 +9695,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.nidorina",
@@ -9119,7 +9711,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.nidoqueen",
@@ -9134,7 +9727,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.nidoranm",
@@ -9149,7 +9743,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.nidorino",
@@ -9164,7 +9759,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.nidoking",
@@ -9179,7 +9775,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.poochyena",
@@ -9194,7 +9791,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.mightyena",
@@ -9209,7 +9807,8 @@
       "eligibility_reason": "level evolution eligible",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.rift_foot.mudbray",
@@ -9224,7 +9823,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.sandile",
@@ -9239,7 +9839,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.krokorok",
@@ -9254,7 +9855,8 @@
       "eligibility_reason": "evolution requires level 29; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.krookodile",
@@ -9269,7 +9871,8 @@
       "eligibility_reason": "evolution requires level 29; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.trapinch",
@@ -9284,7 +9887,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.vibrava",
@@ -9299,7 +9903,8 @@
       "eligibility_reason": "evolution requires level 35; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.flygon",
@@ -9314,7 +9919,8 @@
       "eligibility_reason": "evolution requires level 35; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.silicobra",
@@ -9329,7 +9935,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.sandaconda",
@@ -9344,7 +9951,8 @@
       "eligibility_reason": "evolution requires level 36; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.cacnea",
@@ -9359,7 +9967,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.east_coast_dunes.cacturne",
@@ -9374,7 +9983,8 @@
       "eligibility_reason": "evolution requires level 32; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.sandile",
@@ -9389,7 +9999,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.hippopotas",
@@ -9404,7 +10015,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.hippowdon",
@@ -9419,7 +10031,8 @@
       "eligibility_reason": "evolution requires level 34; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.rellor",
@@ -9434,7 +10047,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.rabsca",
@@ -9449,7 +10063,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.flittle",
@@ -9464,7 +10079,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.espathra",
@@ -9479,7 +10095,8 @@
       "eligibility_reason": "evolution requires level 35; band begins at 25",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.helioptile",
@@ -9494,7 +10111,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.heliolisk",
@@ -9509,7 +10127,8 @@
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "surface.south_east_dunes.sigilyph",
@@ -9524,7 +10143,8 @@
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:desert"
-      ]
+      ],
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.gastly",
@@ -9536,7 +10156,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.haunter",
@@ -9548,7 +10169,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 25; band begins at 6"
+      "eligibility_reason": "evolution requires level 25; band begins at 6",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.misdreavus",
@@ -9560,7 +10182,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.mismagius",
@@ -9572,7 +10195,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.shuppet",
@@ -9584,7 +10208,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.banette",
@@ -9596,7 +10221,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 37; band begins at 6"
+      "eligibility_reason": "evolution requires level 37; band begins at 6",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.duskull",
@@ -9608,7 +10234,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.litwick",
@@ -9620,7 +10247,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.phantump",
@@ -9632,7 +10260,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.sinistea",
@@ -9644,7 +10273,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.greavard",
@@ -9656,7 +10286,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.murkrow",
@@ -9668,7 +10299,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.sableye",
@@ -9680,7 +10312,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.route_1_ghost_mansion.zorua",
@@ -9692,7 +10325,8 @@
       "scope": "route_1_ghost_mansion",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.roggenrola",
@@ -9704,7 +10338,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.boldore",
@@ -9716,7 +10351,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.aron",
@@ -9728,7 +10364,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.lairon",
@@ -9740,7 +10377,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.rolycoly",
@@ -9752,7 +10390,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.carkol",
@@ -9764,7 +10403,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.drilbur",
@@ -9776,7 +10416,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.onix",
@@ -9788,7 +10429,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.carbink",
@@ -9800,7 +10442,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.sableye",
@@ -9812,7 +10455,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.glimmet",
@@ -9824,7 +10468,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.mining_town_fossil_levels.nosepass",
@@ -9836,7 +10481,8 @@
       "scope": "mining_town_fossil_levels",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.pineco",
@@ -9848,7 +10494,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.forretress",
@@ -9860,7 +10507,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 31; band begins at 25"
+      "eligibility_reason": "evolution requires level 31; band begins at 25",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.teddiursa",
@@ -9872,7 +10520,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.ursaring",
@@ -9884,7 +10533,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 30; band begins at 25"
+      "eligibility_reason": "evolution requires level 30; band begins at 25",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.stantler",
@@ -9896,7 +10546,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.wyrdeer",
@@ -9908,7 +10559,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.hoothoot",
@@ -9920,7 +10572,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.noctowl",
@@ -9932,7 +10585,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.phantump",
@@ -9944,7 +10598,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.trevenant",
@@ -9956,7 +10611,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.sawsbuck",
@@ -9968,7 +10624,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 34; band begins at 25"
+      "eligibility_reason": "evolution requires level 34; band begins at 25",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.northgate_old_growth_grove.sneasel",
@@ -9980,7 +10637,8 @@
       "scope": "northgate_old_growth_grove",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.bergmite",
@@ -9992,7 +10650,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.avalugg",
@@ -10004,7 +10663,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.snom",
@@ -10016,7 +10676,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.frosmoth",
@@ -10028,7 +10689,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.snorunt",
@@ -10040,7 +10702,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.froslass",
@@ -10052,7 +10715,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.cubchoo",
@@ -10064,7 +10728,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.beartic",
@@ -10076,7 +10741,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 37; band begins at 27"
+      "eligibility_reason": "evolution requires level 37; band begins at 27",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.cryogonal",
@@ -10088,7 +10754,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.spheal",
@@ -10100,7 +10767,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.piplup",
@@ -10112,7 +10780,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.glacial_tear_deep_valley.swinub",
@@ -10124,7 +10793,8 @@
       "scope": "glacial_tear_deep_valley",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.wooper",
@@ -10136,7 +10806,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.quagsire",
@@ -10148,7 +10819,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.totodile",
@@ -10160,7 +10832,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.croagunk",
@@ -10172,7 +10845,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.toxicroak",
@@ -10184,7 +10858,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 37; band begins at 35"
+      "eligibility_reason": "evolution requires level 37; band begins at 35",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.gulpin",
@@ -10196,7 +10871,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.swalot",
@@ -10208,7 +10884,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.carnivine",
@@ -10220,7 +10897,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.tympole",
@@ -10232,7 +10910,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.barboach",
@@ -10244,7 +10923,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "submerged"
     },
     {
       "id": "habitat.marshy_marsh_basin.goomy",
@@ -10256,7 +10936,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "authored encounter family"
+      "eligibility_reason": "authored encounter family",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.marshy_marsh_basin.foongus",
@@ -10268,7 +10949,8 @@
       "scope": "marshy_marsh_basin",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.slugma",
@@ -10280,7 +10962,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.magcargo",
@@ -10292,7 +10975,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.numel",
@@ -10304,7 +10988,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.camerupt",
@@ -10316,7 +11001,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.torkoal",
@@ -10328,7 +11014,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.salandit",
@@ -10340,7 +11027,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.salazzle",
@@ -10352,7 +11040,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.rolycoly",
@@ -10364,7 +11053,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.carkol",
@@ -10376,7 +11066,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.sizzlipede",
@@ -10388,7 +11079,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.heatmor",
@@ -10400,7 +11092,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.great_crater_bowls.turtonator",
@@ -10412,7 +11105,8 @@
       "scope": "great_crater_bowls",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.magnemite",
@@ -10424,7 +11118,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.magneton",
@@ -10436,7 +11131,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.klink",
@@ -10448,7 +11144,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.klang",
@@ -10460,7 +11157,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 38; band begins at 32"
+      "eligibility_reason": "evolution requires level 38; band begins at 32",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.rotom",
@@ -10472,7 +11170,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.porygon",
@@ -10484,7 +11183,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.trubbish",
@@ -10496,7 +11196,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.garbodor",
@@ -10508,7 +11209,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "evolution requires level 36; band begins at 32"
+      "eligibility_reason": "evolution requires level 36; band begins at 32",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.gothita",
@@ -10520,7 +11222,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.espurr",
@@ -10532,7 +11235,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.klefki",
@@ -10544,7 +11248,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.mimikyu",
@@ -10556,7 +11261,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.greavard",
@@ -10568,7 +11274,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.displaced_city_cavern.sableye",
@@ -10580,7 +11287,8 @@
       "scope": "displaced_city_cavern",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.sewaddle",
@@ -10592,7 +11300,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.swadloon",
@@ -10604,7 +11313,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.leavanny",
@@ -10616,7 +11326,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.aipom",
@@ -10628,7 +11339,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.ambipom",
@@ -10640,7 +11352,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "player evolution (non-level method)"
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.pikipek",
@@ -10652,7 +11365,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.trumbeak",
@@ -10664,7 +11378,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "level evolution eligible"
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.emolga",
@@ -10676,7 +11391,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.pachirisu",
@@ -10688,7 +11404,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.applin",
@@ -10700,7 +11417,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.combee",
@@ -10712,7 +11430,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.tree_town_canopy.cutiefly",
@@ -10724,7 +11443,8 @@
       "scope": "tree_town_canopy",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.rolycoly",
@@ -10736,7 +11456,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.roggenrola",
@@ -10748,7 +11469,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.nacli",
@@ -10760,7 +11482,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.glimmet",
@@ -10772,7 +11495,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.baltoy",
@@ -10784,7 +11508,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.golett",
@@ -10796,7 +11521,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.cubone",
@@ -10808,7 +11534,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.dwebble",
@@ -10820,7 +11547,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.orthworm",
@@ -10832,7 +11560,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.klink",
@@ -10844,7 +11573,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.bronzor",
@@ -10856,7 +11586,8 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     },
     {
       "id": "habitat.rift_depths.runerigus",
@@ -10868,7 +11599,80 @@
       "scope": "rift_depths",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage"
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.wooper",
+      "species": "wooper",
+      "bucket": "common",
+      "level": "24-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.wooper_paldean",
+      "species": "wooper paldean",
+      "bucket": "common",
+      "level": "24-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "base stage; a regional form is a plain aspect on a spawn_pool_world entry (Cobblemon 1.8 ships 12 of them), unlike a habitat pool, whose species field takes a bare id and throws on a space",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.quagsire",
+      "species": "quagsire",
+      "bucket": "uncommon",
+      "level": "24-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "evolves from Wooper at 20; the band begins at 24",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.mt_clay_outflow.clodsire",
+      "species": "clodsire",
+      "bucket": "rare",
+      "level": "24-30",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "eligibility_reason": "evolves from Paldean Wooper at 20; the band begins at 24",
+      "biomes": [],
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [

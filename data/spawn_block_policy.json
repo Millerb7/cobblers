@@ -1,175 +1,263 @@
 {
- "schema": "cobblers.spawn-block-policy/1",
- "status": "draft",
- "note": "What a placed template may contain of the blocks in data/spawn_blocks.json. Everything else fails validation: a donor's roof must not decide a town's encounters. Substitutions are applied to the template itself by tools/spawn_blocks.py substitute, so the fix travels with the asset and is not rediscovered per placement.",
- "substitutions": [
-  {
-   "from": "minecraft:red_concrete",
-   "to": "moarconcrete:red_concrete_texture",
-   "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
-   "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
-   "dependency": "moarconcrete, already a world-critical component of this pack"
-  },
-  {
-   "from": "minecraft:white_concrete",
-   "to": "moarconcrete:white_concrete_texture",
-   "why": "as above",
-   "visually": "byte-identical texture, cube_all model",
-   "dependency": "moarconcrete"
-  },
-  {
-   "from": "minecraft:blue_concrete",
-   "to": "moarconcrete:blue_concrete_texture",
-   "why": "as above",
-   "visually": "byte-identical texture, cube_all model",
-   "dependency": "moarconcrete"
-  },
-  {
-   "from": "minecraft:black_concrete",
-   "to": "moarconcrete:black_concrete_texture",
-   "why": "as above",
-   "visually": "byte-identical texture, cube_all model",
-   "dependency": "moarconcrete"
-  },
-  {
-   "from": "minecraft:brown_concrete",
-   "to": "moarconcrete:brown_concrete_texture",
-   "why": "as above",
-   "visually": "the mod's texture file is byte-identical to the vanilla one (sha256 c5c9faa80b7d..., both), and its model is minecraft:block/cube_all, so nothing changes on screen. Added 2026-09-17 for the Cobbleverse Brock gym, which is mostly brown concrete (566 blocks).",
-   "dependency": "moarconcrete"
-  }
- ],
- "whitelist": [
-  {
-   "blocks": [
-    "minecraft:quartz_block"
-   ],
-   "why": "the only spawns conditioned on it (carbink, corsola galarian, cursola, duraludon, archaludon and their herds) require #cobblemon:nether/is_quartz biomes. In an overworld town it has no effect.",
-   "scope": "overworld placements only"
-  },
-  {
-   "blocks": [
-    "minecraft:amethyst_block"
-   ],
-   "why": "terapagos needs #cobblemon:is_cave, which is dripstone and lush caves plus #c:is_cave and #c:is_underground. The Displaced City cavern is filled with minecraft:cherry_grove, so the Pokemon Center's amethyst does nothing there.",
-   "scope": "overworld and the cherry-grove cavern; a placement left in a cave biome would need checking again"
-  },
-  {
-   "blocks": [
-    "cobblemon:pc",
-    "cobblemon:healing_machine",
-    "cobblemon:fossil_analyzer"
-   ],
-   "why": "rotom is drawn to the machines a Pokemon Center is made of. That is the encounter the building should create, and it is deliberate.",
-   "scope": "service buildings"
-  },
-  {
-   "blocks": [
-    "cobblemon:red_apricorn",
-    "cobblemon:white_apricorn",
-    "cobblemon:black_apricorn",
-    "cobblemon:blue_apricorn",
-    "cobblemon:green_apricorn",
-    "cobblemon:pink_apricorn",
-    "cobblemon:yellow_apricorn"
-   ],
-   "why": "apricorn trees draw electrode hisuian. A town that grows apricorns should get them.",
-   "scope": "gardens and orchards"
-  },
-  {
-   "tags": [
-    "leaves",
-    "flowers",
-    "petals",
-    "berries"
-   ],
-   "blocks": [
-    "minecraft:oak_leaves",
-    "minecraft:dark_oak_leaves",
-    "minecraft:cherry_leaves",
-    "minecraft:birch_leaves",
-    "minecraft:spruce_leaves",
-    "minecraft:jungle_leaves",
-    "minecraft:acacia_leaves",
-    "minecraft:mangrove_leaves",
-    "minecraft:azalea_leaves",
-    "minecraft:flowering_azalea_leaves",
-    "minecraft:flowering_azalea",
-    "minecraft:azalea",
-    "minecraft:pink_petals",
-    "minecraft:azure_bluet",
-    "minecraft:pink_tulip",
-    "minecraft:red_tulip",
-    "minecraft:orange_tulip",
-    "minecraft:white_tulip",
-    "minecraft:poppy",
-    "minecraft:dandelion",
-    "minecraft:cornflower",
-    "minecraft:oxeye_daisy",
-    "minecraft:lily_of_the_valley",
-    "minecraft:allium",
-    "minecraft:blue_orchid"
-   ],
-   "why": "flabebe and its kin are drawn to flowers, and several herds to leaves. Foliage objects and gardens are supposed to be foliage: this is the forest reading as forest, not a donor's roof deciding a town.",
-   "scope": "foliage objects, gardens and landmark trees"
-  }
- ],
- "checked_paving": {
-  "gym1_town": [
-   "minecraft:polished_andesite",
-   "minecraft:cobblestone",
-   "minecraft:stone_bricks"
-  ],
-  "gym2_town": [
-   "minecraft:mud_bricks",
-   "minecraft:prismarine_bricks"
-  ],
-  "cavern": [
-   "minecraft:grass_block",
-   "minecraft:dirt",
-   "minecraft:sea_lantern",
-   "minecraft:light_blue_stained_glass",
-   "minecraft:light",
-   "minecraft:stone",
-   "minecraft:stone_bricks",
-   "minecraft:stone_brick_stairs"
-  ],
-  "tree_town_grove": [
-   "minecraft:oak_log",
-   "minecraft:birch_log",
-   "minecraft:mangrove_log",
-   "minecraft:dark_oak_log"
-  ],
-  "roads_and_paths": [
-   "minecraft:dirt_path",
-   "minecraft:gravel"
-  ],
-  "result": "none of these appears in data/spawn_blocks.json; the grove's leaves are covered by the foliage entry above"
- },
- "applied": {
-  "date": "2026-09-16",
-  "by": "tools/spawn_blocks.py substitute",
-  "templates": [
-   {
-    "template": "kits/structures/prefabs/gyms/kanto/brock.nbt",
-    "palette_entries_changed": 3,
-    "blocks": {
-     "minecraft:black_concrete": {
-      "count": 127,
-      "to": "moarconcrete:black_concrete_texture"
-     },
-     "minecraft:brown_concrete": {
-      "count": 566,
-      "to": "moarconcrete:brown_concrete_texture"
-     },
-     "minecraft:white_concrete": {
-      "count": 274,
-      "to": "moarconcrete:white_concrete_texture"
-     }
+  "schema": "cobblers.spawn-block-policy/1",
+  "status": "draft",
+  "note": "What a placed template may contain of the blocks in data/spawn_blocks.json. Everything else fails validation: a donor's roof must not decide a town's encounters. Substitutions are applied to the template itself by tools/spawn_blocks.py substitute, so the fix travels with the asset and is not rediscovered per placement.",
+  "substitutions": [
+    {
+      "from": "minecraft:red_concrete",
+      "to": "moarconcrete:red_concrete_texture",
+      "why": "Cobbleverse spawns varoom and revavroom on all 16 vanilla concrete colours in every overworld biome (data/spawn_blocks.json). The Moar Concrete block is not named by any spawn condition.",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (16x16 RGBA) and its model is minecraft:block/cube_all, so nothing changes on screen",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
     },
-    "sha256_before": "344a782f63a3af03c2b282e168f9824302cc35f92087203eecbbbb69404a7bde",
-    "sha256_after": "9820c8f3db0095c63efe6f6357169e8d59b217e3775ee26dea1320d77b24d5d0"
-   }
-  ]
- }
+    {
+      "from": "minecraft:white_concrete",
+      "to": "moarconcrete:white_concrete_texture",
+      "why": "as above",
+      "visually": "byte-identical texture, cube_all model",
+      "dependency": "moarconcrete"
+    },
+    {
+      "from": "minecraft:blue_concrete",
+      "to": "moarconcrete:blue_concrete_texture",
+      "why": "as above",
+      "visually": "byte-identical texture, cube_all model",
+      "dependency": "moarconcrete"
+    },
+    {
+      "from": "minecraft:black_concrete",
+      "to": "moarconcrete:black_concrete_texture",
+      "why": "as above",
+      "visually": "byte-identical texture, cube_all model",
+      "dependency": "moarconcrete"
+    },
+    {
+      "from": "minecraft:brown_concrete",
+      "to": "moarconcrete:brown_concrete_texture",
+      "why": "as above",
+      "visually": "the mod's texture file is byte-identical to the vanilla one (sha256 c5c9faa80b7d..., both), and its model is minecraft:block/cube_all, so nothing changes on screen. Added 2026-09-17 for the Cobbleverse Brock gym, which is mostly brown concrete (566 blocks).",
+      "dependency": "moarconcrete"
+    },
+    {
+      "from": "minecraft:cyan_concrete",
+      "to": "moarconcrete:cyan_concrete_texture",
+      "why": "as the other concrete colours: Cobbleverse spawns varoom and revavroom on all 16 vanilla concretes in every overworld biome. The CobbleTowns Mart roof uses this one.",
+      "visually": "byte-identical texture, cube_all model",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    },
+    {
+      "from": "minecraft:light_blue_concrete",
+      "to": "moarconcrete:light_blue_concrete_texture",
+      "why": "as the other concrete colours: Cobbleverse spawns varoom and revavroom on all 16 vanilla concretes in every overworld biome. The CobbleTowns Mart roof uses this one.",
+      "visually": "byte-identical texture, cube_all model",
+      "dependency": "moarconcrete, already a world-critical component of this pack"
+    }
+  ],
+  "whitelist": [
+    {
+      "blocks": [
+        "minecraft:quartz_block"
+      ],
+      "why": "the only spawns conditioned on it (carbink, corsola galarian, cursola, duraludon, archaludon and their herds) require #cobblemon:nether/is_quartz biomes. In an overworld town it has no effect.",
+      "scope": "overworld placements only"
+    },
+    {
+      "blocks": [
+        "minecraft:amethyst_block"
+      ],
+      "why": "terapagos needs #cobblemon:is_cave, which is dripstone and lush caves plus #c:is_cave and #c:is_underground. The Displaced City cavern is filled with minecraft:cherry_grove, so the Pokemon Center's amethyst does nothing there.",
+      "scope": "overworld and the cherry-grove cavern; a placement left in a cave biome would need checking again"
+    },
+    {
+      "blocks": [
+        "cobblemon:pc",
+        "cobblemon:healing_machine",
+        "cobblemon:fossil_analyzer"
+      ],
+      "why": "rotom is drawn to the machines a Pokemon Center is made of. That is the encounter the building should create, and it is deliberate.",
+      "scope": "service buildings"
+    },
+    {
+      "blocks": [
+        "cobblemon:red_apricorn",
+        "cobblemon:white_apricorn",
+        "cobblemon:black_apricorn",
+        "cobblemon:blue_apricorn",
+        "cobblemon:green_apricorn",
+        "cobblemon:pink_apricorn",
+        "cobblemon:yellow_apricorn"
+      ],
+      "why": "apricorn trees draw electrode hisuian. A town that grows apricorns should get them.",
+      "scope": "gardens and orchards"
+    },
+    {
+      "tags": [
+        "leaves",
+        "flowers",
+        "petals",
+        "berries"
+      ],
+      "blocks": [
+        "minecraft:oak_leaves",
+        "minecraft:dark_oak_leaves",
+        "minecraft:cherry_leaves",
+        "minecraft:birch_leaves",
+        "minecraft:spruce_leaves",
+        "minecraft:jungle_leaves",
+        "minecraft:acacia_leaves",
+        "minecraft:mangrove_leaves",
+        "minecraft:azalea_leaves",
+        "minecraft:flowering_azalea_leaves",
+        "minecraft:flowering_azalea",
+        "minecraft:azalea",
+        "minecraft:pink_petals",
+        "minecraft:azure_bluet",
+        "minecraft:pink_tulip",
+        "minecraft:red_tulip",
+        "minecraft:orange_tulip",
+        "minecraft:white_tulip",
+        "minecraft:poppy",
+        "minecraft:dandelion",
+        "minecraft:cornflower",
+        "minecraft:oxeye_daisy",
+        "minecraft:lily_of_the_valley",
+        "minecraft:allium",
+        "minecraft:blue_orchid"
+      ],
+      "why": "flabebe and its kin are drawn to flowers, and several herds to leaves. Foliage objects and gardens are supposed to be foliage: this is the forest reading as forest, not a donor's roof deciding a town.",
+      "scope": "foliage objects, gardens and landmark trees"
+    },
+    {
+      "blocks": [
+        "minecraft:white_bed",
+        "minecraft:white_carpet",
+        "minecraft:yellow_carpet",
+        "minecraft:yellow_wool"
+      ],
+      "why": "the furniture of a village house. Whatever is drawn to a bed or a rug belongs in a bedroom, and a town whose houses have no beds reads as a film set.",
+      "scope": "houses in Brock's and Misty's towns (Repurposed Structures village interiors)"
+    },
+    {
+      "blocks": [
+        "minecraft:wheat",
+        "minecraft:hay_block"
+      ],
+      "why": "the farm lots are meant to be farms. A crop drawing the Pokemon that like crops is the lot doing its job.",
+      "scope": "farm and animal-pen lots"
+    },
+    {
+      "blocks": [
+        "minecraft:bell"
+      ],
+      "why": "the meeting point on Brock's approach carries a village bell, which is what makes it read as a gathering place rather than an empty square.",
+      "scope": "Brock's town meeting point"
+    },
+    {
+      "blocks": [
+        "minecraft:water",
+        "minecraft:seagrass",
+        "minecraft:brain_coral_fan",
+        "minecraft:sand"
+      ],
+      "why": "Misty's town is built from the ocean village set and stands on the shore: its houses carry water, sand and coral, and water spawns inside a water town are the point of putting it there. Deliberate, and worth re-reading if any of these templates is ever reused inland.",
+      "scope": "gym2_town houses only"
+    },
+    {
+      "blocks": [
+        "minecraft:lilac",
+        "minecraft:peony",
+        "minecraft:rose_bush"
+      ],
+      "why": "the planting around a Pokemon Centre. The same argument as the flowers already whitelisted: a garden drawing the Pokemon that like gardens is the garden doing its job, and a Centre with a bare verge would look abandoned.",
+      "scope": "the CobbleTowns Centre and Mart gardens"
+    },
+    {
+      "blocks": [
+        "minecraft:fire_coral",
+        "minecraft:tube_coral_fan",
+        "minecraft:kelp_plant",
+        "minecraft:kelp",
+        "minecraft:redstone_block"
+      ],
+      "why": "the decoration inside the ocean village houses Misty's town is built from: coral on a shelf, kelp in a jar, a redstone block in a workshop. The same argument as the brain coral already listed, and one of each: a water town that owns no coral would be odd.",
+      "scope": "gym2_town houses only"
+    }
+  ],
+  "checked_paving": {
+    "gym1_town": [
+      "minecraft:polished_andesite",
+      "minecraft:cobblestone",
+      "minecraft:stone_bricks"
+    ],
+    "gym2_town": [
+      "minecraft:mud_bricks",
+      "minecraft:prismarine_bricks"
+    ],
+    "cavern": [
+      "minecraft:grass_block",
+      "minecraft:dirt",
+      "minecraft:sea_lantern",
+      "minecraft:light_blue_stained_glass",
+      "minecraft:light",
+      "minecraft:stone",
+      "minecraft:stone_bricks",
+      "minecraft:stone_brick_stairs"
+    ],
+    "tree_town_grove": [
+      "minecraft:oak_log",
+      "minecraft:birch_log",
+      "minecraft:mangrove_log",
+      "minecraft:dark_oak_log"
+    ],
+    "roads_and_paths": [
+      "minecraft:dirt_path",
+      "minecraft:gravel"
+    ],
+    "result": "none of these appears in data/spawn_blocks.json; the grove's leaves are covered by the foliage entry above"
+  },
+  "applied": {
+    "date": "2026-09-20",
+    "by": "tools/spawn_blocks.py substitute",
+    "templates": [
+      {
+        "template": "kits/structures/campaign/f4/services/towns/cherrygrove_mart.nbt",
+        "palette_entries_changed": 0,
+        "jigsaw_final_states_changed": 2,
+        "blocks": {
+          "minecraft:light_blue_concrete": {
+            "count": 2,
+            "to": "moarconcrete:light_blue_concrete_texture"
+          }
+        },
+        "sha256_before": "9f16711e05e0185749a1d8284f2a67417ac3e7c046c1dc9f2486fdf56325a4f0",
+        "sha256_after": "4d9403f9430b173adc28f7097cc14feae45bc863c52a9bd227fd11c8631d1d2c"
+      },
+      {
+        "template": "kits/structures/campaign/f4/services/towns/floaroma_mart.nbt",
+        "palette_entries_changed": 0,
+        "jigsaw_final_states_changed": 2,
+        "blocks": {
+          "minecraft:light_blue_concrete": {
+            "count": 2,
+            "to": "moarconcrete:light_blue_concrete_texture"
+          }
+        },
+        "sha256_before": "5e2c6c2629f3637eb72be0d10248741adfe5b42bf9b42f2e9054f72f47349fe1",
+        "sha256_after": "75da55d454f1ac6ca5320fe842cf638f3c7578bfab37abd5da88a294b3b42e5a"
+      },
+      {
+        "template": "kits/structures/campaign/f4/services/towns/lavender_mart.nbt",
+        "palette_entries_changed": 0,
+        "jigsaw_final_states_changed": 2,
+        "blocks": {
+          "minecraft:light_blue_concrete": {
+            "count": 2,
+            "to": "moarconcrete:light_blue_concrete_texture"
+          }
+        },
+        "sha256_before": "6b2df5775eb2d8475d8fa99b92458e8a01e6ef32ddefdfc57463a785546ebade",
+        "sha256_after": "feed2d8ec201b5018801ac0ea485fc0b1ed10edd4c440144d31e5a9aa6fe81b5"
+      }
+    ]
+  }
 }

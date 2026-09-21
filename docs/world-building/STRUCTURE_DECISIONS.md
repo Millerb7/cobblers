@@ -210,3 +210,22 @@ game.
 4. Rolled or authored villager trades.
 5. The six legendary picks.
 6. One player session for EXP-013 D and E.
+
+## Legendary structures: candidates, not on Route 1 (2026-09-17)
+
+Cobbleverse ships each legendary encounter as a structure with a LumyMon summon block: the block consumes an
+activation item, checks a summon anchor nearby and spawns the Pokémon at level 70-90. The gate is therefore the item,
+not the place. Two suit a forest:
+
+| Structure | Template | Size | Summon block and item | Notes |
+| --- | --- | ---: | --- | --- |
+| Mew's shrine | `cobbleverse:mythical/mew` (installed) | 37 x 25 x 39 | `lumymon:mew_shrine`, Origin Fossil (craftable, `lumymon:recipe/origin_fossil`) | its command blocks also gate on Cobbleverse's own "defeat champion" advancement, which our progression does not grant. Carries a Z-crystal, TMs and ancient balls |
+| Crown Cemetery (Calyrex) | `cobbleverse:crown_cemetery` (installed) | 45 x 24 x 47 | `lumymon:calyrex_statue`, Calyrex Crown | old-growth pine country; brushable gravel loot (TMs, vitamins, rare items) |
+
+The Johto pack also ships `cobbleverse:celebi_shrine` (Ilex shrine, `lumymon:ilex_shrine` plus a GS Ball), but that pack
+is not enabled and it would duplicate the Celebi planned for the Route 1 sapling.
+
+**Not on Route 1.** The maze forest's openings are the sapling clearing (r20), the mansion clearing (r22), three
+glades (r10-11) and three secret glades (r8-9); its dead ends are 3 blocks wide. Either structure needs roughly a
+30-block clearing, which is a hole in a maze whose whole point is enclosure, and their loot is late-game on a first
+route. Both stay as candidates for a place with room: see the region rosters for where a shrine would fit.

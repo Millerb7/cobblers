@@ -141,11 +141,17 @@ def test_build_lays_no_pads(built):
 
 # removing this lets the floor be seated anywhere but the ground in front of the door, so the entrance steps up or
 # down from the street
-def test_build_floor_is_the_median_ground_in_front_of_the_entrance(built):
+# Changed 2026-09-20 with the rule it protects, after houses in Brock's town came out a block into
+# the hill: the floor is the door's grade unless that would bury the uphill side, and then it is the
+# highest ground the building covers. Without this a building on any fall is partly underground.
+def test_build_floor_is_the_door_grade_but_never_below_the_ground_it_covers(built):
     cmds, b, out = built
     info = P.template_info(ROOT / POKECENTER)
     ex, ez = 1000 + info["entrance_pos"][0], 1000 + info["entrance_pos"][2]     # rotation none: facing west
     front = sorted(ground_at(ex - k, ez + j) for k in (1, 2) for j in (-1, 0, 1))
+    # This fixture has no computed plan, so there is no measured lot ground and the rule falls back
+    # to the door's grade. Where a lot ground exists it wins, which is what stops a building being
+    # seated into the hill behind it.
     floor = int(np.median(front))
     assert front[0] < floor < front[-1], ("the samples differ, so min, max and median disagree", front)
     assert b["center"]["rotation"] == "none"
