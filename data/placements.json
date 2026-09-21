@@ -876,7 +876,7 @@
         2446
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21; not laid out, not built",
+      "status": "approved 2026-09-21; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Route 5 comes down off the downs from the north-west and simply becomes the high street: there is no edge, the fields turn into yards and the yards into a town strung along the road. On the left the ground drops into a shallow fen; on the right it rises dry. Half-way along, the road opens into a market yard on the dry side. The gym is not on the road. You can see its roof over the reeds, but the way to it is a mangrove boardwalk that leaves the road behind the Centre, doubles back twice through the fen and arrives at a door facing away from town. A ninja's house should have to be found.",
         "entries": [
@@ -1014,7 +1014,8 @@
               2495
             ],
             "facing": "north",
-            "why": "down in the fen, off the road, reached only by the boardwalk. Its door faces the boardwalk's end, away from the high street. Cobbleverse's own Koga."
+            "why": "down in the fen, off the road, reached only by the boardwalk. Its door faces the boardwalk's end, away from the high street. Cobbleverse's own Koga.",
+            "level": 116
           }
         ],
         "house_lots": {
@@ -1056,7 +1057,7 @@
         3398
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21; not laid out, not built",
+      "status": "approved 2026-09-21; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Route 6 arrives from the west along the lakeshore flat and runs straight into a cross street, and at the crossing is the only true square in the region. From the square the whole town is visible at once: a white axis rising north up the slope, and at its head, looking straight back down it, the gym, with the observatory beside it on the high ground and the dojo across the gym street. The four blocks the axis and the cross street make are not houses. South-west is the market square, south-east the commons, and the Centre and the Mart face each other across the axis on the cross street. The houses stand in two rows along the outer streets, and at the lake end the department store closes the view. Route 7 leaves by the axis, down to the lake.",
         "entries": [
@@ -1230,7 +1231,8 @@
               3334
             ],
             "facing": "south",
-            "why": "at the head of the axis on the highest ground, facing straight down it: visible from the square the moment you arrive. Cobbleverse's own Sabrina."
+            "why": "at the head of the axis on the highest ground, facing straight down it: visible from the square the moment you arrive. Cobbleverse's own Sabrina.",
+            "level": 97
           },
           {
             "id": "gym6_market",
@@ -1243,7 +1245,9 @@
               3464
             ],
             "facing": "north",
-            "why": "the south-west block, an open paved square off the cross street: the region's market. Its stalls are the traders, placed once the badge-gated stock lands; until then it is a square. Donor if a built market is wanted instead: bca:fighting/centers/center_the_farmers_market_fighting (48 by 49), which needs the block widened by six"
+            "why": "the south-west block, an open paved square off the cross street: the region's market. Its stalls are the traders, placed once the badge-gated stock lands; until then it is a square. Donor if a built market is wanted instead: bca:fighting/centers/center_the_farmers_market_fighting (48 by 49), which needs the block widened by six",
+            "level": 95,
+            "surface": "minecraft:smooth_stone"
           },
           {
             "id": "gym6_commons",
@@ -1269,7 +1273,8 @@
               3364
             ],
             "facing": "south",
-            "why": "north-west of the axis on the high ground beside the gym: a psychic town's landmark, 16 by 16 and 23 tall. Mega Showdown's own, placed from the installed mod"
+            "why": "north-west of the axis on the high ground beside the gym: a psychic town's landmark, 16 by 16 and 23 tall. Mega Showdown's own, placed from the installed mod",
+            "level": 97
           },
           {
             "id": "gym6_dojo",
@@ -1282,7 +1287,8 @@
               3340
             ],
             "facing": "west",
-            "why": "beside the gym across the gym street's east end, as Kanto's Fighting Dojo stands next to Saffron's gym: BCA's battlepad centrepiece, 37 by 38, a trainers' arena"
+            "why": "beside the gym across the gym street's east end, as Kanto's Fighting Dojo stands next to Saffron's gym: BCA's battlepad centrepiece, 37 by 38, a trainers' arena",
+            "level": 96
           },
           {
             "id": "gym6_department_store",
@@ -1295,7 +1301,8 @@
               3518
             ],
             "facing": "north",
-            "why": "the lake end, east of the axis where Route 7 leaves: 40 by 72 and 41 tall, the region's one big city building, closing the view south from the square. BCA's, placed from the installed mod"
+            "why": "the lake end, east of the axis where Route 7 leaves: 40 by 72 and 41 tall, the region's one big city building, closing the view south from the square. BCA's, placed from the installed mod",
+            "level": 95
           }
         ],
         "house_lots": {
@@ -1339,7 +1346,7 @@
         4995
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21; not laid out, not built",
+      "status": "approved 2026-09-21; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Route 7 comes over the lake crossing and up onto the rim from the north-east, and the cone fills the eastern sky. The town has put the mound between itself and the fire: its houses sit on the mound's lee, along lanes that follow the contour round it, and the road runs through an ash-black square at the mound's foot. East of the square nothing is built. A bare basalt causeway runs straight out across the open rim towards the cone, and at its end, alone, is the gym. You leave the town to get there.",
         "entries": [
@@ -1485,7 +1492,8 @@
               5010
             ],
             "facing": "west",
-            "why": "alone at the causeway's end on the open rim, between the town and the cone, facing back to the square. Outside the footprint on purpose. Cobbleverse's own Blaine."
+            "why": "alone at the causeway's end on the open rim, between the town and the cone, facing back to the square. Outside the footprint on purpose. Cobbleverse's own Blaine.",
+            "level": 106
           }
         ],
         "house_lots": {
@@ -1528,7 +1536,7 @@
         6497
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21; not laid out, not built",
+      "status": "approved 2026-09-21; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Route 8 arrives from the north-east at the foot of a broad, low dome, and the town lies up and behind it on the crown, its two lanes curving round the hill with the sea cliff somewhere beyond. The through street swings west along the town's northern foot, the side that looks out over the falling land towards the Rift, to a square where the town stops and Victory Road begins. Across that square stands the gym, and the road north runs past its door. Giovanni's gym is the gate: for seven badges it is the building everyone walks past, and for the eighth it is the one you have to go through to leave.",
         "entries": [
@@ -1686,7 +1694,8 @@
               6432
             ],
             "facing": "east",
-            "why": "across the gate square at the town's north-west corner, beside the road out: Victory Road runs past its door. Outside the footprint on purpose. Cobbleverse's own Giovanni."
+            "why": "across the gate square at the town's north-west corner, beside the road out: Victory Road runs past its door. Outside the footprint on purpose. Cobbleverse's own Giovanni.",
+            "level": 112
           }
         ],
         "house_lots": {
@@ -1729,7 +1738,7 @@
         2603
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21; not laid out, not built",
+      "status": "approved 2026-09-21; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Victory Road's last climb comes up the escarpment from the river valley and tops out at the plateau's east lip, onto a forecourt. The Centre and the Mart stand together on its north side, the last heal and the last shop, and the south side is left open to the drop and the view back down Victory Road. West of the forecourt a wide processional way crosses the plateau, lined with lamps and nothing else, straight to the League's door. Nobody lives here. It is a precinct, not a town, and it should feel emptied out for you.",
         "entries": [
@@ -2979,6 +2988,2286 @@
         "material": "minecraft:prismarine_bricks",
         "from_y": 100,
         "why": "the lot straddles the bank: the town side is y108 and the lake is y103 with its bed at 102. At one height the north half is buried or the south half stands on the template's own dirt, which read as a floating landmass. The quay carries the lake side in prismarine instead, and the floor sits one step below the promenade."
+      }
+    },
+    {
+      "id": "gym5_gym_building",
+      "settlement": "gym5_town",
+      "pack_template": "cobbleverse:koga",
+      "template": "cobbleverse:koga",
+      "cell": "C5",
+      "kind": "gym",
+      "lot": "gym5_gym",
+      "position": {
+        "x": 4603,
+        "y": 115,
+        "z": 2490
+      },
+      "size": [
+        27,
+        17,
+        24
+      ],
+      "rotation": "180",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "north",
+      "entrance_in_template": "south",
+      "chosen_because": "down in the fen, off the road, reached only by the boardwalk. Its door faces the boardwalk's end, away from the high street. Cobbleverse's own Koga.",
+      "rotation_because": "the Cobbleverse gym shell opens south, as Brock's does; turned to face north",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "gym5_pokecenter",
+      "settlement": "gym5_town",
+      "template": "cobblers:f4/services/towns/koga_center",
+      "file": "kits/structures/campaign/f4/services/towns/koga_center.nbt",
+      "cell": "C5",
+      "kind": "service",
+      "lot": "gym5_pokecenter",
+      "position": {
+        "x": 4619,
+        "z": 2364
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the first building on the high street, where the fields end; the fen boardwalk leaves the road just past it, so the Centre is also the landmark for finding the gym",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym5_pokemart",
+      "settlement": "gym5_town",
+      "template": "cobblers:f4/services/towns/koga_mart",
+      "file": "kits/structures/campaign/f4/services/towns/koga_mart.nbt",
+      "cell": "C5",
+      "kind": "service",
+      "lot": "gym5_pokemart",
+      "position": {
+        "x": 4709,
+        "z": 2467
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the dry side towards the far end of the street, the last shop before Route 6",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym5_house_01",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/temple_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/temple_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_07",
+      "position": {
+        "x": 4665,
+        "z": 2452
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the fen side of the road: swamp houses; near the square, so it takes a civic or large design",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_02",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/oak/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/armorer_house_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_06",
+      "position": {
+        "x": 4640,
+        "z": 2455
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the dry field side of the road: oak houses, as plains farmsteads; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_03",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/oak/houses/cartographer_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/cartographer_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_05",
+      "position": {
+        "x": 4625,
+        "z": 2428
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the dry field side of the road: oak houses, as plains farmsteads; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_04",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/oak/houses/fisher_cottage_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/fisher_cottage_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_04",
+      "position": {
+        "x": 4630,
+        "z": 2400
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the dry field side of the road: oak houses, as plains farmsteads; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      },
+      "dry": true,
+      "dry_why": "holds 29 water blocks and is not a farm: placed from a dried copy so none runs into the street"
+    },
+    {
+      "id": "gym5_house_05",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/oak/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/masons_house_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_08",
+      "position": {
+        "x": 4662,
+        "z": 2477
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the dry field side of the road: oak houses, as plains farmsteads; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_06",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/armorer_house_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_09",
+      "position": {
+        "x": 4690,
+        "z": 2474
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the fen side of the road: swamp houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_07",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/medium_house_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "fen_walk_lot_13",
+      "position": {
+        "x": 4610,
+        "z": 2417
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the boardwalk runs out into the fen: swamp houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_08",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/medium_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/medium_house_3.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "fen_walk_lot_15",
+      "position": {
+        "x": 4605,
+        "z": 2439
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the boardwalk runs out into the fen: swamp houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_09",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "fen_walk_lot_14",
+      "position": {
+        "x": 4591,
+        "z": 2417
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the boardwalk runs out into the fen: swamp houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_10",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_2.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_03",
+      "position": {
+        "x": 4594,
+        "z": 2393
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the fen side of the road: swamp houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_11",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/animal_pen_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/animal_pen_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_10",
+      "position": {
+        "x": 4712,
+        "z": 2497
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the fen side of the road: swamp houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_12",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/animal_pen_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/animal_pen_2.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "fen_walk_lot_16",
+      "position": {
+        "x": 4576,
+        "z": 2441
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the boardwalk runs out into the fen: swamp houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_13",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/farm_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/farm_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_02",
+      "position": {
+        "x": 4598,
+        "z": 2367
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the fen side of the road: swamp houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_14",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_3.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_12",
+      "position": {
+        "x": 4735,
+        "z": 2508
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the fen side of the road: swamp houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_15",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/oak/houses/accessory_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/accessory_1.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_11",
+      "position": {
+        "x": 4717,
+        "z": 2527
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the dry field side of the road: oak houses, as plains farmsteads; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym5_house_16",
+      "settlement": "gym5_town",
+      "template": "repurposed_structures:villages/swamp/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_4.nbt",
+      "cell": "C5",
+      "kind": "house",
+      "lot": "post_road_lot_01",
+      "position": {
+        "x": 4575,
+        "z": 2344
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the fen side of the road: swamp houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_gym_building",
+      "settlement": "gym6_town",
+      "pack_template": "cobbleverse:sabrina",
+      "template": "cobbleverse:sabrina",
+      "cell": "D7",
+      "kind": "gym",
+      "lot": "gym6_gym",
+      "position": {
+        "x": 6183,
+        "y": 96,
+        "z": 3306
+      },
+      "size": [
+        27,
+        17,
+        24
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "entrance_in_template": "south",
+      "chosen_because": "at the head of the axis on the highest ground, facing straight down it: visible from the square the moment you arrive. Cobbleverse's own Sabrina.",
+      "rotation_because": "the Cobbleverse gym shell opens south; turned to face south",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "gym6_observatory",
+      "settlement": "gym6_town",
+      "pack_template": "mega_showdown:observatory",
+      "template": "mega_showdown:observatory",
+      "cell": "D7",
+      "kind": "civic",
+      "lot": "gym6_observatory",
+      "position": {
+        "x": 6172,
+        "y": 96,
+        "z": 3361
+      },
+      "size": [
+        16,
+        23,
+        16
+      ],
+      "rotation": "180",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "entrance_in_template": "north",
+      "chosen_because": "north-west of the axis on the high ground beside the gym: a psychic town's landmark, 16 by 16 and 23 tall. Mega Showdown's own, placed from the installed mod",
+      "rotation_because": "its ground-floor doors are on the north side; turned to face south",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "gym6_dojo",
+      "settlement": "gym6_town",
+      "pack_template": "bca:default/centers/center_battlepad",
+      "template": "bca:default/centers/center_battlepad",
+      "cell": "D7",
+      "kind": "civic",
+      "lot": "gym6_dojo",
+      "position": {
+        "x": 6253,
+        "y": 95,
+        "z": 3338
+      },
+      "size": [
+        37,
+        12,
+        38
+      ],
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "west",
+      "entrance_in_template": "north",
+      "chosen_because": "beside the gym across the gym street's east end, as Kanto's Fighting Dojo stands next to Saffron's gym: BCA's battlepad centrepiece, 37 by 38, a trainers' arena",
+      "rotation_because": "a symmetric arena; any side; turned to face west",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "gym6_department_store",
+      "settlement": "gym6_town",
+      "pack_template": "bca:default/centers/center_department_store",
+      "template": "bca:default/centers/center_department_store",
+      "cell": "D7",
+      "kind": "landmark",
+      "lot": "gym6_department_store",
+      "position": {
+        "x": 6274,
+        "y": 94,
+        "z": 3477
+      },
+      "size": [
+        40,
+        41,
+        72
+      ],
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "north",
+      "entrance_in_template": "west",
+      "chosen_because": "the lake end, east of the axis where Route 7 leaves: 40 by 72 and 41 tall, the region's one big city building, closing the view south from the square. BCA's, placed from the installed mod",
+      "rotation_because": "its street connections are on the long west and east sides; turned to face north",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "gym6_pokecenter",
+      "settlement": "gym6_town",
+      "template": "cobblers:f4/services/towns/sabrina_center",
+      "file": "kits/structures/campaign/f4/services/towns/sabrina_center.nbt",
+      "cell": "D7",
+      "kind": "service",
+      "lot": "gym6_pokecenter",
+      "position": {
+        "x": 6156,
+        "z": 3373
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "west of the axis, opening onto the cross street beside the square, mirrored by the Mart",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym6_pokemart",
+      "settlement": "gym6_town",
+      "template": "cobblers:f4/services/towns/sabrina_mart",
+      "file": "kits/structures/campaign/f4/services/towns/sabrina_mart.nbt",
+      "cell": "D7",
+      "kind": "service",
+      "lot": "gym6_pokemart",
+      "position": {
+        "x": 6218,
+        "z": 3373
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "east of the axis, the Centre's mirror",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym6_house_01",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/armorer_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/armorer_2.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_23",
+      "position": {
+        "x": 6217,
+        "z": 3404
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_02",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/armorer_house_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_22",
+      "position": {
+        "x": 6165,
+        "z": 3403
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_03",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/armorer_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/armorer_house_2.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_24",
+      "position": {
+        "x": 6230,
+        "z": 3404
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_04",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/cartographer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/cartographer_house_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_21",
+      "position": {
+        "x": 6152,
+        "z": 3404
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_05",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/library_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/library_2.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_10",
+      "position": {
+        "x": 6232,
+        "z": 3348
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; near the square, so it takes a civic or large design",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_06",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/temple_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/temple_3.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_12",
+      "position": {
+        "x": 6250,
+        "z": 3375
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; near the square, so it takes a civic or large design",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_07",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/armorer_house_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_13",
+      "position": {
+        "x": 6251,
+        "z": 3414
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_08",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/cartographer_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/cartographer_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_04",
+      "position": {
+        "x": 6131,
+        "z": 3375
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_09",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/fisher_cottage_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/fisher_cottage_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_05",
+      "position": {
+        "x": 6130,
+        "z": 3413
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      },
+      "dry": true,
+      "dry_why": "holds 29 water blocks and is not a farm: placed from a dried copy so none runs into the street"
+    },
+    {
+      "id": "gym6_house_10",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/masons_house_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_11",
+      "position": {
+        "x": 6252,
+        "z": 3361
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_11",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/tannery_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/tannery_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_14",
+      "position": {
+        "x": 6252,
+        "z": 3426
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_12",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/accessory_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/accessory_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_03",
+      "position": {
+        "x": 6134,
+        "z": 3363
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_13",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_06",
+      "position": {
+        "x": 6132,
+        "z": 3427
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_14",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_2.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_09",
+      "position": {
+        "x": 6252,
+        "z": 3349
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_15",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_3.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_15",
+      "position": {
+        "x": 6252,
+        "z": 3440
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_16",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_4.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_02",
+      "position": {
+        "x": 6132,
+        "z": 3349
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_17",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_5.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_07",
+      "position": {
+        "x": 6131,
+        "z": 3439
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_18",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/fisher_cottage_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/fisher_cottage_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_26",
+      "position": {
+        "x": 6268,
+        "z": 3402
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      },
+      "dry": true,
+      "dry_why": "holds 28 water blocks and is not a farm: placed from a dried copy so none runs into the street"
+    },
+    {
+      "id": "gym6_house_19",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/medium_house_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_25",
+      "position": {
+        "x": 6268,
+        "z": 3383
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_20",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/medium_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/medium_house_2.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_20",
+      "position": {
+        "x": 6113,
+        "z": 3404
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_21",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/large_farm_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/large_farm_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_19",
+      "position": {
+        "x": 6112,
+        "z": 3383
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_22",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/large_farm_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/large_farm_2.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "lake_street_lot_32",
+      "position": {
+        "x": 6181,
+        "z": 3475
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_23",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/animal_pen_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/animal_pen_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "east_row_lot_16",
+      "position": {
+        "x": 6253,
+        "z": 3454
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_24",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/small_farm_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_farm_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_01",
+      "position": {
+        "x": 6132,
+        "z": 3335
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_25",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/birch/houses/small_house_6",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_6.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "west_row_lot_08",
+      "position": {
+        "x": 6132,
+        "z": 3453
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on an outer row of the birch shore: birch houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_26",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/small_farm_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_farm_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "lake_street_lot_31",
+      "position": {
+        "x": 6168,
+        "z": 3476
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_27",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/medium_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/medium_house_4.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "lake_street_lot_30",
+      "position": {
+        "x": 6154,
+        "z": 3475
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_28",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_1.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_28",
+      "position": {
+        "x": 6282,
+        "z": 3403
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_29",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_2.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_27",
+      "position": {
+        "x": 6282,
+        "z": 3384
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_30",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_3.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_18",
+      "position": {
+        "x": 6100,
+        "z": 3404
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_31",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_4.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "cross_street_lot_17",
+      "position": {
+        "x": 6100,
+        "z": 3384
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym6_house_32",
+      "settlement": "gym6_town",
+      "template": "repurposed_structures:villages/mountains/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_5.nbt",
+      "cell": "D7",
+      "kind": "house",
+      "lot": "lake_street_lot_29",
+      "position": {
+        "x": 6142,
+        "z": 3475
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the city frontage: stone houses; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_gym_building",
+      "settlement": "gym7_town",
+      "pack_template": "cobbleverse:blaine",
+      "template": "cobbleverse:blaine",
+      "cell": "E6",
+      "kind": "gym",
+      "lot": "gym7_gym",
+      "position": {
+        "x": 6181,
+        "y": 105,
+        "z": 4982
+      },
+      "size": [
+        27,
+        17,
+        23
+      ],
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "west",
+      "entrance_in_template": "south",
+      "chosen_because": "alone at the causeway's end on the open rim, between the town and the cone, facing back to the square. Outside the footprint on purpose. Cobbleverse's own Blaine.",
+      "rotation_because": "the Cobbleverse gym shell opens south; turned to face west",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "gym7_pokecenter",
+      "settlement": "gym7_town",
+      "template": "cobblers:f4/services/towns/blaine_center",
+      "file": "kits/structures/campaign/f4/services/towns/blaine_center.nbt",
+      "cell": "E6",
+      "kind": "service",
+      "lot": "gym7_pokecenter",
+      "position": {
+        "x": 6091,
+        "z": 4922
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the first door off the road after the lake crossing, the game's first real barrier: you need it",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym7_pokemart",
+      "settlement": "gym7_town",
+      "template": "cobblers:f4/services/towns/blaine_mart",
+      "file": "kits/structures/campaign/f4/services/towns/blaine_mart.nbt",
+      "cell": "E6",
+      "kind": "service",
+      "lot": "gym7_pokemart",
+      "position": {
+        "x": 6042,
+        "z": 5047
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the road out south-west, on the lee side",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym7_house_01",
+      "settlement": "gym7_town",
+      "template": "minecraft:village/savanna/houses/savanna_temple_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_temple_2.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "rim_road_lot_10",
+      "position": {
+        "x": 6046,
+        "z": 5003
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the rim road, exposed to the heat: savanna houses; near the square, so it takes a civic or large design",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_02",
+      "settlement": "gym7_town",
+      "template": "minecraft:village/savanna/houses/savanna_armorer_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_armorer_1.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "rim_road_lot_09",
+      "position": {
+        "x": 6086,
+        "z": 4964
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the rim road, exposed to the heat: savanna houses; a working frontage",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_03",
+      "settlement": "gym7_town",
+      "template": "repurposed_structures:villages/badlands/houses/armorer",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/armorer.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "lee_lane_lot_01",
+      "position": {
+        "x": 6032,
+        "z": 4973
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the mound's lee: badlands terracotta; a working frontage",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_04",
+      "settlement": "gym7_town",
+      "template": "minecraft:village/savanna/houses/savanna_cartographer_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_cartographer_1.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "rim_road_lot_11",
+      "position": {
+        "x": 6030,
+        "z": 5018
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the rim road, exposed to the heat: savanna houses; a working frontage",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_05",
+      "settlement": "gym7_town",
+      "template": "minecraft:village/savanna/houses/savanna_fisher_cottage_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_fisher_cottage_1.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "rim_road_lot_08",
+      "position": {
+        "x": 6101,
+        "z": 4947
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the rim road, exposed to the heat: savanna houses; a working frontage",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      },
+      "dry": true,
+      "dry_why": "holds 15 water blocks and is not a farm: placed from a dried copy so none runs into the street"
+    },
+    {
+      "id": "gym7_house_06",
+      "settlement": "gym7_town",
+      "template": "repurposed_structures:villages/badlands/houses/medium_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/medium_house_2.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "lee_lane_lot_04",
+      "position": {
+        "x": 6017,
+        "z": 5008
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the mound's lee: badlands terracotta; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_07",
+      "settlement": "gym7_town",
+      "template": "repurposed_structures:villages/badlands/houses/medium_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/medium_house_4.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "lee_lane_lot_02",
+      "position": {
+        "x": 6025,
+        "z": 4957
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the mound's lee: badlands terracotta; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_08",
+      "settlement": "gym7_town",
+      "template": "repurposed_structures:villages/badlands/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/small_house_1.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "lee_lane_lot_03",
+      "position": {
+        "x": 6006,
+        "z": 4976
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the mound's lee: badlands terracotta; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_09",
+      "settlement": "gym7_town",
+      "template": "repurposed_structures:villages/badlands/houses/pen_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/pen_1.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "lee_lane_lot_05",
+      "position": {
+        "x": 6002,
+        "z": 5012
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the mound's lee: badlands terracotta; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_10",
+      "settlement": "gym7_town",
+      "template": "repurposed_structures:villages/badlands/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/small_house_2.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "lee_lane_lot_06",
+      "position": {
+        "x": 6004,
+        "z": 5025
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the mound's lee: badlands terracotta; a plain house",
+      "donor_source": {
+        "pack": "Repurposed Structures (installed mod)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_11",
+      "settlement": "gym7_town",
+      "template": "minecraft:village/savanna/houses/savanna_animal_pen_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_animal_pen_1.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "rim_road_lot_12",
+      "position": {
+        "x": 6007,
+        "z": 5041
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the rim road, exposed to the heat: savanna houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym7_house_12",
+      "settlement": "gym7_town",
+      "template": "minecraft:village/savanna/houses/savanna_small_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_small_house_1.nbt",
+      "cell": "E6",
+      "kind": "house",
+      "lot": "rim_road_lot_07",
+      "position": {
+        "x": 6125,
+        "z": 4925
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the rim road, exposed to the heat: savanna houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_gym_building",
+      "settlement": "gym8_town",
+      "pack_template": "cobbleverse:giovanni",
+      "template": "cobbleverse:giovanni",
+      "cell": "G4",
+      "kind": "gym",
+      "lot": "gym8_gym",
+      "position": {
+        "x": 3560,
+        "y": 111,
+        "z": 6429
+      },
+      "size": [
+        27,
+        17,
+        24
+      ],
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "entrance_in_template": "south",
+      "chosen_because": "across the gate square at the town's north-west corner, beside the road out: Victory Road runs past its door. Outside the footprint on purpose. Cobbleverse's own Giovanni.",
+      "rotation_because": "its one door is on the south side; turned to face east",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "gym8_pokecenter",
+      "settlement": "gym8_town",
+      "template": "cobblers:f4/services/towns/giovanni_center",
+      "file": "kits/structures/campaign/f4/services/towns/giovanni_center.nbt",
+      "cell": "G4",
+      "kind": "service",
+      "lot": "gym8_pokecenter",
+      "position": {
+        "x": 3677,
+        "z": 6416
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the first door off the foot street after Route 8, the longest leg in the game",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym8_pokemart",
+      "settlement": "gym8_town",
+      "template": "cobblers:f4/services/towns/giovanni_mart",
+      "file": "kits/structures/campaign/f4/services/towns/giovanni_mart.nbt",
+      "cell": "G4",
+      "kind": "service",
+      "lot": "gym8_pokemart",
+      "position": {
+        "x": 3624,
+        "z": 6471
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the foot street below the crown lane, facing the square's approach: the last shop before Victory Road",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "gym8_house_01",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/taiga/houses/taiga_armorer_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_armorer_2.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "foot_street_lot_14",
+      "position": {
+        "x": 3633,
+        "z": 6445
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the lower, north-facing slope towards the woods: taiga houses; a working frontage",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_02",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/desert/houses/desert_armorer_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_armorer_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "crown_lane_lot_07",
+      "position": {
+        "x": 3604,
+        "z": 6484
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the scrub crown of the dome: desert houses; a working frontage",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_03",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/taiga/houses/taiga_armorer_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_armorer_house_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "foot_street_lot_13",
+      "position": {
+        "x": 3646,
+        "z": 6444
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the lower, north-facing slope towards the woods: taiga houses; a working frontage",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_04",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/desert/houses/desert_butcher_shop_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_butcher_shop_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "crown_lane_lot_06",
+      "position": {
+        "x": 3604,
+        "z": 6498
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the scrub crown of the dome: desert houses; a working frontage",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_05",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/desert/houses/desert_medium_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_medium_house_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "crown_lane_lot_02",
+      "position": {
+        "x": 3660,
+        "z": 6473
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the scrub crown of the dome: desert houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_06",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/taiga/houses/taiga_medium_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "foot_street_lot_12",
+      "position": {
+        "x": 3667,
+        "z": 6442
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the lower, north-facing slope towards the woods: taiga houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_07",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/desert/houses/desert_small_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_small_house_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "crown_lane_lot_03",
+      "position": {
+        "x": 3663,
+        "z": 6487
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the scrub crown of the dome: desert houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_08",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/desert/houses/desert_small_house_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_small_house_2.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "crown_lane_lot_05",
+      "position": {
+        "x": 3628,
+        "z": 6515
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the scrub crown of the dome: desert houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_09",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/desert/houses/desert_animal_pen_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_animal_pen_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "crown_lane_lot_01",
+      "position": {
+        "x": 3676,
+        "z": 6467
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the scrub crown of the dome: desert houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_10",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/desert/houses/desert_animal_pen_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_animal_pen_2.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "crown_lane_lot_04",
+      "position": {
+        "x": 3646,
+        "z": 6510
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the scrub crown of the dome: desert houses; at the edge of town, so a farm or pen",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_11",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/taiga/houses/taiga_medium_house_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_2.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "lower_lane_lot_08",
+      "position": {
+        "x": 3687,
+        "z": 6483
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the lower, north-facing slope towards the woods: taiga houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_12",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/taiga/houses/taiga_medium_house_4",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_4.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "lower_lane_lot_09",
+      "position": {
+        "x": 3685,
+        "z": 6505
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the lower, north-facing slope towards the woods: taiga houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_13",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/taiga/houses/taiga_small_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_small_house_1.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "lower_lane_lot_11",
+      "position": {
+        "x": 3650,
+        "z": 6538
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the lower, north-facing slope towards the woods: taiga houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym8_house_14",
+      "settlement": "gym8_town",
+      "template": "minecraft:village/taiga/houses/taiga_small_house_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_small_house_2.nbt",
+      "cell": "G4",
+      "kind": "house",
+      "lot": "lower_lane_lot_10",
+      "position": {
+        "x": 3674,
+        "z": 6531
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the lower, north-facing slope towards the woods: taiga houses; a plain house",
+      "donor_source": {
+        "pack": "Minecraft (server jar)",
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "league_building",
+      "settlement": "league",
+      "pack_template": "cobbleverse:kanto_league",
+      "template": "cobbleverse:kanto_league",
+      "cell": "C4",
+      "kind": "league",
+      "lot": "league_building",
+      "position": {
+        "x": 3147,
+        "y": 117,
+        "z": 2543
+      },
+      "size": [
+        111,
+        159,
+        120
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "entrance_in_template": "east",
+      "chosen_because": "Cobbleverse's own Kanto League, 111 by 120 and 159 tall, on the plateau's flat west half, its door at the end of the processional way. It reaches y277; the height pack allows y575.",
+      "rotation_because": "its entrance stairs rise on the east side; turned to face east",
+      "source": {
+        "pack": "installed",
+        "licence": "placed by resource id from the installed pack; never copied into the repo"
+      }
+    },
+    {
+      "id": "league_pokecenter",
+      "settlement": "league",
+      "template": "cobblers:f4/services/towns/league_center",
+      "file": "kits/structures/campaign/f4/services/towns/league_center.nbt",
+      "cell": "C4",
+      "kind": "service",
+      "lot": "league_pokecenter",
+      "position": {
+        "x": 3340,
+        "z": 2563
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the forecourt's north side: the last heal before the Elite Four",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
+      }
+    },
+    {
+      "id": "league_pokemart",
+      "settlement": "league",
+      "template": "cobblers:f4/services/towns/league_mart",
+      "file": "kits/structures/campaign/f4/services/towns/league_mart.nbt",
+      "cell": "C4",
+      "kind": "service",
+      "lot": "league_pokemart",
+      "position": {
+        "x": 3310,
+        "z": 2561
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "beside the Centre on the north side, at the head of the processional way",
+      "donor_source": {
+        "pack": "our kit",
+        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
       }
     }
   ]

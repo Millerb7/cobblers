@@ -163,6 +163,12 @@ Spot-check the code and the tests against real data, and report disagreements ra
    (last write wins, `replace` honoured only against blocks the replay wrote) cannot pass a build that differs,
    that the cavern's mid-height open test cannot be fooled by a tree, and that the stock policy's category names
    match what the templates spell (`Pok\u00e9balls` has an accent).
+16. **Batch 1 placement: `tools/rematerial.py`, the check-and-retry donor functions in `tools/place_donor.py`, the
+   exact plaza paving in `tools/place_town.py`, the stray-paving and decay rules in `tools/town_audit.py`, and the
+   spawn-policy entries of 2026-09-21.** One session wrote them and placed the towns. Check the house-choice rule in
+   the placements' `chosen_because` against the renders, that the grass/dirt/path equivalences cannot hide a missing
+   building, and the two scoped whitelist entries (the League's wool, red sand and lily pads; Sabrina's sunflower,
+   cobweb and monitor), which the owner may veto.
 
 ## What Codex can resume
 

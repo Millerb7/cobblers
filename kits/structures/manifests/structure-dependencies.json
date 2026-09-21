@@ -574,6 +574,146 @@
         "moarconcrete"
       ],
       "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns) copied into the campaign namespace for deliberate placement. the Mart that goes with it, not yet placed"
+    },
+    {
+      "id": "campaign:f4/services/towns/koga_center",
+      "structure_id": "cobblers:f4/services/towns/koga_center",
+      "asset": "kits/structures/campaign/f4/services/towns/koga_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from cherrygrove_center per data/rematerial.json: Pokemon Centre for Koga's town, a fen-edge town: mud brick and packed mud walls, a moss and mud garden with ferns and blue orchids"
+    },
+    {
+      "id": "campaign:f4/services/towns/koga_mart",
+      "structure_id": "cobblers:f4/services/towns/koga_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/koga_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "moarconcrete"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from cherrygrove_mart per data/rematerial.json: Pokemon Mart for Koga's town, a fen-edge town: mud brick and packed mud walls, a moss and mud garden with ferns and blue orchids"
+    },
+    {
+      "id": "campaign:f4/services/towns/sabrina_center",
+      "structure_id": "cobblers:f4/services/towns/sabrina_center",
+      "asset": "kits/structures/campaign/f4/services/towns/sabrina_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from floaroma_center per data/rematerial.json: Pokemon Centre for Sabrina's town, the formal hub: white diorite and calcite with pink terracotta, the garden turned to lilac and pale tulips"
+    },
+    {
+      "id": "campaign:f4/services/towns/sabrina_mart",
+      "structure_id": "cobblers:f4/services/towns/sabrina_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/sabrina_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "moarconcrete"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from floaroma_mart per data/rematerial.json: Pokemon Mart for Sabrina's town, the formal hub: white diorite and calcite with pink terracotta, the garden turned to lilac and pale tulips"
+    },
+    {
+      "id": "campaign:f4/services/towns/blaine_center",
+      "structure_id": "cobblers:f4/services/towns/blaine_center",
+      "asset": "kits/structures/campaign/f4/services/towns/blaine_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lavender_center per data/rematerial.json: Pokemon Centre for Blaine's town, the volcanic rim: polished blackstone with orange trim, coarse dirt and dead bushes for a garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/blaine_mart",
+      "structure_id": "cobblers:f4/services/towns/blaine_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/blaine_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "moarconcrete"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lavender_mart per data/rematerial.json: Pokemon Mart for Blaine's town, the volcanic rim: polished blackstone with orange trim, coarse dirt and dead bushes for a garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/giovanni_center",
+      "structure_id": "cobblers:f4/services/towns/giovanni_center",
+      "asset": "kits/structures/campaign/f4/services/towns/giovanni_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lentimas_center per data/rematerial.json: Pokemon Centre for Giovanni's town, the scrub coast: sandstone and brown terracotta on coarse dirt, tall grass for the garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/giovanni_mart",
+      "structure_id": "cobblers:f4/services/towns/giovanni_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/giovanni_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "moarconcrete"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from cherrygrove_mart per data/rematerial.json: Pokemon Mart for Giovanni's town, the scrub coast: sandstone and brown terracotta on coarse dirt, tall grass for the garden"
+    },
+    {
+      "id": "campaign:f4/services/towns/league_center",
+      "structure_id": "cobblers:f4/services/towns/league_center",
+      "asset": "kits/structures/campaign/f4/services/towns/league_center.nbt",
+      "dimensions": [
+        19,
+        11,
+        16
+      ],
+      "required_components": [
+        "cobblemon"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lavender_center per data/rematerial.json: Pokemon Centre for the League's town, to stand beside the League: its deepslate tiles and cyan terracotta"
+    },
+    {
+      "id": "campaign:f4/services/towns/league_mart",
+      "structure_id": "cobblers:f4/services/towns/league_mart",
+      "asset": "kits/structures/campaign/f4/services/towns/league_mart.nbt",
+      "dimensions": [
+        23,
+        15,
+        16
+      ],
+      "required_components": [
+        "moarconcrete"
+      ],
+      "dependency_reason": "MIT donor template (CobbleTowns via CobblemonCityTowns), re-materialed by tools/rematerial.py from lavender_mart per data/rematerial.json: Pokemon Mart for the League's town, to stand beside the League: its deepslate tiles and cyan terracotta"
     }
   ]
 }

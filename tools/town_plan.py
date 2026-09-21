@@ -217,6 +217,10 @@ def main(argv=None):
             if low < yl:
                 cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (x0, low + 1, z0, x1, yl, z1))
                 cmds.append("fill %d %d %d %d %d %d minecraft:grass_block replace minecraft:dirt" % (x0, yl, z0, x1, yl, z1))
+            if lot.get("surface"):
+                # an open lot that is a square, not a building plot: Sabrina's market is paved at its level
+                cmds.append("fill %d %d %d %d %d %d %s" % (x0, yl, z0, x1, yl, z1, lot["surface"]))
+                row["surface"] = lot["surface"]
             row.update({"level": yl, "cut_blocks": cut, "fill_blocks": fill})
         occupied.append((lot["id"], box, "anchor"))
         report["anchors"].append(row)

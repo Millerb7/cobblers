@@ -72,8 +72,10 @@ def main(argv=None):
     p.add_argument("settlement")
     p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
     p.add_argument("--out", default=str(ROOT / "build" / "datapacks" / "cobblers_restore"))
+    p.add_argument("--headroom", type=int, default=48,
+                   help="blocks of air above the ground; the League stands 159 tall, so it needs about 170")
     a = p.parse_args(argv)
-    cmds, box = commands(a.settlement, a.source_root)
+    cmds, box = commands(a.settlement, a.source_root, headroom=a.headroom)
     refused = function_limits.check_lines(cmds, a.settlement)
     if refused:
         raise SystemExit("%d command(s) the server would refuse" % len(refused))

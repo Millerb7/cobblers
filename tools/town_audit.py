@@ -271,7 +271,11 @@ def plan_audit(settlement, world, server_dir=None):
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     policy = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))
-    same = {}
+    # grass under a block turns to dirt by itself, and farmland dries back to dirt: Brock's animal pen had lost 21
+    # grass blocks that way over a few hours, which is not the building failing to stand
+    same = {"minecraft:grass_block": {"minecraft:dirt"}, "minecraft:farmland": {"minecraft:dirt"},
+            # a dirt path with a block on it reverts to dirt (Sabrina's two large farms, 24 blocks)
+            "minecraft:dirt_path": {"minecraft:dirt"}}
     for s in policy.get("substitutions") or []:
         same.setdefault(s["from"], set()).add(s["to"])
         same.setdefault(s["to"], set()).add(s["from"])
@@ -285,6 +289,11 @@ def plan_audit(settlement, world, server_dir=None):
     xs = [k[0] for k in paving] + [p[0] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
     zs = [k[1] for k in paving] + [p[2] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
     ys = [v[0] for v in paving.values()] + [p[1] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
+    if plan.get("plaza"):                        # the ring the stray-paving check reads
+        r = plan["plaza"]["rect"]
+        xs += [r[0] - 20, r[2] + 20]
+        zs += [r[1] - 20, r[3] + 20]
+        ys += [plan["plaza"]["y"] - 3, plan["plaza"]["y"] + 3]
     cap = SN.capture(world, (min(xs), min(ys) - 2, min(zs)), (max(xs), max(ys) + 3, max(zs)))
     at = lambda x, y, z: cap.blocks.get((x, y, z), ("minecraft:air",))[0]
     problems = []
@@ -319,8 +328,32 @@ def plan_audit(settlement, world, server_dir=None):
                             % (what, sum(r["blocked_above"].values()),
                                ", ".join("%s %d" % (k.split(":")[-1], n) for k, n in r["blocked_above"].most_common(4))))
 
+    # paving where the plan puts none: the plaza's surface in a ring round the plaza. Laid with a street's square
+    # brush the plaza ran 16 blocks past its short sides onto the grass, which no check of the planned cells sees
+    pzp = plan.get("plaza")
+    stray_paving = 0
+    if pzp:
+        x0, z0, x1, z1 = pzp["rect"]
+        # a building beside the plaza may be built of the same block (Sabrina's Centre is diorite, Brock's
+        # foundations stone brick): its footprint, with a block round it for the foundation, is not paving
+        built = set()
+        for _, solid, rooms, _ in buildings:
+            for (bx, _, bz) in list(solid or {}) + list(rooms or {}):
+                for dx in (-1, 0, 1):
+                    for dz in (-1, 0, 1):
+                        built.add((bx + dx, bz + dz))
+        for x in range(x0 - 20, x1 + 21):
+            for z in range(z0 - 20, z1 + 21):
+                if (x0 <= x <= x1 and z0 <= z <= z1) or (x, z) in paving or (x, z) in built:
+                    continue
+                if any(at(x, y, z) == pzp["surface"] for y in range(pzp["y"] - 3, pzp["y"] + 4)):
+                    stray_paving += 1
+        if stray_paving:
+            problems.append("plaza paving outside the plan: %d columns round the plaza hold %s where nothing is planned"
+                            % (stray_paving, pzp["surface"]))
+
     # lamps
-    dark = [(x, y - 1, z, at(x, y - 1, z)) for x, y, z in lamps if at(x, y - 1, z) != lamp_block]
+    dark =[(x, y - 1, z, at(x, y - 1, z)) for x, y, z in lamps if at(x, y - 1, z) != lamp_block]
     if lamps and dark:
         problems.append("lamps: %d of %d spots are not lit with %s (first: %s)"
                         % (len(dark), len(lamps), lamp_block, "; ".join("%d %d %d holds %s" % d for d in dark[:3])))
