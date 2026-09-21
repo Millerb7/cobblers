@@ -1,0 +1,215 @@
+{
+  "schema": "cobblers.traders/1",
+  "status": "manifest_ready_proven_on_disposable_world",
+  "note": "Every trader the campaign stands in a town. A trader is an entity, and a re-export regenerates every region and entity file from the WorldPainter project, so a trader summoned in game is erased by every export. This manifest is the source: tools/traders.py function writes the re-application function, and the post-export procedure in docs/world-building/REEXPORT.md (R14) runs it. Nothing is summoned by hand. tools/validate_data.py checks the static rules, and exactly-one presence in a stopped world passed with --world-save.",
+  "fields": {
+    "id": "stable id; the entity carries the tags cobblers_vendor and cobblers_vendor_<id>",
+    "settlement": "the town in data/placements.json whose plaza the trader stands on",
+    "cell": "planning cell",
+    "template": "the installed shopkeeper template the trader's entity is read from (its trade list, name and look)",
+    "source": "where that template ships, and its licence: placed by resource id, never copied into the repo",
+    "position": "{x, y, z}: the block the trader stands in, one above the plaza paving the town plan grades",
+    "status": "planned (not in the campaign world), placed (re-applied by the function), verified (checked in game)",
+    "chosen_because": "why this trader, in this town"
+  },
+  "traders": [
+    {
+      "id": "gym1_vendor_01",
+      "settlement": "gym1_town",
+      "cell": "D3",
+      "template": "bca:stores/farmers_market/shopkeeper_apricorn_seeds",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/farmers_market/shopkeeper_apricorn_seeds.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1741,
+        "y": 139,
+        "z": 3603
+      },
+      "status": "planned",
+      "chosen_because": "a mining town still has to eat, and apricorns are what a trainer buys"
+    },
+    {
+      "id": "gym1_vendor_02",
+      "settlement": "gym1_town",
+      "cell": "D3",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1746,
+        "y": 139,
+        "z": 3603
+      },
+      "status": "planned",
+      "chosen_because": "the general stall, nearest the Mart side of the square"
+    },
+    {
+      "id": "gym1_vendor_03",
+      "settlement": "gym1_town",
+      "cell": "D3",
+      "template": "bca:stores/farmers_market/shopkeeper_herbalist",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/farmers_market/shopkeeper_herbalist.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1751,
+        "y": 139,
+        "z": 3603
+      },
+      "status": "planned",
+      "chosen_because": "herbs off the plateau's birch woods"
+    },
+    {
+      "id": "gym1_vendor_04",
+      "settlement": "gym1_town",
+      "cell": "D3",
+      "template": "bca:stores/store_workers/shopkeeper_ds_mulch",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_mulch.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1756,
+        "y": 139,
+        "z": 3603
+      },
+      "status": "planned",
+      "chosen_because": "mulch, which is what the farm lots on the approach grow for"
+    },
+    {
+      "id": "gym1_vendor_05",
+      "settlement": "gym1_town",
+      "cell": "D3",
+      "template": "bca:stores/farmers_market/shopkeeper_small_game",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/farmers_market/shopkeeper_small_game.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1761,
+        "y": 139,
+        "z": 3603
+      },
+      "status": "planned",
+      "chosen_because": "game from the woods rather than fish: this town is nowhere near water"
+    },
+    {
+      "id": "gym1_vendor_06",
+      "settlement": "gym1_town",
+      "cell": "D3",
+      "template": "bca:stores/store_workers/shopkeeper_ds_battle_items",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_battle_items.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1766,
+        "y": 139,
+        "z": 3603
+      },
+      "status": "planned",
+      "chosen_because": "the one that matters before a gym"
+    },
+    {
+      "id": "gym2_vendor_01",
+      "settlement": "gym2_town",
+      "cell": "D5",
+      "template": "bca:stores/farmers_market/shopkeeper_common_fish",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/farmers_market/shopkeeper_common_fish.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1609,
+        "y": 108,
+        "z": 2799
+      },
+      "status": "planned",
+      "chosen_because": "the catch, on a plaza a hundred blocks from the water"
+    },
+    {
+      "id": "gym2_vendor_02",
+      "settlement": "gym2_town",
+      "cell": "D5",
+      "template": "bca:stores/farmers_market/shopkeeper_exotic_fish",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/farmers_market/shopkeeper_exotic_fish.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1614,
+        "y": 108,
+        "z": 2799
+      },
+      "status": "planned",
+      "chosen_because": "and the part of the catch worth a detour"
+    },
+    {
+      "id": "gym2_vendor_03",
+      "settlement": "gym2_town",
+      "cell": "D5",
+      "template": "bca:stores/farmers_market/shopkeeper_chef",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/farmers_market/shopkeeper_chef.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1619,
+        "y": 108,
+        "z": 2799
+      },
+      "status": "planned",
+      "chosen_because": "someone to cook it"
+    },
+    {
+      "id": "gym2_vendor_04",
+      "settlement": "gym2_town",
+      "cell": "D5",
+      "template": "bca:stores/store_workers/shopkeeper_ds_special_balls",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_special_balls.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1624,
+        "y": 108,
+        "z": 2799
+      },
+      "status": "planned",
+      "chosen_because": "dive balls and the rest, which is what a water town sells"
+    },
+    {
+      "id": "gym2_vendor_05",
+      "settlement": "gym2_town",
+      "cell": "D5",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1629,
+        "y": 108,
+        "z": 2799
+      },
+      "status": "planned",
+      "chosen_because": "the general stall"
+    }
+  ]
+}

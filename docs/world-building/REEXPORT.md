@@ -25,25 +25,27 @@ Ores and underground water pockets are re-rolled by WorldPainter on every export
 
 ### Re-applied, in order
 
-Every step needs the source root (the out-of-repo heightmap) and, where noted, a **stopped copy** of the new export as
-`--surface-world`. Regenerate the gitignored derived inputs first: they are not in the repository.
+Every step takes its ground from the source root (the out-of-repo heightmap), never from the world being rebuilt:
+`--surface-world` is refused by every placement tool (CLAUDE.md, `tests/test_ground_rule.py`). Regenerate the
+gitignored derived inputs first: they are not in the repository.
 
 | # | Step | Command | Check |
 | --- | --- | --- | --- |
 | R0 | Derived inputs | `python tools/critical_legs.py --source-root <root>`; `python tools/paint_maps.py` if the paint changed | `derived/routes/critical_legs.json` and `build/paint/manifest.json` exist |
 | R1 | World datapacks back into the world folder | copy `modpack/datapacks/cobblers_height` and the generated `build/datapacks/cobblers_worldtree` into `<world>/datapacks/` | `/datapack list enabled` names both. **cobblers_height raises the build limit to y575; without it the world tree's crown (y457-535) will not build** |
-| R2 | Displaced City cavern | `python tools/cavern_plan.py --source-root <root> --surface-world <stopped world> --install <server>/datapacks`, then `/function cobblers:cavern/00_seal`, `05_reset`, `10_excavate`, `20_surfaces`, `30_trees`, `40_light`, `50_tunnel`, `70_drain`, then `15_cap` last (water seeps until the drain runs), then `60_biome` | floor and air counts in [`BUILT.md`](BUILT.md); `execute if biome <inside> minecraft:cherry_grove` |
-| R3 | World tree | `python tools/world_tree.py --surface-world <stopped world>`, install, `/function cobblers:worldtree/00_tree` … `03_tree`, then `90_foundation` | crown reaches y535 (`execute if block 2016 535 2280`), trunk at (2016, 2280) |
-| R4 | Foothill grove: giants and elders | `python tools/tree_grove.py --source-root <root> --site 2016,2272 --id foothill_woods --surface-world <stopped world>`, then its placement function; `--augment foothill_woods` for the elders | 7 giants and 4 elders in the grove box ([`BUILT.md`](BUILT.md)) |
-| R5 | The 48 elders | `python tools/elder_trees.py --source-root <root> --surface-world <stopped world>`, then `build/elders/elders.mcfunction` | the run report lists 48 placed; the tool re-picks sites, so compare with `derived/sites/elder_trees.json` from the previous run and record any that moved |
-| R6 | Route 1 maze forest and the world-tree sapling | `python tools/maze_forest.py --source-root <root> --surface-world <stopped world> --install <server>/datapacks`, then `/function cobblers:route1/tile_*` (16 tiles) | the run report's object count; corridor clearance at eye height; the sapling's trunk at (1380, 4628) and crown top |
-| R7 | Hometown | `python tools/place_town.py hometown --surface-world <stopped world> --install <server>/datapacks`, `/reload`, `/function cobblers:towns/hometown` | `python tools/place_town.py hometown --verify --server-dir <server>`: 0 gaps |
-| R8 | Gym-town prep (gym1, gym2) | `python tools/town_plan.py gym1_town --source-root <root> --surface-world <stopped world>` (and `gym2_town`), then the prep functions. Brock's box is 272 chunks, over forceload's 256 limit, so run it in halves | street, plaza and lot levels in [`BUILT.md`](BUILT.md) |
+| R2 | Displaced City cavern | `python tools/cavern_plan.py --source-root <root> --install <server>/datapacks`, then `/function cobblers:cavern/00_seal`, `05_reset`, `10_excavate`, `20_surfaces`, `30_trees`, `40_light`, `50_tunnel`, `70_drain`, then `15_cap` last (water seeps until the drain runs), then `60_biome` | floor and air counts in [`BUILT.md`](BUILT.md); `execute if biome <inside> minecraft:cherry_grove` |
+| R3 | World tree | `python tools/world_tree.py --source-root <root>`, install, `/function cobblers:worldtree/00_tree` … `03_tree`, then `90_foundation` | crown reaches y535 (`execute if block 2016 535 2280`), trunk at (2016, 2280) |
+| R4 | Foothill grove: giants and elders | `python tools/tree_grove.py --source-root <root> --site 2016,2272 --id foothill_woods`, then its placement function; `--augment foothill_woods` for the elders | 7 giants and 4 elders in the grove box ([`BUILT.md`](BUILT.md)) |
+| R5 | The 48 elders | `python tools/elder_trees.py --source-root <root>`, then `build/elders/elders.mcfunction` | the run report lists 48 placed; the tool re-picks sites, so compare with `derived/sites/elder_trees.json` from the previous run and record any that moved |
+| R6 | Route 1 maze forest and the world-tree sapling | `python tools/maze_forest.py --source-root <root> --install <server>/datapacks`, then `/function cobblers:route1/tile_*` (16 tiles) | the run report's object count; corridor clearance at eye height; the sapling's trunk at (1380, 4628) and crown top |
+| R7 | Hometown | `python tools/place_town.py hometown --source-root <root> --install <server>/datapacks`, `/reload`, `/function cobblers:towns/hometown` | `python tools/place_town.py hometown --verify --server-dir <server>`: 0 gaps |
+| R8 | Gym-town prep (gym1, gym2) | `python tools/town_plan.py gym1_town --source-root <root>` (and `gym2_town`), then the prep functions. Brock's box is 272 chunks, over forceload's 256 limit, so run it in halves | street, plaza and lot levels in [`BUILT.md`](BUILT.md) |
 | R9 | Brock's gym | `python tools/place_donor.py function`, install, `/function cobblers:structures/place_gym1_brock_gym` | `python tools/place_donor.py verify --world <stopped copy>`: 2,712 blocks, 20 block entities, substituted counts as recorded |
 | R10 | Relic Island islet | `python tools/islet.py --source-root <root> --apply --server <server>` under the coordination lock | `data/towns.json` `built_ground`, checked by the validator's `town-ground` |
 | R11 | Habitat Blocks | `python tools/habitat_blocks.py function`, install, `/function cobblers:habitats/place` with no player near them, then **restart the server**, and only then verify. See the three rules below | `python tools/habitat_blocks.py verify --rcon <server>` **after the restart** |
 | R12 | Waystones | re-registered by R7; clear stale entries from `waystones.dat` before the first boot | the hometown waystone is claimable and no duplicate appears |
 | R13 | Spawn pools and suppression (datapacks, not blocks) | regenerate if routes or the mod set changed: `python tools/compile_spawns.py`; `python tools/suppress_inherited_spawns.py --server <server> --world <world>` (grid 16) | EXP-012: `/checkspawn` on a corridor shows the authored roster only |
+| R14 | Town traders | `python tools/traders.py function --server-dir <server>`, install `build/datapacks/cobblers_vendors`, `/reload`, then `/function cobblers:towns/vendors_<settlement>` per town and wait 8 seconds (it runs over 140 ticks: load, summon, de-duplicate, release). Safe to re-run: it converges on one trader per stall. Never summon a trader by hand | `python tools/traders.py verify --rcon <server>`: every trader `1 tagged, 1 on its spot, 0 untagged copies` |
 
 #### Habitat Blocks: three rules R11 depends on
 

@@ -149,6 +149,10 @@ Spot-check the code and the tests against real data, and report disagreements ra
    calls, so a world read by another route (opening region files directly, a new reader module) would pass. Check
    that `VERIFY_ONLY` functions really only verify, and that `round` rather than `floor` holds away from the 40
    sampled windows.
+13. **`tools/traders.py`, `tests/test_traders.py` and the `traders` check.** One session wrote the function, its
+   tests and the verifier. Check the de-duplication cannot kill the only trader (it kills only where a `new` one
+   stands), that the stray sweep (same type and exact name within 48 blocks) cannot catch an unrelated entity, and
+   that 40 ticks is a safe load wait on a busier server than the idle disposable one it was measured on.
 
 ## What Codex can resume
 

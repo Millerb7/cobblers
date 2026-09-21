@@ -23,7 +23,7 @@ TOOLS = ROOT / "tools"
 
 # tools that decide where something goes in the world
 PLACEMENT_TOOLS = [
-    "place_town.py", "place_vendors.py", "place_donor.py", "town_plan.py", "cavern_plan.py",
+    "place_town.py", "traders.py", "place_donor.py", "town_plan.py", "cavern_plan.py",
     "elder_trees.py", "maze_forest.py", "tree_grove.py", "world_tree.py", "habitat_blocks.py",
     "compile_spawns.py", "subregion_boxes.py", "waterways.py", "size_outliers.py",
 ]

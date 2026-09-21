@@ -59,8 +59,8 @@ z1650–1849).
   20 minutes and the saplings should grow. The saplings and chamber are still there.
 
 **Sequencing.** The restored creek changes the ground above the cavern. So excavate **after** the creek export, in
-the new world, and generate the functions again with `--surface-world` on that world so the ceiling follows the real
-creek bed. Excavating before the export would be lost, or copying its chunks across would undo the creek.
+the new world, and generate the functions again from the heightmap that export was made from, so the ceiling follows
+the real creek bed. (This note once said `--surface-world`; tools no longer read ground from a world, see CLAUDE.md.) Excavating before the export would be lost, or copying its chunks across would undo the creek.
 
 ## Tree town
 

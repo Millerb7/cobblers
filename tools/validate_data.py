@@ -213,6 +213,11 @@ SCHEMAS = {
         ["id", "pool", "style", "replace_spawns", "range_of_influence", "position", "status"],
         {"style": {"natural"}, "status": {"planned", "placed", "verified"}},
     ),
+    "traders.json": (
+        "cobblers.traders/1", "traders",
+        ["id", "settlement", "template", "source", "position", "status"],
+        {"status": {"planned", "placed", "verified"}},
+    ),
     "dialogue.json": (
         "cobblers.dialogue/1", "conversations",
         ["id", "quest_id", "npc_id", "scope", "cursor", "entry_rules", "nodes"], {},
@@ -2737,6 +2742,41 @@ def _spawn_example(triggers, block):
     return "a loaded spawn condition"
 
 
+def check_traders(ctx: Context):
+    """Every trader in data/traders.json can be re-applied after a re-export: a unique id that can be an entity tag,
+    a namespaced template, a settlement that exists, one trader per block, and a standing height one above the plaza
+    the town plan paves (when that plan has been generated). With --world-save (a stopped world copy, never the live
+    world) every placed or verified trader must stand exactly once on its spot in that world's entity files; without
+    it, presence is SKIPPED, never passed."""
+    rep = ctx.report
+    C = "traders"
+    f = ctx.files.get("traders.json")
+    if not f:
+        return
+    import traders as TR
+    for rid, msg in TR.static_problems(f.doc, ctx.doc("placements.json"), ROOT / "derived" / "towns"):
+        rep.error(C, msg, file=f.rel, line=f.line_of_id(rid) if rid else None, where=rid)
+    recs = [r for r in f.doc.get("traders") or [] if isinstance(r, dict)]
+    placed = [r for r in recs if r.get("status") in TR.PLACED]
+    if not placed:
+        rep.info(C, "%d traders recorded, none placed in the campaign world; nothing to find in a world" % len(recs),
+                 file=f.rel)
+        return
+    if not ctx.world_save:
+        rep.skip(C, "%d placed traders were not checked against a world; pass --world-save <stopped world copy> "
+                 "(or tools/traders.py verify --rcon on a running server)" % len(placed), file=f.rel)
+        return
+    try:
+        problems = TR.world_problems(f.doc, ctx.world_save)
+    except SystemExit as exc:
+        rep.error(C, str(exc), file=f.rel)
+        return
+    for rid, msg in problems:
+        rep.error(C, msg, file=f.rel, line=f.line_of_id(rid), where=rid)
+    if not problems:
+        rep.info(C, "%d placed traders stand once each in %s" % (len(placed), ctx.world_save), file=f.rel)
+
+
 def check_habitat_blocks(ctx: Context):
     """Every Habitat Block in data/habitat_blocks.json can be re-applied after a re-export: its pool exists, its style
     is the proven natural one, and no two ReplaceSpawns ranges overlap (EXP-021). With --world-save (a stopped world
@@ -2836,6 +2876,7 @@ CHECKS = [
     ("town-ground", check_town_ground),
     ("visibility", check_visibility),
     ("habitat-blocks", check_habitat_blocks),
+    ("traders", check_traders),
     ("spawn-pack", check_spawn_pack),
 ]
 
