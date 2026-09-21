@@ -27,6 +27,11 @@ SEVERITY_ORDER = {ERROR: 0, WARNING: 1, SKIPPED: 2, INFO: 3}
 # ---------------------------------------------------------------- findings
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: two optional checks read a stopped world copy (--world-save) to verify placements.
+WORLD_READS = {'<module>', 'check_habitat_blocks', 'check_traders'}
+
+
 class Finding:
     __slots__ = ("severity", "check", "file", "line", "message", "where")
 

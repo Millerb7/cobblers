@@ -64,6 +64,11 @@ NOT_FLOOR = {"minecraft:" + b for b in (
     "rail", "redstone_wire")}
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: only the --verify --world branch of main reads a world, to audit the built town (town_audit).
+WORLD_READS = {'main'}
+
+
 def is_floor(name):
     """True when a template block at the ground layer is floor a verify can stand on, not a plant, a snow layer,
     a carpet or anything else in #minecraft:replaceable."""

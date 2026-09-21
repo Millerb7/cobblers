@@ -66,6 +66,11 @@ HALF = 16
 TOP = 48
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: harvests object templates from a disposable probe world into the kit library; no position is decided from it.
+WORLD_READS = {'harvest', 'main'}
+
+
 def rcon_module(server):
     import runtime_guard
     server = runtime_guard.check(server, "use RCON through")

@@ -62,6 +62,11 @@ SEE_THROUGH_SUFFIX = ("_pane", "_fence", "_fence_gate", "_leaves", "_door", "_tr
 NO_SPAWN_ON = ("_slab", "_stairs", "_wall", "bedrock", "barrier", "magma_block", "farmland", "lava", "ice")
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: `check` reads a stopped world's light arrays to verify; `plan` never reads a world.
+WORLD_READS = {'cmd_check', 'main', 'world_light'}
+
+
 def short(name):
     return name.split(":")[-1].split("[")[0]
 

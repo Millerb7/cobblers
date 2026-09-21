@@ -49,6 +49,11 @@ TRUNKS_OK = 0.98       # a trunk can be cut by a later corridor dressing (the re
 COLUMNS_OK = 0.99
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: the build audit reads a stopped world to check what the re-application built.
+WORLD_READS = {'World', 'main'}
+
+
 def base(name):
     return name.split("[")[0]
 

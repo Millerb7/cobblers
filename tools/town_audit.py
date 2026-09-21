@@ -36,6 +36,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: the town audit reads a stopped world to check a town against its plan.
+WORLD_READS = {'audit', 'main', 'plan_audit'}
+
+
 def policy_sets(policy, triggers):
     """(blocks that must not appear, blocks that are allowed on purpose)."""
     substituted_from = {s["from"] for s in policy.get("substitutions") or [] if isinstance(s, dict)}

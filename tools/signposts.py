@@ -32,6 +32,11 @@ REPORT = ROOT / "derived" / "signposts.json"
 MIN_GAP = 150                 # blocks between transition posts on one route
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: `verify` reads a stopped world to check every post; `function` never does.
+WORLD_READS = {'main', 'verify'}
+
+
 def load(name):
     return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
 

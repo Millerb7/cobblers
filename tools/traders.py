@@ -64,6 +64,11 @@ SPOT_RADIUS = 3     # a trader wanders a little; further than this from its spot
 PLAZA_MARGIN = 48    # force-loaded round the plaza, so strays that walked off are found too
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: `verify` counts traders in a stopped world; placement never reads one.
+WORLD_READS = {'main', 'world_counts', 'world_problems'}
+
+
 def tag_of(tid):
     return "%s_%s" % (TAG_ALL, tid)
 

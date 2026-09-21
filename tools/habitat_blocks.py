@@ -42,6 +42,11 @@ PLACED = ("placed", "verified")
 STATUSES = ("planned",) + PLACED
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: the verify reads a stopped world copy to check placed Habitat Blocks.
+WORLD_READS = {'main', 'read_world', 'world_problems'}
+
+
 def habitat_pool_ids(spawns_doc):
     return {"cobblers:%s" % h["id"] for h in (spawns_doc or {}).get("habitats") or [] if isinstance(h, dict) and "id" in h}
 

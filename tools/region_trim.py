@@ -36,6 +36,11 @@ REGION_RE = re.compile(r"^r\.(-?\d+)\.(-?\d+)\.mca$")
 DIM_DIRS = {"overworld": "", "the_nether": "DIM-1", "the_end": "DIM1"}
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: classifies and trims saved chunks outside the border; decides no position.
+WORLD_READS = {'main', 'scan'}
+
+
 def chunk_inside(cx, cz, b):
     """A chunk is inside if any of its blocks is inside the inclusive rectangle."""
     x0, z0 = cx * 16, cz * 16

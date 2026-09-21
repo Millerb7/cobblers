@@ -60,6 +60,11 @@ COVER = {
 COVER_SUFFIXES = ("_leaves", "_log", "_wood")
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: exists to read a world, for drift reports against the heightmap; no placement tool may use it.
+WORLD_READS = {'_region_job', 'extract', 'main'}
+
+
 def is_cover(name):
     return name in COVER or name.endswith(COVER_SUFFIXES)
 

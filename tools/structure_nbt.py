@@ -32,6 +32,11 @@ END, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BYTE_ARRAY, STRING, LIST, COMPOUND, 
 
 # ------------------------------------------------------------------ writing
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: captures a world region to a template or for a check; callers declare their own use.
+WORLD_READS = {'capture'}
+
+
 def _str(out, s):
     b = s.encode("utf-8")
     out.write(struct.pack(">H", len(b)))
