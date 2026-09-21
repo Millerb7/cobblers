@@ -27,6 +27,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+import function_limits
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_donor"
@@ -113,6 +115,13 @@ def main(argv=None):
         for rec in recs:
             fn = out / "data" / NS / "function" / "structures" / ("place_%s.mcfunction" % rec["id"])
             fn.parent.mkdir(parents=True, exist_ok=True)
+            lines_out = commands(rec, subs)
+            refused = function_limits.check_lines(lines_out, str(fn))
+            if refused:
+                for _n, _cmd, _why in refused:
+                    print("REFUSED line %d: %s" % (_n, _why))
+                    print("   %s" % _cmd)
+                raise SystemExit("%s: %d command(s) the server would refuse; not written" % (fn, len(refused)))
             fn.write_text("\n".join(commands(rec, subs)) + "\n", encoding="utf-8", newline="\n")
             print("wrote", fn)
         (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers donor structure placements (generated)"}}) + "\n", encoding="utf-8")

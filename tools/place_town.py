@@ -35,6 +35,7 @@ from pathlib import Path
 
 import numpy as np
 
+import function_limits
 import nbt
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -138,6 +139,25 @@ def fill_boxes(x0, y0, z0, x1, y1, z1, limit=32768):
     return [(x0, y, z0, x1, min(y1, y + per - 1), z1) for y in range(y0, y1 + 1, per)]
 
 
+def forceload_commands(box, verb, limit=256):
+    """One or more forceload commands covering the box, each inside the 256-chunk limit.
+
+    `/forceload add` refuses more than 256 chunks and refuses the whole command, so a single call over
+    a big town leaves every later command running on unloaded ground. Brock's build function asked for
+    270 chunks in one go (found 2026-09-20 by tools/function_limits.py), which is why the town's roads
+    and waystone were written into chunks the server had not loaded.
+    """
+    x0, z0, x1, z1 = box
+    cx0, cz0, cx1, cz1 = x0 // 16, z0 // 16, x1 // 16, z1 // 16
+    wide = cx1 - cx0 + 1
+    rows = max(1, min(cz1 - cz0 + 1, limit // max(wide, 1)))
+    out = []
+    for c in range(cz0, cz1 + 1, rows):
+        c_end = min(c + rows - 1, cz1)
+        out.append("forceload %s %d %d %d %d" % (verb, x0, c * 16, x1, c_end * 16 + 15))
+    return out
+
+
 def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     """ground_at(x, z) -> Y of the world's ground (the highest block that is not air, water, a plant or a tree)."""
     s = doc["settlements"][settlement]
@@ -191,6 +211,17 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         for plant in PLANTS:
             for bx in fill_boxes(x0 - m, lo_clear, z0 - m, x1 + m, max(Y, max(under)) + 2, z1 + m):
                 cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (plant,)))
+        # any fluid the ground brought with it, cleared before the template lands so the building does
+        # not enclose it. A template that wants water or lava puts its own back afterwards. One block
+        # of natural lava sat inside Brock's armorer house until tools/town_audit.py found it, and
+        # lava decides what spawns wherever it is.
+        for fluid in ("minecraft:lava", "minecraft:water"):
+            # over the margin too: a source just outside the footprint flows straight back in, which
+            # is how the block in Brock's armorer house survived the first attempt at this
+            # from below the floor, not from the template's lowest stored block: in Brock's armorer
+            # house those differ by two, and the lava sat in the gap
+            for bx in fill_boxes(x0 - m, min(lo_clear, Y - 2), z0 - m, x1 + m, oy + H + 2, z1 + m):
+                cmds.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (bx + (fluid,)))
         template_id = p["template"]
         if info["waystones"]:
             if out_dir is None:
@@ -281,7 +312,8 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
 
     allx = [b[1] for b in boxes] + [b[3] for b in boxes]
     allz = [b[2] for b in boxes] + [b[4] for b in boxes]
-    cmds.append("forceload add %d %d %d %d" % (min(allx) - 40, min(allz) - 40, max(allx) + 40, max(allz) + 40))
+    force = (min(allx) - 40, min(allz) - 40, max(allx) + 40, max(allz) + 40)
+    cmds += forceload_commands(force, "add")
     # A planned town's streets carry the same three things a hometown road does: a polyline, a width
     # and a surface. The plaza is paved as a one-segment street across its own rectangle.
     ways = list(s.get("roads") or [])
@@ -320,7 +352,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         sx, sz = s["spawn"]
         sy = surface(sx, sz) + 1
         cmds.append("setworldspawn %d %d %d" % (sx, sy, sz))
-    cmds.append("forceload remove %d %d %d %d" % (min(allx) - 40, min(allz) - 40, max(allx) + 40, max(allz) + 40))
+    cmds += forceload_commands(force, "remove")
     if way:
         report["waystone"] = [wx, wy, wz]
     if s.get("spawn"):
@@ -423,15 +455,23 @@ def main(argv=None):
     p.add_argument("--surface-world", default=None, help="stopped world folder whose region files give the ground")
     p.add_argument("--out", default=None)
     p.add_argument("--install", default=None, help="copy the datapack into this datapacks folder")
+    p.add_argument("--world", help="a STOPPED world copy; with --verify it also audits the town's blocks")
     p.add_argument("--verify", action="store_true", help="check the built settlement over RCON")
     p.add_argument("--server-dir", default=None)
     a = p.parse_args(argv)
     if a.verify:
         res = verify(a.settlement, a.server_dir)
+        # the block audit runs with the floor check, not when somebody remembers it: the two failures
+        # it catches (a refused substitution, a fluid the ground brought) both look fine from here
+        if a.world:
+            import town_audit
+            res["spawn_block_audit"] = town_audit.audit(a.settlement, a.world)
+            bad = res["spawn_block_audit"]["unsubstituted"], res["spawn_block_audit"]["not_in_policy"]
+            res["spawn_block_problems"] = sum(len(x) for x in bad)
         path = ROOT / "derived" / "towns" / ("%s_verify.json" % a.settlement)
         path.write_text(json.dumps(res, indent=1), encoding="utf-8")
         print(json.dumps(res, indent=1))
-        raise SystemExit(0 if res["gaps"] == 0 else 1)
+        raise SystemExit(0 if (res["gaps"] == 0 and not res.get("spawn_block_problems")) else 1)
     if not a.surface_world:
         raise SystemExit("--surface-world is required: buildings are seated on the ground as the world has it")
     import world_heights
@@ -451,6 +491,14 @@ def main(argv=None):
     fn = out / "data" / "cobblers" / "function" / "towns" / ("%s.mcfunction" % a.settlement)
     fn.parent.mkdir(parents=True, exist_ok=True)
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: settlement placement functions (tools/place_town.py)"}}, indent=2) + "\n", encoding="utf-8")
+    # a command the server would refuse is never written: a refused command reports nothing, and
+    # a build that quietly did half its work is worse than one that failed outright
+    refused = function_limits.check_lines(cmds, str(fn))
+    if refused:
+        for _n, _cmd, _why in refused:
+            print("REFUSED line %d: %s" % (_n, _why))
+            print("   %s" % _cmd)
+        raise SystemExit("%s: %d command(s) the server would refuse; not written" % (fn, len(refused)))
     fn.write_text("\n".join(cmds) + "\n", encoding="utf-8")
     rep = ROOT / "derived" / "towns" / ("%s_placement.json" % a.settlement)
     rep.parent.mkdir(parents=True, exist_ok=True)
