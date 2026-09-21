@@ -238,14 +238,17 @@ def run(a):
                     vf.unlink(missing_ok=True)
                     r = subprocess.run([sys.executable, str(TOOLS / "place_town.py"), s, "--verify", "--server-dir", a.server_dir],
                                        cwd=ROOT, capture_output=True, text=True)
-                    gaps = None
+                    gaps, unverified = None, []
                     if vf.is_file():
-                        gaps = json.loads(vf.read_text(encoding="utf-8"))["gaps"]
+                        vres = json.loads(vf.read_text(encoding="utf-8"))
+                        gaps, unverified = vres["gaps"], vres.get("unverified") or []
                     elif r.returncode:
                         print("   verify %s failed: %s" % (s, (r.stderr or r.stdout).strip().splitlines()[-1:]), flush=True)
-                    print("   verify %-16s gaps %s" % (s, gaps), flush=True)
-                    if gaps != 0:
-                        bad.append("%s: floor verify %s" % (s, "failed to run" if gaps is None else "%d gaps" % gaps))
+                    print("   verify %-16s gaps %s%s" % (s, gaps, ", unverified: %s" % unverified if unverified else ""), flush=True)
+                    # fail closed: the exit code, the gaps and every building the data records, not only the gaps
+                    if gaps != 0 or unverified or r.returncode:
+                        bad.append("%s: floor verify %s" % (s, "failed to run" if gaps is None else
+                                                            "%d gaps, %d unverified, exit %d" % (gaps, len(unverified), r.returncode)))
                 r = subprocess.run([sys.executable, str(TOOLS / "traders.py"), "verify", "--rcon", a.server_dir],
                                    cwd=ROOT, capture_output=True, text=True)
                 print("   traders verify exit %d" % r.returncode, flush=True)
@@ -293,7 +296,11 @@ def audit(a):
     print("signposts:", " | ".join(res["signposts"]["tail"]))
     # no walkable position under a roof, or anywhere in the cavern, at block light 0 (tools/light_plan.py check, from
     # the saved world's own light arrays)
-    lp = [sys.executable, str(TOOLS / "light_plan.py"), "check", "hometown", *places(), "--world", a.world, "--server-dir", a.server_dir]
+    # every place but those whose plan says dark by design (the Scar, the jungle ruins): asking the check about one of
+    # those fails it, so the list comes from the data, not from a hand edit here
+    import light_plan
+    lp = [sys.executable, str(TOOLS / "light_plan.py"), "check", *light_plan.light_places(placements()),
+          "--world", a.world, "--server-dir", a.server_dir]
     if getattr(a, "source_root", None):
         lp += ["--source-root", a.source_root]
     r = subprocess.run(lp, cwd=ROOT, capture_output=True, text=True)

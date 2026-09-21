@@ -580,11 +580,18 @@ def verify(settlement, server_dir):
             tree = rcon.run(["execute if block %d %d %d #minecraft:%s" % (x, y, z, t) for y in cand for t in ("leaves", "logs")], pw)
             cand = [y for k, y in enumerate(cand) if not any("passed" in r for r in tree[2 * k:2 * k + 2])]
         return cand[0] if cand else None
-    out = {"buildings": [], "gaps": 0, "columns_checked": 0}
+    out = {"buildings": [], "gaps": 0, "columns_checked": 0, "unverified": []}
     fb = rep["buildings"]
+    # Fail closed: the buildings to verify are the ones the data records (every templated house or service this
+    # tool places), not the ones the last build's report happens to list; a building missing from the report, or one
+    # with no corner to test, is unverified, and an unverified building fails the verify (Codex review, 2026-09-21).
+    doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    expected = {q["id"] for q in doc["placements"] if q.get("settlement") == settlement and q.get("file")}
+    out["unverified"] += ["%s: in the data, not in the placement report" % i for i in sorted(expected - {b["id"] for b in fb})]
+    out["unverified"] += ["%s: no corner to test" % b["id"] for b in fb if not b.get("corners")]
     if not fb:
         # a place with no templated building (Viltri Light is a platform and an authored tower): nothing to seat, and
-        # its earthworks are checked by tools/town_audit.py
+        # its earthworks are checked by tools/town_audit.py. Only when the data records none either.
         return out
     xs = [b["footprint"][0] for b in fb] + [b["footprint"][2] for b in fb]
     zs = [b["footprint"][1] for b in fb] + [b["footprint"][3] for b in fb]
@@ -663,7 +670,7 @@ def main(argv=None):
         path = ROOT / "derived" / "towns" / ("%s_verify.json" % a.settlement)
         path.write_text(json.dumps(res, indent=1), encoding="utf-8")
         print(json.dumps(res, indent=1))
-        raise SystemExit(0 if (res["gaps"] == 0 and not res.get("spawn_block_problems")
+        raise SystemExit(0 if (res["gaps"] == 0 and not res.get("unverified") and not res.get("spawn_block_problems")
                                and not res.get("plan_problems")) else 1)
     if a.surface_world:
         raise SystemExit("--surface-world is gone: ground comes from the heightmap (tools/ground.py), never from "

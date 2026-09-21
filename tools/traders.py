@@ -460,6 +460,10 @@ def main(argv=None):
     for rid, m in problems:
         print("PROBLEM %s: %s" % (rid, m))
     print("%d traders checked, %d problems" % (len(counts), len(problems)))
+    if not counts:
+        # fail closed: a selection that matches no trader (a mistyped --settlement, an empty manifest) checked nothing
+        print("PROBLEM: no trader was checked")
+        return 1
     return 1 if problems else 0
 
 

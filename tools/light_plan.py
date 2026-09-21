@@ -415,6 +415,20 @@ def world_light(world, x, y, z, cache):
     return (b >> 4) if i & 1 else (b & 0x0F)
 
 
+BUILT_SHARE = 0.75       # the world must hold this share of the positions the model plans (all but two places: 0.92-1.14)
+
+
+def dark_by_design(doc, sid):
+    """The reason a place is left dark on purpose (its plan's lighting.dark_by_design), or None."""
+    return (((doc["settlements"].get(sid) or {}).get("plan") or {}).get("lighting") or {}).get("dark_by_design")
+
+
+def light_places(doc):
+    """The places the light check covers: the hometown and every planned place, less those dark by design."""
+    import reapply
+    return [s for s in ["hometown"] + reapply.places(doc) if not dark_by_design(doc, s)]
+
+
 def connected_air(m, cols):
     """The world's passable cells joined to the cavern the plan carved: seeded strictly between the planned floor and
     ceiling (derived/cavern/plan.npz) where the world is open, grown face to face through the world's own passable
@@ -466,7 +480,17 @@ def cmd_check(a):
     bad = 0
     dump = []
     for sid in a.settlements:
+        dark_on_purpose = dark_by_design(doc, sid)
+        if dark_on_purpose:
+            # not a light-check target: asking to check one is a mistake in the caller, and fails
+            print("%-16s DARK BY DESIGN, not a light-check target: %s" % (sid, dark_on_purpose))
+            bad += 1
+            continue
         m, scope, cells, _ = build_model(sid, doc, os.environ.get("COBBLERS_SOURCE_ROOT") or a.source_root, a.server_dir)
+        # fail closed: the expected set is the model's (from the plan), and a check that finds nothing, or far fewer
+        # positions than the plan builds, has not checked the place (Surge's town read "0 positions, 0 dark" on a
+        # world it was not built in, 2026-09-21)
+        expected = int((m.spawn_cells() & scope).sum())
         cache = {}
         n = dark_n = 0
         examples = []
@@ -498,7 +522,15 @@ def cmd_check(a):
                     if len(examples) < 8:
                         examples.append((x, y, z, short(prev)))
         bad += dark_n
-        print("%-16s %6d spawnable positions in scope, %d at block light 0%s" % (sid, n, dark_n, "  e.g. %s" % examples if dark_n else ""))
+        print("%-16s %6d spawnable positions in scope (the plan's model: %d), %d at block light 0%s"
+              % (sid, n, expected, dark_n, "  e.g. %s" % examples if dark_n else ""))
+        if expected == 0:
+            print("   NOTHING TO CHECK: the plan puts no roofed position here; mark it dark by design or give it a roof")
+            bad += 1
+        elif n < BUILT_SHARE * expected:
+            print("   NOT BUILT AS PLANNED: the world holds %d of the %d positions the plan builds (needs %.0f%%)"
+                  % (n, expected, 100 * BUILT_SHARE))
+            bad += 1
     if a.dump:
         Path(a.dump).write_text(json.dumps(dump) + "\n", encoding="utf-8")
     return 1 if bad else 0

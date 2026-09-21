@@ -2608,7 +2608,10 @@
           "lamp_why": "nothing lights the Scar",
           "why": "old broken stone; neither is a spawn condition"
         },
-        "prep_note": "The pad is pressed flat at y280; nothing to cut. The avenue's north end is left open at the cliff."
+        "prep_note": "The pad is pressed flat at y280; nothing to cut. The avenue's north end is left open at the cliff.",
+        "lighting": {
+          "dark_by_design": "a foundation-only ruin on the Mt Vessu pad, one course of stone and no roofs: nothing covered to light, and left unlit on purpose"
+        }
       }
     },
     "northlight": {
@@ -3876,6 +3879,9 @@
           "plaza": "minecraft:mossy_stone_bricks",
           "lamp": "none",
           "why": "a ruin lit by nothing"
+        },
+        "lighting": {
+          "dark_by_design": "six ruin pieces half sunk in the jungle: their covered dark is the ruins being ruins (169 positions), left unlit on purpose; vanilla hostiles cannot spawn in this pack anyway (MobsBeGone)"
         }
       }
     },

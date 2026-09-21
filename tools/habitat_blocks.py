@@ -238,6 +238,10 @@ def main(argv=None):
     for bid, m in problems:
         print("MISMATCH %s: %s" % (bid, m))
     print("%d placed or verified blocks checked, %d problems" % (n, len(problems)))
+    if n == 0:
+        # fail closed: with no block recorded as placed there is nothing to verify, and "0 checked" is not a pass
+        print("MISMATCH: no Habitat Block is recorded as placed; nothing was verified")
+        return 1
     return 1 if problems else 0
 
 

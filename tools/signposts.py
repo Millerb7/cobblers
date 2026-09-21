@@ -228,6 +228,10 @@ def verify(a):
     if "cobblers-10240" in Path(a.world).as_posix():
         raise SystemExit("refusing to read the live world")
     rep = json.loads(REPORT.read_text(encoding="utf-8"))
+    if not rep.get("posts"):
+        # fail closed: nothing to check is not "0 of 0 standing"
+        print("no posts in %s: nothing to verify, which fails (run `signposts.py function` first)" % REPORT.name)
+        return 1
     wood = rep["wood"]
     by_region = {}
     for p in rep["posts"]:
