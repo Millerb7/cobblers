@@ -869,6 +869,929 @@
         },
         "prep_note": "The site moves three metres across 179 blocks, so the streets need grading rather than cutting. The green should not be levelled flat: let it keep the fall it has, which is about a metre across its width."
       }
+    },
+    "gym5_town": {
+      "centre": [
+        4646,
+        2446
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21; not laid out, not built",
+      "plan": {
+        "reading": "Route 5 comes down off the downs from the north-west and simply becomes the high street: there is no edge, the fields turn into yards and the yards into a town strung along the road. On the left the ground drops into a shallow fen; on the right it rises dry. Half-way along, the road opens into a market yard on the dry side. The gym is not on the road. You can see its roof over the reeds, but the way to it is a mangrove boardwalk that leaves the road behind the Centre, doubles back twice through the fen and arrives at a door facing away from town. A ninja's house should have to be found.",
+        "entries": [
+          {
+            "from": "gym4_town",
+            "at": [
+              4572,
+              2355
+            ],
+            "street": "post_road"
+          }
+        ],
+        "exits": [
+          {
+            "to": "gym6_town",
+            "at": [
+              4751,
+              2524
+            ],
+            "street": "post_road"
+          }
+        ],
+        "streets": [
+          {
+            "id": "post_road",
+            "polyline": [
+              [
+                4572,
+                2355
+              ],
+              [
+                4610,
+                2394
+              ],
+              [
+                4642,
+                2428
+              ],
+              [
+                4646,
+                2446
+              ],
+              [
+                4718,
+                2518
+              ],
+              [
+                4751,
+                2524
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:packed_mud",
+            "max_grade": 0.08
+          },
+          {
+            "id": "fen_walk",
+            "polyline": [
+              [
+                4624,
+                2409
+              ],
+              [
+                4604,
+                2409
+              ],
+              [
+                4604,
+                2432
+              ],
+              [
+                4590,
+                2446
+              ],
+              [
+                4590,
+                2459
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:mangrove_planks",
+            "max_grade": 0.1
+          }
+        ],
+        "plaza": {
+          "rect": [
+            4652,
+            2420,
+            4684,
+            2444
+          ],
+          "y": 117,
+          "surface": "minecraft:mossy_cobblestone",
+          "why": "the market yard, on the dry side of the road where it bends. Mossy, because everything here is a little damp; moss names no spawn condition in the loaded data."
+        },
+        "anchors": [
+          {
+            "id": "gym5_pokecenter",
+            "role": "pokecenter",
+            "rect": [
+              4616,
+              2362,
+              4638,
+              2384
+            ],
+            "facing": "west",
+            "why": "the first building on the high street, where the fields end; the fen boardwalk leaves the road just past it, so the Centre is also the landmark for finding the gym",
+            "template": "cobblers:f4/services/towns/koga_center",
+            "derived_from": "cobblers:f4/services/towns/cherrygrove_center",
+            "rematerial": "the coastal sand and podzol of its garden become mud and moss, its planting reeds and sugar cane: a Centre on a fen edge"
+          },
+          {
+            "id": "gym5_pokemart",
+            "role": "pokemart",
+            "rect": [
+              4704,
+              2466,
+              4730,
+              2490
+            ],
+            "facing": "west",
+            "why": "on the dry side towards the far end of the street, the last shop before Route 6",
+            "template": "cobblers:f4/services/towns/koga_mart",
+            "derived_from": "cobblers:f4/services/towns/cherrygrove_mart",
+            "rematerial": "the same fen re-material as the Centre, so the pair belongs together"
+          },
+          {
+            "id": "gym5_gym",
+            "role": "gym",
+            "template": "cobbleverse:koga",
+            "rect": [
+              4574,
+              2463,
+              4606,
+              2495
+            ],
+            "facing": "north",
+            "why": "down in the fen, off the road, reached only by the boardwalk. Its door faces the boardwalk's end, away from the high street. Cobbleverse's own Koga."
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "post_road",
+            "fen_walk"
+          ],
+          "size": [
+            11,
+            11
+          ],
+          "setback": 3,
+          "gap": 5,
+          "max_lot_relief": 3,
+          "why": "roomy yards along a road through fields, with a few cottages out on the boardwalk; the spacing is the opposite of Surge's shelf"
+        },
+        "waystone": {
+          "position": [
+            4668,
+            2422
+          ],
+          "facing": "south",
+          "note": "flag gym5_cleared (data/progression.json); the market yard's north edge, on the dry side"
+        },
+        "paving": {
+          "main": "minecraft:packed_mud",
+          "fen_walk": "minecraft:mangrove_planks",
+          "plaza": "minecraft:mossy_cobblestone",
+          "lamp": "minecraft:verdant_froglight",
+          "lamp_why": "a sour green light for the poison town, set flush into the road; not a spawn condition",
+          "why": "packed mud and mangrove are the marsh's own materials; none of the three is named by a spawn condition in data/spawn_blocks.json."
+        },
+        "prep_note": "The road runs along the fen's edge at y116-118 and needs almost no cut; the boardwalk descends two or three blocks into the fen and is filled under, not dug. The gym lot is the one real levelling, in the fen at about y114."
+      }
+    },
+    "gym6_town": {
+      "centre": [
+        6196,
+        3398
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21; not laid out, not built",
+      "plan": {
+        "reading": "Route 6 arrives from the west along the lakeshore flat and runs straight into a cross street, and at the crossing is the only true square in the region. From the square the whole town is visible at once: a white axis rising north up the slope between two regular rows of houses, and at its head, looking straight back down it, the gym. Everything is symmetrical, the Centre and the Mart face each other across the axis on the cross street, and the town is laid out like a thought. Route 7 leaves by the same axis south, down to the lake.",
+        "entries": [
+          {
+            "from": "gym5_town",
+            "at": [
+              6104,
+              3398
+            ],
+            "street": "cross_street"
+          }
+        ],
+        "exits": [
+          {
+            "to": "gym7_town",
+            "at": [
+              6196,
+              3496
+            ],
+            "street": "grand_axis"
+          }
+        ],
+        "streets": [
+          {
+            "id": "grand_axis",
+            "polyline": [
+              [
+                6196,
+                3496
+              ],
+              [
+                6196,
+                3342
+              ]
+            ],
+            "width": 7,
+            "surface": "minecraft:calcite",
+            "max_grade": 0.06
+          },
+          {
+            "id": "cross_street",
+            "polyline": [
+              [
+                6104,
+                3398
+              ],
+              [
+                6290,
+                3398
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:smooth_stone",
+            "max_grade": 0.06
+          },
+          {
+            "id": "gym_street",
+            "polyline": [
+              [
+                6146,
+                3340
+              ],
+              [
+                6246,
+                3340
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:smooth_stone",
+            "max_grade": 0.06
+          },
+          {
+            "id": "west_row",
+            "polyline": [
+              [
+                6146,
+                3340
+              ],
+              [
+                6146,
+                3470
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:smooth_stone",
+            "max_grade": 0.06
+          },
+          {
+            "id": "east_row",
+            "polyline": [
+              [
+                6246,
+                3340
+              ],
+              [
+                6246,
+                3470
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:smooth_stone",
+            "max_grade": 0.06
+          },
+          {
+            "id": "lake_street",
+            "polyline": [
+              [
+                6146,
+                3470
+              ],
+              [
+                6246,
+                3470
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:smooth_stone",
+            "max_grade": 0.06
+          }
+        ],
+        "plaza": {
+          "rect": [
+            6180,
+            3382,
+            6212,
+            3414
+          ],
+          "y": 94,
+          "surface": "minecraft:polished_diorite",
+          "why": "the square where the road meets the axis; the whole plan reads from here"
+        },
+        "anchors": [
+          {
+            "id": "gym6_pokecenter",
+            "role": "pokecenter",
+            "rect": [
+              6154,
+              3368,
+              6176,
+              3393
+            ],
+            "facing": "south",
+            "why": "west of the axis, opening onto the cross street beside the square, mirrored by the Mart",
+            "template": "cobblers:f4/services/towns/sabrina_center",
+            "derived_from": "cobblers:f4/services/towns/floaroma_center",
+            "rematerial": "its loose flower garden becomes a clipped parterre: box hedges of azalea leaves, white and pink tulips in beds, calcite paths"
+          },
+          {
+            "id": "gym6_pokemart",
+            "role": "pokemart",
+            "rect": [
+              6216,
+              3368,
+              6242,
+              3393
+            ],
+            "facing": "south",
+            "why": "east of the axis, the Centre's mirror",
+            "template": "cobblers:f4/services/towns/sabrina_mart",
+            "derived_from": "cobblers:f4/services/towns/floaroma_mart",
+            "rematerial": "the same parterre re-material as the Centre"
+          },
+          {
+            "id": "gym6_gym",
+            "role": "gym",
+            "template": "cobbleverse:sabrina",
+            "rect": [
+              6180,
+              3302,
+              6212,
+              3334
+            ],
+            "facing": "south",
+            "why": "at the head of the axis on the highest ground, facing straight down it: visible from the square the moment you arrive. Cobbleverse's own Sabrina."
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "west_row",
+            "east_row",
+            "lake_street",
+            "gym_street",
+            "cross_street"
+          ],
+          "size": [
+            10,
+            12
+          ],
+          "setback": 2,
+          "gap": 2,
+          "max_lot_relief": 3,
+          "why": "a city's frontage: narrow, deep and regular, one house against the next"
+        },
+        "waystone": {
+          "position": [
+            6186,
+            3386
+          ],
+          "facing": "east",
+          "note": "flag gym6_cleared (data/progression.json); on the square, beside the axis"
+        },
+        "paving": {
+          "axis": "minecraft:calcite",
+          "streets": "minecraft:smooth_stone",
+          "plaza": "minecraft:polished_diorite",
+          "lamp": "minecraft:pearlescent_froglight",
+          "lamp_why": "a pale violet light for the psychic town, set flush into the paving; not a spawn condition",
+          "why": "white stone for a formal town; none of the three is named by a spawn condition in data/spawn_blocks.json (quartz, the obvious choice, is)."
+        },
+        "prep_note": "The flat takes the grid with little work; the axis climbs about four blocks over 150, graded to a steady rise. The gym lot at the top needs a small cut into the rise."
+      }
+    },
+    "gym7_town": {
+      "centre": [
+        6074,
+        4995
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21; not laid out, not built",
+      "plan": {
+        "reading": "Route 7 comes over the lake crossing and up onto the rim from the north-east, and the cone fills the eastern sky. The town has put the mound between itself and the fire: its houses sit on the mound's lee, along lanes that follow the contour round it, and the road runs through an ash-black square at the mound's foot. East of the square nothing is built. A bare basalt causeway runs straight out across the open rim towards the cone, and at its end, alone, is the gym. You leave the town to get there.",
+        "entries": [
+          {
+            "from": "gym6_town",
+            "at": [
+              6150,
+              4919
+            ],
+            "street": "rim_road"
+          }
+        ],
+        "exits": [
+          {
+            "to": "gym8_town",
+            "at": [
+              6002,
+              5067
+            ],
+            "street": "rim_road"
+          }
+        ],
+        "streets": [
+          {
+            "id": "rim_road",
+            "polyline": [
+              [
+                6150,
+                4919
+              ],
+              [
+                6074,
+                4995
+              ],
+              [
+                6002,
+                5067
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:polished_blackstone",
+            "max_grade": 0.08
+          },
+          {
+            "id": "lee_lane",
+            "polyline": [
+              [
+                6060,
+                4981
+              ],
+              [
+                6040,
+                4966
+              ],
+              [
+                6020,
+                4975
+              ],
+              [
+                6010,
+                5000
+              ],
+              [
+                6016,
+                5025
+              ],
+              [
+                6030,
+                5040
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:cobbled_deepslate",
+            "max_grade": 0.12
+          },
+          {
+            "id": "causeway",
+            "polyline": [
+              [
+                6088,
+                4995
+              ],
+              [
+                6152,
+                4995
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:smooth_basalt",
+            "max_grade": 0.05
+          }
+        ],
+        "plaza": {
+          "rect": [
+            6060,
+            4981,
+            6088,
+            5009
+          ],
+          "y": 107,
+          "surface": "minecraft:polished_basalt",
+          "why": "the ash square at the mound's foot, where the road, the lee lane and the causeway meet"
+        },
+        "anchors": [
+          {
+            "id": "gym7_pokecenter",
+            "role": "pokecenter",
+            "rect": [
+              6090,
+              4920,
+              6111,
+              4940
+            ],
+            "facing": "south",
+            "why": "the first door off the road after the lake crossing, the game's first real barrier: you need it",
+            "template": "cobblers:f4/services/towns/blaine_center",
+            "derived_from": "cobblers:f4/services/towns/lavender_center",
+            "rematerial": "its basalt and deepslate kept, its garden's grass turned to coarse dirt and magma-coloured flowers (torchflowers, orange tulips): a Centre on a volcano"
+          },
+          {
+            "id": "gym7_pokemart",
+            "role": "pokemart",
+            "rect": [
+              6040,
+              5044,
+              6066,
+              5066
+            ],
+            "facing": "north",
+            "why": "on the road out south-west, on the lee side",
+            "template": "cobblers:f4/services/towns/blaine_mart",
+            "derived_from": "cobblers:f4/services/towns/lavender_mart",
+            "rematerial": "the Centre's volcanic re-material"
+          },
+          {
+            "id": "gym7_gym",
+            "role": "gym",
+            "template": "cobbleverse:blaine",
+            "rect": [
+              6154,
+              4980,
+              6186,
+              5010
+            ],
+            "facing": "west",
+            "why": "alone at the causeway's end on the open rim, between the town and the cone, facing back to the square. Outside the footprint on purpose. Cobbleverse's own Blaine."
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "lee_lane",
+            "rim_road"
+          ],
+          "size": [
+            9,
+            9
+          ],
+          "setback": 2,
+          "gap": 2,
+          "max_lot_relief": 3,
+          "why": "tucked in and tight: small houses close together on the mound's lee and along the road, none along the causeway"
+        },
+        "waystone": {
+          "position": [
+            6064,
+            4984
+          ],
+          "facing": "south",
+          "note": "flag gym7_cleared (data/progression.json); the ash square's north-west corner"
+        },
+        "paving": {
+          "main": "minecraft:polished_blackstone",
+          "lanes": "minecraft:cobbled_deepslate",
+          "causeway": "minecraft:smooth_basalt",
+          "plaza": "minecraft:polished_basalt",
+          "lamp": "minecraft:shroomlight",
+          "lamp_why": "an ember-orange light set flush into the black paving; not a spawn condition",
+          "why": "the volcano's own blacks. Magma block, the obvious floor for a fire town, is a spawn condition in data/spawn_blocks.json and is not used."
+        },
+        "prep_note": "The square and the road sit on the flat at y106-108. The lee lane climbs round the mound at two to four blocks above it and is cut to a contour. The causeway is level across the rim."
+      }
+    },
+    "gym8_town": {
+      "centre": [
+        3647,
+        6497
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21; not laid out, not built",
+      "plan": {
+        "reading": "Route 8 arrives from the north-east at the foot of a broad, low dome, and the town lies up and behind it on the crown, its two lanes curving round the hill with the sea cliff somewhere beyond. The through street swings west along the town's northern foot, the side that looks out over the falling land towards the Rift, to a square where the town stops and Victory Road begins. Across that square stands the gym, and the road north runs past its door. Giovanni's gym is the gate: for seven badges it is the building everyone walks past, and for the eighth it is the one you have to go through to leave.",
+        "entries": [
+          {
+            "from": "gym7_town",
+            "at": [
+              3709,
+              6436
+            ],
+            "street": "foot_street"
+          }
+        ],
+        "exits": [
+          {
+            "to": "league",
+            "at": [
+              3593,
+              6426
+            ],
+            "street": "foot_street"
+          }
+        ],
+        "streets": [
+          {
+            "id": "foot_street",
+            "polyline": [
+              [
+                3709,
+                6436
+              ],
+              [
+                3668,
+                6458
+              ],
+              [
+                3630,
+                6458
+              ],
+              [
+                3593,
+                6426
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:polished_granite",
+            "max_grade": 0.08
+          },
+          {
+            "id": "crown_lane",
+            "polyline": [
+              [
+                3668,
+                6462
+              ],
+              [
+                3676,
+                6492
+              ],
+              [
+                3656,
+                6522
+              ],
+              [
+                3622,
+                6530
+              ],
+              [
+                3598,
+                6512
+              ],
+              [
+                3600,
+                6478
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:coarse_dirt",
+            "max_grade": 0.1
+          },
+          {
+            "id": "lower_lane",
+            "polyline": [
+              [
+                3696,
+                6448
+              ],
+              [
+                3702,
+                6500
+              ],
+              [
+                3690,
+                6540
+              ],
+              [
+                3650,
+                6554
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:coarse_dirt",
+            "max_grade": 0.1
+          }
+        ],
+        "plaza": {
+          "rect": [
+            3590,
+            6440,
+            3620,
+            6462
+          ],
+          "y": 112,
+          "surface": "minecraft:terracotta",
+          "why": "the gate square, where the town stops and Victory Road begins"
+        },
+        "anchors": [
+          {
+            "id": "gym8_pokecenter",
+            "role": "pokecenter",
+            "rect": [
+              3676,
+              6414,
+              3697,
+              6434
+            ],
+            "facing": "south",
+            "why": "the first door off the foot street after Route 8, the longest leg in the game",
+            "template": "cobblers:f4/services/towns/giovanni_center",
+            "derived_from": "cobblers:f4/services/towns/lentimas_center",
+            "rematerial": "its bare podzol and dirt path become coarse dirt, terracotta and dripstone: the ground-type town's earth"
+          },
+          {
+            "id": "gym8_pokemart",
+            "role": "pokemart",
+            "rect": [
+              3622,
+              6468,
+              3648,
+              6490
+            ],
+            "facing": "north",
+            "why": "on the foot street below the crown lane, facing the square's approach: the last shop before Victory Road",
+            "template": "cobblers:f4/services/towns/giovanni_mart",
+            "derived_from": "cobblers:f4/services/towns/cherrygrove_mart",
+            "rematerial": "its sand and planting become coarse dirt and terracotta, as the Centre"
+          },
+          {
+            "id": "gym8_gym",
+            "role": "gym",
+            "template": "cobbleverse:giovanni",
+            "rect": [
+              3556,
+              6400,
+              3588,
+              6432
+            ],
+            "facing": "east",
+            "why": "across the gate square at the town's north-west corner, beside the road out: Victory Road runs past its door. Outside the footprint on purpose. Cobbleverse's own Giovanni."
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "crown_lane",
+            "lower_lane",
+            "foot_street"
+          ],
+          "size": [
+            10,
+            10
+          ],
+          "setback": 2,
+          "gap": 3,
+          "max_lot_relief": 3,
+          "why": "houses on the crown, facing out over the dome's falls; the foot street's north side stays open to the view"
+        },
+        "waystone": {
+          "position": [
+            3594,
+            6444
+          ],
+          "facing": "south",
+          "note": "flag gym8_cleared (data/progression.json); the gate square, in front of the gym"
+        },
+        "paving": {
+          "main": "minecraft:polished_granite",
+          "lanes": "minecraft:coarse_dirt",
+          "plaza": "minecraft:terracotta",
+          "lamp": "minecraft:glowstone",
+          "lamp_why": "a plain warm light set flush into the earth streets; not a spawn condition",
+          "why": "the ground-type town is paved in earth: granite on the through street, coarse dirt on the lanes, terracotta on the square. None is named by a spawn condition in data/spawn_blocks.json."
+        },
+        "prep_note": "The dome has only three or four blocks of relief inside the footprint, so the streets follow it with little cut; the gym's lot, below the square to the north-west, is levelled to the square."
+      }
+    },
+    "league": {
+      "centre": [
+        3297,
+        2603
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "planned 2026-09-21; not laid out, not built",
+      "plan": {
+        "reading": "Victory Road's last climb comes up the escarpment from the river valley and tops out at the plateau's east lip, onto a forecourt. The Centre and the Mart stand together on its north side, the last heal and the last shop, and the south side is left open to the drop and the view back down Victory Road. West of the forecourt a wide processional way crosses the plateau, lined with lamps and nothing else, straight to the League's door. Nobody lives here. It is a precinct, not a town, and it should feel emptied out for you.",
+        "entries": [
+          {
+            "from": "gym8_town",
+            "at": [
+              3394,
+              2603
+            ],
+            "street": "victory_approach"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "victory_approach",
+            "polyline": [
+              [
+                3394,
+                2603
+              ],
+              [
+                3362,
+                2603
+              ]
+            ],
+            "width": 7,
+            "surface": "minecraft:tuff_bricks",
+            "max_grade": 0.1
+          },
+          {
+            "id": "processional_way",
+            "polyline": [
+              [
+                3330,
+                2603
+              ],
+              [
+                3272,
+                2603
+              ]
+            ],
+            "width": 9,
+            "surface": "minecraft:deepslate_tiles",
+            "max_grade": 0.04
+          }
+        ],
+        "plaza": {
+          "rect": [
+            3330,
+            2586,
+            3362,
+            2620
+          ],
+          "y": 119,
+          "surface": "minecraft:polished_tuff",
+          "why": "the forecourt at the lip, where Victory Road ends"
+        },
+        "anchors": [
+          {
+            "id": "league_pokecenter",
+            "role": "pokecenter",
+            "rect": [
+              3338,
+              2560,
+              3360,
+              2582
+            ],
+            "facing": "south",
+            "why": "on the forecourt's north side: the last heal before the Elite Four",
+            "template": "cobblers:f4/services/towns/league_center",
+            "derived_from": "cobblers:f4/services/towns/lavender_center",
+            "rematerial": "its deepslate kept and its basalt turned to deepslate tiles and polished blackstone, to stand beside the League"
+          },
+          {
+            "id": "league_pokemart",
+            "role": "pokemart",
+            "rect": [
+              3308,
+              2556,
+              3334,
+              2582
+            ],
+            "facing": "south",
+            "why": "beside the Centre on the north side, at the head of the processional way",
+            "template": "cobblers:f4/services/towns/league_mart",
+            "derived_from": "cobblers:f4/services/towns/lavender_mart",
+            "rematerial": "the Centre's League re-material"
+          },
+          {
+            "id": "league_building",
+            "role": "league",
+            "template": "cobbleverse:kanto_league",
+            "rect": [
+              3138,
+              2539,
+              3266,
+              2667
+            ],
+            "facing": "east",
+            "why": "Cobbleverse's own Kanto League, 111 by 120 and 159 tall, on the plateau's flat west half, its door at the end of the processional way. It reaches y277; the height pack allows y575.",
+            "level": 118
+          }
+        ],
+        "house_lots": {
+          "along": [],
+          "why": "none: nobody lives at the League"
+        },
+        "waystone": {
+          "position": [
+            3346,
+            2590
+          ],
+          "facing": "west",
+          "note": "proposed: opens with the League; on the forecourt, facing the processional way"
+        },
+        "paving": {
+          "approach": "minecraft:tuff_bricks",
+          "processional": "minecraft:deepslate_tiles",
+          "plaza": "minecraft:polished_tuff",
+          "lamp": "minecraft:sea_lantern",
+          "lamp_why": "the League's cold light, flush along the processional way; the one lamp shared with another place (Misty's), since only five full-block lights exist that name no spawn condition",
+          "why": "deepslate tiles are the League building's own main block, so the way reads as its approach. None is named by a spawn condition in data/spawn_blocks.json."
+        },
+        "prep_note": "The forecourt and way are on the plateau's flat at y118-119, and the approach climbs two blocks from the lip. The League's lot is the real work: it spans y113 to y120, lowest at its west end outside the footprint, and is levelled to y118, cutting the east and filling up to five blocks on the west."
+      }
     }
   },
   "placements": [
