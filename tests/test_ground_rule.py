@@ -25,7 +25,8 @@ TOOLS = ROOT / "tools"
 PLACEMENT_TOOLS = [
     "place_town.py", "traders.py", "place_donor.py", "town_plan.py", "cavern_plan.py",
     "elder_trees.py", "maze_forest.py", "tree_grove.py", "world_tree.py", "habitat_blocks.py",
-    "compile_spawns.py", "subregion_boxes.py", "waterways.py", "size_outliers.py",
+    "compile_spawns.py", "subregion_boxes.py", "waterways.py", "size_outliers.py", "light_plan.py",
+    "cavern_farms.py", "location_titles.py",
 ]
 # world_heights exists only to read a world. structure_nbt also WRITES structure files (Builder, dumps),
 # which is harmless, so for it only the read, capture(), counts.
@@ -35,6 +36,7 @@ WORLD_CALLS = {"extract", "capture"}
 VERIFY_ONLY = {
     "place_donor.py": {"read_world", "verify"},
     "habitat_blocks.py": {"read_world", "world_problems"},
+    "light_plan.py": {"cmd_check", "world_light", "connected_air"},
 }
 
 

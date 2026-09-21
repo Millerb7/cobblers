@@ -172,6 +172,9 @@ def steps(with_spawns=False):
     for d in donors(doc):
         r9 += [("fn", "cobblers:structures/place_%s" % d), ("wait", 3)]
     out.append(("R9", "pack donors (%d)" % len(donors(doc)), r9))
+    # what must stand after the donors, which are placed whole and erase what was inside them: the lights
+    late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
+    out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -278,8 +281,17 @@ def audit(a):
     r = subprocess.run([sys.executable, str(TOOLS / "signposts.py"), "verify", "--world", a.world], cwd=ROOT, capture_output=True, text=True)
     res["signposts"] = {"exit": r.returncode, "tail": r.stdout.strip().splitlines()[-6:]}
     print("signposts:", " | ".join(res["signposts"]["tail"]))
+    # no walkable position under a roof, or anywhere in the cavern, at block light 0 (tools/light_plan.py check, from
+    # the saved world's own light arrays)
+    lp = [sys.executable, str(TOOLS / "light_plan.py"), "check", "hometown", *places(), "--world", a.world, "--server-dir", a.server_dir]
+    if getattr(a, "source_root", None):
+        lp += ["--source-root", a.source_root]
+    r = subprocess.run(lp, cwd=ROOT, capture_output=True, text=True)
+    res["lights"] = {"exit": r.returncode, "tail": [l[:200] for l in r.stdout.strip().splitlines()]}
+    print("lights:", "0 dark everywhere" if r.returncode == 0 else
+          "\n  ".join(l for l in res["lights"]["tail"] if " 0 at block light 0" not in l))
     res["clean"] = (res["build_audit"]["exit"] == 0 and all(v["clean"] for v in res["towns"].values())
-                    and res["signposts"]["exit"] == 0)
+                    and res["signposts"]["exit"] == 0 and res["lights"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")
     print("audit %s: %s" % ("CLEAN" if res["clean"] else "NOT CLEAN", path))
@@ -303,6 +315,7 @@ def main(argv=None):
     q = sub.add_parser("audit")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world", required=True)
+    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), help="heightmap root, for the light check")
     q = sub.add_parser("plan", help="print the steps and their commands without running anything")
     a = p.parse_args(argv)
     if a.cmd == "plan":
