@@ -12,8 +12,12 @@ with a check after each, and audit the result. docs/world-building/REEXPORT.md i
         with the server running and the coordination lock held: R2 to R14 in order, timed, each function's reply
         checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
   python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
-        with the server STOPPED: build_audit (cavern, forest, world tree, islet) and town_audit for every place;
-        writes derived/reapply/audit_<time>.json and exits non-zero on any mismatch
+        with the server STOPPED: build_audit (cavern, forest, world tree, islet), town_audit for every place, the
+        signposts, and the light check (tools/light_plan.py: nothing walkable under a roof or in the cavern at block
+        light 0); writes derived/reapply/audit_<time>.json and exits non-zero on any mismatch
+
+R16 runs each place's after-donor function (its lights, the cavern fields' crops) after the pack donors (R9), which
+are placed whole and would erase them.
 
 The order differs from the table in one place: the islet (R10) runs before the towns, because Relic Island's house
 stands on it. The Displaced City comes after the cavern (R2) for the same reason.
@@ -41,7 +45,7 @@ PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
 OUT = ROOT / "derived" / "reapply"
 SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
-                "cobblers_signs")
+                "cobblers_signs", "cobblers_titles")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -93,6 +97,7 @@ def prepare(a):
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "signposts.py", "function", *src)
+    py(TOOLS / "location_titles.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
