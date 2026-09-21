@@ -254,13 +254,16 @@ def main(argv=None):
     # reaches above the ground (the surface over this footprint runs y96-135), and "fill stone replace water" does
     # not know the difference between a buried pocket and a river: it turned 900 columns of the Glacial Tear creek
     # into stone at y98-100. Stop 4 blocks under the real ground, every column.
-    cmds = ["# seal underground water and lava, from y%d to 4 under the ground, per column" % seal_lo]
+    cmds = ["# seal underground water, lava and falling blocks, from y%d to 4 under the ground, per column" % seal_lo]
     # The whole rock column, not just 10 blocks over the roof. Stopping at ceiling+10 left pockets higher in the
     # rock, and natural voids let them drain into the chamber: 1,458 fluid cells inside it on the first rebuild.
     # `top` is the top SOLID block, so for a creek column it is the BED (y95-97), not the water surface (y98-100)
     # -- stopping 4 under it still leaves the Glacial Tear alone, which is what narrowing the seal was protecting.
     seal_top = top - 4
-    for fluid in ("minecraft:water", "minecraft:lava"):
+    # Falling blocks too. A fresh export re-rolls gravel pockets through the rock, and the ones at the roof line fall
+    # the moment the excavation or a later build updates them: on the staging run of 2026-09-21 they left 147 roof-cap
+    # columns open and 75 lumps of gravel on the Displaced City's streets. Stone in their place holds.
+    for fluid in ("minecraft:water", "minecraft:lava", "minecraft:gravel", "minecraft:sand", "minecraft:red_sand"):
         for j in range(n):
             i = 0
             while i < n:

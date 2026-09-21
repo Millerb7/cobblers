@@ -61,6 +61,23 @@ def graded_profile(ground, max_grade):
     return np.rint(y).astype(int)
 
 
+HEADROOM = 3            # blocks of air kept over every street and plaza cell, whatever the export put there
+CANOPY = 24             # how high a tree standing on a street or square is cleared
+
+
+def clear_above(x0, z0, x1, z1, y):
+    """Commands that leave a paved box walkable: air for HEADROOM blocks over it, and any tree over it gone.
+
+    A fresh export carries its natural foliage, and nothing cleared it from a street: the prep cut the ground down
+    to grade and paved it, and a tree or a flower standing on the old ground stayed standing on the new road. The
+    disposable world never showed it, because the ground restore there had already cleared everything. The staging
+    run of 2026-09-21 found trunks on three towns' streets and flowers on the Rift rim trail."""
+    out = ["fill %d %d %d %d %d %d minecraft:air" % (x0, y + 1, z0, x1, y + HEADROOM, z1)]
+    for tag in ("#minecraft:logs", "#minecraft:leaves"):
+        out.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (x0, y + 1, z0, x1, y + CANOPY, z1, tag))
+    return out
+
+
 def rect_overlap(a, b, pad=0):
     return not (a[2] + pad < b[0] or b[2] + pad < a[0] or a[3] + pad < b[1] or b[3] + pad < a[1])
 
@@ -151,6 +168,7 @@ def main(argv=None):
                 if low < y - 1:
                     cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (run[0], low + 1, cz, run[-1], y - 1, cz))
                 cmds.append("fill %d %d %d %d %d %d %s" % (run[0], y, cz, run[-1], y, cz, r["surface"]))
+                cmds += clear_above(run[0], cz, run[-1], cz, y)
                 runs.append([cz, int(y), run[0], run[-1]])
                 if xx is not None:
                     run = [xx]
@@ -179,6 +197,7 @@ def main(argv=None):
         if low < y - 1:
             cmds.append("fill %d %d %d %d %d %d minecraft:dirt replace #minecraft:replaceable" % (x0, low + 1, z0, x1, y - 1, z1))
         cmds.append("fill %d %d %d %d %d %d %s" % (x0, y, z0, x1, y, z1, pz["surface"]))
+        cmds += clear_above(x0, z0, x1, z1, y)
         we.append("plaza: //pos1 %d,%d,%d  //pos2 %d,%d,%d  //set air ; //pos1 %d,%d,%d //pos2 %d,%d,%d //set %s"
                   % (x0, y + 1, z0, x1, max(top, y + 1), z1, x0, y, z0, x1, y, z1, pz["surface"]))
         report["plaza"] = {"rect": pz["rect"], "y": y, "ground_range": [low, top], "cut_blocks": cut, "fill_blocks": fill,

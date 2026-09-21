@@ -341,12 +341,13 @@ def plan_audit(settlement, world, server_dir=None):
     ys = [v[0] for v in paving.values()] + [p[1] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
     if plan.get("plaza"):                        # the ring the stray-paving check reads
         r = plan["plaza"]["rect"]
-        xs += [r[0] - 20, r[2] + 20]
-        zs += [r[1] - 20, r[3] + 20]
+        xs += [r[0] - 40, r[2] + 40]
+        zs += [r[1] - 40, r[3] + 40]
         ys += [plan["plaza"]["y"] - 3, plan["plaza"]["y"] + 3]
     cap = SN.capture(world, (min(xs), min(ys) - 2, min(zs)), (max(xs), max(ys) + 3, max(zs)))
     at = lambda x, y, z: cap.blocks.get((x, y, z), ("minecraft:air",))[0]
     problems = []
+    unchecked = []                                       # checks that could not run here, said so rather than passed
 
     # roads and the plaza
     lamp_cells = {(x, z) for x, _, z in lamps}
@@ -406,15 +407,37 @@ def plan_audit(settlement, world, server_dir=None):
             if a.get("surface"):
                 # a lot the plan paves on purpose (Sabrina's market, the rim post's overlook)
                 built |= {(x, z) for x in range(a["rect"][0], a["rect"][2] + 1) for z in range(a["rect"][1], a["rect"][3] + 1)}
-        for x in range(x0 - 20, x1 + 21):
-            for z in range(z0 - 20, z1 + 21):
-                if (x0 <= x <= x1 and z0 <= z <= z1) or (x, z) in paving or (x, z) in built:
+        # Against a control. A fresh export paints its own surfaces, and some are a plaza's material: moss round
+        # Erika's green, cobble round the Merian hut, red terracotta on the Tableland, gravel at the dig camp (the
+        # staging run of 2026-09-21 flagged 1,499 to 3,135 columns at each). So the ring the paving could have run
+        # into (1 to 20 blocks out) is compared with a ring the town never touches (21 to 40 out), and only paving
+        # beyond what the landscape carries there anyway is reported.
+        near = far = near_n = far_n = 0
+        for x in range(x0 - 40, x1 + 41):
+            for z in range(z0 - 40, z1 + 41):
+                d = max(x0 - x, x - x1, z0 - z, z - z1)
+                if d <= 0 or (x, z) in paving or (x, z) in built:
                     continue
-                if any(at(x, y, z) == pzp["surface"] for y in range(pzp["y"] - 3, pzp["y"] + 4)):
-                    stray_paving += 1
-        if stray_paving:
-            problems.append("plaza paving outside the plan: %d columns round the plaza hold %s where nothing is planned"
-                            % (stray_paving, pzp["surface"]))
+                hit = any(at(x, y, z) == pzp["surface"] for y in range(pzp["y"] - 3, pzp["y"] + 4))
+                if d <= 20:
+                    near_n += 1
+                    near += hit
+                else:
+                    far_n += 1
+                    far += hit
+        expected = far / far_n * near_n if far_n else 0
+        stray_paving = int(round(near - expected))
+        density = far / far_n if far_n else 0
+        if density > 0.25:
+            # the landscape here is mostly the plaza's own stone (the Tableland's red terracotta is 41% of the ring
+            # 21 to 40 blocks out, the dig camp's gravel 74%): stray paving cannot be told from ground, so the check
+            # says it could not run rather than passing or failing
+            unchecked.append("plaza paving outside the plan: not checkable, %.0f%% of the landscape round the plaza is %s"
+                             % (100 * density, pzp["surface"]))
+        elif stray_paving > max(50, 0.05 * near_n):
+            problems.append("plaza paving outside the plan: %d columns round the plaza hold %s where nothing is planned "
+                            "(%d found within 20 blocks, %d expected from the landscape 21 to 40 blocks out)"
+                            % (stray_paving, pzp["surface"], near, round(expected)))
 
     # lamps
     dark =[(x, y - 1, z, at(x, y - 1, z)) for x, y, z in lamps if at(x, y - 1, z) != lamp_block]
@@ -441,7 +464,7 @@ def plan_audit(settlement, world, server_dir=None):
                                                                                for k, n in buried.most_common(4))))
     return {"roads": {k: dict(v, wrong=dict(v["wrong"]), blocked_above=dict(v["blocked_above"])) for k, v in roads.items()},
             "lamps": {"spots": len(lamps), "lit": len(lamps) - len(dark), "block": lamp_block},
-            "buildings": rows, "problems": problems}
+            "buildings": rows, "problems": problems, "not_checkable": unchecked}
 
 
 def main(argv=None):
@@ -489,6 +512,8 @@ def main(argv=None):
                              "  GROUND IN ROOMS %s" % row["ground_in_rooms"] if row["ground_in_rooms"] else ""))
             for msg in pl["problems"]:
                 print("   PLAN MISMATCH  %s" % msg)
+            for msg in pl.get("not_checkable") or []:
+                print("   NOT CHECKABLE  %s" % msg)
         print("%-12s %s blocks read in %s, y %d to %d"
               % (name, format(res["blocks_read"], ","), res["bounds"], res["y_range"][0], res["y_range"][1]))
         for b, n in res["unsubstituted"].items():

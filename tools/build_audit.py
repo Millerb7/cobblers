@@ -130,17 +130,58 @@ def compare_columns(world, expected):
 
 # ------------------------------------------------------------------ the four builds
 
+def built_over(settlement, margin=2):
+    """Columns a town later rebuilds on top of an earlier build: its streets, square, lots and anchors from its
+    derived plan, every building's footprint with the margin tools/place_town.py clears round it, and every column
+    its earthworks write. The cavern's floor and the islet's core are built first and then built on, so the Displaced
+    City's streets and Relic Island's seam are not a floor or a core gone wrong; the staging run of 2026-09-21
+    reported the cavern floor at 81% and the islet at 97% for that reason alone."""
+    out = set()
+    plan_path = ROOT / "derived" / "towns" / ("%s_plan.json" % settlement)
+    if plan_path.is_file():
+        pl = json.loads(plan_path.read_text(encoding="utf-8"))
+        for st in (pl.get("streets") or {}).values():
+            for z, _, xa, xb in st.get("cells") or []:
+                out |= {(x, z) for x in range(xa - 1, xb + 2)}
+        rects = [a["rect"] for a in pl.get("anchors") or []] + [l["rect"] for l in pl.get("lots") or []]
+        if pl.get("plaza"):
+            rects.append(pl["plaza"]["rect"])
+        for x0, z0, x1, z1 in rects:
+            out |= {(x, z) for x in range(x0 - 1, x1 + 2) for z in range(z0 - 1, z1 + 2)}
+    rep_path = ROOT / "derived" / "towns" / ("%s_placement.json" % settlement)
+    if rep_path.is_file():
+        for b in json.loads(rep_path.read_text(encoding="utf-8")).get("buildings") or []:
+            x0, z0, x1, z1 = b["footprint"]
+            out |= {(x, z) for x in range(x0 - margin, x1 + margin + 1) for z in range(z0 - margin, z1 + margin + 1)}
+    doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    import town_audit
+    for q in doc["placements"]:
+        if q.get("settlement") == settlement and q.get("kind") == "earthwork":
+            out |= set(town_audit._command_columns(q.get("commands") or []))
+    return out
+
+
 def cavern(world):
     plan = json.loads((ROOT / "derived" / "cavern" / "plan.json").read_text(encoding="utf-8"))
+    town = built_over("displaced_city")
     arr = np.load(ROOT / "derived" / "cavern" / "plan.npz")
     floor, ceiling = arr["floor"], arr["ceiling"]
     x0, z0 = plan["cavern"][0], plan["cavern"][1]
     n = floor.size
     floor_ok = open_ok = roof_ok = 0
+    n_ground = 0                                         # columns whose floor and interior the town has not rebuilt
     bad = Counter()
     for j in range(floor.shape[0]):
         for i in range(floor.shape[1]):
             x, z, f, c = x0 + i, z0 + j, int(floor[j, i]), int(ceiling[j, i])
+            cap = [base(world.block(x, y, z)) for y in range(c, c + 4)]
+            if all(b not in AIR and b not in FLUID for b in cap):
+                roof_ok += 1
+            else:
+                bad["roof cap open (" + ",".join(b.split(":")[-1] for b in cap) + ")"] += 1
+            if (x, z) in town:
+                continue
+            n_ground += 1
             surf = base(world.block(x, f, z))
             if surf in ("minecraft:grass_block", "minecraft:dirt", "minecraft:podzol", "minecraft:moss_block"):
                 floor_ok += 1
@@ -151,16 +192,12 @@ def cavern(world):
                 open_ok += 1
             else:
                 bad["filled at mid-height with " + mid] += 1
-            cap = [base(world.block(x, y, z)) for y in range(c, c + 4)]
-            if all(b not in AIR and b not in FLUID for b in cap):
-                roof_ok += 1
-            else:
-                bad["roof cap open (" + ",".join(b.split(":")[-1] for b in cap) + ")"] += 1
     problems = []
-    for what, got, need in (("floor", floor_ok, FLOOR_OK), ("roof cap", roof_ok, ROOF_OK), ("open interior", open_ok, COLUMNS_OK)):
-        if got < need * n:
-            problems.append("cavern %s: %d of %d columns (%.2f%%), needs %.0f%%" % (what, got, n, 100 * got / n, 100 * need))
-    return {"columns": n, "floor_ok": floor_ok, "roof_ok": roof_ok, "open_ok": open_ok,
+    for what, got, total, need in (("floor", floor_ok, n_ground, FLOOR_OK), ("roof cap", roof_ok, n, ROOF_OK),
+                                   ("open interior", open_ok, n_ground, COLUMNS_OK)):
+        if got < need * total:
+            problems.append("cavern %s: %d of %d columns (%.2f%%), needs %.0f%%" % (what, got, total, 100 * got / max(total, 1), 100 * need))
+    return {"columns": n, "rebuilt_by_the_town": n - n_ground, "floor_ok": floor_ok, "roof_ok": roof_ok, "open_ok": open_ok,
             "worst": bad.most_common(5), "problems": problems}
 
 
@@ -249,6 +286,8 @@ def islet(world):
             if (x - cx) ** 2 + (z - cz) ** 2 <= (r // 2) ** 2]
     exp = replay(lines, cols)
     dry = {c: col for c, col in exp.items() if col and max(y for y, b in col.items() if b not in AIR) > sea}
+    rebuilt = built_over("relic_island")
+    dry = {c: col for c, col in dry.items() if c not in rebuilt}           # the house, its walk and its seam stand here
     n, ok, bad = compare_columns(world, dry)
     wet_top = [c for c, col in dry.items()
                if base(world.block(c[0], max(y for y, b in col.items() if b not in AIR) + 1, c[1])) in FLUID]

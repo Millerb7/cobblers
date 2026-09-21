@@ -7,7 +7,7 @@
  "author": "tools/tree_grove.py",
  "source": {
   "file": "generated",
-  "imported": "2026-09-15",
+  "imported": "2026-09-21",
   "size": [
    31,
    48,
@@ -22,6 +22,7 @@
   2,
   12
  ],
+ "tier": "giant",
  "habitat": {
   "floor_tier_y": [
    16,

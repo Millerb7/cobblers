@@ -518,17 +518,24 @@ def verify(settlement, server_dir):
     import runtime_guard
     rcon, pw = runtime_guard.rcon(server_dir)
 
+    # Every question is asked in one batch over one connection. One connection per block test ran Windows out of
+    # client ports (WinError 10048) part way through a staging run of all 24 places: Sabrina's town alone is 1,888
+    # columns (2026-09-21).
+    def solid_many(cells):
+        replies = rcon.run(["execute unless block %d %d %d #minecraft:replaceable" % c for c in cells], pw) if cells else []
+        return ["passed" in r for r in replies]
+
     def solid(x, y, z):
-        return "passed" in rcon.run(["execute unless block %d %d %d #minecraft:replaceable" % (x, y, z)], pw)[0]
+        return solid_many([(x, y, z)])[0]
 
     def top_solid(x, z, start, stop, skip_trees=False):
-        for y in range(start, stop, -1):
-            if solid(x, y, z):
-                if skip_trees and any("passed" in r for r in rcon.run(
-                        ["execute if block %d %d %d #minecraft:%s" % (x, y, z, t) for t in ("leaves", "logs")], pw)):
-                    continue
-                return y
-        return None
+        ys = list(range(start, stop, -1))
+        hits = solid_many([(x, y, z) for y in ys])
+        cand = [y for y, h in zip(ys, hits) if h]
+        if skip_trees and cand:
+            tree = rcon.run(["execute if block %d %d %d #minecraft:%s" % (x, y, z, t) for y in cand for t in ("leaves", "logs")], pw)
+            cand = [y for k, y in enumerate(cand) if not any("passed" in r for r in tree[2 * k:2 * k + 2])]
+        return cand[0] if cand else None
     out = {"buildings": [], "gaps": 0, "columns_checked": 0}
     fb = rep["buildings"]
     if not fb:
@@ -568,10 +575,8 @@ def verify(settlement, server_dir):
                          "gap": (Y - 1 - support) if support is not None else None, "outside_ground_y": grade,
                          "floor_minus_outside_ground": (Y - grade) if grade is not None else None})
         # every column the building stands on: the block under its lowest block is solid
-        gaps = []
-        for x, z, bottom in b["columns"]:
-            if not solid(x, bottom - 1, z):
-                gaps.append([x, bottom - 1, z])
+        below = [(x, bottom - 1, z) for x, z, bottom in b["columns"]]
+        gaps = [list(c) for c, ok in zip(below, solid_many(below)) if not ok]
         out["columns_checked"] += len(b["columns"])
         out["gaps"] += len(gaps) + sum(1 for r in rows if r["gap"] != 0 or not r["floor_block_present"])
         out["buildings"].append({"id": b["id"], "floor_y": b["floor_y"], "corners": rows,
