@@ -8,7 +8,8 @@ the block list to data/spawn_blocks.json. `audit` then reports which structure t
 
   blocks      scan and write data/spawn_blocks.json (blocks -> the spawns that name them)
   audit       scan kits/structures for templates containing any of them
-  substitute  rewrite templates with data/spawn_block_policy.json substitutions, recording sha256 before and after
+  substitute  rewrite templates with data/spawn_block_policy.json substitutions, in the palette and in
+              every jigsaw final_state, recording sha256 before and after
 
   python tools/spawn_blocks.py blocks --server-dir <server-dir, under the lock>
   python tools/spawn_blocks.py audit [--server-dir <server-dir, under the lock>]
@@ -163,11 +164,20 @@ def cmd_blocks(a):
 
 
 def template_blocks(path):
+    """Every block a placed template puts in the world, by name.
+
+    That includes what its jigsaws turn into: a jigsaw's final_state is not in the palette, and
+    tools/place_town.py resolves it when it places the template. Counting the palette alone made the
+    CobbleTowns Marts look clean while their shop counters still became light blue concrete.
+    """
     _, doc = nbt.load(path)
     pal = [p.get("Name") for p in doc.get("palette") or []]
     used = defaultdict(int)
     for b in doc.get("blocks") or []:
         used[pal[b["state"]]] += 1
+        final = (b.get("nbt") or {}).get("final_state")
+        if isinstance(final, str):
+            used[final.split("[")[0]] += 1
     return used
 
 
@@ -212,10 +222,29 @@ def cmd_substitute(a):
             if nm in swap:
                 entry["Name"] = (L.STRING, swap[nm])
                 changed += 1
+        # A jigsaw block carries the block it becomes in its own nbt, not in the palette. Swapping
+        # only the palette leaves the substituted block behind in every jigsaw's final_state, and
+        # tools/place_town.py resolves those when it places the template: found on 2026-09-20 in the
+        # CobbleTowns Marts, whose shop-counter jigsaws turn into light blue concrete.
+        jigsaws = 0
+        for block in root["blocks"][1][1]:
+            nbt_tag = block.get("nbt")
+            if not nbt_tag:
+                continue
+            fields = nbt_tag[1] if isinstance(nbt_tag, tuple) else nbt_tag
+            final = fields.get("final_state") if hasattr(fields, "get") else None
+            if final is None:
+                continue
+            text = L.plain(final)
+            base = text.split("[")[0]
+            if base in swap:
+                fields["final_state"] = (L.STRING, text.replace(base, swap[base], 1))
+                jigsaws += 1
         before = hashlib.sha256(raw).hexdigest()
         out = L.dumps(name, root)
         after = hashlib.sha256(out).hexdigest()
         row = {"template": path.relative_to(ROOT).as_posix(), "palette_entries_changed": changed,
+               "jigsaw_final_states_changed": jigsaws,
                "blocks": {b: {"count": n, "to": swap[b]} for b, n in sorted(hits.items())},
                "sha256_before": before, "sha256_after": after}
         applied.append(row)

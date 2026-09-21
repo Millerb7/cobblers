@@ -218,10 +218,11 @@
               1778,
               3602,
               1800,
-              3623
+              3625
             ],
             "facing": "west",
-            "why": "faces the Center across the plaza, so the two services read as a pair"
+            "why": "faces the Center across the plaza, so the two services read as a pair",
+            "rect_note": "deepened by 2 on 2026-09-20: the CobbleTowns Mart is 23 deep once it faces the plaza, and the lot was 22. The street frontage is unchanged."
           },
           {
             "id": "gym1_gym",
@@ -415,10 +416,11 @@
               1626,
               2766,
               1648,
-              2787
+              2789
             ],
             "facing": "west",
-            "why": "across the avenue from the Center, on the way out north"
+            "why": "across the avenue from the Center, on the way out north",
+            "rect_note": "deepened by 2 on 2026-09-20: the CobbleTowns Mart is 23 deep once it faces the plaza, and the lot was 22. The street frontage is unchanged."
           },
           {
             "id": "gym2_gym",
@@ -1451,6 +1453,110 @@
         "licence": "not redistributable: the placement function places the pack's own template by id, and the local copy under kits/structures/incoming/ is gitignored",
         "style": "ocean: a water town on the shore, and Misty's gym is its waterfront",
         "if_lost": "re-extract from the installed mod; the file is never committed"
+      }
+    },
+    {
+      "id": "gym1_pokecenter",
+      "settlement": "gym1_town",
+      "template": "cobblers:f4/services/towns/lavender_center",
+      "file": "kits/structures/campaign/f4/services/towns/lavender_center.nbt",
+      "cell": "D3",
+      "kind": "service",
+      "lot": "gym1_pokecenter",
+      "position": {
+        "x": 1714,
+        "z": 3614
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "basalt and deepslate around it: the Centre of a rock town",
+      "donor_source": {
+        "pack": "CobblemonCityTowns 1.0 (from CobbleTowns by LastGreenseer)",
+        "path": "data/cobblemoncitytowns/structure/lavender_town/buildings/center",
+        "licence": "MIT with notice (kits/structures/licenses/CobbleTowns-NOTICE.md); copied unmodified and committed, unlike the Cobbleverse pair in Pallet",
+        "if_lost": "re-extract from the pinned archive recorded in kits/structures/manifests/"
+      }
+    },
+    {
+      "id": "gym1_pokemart",
+      "settlement": "gym1_town",
+      "template": "cobblers:f4/services/towns/lavender_mart",
+      "file": "kits/structures/campaign/f4/services/towns/lavender_mart.nbt",
+      "cell": "D3",
+      "kind": "service",
+      "lot": "gym1_pokemart",
+      "position": {
+        "x": 1781,
+        "z": 3602
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the Mart that goes with it, facing the Centre across the plaza",
+      "donor_source": {
+        "pack": "CobblemonCityTowns 1.0 (from CobbleTowns by LastGreenseer)",
+        "path": "data/cobblemoncitytowns/structure/lavender_town/buildings/mart",
+        "licence": "MIT with notice (kits/structures/licenses/CobbleTowns-NOTICE.md); copied unmodified and committed, unlike the Cobbleverse pair in Pallet",
+        "if_lost": "re-extract from the pinned archive recorded in kits/structures/manifests/"
+      }
+    },
+    {
+      "id": "gym2_pokecenter",
+      "settlement": "gym2_town",
+      "template": "cobblers:f4/services/towns/cherrygrove_center",
+      "file": "kits/structures/campaign/f4/services/towns/cherrygrove_center.nbt",
+      "cell": "D5",
+      "kind": "service",
+      "lot": "gym2_pokecenter",
+      "position": {
+        "x": 1580,
+        "z": 2775
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "sand and coastal planting around it: the Centre of a town on the water",
+      "donor_source": {
+        "pack": "CobblemonCityTowns 1.0 (from CobbleTowns by LastGreenseer)",
+        "path": "data/cobblemoncitytowns/structure/cherrygrove_city/buildings/center",
+        "licence": "MIT with notice (kits/structures/licenses/CobbleTowns-NOTICE.md); copied unmodified and committed, unlike the Cobbleverse pair in Pallet",
+        "if_lost": "re-extract from the pinned archive recorded in kits/structures/manifests/"
+      }
+    },
+    {
+      "id": "gym2_pokemart",
+      "settlement": "gym2_town",
+      "template": "cobblers:f4/services/towns/cherrygrove_mart",
+      "file": "kits/structures/campaign/f4/services/towns/cherrygrove_mart.nbt",
+      "cell": "D5",
+      "kind": "service",
+      "lot": "gym2_pokemart",
+      "position": {
+        "x": 1629,
+        "z": 2766
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "its pair, on the way out north",
+      "donor_source": {
+        "pack": "CobblemonCityTowns 1.0 (from CobbleTowns by LastGreenseer)",
+        "path": "data/cobblemoncitytowns/structure/cherrygrove_city/buildings/mart",
+        "licence": "MIT with notice (kits/structures/licenses/CobbleTowns-NOTICE.md); copied unmodified and committed, unlike the Cobbleverse pair in Pallet",
+        "if_lost": "re-extract from the pinned archive recorded in kits/structures/manifests/"
       }
     }
   ]
