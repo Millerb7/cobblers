@@ -570,7 +570,7 @@ def main(argv=None):
     doc = json.loads(Path(a.placements).read_text(encoding="utf-8"))
     legs = json.loads(Path(a.legs).read_text(encoding="utf-8")) if Path(a.legs).exists() else None
     bx0, bz0, bx1, bz1 = settlement_bounds(a.settlement, doc)
-    ground_at = G.load(a.source_root)
+    ground_at = G.for_settlement(a.settlement, a.source_root, doc)
     cmds, report = build(a.settlement, doc, ground_at, legs, out)
     fn = out / "data" / "cobblers" / "function" / "towns" / ("%s.mcfunction" % a.settlement)
     fn.parent.mkdir(parents=True, exist_ok=True)

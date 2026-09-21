@@ -87,7 +87,7 @@ def main(argv=None):
     # export, see tools/ground.py), which put every lot's measured ground range one block under the
     # ground WorldPainter actually writes.
     import ground as G
-    _g = G.load(a.source_root) if getattr(a, "source_root", None) else G.load()
+    _g = G.for_settlement(a.settlement, getattr(a, "source_root", None), doc)
 
     def ground(x, z):
         return _g(int(round(x)), int(round(z)))

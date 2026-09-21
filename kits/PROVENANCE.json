@@ -103,7 +103,15 @@
         "kits/structures/campaign/f4/services/towns/giovanni_center.nbt",
         "kits/structures/campaign/f4/services/towns/giovanni_mart.nbt",
         "kits/structures/campaign/f4/services/towns/league_center.nbt",
-        "kits/structures/campaign/f4/services/towns/league_mart.nbt"
+        "kits/structures/campaign/f4/services/towns/league_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/northlight_center.nbt",
+        "kits/structures/campaign/f4/services/towns/northlight_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/mining_center.nbt",
+        "kits/structures/campaign/f4/services/towns/mining_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/tea_center.nbt",
+        "kits/structures/campaign/f4/services/towns/tea_mart.nbt",
+        "kits/structures/campaign/f4/services/towns/displaced_center.nbt",
+        "kits/structures/campaign/f4/services/towns/displaced_mart.nbt"
       ],
       "licence": "MIT",
       "source": "CobblemonCityTowns 1.0 (CurseForge file 7692448) town Centres and Marts, re-materialed by tools/rematerial.py from the committed bases per data/rematerial.json",
