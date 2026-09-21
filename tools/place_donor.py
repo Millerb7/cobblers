@@ -123,6 +123,33 @@ def loot_commands(rec, template_doc):
     return out
 
 
+def jigsaw_commands(rec, template_doc):
+    """A `setblock` of its own final state for every jigsaw the template holds, when the record asks for it.
+
+    `place template` leaves jigsaw blocks standing; worldgen would have resolved each into its final state. A bca
+    building's jigsaws are its floor, its berry soil and its decoration points (final state planks, dirt, stone or
+    nothing), so removing them all to air, as the watchtower's one jigsaw was, would hole the floor. This is what
+    tools/place_town.py does for a house, and what tools/town_audit.py already expects to find."""
+    if rec.get("jigsaws") != "final_state":
+        return []
+    import place_town
+    own = {s["from"]: s["to"] for s in own_substitutions(rec)}
+    own.update({b: "minecraft:air" for b in rec.get("remove_blocks") or []})
+    out = []
+    pal = template_doc["palette"]
+    for b in template_doc["blocks"]:
+        if pal[b["state"]]["Name"] != "minecraft:jigsaw":
+            continue
+        final = (b.get("nbt") or {}).get("final_state") or "minecraft:air"
+        if final.split("[")[0] == "minecraft:structure_void":
+            final = "minecraft:air"
+        final = own.get(final.split("[")[0], final)
+        tx, ty, tz = b["pos"]
+        rx, rz = place_town.rotate(tx, tz, rec.get("rotation", "none"))
+        out.append("setblock %d %d %d %s" % (rec["position"]["x"] + rx, rec["position"]["y"] + ty, rec["position"]["z"] + rz, final))
+    return out
+
+
 def functions(rec, subs, check=None, extra=None):
     """{function name: lines}. Force-load, wait SETTLE ticks, place and substitute, wait SETTLE ticks, and if the
     check block is missing place again, then release the box.
@@ -231,9 +258,9 @@ def main(argv=None):
                 _, tdoc = load_template(a.server_dir, rec["pack_template"])
                 own = {s["from"]: s["to"] for s in own_substitutions(rec)}
                 check = sentinel(rec, tdoc, list(subs) + [{"from": k, "to": v} for k, v in own.items()])
-                extra = loot_commands(rec, tdoc)
-            elif rec.get("clear_loot"):
-                raise SystemExit("%s clears loot, which needs --server-dir to find its containers" % rec["id"])
+                extra = loot_commands(rec, tdoc) + jigsaw_commands(rec, tdoc)
+            elif rec.get("clear_loot") or rec.get("jigsaws"):
+                raise SystemExit("%s clears loot or resolves jigsaws, which needs --server-dir to read its template" % rec["id"])
             for name, lines_out in functions(rec, subs, check, extra).items():
                 fn = out / "data" / NS / "function" / "structures" / ("%s.mcfunction" % name)
                 fn.parent.mkdir(parents=True, exist_ok=True)

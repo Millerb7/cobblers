@@ -293,7 +293,9 @@ def expected_buildings(settlement, placements, server_dir=None):
         import place_donor
         _, doc = place_donor.load_template(server_dir, q["pack_template"])
         pos = q["position"]
-        expand(q["id"], doc, (pos["x"], pos["y"], pos["z"]), q.get("rotation", "none"), 0)
+        # a donor whose ground layer is not its lowest (a bca building stands on two to five layers of its own
+        # terrain) records it, so the air below that layer is not read as rooms with ground in them
+        expand(q["id"], doc, (pos["x"], pos["y"], pos["z"]), q.get("rotation", "none"), int(q.get("grade_layer", 0)))
         # the record's own substitutions and removals are what should stand, not the template's blocks
         own = {s["from"]: s["to"] for s in place_donor.own_substitutions(q)}
         own.update({b: "minecraft:air" for b in q.get("remove_blocks") or []})
