@@ -255,6 +255,114 @@
       "why": "one of each inside the two civic buildings, placed whole by resource id. A Rotom drawn to the observatory's monitor in the psychic town is flavour, not a leak",
       "consequence": "a Rotom by the monitor, a Spinarak or Ariados by the web, garden Pokemon by the flower, in those two buildings",
       "decided": "2026-09-21, approved by the owner: a Rotom in the monitor room and a Spinarak in the cobweb are features"
+    },
+    {
+      "blocks": [
+        "minecraft:black_wool",
+        "minecraft:light_gray_wool"
+      ],
+      "scope": "the Rift dig camp's tents (Repurposed Structures badlands and desert tent1)",
+      "why": "the tents are canvas, and wool is the only canvas there is; the camp is an outpost off Victory Road",
+      "consequence": "a Smeargle near the tents",
+      "decided": "2026-09-21, by the implementing session under the owner's standing instruction to decide and record; on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:sand",
+        "minecraft:suspicious_sand",
+        "minecraft:rail"
+      ],
+      "scope": "the Rift dig camp's excavation (Mega Showdown archaeological_site a and b)",
+      "why": "the dig is sand, and its suspicious sand carries the brushable finds; substituting it would wipe the loot tables, which are the point of a dig; the site's own mine-cart track, 6 rails in each",
+      "consequence": "whatever spawns on or near sand, in the excavation only",
+      "decided": "2026-09-21, by the implementing session under the owner's standing instruction to decide and record; on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:spore_blossom"
+      ],
+      "scope": "Erika's gym (cobbleverse:erika)",
+      "why": "one spore blossom hanging in the grass gym's own planting, placed whole by resource id",
+      "consequence": "whatever a spore blossom draws, inside Erika's gym; the same call as Sabrina's approved exceptions",
+      "decided": "2026-09-21, by the implementing session under the owner's standing instruction to decide and record; on the review list"
+    },
+    {
+      "blocks": [
+        "cobblemon:apicot_berry",
+        "cobblemon:babiri_berry",
+        "cobblemon:bluk_berry",
+        "cobblemon:cheri_berry",
+        "cobblemon:coba_berry",
+        "cobblemon:cornn_berry",
+        "cobblemon:custap_berry",
+        "cobblemon:ganlon_berry",
+        "cobblemon:haban_berry",
+        "cobblemon:hopo_berry",
+        "cobblemon:kasib_berry",
+        "cobblemon:kee_berry",
+        "cobblemon:lansat_berry",
+        "cobblemon:liechi_berry",
+        "cobblemon:lum_berry",
+        "cobblemon:mago_berry",
+        "cobblemon:magost_berry",
+        "cobblemon:maranga_berry",
+        "cobblemon:medicinal_leek",
+        "cobblemon:payapa_berry",
+        "cobblemon:persim_berry",
+        "cobblemon:petaya_berry",
+        "cobblemon:rabuta_berry",
+        "cobblemon:razz_berry",
+        "cobblemon:roseli_berry",
+        "cobblemon:salac_berry",
+        "cobblemon:sitrus_berry",
+        "cobblemon:touga_berry",
+        "cobblemon:wepear_berry",
+        "cobblemon:yache_berry",
+        "minecraft:iron_block",
+        "minecraft:redstone_lamp"
+      ],
+      "scope": "the department store's shop goods (bca:default/centers/center_department_store)",
+      "why": "the store's own stock and fittings: a berry display, leeks, redstone lamps and an iron block, placed whole by resource id. Found on 2026-09-21 when the spawn audit began counting exactly what a template writes; boxes that ignored the store's rotation had missed them",
+      "consequence": "whatever berries, leeks, redstone lamps and iron draw, inside the department store",
+      "decided": "2026-09-21, by the implementing session: an extension of the owner's approval of the department store's exceptions to blocks the owner has not seen; on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:deepslate_coal_ore"
+      ],
+      "scope": "Brock's gym (cobbleverse:brock)",
+      "why": "five blocks of ore set into the rock gym's own walls, placed whole by resource id; a rock gym's ore is its character",
+      "consequence": "whatever coal ore draws, inside Brock's gym",
+      "decided": "2026-09-21, by the implementing session; hidden until the spawn audit counted exactly; on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:lily_pad",
+        "minecraft:pitcher_plant"
+      ],
+      "scope": "Koga's gym (cobbleverse:koga)",
+      "why": "the gym's own interior, placed whole by resource id: its pond planting: 2 lily pads, 2 pitcher plants. Hidden until the spawn audit counted exactly what a rotated template writes (2026-09-21)",
+      "consequence": "Lotad's line or Politoed by the pond inside the poison gym",
+      "decided": "2026-09-21, by the implementing session, following the owner's approval of Sabrina's exceptions; on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:magma_block"
+      ],
+      "scope": "Blaine's gym (cobbleverse:blaine)",
+      "why": "the gym's own interior, placed whole by resource id: 23 magma blocks in the fire gym's floor. Hidden until the spawn audit counted exactly what a rotated template writes (2026-09-21)",
+      "consequence": "fire types drawn to magma, inside the fire gym",
+      "decided": "2026-09-21, by the implementing session, following the owner's approval of Sabrina's exceptions; on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:redstone_torch",
+        "cobblemon:restoration_tank"
+      ],
+      "scope": "Giovanni's gym (cobbleverse:giovanni)",
+      "why": "the gym's own interior, placed whole by resource id: a redstone torch and two restoration tanks, the fossil machine. Hidden until the spawn audit counted exactly what a rotated template writes (2026-09-21)",
+      "consequence": "whatever a redstone torch or a restoration tank draws, inside Giovanni's gym",
+      "decided": "2026-09-21, by the implementing session, following the owner's approval of Sabrina's exceptions; on the review list"
     }
   ],
   "checked_paving": {

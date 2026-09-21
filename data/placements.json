@@ -502,7 +502,7 @@
         1410
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-20; not laid out, not built",
+      "status": "approved; parked 2026-09-21: the disposable world does not carry this site's pressed pad (world ground 8 to 29 blocks off the heightmap), so it waits for an export that does",
       "plan": {
         "reading": "The climb from Lake Viltri tops out at the shelf's south-west corner, and the town appears sideways: a single walk running north along the lip with the whole flank falling away on the left. At the north end the walk opens into a belvedere, and that is where Mt Vessu's summit and Surge's signal array come into view together, up and to the right. From the belvedere a lane runs east along the foot of the wall to the gym, which is cut into the rock rather than standing on it. Nothing is more than one street from the drop.",
         "entries": [
@@ -664,7 +664,7 @@
         1555
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-20; not laid out, not built",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "The road from the Trough comes in from the west and meets the garden before it meets a building: the plaza here is a green, not a square, and the streets run around it rather than through it. Every house faces the garden across a street. The Centre is on the green's west side, first door reached; the Mart is on the south. Erika's gym fronts the green from the north, glass to the south so the garden is what you see through it, and the lane from the green's west corner runs out to Peak Pond.",
         "entries": [
@@ -834,7 +834,8 @@
               1512
             ],
             "facing": "south",
-            "why": "fronting the green from the north with the whole garden in front of it. A grass gym should be looked into rather than entered from a street, and this is the only face of the ring with room for a wide building behind it."
+            "why": "fronting the green from the north with the whole garden in front of it. A grass gym should be looked into rather than entered from a street, and this is the only face of the ring with room for a wide building behind it.",
+            "level": 110
           }
         ],
         "house_lots": {
@@ -1872,7 +1873,7 @@
         1102
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Route 4 crosses the cirque's open mouth, and from the road the hut is a speck at the far end of a floor so flat it looks swept. The path leaves the road and simply walks north, two hundred blocks of it, while the walls rise on three sides until they are most of the sky. It ends at the hut's door. There is no yard: the stable, the hut and the woodshed stand in one row with their backs against the cliff, looking down the cirque the way you came. The keeper knows where the river starts. The walk in is the point.",
         "entries": [
@@ -1991,7 +1992,7 @@
         4367
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "The trail comes in from Route 7 across the dunes, and the hamlet shows as a single blank wall with a gate in it: the buildings stand shoulder to shoulder round a sheltered yard, backs to the sea wind. Through the gate the yard is quiet, the Center on its far side, two houses on the others, a well in the middle. From the yard's east corner a gap opens on the drop to the coast. The bridge-keepers live here; one of them knows the river.",
         "entries": [
@@ -2113,7 +2114,7 @@
         5729
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "From Route 8 the tower is the only thing standing on the plateau's rim, and the trail goes up to it, taking the last few blocks of the brow at a slant. The lookout stands on the edge with the road below it, and behind it, back from the edge, the waystation and the prospector's house face each other across a yard of red stone. The waystation is the Center. The prospector will tell you what the plateau is made of.",
         "entries": [
@@ -2198,7 +2199,8 @@
               5688
             ],
             "facing": "south",
-            "why": "the lookout on the brow: tall enough to be read from the road below, which the fragile canopy sightline needs (visibility:tableland_stop_from_its_leg_canopy). Candidate donor, the vanilla outpost watchtower without its banners; to confirm at placement"
+            "why": "the lookout on the brow: tall enough to be read from the road below, which the fragile canopy sightline needs (visibility:tableland_stop_from_its_leg_canopy). Candidate donor, the vanilla outpost watchtower without its banners; to confirm at placement",
+            "level": 162
           }
         ],
         "house_lots": {
@@ -2235,7 +2237,7 @@
         3951
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Victory Road runs in the Rift, and the post is on its rim, out of sight until the stepped trail from the road has climbed out of the trench and into the trees. There is no square. The Center stands among the trunks with a narrow boardwalk running from its door straight to a railed terrace built out over the rim, where the Rift opens below and the road you left is a line in it. The two rangers' cabins are off in the trees to either side, not lined up with anything. It is the traditional Center before the League, placed off the road so Victory Road stays unbroken.",
         "entries": [
@@ -2377,7 +2379,7 @@
         3314
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "The west spur is a dead end, and the camp is strung along the one track down its floor between walls twenty blocks high. Tents and a finds shed line the track, and at the very end, against the rock, the excavation: a cut into the spur's head with a scaffold over it, where the archaeologists are working towards the steel chamber. An outpost, so no Center and no waystone: you come here because you heard about it.",
         "entries": [
@@ -2488,7 +2490,7 @@
         950
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; parked 2026-09-21: the disposable world does not carry this site's pressed pad (world ground 8 to 29 blocks off the heightmap), so it waits for an export that does",
       "plan": {
         "reading": "The Scar is flat in the way nothing on a mountain is flat: a disc pressed out of Mt Vessu's shoulder, and on it what is left of a town that is not there. Roads of cracked stone brick cross it in a grid, and between them the foundations of houses, one course high, with nothing on them. One avenue runs north across the whole disc and stops at the cliff edge, in the air. No lamps, no people. This is where the Displaced City stood; the city is underground now, and this is the hole it left.",
         "entries": [
@@ -6033,6 +6035,965 @@
         "pack": "our kit",
         "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
       }
+    },
+    {
+      "id": "gym4_pokecenter",
+      "settlement": "gym4_town",
+      "template": "cobblers:f4/services/towns/floaroma_center",
+      "file": "kits/structures/campaign/f4/services/towns/floaroma_center.nbt",
+      "cell": "B5",
+      "kind": "service",
+      "lot": "gym4_pokecenter",
+      "position": {
+        "x": 4251,
+        "z": 1525
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the green's west side, facing the road in: the first door a player reaches. The floaroma Centre comes with tulips and pink petals, which is the town this is.",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "gym4_pokemart",
+      "settlement": "gym4_town",
+      "template": "cobblers:f4/services/towns/floaroma_mart",
+      "file": "kits/structures/campaign/f4/services/towns/floaroma_mart.nbt",
+      "cell": "B5",
+      "kind": "service",
+      "lot": "gym4_pokemart",
+      "position": {
+        "x": 4296,
+        "z": 1605
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the ring's south side, its door to the green",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "gym4_gym_building",
+      "settlement": "gym4_town",
+      "pack_template": "cobbleverse:erika",
+      "template": "cobbleverse:erika",
+      "cell": "B5",
+      "kind": "donor",
+      "position": {
+        "x": 4297,
+        "y": 109,
+        "z": 1480
+      },
+      "size": [
+        27,
+        17,
+        23
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "fronting the green from the north with the whole garden in front of it. A grass gym should be looked into rather than entered from a street, and this is the only face of the ring with room for a wide building behind it.. the Cobbleverse gym shell opens south",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      }
+    },
+    {
+      "id": "gym4_house_01",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/oak/houses/accessory_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/accessory_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "pond_road_lot_09",
+      "position": {
+        "x": 4229,
+        "z": 1541
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the pond road, looking out to the pond and the fields: oak",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_02",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/oak/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/medium_house_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "pond_road_lot_10",
+      "position": {
+        "x": 4226,
+        "z": 1559
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the pond road, looking out to the pond and the fields: oak",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_03",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_04",
+      "position": {
+        "x": 4350,
+        "z": 1589
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_04",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_2.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_05",
+      "position": {
+        "x": 4351,
+        "z": 1573
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_05",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_3.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_06",
+      "position": {
+        "x": 4351,
+        "z": 1536
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_06",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_4.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_07",
+      "position": {
+        "x": 4351,
+        "z": 1521
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_07",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_north_lot_08",
+      "position": {
+        "x": 4340,
+        "z": 1502
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_08",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_2.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_south_lot_03",
+      "position": {
+        "x": 4272,
+        "z": 1602
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_09",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_3.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_west_lot_01",
+      "position": {
+        "x": 4261,
+        "z": 1565
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_10",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_4.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_west_lot_02",
+      "position": {
+        "x": 4260,
+        "z": 1582
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "merian_hut_pokecenter",
+      "settlement": "merian_hut",
+      "template": "cobblemon:villages/mountains/pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/villages/mountains/pokecenter.nbt",
+      "cell": "B3",
+      "kind": "service",
+      "lot": "merian_hut_pokecenter",
+      "position": {
+        "x": 2806,
+        "z": 1014
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the hut itself: the mountain village Center, stone and dark wood, its door onto the yard and down the cirque",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "merian_woodshed",
+      "settlement": "merian_hut",
+      "template": "repurposed_structures:villages/mountains/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_4.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "merian_woodshed",
+      "position": {
+        "x": 2836,
+        "z": 1017
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the woodshed: the smallest mountains house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "merian_stable",
+      "settlement": "merian_hut",
+      "template": "repurposed_structures:villages/mountains/houses/animal_pen_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/animal_pen_1.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "merian_stable",
+      "position": {
+        "x": 2781,
+        "z": 1017
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the stable: the mountains set's pen",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gorge_hamlet_pokecenter",
+      "settlement": "gorge_hamlet",
+      "template": "cobblemon:village_desert/village_desert_pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/village_desert/village_desert_pokecenter.nbt",
+      "cell": "E7",
+      "kind": "service",
+      "lot": "gorge_hamlet_pokecenter",
+      "position": {
+        "x": 6808,
+        "z": 4338
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the yard's north side, facing the gate across it: the desert village Center, for a dune settlement",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gorge_house_east",
+      "settlement": "gorge_hamlet",
+      "template": "minecraft:village/desert/houses/desert_medium_house_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_medium_house_2.nbt",
+      "cell": "E7",
+      "kind": "house",
+      "lot": "gorge_house_east",
+      "position": {
+        "x": 6835,
+        "z": 4362
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the seaward side of the ring: a long desert house, its length against the wind",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gorge_house_south",
+      "settlement": "gorge_hamlet",
+      "template": "minecraft:village/desert/houses/desert_small_house_7",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_small_house_7.nbt",
+      "cell": "E7",
+      "kind": "house",
+      "lot": "gorge_house_south",
+      "position": {
+        "x": 6812,
+        "z": 4387
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the south side: a small desert house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tableland_stop_pokecenter",
+      "settlement": "tableland_stop",
+      "template": "cobblemon:villages/badlands/pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/villages/badlands/pokecenter.nbt",
+      "cell": "F5",
+      "kind": "service",
+      "lot": "tableland_stop_pokecenter",
+      "position": {
+        "x": 4833,
+        "z": 5705
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the waystation: the badlands village Center, facing the yard",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tableland_prospector",
+      "settlement": "tableland_stop",
+      "template": "repurposed_structures:villages/badlands/houses/tool_smith",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/tool_smith.nbt",
+      "cell": "F5",
+      "kind": "house",
+      "lot": "tableland_prospector",
+      "position": {
+        "x": 4862,
+        "z": 5684
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the prospector's house: the badlands tool smith, a working house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tableland_lookout",
+      "settlement": "tableland_stop",
+      "pack_template": "minecraft:pillager_outpost/watchtower",
+      "template": "minecraft:pillager_outpost/watchtower",
+      "cell": "F5",
+      "kind": "donor",
+      "position": {
+        "x": 4800,
+        "y": 161,
+        "z": 5672
+      },
+      "size": [
+        15,
+        21,
+        15
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "the lookout on the brow: tall enough to be read from the road below, which the fragile canopy sightline needs (visibility:tableland_stop_from_its_leg_canopy). Candidate donor, the vanilla outpost watchtower without its banners; to confirm at placement. its entrance jigsaw is on the south side",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:white_wall_banner",
+        "minecraft:jigsaw"
+      ],
+      "clear_loot": true,
+      "remove_blocks_why": "the eight ominous (pillager) banners, and the jigsaw a template placement leaves",
+      "clear_loot_why": "a pillager outpost chest holds crossbows and the like; a lookout keeps nothing"
+    },
+    {
+      "id": "rift_rim_stop_pokecenter",
+      "settlement": "rift_rim_stop",
+      "template": "cobblemon:village_taiga/village_taiga_pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/village_taiga/village_taiga_pokecenter.nbt",
+      "cell": "D4",
+      "kind": "service",
+      "lot": "rift_rim_stop_pokecenter",
+      "position": {
+        "x": 3729,
+        "z": 3945
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the Center on the clearing's west side, facing the terrace: the taiga village Center, for the woods",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "rimpost_cabin_north",
+      "settlement": "rift_rim_stop",
+      "template": "minecraft:village/taiga/houses/taiga_medium_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_1.nbt",
+      "cell": "D4",
+      "kind": "house",
+      "lot": "rimpost_cabin_north",
+      "position": {
+        "x": 3727,
+        "z": 3918
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a ranger's cabin: a taiga house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "rimpost_cabin_south",
+      "settlement": "rift_rim_stop",
+      "template": "minecraft:village/taiga/houses/taiga_cartographer_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_cartographer_house_1.nbt",
+      "cell": "D4",
+      "kind": "house",
+      "lot": "rimpost_cabin_south",
+      "position": {
+        "x": 3762,
+        "z": 3979
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the other cabin, where the rangers keep their maps",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "dig_finds_shed",
+      "settlement": "rift_dig_camp",
+      "template": "repurposed_structures:villages/badlands/houses/cartographer",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/cartographer.nbt",
+      "cell": "D4",
+      "kind": "house",
+      "lot": "dig_finds_shed",
+      "position": {
+        "x": 3124,
+        "z": 3280
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the finds shed: the badlands cartographer, a records office",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "dig_tent_01",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3153,
+        "y": 90,
+        "z": 3304
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_01"
+    },
+    {
+      "id": "dig_tent_02",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3152,
+        "y": 89,
+        "z": 3291
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_02"
+    },
+    {
+      "id": "dig_tent_03",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3143,
+        "y": 91,
+        "z": 3305
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_03"
+    },
+    {
+      "id": "dig_tent_04",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3142,
+        "y": 89,
+        "z": 3292
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_04"
+    },
+    {
+      "id": "dig_tent_05",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3133,
+        "y": 91,
+        "z": 3306
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_05"
+    },
+    {
+      "id": "dig_tent_06",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3123,
+        "y": 91,
+        "z": 3306
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_06"
+    },
+    {
+      "id": "dig_tent_07",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3083,
+        "y": 92,
+        "z": 3304
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_07"
+    },
+    {
+      "id": "dig_tent_08",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3084,
+        "y": 90,
+        "z": 3291
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_08"
+    },
+    {
+      "id": "dig_site_a",
+      "settlement": "rift_dig_camp",
+      "pack_template": "mega_showdown:archaeological_site/archaeological_site_a",
+      "template": "mega_showdown:archaeological_site/archaeological_site_a",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3054,
+        "y": 90,
+        "z": 3286
+      },
+      "size": [
+        15,
+        11,
+        15
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "chosen_because": "the excavation at the spur's head: Mega Showdown's archaeological site, sunk so its rim walkway is at ground level; its suspicious sand keeps its loot",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "lot": "dig_excavation"
+    },
+    {
+      "id": "dig_site_b",
+      "settlement": "rift_dig_camp",
+      "pack_template": "mega_showdown:archaeological_site/archaeological_site_b",
+      "template": "mega_showdown:archaeological_site/archaeological_site_b",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3054,
+        "y": 90,
+        "z": 3302
+      },
+      "size": [
+        15,
+        11,
+        15
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "chosen_because": "the excavation at the spur's head: Mega Showdown's archaeological site, sunk so its rim walkway is at ground level; its suspicious sand keeps its loot",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "lot": "dig_excavation"
+    },
+    {
+      "id": "gorge_courtyard_wall",
+      "settlement": "gorge_hamlet",
+      "kind": "earthwork",
+      "cell": "E7",
+      "status": "planned",
+      "chosen_because": "the ring's wall between the buildings, a gate on the west towards the road and a gap at the north-east corner onto the drop to the coast",
+      "commands": [
+        "fill 6797 114 4352 6807 115 4352 minecraft:sandstone_wall",
+        "fill 6823 114 4352 6828 115 4352 minecraft:sandstone_wall",
+        "fill 6829 114 4378 6829 115 4382 minecraft:sandstone_wall",
+        "fill 6797 114 4382 6805 115 4382 minecraft:sandstone_wall",
+        "fill 6825 114 4382 6829 115 4382 minecraft:sandstone_wall",
+        "fill 6797 114 4353 6797 115 4364 minecraft:sandstone_wall",
+        "fill 6797 114 4370 6797 115 4381 minecraft:sandstone_wall"
+      ]
+    },
+    {
+      "id": "rimpost_overlook_railing",
+      "settlement": "rift_rim_stop",
+      "kind": "earthwork",
+      "cell": "D4",
+      "status": "planned",
+      "chosen_because": "a railing on the overlook's three open sides, over the rim",
+      "commands": [
+        "fill 3774 142 3944 3790 142 3944 minecraft:spruce_fence",
+        "fill 3790 142 3944 3790 142 3962 minecraft:spruce_fence",
+        "fill 3774 142 3962 3790 142 3962 minecraft:spruce_fence"
+      ]
     }
   ]
 }

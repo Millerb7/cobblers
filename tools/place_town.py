@@ -214,7 +214,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     # tools/place_donor.py from its resource id (Brock's gym is the first): its geometry cannot be
     # read here and its function is generated separately.
     skipped_donors = [q["id"] for q in doc["placements"]
-                      if q.get("settlement") == settlement and not q.get("file")]
+                      if q.get("settlement") == settlement and not q.get("file") and q.get("kind") != "earthwork"]
     for p in [q for q in doc["placements"] if q.get("settlement") == settlement and q.get("file")]:
         info = template_info(ROOT / p["file"])
         if info["entrance_pos"] is None:
@@ -428,6 +428,12 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
         sx, sz = s["spawn"]
         sy = surface(sx, sz) + 1
         cmds.append("setworldspawn %d %d %d" % (sx, sy, sz))
+    # earthworks: authored commands a place carries beyond its templates (the gorge hamlet's courtyard wall, the
+    # rim post's railing). tools/town_audit.py replays the same commands to check the result
+    for q in doc["placements"]:
+        if q.get("settlement") == settlement and q.get("kind") == "earthwork":
+            cmds.append("# earthwork %s" % q["id"])
+            cmds += list(q.get("commands") or [])
     cmds += forceload_commands(force, "remove")
     if way:
         report["waystone"] = [wx, wy, wz]
@@ -449,7 +455,7 @@ def settlement_bounds(settlement, doc, margin=64):
     plan = s.get("plan") or {}
     xs, zs = [], []
     for q in doc["placements"]:
-        if q.get("settlement") == settlement:
+        if q.get("settlement") == settlement and q.get("position"):
             xs.append(q["position"]["x"]); zs.append(q["position"]["z"])
     for r in s.get("roads") or []:
         for x, z in r.get("polyline") or []:
@@ -543,7 +549,7 @@ def main(argv=None):
         # it catches (a refused substitution, a fluid the ground brought) both look fine from here
         if a.world:
             import town_audit
-            res["spawn_block_audit"] = town_audit.audit(a.settlement, a.world)
+            res["spawn_block_audit"] = town_audit.audit(a.settlement, a.world, server_dir=a.server_dir)
             bad = res["spawn_block_audit"]["unsubstituted"], res["spawn_block_audit"]["not_in_policy"]
             res["spawn_block_problems"] = sum(len(x) for x in bad)
             # and the plan against the result: roads, paving, lamps, every building standing. A function's
