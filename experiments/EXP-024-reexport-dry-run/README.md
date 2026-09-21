@@ -1,5 +1,8 @@
 # EXP-024: The re-export procedure, end to end on a staging export
 
+> **Correction, 2026-09-21.** This experiment proved that the re-application commands run on a fresh export. It did not prove that they build what they should: most checks below read a sample, a proxy or an unanchored count. Re-checked by result on the disposable world, the builds these same functions made were missing 13,586 of Route 1's 46,052 trees and 165 columns of the cavern's roof cap, because 39 of 72 generated functions wrote into chunks they never force-loaded. The functions are fixed and every step now has a result check; which of the checks below were which is in `docs/world-building/REEXPORT.md`. A fresh staging run with the result checks has not been done.
+
+
 ## Objective
 An inventory of authored content found that a re-export would lose work: Brock's gym had no rebuild path at all, the
 braided maze forest had never been re-applied, the cavern's biome step had never been run after an export, and two

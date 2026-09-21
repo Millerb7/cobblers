@@ -502,7 +502,7 @@
         1410
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-20; not laid out, not built",
+      "status": "approved; parked 2026-09-21: the disposable world does not carry this site's pressed pad (world ground 8 to 29 blocks off the heightmap), so it waits for an export that does",
       "plan": {
         "reading": "The climb from Lake Viltri tops out at the shelf's south-west corner, and the town appears sideways: a single walk running north along the lip with the whole flank falling away on the left. At the north end the walk opens into a belvedere, and that is where Mt Vessu's summit and Surge's signal array come into view together, up and to the right. From the belvedere a lane runs east along the foot of the wall to the gym, which is cut into the rock rather than standing on it. Nothing is more than one street from the drop.",
         "entries": [
@@ -664,7 +664,7 @@
         1555
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-20; not laid out, not built",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "The road from the Trough comes in from the west and meets the garden before it meets a building: the plaza here is a green, not a square, and the streets run around it rather than through it. Every house faces the garden across a street. The Centre is on the green's west side, first door reached; the Mart is on the south. Erika's gym fronts the green from the north, glass to the south so the garden is what you see through it, and the lane from the green's west corner runs out to Peak Pond.",
         "entries": [
@@ -834,7 +834,8 @@
               1512
             ],
             "facing": "south",
-            "why": "fronting the green from the north with the whole garden in front of it. A grass gym should be looked into rather than entered from a street, and this is the only face of the ring with room for a wide building behind it."
+            "why": "fronting the green from the north with the whole garden in front of it. A grass gym should be looked into rather than entered from a street, and this is the only face of the ring with room for a wide building behind it.",
+            "level": 110
           }
         ],
         "house_lots": {
@@ -1872,7 +1873,7 @@
         1102
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Route 4 crosses the cirque's open mouth, and from the road the hut is a speck at the far end of a floor so flat it looks swept. The path leaves the road and simply walks north, two hundred blocks of it, while the walls rise on three sides until they are most of the sky. It ends at the hut's door. There is no yard: the stable, the hut and the woodshed stand in one row with their backs against the cliff, looking down the cirque the way you came. The keeper knows where the river starts. The walk in is the point.",
         "entries": [
@@ -1991,7 +1992,7 @@
         4367
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "The trail comes in from Route 7 across the dunes, and the hamlet shows as a single blank wall with a gate in it: the buildings stand shoulder to shoulder round a sheltered yard, backs to the sea wind. Through the gate the yard is quiet, the Center on its far side, two houses on the others, a well in the middle. From the yard's east corner a gap opens on the drop to the coast. The bridge-keepers live here; one of them knows the river.",
         "entries": [
@@ -2113,7 +2114,7 @@
         5729
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "From Route 8 the tower is the only thing standing on the plateau's rim, and the trail goes up to it, taking the last few blocks of the brow at a slant. The lookout stands on the edge with the road below it, and behind it, back from the edge, the waystation and the prospector's house face each other across a yard of red stone. The waystation is the Center. The prospector will tell you what the plateau is made of.",
         "entries": [
@@ -2198,7 +2199,8 @@
               5688
             ],
             "facing": "south",
-            "why": "the lookout on the brow: tall enough to be read from the road below, which the fragile canopy sightline needs (visibility:tableland_stop_from_its_leg_canopy). Candidate donor, the vanilla outpost watchtower without its banners; to confirm at placement"
+            "why": "the lookout on the brow: tall enough to be read from the road below, which the fragile canopy sightline needs (visibility:tableland_stop_from_its_leg_canopy). Candidate donor, the vanilla outpost watchtower without its banners; to confirm at placement",
+            "level": 162
           }
         ],
         "house_lots": {
@@ -2235,7 +2237,7 @@
         3951
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "Victory Road runs in the Rift, and the post is on its rim, out of sight until the stepped trail from the road has climbed out of the trench and into the trees. There is no square. The Center stands among the trunks with a narrow boardwalk running from its door straight to a railed terrace built out over the rim, where the Rift opens below and the road you left is a line in it. The two rangers' cabins are off in the trees to either side, not lined up with anything. It is the traditional Center before the League, placed off the road so Victory Road stays unbroken.",
         "entries": [
@@ -2377,7 +2379,7 @@
         3314
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
         "reading": "The west spur is a dead end, and the camp is strung along the one track down its floor between walls twenty blocks high. Tents and a finds shed line the track, and at the very end, against the rock, the excavation: a cut into the spur's head with a scaffold over it, where the archaeologists are working towards the steel chamber. An outpost, so no Center and no waystone: you come here because you heard about it.",
         "entries": [
@@ -2488,7 +2490,7 @@
         950
       ],
       "footprint_from": "data/towns.json",
-      "status": "planned 2026-09-21 (batch 2); not approved, not laid out",
+      "status": "approved; parked 2026-09-21: the disposable world does not carry this site's pressed pad (world ground 8 to 29 blocks off the heightmap), so it waits for an export that does",
       "plan": {
         "reading": "The Scar is flat in the way nothing on a mountain is flat: a disc pressed out of Mt Vessu's shoulder, and on it what is left of a town that is not there. Roads of cracked stone brick cross it in a grid, and between them the foundations of houses, one course high, with nothing on them. One avenue runs north across the whole disc and stops at the cliff edge, in the air. No lamps, no people. This is where the Displaced City stood; the city is underground now, and this is the hole it left.",
         "entries": [
@@ -2606,6 +2608,910 @@
           "why": "old broken stone; neither is a spawn condition"
         },
         "prep_note": "The pad is pressed flat at y280; nothing to cut. The avenue's north end is left open at the cliff."
+      }
+    },
+    "northlight": {
+      "centre": [
+        7265,
+        1556
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "plan": {
+        "reading": "You come up from the landing in the north, and the town is laid along the one hollow in the isle, where the ground drains to the sea: a dark stone road climbing a shallow valley between spruce-dark rises. The square is at the head of the hollow with the Centre and the Mart on its north side, backs to the sea wind. From the square the station lane climbs south-west to the one high point on the isle, where the observatory stands clear of the trees with the whole sky over it; the field station is on the lane below it. The east row runs out over the gentler eastern rise, where the spruce houses of the station's people are.",
+        "entries": [
+          {
+            "from": "the landing on the north shore (sea crossing from the north-east coast)",
+            "at": [
+              7265,
+              1444
+            ],
+            "street": "harbour_road"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "harbour_road",
+            "polyline": [
+              [
+                7265,
+                1444
+              ],
+              [
+                7263,
+                1500
+              ],
+              [
+                7265,
+                1539
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:cobbled_deepslate",
+            "max_grade": 0.08
+          },
+          {
+            "id": "station_lane",
+            "polyline": [
+              [
+                7244,
+                1566
+              ],
+              [
+                7215,
+                1596
+              ],
+              [
+                7190,
+                1624
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:cobbled_deepslate",
+            "max_grade": 0.12
+          },
+          {
+            "id": "east_row",
+            "polyline": [
+              [
+                7286,
+                1556
+              ],
+              [
+                7330,
+                1558
+              ],
+              [
+                7372,
+                1562
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:cobbled_deepslate",
+            "max_grade": 0.08
+          }
+        ],
+        "plaza": {
+          "rect": [
+            7245,
+            1540,
+            7285,
+            1570
+          ],
+          "surface": "minecraft:polished_deepslate",
+          "why": "the square at the head of the hollow, where the three ways meet",
+          "y": 116
+        },
+        "anchors": [
+          {
+            "id": "northlight_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblers:f4/services/towns/northlight_center",
+            "rect": [
+              7236,
+              1518,
+              7257,
+              1537
+            ],
+            "facing": "south",
+            "why": "on the square's north side, its back to the sea wind; the first door up from the landing"
+          },
+          {
+            "id": "northlight_pokemart",
+            "role": "pokemart",
+            "template": "cobblers:f4/services/towns/northlight_mart",
+            "rect": [
+              7270,
+              1518,
+              7295,
+              1537
+            ],
+            "facing": "south",
+            "why": "across the road from the Centre, also facing the square"
+          },
+          {
+            "id": "northlight_field_station",
+            "role": "landmark",
+            "template": "bca:default/structures/the_lanturn_lodge",
+            "rect": [
+              7222,
+              1600,
+              7246,
+              1624
+            ],
+            "facing": "west",
+            "why": "the ice-type field station: a timber lodge on the station lane, its door to the lane",
+            "level": 119
+          },
+          {
+            "id": "northlight_observatory",
+            "role": "landmark",
+            "template": null,
+            "rect": [
+              7166,
+              1628,
+              7186,
+              1648
+            ],
+            "facing": "north",
+            "why": "the weather and aurora observatory on the isle's one high point, an authored round tower with a glass dome (earthwork northlight_observatory)"
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "harbour_road",
+            "east_row",
+            "station_lane"
+          ],
+          "size": [
+            13,
+            13
+          ],
+          "setback": 2,
+          "gap": 4,
+          "max_lot_relief": 3,
+          "why": "the hollow's road and the two ways out of the square; spruce and snow houses, a few to a road, because this is a station and not a city"
+        },
+        "waystone": {
+          "position": [
+            7280,
+            1566
+          ],
+          "facing": "north",
+          "note": "discovery: first visit activates it; an island's waystone is what the crossing earns"
+        },
+        "paving": {
+          "main": "minecraft:cobbled_deepslate",
+          "plaza": "minecraft:polished_deepslate",
+          "lamp": "minecraft:pearlescent_froglight",
+          "why": "dark stone against the snow, and a pale froglight that reads as aurora light; none is a spawn condition"
+        },
+        "prep_note": "The harbour road climbs about five blocks out of the hollow; the station lane about seven to the knoll."
+      }
+    },
+    "mining_town": {
+      "centre": [
+        6633,
+        5716
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "plan": {
+        "reading": "The ore road comes in from the west, from Blaine's side, across the one level shelf on the cone's flank, and everything in the town faces it. The pithead yard opens north of the road with the Centre and the Mart either side of the way in. East, the mine spur leaves the road and climbs the rising flank to the mine head: the assay office and the portal cut into the slope, barred until the workings are opened. North of the yard a walk runs out to the lip of the bowl, the old crater the town looks down into.",
+        "entries": [
+          {
+            "from": "the west, from Blaine's rim town (912 blocks, no road)",
+            "at": [
+              6522,
+              5716
+            ],
+            "street": "ore_road"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "ore_road",
+            "polyline": [
+              [
+                6522,
+                5716
+              ],
+              [
+                6600,
+                5715
+              ],
+              [
+                6682,
+                5720
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:gravel",
+            "max_grade": 0.08
+          },
+          {
+            "id": "mine_spur",
+            "polyline": [
+              [
+                6682,
+                5720
+              ],
+              [
+                6722,
+                5760
+              ],
+              [
+                6734,
+                5798
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:gravel",
+            "max_grade": 0.14
+          },
+          {
+            "id": "bowl_walk",
+            "polyline": [
+              [
+                6620,
+                5687
+              ],
+              [
+                6628,
+                5650
+              ],
+              [
+                6636,
+                5612
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:gravel",
+            "max_grade": 0.14
+          }
+        ],
+        "plaza": {
+          "rect": [
+            6600,
+            5688,
+            6640,
+            5711
+          ],
+          "surface": "minecraft:cobblestone",
+          "why": "the pithead yard, where ore and people come in off the road",
+          "y": 137
+        },
+        "anchors": [
+          {
+            "id": "mining_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblers:f4/services/towns/mining_center",
+            "rect": [
+              6574,
+              5690,
+              6594,
+              5709
+            ],
+            "facing": "south",
+            "why": "west of the yard, its door on the ore road: the first door in from the west"
+          },
+          {
+            "id": "mining_pokemart",
+            "role": "pokemart",
+            "template": "cobblers:f4/services/towns/mining_mart",
+            "rect": [
+              6646,
+              5690,
+              6670,
+              5709
+            ],
+            "facing": "south",
+            "why": "east of the yard, on the ore road"
+          },
+          {
+            "id": "mining_assay_office",
+            "role": "landmark",
+            "template": "bca:default/structures/the_miners_den",
+            "rect": [
+              6690,
+              5776,
+              6719,
+              5806
+            ],
+            "facing": "east",
+            "why": "the mine office and assay house at the head of the spur, facing it; the fossil lab's first stop",
+            "level": 141
+          },
+          {
+            "id": "mining_portal",
+            "role": "landmark",
+            "template": null,
+            "rect": [
+              6728,
+              5802,
+              6742,
+              5816
+            ],
+            "facing": "north",
+            "why": "the adit portal cut into the rising flank, timber-framed and barred (earthwork mining_portal). The workings behind it are the volume build, not this pass"
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "ore_road",
+            "bowl_walk"
+          ],
+          "size": [
+            13,
+            13
+          ],
+          "setback": 2,
+          "gap": 3,
+          "max_lot_relief": 3,
+          "why": "miners live on the road and on the walk to the bowl; tight lots, a working town"
+        },
+        "paving": {
+          "main": "minecraft:gravel",
+          "plaza": "minecraft:cobblestone",
+          "lamp": "minecraft:glowstone",
+          "why": "gravel and cobble, what a mine road is made of; glowstone set in it. None is a spawn condition"
+        },
+        "prep_note": "The shelf is level within three; the spur climbs about eight to the mine head."
+      }
+    },
+    "tea_town": {
+      "centre": [
+        2654,
+        3605
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "plan": {
+        "reading": "The town is on the west terrace above the lake, and the tea is on the slope below it. The terrace road runs north to south along the level top; halfway down it the tea square opens on the east side, with the tea house on the terrace's edge, its balcony over the tea rows that step down the east-facing slope below. The Centre and the Mart face the square from across the road. At the south end the road turns into the lake lane and goes down to Shrew Lake.",
+        "entries": [
+          {
+            "from": "the north, wandering in from the Brock to Misty route (898 blocks, no road)",
+            "at": [
+              2600,
+              3486
+            ],
+            "street": "terrace_road"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "terrace_road",
+            "polyline": [
+              [
+                2600,
+                3486
+              ],
+              [
+                2600,
+                3560
+              ],
+              [
+                2598,
+                3640
+              ],
+              [
+                2605,
+                3700
+              ]
+            ],
+            "width": 4,
+            "surface": "minecraft:stone_bricks",
+            "max_grade": 0.08
+          },
+          {
+            "id": "lake_lane",
+            "polyline": [
+              [
+                2605,
+                3700
+              ],
+              [
+                2640,
+                3716
+              ],
+              [
+                2662,
+                3726
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:stone_bricks",
+            "max_grade": 0.12
+          }
+        ],
+        "plaza": {
+          "rect": [
+            2604,
+            3570,
+            2632,
+            3596
+          ],
+          "surface": "minecraft:mossy_stone_bricks",
+          "why": "the tea square, on the terrace's edge between the road and the tea house",
+          "y": 114
+        },
+        "anchors": [
+          {
+            "id": "tea_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblers:f4/services/towns/tea_center",
+            "rect": [
+              2576,
+              3566,
+              2596,
+              3586
+            ],
+            "facing": "east",
+            "why": "across the road from the square, facing it"
+          },
+          {
+            "id": "tea_pokemart",
+            "role": "pokemart",
+            "template": "cobblers:f4/services/towns/tea_mart",
+            "rect": [
+              2576,
+              3590,
+              2596,
+              3615
+            ],
+            "facing": "east",
+            "why": "beside the Centre, facing the road"
+          },
+          {
+            "id": "tea_house",
+            "role": "landmark",
+            "template": "bca:default/structures/blossom_balcony",
+            "rect": [
+              2636,
+              3570,
+              2660,
+              3594
+            ],
+            "facing": "west",
+            "why": "the tea house on the terrace's edge: its door to the square, its balcony over the tea rows. Poltchageist's set piece",
+            "level": 113
+          },
+          {
+            "id": "tea_terraces",
+            "role": "landmark",
+            "template": null,
+            "rect": [
+              2664,
+              3500,
+              2719,
+              3599
+            ],
+            "facing": "west",
+            "why": "the tea rows on the east-facing slope below the tea house, stepped a block at a time (earthwork tea_terraces)"
+          }
+        ],
+        "house_lots": {
+          "along": [
+            "terrace_road",
+            "lake_lane"
+          ],
+          "size": [
+            13,
+            13
+          ],
+          "setback": 2,
+          "gap": 5,
+          "max_lot_relief": 3,
+          "why": "the growers live along the terrace road, spaced for gardens; bamboo houses, because the tea country is the one thing this town is"
+        },
+        "paving": {
+          "main": "minecraft:stone_bricks",
+          "plaza": "minecraft:mossy_stone_bricks",
+          "lamp": "minecraft:shroomlight",
+          "why": "worn stone paths, and a warm shroomlight for the evening tea; none is a spawn condition"
+        },
+        "prep_note": "The terrace is level within three; the lake lane drops about four to the shore."
+      }
+    },
+    "displaced_city": {
+      "centre": [
+        3366,
+        1755
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "ground": "cavern_floor",
+      "plan": {
+        "reading": "The tunnel brings you out at the cavern's north-west corner onto the old summit road, and the road does what it always did: it climbs the groove between the two crowns of what was a mountain top, cuts through the saddle, and comes down onto the bench on the far side, where the town's square is. It is a mountain town's road and the mountain is under the ice now. The houses stand on terraces cut level beside the road, the way houses on a summit do. The Mart is cut into the east crown's flank above the square, the Centre stands on a built-up terrace at the bench's edge, and the waystone that makes finding this place once enough is on the square. The cherry trees and their lantern strings are the cavern's own and are left where they grew; the town fits between them.",
+        "entries": [
+          {
+            "from": "the tunnel from the meltwater mouth on the trough flank (derived/cavern/plan.json tunnel)",
+            "at": [
+              3264,
+              1662
+            ],
+            "street": "old_road"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "old_road",
+            "polyline": [
+              [
+                3264,
+                1662
+              ],
+              [
+                3288,
+                1682
+              ],
+              [
+                3312,
+                1708
+              ],
+              [
+                3332,
+                1730
+              ],
+              [
+                3348,
+                1748
+              ],
+              [
+                3354,
+                1766
+              ],
+              [
+                3362,
+                1781
+              ]
+            ],
+            "width": 5,
+            "surface": "minecraft:cobblestone",
+            "max_grade": 0.25
+          }
+        ],
+        "plaza": {
+          "rect": [
+            3360,
+            1782,
+            3388,
+            1800
+          ],
+          "surface": "minecraft:chiseled_stone_bricks",
+          "why": "the square on the bench beyond the saddle, the level ground the old summit town kept",
+          "y": 38
+        },
+        "anchors": [
+          {
+            "id": "displaced_pokecenter",
+            "role": "pokecenter",
+            "template": "cobblers:f4/services/towns/displaced_center",
+            "rect": [
+              3390,
+              1781,
+              3409,
+              1800
+            ],
+            "facing": "west",
+            "level": 38,
+            "why": "on the square's east side, on a terrace built up to the square where the bench falls away"
+          },
+          {
+            "id": "displaced_pokemart",
+            "role": "pokemart",
+            "template": "cobblers:f4/services/towns/displaced_mart",
+            "rect": [
+              3366,
+              1758,
+              3391,
+              1779
+            ],
+            "facing": "south",
+            "level": 39,
+            "why": "cut into the east crown's south flank above the square, a step up from it"
+          },
+          {
+            "id": "displaced_gate",
+            "role": "landmark",
+            "template": null,
+            "rect": [
+              3030,
+              1694,
+              3040,
+              1706
+            ],
+            "facing": "east",
+            "why": "at the surface, the meltwater mouth framed by a gate of the summit town's stone: the only sign up here that anything is below (earthwork displaced_gate)"
+          },
+          {
+            "id": "displaced_house_1",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3288,
+              1662,
+              3301,
+              1675
+            ],
+            "facing": "south",
+            "level": 27,
+            "why": "a terrace cut level beside the old road, clear of the cavern's trees (7 blocks) and light strings (3), facing the road"
+          },
+          {
+            "id": "displaced_house_2",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3262,
+              1678,
+              3275,
+              1691
+            ],
+            "facing": "north",
+            "level": 27,
+            "why": "a terrace cut level beside the old road, clear of the cavern's trees (7 blocks) and light strings (3), facing the road"
+          },
+          {
+            "id": "displaced_house_3",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3294,
+              1710,
+              3307,
+              1723
+            ],
+            "facing": "east",
+            "level": 34,
+            "why": "a terrace cut level beside the old road, clear of the cavern's trees (7 blocks) and light strings (3), facing the road"
+          },
+          {
+            "id": "displaced_house_4",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3330,
+              1706,
+              3343,
+              1719
+            ],
+            "facing": "west",
+            "level": 38,
+            "why": "a terrace cut level beside the old road, clear of the cavern's trees (7 blocks) and light strings (3), facing the road"
+          },
+          {
+            "id": "displaced_house_5",
+            "role": "building",
+            "template": null,
+            "rect": [
+              3330,
+              1754,
+              3343,
+              1767
+            ],
+            "facing": "east",
+            "level": 42,
+            "why": "a terrace cut level beside the old road, clear of the cavern's trees (7 blocks) and light strings (3), facing the road"
+          }
+        ],
+        "house_lots": {
+          "along": [],
+          "why": "the floor either side of the road is two steep crowns, so no lot along it is level enough; the houses stand on authored terraces (anchors displaced_house_*) chosen clear of the cavern's trees and light strings"
+        },
+        "waystone": {
+          "position": [
+            3374,
+            1796
+          ],
+          "facing": "north",
+          "note": "discovery: first visit activates it; underground and hard to find twice"
+        },
+        "paving": {
+          "main": "minecraft:cobblestone",
+          "plaza": "minecraft:chiseled_stone_bricks",
+          "lamp": "minecraft:sea_lantern",
+          "why": "a mountain town's cobbles; the lamps are the city's lit ground, where the cavern's dark margins are the encounter area"
+        },
+        "prep_note": "The old road grades the groove at up to 1 in 4 and cuts through the saddle between the crowns."
+      },
+      "centre_note": "the city on the cavern floor; data/towns.json's centre is the surface entrance"
+    },
+    "relic_island": {
+      "centre": [
+        1092,
+        5532
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "ground": "islet",
+      "plan": {
+        "reading": "One house on a torn-off islet: a Pallet home, its front walk and fence running east, towards Pallet, and stopping at the torn edge where the sea starts. Behind it, on the west side, a seam of calcite and amethyst shows where the land was broken off.",
+        "entries": [
+          {
+            "from": "the sea, from Pallet's west coast (440 blocks)",
+            "at": [
+              1110,
+              5531
+            ],
+            "street": "front_walk"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "front_walk",
+            "polyline": [
+              [
+                1098,
+                5531
+              ],
+              [
+                1116,
+                5531
+              ]
+            ],
+            "width": 1,
+            "surface": "minecraft:dirt_path",
+            "max_grade": 0.35
+          }
+        ],
+        "anchors": [
+          {
+            "id": "relic_house",
+            "role": "building",
+            "template": "cobblers:f4/pallet_house_large2",
+            "rect": [
+              1084,
+              5524,
+              1097,
+              5539
+            ],
+            "facing": "east",
+            "why": "the Pallet home, door east, towards Pallet: the event's own donor, the same design as Pallet's large house, which is the point"
+          }
+        ],
+        "house_lots": {
+          "along": [],
+          "why": "one house"
+        },
+        "paving": {
+          "main": "minecraft:dirt_path",
+          "lamp": "none",
+          "why": "a garden path, unlit: nobody lives here now"
+        }
+      }
+    },
+    "viltri_light": {
+      "centre": [
+        550,
+        4518
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "plan": {
+        "reading": "A lighthouse on the low coast at the Mouth of Viltri, keeping a light over an estuary no river uses any more. It stands on a raised stone platform at the water's edge, its door on the landward side, and a keeper's track runs inland from it.",
+        "entries": [
+          {
+            "from": "inland, the east (840 blocks off the first leg)",
+            "at": [
+              574,
+              4519
+            ],
+            "street": "keeper_track"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "keeper_track",
+            "polyline": [
+              [
+                560,
+                4518
+              ],
+              [
+                577,
+                4519
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:gravel",
+            "max_grade": 0.25
+          }
+        ],
+        "plaza": {
+          "rect": [
+            553,
+            4512,
+            558,
+            4524
+          ],
+          "surface": "minecraft:stone_bricks",
+          "why": "a paved apron at the lighthouse door, on the landward side; the tower stands on its own foundation",
+          "y": 70
+        },
+        "anchors": [],
+        "house_lots": {
+          "along": [],
+          "why": "a lighthouse"
+        },
+        "paving": {
+          "main": "minecraft:gravel",
+          "plaza": "minecraft:stone_bricks",
+          "lamp": "none",
+          "why": "the only light here is the lighthouse's"
+        }
+      }
+    },
+    "jungle_ruins": {
+      "centre": [
+        5160,
+        7463
+      ],
+      "footprint_from": "data/towns.json",
+      "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "plan": {
+        "reading": "An overgrown causeway comes up from the north shore into the jungle and ends in a ruined court. The ruins are what is left of a stone city the jungle has taken: broken walls either side of the causeway, half sunk, and the great ruin at the court's south side. Nothing is lit and nothing is kept.",
+        "entries": [
+          {
+            "from": "the north shore of the jungle island, by boat",
+            "at": [
+              5160,
+              7318
+            ],
+            "street": "causeway"
+          }
+        ],
+        "exits": [],
+        "streets": [
+          {
+            "id": "causeway",
+            "polyline": [
+              [
+                5160,
+                7318
+              ],
+              [
+                5156,
+                7400
+              ],
+              [
+                5160,
+                7468
+              ]
+            ],
+            "width": 3,
+            "surface": "minecraft:mossy_cobblestone",
+            "max_grade": 0.15
+          }
+        ],
+        "plaza": {
+          "rect": [
+            5140,
+            7470,
+            5180,
+            7500
+          ],
+          "surface": "minecraft:mossy_stone_bricks",
+          "why": "the ruined court the causeway ends in",
+          "y": 129
+        },
+        "anchors": [],
+        "house_lots": {
+          "along": [],
+          "why": "ruins, placed as found"
+        },
+        "paving": {
+          "main": "minecraft:mossy_cobblestone",
+          "plaza": "minecraft:mossy_stone_bricks",
+          "lamp": "none",
+          "why": "a ruin lit by nothing"
+        }
       }
     }
   },
@@ -5962,7 +6868,29 @@
       "source": {
         "pack": "installed",
         "licence": "placed by resource id from the installed pack; never copied into the repo"
-      }
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:red_sand",
+          "to": "minecraft:red_concrete_powder",
+          "why": "red sand draws Sandygast and Palossand; the powder is the same colour and falls the same way"
+        },
+        {
+          "from": "minecraft:blue_wool",
+          "to": "minecraft:blue_terracotta",
+          "why": "wool draws Smeargle; terracotta of the same colour"
+        },
+        {
+          "from": "minecraft:light_blue_wool",
+          "to": "minecraft:light_blue_terracotta",
+          "why": "as the blue wool"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:lily_pad"
+      ],
+      "remove_blocks_why": "lily pads draw Lotad's line and Politoed, and nothing else floats on water",
+      "decided": "2026-09-21 by the owner: nothing wanders the champion's processional"
     },
     {
       "id": "league_pokecenter",
@@ -6011,6 +6939,3694 @@
         "pack": "our kit",
         "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
       }
+    },
+    {
+      "id": "gym4_pokecenter",
+      "settlement": "gym4_town",
+      "template": "cobblers:f4/services/towns/floaroma_center",
+      "file": "kits/structures/campaign/f4/services/towns/floaroma_center.nbt",
+      "cell": "B5",
+      "kind": "service",
+      "lot": "gym4_pokecenter",
+      "position": {
+        "x": 4251,
+        "z": 1525
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the green's west side, facing the road in: the first door a player reaches. The floaroma Centre comes with tulips and pink petals, which is the town this is.",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "gym4_pokemart",
+      "settlement": "gym4_town",
+      "template": "cobblers:f4/services/towns/floaroma_mart",
+      "file": "kits/structures/campaign/f4/services/towns/floaroma_mart.nbt",
+      "cell": "B5",
+      "kind": "service",
+      "lot": "gym4_pokemart",
+      "position": {
+        "x": 4296,
+        "z": 1605
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the ring's south side, its door to the green",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "gym4_gym_building",
+      "settlement": "gym4_town",
+      "pack_template": "cobbleverse:erika",
+      "template": "cobbleverse:erika",
+      "cell": "B5",
+      "kind": "donor",
+      "position": {
+        "x": 4297,
+        "y": 109,
+        "z": 1480
+      },
+      "size": [
+        27,
+        17,
+        23
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "fronting the green from the north with the whole garden in front of it. A grass gym should be looked into rather than entered from a street, and this is the only face of the ring with room for a wide building behind it.. the Cobbleverse gym shell opens south",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      }
+    },
+    {
+      "id": "gym4_house_01",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/oak/houses/accessory_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/accessory_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "pond_road_lot_09",
+      "position": {
+        "x": 4229,
+        "z": 1541
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the pond road, looking out to the pond and the fields: oak",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_02",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/oak/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/medium_house_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "pond_road_lot_10",
+      "position": {
+        "x": 4226,
+        "z": 1559
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the pond road, looking out to the pond and the fields: oak",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_03",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_04",
+      "position": {
+        "x": 4350,
+        "z": 1589
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_04",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_2.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_05",
+      "position": {
+        "x": 4351,
+        "z": 1573
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_05",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_3.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_06",
+      "position": {
+        "x": 4351,
+        "z": 1536
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_06",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/medium_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_4.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_east_lot_07",
+      "position": {
+        "x": 4351,
+        "z": 1521
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_07",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_1.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_north_lot_08",
+      "position": {
+        "x": 4340,
+        "z": 1502
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_08",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_2.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_south_lot_03",
+      "position": {
+        "x": 4272,
+        "z": 1602
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_09",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_3.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_west_lot_01",
+      "position": {
+        "x": 4261,
+        "z": 1565
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gym4_house_10",
+      "settlement": "gym4_town",
+      "template": "repurposed_structures:villages/cherry/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_4.nbt",
+      "cell": "B5",
+      "kind": "house",
+      "lot": "ring_west_lot_02",
+      "position": {
+        "x": 4260,
+        "z": 1582
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "facing the garden across the ring: cherry, the blossom town's set",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "merian_hut_pokecenter",
+      "settlement": "merian_hut",
+      "template": "cobblemon:villages/mountains/pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/villages/mountains/pokecenter.nbt",
+      "cell": "B3",
+      "kind": "service",
+      "lot": "merian_hut_pokecenter",
+      "position": {
+        "x": 2806,
+        "z": 1014
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the hut itself: the mountain village Center, stone and dark wood, its door onto the yard and down the cirque",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "merian_woodshed",
+      "settlement": "merian_hut",
+      "template": "repurposed_structures:villages/mountains/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_4.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "merian_woodshed",
+      "position": {
+        "x": 2836,
+        "z": 1017
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the woodshed: the smallest mountains house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "merian_stable",
+      "settlement": "merian_hut",
+      "template": "repurposed_structures:villages/mountains/houses/animal_pen_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/animal_pen_1.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "merian_stable",
+      "position": {
+        "x": 2781,
+        "z": 1017
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the stable: the mountains set's pen",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gorge_hamlet_pokecenter",
+      "settlement": "gorge_hamlet",
+      "template": "cobblemon:village_desert/village_desert_pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/village_desert/village_desert_pokecenter.nbt",
+      "cell": "E7",
+      "kind": "service",
+      "lot": "gorge_hamlet_pokecenter",
+      "position": {
+        "x": 6808,
+        "z": 4338
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the yard's north side, facing the gate across it: the desert village Center, for a dune settlement",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gorge_house_east",
+      "settlement": "gorge_hamlet",
+      "template": "minecraft:village/desert/houses/desert_medium_house_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_medium_house_2.nbt",
+      "cell": "E7",
+      "kind": "house",
+      "lot": "gorge_house_east",
+      "position": {
+        "x": 6835,
+        "z": 4362
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the seaward side of the ring: a long desert house, its length against the wind",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "gorge_house_south",
+      "settlement": "gorge_hamlet",
+      "template": "minecraft:village/desert/houses/desert_small_house_7",
+      "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_small_house_7.nbt",
+      "cell": "E7",
+      "kind": "house",
+      "lot": "gorge_house_south",
+      "position": {
+        "x": 6812,
+        "z": 4387
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the south side: a small desert house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tableland_stop_pokecenter",
+      "settlement": "tableland_stop",
+      "template": "cobblemon:villages/badlands/pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/villages/badlands/pokecenter.nbt",
+      "cell": "F5",
+      "kind": "service",
+      "lot": "tableland_stop_pokecenter",
+      "position": {
+        "x": 4833,
+        "z": 5705
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the waystation: the badlands village Center, facing the yard",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tableland_prospector",
+      "settlement": "tableland_stop",
+      "template": "repurposed_structures:villages/badlands/houses/tool_smith",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/tool_smith.nbt",
+      "cell": "F5",
+      "kind": "house",
+      "lot": "tableland_prospector",
+      "position": {
+        "x": 4862,
+        "z": 5684
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the prospector's house: the badlands tool smith, a working house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tableland_lookout",
+      "settlement": "tableland_stop",
+      "pack_template": "minecraft:pillager_outpost/watchtower",
+      "template": "minecraft:pillager_outpost/watchtower",
+      "cell": "F5",
+      "kind": "donor",
+      "position": {
+        "x": 4800,
+        "y": 161,
+        "z": 5672
+      },
+      "size": [
+        15,
+        21,
+        15
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "the lookout on the brow: tall enough to be read from the road below, which the fragile canopy sightline needs (visibility:tableland_stop_from_its_leg_canopy). Candidate donor, the vanilla outpost watchtower without its banners; to confirm at placement. its entrance jigsaw is on the south side",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:white_wall_banner",
+        "minecraft:jigsaw"
+      ],
+      "clear_loot": true,
+      "remove_blocks_why": "the eight ominous (pillager) banners, and the jigsaw a template placement leaves",
+      "clear_loot_why": "a pillager outpost chest holds crossbows and the like; a lookout keeps nothing"
+    },
+    {
+      "id": "rift_rim_stop_pokecenter",
+      "settlement": "rift_rim_stop",
+      "template": "cobblemon:village_taiga/village_taiga_pokecenter",
+      "file": "kits/structures/incoming/townkit/cobblemon/village_taiga/village_taiga_pokecenter.nbt",
+      "cell": "D4",
+      "kind": "service",
+      "lot": "rift_rim_stop_pokecenter",
+      "position": {
+        "x": 3729,
+        "z": 3945
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the Center on the clearing's west side, facing the terrace: the taiga village Center, for the woods",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "rimpost_cabin_north",
+      "settlement": "rift_rim_stop",
+      "template": "minecraft:village/taiga/houses/taiga_medium_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_1.nbt",
+      "cell": "D4",
+      "kind": "house",
+      "lot": "rimpost_cabin_north",
+      "position": {
+        "x": 3727,
+        "z": 3918
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a ranger's cabin: a taiga house",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "rimpost_cabin_south",
+      "settlement": "rift_rim_stop",
+      "template": "minecraft:village/taiga/houses/taiga_cartographer_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_cartographer_house_1.nbt",
+      "cell": "D4",
+      "kind": "house",
+      "lot": "rimpost_cabin_south",
+      "position": {
+        "x": 3762,
+        "z": 3979
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the other cabin, where the rangers keep their maps",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "dig_finds_shed",
+      "settlement": "rift_dig_camp",
+      "template": "repurposed_structures:villages/badlands/houses/cartographer",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/cartographer.nbt",
+      "cell": "D4",
+      "kind": "house",
+      "lot": "dig_finds_shed",
+      "position": {
+        "x": 3124,
+        "z": 3280
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the finds shed: the badlands cartographer, a records office",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "dig_tent_01",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3153,
+        "y": 90,
+        "z": 3304
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_01"
+    },
+    {
+      "id": "dig_tent_02",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3152,
+        "y": 89,
+        "z": 3291
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_02"
+    },
+    {
+      "id": "dig_tent_03",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3143,
+        "y": 91,
+        "z": 3305
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_03"
+    },
+    {
+      "id": "dig_tent_04",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3142,
+        "y": 89,
+        "z": 3292
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_04"
+    },
+    {
+      "id": "dig_tent_05",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3133,
+        "y": 91,
+        "z": 3306
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_05"
+    },
+    {
+      "id": "dig_tent_06",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3123,
+        "y": 91,
+        "z": 3306
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_06"
+    },
+    {
+      "id": "dig_tent_07",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/badlands/tent1",
+      "template": "repurposed_structures:outposts/badlands/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3083,
+        "y": 92,
+        "z": 3304
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_07"
+    },
+    {
+      "id": "dig_tent_08",
+      "settlement": "rift_dig_camp",
+      "pack_template": "repurposed_structures:outposts/desert/tent1",
+      "template": "repurposed_structures:outposts/desert/tent1",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3084,
+        "y": 90,
+        "z": 3291
+      },
+      "size": [
+        6,
+        4,
+        7
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a tent on the camp track; badlands and desert tent1 alternate (tent2 carries pumpkins)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "remove_blocks": [
+        "minecraft:jigsaw"
+      ],
+      "lot": "camp_track_lot_08"
+    },
+    {
+      "id": "dig_site_a",
+      "settlement": "rift_dig_camp",
+      "pack_template": "mega_showdown:archaeological_site/archaeological_site_a",
+      "template": "mega_showdown:archaeological_site/archaeological_site_a",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3054,
+        "y": 90,
+        "z": 3286
+      },
+      "size": [
+        15,
+        11,
+        15
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "chosen_because": "the excavation at the spur's head: Mega Showdown's archaeological site, sunk so its rim walkway is at ground level; its suspicious sand keeps its loot",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "lot": "dig_excavation"
+    },
+    {
+      "id": "dig_site_b",
+      "settlement": "rift_dig_camp",
+      "pack_template": "mega_showdown:archaeological_site/archaeological_site_b",
+      "template": "mega_showdown:archaeological_site/archaeological_site_b",
+      "cell": "D4",
+      "kind": "donor",
+      "position": {
+        "x": 3054,
+        "y": 90,
+        "z": 3302
+      },
+      "size": [
+        15,
+        11,
+        15
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "chosen_because": "the excavation at the spur's head: Mega Showdown's archaeological site, sunk so its rim walkway is at ground level; its suspicious sand keeps its loot",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "lot": "dig_excavation"
+    },
+    {
+      "id": "gorge_courtyard_wall",
+      "settlement": "gorge_hamlet",
+      "kind": "earthwork",
+      "cell": "E7",
+      "status": "planned",
+      "chosen_because": "the ring's wall between the buildings, a gate on the west towards the road and a gap at the north-east corner onto the drop to the coast",
+      "commands": [
+        "fill 6797 114 4352 6807 115 4352 minecraft:sandstone_wall",
+        "fill 6823 114 4352 6828 115 4352 minecraft:sandstone_wall",
+        "fill 6829 114 4378 6829 115 4382 minecraft:sandstone_wall",
+        "fill 6797 114 4382 6805 115 4382 minecraft:sandstone_wall",
+        "fill 6825 114 4382 6829 115 4382 minecraft:sandstone_wall",
+        "fill 6797 114 4353 6797 115 4364 minecraft:sandstone_wall",
+        "fill 6797 114 4370 6797 115 4381 minecraft:sandstone_wall"
+      ]
+    },
+    {
+      "id": "rimpost_overlook_railing",
+      "settlement": "rift_rim_stop",
+      "kind": "earthwork",
+      "cell": "D4",
+      "status": "planned",
+      "chosen_because": "a railing on the overlook's three open sides, over the rim",
+      "commands": [
+        "fill 3774 142 3944 3790 142 3944 minecraft:spruce_fence",
+        "fill 3790 142 3944 3790 142 3962 minecraft:spruce_fence",
+        "fill 3774 142 3962 3790 142 3962 minecraft:spruce_fence"
+      ]
+    },
+    {
+      "id": "northlight_pokecenter",
+      "settlement": "northlight",
+      "template": "cobblers:f4/services/towns/northlight_center",
+      "file": "kits/structures/campaign/f4/services/towns/northlight_center.nbt",
+      "cell": "B8",
+      "kind": "service",
+      "lot": "northlight_pokecenter",
+      "position": {
+        "x": 7237,
+        "z": 1520
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the square's north side, its back to the sea wind; the first door up from the landing",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "northlight_pokemart",
+      "settlement": "northlight",
+      "template": "cobblers:f4/services/towns/northlight_mart",
+      "file": "kits/structures/campaign/f4/services/towns/northlight_mart.nbt",
+      "cell": "B8",
+      "kind": "service",
+      "lot": "northlight_pokemart",
+      "position": {
+        "x": 7271,
+        "z": 1520
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "across the road from the Centre, also facing the square",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "northlight_field_station",
+      "settlement": "northlight",
+      "pack_template": "bca:default/structures/the_lanturn_lodge",
+      "template": "bca:default/structures/the_lanturn_lodge",
+      "cell": "B8",
+      "kind": "donor",
+      "position": {
+        "x": 7244,
+        "y": 117,
+        "z": 1621
+      },
+      "size": [
+        22,
+        18,
+        19
+      ],
+      "rotation": "180",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "west",
+      "chosen_because": "the ice-type field station: a timber lodge on the station lane, its door to the lane. placed by id from the installed pack",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "clear_loot": true,
+      "jigsaws": "final_state",
+      "clear_loot_why": "a bca building's barrels and chests are stocked by loot table; nothing is handed out before the badge-gated stock lands",
+      "jigsaws_why": "its jigsaws are floor, berry soil and decoration points; each is set to its own final state",
+      "remove_blocks": [
+        "cobblemon:pep_up_flower"
+      ],
+      "remove_blocks_why": "four pep-up flowers in its planters, a spawn condition",
+      "grade_layer": 2
+    },
+    {
+      "id": "northlight_house_01",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_library_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_library_1.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_06",
+      "position": {
+        "x": 7299,
+        "z": 1561
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_02",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_temple_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_temple_1.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_07",
+      "position": {
+        "x": 7317,
+        "z": 1542
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_03",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_armorer_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_armorer_house_1.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_08",
+      "position": {
+        "x": 7316,
+        "z": 1564
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_04",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_armorer_house_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_armorer_house_2.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_09",
+      "position": {
+        "x": 7334,
+        "z": 1545
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_05",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_butchers_shop_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_butchers_shop_1.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_10",
+      "position": {
+        "x": 7351,
+        "z": 1545
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_06",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_butchers_shop_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_butchers_shop_2.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_11",
+      "position": {
+        "x": 7350,
+        "z": 1566
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_07",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_medium_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_medium_house_1.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_12",
+      "position": {
+        "x": 7368,
+        "z": 1548
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_08",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_medium_house_3",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_medium_house_3.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "east_row_lot_13",
+      "position": {
+        "x": 7367,
+        "z": 1570
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_09",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_small_house_1",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_1.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "harbour_road_lot_01",
+      "position": {
+        "x": 7271,
+        "z": 1458
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_10",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_small_house_2",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_2.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "harbour_road_lot_02",
+      "position": {
+        "x": 7250,
+        "z": 1457
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_11",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_small_house_3",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_3.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "harbour_road_lot_03",
+      "position": {
+        "x": 7271,
+        "z": 1475
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_12",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_small_house_4",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_4.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "harbour_road_lot_04",
+      "position": {
+        "x": 7249,
+        "z": 1475
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_13",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_small_house_5",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_5.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "harbour_road_lot_05",
+      "position": {
+        "x": 7270,
+        "z": 1493
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "northlight_house_14",
+      "settlement": "northlight",
+      "template": "minecraft:village/snowy/houses/snowy_small_house_6",
+      "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_6.nbt",
+      "cell": "B8",
+      "kind": "house",
+      "lot": "station_lane_lot_14",
+      "position": {
+        "x": 7209,
+        "z": 1579
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a snowy-isle station: vanilla snowy houses",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_pokecenter",
+      "settlement": "mining_town",
+      "template": "cobblers:f4/services/towns/mining_center",
+      "file": "kits/structures/campaign/f4/services/towns/mining_center.nbt",
+      "cell": "F7",
+      "kind": "service",
+      "lot": "mining_pokecenter",
+      "position": {
+        "x": 6575,
+        "z": 5692
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "west of the yard, its door on the ore road: the first door in from the west",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "mining_pokemart",
+      "settlement": "mining_town",
+      "template": "cobblers:f4/services/towns/mining_mart",
+      "file": "kits/structures/campaign/f4/services/towns/mining_mart.nbt",
+      "cell": "F7",
+      "kind": "service",
+      "lot": "mining_pokemart",
+      "position": {
+        "x": 6647,
+        "z": 5692
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "east of the yard, on the ore road",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "mining_assay_office",
+      "settlement": "mining_town",
+      "pack_template": "bca:default/structures/the_miners_den",
+      "template": "bca:default/structures/the_miners_den",
+      "cell": "F7",
+      "kind": "donor",
+      "position": {
+        "x": 6694,
+        "y": 136,
+        "z": 5778
+      },
+      "size": [
+        22,
+        20,
+        27
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "chosen_because": "the mine office and assay house at the head of the spur, facing it; the fossil lab's first stop. placed by id from the installed pack",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "clear_loot": true,
+      "jigsaws": "final_state",
+      "clear_loot_why": "a bca building's barrels and chests are stocked by loot table; nothing is handed out before the badge-gated stock lands",
+      "jigsaws_why": "its jigsaws are floor, berry soil and decoration points; each is set to its own final state",
+      "remove_blocks": [
+        "minecraft:sugar_cane",
+        "cobblemon:shuca_berry",
+        "minecraft:water"
+      ],
+      "remove_blocks_why": "its sugar cane, a shuca berry bush and the water they stand in, all spawn conditions",
+      "grade_layer": 5
+    },
+    {
+      "id": "mining_house_01",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/big_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/big_house_1.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "bowl_walk_lot_11",
+      "position": {
+        "x": 6611,
+        "z": 5664
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_02",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/library_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/library_2.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "bowl_walk_lot_12",
+      "position": {
+        "x": 6613,
+        "z": 5649
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_03",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/armorer_house_1.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "bowl_walk_lot_13",
+      "position": {
+        "x": 6632,
+        "z": 5653
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_04",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/butcher_shop_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/butcher_shop_1.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "bowl_walk_lot_14",
+      "position": {
+        "x": 6619,
+        "z": 5616
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_05",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/cartographer_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/cartographer_1.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_01",
+      "position": {
+        "x": 6534,
+        "z": 5700
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_06",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/fisher_cottage_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/fisher_cottage_1.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_02",
+      "position": {
+        "x": 6532,
+        "z": 5721
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      },
+      "dry": true
+    },
+    {
+      "id": "mining_house_07",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/medium_house_1.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_03",
+      "position": {
+        "x": 6548,
+        "z": 5699
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_08",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/medium_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/medium_house_2.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_04",
+      "position": {
+        "x": 6547,
+        "z": 5723
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_09",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/small_house_1.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_05",
+      "position": {
+        "x": 6567,
+        "z": 5722
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_10",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/small_house_2.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_06",
+      "position": {
+        "x": 6583,
+        "z": 5722
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_11",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/small_house_3.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_07",
+      "position": {
+        "x": 6614,
+        "z": 5723
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_12",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/small_house_4.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_08",
+      "position": {
+        "x": 6646,
+        "z": 5725
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_13",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/small_house_5.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_09",
+      "position": {
+        "x": 6661,
+        "z": 5725
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "mining_house_14",
+      "settlement": "mining_town",
+      "template": "repurposed_structures:villages/dark_forest/houses/small_house_6",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/dark_forest/houses/small_house_6.nbt",
+      "cell": "F7",
+      "kind": "house",
+      "lot": "ore_road_lot_10",
+      "position": {
+        "x": 6679,
+        "z": 5706
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_pokecenter",
+      "settlement": "tea_town",
+      "template": "cobblers:f4/services/towns/tea_center",
+      "file": "kits/structures/campaign/f4/services/towns/tea_center.nbt",
+      "cell": "D3",
+      "kind": "service",
+      "lot": "tea_pokecenter",
+      "position": {
+        "x": 2578,
+        "z": 3567
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "across the road from the square, facing it",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "tea_pokemart",
+      "settlement": "tea_town",
+      "template": "cobblers:f4/services/towns/tea_mart",
+      "file": "kits/structures/campaign/f4/services/towns/tea_mart.nbt",
+      "cell": "D3",
+      "kind": "service",
+      "lot": "tea_pokemart",
+      "position": {
+        "x": 2578,
+        "z": 3591
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "beside the Centre, facing the road",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "tea_house",
+      "settlement": "tea_town",
+      "pack_template": "bca:default/structures/blossom_balcony",
+      "template": "bca:default/structures/blossom_balcony",
+      "cell": "D3",
+      "kind": "donor",
+      "position": {
+        "x": 2658,
+        "y": 113,
+        "z": 3590
+      },
+      "size": [
+        22,
+        13,
+        18
+      ],
+      "rotation": "180",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "west",
+      "chosen_because": "the tea house on the terrace's edge: its door to the square, its balcony over the tea rows. Poltchageist's set piece. placed by id from the installed pack",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "clear_loot": true,
+      "jigsaws": "final_state",
+      "clear_loot_why": "a bca building's barrels and chests are stocked by loot table; nothing is handed out before the badge-gated stock lands",
+      "jigsaws_why": "its jigsaws are floor, berry soil and decoration points; each is set to its own final state",
+      "remove_blocks": [
+        "minecraft:cake",
+        "minecraft:wheat",
+        "minecraft:water"
+      ],
+      "remove_blocks_why": "three cakes, its wheat and a water block, all spawn conditions",
+      "grade_layer": 0
+    },
+    {
+      "id": "tea_house_01",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/library_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/library_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "lake_lane_lot_15",
+      "position": {
+        "x": 2653,
+        "z": 3709
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_02",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/temple_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/temple_2.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_01",
+      "position": {
+        "x": 2607,
+        "z": 3499
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_03",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/armorer_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/armorer_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_02",
+      "position": {
+        "x": 2586,
+        "z": 3500
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_04",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/butcher_shop_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/butcher_shop_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_03",
+      "position": {
+        "x": 2605,
+        "z": 3516
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_05",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/butcher_shop_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/butcher_shop_2.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_04",
+      "position": {
+        "x": 2583,
+        "z": 3517
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_06",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/cartographer_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/cartographer_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_05",
+      "position": {
+        "x": 2606,
+        "z": 3535
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_07",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/medium_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/medium_house_2.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_06",
+      "position": {
+        "x": 2584,
+        "z": 3534
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      },
+      "dry": true
+    },
+    {
+      "id": "tea_house_08",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_1.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_07",
+      "position": {
+        "x": 2607,
+        "z": 3554
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_09",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_2.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_08",
+      "position": {
+        "x": 2606,
+        "z": 3609
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_10",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_3.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_09",
+      "position": {
+        "x": 2605,
+        "z": 3627
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_11",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_4.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_10",
+      "position": {
+        "x": 2584,
+        "z": 3624
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_12",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_5.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_11",
+      "position": {
+        "x": 2585,
+        "z": 3646
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_13",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_6",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_6.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_12",
+      "position": {
+        "x": 2608,
+        "z": 3661
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_14",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_7",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_7.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_13",
+      "position": {
+        "x": 2610,
+        "z": 3679
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "tea_house_15",
+      "settlement": "tea_town",
+      "template": "repurposed_structures:villages/bamboo/houses/small_house_8",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_8.nbt",
+      "cell": "D3",
+      "kind": "house",
+      "lot": "terrace_road_lot_14",
+      "position": {
+        "x": 2589,
+        "z": 3681
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a grower's house in the tea country: bamboo",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "displaced_pokecenter",
+      "settlement": "displaced_city",
+      "template": "cobblers:f4/services/towns/displaced_center",
+      "file": "kits/structures/campaign/f4/services/towns/displaced_center.nbt",
+      "cell": "B4",
+      "kind": "service",
+      "lot": "displaced_pokecenter",
+      "position": {
+        "x": 3392,
+        "z": 1781
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "on the square's east side, on a terrace built up to the square where the bench falls away",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "displaced_pokemart",
+      "settlement": "displaced_city",
+      "template": "cobblers:f4/services/towns/displaced_mart",
+      "file": "kits/structures/campaign/f4/services/towns/displaced_mart.nbt",
+      "cell": "B4",
+      "kind": "service",
+      "lot": "displaced_pokemart",
+      "position": {
+        "x": 3367,
+        "z": 1761
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "cut into the east crown's south flank above the square, a step up from it",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "displaced_house_01",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/library_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/library_1.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "displaced_house_1",
+      "position": {
+        "x": 3291,
+        "z": 1662
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "displaced_house_02",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/temple_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/temple_1.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "displaced_house_2",
+      "position": {
+        "x": 3265,
+        "z": 1680
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "displaced_house_03",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_1.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "displaced_house_3",
+      "position": {
+        "x": 3297,
+        "z": 1713
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "displaced_house_04",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_2.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "displaced_house_4",
+      "position": {
+        "x": 3333,
+        "z": 1709
+      },
+      "facing": "west",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "displaced_house_05",
+      "settlement": "displaced_city",
+      "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/butcher_shop_1.nbt",
+      "cell": "B4",
+      "kind": "house",
+      "lot": "displaced_house_5",
+      "position": {
+        "x": 3332,
+        "z": 1757
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "a summit town's house: giant taiga spruce and mossy cobble",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
+      }
+    },
+    {
+      "id": "relic_house",
+      "settlement": "relic_island",
+      "template": "cobblers:f4/pallet_house_large2",
+      "file": "kits/structures/campaign/f4/pallet_house_large2.nbt",
+      "cell": "F2",
+      "kind": "house",
+      "lot": "relic_house",
+      "position": {
+        "x": 1085,
+        "z": 5527
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "chosen_because": "the Pallet home, door east, towards Pallet: the event's own donor, the same design as Pallet's large house, which is the point",
+      "donor_source": {
+        "licence": "MIT (CobbleTowns, our kit)"
+      }
+    },
+    {
+      "id": "northlight_observatory",
+      "settlement": "northlight",
+      "kind": "earthwork",
+      "cell": "B8",
+      "status": "planned",
+      "chosen_because": "the weather and aurora observatory on the isle's high point: nothing in the installed packs is an observatory except Mega Showdown's, which is Sabrina's, so it is authored",
+      "commands": [
+        "# Northlight observatory: a round stone tower, a dark band, an upper floor and a glass dome (authored)",
+        "fill 7174 117 1633 7178 121 1633 minecraft:stone_bricks",
+        "fill 7173 117 1634 7179 121 1634 minecraft:stone_bricks",
+        "fill 7172 117 1635 7180 121 1635 minecraft:stone_bricks",
+        "fill 7171 117 1636 7181 121 1636 minecraft:stone_bricks",
+        "fill 7171 117 1637 7181 121 1637 minecraft:stone_bricks",
+        "fill 7171 117 1638 7181 121 1638 minecraft:stone_bricks",
+        "fill 7171 117 1639 7181 121 1639 minecraft:stone_bricks",
+        "fill 7171 117 1640 7181 121 1640 minecraft:stone_bricks",
+        "fill 7172 117 1641 7180 121 1641 minecraft:stone_bricks",
+        "fill 7173 117 1642 7179 121 1642 minecraft:stone_bricks",
+        "fill 7174 117 1643 7178 121 1643 minecraft:stone_bricks",
+        "fill 7174 122 1630 7178 142 1630 minecraft:air",
+        "fill 7172 122 1631 7180 142 1631 minecraft:air",
+        "fill 7170 122 1632 7182 142 1632 minecraft:air",
+        "fill 7170 122 1633 7182 142 1633 minecraft:air",
+        "fill 7169 122 1634 7183 142 1634 minecraft:air",
+        "fill 7169 122 1635 7183 142 1635 minecraft:air",
+        "fill 7168 122 1636 7184 142 1636 minecraft:air",
+        "fill 7168 122 1637 7184 142 1637 minecraft:air",
+        "fill 7168 122 1638 7184 142 1638 minecraft:air",
+        "fill 7168 122 1639 7184 142 1639 minecraft:air",
+        "fill 7168 122 1640 7184 142 1640 minecraft:air",
+        "fill 7169 122 1641 7183 142 1641 minecraft:air",
+        "fill 7169 122 1642 7183 142 1642 minecraft:air",
+        "fill 7170 122 1643 7182 142 1643 minecraft:air",
+        "fill 7170 122 1644 7182 142 1644 minecraft:air",
+        "fill 7172 122 1645 7180 142 1645 minecraft:air",
+        "fill 7174 122 1646 7178 142 1646 minecraft:air",
+        "fill 7174 122 1633 7178 122 1633 minecraft:polished_andesite",
+        "fill 7173 122 1634 7179 122 1634 minecraft:polished_andesite",
+        "fill 7172 122 1635 7180 122 1635 minecraft:polished_andesite",
+        "fill 7171 122 1636 7181 122 1636 minecraft:polished_andesite",
+        "fill 7171 122 1637 7181 122 1637 minecraft:polished_andesite",
+        "fill 7171 122 1638 7181 122 1638 minecraft:polished_andesite",
+        "fill 7171 122 1639 7181 122 1639 minecraft:polished_andesite",
+        "fill 7171 122 1640 7181 122 1640 minecraft:polished_andesite",
+        "fill 7172 122 1641 7180 122 1641 minecraft:polished_andesite",
+        "fill 7173 122 1642 7179 122 1642 minecraft:polished_andesite",
+        "fill 7174 122 1643 7178 122 1643 minecraft:polished_andesite",
+        "fill 7174 123 1633 7178 133 1633 minecraft:stone_bricks",
+        "fill 7173 123 1634 7173 133 1634 minecraft:stone_bricks",
+        "fill 7179 123 1634 7179 133 1634 minecraft:stone_bricks",
+        "fill 7172 123 1635 7172 133 1635 minecraft:stone_bricks",
+        "fill 7180 123 1635 7180 133 1635 minecraft:stone_bricks",
+        "fill 7171 123 1636 7171 133 1636 minecraft:stone_bricks",
+        "fill 7181 123 1636 7181 133 1636 minecraft:stone_bricks",
+        "fill 7171 123 1637 7171 133 1637 minecraft:stone_bricks",
+        "fill 7181 123 1637 7181 133 1637 minecraft:stone_bricks",
+        "fill 7171 123 1638 7171 133 1638 minecraft:stone_bricks",
+        "fill 7181 123 1638 7181 133 1638 minecraft:stone_bricks",
+        "fill 7171 123 1639 7171 133 1639 minecraft:stone_bricks",
+        "fill 7181 123 1639 7181 133 1639 minecraft:stone_bricks",
+        "fill 7171 123 1640 7171 133 1640 minecraft:stone_bricks",
+        "fill 7181 123 1640 7181 133 1640 minecraft:stone_bricks",
+        "fill 7172 123 1641 7172 133 1641 minecraft:stone_bricks",
+        "fill 7180 123 1641 7180 133 1641 minecraft:stone_bricks",
+        "fill 7173 123 1642 7173 133 1642 minecraft:stone_bricks",
+        "fill 7179 123 1642 7179 133 1642 minecraft:stone_bricks",
+        "fill 7174 123 1643 7178 133 1643 minecraft:stone_bricks",
+        "fill 7174 128 1633 7178 128 1633 minecraft:polished_deepslate",
+        "fill 7173 128 1634 7173 128 1634 minecraft:polished_deepslate",
+        "fill 7179 128 1634 7179 128 1634 minecraft:polished_deepslate",
+        "fill 7172 128 1635 7172 128 1635 minecraft:polished_deepslate",
+        "fill 7180 128 1635 7180 128 1635 minecraft:polished_deepslate",
+        "fill 7171 128 1636 7171 128 1636 minecraft:polished_deepslate",
+        "fill 7181 128 1636 7181 128 1636 minecraft:polished_deepslate",
+        "fill 7171 128 1637 7171 128 1637 minecraft:polished_deepslate",
+        "fill 7181 128 1637 7181 128 1637 minecraft:polished_deepslate",
+        "fill 7171 128 1638 7171 128 1638 minecraft:polished_deepslate",
+        "fill 7181 128 1638 7181 128 1638 minecraft:polished_deepslate",
+        "fill 7171 128 1639 7171 128 1639 minecraft:polished_deepslate",
+        "fill 7181 128 1639 7181 128 1639 minecraft:polished_deepslate",
+        "fill 7171 128 1640 7171 128 1640 minecraft:polished_deepslate",
+        "fill 7181 128 1640 7181 128 1640 minecraft:polished_deepslate",
+        "fill 7172 128 1641 7172 128 1641 minecraft:polished_deepslate",
+        "fill 7180 128 1641 7180 128 1641 minecraft:polished_deepslate",
+        "fill 7173 128 1642 7173 128 1642 minecraft:polished_deepslate",
+        "fill 7179 128 1642 7179 128 1642 minecraft:polished_deepslate",
+        "fill 7174 128 1643 7178 128 1643 minecraft:polished_deepslate",
+        "fill 7174 134 1633 7178 134 1633 minecraft:spruce_planks",
+        "fill 7173 134 1634 7179 134 1634 minecraft:spruce_planks",
+        "fill 7172 134 1635 7180 134 1635 minecraft:spruce_planks",
+        "fill 7171 134 1636 7181 134 1636 minecraft:spruce_planks",
+        "fill 7171 134 1637 7181 134 1637 minecraft:spruce_planks",
+        "fill 7171 134 1638 7181 134 1638 minecraft:spruce_planks",
+        "fill 7171 134 1639 7181 134 1639 minecraft:spruce_planks",
+        "fill 7171 134 1640 7181 134 1640 minecraft:spruce_planks",
+        "fill 7172 134 1641 7180 134 1641 minecraft:spruce_planks",
+        "fill 7173 134 1642 7179 134 1642 minecraft:spruce_planks",
+        "fill 7174 134 1643 7178 134 1643 minecraft:spruce_planks",
+        "fill 7174 135 1633 7178 135 1633 minecraft:waxed_oxidized_cut_copper",
+        "fill 7173 135 1634 7173 135 1634 minecraft:waxed_oxidized_cut_copper",
+        "fill 7179 135 1634 7179 135 1634 minecraft:waxed_oxidized_cut_copper",
+        "fill 7172 135 1635 7172 135 1635 minecraft:waxed_oxidized_cut_copper",
+        "fill 7180 135 1635 7180 135 1635 minecraft:waxed_oxidized_cut_copper",
+        "fill 7171 135 1636 7171 135 1636 minecraft:waxed_oxidized_cut_copper",
+        "fill 7181 135 1636 7181 135 1636 minecraft:waxed_oxidized_cut_copper",
+        "fill 7171 135 1637 7171 135 1637 minecraft:waxed_oxidized_cut_copper",
+        "fill 7181 135 1637 7181 135 1637 minecraft:waxed_oxidized_cut_copper",
+        "fill 7171 135 1638 7171 135 1638 minecraft:waxed_oxidized_cut_copper",
+        "fill 7181 135 1638 7181 135 1638 minecraft:waxed_oxidized_cut_copper",
+        "fill 7171 135 1639 7171 135 1639 minecraft:waxed_oxidized_cut_copper",
+        "fill 7181 135 1639 7181 135 1639 minecraft:waxed_oxidized_cut_copper",
+        "fill 7171 135 1640 7171 135 1640 minecraft:waxed_oxidized_cut_copper",
+        "fill 7181 135 1640 7181 135 1640 minecraft:waxed_oxidized_cut_copper",
+        "fill 7172 135 1641 7172 135 1641 minecraft:waxed_oxidized_cut_copper",
+        "fill 7180 135 1641 7180 135 1641 minecraft:waxed_oxidized_cut_copper",
+        "fill 7173 135 1642 7173 135 1642 minecraft:waxed_oxidized_cut_copper",
+        "fill 7179 135 1642 7179 135 1642 minecraft:waxed_oxidized_cut_copper",
+        "fill 7174 135 1643 7178 135 1643 minecraft:waxed_oxidized_cut_copper",
+        "fill 7174 136 1633 7178 136 1633 minecraft:glass",
+        "fill 7173 136 1634 7173 136 1634 minecraft:glass",
+        "fill 7179 136 1634 7179 136 1634 minecraft:glass",
+        "fill 7172 136 1635 7172 136 1635 minecraft:glass",
+        "fill 7180 136 1635 7180 136 1635 minecraft:glass",
+        "fill 7171 136 1636 7171 136 1636 minecraft:glass",
+        "fill 7181 136 1636 7181 136 1636 minecraft:glass",
+        "fill 7171 136 1637 7171 136 1637 minecraft:glass",
+        "fill 7181 136 1637 7181 136 1637 minecraft:glass",
+        "fill 7171 136 1638 7171 136 1638 minecraft:glass",
+        "fill 7181 136 1638 7181 136 1638 minecraft:glass",
+        "fill 7171 136 1639 7171 136 1639 minecraft:glass",
+        "fill 7181 136 1639 7181 136 1639 minecraft:glass",
+        "fill 7171 136 1640 7171 136 1640 minecraft:glass",
+        "fill 7181 136 1640 7181 136 1640 minecraft:glass",
+        "fill 7172 136 1641 7172 136 1641 minecraft:glass",
+        "fill 7180 136 1641 7180 136 1641 minecraft:glass",
+        "fill 7173 136 1642 7173 136 1642 minecraft:glass",
+        "fill 7179 136 1642 7179 136 1642 minecraft:glass",
+        "fill 7174 136 1643 7178 136 1643 minecraft:glass",
+        "fill 7174 137 1633 7178 137 1633 minecraft:glass",
+        "fill 7173 137 1634 7173 137 1634 minecraft:glass",
+        "fill 7179 137 1634 7179 137 1634 minecraft:glass",
+        "fill 7172 137 1635 7172 137 1635 minecraft:glass",
+        "fill 7180 137 1635 7180 137 1635 minecraft:glass",
+        "fill 7171 137 1636 7171 137 1636 minecraft:glass",
+        "fill 7181 137 1636 7181 137 1636 minecraft:glass",
+        "fill 7171 137 1637 7171 137 1637 minecraft:glass",
+        "fill 7181 137 1637 7181 137 1637 minecraft:glass",
+        "fill 7171 137 1638 7171 137 1638 minecraft:glass",
+        "fill 7181 137 1638 7181 137 1638 minecraft:glass",
+        "fill 7171 137 1639 7171 137 1639 minecraft:glass",
+        "fill 7181 137 1639 7181 137 1639 minecraft:glass",
+        "fill 7171 137 1640 7171 137 1640 minecraft:glass",
+        "fill 7181 137 1640 7181 137 1640 minecraft:glass",
+        "fill 7172 137 1641 7172 137 1641 minecraft:glass",
+        "fill 7180 137 1641 7180 137 1641 minecraft:glass",
+        "fill 7173 137 1642 7173 137 1642 minecraft:glass",
+        "fill 7179 137 1642 7179 137 1642 minecraft:glass",
+        "fill 7174 137 1643 7178 137 1643 minecraft:glass",
+        "fill 7174 138 1634 7178 138 1634 minecraft:glass",
+        "fill 7173 138 1635 7174 138 1635 minecraft:glass",
+        "fill 7178 138 1635 7179 138 1635 minecraft:glass",
+        "fill 7172 138 1636 7173 138 1636 minecraft:glass",
+        "fill 7179 138 1636 7180 138 1636 minecraft:glass",
+        "fill 7172 138 1637 7172 138 1637 minecraft:glass",
+        "fill 7180 138 1637 7180 138 1637 minecraft:glass",
+        "fill 7172 138 1638 7172 138 1638 minecraft:glass",
+        "fill 7180 138 1638 7180 138 1638 minecraft:glass",
+        "fill 7172 138 1639 7172 138 1639 minecraft:glass",
+        "fill 7180 138 1639 7180 138 1639 minecraft:glass",
+        "fill 7172 138 1640 7173 138 1640 minecraft:glass",
+        "fill 7179 138 1640 7180 138 1640 minecraft:glass",
+        "fill 7173 138 1641 7174 138 1641 minecraft:glass",
+        "fill 7178 138 1641 7179 138 1641 minecraft:glass",
+        "fill 7174 138 1642 7178 138 1642 minecraft:glass",
+        "fill 7175 139 1635 7177 139 1635 minecraft:glass",
+        "fill 7174 139 1636 7174 139 1636 minecraft:glass",
+        "fill 7178 139 1636 7178 139 1636 minecraft:glass",
+        "fill 7173 139 1637 7173 139 1637 minecraft:glass",
+        "fill 7179 139 1637 7179 139 1637 minecraft:glass",
+        "fill 7173 139 1638 7173 139 1638 minecraft:glass",
+        "fill 7179 139 1638 7179 139 1638 minecraft:glass",
+        "fill 7173 139 1639 7173 139 1639 minecraft:glass",
+        "fill 7179 139 1639 7179 139 1639 minecraft:glass",
+        "fill 7174 139 1640 7174 139 1640 minecraft:glass",
+        "fill 7178 139 1640 7178 139 1640 minecraft:glass",
+        "fill 7175 139 1641 7177 139 1641 minecraft:glass",
+        "fill 7175 140 1637 7177 140 1637 minecraft:glass",
+        "fill 7175 140 1638 7175 140 1638 minecraft:glass",
+        "fill 7177 140 1638 7177 140 1638 minecraft:glass",
+        "fill 7175 140 1639 7177 140 1639 minecraft:glass",
+        "setblock 7176 141 1638 minecraft:glass",
+        "setblock 7176 122 1638 minecraft:pearlescent_froglight",
+        "setblock 7176 134 1638 minecraft:pearlescent_froglight",
+        "setblock 7172 123 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 124 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 125 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 126 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 127 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 128 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 129 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 130 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 131 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 132 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 133 1638 minecraft:ladder[facing=east]",
+        "setblock 7172 134 1638 minecraft:air",
+        "setblock 7181 123 1638 minecraft:air",
+        "setblock 7181 124 1638 minecraft:air",
+        "setblock 7181 123 1638 minecraft:spruce_door[facing=west,half=lower]",
+        "setblock 7181 124 1638 minecraft:spruce_door[facing=west,half=upper]"
+      ]
+    },
+    {
+      "id": "mining_portal",
+      "settlement": "mining_town",
+      "kind": "earthwork",
+      "cell": "F7",
+      "status": "planned",
+      "chosen_because": "the adit portal at the head of the mine spur, barred: the workings are the volume build (data/towns.json)",
+      "commands": [
+        "# Mining Town adit portal: a cobble face and a hump of stone into the flank, a timber frame, barred (authored)",
+        "fill 6729 141 5810 6741 149 5810 minecraft:cobblestone",
+        "fill 6729 141 5811 6741 148 5818 minecraft:stone",
+        "fill 6734 144 5810 6736 146 5816 minecraft:air",
+        "fill 6734 143 5810 6736 143 5816 minecraft:gravel",
+        "fill 6733 144 5809 6733 146 5809 minecraft:stripped_dark_oak_log",
+        "fill 6737 144 5809 6737 146 5809 minecraft:stripped_dark_oak_log",
+        "fill 6733 147 5809 6737 147 5809 minecraft:stripped_dark_oak_log[axis=x]",
+        "fill 6734 144 5812 6736 146 5812 minecraft:iron_bars",
+        "setblock 6733 148 5809 minecraft:lantern",
+        "setblock 6737 148 5809 minecraft:lantern"
+      ]
+    },
+    {
+      "id": "tea_terraces",
+      "settlement": "tea_town",
+      "kind": "earthwork",
+      "cell": "D3",
+      "status": "planned",
+      "chosen_because": "the tea rows on the east-facing slope below the tea house",
+      "commands": [
+        "# tea town: tea rows stepped down the east-facing slope, a coarse-dirt walk and two rows of azalea per 4-block band (authored)",
+        "fill 2664 112 3500 2667 129 3519 minecraft:air replace #minecraft:logs",
+        "fill 2664 112 3500 2667 129 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2664 112 3500 2667 116 3519 minecraft:air",
+        "fill 2664 108 3500 2667 110 3519 minecraft:dirt",
+        "fill 2664 111 3500 2667 111 3519 minecraft:grass_block",
+        "fill 2664 111 3500 2664 111 3519 minecraft:coarse_dirt",
+        "fill 2665 112 3500 2666 112 3519 minecraft:azalea",
+        "fill 2664 112 3520 2667 129 3539 minecraft:air replace #minecraft:logs",
+        "fill 2664 112 3520 2667 129 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2664 112 3520 2667 116 3539 minecraft:air",
+        "fill 2664 108 3520 2667 110 3539 minecraft:dirt",
+        "fill 2664 111 3520 2667 111 3539 minecraft:grass_block",
+        "fill 2664 111 3520 2664 111 3539 minecraft:coarse_dirt",
+        "fill 2665 112 3520 2666 112 3539 minecraft:azalea",
+        "fill 2664 112 3540 2667 129 3559 minecraft:air replace #minecraft:logs",
+        "fill 2664 112 3540 2667 129 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2664 112 3540 2667 116 3559 minecraft:air",
+        "fill 2664 108 3540 2667 110 3559 minecraft:dirt",
+        "fill 2664 111 3540 2667 111 3559 minecraft:grass_block",
+        "fill 2664 111 3540 2664 111 3559 minecraft:coarse_dirt",
+        "fill 2665 112 3540 2666 112 3559 minecraft:azalea",
+        "fill 2664 112 3560 2667 129 3579 minecraft:air replace #minecraft:logs",
+        "fill 2664 112 3560 2667 129 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2664 112 3560 2667 116 3579 minecraft:air",
+        "fill 2664 108 3560 2667 110 3579 minecraft:dirt",
+        "fill 2664 111 3560 2667 111 3579 minecraft:grass_block",
+        "fill 2664 111 3560 2664 111 3579 minecraft:coarse_dirt",
+        "fill 2665 112 3560 2666 112 3579 minecraft:azalea",
+        "fill 2664 112 3580 2667 129 3599 minecraft:air replace #minecraft:logs",
+        "fill 2664 112 3580 2667 129 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2664 112 3580 2667 116 3599 minecraft:air",
+        "fill 2664 108 3580 2667 110 3599 minecraft:dirt",
+        "fill 2664 111 3580 2667 111 3599 minecraft:grass_block",
+        "fill 2664 111 3580 2664 111 3599 minecraft:coarse_dirt",
+        "fill 2665 112 3580 2666 112 3599 minecraft:azalea",
+        "fill 2668 112 3500 2671 129 3519 minecraft:air replace #minecraft:logs",
+        "fill 2668 112 3500 2671 129 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2668 112 3500 2671 116 3519 minecraft:air",
+        "fill 2668 108 3500 2671 110 3519 minecraft:dirt",
+        "fill 2668 111 3500 2671 111 3519 minecraft:grass_block",
+        "fill 2668 111 3500 2668 111 3519 minecraft:coarse_dirt",
+        "fill 2669 112 3500 2670 112 3519 minecraft:azalea",
+        "fill 2668 112 3520 2671 129 3539 minecraft:air replace #minecraft:logs",
+        "fill 2668 112 3520 2671 129 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2668 112 3520 2671 116 3539 minecraft:air",
+        "fill 2668 108 3520 2671 110 3539 minecraft:dirt",
+        "fill 2668 111 3520 2671 111 3539 minecraft:grass_block",
+        "fill 2668 111 3520 2668 111 3539 minecraft:coarse_dirt",
+        "fill 2669 112 3520 2670 112 3539 minecraft:azalea",
+        "fill 2668 112 3540 2671 129 3559 minecraft:air replace #minecraft:logs",
+        "fill 2668 112 3540 2671 129 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2668 112 3540 2671 116 3559 minecraft:air",
+        "fill 2668 108 3540 2671 110 3559 minecraft:dirt",
+        "fill 2668 111 3540 2671 111 3559 minecraft:grass_block",
+        "fill 2668 111 3540 2668 111 3559 minecraft:coarse_dirt",
+        "fill 2669 112 3540 2670 112 3559 minecraft:azalea",
+        "fill 2668 112 3560 2671 129 3579 minecraft:air replace #minecraft:logs",
+        "fill 2668 112 3560 2671 129 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2668 112 3560 2671 116 3579 minecraft:air",
+        "fill 2668 108 3560 2671 110 3579 minecraft:dirt",
+        "fill 2668 111 3560 2671 111 3579 minecraft:grass_block",
+        "fill 2668 111 3560 2668 111 3579 minecraft:coarse_dirt",
+        "fill 2669 112 3560 2670 112 3579 minecraft:azalea",
+        "fill 2668 112 3580 2671 129 3599 minecraft:air replace #minecraft:logs",
+        "fill 2668 112 3580 2671 129 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2668 112 3580 2671 116 3599 minecraft:air",
+        "fill 2668 108 3580 2671 110 3599 minecraft:dirt",
+        "fill 2668 111 3580 2671 111 3599 minecraft:grass_block",
+        "fill 2668 111 3580 2668 111 3599 minecraft:coarse_dirt",
+        "fill 2669 112 3580 2670 112 3599 minecraft:azalea",
+        "fill 2672 111 3500 2675 128 3519 minecraft:air replace #minecraft:logs",
+        "fill 2672 111 3500 2675 128 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2672 111 3500 2675 115 3519 minecraft:air",
+        "fill 2672 107 3500 2675 109 3519 minecraft:dirt",
+        "fill 2672 110 3500 2675 110 3519 minecraft:grass_block",
+        "fill 2672 110 3500 2672 110 3519 minecraft:coarse_dirt",
+        "fill 2673 111 3500 2674 111 3519 minecraft:azalea",
+        "fill 2672 111 3520 2675 128 3539 minecraft:air replace #minecraft:logs",
+        "fill 2672 111 3520 2675 128 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2672 111 3520 2675 115 3539 minecraft:air",
+        "fill 2672 107 3520 2675 109 3539 minecraft:dirt",
+        "fill 2672 110 3520 2675 110 3539 minecraft:grass_block",
+        "fill 2672 110 3520 2672 110 3539 minecraft:coarse_dirt",
+        "fill 2673 111 3520 2674 111 3539 minecraft:azalea",
+        "fill 2672 111 3540 2675 128 3559 minecraft:air replace #minecraft:logs",
+        "fill 2672 111 3540 2675 128 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2672 111 3540 2675 115 3559 minecraft:air",
+        "fill 2672 107 3540 2675 109 3559 minecraft:dirt",
+        "fill 2672 110 3540 2675 110 3559 minecraft:grass_block",
+        "fill 2672 110 3540 2672 110 3559 minecraft:coarse_dirt",
+        "fill 2673 111 3540 2674 111 3559 minecraft:azalea",
+        "fill 2672 111 3560 2675 128 3579 minecraft:air replace #minecraft:logs",
+        "fill 2672 111 3560 2675 128 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2672 111 3560 2675 115 3579 minecraft:air",
+        "fill 2672 107 3560 2675 109 3579 minecraft:dirt",
+        "fill 2672 110 3560 2675 110 3579 minecraft:grass_block",
+        "fill 2672 110 3560 2672 110 3579 minecraft:coarse_dirt",
+        "fill 2673 111 3560 2674 111 3579 minecraft:azalea",
+        "fill 2672 111 3580 2675 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2672 111 3580 2675 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2672 111 3580 2675 115 3599 minecraft:air",
+        "fill 2672 107 3580 2675 109 3599 minecraft:dirt",
+        "fill 2672 110 3580 2675 110 3599 minecraft:grass_block",
+        "fill 2672 110 3580 2672 110 3599 minecraft:coarse_dirt",
+        "fill 2673 111 3580 2674 111 3599 minecraft:azalea",
+        "fill 2676 111 3500 2679 128 3519 minecraft:air replace #minecraft:logs",
+        "fill 2676 111 3500 2679 128 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2676 111 3500 2679 115 3519 minecraft:air",
+        "fill 2676 107 3500 2679 109 3519 minecraft:dirt",
+        "fill 2676 110 3500 2679 110 3519 minecraft:grass_block",
+        "fill 2676 110 3500 2676 110 3519 minecraft:coarse_dirt",
+        "fill 2677 111 3500 2678 111 3519 minecraft:azalea",
+        "fill 2676 111 3520 2679 128 3539 minecraft:air replace #minecraft:logs",
+        "fill 2676 111 3520 2679 128 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2676 111 3520 2679 115 3539 minecraft:air",
+        "fill 2676 107 3520 2679 109 3539 minecraft:dirt",
+        "fill 2676 110 3520 2679 110 3539 minecraft:grass_block",
+        "fill 2676 110 3520 2676 110 3539 minecraft:coarse_dirt",
+        "fill 2677 111 3520 2678 111 3539 minecraft:azalea",
+        "fill 2676 111 3540 2679 128 3559 minecraft:air replace #minecraft:logs",
+        "fill 2676 111 3540 2679 128 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2676 111 3540 2679 115 3559 minecraft:air",
+        "fill 2676 107 3540 2679 109 3559 minecraft:dirt",
+        "fill 2676 110 3540 2679 110 3559 minecraft:grass_block",
+        "fill 2676 110 3540 2676 110 3559 minecraft:coarse_dirt",
+        "fill 2677 111 3540 2678 111 3559 minecraft:azalea",
+        "fill 2676 111 3560 2679 128 3579 minecraft:air replace #minecraft:logs",
+        "fill 2676 111 3560 2679 128 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2676 111 3560 2679 115 3579 minecraft:air",
+        "fill 2676 107 3560 2679 109 3579 minecraft:dirt",
+        "fill 2676 110 3560 2679 110 3579 minecraft:grass_block",
+        "fill 2676 110 3560 2676 110 3579 minecraft:coarse_dirt",
+        "fill 2677 111 3560 2678 111 3579 minecraft:azalea",
+        "fill 2676 111 3580 2679 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2676 111 3580 2679 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2676 111 3580 2679 115 3599 minecraft:air",
+        "fill 2676 107 3580 2679 109 3599 minecraft:dirt",
+        "fill 2676 110 3580 2679 110 3599 minecraft:grass_block",
+        "fill 2676 110 3580 2676 110 3599 minecraft:coarse_dirt",
+        "fill 2677 111 3580 2678 111 3599 minecraft:azalea",
+        "fill 2680 111 3500 2683 128 3519 minecraft:air replace #minecraft:logs",
+        "fill 2680 111 3500 2683 128 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2680 111 3500 2683 115 3519 minecraft:air",
+        "fill 2680 107 3500 2683 109 3519 minecraft:dirt",
+        "fill 2680 110 3500 2683 110 3519 minecraft:grass_block",
+        "fill 2680 110 3500 2680 110 3519 minecraft:coarse_dirt",
+        "fill 2681 111 3500 2682 111 3519 minecraft:azalea",
+        "fill 2680 111 3520 2683 128 3539 minecraft:air replace #minecraft:logs",
+        "fill 2680 111 3520 2683 128 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2680 111 3520 2683 115 3539 minecraft:air",
+        "fill 2680 107 3520 2683 109 3539 minecraft:dirt",
+        "fill 2680 110 3520 2683 110 3539 minecraft:grass_block",
+        "fill 2680 110 3520 2680 110 3539 minecraft:coarse_dirt",
+        "fill 2681 111 3520 2682 111 3539 minecraft:azalea",
+        "fill 2680 111 3540 2683 128 3559 minecraft:air replace #minecraft:logs",
+        "fill 2680 111 3540 2683 128 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2680 111 3540 2683 115 3559 minecraft:air",
+        "fill 2680 107 3540 2683 109 3559 minecraft:dirt",
+        "fill 2680 110 3540 2683 110 3559 minecraft:grass_block",
+        "fill 2680 110 3540 2680 110 3559 minecraft:coarse_dirt",
+        "fill 2681 111 3540 2682 111 3559 minecraft:azalea",
+        "fill 2680 111 3560 2683 128 3579 minecraft:air replace #minecraft:logs",
+        "fill 2680 111 3560 2683 128 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2680 111 3560 2683 115 3579 minecraft:air",
+        "fill 2680 107 3560 2683 109 3579 minecraft:dirt",
+        "fill 2680 110 3560 2683 110 3579 minecraft:grass_block",
+        "fill 2680 110 3560 2680 110 3579 minecraft:coarse_dirt",
+        "fill 2681 111 3560 2682 111 3579 minecraft:azalea",
+        "fill 2680 111 3580 2683 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2680 111 3580 2683 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2680 111 3580 2683 115 3599 minecraft:air",
+        "fill 2680 107 3580 2683 109 3599 minecraft:dirt",
+        "fill 2680 110 3580 2683 110 3599 minecraft:grass_block",
+        "fill 2680 110 3580 2680 110 3599 minecraft:coarse_dirt",
+        "fill 2681 111 3580 2682 111 3599 minecraft:azalea",
+        "fill 2684 110 3500 2687 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2684 110 3500 2687 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2684 110 3500 2687 114 3519 minecraft:air",
+        "fill 2684 106 3500 2687 108 3519 minecraft:dirt",
+        "fill 2684 109 3500 2687 109 3519 minecraft:grass_block",
+        "fill 2684 109 3500 2684 109 3519 minecraft:coarse_dirt",
+        "fill 2685 110 3500 2686 110 3519 minecraft:azalea",
+        "fill 2684 110 3520 2687 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2684 110 3520 2687 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2684 110 3520 2687 114 3539 minecraft:air",
+        "fill 2684 106 3520 2687 108 3539 minecraft:dirt",
+        "fill 2684 109 3520 2687 109 3539 minecraft:grass_block",
+        "fill 2684 109 3520 2684 109 3539 minecraft:coarse_dirt",
+        "fill 2685 110 3520 2686 110 3539 minecraft:azalea",
+        "fill 2684 111 3540 2687 128 3559 minecraft:air replace #minecraft:logs",
+        "fill 2684 111 3540 2687 128 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2684 111 3540 2687 115 3559 minecraft:air",
+        "fill 2684 107 3540 2687 109 3559 minecraft:dirt",
+        "fill 2684 110 3540 2687 110 3559 minecraft:grass_block",
+        "fill 2684 110 3540 2684 110 3559 minecraft:coarse_dirt",
+        "fill 2685 111 3540 2686 111 3559 minecraft:azalea",
+        "fill 2684 111 3560 2687 128 3579 minecraft:air replace #minecraft:logs",
+        "fill 2684 111 3560 2687 128 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2684 111 3560 2687 115 3579 minecraft:air",
+        "fill 2684 107 3560 2687 109 3579 minecraft:dirt",
+        "fill 2684 110 3560 2687 110 3579 minecraft:grass_block",
+        "fill 2684 110 3560 2684 110 3579 minecraft:coarse_dirt",
+        "fill 2685 111 3560 2686 111 3579 minecraft:azalea",
+        "fill 2684 111 3580 2687 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2684 111 3580 2687 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2684 111 3580 2687 115 3599 minecraft:air",
+        "fill 2684 107 3580 2687 109 3599 minecraft:dirt",
+        "fill 2684 110 3580 2687 110 3599 minecraft:grass_block",
+        "fill 2684 110 3580 2684 110 3599 minecraft:coarse_dirt",
+        "fill 2685 111 3580 2686 111 3599 minecraft:azalea",
+        "fill 2688 110 3500 2691 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2688 110 3500 2691 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2688 110 3500 2691 114 3519 minecraft:air",
+        "fill 2688 106 3500 2691 108 3519 minecraft:dirt",
+        "fill 2688 109 3500 2691 109 3519 minecraft:grass_block",
+        "fill 2688 109 3500 2688 109 3519 minecraft:coarse_dirt",
+        "fill 2689 110 3500 2690 110 3519 minecraft:azalea",
+        "fill 2688 110 3520 2691 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2688 110 3520 2691 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2688 110 3520 2691 114 3539 minecraft:air",
+        "fill 2688 106 3520 2691 108 3539 minecraft:dirt",
+        "fill 2688 109 3520 2691 109 3539 minecraft:grass_block",
+        "fill 2688 109 3520 2688 109 3539 minecraft:coarse_dirt",
+        "fill 2689 110 3520 2690 110 3539 minecraft:azalea",
+        "fill 2688 110 3540 2691 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2688 110 3540 2691 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2688 110 3540 2691 114 3559 minecraft:air",
+        "fill 2688 106 3540 2691 108 3559 minecraft:dirt",
+        "fill 2688 109 3540 2691 109 3559 minecraft:grass_block",
+        "fill 2688 109 3540 2688 109 3559 minecraft:coarse_dirt",
+        "fill 2689 110 3540 2690 110 3559 minecraft:azalea",
+        "fill 2688 111 3560 2691 128 3579 minecraft:air replace #minecraft:logs",
+        "fill 2688 111 3560 2691 128 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2688 111 3560 2691 115 3579 minecraft:air",
+        "fill 2688 107 3560 2691 109 3579 minecraft:dirt",
+        "fill 2688 110 3560 2691 110 3579 minecraft:grass_block",
+        "fill 2688 110 3560 2688 110 3579 minecraft:coarse_dirt",
+        "fill 2689 111 3560 2690 111 3579 minecraft:azalea",
+        "fill 2688 111 3580 2691 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2688 111 3580 2691 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2688 111 3580 2691 115 3599 minecraft:air",
+        "fill 2688 107 3580 2691 109 3599 minecraft:dirt",
+        "fill 2688 110 3580 2691 110 3599 minecraft:grass_block",
+        "fill 2688 110 3580 2688 110 3599 minecraft:coarse_dirt",
+        "fill 2689 111 3580 2690 111 3599 minecraft:azalea",
+        "fill 2692 110 3500 2695 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2692 110 3500 2695 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2692 110 3500 2695 114 3519 minecraft:air",
+        "fill 2692 106 3500 2695 108 3519 minecraft:dirt",
+        "fill 2692 109 3500 2695 109 3519 minecraft:grass_block",
+        "fill 2692 109 3500 2692 109 3519 minecraft:coarse_dirt",
+        "fill 2693 110 3500 2694 110 3519 minecraft:azalea",
+        "fill 2692 110 3520 2695 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2692 110 3520 2695 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2692 110 3520 2695 114 3539 minecraft:air",
+        "fill 2692 106 3520 2695 108 3539 minecraft:dirt",
+        "fill 2692 109 3520 2695 109 3539 minecraft:grass_block",
+        "fill 2692 109 3520 2692 109 3539 minecraft:coarse_dirt",
+        "fill 2693 110 3520 2694 110 3539 minecraft:azalea",
+        "fill 2692 110 3540 2695 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2692 110 3540 2695 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2692 110 3540 2695 114 3559 minecraft:air",
+        "fill 2692 106 3540 2695 108 3559 minecraft:dirt",
+        "fill 2692 109 3540 2695 109 3559 minecraft:grass_block",
+        "fill 2692 109 3540 2692 109 3559 minecraft:coarse_dirt",
+        "fill 2693 110 3540 2694 110 3559 minecraft:azalea",
+        "fill 2692 111 3560 2695 128 3579 minecraft:air replace #minecraft:logs",
+        "fill 2692 111 3560 2695 128 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2692 111 3560 2695 115 3579 minecraft:air",
+        "fill 2692 107 3560 2695 109 3579 minecraft:dirt",
+        "fill 2692 110 3560 2695 110 3579 minecraft:grass_block",
+        "fill 2692 110 3560 2692 110 3579 minecraft:coarse_dirt",
+        "fill 2693 111 3560 2694 111 3579 minecraft:azalea",
+        "fill 2692 111 3580 2695 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2692 111 3580 2695 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2692 111 3580 2695 115 3599 minecraft:air",
+        "fill 2692 107 3580 2695 109 3599 minecraft:dirt",
+        "fill 2692 110 3580 2695 110 3599 minecraft:grass_block",
+        "fill 2692 110 3580 2692 110 3599 minecraft:coarse_dirt",
+        "fill 2693 111 3580 2694 111 3599 minecraft:azalea",
+        "fill 2696 110 3500 2699 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2696 110 3500 2699 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2696 110 3500 2699 114 3519 minecraft:air",
+        "fill 2696 106 3500 2699 108 3519 minecraft:dirt",
+        "fill 2696 109 3500 2699 109 3519 minecraft:grass_block",
+        "fill 2696 109 3500 2696 109 3519 minecraft:coarse_dirt",
+        "fill 2697 110 3500 2698 110 3519 minecraft:azalea",
+        "fill 2696 110 3520 2699 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2696 110 3520 2699 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2696 110 3520 2699 114 3539 minecraft:air",
+        "fill 2696 106 3520 2699 108 3539 minecraft:dirt",
+        "fill 2696 109 3520 2699 109 3539 minecraft:grass_block",
+        "fill 2696 109 3520 2696 109 3539 minecraft:coarse_dirt",
+        "fill 2697 110 3520 2698 110 3539 minecraft:azalea",
+        "fill 2696 110 3540 2699 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2696 110 3540 2699 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2696 110 3540 2699 114 3559 minecraft:air",
+        "fill 2696 106 3540 2699 108 3559 minecraft:dirt",
+        "fill 2696 109 3540 2699 109 3559 minecraft:grass_block",
+        "fill 2696 109 3540 2696 109 3559 minecraft:coarse_dirt",
+        "fill 2697 110 3540 2698 110 3559 minecraft:azalea",
+        "fill 2696 110 3560 2699 127 3579 minecraft:air replace #minecraft:logs",
+        "fill 2696 110 3560 2699 127 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2696 110 3560 2699 114 3579 minecraft:air",
+        "fill 2696 106 3560 2699 108 3579 minecraft:dirt",
+        "fill 2696 109 3560 2699 109 3579 minecraft:grass_block",
+        "fill 2696 109 3560 2696 109 3579 minecraft:coarse_dirt",
+        "fill 2697 110 3560 2698 110 3579 minecraft:azalea",
+        "fill 2696 111 3580 2699 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2696 111 3580 2699 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2696 111 3580 2699 115 3599 minecraft:air",
+        "fill 2696 107 3580 2699 109 3599 minecraft:dirt",
+        "fill 2696 110 3580 2699 110 3599 minecraft:grass_block",
+        "fill 2696 110 3580 2696 110 3599 minecraft:coarse_dirt",
+        "fill 2697 111 3580 2698 111 3599 minecraft:azalea",
+        "fill 2700 110 3500 2703 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2700 110 3500 2703 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2700 110 3500 2703 114 3519 minecraft:air",
+        "fill 2700 106 3500 2703 108 3519 minecraft:dirt",
+        "fill 2700 109 3500 2703 109 3519 minecraft:grass_block",
+        "fill 2700 109 3500 2700 109 3519 minecraft:coarse_dirt",
+        "fill 2701 110 3500 2702 110 3519 minecraft:azalea",
+        "fill 2700 110 3520 2703 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2700 110 3520 2703 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2700 110 3520 2703 114 3539 minecraft:air",
+        "fill 2700 106 3520 2703 108 3539 minecraft:dirt",
+        "fill 2700 109 3520 2703 109 3539 minecraft:grass_block",
+        "fill 2700 109 3520 2700 109 3539 minecraft:coarse_dirt",
+        "fill 2701 110 3520 2702 110 3539 minecraft:azalea",
+        "fill 2700 110 3540 2703 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2700 110 3540 2703 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2700 110 3540 2703 114 3559 minecraft:air",
+        "fill 2700 106 3540 2703 108 3559 minecraft:dirt",
+        "fill 2700 109 3540 2703 109 3559 minecraft:grass_block",
+        "fill 2700 109 3540 2700 109 3559 minecraft:coarse_dirt",
+        "fill 2701 110 3540 2702 110 3559 minecraft:azalea",
+        "fill 2700 110 3560 2703 127 3579 minecraft:air replace #minecraft:logs",
+        "fill 2700 110 3560 2703 127 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2700 110 3560 2703 114 3579 minecraft:air",
+        "fill 2700 106 3560 2703 108 3579 minecraft:dirt",
+        "fill 2700 109 3560 2703 109 3579 minecraft:grass_block",
+        "fill 2700 109 3560 2700 109 3579 minecraft:coarse_dirt",
+        "fill 2701 110 3560 2702 110 3579 minecraft:azalea",
+        "fill 2700 111 3580 2703 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2700 111 3580 2703 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2700 111 3580 2703 115 3599 minecraft:air",
+        "fill 2700 107 3580 2703 109 3599 minecraft:dirt",
+        "fill 2700 110 3580 2703 110 3599 minecraft:grass_block",
+        "fill 2700 110 3580 2700 110 3599 minecraft:coarse_dirt",
+        "fill 2701 111 3580 2702 111 3599 minecraft:azalea",
+        "fill 2704 110 3500 2707 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2704 110 3500 2707 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2704 110 3500 2707 114 3519 minecraft:air",
+        "fill 2704 106 3500 2707 108 3519 minecraft:dirt",
+        "fill 2704 109 3500 2707 109 3519 minecraft:grass_block",
+        "fill 2704 109 3500 2704 109 3519 minecraft:coarse_dirt",
+        "fill 2705 110 3500 2706 110 3519 minecraft:azalea",
+        "fill 2704 110 3520 2707 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2704 110 3520 2707 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2704 110 3520 2707 114 3539 minecraft:air",
+        "fill 2704 106 3520 2707 108 3539 minecraft:dirt",
+        "fill 2704 109 3520 2707 109 3539 minecraft:grass_block",
+        "fill 2704 109 3520 2704 109 3539 minecraft:coarse_dirt",
+        "fill 2705 110 3520 2706 110 3539 minecraft:azalea",
+        "fill 2704 110 3540 2707 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2704 110 3540 2707 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2704 110 3540 2707 114 3559 minecraft:air",
+        "fill 2704 106 3540 2707 108 3559 minecraft:dirt",
+        "fill 2704 109 3540 2707 109 3559 minecraft:grass_block",
+        "fill 2704 109 3540 2704 109 3559 minecraft:coarse_dirt",
+        "fill 2705 110 3540 2706 110 3559 minecraft:azalea",
+        "fill 2704 110 3560 2707 127 3579 minecraft:air replace #minecraft:logs",
+        "fill 2704 110 3560 2707 127 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2704 110 3560 2707 114 3579 minecraft:air",
+        "fill 2704 106 3560 2707 108 3579 minecraft:dirt",
+        "fill 2704 109 3560 2707 109 3579 minecraft:grass_block",
+        "fill 2704 109 3560 2704 109 3579 minecraft:coarse_dirt",
+        "fill 2705 110 3560 2706 110 3579 minecraft:azalea",
+        "fill 2704 111 3580 2707 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2704 111 3580 2707 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2704 111 3580 2707 115 3599 minecraft:air",
+        "fill 2704 107 3580 2707 109 3599 minecraft:dirt",
+        "fill 2704 110 3580 2707 110 3599 minecraft:grass_block",
+        "fill 2704 110 3580 2704 110 3599 minecraft:coarse_dirt",
+        "fill 2705 111 3580 2706 111 3599 minecraft:azalea",
+        "fill 2708 110 3500 2711 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2708 110 3500 2711 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2708 110 3500 2711 114 3519 minecraft:air",
+        "fill 2708 106 3500 2711 108 3519 minecraft:dirt",
+        "fill 2708 109 3500 2711 109 3519 minecraft:grass_block",
+        "fill 2708 109 3500 2708 109 3519 minecraft:coarse_dirt",
+        "fill 2709 110 3500 2710 110 3519 minecraft:azalea",
+        "fill 2708 110 3520 2711 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2708 110 3520 2711 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2708 110 3520 2711 114 3539 minecraft:air",
+        "fill 2708 106 3520 2711 108 3539 minecraft:dirt",
+        "fill 2708 109 3520 2711 109 3539 minecraft:grass_block",
+        "fill 2708 109 3520 2708 109 3539 minecraft:coarse_dirt",
+        "fill 2709 110 3520 2710 110 3539 minecraft:azalea",
+        "fill 2708 110 3540 2711 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2708 110 3540 2711 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2708 110 3540 2711 114 3559 minecraft:air",
+        "fill 2708 106 3540 2711 108 3559 minecraft:dirt",
+        "fill 2708 109 3540 2711 109 3559 minecraft:grass_block",
+        "fill 2708 109 3540 2708 109 3559 minecraft:coarse_dirt",
+        "fill 2709 110 3540 2710 110 3559 minecraft:azalea",
+        "fill 2708 110 3560 2711 127 3579 minecraft:air replace #minecraft:logs",
+        "fill 2708 110 3560 2711 127 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2708 110 3560 2711 114 3579 minecraft:air",
+        "fill 2708 106 3560 2711 108 3579 minecraft:dirt",
+        "fill 2708 109 3560 2711 109 3579 minecraft:grass_block",
+        "fill 2708 109 3560 2708 109 3579 minecraft:coarse_dirt",
+        "fill 2709 110 3560 2710 110 3579 minecraft:azalea",
+        "fill 2708 111 3580 2711 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2708 111 3580 2711 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2708 111 3580 2711 115 3599 minecraft:air",
+        "fill 2708 107 3580 2711 109 3599 minecraft:dirt",
+        "fill 2708 110 3580 2711 110 3599 minecraft:grass_block",
+        "fill 2708 110 3580 2708 110 3599 minecraft:coarse_dirt",
+        "fill 2709 111 3580 2710 111 3599 minecraft:azalea",
+        "fill 2712 110 3500 2715 127 3519 minecraft:air replace #minecraft:logs",
+        "fill 2712 110 3500 2715 127 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2712 110 3500 2715 114 3519 minecraft:air",
+        "fill 2712 106 3500 2715 108 3519 minecraft:dirt",
+        "fill 2712 109 3500 2715 109 3519 minecraft:grass_block",
+        "fill 2712 109 3500 2712 109 3519 minecraft:coarse_dirt",
+        "fill 2713 110 3500 2714 110 3519 minecraft:azalea",
+        "fill 2712 110 3520 2715 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2712 110 3520 2715 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2712 110 3520 2715 114 3539 minecraft:air",
+        "fill 2712 106 3520 2715 108 3539 minecraft:dirt",
+        "fill 2712 109 3520 2715 109 3539 minecraft:grass_block",
+        "fill 2712 109 3520 2712 109 3539 minecraft:coarse_dirt",
+        "fill 2713 110 3520 2714 110 3539 minecraft:azalea",
+        "fill 2712 110 3540 2715 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2712 110 3540 2715 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2712 110 3540 2715 114 3559 minecraft:air",
+        "fill 2712 106 3540 2715 108 3559 minecraft:dirt",
+        "fill 2712 109 3540 2715 109 3559 minecraft:grass_block",
+        "fill 2712 109 3540 2712 109 3559 minecraft:coarse_dirt",
+        "fill 2713 110 3540 2714 110 3559 minecraft:azalea",
+        "fill 2712 110 3560 2715 127 3579 minecraft:air replace #minecraft:logs",
+        "fill 2712 110 3560 2715 127 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2712 110 3560 2715 114 3579 minecraft:air",
+        "fill 2712 106 3560 2715 108 3579 minecraft:dirt",
+        "fill 2712 109 3560 2715 109 3579 minecraft:grass_block",
+        "fill 2712 109 3560 2712 109 3579 minecraft:coarse_dirt",
+        "fill 2713 110 3560 2714 110 3579 minecraft:azalea",
+        "fill 2712 111 3580 2715 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2712 111 3580 2715 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2712 111 3580 2715 115 3599 minecraft:air",
+        "fill 2712 107 3580 2715 109 3599 minecraft:dirt",
+        "fill 2712 110 3580 2715 110 3599 minecraft:grass_block",
+        "fill 2712 110 3580 2712 110 3599 minecraft:coarse_dirt",
+        "fill 2713 111 3580 2714 111 3599 minecraft:azalea",
+        "fill 2716 109 3500 2719 126 3519 minecraft:air replace #minecraft:logs",
+        "fill 2716 109 3500 2719 126 3519 minecraft:air replace #minecraft:leaves",
+        "fill 2716 109 3500 2719 113 3519 minecraft:air",
+        "fill 2716 105 3500 2719 107 3519 minecraft:dirt",
+        "fill 2716 108 3500 2719 108 3519 minecraft:grass_block",
+        "fill 2716 108 3500 2716 108 3519 minecraft:coarse_dirt",
+        "fill 2717 109 3500 2718 109 3519 minecraft:azalea",
+        "fill 2716 110 3520 2719 127 3539 minecraft:air replace #minecraft:logs",
+        "fill 2716 110 3520 2719 127 3539 minecraft:air replace #minecraft:leaves",
+        "fill 2716 110 3520 2719 114 3539 minecraft:air",
+        "fill 2716 106 3520 2719 108 3539 minecraft:dirt",
+        "fill 2716 109 3520 2719 109 3539 minecraft:grass_block",
+        "fill 2716 109 3520 2716 109 3539 minecraft:coarse_dirt",
+        "fill 2717 110 3520 2718 110 3539 minecraft:azalea",
+        "fill 2716 110 3540 2719 127 3559 minecraft:air replace #minecraft:logs",
+        "fill 2716 110 3540 2719 127 3559 minecraft:air replace #minecraft:leaves",
+        "fill 2716 110 3540 2719 114 3559 minecraft:air",
+        "fill 2716 106 3540 2719 108 3559 minecraft:dirt",
+        "fill 2716 109 3540 2719 109 3559 minecraft:grass_block",
+        "fill 2716 109 3540 2716 109 3559 minecraft:coarse_dirt",
+        "fill 2717 110 3540 2718 110 3559 minecraft:azalea",
+        "fill 2716 110 3560 2719 127 3579 minecraft:air replace #minecraft:logs",
+        "fill 2716 110 3560 2719 127 3579 minecraft:air replace #minecraft:leaves",
+        "fill 2716 110 3560 2719 114 3579 minecraft:air",
+        "fill 2716 106 3560 2719 108 3579 minecraft:dirt",
+        "fill 2716 109 3560 2719 109 3579 minecraft:grass_block",
+        "fill 2716 109 3560 2716 109 3579 minecraft:coarse_dirt",
+        "fill 2717 110 3560 2718 110 3579 minecraft:azalea",
+        "fill 2716 111 3580 2719 128 3599 minecraft:air replace #minecraft:logs",
+        "fill 2716 111 3580 2719 128 3599 minecraft:air replace #minecraft:leaves",
+        "fill 2716 111 3580 2719 115 3599 minecraft:air",
+        "fill 2716 107 3580 2719 109 3599 minecraft:dirt",
+        "fill 2716 110 3580 2719 110 3599 minecraft:grass_block",
+        "fill 2716 110 3580 2716 110 3599 minecraft:coarse_dirt",
+        "fill 2717 111 3580 2718 111 3599 minecraft:azalea"
+      ]
+    },
+    {
+      "id": "displaced_gate",
+      "settlement": "displaced_city",
+      "kind": "earthwork",
+      "cell": "B4",
+      "status": "planned",
+      "chosen_because": "a gate of the summit town's stone on the approach to the meltwater mouth",
+      "commands": [
+        "# the Displaced City's gate on the approach to the meltwater mouth: the summit town's stone, moss-grown (authored)",
+        "fill 3029 117 1713 3029 124 1715 minecraft:stone_bricks",
+        "fill 3029 120 1714 3029 122 1714 minecraft:mossy_stone_bricks",
+        "fill 3037 117 1713 3037 124 1715 minecraft:stone_bricks",
+        "fill 3037 120 1714 3037 122 1714 minecraft:mossy_stone_bricks",
+        "fill 3030 125 1713 3036 125 1715 minecraft:stone_brick_slab[type=bottom]",
+        "fill 3029 125 1714 3037 125 1714 minecraft:mossy_stone_bricks",
+        "setblock 3033 125 1714 minecraft:chiseled_stone_bricks"
+      ]
+    },
+    {
+      "id": "viltri_lighthouse",
+      "settlement": "viltri_light",
+      "kind": "earthwork",
+      "cell": "E1",
+      "status": "planned",
+      "chosen_because": "the lighthouse: no lighthouse template exists in the installed packs, so it is authored",
+      "commands": [
+        "# Viltri Light: a round tower in calcite banded with red nether brick, a gallery and a lantern room (authored)",
+        "fill 548 65 4515 550 70 4515 minecraft:stone_bricks",
+        "fill 547 65 4516 551 70 4516 minecraft:stone_bricks",
+        "fill 546 65 4517 552 70 4517 minecraft:stone_bricks",
+        "fill 546 65 4518 552 70 4518 minecraft:stone_bricks",
+        "fill 546 65 4519 552 70 4519 minecraft:stone_bricks",
+        "fill 547 65 4520 551 70 4520 minecraft:stone_bricks",
+        "fill 548 65 4521 550 70 4521 minecraft:stone_bricks",
+        "fill 548 71 4515 550 90 4515 minecraft:calcite",
+        "fill 547 71 4516 547 90 4516 minecraft:calcite",
+        "fill 551 71 4516 551 90 4516 minecraft:calcite",
+        "fill 546 71 4517 546 90 4517 minecraft:calcite",
+        "fill 552 71 4517 552 90 4517 minecraft:calcite",
+        "fill 546 71 4518 546 90 4518 minecraft:calcite",
+        "fill 552 71 4518 552 90 4518 minecraft:calcite",
+        "fill 546 71 4519 546 90 4519 minecraft:calcite",
+        "fill 552 71 4519 552 90 4519 minecraft:calcite",
+        "fill 547 71 4520 547 90 4520 minecraft:calcite",
+        "fill 551 71 4520 551 90 4520 minecraft:calcite",
+        "fill 548 71 4521 550 90 4521 minecraft:calcite",
+        "fill 548 75 4515 550 76 4515 minecraft:red_nether_bricks",
+        "fill 547 75 4516 547 76 4516 minecraft:red_nether_bricks",
+        "fill 551 75 4516 551 76 4516 minecraft:red_nether_bricks",
+        "fill 546 75 4517 546 76 4517 minecraft:red_nether_bricks",
+        "fill 552 75 4517 552 76 4517 minecraft:red_nether_bricks",
+        "fill 546 75 4518 546 76 4518 minecraft:red_nether_bricks",
+        "fill 552 75 4518 552 76 4518 minecraft:red_nether_bricks",
+        "fill 546 75 4519 546 76 4519 minecraft:red_nether_bricks",
+        "fill 552 75 4519 552 76 4519 minecraft:red_nether_bricks",
+        "fill 547 75 4520 547 76 4520 minecraft:red_nether_bricks",
+        "fill 551 75 4520 551 76 4520 minecraft:red_nether_bricks",
+        "fill 548 75 4521 550 76 4521 minecraft:red_nether_bricks",
+        "fill 548 81 4515 550 82 4515 minecraft:red_nether_bricks",
+        "fill 547 81 4516 547 82 4516 minecraft:red_nether_bricks",
+        "fill 551 81 4516 551 82 4516 minecraft:red_nether_bricks",
+        "fill 546 81 4517 546 82 4517 minecraft:red_nether_bricks",
+        "fill 552 81 4517 552 82 4517 minecraft:red_nether_bricks",
+        "fill 546 81 4518 546 82 4518 minecraft:red_nether_bricks",
+        "fill 552 81 4518 552 82 4518 minecraft:red_nether_bricks",
+        "fill 546 81 4519 546 82 4519 minecraft:red_nether_bricks",
+        "fill 552 81 4519 552 82 4519 minecraft:red_nether_bricks",
+        "fill 547 81 4520 547 82 4520 minecraft:red_nether_bricks",
+        "fill 551 81 4520 551 82 4520 minecraft:red_nether_bricks",
+        "fill 548 81 4521 550 82 4521 minecraft:red_nether_bricks",
+        "fill 548 87 4515 550 88 4515 minecraft:red_nether_bricks",
+        "fill 547 87 4516 547 88 4516 minecraft:red_nether_bricks",
+        "fill 551 87 4516 551 88 4516 minecraft:red_nether_bricks",
+        "fill 546 87 4517 546 88 4517 minecraft:red_nether_bricks",
+        "fill 552 87 4517 552 88 4517 minecraft:red_nether_bricks",
+        "fill 546 87 4518 546 88 4518 minecraft:red_nether_bricks",
+        "fill 552 87 4518 552 88 4518 minecraft:red_nether_bricks",
+        "fill 546 87 4519 546 88 4519 minecraft:red_nether_bricks",
+        "fill 552 87 4519 552 88 4519 minecraft:red_nether_bricks",
+        "fill 547 87 4520 547 88 4520 minecraft:red_nether_bricks",
+        "fill 551 87 4520 551 88 4520 minecraft:red_nether_bricks",
+        "fill 548 87 4521 550 88 4521 minecraft:red_nether_bricks",
+        "fill 548 71 4516 550 90 4516 minecraft:air",
+        "fill 547 71 4517 551 90 4517 minecraft:air",
+        "fill 547 71 4518 551 90 4518 minecraft:air",
+        "fill 547 71 4519 551 90 4519 minecraft:air",
+        "fill 548 71 4520 550 90 4520 minecraft:air",
+        "fill 548 70 4516 550 70 4516 minecraft:polished_andesite",
+        "fill 547 70 4517 551 70 4517 minecraft:polished_andesite",
+        "fill 547 70 4518 551 70 4518 minecraft:polished_andesite",
+        "fill 547 70 4519 551 70 4519 minecraft:polished_andesite",
+        "fill 548 70 4520 550 70 4520 minecraft:polished_andesite",
+        "fill 547 91 4514 551 91 4514 minecraft:polished_andesite",
+        "fill 546 91 4515 552 91 4515 minecraft:polished_andesite",
+        "fill 545 91 4516 553 91 4516 minecraft:polished_andesite",
+        "fill 545 91 4517 553 91 4517 minecraft:polished_andesite",
+        "fill 545 91 4518 553 91 4518 minecraft:polished_andesite",
+        "fill 545 91 4519 553 91 4519 minecraft:polished_andesite",
+        "fill 545 91 4520 553 91 4520 minecraft:polished_andesite",
+        "fill 546 91 4521 552 91 4521 minecraft:polished_andesite",
+        "fill 547 91 4522 551 91 4522 minecraft:polished_andesite",
+        "fill 547 92 4514 551 92 4514 minecraft:iron_bars",
+        "fill 546 92 4515 547 92 4515 minecraft:iron_bars",
+        "fill 551 92 4515 552 92 4515 minecraft:iron_bars",
+        "fill 545 92 4516 546 92 4516 minecraft:iron_bars",
+        "fill 552 92 4516 553 92 4516 minecraft:iron_bars",
+        "fill 545 92 4517 545 92 4517 minecraft:iron_bars",
+        "fill 553 92 4517 553 92 4517 minecraft:iron_bars",
+        "fill 545 92 4518 545 92 4518 minecraft:iron_bars",
+        "fill 553 92 4518 553 92 4518 minecraft:iron_bars",
+        "fill 545 92 4519 545 92 4519 minecraft:iron_bars",
+        "fill 553 92 4519 553 92 4519 minecraft:iron_bars",
+        "fill 545 92 4520 546 92 4520 minecraft:iron_bars",
+        "fill 552 92 4520 553 92 4520 minecraft:iron_bars",
+        "fill 546 92 4521 547 92 4521 minecraft:iron_bars",
+        "fill 551 92 4521 552 92 4521 minecraft:iron_bars",
+        "fill 547 92 4522 551 92 4522 minecraft:iron_bars",
+        "fill 548 92 4516 550 94 4516 minecraft:glass",
+        "fill 547 92 4517 547 94 4517 minecraft:glass",
+        "fill 551 92 4517 551 94 4517 minecraft:glass",
+        "fill 547 92 4518 547 94 4518 minecraft:glass",
+        "fill 551 92 4518 551 94 4518 minecraft:glass",
+        "fill 547 92 4519 547 94 4519 minecraft:glass",
+        "fill 551 92 4519 551 94 4519 minecraft:glass",
+        "fill 548 92 4520 550 94 4520 minecraft:glass",
+        "fill 548 92 4517 550 94 4517 minecraft:air",
+        "fill 548 92 4518 550 94 4518 minecraft:air",
+        "fill 548 92 4519 550 94 4519 minecraft:air",
+        "fill 549 92 4518 549 93 4518 minecraft:sea_lantern",
+        "fill 548 95 4515 550 95 4515 minecraft:waxed_oxidized_cut_copper",
+        "fill 547 95 4516 551 95 4516 minecraft:waxed_oxidized_cut_copper",
+        "fill 546 95 4517 552 95 4517 minecraft:waxed_oxidized_cut_copper",
+        "fill 546 95 4518 552 95 4518 minecraft:waxed_oxidized_cut_copper",
+        "fill 546 95 4519 552 95 4519 minecraft:waxed_oxidized_cut_copper",
+        "fill 547 95 4520 551 95 4520 minecraft:waxed_oxidized_cut_copper",
+        "fill 548 95 4521 550 95 4521 minecraft:waxed_oxidized_cut_copper",
+        "fill 548 96 4516 550 96 4516 minecraft:waxed_oxidized_cut_copper",
+        "fill 547 96 4517 551 96 4517 minecraft:waxed_oxidized_cut_copper",
+        "fill 547 96 4518 551 96 4518 minecraft:waxed_oxidized_cut_copper",
+        "fill 547 96 4519 551 96 4519 minecraft:waxed_oxidized_cut_copper",
+        "fill 548 96 4520 550 96 4520 minecraft:waxed_oxidized_cut_copper",
+        "setblock 549 97 4518 minecraft:waxed_oxidized_cut_copper",
+        "setblock 547 71 4518 minecraft:ladder[facing=east]",
+        "setblock 547 72 4518 minecraft:ladder[facing=east]",
+        "setblock 547 73 4518 minecraft:ladder[facing=east]",
+        "setblock 547 74 4518 minecraft:ladder[facing=east]",
+        "setblock 547 75 4518 minecraft:ladder[facing=east]",
+        "setblock 547 76 4518 minecraft:ladder[facing=east]",
+        "setblock 547 77 4518 minecraft:ladder[facing=east]",
+        "setblock 547 78 4518 minecraft:ladder[facing=east]",
+        "setblock 547 79 4518 minecraft:ladder[facing=east]",
+        "setblock 547 80 4518 minecraft:ladder[facing=east]",
+        "setblock 547 81 4518 minecraft:ladder[facing=east]",
+        "setblock 547 82 4518 minecraft:ladder[facing=east]",
+        "setblock 547 83 4518 minecraft:ladder[facing=east]",
+        "setblock 547 84 4518 minecraft:ladder[facing=east]",
+        "setblock 547 85 4518 minecraft:ladder[facing=east]",
+        "setblock 547 86 4518 minecraft:ladder[facing=east]",
+        "setblock 547 87 4518 minecraft:ladder[facing=east]",
+        "setblock 547 88 4518 minecraft:ladder[facing=east]",
+        "setblock 547 89 4518 minecraft:ladder[facing=east]",
+        "setblock 547 90 4518 minecraft:ladder[facing=east]",
+        "setblock 547 91 4518 minecraft:ladder[facing=east]",
+        "setblock 547 91 4518 minecraft:air",
+        "setblock 547 91 4518 minecraft:ladder[facing=east]",
+        "setblock 552 71 4518 minecraft:spruce_door[facing=west,half=lower]",
+        "setblock 552 72 4518 minecraft:spruce_door[facing=west,half=upper]"
+      ]
+    },
+    {
+      "id": "relic_walk_and_seam",
+      "settlement": "relic_island",
+      "kind": "earthwork",
+      "cell": "F2",
+      "status": "planned",
+      "chosen_because": "the event's front fence, broken, and the seam where the islet was torn off (F4_RELIC_ISLAND_ASH_HOUSE.md)",
+      "commands": [
+        "# Relic Island: the front walk's fence, broken, stopping at the torn edge; a calcite and amethyst seam behind the house (authored)",
+        "setblock 1099 66 5530 minecraft:oak_fence",
+        "setblock 1099 66 5532 minecraft:oak_fence",
+        "setblock 1100 66 5530 minecraft:oak_fence",
+        "setblock 1100 66 5532 minecraft:oak_fence",
+        "setblock 1101 65 5530 minecraft:oak_fence",
+        "setblock 1101 65 5532 minecraft:oak_fence",
+        "setblock 1102 65 5530 minecraft:oak_fence",
+        "setblock 1102 66 5532 minecraft:oak_fence",
+        "setblock 1103 66 5530 minecraft:oak_fence",
+        "setblock 1103 66 5532 minecraft:oak_fence",
+        "setblock 1105 66 5530 minecraft:oak_fence",
+        "setblock 1105 67 5532 minecraft:oak_fence",
+        "setblock 1106 67 5530 minecraft:oak_fence",
+        "setblock 1106 67 5532 minecraft:oak_fence",
+        "setblock 1107 66 5530 minecraft:oak_fence",
+        "setblock 1107 67 5532 minecraft:oak_fence",
+        "setblock 1108 66 5530 minecraft:oak_fence",
+        "setblock 1108 66 5532 minecraft:oak_fence",
+        "setblock 1110 63 5530 minecraft:oak_fence",
+        "setblock 1110 64 5532 minecraft:oak_fence",
+        "setblock 1111 63 5530 minecraft:oak_fence",
+        "setblock 1111 63 5532 minecraft:oak_fence",
+        "setblock 1112 63 5530 minecraft:oak_fence",
+        "setblock 1112 63 5532 minecraft:oak_fence",
+        "fill 1080 62 5516 1081 65 5516 minecraft:calcite",
+        "setblock 1080 66 5516 minecraft:amethyst_cluster",
+        "fill 1079 62 5517 1080 65 5517 minecraft:calcite",
+        "fill 1078 61 5518 1079 64 5518 minecraft:calcite",
+        "fill 1078 61 5519 1079 64 5519 minecraft:calcite",
+        "fill 1078 61 5520 1079 64 5520 minecraft:calcite",
+        "setblock 1078 65 5520 minecraft:amethyst_cluster",
+        "fill 1079 61 5521 1080 64 5521 minecraft:calcite",
+        "fill 1079 62 5522 1080 65 5522 minecraft:calcite",
+        "fill 1079 61 5523 1080 64 5523 minecraft:calcite",
+        "fill 1078 61 5524 1079 64 5524 minecraft:calcite",
+        "setblock 1078 65 5524 minecraft:amethyst_cluster",
+        "fill 1078 62 5525 1079 65 5525 minecraft:calcite",
+        "fill 1079 61 5526 1080 64 5526 minecraft:calcite",
+        "fill 1079 60 5527 1080 63 5527 minecraft:calcite",
+        "fill 1078 60 5528 1079 63 5528 minecraft:calcite",
+        "setblock 1078 64 5528 minecraft:amethyst_cluster",
+        "fill 1078 60 5529 1079 63 5529 minecraft:calcite",
+        "fill 1079 60 5530 1080 63 5530 minecraft:calcite",
+        "fill 1079 61 5531 1080 64 5531 minecraft:calcite",
+        "fill 1079 61 5532 1080 64 5532 minecraft:calcite",
+        "setblock 1079 65 5532 minecraft:amethyst_cluster",
+        "fill 1078 61 5533 1079 64 5533 minecraft:calcite",
+        "fill 1078 61 5534 1079 64 5534 minecraft:calcite",
+        "fill 1078 60 5535 1079 63 5535 minecraft:calcite",
+        "fill 1079 60 5536 1080 63 5536 minecraft:calcite",
+        "setblock 1079 64 5536 minecraft:amethyst_cluster",
+        "fill 1080 60 5537 1081 63 5537 minecraft:calcite",
+        "fill 1078 60 5538 1079 63 5538 minecraft:calcite",
+        "fill 1078 60 5539 1079 63 5539 minecraft:calcite",
+        "fill 1079 60 5541 1080 63 5541 minecraft:calcite",
+        "fill 1079 60 5542 1080 63 5542 minecraft:calcite",
+        "fill 1079 60 5544 1080 63 5544 minecraft:calcite",
+        "setblock 1079 64 5544 minecraft:amethyst_cluster",
+        "fill 1078 60 5545 1079 63 5545 minecraft:calcite",
+        "fill 1079 60 5546 1080 63 5546 minecraft:calcite",
+        "fill 1079 60 5547 1080 63 5547 minecraft:calcite",
+        "fill 1078 60 5548 1079 63 5548 minecraft:calcite",
+        "setblock 1078 64 5548 minecraft:amethyst_cluster"
+      ]
+    },
+    {
+      "id": "ruin_great_hall",
+      "settlement": "jungle_ruins",
+      "pack_template": "minecraft:underwater_ruin/big_mossy_2",
+      "template": "minecraft:underwater_ruin/big_mossy_2",
+      "cell": "H6",
+      "kind": "donor",
+      "position": {
+        "x": 5152,
+        "y": 126,
+        "z": 7503
+      },
+      "size": [
+        16,
+        16,
+        16
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "north",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:magma_block",
+          "to": "minecraft:mossy_cobblestone",
+          "why": "magma draws fire types; the ruin's floor is old stone"
+        },
+        {
+          "from": "minecraft:sand",
+          "to": "minecraft:coarse_dirt",
+          "why": "sand is a spawn condition; jungle floor instead of seabed"
+        },
+        {
+          "from": "minecraft:prismarine",
+          "to": "minecraft:cracked_stone_bricks",
+          "why": "prismarine reads as the sea; cracked stone as ruin"
+        },
+        {
+          "from": "minecraft:sea_lantern",
+          "to": "minecraft:chiseled_stone_bricks",
+          "why": "a ruin lit by nothing"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:structure_block"
+      ],
+      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+    },
+    {
+      "id": "ruin_west_wall",
+      "settlement": "jungle_ruins",
+      "pack_template": "minecraft:underwater_ruin/big_mossy_1",
+      "template": "minecraft:underwater_ruin/big_mossy_1",
+      "cell": "H6",
+      "kind": "donor",
+      "position": {
+        "x": 5145,
+        "y": 123,
+        "z": 7412
+      },
+      "size": [
+        16,
+        16,
+        16
+      ],
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:magma_block",
+          "to": "minecraft:mossy_cobblestone",
+          "why": "magma draws fire types; the ruin's floor is old stone"
+        },
+        {
+          "from": "minecraft:sand",
+          "to": "minecraft:coarse_dirt",
+          "why": "sand is a spawn condition; jungle floor instead of seabed"
+        },
+        {
+          "from": "minecraft:prismarine",
+          "to": "minecraft:cracked_stone_bricks",
+          "why": "prismarine reads as the sea; cracked stone as ruin"
+        },
+        {
+          "from": "minecraft:sea_lantern",
+          "to": "minecraft:chiseled_stone_bricks",
+          "why": "a ruin lit by nothing"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:structure_block"
+      ],
+      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+    },
+    {
+      "id": "ruin_east_court",
+      "settlement": "jungle_ruins",
+      "pack_template": "minecraft:underwater_ruin/big_mossy_3",
+      "template": "minecraft:underwater_ruin/big_mossy_3",
+      "cell": "H6",
+      "kind": "donor",
+      "position": {
+        "x": 5170,
+        "y": 123,
+        "z": 7387
+      },
+      "size": [
+        16,
+        16,
+        16
+      ],
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "west",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:magma_block",
+          "to": "minecraft:mossy_cobblestone",
+          "why": "magma draws fire types; the ruin's floor is old stone"
+        },
+        {
+          "from": "minecraft:sand",
+          "to": "minecraft:coarse_dirt",
+          "why": "sand is a spawn condition; jungle floor instead of seabed"
+        },
+        {
+          "from": "minecraft:prismarine",
+          "to": "minecraft:cracked_stone_bricks",
+          "why": "prismarine reads as the sea; cracked stone as ruin"
+        },
+        {
+          "from": "minecraft:sea_lantern",
+          "to": "minecraft:chiseled_stone_bricks",
+          "why": "a ruin lit by nothing"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:structure_block"
+      ],
+      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+    },
+    {
+      "id": "ruin_north_gate",
+      "settlement": "jungle_ruins",
+      "pack_template": "minecraft:underwater_ruin/big_mossy_8",
+      "template": "minecraft:underwater_ruin/big_mossy_8",
+      "cell": "H6",
+      "kind": "donor",
+      "position": {
+        "x": 5147,
+        "y": 120,
+        "z": 7351
+      },
+      "size": [
+        16,
+        16,
+        16
+      ],
+      "rotation": "180",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "south",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:magma_block",
+          "to": "minecraft:mossy_cobblestone",
+          "why": "magma draws fire types; the ruin's floor is old stone"
+        },
+        {
+          "from": "minecraft:sand",
+          "to": "minecraft:coarse_dirt",
+          "why": "sand is a spawn condition; jungle floor instead of seabed"
+        },
+        {
+          "from": "minecraft:prismarine",
+          "to": "minecraft:cracked_stone_bricks",
+          "why": "prismarine reads as the sea; cracked stone as ruin"
+        },
+        {
+          "from": "minecraft:sea_lantern",
+          "to": "minecraft:chiseled_stone_bricks",
+          "why": "a ruin lit by nothing"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:structure_block"
+      ],
+      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+    },
+    {
+      "id": "ruin_court_east",
+      "settlement": "jungle_ruins",
+      "pack_template": "minecraft:underwater_ruin/mossy_3",
+      "template": "minecraft:underwater_ruin/mossy_3",
+      "cell": "H6",
+      "kind": "donor",
+      "position": {
+        "x": 5186,
+        "y": 127,
+        "z": 7482
+      },
+      "size": [
+        6,
+        7,
+        7
+      ],
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "west",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:magma_block",
+          "to": "minecraft:mossy_cobblestone",
+          "why": "magma draws fire types; the ruin's floor is old stone"
+        },
+        {
+          "from": "minecraft:sand",
+          "to": "minecraft:coarse_dirt",
+          "why": "sand is a spawn condition; jungle floor instead of seabed"
+        },
+        {
+          "from": "minecraft:prismarine",
+          "to": "minecraft:cracked_stone_bricks",
+          "why": "prismarine reads as the sea; cracked stone as ruin"
+        },
+        {
+          "from": "minecraft:sea_lantern",
+          "to": "minecraft:chiseled_stone_bricks",
+          "why": "a ruin lit by nothing"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:structure_block"
+      ],
+      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
+    },
+    {
+      "id": "ruin_court_west",
+      "settlement": "jungle_ruins",
+      "pack_template": "minecraft:underwater_ruin/mossy_6",
+      "template": "minecraft:underwater_ruin/mossy_6",
+      "cell": "H6",
+      "kind": "donor",
+      "position": {
+        "x": 5133,
+        "y": 125,
+        "z": 7487
+      },
+      "size": [
+        6,
+        7,
+        7
+      ],
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "facing": "east",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "source": {
+        "licence": "placed by resource id from the installed pack or the server jar; never copied"
+      },
+      "substitutions": [
+        {
+          "from": "minecraft:magma_block",
+          "to": "minecraft:mossy_cobblestone",
+          "why": "magma draws fire types; the ruin's floor is old stone"
+        },
+        {
+          "from": "minecraft:sand",
+          "to": "minecraft:coarse_dirt",
+          "why": "sand is a spawn condition; jungle floor instead of seabed"
+        },
+        {
+          "from": "minecraft:prismarine",
+          "to": "minecraft:cracked_stone_bricks",
+          "why": "prismarine reads as the sea; cracked stone as ruin"
+        },
+        {
+          "from": "minecraft:sea_lantern",
+          "to": "minecraft:chiseled_stone_bricks",
+          "why": "a ruin lit by nothing"
+        }
+      ],
+      "remove_blocks": [
+        "minecraft:structure_block"
+      ],
+      "remove_blocks_why": "the data markers the ocean-ruin generator reads; placed by command they would stand as blocks"
     }
   ]
 }

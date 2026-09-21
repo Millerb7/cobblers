@@ -140,7 +140,38 @@ def seg_point(px, pz, a, b):
     return math.hypot(px - (ax + t * dx), pz - (az + t * dz)), ad + (bd - ad) * t
 
 
-def compile_route(route, entries_by_scope, allowed=None):
+def spawn_free_zones(doc=None):
+    """[(minX, maxX, minZ, maxZ)] where no wild Pokemon spawns at all (data/spawn_suppression.json
+    spawn_free_zones). The League plateau is the first: nothing wanders the champion's processional."""
+    if doc is None:
+        path = ROOT / "data" / "spawn_suppression.json"
+        doc = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+    return [(z["box"][0], z["box"][2], z["box"][1], z["box"][3]) for z in doc.get("spawn_free_zones") or []]
+
+
+def subtract(box, zones):
+    """The parts of an inclusive (minX, maxX, minZ, maxZ) box outside every zone, as up to four boxes a zone."""
+    parts = [box]
+    for zx0, zx1, zz0, zz1 in zones:
+        nxt = []
+        for x0, x1, z0, z1 in parts:
+            if x1 < zx0 or x0 > zx1 or z1 < zz0 or z0 > zz1:
+                nxt.append((x0, x1, z0, z1))
+                continue
+            if z0 < zz0:
+                nxt.append((x0, x1, z0, zz0 - 1))
+            if z1 > zz1:
+                nxt.append((x0, x1, zz1 + 1, z1))
+            mz0, mz1 = max(z0, zz0), min(z1, zz1)
+            if x0 < zx0:
+                nxt.append((x0, zx0 - 1, mz0, mz1))
+            if x1 > zx1:
+                nxt.append((zx1 + 1, x1, mz0, mz1))
+        parts = nxt
+    return parts
+
+
+def compile_route(route, entries_by_scope, allowed=None, zones=()):
     intervals = interval_subregions(route)
     boxes = route["spawn_scope"]["boxes"]
     smp = samples(route["corridor"]["polyline"])
@@ -173,12 +204,16 @@ def compile_route(route, entries_by_scope, allowed=None):
             for e in entries_by_scope.get(s, []):
                 if allowed is not None and e["species"] not in allowed:
                     continue
-                cond = box_condition(b["min_x"], b["max_x"], b["min_z"], b["max_z"], e)
-                cond.update(e.get("conditions") or {})
-                spawns.append({"id": "%s_%s_%s" % (b["id"], s, e["species"]), "pokemon": e["species"], "type": "pokemon",
-                               "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
-                               "weight": e["weight"], "condition": cond})
-                species.add(e["species"])
+                pieces = subtract((b["min_x"], b["max_x"], b["min_z"], b["max_z"]), zones)
+                for k, (x0, x1, z0, z1) in enumerate(pieces):
+                    cond = box_condition(x0, x1, z0, z1, e)
+                    cond.update(e.get("conditions") or {})
+                    sid = "%s_%s_%s" % (b["id"], s, e["species"]) if len(pieces) == 1 and pieces[0] == (b["min_x"], b["max_x"], b["min_z"], b["max_z"]) \
+                        else "%s_p%d_%s_%s" % (b["id"], k, s, e["species"])
+                    spawns.append({"id": sid, "pokemon": e["species"], "type": "pokemon",
+                                   "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
+                                   "weight": e["weight"], "condition": cond})
+                    species.add(e["species"])
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
     summary = {"route_id": route["id"], "source_box_count": len(boxes), "compiled_entry_count": len(spawns),
                "route_species_count": len(species), "route_species": sorted(species),
@@ -272,7 +307,7 @@ def build(spawns, routes):
     files, route_summaries, habitat_summaries = {"pack.mcmeta": dumps(PACK_MCMETA)}, [], []
     for r in routes["routes"]:
         sel = (spawns.get("route_species_selection") or {}).get(r["id"])
-        doc, summ = compile_route(r, by_scope, set(sel["species"]) if sel else None)
+        doc, summ = compile_route(r, by_scope, set(sel["species"]) if sel else None, spawn_free_zones())
         if sel:
             # an authored species the corridor no longer reaches (its sub-region left the route) compiles to nothing
             summ["selected_species_not_reached"] = sorted(set(sel["species"]) - set(summ["route_species"]))
@@ -303,6 +338,9 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
         if e["mechanism"] == "spawn_json_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
             by_scope.setdefault(e["scope"], []).append(e)
     corridor = subregion_boxes.route_boxes(routes)
+    # a spawn-free zone takes every cell it touches, as a waterway does: excluded by centre, a 32-block cell
+    # overlapping the League zone's edge by 8 blocks kept its roster (80 details on the first compile)
+    waterways = list(waterways) + spawn_free_zones()
     files, summaries = {}, []
     for sub in regions["subregions"]:
         ents = by_scope.get(sub["id"], [])
@@ -340,6 +378,13 @@ def main(argv=None):
         for wdef in waterdoc["waterways"]:
             for _, _, bs in waterways_mod.boxes_by_segment(wdef["polyline"], wdef["half_width"], WATERWAY_GRID):
                 water_boxes.extend(bs)
+        zones = spawn_free_zones()
+        for rel in [r for r in files if "/waterways/" in r]:
+            d = json.loads(files[rel])
+            if any(subtract((s["condition"]["minX"], s["condition"]["maxX"], s["condition"]["minZ"], s["condition"]["maxZ"]), zones)
+                   != [(s["condition"]["minX"], s["condition"]["maxX"], s["condition"]["minZ"], s["condition"]["maxZ"])]
+                   for s in d["spawns"] if "minX" in s["condition"]):
+                raise SystemExit("%s reaches into a spawn-free zone; cut the waterway short of it" % rel)
     ss = []
     if not a.no_subregions:
         regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))

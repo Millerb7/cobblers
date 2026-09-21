@@ -70,6 +70,81 @@
       "minecraft:chiseled_quartz_block": "minecraft:chiseled_deepslate",
       "minecraft:gray_terracotta": "minecraft:cyan_terracotta",
       "minecraft:white_terracotta": "minecraft:light_gray_terracotta"
+    },
+    "northlight_walls": {
+      "minecraft:smooth_quartz": "minecraft:spruce_planks",
+      "minecraft:smooth_quartz_stairs": "minecraft:spruce_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:spruce_slab",
+      "minecraft:quartz_block": "minecraft:snow_block",
+      "minecraft:chiseled_quartz_block": "minecraft:packed_ice",
+      "minecraft:gray_terracotta": "minecraft:blue_terracotta",
+      "minecraft:white_terracotta": "minecraft:light_blue_terracotta"
+    },
+    "northlight_garden": {
+      "minecraft:rose_bush": "minecraft:large_fern",
+      "minecraft:red_tulip": "minecraft:fern",
+      "minecraft:orange_tulip": "minecraft:fern",
+      "minecraft:white_tulip": "minecraft:fern",
+      "minecraft:pink_tulip": "minecraft:fern",
+      "minecraft:azure_bluet": "minecraft:fern",
+      "minecraft:allium": "minecraft:fern",
+      "minecraft:grass_block": "minecraft:podzol"
+    },
+    "mining_walls": {
+      "minecraft:smooth_quartz": "minecraft:polished_andesite",
+      "minecraft:smooth_quartz_stairs": "minecraft:polished_andesite_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:polished_andesite_slab",
+      "minecraft:quartz_block": "minecraft:andesite",
+      "minecraft:chiseled_quartz_block": "minecraft:chiseled_stone_bricks",
+      "minecraft:gray_terracotta": "minecraft:gray_terracotta",
+      "minecraft:white_terracotta": "minecraft:brown_terracotta"
+    },
+    "mining_garden": {
+      "minecraft:grass_block": "minecraft:gravel",
+      "minecraft:rose_bush": "minecraft:tall_grass",
+      "minecraft:red_tulip": "minecraft:short_grass",
+      "minecraft:orange_tulip": "minecraft:short_grass",
+      "minecraft:white_tulip": "minecraft:short_grass",
+      "minecraft:pink_tulip": "minecraft:short_grass",
+      "minecraft:azure_bluet": "minecraft:short_grass",
+      "minecraft:allium": "minecraft:short_grass"
+    },
+    "tea_walls": {
+      "minecraft:smooth_quartz": "minecraft:bamboo_planks",
+      "minecraft:smooth_quartz_stairs": "minecraft:bamboo_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:bamboo_slab",
+      "minecraft:quartz_block": "minecraft:bamboo_block",
+      "minecraft:chiseled_quartz_block": "minecraft:bamboo_mosaic",
+      "minecraft:gray_terracotta": "minecraft:lime_terracotta",
+      "minecraft:white_terracotta": "minecraft:white_terracotta"
+    },
+    "tea_garden": {
+      "minecraft:rose_bush": "minecraft:tall_grass",
+      "minecraft:red_tulip": "minecraft:azalea",
+      "minecraft:orange_tulip": "minecraft:azalea",
+      "minecraft:white_tulip": "minecraft:azalea",
+      "minecraft:pink_tulip": "minecraft:azalea",
+      "minecraft:azure_bluet": "minecraft:azalea",
+      "minecraft:allium": "minecraft:azalea"
+    },
+    "displaced_walls": {
+      "minecraft:smooth_quartz": "minecraft:mossy_stone_bricks",
+      "minecraft:smooth_quartz_stairs": "minecraft:mossy_stone_brick_stairs",
+      "minecraft:smooth_quartz_slab": "minecraft:mossy_stone_brick_slab",
+      "minecraft:quartz_block": "minecraft:stone_bricks",
+      "minecraft:chiseled_quartz_block": "minecraft:chiseled_stone_bricks",
+      "minecraft:gray_terracotta": "minecraft:purple_terracotta",
+      "minecraft:white_terracotta": "minecraft:magenta_terracotta"
+    },
+    "displaced_garden": {
+      "minecraft:rose_bush": "minecraft:large_fern",
+      "minecraft:red_tulip": "minecraft:fern",
+      "minecraft:orange_tulip": "minecraft:fern",
+      "minecraft:white_tulip": "minecraft:fern",
+      "minecraft:pink_tulip": "minecraft:fern",
+      "minecraft:azure_bluet": "minecraft:fern",
+      "minecraft:allium": "minecraft:fern",
+      "minecraft:grass_block": "minecraft:moss_block"
     }
   },
   "templates": [
@@ -170,6 +245,86 @@
         "league_walls"
       ],
       "why": "to stand beside the League: its deepslate tiles and cyan terracotta"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/northlight_center.nbt",
+      "id": "cobblers:f4/services/towns/northlight_center",
+      "base": "kits/structures/campaign/f4/services/towns/lentimas_center.nbt",
+      "maps": [
+        "northlight_walls",
+        "northlight_garden"
+      ],
+      "why": "a cold research station: spruce plank walls on a snow-block base course with packed-ice trim and blue terracotta, ferns on podzol for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/northlight_mart.nbt",
+      "id": "cobblers:f4/services/towns/northlight_mart",
+      "base": "kits/structures/campaign/f4/services/towns/floaroma_mart.nbt",
+      "maps": [
+        "northlight_walls",
+        "northlight_garden"
+      ],
+      "why": "a cold research station: spruce plank walls on a snow-block base course with packed-ice trim and blue terracotta, ferns on podzol for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/mining_center.nbt",
+      "id": "cobblers:f4/services/towns/mining_center",
+      "base": "kits/structures/campaign/f4/services/towns/cherrygrove_center.nbt",
+      "maps": [
+        "mining_walls",
+        "mining_garden"
+      ],
+      "why": "a working town on the cone: polished andesite walls, andesite base, brown terracotta trim, a gravel yard with grass for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/mining_mart.nbt",
+      "id": "cobblers:f4/services/towns/mining_mart",
+      "base": "kits/structures/campaign/f4/services/towns/lavender_mart.nbt",
+      "maps": [
+        "mining_walls",
+        "mining_garden"
+      ],
+      "why": "a working town on the cone: polished andesite walls, andesite base, brown terracotta trim, a gravel yard with grass for a garden"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/tea_center.nbt",
+      "id": "cobblers:f4/services/towns/tea_center",
+      "base": "kits/structures/campaign/f4/services/towns/floaroma_center.nbt",
+      "maps": [
+        "tea_walls",
+        "tea_garden"
+      ],
+      "why": "the tea town: bamboo walls and a bamboo-mosaic base with lime terracotta, the flower beds turned to azalea bushes, the tea plant"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/tea_mart.nbt",
+      "id": "cobblers:f4/services/towns/tea_mart",
+      "base": "kits/structures/campaign/f4/services/towns/cherrygrove_mart.nbt",
+      "maps": [
+        "tea_walls",
+        "tea_garden"
+      ],
+      "why": "the tea town: bamboo walls and a bamboo-mosaic base with lime terracotta, the flower beds turned to azalea bushes, the tea plant"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/displaced_center.nbt",
+      "id": "cobblers:f4/services/towns/displaced_center",
+      "base": "kits/structures/campaign/f4/services/towns/lavender_center.nbt",
+      "maps": [
+        "displaced_walls",
+        "displaced_garden"
+      ],
+      "why": "the summit town under the ice: mossy stone brick walls grown over in the cavern's damp, purple and magenta trim, ferns on moss"
+    },
+    {
+      "out": "kits/structures/campaign/f4/services/towns/displaced_mart.nbt",
+      "id": "cobblers:f4/services/towns/displaced_mart",
+      "base": "kits/structures/campaign/f4/services/towns/floaroma_mart.nbt",
+      "maps": [
+        "displaced_walls",
+        "displaced_garden"
+      ],
+      "why": "the summit town under the ice: mossy stone brick walls grown over in the cavern's damp, purple and magenta trim, ferns on moss"
     }
   ]
 }
