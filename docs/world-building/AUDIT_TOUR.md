@@ -8,9 +8,10 @@ review list of 2026-09-21 is at one of these stops (marked **R**).
 coordination lock. `/gamemode spectator` so a `/tp` into a wall or a tree is harmless, and `/time set noon` for the
 towns (the Displaced City is dark at any hour). Every coordinate is where you stand, a block or two above the ground.
 
-Surge's town and the Scar are **not** on the disposable world, which predates their pads. They are built on the
-staging export `cobblers-dryrun2` (`--universe cobblers-runtime-proof/dryrun2 --world cobblers-dryrun2`); their stops
-are at the end.
+Surge's town and the Scar are **not** on the disposable world, which predates their pads. They are built, and
+audited clean, on the staging export `cobblers-dryrun3` (`--universe cobblers-runtime-proof/dryrun3 --world
+cobblers-dryrun3`), which also holds every other place as the live re-export will build it: a fresh export with its
+natural foliage, not the restored ground of the disposable world. Their stops are at the end.
 
 ## The twenty minutes
 
@@ -37,21 +38,25 @@ the mainland: a river mouth on the strait, across from the isle.
 | Footbridge | `/tp @s 2629 72 6448` | The river left as it runs; the bridge, quay and slipway. |
 
 ### 3. The League plateau (3 min)
-| `/tp @s 3346 122 2603` | **R** Red sand is red concrete powder, wool is terracotta, and there are no lily pads. The plateau is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. |
-| --- | --- |
+| Stop | `/tp` | Look at |
+| --- | --- | --- |
+| The processional | `/tp @s 3346 122 2603` | **R** Red sand is red concrete powder, wool is terracotta, and there are no lily pads. The plateau is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. |
 
 ### 4. Giovanni's gym (2 min)
-| `/tp @s 3605 115 6451`, then walk to the gym on the square's west | **R** The redstone torch on the desk in the barred room is now a plain torch. **Decide:** the fossil machine (tank, analyser, monitor) and a redstone block in the same gym still draw Rotom, which is Electric/Ghost with Levitate (immune to Ground). Keep the machine and accept Rotom, or make the gym interior spawn-free? |
-| --- | --- |
+| Stop | `/tp` | Look at |
+| --- | --- | --- |
+| The square, then the gym on its west | `/tp @s 3605 115 6451` | **R** The redstone torch on the desk in the barred room is now a plain torch. **Decide:** the fossil machine (tank, analyser, monitor) and a redstone block in the same gym still draw Rotom, which is Electric/Ghost with Levitate (immune to Ground). Keep the machine and accept Rotom, or make the gym interior spawn-free? |
 
 ### 5. The two towers (3 min)
-| `/tp @s 7183 124 1638` Northlight observatory | **R** Now a square station house carrying a copper dome with a glass slit. |
-| --- | --- |
-| `/tp @s 560 74 4518` Viltri Light | **R** Now a round tower tapering in three stages, with a gallery and a lantern room. Do they read as two different buildings? |
+| Stop | `/tp` | Look at |
+| --- | --- | --- |
+| Northlight observatory | `/tp @s 7183 124 1638` | **R** Now a square station house carrying a copper dome with a glass slit. |
+| Viltri Light | `/tp @s 560 74 4518` | **R** Now a round tower tapering in three stages, with a gallery and a lantern room. Do the two read as different buildings? |
 
 ### 6. Relic Island (2 min)
-| `/tp @s 1114 66 5531` | **R** The house is the same design as Pallet's large house, on purpose. The fence runs towards Pallet and stops at the torn edge; the calcite seam is behind the house. |
-| --- | --- |
+| Stop | `/tp` | Look at |
+| --- | --- | --- |
+| The torn edge | `/tp @s 1114 66 5531` | **R** The house is the same design as Pallet's large house, on purpose. The fence runs towards Pallet and stops at the torn edge; the calcite seam is behind the house. |
 
 ## The next half hour: batch 3 and the rest of the review list
 
@@ -73,7 +78,7 @@ the mainland: a river mouth on the strait, across from the isle.
 - **Right-click a trader** in Brock's town (`/tp @s 1756 141 3620`): a `NoAI` merchant should still open its trades.
 - **The ball throw** and **the creek census**, as queued before.
 
-## After the re-export, or on the staging export `cobblers-dryrun2`
+## After the re-export, or on the staging export `cobblers-dryrun3`
 
 | Place | `/tp` | Look at |
 | --- | --- | --- |

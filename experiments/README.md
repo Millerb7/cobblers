@@ -26,6 +26,7 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | EXP-024 | Can everything authored be re-applied after a re-export? | run: staging export (484 regions, seed carried) then R0-R10 re-applied and checked; Brock's gym re-placed from the installed pack; 0 gaps in the hometown; the live export still to do |
 | EXP-023 | What mechanism can hold a sleeping Celebi in the sapling? | run: Pokemon entity gives uncatchable, unbattleable, immobile, persistent and a sleep pose, but a player can still kill it and data-driven interactions do not fire for a wild Pokemon; parked |
 | EXP-022 | Can campaign dialogue run on Cobblemon's native dialogue with persistent per-player state? | run single-player: compiled thirsty stranger; disconnect restores the cursor; bucket and bottle consumed and returned; reward once; two-player not run |
+| EXP-026 | Does the whole re-application, driven by `tools/reapply.py`, build everything on a fresh export, judged by result? | run twice: the first found trees on streets and gravel falling from the cavern roof (fixed); the second ran every step without a stop, 24 of 24 places 0 gaps, audit clean |
 | EXP-021 | Do Habitat Blocks replace or add, how far, do they persist and stack? | run: replace; edge at the configured range; survive restart, lost on re-export unless transplanted or re-placed; overlapping ranges spawn nothing; command-placed blocks need a chunk reload |
 
 ## Template
