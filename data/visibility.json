@@ -142,8 +142,8 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 56,
-    "of": 162,
+    "seen": 51,
+    "of": 136,
     "unit": "observer points"
    },
    "fragile": false
@@ -194,8 +194,8 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 41,
-    "of": 108,
+    "seen": 26,
+    "of": 91,
     "unit": "observer points"
    },
    "fragile": false
@@ -565,19 +565,19 @@
    },
    "surface": "terrain",
    "measured": {
-    "seen": 56,
-    "of": 324,
+    "seen": 40,
+    "of": 272,
     "unit": "observer points"
    },
    "fragile": false
   },
   {
    "id": "rift_rim_stop_from_its_leg_canopy",
-   "claim": "The rift rim stop is visible from its leg (8-block roofline, over the planned canopy).",
+   "claim": "The rift rim stop is NOT visible from its leg over the planned canopy (8-block roofline): since Victory Road ends at the League on the trunk head (2026-09-21) it no longer climbs to the apex, and the two points that saw the post over the trees were on that stretch. It reads from the road only with a tall marker.",
    "recorded_in": {
     "file": "docs/world-building/SETTLEMENTS.md"
    },
-   "expect": "visible",
+   "expect": "not_visible",
    "observers": {
     "type": "route",
     "route_id": "victory_road",
@@ -590,11 +590,11 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 1,
-    "of": 324,
+    "seen": 0,
+    "of": 272,
     "unit": "observer points"
    },
-   "fragile": true
+   "fragile": false
   }
  ]
 }

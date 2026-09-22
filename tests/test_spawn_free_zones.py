@@ -28,10 +28,17 @@ def test_subtract_leaves_nothing_inside_and_everything_outside():
     assert CS.subtract((0, 5, 0, 5), [zone]) == [(0, 5, 0, 5)]
 
 
-def test_the_league_plateau_is_a_zone():
+def test_the_league_precinct_is_a_zone():
+    # the League moved into the Rift, onto the trunk head's floor (2026-09-21): its lot, forecourt and Victory Road's
+    # arrival, taken from its plan, must be inside a spawn-free zone
+    plan = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["settlements"]["league"]["plan"]
+    lot = next(a["rect"] for a in plan["anchors"] if a["id"] == "league_building")
+    pz = plan["plaza"]["rect"]
+    x0p, z0p = min(lot[0], pz[0]), min(lot[1], pz[1])
+    x1p, z1p = max(lot[2], pz[2]), max(lot[3], plan["entries"][0]["at"][1])
     zones = CS.spawn_free_zones()
-    assert any(x0 <= 3200 and x1 >= 3395 and z0 <= 2535 and z1 >= 2671 for x0, x1, z0, z1 in zones), \
-        "the League precinct (its lot, forecourt and processional) must be inside a spawn-free zone"
+    assert any(x0 <= x0p and x1 >= x1p and z0 <= z0p and z1 >= z1p for x0, x1, z0, z1 in zones), \
+        "the League precinct (its lot, forecourt and Victory Road's arrival) must be inside a spawn-free zone"
 
 
 def test_no_compiled_detail_reaches_a_zone():

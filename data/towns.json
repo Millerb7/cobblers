@@ -1120,30 +1120,30 @@
    "leader_type": null,
    "annotation_box": null,
    "centre": {
-    "x": 3297,
-    "z": 2603,
-    "ground_y": 118.0
+    "x": 3576,
+    "z": 2676,
+    "ground_y": 84.1
    },
    "footprint": {
     "shape": "square",
     "class": "major",
-    "size_blocks": 196,
-    "min_x": 3200,
-    "min_z": 2506,
-    "max_x": 3395,
-    "max_z": 2701,
+    "size_blocks": 181,
+    "min_x": 3486,
+    "min_z": 2585,
+    "max_x": 3666,
+    "max_z": 2765,
     "ground_y": [
-     114.2,
-     121.2
+     83.4,
+     103.5
     ],
     "slope_degrees": {
-     "mean": 2.3,
-     "max": 8.0
+     "mean": 8.7,
+     "max": 32.2
     },
-    "basis": "largest square in the search window with slope under 8 degrees, ground y64-196, at least 24 blocks from lake and river water, on the river-cut heightmap"
+    "basis": "authored: the Rift's floor at the trunk head, the League's lot (x3517-3636, z2591-2701, fit-checked on the heightmap: median floor y85, 93.4% within 3 blocks, range 11), its forecourt and Victory Road's arrival, squared up round them. the owner, 2026-09-21: the League moves into the Rift, onto the floor at its apex; players descend into the chasm to reach it"
    },
-   "subregion": "foothill_woods",
-   "region": "viltri_woods",
+   "subregion": "rift_trunk",
+   "region": "the_rift",
    "nearby": [
     {
      "landmark": "rift",
@@ -1160,14 +1160,14 @@
    ],
    "approach": {
     "from": "gym8_town",
-    "route_length_blocks": 5174,
+    "route_length_blocks": 4340,
     "straight_line_blocks": 3911,
     "water_crossings": [],
-    "text": "North from Giovanni's town through Rift Foot and the south-east arm, then along the Rift's south-west arm, west spur, fork, trunk and apex to the League plateau. Terrain-derived Victory Road length: 5,174 blocks; no water crossing.",
+    "text": "North from Giovanni's town through Rift Foot and the south-east arm, then along the Rift's south-west arm, the fork and the trunk to the League's forecourt on the floor below the apex.",
     "route_length_source": "victory_road",
     "route_length_method": "full-resolution A* on the canonical heightmap (tools/build_routes.py)"
    },
-   "route_role": "The League on the Foothill Woods plateau 178 blocks from the Rift and 447 from the Glacial Tear, overlooking the major river. The Rift, a dry valley with its own custom biome still to come, is the approach. Proposed in the overworld: see the note on the End.",
+   "route_role": "The League on the Rift's floor at the head of the trunk, 250 blocks below the apex at the Glacial Tear. Victory Road comes up the trunk from the fork to its forecourt; players descend into the chasm to reach it. Moved from the Foothill Woods plateau on 2026-09-21 (the owner).",
    "note_on_the_end": "Decided 2026-09-14: the League is in the overworld; the End's cobbleverse:kanto_league copies are to be disabled and End access is post-game (DIMENSIONS_AND_BORDERS.md 4.2).",
    "tier": "critical",
    "critical_path": true,
@@ -1178,7 +1178,7 @@
    },
    "nearest_settlement": {
     "id": "rift_dig_camp",
-    "distance_blocks": 736
+    "distance_blocks": 792
    }
   },
   {
@@ -1875,7 +1875,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.623,
+    "at_fraction": 0.743,
     "nearest_point": {
      "x": 4007,
      "z": 3678
@@ -2167,15 +2167,15 @@
      "distance_blocks": 767
     }
    ],
-   "distance_from_critical_path_blocks": 495,
+   "distance_from_critical_path_blocks": 494,
    "nearest_leg": {
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.755,
+    "at_fraction": 0.894,
     "nearest_point": {
-     "x": 3581,
-     "z": 3175
+     "x": 3587,
+     "z": 3201
     }
    },
    "waystone": {
@@ -2532,7 +2532,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.603,
+    "at_fraction": 0.719,
     "nearest_point": {
      "x": 4076,
      "z": 3751
@@ -2605,7 +2605,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.683,
+    "at_fraction": 0.815,
     "nearest_point": {
      "x": 3784,
      "z": 3464
@@ -2638,7 +2638,7 @@
  ],
  "critical_path_geometry": {
   "legs": "full-resolution terrain-weighted A* between consecutive critical towns; required bridge crossings are mandatory waypoints; Victory Road is A* between the Rift arm, fork, trunk and apex waypoints",
-  "victory_road_blocks": 5174,
+  "victory_road_blocks": 4340,
   "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
  },
  "measurement_note": "Every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees are measured on the canonical heightmap 5b963567 (the rescale plus the three tools/press_pads.py pads) with find_sites' own slope (terrain.slope_degrees), at the recorded footprints, by tools/measure_towns.py; a town with built_ground is measured with that tool's surface laid over the heightmap. Sites were NOT re-searched: siting is an authored decision. A site that no longer meets its footprint basis carries site_review (tableland_stop, max slope 5.8 against under 5)."

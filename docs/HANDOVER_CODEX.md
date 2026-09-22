@@ -265,6 +265,13 @@ For Codex to pick up. Claude has not edited any of the files named here.
     - What run 3 then found and fixed: R15 after R9; `town_audit.expected_buildings` earthworks by final state; the
       light model's foundations. EXP-026 run 3 has the numbers.
 
+22. **Hoopa's cradle moves with the League.** The League moved off the Foothill Woods plateau into the Rift
+    (the owner, 2026-09-21): it now stands on the Rift's floor at the head of the trunk, lot x3517-3636 z2591-2701,
+    floor y85, about 250 blocks down the trunk from the apex at the Glacial Tear (3660, 2400). The story places
+    Hoopa's cradle beneath the League, so the cradle is now under the Rift's floor there, not under the plateau at
+    (3297, 2603). Update the story documents that locate it; Claude has not edited them. The plateau is empty ground
+    again on the next export.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.

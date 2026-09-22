@@ -36,14 +36,14 @@
   ],
   "spawn_free_zones": [
     {
-      "id": "league_plateau",
+      "id": "league_precinct",
       "box": [
-        3120,
-        2488,
-        3423,
-        2719
+        3496,
+        2568,
+        3655,
+        2783
       ],
-      "why": "the owner, 2026-09-21: nothing wanders the champion's processional. The box is the League precinct (the League's lot, the forecourt, the processional way and the Victory Road approach) with 16 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "why": "the owner, 2026-09-21: nothing wanders the champion's approach. Moved with the League onto the Rift's floor: the League's lot, the forecourt and Victory Road's arrival with 16 blocks round them, snapped out to the 8-block grid the route boxes share.",
       "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",
       "not_covered": "Pokemon a player sends out, and anything a trainer spawner or scripted event puts there"
     },
