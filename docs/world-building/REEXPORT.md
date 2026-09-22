@@ -177,13 +177,47 @@ islet are rebuilt from committed data; and every one of them is audited by resul
 | 2 | Retire the world and the `.world` file to `cobblers-server-retired/<date>-pre-reexport/` | 3 min |
 | 3 | `python tools/reexport.py --source-root C:/Users/wnd/Documents --old-world <retired world> --out-dir C:/Users/wnd/Documents/github/cobblers-server --name cobblers-10240 --world-file C:/Users/wnd/Documents/cobblers-10240.world --paint build/paint/manifest.json` | 14 min |
 | 4 | Check: 484 region files, `seed_match: true` in its report | 1 min |
-| 5 | `python tools/reapply.py install --server-dir <server> --world-dir <server>/cobblers-10240` (server stopped): the packs, `cobblers_height` and `cobblers_worldtree` into the world folder, and the disposable-only restore pack removed | 1 min |
+| 4a | **Carry the players, before the first boot.** `python tools/reapply.py carry --old-world <retired world> --world-dir <server>/cobblers-10240` (server stopped). It must end `carried: N players, every file present, non-empty and matching by sha256`, with N the number of people who have played. Anything else stops the run: fix it and carry again (it refuses a world that already holds player files, so move a half-carried world's player folders aside first). See "Carrying the players" below | 1 min |
+| 5 | `python tools/reapply.py install --server-dir <server> --world-dir <server>/cobblers-10240` (server stopped): the packs, `cobblers_height` and `cobblers_worldtree` into the world folder, and the disposable-only restore pack removed. It refuses a world with no player in it (step 4a not done) | 1 min |
 | 6 | Boot the server | 30 s |
 | 7 | `python tools/reapply.py run --server-dir <server>` | 4.5 min |
 | 8 | Stop the server; copy the world folder (the audit tools refuse to read the live save) | 3 min |
 | 9 | `python tools/reapply.py audit --server-dir <server> --world <the copy>` | 2 min |
 | 10 | Boot; Distant Horizons pregen over the border; retire the client LOD cache | 10-60 min |
 | 11 | The audit tour (`docs/world-building/AUDIT_TOUR.md`) | you |
+
+**Carrying the players (step 4a).** A required step, not an extra: the September rescale copied player data across
+by hand (`VERTICAL_RESCALE.md`: inventory, Pokédex, PC store, TM moves, CobbleDollars, advancements, stats), and
+without it everything a player earned is gone. `tools/carry_players.py` carries, per player:
+
+| What | Where in the world | Required |
+| --- | --- | --- |
+| inventory, position, ender chest; Waystones' activated waystones (Balm persistent data inside the player file) | `playerdata/<uuid>.dat` | yes |
+| advancements, including the badge flags `cobblers:flag/*` | `advancements/<uuid>.json` | yes |
+| statistics | `stats/<uuid>.json` | yes |
+| Cobblemon player data (starter, key items, capture totals) | `cobblemonplayerdata/<xx>/<uuid>.json` | yes |
+| the Pokédex | `pokedex/<xx>/<uuid>.nbt` | yes |
+| PC and party | `pokemon/pcstore/…`, `pokemon/<party store>/…` | yes |
+| CobbleDollars balance | `cobbledollarsplayerdata/<uuid>.json` | yes |
+| rctmod series progress and level cap | `data/rctmod.player.<uuid>.stat.dat` | yes |
+| TMCraft's learned TMs | `tm_moves/<xx>/<uuid>.nbt` | if present |
+| CobbleNav's spawn data | `cobblenav/spawndata/<xx>/<uuid>.nbt` | if present |
+| our quest fields and dialogue cursors (`q.player.data()`, EXP-022) | `playermolangdata/<uuid>.dat` | if present |
+| every trainer's per-player defeat counts (world-wide) | `data/rctmod.trainers.*` | yes |
+| per-player scores (world-wide) | `data/scoreboard.dat` | if present |
+
+Not carried: `waystones.dat` (the waystones stand in new places; a player's old activations name waystones the new
+world does not have, and the badge flags re-activate the town waystones on join), rctmod's
+`rctmod.spawn.chunks.map.dat` (bookkeeping by chunk), terrain, entities, Distant Horizons.
+
+**How the carry is verified.** Before copying, it lists every file of every category in the old world with its size
+and sha256, and fails if the old world has no player, if any player lacks a required category, or if any file is
+empty. It refuses a new world that already holds any of these files. After copying, it fails unless every file is
+present in the new world, non-empty and identical by sha256, the player count is the same in both, and every
+category has as many files after as before. The record is written to `derived/reapply/carry_<time>.json` (it names
+files by UUID: never copy it into a document); `python tools/carry_players.py --verify <record>` re-checks it any
+time before the first boot. `reapply.py install` refuses a world with no player in it, unless `--no-players` says
+it is a staging world nobody plays.
 
 **If the run stops.** It names the step and why. Re-run that step alone once (`--only R8`), then continue
 (`--from R9`). Every step is idempotent. A pack donor that fails twice alone is a new problem: stop and diagnose (see
@@ -204,7 +238,8 @@ the retired one back.
 **Known costs of doing it**
 - Ore and underground-water placement is re-rolled, so any ore survey is stale afterwards.
 - Elder and grove sites are re-picked deterministically; individual trees may move.
-- Player inventories and Pokédex data carry in `playerdata/`; anything built by hand is lost (nothing has been).
+- Players are carried by step 4a, not by the export: a fresh export has no player files at all. Anything built by
+  hand is lost (nothing has been).
 - The Distant Horizons client cache has to be cleared, or players see the old terrain at distance.
 
 ## 2026-09-17: dry run of the whole procedure on a staging export

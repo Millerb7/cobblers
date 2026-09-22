@@ -72,7 +72,27 @@ forecourt, `/tp @s 3576 86 2724`. The player is in survival, series `kanto`.
 
 ## Results
 
-Not yet run: this needs a player to battle. Recorded here when it has.
+### The player carry (criterion 5, file level), 2026-09-21: PASS
+
+On `cobblers-dryrun4`, server stopped, lock held. dryrun4's own player files (the flight's, 18 files) were moved to
+`cobblers-runtime-proof/dryrun4/player-aside-2026-09-21/`, so the world held no player, as a fresh export does. The
+source was the owner's real player in the retained offline snapshot `cobblers-server-retired/2026-09-17-pre-grass`
+(never the live world; that snapshot's player is the state of 2026-09-17, not today's).
+
+| Check | Result |
+| --- | --- |
+| `reapply.py install` into the world with no player | refused, exit 1: "no player … run `reapply.py carry` first" |
+| `reapply.py carry --old-world <snapshot> --world-dir <dryrun4>` | exit 0: 1 player; playerdata 2, advancements 1, stats 1, cobblemonplayerdata 2, pokedex 2, pokemon 2, cobbledollars 1, rctmod_player 1, tm_moves 2, cobblenav 2, rctmod_trainers 1 files, all present, non-empty and equal by sha256. The snapshot has no quest fields (`playermolangdata`) or scoreboard to carry |
+| the same carry again | refused, exit 1: 17 files already present, "not a fresh export" |
+| `carry_players.py --verify <record>` | exit 0, the same counts |
+| boot dryrun4 with the carried player (76.8 s to Done), `save-all flush`, stop, verify again | exit 0: nothing changed. 43 error lines, the same set as the boot before the carry; none mentions player data |
+
+Not yet shown: the owner joining and finding the snapshot's inventory, party, PC and balance in game. That is the
+same join the battle steps below need.
+
+### The badge flags (criteria 1-4): not yet run
+
+This needs a player to battle. Recorded here when it has.
 
 ## Limitations
 
