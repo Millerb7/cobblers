@@ -1,7 +1,7 @@
 """tools/carry_players.py: a re-export keeps what players earned, and the carry fails closed.
 
 Offline: small fake worlds under tmp_path. Whether the server loads a carried player is a runtime question
-(experiments/EXP-029-badge-flags).
+(experiments/EXP-027-badge-flags).
 """
 import sys
 from pathlib import Path

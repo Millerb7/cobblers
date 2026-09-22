@@ -270,18 +270,30 @@ For Codex to pick up. Claude has not edited any of the files named here.
     floor y85, about 250 blocks down the trunk from the apex at the Glacial Tear (3660, 2400). The story places
     Hoopa's cradle beneath the League, so the cradle is now under the Rift's floor there, not under the plateau at
     (3297, 2603). Update the story documents that locate it; Claude has not edited them. The plateau is empty ground
-    again on the next export.
+    again on the next export. **One constraint from the Rift's zones** (`docs/mechanics/RIFT_ZONES.md` section 2a):
+    the cradle and the final operation are story-required, so they must stand in the Victory Road zone, under the
+    League's lot or on the trunk's floor south of the League. North of the League is the apex, gated on 120 species
+    caught, which a Nuzlocke player never reaches. `data/quests.json` still says "beneath or adjacent to the League
+    plateau at (3297, 2603)" (two places).
 
 23. **The Rift's guards need characters and lines.** The owner, 2026-09-21: at each weak point of the Rift's wall the
     only walkable way in is a one-wide walkway held by a Cobblemon NPC; a qualified player passes by talking to the
     guard, who sends them through, and an unqualified one is told what they lack. The zone check behind each guard
     speaks in that guard's voice when it turns someone back. Design: `docs/mechanics/RIFT_ZONES.md` sections 2, 4
     and 6. Four guards, proposed: G1 at the west spur's end before the dig camp (2 badges), G2 at Victory Road's gate
-    at the south-west arm's tip (8 badges), G3 at the south-east arm's tip (60 species caught), and G4 in the wall
+    at the south-west arm's tip (8 badges), G3 at the south-east branch's tip (60 species caught), and G4 in the wall
     behind the League before the apex (120 species). Needed from Codex: who each is and why they stand there; their
     greeting, their pass line, their refusal line for each thing a player can lack (badges short by N, species short
     by N), a short turn-back line for the zone check, and a farewell for the walkway's exit. Claude has not written
     dialogue.
+
+25. **Victory Road's trainers are placed on the old road.** Victory Road was re-routed to end at the League's
+    forecourt (3576, 2762), 4,340 blocks, when the League moved. `data/trainers.json` still places its trainers on
+    the old polyline (`docs/story/generate_trainers.py`): `route_09_trainer_08` at 4,408 blocks and
+    `route_09_trainer_09`, the "League Examiner", at 4,623, both past the new end, and trainer 9 stands at
+    (3598, 2575), north of the League in the proposed apex zone, which is optional content. Re-generate the
+    placements on the current `data/routes.json` so all nine stand on the road, before the League. Claude has not
+    edited the trainer data.
 
 ## What Codex can resume
 
