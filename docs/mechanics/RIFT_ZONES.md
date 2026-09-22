@@ -1,134 +1,178 @@
-# The Rift: zones, gates, wall and biome (design, not built)
+# The Rift: zones, guards, wall and biome (design, not built)
 
-**Status: proposed 2026-09-21, for the owner's review. Nothing here is built.** The League move it depends on is
-built on the staging export (`cobblers-dryrun4`); everything below is a design with costs.
+**Status: proposed 2026-09-21, revised the same day for the owner's review. Nothing here is built.** The League move
+it depends on is built on the staging export (`cobblers-dryrun4`, PR #37); everything below is a design with costs.
 
-Sources: the Rift's axes and extent (`data/landmarks.json` `rift`), its sub-regions (`data/regions.json`), the
-League's new site (`data/placements.json` `league`), Cobblemon 1.8.0's per-player data
-(`docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md`), the location titles (`tools/location_titles.py`), and the
-proven dialogue system (EXP-022, `tools/compile_dialogue.py`). Measurements are on the canonical heightmap.
+Sources: the Rift's axes, anchors and extent (`data/landmarks.json` `rift`), the League's site (`data/placements.json`
+`league`), Victory Road (`data/routes.json` `victory_road`), Cobblemon 1.8.0's per-player data and NPC fields
+(`docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md`), the location titles (`tools/location_titles.py`), and the proven
+dialogue system (EXP-022, `tools/compile_dialogue.py`). Measurements are on the canonical heightmap (`tools/ground.py`).
 
 ## 1. The geometry
 
 | Part | From | To | Length | Floor width (median) |
 | --- | --- | --- | --- | --- |
-| Trunk | apex (3686, 2442) | fork (4174, 3882) | 1,690 | 113 |
+| Trunk | apex (3660, 2400) | fork (4174, 3882) | 1,690 | 113 |
 | West spur | trunk at (3598, 3294) | spur end (3022, 3254) | 590 | 78 |
 | South-west arm | fork | tip (3738, 5082) | 1,424 | 85 |
 | South-east arm | fork | tip (4390, 4894) | 1,124 | 80 |
 
-Floor y82-89, walls about 37 blocks deep, outline 8,245 blocks round, rim y87-149 (median y121). The League stands
-on the trunk's floor 250 blocks below the apex. Victory Road enters at the south-west arm's tip (3738, 5082), runs up
-the arm to the fork and up the trunk to the League. The dig camp is on the west spur at (3106, 3314), 84 blocks
-from its end; Brock's and Misty's towns are 1,400-1,600 blocks west of it.
+Floor y82-89, walls about 37 blocks deep at about 17 degrees, rim to rim 300-380 blocks, outline 8,245 blocks
+round, rim y87-149 (median y121). **The walls are walkable**: at 17 degrees anyone can walk down into the Rift
+anywhere, so the rim wall (section 5) is what makes the guarded walkways the only walkable entrances.
 
-## 2. Zones and their gates
+**The League** stands on the trunk's floor at its head, lot x3517-3636 z2591-2701, floor y85, about 250 blocks
+down the trunk from the apex (the apex itself is too broken to seat it: y86-105, 46% flat). Victory Road enters at
+the south-west arm's tip, runs up the arm to the fork and up the trunk to the League's forecourt (3576, 2762).
+North of the League the trunk runs on 250 blocks to the apex at the Glacial Tear, over Hoopa's cradle
+(`docs/HANDOVER_CODEX.md` item 22). The dig camp is on the west spur at (3106, 3314), 84 blocks from its end.
 
-| Zone | Area | Gate | Why | Weak point |
+## 2. Zones and their guards
+
+Four zones, one guard each. Every threshold is one number in data; the numbers and which pocket is which are
+proposals for the owner.
+
+| Zone | Area | Pass | Guard | Why |
 | --- | --- | --- | --- | --- |
-| **Z1 West Spur (dig camp)** | the west spur from its end to 200 blocks short of the trunk | **2 badges** | the early weak point: the first place a young player gets into the Rift, a taste of it | the spur end (3022, 3254): the wall broken down to rubble for 40 blocks, one walkway, one guard |
-| **Z2 The spur's throat** | the last 200 blocks of the spur, to the trunk | **8 badges** | the spur must not be a back door onto Victory Road | none: the wall is full height across the throat, no walkway |
-| **Z3 South-west arm** | the arm, tip to fork | **8 badges** | Victory Road's own entry | the arm's tip (3738, 5082): the Victory Road gate, one walkway, one guard |
-| **Z4 Fork and trunk** | the fork and the trunk up to the League's forecourt | **8 badges** | Victory Road | inside Z3's gate: no separate guard |
-| **Z5 League precinct** | the League's lot, forecourt, approach | **8 badges** | the League | inside Z3's gate |
-| **Z6 South-east arm** | the arm, fork to tip | **caught 60 species** | a side pocket for collectors, not on the critical path; its Pokemon are the reward | the arm's tip (4390, 4894): the wall thinned, one walkway, one guard |
-| **Z7 The apex** | the trunk head beyond the League to the Glacial Tear | **caught 120 species** | the deepest pocket, past the League, over Hoopa's cradle (Codex item 22) | none from outside: reached only through Z4/Z5, a guard on the trunk behind the League |
+| **Z1 Dig camp** | the west spur, its end to the throat wall | **2 badges** | **G1** at the spur end (3022, 3254) | the early weak point: a young player's first taste of the Rift |
+| **Z2 Victory Road** | the south-west arm, the fork, the trunk and the League's precinct | **8 badges** | **G2** where Victory Road crosses the rim at the south-west tip (3738, 5082) | Victory Road and the League |
+| **Z3 South-east arm** | the arm, the fork mouth wall to its tip | **60 species caught** | **G3** at the arm's tip (4390, 4894) | a collectors' side pocket off the critical path; its Pokemon are the reward |
+| **Z4 The apex** | the trunk north of the League to the Glacial Tear | **120 species caught** | **G4** in the wall behind the League | the deepest pocket, over Hoopa's cradle, reached only through Z2 |
 
-The badge counts, the two caught thresholds (60 and 120) and which zone is which pocket are proposals for the
-owner. Every threshold is one number in data.
+Three walls cross the floor inside the Rift, rim to rim, where two zones meet (section 5):
 
-## 3. Can caught-count gates exist? Yes, without a mod
+| Wall | Where | Walkway |
+| --- | --- | --- |
+| the throat | the west spur 200 blocks short of the trunk, (3384, 3502) to (3406, 3182) | none: the dig camp must not be a back door onto Victory Road |
+| the fork mouth | the south-east arm's mouth at the fork, (4370, 3912) to (4010, 3988) | none: Z3 is entered from its own tip. (A second guard here is the option if the owner wants Victory Road players to reach it without walking round.) |
+| behind the League | across the trunk north of the lot, (3466, 2544) to (3768, 2629) | G4's walkway |
 
-From `docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md` (Cobblemon 1.8.0 source, not yet tested in game):
+## 3. What Cobblemon 1.8.0 exposes for caught count
 
-- **Species caught**: the Molang query `q.player.pokedex.caught_count` counts distinct species the player owns
-  (starters, trades, gifts and eggs included, not only ball captures). Readable in NPC dialogue.
-- **Ball captures**: the stat `cobblemon:captured` (Molang `q.player.get_custom_stat('cobblemon:captured')`; as a
-  scoreboard criterion `minecraft.custom:cobblemon.captured`, the name assumed) and the advancement trigger
-  `cobblemon:catch_pokemon` with `{"count": N}`.
-- **Recommended**: gate on species with `caught_count`, read by the guard when the player talks to it. It reads the
-  stored Pokedex, so catches made before the gate existed count, and nothing has to watch in the background.
+From `docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md`, read in the Cobblemon 1.8.0 source; **none of it is run in game
+yet**:
 
-Three experiments stand before any caught gate is built: which acquisitions move `caught_count` (a duplicate, a
-trade, an evolution); whether `catch_pokemon` fires only on ball captures; and the scoreboard criterion's name.
+- **Species owned**: `q.player.pokedex.caught_count` (`PokedexMoLangFunctions.kt`, VERIFIED key) counts species
+  whose Pokedex entry is `OWNED`: starters, trades, gifts and eggs as well as ball captures. The call form is ASSUMED.
+- **Ball captures**: the stat `cobblemon:captured` (`q.player.get_custom_stat('cobblemon:captured')`, VERIFIED) and
+  the advancement trigger `cobblemon:catch_pokemon` `{"count": N}`, compared with the running capture total and
+  checked only when a capture happens (VERIFIED). No condition for "N of species X" exists.
+- **Advancements**: `q.player.has_advancement('<id>')` (VERIFIED).
+- **Recommended**: G3 and G4 read `caught_count` when the player talks. It reads the stored Pokedex, so catches made
+  before the gate existed count and nothing ticks in the background.
 
-## 4. The gate is a per-player zone check
+To prove before a caught gate is built: which acquisitions move `caught_count` (a new species, a duplicate, a trade,
+an evolution); the call form; and that the dialogue sees the same number `/runmolang` does.
 
-The guard (section 6) is where a player earns passage; the zone check is what enforces it. They meet in one
-per-player record: **a pass score per zone** (objective `cob_pass`, one bit per zone, or one objective per zone),
-set by the guard's dialogue when the player qualifies and read by the zone check. The guard can read badge flags
-and the Pokedex through Molang (proven: EXP-022 reads and writes player data from dialogue); a vanilla
-advancement cannot, but it can read a score (`minecraft:entity_scores`), cheaply. So:
+**Badges**: G1 and G2 read the gym flags (`gymN_cleared`, `data/progression.json`), which nothing sets yet (STATE:
+flag-driven waystones are blocked on an in-game proof). The badge gates wait on that; the caught gates do not.
 
-- **Earn**: the player talks to the guard; the dialogue checks `q.player.data` badge flags or
-  `q.player.pokedex.caught_count`, and if the player qualifies runs, as the server,
-  `scoreboard players set <player> cob_pass_<zone> 1` and teleports them through (section 6).
-- **Enforce**: per zone, the location-title pair of hidden advancements, reused: `in_zone_<z>` is true in the
-  overworld inside the zone's boxes (the zone's polygon rasterised by `tools/subregion_boxes.py`, full height, y-64
-  to y575) **and** the player's `cob_pass_<z>` is below 1. Its reward function turns the player back and revokes the
-  advancement, so it is tested again a second later.
+## 4. The zone check, behind every guard
 
-**Turned back** means: teleported to the zone's turn-back point (the near side of its guard, facing away), with
-the guard's line on screen (`tellraw` in the guard's name and colour, and a short `title` subtitle), and a sound.
+The guard is where a player earns passage; the zone check enforces it for anyone who flies over, digs under or
+pearls past. They meet in one per-player record: **a pass score per zone** (`cob_pass_z1` .. `cob_pass_z4`), set by
+the guard's dialogue when the player qualifies, read by the zone check. It never unsets.
 
-It handles, by being a position test once a second and nothing else:
+- **Earn**: the dialogue checks the flags or `caught_count`; if the player qualifies it runs, as the server
+  (`q.run_command`, proven in EXP-022), `scoreboard players set <uuid> cob_pass_<z> 1` and the teleport (section 6).
+- **Enforce**: per zone, the location-title mechanism reused: a hidden advancement `in_zone_<z>` whose
+  `minecraft:location` condition is the overworld inside the zone's boxes (its polygon rasterised by
+  `tools/subregion_boxes.py`, full height y-64 to y575) **and** `minecraft:entity_scores` `cob_pass_<z>` below 1.
+  Its reward function turns the player back and revokes the advancement, so it is tested again a second later.
+- **Turned back**: teleported to the zone's turn-back point, in front of its guard facing away, with the guard's
+  turn-back line (`tellraw` in the guard's name and colour, a short `title` subtitle) and a sound. The zone check
+  speaks only in the guard's voice.
+- **Leaving**: each walkway has an exit box on its inner side, the same kind of hidden advancement with no score
+  condition: stepping into it sends the player out to the front of the guard with the guard's farewell line.
+  Waystones also work.
 
 | Case | How |
 | --- | --- |
-| walking, flying, digging, ender pearls | all end with the player inside the boxes; the test fires within a second of arrival, whatever the route |
-| riding a flying Pokemon | the reward runs `execute on vehicle run tp @s <point>` before teleporting the player, so the mount comes too. **To prove**: whether a teleported vehicle keeps its rider in 1.21.1 (if not: dismount, move both, remount is not possible by command, so the mount is teleported beside the player) |
-| logging in inside | the location trigger tests on the first second after login |
-| respawning inside | the same; and a bed inside a forbidden zone is broken as the player is turned back (`execute at @s run fill ... air replace #minecraft:beds`) so it cannot loop |
-| multiplayer | advancements and scores are per player: each is judged on their own pass |
+| walking, flying, digging, ender pearls, chorus fruit | every route ends with the player inside the boxes; the test fires within a second of arrival |
+| riding a flying Pokemon | the reward teleports the mount first (`execute on vehicle run tp @s <point>`), then the player, then remounts them (`ride <player> mount <mount>`, vanilla since 1.19.4). **To prove**: that Cobblemon's riding accepts `/ride`; if not, the mount lands beside the player |
+| logging in inside | the location test runs within a second of login |
+| respawning inside | the same; and a bed or respawn anchor inside a zone is removed as the player is turned back, so it cannot loop |
+| a waystone inside a zone | the same test: a teleport is one more route in |
+| multiplayer | advancements and scores are per player; each is judged on their own pass. A qualified player cannot bring an unqualified one through: G's teleport moves only the player who talked |
 
-Cost: one location test per zone per player per second for players without the pass, `entity_scores` plus a box
-list (the Rift's zones rasterise to a few hundred boxes at the 32-block grid the titles use). Negligible for a small
-group.
+Cost: for players without the pass, one location test per zone per second against a few hundred boxes (the 32-block
+grid the titles use). Negligible for a small group.
 
-**Dependencies, unbuilt:** the badge flags (`gymN_cleared`, `data/progression.json`) are set by nothing yet
-(STATE: flag-driven waystones are blocked on an in-game proof). The guard's badge check reads them, so the badge
-gates wait on that; the caught gates do not.
+## 5. The wall: the look, and the closure
 
-## 5. The wall: the look, not the gate
+Obsidian, crying obsidian and blackstone rising from the rim, the portal look climbing into the sky, visibly
+broken at the four guard sites. No `nether_portal` block anywhere (they teleport players). Blocks: obsidian, crying
+obsidian, blackstone, gilded blackstone, purple and magenta stained glass and panes, tinted glass. None is named by a
+spawn condition in `data/spawn_blocks.json` (amethyst and purple concrete are, and are not used); every block goes
+through the spawn-block policy check like any template. Obsidian also cannot be moved by pistons.
 
-Obsidian, crying obsidian and blackstone rising from the rim, the portal vibe climbing into the sky, visibly thinner
-and broken at the weak points. No `nether_portal` block anywhere (they teleport players).
+| Part | Height | Blocks |
+| --- | --- | --- |
+| rim wall, 2 thick, round the whole outline | 16 above the rim | 264,000 |
+| spires, 3x3, every 32 blocks along the rim (257) | to y320, the top third purple glass | 452,000 |
+| the throat wall, 2 thick, rim to rim across 322 blocks | floor y86 to y136 (rim y120 + 16) | 24,000 |
+| the fork mouth wall, 369 across | floor y88 to y163 (rim y147 + 16) | 39,000 |
+| the wall behind the League, 314 across | floor y85 to y136 (rim y120 + 16) | 24,000 |
+| four gatehouses (section 6), about 9 x 7 x 8 each | | 2,000 |
+| **Total** | | **about 805,000** |
 
-Blocks: obsidian, crying obsidian, blackstone, gilded blackstone, purple and magenta stained glass (and panes),
-tinted glass. None is named by a spawn condition in `data/spawn_blocks.json`. Amethyst and purple concrete are, and
-are not used. Every block goes through the spawn-block policy check like any template.
-
-| Option | Blocks |
-| --- | --- |
-| a continuous wall 24 above the rim, 1 thick | 198,000 |
-| continuous, 48 above, 2 thick | 792,000 |
-| continuous, 96 above, 2 thick | 1,583,000 |
-| **a 16-high, 2-thick base wall on the rim plus a 3x3 spire every 32 blocks to y320** | **264,000 + 452,000 = 716,000** |
-| the same with spires every 48 to y400 | 264,000 + 424,000 = 688,000 |
-
-**Recommendation: the base wall and spires to y320.** A continuous wall reads as a wall at any height; what reads
-as "reaching the sky" is height, and height is cheap in spires, not in wall. 257 spires of obsidian banded with
-crying obsidian, the top third purple glass, with Distant Horizons showing them across the map, over a 16-block
-wall that actually closes the rim. Spires lean and taper at random, so they read as grown, not built. At the weak
-points the base wall drops to rubble and the spires stop, which is how a player reads "this is where you can get
-in". About 716,000 blocks, the size of the world tree's crown, as generated fill functions like the cavern.
+Options measured for the rim wall alone: continuous 24 high, 1 thick 198,000; 48 high, 2 thick 792,000; 96 high,
+2 thick 1,583,000; spires every 48 to y400 instead of every 32 to y320 saves 28,000. **Recommendation: the 16-high
+wall with spires to y320.** Sixteen blocks cannot be walked or jumped, so the wall closes the rim; what reads as
+"reaching the sky" is height, and height is cheap in spires. Spires lean and taper at random so they read as grown,
+and Distant Horizons shows them across the map. At each guard site the wall drops to rubble either side of the
+gatehouse and the spires stop, which is how a player reads "this is the way in". Built as generated fill functions,
+like the cavern.
 
 ## 6. The guards
 
-At each weak point (Z1, Z3, Z6, and Z7 behind the League) the only walkable way in is a one-wide walkway, roofed so
-nobody hops it, with a Cobblemon NPC standing in it.
+At each guard site the only walkable way in is a one-wide walkway through a gatehouse in the wall, and a Cobblemon
+NPC stands in it.
 
-- **Talking is passing.** A shared entity cannot step aside for one player, so a qualified player talks to the
-  guard and the dialogue sends them through: sets their pass and teleports them to the walkway's far side
-  (`q.run_command`, run as the server, proven in EXP-022). An unqualified player is told what they lack.
-- **The NPC does not block on its own.** The research finds Cobblemon NPCs can be made invulnerable, unpushable
-  and stationary (the class `tools/compile_dialogue.py` writes already is), but the code does not give them a solid
-  collision box: a player may squeeze past in a one-wide walkway. So the walkway is closed behind the guard by a
-  real block (iron bars, or a door with no handle), and the guard stands in front of it. **To prove before
-  building**: walk, sprint, sprint-jump, crouch, a piston, and a ridden flying Pokemon against a guard.
-- **The zone check sits behind every guard**, and speaks in the guard's voice when it turns someone back: the same
-  wall.
-- **Characters and lines are Codex's** (who each guard is, why they stand there): `docs/HANDOVER_CODEX.md` item 23.
+```
+section along the walkway, outside on the left      plan
+  y+2   O O O O O O O O     roof over the guard      O O O O O O O O
+  y+1   . . . G B . . .                              . . . G B . x .
+  y     . . . G B . . .                              O O O O O O O O
+  y-1   O O O O O O O O     floor
+  G  the guard (Cobblemon NPC, 0.6 x 1.8)   B  barrier, 2 high, directly behind the guard
+  O  obsidian   x  the exit box   the passed player arrives 3 blocks in, facing in
+```
+
+- **It blocks everyone physically.** The walkway is one wide between obsidian, roofed at y+2 so nothing jumps over
+  the guard, and closed by a two-high barrier column directly behind the guard. The barrier is what actually stops a
+  player; it is invisible and unbreakable in survival, so the guard reads as what blocks the way.
+- **Talking is passing.** A shared entity cannot step aside for one player, so a qualified player talks to the guard
+  and the dialogue sets their pass and sends them through with
+  `q.run_command('execute as ' + q.player.uuid + ' run tp @s X Y Z yaw 0')`: exact, where `q.player.teleport` uses
+  `randomTeleport` and may adjust the spot. An unqualified player is told what they lack, with the numbers.
+- **Can the guard be pushed, damaged or jumped?** From the 1.8.0 source (VERIFIED unless marked):
+  - *Pushed*: `isPushable()` returns the class's `isMovable`, which our class sets `false`. Pistons ignore that
+    (ASSUMED: `getPistonPushReaction` is not overridden), but a piston can only stand in front of the guard, and it
+    pushes the guard into the barrier, where it cannot go; the sides and roof are obsidian, which a piston cannot
+    move.
+  - *Damaged*: `isInvulnerableTo` honours the class's `isInvulnerable`, which our class sets `true`: everything but
+    `/kill` and the void. Our class also sets `allowProjectileHits: false`, `isLeashable: false` and
+    `canDespawn: false`, and has no wander behaviour.
+  - *Jumped*: the roof makes it impossible regardless. The NPC has no solid collision box (`canBeCollidedWith` is
+    not overridden, ASSUMED false from vanilla), so it cannot be stood on, and could be squeezed past, which is why
+    the barrier stands behind it and the design does not depend on the NPC's own collision.
+- **The zone check sits behind every guard** (section 4) and turns back, in the guard's voice, anyone who went over,
+  under or round.
+- **To prove before building** (one experiment on a disposable world): the guard can be talked to from the front with
+  the barrier behind it; walk, sprint, sprint-jump, crouch, a piston, an ender pearl and a ridden flying Pokemon do
+  not get an unqualified player through; the dialogue's teleport lands exactly.
+
+**Guards for Codex to write** (`docs/HANDOVER_CODEX.md` item 23): who each is and why they stand there; a greeting;
+a pass line; a refusal for each thing a player can lack (badges short by N, species short by N); a turn-back line
+for the zone check; and a farewell for the exit box. Claude writes no dialogue.
+
+| Guard | Site | Checks |
+| --- | --- | --- |
+| G1 | the west spur's end, before the dig camp | 2 badges |
+| G2 | Victory Road's gate at the south-west tip | 8 badges |
+| G3 | the south-east arm's tip | 60 species caught |
+| G4 | the wall behind the League, before the apex | 120 species caught |
 
 ## 7. The Rift biome
 
@@ -139,31 +183,30 @@ A custom biome, `cobblers:the_rift`, painted with `/fillbiome` over the Rift's e
 | portal particles | yes | `effects.particle`: `minecraft:portal`, probability about 0.02 |
 | fog colour | yes | `effects.fog_color`, `sky_color`, `water_fog_color`: violet-grey |
 | **heavy fog** | **no** | fog distance is the client's; a datapack biome sets its colour, not its density. Needs a client mod or a shader; not proposed |
-| light from below | not from the biome | from blocks: crying obsidian (light 10) scattered in the floor, and in the wall's base |
+| light from below | not from the biome | from blocks: crying obsidian (light 10) scattered in the floor and the wall's base |
 | mood sounds | yes | `effects.ambient_sound` / `mood_sound` |
 
 **What the biome does to spawns, and why it cannot go in alone.** Every Rift entry in the compiled pools carries
-`"biomes": ["minecraft:windswept_gravelly_hills"]` (checked in `build/datapacks/cobblers_spawns`, the Victory
-Road and `rift_trunk` pools). Repainted to `cobblers:the_rift`, every one of them stops matching: the Rift would
-spawn nothing we authored. Cobbleverse's inherited pools key on biome tags (`#cobblemon:is_hills` and the like),
-which a new biome is in only if we put it there: those would stop too. So the biome ships with:
+`"biomes": ["minecraft:windswept_gravelly_hills"]` (the Victory Road and `rift_trunk` pools in
+`build/datapacks/cobblers_spawns`). Repainted, every one of them stops matching and the Rift spawns nothing we
+authored; Cobbleverse's inherited pools key on biome tags (`#cobblemon:is_hills` and the like) and would stop too.
+So the biome ships with:
 
-- `cobblers:the_rift` added to the biomes of every `data/spawns.json` entry scoped to the Rift's sub-regions and
-  to Victory Road's corridor, and recompiled;
-- the biome added to the biome tags the Rift's current biome is in, through the tag pack
-  (`tools/spawn_tag_pack.py`), so the inherited pools see it as they saw the gravelly hills;
+- `cobblers:the_rift` added to every `data/spawns.json` entry scoped to the Rift's sub-regions and Victory Road's
+  corridor, and recompiled;
+- the biome added to the tags the gravelly hills are in, through the tag pack (`tools/spawn_tag_pack.py`);
 - a check that fails if any Rift-scoped entry does not name it.
 
-Cost: `/fillbiome` over about 2.2 km² and y64-y320 (in 4x4x4 cells), split under its volume limit into generated
-functions: a new re-export step after the cavern's own `60_biome`. It survives the world only as long as the world;
-every re-export re-runs it.
+Cost: `/fillbiome` over about 2.2 km² and y64-y320 (4x4x4 cells), split under its volume limit into generated
+functions: a new re-export step after the cavern's own `60_biome`, re-run on every re-export.
 
 ## 8. Build order, once approved
 
-1. the three spawn experiments (section 3) and the guard walk-past test (section 6);
-2. the badge flags (the dependency in section 4), or the caught gates alone first;
+1. the caught-count experiments (section 3) and the guard experiment (section 6);
+2. the badge flags (section 3), or the caught gates alone first;
 3. the biome with its spawn and tag changes and its check;
-4. the zone check and passes, with a fail-closed audit (every zone has boxes and a turn-back point; every guard has a
-   dialogue that grants its zone's pass);
-5. the wall and spires, then the guards' walkways;
+4. the zone check and passes, with a fail-closed audit: every zone has boxes, a turn-back point and an exit box;
+   every guard has a dialogue that grants its zone's pass; the expected counts come from this design's data, not
+   from what was placed;
+5. the wall, spires and cross-walls, then the gatehouses and guards;
 6. staging rehearsal, audit, and a flight.
