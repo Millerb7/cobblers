@@ -800,8 +800,11 @@ def build(source_root, server_dir=None):
         py = top_of(round(px), round(pz))
         qt = quat_mul(quat_y(phi), (0.7071, 0.0, 0.0, 0.7071))
         sheet((px, py - ws["depth"] + 1.05, pz), qt, (14.0, 6.0, 1.0), "pool")
-        lights([(round(fr.xz(pool_at[0] + d, pool_at[1] + e)[0]), py + 1, round(fr.xz(pool_at[0] + d, pool_at[1] + e)[1]))
-                for d in (-6, 0, 6) for e in (-5, 5)])
+        # inside the pit's own carved air, never on the surface: the exported floor can stand a block above the
+        # heightmap there (gravel), and a light block set into it is lost
+        lights([(round(fr.xz(pool_at[0] + d, pool_at[1] + e)[0]), py - ws["depth"] + 2,
+                 round(fr.xz(pool_at[0] + d, pool_at[1] + e)[1]))
+                for d in (-6, 0, 6) for e in (-3, 3)])
         views["pool"] = [round(px), py + 4, round(pz)]
     # no sheet in the fissures: the owner found it tacky (2026-09-22); they keep their depth and their seep
 
@@ -855,7 +858,9 @@ def build(source_root, server_dir=None):
     for (x, z), y in plan.top.items():
         near_fall = any(abs(x - wx) < 24 and abs(z - wz) < 24 for wx, wy, wz in plan.water)
         if rs.random() < 0.02 and not near_fall and (x, z) not in plan.caps:
-            plan.checks.append((x, y + 1, z, ["minecraft:air"], "cut: air above the new ground"))
+            above = plan.put.get((x, y + 1, z))
+            if above is None or above == "minecraft:air":
+                plan.checks.append((x, y + 1, z, ["minecraft:air"], "cut: air above the new ground"))
     for (x, y, z), b in plan.put.items():
         base = b.split("[")[0]
         if base in (pal["vein_core"], pal["vein_bed"]) and rs.random() < 0.1:
@@ -864,6 +869,12 @@ def build(source_root, server_dir=None):
             plan.checks.append((x, y, z, [base], "sky crack"))
         elif base == "minecraft:light" and rs.random() < 0.5:
             plan.checks.append((x, y, z, [base], "light block"))
+    # the perimeter and its safety: crag tops, glass caps, the entrance path, each against the final plan
+    for kind, layer, share in (("crag top", plan.crag, 0.05), ("crack cap", plan.caps, 0.02),
+                               ("entrance path", plan.path, 0.1)):
+        for (x, z), y in sorted(layer.items()):
+            if rs.random() < share and (x, y, z) in plan.put:
+                plan.checks.append((x, y, z, [plan.put[(x, y, z)]], kind))
     plan.fx_area = area
     plan.fx_box = None
     plan.views = views
@@ -1174,7 +1185,8 @@ def verify(world):
         return 1
     p = json.loads(PLAN.read_text(encoding="utf-8"))
     kinds = {c[4] for c in p["checks"]}
-    need = {"cut: air above the new ground", "vein", "sky crack", "light block"}
+    need = {"cut: air above the new ground", "vein", "sky crack", "light block", "crag top", "crack cap",
+            "entrance path"}
     if not need <= kinds or not p.get("entities_expected"):
         print("FAIL: the plan checks %s and expects %s entities: not everything the build makes" %
               (sorted(kinds), p.get("entities_expected")))

@@ -171,7 +171,8 @@ def test_verify_fails_when_the_plan_expects_no_entities(tmp_path, monkeypatch, c
     # Fail closed: a plan that counts no sheets cannot call the sheets present.
     p = tmp_path / "plan.json"
     p.write_text(json.dumps({"checks": [[0, 0, 0, ["minecraft:air"], k] for k in
-                                        ("cut: air above the new ground", "vein", "sky crack", "light block")],
+                                        ("cut: air above the new ground", "vein", "sky crack", "light block",
+                                         "crag top", "crack cap", "entrance path")],
                              "entities_expected": 0}), encoding="utf-8")
     monkeypatch.setattr(RF, "PLAN", p)
     assert RF.verify(tmp_path) == 1

@@ -47,18 +47,21 @@ the mainland: a river mouth on the strait, across from the isle.
 | --- | --- | --- |
 | The forecourt | `/tp @s 3576 88 2724` | **R** The League on the Rift's floor at the trunk head, Victory Road's end at the plaza's south edge; its Centre and Mart are the template's own, inside. Red sand is red concrete powder, wool is terracotta. The precinct is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. On `cobblers-dryrun4` the old plateau League, Centre and Mart still stand at (3346, 2603); a fresh export has none. |
 
-### 3a. The Rift as a fracture: the prototype stretch, staging only (15 min)
-Built on the fresh staging export `cobblers-dryrun5` by `tools/rift_fracture.py` from `data/rift_fracture.json` (2026-09-22); not in the live world. Design: `docs/mechanics/RIFT_FRACTURE.md`. Move the client's Distant Horizons cache for the staging server aside first, or it shows the old staging world at range.
+### 3a. The Rift as a fracture: the chasm prototype, perimeter first, staging only (15 min)
+Built on the fresh staging export `cobblers-dryrun6` by `tools/rift_fracture.py` from `data/rift_fracture.json`
+(2026-09-22), audited clean; not in the live world. Design: `docs/mechanics/RIFT_FRACTURE.md` section 4a. Move the
+client's Distant Horizons cache for the staging server aside first: it still holds the older staging worlds.
 | Stop | `/tp` | Look at |
 | --- | --- | --- |
-| 3,000 blocks out, the hometown | `/tp @s 1461 120 5306 -121 -1` | **R** Distant Horizons: the sky crack sample and the scarp faces; entities gone. Day and night (`/time set 18000`) |
-| 1,000 blocks out | `/tp @s 3230 140 4300 -125 -4` | **R** The same, nearer |
-| The east rim, outside the lip | `/tp @s 4272 150 3600 61 -12` | **R** Normal sky behind you; the drop, the veins and the torn window ahead |
-| Across the lip | `/tp @s 3968 150 3949`, then walk to `3974 150 3943` | **R** The crossing: sky, fog, grass colour, sound and particles change as you step over |
-| The torn window (vertical sheet) | `/tp @s 4161 127 3503` | **R** The swirl in the face, lit rock round it; fly past so its origin leaves the screen (culling) |
-| The pool (horizontal sheet) in the wound | `/tp @s 4020 90 3717` | **R** Energy lying in the crack; the crusted half next to it |
-| The curtain in a fissure | `/tp @s 3958 124 3918` | **R** A sheet filling the slot |
-| Under the sky crack | `/tp @s 4041 320 3729` | **R** How it reads close; how the shaders treat it and the sheets (toggle shaders) |
+| 3,000 blocks out, the hometown | `/tp @s 1461 120 5306 -121 -1` | **R** Distant Horizons: do the crags and the two peaks read as height from here? Day, then night (`/time set 18000`) |
+| 1,000 blocks out | `/tp @s 3230 140 4300 -125 -4` | **R** The same, nearer: broken, irregular, not a fence? |
+| Outside the east rim, the highest peak | `/tp @s 4244 156 3404 48 -15` | **R** Peak top y296, 148 over the plateau; crags beside it, sheer stretches and broken plates along the rim |
+| Outside the east rim, the second peak | `/tp @s 4361 156 3672 48 -15` | **R** 141 over the plateau |
+| The rim post's trailhead (a gate) | `/tp @s 3877 148 3824` | **R** The gap in the crags, the guard placeholder standing in the open, the switchback down the scarp. The rim post's old trail beyond is still the old plan (it audits 637 cells short) |
+| The waterfall | `/tp @s 3992 137 3927` | **R** The one deliberate fall off the highest sheer lip |
+| On the floor, mid-stretch | `/tp @s 4085 88 3779` | **R** The walls from below: scarp plus crag, up to 211 blocks of rock. The capped cracks underfoot: walk over them, and watch whether anything that wanders in gets stuck |
+| The glimpse | `/tp @s 4128 125 3484` | **R** The tear in the east lip |
+| The pool in the wound | `/tp @s 4023 89 3719` | **R** Its open end now climbs out in steps |
 
 ### 4. Giovanni's gym (2 min)
 | Stop | `/tp` | Look at |
