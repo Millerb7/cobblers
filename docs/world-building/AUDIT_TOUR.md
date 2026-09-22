@@ -42,10 +42,10 @@ the mainland: a river mouth on the strait, across from the isle.
 | South pier head | `/tp @s 2701 67 6639` | Look south across the strait: the isle is where the boats go. Is this a harbour? |
 | Footbridge | `/tp @s 2629 72 6448` | The river left as it runs; the bridge, quay and slipway. |
 
-### 3. The League plateau (3 min)
+### 3. The League in the Rift (3 min)
 | Stop | `/tp` | Look at |
 | --- | --- | --- |
-| The processional | `/tp @s 3346 122 2603` | **R** Red sand is red concrete powder, wool is terracotta, and there are no lily pads. The plateau is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. |
+| The forecourt | `/tp @s 3576 88 2724` | **R** The League on the Rift's floor at the trunk head, Victory Road's end at the plaza's south edge; its Centre and Mart are the template's own, inside. Red sand is red concrete powder, wool is terracotta. The precinct is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. On `cobblers-dryrun4` the old plateau League, Centre and Mart still stand at (3346, 2603); a fresh export has none. |
 
 ### 4. Giovanni's gym (2 min)
 | Stop | `/tp` | Look at |
