@@ -17,6 +17,13 @@ dialogue system (EXP-022, `tools/compile_dialogue.py`). Measurements are on the 
 | South-west arm | fork | tip (3738, 5082) | 1,424 | 85 |
 | South-east arm | fork | tip (4390, 4894) | 1,124 | 80 |
 
+**The two arms share their first 850 blocks.** The landmark's fork anchor is not where the floor divides: from
+(4174, 3882) one trench runs south along x≈4200 to about **(4180, 4745)**, where it splits into the south-west arm
+(to 3738, 5082) and a short south-east branch (to 4390, 4894), about 290 blocks long (heightmap, sampled every 40
+blocks; the arms' lengths above are measured from the anchor, so both include the shared stem). Victory Road runs
+the whole stem. So the south-east pocket is only the branch below the split, and its wall stands at the split, not
+at the anchor: a wall at the anchor would cut Victory Road.
+
 Floor y82-89, walls about 37 blocks deep at about 17 degrees, rim to rim 300-380 blocks, outline 8,245 blocks
 round, rim y87-149 (median y121). **The walls are walkable**: at 17 degrees anyone can walk down into the Rift
 anywhere, so the rim wall (section 5) is what makes the guarded walkways the only walkable entrances.
@@ -35,17 +42,57 @@ proposals for the owner.
 | Zone | Area | Pass | Guard | Why |
 | --- | --- | --- | --- | --- |
 | **Z1 Dig camp** | the west spur, its end to the throat wall | **2 badges** | **G1** at the spur end (3022, 3254) | the early weak point: a young player's first taste of the Rift |
-| **Z2 Victory Road** | the south-west arm, the fork, the trunk and the League's precinct | **8 badges** | **G2** where Victory Road crosses the rim at the south-west tip (3738, 5082) | Victory Road and the League |
-| **Z3 South-east arm** | the arm, the fork mouth wall to its tip | **60 species caught** | **G3** at the arm's tip (4390, 4894) | a collectors' side pocket off the critical path; its Pokemon are the reward |
-| **Z4 The apex** | the trunk north of the League to the Glacial Tear | **120 species caught** | **G4** in the wall behind the League | the deepest pocket, over Hoopa's cradle, reached only through Z2 |
+| **Z2 Victory Road** | the south-west arm, the shared stem, the trunk, the League's precinct, and Hoopa's cradle | **8 badges** | **G2** where Victory Road crosses the rim at the south-west tip (3738, 5082) | Victory Road, the finale and the League |
+| **Z3 South-east branch** | the branch below the split, its mouth wall to its tip | **60 species caught** | **G3** at the branch's tip (4390, 4894) | a collectors' side pocket off the critical path; its Pokemon are the reward |
+| **Z4 The apex** | the trunk north of the League to the Glacial Tear | **120 species caught** | **G4** in the wall behind the League | the deepest pocket, a postgame reward reached only through Z2 |
 
 Three walls cross the floor inside the Rift, rim to rim, where two zones meet (section 5):
 
 | Wall | Where | Walkway |
 | --- | --- | --- |
 | the throat | the west spur 200 blocks short of the trunk, (3384, 3502) to (3406, 3182) | none: the dig camp must not be a back door onto Victory Road |
-| the fork mouth | the south-east arm's mouth at the fork, (4370, 3912) to (4010, 3988) | none: Z3 is entered from its own tip. (A second guard here is the option if the owner wants Victory Road players to reach it without walking round.) |
+| the branch mouth | across the south-east branch just below the split, (4373, 4691) to (4196, 4927) | none: Z3 is entered from its own tip. (A second guard here is the option if the owner wants Victory Road players to reach it without walking round.) |
 | behind the League | across the trunk north of the lot, (3466, 2544) to (3768, 2629) | G4's walkway |
+
+## 2a. Caught-count gates and Nuzlocke: optional content only
+
+A Nuzlocke player catches about one Pokemon per route, 10 to 20 over the whole game, and never reaches 60 or 120
+species. So **Z3 and Z4 hold nothing the story or the League needs**, and the design keeps them that way:
+
+- **Hoopa's cradle and the final operation stand in Z2.** The finale is story-required: the dialogue sends the
+  player "the trunk toward the head" to the cradle, and releasing Hoopa (`rift_crisis_resolved`) is what opens the
+  League. The cradle must therefore be under the League's lot or on the trunk's floor south of the wall behind the
+  League, never north of it (Z4) and never in the south-east branch (Z3). Codex places it
+  (`docs/HANDOVER_CODEX.md` item 22, with this constraint).
+- **What is in Z3 and Z4 now:** no settlement, quest site or dialogue location in the data. One stale record: Victory
+  Road's ninth trainer, the "League Examiner" (`data/trainers.json` `route_09_trainer_09`), sits at (3598, 2575),
+  north of the League, because its placement predates the re-route (it is at 4,623 blocks on a road now 4,340
+  long; the eighth, at 4,408, is past the end too). Victory Road's trainers are re-placed on the new road, south of
+  the League, before any wall is built (item 25).
+- **A check when it is built:** the zone audit fails if any story-required site (a quest location, a mainline beat's
+  actor, a gym or League trainer) lies inside a caught-count zone.
+
+**Where the thresholds come from.** Distinct species a player can meet before each point of the critical path, from
+`data/spawns.json` (the route rosters, plus the sub-regions whose level band is based on that route; evolutions are
+counted in the second column because `caught_count` counts every species owned, and an evolution is assumed to add
+one, not yet tested):
+
+| Before | Catchable, cumulative | With their evolutions | A normal player at about half |
+| --- | --- | --- | --- |
+| gym 3 | 38 | 73 | 37 |
+| gym 4 | 54 | 101 | 50 |
+| gym 5 | 68 | 120 | 60 |
+| gym 6 | 81 | 135 | 67 |
+| gym 7 | 102 | 160 | 80 |
+| gym 8 | 127 | 188 | 94 |
+| the League | 160 | 223 | 111 |
+
+(300 species are catchable anywhere, 140 of them only in wilderness sub-regions off the routes.) "About half" is an
+assumption, not a measurement: a player who catches one of each family they meet and evolves what they use.
+
+**Proposed: Z3 at 60 species**, which a normal player reaches around the fifth gym, so the south-east branch is a
+mid-game reward for collecting; **Z4 at 120**, which a normal player reaches just after the League, so the apex is
+postgame. Both remain single numbers in data, and both stay off the critical path whatever they are set to.
 
 ## 3. What Cobblemon 1.8.0 exposes for caught count
 
@@ -64,8 +111,10 @@ yet**:
 To prove before a caught gate is built: which acquisitions move `caught_count` (a new species, a duplicate, a trade,
 an evolution); the call form; and that the dialogue sees the same number `/runmolang` does.
 
-**Badges**: G1 and G2 read the gym flags (`gymN_cleared`, `data/progression.json`), which nothing sets yet (STATE:
-flag-driven waystones are blocked on an in-game proof). The badge gates wait on that; the caught gates do not.
+**Badges**: G1 and G2 read the gym flags (`gymN_cleared`, `data/progression.json`): one advancement per leader,
+`cobblers:flag/gymN_cleared`, set by rctmod when the player wins that leader's battle (`tools/progression_pack.py`,
+EXP-027). A guard reads it with `q.player.has_advancement('cobblers:flag/gym8_cleared')` (in the 1.8.0 source,
+not yet run from dialogue) and counts badges by summing the eight.
 
 ## 4. The zone check, behind every guard
 
@@ -111,10 +160,10 @@ through the spawn-block policy check like any template. Obsidian also cannot be 
 | rim wall, 2 thick, round the whole outline | 16 above the rim | 264,000 |
 | spires, 3x3, every 32 blocks along the rim (257) | to y320, the top third purple glass | 452,000 |
 | the throat wall, 2 thick, rim to rim across 322 blocks | floor y86 to y136 (rim y120 + 16) | 24,000 |
-| the fork mouth wall, 369 across | floor y88 to y163 (rim y147 + 16) | 39,000 |
+| the branch mouth wall, 296 across | floor y88 to y141 (rim y125 + 16) | 23,000 |
 | the wall behind the League, 314 across | floor y85 to y136 (rim y120 + 16) | 24,000 |
 | four gatehouses (section 6), about 9 x 7 x 8 each | | 2,000 |
-| **Total** | | **about 805,000** |
+| **Total** | | **about 789,000** |
 
 Options measured for the rim wall alone: continuous 24 high, 1 thick 198,000; 48 high, 2 thick 792,000; 96 high,
 2 thick 1,583,000; spires every 48 to y400 instead of every 32 to y320 saves 28,000. **Recommendation: the 16-high
@@ -171,7 +220,7 @@ for the zone check; and a farewell for the exit box. Claude writes no dialogue.
 | --- | --- | --- |
 | G1 | the west spur's end, before the dig camp | 2 badges |
 | G2 | Victory Road's gate at the south-west tip | 8 badges |
-| G3 | the south-east arm's tip | 60 species caught |
+| G3 | the south-east branch's tip | 60 species caught |
 | G4 | the wall behind the League, before the apex | 120 species caught |
 
 ## 7. The Rift biome

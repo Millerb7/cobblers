@@ -242,13 +242,35 @@ def test_one_flag_advancement_per_flag_and_no_others():
 
 
 def test_trainer_defeat_flag_uses_rct_defeat_count_with_exact_ids():
-    # Without this a flag could be set by the wrong leader or need an extra `count` to fire.
+    # Without this a flag could be set by the wrong leader, or by a count the first win does not reach. rctmod
+    # 0.19.0 records the defeat (TrainerBattleMemory.addDefeatedBy) before it fires the trigger, so on a first win
+    # the player's count is already 1 when `count` is compared; it is pinned to 1 rather than left to the codec.
     adv = json.loads(_pack()["data/%s/advancement/flag/gym1_cleared.json" % NS])
     assert list(adv["criteria"]) == ["defeated"]
     crit = adv["criteria"]["defeated"]
     assert crit["trigger"] == "rctmod:defeat_count"
-    assert crit["conditions"] == {"trainer_ids": ["kanto_brock", "kanto_brock_rematch"]}
-    assert "count" not in crit["conditions"]
+    assert crit["conditions"] == {"trainer_ids": ["kanto_brock", "kanto_brock_rematch"], "count": 1}
+
+
+def test_flag_report_fails_on_a_world_with_no_players(tmp_path, capsys):
+    # Without this the staging proof could "pass" by reading a world nobody has joined: no advancement files,
+    # so no player lacks a flag and nothing looks wrong.
+    assert PP.report(PP.plan(_doc()), tmp_path) == 1
+    assert "FAIL" in capsys.readouterr().out
+
+
+def test_flag_report_shows_each_player_only_their_own_flags(tmp_path, capsys):
+    # Without this a flag landing on the wrong player, or on every player, would not show in the proof.
+    adv = tmp_path / "advancements"
+    adv.mkdir()
+    (adv / "aaaaaaaa-0000-0000-0000-000000000001.json").write_text(json.dumps(
+        {"%s:flag/gym1_cleared" % NS: {"criteria": {"defeated": "x"}, "done": True}}), encoding="utf8")
+    (adv / "bbbbbbbb-0000-0000-0000-000000000002.json").write_text(json.dumps(
+        {"%s:flag/gym2_cleared" % NS: {"criteria": {}, "done": False}}), encoding="utf8")
+    assert PP.report(PP.plan(_doc()), tmp_path) == 0
+    out = capsys.readouterr().out.splitlines()
+    assert any(l.startswith("player aaaaaaaa") and "gym1_cleared" in l and "gym2" not in l for l in out)
+    assert any(l.startswith("player bbbbbbbb") and ": 0 of" in l for l in out)
 
 
 def test_run_start_flag_uses_tick_and_trigger_flag_is_impossible():

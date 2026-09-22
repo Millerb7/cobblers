@@ -20043,16 +20043,16 @@
         },
         {
           "id": "rift_apex",
-          "kind": "rift_ascent",
+          "kind": "route_end",
           "at": {
             "x": 3576,
             "y": 86.16,
             "z": 2762
           },
-          "note": "Leaves the trench for the League plateau.",
+          "note": "Ends on the trunk's floor at the League's forecourt; the League stands in the trench, not above it.",
           "source_coordinate": {
-            "x": 3686,
-            "z": 2442
+            "x": 3576,
+            "z": 2762
           }
         }
       ],

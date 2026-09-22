@@ -1,7 +1,7 @@
 """A spawn-free zone has nothing spawning in it: no compiled pool reaches it, and the inherited pools are
 suppressed over it.
 
-Without this the League plateau, the owner's one ceremonial place, gets Sandygast and Smeargle on the champion's
+Without this the League precinct, the owner's one ceremonial place, gets Sandygast and Smeargle on the champion's
 processional (2026-09-21). The first compile still left 80 details in the zone, from sub-region cells that only
 overlapped its edge.
 

@@ -2,6 +2,9 @@
 """The re-application after an export, as one supervised run: regenerate, install, run every step in order over RCON
 with a check after each, and audit the result. docs/world-building/REEXPORT.md is the procedure; this runs it.
 
+  python tools/reapply.py carry --old-world <retired old world copy> --world-dir <fresh export>
+        with the server STOPPED, before the new world's first boot: every player's state (tools/carry_players.py),
+        checked file by file by sha256 and player by player; install refuses a world with no player carried
   python tools/reapply.py prepare --source-root <root> --server-dir <server>
         regenerate every function and pack from the heightmap and committed data (server not needed), assemble the
         loose functions into build/datapacks/cobblers_reapply, and refuse to go on if any function would be refused
@@ -47,7 +50,7 @@ PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
 OUT = ROOT / "derived" / "reapply"
 SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
-                "cobblers_signs", "cobblers_titles")
+                "cobblers_signs", "cobblers_titles", "cobblers_progression")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -100,6 +103,8 @@ def prepare(a):
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "signposts.py", "function", *src)
     py(TOOLS / "location_titles.py")
+    # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
+    py(TOOLS / "progression_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
@@ -132,6 +137,12 @@ def install(a):
     # the port says the server is down; only the lock says nobody else is using the runtime
     dp = runtime_guard.check(Path(a.server_dir) / "datapacks", "install packs into")
     runtime_guard.check(a.world_dir, "install world packs into")
+    # the players first: a world nobody has been carried into loses every player's party, flags and progress on the
+    # first boot that anyone joins. Only a staging export nobody plays may skip it, and must say so
+    import carry_players
+    if not carry_players.players(Path(a.world_dir)) and not a.no_players:
+        raise SystemExit("no player in %s/playerdata: run `reapply.py carry` first, or pass --no-players for a "
+                         "staging world nobody has played" % a.world_dir)
     # cobblers_restore puts ground back to the heightmap: a disposable-world tool that must never be installed
     # beside the live world, where one mistyped function would flatten a town
     if (dp / "cobblers_restore").exists():
@@ -319,15 +330,41 @@ def audit(a):
     return 0 if res["clean"] else 1
 
 
+def carry(a):
+    import socket
+    s = socket.socket()
+    busy = s.connect_ex(("127.0.0.1", 25565)) == 0
+    s.close()
+    if busy:
+        raise SystemExit("port 25565 is in use: carry players with the server stopped, before the first boot")
+    import carry_players
+    OUT.mkdir(parents=True, exist_ok=True)
+    try:
+        r = carry_players.carry(Path(a.old_world), Path(a.world_dir),
+                                OUT / ("carry_%s.json" % time.strftime("%Y%m%d_%H%M%S")), a.rehearsal)
+    except carry_players.CarryError as e:
+        raise SystemExit("carry FAILED: %s" % e)
+    print("carried: " + carry_players.summary(r))
+    print("manifest (names files by UUID; keep it out of documents):", r["manifest"])
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
+    q = sub.add_parser("carry", help="with the server STOPPED, before the new world's first boot: every player's state")
+    q.add_argument("--old-world", required=True,
+                   help="the live world as retired in REEXPORT step 2 (last saved within 12 hours)")
+    q.add_argument("--world-dir", required=True, help="the fresh export")
+    q.add_argument("--rehearsal", action="store_true",
+                   help="staging only: allow a retained snapshot or an older copy as the source")
     q = sub.add_parser("prepare")
     q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
     q.add_argument("--server-dir", required=True)
     q = sub.add_parser("install")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world-dir", required=True)
+    q.add_argument("--no-players", action="store_true",
+                   help="install into a staging world nobody has played, with no players carried")
     q = sub.add_parser("run")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--from", dest="from_step")
@@ -347,7 +384,7 @@ def main(argv=None):
     # Every subcommand but `plan` reads or writes the server or a world (prepare reads the installed packs' donor
     # templates; install writes the packs; run drives RCON; audit reads a world): the lock first, before anything.
     runtime_guard.require_lock("reapply %s" % a.cmd)
-    return {"prepare": prepare, "install": install, "run": run, "audit": audit}[a.cmd](a) or 0
+    return {"carry": carry, "prepare": prepare, "install": install, "run": run, "audit": audit}[a.cmd](a) or 0
 
 
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ are placed after the next terrain rendition.
   python tools/progression_pack.py                      # -> build/datapacks/cobblers_progression
   python tools/progression_pack.py --series johto       # prestige: another region's leaders
   python tools/progression_pack.py --out some/dir
+  python tools/progression_pack.py --report <stopped world copy>   # each player's flags
 
 Command syntax used here was loaded on this server's Waystones 21.1.37 and
 rctmod 0.19.0-beta (EXP-020). Its runtime effect still needs a player.
@@ -130,8 +131,11 @@ def plan(doc: dict, series: str | None = None) -> dict:
 
 def _flag_advancement(ns: str, flag: dict) -> dict:
     if flag["kind"] == "trainer_defeat":
+        # rctmod fires defeat_count only for the players on the winning side of a finished battle
+        # (TrainerBattle.distributeRewards, from Cobblemon's BATTLE_VICTORY), and matches when this player's own
+        # defeats of the trainer reach count. count 1 says so rather than leaning on the codec's default
         criteria = {"defeated": {"trigger": "rctmod:defeat_count",
-                                 "conditions": {"trainer_ids": flag["trainer_ids"]}}}
+                                 "conditions": {"trainer_ids": flag["trainer_ids"], "count": 1}}}
     elif flag["kind"] == "run_start":
         criteria = {"started": {"trigger": "minecraft:tick"}}
     else:
@@ -226,14 +230,39 @@ def write(p: dict, out_dir: Path) -> list:
     return sorted(written)
 
 
+def report(p: dict, world: Path) -> int:
+    """Which flags each player of a STOPPED world copy holds, read from its advancements files. Fails closed: a
+    plan with no flags, or a world with no player advancements, has nothing to show and fails."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import runtime_guard
+    world = runtime_guard.check(world, "read player advancements from")
+    ns = p["namespace"]
+    expected = [f["id"] for f in p["flags"]]
+    found = sorted((world / "advancements").glob("*.json")) if (world / "advancements").is_dir() else []
+    if not expected or not found:
+        print("FAIL: %d flags planned, %d player advancement files in %s" % (len(expected), len(found), world))
+        return 1
+    for path in found:
+        adv = json.loads(path.read_text(encoding="utf8"))
+        held = [fid for fid in expected if adv.get("%s:flag/%s" % (ns, fid), {}).get("done")]
+        # the first 8 characters of the file name only: enough to tell players apart, not an identity
+        print("player %s: %d of %d flags%s" % (path.stem[:8], len(held), len(expected),
+                                              (": " + ", ".join(held)) if held else ""))
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--report", type=Path, metavar="WORLD",
+                    help="print each player's flags from a stopped world copy instead of writing the pack")
     ap.add_argument("--data", type=Path, default=ROOT / "data" / "progression.json")
     ap.add_argument("--series", help="override active_series (prestige)")
     ap.add_argument("--out", type=Path, default=ROOT / "build" / "datapacks" / "cobblers_progression")
     args = ap.parse_args(argv)
     try:
         p = plan(load(args.data), args.series)
+        if args.report:
+            return report(p, args.report)
         written = write(p, args.out)
     except (ProgressionError, OSError, json.JSONDecodeError) as e:
         print("error: %s" % e, file=sys.stderr)
