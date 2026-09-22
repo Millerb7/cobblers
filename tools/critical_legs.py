@@ -30,7 +30,10 @@ def coarse(heights, cell=CELL):
 
 
 def victory_road(a, b, landmarks_doc):
-    """Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League."""
+    """Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk as far as the League, to the
+    League. The trunk is followed to its point nearest the League and no further: since 2026-09-21 the League stands on
+    the trunk's own floor below the apex, and a road that ran on to the apex would pass it and come back. For a League
+    beyond the apex (the plateau it stood on before) that point is the apex, as it was."""
     rift = next((l for l in landmarks_doc["landmarks"] if l["id"] == "rift"), None)
     if not rift:
         return None
@@ -39,7 +42,9 @@ def victory_road(a, b, landmarks_doc):
         return None
     arm = list(reversed(ax["south_west_arm"]))          # foot of the arm first, fork last
     trunk = list(reversed(ax["trunk"]))                  # fork first, apex last
-    return [[a["centre"]["x"], a["centre"]["z"]]] + arm + trunk[1:] + [[b["centre"]["x"], b["centre"]["z"]]]
+    goal = [b["centre"]["x"], b["centre"]["z"]]
+    stop = min(range(len(trunk)), key=lambda i: (trunk[i][0] - goal[0]) ** 2 + (trunk[i][1] - goal[1]) ** 2)
+    return [[a["centre"]["x"], a["centre"]["z"]]] + arm + trunk[1:stop + 1] + [goal]
 
 
 def legs(towns_doc, heights, sea_level, landmarks_doc=None):

@@ -155,6 +155,18 @@ def jigsaw_commands(rec, template_doc):
     return out
 
 
+def load_box(rec, margin=16):
+    """(x0, z0, x1, z1) to force-load before /place template: the rotated footprint the template is written into AND
+    the unrotated extent (origin to origin + size). Vanilla's /place template refuses with "That position is not
+    loaded" unless the unrotated extent is loaded, even though it writes the rotated one: the League turned
+    clockwise_90 on the Rift's floor placed nothing in a whole staging run (2026-09-21), and the other rotated donors
+    had worked only because their unrotated extents happened to be loaded by the town around them."""
+    lo, hi = box(rec)
+    x, z = rec["position"]["x"], rec["position"]["z"]
+    sx, _, sz = rec.get("size") or [hi[0] - lo[0] + 1, 0, hi[2] - lo[2] + 1]
+    return (min(lo[0], x) - margin, min(lo[2], z) - margin, max(hi[0], x + sx - 1) + margin, max(hi[2], z + sz - 1) + margin)
+
+
 def functions(rec, subs, check=None, extra=None):
     """{function name: lines}. Force-load, wait SETTLE ticks, place and substitute, wait SETTLE ticks, and if the
     check block is missing place again, then release the box.
@@ -163,8 +175,7 @@ def functions(rec, subs, check=None, extra=None):
     in one run, Blaine's in the next) and none of ten failed when run on their own; the cause was not found. The
     wait and the check make the placement not depend on it, and tools/town_audit.py checks the result."""
     name = "place_%s" % rec["id"]
-    lo, hi = box(rec)
-    fl = "%d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16)
+    fl = "%d %d %d %d" % load_box(rec)
     body = commands(rec, subs)
     body = [l for l in body if not l.startswith("forceload")] + list(extra or [])
     held = "# chunks-loaded-by: cobblers:structures/%s" % name
@@ -183,7 +194,7 @@ def commands(rec, subs):
     x, y, z = (rec["position"][k] for k in "xyz")
     lo, hi = box(rec)
     out = ["# %s: %s at (%d, %d, %d) rotation %s" % (rec["id"], rec["pack_template"], x, y, z, rec.get("rotation", "none")),
-           "forceload add %d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16),
+           "forceload add %d %d %d %d" % load_box(rec),
            "place template %s %d %d %d %s %s 1.0 0" % (rec["pack_template"], x, y, z, rec.get("rotation", "none"), rec.get("mirror", "none"))]
     # /fill refuses more than 32,768 blocks, and it refuses the whole command rather than part of it.
     # Brock's gym is 11,016 and fitted; Misty's is 46,080 and every substitution silently did nothing
@@ -213,7 +224,7 @@ def commands(rec, subs):
             for gone in ("minecraft:water", "minecraft:air"):
                 out.append("fill %d %d %d %d %d %d %s replace %s"
                            % (lo[0], y0, lo[2], hi[0], y1, hi[2], material, gone))
-    out.append("forceload remove %d %d %d %d" % (lo[0] - 16, lo[2] - 16, hi[0] + 16, hi[2] + 16))
+    out.append("forceload remove %d %d %d %d" % load_box(rec))
     return out
 
 

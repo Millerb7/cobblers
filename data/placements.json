@@ -1736,113 +1736,76 @@
     },
     "league": {
       "centre": [
-        3297,
-        2603
+        3576,
+        2676
       ],
       "footprint_from": "data/towns.json",
-      "status": "approved 2026-09-21; laid out and audited on the disposable world 2026-09-21; not in the live world; no traders until the badge-gated stock lands",
+      "status": "moved into the Rift 2026-09-21 (the owner); laid out on the staging export; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
-        "reading": "Victory Road's last climb comes up the escarpment from the river valley and tops out at the plateau's east lip, onto a forecourt. The Centre and the Mart stand together on its north side, the last heal and the last shop, and the south side is left open to the drop and the view back down Victory Road. West of the forecourt a wide processional way crosses the plateau, lined with lamps and nothing else, straight to the League's door. Nobody lives here. It is a precinct, not a town, and it should feel emptied out for you.",
+        "reading": "Victory Road's last stretch runs up the Rift's trunk on the dry floor, the walls closing in, and ends at a forecourt at the foot of the League. The building stands on the floor with the apex behind it, far taller than the chasm is deep, so its upper storeys rise out over the rim: you see it from the plateau, and you have to go down to reach it. Nobody lives here; the League carries its own Centre and Mart inside.",
         "entries": [
           {
             "from": "gym8_town",
             "at": [
-              3394,
-              2603
+              3576,
+              2762
             ],
             "street": "victory_approach"
           }
         ],
         "exits": [],
+        "footprint": {
+          "rect": [
+            3486,
+            2585,
+            3666,
+            2765
+          ],
+          "why": "the League's lot, the forecourt and the approach, squared up"
+        },
         "streets": [
           {
             "id": "victory_approach",
             "polyline": [
               [
-                3394,
-                2603
+                3576,
+                2762
               ],
               [
-                3362,
-                2603
+                3576,
+                2729
               ]
             ],
             "width": 7,
             "surface": "minecraft:tuff_bricks",
             "max_grade": 0.1
-          },
-          {
-            "id": "processional_way",
-            "polyline": [
-              [
-                3330,
-                2603
-              ],
-              [
-                3272,
-                2603
-              ]
-            ],
-            "width": 9,
-            "surface": "minecraft:deepslate_tiles",
-            "max_grade": 0.04
           }
         ],
         "plaza": {
           "rect": [
-            3330,
-            2586,
-            3362,
-            2620
+            3560,
+            2703,
+            3592,
+            2728
           ],
-          "y": 119,
+          "y": 85,
           "surface": "minecraft:polished_tuff",
-          "why": "the forecourt at the lip, where Victory Road ends"
+          "why": "the forecourt at the League's door, where Victory Road ends"
         },
         "anchors": [
-          {
-            "id": "league_pokecenter",
-            "role": "pokecenter",
-            "rect": [
-              3338,
-              2560,
-              3360,
-              2582
-            ],
-            "facing": "south",
-            "why": "on the forecourt's north side: the last heal before the Elite Four",
-            "template": "cobblers:f4/services/towns/league_center",
-            "derived_from": "cobblers:f4/services/towns/lavender_center",
-            "rematerial": "its deepslate kept and its basalt turned to deepslate tiles and polished blackstone, to stand beside the League"
-          },
-          {
-            "id": "league_pokemart",
-            "role": "pokemart",
-            "rect": [
-              3308,
-              2556,
-              3334,
-              2582
-            ],
-            "facing": "south",
-            "why": "beside the Centre on the north side, at the head of the processional way",
-            "template": "cobblers:f4/services/towns/league_mart",
-            "derived_from": "cobblers:f4/services/towns/lavender_mart",
-            "rematerial": "the Centre's League re-material"
-          },
           {
             "id": "league_building",
             "role": "league",
             "template": "cobbleverse:kanto_league",
             "rect": [
-              3138,
-              2539,
-              3266,
-              2667
+              3513,
+              2587,
+              3640,
+              2702
             ],
-            "facing": "east",
-            "why": "Cobbleverse's own Kanto League, 111 by 120 and 159 tall, on the plateau's flat west half, its door at the end of the processional way. It reaches y277; the height pack allows y575.",
-            "level": 118
+            "facing": "south",
+            "level": 85,
+            "why": "Cobbleverse's own Kanto League, turned to face south down the trunk: 120 by 111 on the floor, 159 tall, so it reaches y243 over a rim at y120-150. Its Centre and Mart are inside it."
           }
         ],
         "house_lots": {
@@ -1851,21 +1814,20 @@
         },
         "waystone": {
           "position": [
-            3346,
-            2590
+            3576,
+            2724
           ],
-          "facing": "west",
-          "note": "proposed: opens with the League; on the forecourt, facing the processional way"
+          "facing": "north",
+          "note": "proposed: opens with the League; on the forecourt, facing the door"
         },
         "paving": {
           "approach": "minecraft:tuff_bricks",
-          "processional": "minecraft:deepslate_tiles",
           "plaza": "minecraft:polished_tuff",
           "lamp": "minecraft:sea_lantern",
-          "lamp_why": "the League's cold light, flush along the processional way; the one lamp shared with another place (Misty's), since only five full-block lights exist that name no spawn condition",
-          "why": "deepslate tiles are the League building's own main block, so the way reads as its approach. None is named by a spawn condition in data/spawn_blocks.json."
+          "lamp_why": "the League's cold light, flush along the approach",
+          "why": "tuff and deepslate, the League's own stone; none is named by a spawn condition"
         },
-        "prep_note": "The forecourt and way are on the plateau's flat at y118-119, and the approach climbs two blocks from the lip. The League's lot is the real work: it spans y113 to y120, lowest at its west end outside the footprint, and is levelled to y118, cutting the east and filling up to five blocks on the west."
+        "prep_note": "The floor at the trunk head runs y80-91 under the lot; levelled to y85, the worst cut and fill a few blocks. The forecourt and approach are on the floor."
       }
     },
     "merian_hut": {
@@ -7563,24 +7525,24 @@
       "kind": "league",
       "lot": "league_building",
       "position": {
-        "x": 3147,
-        "y": 117,
-        "z": 2543
+        "x": 3636,
+        "y": 84,
+        "z": 2591
       },
       "size": [
         111,
         159,
         120
       ],
-      "rotation": "none",
+      "rotation": "clockwise_90",
       "mirror": "none",
       "anchor_mode": "corner",
       "y_mode": "absolute",
       "status": "planned",
-      "facing": "east",
+      "facing": "south",
       "entrance_in_template": "east",
-      "chosen_because": "Cobbleverse's own Kanto League, 111 by 120 and 159 tall, on the plateau's flat west half, its door at the end of the processional way. It reaches y277; the height pack allows y575.",
-      "rotation_because": "its entrance stairs rise on the east side; turned to face east",
+      "chosen_because": "Cobbleverse's own Kanto League, 111 by 120 and 159 tall, on the Rift's floor at the trunk head (moved from the plateau, the owner, 2026-09-21: the League moves into the Rift, onto the floor at its apex; players descend into the chasm to reach it). Command position for clockwise_90: footprint x3517-3636 z2591-2701, seated one below the levelled floor as it was on the plateau.",
+      "rotation_because": "its entrance stairs rise on the template's east side; turned clockwise to face south down the trunk, the way Victory Road arrives",
       "source": {
         "pack": "installed",
         "licence": "placed by resource id from the installed pack; never copied into the repo"
@@ -7607,54 +7569,6 @@
       ],
       "remove_blocks_why": "lily pads draw Lotad's line and Politoed, and nothing else floats on water",
       "decided": "2026-09-21 by the owner: nothing wanders the champion's processional"
-    },
-    {
-      "id": "league_pokecenter",
-      "settlement": "league",
-      "template": "cobblers:f4/services/towns/league_center",
-      "file": "kits/structures/campaign/f4/services/towns/league_center.nbt",
-      "cell": "C4",
-      "kind": "service",
-      "lot": "league_pokecenter",
-      "position": {
-        "x": 3340,
-        "z": 2563
-      },
-      "facing": "south",
-      "anchor_mode": "corner",
-      "y_mode": "surface",
-      "rotation": "none",
-      "mirror": "none",
-      "status": "planned",
-      "chosen_because": "on the forecourt's north side: the last heal before the Elite Four",
-      "donor_source": {
-        "pack": "our kit",
-        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
-      }
-    },
-    {
-      "id": "league_pokemart",
-      "settlement": "league",
-      "template": "cobblers:f4/services/towns/league_mart",
-      "file": "kits/structures/campaign/f4/services/towns/league_mart.nbt",
-      "cell": "C4",
-      "kind": "service",
-      "lot": "league_pokemart",
-      "position": {
-        "x": 3310,
-        "z": 2561
-      },
-      "facing": "south",
-      "anchor_mode": "corner",
-      "y_mode": "surface",
-      "rotation": "none",
-      "mirror": "none",
-      "status": "planned",
-      "chosen_because": "beside the Centre on the north side, at the head of the processional way",
-      "donor_source": {
-        "pack": "our kit",
-        "licence": "MIT (CobbleTowns, re-materialed by tools/rematerial.py)"
-      }
     },
     {
       "id": "gym4_pokecenter",
@@ -15435,47 +15349,6 @@
       ]
     },
     {
-      "id": "league_lights",
-      "settlement": "league",
-      "kind": "earthwork",
-      "cell": "C4",
-      "status": "planned",
-      "after": "donors",
-      "chosen_because": "no walkable position left at block light 0, where monsters spawn: 314 positions were dark, 29 lights placed by tools/light_plan.py from the model of what the data builds",
-      "commands": [
-        "# lights for league (tools/light_plan.py): no walkable position here is left at block light 0",
-        "setblock 3157 161 2652 minecraft:lantern[hanging=false]",
-        "setblock 3170 119 2572 minecraft:lantern[hanging=false]",
-        "setblock 3170 119 2631 minecraft:lantern[hanging=false]",
-        "setblock 3175 169 2591 minecraft:lantern[hanging=false]",
-        "setblock 3175 169 2613 minecraft:lantern[hanging=false]",
-        "setblock 3179 157 2599 minecraft:lantern[hanging=false]",
-        "setblock 3188 167 2579 minecraft:lantern[hanging=false]",
-        "setblock 3192 157 2606 minecraft:lantern[hanging=false]",
-        "setblock 3195 169 2591 minecraft:lantern[hanging=false]",
-        "setblock 3195 169 2613 minecraft:lantern[hanging=false]",
-        "setblock 3195 168 2632 minecraft:lantern[hanging=false]",
-        "setblock 3199 157 2619 minecraft:lantern[hanging=false]",
-        "setblock 3201 157 2581 minecraft:lantern[hanging=false]",
-        "setblock 3201 129 2585 minecraft:lantern[hanging=false]",
-        "setblock 3201 128 2618 minecraft:lantern[hanging=false]",
-        "setblock 3202 178 2581 minecraft:lantern[hanging=false]",
-        "setblock 3202 178 2623 minecraft:lantern[hanging=false]",
-        "setblock 3211 167 2582 minecraft:lantern[hanging=false]",
-        "setblock 3211 166 2623 minecraft:lantern[hanging=false]",
-        "setblock 3223 169 2591 minecraft:lantern[hanging=false]",
-        "setblock 3227 119 2566 minecraft:lantern[hanging=false]",
-        "setblock 3227 119 2638 minecraft:lantern[hanging=false]",
-        "setblock 3232 148 2635 minecraft:lantern[hanging=false]",
-        "setblock 3246 170 2550 minecraft:lantern[hanging=false]",
-        "setblock 3182 167 2588 minecraft:lantern[hanging=false]",
-        "setblock 3195 168 2615 minecraft:lantern[hanging=false]",
-        "setblock 3201 168 2599 minecraft:lantern[hanging=false]",
-        "setblock 3209 168 2628 minecraft:lantern[hanging=false]",
-        "setblock 3213 169 2613 minecraft:lantern[hanging=false]"
-      ]
-    },
-    {
       "id": "tableland_stop_lights",
       "settlement": "tableland_stop",
       "kind": "earthwork",
@@ -15862,6 +15735,48 @@
         "setblock 3360 41 1714 minecraft:carrots[age=2]",
         "setblock 3361 41 1714 minecraft:carrots[age=4]",
         "setblock 3362 41 1714 minecraft:carrots[age=0]"
+      ]
+    },
+    {
+      "id": "league_lights",
+      "settlement": "league",
+      "kind": "earthwork",
+      "cell": "C4",
+      "status": "planned",
+      "after": "donors",
+      "chosen_because": "no walkable position left at block light 0, where monsters spawn: 314 positions were dark, 30 lights placed by tools/light_plan.py from the model of what the data builds",
+      "commands": [
+        "# lights for league (tools/light_plan.py): no walkable position here is left at block light 0",
+        "setblock 3527 128 2601 minecraft:lantern[hanging=false]",
+        "setblock 3540 135 2640 minecraft:lantern[hanging=false]",
+        "setblock 3541 86 2620 minecraft:lantern[hanging=false]",
+        "setblock 3541 86 2671 minecraft:lantern[hanging=false]",
+        "setblock 3544 115 2676 minecraft:lantern[hanging=false]",
+        "setblock 3550 135 2653 minecraft:lantern[hanging=false]",
+        "setblock 3556 124 2646 minecraft:lantern[hanging=false]",
+        "setblock 3556 145 2646 minecraft:lantern[hanging=false]",
+        "setblock 3557 95 2653 minecraft:lantern[hanging=false]",
+        "setblock 3562 135 2639 minecraft:lantern[hanging=false]",
+        "setblock 3566 136 2619 minecraft:lantern[hanging=false]",
+        "setblock 3566 136 2657 minecraft:lantern[hanging=false]",
+        "setblock 3569 124 2630 minecraft:lantern[hanging=false]",
+        "setblock 3575 135 2646 minecraft:lantern[hanging=false]",
+        "setblock 3586 136 2669 minecraft:lantern[hanging=false]",
+        "setblock 3588 136 2619 minecraft:lantern[hanging=false]",
+        "setblock 3588 136 2639 minecraft:lantern[hanging=false]",
+        "setblock 3593 96 2645 minecraft:lantern[hanging=false]",
+        "setblock 3593 124 2650 minecraft:lantern[hanging=false]",
+        "setblock 3598 145 2646 minecraft:lantern[hanging=false]",
+        "setblock 3600 134 2632 minecraft:lantern[hanging=false]",
+        "setblock 3606 86 2614 minecraft:lantern[hanging=false]",
+        "setblock 3606 86 2678 minecraft:lantern[hanging=false]",
+        "setblock 3628 133 2692 minecraft:lantern[hanging=false]",
+        "setblock 3555 133 2655 minecraft:lantern[hanging=false]",
+        "setblock 3566 136 2634 minecraft:lantern[hanging=false]",
+        "setblock 3578 124 2624 minecraft:lantern[hanging=false]",
+        "setblock 3588 136 2654 minecraft:lantern[hanging=false]",
+        "setblock 3591 134 2626 minecraft:lantern[hanging=false]",
+        "setblock 3596 135 2655 minecraft:lantern[hanging=false]"
       ]
     }
   ]

@@ -144,8 +144,10 @@ def test_real_victory_road_runs_from_gym8_up_the_rift_to_the_league():
     vr = CL.victory_road(a, b, landmarks)
     assert vr[0] == [a["centre"]["x"], a["centre"]["z"]] and vr[-1] == [b["centre"]["x"], b["centre"]["z"]]
     assert vr[1] == ax["south_west_arm"][-1], "the road enters the Rift at the foot of the south-west arm"
-    assert vr[-2] == ax["trunk"][0], "and leaves it at the trunk's apex"
+    # the League stands on the trunk's floor below the apex (2026-09-21): the road follows the trunk to its point
+    # nearest the League and stops, never running on to the apex and back
+    assert vr[-2] in ax["trunk"] and vr[-2] != ax["trunk"][0], "and stops on the trunk short of the apex"
     assert ax["south_west_arm"][0] == ax["trunk"][-1], "arm and trunk meet at the fork"
     assert vr.count(ax["trunk"][-1]) == 1
     length = sum(math.dist(p, q) for p, q in zip(vr, vr[1:]))
-    assert round(length) == 4953
+    assert round(length) == 4283
