@@ -341,7 +341,7 @@ def carry(a):
     OUT.mkdir(parents=True, exist_ok=True)
     try:
         r = carry_players.carry(Path(a.old_world), Path(a.world_dir),
-                                OUT / ("carry_%s.json" % time.strftime("%Y%m%d_%H%M%S")))
+                                OUT / ("carry_%s.json" % time.strftime("%Y%m%d_%H%M%S")), a.rehearsal)
     except carry_players.CarryError as e:
         raise SystemExit("carry FAILED: %s" % e)
     print("carried: " + carry_players.summary(r))
@@ -352,8 +352,11 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
     q = sub.add_parser("carry", help="with the server STOPPED, before the new world's first boot: every player's state")
-    q.add_argument("--old-world", required=True, help="the retired, stopped copy of the old world")
+    q.add_argument("--old-world", required=True,
+                   help="the live world as retired in REEXPORT step 2 (last saved within 12 hours)")
     q.add_argument("--world-dir", required=True, help="the fresh export")
+    q.add_argument("--rehearsal", action="store_true",
+                   help="staging only: allow a retained snapshot or an older copy as the source")
     q = sub.add_parser("prepare")
     q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
     q.add_argument("--server-dir", required=True)

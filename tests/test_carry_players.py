@@ -6,6 +6,7 @@ server loads a carried player is a runtime question (experiments/EXP-027-badge-f
 """
 import json
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -14,36 +15,53 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 import carry_players as C  # noqa: E402
+import level_dat as L  # noqa: E402
 
 A = "aaaaaaaa-0000-0000-0000-000000000001"
 B = "bbbbbbbb-0000-0000-0000-000000000002"
 
 
-def _player(root, u):
+def _level_dat(hours_ago=0.5):
+    ms = int((time.time() - hours_ago * 3600) * 1000)
+    return L.dumps("", {"Data": (L.COMPOUND, {"LastPlayed": (L.LONG, ms)})})
+
+
+def _rct(defeats):
+    """rctmod 0.19's per-player record, as data/rctmod.player.<uuid>.stat.dat holds it."""
+    return L.dumps("", {"data": (L.COMPOUND, {
+        "progressDefeats": (L.COMPOUND, {t: (L.INT, n) for t, n in defeats.items()}),
+        "currentSeries": (L.STRING, "kanto")})})
+
+
+def _player(root, u, flags=("gym1_cleared",), defeats=None):
+    defeats = {"kanto_brock": 1} if defeats is None else defeats
     files = {
         "playerdata/%s.dat" % u: "inventory and BalmData waystones",
         "playerdata/%s.dat_old" % u: "previous save",
-        "advancements/%s.json" % u: json.dumps({"cobblers:flag/gym1_cleared": {"done": True}}),
+        "advancements/%s.json" % u: json.dumps({"cobblers:flag/%s" % f: {"done": True} for f in flags}),
         "stats/%s.json" % u: "{}",
         "cobblemonplayerdata/%s/%s.json" % (u[:2], u): "{}",
         "pokedex/%s/%s.nbt" % (u[:2], u): "dex",
         "pokemon/pcstore/%s/%s.dat" % (u[:2], u): "pc",
         "pokemon/playerpartystore/%s/%s.dat" % (u[:2], u): "party",
         "cobbledollarsplayerdata/%s.json" % u: "{\"balance\": 5}",
-        "data/rctmod.player.%s.stat.dat" % u: "series progress",
+        "data/rctmod.player.%s.stat.dat" % u: _rct(defeats),
         "tm_moves/%s/%s.nbt" % (u[:2], u): "tms",
         "cobblenav/spawndata/%s/%s.nbt" % (u[:2], u): "nav",
         "playermolangdata/%s.dat" % u: "quest fields and cursors",
     }
-    for rel, text in files.items():
+    for rel, content in files.items():
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
-        (root / rel).write_text(text)
+        if isinstance(content, bytes):
+            (root / rel).write_bytes(content)
+        else:
+            (root / rel).write_text(content)
     return files
 
 
-def _world(root, who=(A,)):
+def _world(root, who=(A,), hours_ago=0.5):
     root.mkdir(parents=True)
-    (root / "level.dat").write_bytes(b"x")
+    (root / "level.dat").write_bytes(_level_dat(hours_ago))
     (root / "data").mkdir()
     (root / "region").mkdir()
     (root / "region" / "r.0.0.mca").write_bytes(b"terrain")
@@ -144,3 +162,43 @@ def test_manifest_counts_every_category_before_and_after(worlds, tmp_path):
     assert r["categories"]["advancements"] == {"before": 2, "after": 2}
     assert r["categories"]["pokemon"] == {"before": 4, "after": 4}
     assert r["categories"]["molang"] == {"before": 2, "after": 2}
+
+
+def test_carry_refuses_a_stale_source_unless_rehearsal(tmp_path):
+    # The live run carries from the world retired minutes ago. Without this an old copy would roll every player back.
+    old, new = _world(tmp_path / "old", (A,), hours_ago=100), _world(tmp_path / "new", ())
+    with pytest.raises(C.CarryError, match="last saved 100 hours ago"):
+        C.carry(old, new, tmp_path / "m.json")
+    assert C.carry(old, new, tmp_path / "m.json", rehearsal=True)["players"] == 1
+
+
+def test_carry_refuses_a_retained_snapshot_unless_rehearsal(tmp_path):
+    # A snapshot is for rehearsals: even a recently touched one is not the world being retired.
+    old = _world(tmp_path / "2026-09-17-pre-grass" / "cobblers-10240", (A,))
+    new = _world(tmp_path / "new", ())
+    with pytest.raises(C.CarryError, match="rehearsals only"):
+        C.carry(old, new, tmp_path / "m.json")
+    assert C.carry(old, new, tmp_path / "m.json", rehearsal=True)["players"] == 1
+
+
+@pytest.mark.parametrize("flags,defeats,says", [
+    (("gym1_cleared",), {}, "gym1_cleared is set but rctmod records no defeat of kanto_brock"),
+    ((), {"kanto_brock": 1}, "gym1_cleared is not set but rctmod records a defeat of kanto_brock"),
+])
+def test_carry_fails_when_badges_and_rctmod_disagree(tmp_path, flags, defeats, says):
+    # The flags and rctmod's progress must travel together. A flag without the defeat: rctmod refuses the next
+    # leader (missing_required_trainer). A defeat without the flag: the guards and waystones stay shut.
+    old, new = _world(tmp_path / "old", ()), _world(tmp_path / "new", ())
+    _player(old, A, flags=flags, defeats=defeats)
+    (old / "data" / "rctmod.trainers.ver.dat").write_bytes(b"v")
+    with pytest.raises(C.CarryError, match=says):
+        C.carry(old, new, tmp_path / "m.json")
+
+
+def test_verify_fails_when_rctmod_progress_did_not_arrive_with_the_flags(worlds, tmp_path):
+    # Without this a carry that later lost rctmod's record (a half-restored world) would still verify.
+    old, new = worlds
+    C.carry(old, new, tmp_path / "m.json")
+    (new / "data" / ("rctmod.player.%s.stat.dat" % A)).write_bytes(_rct({}))
+    with pytest.raises(C.CarryError, match="gym1_cleared is set but rctmod records no defeat"):
+        C.verify(tmp_path / "m.json")

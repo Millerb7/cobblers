@@ -81,6 +81,12 @@ WORLD_WIDE = (
     ("scoreboard", "data/scoreboard.dat", False),
 )
 DEFAULT_OUT = ROOT / "derived" / "reapply"
+# The live run carries from the live world as it was retired a few minutes earlier (REEXPORT step 2), never from an
+# older copy: a snapshot's players are days out of date, and carrying one would silently roll every player back. An
+# old world last saved longer ago than this, or one of the retained snapshots (docs/world-building/SNAPSHOTS.md),
+# is refused unless the carry is a rehearsal.
+FRESH_HOURS = 12
+REHEARSAL_SNAPSHOTS = ("2026-09-16-pre-rescale", "2026-09-17-pre-grass")
 
 
 class CarryError(RuntimeError):
@@ -132,6 +138,66 @@ def check_old(world: Path, inv: dict) -> set:
     return who
 
 
+def last_played(world: Path) -> float:
+    """Seconds since the epoch when the world was last saved (level.dat Data.LastPlayed)."""
+    import level_dat as L
+    return L.plain(L.data_of(L.load(world / "level.dat")[1])["LastPlayed"]) / 1000.0
+
+
+def check_source(old: Path, rehearsal: bool) -> None:
+    snap = [part for part in old.parts if part in REHEARSAL_SNAPSHOTS]
+    age_h = (time.time() - last_played(old)) / 3600.0
+    if rehearsal:
+        return
+    if snap:
+        raise CarryError("%s is the retained snapshot %s: a snapshot is for rehearsals only (--rehearsal). The live "
+                         "run carries from the world retired in REEXPORT step 2" % (old, snap[0]))
+    if age_h > FRESH_HOURS:
+        raise CarryError("%s was last saved %.0f hours ago: the live run carries from the world retired minutes "
+                         "ago (REEXPORT step 2), not an older copy. Pass --rehearsal to carry it anyway"
+                         % (old, age_h))
+
+
+def _flag_trainers() -> dict:
+    """{flag id: [trainer ids]} for every flag a trainer defeat sets, from data/progression.json."""
+    import progression_pack as PP
+    p = PP.plan(PP.load(ROOT / "data" / "progression.json"))
+    return {f["id"]: f["trainer_ids"] for f in p["flags"] if f["kind"] == "trainer_defeat"}, p["namespace"]
+
+
+def badge_agreement(world: Path) -> list:
+    """Every disagreement between a player's badge flags (advancements) and rctmod's record of whom they beat
+    (data/rctmod.player.<uuid>.stat.dat, data.progressDefeats). The two must carry together: a flag without the
+    defeat makes rctmod refuse the next leader (missing_required_trainer) while the world says the badge is earned;
+    a defeat without the flag leaves the guards, traders and waystones closed to a player rctmod has let through."""
+    import nbt
+    flags, ns = _flag_trainers()
+    if not flags:
+        return ["data/progression.json has no trainer-defeat flag: nothing to compare"]
+    out = []
+    for u in sorted(players(world)):
+        adv_p = world / "advancements" / ("%s.json" % u)
+        rct_p = world / "data" / ("rctmod.player.%s.stat.dat" % u)
+        if not adv_p.is_file() or not rct_p.is_file():
+            out.append("player %s…: %s missing, so its badges cannot be checked against rctmod"
+                       % (u[:8], "advancements" if not adv_p.is_file() else "rctmod record"))
+            continue
+        adv = json.loads(adv_p.read_text(encoding="utf-8"))
+        try:
+            defeats = nbt.load(rct_p)[1]["data"]["progressDefeats"]
+        except (KeyError, TypeError, ValueError, OSError) as e:
+            out.append("player %s…: rctmod record unreadable (%s)" % (u[:8], e))
+            continue
+        for fid, trainers in sorted(flags.items()):
+            flagged = bool(adv.get("%s:flag/%s" % (ns, fid), {}).get("done"))
+            beaten = any(int(defeats.get(t, 0) or 0) > 0 for t in trainers)
+            if flagged != beaten:
+                out.append("player %s…: %s is %s but rctmod records %s" % (
+                    u[:8], fid, "set" if flagged else "not set",
+                    "a defeat of %s" % "/".join(trainers) if beaten else "no defeat of %s" % "/".join(trainers)))
+    return out
+
+
 def compare(old: Path, new: Path, before: dict) -> dict:
     """Every carried file in the new world, the same size and sha256 as before; counts per category and players."""
     problems = []
@@ -152,12 +218,13 @@ def compare(old: Path, new: Path, before: dict) -> dict:
     who_old, who_new = players(old), players(new)
     if who_old != who_new:
         problems.append("players: %d in the old world, %d in the new" % (len(who_old), len(who_new)))
+    problems += ["badges and rctmod disagree in the new world: " + d for d in badge_agreement(new)]
     if problems:
         raise CarryError("the carry is not complete:\n  " + "\n  ".join(problems))
     return {"players": len(who_new), "categories": counts}
 
 
-def carry(old: Path, new: Path, manifest: Path | None = None) -> dict:
+def carry(old: Path, new: Path, manifest: Path | None = None, rehearsal: bool = False) -> dict:
     old = runtime_guard.check(old, "carry players from")
     new = runtime_guard.check(new, "carry players into")
     for w, what in ((old, "--from"), (new, "--to")):
@@ -165,8 +232,13 @@ def carry(old: Path, new: Path, manifest: Path | None = None) -> dict:
             raise CarryError("%s %s has no level.dat: not a world" % (what, w))
     if old == new:
         raise CarryError("--from and --to are the same world")
+    check_source(old, rehearsal)
     before = inventory(old)
     who = check_old(old, before)
+    already = badge_agreement(old)
+    if already:
+        raise CarryError("badges and rctmod already disagree in the old world; resolve it there (grant or revoke the "
+                         "flag to match rctmod) before carrying:\n  " + "\n  ".join(already))
     present = inventory(new)
     clash = sorted(rel for files in present.values() for rel in files)
     if clash:
@@ -177,7 +249,7 @@ def carry(old: Path, new: Path, manifest: Path | None = None) -> dict:
             (new / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(old / rel, new / rel)
     result = compare(old, new, before)
-    record = {"carried": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": str(old), "to": str(new),
+    record = {"carried": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": str(old), "to": str(new), "rehearsal": rehearsal,
               "players": sorted(who), "files": before, **result}
     manifest = manifest or DEFAULT_OUT / ("carry_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     manifest.parent.mkdir(parents=True, exist_ok=True)
@@ -209,12 +281,14 @@ def main(argv=None) -> int:
     ap.add_argument("--to", dest="new", type=Path, help="the fresh export, before its first boot")
     ap.add_argument("--manifest", type=Path, help="where to write the record (default derived/reapply/carry_<time>.json)")
     ap.add_argument("--verify", type=Path, metavar="MANIFEST", help="re-check an earlier carry")
+    ap.add_argument("--rehearsal", action="store_true",
+                    help="allow a retained snapshot or an old copy as the source (staging only, never the live run)")
     a = ap.parse_args(argv)
     try:
         if a.verify:
             print("verified: " + summary(verify(a.verify)))
         elif a.old and a.new:
-            r = carry(a.old, a.new, a.manifest)
+            r = carry(a.old, a.new, a.manifest, a.rehearsal)
             print("carried: " + summary(r))
             print("manifest:", r["manifest"])
         else:

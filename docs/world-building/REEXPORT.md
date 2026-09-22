@@ -174,11 +174,12 @@ islet are rebuilt from committed data; and every one of them is audited by resul
 | # | Step | Measured |
 | --- | --- | --- |
 | 1 | Confirm nobody is playing; take the coordination lock and set `COBBLERS_SERVER_LOCK` to its path and `COBBLERS_LOCK_OWNER` to the owner line written in it (every `reapply.py` subcommand but `plan` refuses without both, and refuses a lock somebody else holds); stop the server | 2 min |
-| 2 | Retire the world and the `.world` file to `cobblers-server-retired/<date>-pre-reexport/` | 3 min |
-| 3 | `python tools/reexport.py --source-root C:/Users/wnd/Documents --old-world <retired world> --out-dir C:/Users/wnd/Documents/github/cobblers-server --name cobblers-10240 --world-file C:/Users/wnd/Documents/cobblers-10240.world --paint build/paint/manifest.json` | 14 min |
+| 2 | Retire the world and the `.world` file to `cobblers-server-retired/<date>-pre-reexport/`. **This retired folder is the live world as it stood when the server stopped in step 1: it is the source of step 3's settings and of step 4a's players.** Never a snapshot | 3 min |
+| 3 | `python tools/reexport.py --source-root C:/Users/wnd/Documents --old-world <retired world> --out-dir C:/Users/wnd/Documents/github/cobblers-server-next --name cobblers-10240 --world-file C:/Users/wnd/Documents/cobblers-10240.world --paint build/paint/manifest.json`. The new world is built **outside** the runtime: the tools refuse any world inside `cobblers-server`, so steps 4a and 5 could not run on it there | 14 min |
 | 4 | Check: 484 region files, `seed_match: true` in its report | 1 min |
-| 4a | **Carry the players, before the first boot.** `python tools/reapply.py carry --old-world <retired world> --world-dir <server>/cobblers-10240` (server stopped). It must end `carried: N players, every file present, non-empty and matching by sha256`, with N the number of people who have played. Anything else stops the run: fix it and carry again (it refuses a world that already holds player files, so move a half-carried world's player folders aside first). See "Carrying the players" below | 1 min |
-| 5 | `python tools/reapply.py install --server-dir <server> --world-dir <server>/cobblers-10240` (server stopped): the packs, `cobblers_height` and `cobblers_worldtree` into the world folder, and the disposable-only restore pack removed. It refuses a world with no player in it (step 4a not done) | 1 min |
+| 4a | **Carry the players, before the first boot.** `python tools/reapply.py carry --old-world <the world retired in step 2> --world-dir C:/Users/wnd/Documents/github/cobblers-server-next/cobblers-10240` (server stopped). It must end `carried: N players, every file present, non-empty and matching by sha256`, with N the number of people who have played. It refuses a source last saved more than 12 hours ago or any retained snapshot (those are for rehearsals, `--rehearsal`, never this run), and fails if any player's badge flags and rctmod defeat records disagree. Anything else stops the run: fix it and carry again (it refuses a world that already holds player files, so move a half-carried world's player folders aside first). See "Carrying the players" below | 1 min |
+| 5 | `python tools/reapply.py install --server-dir <server> --world-dir C:/Users/wnd/Documents/github/cobblers-server-next/cobblers-10240` (server stopped): the packs, `cobblers_height` and `cobblers_worldtree` into the world folder, and the disposable-only restore pack removed. It refuses a world with no player in it (step 4a not done) | 1 min |
+| 5a | Move `cobblers-server-next/cobblers-10240` to `<server>/cobblers-10240` (the folder step 2 emptied) | 1 min |
 | 6 | Boot the server | 30 s |
 | 7 | `python tools/reapply.py run --server-dir <server>` | 4.5 min |
 | 8 | Stop the server; copy the world folder (the audit tools refuse to read the live save) | 3 min |
@@ -214,7 +215,19 @@ world does not have, and the badge flags re-activate the town waystones on join)
 and sha256, and fails if the old world has no player, if any player lacks a required category, or if any file is
 empty. It refuses a new world that already holds any of these files. After copying, it fails unless every file is
 present in the new world, non-empty and identical by sha256, the player count is the same in both, and every
-category has as many files after as before. The record is written to `derived/reapply/carry_<time>.json` (it names
+category has as many files after as before.
+
+**The badges and rctmod carry together.** For every player, each badge flag (`cobblers:flag/gymN_cleared`,
+`champion_cleared`, in `advancements/`) must agree with rctmod's record of whom they beat
+(`data/rctmod.player.<uuid>.stat.dat`, `progressDefeats`): a flag set means that leader is in the record, and a
+leader in the record means the flag is set. A flag without the defeat is a player whose badges say cleared while
+rctmod refuses the next leader as out of order; a defeat without the flag is a player rctmod lets through whom the
+guards, traders and waystones keep out. The carry checks this in the old world before it copies anything (a
+disagreement already there is resolved first, by granting or revoking the flag to match rctmod) and again in the new
+world after, and `--verify` checks it too.
+
+**The source.** The live run carries from the world retired in step 2 and nothing else. The retained snapshots
+(`SNAPSHOTS.md`) and any older copy are refused unless `--rehearsal` is given, which is for staging only. The record is written to `derived/reapply/carry_<time>.json` (it names
 files by UUID: never copy it into a document); `python tools/carry_players.py --verify <record>` re-checks it any
 time before the first boot. `reapply.py install` refuses a world with no player in it, unless `--no-players` says
 it is a staging world nobody plays.
