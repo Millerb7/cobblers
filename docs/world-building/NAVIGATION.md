@@ -283,8 +283,13 @@ would need a new client-and-server companion mod: new code, last on the preferen
      confirms.
    - A `tellraw` can therefore **offer** a marker at a chosen moment. It cannot place one
      without the click, and it cannot take one back.
-   - The exact field order must be copied from a real share (EXP-020 F5) before the generator
-     emits it.
+   - The field order, read from `WaypointSharingHandler` in xaerominimap 26.4.2 (2026-09-21):
+     `xaero-waypoint:<name>:<initials>:<x>:<y or ~>:<z>:<colour 0-15>:<rotation>:<yaw>:Internal-overworld-waypoints`,
+     name 1-32 characters and initials 1-3, with `:`, `-` and `_` rewritten, so our names use
+     none. The client finds it anywhere in a system-chat line.
+   - **Built:** `tools/progression_pack.py` offers gym *N+1*'s marker from `gymN_cleared`'s reward,
+     to that player only (`data/progression.json` `gym_markers`). Cobbleverse's own gym maps
+     (exploration maps to naturally generated gyms, which this world does not have) are emptied.
 
 **Considered and rejected:** GLOBAL-visibility waystones as markers. They would show under
 Xaero's "other waystones", but everyone can warp to them. The only way to stop that is an
