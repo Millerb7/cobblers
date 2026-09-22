@@ -272,6 +272,17 @@ For Codex to pick up. Claude has not edited any of the files named here.
     (3297, 2603). Update the story documents that locate it; Claude has not edited them. The plateau is empty ground
     again on the next export.
 
+23. **The Rift's guards need characters and lines.** The owner, 2026-09-21: at each weak point of the Rift's wall the
+    only walkable way in is a one-wide walkway held by a Cobblemon NPC; a qualified player passes by talking to the
+    guard, who sends them through, and an unqualified one is told what they lack. The zone check behind each guard
+    speaks in that guard's voice when it turns someone back. Design: `docs/mechanics/RIFT_ZONES.md` sections 2, 4
+    and 6. Four guards, proposed: G1 at the west spur's end before the dig camp (2 badges), G2 at Victory Road's gate
+    at the south-west arm's tip (8 badges), G3 at the south-east arm's tip (60 species caught), and G4 in the wall
+    behind the League before the apex (120 species). Needed from Codex: who each is and why they stand there; their
+    greeting, their pass line, their refusal line for each thing a player can lack (badges short by N, species short
+    by N), a short turn-back line for the zone check, and a farewell for the walkway's exit. Claude has not written
+    dialogue.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.
