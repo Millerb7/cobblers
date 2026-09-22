@@ -1,0 +1,28 @@
+{
+  "schema": "cobblers.rift_regions/1",
+  "status": "the owner's map of the Rift's regions, 2026-09-22: traced, measured, not yet built",
+  "source": {
+    "file": "land_8k_16_annotated_rift.png (in the source root, beside the heightmap; not in the repo)",
+    "sha256": "407f58f4c3ec144e8e94efe0fc889a0473c110b90f24b6db7a1160d06ef956ad",
+    "how": "black outlines drawn by the owner on the heightmap, 1 pixel = 1 block; each region is the flood fill of its outline from its seed"
+  },
+  "owner_intent": [
+    "The Deep sits very low in the ground: almost a futuristic city fuelled by the Rift. It hosts the evil group's HQ, among other things.",
+    "A tunnel runs from the Deep up to the Elite Four: it acts as Victory Road, where trainers stand.",
+    "The entrance to the Elite Four is sealed off unless you go through the town first.",
+    "A physical edge between the excavation site and the relic area and shrine stops new players."
+  ],
+  "regions": {
+    "e4_tower":                  {"seed": [3640, 2450], "columns": 52271,  "bbox": [3527, 2335, 3792, 2653], "ground": {"min": 84, "median": 89, "max": 103}},
+    "gate":                      {"seed": [3560, 2650], "columns": 3459,   "bbox": [3511, 2612, 3635, 2686], "ground": {"min": 83, "median": 85, "max": 90}},
+    "entrance_to_e4":            {"seed": [3540, 2800], "columns": 44790,  "bbox": [3462, 2661, 3613, 3025], "ground": {"min": 83, "median": 85, "max": 94}},
+    "the_deep":                  {"seed": [3600, 3150], "columns": 111976, "bbox": [3421, 3015, 3786, 3429], "ground": {"min": 82, "median": 83, "max": 112}, "role": "town: a sunken city fuelled by the Rift; the evil group's HQ; the start of the tunnel"},
+    "relic_area_shrine":         {"seed": [3340, 3310], "columns": 12298,  "bbox": [3285, 3229, 3429, 3384], "ground": {"min": 86, "median": 90, "max": 100}},
+    "rift_excavation_site":      {"seed": [3050, 3285], "columns": 28230,  "bbox": [2950, 3213, 3308, 3327], "ground": {"min": 87, "median": 88, "max": 98}, "role": "the dig camp; a physical edge on its east side stops new players"},
+    "the_sink":                  {"seed": [3780, 3520], "columns": 91309,  "bbox": [3509, 3351, 4132, 3755], "ground": {"min": 82, "median": 87, "max": 120}},
+    "upper_rift":                {"seed": [4180, 3950], "columns": 97529,  "bbox": [3971, 3672, 4368, 4155], "ground": {"min": 85, "median": 92, "max": 121}},
+    "rift_wilds":                {"seed": [4230, 4380], "columns": 56929,  "bbox": [4064, 4140, 4360, 4547], "ground": {"min": 83, "median": 89, "max": 112}},
+    "mega_stone_mine_the_gulch": {"seed": [4330, 4800], "columns": 61330,  "bbox": [4039, 4513, 4454, 4958], "ground": {"min": 83, "median": 89, "max": 110}},
+    "hidden_rift_cavern":        {"seed": [3850, 4870], "columns": 116699, "bbox": [3658, 4574, 4125, 5079], "ground": {"min": 83, "median": 88, "max": 114}}
+  }
+}
