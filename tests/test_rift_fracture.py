@@ -42,8 +42,9 @@ def test_the_lip_is_a_lethal_drop_where_the_depth_allows(plan):
         for side in (-1, 1):
             sd = st["sides"][side]
             D = sd["rim_y"] - st["floor"]
-            if D < 52:
-                continue
+            if D < 52 or any(es_side == side and abs(st["s"] - es) <= gap + 14
+                             for es_side, es, gap in plan.entrance_spans):
+                continue            # an entrance is a way down on purpose
             x, z = map(round, fr.xz(st["s"], sd["rim_t"] - side * 2))
             y = plan.top.get((x, z))
             assert y is not None and sd["rim_y"] - y >= 23, (st["s"], side, sd["rim_y"], y)
@@ -84,7 +85,41 @@ def test_nothing_placed_conditions_a_spawn(plan):
     # Spawns are assigned by biome and region; a placed block that a spawn condition names would decide encounters.
     policy = json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"]
     used = {b.split("[")[0] for b in plan.put.values()}
-    assert used and not (used & set(policy)), used & set(policy)
+    spec = json.loads((ROOT / "data" / "rift_fracture.json").read_text(encoding="utf-8"))
+    allowed = {"minecraft:water"} if spec["waterfalls"].get("spawn_policy_exception") else set()
+    assert used and not (used & set(policy) - allowed), used & set(policy)
+    # the one exception is the deliberate waterfall, and only as many sources as it has
+    assert sum(1 for b in plan.put.values() if b == "minecraft:water") == len(plan.water) <= 2 * spec["waterfalls"]["count"]
+
+
+def test_nothing_that_walks_can_be_trapped(plan):
+    # The owner's worry (2026-09-22): Pokemon running about get stuck in the crevices. Every column must reach the
+    # stretch's edge by steps of at most one block up; falling is allowed. Fails closed: the build refuses otherwise.
+    traps, ours = RF.trap_cells(plan)
+    assert ours == []
+    assert plan.caps, "no crack was capped: the check would be passing on nothing"
+
+
+def test_every_deep_crack_is_capped_with_glass_at_ground_level(plan):
+    # Nothing can fall into a crack deeper than one block; purple glass where it glows, tinted where it is dark.
+    spec = json.loads((ROOT / "data" / "rift_fracture.json").read_text(encoding="utf-8"))["caps"]
+    for (x, z), y in plan.caps.items():
+        assert plan.put.get((x, y, z)) in (spec["glow"], spec["dark"]), (x, y, z)
+        assert plan.top.get((x, z), y) <= y - 2 or plan.top.get((x, z), y) == y
+
+
+def test_the_entrance_is_a_gap_in_the_crags_with_the_guard_in_the_open(plan):
+    # A gap, not a gatehouse: no upthrust rock on the path, and the trailhead guard stands in the open.
+    assert plan.path and not (set(plan.path) & set(plan.crag))
+    guards = [c for c in plan.entities if "armor_stand" in c]
+    assert len(guards) == 1 and "guard" in guards[0].lower()
+
+
+def test_the_rim_is_high_where_it_is_crags_and_higher_at_the_peaks(plan):
+    # What the owner liked in the first pass: height seen from far away. Crags 20-80 over the plateau, peaks higher.
+    over = sorted(plan.crag[k] - plan.old[k] for k in plan.crag)
+    assert over and sum(1 for h in over if h >= 20) > 1000
+    assert over[-1] >= 100
 
 
 def test_the_build_is_the_same_every_time():
@@ -106,7 +141,9 @@ def test_portal_sheets_force_load_wait_kill_then_summon(plan):
     assert wait and int(wait[0].split()[-2].rstrip("t")) >= 40
     kills = [i for i, l in enumerate(go) if l.startswith("kill ")]
     summons = [i for i, l in enumerate(go) if l.startswith("summon ")]
-    assert kills and summons and max(kills) < min(summons) and len(summons) == n == 3
+    assert kills and summons and max(kills) < min(summons) and len(summons) == n == 4
+    # the kill takes every entity of the stretch, whatever its type, so a re-run never stacks a guard
+    assert all(l.split("[")[1].startswith("tag=") for l in go if l.startswith("kill "))
     for l in first + go:
         assert "tag=rift_fx_" in l or not l.startswith(("kill", "execute store"))
     assert FL.check_lines(first, "fx") == [] or all("chunks" not in p[2] for p in FL.check_lines(first, "fx"))
@@ -115,7 +152,9 @@ def test_portal_sheets_force_load_wait_kill_then_summon(plan):
 def test_every_sheet_glows_and_culls_by_its_own_size(plan):
     # Brightness 15 so it glows in the dark; a culling box as large as the sheet, so a big sheet does not vanish
     # when its origin leaves the screen.
-    for c in plan.entities:
+    sheets = [c for c in plan.entities if "block_display" in c]
+    assert len(sheets) == 3
+    for c in sheets:
         assert "brightness:{sky:15,block:15}" in c and "nether_portal" in c
         w = float(c.split("width:")[1].split("f")[0])
         scale = [float(v.rstrip("f")) for v in c.split("scale:[")[1].split("]")[0].split(",")]

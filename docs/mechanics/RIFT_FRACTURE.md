@@ -318,6 +318,43 @@ The owner drew the Rift's regions on the heightmap (`land_8k_16_annotated_rift.p
   water. The Displaced City cavern's `02_shell` (every void within 24 blocks made rock) is the precedent for sealing
   it.
 
+## 4a. The perimeter, reworked after the first flight (2026-09-22)
+
+The owner's notes after flying the first prototype:
+- **Cracks:** they liked the cracks and tears, but feared that Pokemon and mobs would get stuck in the crevices.
+- **The perimeter:** the first pass's near-sky-high perimeter was what gated early and mid game, but a dome with a
+  1x2 entrance is forced. Natural progression should allow natural exploration.
+
+So the chasm prototype was rebuilt, perimeter first:
+
+- **The upthrust rim** (`data/rift_fracture.json` `rim`).
+  - **The slabs:** where the ground tore, its edges are shoved up into jagged crags and tilted slabs, 8-20 thick so
+    Distant Horizons draws them, high at the lip and dipping back into the plateau.
+  - **Variation:** each side varies in irregular lengths: crags (20-80 over the plateau), the sheer drop, or broken
+    plates (5-15).
+  - **Peaks:** two peaks on the higher east rim reach 110-150; the apex gets the most in the full build.
+  - **Measured:** 6,287 crag columns; median 11 over the plateau, 90th percentile 48, maximum 148; the tallest face,
+    floor to crag top, 211.
+- **Entrances are gaps in the crags.** The rim post's descent is a gate: a five-leg switchback down the scarp, three
+  wide, `dirt_path` over a tuff ledge, through a 60-block gap in the crags, with the guard at the trailhead in the
+  open (a placeholder armor stand). The rim post's own `rim_trail` plan crosses this stretch and is superseded here
+  until it is re-planned. The other kinds (a canyon mouth, a landslide slope, the dig company's lift) belong to other
+  stretches.
+- **Cracks are capped.** Every crack deeper than one block is capped at ground level (21,996 columns):
+  - purple stained glass where a glowing bed of crying obsidian lights the surface (one in three);
+  - tinted glass where darkness is the point.
+
+  Neither conditions a spawn. The vein slots (one deep) stay open. The wound's open end climbs out in one-block steps.
+- **Nothing that walks can be trapped.** A fail-closed check (`trap_cells`) walks every column: a walker steps up at
+  most one block and may fall any distance, and must reach the stretch's edge. The build first fills every pocket it
+  made to its spill level (`make_walkable`: 1,208 columns raised), then refuses to write if any column it made or
+  touches is still a trap. The untouched terrain has none.
+- **Water.** The first prototype's cuts opened caves, and water ran in. Every void within 3 blocks behind a new
+  surface is now made rock at run time (`fill ... replace #cobblers:rift_void`), and each cut column's own ground up
+  to its surface is restored the same way, so a re-run over any earlier state comes out the same. One deliberate
+  waterfall falls off the highest sheer lip. Water conditions 84 species, and that is recorded in the data as the
+  one exception: the Rift's pools are curated and none needs water.
+
 ## 5. The prototype
 
 - **What:** one stretch, "the chasm": the trunk from (4171, 3875) to (3911, 3583), 391 blocks, both walls, on a

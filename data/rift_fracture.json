@@ -21,6 +21,41 @@
     "cut_only": true,
     "why": "The walls average 13-22 degrees (steepest 4-block step 45): a valley. The lip becomes a sheer riser (23+ blocks is a lethal drop), then shattered steps and tilted plates to the floor. Cut only: the rim and the floor edge stay where they are, so nothing on the floor or the plateau moves."
   },
+  "rim": {
+    "why": "The owner, 2026-09-22: what worked in the first pass was height seen from far away; give that without spacing or regularity. The torn edges are shoved up into jagged crags and tilted slabs, 8-20 thick so Distant Horizons draws them. Each side of the Rift varies along its length: crags, the sheer drop, broken plates.",
+    "mix": {"crags": 0.45, "sheer": 0.3, "plates": 0.25},
+    "segment_length": [45, 140],
+    "crags": {"height": [20, 80], "width": [8, 20], "length": [18, 45], "every": [10, 26], "set_back": [0, 6], "dip": [0.2, 0.8]},
+    "plates": {"height": [5, 15], "width": [8, 14], "length": [12, 26], "every": [8, 16], "set_back": [0, 12]},
+    "peaks": {"count": 2, "side": "east", "height": [110, 150], "radius": [7, 9],
+              "why": "a handful of much higher peaks at the forbidding stretches; the apex gets the most when the full Rift is built. In this stretch, on the higher east rim"},
+    "seams": {"one_in_slabs": 4, "why": "the veins climb through some upthrust faces: violet and crying obsidian"},
+    "materials": ["minecraft:stone", "minecraft:tuff", "minecraft:andesite", "minecraft:stone", "minecraft:deepslate"],
+    "streak": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:purple_terracotta", "one_in_bands": 8}
+  },
+  "entrances": [
+    {"id": "rim_post_descent", "kind": "switchback", "side": "west", "settlement": "rift_rim_stop", "road": "rim_trail",
+     "gap": 30, "legs": 5, "leg_half_width": 12, "width": 3, "surface": "minecraft:dirt_path", "fill": "minecraft:tuff",
+     "guard": "Rim post guard", "why": "The rim post's descent is a gate (owner, 2026-09-22): a switchback down the scarp through a gap in the crags, the guard at the trailhead in the open. The rim post's own rim_trail plan crosses this stretch and is superseded here until it is re-planned."}
+  ],
+  "caps": {
+    "glow": "minecraft:purple_stained_glass",
+    "dark": "minecraft:tinted_glass",
+    "glow_one_in": 3,
+    "why": "Every crack deeper than one block is capped at ground level, so nothing that walks falls in (owner, 2026-09-22). Purple stained glass where the glow should light the surface; tinted glass, which blocks light, only where darkness is the point. Neither conditions a spawn."
+  },
+  "seal": {
+    "block": "minecraft:stone",
+    "depth": 3,
+    "restore": 70,
+    "why": "The first prototype's cuts opened caves behind the new faces and water ran in. Every void within 3 blocks behind a new surface is made rock at run time (fill ... replace #cobblers:rift_void), as the Displaced City cavern's shell does; nothing reads the world to decide."
+  },
+  "waterfalls": {
+    "count": 1,
+    "side": "either",
+    "why": "One deliberate fall off the highest sheer lip, where it looks best; everything else is sealed.",
+    "spawn_policy_exception": "minecraft:water conditions 84 species (data/spawn_blocks.json). The Rift's spawn pools are exclusive and curated, and none of their entries needs water, so the fall decides no encounter there. Recorded here as the one deliberate exception."
+  },
   "palette": {
     "face_upper": {"block": "minecraft:tuff", "why": "the torn edge of our world: its own rock, in bands"},
     "face_lower": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:purple_terracotta", "why": "deeper down, the other world bleeds through"},

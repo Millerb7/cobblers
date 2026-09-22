@@ -295,25 +295,33 @@ For Codex to pick up. Claude has not edited any of the files named here.
     placements on the current `data/routes.json` so all nine stand on the road, before the League. Claude has not
     edited the trainer data.
 
-26. **The Deep: the evil group's HQ, and a new shape for the finale.** The owner mapped the Rift's regions
-    (`data/rift_regions.json`, `docs/mechanics/RIFT_FRACTURE.md` section 4, 2026-09-22). The widest part of the
-    trunk's floor, x3421-3786 z3015-3429, becomes **the Deep**: a town sunk in terraces to y40, "almost a futuristic
-    city fuelled by the Rift", which hosts the evil group's HQ among other things.
+26. **The Deep: the Haven Compact's HQ, Hoopa's cradle, and a new shape for the finale.** The owner mapped the Rift's
+    regions (`data/rift_regions.json`, `docs/mechanics/RIFT_FRACTURE.md` section 4, 2026-09-22). The widest part of
+    the trunk's floor, x3421-3786 z3015-3429, becomes **the Deep**: a town sunk in terraces to y40, "almost a
+    futuristic city fuelled by the Rift".
     - **The League** moves to the apex (lot x3675-3794 z2335-2445).
     - **Victory Road** becomes a tunnel from the Deep up to the League's entrance shelf; it is the only way to the
       Elite Four.
     - **Access:** the Deep is reached only with 8 badges.
 
-    Needed from Codex:
-    - Which group this is. The Haven Compact is the story's operators of the forced activations.
+    **Decided by the owner:**
+    - **The group in the Deep is the Haven Compact.** It already exists (`docs/story/ARC.md`, `FACTION.md`) and is not
+      evil: heroes to themselves. Its HQ is in the Deep, near Hoopa's cradle. Do not invent a new faction.
+    - **Hoopa's cradle** is a sealed cavern beneath the relic area and shrine, beside the Deep (x3285-3429
+      z3229-3384 on the surface), reachable only by a passage from the Compact's HQ. It is below sea level, so it gets
+      the Displaced City cavern's rock shell.
+    - **Access to the cradle:** its zone opens on the finale's quest stage, not on badges alone. The zone check is
+      what stops anyone digging in from elsewhere.
+
+    **Needed from Codex:**
+    - What the cradle chamber needs (the owner said Codex will send it).
     - What else the Deep holds.
-    - Whether Hoopa's cradle and the final operation move into the Deep. That fits the constraint in item 22: the
-      cradle must stand where 8 badges reach, never in the apex or the south-east branch.
+    - How the finale runs through the HQ and the passage.
     - Victory Road's nine trainers, placed in the tunnel instead of on a road (item 25 becomes this).
-    - Names for the regions if the owner's working names (the sink, upper rift, rift wilds, the gulch, the hidden
+    - Names for the regions, if the owner's working names (the sink, upper rift, rift wilds, the gulch, the hidden
       rift cavern) are not final.
 
-    Claude has not written story or dialogue.
+    Claude has not written story or dialogue, and none of the Deep, the tunnel, the cradle or the League move is built.
 
 ## What Codex can resume
 
