@@ -1,0 +1,81 @@
+{
+  "schema": "cobblers.rift_fracture/1",
+  "status": "prototype: one stretch on the staging export only (2026-09-22); nothing full-scale until the owner has flown it",
+  "design": "docs/mechanics/RIFT_FRACTURE.md",
+  "builder": "tools/rift_fracture.py",
+  "supersedes": "data/rift.json and tools/rift_build.py (the first pass: a rim wall and spires; it read as a fence)",
+  "stretch": {
+    "id": "chasm",
+    "why": "The deepest stretch of the trunk (depth 45-63 on the heightmap, rims y137-151), clear of every settlement, with an outside vantage on the east rim at the Patriarch of the Wedge and a 3,000-block sightline from the hometown.",
+    "from": [4171, 3875],
+    "to": [3911, 3583],
+    "half_width": 260,
+    "station_every": 4
+  },
+  "scarp": {
+    "lip_riser": {"fraction_of_depth": 0.45, "min": 12, "max": 28},
+    "steps": {"count": [3, 4], "riser_jitter": 4},
+    "plate": {"cell": 14, "tilt": [0, 3], "crack_depth": [3, 6]},
+    "undercut": {"depth": 4, "overhang_top": 5, "one_in_stations": 3},
+    "fissures": {"per_side": [2, 3], "length": [25, 60], "width": [2, 4]},
+    "cut_only": true,
+    "why": "The walls average 13-22 degrees (steepest 4-block step 45): a valley. The lip becomes a sheer riser (23+ blocks is a lethal drop), then shattered steps and tilted plates to the floor. Cut only: the rim and the floor edge stay where they are, so nothing on the floor or the plateau moves."
+  },
+  "palette": {
+    "face_upper": {"block": "minecraft:tuff", "why": "the torn edge of our world: its own rock, in bands"},
+    "face_lower": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:purple_terracotta", "why": "deeper down, the other world bleeds through"},
+    "tread": {"block": "legendarymonuments:distortion_deepslate", "fallback": "minecraft:deepslate", "why": "the shattered plates near the floor"},
+    "floor_plate": {"block": "minecraft:smooth_basalt", "why": "the floor broken into plates"},
+    "vein_core": {"block": "minecraft:sea_lantern", "why": "cyan-white, light 15, vanilla: the sky reference's veins"},
+    "vein_halo": {"block": "legendarymonuments:galar_particle_block", "fallback": "minecraft:pearlescent_froglight", "why": "violet-pink, light 15, a full cube"},
+    "vein_seep": {"block": "minecraft:crying_obsidian", "why": "light 10 and purple drips where the vein thins"},
+    "wound_crust": {"block": "minecraft:purple_stained_glass", "why": "glass over light: depth, and colour at range"},
+    "crystal": {"block": "legendarymonuments:distortion_crystal", "fallback": "minecraft:amethyst_cluster", "why": "where the energy crystallised, at the veins' branch points"},
+    "never": {"blocks": ["minecraft:amethyst_block", "minecraft:budding_amethyst", "minecraft:purple_concrete", "minecraft:magenta_concrete", "minecraft:magma_block", "cobblemon:*_gem_block", "cobblemon:*_gem_cluster"], "why": "each conditions a spawn (data/spawn_blocks.json): Glimmet and Glimmora, Varoom, Gible, and the gem species"}
+  },
+  "veins": {
+    "main_width": 5,
+    "wound": {"length": 60, "width": 9, "depth": 3},
+    "branch_every": [18, 45],
+    "branch_angle": [25, 65],
+    "split_chance": 0.4,
+    "up_the_face": [4, 12],
+    "seed": 20260922
+  },
+  "sky_crack": {
+    "y": [360, 400],
+    "core": "minecraft:sea_lantern",
+    "halo": "legendarymonuments:galar_particle_block",
+    "halo_fallback": "minecraft:pearlescent_froglight",
+    "thickness": 8,
+    "main_width": 10,
+    "branch_width": 6,
+    "why": "Candidate only (decision 2): a sample over this stretch to judge from 3,000 blocks. Every part 8 thick or more, so Distant Horizons draws it."
+  },
+  "portal_sheets": {
+    "tag": "rift_fx",
+    "wait_ticks": 60,
+    "why": "Display entities showing the nether portal texture: no teleport, no collision. Not seen beyond entity render distance, so only where the tear is still open, close up."
+  },
+  "biome": {
+    "id": "cobblers:the_rift",
+    "paint": "every 4x4 biome cell whose 16 columns all lie inside the lip, and nothing outside it",
+    "y": [48, 575],
+    "effects": {
+      "sky_color": 2828368,
+      "fog_color": 3417436,
+      "water_color": 5905575,
+      "water_fog_color": 2230592,
+      "grass_color": 7102840,
+      "foliage_color": 6446711,
+      "particle": {"options": {"type": "minecraft:portal"}, "probability": 0.012},
+      "ambient_sound": "minecraft:ambient.basalt_deltas.loop",
+      "mood_sound": {"sound": "minecraft:ambient.basalt_deltas.mood", "tick_delay": 6000, "block_search_extent": 8, "offset": 2.0},
+      "additions_sound": {"sound": "minecraft:block.portal.ambient", "tick_chance": 0.004}
+    },
+    "temperature": 0.6,
+    "downfall": 0.0,
+    "has_precipitation": false,
+    "spawns": "Ships only with the spawn change in docs/mechanics/RIFT_FRACTURE.md: the 40 data/spawns.json entries scoped to rift_trunk, rift_west_spur, rift_south_west_arm and rift_south_east_arm add cobblers:the_rift to their biomes, and the pools are recompiled (2,120 compiled spawns). Staging has no pools installed."
+  }
+}

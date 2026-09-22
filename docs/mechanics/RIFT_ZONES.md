@@ -1,6 +1,6 @@
 # The Rift: zones, guards, wall and biome (design; built on staging only)
 
-**Status: approved in structure 2026-09-21. Built on the staging export `cobblers-dryrun4` only, for a flyover (2026-09-22: `tools/rift_build.py` from `data/rift.json`, audited clean by `rift_build.py verify`); nothing in the live world, and no zone check, guard or spawn change is built.** The League move
+**Status: the zones, guards and zone check approved in structure 2026-09-21. The rim wall and spires of section 5 are superseded by `docs/mechanics/RIFT_FRACTURE.md`: the scarps are the barrier. The first pass that built them on `cobblers-dryrun4` is removed. Nothing here is in the live world.** The League move
 it depends on is built on the staging export (`cobblers-dryrun4`, PR #37); everything below is a design with costs.
 
 Sources: the Rift's axes, anchors and extent (`data/landmarks.json` `rift`), the League's site (`data/placements.json`

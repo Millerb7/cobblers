@@ -47,16 +47,18 @@ the mainland: a river mouth on the strait, across from the isle.
 | --- | --- | --- |
 | The forecourt | `/tp @s 3576 88 2724` | **R** The League on the Rift's floor at the trunk head, Victory Road's end at the plaza's south edge; its Centre and Mart are the template's own, inside. Red sand is red concrete powder, wool is terracotta. The precinct is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. On `cobblers-dryrun4` the old plateau League, Centre and Mart still stand at (3346, 2603); a fresh export has none. |
 
-### 3a. The Rift overhaul, staging only (10 min)
-Built on `cobblers-dryrun4` by `tools/rift_build.py` from `data/rift.json` (2026-09-22); not in the live world. Fly it: `/gamemode spectator`.
+### 3a. The Rift as a fracture: the prototype stretch, staging only (15 min)
+Built on the fresh staging export `cobblers-dryrun5` by `tools/rift_fracture.py` from `data/rift_fracture.json` (2026-09-22); not in the live world. Design: `docs/mechanics/RIFT_FRACTURE.md`. Move the client's Distant Horizons cache for the staging server aside first, or it shows the old staging world at range.
 | Stop | `/tp` | Look at |
 | --- | --- | --- |
-| Overview | `/tp @s 3900 300 3300 150 40` | **R** The wall on the rim, 211 spires to y320 (top third purple glass), the floor's crying-obsidian light, the biome's fog and portal particles |
-| G2, Victory Road's gate | `/tp @s 3560 113 5291 -90 10` | **R** The rubble either side, the gatehouse, the one-wide roofed walkway, the barrier behind the (placeholder) guard |
-| G4, behind the League | `/tp @s 3611 87 2574 180 10` | **R** The cross-wall to the apex and its gatehouse |
-| G1, the dig camp | `/tp @s 2946 104 3316 -90 10` | **R** The dig camp's gate at the spur's end |
-| G3, the south-east branch | `/tp @s 4609 131 4836 90 10` | **R** The collectors' pocket gate |
-| The rim post | `/tp @s 3734 142 3951` | **R** The wall stops either side of the post's town: an unguarded way in (open decision) |
+| 3,000 blocks out, the hometown | `/tp @s 1461 120 5306 -121 -1` | **R** Distant Horizons: the sky crack sample and the scarp faces; entities gone. Day and night (`/time set 18000`) |
+| 1,000 blocks out | `/tp @s 3230 140 4300 -125 -4` | **R** The same, nearer |
+| The east rim, outside the lip | `/tp @s 4272 150 3600 61 -12` | **R** Normal sky behind you; the drop, the veins and the torn window ahead |
+| Across the lip | `/tp @s 3968 150 3949`, then walk to `3974 150 3943` | **R** The crossing: sky, fog, grass colour, sound and particles change as you step over |
+| The torn window (vertical sheet) | `/tp @s 4161 127 3503` | **R** The swirl in the face, lit rock round it; fly past so its origin leaves the screen (culling) |
+| The pool (horizontal sheet) in the wound | `/tp @s 4020 90 3717` | **R** Energy lying in the crack; the crusted half next to it |
+| The curtain in a fissure | `/tp @s 3958 124 3918` | **R** A sheet filling the slot |
+| Under the sky crack | `/tp @s 4041 320 3729` | **R** How it reads close; how the shaders treat it and the sheets (toggle shaders) |
 
 ### 4. Giovanni's gym (2 min)
 | Stop | `/tp` | Look at |
