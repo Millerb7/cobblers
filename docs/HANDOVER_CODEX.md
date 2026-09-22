@@ -295,6 +295,26 @@ For Codex to pick up. Claude has not edited any of the files named here.
     placements on the current `data/routes.json` so all nine stand on the road, before the League. Claude has not
     edited the trainer data.
 
+26. **The Deep: the evil group's HQ, and a new shape for the finale.** The owner mapped the Rift's regions
+    (`data/rift_regions.json`, `docs/mechanics/RIFT_FRACTURE.md` section 4, 2026-09-22). The widest part of the
+    trunk's floor, x3421-3786 z3015-3429, becomes **the Deep**: a town sunk in terraces to y40, "almost a futuristic
+    city fuelled by the Rift", which hosts the evil group's HQ among other things.
+    - **The League** moves to the apex (lot x3675-3794 z2335-2445).
+    - **Victory Road** becomes a tunnel from the Deep up to the League's entrance shelf; it is the only way to the
+      Elite Four.
+    - **Access:** the Deep is reached only with 8 badges.
+
+    Needed from Codex:
+    - Which group this is. The Haven Compact is the story's operators of the forced activations.
+    - What else the Deep holds.
+    - Whether Hoopa's cradle and the final operation move into the Deep. That fits the constraint in item 22: the
+      cradle must stand where 8 badges reach, never in the apex or the south-east branch.
+    - Victory Road's nine trainers, placed in the tunnel instead of on a road (item 25 becomes this).
+    - Names for the regions if the owner's working names (the sink, upper rift, rift wilds, the gulch, the hidden
+      rift cavern) are not final.
+
+    Claude has not written story or dialogue.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.

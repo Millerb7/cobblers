@@ -271,7 +271,54 @@ wound's glow. The portal sheets are close-range only, by design.
 - **Range:** `view_range` 2. In practice they are seen within the viewer's entity render distance, 128 blocks at
   the pack's default.
 
-## 4. The prototype
+## 4. The owner's map and the Deep (2026-09-22)
+
+The owner drew the Rift's regions on the heightmap (`land_8k_16_annotated_rift.png`, traced and measured into
+`data/rift_regions.json`). From the apex south:
+
+| Region | Where | Ground | What it is |
+| --- | --- | --- | --- |
+| e4 tower | x3527-3792 z2335-2653 | 84-103 | the League, moved here |
+| gate | x3511-3635 z2612-2686 | 83-90 | between the entrance shelf and the tower |
+| entrance to e4 | x3462-3613 z2661-3025 | 83-85 | a shelf reached only by the tunnel |
+| **the Deep** (town) | x3421-3786 z3015-3429 | 82-83 | the widest floor; a sunken city fuelled by the Rift; the evil group's HQ |
+| relic area / shrine | x3285-3429 z3229-3384 | 86-100 | between the Deep and the dig |
+| rift excavation site | x2950-3308 z3213-3327 | 87-98 | the dig camp; a physical edge on its east side stops new players |
+| the sink | x3509-4132 z3351-3755 | 82-120 | the veins drain down it into the Deep |
+| upper rift | x3971-4368 z3672-4155 | 85-121 | |
+| rift wilds | x4064-4360 z4140-4547 | 83-112 | |
+| mega stone mine / the gulch | x4039-4454 z4513-4958 | 83-110 | the south-east branch; Mega Showdown's meteorite blocks belong here |
+| hidden rift cavern | x3658-4125 z4574-5079 | 83-114 | the south-west arm, where players come in |
+
+**Decided by the owner (2026-09-22):**
+- **The League moves into the tower oval.** It fits facing south at lot x3675-3794 z2335-2445 on the apex, levelled
+  to y88 (cut 16,364, fill 2,345, 88% inside the oval). Its forecourt runs 170 blocks south to the gate.
+- **The Deep is sunk in terraces to a core at y40.**
+  - **Terraces:** five rings about 18 wide, each stepping about 9 blocks, reach a core roughly 40-60 blocks across
+    at the pan's middle (inradius 109).
+  - **Volume:** about 1.7M blocks removed.
+  - **Access:** 9-block risers cannot be walked, so the city moves between rings by stairs, ramps or lifts. LumyMon
+    has an `elevator` block.
+  - **The seal:** sunk, the Deep leaves the entrance shelf 44 blocks above it with a sheer edge. The shelf is sealed
+    by terrain, so going through the town first is the only way up.
+- **Victory Road is the tunnel alone.** It runs from the Deep up to the entrance shelf: a climb of 44, which is
+  440-530 blocks at 1 in 10 to 1 in 12, or longer with switchbacks. The nine trainers stand in it, about one per 50-60
+  blocks. The walk from the hidden rift cavern through the wilds, the upper rift and the sink to the Deep becomes the
+  approach, with wild encounters and no trainers.
+- **The Deep is late-game.** The 8-badge gate stands where players come into the Rift, not at the tunnel.
+
+**Open:**
+- **The city's buildings.** Nothing in the pack is futuristic as a building. The terraces, retaining walls, lifts,
+  light bridges, and pylons drawing on the veins can be generated. The buildings themselves, the evil group's HQ
+  first, need a source: prefabs the owner builds (Axiom kits), or donors. The materials that suit are Mega
+  Showdown's meteorite blocks, Moar Concrete, Rechiseled, glass, and the veins' own crystals.
+- **Spawns.** The eleven regions do not match the four spawn sub-regions (`rift_trunk`, `rift_west_spur`,
+  `rift_south_west_arm`, `rift_south_east_arm`). The owner assigns spawns; flagged, not changed.
+- **Water.** The Deep's core is below sea level (y62). A WorldPainter export has no aquifers, but caves can hold
+  water. The Displaced City cavern's `02_shell` (every void within 24 blocks made rock) is the precedent for sealing
+  it.
+
+## 5. The prototype
 
 - **What:** one stretch, "the chasm": the trunk from (4171, 3875) to (3911, 3583), 391 blocks, both walls, on a
   fresh staging export.
@@ -289,7 +336,7 @@ wound's glow. The portal sheets are close-range only, by design.
 - the spawn change;
 - a reapply step and its audit.
 
-## 5. Found by the prototype's audit
+## 5a. Found by the prototype's audit
 
 - **Water runs into the cuts.** 4 of the 2,389 sampled cut cells held water on `cobblers-dryrun5`: cutting the walls
   opened the sides of water bodies above and beside them, and it flowed down the scarps. That is about 0.2% of the
@@ -298,7 +345,7 @@ wound's glow. The portal sheets are close-range only, by design.
   behind a rock rim, or turns them into deliberate falls down the scarps: a waterfall into the Rift is good scenery if
   it is placed.
 
-## 5. Not verified
+## 6. Not verified
 
 - **Complementary's emission:** whether it lights up the galar particle block, and whether it blooms a display
   entity. The flight will show.
