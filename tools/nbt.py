@@ -17,6 +17,11 @@ from pathlib import Path
 END, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, BYTE_ARRAY, STRING, LIST, COMPOUND, INT_ARRAY, LONG_ARRAY = range(13)
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: the region-file reader itself; every caller must declare its own use.
+WORLD_READS = {'region_chunks'}
+
+
 class _Reader:
     def __init__(self, data: bytes):
         self.b = data

@@ -17,6 +17,8 @@ Checks (see CHECKS at the bottom):
   hash_csv_wellformed   base-pack/inventory/pack_hashes.csv has the expected columns,
                         64-hex sha256, integer sizes, unique paths
   manifest_sanity       modpack/manifest/*.json have the expected top-level shape
+  ground_rule           no tool reads a world save except in a function its own WORLD_READS declares (a check,
+                        never ground for a placement; tools/ground_rule.py)
   template_provenance   every structure template git would publish matches a kits/PROVENANCE.json record
                         with a permissive licence (and a notice file when third-party); records for
                         non-permissive sources may only cover gitignored, local-only files
@@ -464,6 +466,15 @@ def check_template_provenance(ctx: Context) -> None:
             ctx.add("error", f, f"third-party {match['licence']} template needs its notice file committed")
 
 
+def check_ground_rule(ctx: Context) -> None:
+    """No tool reads a world except in a function its own WORLD_READS declares (tools/ground_rule.py)."""
+    import sys as _sys
+    _sys.path.insert(0, str(ctx.root / "tools"))
+    import ground_rule
+    for msg in ground_rule.problems(ground_rule.analyse(ctx.root / "tools")):
+        ctx.add("error", "tools/", msg)
+
+
 def _stub(name: str, what: str):
     """Placeholder for a future campaign check. Reports 'skipped' so nobody mistakes it for coverage."""
 
@@ -484,6 +495,7 @@ CHECKS = [
     ("manifest_sanity", check_manifest_sanity),
     ("structure_manifest", check_structure_manifest),
     ("template_provenance", check_template_provenance),
+    ("ground_rule", check_ground_rule),
     # --- extension points (EXP-001..EXP-007 will define the data these need) ---
     ("duplicate_ids", _stub("duplicate_ids", "duplicate campaign ids across routes/trainers/rewards")),
     ("missing_pokemon_refs", _stub("missing_pokemon_refs", "species/form names that Cobblemon does not know")),

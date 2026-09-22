@@ -42,6 +42,11 @@ PLACED = ("placed", "verified")
 STATUSES = ("planned",) + PLACED
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: the verify reads a stopped world copy to check placed Habitat Blocks.
+WORLD_READS = {'main', 'read_world', 'world_problems'}
+
+
 def habitat_pool_ids(spawns_doc):
     return {"cobblers:%s" % h["id"] for h in (spawns_doc or {}).get("habitats") or [] if isinstance(h, dict) and "id" in h}
 
@@ -233,6 +238,10 @@ def main(argv=None):
     for bid, m in problems:
         print("MISMATCH %s: %s" % (bid, m))
     print("%d placed or verified blocks checked, %d problems" % (n, len(problems)))
+    if n == 0:
+        # fail closed: with no block recorded as placed there is nothing to verify, and "0 checked" is not a pass
+        print("MISMATCH: no Habitat Block is recorded as placed; nothing was verified")
+        return 1
     return 1 if problems else 0
 
 

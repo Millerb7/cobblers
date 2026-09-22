@@ -63,6 +63,49 @@ unpolicied spawn block. Stray paving was not checkable at Erika's town (moss 40%
 (cobblestone 78%), the Tableland stop (red terracotta 48%) and the dig camp (gravel 87%). Run and audit records:
 `derived/reapply/run_20260921_130109.json`, `derived/reapply/audit_20260921_130836.json` (gitignored).
 
+### Run 3: `cobblers-dryrun4` (2026-09-21), after the lights, fields, titles, the cavern shell and the Codex review
+Export 14 minutes, 484 regions, `seed_match: true`, seed from the offline snapshot `2026-09-17-pre-grass`.
+`prepare` 180 s, 332 functions, 0 refused; boot 30 s, 43 error lines, none from our packs (all Cobbleverse's own:
+raid-den loot tables, two Cobblemon advancements).
+
+Codex's review found four fail-open defects in the re-export path (the lock; audits passing on empty output; "not
+checkable" counted clean; the ground-rule detector). The owner stopped the run on this export until they were fixed.
+They were, with a sweep of every other verify (`tests/test_reapply_lock.py`, `test_audits_fail_closed.py`,
+`test_town_audit_fail_closed.py`, `test_verifies_fail_closed.py`, `test_ground_rule.py`); then the run went ahead
+on the same export, under the lock with its owner declared (`COBBLERS_LOCK_OWNER`).
+
+| Step | Time | Result |
+| --- | --- | --- |
+| R2 cavern (now with `02_shell`) | 6 s | ran |
+| R3-R6, R10, R7 | 19 s | ran |
+| R8 24 places | 11 s | ran |
+| R9 32 donors | 98 s | ran |
+| R16 lights and the fields' crops, after the donors | 1 s | ran |
+| R15 signposts, now after the donors | 1 s | ran |
+| R14 traders | 16 s | ran |
+| V verify | 116 s | **25 of 25 places 0 gaps, 0 unverified**; trader verify passed |
+
+The first audit, failing closed, was not clean, and each finding was real: the department store (a donor placed
+whole) had erased the Route 7 post at Sabrina's town, since the signs went in first (R15 now follows R9); the fields
+were compared earthwork by earthwork instead of by final state (88.8%); the light model counted positions under house
+floors that carry foundations, and the light check skipped snow-covered positions. Fixed, and the whole driver run
+again on the same export (272 s, no stop, every verify clean).
+
+The second audit (`derived/reapply/audit_20260921_182200.json`):
+
+| Check | Result |
+| --- | --- |
+| cavern | roof cap 40,000 of 40,000; floor 26,175 of 26,178; **shell 60,992 columns, 0 voids** within 24 blocks of the chamber |
+| forest | 46,043 of 46,052 planned trunks (99.98%); the plan's count, plus the sapling |
+| world tree | 1,380 of 1,380, crown at (2044, 535, 2282), the plan's y535 |
+| islet | 2,139 of 2,139 |
+| towns | 24 of 24 plan-clean: paving checked cell by cell against the plan (no heuristic, nothing "not checkable"), every building the data records checked |
+| signposts | 51 of 51 |
+| light check | **fails**: 67 positions at Surge's town and 14 at Northlight, all in snow-layer cells, store block light 0 while the air directly above reads 10-11 and the lanterns stand lit. The model has no snow. Every other place 0 |
+| MobsBeGone | `/summon` of zombie, skeleton, creeper, spider, enderman and witch each answer "Summoned" and none exists; the control armor stand does |
+
+**Result: not clean, on the light check alone.** Everything else passes.
+
 ## Limitations
 - A staging export, not the live world. The live run adds retiring the world and its datapack list.
 - Not in the driver and not run: Habitat Blocks (0 recorded), `waystones.dat` (a fresh export has none), spawn pools
@@ -73,5 +116,7 @@ unpolicied spawn block. Stray paving was not checkable at Erika's town (moss 40%
 - Implementation, tests and this verdict are the same session's.
 
 ## Decision
-The re-application is ready to run on the live world with `tools/reapply.py`, as written in
-`docs/world-building/REEXPORT.md`. The live run is the owner's to start.
+Run 2's decision ("ready") is withdrawn: its clean audit rested on checks that passed when they had nothing to check.
+After run 3 the re-application is not yet ready for the live world. It waits on (1) Codex's re-review of the fixes,
+and (2) the owner's call on the light check's 81 snow-layer positions, which have no gameplay effect since vanilla
+hostiles cannot spawn in this pack. The live run is the owner's to start once both are done.

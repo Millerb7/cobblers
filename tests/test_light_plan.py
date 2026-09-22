@@ -131,6 +131,8 @@ def test_reapply_runs_the_after_donor_step_after_the_donors():
     import reapply as RA
     ids = [s[0] for s in RA.steps()]
     assert "R16" in ids and ids.index("R16") > ids.index("R9")
+    # and the signposts, which a donor's air margin erased when they went in first (Route 7 at Sabrina's town)
+    assert ids.index("R15") > ids.index("R9")
     r16 = next(s for s in RA.steps() if s[0] == "R16")
     fns = {v for k, v in r16[2] if k == "fn"}
     assert "cobblers:towns/displaced_city_after_donors" in fns

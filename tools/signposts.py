@@ -32,6 +32,11 @@ REPORT = ROOT / "derived" / "signposts.json"
 MIN_GAP = 150                 # blocks between transition posts on one route
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: `verify` reads a stopped world to check every post; `function` never does.
+WORLD_READS = {'main', 'verify'}
+
+
 def load(name):
     return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
 
@@ -223,6 +228,10 @@ def verify(a):
     if "cobblers-10240" in Path(a.world).as_posix():
         raise SystemExit("refusing to read the live world")
     rep = json.loads(REPORT.read_text(encoding="utf-8"))
+    if not rep.get("posts"):
+        # fail closed: nothing to check is not "0 of 0 standing"
+        print("no posts in %s: nothing to verify, which fails (run `signposts.py function` first)" % REPORT.name)
+        return 1
     wood = rep["wood"]
     by_region = {}
     for p in rep["posts"]:

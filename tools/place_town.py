@@ -64,6 +64,11 @@ NOT_FLOOR = {"minecraft:" + b for b in (
     "rail", "redstone_wire")}
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: only the --verify --world branch of main reads a world, to audit the built town (town_audit).
+WORLD_READS = {'main'}
+
+
 def is_floor(name):
     """True when a template block at the ground layer is floor a verify can stand on, not a plant, a snow layer,
     a carpet or anything else in #minecraft:replaceable."""
@@ -233,9 +238,13 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
     # lot id -> the top of the ground range tools/town_plan.py measured for it, off the heightmap
     lot_ground = {}
     levelled = set()
+    street_cells = {}                                  # street id -> the plan's exact cells, when the plan has them
     _computed = ROOT / "derived" / "towns" / ("%s_plan.json" % settlement)
     if _computed.is_file():
         _doc = json.loads(_computed.read_text(encoding="utf-8"))
+        for _sid, _st in (_doc.get("streets") or {}).items():
+            if _st.get("cells"):
+                street_cells[_sid] = {(x, z) for z, _y, xa, xb in _st["cells"] for x in range(xa, xb + 1)}
         for _l in (_doc.get("lots") or []) + (_doc.get("anchors") or []):
             if _l.get("level") is not None:
                 # a levelled lot is cut and filled to its level by the prep, so that is its ground
@@ -399,6 +408,11 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
             # blocks past each of its short sides and paved a neighbouring house's yard (Sabrina, 2026-09-21)
             points = []
             cols = {(x, z) for x in range(rect[0], rect[2] + 1) for z in range(rect[1], rect[3] + 1)}
+        elif rid in street_cells:
+            # a planned street is paved on the plan's own cells, not re-drawn with a square brush: the brush ran
+            # 2 to 36 columns past the plan's cells in 17 of 24 places (the paving check, 2026-09-21)
+            points = []
+            cols = set(street_cells[rid])
         for (ax, az), (bx, bz) in zip(points, points[1:]):
             n = int(max(abs(bx - ax), abs(bz - az))) + 1
             for i in range(n):
@@ -566,11 +580,18 @@ def verify(settlement, server_dir):
             tree = rcon.run(["execute if block %d %d %d #minecraft:%s" % (x, y, z, t) for y in cand for t in ("leaves", "logs")], pw)
             cand = [y for k, y in enumerate(cand) if not any("passed" in r for r in tree[2 * k:2 * k + 2])]
         return cand[0] if cand else None
-    out = {"buildings": [], "gaps": 0, "columns_checked": 0}
+    out = {"buildings": [], "gaps": 0, "columns_checked": 0, "unverified": []}
     fb = rep["buildings"]
+    # Fail closed: the buildings to verify are the ones the data records (every templated house or service this
+    # tool places), not the ones the last build's report happens to list; a building missing from the report, or one
+    # with no corner to test, is unverified, and an unverified building fails the verify (Codex review, 2026-09-21).
+    doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    expected = {q["id"] for q in doc["placements"] if q.get("settlement") == settlement and q.get("file")}
+    out["unverified"] += ["%s: in the data, not in the placement report" % i for i in sorted(expected - {b["id"] for b in fb})]
+    out["unverified"] += ["%s: no corner to test" % b["id"] for b in fb if not b.get("corners")]
     if not fb:
         # a place with no templated building (Viltri Light is a platform and an authored tower): nothing to seat, and
-        # its earthworks are checked by tools/town_audit.py
+        # its earthworks are checked by tools/town_audit.py. Only when the data records none either.
         return out
     xs = [b["footprint"][0] for b in fb] + [b["footprint"][2] for b in fb]
     zs = [b["footprint"][1] for b in fb] + [b["footprint"][3] for b in fb]
@@ -649,7 +670,7 @@ def main(argv=None):
         path = ROOT / "derived" / "towns" / ("%s_verify.json" % a.settlement)
         path.write_text(json.dumps(res, indent=1), encoding="utf-8")
         print(json.dumps(res, indent=1))
-        raise SystemExit(0 if (res["gaps"] == 0 and not res.get("spawn_block_problems")
+        raise SystemExit(0 if (res["gaps"] == 0 and not res.get("unverified") and not res.get("spawn_block_problems")
                                and not res.get("plan_problems")) else 1)
     if a.surface_world:
         raise SystemExit("--surface-world is gone: ground comes from the heightmap (tools/ground.py), never from "

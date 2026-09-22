@@ -18,6 +18,7 @@ import runtime_guard as G  # noqa: E402
 @pytest.fixture
 def layout(tmp_path, monkeypatch):
     monkeypatch.delenv(G.LOCK_ENV, raising=False)
+    monkeypatch.delenv(G.OWNER_ENV, raising=False)
     server = tmp_path / "cobblers-server"
     (server / "live-world" / "region").mkdir(parents=True)
     (server / "live-world" / "level.dat").write_bytes(b"x")
@@ -30,9 +31,10 @@ def layout(tmp_path, monkeypatch):
     return server, snap, lock
 
 
-def hold_lock(monkeypatch, lock):
-    lock.write_text("owner: test", encoding="utf-8")
+def hold_lock(monkeypatch, lock, owner="test"):
+    lock.write_text("owner: %s\ntask: tests\n" % owner, encoding="utf-8")
     monkeypatch.setenv(G.LOCK_ENV, str(lock))
+    monkeypatch.setenv(G.OWNER_ENV, "test")
 
 
 def test_offline_snapshot_is_allowed(layout):
@@ -73,3 +75,23 @@ def test_no_tool_hard_codes_the_runtime(tool):
     assert not re.search(r"cobblers-server[\\/]+cobblers-10240", code), tool
     assert not re.search(r'default=[^,)]*cobblers-server', code), tool
     assert not re.search(r'["\'][A-Za-z]:[\\/]+[^"\']*cobblers-server(?![-\w])', code), tool
+
+
+def test_a_lock_somebody_else_holds_is_refused(layout, monkeypatch):
+    # Codex review, 2026-09-21: any existing lock file passed, so a tool ran on another agent's lock.
+    server, _, lock = layout
+    hold_lock(monkeypatch, lock, owner="Codex, some other task")
+    with pytest.raises(G.RuntimeAccessRefused):
+        G.check(server / "datapacks")
+    with pytest.raises(G.RuntimeAccessRefused):
+        G.require_lock()
+
+
+def test_a_lock_without_a_declared_owner_is_refused(layout, monkeypatch):
+    server, _, lock = layout
+    hold_lock(monkeypatch, lock)
+    monkeypatch.delenv(G.OWNER_ENV)
+    with pytest.raises(G.RuntimeAccessRefused):
+        G.check(server / "datapacks")
+    monkeypatch.setenv(G.OWNER_ENV, "test")
+    assert G.require_lock() == lock

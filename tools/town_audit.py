@@ -36,6 +36,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: the town audit reads a stopped world to check a town against its plan.
+WORLD_READS = {'audit', 'main', 'plan_audit'}
+
+
 def policy_sets(policy, triggers):
     """(blocks that must not appear, blocks that are allowed on purpose)."""
     substituted_from = {s["from"] for s in policy.get("substitutions") or [] if isinstance(s, dict)}
@@ -275,15 +280,24 @@ def expected_buildings(settlement, placements, server_dir=None):
             src = ROOT / "build" / "datapacks" / "cobblers_towns" / "data" / ns / "structure" / (rel + ".nbt")
         _, doc = nbt.load(src)
         expand(b["id"], doc, tuple(b["command_position"]), b["rotation"], b["grade_layer"])
+    # Earthworks, replayed in the order the re-application runs them (the town function's, then the after-donor
+    # function's), last write winning: a block a later earthwork replaces is that one's to answer for. Replayed each
+    # on its own, the Displaced City's fields were expected to show the coarse dirt the crops step turns to farmland
+    # (1,076 of 1,212, the staging run of 2026-09-21).
+    import build_audit
+    earth = [q for q in by_id.values() if q.get("kind") == "earthwork"]
+    earth = [q for q in earth if q.get("after") != "donors"] + [q for q in earth if q.get("after") == "donors"]
+    last = {}
+    for q in earth:
+        cols = sorted(_command_columns(q.get("commands") or []))
+        for (x, z), ys in build_audit.replay(q.get("commands") or [], cols).items():
+            for y, b in ys.items():
+                last[(x, y, z)] = (q["id"], b)
+    for q in earth:
+        solid = {p: b for p, (eid, b) in last.items() if eid == q["id"] and b != "minecraft:air"}
+        out.append((q["id"], solid, {}, None))
     for q in by_id.values():
         if q.get("kind") == "earthwork":
-            # the authored commands, replayed: what they write is what should stand
-            import build_audit
-            import function_limits
-            cols = {(x, z) for (x, z) in _command_columns(q.get("commands") or [])}
-            col = build_audit.replay(q.get("commands") or [], sorted(cols))
-            solid = {(x, y, z): b for (x, z), ys in col.items() for y, b in ys.items() if b not in ("minecraft:air",)}
-            out.append((q["id"], solid, {}, None))
             continue
         if q.get("file") or not q.get("pack_template") or q.get("kind") == "vendor":
             continue
@@ -311,13 +325,77 @@ def expected_buildings(settlement, placements, server_dir=None):
     return out
 
 
+def town_functions(settlement):
+    """The functions that build a place, in the order the re-application runs them: its prep, its town function, its
+    after-donor function (when it has one)."""
+    fdir = ROOT / "build" / "datapacks" / "cobblers_towns" / "data" / "cobblers" / "function" / "towns"
+    out = [ROOT / "build" / "town_prep" / ("prep_%s.mcfunction" % settlement), fdir / ("%s.mcfunction" % settlement)]
+    late = fdir / ("%s_after_donors.mcfunction" % settlement)
+    return out + ([late] if late.is_file() else [])
+
+
+_WRITE = None
+
+
+def stray_paving_writes(settlement, plan, placements):
+    """([(file, line)], problem or None): every write in the place's own functions of a block the plan paves with, at a
+    column the plan does not pave. Deterministic, cell by cell against the plan's road and plaza cells, with a
+    building's footprint (and a block round it), an anchor the plan paves on purpose and an authored earthwork's
+    columns allowed. It replaces a density heuristic that compared the ring round the plaza with the landscape
+    further out and gave up ("not checkable") wherever the landscape was the plaza's own stone (Codex review,
+    2026-09-21). Stray paving in a world can only come from these functions, so checking them is checking for it."""
+    import re
+    global _WRITE
+    _WRITE = _WRITE or re.compile(r"(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))? (\S+)")
+    paving = expected_paving(plan)
+    if not paving:
+        return [], "the plan paves no cell: nothing to check the town's paving against"
+    surfaces = {v[1] for v in paving.values()}
+    allowed = set(paving)
+    for a in plan.get("anchors") or []:
+        if a.get("surface"):
+            x0, z0, x1, z1 = a["rect"]
+            allowed |= {(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)}
+    for q in placements["placements"]:
+        if q.get("settlement") == settlement and q.get("kind") == "earthwork":
+            allowed |= _command_columns(q.get("commands") or [])
+    rep_path = ROOT / "derived" / "towns" / ("%s_placement.json" % settlement)
+    if rep_path.is_file():
+        for b in json.loads(rep_path.read_text(encoding="utf-8")).get("buildings") or []:
+            x0, z0, x1, z1 = b["footprint"]
+            allowed |= {(x, z) for x in range(x0 - 1, x1 + 2) for z in range(z0 - 1, z1 + 2)}
+    stray = []
+    for f in town_functions(settlement):
+        if not f.is_file():
+            return [], "%s is missing: the town's functions were not generated, so its paving cannot be checked" % f.name
+        for line in f.read_text(encoding="utf-8").splitlines():
+            m = _WRITE.match(line.strip())
+            if not m or m.group(8).split("[")[0].split("{")[0] not in surfaces:
+                continue
+            x0, z0 = int(m.group(2)), int(m.group(4))
+            x1, z1 = (int(m.group(5)), int(m.group(7))) if m.group(5) else (x0, z0)
+            if any((x, z) not in allowed for x in range(min(x0, x1), max(x0, x1) + 1)
+                   for z in range(min(z0, z1), max(z0, z1) + 1)):
+                stray.append((f.name, line.strip()))
+    return stray, None
+
+
+def expected_building_ids(settlement, placements):
+    """The buildings the data says the place has: every house, service, donor and earthwork record (not vendors)."""
+    return {q["id"] for q in placements["placements"]
+            if q.get("settlement") == settlement and q.get("kind") != "vendor"
+            and (q.get("file") or q.get("pack_template") or q.get("kind") == "earthwork")}
+
+
 def plan_audit(settlement, world, server_dir=None):
     """Roads where the plan puts them, paved with the right block; lamps lit at their spots; every building
     standing and none of them buried. Returns a result dict with a "problems" list of sentences."""
     import structure_nbt as SN
     plan_path = ROOT / "derived" / "towns" / ("%s_plan.json" % settlement)
     if not plan_path.is_file():
-        return {"skipped": "no plan: %s has not been run through tools/town_plan.py" % settlement, "problems": []}
+        # fail closed: a place with no plan has nothing checked, which is not a pass
+        msg = "no plan: %s has not been run through tools/town_plan.py" % settlement
+        return {"skipped": msg, "problems": [msg], "not_checkable": []}
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     policy = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))
@@ -334,7 +412,8 @@ def plan_audit(settlement, world, server_dir=None):
     lamp_block = plan.get("lamp_block")
     buildings = expected_buildings(settlement, placements, server_dir)
     if not any(st.get("cells") for st in (plan.get("streets") or {}).values()):
-        return {"skipped": "the plan predates recorded street cells; re-run tools/town_plan.py", "problems": []}
+        msg = "the plan predates recorded street cells; re-run tools/town_plan.py"
+        return {"skipped": msg, "problems": [msg], "not_checkable": []}
 
     xs = [k[0] for k in paving] + [p[0] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
     zs = [k[1] for k in paving] + [p[2] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
@@ -389,55 +468,22 @@ def plan_audit(settlement, world, server_dir=None):
                             % (what, sum(r["blocked_above"].values()),
                                ", ".join("%s %d" % (k.split(":")[-1], n) for k, n in r["blocked_above"].most_common(4))))
 
-    # paving where the plan puts none: the plaza's surface in a ring round the plaza. Laid with a street's square
-    # brush the plaza ran 16 blocks past its short sides onto the grass, which no check of the planned cells sees
-    pzp = plan.get("plaza")
-    stray_paving = 0
-    if pzp:
-        x0, z0, x1, z1 = pzp["rect"]
-        # a building beside the plaza may be built of the same block (Sabrina's Centre is diorite, Brock's
-        # foundations stone brick): its footprint, with a block round it for the foundation, is not paving
-        built = set()
-        for _, solid, rooms, _ in buildings:
-            for (bx, _, bz) in list(solid or {}) + list(rooms or {}):
-                for dx in (-1, 0, 1):
-                    for dz in (-1, 0, 1):
-                        built.add((bx + dx, bz + dz))
-        for a in plan.get("anchors") or []:
-            if a.get("surface"):
-                # a lot the plan paves on purpose (Sabrina's market, the rim post's overlook)
-                built |= {(x, z) for x in range(a["rect"][0], a["rect"][2] + 1) for z in range(a["rect"][1], a["rect"][3] + 1)}
-        # Against a control. A fresh export paints its own surfaces, and some are a plaza's material: moss round
-        # Erika's green, cobble round the Merian hut, red terracotta on the Tableland, gravel at the dig camp (the
-        # staging run of 2026-09-21 flagged 1,499 to 3,135 columns at each). So the ring the paving could have run
-        # into (1 to 20 blocks out) is compared with a ring the town never touches (21 to 40 out), and only paving
-        # beyond what the landscape carries there anyway is reported.
-        near = far = near_n = far_n = 0
-        for x in range(x0 - 40, x1 + 41):
-            for z in range(z0 - 40, z1 + 41):
-                d = max(x0 - x, x - x1, z0 - z, z - z1)
-                if d <= 0 or (x, z) in paving or (x, z) in built:
-                    continue
-                hit = any(at(x, y, z) == pzp["surface"] for y in range(pzp["y"] - 3, pzp["y"] + 4))
-                if d <= 20:
-                    near_n += 1
-                    near += hit
-                else:
-                    far_n += 1
-                    far += hit
-        expected = far / far_n * near_n if far_n else 0
-        stray_paving = int(round(near - expected))
-        density = far / far_n if far_n else 0
-        if density > 0.25:
-            # the landscape here is mostly the plaza's own stone (the Tableland's red terracotta is 41% of the ring
-            # 21 to 40 blocks out, the dig camp's gravel 74%): stray paving cannot be told from ground, so the check
-            # says it could not run rather than passing or failing
-            unchecked.append("plaza paving outside the plan: not checkable, %.0f%% of the landscape round the plaza is %s"
-                             % (100 * density, pzp["surface"]))
-        elif stray_paving > max(50, 0.05 * near_n):
-            problems.append("plaza paving outside the plan: %d columns round the plaza hold %s where nothing is planned "
-                            "(%d found within 20 blocks, %d expected from the landscape 21 to 40 blocks out)"
-                            % (stray_paving, pzp["surface"], near, round(expected)))
+    # paving where the plan puts none, cell by cell: every write of a planned paving block in the place's own
+    # functions must land on a planned road or plaza cell (or a building, a paved anchor, an earthwork). The world
+    # side (each planned cell paved) is checked above; stray paving can only come from these writes.
+    stray, why_not = stray_paving_writes(settlement, plan, placements)
+    if why_not:
+        problems.append("paving: %s" % why_not)
+    elif stray:
+        problems.append("paving outside the plan: %d writes of a paving block land off the plan's road cells (first: %s)"
+                        % (len(stray), "; ".join("%s: %s" % s for s in stray[:3])))
+    if not roads or not sum(r["cells"] for r in roads.values()):
+        problems.append("roads: no planned road cell was checked")
+    # every building the data records is checked, or the audit says which were not
+    checked = {r["id"] for r in [{"id": b[0]} for b in buildings if b[1] is not None]}
+    missing = sorted(expected_building_ids(settlement, placements) - checked)
+    if missing:
+        problems.append("buildings the data records but the audit did not check: %s" % ", ".join(missing[:8]))
 
     # lamps
     dark =[(x, y - 1, z, at(x, y - 1, z)) for x, y, z in lamps if at(x, y - 1, z) != lamp_block]
@@ -488,12 +534,15 @@ def main(argv=None):
         try:
             res = audit(name, a.world, server_dir=a.server_dir)
         except SystemExit as exc:
-            print("%-12s skipped: %s" % (name, exc))
+            # fail closed: a place the audit could not read is not clean
+            print("%-12s NOT AUDITED: %s" % (name, exc))
+            bad += 1
             continue
         res["plan"] = plan_audit(name, a.world, a.server_dir)
         out.append(res)
         problems = len(res["unsubstituted"]) + len(res["not_in_policy"])
-        bad += problems + len(res["plan"]["problems"])
+        # a check that could not run blocks a clean result as surely as one that failed
+        bad += problems + len(res["plan"]["problems"]) + len(res["plan"].get("not_checkable") or [])
         if a.as_json:
             continue
         pl = res["plan"]
@@ -529,7 +578,7 @@ def main(argv=None):
                   % ", ".join("%s %d" % (b.split(":")[-1], n) for b, n in top))
         if not problems:
             print("   spawn blocks clean: nothing inside a footprint we placed decides a spawn without saying so")
-        if not pl.get("skipped") and not pl["problems"]:
+        if not pl.get("skipped") and not pl["problems"] and not pl.get("not_checkable"):
             print("   plan clean: every road cell, lamp and building is where the plan puts it")
     if a.as_json:
         print(json.dumps(out, indent=1))

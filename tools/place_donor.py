@@ -36,6 +36,11 @@ DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_donor"
 NS = "cobblers"
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: `verify` reads a stopped world to check a donor stands; placement never does.
+WORLD_READS = {'main', 'read_world'}
+
+
 def records(placements_doc):
     return [p for p in placements_doc.get("placements") or [] if isinstance(p, dict) and p.get("pack_template")]
 

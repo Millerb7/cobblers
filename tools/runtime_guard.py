@@ -7,8 +7,11 @@ point for every tool that takes a world folder, a server directory, an install t
   - A path inside a directory named exactly `cobblers-server` that is, or lies inside, a world folder (a directory
     holding `level.dat` or `region/`) is refused outright. Work on an offline snapshot outside the runtime (for
     example under `cobblers-server-retired/`) or on a disposable copy.
-  - Any other path inside `cobblers-server` (mods, datapacks, config, the RCON password) is allowed only when the
-    environment variable COBBLERS_SERVER_LOCK names an existing, non-empty lock file.
+  - Any other path inside `cobblers-server` (mods, datapacks, config, the RCON password) is allowed only while the
+    caller HOLDS the lock (`require_lock`): COBBLERS_SERVER_LOCK names the lock file, and its `owner:` line equals
+    COBBLERS_LOCK_OWNER. A lock file that merely exists is somebody's lock, not ours; until 2026-09-21 any existing
+    file passed, and tools/reapply.py set the path itself when it was missing, so a run could proceed on another
+    agent's lock (Codex review). Tools that drive a server or a world call `require_lock` before anything else.
 
 Nothing here has a default server or world path. Every caller passes one explicitly.
 """
@@ -20,6 +23,7 @@ from pathlib import Path
 
 RUNTIME_DIR_NAME = "cobblers-server"
 LOCK_ENV = "COBBLERS_SERVER_LOCK"
+OWNER_ENV = "COBBLERS_LOCK_OWNER"
 
 
 class RuntimeAccessRefused(SystemExit):
@@ -37,6 +41,36 @@ def _is_world(d: Path) -> bool:
     return (d / "level.dat").exists() or (d / "region").is_dir()
 
 
+def lock_owner(lock_path) -> str | None:
+    """The `owner:` line of a lock file, or None."""
+    try:
+        for line in Path(lock_path).read_text(encoding="utf-8", errors="replace").splitlines():
+            if line.lower().startswith("owner:"):
+                return line.split(":", 1)[1].strip() or None
+    except OSError:
+        return None
+    return None
+
+
+def require_lock(purpose: str = "use the server") -> Path:
+    """The lock file's path when the caller holds the coordination lock, else raise RuntimeAccessRefused.
+
+    Held means: COBBLERS_SERVER_LOCK names an existing lock file, and its `owner:` line equals COBBLERS_LOCK_OWNER.
+    There is no default for either: a caller that did not take the lock cannot name it."""
+    lock = os.environ.get(LOCK_ENV)
+    owner = (os.environ.get(OWNER_ENV) or "").strip()
+    if not lock or not Path(lock).is_file() or Path(lock).stat().st_size == 0:
+        raise RuntimeAccessRefused(
+            "runtime_guard: refusing to %s without the coordination lock. Acquire it (CLAUDE.md, Live server "
+            "safety), set %s to its path and %s to the owner line you wrote in it." % (purpose, LOCK_ENV, OWNER_ENV))
+    held_by = lock_owner(lock)
+    if not owner or held_by != owner:
+        raise RuntimeAccessRefused(
+            "runtime_guard: refusing to %s: the lock %s is held by %r, and this caller declares %r (%s). A lock "
+            "file that exists is not a lock you hold." % (purpose, lock, held_by, owner or None, OWNER_ENV))
+    return Path(lock)
+
+
 def check(path, purpose: str = "access") -> Path:
     """Return the resolved path, or raise RuntimeAccessRefused. `purpose` only shapes the message."""
     if path is None or str(path) == "":
@@ -52,11 +86,7 @@ def check(path, purpose: str = "access") -> Path:
             raise RuntimeAccessRefused(
                 "runtime_guard: refusing to %s %s: %s is a world inside the live server runtime. "
                 "Use an offline snapshot outside %s or a disposable copy." % (purpose, p, d, RUNTIME_DIR_NAME))
-    lock = os.environ.get(LOCK_ENV)
-    if not lock or not Path(lock).is_file() or Path(lock).stat().st_size == 0:
-        raise RuntimeAccessRefused(
-            "runtime_guard: refusing to %s %s inside the server runtime without the coordination lock. "
-            "Acquire the lock (CLAUDE.md, Live server safety) and set %s to its path." % (purpose, p, LOCK_ENV))
+    require_lock("%s %s inside the server runtime" % (purpose, p))
     return p
 
 

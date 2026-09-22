@@ -62,6 +62,11 @@ SEE_THROUGH_SUFFIX = ("_pane", "_fence", "_fence_gate", "_leaves", "_door", "_tr
 NO_SPAWN_ON = ("_slab", "_stairs", "_wall", "bedrock", "barrier", "magma_block", "farmland", "lava", "ice")
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: `check` reads a stopped world's light arrays to verify; `plan` never reads a world.
+WORLD_READS = {'cmd_check', 'main', 'world_light'}
+
+
 def short(name):
     return name.split(":")[-1].split("[")[0]
 
@@ -69,6 +74,16 @@ def short(name):
 def see_through(name):
     s = short(name)
     return s in SEE_THROUGH_EXACT or s.endswith(SEE_THROUGH_SUFFIX)
+
+
+PASSABLE = {"air", "cave_air", "void_air", "short_grass", "tall_grass", "fern", "large_fern", "snow", "dead_bush"}
+
+
+def passable(name):
+    """A monster can stand in it: air, or the plants and the snow layer that take no space. The model and the world
+    check use the same rule; the check used to want plain air, and skipped 44 positions at the Merian hut where snow
+    had settled (the staging run of 2026-09-21)."""
+    return short(name) in PASSABLE
 
 
 def spawn_surface(name):
@@ -102,7 +117,7 @@ class Model:
         air = s in ("air", "cave_air", "void_air")
         self.opaque[t] = not see_through(name)
         self.surface[t] = spawn_surface(name)
-        self.solid_any[t] = not air and s not in ("short_grass", "tall_grass", "fern", "large_fern", "snow", "dead_bush")
+        self.solid_any[t] = not passable(name)
         self.emit[t] = EMIT.get(s, 0)
 
     def column(self, x, z, top, name_top="minecraft:dirt"):
@@ -210,6 +225,18 @@ def build_model(settlement, doc, source_root, server_dir, extra=None):
         for p, name in (solid or {}).items():
             m.set(*p, name)
             footprint.add((p[0], p[2]))
+    # the foundation course tools/place_town.py lays under every column a building stands on, down to the ground (and
+    # through the air a template stores under its lowest block): solid, so the model does not count spawn positions
+    # under a house floor that the world fills with stone (Relic Island: 58 of the model's 96, the staging run of
+    # 2026-09-21)
+    rep_path = ROOT / "derived" / "towns" / ("%s_placement.json" % settlement)
+    if rep_path.is_file():
+        for b in json.loads(rep_path.read_text(encoding="utf-8")).get("buildings") or []:
+            for x, z, bottom in b.get("columns") or []:
+                for y in range(m.y0, bottom):
+                    t = m.idx(x, y, z)
+                    if t and not m.solid_any[t]:
+                        m.set(x, y, z, "minecraft:stone_bricks")
     for p, name in (extra or {}).items():
         m.set(*p, name)
     # scope
@@ -410,6 +437,20 @@ def world_light(world, x, y, z, cache):
     return (b >> 4) if i & 1 else (b & 0x0F)
 
 
+BUILT_SHARE = 0.75       # the world must hold this share of the positions the model plans (all but two places: 0.92-1.14)
+
+
+def dark_by_design(doc, sid):
+    """The reason a place is left dark on purpose (its plan's lighting.dark_by_design), or None."""
+    return (((doc["settlements"].get(sid) or {}).get("plan") or {}).get("lighting") or {}).get("dark_by_design")
+
+
+def light_places(doc):
+    """The places the light check covers: the hometown and every planned place, less those dark by design."""
+    import reapply
+    return [s for s in ["hometown"] + reapply.places(doc) if not dark_by_design(doc, s)]
+
+
 def connected_air(m, cols):
     """The world's passable cells joined to the cavern the plan carved: seeded strictly between the planned floor and
     ceiling (derived/cavern/plan.npz) where the world is open, grown face to face through the world's own passable
@@ -461,7 +502,17 @@ def cmd_check(a):
     bad = 0
     dump = []
     for sid in a.settlements:
+        dark_on_purpose = dark_by_design(doc, sid)
+        if dark_on_purpose:
+            # not a light-check target: asking to check one is a mistake in the caller, and fails
+            print("%-16s DARK BY DESIGN, not a light-check target: %s" % (sid, dark_on_purpose))
+            bad += 1
+            continue
         m, scope, cells, _ = build_model(sid, doc, os.environ.get("COBBLERS_SOURCE_ROOT") or a.source_root, a.server_dir)
+        # fail closed: the expected set is the model's (from the plan), and a check that finds nothing, or far fewer
+        # positions than the plan builds, has not checked the place (Surge's town read "0 positions, 0 dark" on a
+        # world it was not built in, 2026-09-21)
+        expected = int((m.spawn_cells() & scope).sum())
         cache = {}
         n = dark_n = 0
         examples = []
@@ -475,7 +526,7 @@ def cmd_check(a):
         for (x, z), col in cols.items():
             for y in range(m.y0 + 1, m.y1 - 1):
                 prev, a1, a2 = col[y - 1 - m.y0], col[y - m.y0], col[y + 1 - m.y0]
-                if not (spawn_surface(prev) and short(a1) in ("air", "cave_air") and short(a2) in ("air", "cave_air")):
+                if not (spawn_surface(prev) and passable(a1) and passable(a2)):
                     continue
                 # the same scope the plan used, judged on the world's own blocks: in the cavern every position the
                 # cavern's own air reaches (a natural cave sealed off in the rock round it is not the cavern); in a
@@ -493,7 +544,15 @@ def cmd_check(a):
                     if len(examples) < 8:
                         examples.append((x, y, z, short(prev)))
         bad += dark_n
-        print("%-16s %6d spawnable positions in scope, %d at block light 0%s" % (sid, n, dark_n, "  e.g. %s" % examples if dark_n else ""))
+        print("%-16s %6d spawnable positions in scope (the plan's model: %d), %d at block light 0%s"
+              % (sid, n, expected, dark_n, "  e.g. %s" % examples if dark_n else ""))
+        if expected == 0:
+            print("   NOTHING TO CHECK: the plan puts no roofed position here; mark it dark by design or give it a roof")
+            bad += 1
+        elif n < BUILT_SHARE * expected:
+            print("   NOT BUILT AS PLANNED: the world holds %d of the %d positions the plan builds (needs %.0f%%)"
+                  % (n, expected, 100 * BUILT_SHARE))
+            bad += 1
     if a.dump:
         Path(a.dump).write_text(json.dumps(dump) + "\n", encoding="utf-8")
     return 1 if bad else 0

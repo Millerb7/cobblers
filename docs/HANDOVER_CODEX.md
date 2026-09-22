@@ -245,6 +245,26 @@ For Codex to pick up. Claude has not edited any of the files named here.
     `data/signposts.json`); then `python tools/signposts.py function` and `python tools/location_titles.py` pick it
     up, and a re-export places the new signs. Names over 15 characters wrap across sign lines.
 
+21. **Re-review the fail-closed fixes before the live run.** Your review of the re-export path found four fail-open
+    defects; the owner has held the live run until they are fixed, rehearsed and re-reviewed. Your written report was
+    not in the repository or your worktree, so the fixtures were rebuilt from the owner's summary of it; check they
+    are the cases you broke. Each commit's tests fail against the tools before it (shown in each commit message).
+    - The lock: `tools/runtime_guard.py` `require_lock` (the lock file's `owner:` must equal `COBBLERS_LOCK_OWNER`),
+      `tools/reapply.py` `main` and `install`; `tests/test_reapply_lock.py`, `tests/test_runtime_guard.py`.
+    - Empty output: `tools/build_audit.py` (forest from `derived/sites/route1_forest.json`, world tree `top_y`, islet,
+      cavern box and shell); `tests/test_audits_fail_closed.py`.
+    - Not checkable: `tools/town_audit.py` `stray_paving_writes` (the heuristic is gone; our functions' paving writes
+      against the plan's cells), `expected_building_ids`, `main`; `tools/reapply.py` `audit`; `tools/place_town.py`
+      `lay` (planned streets on the plan's cells, which the new check caught overrunning in 17 of 24 places);
+      `tests/test_town_audit_fail_closed.py`.
+    - The ground rule: `tools/ground_rule.py` (call graph over every tool, `WORLD_READS` declared in each of the 17
+      tools that read a world, a `validate.py` check); `tests/test_ground_rule.py`.
+    - The sweep: `tools/light_plan.py check` (expected from the model, `BUILT_SHARE`, `dark_by_design`, shared
+      `passable`), `signposts.py verify`, `traders.py verify`, `habitat_blocks.py verify`, `place_town.py verify`
+      (`unverified`); `tests/test_verifies_fail_closed.py`.
+    - What run 3 then found and fixed: R15 after R9; `town_audit.expected_buildings` earthworks by final state; the
+      light model's foundations. EXP-026 run 3 has the numbers.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.

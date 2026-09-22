@@ -23,6 +23,11 @@ SECTOR = 4096
 DIRS = ("region", "entities", "poi")
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: copies chunks between disposable worlds; decides no position.
+WORLD_READS = {'main', 'transplant', 'write_region'}
+
+
 def read_region(path):
     """{index: (timestamp, raw chunk record incl. 4-byte length and compression byte)}"""
     out = {}

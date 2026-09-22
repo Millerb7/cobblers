@@ -35,6 +35,11 @@ ROOT = Path(__file__).resolve().parent.parent
 CATALOG_DIMENSION = {"overworld": "overworld", "the_nether": "nether", "the_end": "end"}
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: audits a pregenerated dimension's chunks; decides nothing.
+WORLD_READS = {'audit', 'main'}
+
+
 def status_name(value):
     return re.sub(r"^minecraft:", "", str(value or "unknown"))
 

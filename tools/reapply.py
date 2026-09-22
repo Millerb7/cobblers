@@ -9,7 +9,7 @@ with a check after each, and audit the result. docs/world-building/REEXPORT.md i
         with the server STOPPED: copy the packs into <server>/datapacks, and cobblers_height and cobblers_worldtree
         into the world folder's own datapacks (they raise the build limit the world tree's crown needs)
   python tools/reapply.py run --server-dir <server> [--from R8] [--only R8] [--with-spawns]
-        with the server running and the coordination lock held: R2 to R14 in order, timed, each function's reply
+        with the server running and the coordination lock held: R2 to R16 in order, timed, each function's reply
         checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
   python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
         with the server STOPPED: build_audit (cavern, forest, world tree, islet), town_audit for every place, the
@@ -40,6 +40,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = ROOT / "tools"
+sys.path.insert(0, str(TOOLS))
+import runtime_guard  # noqa: E402
 BUILD = ROOT / "build"
 PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
@@ -48,7 +50,7 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_signs", "cobblers_titles")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
-CAVERN = ["00_seal", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
+CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
 UNPLACED = {"hometown"}                          # has roads, not a town plan: placed by R7
 
 
@@ -127,7 +129,9 @@ def install(a):
     s.close()
     if busy:
         raise SystemExit("port 25565 is in use: install with the server stopped")
-    dp = Path(a.server_dir) / "datapacks"
+    # the port says the server is down; only the lock says nobody else is using the runtime
+    dp = runtime_guard.check(Path(a.server_dir) / "datapacks", "install packs into")
+    runtime_guard.check(a.world_dir, "install world packs into")
     # cobblers_restore puts ground back to the heightmap: a disposable-world tool that must never be installed
     # beside the live world, where one mistyped function would flatten a town
     if (dp / "cobblers_restore").exists():
@@ -172,7 +176,6 @@ def steps(with_spawns=False):
     for s in places(doc):
         r8 += [("fn", "cobblers:reapply/prep_%s" % s), ("fn", "cobblers:towns/%s" % s)]
     out.append(("R8", "planned towns and places (%d)" % len(places(doc)), r8))
-    out.append(("R15", "route signposts", [("fn", "cobblers:signs/place")]))
     r9 = []
     for d in donors(doc):
         r9 += [("fn", "cobblers:structures/place_%s" % d), ("wait", 3)]
@@ -180,6 +183,9 @@ def steps(with_spawns=False):
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
+    # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
+    # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
+    out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -188,8 +194,6 @@ def steps(with_spawns=False):
 
 
 def run(a):
-    if not os.environ.get("COBBLERS_SERVER_LOCK"):
-        os.environ["COBBLERS_SERVER_LOCK"] = str(Path(a.server_dir).parent / ".cobblers-server-agent.lock")
     rc = Rcon(a.server_dir)
     OUT.mkdir(parents=True, exist_ok=True)
     rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": []}
@@ -236,14 +240,17 @@ def run(a):
                     vf.unlink(missing_ok=True)
                     r = subprocess.run([sys.executable, str(TOOLS / "place_town.py"), s, "--verify", "--server-dir", a.server_dir],
                                        cwd=ROOT, capture_output=True, text=True)
-                    gaps = None
+                    gaps, unverified = None, []
                     if vf.is_file():
-                        gaps = json.loads(vf.read_text(encoding="utf-8"))["gaps"]
+                        vres = json.loads(vf.read_text(encoding="utf-8"))
+                        gaps, unverified = vres["gaps"], vres.get("unverified") or []
                     elif r.returncode:
                         print("   verify %s failed: %s" % (s, (r.stderr or r.stdout).strip().splitlines()[-1:]), flush=True)
-                    print("   verify %-16s gaps %s" % (s, gaps), flush=True)
-                    if gaps != 0:
-                        bad.append("%s: floor verify %s" % (s, "failed to run" if gaps is None else "%d gaps" % gaps))
+                    print("   verify %-16s gaps %s%s" % (s, gaps, ", unverified: %s" % unverified if unverified else ""), flush=True)
+                    # fail closed: the exit code, the gaps and every building the data records, not only the gaps
+                    if gaps != 0 or unverified or r.returncode:
+                        bad.append("%s: floor verify %s" % (s, "failed to run" if gaps is None else
+                                                            "%d gaps, %d unverified, exit %d" % (gaps, len(unverified), r.returncode)))
                 r = subprocess.run([sys.executable, str(TOOLS / "traders.py"), "verify", "--rcon", a.server_dir],
                                    cwd=ROOT, capture_output=True, text=True)
                 print("   traders verify exit %d" % r.returncode, flush=True)
@@ -277,9 +284,12 @@ def audit(a):
         r = subprocess.run([sys.executable, str(TOOLS / "town_audit.py"), s, "--world", a.world, "--server-dir", a.server_dir],
                            cwd=ROOT, capture_output=True, text=True)
         lines = r.stdout.strip().splitlines()
-        problems = [l.strip() for l in lines if "MISMATCH" in l or "NOT POLICIED" in l.upper() or "unpolicied" in l]
+        problems = [l.strip() for l in lines if "MISMATCH" in l or "NOT POLICIED" in l.upper() or "unpolicied" in l
+                    or "NOT AUDITED" in l or "NOT IN POLICY" in l or "UNSUBSTITUTED" in l]
         notes = [l.strip() for l in lines if "NOT CHECKABLE" in l]
-        clean = any("plan clean" in l for l in lines) and not problems
+        # fail closed: clean only when the audit exits 0, says the plan is clean, and nothing was left unchecked. It
+        # used to ignore the exit code and pass "not checkable" (Codex review, 2026-09-21)
+        clean = r.returncode == 0 and any("plan clean" in l for l in lines) and not problems and not notes
         res["towns"][s] = {"exit": r.returncode, "clean": clean, "problems": problems, "not_checkable": notes}
         print("%-16s %s%s" % (s, "clean" if clean else "PROBLEMS: %s" % problems[:3],
                               "  (%s)" % "; ".join(n.replace("NOT CHECKABLE  ", "") for n in notes) if notes else ""), flush=True)
@@ -288,14 +298,20 @@ def audit(a):
     print("signposts:", " | ".join(res["signposts"]["tail"]))
     # no walkable position under a roof, or anywhere in the cavern, at block light 0 (tools/light_plan.py check, from
     # the saved world's own light arrays)
-    lp = [sys.executable, str(TOOLS / "light_plan.py"), "check", "hometown", *places(), "--world", a.world, "--server-dir", a.server_dir]
+    # every place but those whose plan says dark by design (the Scar, the jungle ruins): asking the check about one of
+    # those fails it, so the list comes from the data, not from a hand edit here
+    import light_plan
+    lp = [sys.executable, str(TOOLS / "light_plan.py"), "check", *light_plan.light_places(placements()),
+          "--world", a.world, "--server-dir", a.server_dir]
     if getattr(a, "source_root", None):
         lp += ["--source-root", a.source_root]
     r = subprocess.run(lp, cwd=ROOT, capture_output=True, text=True)
     res["lights"] = {"exit": r.returncode, "tail": [l[:200] for l in r.stdout.strip().splitlines()]}
     print("lights:", "0 dark everywhere" if r.returncode == 0 else
           "\n  ".join(l for l in res["lights"]["tail"] if " 0 at block light 0" not in l))
-    res["clean"] = (res["build_audit"]["exit"] == 0 and all(v["clean"] for v in res["towns"].values())
+    # all() of nothing is True: the places audited must be every place the data plans, and there must be some
+    res["clean"] = (res["build_audit"]["exit"] == 0 and len(res["towns"]) == len(places()) > 0
+                    and all(v["clean"] for v in res["towns"].values())
                     and res["signposts"]["exit"] == 0 and res["lights"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")
@@ -328,6 +344,9 @@ def main(argv=None):
             print("%-4s %-60s %4d functions" % (sid, title, sum(1 for k, _ in actions if k == "fn")))
         print("places:", ", ".join(places()))
         return 0
+    # Every subcommand but `plan` reads or writes the server or a world (prepare reads the installed packs' donor
+    # templates; install writes the packs; run drives RCON; audit reads a world): the lock first, before anything.
+    runtime_guard.require_lock("reapply %s" % a.cmd)
     return {"prepare": prepare, "install": install, "run": run, "audit": audit}[a.cmd](a) or 0
 
 

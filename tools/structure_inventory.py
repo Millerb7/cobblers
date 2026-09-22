@@ -55,6 +55,11 @@ CODE_TYPES = {
 }
 
 
+# The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
+# decide a position: inventories structure starts in a world; decides no position.
+WORLD_READS = {'main', 'scan_world'}
+
+
 def ident(m):
     return "%s:%s" % m.groups()
 
