@@ -1,6 +1,6 @@
-# The Rift: zones, guards, wall and biome (design, not built)
+# The Rift: zones, guards, wall and biome (design; built on staging only)
 
-**Status: proposed 2026-09-21, revised the same day for the owner's review. Nothing here is built.** The League move
+**Status: approved in structure 2026-09-21. Built on the staging export `cobblers-dryrun4` only, for a flyover (2026-09-22: `tools/rift_build.py` from `data/rift.json`, audited clean by `rift_build.py verify`); nothing in the live world, and no zone check, guard or spawn change is built.** The League move
 it depends on is built on the staging export (`cobblers-dryrun4`, PR #37); everything below is a design with costs.
 
 Sources: the Rift's axes, anchors and extent (`data/landmarks.json` `rift`), the League's site (`data/placements.json`
@@ -52,7 +52,7 @@ Three walls cross the floor inside the Rift, rim to rim, where two zones meet (s
 | --- | --- | --- |
 | the throat | the west spur 200 blocks short of the trunk, (3384, 3502) to (3406, 3182) | none: the dig camp must not be a back door onto Victory Road |
 | the branch mouth | across the south-east branch just below the split, (4373, 4691) to (4196, 4927) | none: Z3 is entered from its own tip. (A second guard here is the option if the owner wants Victory Road players to reach it without walking round.) |
-| behind the League | across the trunk north of the lot, (3466, 2544) to (3768, 2629) | G4's walkway |
+| behind the League | east-west across the trunk at z2560, 31 blocks north of the lot (as built on staging; the first line, (3466, 2544) to (3768, 2629), came within a block of the League's north-east corner) | G4's walkway |
 
 ## 2a. Caught-count gates and Nuzlocke: optional content only
 

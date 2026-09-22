@@ -47,6 +47,17 @@ the mainland: a river mouth on the strait, across from the isle.
 | --- | --- | --- |
 | The forecourt | `/tp @s 3576 88 2724` | **R** The League on the Rift's floor at the trunk head, Victory Road's end at the plaza's south edge; its Centre and Mart are the template's own, inside. Red sand is red concrete powder, wool is terracotta. The precinct is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. On `cobblers-dryrun4` the old plateau League, Centre and Mart still stand at (3346, 2603); a fresh export has none. |
 
+### 3a. The Rift overhaul, staging only (10 min)
+Built on `cobblers-dryrun4` by `tools/rift_build.py` from `data/rift.json` (2026-09-22); not in the live world. Fly it: `/gamemode spectator`.
+| Stop | `/tp` | Look at |
+| --- | --- | --- |
+| Overview | `/tp @s 3900 300 3300 150 40` | **R** The wall on the rim, 211 spires to y320 (top third purple glass), the floor's crying-obsidian light, the biome's fog and portal particles |
+| G2, Victory Road's gate | `/tp @s 3560 113 5291 -90 10` | **R** The rubble either side, the gatehouse, the one-wide roofed walkway, the barrier behind the (placeholder) guard |
+| G4, behind the League | `/tp @s 3611 87 2574 180 10` | **R** The cross-wall to the apex and its gatehouse |
+| G1, the dig camp | `/tp @s 2946 104 3316 -90 10` | **R** The dig camp's gate at the spur's end |
+| G3, the south-east branch | `/tp @s 4609 131 4836 90 10` | **R** The collectors' pocket gate |
+| The rim post | `/tp @s 3734 142 3951` | **R** The wall stops either side of the post's town: an unguarded way in (open decision) |
+
 ### 4. Giovanni's gym (2 min)
 | Stop | `/tp` | Look at |
 | --- | --- | --- |

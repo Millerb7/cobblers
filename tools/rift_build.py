@@ -435,6 +435,13 @@ def build(source_root):
                     plan.put(x, int(h), z, fl["block"])
                     plan.checks.append((x, int(h), z, [fl["block"]], "floor light"))
                     plan.count("floor lights")
+    # every check expects the plan's final block at its position (a later write, a spire over the wall's base or a
+    # gatehouse over a rubble column, wins in the world as it does in the plan)
+    final = []
+    for x, y, z, allowed, what in plan.checks:
+        b = plan.cols.get((x, z), {}).get(y)
+        final.append((x, y, z, [b] if b else allowed, what))
+    plan.checks = final
     plan.biome_chunks = sorted(chunks)
     plan.count("biome chunks", len(chunks))
     plan.skipped = skipped
