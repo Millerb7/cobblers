@@ -218,9 +218,11 @@ present in the new world, non-empty and identical by sha256, the player count is
 category has as many files after as before.
 
 **The badges and rctmod carry together.** For every player, each badge flag (`cobblers:flag/gymN_cleared`,
-`champion_cleared`, in `advancements/`) must agree with rctmod's record of whom they beat
-(`data/rctmod.player.<uuid>.stat.dat`, `progressDefeats`): a flag set means that leader is in the record, and a
-leader in the record means the flag is set. A flag without the defeat is a player whose badges say cleared while
+`champion_cleared`, in `advancements/`) must agree with both of rctmod's records of whom they beat: series
+progress (`data/rctmod.player.<uuid>.stat.dat`, `progressDefeats`, where the leader's key means beaten and its value
+is not a count) and trainer memory (`data/rctmod.trainers.<n>.mem.dat`, `defeats[leader][uuid]`, which is what
+`/rctmod player set defeats` changes). All three say beaten, or all three say not; anything else fails (EXP-027: a
+real win agreed, and Misty set by command in trainer memory alone failed as it should). A flag without the defeat is a player whose badges say cleared while
 rctmod refuses the next leader as out of order; a defeat without the flag is a player rctmod lets through whom the
 guards, traders and waystones keep out. The carry checks this in the old world before it copies anything (a
 disagreement already there is resolved first, by granting or revoking the flag to match rctmod) and again in the new

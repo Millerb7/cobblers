@@ -26,15 +26,26 @@ def _level_dat(hours_ago=0.5):
     return L.dumps("", {"Data": (L.COMPOUND, {"LastPlayed": (L.LONG, ms)})})
 
 
-def _rct(defeats):
-    """rctmod 0.19's per-player record, as data/rctmod.player.<uuid>.stat.dat holds it."""
+def _rct(beaten):
+    """rctmod 0.19's per-player series progress, as data/rctmod.player.<uuid>.stat.dat holds it after a real win on
+    cobblers-dryrun4 (EXP-027): the trainer's key means beaten, and its value is 0, not a count."""
     return L.dumps("", {"data": (L.COMPOUND, {
-        "progressDefeats": (L.COMPOUND, {t: (L.INT, n) for t, n in defeats.items()}),
+        "progressDefeats": (L.COMPOUND, {t: (L.INT, 0) for t in beaten}),
         "currentSeries": (L.STRING, "kanto")})})
 
 
-def _player(root, u, flags=("gym1_cleared",), defeats=None):
-    defeats = {"kanto_brock": 1} if defeats is None else defeats
+def _memory(defeats):
+    """rctmod 0.19's trainer memory, data/rctmod.trainers.<n>.mem.dat: defeats[trainer][player uuid] = count."""
+    return L.dumps("", {"data": (L.COMPOUND, {"defeats": (L.COMPOUND, {
+        t: (L.COMPOUND, {u: (L.INT, n) for u, n in by.items()}) for t, by in defeats.items()})})})
+
+
+def _player(root, u, flags=("gym1_cleared",), defeats=None, memory=None):
+    defeats = ["kanto_brock"] if defeats is None else defeats
+    memory = defeats if memory is None else memory
+    mem_file = root / "data" / ("rctmod.trainers.%s.mem.dat" % u[:2])
+    mem_file.parent.mkdir(parents=True, exist_ok=True)
+    mem_file.write_bytes(_memory({t: {u: 1} for t in memory}))
     files = {
         "playerdata/%s.dat" % u: "inventory and BalmData waystones",
         "playerdata/%s.dat_old" % u: "previous save",
@@ -69,7 +80,6 @@ def _world(root, who=(A,), hours_ago=0.5):
         _player(root, u)
     if who:
         (root / "data" / "rctmod.trainers.ver.dat").write_bytes(b"v")
-        (root / "data" / "rctmod.trainers.0.mem").write_bytes(b"defeats")
         (root / "data" / "scoreboard.dat").write_bytes(b"scores")
         (root / "data" / "waystones.dat").write_bytes(b"old waystones")
         (root / "data" / "rctmod.spawn.chunks.map.dat").write_bytes(b"chunk bookkeeping")
@@ -90,7 +100,8 @@ def test_carry_takes_every_players_flags_party_pc_money_progress_and_quests(worl
     for u in (A, B):
         for rel in _player(tmp_path / "ref" / u, u):
             assert (new / rel).read_bytes() == (old / rel).read_bytes(), rel
-    for rel in ("data/rctmod.trainers.ver.dat", "data/rctmod.trainers.0.mem", "data/scoreboard.dat"):
+    for rel in ("data/rctmod.trainers.ver.dat", "data/rctmod.trainers.aa.mem.dat", "data/rctmod.trainers.bb.mem.dat",
+                "data/scoreboard.dat"):
         assert (new / rel).read_bytes() == (old / rel).read_bytes()
 
 
@@ -181,24 +192,38 @@ def test_carry_refuses_a_retained_snapshot_unless_rehearsal(tmp_path):
     assert C.carry(old, new, tmp_path / "m.json", rehearsal=True)["players"] == 1
 
 
-@pytest.mark.parametrize("flags,defeats,says", [
-    (("gym1_cleared",), {}, "gym1_cleared is set but rctmod records no defeat of kanto_brock"),
-    ((), {"kanto_brock": 1}, "gym1_cleared is not set but rctmod records a defeat of kanto_brock"),
+@pytest.mark.parametrize("flags,progress,memory,says", [
+    # a flag with no defeat anywhere: rctmod refuses the next leader (missing_required_trainer)
+    (("gym1_cleared",), [], [], "the flag says beaten, rctmod's series progress says not beaten, rctmod's trainer "
+                                "memory says not beaten"),
+    # a real win whose flag is missing: the guards, traders and waystones stay shut
+    ((), ["kanto_brock"], ["kanto_brock"], "the flag says not beaten, rctmod's series progress says beaten"),
+    # `/rctmod player set defeats` by command: trainer memory only (seen on cobblers-dryrun4 with Misty, EXP-027)
+    ((), [], ["kanto_brock"], "rctmod's trainer memory says beaten"),
+    # a win recorded in progress but whose trainer memory did not come across
+    (("gym1_cleared",), ["kanto_brock"], [], "rctmod's trainer memory says not beaten"),
 ])
-def test_carry_fails_when_badges_and_rctmod_disagree(tmp_path, flags, defeats, says):
-    # The flags and rctmod's progress must travel together. A flag without the defeat: rctmod refuses the next
-    # leader (missing_required_trainer). A defeat without the flag: the guards and waystones stay shut.
+def test_carry_fails_when_badges_and_rctmod_disagree(tmp_path, flags, progress, memory, says):
+    # The flag and rctmod's two records must travel together and agree, or a player is stuck or let through wrongly.
     old, new = _world(tmp_path / "old", ()), _world(tmp_path / "new", ())
-    _player(old, A, flags=flags, defeats=defeats)
+    _player(old, A, flags=flags, defeats=progress, memory=memory)
     (old / "data" / "rctmod.trainers.ver.dat").write_bytes(b"v")
-    with pytest.raises(C.CarryError, match=says):
+    with pytest.raises(C.CarryError, match="gym1_cleared .*" + says):
         C.carry(old, new, tmp_path / "m.json")
+
+
+def test_a_real_first_win_agrees(tmp_path):
+    # rctmod stores a first win in progressDefeats with the value 0 (seen on cobblers-dryrun4). Reading the value as
+    # a count said "not beaten" for Brock after a real win: the check must read the key.
+    old, new = _world(tmp_path / "old", (A,)), _world(tmp_path / "new", ())
+    assert C.badge_agreement(old) == []
+    assert C.carry(old, new, tmp_path / "m.json")["players"] == 1
 
 
 def test_verify_fails_when_rctmod_progress_did_not_arrive_with_the_flags(worlds, tmp_path):
     # Without this a carry that later lost rctmod's record (a half-restored world) would still verify.
     old, new = worlds
     C.carry(old, new, tmp_path / "m.json")
-    (new / "data" / ("rctmod.player.%s.stat.dat" % A)).write_bytes(_rct({}))
-    with pytest.raises(C.CarryError, match="gym1_cleared is set but rctmod records no defeat"):
+    (new / "data" / ("rctmod.player.%s.stat.dat" % A)).write_bytes(_rct([]))
+    with pytest.raises(C.CarryError, match="rctmod's series progress says not beaten"):
         C.verify(tmp_path / "m.json")

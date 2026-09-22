@@ -90,9 +90,51 @@ source was the owner's real player in the retained offline snapshot `cobblers-se
 Not yet shown: the owner joining and finding the snapshot's inventory, party, PC and balance in game. That is the
 same join the battle steps below need.
 
-### The badge flags (criteria 1-4): not yet run
+### The badge flags (criteria 1-4), 2026-09-21
 
-This needs a player to battle. Recorded here when it has.
+On `cobblers-dryrun4`, the progression pack installed, the owner playing their carried 2026-09-17 player. Flags
+read over RCON with `execute if entity @a[advancements={cobblers:flag/<id>=true}]` after each step, and rctmod's
+own state with `/rctmod player get`.
+
+| Step | Result |
+| --- | --- |
+| before anything | 0 of 9 flags; rctmod: series `kanto`, progress `[]`, level cap 25 |
+| **beat Brock** (the owner's own party) | **PASS.** `gym1_cleared` set, the other 8 not. rctmod: progress `[kanto_brock]`, Brock defeats 1, level cap 30. The log also shows Cobbleverse's own advancement `cobbleverse:trainer/kanto/defeat_brock`, on the same trigger |
+| **forfeit** against Misty (`kanto_misty` summoned) | **PASS.** `gym2_cleared` not set; Misty defeats 0 |
+| **lose** against Misty (level-5 Magikarp fainted) | **PASS.** `gym2_cleared` not set; Misty defeats 0 |
+| **command**: `/rctmod player set defeats kanto_misty <player> 1` | **PASS.** `gym2_cleared` not set; Misty defeats 1 in rctmod's trainer memory, progress still `[kanto_brock]` |
+| **restart**: stop, `progression_pack.py --report` on the saved world | **PASS (file).** "1 of 9 flags: gym1_cleared" |
+| restart, in game | **not observed**: the server was booted again and the owner had not rejoined within 14 minutes |
+| **second player** | **NOT VERIFIED.** No second account joined. Must be proven before anyone else plays (the owner, 2026-09-21) |
+| the Champion | skipped by the owner: beating Brock proves the mechanism, and `champion_cleared` is the same generated form |
+
+### The agreement check against a real defeat, 2026-09-21
+
+The owner asked for a deliberate mismatch: Misty marked defeated by command while her flag stays off must make the
+badge/rctmod agreement check (`carry_players.badge_agreement`) FAIL for that player.
+
+- **The first version would have been wrong twice**, found by reading the real files after the run:
+  1. rctmod stores a first win in `progressDefeats` as `{"kanto_brock": 0}`: the key means beaten, the value is not
+     a count. The first version read the value and would have failed Brock, a real win.
+  2. `/rctmod player set defeats` writes only rctmod's trainer memory (`data/rctmod.trainers.<n>.mem.dat`,
+     `defeats[trainer][uuid] = 1`), not `progressDefeats`. The first version read only `progressDefeats` and would
+     have **passed** the Misty mismatch. It was broken, as the owner said it would be if it passed.
+- **Fixed**: all three must agree per player and flag: the flag, `progressDefeats` (key present) and trainer memory
+  (count above 0). Run on the saved world with Misty set: **FAIL**, one line: `gym2_cleared (kanto_misty) disagree:
+  the flag says not beaten, rctmod's series progress says not beaten, rctmod's trainer memory says beaten`. Brock
+  agreed in all three.
+- **Cleared**: `/rctmod player set defeats kanto_misty <player> 0`, saved; the check **PASSES** (0 disagreements).
+- Tests now use the formats read from this run (`tests/test_carry_players.py`: a real first win agrees; four
+  disagreements fail, including the command-only one).
+
+### Seen during the run, not part of this experiment
+
+- **Catching above the level cap.** The owner could throw balls at a wild Pokemon above their rctmod level cap and
+  wants the chance there to be about 1%. Not examined here.
+- **A "gym 1 map" reward points at a random chunk.** It is Cobbleverse's `cobbleverse:gym_map` loot table, an
+  exploration map to the nearest `cobbleverse:kanto_brock_gym` structure: a naturally generated gym, not the one we
+  place by hand, so it leads nowhere useful in this world. Also, the `cobbleverse:brock_defeated` function that
+  Cobbleverse's own `defeat_brock` advancement names as its reward exists in no installed pack.
 
 ## Limitations
 

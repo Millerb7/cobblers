@@ -165,15 +165,34 @@ def _flag_trainers() -> dict:
     return {f["id"]: f["trainer_ids"] for f in p["flags"] if f["kind"] == "trainer_defeat"}, p["namespace"]
 
 
+def trainer_memory(world: Path) -> dict:
+    """{trainer id: {player uuid: defeats}} from rctmod's trainer memory, data/rctmod.trainers.<n>.mem.dat
+    (data.defeats), the record `/rctmod player set defeats` writes and the badge loot condition reads."""
+    import nbt
+    mem = {}
+    for p in sorted((world / "data").glob("rctmod.trainers.*.mem*")):
+        for t, by in nbt.load(p)[1]["data"]["defeats"].items():
+            for u, n in by.items():
+                mem.setdefault(t, {})[u] = mem.get(t, {}).get(u, 0) + int(n)
+    return mem
+
+
 def badge_agreement(world: Path) -> list:
-    """Every disagreement between a player's badge flags (advancements) and rctmod's record of whom they beat
-    (data/rctmod.player.<uuid>.stat.dat, data.progressDefeats). The two must carry together: a flag without the
-    defeat makes rctmod refuse the next leader (missing_required_trainer) while the world says the badge is earned;
-    a defeat without the flag leaves the guards, traders and waystones closed to a player rctmod has let through."""
+    """Every disagreement, per player and flag, between the badge flag (advancements/<uuid>.json) and rctmod's two
+    records of whom the player beat: series progress (data/rctmod.player.<uuid>.stat.dat, data.progressDefeats: a
+    trainer's KEY there means beaten; its value is not a count, a first win stores 0) and trainer memory
+    (data/rctmod.trainers.<n>.mem.dat, data.defeats[trainer][uuid] > 0). All three must agree. A flag without the
+    defeat makes rctmod refuse the next leader (missing_required_trainer) while the world says the badge is earned; a
+    defeat without the flag leaves the guards, traders and waystones closed to a player rctmod has let through; and
+    the two rctmod records disagreeing is a half-carried or hand-edited player."""
     import nbt
     flags, ns = _flag_trainers()
     if not flags:
         return ["data/progression.json has no trainer-defeat flag: nothing to compare"]
+    try:
+        memory = trainer_memory(world)
+    except (KeyError, TypeError, ValueError, OSError) as e:
+        return ["rctmod trainer memory unreadable (%s)" % e]
     out = []
     for u in sorted(players(world)):
         adv_p = world / "advancements" / ("%s.json" % u)
@@ -184,17 +203,18 @@ def badge_agreement(world: Path) -> list:
             continue
         adv = json.loads(adv_p.read_text(encoding="utf-8"))
         try:
-            defeats = nbt.load(rct_p)[1]["data"]["progressDefeats"]
+            progress = nbt.load(rct_p)[1]["data"]["progressDefeats"]
         except (KeyError, TypeError, ValueError, OSError) as e:
             out.append("player %s…: rctmod record unreadable (%s)" % (u[:8], e))
             continue
         for fid, trainers in sorted(flags.items()):
-            flagged = bool(adv.get("%s:flag/%s" % (ns, fid), {}).get("done"))
-            beaten = any(int(defeats.get(t, 0) or 0) > 0 for t in trainers)
-            if flagged != beaten:
-                out.append("player %s…: %s is %s but rctmod records %s" % (
-                    u[:8], fid, "set" if flagged else "not set",
-                    "a defeat of %s" % "/".join(trainers) if beaten else "no defeat of %s" % "/".join(trainers)))
+            says = {"the flag": bool(adv.get("%s:flag/%s" % (ns, fid), {}).get("done")),
+                    "rctmod's series progress": any(t in progress for t in trainers),
+                    "rctmod's trainer memory": any(memory.get(t, {}).get(u, 0) > 0 for t in trainers)}
+            if len(set(says.values())) > 1:
+                out.append("player %s…: %s (%s) disagree: %s" % (
+                    u[:8], fid, "/".join(trainers),
+                    ", ".join("%s says %s" % (k, "beaten" if v else "not beaten") for k, v in says.items())))
     return out
 
 
