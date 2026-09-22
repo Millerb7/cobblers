@@ -26,8 +26,9 @@
     "face_lower": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:purple_terracotta", "why": "deeper down, the other world bleeds through"},
     "tread": {"block": "legendarymonuments:distortion_deepslate", "fallback": "minecraft:deepslate", "why": "the shattered plates near the floor"},
     "floor_plate": {"block": "minecraft:smooth_basalt", "why": "the floor broken into plates"},
-    "vein_core": {"block": "minecraft:sea_lantern", "why": "cyan-white, light 15, vanilla: the sky reference's veins"},
-    "vein_halo": {"block": "legendarymonuments:galar_particle_block", "fallback": "minecraft:pearlescent_froglight", "why": "violet-pink, light 15, a full cube"},
+    "vein_core": {"block": "mega_showdown:dormant_crystal", "fallback": "minecraft:end_rod", "why": "mint-white, light 15: a crystal standing in the crack's slot, not a flat tile. Sea lanterns read as a tiled path the owner recognised (2026-09-22)"},
+    "vein_bed": {"block": "legendarymonuments:galar_particle_block", "fallback": "minecraft:pearlescent_froglight", "why": "violet, light 15: the glow one block down in the crack"},
+    "vein_halo": {"block": "legendarymonuments:galar_particle_block", "fallback": "minecraft:pearlescent_froglight", "why": "violet-pink, light 15, a full cube: the seams up the faces"},
     "vein_seep": {"block": "minecraft:crying_obsidian", "why": "light 10 and purple drips where the vein thins"},
     "wound_crust": {"block": "minecraft:purple_stained_glass", "why": "glass over light: depth, and colour at range"},
     "crystal": {"block": "legendarymonuments:distortion_crystal", "fallback": "minecraft:amethyst_cluster", "why": "where the energy crystallised, at the veins' branch points"},
@@ -54,6 +55,7 @@
   },
   "portal_sheets": {
     "tag": "rift_fx",
+    "use": "glimpses only: two sheets deep in a narrow tear in a solid face, the rock hiding every edge, and one pool lying in the wound. Never standing in the open, never in a fissure (owner, 2026-09-22)",
     "wait_ticks": 60,
     "why": "Display entities showing the nether portal texture: no teleport, no collision. Not seen beyond entity render distance, so only where the tear is still open, close up."
   },

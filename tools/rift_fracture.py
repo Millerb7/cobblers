@@ -8,14 +8,15 @@ decide (the ground rule). A world is read only by `verify`, to check.
                shattered steps down to the floor, jittered along the length; tilted plates with cracks on the treads;
                the lip undercut where it overhangs; side fissures running back into the plateau. Cut only: the rim
                and the floor edge stay where they are
-  veins        a branching glowing crack from a line along the floor, branches climbing the risers: sea lantern core
-               (cyan-white, light 15), galar particle halo (violet, light 15), crying obsidian where they thin; one
-               open wound 9 wide, part crusted with purple glass
+  veins        a branching glowing crack from a line along the floor, branches climbing the risers: a violet bed of galar
+               particle blocks one down (light 15) under a slot holding dormant crystals (mint-white, light 15) or
+               open, crying obsidian at its edges and where it thins; one open wound 9 wide, part crusted with glass
   crystals     distortion crystals where a branch leaves the main vein
   sky crack    a sample of the candidate fracture in the sky over the stretch, y360-400, every part 8 thick
-  portal       block_display sheets of the nether portal texture: a torn window in the lip riser, a pool lying in the
-               wound, a curtain in a fissure; each with light blocks round it. Summoned by a re-runnable function that
-               force-loads, waits for the entities to load, kills its own tag and summons
+  portal       block_display sheets of the nether portal texture, as glimpses only: two sheets deep inside a narrow tear
+               in a solid lip face (the rock hides every edge), and a pool lying in the wound; light blocks round them.
+               Summoned by a re-runnable function that force-loads, waits for the entities to load, kills its own tag
+               and summons
   biome        cobblers:the_rift painted only on 4x4 cells wholly inside the lip
 
   python tools/rift_fracture.py --source-root <root>                 plan and write the packs
@@ -337,7 +338,7 @@ def build(source_root, server_dir=None):
                     if (x, z) in plan.old:
                         plan.top[(x, z)] = min(plan.top.get((x, z), plan.old[(x, z)]), floor_y)
                         if k % 4 == 0 and dw == 0:
-                            plan.put[(x, floor_y, z)] = pal["vein_core"]
+                            plan.put[(x, floor_y, z)] = pal["vein_bed"]
                         else:
                             plan.put[(x, floor_y, z)] = pal["vein_seep"]
             plan.count("fissures")
@@ -387,11 +388,16 @@ def build(source_root, server_dir=None):
                 y = top_of(x, z)
                 if y is None:
                     continue
+                # a crack, not a tiled path (owner, 2026-09-22: sea lanterns read as recognisable): the light is a bed
+                # of violet one down, and the slot above it holds a standing crystal or stays open; the vein's edge
+                # is crying obsidian flush with the ground
                 edge = abs(dw) == width // 2 and width >= 3
-                blk = pal["vein_halo"] if edge else pal["vein_core"] if kind != "thin" else (
-                    pal["vein_core"] if (int(s) % 3) else pal["vein_seep"])
-                plan.put[(x, y, z)] = blk
-                plan.put[(x, y - 1, z)] = blk
+                if edge or (kind == "thin" and int(s) % 3 == 0):
+                    plan.put[(x, y, z)] = pal["vein_seep"]
+                    continue
+                plan.put[(x, y - 1, z)] = pal["vein_bed"]
+                cr = rng_for(seed, "slot", x, z).random()
+                plan.put[(x, y, z)] = (pal["vein_core"] + "[facing=up]") if cr < 0.6 else "minecraft:air"
                 n += 1
         return n
 
@@ -417,7 +423,7 @@ def build(source_root, server_dir=None):
                 plan.put.pop((x, yy, z), None)
             if i < crust_to:
                 plan.put[(x, y, z)] = pal["wound_crust"]
-                plan.put[(x, y - 1, z)] = pal["vein_core"]
+                plan.put[(x, y - 1, z)] = pal["vein_bed"]
         if i == crust_to + (len(wound) - crust_to) // 2:
             pool_at = (s, t)
     plan.count("wound length", len(wound))
@@ -457,7 +463,7 @@ def build(source_root, server_dir=None):
             if y is not None:
                 for yy in range(y, y + vr_rng.randint(*vs["up_the_face"])):
                     for dz in (0,):
-                        plan.put[(x, yy, z)] = pal["vein_core"] if yy % 2 else pal["vein_halo"]
+                        plan.put[(x, yy, z)] = pal["vein_bed"] if yy % 2 else pal["vein_seep"]
                 plan.count("seams up the face")
         for ss0, tt0, a0 in splits:
             a1 = a0 + math.radians(vr_rng.choice((-1, 1)) * vr_rng.uniform(20, 40))
@@ -479,7 +485,7 @@ def build(source_root, server_dir=None):
         for _ in range(r.randint(3, 7)):
             x, z = map(round, fr.xz(bs + r.uniform(-3, 3), bt + r.uniform(-3, 3)))
             y = top_of(x, z)
-            if y is None or (x, y, z) in plan.put and plan.put[(x, y, z)] in (pal["vein_core"], pal["vein_halo"]):
+            if y is None or (x, y, z) in plan.put and plan.put[(x, y, z)].split("[")[0] in (pal["vein_core"], pal["vein_bed"], pal["vein_seep"]):
                 continue
             blk = pal["crystal"]
             plan.put[(x, y + 1, z)] = blk + ("[facing=up]" if blk.startswith("legendarymonuments") else "[facing=up]")
@@ -531,17 +537,43 @@ def build(source_root, server_dir=None):
                 plan.count("light blocks")
 
     phi = math.atan2(-fr.u[1], fr.u[0])   # model x along the stretch
-    # 1. a torn window in the lip riser: the undercut group with the deepest lip on the east (+t) side
-    cand = [st_ for st_ in sts if group(int(round(st_["s"] / every)))[3] and 40 < st_["s"] < fr.L - 40]
+    # 1. a glimpse: a narrow jagged tear in the lip riser's solid face (a group with no undercut, the deepest lip on
+    # the east side), and the portal deep inside it. Two sheets at different depths behind the tear, each wider than
+    # it, so the rock hides every edge and the swirl shows only as the tear's own ragged shape, layered in depth.
+    # Owner, 2026-09-22: a sheet standing in the open read as a nether portal, and one in a fissure as tacky
+    gl = random.Random(seed + 11)
+    cand = [st_ for st_ in sts if not group(int(round(st_["s"] / every)))[3] and 40 < st_["s"] < fr.L - 40]
     win = max(cand or sts, key=lambda st_: st_["sides"][1]["rim_y"] - st_["floor"])
     sdw = win["sides"][1]
     y0 = level(win["s"], 1, 0) or sdw["rim_y"] - 20
-    wx, wz = fr.xz(win["s"], sdw["rim_t"] - 2)
-    height = max(8, min(16, sdw["rim_y"] - y0 - 2))
-    sheet((wx, y0 + 1, wz), quat_y(phi), (12.0, float(height), 1.0), "window")
-    lights([(round(fr.xz(win["s"] + d, sdw["rim_t"] - 4)[0]), y0 + 1 + hy, round(fr.xz(win["s"] + d, sdw["rim_t"] - 4)[1]))
-            for d in (-5, 0, 5) for hy in (2, int(height) - 2)])
-    views = {"window": [round(wx), y0 + 6, round(wz)]}
+    rim_t = sdw["rim_t"]
+    depth = 5
+    tall = max(8, min(18, sdw["rim_y"] - y0 - 6))
+    sc_, w = win["s"], 1
+    tear = set()
+    for yy in range(y0 + 2, y0 + 2 + tall):
+        edge_rows = yy - (y0 + 2) < 2 or (y0 + 2 + tall) - yy <= 2
+        w = 1 if edge_rows else max(1, min(3, w + gl.choice((-1, 0, 1))))
+        sc_ += gl.choice((-0.5, 0, 0, 0.5))
+        for k2 in range(2, 2 * depth + 1):             # half-block steps into the rock, so the diagonal has no gaps
+            for j2 in range(0, 2 * w):
+                x, z = map(round, fr.xz(sc_ + j2 / 2 - w / 2, rim_t + k2 / 2))
+                tear.add((x, yy, z))
+    for x, yy, z in tear:
+        plan.put[(x, yy, z)] = "minecraft:air"
+    plan.count("glimpse tear blocks", len(tear))
+    # the tear's lips weep: crying obsidian on a third of the face cells round the opening
+    for x, yy, z in sorted(tear):
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            c = (x + dx, yy, z + dz)
+            if c not in tear and gl.random() < 0.08:
+                plan.put.setdefault(c, pal["vein_seep"])
+    for d_in, width, turn in ((depth - 0.8, 7.0, 0.0), (depth - 2.6, 5.0, math.radians(9))):
+        cx, cz = fr.xz(win["s"], rim_t + d_in)
+        sheet((cx, y0 + 1, cz), quat_y(phi + turn), (width, float(tall + 2), 1.0), "glimpse")
+    lights([(x, yy, z) for x, yy, z in sorted(tear) if (yy - y0) % 5 == 0][:6])
+    ox, oz = fr.xz(win["s"], rim_t - 14)
+    views = {"glimpse (tear in the east lip)": [round(ox), y0 + 4, round(oz)]}
     # 2. a pool lying in the open part of the wound
     if pool_at:
         px, pz = fr.xz(*pool_at)
@@ -551,14 +583,7 @@ def build(source_root, server_dir=None):
         lights([(round(fr.xz(pool_at[0] + d, pool_at[1] + e)[0]), py + 1, round(fr.xz(pool_at[0] + d, pool_at[1] + e)[1]))
                 for d in (-6, 0, 6) for e in (-5, 5)])
         views["pool"] = [round(px), py + 4, round(pz)]
-    # 3. a curtain filling the widest fissure's mouth
-    side, fy0, pts = max(fissure_lines, key=lambda f: len(f[2]))
-    ms, mt, _ = pts[3]
-    fx, fz = fr.xz(ms, mt)
-    fang = math.atan2(-(fr.xz(*pts[8][:2])[1] - fz), fr.xz(*pts[8][:2])[0] - fx)
-    sheet((fx, fy0 + 1, fz), quat_y(fang), (6.0, 10.0, 1.0), "curtain")
-    lights([(round(fx), fy0 + 2, round(fz)), (round(fx), fy0 + 8, round(fz))])
-    views["curtain"] = [round(fx), fy0 + 5, round(fz)]
+    # no sheet in the fissures: the owner found it tacky (2026-09-22); they keep their depth and their seep
 
     # the sky crack sample
     skc = spec["sky_crack"]
@@ -608,7 +633,7 @@ def build(source_root, server_dir=None):
             plan.checks.append((x, y + 1, z, ["minecraft:air"], "cut: air above the new ground"))
     for (x, y, z), b in plan.put.items():
         base = b.split("[")[0]
-        if base in (pal["vein_core"], pal["vein_halo"]) and rs.random() < 0.1:
+        if base in (pal["vein_core"], pal["vein_bed"]) and rs.random() < 0.1:
             plan.checks.append((x, y, z, [base], "vein"))
         elif base in (pal["sky_core"], pal["sky_halo"]) and rs.random() < 0.01:
             plan.checks.append((x, y, z, [base], "sky crack"))
