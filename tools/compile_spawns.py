@@ -142,7 +142,7 @@ def seg_point(px, pz, a, b):
 
 def spawn_free_zones(doc=None):
     """[(minX, maxX, minZ, maxZ)] where no wild Pokemon spawns at all (data/spawn_suppression.json
-    spawn_free_zones). The League plateau is the first: nothing wanders the champion's processional."""
+    spawn_free_zones). The League precinct is the first: nothing wanders the champion's forecourt."""
     if doc is None:
         path = ROOT / "data" / "spawn_suppression.json"
         doc = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
