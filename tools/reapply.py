@@ -47,7 +47,7 @@ PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
 OUT = ROOT / "derived" / "reapply"
 SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
-                "cobblers_signs", "cobblers_titles")
+                "cobblers_signs", "cobblers_titles", "cobblers_progression")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -100,6 +100,8 @@ def prepare(a):
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "signposts.py", "function", *src)
     py(TOOLS / "location_titles.py")
+    # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
+    py(TOOLS / "progression_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
