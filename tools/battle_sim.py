@@ -17,32 +17,57 @@ Where every number comes from:
   level cap    base-pack/cobbleverse/config/rctmod-server.toml: initialLevelCap 20, relativeLevelCap 5, so a
                player arrives at each gym capped at exactly that gym's ace level.
 
-LIMITS, and they are large. This models one thing: two Pokemon at full health hitting each other with their best
-damaging move until one faints.
+WHAT IS MODELLED. Enough to design a fight around abilities and items, which is what the gyms are built on.
 
-  - no switching, so it cannot see a team that wins by pivoting, and it cannot see a gym that punishes one
-  - no items in battle, no healing, no revives: a player with twenty potions is not modelled
-  - no AI: the leader always picks its own best damaging move, which is better than most AI plays
-  - no status moves at all. Every leader's hazards, screens, boosts and debuffs are dropped, so
-    stealthrock, scaryface, tearfullook and protect are worth nothing here and are worth a lot in play
-  - no secondary effects: no flinch, no burn, no paralysis, no confusion, no critical hits
-  - abilities: only sturdy, levitate, moldbreaker, thickfat and filter are modelled. Every other ability,
-    including intimidate, drought, chlorophyll and swiftswim, does nothing here
-  - held items: only eviolite, life_orb, muscle_band, choice_band, assault_vest and the type-resist berries
-    are modelled. focus_sash, weakness_policy, oran_berry, sitrus_berry and leftovers are dynamic and are NOT,
-    which understates every leader that holds one
-  - IVs 15 and EVs 0 on both sides. Real wild catches roll 0-31 and real trainers may not
-  - damage takes the average roll (0.925) and multiplies by accuracy, so a 90% move does 90% of its damage
-    every turn rather than missing one turn in ten
+  damage       the mainline formula, average roll, multiplied by accuracy; physical/special split; stat stages
+  weather      Drought, Drizzle, Sand Stream, Snow Warning and the weather moves. Sun multiplies Fire by 1.5 and
+               halves Water; rain does the reverse. This is not decoration: Blaine leads Drought Torkoal, and
+               turning sun on reversed the verdict on his gym from a clean win to a loss.
+  abilities    Sturdy, Levitate, Mold Breaker, Thick Fat, Filter/Solid Rock, Multiscale, Adaptability, Tinted
+               Lens, Huge/Pure Power, Guts, Magic Guard, Intimidate (on switch-in), and the type absorbers:
+               Lightning Rod, Motor Drive, Volt Absorb, Water Absorb, Dry Skin, Flash Fire, Sap Sipper, Earth
+               Eater. Three of Surge's four have Lightning Rod, so an Electric answer to the Electric gym does
+               literally nothing, and the tool now knows that.
+  items        Focus Sash, Sturdy's twin, on seven leader Pokemon; Weakness Policy, Sitrus and Oran berries,
+               Leftovers, Black Sludge, Life Orb and its recoil, Choice Band/Specs/Scarf, Muscle Band, Assault
+               Vest, Eviolite, Rocky Helmet, Air Balloon and the type-resist berries.
+  status       paralysis (half speed, a quarter of turns lost), burn (halved physical, chip), poison and toxic,
+               sleep for two turns. Thunder Wave, Will-O-Wisp, Toxic, Sleep Powder, Hypnosis, Spore, Glare.
+  status moves stat-stage moves both ways (Nasty Plot, Quiver Dance, Shell Smash, Scary Face, Tearful Look),
+               screens, weather moves and recovery moves.
+  variable     Grass Knot and Low Kick by the defender's weight, Gyro Ball by the speed ratio. Showdown stores
+               these with basePower 0, and reading that as "status move" had silently disarmed Raichu.
+  no bag items neither side uses one, which is correct: every authored leader sets `battleRules.maxItemUses: 0`.
 
-So: a species this says loses may well win in play, and a species it says wins may lose to a hazard it cannot
-see. Read it for the shape -- how many answers a gym has and how hard they are to find -- not for the result of
-any single fight.
+LIMITS, and they are still large.
+
+  - SWITCHING IS NOT TRUSTWORTHY and is off by default (`--switching` turns it on). The player-side bound
+    implemented here came out WORSE than never switching at two of seven gyms, because every switch hands the
+    foe a free hit and a greedy "who wins this matchup" rule spends them badly. A bound that can fall below the
+    thing it bounds is measuring its own policy, not the fight. The leader never switches at all, though
+    data/trainers.json declares a `switchBias` of 0.65 for every gym leader.
+  - no healing items, no revives: a player with twenty potions is not modelled. The leaders need none.
+  - no hazards. Stealth Rock, Spikes and Toxic Spikes are counted as unmodelled and do nothing, because they
+    only pay off against switching.
+  - no secondary effects: no flinch, no burn or freeze chance on an attacking move, no confusion, no crits.
+  - no Protect, Substitute, Encore, Taunt, Pain Split, Trick Room, Tailwind or Baton Pass.
+  - abilities outside the list above do nothing, including Static, Effect Spore, Cursed Body, Poison Point,
+    Chlorophyll, Swift Swim and Solar Power.
+  - IVs 15 and EVs 0 on both sides. Real wild catches roll 0-31 and real trainers may not.
+  - the player's moves are the level-up list only, while every leader carries a hand-picked set including TM
+    moves. TMCraft is in the pack. This biases the whole simulation AGAINST the player.
+  - it cannot tell you whether a fight is fun, how long it takes, or whether the answer is discoverable.
+
+AND ONE THING IT CANNOT CHECK AT ALL: whether Cobblemon's own embedded Showdown computes damage the way the
+mainline formula does at these levels. The tests prove this tool agrees with the published formula, not that the
+game agrees with either. Settling that needs a battle run in a real server and the damage read back; see
+docs/research/EXPERIMENT_BACKLOG.md.
 
   python tools/battle_sim.py                     # the report
   python tools/battle_sim.py --gym 3             # one gym, every candidate listed
   python tools/battle_sim.py --ivs 31            # sensitivity: both sides at perfect IVs
   python tools/battle_sim.py --stones            # allow item evolutions as well as level ones
+  python tools/battle_sim.py --switching         # also run the (untrustworthy) switching bound
   python tools/battle_sim.py --markdown docs/story/BATTLE_SIM.md
 """
 from __future__ import annotations
@@ -58,6 +83,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TRAINERS = ROOT / "data" / "trainers.json"
 AVAILABILITY = ROOT / "docs" / "story" / "AVAILABILITY.md"
+AVAIL_JSON = ROOT / "derived" / "availability.json"
+GYM_NAMES = {1: ("kanto_brock", "Rock"), 2: ("kanto_misty", "Water"),
+             3: ("kanto_ltsurge", "Electric"), 4: ("kanto_erika", "Grass"),
+             5: ("kanto_koga", "Poison"), 6: ("kanto_sabrina", "Psychic"),
+             7: ("kanto_blaine", "Fire"), 8: ("kanto_giovanni", "Ground")}
+STARTER_CONFIG = ROOT / "base-pack" / "cobbleverse" / "config" / "cobblemon" / "starters.json"
 RCT_CONFIG = ROOT / "base-pack" / "cobbleverse" / "config" / "rctmod-server.toml"
 
 JAR_CANDIDATES = [
@@ -172,22 +203,24 @@ ROW = re.compile(r"^\| ([A-Za-z'\u00e9\u2640\u2642. \-]+?) \| (\d+)-(\d+) \| ([^
 
 
 def parse_availability(path):
-    text = path.read_text(encoding="utf-8")
-    heads = list(GYM_HEAD.finditer(text))
+    """Read derived/availability.json, which tools/battle_sim.py's sibling generates from the compiled pools.
+
+    This used to scrape docs/story/AVAILABILITY.md with a regex. A generated table is not an interface: the
+    gendered Nidoran rows could not be matched and simply vanished from the candidate pool, and a pool that had
+    silently shrunk looked exactly like one that was genuinely narrow.
+    """
+    if not AVAIL_JSON.is_file():
+        raise SimError("no %s: run python tools/availability.py --write first" % AVAIL_JSON)
+    d = json.loads(AVAIL_JSON.read_text(encoding="utf-8"))
     out = {}
-    for i, h in enumerate(heads):
-        end = heads[i + 1].start() if i + 1 < len(heads) else len(text)
-        body = text[h.end():end]
-        rows = []
-        for r in ROW.finditer(body):
-            name = r.group(1).strip()
-            if name.lower() in ("species", "---"):
-                continue
-            rows.append({"species": name, "lo": int(r.group(2)), "hi": int(r.group(3)),
-                         "corridor": r.group(5).strip()})
-        out[int(h.group(1))] = {"leader": h.group(2), "theme": h.group(3), "rows": rows}
+    for g, rows in d["gyms"].items():
+        g = int(g)
+        leader, theme = GYM_NAMES.get(g, ("gym_%d" % g, "?"))
+        out[g] = {"leader": leader, "theme": theme,
+                  "rows": [{"species": r["species"], "lo": r["lo"], "hi": r["hi"],
+                            "corridor": "%s (%s)" % (r["pool"], r["kind"])} for r in rows]}
     if not out:
-        raise SimError("parsed no gyms out of %s" % path)
+        raise SimError("no gyms in %s" % AVAIL_JSON)
     return out
 
 
@@ -319,6 +352,44 @@ class Mon:
         if self.item == "assault_vest":
             self.spd = int(self.spd * 1.5)
         self.moveset = moveset if moveset is not None else choose_moveset(sp, level, moves, chart)
+        self.side = "player"
+        self.reset()
+
+    # ---- battle state. A Mon is reused across duels, so every battle starts by clearing it.
+    def reset(self):
+        self.hp_now = float(self.hp)
+        self.stages = {"atk": 0, "def": 0, "spa": 0, "spd": 0, "spe": 0}
+        self.status = None
+        self.used_once = set()
+        self.item_used = False
+        self.balloon_popped = False
+        self.tox_turns = 0
+        self.sleep_turns = 0
+        self.hit_this_turn = False
+
+    def enter(self, side):
+        self.reset()
+        self.side = side
+
+    def eff_atk(self):
+        return max(1, int(self.atk * STAGE[self.stages["atk"]]))
+
+    def eff_def(self):
+        return max(1, int(self.df * STAGE[self.stages["def"]]))
+
+    def eff_spa(self):
+        return max(1, int(self.spa * STAGE[self.stages["spa"]]))
+
+    def eff_spd(self):
+        return max(1, int(self.spd * STAGE[self.stages["spd"]]))
+
+    def eff_spe(self):
+        s = int(self.spe * STAGE[self.stages["spe"]])
+        if self.item == "choice_scarf":
+            s = int(s * 1.5)
+        if self.status == "par":
+            s = int(s * 0.5)
+        return max(1, s)
 
     def __repr__(self):
         return "%s L%d" % (self.name, self.level)
@@ -326,105 +397,386 @@ class Mon:
 
 # ------------------------------------------------------------------ the fight
 
-def damage(att, dfn, mid, moves, chart):
+STAGE = {-6: 2 / 8, -5: 2 / 7, -4: 2 / 6, -3: 2 / 5, -2: 2 / 4, -1: 2 / 3,
+         0: 1.0, 1: 3 / 2, 2: 4 / 2, 3: 5 / 2, 4: 6 / 2, 5: 7 / 2, 6: 8 / 2}
+
+# Abilities that make an attacking type do nothing, and what the holder gets for it. These flip whole matchups:
+# three of Surge's four have Lightning Rod, so an Electric answer to an Electric gym does literally zero.
+ABSORB = {"lightningrod": ("Electric", "spa"), "motordrive": ("Electric", "spe"),
+          "voltabsorb": ("Electric", "heal"), "waterabsorb": ("Water", "heal"),
+          "dryskin": ("Water", "heal"), "flashfire": ("Fire", "spa"), "sapsipper": ("Grass", "atk"),
+          "levitate": ("Ground", None), "eartheater": ("Ground", "heal")}
+WEATHER_ABILITY = {"drought": "sun", "drizzle": "rain", "sandstream": "sand", "snowwarning": "snow"}
+SCREEN_MOVES = {"lightscreen": "special", "reflect": "physical", "auroraveil": "both"}
+BOOST_MOVES = {"nastyplot": {"spa": 2}, "swordsdance": {"atk": 2}, "agility": {"spe": 2},
+               "calmmind": {"spa": 1, "spd": 1}, "irondefense": {"def": 2}, "growth": {"atk": 1, "spa": 1},
+               "quiverdance": {"spa": 1, "spd": 1, "spe": 1}, "shellsmash": {"atk": 2, "spa": 2, "spe": 2,
+                                                                            "def": -1, "spd": -1},
+               "dragondance": {"atk": 1, "spe": 1}, "bulkup": {"atk": 1, "def": 1}}
+DROP_MOVES = {"scaryface": {"spe": -2}, "growl": {"atk": -1}, "tearfullook": {"atk": -1, "spa": -1},
+              "charm": {"atk": -2}, "screech": {"def": -2}, "smokescreen": {}, "leer": {"def": -1}}
+STATUS_MOVES = {"thunderwave": "par", "willowisp": "brn", "toxic": "tox", "sleeppowder": "slp",
+                "spore": "slp", "hypnosis": "slp", "yawn": "slp", "poisonpowder": "psn", "glare": "par"}
+WEATHER_MOVES = {"sunnyday": "sun", "raindance": "rain", "sandstorm": "sand", "hail": "snow", "snowscape": "snow"}
+HEAL_MOVES = {"recover", "roost", "softboiled", "slackoff", "synthesis", "moonlight", "morningsun", "rest"}
+# Modelled as a no-op, and counted as such in the report rather than quietly ignored.
+UNMODELLED = {"stealthrock", "toxicspikes", "spikes", "protect", "encore", "painsplit", "trickroom",
+              "tailwind", "substitute", "taunt", "whirlwind", "roar", "haze", "healbell", "batonpass"}
+
+
+class Field:
+    """What is true of the battle rather than of one Pokemon."""
+
+    def __init__(self):
+        self.weather = None
+        self.screens = {"player": {}, "foe": {}}
+
+    def screen(self, side, category):
+        sc = self.screens[side]
+        return 0.5 if (sc.get(category) or sc.get("both")) else 1.0
+
+
+def side_of(mon, team):
+    return "player" if mon in team else "foe"
+
+
+def variable_power(mid, att, dfn, moves, species):
+    """Grass Knot, Low Kick and Gyro Ball carry basePower 0 in Showdown because the power is computed. Treating
+    them as status moves silently disarmed every leader that holds one -- Raichu's Grass Knot among them."""
+    if mid in ("grassknot", "lowkick"):
+        w = float((species.get(dfn.name) or {}).get("weight") or 0)   # hectograms in the jar
+        kg = w / 10.0
+        for bound, pw in ((200, 120), (100, 100), (50, 80), (25, 60), (10, 40)):
+            if kg >= bound:
+                return pw
+        return 20
+    if mid == "gyroball":
+        return max(1, min(150, int(25 * max(1, dfn.eff_spe()) / max(1, att.eff_spe()))))
+    if mid in ("seismictoss", "nightshade"):
+        return None      # fixed damage, handled by the caller
+    return None
+
+
+def damage(att, dfn, mid, moves, chart, field=None, species=None):
     mv = moves.get(mid)
-    if not mv or mv["power"] <= 0:
+    if not mv:
+        return 0.0
+    power = mv["power"]
+    if power <= 0 and species is not None:
+        vp = variable_power(mid, att, dfn, moves, species)
+        power = vp or 0
+    if power <= 0:
         return 0.0
     eff = effectiveness(chart, mv["type"], dfn.types)
-    if dfn.ability == "levitate" and mv["type"] == "Ground" and att.ability != "moldbreaker":
-        eff = 0.0
+    absorb = ABSORB.get(dfn.ability)
+    if absorb and absorb[0] == mv["type"] and att.ability != "moldbreaker":
+        return 0.0
+    if dfn.item == "airballoon" and mv["type"] == "Ground" and not dfn.balloon_popped:
+        return 0.0
     if eff == 0.0:
         return 0.0
-    if mv["category"] == "Physical":
-        a, d = att.atk, dfn.df
-    else:
-        a, d = att.spa, dfn.spd
-    if att.item in ("choice_band", "muscle_band") and mv["category"] == "Physical":
+    physical = mv["category"] == "Physical"
+    a = att.eff_atk() if physical else att.eff_spa()
+    d = dfn.eff_def() if physical else dfn.eff_spd()
+    if att.item in ("choice_band", "muscle_band") and physical:
         a = int(a * (1.5 if att.item == "choice_band" else 1.1))
-    base = int(int(int(2 * att.level / 5 + 2) * mv["power"] * a / d) / 50) + 2
-    dmg = base * eff
+    if att.item == "choice_specs" and not physical:
+        a = int(a * 1.5)
+    if att.ability in ("hugepower", "purepower") and physical:
+        a *= 2
+    if att.ability == "guts" and att.status in ("brn", "par", "psn", "tox") and physical:
+        a = int(a * 1.5)
+    elif att.status == "brn" and physical and att.ability != "guts":
+        a = int(a * 0.5)
+    base = int(int(int(2 * att.level / 5 + 2) * power * a / max(1, d)) / 50) + 2
+    dmg = float(base) * eff
+    stab = 2.0 if att.ability == "adaptability" else 1.5
     if mv["type"].lower() in [t.lower() for t in att.types]:
-        dmg *= 1.5
+        dmg *= stab
+    if field is not None and field.weather:
+        if field.weather == "sun":
+            dmg *= 1.5 if mv["type"] == "Fire" else (0.5 if mv["type"] == "Water" else 1.0)
+        elif field.weather == "rain":
+            dmg *= 1.5 if mv["type"] == "Water" else (0.5 if mv["type"] == "Fire" else 1.0)
+    if field is not None:
+        dmg *= field.screen(dfn.side, "physical" if physical else "special")
     if att.item == "life_orb":
         dmg *= 1.3
+    if att.ability == "tintedlens" and eff < 1:
+        dmg *= 2.0
     if dfn.ability == "thickfat" and mv["type"] in ("Fire", "Ice") and att.ability != "moldbreaker":
         dmg *= 0.5
-    if dfn.ability == "filter" and eff > 1 and att.ability != "moldbreaker":
+    if dfn.ability in ("filter", "solidrock", "prismarmor") and eff > 1 and att.ability != "moldbreaker":
         dmg *= 0.75
+    if dfn.ability == "multiscale" and dfn.hp_now >= dfn.hp and att.ability != "moldbreaker":
+        dmg *= 0.5
     if RESIST_BERRY.get(dfn.item or "") == mv["type"] and eff > 1:
         dmg *= 0.5
     return dmg * 0.925 * mv["accuracy"] / 100.0
 
 
-def best_damage(att, dfn, moves, chart):
-    best = 0.0
-    pick = None
+def best_damage(att, dfn, moves, chart, field=None, species=None):
+    best, pick = 0.0, None
     for mid in att.moveset:
-        d = damage(att, dfn, mid, moves, chart)
+        d = damage(att, dfn, mid, moves, chart, field, species)
         if d > best:
             best, pick = d, mid
     return best, pick
 
 
-def duel(a, b, moves, chart, cap_turns=60):
-    """One on one from full health, best damaging move each turn, faster first. Returns (winner, turns)."""
-    ha, hb = float(a.hp), float(b.hp)
-    da, _ = best_damage(a, b, moves, chart)
-    db, _ = best_damage(b, a, moves, chart)
-    if da <= 0 and db <= 0:
-        return None, cap_turns
-    first_a = a.spe >= b.spe
-    for t in range(cap_turns):
-        order = [(a, b), (b, a)] if first_a else [(b, a), (a, b)]
-        for att, dfn in order:
-            dmg = da if att is a else db
-            if dmg <= 0:
-                continue
-            full = (hb if dfn is b else ha) >= dfn.hp
-            if dfn.ability == "sturdy" and att.ability != "moldbreaker" and full and dmg >= dfn.hp:
-                dmg = dfn.hp - 1
-            if dfn is b:
-                hb -= dmg
-                if hb <= 0:
-                    return a, t + 1
-            else:
-                ha -= dmg
-                if ha <= 0:
-                    return b, t + 1
-    return None, cap_turns
+def best_action(att, dfn, moves, chart, field, species):
+    """What the Pokemon does this turn: its best damaging move, or a set-up move when it cannot hurt the target.
+
+    This is not an AI. It is the best deterministic line available to a side that never switches, which is
+    stronger than most play on the leader's side and weaker on the player's.
+    """
+    dmg, mid = best_damage(att, dfn, moves, chart, field, species)
+    if dmg > 0:
+        return ("attack", mid, dmg)
+    for m in att.moveset:
+        if m in BOOST_MOVES or m in STATUS_MOVES or m in SCREEN_MOVES or m in WEATHER_MOVES:
+            if m not in att.used_once:
+                return ("support", m, 0.0)
+    return ("stall", None, 0.0)
 
 
-def run_gauntlet(team, foes, moves, chart):
-    """Lead with team[0], never switch, never heal; both sides carry their damage forward. Returns
-    (won, player faints, foes downed, the fraction of the last foe's health left)."""
-    hp = {id(m): float(m.hp) for m in team + foes}
-    i, j = 0, 0
-    guard = 0
-    while i < len(team) and j < len(foes) and guard < 400:
+def apply_support(mon, foe, mid, field, moves):
+    """Stat stages, screens, weather and status. Everything the leaders' movesets actually carry."""
+    mon.used_once.add(mid)
+    if mid in BOOST_MOVES:
+        for k, v in BOOST_MOVES[mid].items():
+            mon.stages[k] = max(-6, min(6, mon.stages[k] + v))
+        return True
+    if mid in DROP_MOVES:
+        for k, v in DROP_MOVES[mid].items():
+            foe.stages[k] = max(-6, min(6, foe.stages[k] + v))
+        return True
+    if mid in SCREEN_MOVES:
+        field.screens[mon.side][SCREEN_MOVES[mid]] = True
+        return True
+    if mid in WEATHER_MOVES:
+        field.weather = WEATHER_MOVES[mid]
+        return True
+    if mid in STATUS_MOVES:
+        if foe.status is None and foe.ability not in ("magicguard",):
+            foe.status = STATUS_MOVES[mid]
+        return True
+    if mid in HEAL_MOVES:
+        mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 2.0)
+        return True
+    return False
+
+
+def take_hit(dfn, att, dmg, eff_super, contact):
+    """Focus Sash, Sturdy, Weakness Policy, Rocky Helmet, the pinch berries and the balloon."""
+    full = dfn.hp_now >= dfn.hp
+    if dmg >= dfn.hp_now and full:
+        if dfn.ability == "sturdy" and att.ability != "moldbreaker":
+            dmg = dfn.hp_now - 1
+        elif dfn.item == "focus_sash" and not dfn.item_used:
+            dmg = dfn.hp_now - 1
+            dfn.item_used = True
+    dfn.hp_now -= dmg
+    if dfn.hp_now > 0:
+        if eff_super and dfn.item == "weakness_policy" and not dfn.item_used:
+            dfn.stages["atk"] = min(6, dfn.stages["atk"] + 2)
+            dfn.stages["spa"] = min(6, dfn.stages["spa"] + 2)
+            dfn.item_used = True
+        if dfn.item in ("sitrus_berry", "oran_berry") and not dfn.item_used and dfn.hp_now <= dfn.hp / 2:
+            dfn.hp_now = min(float(dfn.hp), dfn.hp_now + (dfn.hp / 4.0 if dfn.item == "sitrus_berry" else 10.0))
+            dfn.item_used = True
+        if contact and dfn.item == "rocky_helmet":
+            att.hp_now -= att.hp / 6.0
+    return dmg
+
+
+def end_of_turn(mon, field):
+    if mon.hp_now <= 0:
+        return
+    if mon.ability == "magicguard":
+        return
+    if mon.item == "leftovers":
+        mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 16.0)
+    elif mon.item == "black_sludge":
+        poison = any(t.lower() == "poison" for t in mon.types)
+        mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 16.0) if poison else mon.hp_now - mon.hp / 8.0
+    if mon.item == "life_orb" and mon.hit_this_turn:
+        mon.hp_now -= mon.hp / 10.0
+    if mon.status == "brn":
+        mon.hp_now -= mon.hp / 16.0
+    elif mon.status == "psn":
+        mon.hp_now -= mon.hp / 8.0
+    elif mon.status == "tox":
+        mon.tox_turns += 1
+        mon.hp_now -= mon.hp * min(15, mon.tox_turns) / 16.0
+    if field.weather == "sand" and not any(t.lower() in ("rock", "ground", "steel") for t in mon.types):
+        mon.hp_now -= mon.hp / 16.0
+    mon.hit_this_turn = False
+
+
+def start_battle(team, foes, field):
+    for m in team:
+        m.enter("player")
+    for m in foes:
+        m.enter("foe")
+    for m in team + foes:
+        w = WEATHER_ABILITY.get(m.ability)
+        if w and field.weather is None:
+            field.weather = w
+
+
+def switch_in(mon, foe):
+    """Intimidate is the only switch-in ability that changes a matchup here, and four leader Pokemon have it."""
+    if mon.ability == "intimidate" and foe is not None and foe.ability not in ("clearbody", "whitesmoke"):
+        foe.stages["atk"] = max(-6, foe.stages["atk"] - 1)
+
+
+def run_gauntlet(team, foes, moves, chart, species=None, switching=False, cap_turns=500, stats=None):
+    """The player's team against the leader's, in order. Damage carries forward on both sides, nobody heals
+    between battles, and no side uses a bag item -- which is what data/trainers.json specifies
+    (`battleRules.maxItemUses: 0` on every authored leader).
+
+    switching=False  the player never switches: the worst case, and the old behaviour.
+    switching=True   the player switches to their best surviving matchup when the active one is losing. The
+                     switch costs a turn, in which the foe attacks the incoming Pokemon for free, which is what
+                     a switch costs in play. The leader never switches in either mode, so this is a bound and
+                     not a prediction: the real fight is somewhere between the two runs.
+    """
+    field = Field()
+    start_battle(team, foes, field)
+    alive = [True] * len(team)
+    active, j = 0, 0
+    switch_in(team[active], foes[j] if foes else None)
+    switch_in(foes[j], team[active] if team else None)
+    guard, switches = 0, 0
+    while any(alive) and j < len(foes) and guard < cap_turns:
         guard += 1
-        a, b = team[i], foes[j]
-        da, _ = best_damage(a, b, moves, chart)
-        db, _ = best_damage(b, a, moves, chart)
-        if da <= 0 and db <= 0:                       # neither can hurt the other: the player has to switch
-            i += 1
-            continue
-        first_a = a.spe >= b.spe
-        for att, dfn in ([(a, b), (b, a)] if first_a else [(b, a), (a, b)]):
-            dmg = da if att is a else db
-            if dmg <= 0:
+        b = foes[j]
+        if switching:
+            k = best_matchup(team, alive, active, b, moves, chart, field, species)
+            if k != active and switches < len(team) * 2:
+                switches += 1
+                active = k
+                a = team[active]
+                switch_in(a, b)
+                # the turn the switch costs: the foe hits the Pokemon coming in, and it does not act
+                dmg, mid = best_damage(b, a, moves, chart, field, species)
+                if dmg > 0:
+                    mv = moves[mid]
+                    take_hit(a, b, dmg, effectiveness(chart, mv["type"], a.types) > 1,
+                             mv["category"] == "Physical")
+                    b.hit_this_turn = True
+                for m in (a, b):
+                    end_of_turn(m, field)
+                if a.hp_now <= 0:
+                    alive[active] = False
+                    nxt = next((q for q in range(len(team)) if alive[q]), None)
+                    if nxt is None:
+                        break
+                    active = nxt
+                    switch_in(team[active], foes[j])
                 continue
-            full = hp[id(dfn)] >= dfn.hp
-            if dfn.ability == "sturdy" and att.ability != "moldbreaker" and full and dmg >= dfn.hp:
-                dmg = dfn.hp - 1
-            hp[id(dfn)] -= dmg
-            if hp[id(dfn)] <= 0:
+        a = team[active]
+        mine = best_action(a, b, moves, chart, field, species)
+        theirs = best_action(b, a, moves, chart, field, species)
+        if mine[0] == "stall" and theirs[0] == "stall":
+            # neither can make progress: the slot is spent rather than looping to the turn cap
+            alive[active] = False
+            nxt = next((q for q in range(len(team)) if alive[q]), None)
+            if nxt is None:
                 break
-        if hp[id(b)] <= 0:
+            active = nxt
+            switch_in(team[active], b)
+            continue
+        acts = [(a, b, mine), (b, a, theirs)]
+        if a.eff_spe() < b.eff_spe():
+            acts.reverse()
+        for att, dfn, (kind, mid, dmg) in acts:
+            if att.hp_now <= 0 or dfn.hp_now <= 0:
+                continue
+            if att.status == "par":
+                dmg *= 0.75                      # a quarter of turns are lost to full paralysis
+            if att.status == "slp":
+                att.sleep_turns += 1
+                if att.sleep_turns <= 2:
+                    continue
+                att.status = None
+            if kind == "attack":
+                mv = moves[mid]
+                att.hit_this_turn = True
+                take_hit(dfn, att, dmg, effectiveness(chart, mv["type"], dfn.types) > 1,
+                         mv["category"] == "Physical")
+            elif kind == "support":
+                apply_support(att, dfn, mid, field, moves)
+            else:
+                break                            # neither side can make progress
+        for m in (a, b):
+            end_of_turn(m, field)
+        if b.hp_now <= 0:
             j += 1
-        elif hp[id(a)] <= 0:
-            i += 1
-    left = 0.0 if j >= len(foes) else max(0.0, hp[id(foes[j])] / foes[j].hp)
-    return j >= len(foes), i, j, left
+            if j < len(foes):
+                switch_in(foes[j], team[active])
+        if a.hp_now <= 0:
+            alive[active] = False
+            nxt = next((q for q in range(len(team)) if alive[q]), None)
+            if nxt is None:
+                break
+            active = nxt
+            if j < len(foes):
+                switch_in(team[active], foes[j])
+    faints = sum(1 for x in alive if not x)
+    left = 0.0 if j >= len(foes) else max(0.0, foes[j].hp_now / foes[j].hp)
+    if stats is not None:
+        stats["turns"] = guard
+        stats["switches"] = switches
+    return j >= len(foes), faints, j, left
+
+
+def best_matchup(team, alive, active, foe, moves, chart, field, species):
+    """Which surviving team member beats this foe by the widest margin. Used only by the switching bound.
+
+    It only recommends a change when the incoming Pokemon is clearly better, or the active one cannot win at
+    all; without that the bound thrashes, switching every turn and never attacking.
+    """
+    def score(m):
+        mine, _ = best_damage(m, foe, moves, chart, field, species)
+        theirs, _ = best_damage(foe, m, moves, chart, field, species)
+        if mine <= 0:
+            return -999.0
+        turns_me = foe.hp_now / mine
+        turns_them = (m.hp_now / theirs) if theirs > 0 else 999.0
+        return turns_them - turns_me
+
+    here = score(team[active]) if alive[active] else -1000.0
+    if here > 0:
+        return active                             # already winning this one: stay in
+    # Only switch when it turns a LOSS into a WIN. A looser rule -- switch whenever someone scores better --
+    # made the bound perform worse than never switching at five of the seven gyms: every switch hands the foe a
+    # free hit, and a chain of marginal switches is just a chain of free hits. A bound that can come out below
+    # the thing it is bounding is measuring its own policy, not the fight.
+    best, pick = 0.0, active
+    for k in range(len(team)):
+        if not alive[k] or k == active:
+            continue
+        sc = score(team[k])
+        if sc > best:
+            best, pick = sc, k
+    return pick
+
+
+
+def duel(a, b, moves, chart, cap_turns=60, species=None):
+    """One on one from full health. Kept for the 1v1 table and for the tests."""
+    for m in (a, b):
+        m.reset()
+    stats = {}
+    won, _i, _j, _left = run_gauntlet([a], [b], moves, chart, species=species, cap_turns=cap_turns,
+                                      stats=stats)
+    alive_a = a.hp_now > 0
+    for m in (a, b):
+        m.reset()
+    # the turn count is part of this function's contract: a caller uses it to tell a two-turn kill from a grind
+    return (a if won else (b if not alive_a else None)), stats.get("turns", cap_turns)
 
 
 def pick_team(cands, species, moves, chart, cap, ivs, stones, how, n=6):
@@ -502,7 +854,7 @@ def assess(gym, avail, leaders, species, moves, chart, ivs, stones, caps):
             continue
         beats, turns = [], []
         for f in foes:
-            w, n = duel(p, f, moves, chart)
+            w, n = duel(p, f, moves, chart, species=species)
             if w is p:
                 beats.append(f.name)
                 turns.append(n)
@@ -517,7 +869,7 @@ def assess(gym, avail, leaders, species, moves, chart, ivs, stones, caps):
     chips = []
     for c in out["candidates"][:40]:
         p = Mon(species, c["caught_as"], cap, moves, chart, ivs=ivs, stones=stones)
-        won, _f, downed, left = run_gauntlet([p], [ace], moves, chart)
+        won, _f, downed, left = run_gauntlet([p], [ace], moves, chart, species=species)
         chips.append((1.0 if won else 1.0 - left, c["used_as"]))
     chips.sort(reverse=True)
     out["ace_chip"] = chips[:5]
@@ -541,12 +893,35 @@ def assess(gym, avail, leaders, species, moves, chart, ivs, stones, caps):
             on_type.setdefault(c["used_as"], c)
     out["on_type"] = list(on_type.values())
 
+    # Two teams, and each run twice: never switching is the worst case for the player and free switching is
+    # the best, so the real fight sits between them. The leader never switches in either, which matches
+    # data/trainers.json's own AI profile only loosely -- it declares a switchBias of 0.65.
     for how in ("informed", "walked"):
-        team = pick_team(out["candidates"], species, moves, chart, cap, ivs, stones, how)
-        won, faints, downed, left = run_gauntlet(team, build_leader(t, species, moves, chart, ivs, stones),
-                                                 moves, chart)
-        out[how] = {"team": [m.name for m in team], "won": won, "faints": faints, "downed": downed,
-                    "left": left}
+        for sw in (False, True):
+            team = pick_team(out["candidates"], species, moves, chart, cap, ivs, stones, how)
+            won, faints, downed, left = run_gauntlet(
+                team, build_leader(t, species, moves, chart, ivs, stones), moves, chart,
+                species=species, switching=sw)
+            out[how + ("_switch" if sw else "")] = {"team": [m.name for m in team], "won": won,
+                                                    "faints": faints, "downed": downed, "left": left}
+    return out
+
+
+def config_starters():
+    """Every species the pack actually offers, from the config the game falls back to.
+
+    `useConfigStarters: false` is Cobblemon's own default and does NOT disable this file: with no starter
+    datapack present -- and the server has none -- `CobblemonStarterHandler.getStarterList` falls straight back
+    to the config list. So the offer is 13 categories, not the Kanto three
+    (docs/research/notes/starter-selection.md).
+    """
+    d = json.loads(STARTER_CONFIG.read_text(encoding="utf-8"))
+    out = []
+    for cat in d.get("starters") or []:
+        for entry in cat.get("pokemon") or []:
+            name = entry.split()[0]
+            if key(name) not in out:
+                out.append(key(name))
     return out
 
 
@@ -561,7 +936,7 @@ def starter_sensitivity(gym_rows, species, moves, chart, ivs, stones, starters):
             if not a.get("foes"):
                 continue
             p = Mon(species, k, a["cap"], moves, chart, ivs=ivs, stones=stones)
-            beats = [f.name for f in a["foes"] if duel(p, f, moves, chart)[0] is p]
+            beats = [f.name for f in a["foes"] if duel(p, f, moves, chart, species=species)[0] is p]
             res[g] = (p.name, len(beats), len(a["foes"]))
         out[s] = res
     return out
@@ -572,6 +947,8 @@ def main(argv=None):
     ap.add_argument("--gym", type=int)
     ap.add_argument("--ivs", type=int, default=15)
     ap.add_argument("--stones", action="store_true")
+    ap.add_argument("--switching", action="store_true",
+                    help="also run the player-side switching bound: see LIMITS, it is not yet sound")
     ap.add_argument("--markdown")
     a = ap.parse_args(argv)
 
@@ -632,11 +1009,13 @@ def main(argv=None):
         say("  Pokemon needed to bring the ace down: %s"
             % (r["ace_cost"] if r["ace_cost"] else "more than five: nothing available can finish it"))
         for how in ("informed", "walked"):
-            g = r[how]
-            say("  gauntlet, %-8s team %s" % (how, ", ".join(g["team"])))
-            say("      %s -- %d of %d leader Pokemon downed, %d player Pokemon lost%s"
-                % ("WIN" if g["won"] else "LOSS", g["downed"], n_foes, g["faints"],
-                   "" if g["won"] else ", next foe on %.0f%% health" % (g["left"] * 100)))
+            say("  gauntlet, %-8s team %s" % (how, ", ".join(r[how]["team"])))
+            modes = [("no switching", how)] + ([("switching bound", how + "_switch")] if a.switching else [])
+            for label, k in modes:
+                g = r[k]
+                say("      %-15s %s -- %d of %d downed, %d lost%s"
+                    % (label, "WIN " if g["won"] else "LOSS", g["downed"], n_foes, g["faints"],
+                       "" if g["won"] else ", next foe on %.0f%%" % (g["left"] * 100)))
         top = cands[:8] if not a.gym else cands
         for c in top:
             say("    %-12s as %-12s %-16s %d/%d  first wild L%-3d %s"
@@ -646,8 +1025,7 @@ def main(argv=None):
 
     say("=" * 100)
     say("STARTERS")
-    starters = ["charmander", "squirtle", "bulbasaur", "cyndaquil", "totodile", "chikorita",
-                "torchic", "mudkip", "treecko"]
+    starters = config_starters()
     sens = starter_sensitivity(results, species, moves, chart, a.ivs, a.stones, starters)
     hdr = "  %-12s" % "starter" + "".join("  G%d" % g for g in sorted(results) if results[g].get("foes"))
     say(hdr)

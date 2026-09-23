@@ -1,5 +1,67 @@
 # Gym matchup sufficiency audit
 
+> ## Review, 2026-09-24: read this first
+>
+> This audit was written against **the inherited Cobbleverse RCT v20 leaders** and **a route-only reading of
+> availability**. Both of those inputs have since changed, and the audit's per-gym verdicts do not survive
+> unaltered. Nothing below has been deleted; this section says what still holds.
+>
+> **What changed under it.**
+>
+> 1. `data/trainers.json` now carries **our own authored rosters**, seven of eight, sitting exactly on the route
+>    ceilings the audit recommended. The inherited teams it audited were 5 to 15 levels higher: it judged Blaine
+>    at 57-60 where ours is 47-50, and Giovanni at 68-70 where ours does not exist yet. Most of its "thin"
+>    verdicts were driven by that gap, and recommendation 2 has already been applied to the rosters.
+> 2. `docs/story/AVAILABILITY.md` is regenerated from **every compiled pool**, not the curated route compilation
+>    alone. Sub-region and waterway pools are in it now. The species counts before each gym roughly double:
+>    19 / 24 / 44 / 74 / 91 / 110 / 146 / 184.
+>
+> **The conclusion that does not survive: Gym 3 is not thin.**
+>
+> The audit set aside the Wooper population as "the existing pond-shore Wooper ... should not carry the entire
+> fairness contract until its one-per-player delivery is proven". That is not what it is. The compiled
+> `mt_clay_outflow` waterway pool carries **Wooper across 100 boxes at bucket `common`, weight 23.98, levels
+> 24-30**, with Quagsire uncommon and Clodsire rare spawning directly beside it, 57 blocks off the Route 3
+> corridor at its closest. It is ambient and repeatable, not an event, and there is no Wooper event in
+> `data/events.json`. Wooper is the single most common thing on that river.
+>
+> So Surge has **three** Ground families before the gym, not one: Bunnelby to Diggersby on Route 3, and
+> Wooper to Quagsire and Clodsire on the waterway. All three are Electric-immune. Against our authored Surge,
+> `tools/battle_sim.py` finds 5 catchable species that beat the whole gym one on one and 9 that beat Raichu.
+>
+> **Therefore the Route 2 quarry Geodude does not earn its place as a balance fix.** It was recommended to
+> create "a second common family" for a gap that has two already. The audit's other argument for it -- that a
+> quarry needs rock-dwelling fauna and extends the miner scene -- is a world-building argument and should be
+> decided on those grounds alone, or the quarry should be cut.
+>
+> **South Strand Wimpod likewise.** It was recommended for Gym 8, which has no roster in `data/trainers.json`
+> (`status: held`, empty team), so nothing about it can be certified. Gym 8's availability is now 184 species
+> with 12 Ground families. Cut it or defer it until the rewritten Giovanni exists.
+>
+> **Item by item, of the coordinated fix package:**
+>
+> | # | Item | Verdict |
+> |---|---|---|
+> | 1 | Keep the Kanto order and the ceilings 20/25/30/35/40/45/50/55 | **Survives.** The simulation shows a clean monotone difficulty curve on those ceilings. |
+> | 2 | Retune leaders to the ceilings; set the cap offset to zero | **Half done.** The authored rosters sit on the ceilings. `rctmod-server.toml` still has `relativeLevelCap = 5`, so the runtime half is open. |
+> | 3 | Route 2 quarry Geodude | **Does not survive as a balance fix.** See above. |
+> | 4 | Build and prove the Route 1 mansion Ghost habitat | **Survives, and is more urgent than it was.** Ghost is absent from authored availability until Gym 7, and **every** habitat pool is inert because `data/habitat_blocks.json` places no blocks at all. |
+> | 5 | Make the Displaced City cavern accessible before Sabrina | **Survives**, on the same evidence. |
+> | 6 | South Strand Wimpod | **Does not survive.** See above. |
+> | 7 | Preserve the species sets for Erika, Koga and Blaine | **Survives, strengthened.** 24, 22 and 36 catchable families can hit those three aces super-effectively. |
+> | 8 | Redesign Giovanni at level 55, Mewtwo out of the gym | **Untestable here** and superseded: there is no roster to redesign, and the owner is rewriting the fights. |
+>
+> **One correction that cuts the other way.** The audit's "availability is sufficient, the only gap is levels"
+> for Blaine is now an understatement. `tilpey_waters` sits **one block** off the Route 7 corridor carrying
+> Arrokuda and Basculin at L39-48; Barraskewda beats all six of Blaine's team one on one. With the corrected
+> pools the best six available win Blaine losing nobody, where the route-only reading had them losing.
+>
+> **What none of this touches.** The audit's evidence boundary still stands: no encounter pool, Habitat Block,
+> RCT battle or level-cap behaviour has been proven in the target runtime, and `data/habitat_blocks.json` places
+> no blocks, so items 4 and 5 are unbuilt rather than merely unproven. Separately, the pack's own inherited
+> pools are live in unauthored caves and off-route wilderness, which no version of this audit has accounted for.
+
+
 **Status:** coordinated design audit complete. No encounter pool, species
 placement, leader roster, level cap, move, item, reward, or runtime config was
 changed.
