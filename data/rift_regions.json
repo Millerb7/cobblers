@@ -11,7 +11,8 @@
   "A tunnel runs from the Deep up to the Elite Four: it acts as Victory Road, where trainers stand.",
   "The entrance to the Elite Four is sealed off unless you go through the town first.",
   "A physical edge between the excavation site and the relic area and shrine stops new players.",
-  "The Deep's floor goes to y0, not y40: it should sit very low in the ground (owner, after the first flight of the whole Rift)."
+  "The Deep's floor goes to y0, not y40: it should sit very low in the ground (owner, after the first flight of the whole Rift).",
+  "Hoopa's cradle and the Compact's HQ are sited now, so the HQ's position accounts for the passage before the HQ is built (owner, 2026-09-22)."
  ],
  "regions": {
   "e4_tower": {
@@ -226,6 +227,49 @@
     "median": 88,
     "max": 114
    }
+  }
+ },
+ "sited": {
+  "haven_compact_hq": {
+   "at": [
+    3427,
+    0,
+    3308
+   ],
+   "where": "on the Deep's floor, at its western edge: the chamber column nearest the relic area's middle",
+   "why": "The cradle is reachable only through the HQ, so the HQ has to sit where a passage to it is short and where nothing else would run. 70 blocks from the cradle's centre, on the floor deck.",
+   "faction": "the Haven Compact, which already exists and is not evil (owner, 2026-09-22). Do not invent a new one.",
+   "status": "sited, not built"
+  },
+  "hoopa_cradle": {
+   "centre": [
+    3357,
+    3306
+   ],
+   "floor_y": 12,
+   "under": "relic_area_shrine",
+   "cover": 76,
+   "below_sea_level": 50,
+   "why": "A sealed cavern beneath the relic area (owner). Ground above its centre is y88, so 76 blocks of cover; sea level is 62, so it is 50 below it and needs the Displaced City cavern's rock shell in every direction, not just under its floor.",
+   "zone": "opens on the finale's quest stage, not on badges. The zone check is what stops anyone digging in from elsewhere.",
+   "status": "sited, not built. Codex will send the chamber's needs."
+  },
+  "cradle_passage": {
+   "from": [
+    3427,
+    0,
+    3308
+   ],
+   "to": [
+    3357,
+    12,
+    3306
+   ],
+   "run": 70,
+   "climb": 12,
+   "grade": "about 1 in 6",
+   "why": "The only way in. It leaves the HQ on the Deep's floor and climbs 12 over 70 blocks to the cradle's floor. Nothing else may reach the cradle: the zone check covers digging in from above.",
+   "status": "sited, not built"
   }
  }
 }

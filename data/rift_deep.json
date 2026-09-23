@@ -55,7 +55,20 @@
     "every": 13,
     "why": "The Rift fuels the city: the same violet the veins use, set into the decks on a loose grid. Light 15, and it conditions no spawn."
   },
-  "spawn_policy": "No block placed here may condition a spawn (data/spawn_blocks.json). The chamber is unlit rock and dressed stone; the glow is the galar particle block, which is clean.",
+  "lifts": {
+    "block": "lumymon:elevator",
+    "banks": 8,
+    "apart": 40,
+    "read_from_the_jar": {
+      "block_entity": "lumymon:elevator_entity",
+      "nbt": {"yOffset": "int, the relative height it sends a player to", "requiredAdvancement": "string, empty means no gate"},
+      "who_it_moves": "ServerPlayerEntity only: the bytecode takes List<class_3222>. Pokemon and NPCs cannot ride it.",
+      "proved": "On cobblers-dryrun9, 2026-09-22: setblock places it, data merge sets yOffset, and a fresh block reads {yOffset: 0, requiredAdvancement: \"\"} -- so it is ungated by default and a generated function can configure every lift without anyone opening its screen.",
+      "not_proved": "That right-clicking it actually teleports a player. That needs a player and is for the owner's flight."
+    },
+    "why": "The decks are 16 apart on purpose, so the Deep is not navigable without them. An elevator sits in the deck's own top surface, so a player standing on it is carried to the deck above or below."
+  },
+  "spawn_policy": "No block placed here may condition a spawn (data/spawn_blocks.json). The chamber is unlit rock and dressed stone; the glow is the galar particle block, which is clean. lumymon:elevator is not in the policy list.",
   "tunnel_mouth": {
     "toward": "entrance_to_e4",
     "width": 9,

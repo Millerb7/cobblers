@@ -157,7 +157,7 @@ def build(source_root, server_dir=None):
                 q.append((nz, nx))
     far = float(inside.max())
 
-    lines, checks, counts = [], [], {}
+    lines, checks, counts, roofs = [], [], {}, {}
 
     def count(k, v=1):
         counts[k] = counts.get(k, 0) + v
@@ -176,6 +176,7 @@ def build(source_root, server_dir=None):
         if top <= floor_y:
             continue
         lines.append("fill %d %d %d %d %d %d minecraft:air" % (wx, floor_y + 1, wz, wx, top, wz))
+        roofs[(z, x)] = top
         count("chamber columns")
         count("chamber blocks", top - floor_y)
         if unit(wx, 1, wz, 72) < 0.0006:
@@ -186,13 +187,34 @@ def build(source_root, server_dir=None):
             checks.append((wx, top + 3, wz, SOLID, "roof cover"))
     count("columns the roof was clamped to keep its cover", broke)
 
-    # the shell: any void within `depth` of the carve becomes rock, before anything is placed
+    # The shell, in every direction. The Displaced City's cavern seals over its roof and round its walls
+    # (tools/cavern_plan.py, and build_audit reports voids as either); the Deep's first cut sealed only under its
+    # floor, which left a cave meeting the roof or a wall free to open the chamber. Emitted first, before the carve.
     d = form["shell"]["depth"]
+    shell_lines = []
     for z, x in zip(zz.tolist(), xx.tolist()):
         wx, wz = x + X0, z + Z0
-        lines.insert(0, "fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
-                     % (wx, floor_y - d, wz, wx, floor_y, wz, shell_b))
-    count("shell fills", int(mask.sum()))
+        shell_lines.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
+                           % (wx, floor_y - d, wz, wx, floor_y, wz, shell_b))
+        shell_lines.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
+                           % (wx, roofs[(z, x)] + 1, wz, wx, roofs[(z, x)] + d, wz, shell_b))
+    # the walls: a ring `d` wide outside the chamber, from under its floor to over its tallest roof
+    ring = set()
+    for z, x in zip(zz.tolist(), xx.tolist()):
+        for dz in range(-d, d + 1):
+            for dx in range(-d, d + 1):
+                nz, nx = z + dz, x + dx
+                if 0 <= nz < mask.shape[0] and 0 <= nx < mask.shape[1] and not mask[nz, nx]:
+                    ring.add((nz, nx))
+    for z, x in sorted(ring):
+        wx, wz = x + X0, z + Z0
+        hi = min(int(H[z, x]) - 1, floor_y + roof["centre"] + d)
+        if hi > floor_y - d:
+            shell_lines.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
+                               % (wx, floor_y - d, wz, wx, hi, wz, shell_b))
+    lines[:0] = shell_lines
+    count("shell fills under the floor and over the roof", 2 * int(mask.sum()))
+    count("shell fills round the walls", len(ring))
 
     # the decks
     for lv in spec["levels"]:
@@ -217,6 +239,38 @@ def build(source_root, server_dir=None):
     if not any(k.startswith("deck columns") for k in counts):
         raise DeepError("no deck was laid: the insets are larger than the chamber")
 
+    # the lifts. The decks are 16 apart on purpose, so without these the Deep cannot be walked at all. An elevator
+    # sits in the deck's own top surface: a player standing on it is carried to the deck above or below.
+    lift = spec["lifts"]
+    ys = [lv["y"] for lv in spec["levels"]]
+    deepest = {lv["y"]: lv["inset"] for lv in spec["levels"]}
+    banks, tries = [], 0
+    top_inset = max(deepest.values())
+    cand = [(int(z), int(x)) for z, x in zip(*np.nonzero((inside > top_inset + 4) & mask))]
+    if not cand:
+        raise DeepError("no column is inside every deck: the lifts would not reach the high deck")
+    while len(banks) < lift["banks"] and tries < 4000:
+        tries += 1
+        z, x = cand[int(unit(tries, 0, 0, 75) * (len(cand) - 1))]
+        if any(abs(x - bx) + abs(z - bz) < lift["apart"] for bz, bx in banks):
+            continue
+        banks.append((z, x))
+    if len(banks) < 2:
+        raise DeepError("only %d lift banks placed: the Deep would not be navigable" % len(banks))
+    for z, x in banks:
+        wx, wz = x + X0, z + Z0
+        for i, y in enumerate(ys):
+            for dx, target in ((0, ys[i + 1] if i + 1 < len(ys) else None),
+                               (2, ys[i - 1] if i > 0 else None)):
+                if target is None:
+                    continue
+                lines.append("setblock %d %d %d %s" % (wx + dx, y, wz, lift["block"]))
+                lines.append('data merge block %d %d %d {yOffset:%d,requiredAdvancement:""}'
+                             % (wx + dx, y, wz, target - y))
+                count("lift blocks")
+                checks.append((wx + dx, y, wz, [lift["block"]], "lift"))
+    count("lift banks", len(banks))
+
     plan = {"lines": lines, "checks": checks, "counts": counts,
             "box": [X0, Z0, X1, Z1], "floor_y": floor_y, "columns": int(mask.sum())}
     return plan, spec
@@ -239,7 +293,8 @@ def write(plan):
     tiles = {}
     for ln in plan["lines"]:
         t = ln.split()
-        tiles.setdefault((int(t[1]) // TILE, int(t[3]) // TILE), []).append(ln)
+        i = 3 if t[0] == "data" else 1          # `data merge block x y z {..}` puts its x at token 3
+        tiles.setdefault((int(t[i]) // TILE, int(t[i + 2]) // TILE), []).append(ln)
     order = []
     for t in sorted(tiles):
         body = tiles[t]
@@ -266,7 +321,7 @@ def verify(world):
         return 1
     p = json.loads(PLAN.read_text(encoding="utf-8"))
     kinds = {c[4] for c in p["checks"]}
-    need = {"chamber air", "deck", "deck light", "roof cover"}
+    need = {"chamber air", "deck", "deck light", "roof cover", "lift"}
     if not need <= kinds:
         print("FAIL: the plan checks %s, missing %s" % (sorted(kinds), sorted(need - kinds)))
         return 1
