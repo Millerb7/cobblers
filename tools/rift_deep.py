@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-"""The Windward Deep: a roofed cavern city carved under the Rift's floor.
+"""The Windward Deep: an open pit sunk into the Rift floor, terraced in five rings.
 
-The chamber, its rock shell, its three decks and their light. The buildings are town content and come after; this
-makes the place they stand in. The region is the owner's own tracing, reproduced here from the annotated heightmap
+The pit, its wall shell, the five treads the city stands on, their lifts and their light. The buildings are town
+content and come after; this makes the place they stand in. Schema 1 built a sealed cavern here, on the reasoning
+that 83 blocks down has ground overhead; that was circular -- the ground is only overhead if the pit is not dug
+through it -- and the Deep must read as the Rift's deepest point, not as a second Displaced City. The region is the owner's own tracing, reproduced here from the annotated heightmap
 whose sha256 data/rift_regions.json pins, so nothing depends on a file in a scratch directory.
 
 Ground comes from the canonical heightmap, never from a world; `verify` reads a world only to check.
@@ -32,12 +34,6 @@ PART = 3500
 
 WORLD_READS = {"verify", "main"}
 
-# what the rock over the chamber may be. Anything else there -- air above all -- means a cave met
-# the roof and the Deep is open to the surface.
-SOLID = ["minecraft:stone", "minecraft:deepslate", "minecraft:tuff", "minecraft:andesite",
-         "minecraft:diorite", "minecraft:granite", "minecraft:dirt", "minecraft:gravel",
-         "minecraft:coarse_dirt", "minecraft:clay", "minecraft:sand", "minecraft:sandstone",
-         "legendarymonuments:distortion_deepslate", "legendarymonuments:distortion_stone"]
 
 
 class DeepError(Exception):
@@ -84,6 +80,39 @@ def pick(block, fallback, have):
     return block if block.startswith("minecraft:") or have is None or block in have else fallback
 
 
+def fill_holes(m):
+    """Close every hole inside the mask.
+
+    The owner's annotation writes each region's NAME across it in the same black the outlines use, so the flood
+    fill stops at the letters and they survive as islands. Carved, that left "the deep (town)" standing in rock in
+    the middle of the chamber (found on the owner's own map, 2026-09-22; 18,285 columns of lettering across the
+    eleven regions). Anything enclosed by the region is part of it: flood the outside from the border, and
+    whatever the outside cannot reach is a hole.
+    """
+    from collections import deque
+    h, w = m.shape
+    outside = np.zeros_like(m)
+    q = deque()
+    for i in range(w):
+        for z in (0, h - 1):
+            if not m[z, i] and not outside[z, i]:
+                outside[z, i] = True
+                q.append((z, i))
+    for j in range(h):
+        for x in (0, w - 1):
+            if not m[j, x] and not outside[j, x]:
+                outside[j, x] = True
+                q.append((j, x))
+    while q:
+        z, x = q.popleft()
+        for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nz, nx = z + dz, x + dx
+            if 0 <= nz < h and 0 <= nx < w and not m[nz, nx] and not outside[nz, nx]:
+                outside[nz, nx] = True
+                q.append((nz, nx))
+    return m | ~outside
+
+
 def region_mask(region_id, source_root):
     """The owner's traced region, flood-filled from its seed on the annotated heightmap it pins."""
     from PIL import Image, ImageDraw
@@ -113,6 +142,7 @@ def region_mask(region_id, source_root):
             break
     ImageDraw.floodfill(b, (px, pz), 128)
     m = np.asarray(b) == 128
+    m = fill_holes(m)
     n = int(m.sum())
     if not (0.8 * r["columns"] <= n <= 1.2 * r["columns"]):
         raise DeepError("the flood fill of %s gives %d columns, not the %d recorded: the outline has changed or "
@@ -130,16 +160,10 @@ def build(source_root, server_dir=None):
     if H.shape != mask.shape:
         raise DeepError("the heightmap box %s and the mask %s disagree" % (H.shape, mask.shape))
 
-    form = spec["form"]
-    roof = form["roof"]
-    shell_b = pick(form["shell"]["block"], form["shell"]["fallback"], have)
-    deck = spec["deck"]
-    deck_b = pick(deck["block"], deck["fallback"], have)
-    edge_b = pick(deck["edge"], deck["edge_fallback"], have)
     light_b = pick(spec["light"]["block"], spec["light"]["fallback"], have)
     floor_y = spec["floor_y"]
 
-    # distance from the chamber's edge, so the roof can dome and the decks can inset
+    # distance from the pit's edge, which is what puts each column in its ring
     zz, xx = np.nonzero(mask)
     inside = np.zeros(mask.shape, np.int32)
     from collections import deque
@@ -157,119 +181,127 @@ def build(source_root, server_dir=None):
                 q.append((nz, nx))
     far = float(inside.max())
 
-    lines, checks, counts, roofs = [], [], {}, {}
+    lines, checks, counts = [], [], {}
 
     def count(k, v=1):
         counts[k] = counts.get(k, 0) + v
 
-    # the chamber: carve from the floor up to a domed roof, clamped so it can never break the surface
-    broke = 0
-    for z, x in zip(zz.tolist(), xx.tolist()):
-        wx, wz = x + X0, z + Z0
-        f = min(1.0, inside[z, x] / max(1.0, far * 0.55))
-        top = floor_y + int(roof["edge"] + (roof["centre"] - roof["edge"]) * (f ** (1.0 / roof["falloff"])))
-        top += int(unit(wx, 0, wz, 71) * 5) - 2
-        cap = int(H[z, x]) - roof["min_cover"]
-        if top > cap:
-            top = cap
-            broke += 1
-        if top <= floor_y:
-            continue
-        lines.append("fill %d %d %d %d %d %d minecraft:air" % (wx, floor_y + 1, wz, wx, top, wz))
-        roofs[(z, x)] = top
-        count("chamber columns")
-        count("chamber blocks", top - floor_y)
-        if unit(wx, 1, wz, 72) < 0.0006:
-            checks.append((wx, floor_y + 2, wz, ["minecraft:air"], "chamber air"))
-        # the rock just above the roof must still be rock. The shell closes the floor, not the ceiling, so a
-        # natural cave meeting the roof would open the chamber to the surface without anything else noticing.
-        if unit(wx, 2, wz, 74) < 0.0012:
-            checks.append((wx, top + 3, wz, SOLID, "roof cover"))
-    count("columns the roof was clamped to keep its cover", broke)
+    # The pit: five rings stepping down to the floor, every column open to the sky above its own tread.
+    rings = spec["rings"]
+    treads, W = rings["treads"], rings["width"]
+    tread = spec["tread"]
+    tread_b = pick(tread["block"], tread["fallback"], have)
+    edge_b = pick(tread["edge"], tread["edge_fallback"], have)
+    restore_b = pick(spec["restore"]["block"], spec["restore"]["fallback"], have)
+    d = spec["shell"]["depth"]
 
-    # The shell, in every direction. The Displaced City's cavern seals over its roof and round its walls
-    # (tools/cavern_plan.py, and build_audit reports voids as either); the Deep's first cut sealed only under its
-    # floor, which left a cave meeting the roof or a wall free to open the chamber. Emitted first, before the carve.
-    d = form["shell"]["depth"]
-    shell_lines = []
+    ring_of, tread_of = {}, {}
+    for z, x in zip(zz.tolist(), xx.tolist()):
+        k = min(len(treads) - 1, int(inside[z, x]) // W)
+        ring_of[(z, x)] = k
+        tread_of[(z, x)] = treads[k]
+
+    # 1. everything under a tread is rock. Schema 1's sealed chamber reached y22-52, which in the outer rings is
+    #    below the new tread, so without this each street would be a shelf over that void.
     for z, x in zip(zz.tolist(), xx.tolist()):
         wx, wz = x + X0, z + Z0
-        shell_lines.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
-                           % (wx, floor_y - d, wz, wx, floor_y, wz, shell_b))
-        shell_lines.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
-                           % (wx, roofs[(z, x)] + 1, wz, wx, roofs[(z, x)] + d, wz, shell_b))
-    # the walls: a ring `d` wide outside the chamber, from under its floor to over its tallest roof
-    ring = set()
+        lines.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
+                     % (wx, floor_y - d, wz, wx, tread_of[(z, x)] - 1, wz, restore_b))
+    count("columns refilled under their tread", int(mask.sum()))
+
+    # 2. the tread, with a margin of bare rock at the back against its riser
+    margin = tread["rock_margin"]
+    for z, x in zip(zz.tolist(), xx.tolist()):
+        wx, wz = x + X0, z + Z0
+        k, ty = ring_of[(z, x)], tread_of[(z, x)]
+        within = int(inside[z, x]) - k * W
+        if within < margin:
+            continue
+        b_ = edge_b if (k == len(treads) - 1 or within >= W - margin) else tread_b
+        lines.append("fill %d %d %d %d %d %d %s" % (wx, ty - tread["thickness"] + 1, wz, wx, ty, wz, b_))
+        count("tread columns (ring %d, y%d)" % (k, ty))
+        if wx % spec["light"]["every"] == 0 and wz % spec["light"]["every"] == 0:
+            lines.append("setblock %d %d %d %s" % (wx, ty, wz, light_b))
+            count("tread lights")
+            checks.append((wx, ty, wz, [light_b], "tread light"))
+        elif unit(wx, ty, wz, 73) < 0.0012:
+            checks.append((wx, ty, wz, [b_], "tread"))
+
+    # 3. open it to the sky: everything above a tread comes out, all the way past the surface
+    for z, x in zip(zz.tolist(), xx.tolist()):
+        wx, wz = x + X0, z + Z0
+        ty, surf = tread_of[(z, x)], int(H[z, x])
+        if surf <= ty:
+            continue
+        lines.append("fill %d %d %d %d %d %d minecraft:air" % (wx, ty + 1, wz, wx, surf + 2, wz))
+        count("pit columns")
+        count("pit blocks", surf + 2 - ty)
+        if unit(wx, 1, wz, 72) < 0.0006:
+            checks.append((wx, ty + 2, wz, ["minecraft:air"], "pit air"))
+        # Open to the sky. This replaces schema 1's roof-cover check, which existed only because there was a roof:
+        # an open pit that is not open is the whole failure, so the column is checked at the old ground line.
+        if unit(wx, 2, wz, 74) < 0.0012:
+            checks.append((wx, surf, wz, ["minecraft:air"], "open to the sky"))
+
+    # The wall shell: a ring of rock outside the pit, from under the floor to the surface, so no cave or aquifer
+    # opens into a wall. There is no roof to seal -- the pit is open, which is the point.
+    shell_b = pick(spec["shell"]["block"], spec["shell"]["fallback"], have)
+    ringcols = set()
     for z, x in zip(zz.tolist(), xx.tolist()):
         for dz in range(-d, d + 1):
             for dx in range(-d, d + 1):
                 nz, nx = z + dz, x + dx
                 if 0 <= nz < mask.shape[0] and 0 <= nx < mask.shape[1] and not mask[nz, nx]:
-                    ring.add((nz, nx))
-    for z, x in sorted(ring):
+                    ringcols.add((nz, nx))
+    shell_lines = []
+    for z, x in sorted(ringcols):
         wx, wz = x + X0, z + Z0
-        hi = min(int(H[z, x]) - 1, floor_y + roof["centre"] + d)
+        hi = int(H[z, x]) - 1
         if hi > floor_y - d:
             shell_lines.append("fill %d %d %d %d %d %d %s replace #cobblers:rift_void"
                                % (wx, floor_y - d, wz, wx, hi, wz, shell_b))
     lines[:0] = shell_lines
-    count("shell fills under the floor and over the roof", 2 * int(mask.sum()))
-    count("shell fills round the walls", len(ring))
+    count("shell fills round the walls", len(ringcols))
 
-    # the decks
-    for lv in spec["levels"]:
-        y, ins = lv["y"], lv["inset"]
-        m = inside > ins
-        lz, lx = np.nonzero(m & mask)
-        edge = set()
-        for z, x in zip(lz.tolist(), lx.tolist()):
-            if not (m[z - 1, x] and m[z + 1, x] and m[z, x - 1] and m[z, x + 1]):
-                edge.add((z, x))
-        for z, x in zip(lz.tolist(), lx.tolist()):
-            wx, wz = x + X0, z + Z0
-            b = edge_b if (z, x) in edge else deck_b
-            lines.append("fill %d %d %d %d %d %d %s" % (wx, y - deck["thickness"] + 1, wz, wx, y, wz, b))
-            count("deck columns (%s)" % lv["name"])
-            if wx % spec["light"]["every"] == 0 and wz % spec["light"]["every"] == 0:
-                lines.append("setblock %d %d %d %s" % (wx, y, wz, light_b))
-                count("deck lights")
-                checks.append((wx, y, wz, [light_b], "deck light"))
-            elif unit(wx, y, wz, 73) < 0.0015:
-                checks.append((wx, y, wz, [b], "deck"))
-    if not any(k.startswith("deck columns") for k in counts):
-        raise DeepError("no deck was laid: the insets are larger than the chamber")
+    if not any(k.startswith("tread columns") for k in counts):
+        raise DeepError("no tread was laid: the rings are wider than the pit")
 
-    # the lifts. The decks are 16 apart on purpose, so without these the Deep cannot be walked at all. An elevator
-    # sits in the deck's own top surface: a player standing on it is carried to the deck above or below.
+    # The lifts, at the risers. A 17-block riser cannot be climbed, so these are the only way between rings and
+    # so the only way down: the tunnel still matters. A pair straddles each boundary -- one on the lower tread
+    # going up, one on the upper tread going down -- because a single column belongs to exactly one ring.
     lift = spec["lifts"]
-    ys = [lv["y"] for lv in spec["levels"]]
-    deepest = {lv["y"]: lv["inset"] for lv in spec["levels"]}
-    banks, tries = [], 0
-    top_inset = max(deepest.values())
-    cand = [(int(z), int(x)) for z, x in zip(*np.nonzero((inside > top_inset + 4) & mask))]
-    if not cand:
-        raise DeepError("no column is inside every deck: the lifts would not reach the high deck")
-    while len(banks) < lift["banks"] and tries < 4000:
-        tries += 1
-        z, x = cand[int(unit(tries, 0, 0, 75) * (len(cand) - 1))]
-        if any(abs(x - bx) + abs(z - bz) < lift["apart"] for bz, bx in banks):
-            continue
-        banks.append((z, x))
-    if len(banks) < 2:
-        raise DeepError("only %d lift banks placed: the Deep would not be navigable" % len(banks))
-    for z, x in banks:
-        wx, wz = x + X0, z + Z0
-        for i, y in enumerate(ys):
-            for dx, target in ((0, ys[i + 1] if i + 1 < len(ys) else None),
-                               (2, ys[i - 1] if i > 0 else None)):
-                if target is None:
-                    continue
-                lines.append("setblock %d %d %d %s" % (wx + dx, y, wz, lift["block"]))
+    per = max(2, lift["banks"] // (len(treads) - 1))
+    n_banks = 0
+    for k in range(len(treads) - 1):
+        edge_in = (inside >= (k + 1) * W) & (inside < (k + 1) * W + 2) & mask
+        edge_out = (inside >= (k + 1) * W - 2) & (inside < (k + 1) * W) & mask
+        ci = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_in))]
+        co = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_out))]
+        if not ci or not co:
+            raise DeepError("ring boundary %d has no columns either side: its lift would go nowhere" % k)
+        placed, tries = [], 0
+        while len(placed) < per and tries < 3000:
+            tries += 1
+            z, x = ci[int(unit(tries, k, 0, 75) * (len(ci) - 1))]
+            if any(abs(x - bx) + abs(z - bz) < lift["apart"] for bz, bx in placed):
+                continue
+            near = min(co, key=lambda c: abs(c[0] - z) + abs(c[1] - x))
+            if abs(near[0] - z) + abs(near[1] - x) > 6:
+                continue
+            placed.append((z, x))
+            n_banks += 1
+            # on the lower tread, going up; on the upper tread, going down
+            for (cz_, cx_), y, target in ((( z, x), treads[k + 1], treads[k]),
+                                          (near, treads[k], treads[k + 1])):
+                wx, wz = cx_ + X0, cz_ + Z0
+                lines.append("setblock %d %d %d %s" % (wx, y, wz, lift["block"]))
                 lines.append('data merge block %d %d %d {yOffset:%d,requiredAdvancement:""}'
-                             % (wx + dx, y, wz, target - y))
+                             % (wx, y, wz, target - y))
                 count("lift blocks")
-                checks.append((wx + dx, y, wz, [lift["block"]], "lift"))
-    count("lift banks", len(banks))
+                checks.append((wx, y, wz, [lift["block"]], "lift"))
+        if not placed:
+            raise DeepError("no lift placed at ring boundary %d: that ring would be unreachable" % k)
+    count("lift pairs", n_banks)
 
     plan = {"lines": lines, "checks": checks, "counts": counts,
             "box": [X0, Z0, X1, Z1], "floor_y": floor_y, "columns": int(mask.sum())}
@@ -321,7 +353,7 @@ def verify(world):
         return 1
     p = json.loads(PLAN.read_text(encoding="utf-8"))
     kinds = {c[4] for c in p["checks"]}
-    need = {"chamber air", "deck", "deck light", "roof cover", "lift"}
+    need = {"pit air", "tread", "tread light", "open to the sky", "lift"}
     if not need <= kinds:
         print("FAIL: the plan checks %s, missing %s" % (sorted(kinds), sorted(need - kinds)))
         return 1

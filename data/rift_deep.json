@@ -1,78 +1,69 @@
 {
-  "schema": "cobblers.rift_deep/1",
-  "status": "the Windward Deep: the chamber and its levels. The buildings are town content and come after.",
+  "schema": "cobblers.rift_deep/2",
+  "status": "the Windward Deep: an open pit sunk into the Rift floor, terraced in five rings. The buildings are town content and come after.",
   "builder": "tools/rift_deep.py",
   "region": "the_deep, traced from the owner's annotated heightmap (data/rift_regions.json)",
   "seed": 20260923,
   "floor_y": 0,
-  "why_y0": "The owner, 2026-09-22, having flown the whole Rift: it should sit very low in the ground, not at y40. Measured at (3603, 3222): surface y83, build floor y-64, bedrock at the bottom. y0 leaves 83 blocks of cover and 64 below for the shell.",
   "form": {
-    "kind": "roofed cavern city",
-    "why": "At 83 blocks down the Deep cannot be a terraced pan open to the Rift's sky: there is unbroken ground above it. It is a chamber, and the city stands in levels inside it, which is what 'almost a futuristic city fuelled by the Rift' asks for. The Displaced City cavern is the precedent for the rock shell.",
-    "roof": {
-      "centre": 52,
-      "edge": 22,
-      "falloff": 1.6,
-      "min_cover": 20,
-      "why": "Tallest over the middle and closing down to the walls, so it reads as a chamber. min_cover is the rock that must remain between the roof and the surface: the carve is clamped per column so it can never break through."
-    },
-    "shell": {
-      "depth": 4,
-      "block": "legendarymonuments:distortion_deepslate",
-      "fallback": "minecraft:deepslate",
-      "why": "Any void within 4 blocks of the carve becomes rock, so the chamber never opens into a cave, an aquifer or the Rift's own floor."
-    }
+    "kind": "open pit, terraced",
+    "why": "The owner's form, at the owner's depth. Schema 1 built a sealed cavern with a domed roof, on the reasoning that 83 blocks down has ground overhead. That was circular: the ground is only overhead if the pit is not excavated through it. The Deep is the Rift's deepest point and must read as a shaft, not as another cavern -- the Displaced City already is one.",
+    "proportion": "83 deep against a widest span near 400, about 1 to 5. At y40 it would have been 1 to 9, which reads as a bowl. Proportion is why y0 (owner, 2026-09-23).",
+    "open_to_sky": true,
+    "sees": "the sky tear 360-400 blocks overhead, and the Rift's floor veins at the pit's rim"
   },
-  "levels": [
-    {
-      "y": 0,
-      "name": "the floor",
-      "inset": 5
-    },
-    {
-      "y": 16,
-      "name": "the second deck",
-      "inset": 38
-    },
-    {
-      "y": 32,
-      "name": "the high deck",
-      "inset": 72
-    }
-  ],
-  "level_why": "Three decks 16 apart, sized to the chamber: its deepest point is 109 blocks from the wall, so insets of 5, 38 and 72 give about 103k, 50k and 13k columns. The floor keeps a 5-block margin of bare rock at the walls, so the chamber reads as rock the city was built inside rather than as a paved box. A 16-block riser is not walkable on purpose: the city moves between decks by lift, which is what makes it read as built rather than as terrain. LumyMon has an `elevator` block; the lifts themselves are town content.",
-  "deck": {
+  "rings": {
+    "count": 5,
+    "treads": [66, 49, 32, 15, 0],
+    "width": 36,
+    "step": 17,
+    "why": "Five rings stepping 17 from the Rift floor at y83 down to y0, each 36 blocks wide horizontally: the deepest point of the region is 177 from its wall. A 17-block riser cannot be climbed, so the city is the only way down and the tunnel still matters.",
+    "one_structure": "The rings ARE the city's levels. Schema 1 also had three decks at y0, y16 and y32; against these treads y32 coincides exactly and y16 sits one block off y15, so they were two systems doing one job, and platforms floating in the middle read as a chamber's mezzanines. The decks are gone (owner, 2026-09-23)."
+  },
+  "tread": {
     "block": "rechiseled:blackstone_polished_connecting",
     "fallback": "minecraft:polished_blackstone",
     "edge": "rechiseled:basalt_bordered_polished",
     "edge_fallback": "minecraft:polished_basalt",
     "thickness": 2,
-    "why": "Rechiseled is dressed masonry, which is wrong for a torn cliff and exactly right for a built city. Its connecting variants stop a large deck reading as a grid."
+    "rock_margin": 4,
+    "why": "Rechiseled is dressed masonry: wrong for a torn cliff, right for a built city, and its connecting variants stop a 36-wide street reading as a grid. A margin of bare rock at the back of each tread, against its riser, so the terrace reads as cut rock with a built surface rather than as a paved shelf."
   },
-  "light": {
-    "block": "legendarymonuments:galar_particle_block",
-    "fallback": "minecraft:pearlescent_froglight",
-    "every": 13,
-    "why": "The Rift fuels the city: the same violet the veins use, set into the decks on a loose grid. Light 15, and it conditions no spawn."
+  "restore": {
+    "block": "legendarymonuments:distortion_deepslate",
+    "fallback": "minecraft:deepslate",
+    "why": "Everything under a tread must be rock. The sealed chamber schema 1 carved reached y22-52, which in the outer rings is BELOW the new tread at y66, so re-running over it would leave each street a thin shelf over a void. Every column is refilled from the shell up to its own tread before anything is laid, which also closes any natural cave."
+  },
+  "shell": {
+    "depth": 4,
+    "block": "legendarymonuments:distortion_deepslate",
+    "fallback": "minecraft:deepslate",
+    "why": "A ring of rock outside the pit, from under the floor to the surface, so no cave or aquifer opens into a wall. There is no roof to seal: the pit is open."
   },
   "lifts": {
     "block": "lumymon:elevator",
-    "banks": 8,
+    "banks": 10,
     "apart": 40,
     "read_from_the_jar": {
       "block_entity": "lumymon:elevator_entity",
       "nbt": {"yOffset": "int, the relative height it sends a player to", "requiredAdvancement": "string, empty means no gate"},
       "who_it_moves": "ServerPlayerEntity only: the bytecode takes List<class_3222>. Pokemon and NPCs cannot ride it.",
-      "proved": "On cobblers-dryrun9, 2026-09-22: setblock places it, data merge sets yOffset, and a fresh block reads {yOffset: 0, requiredAdvancement: \"\"} -- so it is ungated by default and a generated function can configure every lift without anyone opening its screen.",
-      "not_proved": "That right-clicking it actually teleports a player. That needs a player and is for the owner's flight."
+      "proved": "On cobblers-dryrun9, 2026-09-22: setblock places it, data merge sets yOffset, and a fresh block reads {yOffset: 0, requiredAdvancement: \"\"} -- ungated by default, and a generated function configures every lift without anyone opening its screen.",
+      "not_proved": "That right-clicking actually teleports a player. That needs a player and is for the owner's flight."
     },
-    "why": "The decks are 16 apart on purpose, so the Deep is not navigable without them. An elevator sits in the deck's own top surface, so a player standing on it is carried to the deck above or below."
+    "why": "The only way between rings, and so the only way down. A 17-block riser cannot be walked."
   },
-  "spawn_policy": "No block placed here may condition a spawn (data/spawn_blocks.json). The chamber is unlit rock and dressed stone; the glow is the galar particle block, which is clean. lumymon:elevator is not in the policy list.",
+  "light": {
+    "block": "legendarymonuments:galar_particle_block",
+    "fallback": "minecraft:pearlescent_froglight",
+    "every": 13,
+    "why": "The Rift fuels the city: the same violet its veins use, set into the treads on a loose grid. Light 15, and it conditions no spawn."
+  },
+  "spawn_policy": "No block placed here may condition a spawn (data/spawn_blocks.json). lumymon:elevator and the galar particle block are both clean.",
   "tunnel_mouth": {
     "toward": "entrance_to_e4",
     "width": 9,
     "height": 7,
-    "why": "Where Victory Road leaves the Deep. The tunnel itself is a separate pass and needs the League's final position; this only opens and marks its mouth so the chamber is not sealed."
+    "why": "Where Victory Road leaves the Deep. The tunnel itself is a separate pass and needs the League's final position."
   }
 }

@@ -4,7 +4,8 @@
  "source": {
   "file": "land_8k_16_annotated_rift.png (in the source root, beside the heightmap; not in the repo)",
   "sha256": "407f58f4c3ec144e8e94efe0fc889a0473c110b90f24b6db7a1160d06ef956ad",
-  "how": "black outlines drawn by the owner on the heightmap, 1 pixel = 1 block; each region is the flood fill of its outline from its seed"
+  "how": "black outlines drawn by the owner on the heightmap, 1 pixel = 1 block; each region is the flood fill of its outline from its seed",
+  "label_text": "The owner's annotation writes each region's name across it in the same black the outlines use, so a flood fill stops at the letters and they survive as islands inside the region. Carved, that left 'the deep (town)' standing in rock in the middle of the chamber (found on the owner's map, 2026-09-22). Every tracer must fill the holes; tools/rift_deep.py fill_holes does, and columns_with_label_holes keeps what each count was before."
  },
  "owner_intent": [
   "The Deep sits very low in the ground: almost a futuristic city fuelled by the Rift. It hosts the evil group's HQ, among other things.",
@@ -20,7 +21,7 @@
     3640,
     2450
    ],
-   "columns": 52271,
+   "columns": 53442,
    "bbox": [
     3527,
     2335,
@@ -31,14 +32,15 @@
     "min": 84,
     "median": 89,
     "max": 103
-   }
+   },
+   "columns_with_label_holes": 52271
   },
   "gate": {
    "seed": [
     3560,
     2650
    ],
-   "columns": 3459,
+   "columns": 4119,
    "bbox": [
     3511,
     2612,
@@ -49,14 +51,15 @@
     "min": 83,
     "median": 85,
     "max": 90
-   }
+   },
+   "columns_with_label_holes": 3459
   },
   "entrance_to_e4": {
    "seed": [
     3540,
     2800
    ],
-   "columns": 44790,
+   "columns": 46691,
    "bbox": [
     3462,
     2661,
@@ -67,14 +70,15 @@
     "min": 83,
     "median": 85,
     "max": 94
-   }
+   },
+   "columns_with_label_holes": 44790
   },
   "the_deep": {
    "seed": [
     3600,
     3150
    ],
-   "columns": 111976,
+   "columns": 114180,
    "bbox": [
     3421,
     3015,
@@ -99,14 +103,15 @@
     "bottom_block": "minecraft:bedrock",
     "column": "gravel y82-78, stone y77-58, dirt y57-51, stone y50-38, diorite y37-28, stone y27-6, dirt y5-1, deepslate from y-2 down, bedrock at y-64",
     "on": "cobblers-dryrun9, 2026-09-22"
-   }
+   },
+   "columns_with_label_holes": 111976
   },
   "relic_area_shrine": {
    "seed": [
     3340,
     3310
    ],
-   "columns": 12298,
+   "columns": 13875,
    "bbox": [
     3285,
     3229,
@@ -117,14 +122,15 @@
     "min": 86,
     "median": 90,
     "max": 100
-   }
+   },
+   "columns_with_label_holes": 12298
   },
   "rift_excavation_site": {
    "seed": [
     3050,
     3285
    ],
-   "columns": 28230,
+   "columns": 30839,
    "bbox": [
     2950,
     3213,
@@ -136,14 +142,15 @@
     "median": 88,
     "max": 98
    },
-   "role": "the dig camp; a physical edge on its east side stops new players"
+   "role": "the dig camp; a physical edge on its east side stops new players",
+   "columns_with_label_holes": 28230
   },
   "the_sink": {
    "seed": [
     3780,
     3520
    ],
-   "columns": 91309,
+   "columns": 92229,
    "bbox": [
     3509,
     3351,
@@ -154,14 +161,15 @@
     "min": 82,
     "median": 87,
     "max": 120
-   }
+   },
+   "columns_with_label_holes": 91309
   },
   "upper_rift": {
    "seed": [
     4180,
     3950
    ],
-   "columns": 97529,
+   "columns": 98715,
    "bbox": [
     3971,
     3672,
@@ -172,14 +180,15 @@
     "min": 85,
     "median": 92,
     "max": 121
-   }
+   },
+   "columns_with_label_holes": 97529
   },
   "rift_wilds": {
    "seed": [
     4230,
     4380
    ],
-   "columns": 56929,
+   "columns": 57941,
    "bbox": [
     4064,
     4140,
@@ -190,14 +199,15 @@
     "min": 83,
     "median": 89,
     "max": 112
-   }
+   },
+   "columns_with_label_holes": 56929
   },
   "mega_stone_mine_the_gulch": {
    "seed": [
     4330,
     4800
    ],
-   "columns": 61330,
+   "columns": 64272,
    "bbox": [
     4039,
     4513,
@@ -208,14 +218,15 @@
     "min": 83,
     "median": 89,
     "max": 110
-   }
+   },
+   "columns_with_label_holes": 61330
   },
   "hidden_rift_cavern": {
    "seed": [
     3850,
     4870
    ],
-   "columns": 116699,
+   "columns": 118802,
    "bbox": [
     3658,
     4574,
@@ -226,7 +237,8 @@
     "min": 83,
     "median": 88,
     "max": 114
-   }
+   },
+   "columns_with_label_holes": 116699
   }
  },
  "sited": {
