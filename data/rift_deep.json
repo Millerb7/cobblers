@@ -18,7 +18,13 @@
     "width": 36,
     "step": 17,
     "why": "Five rings stepping 17 from the Rift floor at y83 down to y0, each 36 blocks wide horizontally: the deepest point of the region is 177 from its wall. A 17-block riser cannot be climbed, so the city is the only way down and the tunnel still matters.",
-    "one_structure": "The rings ARE the city's levels. Schema 1 also had three decks at y0, y16 and y32; against these treads y32 coincides exactly and y16 sits one block off y15, so they were two systems doing one job, and platforms floating in the middle read as a chamber's mezzanines. The decks are gone (owner, 2026-09-23)."
+    "one_structure": "The rings ARE the city's levels. Schema 1 also had three decks at y0, y16 and y32; against these treads y32 coincides exactly and y16 sits one block off y15, so they were two systems doing one job, and platforms floating in the middle read as a chamber's mezzanines. The decks are gone (owner, 2026-09-23).",
+    "sheer_side": {
+      "toward": "entrance_to_e4",
+      "half_angle_degrees": 55,
+      "keeps_rings": 1,
+      "why": "The north side takes the first drop and then falls away: ring 0's street along the rim, then one unbroken 66-block face to the floor (owner, 2026-09-23). It gives the pit a back wall for the tunnel to come out of, which reads better than a tunnel mouth opening onto a terrace, and it stops the five rings wrapping the whole pit like a stadium."
+    }
   },
   "tread": {
     "block": "rechiseled:blackstone_polished_connecting",
@@ -51,7 +57,9 @@
       "proved": "On cobblers-dryrun9, 2026-09-22: setblock places it, data merge sets yOffset, and a fresh block reads {yOffset: 0, requiredAdvancement: \"\"} -- ungated by default, and a generated function configures every lift without anyone opening its screen.",
       "not_proved": "That right-clicking actually teleports a player. That needs a player and is for the owner's flight."
     },
-    "why": "The only way between rings, and so the only way down. A 17-block riser cannot be walked."
+    "why": "The only way between rings, and so the only way down. A 17-block riser cannot be walked.",
+    "how_a_player_works_it": "Read from ElevatorBlock's bytecode, 2026-09-23: it calls isSneaking, so a plain right-click rides and a sneaking right-click opens the configuration screen. It collects players in a box above the block (getEntitiesByClass over ServerPlayerEntity) and teleports each by yOffset, so everyone standing on it travels together. If requiredAdvancement is set and the player lacks it, they get message.lumymon.elevator.missing_advancement in red instead. Ours are left ungated.",
+    "not_on_the_sheer_side": "The ring boundaries the lifts sit on do not exist in the sheer sector, and a lift there would have to jump 66 at once. The north face is the tunnel's, not a lift's."
   },
   "light": {
     "block": "legendarymonuments:galar_particle_block",

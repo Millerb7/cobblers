@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -195,11 +196,30 @@ def build(source_root, server_dir=None):
     restore_b = pick(spec["restore"]["block"], spec["restore"]["fallback"], have)
     d = spec["shell"]["depth"]
 
+    # The sheer side: towards the tunnel the pit takes ring 0's street and then falls away in one face to the
+    # floor, instead of stepping all five rings round. It gives the tunnel a back wall to come out of, and stops
+    # the rings wrapping the pit like a stadium (owner, 2026-09-23).
+    sheer = rings.get("sheer_side")
+    cz_, cx_ = float(zz.mean()), float(xx.mean())
+    toward = None
+    if sheer:
+        tb = json.loads(REGIONS.read_text(encoding="utf-8"))["regions"][sheer["toward"]]["bbox"]
+        tx, tz = (tb[0] + tb[2]) / 2.0 - X0, (tb[1] + tb[3]) / 2.0 - Z0
+        toward = math.atan2(tx - cx_, tz - cz_)
+
     ring_of, tread_of = {}, {}
+    n_sheer = 0
     for z, x in zip(zz.tolist(), xx.tolist()):
         k = min(len(treads) - 1, int(inside[z, x]) // W)
+        if toward is not None and k >= sheer["keeps_rings"]:
+            a = math.atan2(x - cx_, z - cz_) - toward
+            a = (a + math.pi) % (2 * math.pi) - math.pi
+            if abs(math.degrees(a)) <= sheer["half_angle_degrees"]:
+                k = len(treads) - 1          # straight to the floor: no terraces on this side
+                n_sheer += 1
         ring_of[(z, x)] = k
         tread_of[(z, x)] = treads[k]
+    count("columns on the sheer side, dropped straight to the floor", n_sheer)
 
     # 1. everything under a tread is rock. Schema 1's sealed chamber reached y22-52, which in the outer rings is
     #    below the new tread, so without this each street would be a shelf over that void.
@@ -273,8 +293,11 @@ def build(source_root, server_dir=None):
     per = max(2, lift["banks"] // (len(treads) - 1))
     n_banks = 0
     for k in range(len(treads) - 1):
-        edge_in = (inside >= (k + 1) * W) & (inside < (k + 1) * W + 2) & mask
-        edge_out = (inside >= (k + 1) * W - 2) & (inside < (k + 1) * W) & mask
+        stepped = np.zeros(mask.shape, bool)
+        for (z_, x_), kk in ring_of.items():
+            stepped[z_, x_] = (kk == int(inside[z_, x_]) // W)      # false wherever the sheer side flattened it
+        edge_in = (inside >= (k + 1) * W) & (inside < (k + 1) * W + 2) & mask & stepped
+        edge_out = (inside >= (k + 1) * W - 2) & (inside < (k + 1) * W) & mask & stepped
         ci = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_in))]
         co = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_out))]
         if not ci or not co:
