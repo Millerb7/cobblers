@@ -47,21 +47,34 @@ the mainland: a river mouth on the strait, across from the isle.
 | --- | --- | --- |
 | The forecourt | `/tp @s 3576 88 2724` | **R** The League on the Rift's floor at the trunk head, Victory Road's end at the plaza's south edge; its Centre and Mart are the template's own, inside. Red sand is red concrete powder, wool is terracotta. The precinct is spawn-free: stand two minutes and nothing wild should appear. This has never been watched with a player. On `cobblers-dryrun4` the old plateau League, Centre and Mart still stand at (3346, 2603); a fresh export has none. |
 
-### 3a. The Rift as a fracture: the chasm prototype, perimeter first, staging only (15 min)
-Built on the fresh staging export `cobblers-dryrun6` by `tools/rift_fracture.py` from `data/rift_fracture.json`
-(2026-09-22), audited clean; not in the live world. Design: `docs/mechanics/RIFT_FRACTURE.md` section 4a. Move the
-client's Distant Horizons cache for the staging server aside first: it still holds the older staging worlds.
+### 3a. The whole Rift, sculpted (25 min)
+
+The shape is in the canonical heightmap (`tools/rift_heightmap.py`), so it is in the terrain itself and will land
+in the live world's next export; the skin, veins, sky tear, entrances and biome are a block pass
+(`tools/rift_skin.py`). Built on the fresh staging export `cobblers-dryrun9` (2026-09-22) and audited clean.
+**Move the client's Distant Horizons cache for the staging server aside first** — it still holds the older worlds.
+
 | Stop | `/tp` | Look at |
 | --- | --- | --- |
-| 3,000 blocks out, the hometown | `/tp @s 1461 120 5306 -121 -1` | **R** Distant Horizons: do the crags and the two peaks read as height from here? Day, then night (`/time set 18000`) |
-| 1,000 blocks out | `/tp @s 3230 140 4300 -125 -4` | **R** The same, nearer: broken, irregular, not a fence? |
-| Outside the east rim, the highest peak | `/tp @s 4244 156 3404 48 -15` | **R** Peak top y296, 148 over the plateau; crags beside it, sheer stretches and broken plates along the rim |
-| Outside the east rim, the second peak | `/tp @s 4361 156 3672 48 -15` | **R** 141 over the plateau |
-| The rim post's trailhead (a gate) | `/tp @s 3877 148 3824` | **R** The gap in the crags, the guard placeholder standing in the open, the switchback down the scarp. The rim post's old trail beyond is still the old plan (it audits 637 cells short) |
-| The waterfall | `/tp @s 3992 137 3927` | **R** The one deliberate fall off the highest sheer lip |
-| On the floor, mid-stretch | `/tp @s 4085 88 3779` | **R** The walls from below: scarp plus crag, up to 211 blocks of rock. The capped cracks underfoot: walk over them, and watch whether anything that wanders in gets stuck |
-| The glimpse | `/tp @s 4128 125 3484` | **R** The tear in the east lip |
-| The pool in the wound | `/tp @s 4023 89 3719` | **R** Its open end now climbs out in steps |
+| 3,000 blocks out, the hometown | `/tp @s 1461 120 5306 -121 -1` | **R** Does the rim read as a wall from across the map? Night is held |
+| The tallest peak, from outside | `/tp @s 3243 230 2828 -137 -12` | **R** y305, 185 over the plateau, on the north-west rim |
+| The south-east peak | `/tp @s 4462 229 4483 62 -12` | **R** y301, 177 over |
+| The southern peak | `/tp @s 4164 228 5524 162 -12` | **R** y302, 182 over |
+| The far east peak | `/tp @s 4684 228 4984 101 -12` | **R** y297, 169 over |
+| The rim post's descent | `/tp @s 3904 142 3799 -137 -8` | **R** The gap, the switchback, the guard placeholder at the trailhead |
+| Victory Road's descent | `/tp @s 3557 114 5379 -134 -8` | **R** The route's own crossing, snapped to where it meets the lip (12 blocks) |
+| The excavation haul road | `/tp @s 2958 104 3411 -133 -8` | **R** The western arm's way in |
+| The gulch mouth | `/tp @s 4397 129 4690 67 -8` | **R** The canyon mouth on the south-east arm |
+| The wilds slip | `/tp @s 4122 135 4276 -66 -8` | **R** The landslide slope on the east |
+| On the floor, the middle | `/tp @s 4108 88 3637` | **R** The walls from below, the crack grooves underfoot, the biome |
+| On the floor, the north arm | `/tp @s 3017 108 3071` | **R** How the arms read from inside |
+| On the floor, the south arm | `/tp @s 4165 90 4865` | **R** The same, at the other end |
+| The sky tear, from below | `/tp @s 4108 88 3637 0 -70` | **R** A line, not a tube, with its shards above |
+| A glimpse | `/tp @s 3812 86 3218` | **R** A portal sheet set deep in a tear in the face |
+
+**What the audit already says** (`tools/rift_skin.py verify`, on the stopped world): skin surface 1,975 of 1,975,
+veins 5,638 of 5,638, sky tear 34 of 34, sky shards 90 of 90, entrance paths 5 of 5, entities 14 of 14. The biome
+reads `cobblers:the_rift` at 25 sampled points inside the lip and **0 outside it**.
 
 ### 4. Giovanni's gym (2 min)
 | Stop | `/tp` | Look at |
