@@ -1,0 +1,65 @@
+{
+  "schema": "cobblers.rift_deep/1",
+  "status": "the Windward Deep: the chamber and its levels. The buildings are town content and come after.",
+  "builder": "tools/rift_deep.py",
+  "region": "the_deep, traced from the owner's annotated heightmap (data/rift_regions.json)",
+  "seed": 20260923,
+  "floor_y": 0,
+  "why_y0": "The owner, 2026-09-22, having flown the whole Rift: it should sit very low in the ground, not at y40. Measured at (3603, 3222): surface y83, build floor y-64, bedrock at the bottom. y0 leaves 83 blocks of cover and 64 below for the shell.",
+  "form": {
+    "kind": "roofed cavern city",
+    "why": "At 83 blocks down the Deep cannot be a terraced pan open to the Rift's sky: there is unbroken ground above it. It is a chamber, and the city stands in levels inside it, which is what 'almost a futuristic city fuelled by the Rift' asks for. The Displaced City cavern is the precedent for the rock shell.",
+    "roof": {
+      "centre": 52,
+      "edge": 22,
+      "falloff": 1.6,
+      "min_cover": 20,
+      "why": "Tallest over the middle and closing down to the walls, so it reads as a chamber. min_cover is the rock that must remain between the roof and the surface: the carve is clamped per column so it can never break through."
+    },
+    "shell": {
+      "depth": 4,
+      "block": "legendarymonuments:distortion_deepslate",
+      "fallback": "minecraft:deepslate",
+      "why": "Any void within 4 blocks of the carve becomes rock, so the chamber never opens into a cave, an aquifer or the Rift's own floor."
+    }
+  },
+  "levels": [
+    {
+      "y": 0,
+      "name": "the floor",
+      "inset": 5
+    },
+    {
+      "y": 16,
+      "name": "the second deck",
+      "inset": 38
+    },
+    {
+      "y": 32,
+      "name": "the high deck",
+      "inset": 72
+    }
+  ],
+  "level_why": "Three decks 16 apart, sized to the chamber: its deepest point is 109 blocks from the wall, so insets of 5, 38 and 72 give about 103k, 50k and 13k columns. The floor keeps a 5-block margin of bare rock at the walls, so the chamber reads as rock the city was built inside rather than as a paved box. A 16-block riser is not walkable on purpose: the city moves between decks by lift, which is what makes it read as built rather than as terrain. LumyMon has an `elevator` block; the lifts themselves are town content.",
+  "deck": {
+    "block": "rechiseled:blackstone_polished_connecting",
+    "fallback": "minecraft:polished_blackstone",
+    "edge": "rechiseled:basalt_bordered_polished",
+    "edge_fallback": "minecraft:polished_basalt",
+    "thickness": 2,
+    "why": "Rechiseled is dressed masonry, which is wrong for a torn cliff and exactly right for a built city. Its connecting variants stop a large deck reading as a grid."
+  },
+  "light": {
+    "block": "legendarymonuments:galar_particle_block",
+    "fallback": "minecraft:pearlescent_froglight",
+    "every": 13,
+    "why": "The Rift fuels the city: the same violet the veins use, set into the decks on a loose grid. Light 15, and it conditions no spawn."
+  },
+  "spawn_policy": "No block placed here may condition a spawn (data/spawn_blocks.json). The chamber is unlit rock and dressed stone; the glow is the galar particle block, which is clean.",
+  "tunnel_mouth": {
+    "toward": "entrance_to_e4",
+    "width": 9,
+    "height": 7,
+    "why": "Where Victory Road leaves the Deep. The tunnel itself is a separate pass and needs the League's final position; this only opens and marks its mouth so the chamber is not sealed."
+  }
+}
