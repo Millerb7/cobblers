@@ -160,7 +160,8 @@ def parse_moves(text):
         if not (cat and typ):
             continue
         out[mid] = {"power": int(bp.group(1)) if bp else 0, "category": cat.group(1), "type": typ.group(1),
-                    "accuracy": 100 if (not acc or acc.group(1) == "true") else int(acc.group(1))}
+                    "accuracy": 100 if (not acc or acc.group(1) == "true") else int(acc.group(1)),
+                    "contact": bool(re.search(r"flags: \{[^}]*contact: 1", body))}
     if len(out) < 500:
         raise SimError("parsed only %d moves from the jar's Showdown data" % len(out))
     return out
@@ -310,10 +311,17 @@ def choose_moveset(sp, level, moves, chart):
     types = [sp.get("primaryType"), sp.get("secondaryType")]
     for mid in level_moves(sp, level):
         mv = moves.get(mid)
-        if not mv or mv["power"] <= 0:
+        if not mv:
+            continue
+        power = mv["power"]
+        if power <= 0:
+            # Grass Knot, Low Kick and Gyro Ball rank on a nominal power here because the real one depends on
+            # the target. Dropping them is what stopped any player candidate carrying Low Kick into Onix.
+            power = VARIABLE_NOMINAL.get(mid, 0)
+        if power <= 0:
             continue
         stab = 1.5 if mv["type"].lower() in [t.lower() for t in types if t] else 1.0
-        cands.append((mv["power"] * stab * mv["accuracy"] / 100.0, mid, mv))
+        cands.append((power * stab * mv["accuracy"] / 100.0, mid, mv))
     best_by_type = {}
     for score, mid, mv in sorted(cands, reverse=True):
         best_by_type.setdefault(mv["type"], (score, mid))
@@ -352,6 +360,7 @@ class Mon:
         if self.item == "assault_vest":
             self.spd = int(self.spd * 1.5)
         self.moveset = moveset if moveset is not None else choose_moveset(sp, level, moves, chart)
+        self.dex = species
         self.side = "player"
         self.reset()
 
@@ -406,6 +415,17 @@ ABSORB = {"lightningrod": ("Electric", "spa"), "motordrive": ("Electric", "spe")
           "voltabsorb": ("Electric", "heal"), "waterabsorb": ("Water", "heal"),
           "dryskin": ("Water", "heal"), "flashfire": ("Fire", "spa"), "sapsipper": ("Grass", "atk"),
           "levitate": ("Ground", None), "eartheater": ("Ground", "heal")}
+# Showdown gives these basePower 0 because the real power depends on the target. This is only for RANKING a
+# player's moveset; the damage calculation computes the real number from the defender's weight or speed.
+VARIABLE_NOMINAL = {"grassknot": 60, "lowkick": 60, "gyroball": 60}
+
+# A type cannot take the status its own type produces. Koga's team is Poison and cannot be poisoned; Blaine's is
+# Fire and cannot be burned; Surge's is Electric and cannot be paralysed. Leaving these out let the simulation
+# shut down three whole gyms with a single status move.
+STATUS_IMMUNE = {"par": ("electric",), "brn": ("fire",), "psn": ("poison", "steel"),
+                 "tox": ("poison", "steel"), "frz": ("ice",)}
+POWDER_MOVES = {"sleeppowder", "poisonpowder", "stunspore", "spore"}
+
 WEATHER_ABILITY = {"drought": "sun", "drizzle": "rain", "sandstream": "sand", "snowwarning": "snow"}
 SCREEN_MOVES = {"lightscreen": "special", "reflect": "physical", "auroraveil": "both"}
 BOOST_MOVES = {"nastyplot": {"spa": 2}, "swordsdance": {"atk": 2}, "agility": {"spe": 2},
@@ -462,14 +482,20 @@ def damage(att, dfn, mid, moves, chart, field=None, species=None):
     if not mv:
         return 0.0
     power = mv["power"]
-    if power <= 0 and species is not None:
-        vp = variable_power(mid, att, dfn, moves, species)
-        power = vp or 0
+    if power <= 0:
+        # the dex travels on the Pokemon, so a caller that forgets to pass one no longer gets a silent zero
+        dex = species if species is not None else getattr(att, "dex", None)
+        power = (variable_power(mid, att, dfn, moves, dex) or 0) if dex else 0
     if power <= 0:
         return 0.0
     eff = effectiveness(chart, mv["type"], dfn.types)
     absorb = ABSORB.get(dfn.ability)
     if absorb and absorb[0] == mv["type"] and att.ability != "moldbreaker":
+        gain = absorb[1]
+        if gain == "heal":
+            dfn.hp_now = min(float(dfn.hp), dfn.hp_now + dfn.hp / 4.0)
+        elif gain:
+            dfn.stages[gain] = min(6, dfn.stages[gain] + 1)
         return 0.0
     if dfn.item == "airballoon" and mv["type"] == "Ground" and not dfn.balloon_popped:
         return 0.0
@@ -534,10 +560,34 @@ def best_action(att, dfn, moves, chart, field, species):
     if dmg > 0:
         return ("attack", mid, dmg)
     for m in att.moveset:
-        if m in BOOST_MOVES or m in STATUS_MOVES or m in SCREEN_MOVES or m in WEATHER_MOVES:
-            if m not in att.used_once:
+        if m in att.used_once:
+            continue
+        if m in HEAL_MOVES:
+            if att.hp_now <= att.hp * 0.6:
+                att.used_once.discard(m)          # recovery is worth repeating, unlike a set-up move
                 return ("support", m, 0.0)
+            continue
+        if m in BOOST_MOVES or m in DROP_MOVES or m in STATUS_MOVES or m in SCREEN_MOVES or m in WEATHER_MOVES:
+            return ("support", m, 0.0)
     return ("stall", None, 0.0)
+
+
+def status_immune(mon, want, mid):
+    """Type immunities, and the abilities that actually confer one. Magic Guard is NOT among them: it stops
+    indirect damage, not status, and Alakazam can be paralysed like anything else."""
+    if any(t.lower() in STATUS_IMMUNE.get(want, ()) for t in mon.types):
+        return True
+    if mid in POWDER_MOVES and any(t.lower() == "grass" for t in mon.types):
+        return True
+    if mon.ability in ("immunity",) and want in ("psn", "tox"):
+        return True
+    if mon.ability in ("limber",) and want == "par":
+        return True
+    if mon.ability in ("waterveil", "waterbubble") and want == "brn":
+        return True
+    if mon.ability in ("insomnia", "vitalspirit") and want == "slp":
+        return True
+    return False
 
 
 def apply_support(mon, foe, mid, field, moves):
@@ -558,8 +608,9 @@ def apply_support(mon, foe, mid, field, moves):
         field.weather = WEATHER_MOVES[mid]
         return True
     if mid in STATUS_MOVES:
-        if foe.status is None and foe.ability not in ("magicguard",):
-            foe.status = STATUS_MOVES[mid]
+        want = STATUS_MOVES[mid]
+        if foe.status is None and not status_immune(foe, want, mid):
+            foe.status = want
         return True
     if mid in HEAL_MOVES:
         mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 2.0)
@@ -593,24 +644,24 @@ def take_hit(dfn, att, dmg, eff_super, contact):
 def end_of_turn(mon, field):
     if mon.hp_now <= 0:
         return
-    if mon.ability == "magicguard":
-        return
+    guarded = mon.ability == "magicguard"     # blocks indirect damage only: it does not stop Leftovers
     if mon.item == "leftovers":
         mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 16.0)
     elif mon.item == "black_sludge":
         poison = any(t.lower() == "poison" for t in mon.types)
         mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 16.0) if poison else mon.hp_now - mon.hp / 8.0
-    if mon.item == "life_orb" and mon.hit_this_turn:
-        mon.hp_now -= mon.hp / 10.0
-    if mon.status == "brn":
-        mon.hp_now -= mon.hp / 16.0
-    elif mon.status == "psn":
-        mon.hp_now -= mon.hp / 8.0
-    elif mon.status == "tox":
-        mon.tox_turns += 1
-        mon.hp_now -= mon.hp * min(15, mon.tox_turns) / 16.0
-    if field.weather == "sand" and not any(t.lower() in ("rock", "ground", "steel") for t in mon.types):
-        mon.hp_now -= mon.hp / 16.0
+    if not guarded:
+        if mon.item == "life_orb" and mon.hit_this_turn:
+            mon.hp_now -= mon.hp / 10.0
+        if mon.status == "brn":
+            mon.hp_now -= mon.hp / 16.0
+        elif mon.status == "psn":
+            mon.hp_now -= mon.hp / 8.0
+        elif mon.status == "tox":
+            mon.tox_turns += 1
+            mon.hp_now -= mon.hp * min(15, mon.tox_turns) / 16.0
+        if field.weather == "sand" and not any(t.lower() in ("rock", "ground", "steel") for t in mon.types):
+            mon.hp_now -= mon.hp / 16.0
     mon.hit_this_turn = False
 
 
@@ -664,7 +715,7 @@ def run_gauntlet(team, foes, moves, chart, species=None, switching=False, cap_tu
                 if dmg > 0:
                     mv = moves[mid]
                     take_hit(a, b, dmg, effectiveness(chart, mv["type"], a.types) > 1,
-                             mv["category"] == "Physical")
+                             mv.get("contact", False))
                     b.hit_this_turn = True
                 for m in (a, b):
                     end_of_turn(m, field)
@@ -705,7 +756,7 @@ def run_gauntlet(team, foes, moves, chart, species=None, switching=False, cap_tu
                 mv = moves[mid]
                 att.hit_this_turn = True
                 take_hit(dfn, att, dmg, effectiveness(chart, mv["type"], dfn.types) > 1,
-                         mv["category"] == "Physical")
+                         mv.get("contact", False))
             elif kind == "support":
                 apply_support(att, dfn, mid, field, moves)
             else:

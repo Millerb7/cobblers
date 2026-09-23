@@ -142,7 +142,10 @@ def collect(margin):
 
 
 def species_types(jar_species, name):
-    sp = jar_species.get(re.sub(r"[^a-z0-9]", "", name.replace("♀", "f").replace("♂", "m")))
+    # battle_sim.key, not a second copy of it: two copies of a normalisation that must agree on both sides is
+    # the exact shape of the bug that dropped the gendered Nidoran.
+    import battle_sim as BS
+    sp = jar_species.get(BS.key(name))
     if not sp:
         return None
     return [t for t in (sp.get("primaryType"), sp.get("secondaryType")) if t]

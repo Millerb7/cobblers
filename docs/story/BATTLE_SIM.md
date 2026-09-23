@@ -22,9 +22,9 @@ Species counts before each gym roughly doubled: 19 / 24 / 44 / 74 / 91 / 110 / 1
 |---|---|---|---|---|---|---|---|---|
 | 1 | Brock (Rock) | 20 | 19 | 6 | 7 | 12 | WIN, 2 lost | LOSS, 3 of 4, next on 2% |
 | 2 | Misty (Water) | 25 | 24 | 4 | 4 | 12 | WIN, 1 lost | WIN, 3 lost |
-| 3 | Surge (Electric) | 30 | 44 | 3 | 11 | **3** | WIN, 2 lost | LOSS, 3 of 4 |
+| 3 | Surge (Electric) | 30 | 44 | 2 | 10 | **3** | WIN, 3 lost | LOSS, 3 of 4 |
 | 4 | Erika (Grass) | 35 | 74 | 8 | 8 | 24 | WIN, 2 lost | LOSS, 3 of 4 |
-| 5 | Koga (Poison) | 40 | 91 | 1 | 26 | 22 | WIN, 4 lost | WIN, 4 lost |
+| 5 | Koga (Poison) | 40 | 91 | 1 | 26 | 22 | WIN, 3 lost | WIN, 4 lost |
 | 6 | Sabrina (Psychic) | 45 | 110 | 2 | 13 | 15 | WIN, 4 lost | LOSS, 4 of 5 |
 | 7 | Blaine (Fire) | 50 | 146 | 2 | 21 | 36 | **LOSS, 5 of 6** | LOSS, 3 of 6 |
 | 8 | Giovanni | — | — | — | — | — | no roster | no roster |
@@ -36,7 +36,7 @@ strategy line in `data/trainers.json` said so all along — "Drought Torkoal set
 exploits sun" — and the tool could not see it.
 
 **Gym 3 is not thin.** All four of Surge's are Electric, so the gym is weak to Ground and nothing else, and that
-is still the narrowest in the game. But there are three Ground families before it, not one, and eleven catchable
+is still the narrowest in the game. But there are three Ground families before it, not one, and ten catchable
 species beat Raichu. See the review at the head of `GYM_SUFFICIENCY_AUDIT.md`.
 
 **Three of Surge's four have Lightning Rod.** An Electric answer to the Electric gym does exactly zero damage.
@@ -75,6 +75,30 @@ fight designed around the AI pivoting is invisible here.
 
 **Hazards are in the same bucket.** Stealth Rock and Toxic Spikes only pay off against switching, so they are
 counted as unmodelled and do nothing. If the rewritten fights lean on hazards, the tool will understate them.
+
+## Defects found in this tool and fixed
+
+A separate session wrote the tests and reviewed the engine, and found ten defects in it. Eight changed a number
+or were footguns; all are fixed. They are listed because they say what to distrust in an engine of this kind.
+
+| Defect | Which way it biased |
+|---|---|
+| `choose_moveset` dropped every move with basePower 0, so no player candidate could ever carry Grass Knot, Low Kick or Gyro Ball. Machop's Low Kick into Brock's Onix — 120 power, super-effective — was unreachable. | against the player |
+| `DROP_MOVES` and `HEAL_MOVES` were unreachable in `best_action`, so **Starmie's Recover did nothing**, along with Scary Face, Tearful Look and Smokescreen. | against the leader |
+| The type absorbers recorded a payoff nobody read: Lightning Rod's +1 SpA, Water and Volt Absorb's heal, Sap Sipper and Motor Drive. Three of Surge's four hold Lightning Rod. | against the leader |
+| No type-based status immunities at all. Thunder Wave landed on Raichu and Magnezone, Will-O-Wisp on Torkoal and Arcanine, Toxic on Weezing and Crobat — a single status move shut down three whole gyms. | against the leader |
+| Magic Guard was given status immunity, which is not a thing, and it also cancelled Leftovers. | both |
+| Contact was approximated as "is it physical", so Weezing's Rocky Helmet taxed Earthquake and Rock Slide, which touch nothing. Now read from the move's own flag: 272 of 930 moves make contact. | against the player |
+| `damage()` returned a silent 0 for a variable-power move when the caller forgot to pass the dex. The dex now travels on the Pokemon. | latent |
+| `availability.py` re-implemented `battle_sim.key()` instead of importing it — two copies of the normalisation that must agree, which is the exact shape of the bug that dropped the gendered Nidoran. | latent |
+
+One review finding needed no change: Mold Breaker bypassing *every* absorber including Levitate is correct, and
+there is now a test that will fail if someone "fixes" it.
+
+The net effect on the table above was small — Surge got harder (2 sweepers, not 3) and Koga easier by one
+Pokemon — but the direction matters more than the size: four of the eight were flattering the player against the
+leaders' own gimmicks, which is precisely the failure mode for a tool you are about to design gimmick fights
+against.
 
 ## What it still cannot judge
 
@@ -200,19 +224,19 @@ GYM 2  kanto_misty (Water)   leader status: authored
 ====================================================================================================
 GYM 3  kanto_ltsurge (Electric)   leader status: authored
   cap 30, roster: electabuzz L27, magnezone L28, boltund L29, raichu L30
-  44 catchable candidates: 3 beat the whole roster 1v1, 11 beat some, 30 beat none
-  beat the ace (raichu): 11
+  44 catchable candidates: 2 beat the whole roster 1v1, 12 beat some, 30 beat none
+  beat the ace (raichu): 10
   the ace is weak to: ground; 3 catchable families can attack on one of those types
     diggersby (normal/ground, first wild L21), clodsire (poison/ground, first wild L24), quagsire (water/ground, first wild L24)
   most health taken off the ace by one Pokemon: ursaring 100%, skiddo 100%, pawmo 100%, heracross 100%, hariyama 100%
   Pokemon needed to bring the ace down: 1
-  gauntlet, informed team ampharos, diggersby, hariyama, clodsire, dubwool, heracross
-      no switching    WIN  -- 4 of 4 downed, 2 lost
+  gauntlet, informed team diggersby, hariyama, ampharos, clodsire, dubwool, heracross
+      no switching    WIN  -- 4 of 4 downed, 3 lost
   gauntlet, walked   team ampharos, pidgeotto, raticate, dubwool, kingler, shellder
       no switching    LOSS -- 3 of 4 downed, 6 lost, next foe on 47%
-    mareep       as ampharos     electric         4/4  first wild L5   electabuzz,magnezone,boltund,raichu
     bunnelby     as diggersby    normal/ground    4/4  first wild L21  electabuzz,magnezone,boltund,raichu
     makuhita     as hariyama     fighting         4/4  first wild L22  electabuzz,magnezone,boltund,raichu
+    mareep       as ampharos     electric         3/4  first wild L5   electabuzz,magnezone,boltund
     clodsire     as clodsire     poison/ground    3/4  first wild L24  electabuzz,magnezone,raichu
     wooloo       as dubwool      normal           3/4  first wild L5   electabuzz,boltund,raichu
     heracross    as heracross    bug/fighting     3/4  first wild L21  electabuzz,magnezone,raichu
@@ -251,7 +275,7 @@ GYM 5  kanto_koga (Poison)   leader status: authored
   most health taken off the ace by one Pokemon: ursaring 100%, ursaring 100%, talonflame 100%, staraptor 100%, staraptor 100%
   Pokemon needed to bring the ace down: 1
   gauntlet, informed team drampa, altaria, bronzong, cryogonal, medicham, ampharos
-      no switching    WIN  -- 5 of 5 downed, 4 lost
+      no switching    WIN  -- 5 of 5 downed, 3 lost
   gauntlet, walked   team ampharos, pidgeot, raticate, dubwool, kingler, shellder
       no switching    WIN  -- 5 of 5 downed, 4 lost
     drampa       as drampa       normal/dragon    5/5  first wild L24  crobat,weezing,drapion,toxtricity,venomoth
@@ -316,7 +340,7 @@ STARTERS
   starter       G1  G2  G3  G4  G5  G6  G7
   charmander    0/4  1/4  2/4  3/4  5/5  3/5  1/6   (final form at cap: charizard)
   squirtle      4/4  3/4  0/4  0/4  2/5  4/5  3/6   (final form at cap: blastoise)
-  bulbasaur     4/4  3/4  2/4  1/4  2/5  1/5  1/6   (final form at cap: venusaur)
+  bulbasaur     4/4  3/4  2/4  1/4  1/5  1/5  1/6   (final form at cap: venusaur)
   cyndaquil     0/4  0/4  0/4  2/4  5/5  3/5  2/6   (final form at cap: typhlosion)
   totodile      4/4  3/4  0/4  0/4  1/5  3/5  2/6   (final form at cap: feraligatr)
   chikorita     4/4  3/4  1/4  1/4  0/5  2/5  1/6   (final form at cap: meganium)
