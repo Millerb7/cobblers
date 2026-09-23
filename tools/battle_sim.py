@@ -881,7 +881,13 @@ def assess(gym, avail, leaders, species, moves, chart, ivs, stones, caps):
     t = leaders.get(gym)
     rows = avail[gym]["rows"]
     init, rel = caps
-    cap = t["team"][-1]["level"] if t and t["team"] else None
+    # rctmod-server.toml, verbatim: "The level cap of a player is based off the strongest pokemon from the party
+    # of their NEXT required trainer ... The relativeLevelCap is added to the resulting value." So entering gym N
+    # the cap is that gym's ace PLUS relativeLevelCap, not the ace itself. Running it at the ace understated the
+    # player by five levels at every gym (found 2026-09-24).
+    cap = (max(m["level"] for m in t["team"]) + rel) if t and t["team"] else None
+    if cap is not None:
+        cap = max(cap, init if gym == 1 else 0)
     out = {"gym": gym, "theme": avail[gym]["theme"], "leader": avail[gym]["leader"],
            "cap": cap, "candidates": [], "team": t["team"] if t else [],
            "status": t["status"] if t else "missing"}
@@ -1003,6 +1009,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--gym", type=int)
     ap.add_argument("--ivs", type=int, default=15)
+    ap.add_argument("--cap-offset", type=int, default=None,
+                    help="override relativeLevelCap: 0 is what GYM_SUFFICIENCY_AUDIT.md recommends")
     ap.add_argument("--stones", action="store_true")
     ap.add_argument("--switching", action="store_true",
                     help="also run the player-side switching bound: see LIMITS, it is not yet sound")
@@ -1014,6 +1022,8 @@ def main(argv=None):
     avail = parse_availability(AVAILABILITY)
     leaders, contract = gym_leaders()
     caps = level_caps(RCT_CONFIG)
+    if a.cap_offset is not None:
+        caps = (caps[0], a.cap_offset)
 
     lines = []
 
@@ -1024,7 +1034,7 @@ def main(argv=None):
     say("Cobblemon jar: %s" % jar.name)
     say("species %d, moves %d, types %d; IVs %d, EVs 0, %s evolutions"
         % (len(species), len(moves), len(chart), a.ivs, "level and item" if a.stones else "level only"))
-    say("level cap from rctmod-server.toml: initial %d, relative +%d" % caps)
+    say("level cap: initial %d, relative %+d -- so the player meets each gym at its ace %+d" % (caps + (caps[1],)))
     say("")
 
     results = {}

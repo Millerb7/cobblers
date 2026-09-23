@@ -16,6 +16,17 @@ Species counts before each gym roughly doubled: 19 / 24 / 44 / 74 / 91 / 110 / 1
 **No bag items on either side**, which is correct rather than a simplification: every authored leader sets
 `rct.battleRules.maxItemUses: 0` and carries an empty `bag`.
 
+**The cap, corrected 2026-09-24.** `rctmod-server.toml` says verbatim: *"The level cap of a player is based off
+the strongest pokemon from the party of their **next required trainer** ... The relativeLevelCap is added to the
+resulting value."* So entering gym N the cap is that gym's ace **+5**, not the ace. An earlier version of this
+document ran the player at the ace and understated them by five levels at every gym. The table below is at the
+live `relativeLevelCap = 5`.
+
+At the live offset the campaign is much softer than the ace-level run suggested: **every gym is won by both
+teams except Blaine against a walked team**, and Misty falls to both teams without a single loss. At offset 0 —
+what `GYM_SUFFICIENCY_AUDIT.md` recommends — four of the seven flip back to a loss for the walked team and
+Blaine beats the informed six as well. That difference is the whole of the audit's level complaint, measured.
+
 ## The numbers
 
 | Gym | Leader | Cap | Candidates | Sweep 1v1 | Beat ace | Families that can hit the ace super-effectively | Informed six | Walked six |
