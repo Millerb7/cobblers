@@ -91,6 +91,7 @@ GYM_NAMES = {1: ("kanto_brock", "Rock"), 2: ("kanto_misty", "Water"),
              3: ("kanto_ltsurge", "Electric"), 4: ("kanto_erika", "Grass"),
              5: ("kanto_koga", "Poison"), 6: ("kanto_sabrina", "Psychic"),
              7: ("kanto_blaine", "Fire"), 8: ("kanto_giovanni", "Ground")}
+STARTER_OVERLAY = ROOT / "modpack" / "config" / "cobblemon" / "starters.json"
 STARTER_CONFIG = ROOT / "base-pack" / "cobbleverse" / "config" / "cobblemon" / "starters.json"
 RCT_CONFIG = ROOT / "base-pack" / "cobbleverse" / "config" / "rctmod-server.toml"
 
@@ -978,7 +979,9 @@ def config_starters():
     to the config list. So the offer is 13 categories, not the Kanto three
     (docs/research/notes/starter-selection.md).
     """
-    d = json.loads(STARTER_CONFIG.read_text(encoding="utf-8"))
+    # the overlay is what players install, so it wins over the base pack when one exists
+    src = STARTER_OVERLAY if STARTER_OVERLAY.is_file() else STARTER_CONFIG
+    d = json.loads(src.read_text(encoding="utf-8"))
     out = []
     for cat in d.get("starters") or []:
         for entry in cat.get("pokemon") or []:
