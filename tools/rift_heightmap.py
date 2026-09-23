@@ -144,11 +144,17 @@ def trace_outline(mask):
     return ring
 
 
-def smooth_normals(ring, span=26):
-    """The inward unit normal at each ring point, from a tangent averaged over `span` points either way."""
+def smooth_normals(ring, mask, span=26):
+    """The inward unit normal at each ring point, from a tangent averaged over `span` points either way.
+
+    Which way is "in" is decided by the mask, not by the centroid. The Rift is a long branching shape, and on an
+    arm's far side the centroid lies across the gap: orienting by it pointed 39% of the ring outwards, so the
+    sculpt sampled its floor on the plateau and its plateau on the floor (found 2026-09-22).
+    """
     n = len(ring)
     cz = sum(p[0] for p in ring) / n
     cx = sum(p[1] for p in ring) / n
+    H, W = mask.shape
     out = []
     for i in range(n):
         az, ax = ring[(i - span) % n]
@@ -157,8 +163,20 @@ def smooth_normals(ring, span=26):
         L = math.hypot(tz, tx) or 1.0
         nz, nx = -tx / L, tz / L
         pz, px = ring[i]
-        if (cz - pz) * nz + (cx - px) * nx < 0:
+
+        def hits(sz, sx):
+            k = 0
+            for d in (3, 6, 10, 15):
+                z2, x2 = int(round(pz + sz * d)), int(round(px + sx * d))
+                if 0 <= z2 < H and 0 <= x2 < W and mask[z2, x2]:
+                    k += 1
+            return k
+
+        fwd, back = hits(nz, nx), hits(-nz, -nx)
+        if back > fwd:
             nz, nx = -nz, -nx
+        elif back == fwd and (cz - pz) * nz + (cx - px) * nx < 0:
+            nz, nx = -nz, -nx           # a tie (a neck, or a corner): fall back to the centroid
         out.append((nz, nx))
     return out
 
@@ -327,7 +345,7 @@ def build(source_root, world_path=None):
             n_basin, candidate.sum()))
     ring = trace_outline(basin)
     total = len(ring)
-    nrm = smooth_normals(ring)
+    nrm = smooth_normals(ring, basin)
     segs = segments(spec, total, seed)
     ent = entrance_indices(spec, ring, X0, Z0)
     peaks = peak_indices(spec, ring, segs, total, seed, ent)

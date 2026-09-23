@@ -90,7 +90,7 @@ def build(server_dir, check=False):
     for j in sorted(glob.glob(str(mods / "*.jar"))):
         try:
             jars.append(zipfile.ZipFile(j))
-        except Exception:
+        except (zipfile.BadZipFile, OSError):  # not a readable jar
             pass
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     want = rocks(spec)

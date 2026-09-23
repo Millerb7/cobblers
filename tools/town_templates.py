@@ -149,7 +149,7 @@ def pool_index(sources):
                 continue
             try:
                 doc = json.loads(read(n))
-            except Exception:
+            except (json.JSONDecodeError, UnicodeDecodeError):  # malformed template JSON in a jar
                 continue
             pid = "%s:%s" % (m.group(1), m.group(2))
             stack = [e.get("element") for e in doc.get("elements", [])]
@@ -609,7 +609,7 @@ class Assets:
                 if n.startswith("META-INF/jars/") and n.endswith(".jar"):
                     try:
                         zips.append(zipfile.ZipFile(io.BytesIO(z.read(n))))
-                    except Exception:
+                    except (zipfile.BadZipFile, OSError):  # a nested jar that is not a zip
                         pass
         for z in zips:
             for n in z.namelist():
@@ -627,7 +627,7 @@ class Assets:
             return None
         try:
             return json.loads(raw.decode("utf-8-sig"))
-        except Exception:
+        except (json.JSONDecodeError, UnicodeDecodeError):  # malformed JSON in a jar
             return None
 
     @staticmethod
@@ -674,7 +674,7 @@ class Assets:
                     elif TINTED.search(p):
                         tint = TINT_WATER if "water" in p else (TINT_FOLIAGE if "leaves" in p or "vine" in p else TINT_GRASS)
                     rgb = tuple(float(c) * t / 255.0 for c, t in zip(base, tint)) if tint else tuple(float(c) for c in base)
-            except Exception:
+            except (OSError, ValueError, IndexError, TypeError):  # no usable pixels to average
                 rgb = None
         self.cache[key] = rgb
         return rgb
@@ -1064,7 +1064,7 @@ def texture_image(assets, ref):
         return None
     try:
         im = Image.open(io.BytesIO(raw)).convert("RGBA")
-    except Exception:
+    except (OSError, ValueError):  # not an image PIL can open
         return None
     w, h = im.size
     meta = assets.read("assets/%s/textures/%s.png.mcmeta" % (ns, p))
@@ -1200,7 +1200,7 @@ def cmd_blocks(a):
             if n.startswith("META-INF/jars/") and n.endswith(".jar"):
                 try:
                     zs.append(("%s!%s" % (jar.name, n.split("/")[-1]), zipfile.ZipFile(io.BytesIO(z.read(n)))))
-                except Exception:
+                except (zipfile.BadZipFile, OSError):  # a nested jar that is not a zip
                     pass
         for label, zz in zs:
             for n in zz.namelist():
@@ -1212,7 +1212,7 @@ def cmd_blocks(a):
                 if len(parts) == 4 and parts[0] == "assets" and parts[2] == "lang" and parts[3] == "en_us.json":
                     try:
                         lang.update(json.loads(zz.read(n).decode("utf-8-sig")))
-                    except Exception:
+                    except (json.JSONDecodeError, UnicodeDecodeError):  # malformed lang JSON in a jar
                         pass
     sources, _ = ordered_sources(a.server_dir)
     spawn = spawn_table(sources)

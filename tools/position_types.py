@@ -62,7 +62,7 @@ def upstream_positions(jar):
                 continue
             try:
                 doc = json.loads(z.read(n).decode("utf-8"))
-            except Exception:
+            except (json.JSONDecodeError, UnicodeDecodeError):  # malformed spawn JSON in a jar
                 continue
             for s in (doc.get("spawns") or []):
                 parts = (s.get("pokemon") or "").split()

@@ -104,7 +104,7 @@ def load_template(server_dir, template_id):
         for j in glob.glob(os.path.join(server_dir, "versions", "*", "*.jar")) + glob.glob(os.path.join(server_dir, "*.jar")):
             try:
                 z = zipfile.ZipFile(j)
-            except Exception:
+            except (zipfile.BadZipFile, OSError):  # not a readable jar
                 continue
             if name in z.namelist():
                 return nbt.loads(z.read(name))

@@ -82,7 +82,7 @@ def loaded_namespaces(sources):
         if "fabric.mod.json" in names:
             try:
                 ns.add(json.loads(read("fabric.mod.json"))["id"])
-            except Exception:
+            except (json.JSONDecodeError, UnicodeDecodeError, KeyError):  # no usable mod id
                 pass
         for n in names:
             if n.startswith(("data/", "assets/")) and n.count("/") >= 2:
@@ -99,12 +99,12 @@ def collect(sources):
                 ns, path = parts[1], "/".join(parts[4:])[:-5]
                 try:
                     tags.setdefault("#%s:%s" % (ns, path), []).extend(json.loads(read(n)).get("values", []))
-                except Exception:
+                except (json.JSONDecodeError, UnicodeDecodeError):  # malformed tag JSON in a jar
                     continue
             if "spawn_pool_world" in n and n.endswith(".json"):
                 try:
                     doc = json.loads(read(n))
-                except Exception:
+                except (json.JSONDecodeError, UnicodeDecodeError):  # malformed spawn JSON in a jar
                     continue
                 for s in doc.get("spawns", []):
                     for field in FIELDS:

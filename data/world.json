@@ -11,7 +11,7 @@
   "height": 8192,
   "channel": "gray",
   "bit_depth": 16,
-  "sha256": "8098ce618cb3e866a0f91d3cfe55980012f16f166473dc7508945f2d4067d80d",
+  "sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
   "pressed_from": {
     "path": "land_8k_16_rescaled_b145.png",
     "sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
@@ -105,6 +105,7 @@
     "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
   },
   "previous_sha256": [
+    "8098ce618cb3e866a0f91d3cfe55980012f16f166473dc7508945f2d4067d80d",
     "604de74e470569f8f0ac7bb7b42edc174c9f1fbee3bb92da318371a54e860ae7",
     "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
@@ -124,8 +125,8 @@
     "sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
     "generator": "python tools/rift_heightmap.py --apply",
     "spec": "data/rift_sculpt.json",
-    "blocks_moved": 10310920,
-    "columns_changed": 400787,
+    "blocks_moved": 12811417,
+    "columns_changed": 512952,
     "note": "The Rift's shape: the lip of the low-ground basin, a cut band inside it, and the upthrust rim outside. Columns outside the Rift's box are bit-identical."
   }
 },

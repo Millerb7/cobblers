@@ -100,6 +100,36 @@ def test_the_sculpt_is_derived_from_the_unsculpted_map():
     assert base["sha256"] in WORLD["heightmap"].get("previous_sha256", [])
 
 
+def test_every_inward_normal_points_into_the_basin():
+    """Which way is "in" must come from the mask, not from the centroid.
+
+    The Rift is a long branching shape. Orienting the ring's normals by the centroid pointed 39% of them outwards
+    -- on an arm's far side the centroid lies across the gap -- so the sculpt sampled its floor level on the
+    plateau and its plateau level on the floor, and the skin laid debris and entrance paths on the wrong side.
+    Found 2026-09-22 when the biome, painted only where a cell is inside the lip, read outside it at half the
+    sampled points.
+    """
+    import numpy as np
+    plan = ROOT / "derived" / "rift_sculpt" / "plan.json"
+    basin = ROOT / "derived" / "rift_sculpt" / "basin.npy"
+    if not (plan.is_file() and basin.is_file()):
+        pytest.skip("the Rift sculpt has not been applied")
+    sc = json.loads(plan.read_text(encoding="utf-8"))
+    m = np.load(basin)
+    X0, _, Z0, _ = sc["box"]
+    ring, nrm = sc["ring"], sc["normals"]
+    assert len(ring) > 1000, "the ring is too short to be the Rift's lip"
+    wrong = 0
+    for (rx, rz), (nx, nz) in zip(ring, nrm):
+        hits = 0
+        for d in (4, 8, 12):
+            ix, iz = int(round(rx + nx * d)) - X0, int(round(rz + nz * d)) - Z0
+            if 0 <= ix < m.shape[1] and 0 <= iz < m.shape[0] and m[iz, ix]:
+                hits += 1
+        wrong += hits < 2
+    assert wrong / len(ring) < 0.01, "%d of %d normals point out of the basin" % (wrong, len(ring))
+
+
 def test_the_basin_is_one_piece():
     m = np.zeros((40, 40), bool)
     m[5:20, 5:20] = True
