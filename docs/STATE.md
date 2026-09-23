@@ -127,6 +127,33 @@
 
 ## What is blocked
 
+- **What still blocks the live re-export**, listed 2026-09-24. In rough order of how hard each is to clear:
+
+  1. **`tools/reapply.py` does not know about five of the builds.** Its steps are R2-R16: cavern, world tree,
+     grove, elders, Route 1 forest, islet, hometown, towns, donors, lights, signposts, traders. There is **no
+     step for the Rift skin, the Rift biome, the Windward Deep, Victory Road or the League's lot**. Every one of
+     those is a block pass applied by hand to `cobblers-dryrun9`. A re-export writes fresh region files, so all
+     five vanish, and the supervised re-apply run would not put them back. This is the largest single blocker
+     and it is pure tooling: five more steps and their ordering.
+  2. **Codex's re-review of PR #36** (the fail-closed audits and the cavern shell). Outstanding; the owner
+     raised it.
+  3. **PR #40 is unmerged.** Victory Road, the Deep, the League move and the campaign tools are all on
+     `world/gym-waypoints-rift`, 26 commits off main.
+  4. **Zero Habitat Blocks are placed.** `data/habitat_blocks.json` has an empty `blocks` list, so all nine
+     habitat pools are inert. A re-export erases blocks placed in game (EXP-021), so the manifest is the only
+     durable form and it has nothing in it to re-apply.
+  5. **Two authoring calls open**, both above: the League's town plan still at the trunk head, and the Rift rim
+     post no longer visible from its own leg.
+  6. **The bounded-suppression override pack is not installed**, so upstream pools are live in unauthored caves
+     and off-route wilderness. That is by policy (`retain_defaults`), but it means Victory Road's encounters are
+     the pack's, not ours.
+  7. **`relativeLevelCap` disagrees with the authored rosters** (5 against the contract's 0). A config decision,
+     not a world one, but it should be settled before the fights are rewritten.
+
+  Cleared by the work of 2026-09-24: `validate_data.py` is green apart from item 5's rim-post claim, which was
+  109 errors of stale cells and visibility; the starter list is narrowed and recorded; and the Showdown damage
+  check is written and ready to run when the server is free.
+
 - **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap and on the staging exports; the live world and the disposable world predate them, so Surge's town, the Scar and the Frostpeak shrine wait for the live re-export, which is ready to run.
 - **Dialogue delivery:** per-player dialogue is proven single-player (EXP-022); the two-player run is blocked on a second account, and the crushed-house conversations are blocked on a design for world-scoped quest fields, which the compiler refuses.
 - **Mainline reveal runtime:** all 13 conversations compile, but 0 actors or evidence objects are placed; safe NPC markers and each beat's physical evidence remain world-build work, advancement-backed gym flags cannot gate dialogue, `crater_operation_stopped` and `rift_crisis_resolved` are absent from the progression ledger, and the defined Rift-to-League handoff has no setter while the League opens too early on `gym8_cleared`.
