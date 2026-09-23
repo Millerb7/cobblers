@@ -293,18 +293,26 @@ The owner drew the Rift's regions on the heightmap (`land_8k_16_annotated_rift.p
 **Decided by the owner (2026-09-22):**
 - **The League moves into the tower oval.** It fits facing south at lot x3675-3794 z2335-2445 on the apex, levelled
   to y88 (cut 16,364, fill 2,345, 88% inside the oval). Its forecourt runs 170 blocks south to the gate.
-- **The Deep is sunk in terraces to a core at y40.**
-  - **Terraces:** five rings about 18 wide, each stepping about 9 blocks, reach a core roughly 40-60 blocks across
-    at the pan's middle (inradius 109).
-  - **Volume:** about 1.7M blocks removed.
-  - **Access:** 9-block risers cannot be walked, so the city moves between rings by stairs, ramps or lifts. LumyMon
-    has an `elevator` block.
-  - **The seal:** sunk, the Deep leaves the entrance shelf 44 blocks above it with a sheer edge. The shelf is sealed
-    by terrain, so going through the town first is the only way up.
-- **Victory Road is the tunnel alone.** It runs from the Deep up to the entrance shelf: a climb of 44, which is
-  440-530 blocks at 1 in 10 to 1 in 12, or longer with switchbacks. The nine trainers stand in it, about one per 50-60
-  blocks. The walk from the hidden rift cavern through the wilds, the upper rift and the sink to the Deep becomes the
-  approach, with wild encounters and no trainers.
+- **The Deep is sunk in terraces to a core at y0** (the owner, 2026-09-22, after flying the whole Rift; it was
+  y40). Measured in world at its centre (3603, 3222) on `cobblers-dryrun9`: the surface is y83, the build floor is
+  y-64 and the bottom layer is bedrock.
+  - **Cover:** 83 blocks of rock overhead against 43 at y40, and 64 blocks still below the floor for the cavern's
+    shell. It reads as genuinely underground rather than as a sunken pit.
+  - **Terraces:** the same five rings, now stepping about 17 blocks each over an 83-block drop rather than 9 over
+    43. A 17-block riser is far past a walkable step, so the rings need stairs, ramps or lifts throughout rather
+    than at a few points. LumyMon has an `elevator` block.
+  - **Volume:** roughly 4.6M blocks removed against 1.7M at y40, over 111,976 columns. It is a cavern, not a pan,
+    so it needs the Displaced City's rock shell overhead (`tools/cavern_plan.py` is the precedent) rather than
+    open sky.
+  - **What it is not:** at y0 the Deep is no longer a terraced bowl open to the Rift's sky. It is a roofed cavern
+    city. That is what "very low in the ground, almost a futuristic city" asks for, but it means the Rift's floor
+    above it is unbroken ground, and the way in is the tunnel and whatever shaft the dig company sank.
+  - **The seal:** the entrance shelf now stands 83 above the core, still sheer, still sealed by terrain, so going
+    through the town first remains the only way up.
+- **Victory Road is the tunnel alone.** It runs from the Deep up to the entrance shelf: a climb of 83, which is
+  830-1,000 blocks at 1 in 10 to 1 in 12, or longer with switchbacks - about twice the 440-530 the y40 core gave,
+  and a better length for nine trainers at one per 90-110 blocks. The walk from the hidden rift cavern through the
+  wilds, the upper rift and the sink to the Deep becomes the approach, with wild encounters and no trainers.
 - **The Deep is late-game.** The 8-badge gate stands where players come into the Rift, not at the tunnel.
 
 **Open:**
