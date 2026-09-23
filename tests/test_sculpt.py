@@ -416,34 +416,51 @@ def test_run_moves_no_column_of_a_footprint_within_its_grown_circle_by_half_a_bl
 # Removing this lets the real sculpt move a settlement footprint column by half a block or more (the coordinator
 # measured 0.22 at most, mining_town). Runs only when COBBLERS_SOURCE_ROOT holds both heightmaps with the sha256 values
 # world.json records; otherwise skipped.
-def test_real_sculpt_moves_no_settlement_footprint_column_by_half_a_block():
+def test_every_settlement_still_stands_on_the_ground_it_was_sited_on():
+    """The ground towns.json records for each footprint must still be the ground the canonical heightmap gives.
+
+    This replaces a check that compared the *pre-sculpt river cut* against the current map. That baseline was
+    three passes out of date -- sculpt, then the b145 rescale, then the pads -- so it asserted something no town
+    was ever sited on: it failed at 86.97 blocks on tableland_stop against the current map, and still at 21.89 on
+    sunset_west against the sculpt's own output. It only ever went green by skipping when COBBLERS_SOURCE_ROOT was
+    unset, so the settlement guard has been inert since before the rescale (found 2026-09-22).
+
+    The invariant that actually protects a town is that its recorded ground has not drifted from the map any
+    later pass left behind -- whatever those passes were. Measured today: all 27 towns agree exactly, drift 0.0.
+    Two settlements do not stand on the heightmap at all (the Displaced City on its cavern floor, Relic Island on
+    an islet) and are excluded by data, not by name.
+    """
     import os
     root = os.environ.get("COBBLERS_SOURCE_ROOT")
     world = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
     hm = world["heightmap"]
-    sf = hm.get("sculpted_from")
-    if not root or not sf:
-        pytest.skip("COBBLERS_SOURCE_ROOT unset or world.json records no sculpt")
-    paths = {"cut": Path(root) / sf["path"], "sculpted": Path(root) / hm["path"]}
-    if not all(q.is_file() for q in paths.values()):
-        pytest.skip("heightmaps not found under COBBLERS_SOURCE_ROOT")
-    for key, want in (("cut", sf["sha256"]), ("sculpted", hm["sha256"])):
-        if hashlib.sha256(paths[key].read_bytes()).hexdigest() != want:
-            pytest.skip("the %s heightmap on disk is not the one world.json records" % key)
-    cut = T.sample_to_height(np.array(Image.open(paths["cut"])), world)
-    sculpted = T.sample_to_height(np.array(Image.open(paths["sculpted"])), world)
-    cfg = json.loads((ROOT / "data" / "sculpt.json").read_text(encoding="utf-8"))
-    pads = {pd["site"] for pd in cfg.get("pads") or []}
+    if not root:
+        pytest.skip("COBBLERS_SOURCE_ROOT unset")
+    path = Path(root) / hm["path"]
+    if not path.is_file():
+        pytest.skip("the canonical heightmap is not under COBBLERS_SOURCE_ROOT")
+    if hashlib.sha256(path.read_bytes()).hexdigest() != hm["sha256"]:
+        pytest.skip("the heightmap on disk is not the one world.json records")
+    now = T.sample_to_height(np.array(Image.open(path)), world)
+
+    off_map = set()
+    placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    for sid, s in placements["settlements"].items():
+        if isinstance(s, dict) and s.get("ground") in ("cavern_floor", "islet"):
+            off_map.add(sid)
+
     towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
     checked, worst = 0, (-1.0, "")
     for t in towns:
         fp = t.get("footprint") or {}
-        if t["id"] in pads or t.get("kind") == "landmark_tree" or fp.get("min_x") is None:
+        gy = fp.get("ground_y")
+        if fp.get("min_x") is None or not gy or t["id"] in off_map:
             continue
         sl = (slice(int(fp["min_z"]), int(fp["max_z"]) + 1), slice(int(fp["min_x"]), int(fp["max_x"]) + 1))
         checked += 1
-        worst = max(worst, (float(np.abs(sculpted[sl] - cut[sl]).max()), t["id"]))
-    assert checked >= 20
+        drift = max(abs(float(now[sl].min()) - float(gy[0])), abs(float(now[sl].max()) - float(gy[1])))
+        worst = max(worst, (drift, t["id"]))
+    assert checked >= 20, "only %d footprints checked" % checked
     assert worst[0] < 0.5, worst
 
 

@@ -410,6 +410,46 @@ But the repository's rule is that only MIT-style sources are committed, so the p
 `build/resourcepacks/` and is **not committed**; it is rebuilt from the local jars. Whether we ship it to players
 in the overlay is an ADR, not a call for this tool.
 
+## 4c. The whole Rift, into the heightmap (2026-09-22)
+
+The prototype was a block pass that cut its own scarp. That can never reach the live world without being
+re-applied after every export, and it cannot be what `tools/ground.py` calls ground. The full Rift splits in two:
+
+**The shape goes into the canonical heightmap** (`tools/rift_heightmap.py`, `data/rift_sculpt.json`), recorded in
+`data/world.json` under `rift_sculpted_from` with the pre-image pinned, exactly as `tools/press_pads.py` does.
+
+- **The lip is not the region polygon.** Walking `the_rift`'s 28 corners showed a median depth to the floor of 16
+  and 57% of stations under 20: it marks the region, not the rim. The lip is the boundary of the low-ground basin
+  (ground ≤ y120), one connected piece of 1,568,203 columns with 9,994 columns of lip. y120 keeps all eleven of
+  the owner's traced places inside; y100 would cut the tops off three of them.
+- 400,787 columns changed, 10,310,920 blocks of shape, 78 character stretches, 22 peaks 111-186 over the plateau,
+  5 entrances.
+- **Nothing passes y310.** The heightmap maps samples onto y10..y310 for the whole world, so a taller peak would
+  be clipped flat rather than tall. Measured from five vantages: from the hometown at 3,232 blocks a y305 peak
+  stands 2.54° above a skyline that only reaches 0.74°; y375 would add 1.24°, about 19 pixels, and clears no
+  horizon y305 fails to clear.
+
+**Everything a height cannot carry stays a block pass** (`tools/rift_skin.py`, `data/rift_skin.json`), and it
+never cuts or raises ground:
+
+| Why it cannot be a height | What |
+| --- | --- |
+| The export paints with WorldPainter's built-in `Terrain` enum, which has no modded blocks | every material |
+| A heightmap is one surface per column | overhangs |
+| Nothing under them | the sky tear, its shards |
+| Entities | the portal sheets, the guards' trailheads |
+| A numeric WorldPainter biome id cannot name ours | `cobblers:the_rift` |
+| Detail below material control | veins, one-block crack grooves, debris |
+
+The skin only dresses what can be seen: the surface of every column the sculpt moved and the exposed face below
+it, to 24 blocks. The interior stays whatever the export made it — which is what makes the whole Rift affordable
+in blocks at all.
+
+**The biome ships with its spawn-tag change.** The four Rift sub-regions' 40 entries moved from
+`minecraft:windswept_gravelly_hills` to `cobblers:the_rift` and `tools/compile_spawns.py` re-emitted: 2,120
+compiled Rift spawns on the new biome, none left on the old one. Without it the roster would have spawned on the
+plateau outside the lip and nothing inside it.
+
 ## 5. The prototype
 
 - **What:** one stretch, "the chasm": the trunk from (4171, 3875) to (3911, 3583), 391 blocks, both walls, on a

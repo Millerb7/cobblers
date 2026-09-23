@@ -43,14 +43,14 @@ def _jar(tmp_path, textures, models=None, animated=()):
 
 def test_every_rock_the_rift_is_built_from_is_covered():
     # The pack is worth nothing if it misses one band: that band keeps its grid while its neighbours lose theirs.
-    spec = json.loads((ROOT / "data" / "rift_fracture.json").read_text(encoding="utf-8"))
+    spec = json.loads((ROOT / "data" / "rift_skin.json").read_text(encoding="utf-8"))
     want = set(C.rocks(spec))
     assert want
-    named = set(spec["rim"]["materials"]) | {spec["rim"]["streak"]["block"]} | {
-        spec["palette"][r]["block"] for r in ("face_upper", "face_lower", "tread")}
+    pal = spec["palette"]
+    named = set(pal["rock"]) | {pal["streak"]["block"], pal["crystal"]["block"]}
     assert want == {b for b in named if not b.startswith("minecraft:")}
-    # and the rim itself names no vanilla block, or ctm_pack could never cover it
-    assert not [b for b in spec["rim"]["materials"] if b.startswith("minecraft:")], spec["rim"]["materials"]
+    # and the rock itself names no vanilla block, or ctm_pack could never cover it
+    assert not [b for b in pal["rock"] if b.startswith("minecraft:")], pal["rock"]
 
 
 def test_the_eight_variants_are_eight_different_images():

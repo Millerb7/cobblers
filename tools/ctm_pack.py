@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "build" / "resourcepacks" / "cobblers_rift_ctm"
-SPEC = ROOT / "data" / "rift_fracture.json"
+SPEC = ROOT / "data" / "rift_skin.json"
 PACK_FORMAT = 34          # Minecraft 1.21.1
 
 WORLD_READS = ()          # jars and data only: this tool never reads a world
@@ -38,8 +38,8 @@ class CtmError(Exception):
 def rocks(spec):
     """The blocks the Rift's rim and faces are built from, in the order the spec names them, without duplicates."""
     out = []
-    for b in (spec["rim"]["materials"] + [spec["rim"]["streak"]["block"]]
-              + [spec["palette"][r]["block"] for r in ("face_upper", "face_lower", "tread")]):
+    pal = spec["palette"]
+    for b in pal["rock"] + [pal["streak"]["block"], pal["crystal"]["block"]]:
         if b not in out and not b.startswith("minecraft:"):
             out.append(b)
     return out

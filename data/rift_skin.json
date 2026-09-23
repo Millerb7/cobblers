@@ -1,0 +1,158 @@
+{
+  "schema": "cobblers.rift_skin/1",
+  "status": "the block pass over the sculpted Rift: everything a height cannot carry",
+  "builder": "tools/rift_skin.py",
+  "shape": "tools/rift_heightmap.py (data/rift_sculpt.json) -- this pass never cuts or raises ground",
+  "supersedes": "tools/rift_fracture.py and data/rift_fracture.json, whose block pass cut its own scarp. With the scarp now in the heightmap that cut has nothing left to remove: its slope() divides by a run of zero. The palette and every value below were flown and approved on that prototype.",
+  "seed": 20260922,
+  "skin": {
+    "depth": 3,
+    "face_depth": 24,
+    "why": "Only what can be seen. The surface of every column the sculpt moved, plus the exposed vertical face wherever a neighbour is lower, to face_depth. The interior stays whatever the export made it, which is why the shape being in the heightmap is what makes the whole Rift affordable in blocks. The rock is chosen per column and per five-block band from an integer hash of the coordinate, so it is vectorised and identical on every rebuild.",
+    "band": 5
+  },
+  "palette": {
+    "rock": [
+      "legendarymonuments:distortion_stone",
+      "legendarymonuments:distortion_cobblestone",
+      "legendarymonuments:distortion_deepslate",
+      "legendarymonuments:distortion_stone",
+      "legendarymonuments:distortion_deepslate"
+    ],
+    "rock_fallbacks": [
+      "minecraft:tuff",
+      "minecraft:cobblestone",
+      "minecraft:deepslate",
+      "minecraft:tuff",
+      "minecraft:deepslate"
+    ],
+    "streak": {
+      "block": "legendarymonuments:distortion_crystal_block",
+      "fallback": "minecraft:purple_terracotta",
+      "one_in": 12
+    },
+    "vein_core": {
+      "block": "mega_showdown:dormant_crystal",
+      "fallback": "minecraft:end_rod"
+    },
+    "vein_bed": {
+      "block": "legendarymonuments:galar_particle_block",
+      "fallback": "minecraft:pearlescent_froglight"
+    },
+    "vein_seep": {
+      "block": "minecraft:crying_obsidian"
+    },
+    "crystal": {
+      "block": "legendarymonuments:distortion_crystal",
+      "fallback": "minecraft:amethyst_cluster"
+    },
+    "never": {
+      "blocks": [
+        "minecraft:amethyst_block",
+        "minecraft:budding_amethyst",
+        "minecraft:purple_concrete",
+        "minecraft:magenta_concrete",
+        "minecraft:magma_block"
+      ],
+      "why": "each conditions a spawn (data/spawn_blocks.json): Glimmet and Glimmora, Varoom, Gible"
+    }
+  },
+  "veins": {
+    "along_lip": {
+      "every": [
+        90,
+        220
+      ],
+      "length": [
+        40,
+        140
+      ],
+      "width": [
+        1,
+        3
+      ]
+    },
+    "up_faces": {
+      "one_in_stations": 26,
+      "height": 0.7
+    },
+    "crystal_one_in": 40,
+    "why": "The glow the owner liked: lines along the floor near the lip and seams climbing some faces."
+  },
+  "cracks": {
+    "cell": 14,
+    "depth": 1,
+    "glow_one_in": 3,
+    "why": "One block deep and never capped, so nothing that walks can fall in and no glass is needed: 'the glass in cracks feels bad' (owner, 2026-09-22)."
+  },
+  "debris": {
+    "reach": 130,
+    "density": 0.16,
+    "falloff": 2.2,
+    "lump_one_in": 7,
+    "lump_height": [
+      2,
+      3
+    ]
+  },
+  "sky_tear": {
+    "y": [
+      360,
+      400
+    ],
+    "core": "minecraft:sea_lantern",
+    "halo": {
+      "block": "legendarymonuments:galar_particle_block",
+      "fallback": "minecraft:pearlescent_froglight"
+    },
+    "thickness": 2,
+    "main_width": 16,
+    "branch_width": 9,
+    "shards": {
+      "count": 90,
+      "above": [
+        18,
+        90
+      ],
+      "width": [
+        8,
+        18
+      ],
+      "height": [
+        6,
+        12
+      ],
+      "drift": 40,
+      "rock": "legendarymonuments:distortion_stone",
+      "rock_fallback": "minecraft:tuff"
+    },
+    "why": "A line, not a tube, with torn rock hanging over it (owner, second flyover). Over the whole Rift now, not one stretch."
+  },
+  "portal_sheets": {
+    "tag": "rift_fx",
+    "count": 9,
+    "view_range": 3.0,
+    "use": "glimpses only: sheets set deep inside a narrow tear in a solid face, the rock hiding every edge. Never standing in the open, never in a fissure (owner, 2026-09-22).",
+    "block": "minecraft:nether_portal"
+  },
+  "water": {
+    "falls": 6,
+    "seal": {
+      "block": "legendarymonuments:distortion_stone",
+      "fallback": "minecraft:tuff",
+      "depth": 3
+    },
+    "spawn_policy_exception": true,
+    "why": "Water conditions 84 species, so it is placed only where it is meant to be. Built from the heightmap there are no cuts to open a water body's side, so the seal only closes voids the export itself left behind a new face."
+  },
+  "biome": {
+    "id": "cobblers:the_rift",
+    "y": [
+      48,
+      575
+    ],
+    "cell": 4,
+    "why": "Painted only where a whole 4x4 cell is inside the lip, so the sky never changes before the crossing.",
+    "spawn_tag_change": "data/spawns.json: the four Rift sub-regions' 40 entries move from minecraft:windswept_gravelly_hills to cobblers:the_rift, and compile_spawns re-emits. Without it the Rift's roster would stop spawning inside its own biome."
+  }
+}
