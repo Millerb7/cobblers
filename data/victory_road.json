@@ -1,66 +1,298 @@
 {
-  "schema": "cobblers.victory_road/1",
-  "status": "the climb out of the wound: a labyrinth in stone from the Deep's floor to the entrance shelf",
+  "schema": "cobblers.victory_road/2",
+  "status": "the gauntlet out of the wound: one road from the Deep's floor to the League's apron, through five caverns",
   "builder": "tools/victory_road.py",
-  "seed": 20260923,
+  "seed": 20260924,
   "brief": [
-    "Everything before it in the Rift is descent; this is the only ascent, and the sole way out of a pit whose walls cannot be climbed.",
-    "A labyrinth in stone the way Route 1 is a labyrinth in trees, but harsher in atmosphere rather than in navigation. Rock blocks sight and movement both.",
-    "It branches vertically as well as horizontally: shafts, galleries stacked over galleries, a path that crosses above itself.",
-    "The 84 blocks of climb are spent in a few concentrated gains, not an even grade, so a player feels the ascent.",
-    "Nine trainers are the obstacle and they are attrition: no Centre between the Deep and the League, so a player arrives worn.",
-    "Light is scarce and placed, not given.",
-    "A landmark in the middle to orient by, and it is the Rift's own material breaking through, not something built.",
-    "Getting lost costs half a minute and a player's bearings, never their run: every wrong turn retreatable, every corridor walkable.",
-    "It ends by delivering the player onto the entrance shelf with the League in front of them, arriving from below."
+    "Schema 1 was a labyrinth: four stacked galleries on a 16-block lattice, each a pruned spanning tree. The owner replaced it on 2026-09-24. It is not a maze and it does not stop short.",
+    "It runs all the way to the tower. The road ends on the League's own apron, not on a shelf a few hundred blocks short of it.",
+    "Large corridors and gaping caves, not boxed passages. The corridor matches the Deep's tunnel mouth, 9 by 7, and the caverns are 42 to 55 across.",
+    "Relatively straight: a spine of long runs with slow bends, inside the corridor the owner traced as entrance_to_e4 and then into e4_tower. A player always knows which way the tower is.",
+    "It ticks uphill every so often and climbs hard at points, and it dips twice on the way, so the grade is felt rather than walked.",
+    "Ten fights and no Centre before them but one rest station in the middle, which splits the gauntlet into five and five.",
+    "Light is a difficulty setting, not decoration: fightorflight makes Dark and Ghost types more aggressive at or below block light 7 and calmer at or above 12, so the road is lit where a fight starts and dark between."
   ],
-  "galleries": {
-    "y": [2, 24, 46, 68],
-    "exit_y": 86,
-    "why": "Four stacked levels and the exit. Every gallery is flat, so the whole 84 of climb happens in four concentrated gains of 22, 22, 22 and 18 -- a player feels each one instead of walking a ramp."
+  "spine": [
+    {
+      "name": "deep_mouth",
+      "x": 3560,
+      "z": 3064,
+      "y": 1
+    },
+    {
+      "name": null,
+      "x": 3560,
+      "z": 3000,
+      "y": 1
+    },
+    {
+      "name": null,
+      "x": 3546,
+      "z": 2966,
+      "y": 8
+    },
+    {
+      "name": "first_hall",
+      "x": 3546,
+      "z": 2934,
+      "y": 8
+    },
+    {
+      "name": null,
+      "x": 3540,
+      "z": 2900,
+      "y": 20
+    },
+    {
+      "name": null,
+      "x": 3540,
+      "z": 2868,
+      "y": 20
+    },
+    {
+      "name": "the_undercut",
+      "x": 3552,
+      "z": 2838,
+      "y": 18
+    },
+    {
+      "name": null,
+      "x": 3552,
+      "z": 2802,
+      "y": 32
+    },
+    {
+      "name": "the_lantern",
+      "x": 3538,
+      "z": 2758,
+      "y": 30
+    },
+    {
+      "name": null,
+      "x": 3538,
+      "z": 2736,
+      "y": 30
+    },
+    {
+      "name": null,
+      "x": 3542,
+      "z": 2716,
+      "y": 40
+    },
+    {
+      "name": "the_vein",
+      "x": 3548,
+      "z": 2678,
+      "y": 44
+    },
+    {
+      "name": null,
+      "x": 3536,
+      "z": 2650,
+      "y": 44
+    },
+    {
+      "name": null,
+      "x": 3570,
+      "z": 2620,
+      "y": 44
+    },
+    {
+      "name": null,
+      "x": 3598,
+      "z": 2598,
+      "y": 44
+    },
+    {
+      "name": "the_last_gate",
+      "x": 3620,
+      "z": 2578,
+      "y": 44
+    },
+    {
+      "name": null,
+      "x": 3644,
+      "z": 2546,
+      "y": 44
+    },
+    {
+      "name": "stair_foot",
+      "x": 3656,
+      "z": 2514,
+      "y": 44
+    }
+  ],
+  "spine_why": "Authored, not routed, so the whole road can be read here without running anything. Every waypoint is checked against the owner's traced regions and against the canonical heightmap for rock cover; the tool refuses to build a road that leaves the corridor or breaks the surface where it should not.",
+  "deep_mouth_why": "y1, not y0, and z3064, not the pit region's edge. The Deep's floor tread is two blocks thick, so its walking level is y1 and a road at y0 would arrive a block low. And the traced region reaches far further north than the open floor does: measured in the world on 2026-09-24, the pit's floor at x3540-3620 begins around z3064, and everything north of it is rock under ring 0's tread. A mouth at z3042 was walled off from the pit by 22 blocks of it.",
+  "corridor": {
+    "width": 9,
+    "height": 7,
+    "max_grade": 0.56,
+    "wall": "legendarymonuments:distortion_deepslate",
+    "wall_fallback": "minecraft:deepslate",
+    "floor": "rechiseled:basalt_bordered_polished",
+    "floor_fallback": "minecraft:polished_basalt",
+    "why": "9 by 7 is the Deep's tunnel mouth (data/rift_deep.json), so the road is the width of the door it comes out of. max_grade 0.56 is one block of rise per 1.8 of run: a player walks up it, never jumps. The tool refuses a steeper leg.",
+    "fallback_note": "minecraft:deepslate conditions a spawn (data/spawn_blocks.json). It is only used if LegendaryMonuments is absent, which would change the Rift everywhere, not just here."
   },
-  "lattice": {
-    "step": 16,
-    "box": [3470, 2880, 3660, 3060],
-    "why": "Corridors run between nodes 16 apart inside this box, which spans from the Deep's north face to the entrance shelf. A lattice keeps every corridor straight and walkable; the wandering comes from which edges exist, not from curves."
+  "cover": {
+    "min": 4,
+    "why": "Blocks of untouched rock between the corridor's ceiling and the canonical ground. Under 4 a re-export's terrain noise can open a hole in the Rift floor, and the road would be visible from above."
   },
-  "corridor": {"width": 4, "height": 5, "wall": "legendarymonuments:distortion_deepslate", "wall_fallback": "minecraft:deepslate",
-               "floor": "rechiseled:basalt_bordered_polished", "floor_fallback": "minecraft:polished_basalt"},
-  "maze": {
-    "dead_end_max": 3,
-    "why": "Each gallery is a spanning tree over its nodes, so there are no loops to get turned around in, and every branch is retreatable by definition. Leaves longer than dead_end_max steps are pruned, so the worst wrong turn is about 48 blocks out and back: half a minute and your bearings, never your run."
+  "regions": {
+    "inside": [
+      "the_deep",
+      "entrance_to_e4",
+      "e4_tower"
+    ],
+    "gap_tolerance": 60,
+    "why": "The owner traced entrance_to_e4 (x3462-3613, z2661-3025) as the approach to the League before any of this was built. The road belongs inside it, and inside e4_tower where it surfaces. Every block of the walked route is tested against the flood-filled tracings, not against a bounding box.",
+    "gap_why": "The two tracings do not meet. entrance_to_e4 tapers to a point near x3520 at z2661 and e4_tower's southern tip begins near x3630 at z2653, so there is a wedge between them that belongs to neither. The road crosses it underground in 37 blocks, plus 3 more where it clips the taper. gap_tolerance is what the build will accept before it refuses; it is not permission to wander."
   },
-  "shafts": {
-    "width": 4,
-    "per_gallery": 2,
-    "kind": "switchback stair",
-    "why": "Two shafts up from each gallery, so there is a choice and a wrong one, both of which arrive. A switchback stair is walkable in both directions: nothing in the road can be fallen down and not climbed back."
+  "chambers": [
+    {
+      "at": "first_hall",
+      "radius": 26,
+      "height": 22,
+      "kind": "cave",
+      "why": "The first thing past the Deep's mouth and the biggest: it tells a player the road is caverns, not a tunnel."
+    },
+    {
+      "at": "the_undercut",
+      "radius": 22,
+      "height": 20,
+      "kind": "cave",
+      "why": "On the dip. A player walks down into it and climbs out the far side."
+    },
+    {
+      "at": "the_lantern",
+      "radius": 21,
+      "height": 18,
+      "kind": "cave",
+      "rest": true,
+      "why": "The middle of the road and the only safe ground on it. The rest station stands in it."
+    },
+    {
+      "at": "the_vein",
+      "radius": 27,
+      "height": 24,
+      "kind": "landmark",
+      "why": "The Rift's own material breaking through, not something built: the tear's face, its vein and its seep. The one thing in the road that is not rock, so it is what a player takes a bearing from."
+    },
+    {
+      "at": "the_last_gate",
+      "radius": 24,
+      "height": 22,
+      "kind": "cave",
+      "why": "The last room before the stair. Everything after it is climb."
+    }
+  ],
+  "stair": {
+    "at": "stair_foot",
+    "top_y": 78,
+    "hall": [
+      15,
+      35
+    ],
+    "legs": 3,
+    "why": "The last 34 blocks of climb are spent in one switchback stair inside a narrow hall, so the climb is felt as a climb. Three legs, not four, because an odd number ends at the north end of the hall, which is the way out; an even number would set a player down where they came in. The hall tops out at y78 because the ground over it is y86 to y88 and the cover rule needs 4."
   },
-  "light": {
-    "block": "legendarymonuments:galar_particle_block",
-    "fallback": "minecraft:pearlescent_froglight",
-    "every_nodes": 3,
-    "why": "Scarce and placed: one at roughly every third node, so the corridors between are dark. The owner's intent is that the dark is dangerous because wild Pokemon turn aggressive in it -- NOT VERIFIED, see docs/research: no mechanic in this pack is known to make a wild Pokemon aggressive at low light, and if none exists the danger has to come from the encounter table instead."
+  "exit": {
+    "at": [
+      3656,
+      2486
+    ],
+    "y": 89,
+    "lot_y": 88,
+    "ramp_from_z": 2500,
+    "why": "The League's lot is levelled to y88 and skirted 14 blocks, so the apron reaches z2499. The road climbs the last eleven blocks as open steps cut into that apron and sets a player down three blocks south of the lot, facing north. They arrive from below with the tower in front of them and nothing left to walk. y is the level a player stands on, which is one over lot_y: the lot's surface block is y88 and the League's own base course reads at y89. at z2486, not z2488: the ramp climbs 11 from the stair's top landing, and over only 9 columns two of them stepped up two blocks, which a player cannot walk."
   },
   "landmark": {
-    "at_gallery": 2,
-    "radius": 11,
-    "height": 9,
     "face": "legendarymonuments:distortion_crystal_block",
     "face_fallback": "minecraft:purple_terracotta",
     "vein": "legendarymonuments:galar_particle_block",
     "vein_fallback": "minecraft:pearlescent_froglight",
-    "seep": "minecraft:crying_obsidian",
-    "why": "The Rift's own material breaking through, not built: a chamber on the middle gallery where the tear's face is exposed, with the vein running through it. It is the one thing in the road that is not corridor, so it is what a player orients by."
+    "seep": "minecraft:crying_obsidian"
+  },
+  "rest": {
+    "size": [
+      15,
+      15
+    ],
+    "wall": "rechiseled:blackstone_polished_connecting",
+    "wall_fallback": "minecraft:polished_blackstone",
+    "floor": "rechiseled:basalt_bordered_polished",
+    "floor_fallback": "minecraft:polished_basalt",
+    "marker": "minecraft:crying_obsidian",
+    "staffed": false,
+    "why": "A walled room inside the_lantern, lit to calm over its whole floor. Marked and unstaffed: whether it heals is content, and Codex owns it (HANDOVER item 25). It sits between fights 5 and 6, so the gauntlet is two runs of five rather than one of ten. A level run was added north of the_lantern so the room stands on flat road: built across the grade out of the cavern, half its floor sat two blocks under the road."
   },
   "trainers": {
-    "count": 9,
+    "count": 10,
     "stand": "rechiseled:blackstone_polished_connecting",
     "stand_fallback": "minecraft:polished_blackstone",
-    "why": "On the main path only, never in a dead end, spread along it so they meet a player at intervals. Marked and unstaffed; Codex writes them (HANDOVER item 25)."
+    "min_apart": 40,
+    "why": "Ten: one in each corridor approaching a cavern, one in each cavern that is not the rest station, and the tenth at the head of the stair, the last thing before the door. That is five before the rest station and five after. min_apart keeps two fights from being in earshot of each other, and it is what forces the caverns to sit 80 or more apart, since a fight stands at each cavern and at the midpoint between. Marked and unstaffed; Codex writes them (HANDOVER item 25)."
   },
-  "exit": {
-    "toward": "e4_tower",
-    "why": "It surfaces on the entrance shelf facing the League, so a player arrives from below with the building in front of them."
+  "light": {
+    "block": "legendarymonuments:galar_particle_block",
+    "fallback": "minecraft:pearlescent_froglight",
+    "emits": 15,
+    "emits_source": "LegendaryMonuments-Cobbleverse.jar, github/jorgaomc/ModBlocks: FabricBlockSettings.luminance(15) immediately before putstatic GALAR_PARTICLE_BLOCK (read 2026-09-24).",
+    "mechanic": "base-pack/cobbleverse/config/fightorflight.json5: do_pokemon_attack_unprovoked true, light_dependent_unprovoked_attack true, dark_light_level_aggro and ghost_light_level_aggro true, aggression_light_level_base_value 33 against an aggressive_threshold of 100. Light moves ONLY Dark and Ghost types: every other type is indifferent to it.",
+    "tiers": {
+      "rest": {
+        "spacing": 3,
+        "in_floor": true,
+        "target": "12 and over: calm"
+      },
+      "stand": {
+        "radius": 6,
+        "spacing": 3,
+        "in_floor": true,
+        "target": "12 and over: calm"
+      },
+      "chamber": {
+        "spacing": 7,
+        "in_floor": true,
+        "target": "8 to 11: neutral"
+      },
+      "stair": {
+        "every": 4,
+        "in_floor": true,
+        "target": "11 and over: the last climb is lit"
+      },
+      "corridor": {
+        "every": 28,
+        "in_floor": false,
+        "target": "0 to 7 over most of the length: hostile"
+      }
+    },
+    "why": "Block light falls one per block of travel, so a source in the ceiling of a 7-high corridor is already down to 9 at the floor under it and 0 nine blocks away. Calm ground has to be lit from the floor, not the roof. Chambers are lit enough to cross and not enough to be safe; the corridors between them are dark on purpose, and the dark is where the Ghosts are."
+  },
+  "backfill": {
+    "box": [
+      3458,
+      2868,
+      3676,
+      3071
+    ],
+    "y": [
+      0,
+      92
+    ],
+    "old_exit": [
+      3550,
+      2880
+    ],
+    "old_exit_radius": 12,
+    "re_apply_after": "cobblers_deep, the functions whose tile is z47 (deep_*_47*). The box takes in the pit's northern rim, so the fill buries it and the Deep's own build puts it back. Those functions are deterministic and already applied once, so re-running them restores exactly what was there.",
+    "box_ends_at_3071": "not 3072, which is the first column of the NEXT chunk row: the box has to end inside tile z47 or the fill leaves a one-block wall of rock standing across the pit that the re-applied functions never reach. The staging world got that wall on 2026-09-24 and it was cleared by also running deep_*_48* once.",
+    "why": "Schema 1's labyrinth was applied to the staging world: four galleries on a 16-block lattice inside x3470-3660 z2880-3060, six switchback shafts, a landmark chamber and an exit that broke the surface at y83. Schema 2 runs through the same rock, so the old corridors would open off the new road and its shafts would still be holes in the Deep's north face. This puts the box back to solid rock under the canonical ground before the new functions run. The old exit is refilled to the ground itself over a 12-block disc, because it was a hole in the surface and nothing else would close it; that leaves a patch of the Rift's own stone on the Rift's own floor. For a disposable world only: it overwrites everything in the box below ground."
+  },
+  "roster_finding": {
+    "spawns_here_today": "nothing. Every compiled spawn box carries canSeeSky true (tools/compile_spawns.py) and data/habitat_blocks.json places no block anywhere yet, so no wild Pokemon spawns underground in the Rift at all.",
+    "pool_if_placed": "cobblers:rift_depths, weight 92: rock 80.4%, ground 16.3%, poison 13.0%, psychic 7.6%, ghost 7.6%, steel 3.3%, bug 2.2%. No Dark at all; the Ghost is golett (6) and runerigus (1).",
+    "means": "Light gates 7.6% of the pool as it stands, so the dark is atmosphere and not yet difficulty. Making it difficulty is a roster change plus a Habitat Block, and both are the owner's call."
   }
 }
