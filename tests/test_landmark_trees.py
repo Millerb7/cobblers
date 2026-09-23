@@ -144,10 +144,13 @@ def test_real_victory_road_runs_from_gym8_up_the_rift_to_the_league():
     vr = CL.victory_road(a, b, landmarks)
     assert vr[0] == [a["centre"]["x"], a["centre"]["z"]] and vr[-1] == [b["centre"]["x"], b["centre"]["z"]]
     assert vr[1] == ax["south_west_arm"][-1], "the road enters the Rift at the foot of the south-west arm"
-    # the League stands on the trunk's floor below the apex (2026-09-21): the road follows the trunk to its point
-    # nearest the League and stops, never running on to the apex and back
-    assert vr[-2] in ax["trunk"] and vr[-2] != ax["trunk"][0], "and stops on the trunk short of the apex"
+    # The road follows the trunk to the League and stops there, never running past it and back. Until 2026-09-23
+    # the League stood on the trunk's FLOOR below the apex, so this asserted the road stopped short of the apex;
+    # the League is on the apex oval now, so reaching the apex is right and doubling back is what to catch.
+    assert vr[-2] in ax["trunk"], "the last leg runs along the trunk"
     assert ax["south_west_arm"][0] == ax["trunk"][-1], "arm and trunk meet at the fork"
     assert vr.count(ax["trunk"][-1]) == 1
+    assert len(vr) == len(set(map(tuple, vr))), "the road doubles back on itself"
     length = sum(math.dist(p, q) for p, q in zip(vr, vr[1:]))
-    assert round(length) == 4283
+    # measured, not authored: it moves when the League does, and the point is that it stays one continuous climb
+    assert 3500 <= round(length) <= 5000, round(length)

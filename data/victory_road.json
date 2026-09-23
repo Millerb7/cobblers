@@ -1,0 +1,66 @@
+{
+  "schema": "cobblers.victory_road/1",
+  "status": "the climb out of the wound: a labyrinth in stone from the Deep's floor to the entrance shelf",
+  "builder": "tools/victory_road.py",
+  "seed": 20260923,
+  "brief": [
+    "Everything before it in the Rift is descent; this is the only ascent, and the sole way out of a pit whose walls cannot be climbed.",
+    "A labyrinth in stone the way Route 1 is a labyrinth in trees, but harsher in atmosphere rather than in navigation. Rock blocks sight and movement both.",
+    "It branches vertically as well as horizontally: shafts, galleries stacked over galleries, a path that crosses above itself.",
+    "The 84 blocks of climb are spent in a few concentrated gains, not an even grade, so a player feels the ascent.",
+    "Nine trainers are the obstacle and they are attrition: no Centre between the Deep and the League, so a player arrives worn.",
+    "Light is scarce and placed, not given.",
+    "A landmark in the middle to orient by, and it is the Rift's own material breaking through, not something built.",
+    "Getting lost costs half a minute and a player's bearings, never their run: every wrong turn retreatable, every corridor walkable.",
+    "It ends by delivering the player onto the entrance shelf with the League in front of them, arriving from below."
+  ],
+  "galleries": {
+    "y": [2, 24, 46, 68],
+    "exit_y": 86,
+    "why": "Four stacked levels and the exit. Every gallery is flat, so the whole 84 of climb happens in four concentrated gains of 22, 22, 22 and 18 -- a player feels each one instead of walking a ramp."
+  },
+  "lattice": {
+    "step": 16,
+    "box": [3470, 2880, 3660, 3060],
+    "why": "Corridors run between nodes 16 apart inside this box, which spans from the Deep's north face to the entrance shelf. A lattice keeps every corridor straight and walkable; the wandering comes from which edges exist, not from curves."
+  },
+  "corridor": {"width": 4, "height": 5, "wall": "legendarymonuments:distortion_deepslate", "wall_fallback": "minecraft:deepslate",
+               "floor": "rechiseled:basalt_bordered_polished", "floor_fallback": "minecraft:polished_basalt"},
+  "maze": {
+    "dead_end_max": 3,
+    "why": "Each gallery is a spanning tree over its nodes, so there are no loops to get turned around in, and every branch is retreatable by definition. Leaves longer than dead_end_max steps are pruned, so the worst wrong turn is about 48 blocks out and back: half a minute and your bearings, never your run."
+  },
+  "shafts": {
+    "width": 4,
+    "per_gallery": 2,
+    "kind": "switchback stair",
+    "why": "Two shafts up from each gallery, so there is a choice and a wrong one, both of which arrive. A switchback stair is walkable in both directions: nothing in the road can be fallen down and not climbed back."
+  },
+  "light": {
+    "block": "legendarymonuments:galar_particle_block",
+    "fallback": "minecraft:pearlescent_froglight",
+    "every_nodes": 3,
+    "why": "Scarce and placed: one at roughly every third node, so the corridors between are dark. The owner's intent is that the dark is dangerous because wild Pokemon turn aggressive in it -- NOT VERIFIED, see docs/research: no mechanic in this pack is known to make a wild Pokemon aggressive at low light, and if none exists the danger has to come from the encounter table instead."
+  },
+  "landmark": {
+    "at_gallery": 2,
+    "radius": 11,
+    "height": 9,
+    "face": "legendarymonuments:distortion_crystal_block",
+    "face_fallback": "minecraft:purple_terracotta",
+    "vein": "legendarymonuments:galar_particle_block",
+    "vein_fallback": "minecraft:pearlescent_froglight",
+    "seep": "minecraft:crying_obsidian",
+    "why": "The Rift's own material breaking through, not built: a chamber on the middle gallery where the tear's face is exposed, with the vein running through it. It is the one thing in the road that is not corridor, so it is what a player orients by."
+  },
+  "trainers": {
+    "count": 9,
+    "stand": "rechiseled:blackstone_polished_connecting",
+    "stand_fallback": "minecraft:polished_blackstone",
+    "why": "On the main path only, never in a dead end, spread along it so they meet a player at intervals. Marked and unstaffed; Codex writes them (HANDOVER item 25)."
+  },
+  "exit": {
+    "toward": "e4_tower",
+    "why": "It surfaces on the entrance shelf facing the League, so a player arrives from below with the building in front of them."
+  }
+}

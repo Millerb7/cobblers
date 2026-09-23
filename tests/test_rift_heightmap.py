@@ -46,15 +46,22 @@ def test_the_sculpt_moves_no_settlement_footprint():
     # touches runs close to the rim post; a town whose footprint moved would have its buildings hanging or buried.
     before, after = _maps()
     towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
-    checked, worst = 0, (-1.0, "")
+    # A lot that a build levels afterwards is exempt: what the sculpt did to that ground is rebuilt. The League
+    # moved onto the apex oval on 2026-09-23, which is inside the sculpted rim, and its lot is levelled to y88.
+    levelled = [json.loads((ROOT / "data" / "rift_league_tunnel.json").read_text(encoding="utf-8"))["lot"]["box"]]
+    checked, worst, exempt = 0, (-1.0, ""), []
     for t in towns:
         fp = t.get("footprint") or {}
         if fp.get("min_x") is None:
             continue
+        if any(fp["min_x"] >= b[0] and fp["max_x"] <= b[2] and fp["min_z"] >= b[1] and fp["max_z"] <= b[3]
+               for b in levelled):
+            exempt.append(t["id"])
+            continue
         sl = (slice(int(fp["min_z"]), int(fp["max_z"]) + 1), slice(int(fp["min_x"]), int(fp["max_x"]) + 1))
         checked += 1
         worst = max(worst, (float(np.abs(after[sl] - before[sl]).max()), t["id"]))
-    assert checked >= 20, "only %d footprints checked" % checked
+    assert checked >= 20, "only %d footprints checked (exempt: %s)" % (checked, exempt)
     assert worst[0] == 0.0, worst
 
 

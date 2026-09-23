@@ -2,7 +2,7 @@
  "schema": "cobblers.towns/1",
  "schema_status": "proposed",
  "status": "proposed",
- "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+ "computed_from_sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
  "coordinates": "Block x, z. A1 origin at 0,0; x east, z south.",
  "decisions": [
   {
@@ -873,8 +873,8 @@
     "unlock": "defeating the town's leader (data/progression.json)"
    },
    "nearest_settlement": {
-    "id": "gym4_town",
-    "distance_blocks": 953
+    "id": "league",
+    "distance_blocks": 952
    }
   },
   {
@@ -1120,27 +1120,27 @@
    "leader_type": null,
    "annotation_box": null,
    "centre": {
-    "x": 3576,
-    "z": 2676,
-    "ground_y": 84.1
+    "x": 3694,
+    "z": 2430,
+    "ground_y": 87.2
    },
    "footprint": {
     "shape": "square",
     "class": "major",
     "size_blocks": 181,
-    "min_x": 3486,
-    "min_z": 2585,
-    "max_x": 3666,
-    "max_z": 2765,
+    "min_x": 3635,
+    "min_z": 2375,
+    "max_x": 3754,
+    "max_z": 2485,
     "ground_y": [
-     83.4,
-     103.5
+     86.3,
+     98.9
     ],
     "slope_degrees": {
-     "mean": 8.7,
-     "max": 32.2
+     "mean": 7.4,
+     "max": 89.5
     },
-    "basis": "authored: the Rift's floor at the trunk head, the League's lot (x3517-3636, z2591-2701, fit-checked on the heightmap: median floor y85, 93.4% within 3 blocks, range 11), its forecourt and Victory Road's arrival, squared up round them. the owner, 2026-09-21: the League moves into the Rift, onto the floor at its apex; players descend into the chasm to reach it"
+    "basis": "the apex oval, levelled to y88 for the League (owner, 2026-09-23). ground_y is the canonical heightmap over the lot, which the levelling does not change."
    },
    "subregion": "rift_trunk",
    "region": "the_rift",
@@ -1177,8 +1177,8 @@
     "unlock": "proposed: opens with the League"
    },
    "nearest_settlement": {
-    "id": "rift_dig_camp",
-    "distance_blocks": 792
+    "id": "gym5_town",
+    "distance_blocks": 952
    }
   },
   {

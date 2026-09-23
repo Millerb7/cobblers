@@ -620,9 +620,22 @@ def test_each_gym_flag_offers_the_next_gym_to_the_player_who_earned_it():
 
 
 def test_the_league_marker_stands_on_the_league():
-    # The marker is the middle of the placed building, not the template corner or the town centre.
+    """The marker is the middle of the placed building, not the template corner or the town centre.
+
+    Taken from the placement rather than written down, so it follows the League when it moves: it went from the
+    Rift's floor at the trunk head to the apex oval on 2026-09-23, and this test caught that the building was
+    anchored 119 blocks off its own levelled lot (corner + clockwise_90 places it west of the position).
+    """
+    import sys
+    sys.path.insert(0, str(ROOT / "tools"))
+    import place_donor as PD
+    rec = [r for r in REAL_PLACEMENTS["placements"] if r.get("id") == "league_building"][0]
+    lo, hi = PD.box(rec)
     league = PP.plan(PP.load(REAL_DATA), placements=REAL_PLACEMENTS)["markers"]["league"]
-    assert 3517 <= league["x"] <= 3636 and 2591 <= league["z"] <= 2701, league
+    assert lo[0] <= league["x"] <= hi[0] and lo[2] <= league["z"] <= hi[2], (league, lo, hi)
+    lot = json.loads((ROOT / "data" / "rift_league_tunnel.json").read_text(encoding="utf-8"))["lot"]["box"]
+    assert (lo[0], lo[2], hi[0], hi[2]) == tuple(lot), (
+        "the League stands at %s but its levelled lot is %s" % ((lo[0], lo[2], hi[0], hi[2]), tuple(lot)))
 
 
 def test_a_marker_with_a_character_xaero_cannot_carry_fails():
