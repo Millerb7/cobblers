@@ -34,6 +34,17 @@
 > quarry needs rock-dwelling fauna and extends the miner scene -- is a world-building argument and should be
 > decided on those grounds alone, or the quarry should be cut.
 >
+> **Neither addition was ever implemented, so there is nothing to cut.** Checked 2026-09-24 against the
+> encounter data: **Geodude, Graveler and Golem appear nowhere** in `data/spawns.json` -- no entry, no
+> sub-region, no habitat. The quarry population was never built.
+>
+> Wimpod does exist, in two places: `long_isle_south` (25-45, uncommon, weight 6) and `south_strand` (50-52,
+> common, weight 9), with Golisopod beside it in both. But both arrived in `a767d1e` *Compile encounter rosters
+> into Cobblemon spawn data*, which **predates** this audit's own first commit `b80cdce` on the same day. They
+> are original roster content on a rocky shoreline -- mareanie, clauncher, pincurchin, crabrawler -- that the
+> audit then pointed at as an existing thing to extend. Cutting it would delete coherent content that was never
+> added for a phantom problem.
+>
 > **South Strand Wimpod likewise.** It was recommended for Gym 8, which has no roster in `data/trainers.json`
 > (`status: held`, empty team), so nothing about it can be certified. Gym 8's availability is now 184 species
 > with 12 Ground families. Cut it or defer it until the rewritten Giovanni exists.
