@@ -15,7 +15,7 @@
   "scarp": {
     "lip_riser": {"fraction_of_depth": 0.45, "min": 12, "max": 28},
     "steps": {"count": [3, 4], "riser_jitter": 4},
-    "plate": {"cell": 14, "tilt": [0, 3], "crack_depth": [3, 6]},
+    "plate": {"cell": 14, "tilt": [0, 3], "crack_depth": [1, 1]},
     "undercut": {"depth": 4, "overhang_top": 5, "one_in_stations": 3},
     "fissures": {"per_side": [2, 3], "length": [25, 60], "width": [2, 4]},
     "cut_only": true,
@@ -23,32 +23,49 @@
   },
   "rim": {
     "why": "The owner, 2026-09-22: what worked in the first pass was height seen from far away; give that without spacing or regularity. The torn edges are shoved up into jagged crags and tilted slabs, 8-20 thick so Distant Horizons draws them. Each side of the Rift varies along its length: crags, the sheer drop, broken plates.",
-    "mix": {"crags": 0.45, "sheer": 0.3, "plates": 0.25},
+    "second_flyover": "The owner, 2026-09-22, having flown it: the ordinary crags are too low, the giant peaks are wanted more often, and the small gaps between crags read as ways in, which defeats the point of entrances that towns vouch for. So every stretch now carries a continuous parapet, the crags overlap, and the peaks are both taller and more numerous.",
+    "mix": {"crags": 0.55, "sheer": 0.15, "plates": 0.3},
     "segment_length": [45, 140],
-    "crags": {"height": [20, 80], "width": [8, 20], "length": [18, 45], "every": [10, 26], "set_back": [0, 6], "dip": [0.2, 0.8]},
-    "plates": {"height": [5, 15], "width": [8, 14], "length": [12, 26], "every": [8, 16], "set_back": [0, 12]},
-    "peaks": {"count": 2, "side": "east", "height": [110, 150], "radius": [7, 9],
-              "why": "a handful of much higher peaks at the forbidding stretches; the apex gets the most when the full Rift is built. In this stretch, on the higher east rim"},
+    "parapet": {"height": [14, 30], "width": [8, 16], "wave": 55,
+                "why": "an unbroken upthrust ridge along every stretch that is not a named entrance, so the wall has no holes in it at range. Crags and plates rise out of it; the sheer stretches keep their drop and still read as wall"},
+    "crags": {"height": [45, 110], "width": [10, 24], "length": [26, 55], "every": [8, 18], "set_back": [0, 6], "dip": [0.2, 0.8]},
+    "plates": {"height": [12, 28], "width": [10, 18], "length": [16, 30], "every": [7, 14], "set_back": [0, 12]},
+    "peaks": {"count": 7, "side": "either", "height": [150, 240], "radius": [9, 14],
+              "why": "giant ones every so often, and more of them than the two of the first rework (owner, second flyover). The build ceiling is y575, measured in world on 2026-09-22, so a peak standing on the y148 plateau has room for 240"},
     "seams": {"one_in_slabs": 4, "why": "the veins climb through some upthrust faces: violet and crying obsidian"},
-    "materials": ["minecraft:stone", "minecraft:tuff", "minecraft:andesite", "minecraft:stone", "minecraft:deepslate"],
-    "streak": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:purple_terracotta", "one_in_bands": 8}
+    "materials": ["legendarymonuments:distortion_stone", "legendarymonuments:distortion_cobblestone", "legendarymonuments:distortion_deepslate", "legendarymonuments:distortion_stone", "legendarymonuments:distortion_deepslate"],
+    "material_fallbacks": ["minecraft:tuff", "minecraft:cobblestone", "minecraft:deepslate", "minecraft:tuff", "minecraft:deepslate"],
+    "materials_why": "every band is a mod rock so that tools/ctm_pack.py covers the whole rim: a vanilla block in the mix would keep its repeating grid on the big faces while its neighbours lost theirs",
+    "streak": {"block": "legendarymonuments:distortion_crystal_block", "fallback": "minecraft:purple_terracotta", "one_in_bands": 12}
   },
   "entrances": [
     {"id": "rim_post_descent", "kind": "switchback", "side": "west", "settlement": "rift_rim_stop", "road": "rim_trail",
-     "gap": 30, "legs": 5, "leg_half_width": 12, "width": 3, "surface": "minecraft:dirt_path", "fill": "minecraft:tuff",
-     "guard": "Rim post guard", "why": "The rim post's descent is a gate (owner, 2026-09-22): a switchback down the scarp through a gap in the crags, the guard at the trailhead in the open. The rim post's own rim_trail plan crosses this stretch and is superseded here until it is re-planned."}
+     "gap": 30, "legs": 5, "leg_half_width": 12, "width": 3, "step_run": 3, "landing": 5,
+     "surface": "minecraft:dirt_path", "fill": "legendarymonuments:distortion_cobblestone", "fill_fallback": "minecraft:tuff",
+     "guard": "Rim post guard", "why": "The rim post's descent is a gate (owner, 2026-09-22): a switchback down the scarp through a gap in the crags, the guard at the trailhead in the open. The rim post's own rim_trail plan crosses this stretch and is superseded here until it is re-planned.",
+     "second_flyover": "The staircase 'would make more sense if it was one level not random looking' (owner, 2026-09-22): every step now drops exactly one block after a fixed run of step_run, with a flat landing of `landing` cells at each corner, instead of a slope rounded to whole blocks."}
   ],
-  "caps": {
-    "glow": "minecraft:purple_stained_glass",
-    "dark": "minecraft:tinted_glass",
+  "cracks": {
+    "depth": 1,
     "glow_one_in": 3,
-    "why": "Every crack deeper than one block is capped at ground level, so nothing that walks falls in (owner, 2026-09-22). Purple stained glass where the glow should light the surface; tinted glass, which blocks light, only where darkness is the point. Neither conditions a spawn."
+    "why": "One block deep and never capped. The owner liked the floor and its tears but not the glass over them (2026-09-22, second flyover): 'the glass in cracks feels bad'. At one block deep nothing that walks can fall in, so the cap that the glass provided is not needed at all, and 21,996 glass blocks come out of the build."
   },
   "seal": {
-    "block": "minecraft:stone",
+    "block": "legendarymonuments:distortion_stone",
+    "block_fallback": "minecraft:tuff",
     "depth": 3,
     "restore": 70,
-    "why": "The first prototype's cuts opened caves behind the new faces and water ran in. Every void within 3 blocks behind a new surface is made rock at run time (fill ... replace #cobblers:rift_void), as the Displaced City cavern's shell does; nothing reads the world to decide."
+    "convert": ["minecraft:stone", "minecraft:andesite", "minecraft:diorite", "minecraft:granite"],
+    "why": "The first prototype's cuts opened caves behind the new faces and water ran in. Every void within 3 blocks behind a new surface is made rock at run time (fill ... replace #cobblers:rift_void), as the Displaced City cavern's shell does; nothing reads the world to decide.",
+    "second_flyover": "It was vanilla stone, and the torn upper face is dressed in alternating bands, so the seal showed through the gaps as a pale grey apron under the crags: the stone the owner said the wall does not need (2026-09-22). The seal is now the same rock as the wall, so what shows through belongs there."
+  },
+  "debris": {
+    "reach": 130,
+    "density": 0.16,
+    "falloff": 2.2,
+    "lump_one_in": 7,
+    "lump_height": [2, 3],
+    "why": "'it should be the void blocks scattered like debris from ripping upwards' (owner, second flyover): the tear threw the other world's rock out across the plateau. The scatter is densest at the rim and fades to nothing well inside the prototype's own edge, so the wall meets the plateau in rubble rather than at a line."
   },
   "waterfalls": {
     "count": 1,
@@ -57,7 +74,7 @@
     "spawn_policy_exception": "minecraft:water conditions 84 species (data/spawn_blocks.json). The Rift's spawn pools are exclusive and curated, and none of their entries needs water, so the fall decides no encounter there. Recorded here as the one deliberate exception."
   },
   "palette": {
-    "face_upper": {"block": "minecraft:tuff", "why": "the torn edge of our world: its own rock, in bands"},
+    "face_upper": {"block": "legendarymonuments:distortion_cobblestone", "fallback": "minecraft:tuff", "why": "the torn edge, rubbly. Vanilla tuff read as an ordinary Overworld cliff; the owner's second flyover asked for rock that is not the world's own"},
     "face_lower": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:purple_terracotta", "why": "deeper down, the other world bleeds through"},
     "tread": {"block": "legendarymonuments:distortion_deepslate", "fallback": "minecraft:deepslate", "why": "the shattered plates near the floor"},
     "floor_plate": {"block": "minecraft:smooth_basalt", "why": "the floor broken into plates"},
@@ -83,10 +100,13 @@
     "core": "minecraft:sea_lantern",
     "halo": "legendarymonuments:galar_particle_block",
     "halo_fallback": "minecraft:pearlescent_froglight",
-    "thickness": 8,
-    "main_width": 10,
-    "branch_width": 6,
-    "why": "Candidate only (decision 2): a sample over this stretch to judge from 3,000 blocks. Every part 8 thick or more, so Distant Horizons draws it."
+    "thickness": 2,
+    "main_width": 16,
+    "branch_width": 9,
+    "shards": {"count": 22, "above": [18, 90], "width": [8, 18], "height": [6, 12], "drift": 40,
+               "rock": "legendarymonuments:distortion_stone", "rock_fallback": "minecraft:tuff",
+               "why": "'needs more going on above it' (owner, second flyover): torn shards of the other world's rock hang over the tear, each 8 or more across so Distant Horizons draws them"},
+    "why": "Candidate only (decision 2): a sample over this stretch to judge from 3,000 blocks. The tear itself is two blocks thick so it reads as a line rather than a tube ('should be a 2d line basically', owner, second flyover); its width carries the draw distance instead of its thickness, and the shards above it give the sky something to hold."
   },
   "portal_sheets": {
     "tag": "rift_fx",

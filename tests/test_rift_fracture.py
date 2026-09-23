@@ -97,15 +97,52 @@ def test_nothing_that_walks_can_be_trapped(plan):
     # stretch's edge by steps of at most one block up; falling is allowed. Fails closed: the build refuses otherwise.
     traps, ours = RF.trap_cells(plan)
     assert ours == []
-    assert plan.caps, "no crack was capped: the check would be passing on nothing"
+    assert plan.counts["columns raised so everything can walk out"] > 0, "nothing was raised: a vacuous pass"
 
 
-def test_every_deep_crack_is_capped_with_glass_at_ground_level(plan):
-    # Nothing can fall into a crack deeper than one block; purple glass where it glows, tinted where it is dark.
-    spec = json.loads((ROOT / "data" / "rift_fracture.json").read_text(encoding="utf-8"))["caps"]
-    for (x, z), y in plan.caps.items():
-        assert plan.put.get((x, y, z)) in (spec["glow"], spec["dark"]), (x, y, z)
-        assert plan.top.get((x, z), y) <= y - 2 or plan.top.get((x, z), y) == y
+def test_no_crack_is_deeper_than_one_block_and_none_is_glassed(plan):
+    # The owner's second flyover: "the glass in cracks feels bad". A crack one block deep needs no cap at all,
+    # because nothing that walks can fall into it, so the glass comes out rather than changing colour.
+    spec = json.loads((ROOT / "data" / "rift_fracture.json").read_text(encoding="utf-8"))
+    assert spec["cracks"]["depth"] == 1 and spec["scarp"]["plate"]["crack_depth"] == [1, 1]
+    assert plan.counts["crack columns"] > 1000, "no crack was cut: the check would be passing on nothing"
+    surf = RF.surfaces(plan)
+    for (x, z) in plan.top:
+        low = min((surf[(x + dx, z + dz)] for dx, dz in RF.RING if (x + dx, z + dz) in surf), default=surf[(x, z)])
+        assert surf[(x, z)] - low <= 30, (x, z)          # a groove, or a face, never a shaft you drop into
+    # the only glass left is the wound's crust, on the floor
+    glass = {(x, y, z): b for (x, y, z), b in plan.put.items() if "glass" in b}
+    assert glass and len({y for _, y, _ in glass}) == 1, sorted({y for _, y, _ in glass})
+
+
+def test_the_rim_has_exactly_one_hole_and_it_is_the_entrance(plan):
+    # "the small gaps in the rift wall defeats the purpose of verified entrances from towns" (owner, second
+    # flyover): every stretch carries a parapet, so the only break in the silhouette is a named entrance.
+    fr = plan.frame
+    holes = []
+    for st in plan.stations:
+        for side in (-1, 1):
+            sd = st["sides"][side]
+            best = max((plan.crag.get(tuple(map(round, fr.xz(st["s"], sd["rim_t"] + side * dq))), 0)
+                        - plan.old.get(tuple(map(round, fr.xz(st["s"], sd["rim_t"] + side * dq))), 0))
+                       for dq in range(1, 26))
+            if best < 8:
+                holes.append((side, st["s"]))
+    assert holes, "no hole at all: the entrance is walled off"
+    for side, s in holes:
+        assert any(es_side == side and abs(s - es) <= gap + 16
+                   for es_side, es, gap in plan.entrance_spans), (side, s)
+
+
+def test_the_descent_is_one_staircase(plan):
+    # "the stair case down would make more sense if it was one level not random looking": every step is one block
+    # after the same run, with a landing at each turn, so the risers do not wander.
+    step = next(k for k in plan.counts if k.startswith("staircase"))
+    run = int(step.split("every ")[1].split(",")[0])
+    assert run >= 2
+    ys = sorted(plan.path.items(), key=lambda kv: -kv[1])
+    drops = [a[1] - b[1] for a, b in zip(ys, ys[1:])]
+    assert set(drops) <= {0, 1}, sorted(set(drops))      # never more than one block between neighbouring levels
 
 
 def test_the_entrance_is_a_gap_in_the_crags_with_the_guard_in_the_open(plan):
@@ -171,8 +208,8 @@ def test_verify_fails_when_the_plan_expects_no_entities(tmp_path, monkeypatch, c
     # Fail closed: a plan that counts no sheets cannot call the sheets present.
     p = tmp_path / "plan.json"
     p.write_text(json.dumps({"checks": [[0, 0, 0, ["minecraft:air"], k] for k in
-                                        ("cut: air above the new ground", "vein", "sky crack", "light block",
-                                         "crag top", "crack cap", "entrance path")],
+                                        ("cut: air above the new ground", "vein", "sky crack", "sky shard",
+                                         "light block", "crag top", "entrance path")],
                              "entities_expected": 0}), encoding="utf-8")
     monkeypatch.setattr(RF, "PLAN", p)
     assert RF.verify(tmp_path) == 1

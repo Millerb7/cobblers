@@ -45,6 +45,7 @@ PACK = BUILD / "cobblers_rift_fracture"
 BIOME_PACK = BUILD / "cobblers_rift_biome"
 PLAN = ROOT / "derived" / "rift_fracture" / "plan.json"
 TILE = 128
+PART = 40000          # commands per function: well under maxCommandChainLength 65536, with room for forceload
 PACK_FORMAT = 48
 # verify reads a world to CHECK a result, never to decide one (CLAUDE.md, the ground rule; tools/ground_rule.py)
 WORLD_READS = {"verify", "entity_count", "main"}
@@ -157,7 +158,9 @@ class Plan:
         self.old = {}        # (x, z) -> heightmap ground y
         self.carve = {}      # (x, z) -> [(y0, y1)] extra air ranges (undercut, pits)
         self.put = {}        # (x, y, z) -> block
-        self.caps = {}       # (x, z) -> y of the glass cap over a crack (the surface a walker stands on)
+        self.caps = {}       # (x, z) -> a surface a walker stands on that is not the cut ground. Empty since the
+                             # cracks became one block deep (2026-09-22); kept because the walk-out flood reads it
+        self.sky_shards = []  # (x, y, z, block) the top of each shard hanging over the sky tear
         self.crag = {}       # (x, z) -> top y of the upthrust rock built on the plateau
         self.path = {}       # (x, z) -> surface y of an entrance's path
         self.water = []      # (x, y, z) water sources: the deliberate falls
@@ -327,28 +330,25 @@ def build(source_root, server_dir=None):
         (d1, c1), (d2, _) = cand[0], cand[1]
         edge = math.sqrt(d2) - math.sqrt(d1) < 1.2
         cx, cz, a, b, tilt, cd = c1
-        capsp = spec["caps"]
-        glow = rng_for(seed, "capglow", round(cx), round(cz)).randrange(capsp["glow_one_in"]) == 0
+        crk = spec["cracks"]
+        glow = rng_for(seed, "crackglow", round(cx), round(cz)).randrange(crk["glow_one_in"]) == 0
         if (x, z) in plan.top:
             # a tilted plate: lower on one side, by up to `tilt`
             fx = ((x - cx) * a + (z - cz) * b) / pc
             y = min(plan.top[(x, z)] - max(0, int(round((fx + 1) / 2 * tilt))), plan.old[(x, z)])
             plan.top[(x, z)] = y
             if edge and seg(side, s) != "gap":
-                # the crack between plates, capped at the plate's surface so nothing that walks falls in
+                # the groove between plates: one block deep, so nothing that walks can fall in and no cap is
+                # needed. The owner's second flyover threw out the glass that used to cap a deeper crack.
                 plan.top[(x, z)] = y - cd
-                plan.caps[(x, z)] = y
-                plan.put[(x, y, z)] = capsp["glow"] if glow else capsp["dark"]
                 if glow:
                     plan.put[(x, y - cd, z)] = pal["vein_seep"]
-                plan.count("capped crack columns")
+                plan.count("crack columns")
         elif -12 <= q < -sc["undercut"]["depth"] and edge and seg(side, s) in ("sheer", "plates"):
             old = plan.old[(x, z)]
-            plan.top[(x, z)] = old - 3        # the ground cracking before the edge, capped flush
-            plan.caps[(x, z)] = old
-            plan.put[(x, old, z)] = capsp["glow"] if glow else capsp["dark"]
+            plan.top[(x, z)] = old - crk["depth"]        # the ground cracking before the edge
             if glow:
-                plan.put[(x, old - 3, z)] = pal["vein_seep"]
+                plan.put[(x, old - crk["depth"], z)] = pal["vein_seep"]
             plan.count("plateau cracks")
 
     # the undercut lip, where the group says so
@@ -425,7 +425,10 @@ def build(source_root, server_dir=None):
                     plan.put.setdefault((x, yy, z), pal["face_upper"])   # tuff bands in the torn upper face
 
     # the upthrust rim: slabs shoved up where the ground tore, high at the lip and dipping back into the plateau
-    rimpal = rim["materials"]
+    rimpal = [b if b.startswith("minecraft:") or have is None or b in have else f
+              for b, f in zip(rim["materials"], rim["material_fallbacks"])]
+    sb = spec["seal"]["block"]
+    plan.seal_block = sb if sb.startswith("minecraft:") or have is None or sb in have else spec["seal"]["block_fallback"]
     streak = rim["streak"]["block"]
     if have is not None and streak not in have:
         streak = rim["streak"]["fallback"]
@@ -468,6 +471,29 @@ def build(source_root, server_dir=None):
                     plan.seams = getattr(plan, "seams", [])
                     plan.seams.append((x, z, plan.old.get((x, z), 0), int(h)))
 
+    # the parapet: a continuous ridge along every stretch that is not a named entrance. The owner's second
+    # flyover: the gaps between crags read as ways in, which defeats entrances the towns vouch for.
+    par = rim["parapet"]
+    for side in (-1, 1):
+        pr = rng_for(seed, "parapet", side)
+        ph, ph2 = pr.uniform(0, 6.283), pr.uniform(0, 6.283)
+        lo, hi = par["height"]
+        w_lo, w_hi = par["width"]
+        s = 0.0
+        while s <= fr.L:
+            if seg(side, s) != "gap":
+                h0 = lo + (hi - lo) * (0.5 + 0.5 * math.sin(ph + s / par["wave"]))
+                w = int(round(w_lo + (w_hi - w_lo) * (0.5 + 0.5 * math.sin(ph2 + s / (par["wave"] * 0.7)))))
+                sd = station(s)["sides"][side]
+                for dq in range(1, w + 1):
+                    x, z = map(round, fr.xz(s, sd["rim_t"] + side * dq))
+                    taper = 1 - (dq - 1) / max(1, w)          # thins back into the plateau
+                    h = h0 * (0.45 + 0.55 * taper) + rng_for(seed, "parjag", x, z).randint(-2, 2)
+                    if h >= 3:
+                        raise_col(x, z, plan.old.get((x, z), 0) + int(h))
+            s += 1.0
+    plan.count("parapet columns", len(plan.crag))
+
     for side in (-1, 1):
         r = rng_for(seed, "slabs", side)
         for a, b, kind in segs[side]:
@@ -481,25 +507,68 @@ def build(source_root, server_dir=None):
                 plan.count("%s slabs" % kind)
                 s += r.uniform(*p["every"])
     pk = rim["peaks"]
-    pside = -1 if pk["side"] == "west" else 1
+    psides = (-1, 1) if pk["side"] == "either" else ((-1,) if pk["side"] == "west" else (1,))
     r = rng_for(seed, "peaks")
-    crag_spans = [(a, b) for a, b, k in segs[pside] if k == "crags" and b > 20 and a < fr.L - 20]
+    placed = []
     for i in range(pk["count"]):
-        if not crag_spans:
-            break
-        a, b = crag_spans[i % len(crag_spans)]
-        s_c = r.uniform(max(a, 20), min(b, fr.L - 20))
+        pside = psides[i % len(psides)]
+        spans = [(a, b) for a, b, k in segs[pside] if k == "crags" and b > 20 and a < fr.L - 20]
+        if not spans:
+            continue
+        s_c = None
+        for apart in (70, 40, 20):               # no regular spacing: a random spot, only not beside another,
+            for _ in range(60):                  # counting both rims, so a pair never makes a gateway
+                a, b = spans[r.randrange(len(spans))]
+                cand = r.uniform(max(a, 20), min(b, fr.L - 20))
+                if all(abs(cand - s_) > apart for _sd, s_ in placed):
+                    s_c = cand
+                    break
+            if s_c is not None:
+                break
+        if s_c is None:
+            continue
+        placed.append((pside, s_c))
         rad = r.randint(*pk["radius"])
         slab(pside, s_c, 2 * rad + 6, 2 * rad, r.randint(*pk["height"]), 0, 2, r, peak=True)
         plan.count("peaks")
+    def rock_at(x, y, z):
+        """Which rock, blended. The old `(y // 4 + x // 9 + z // 11) % n` laid the rocks in clean diagonal bands,
+        which is what read as stripes on the faces. This is a coarse lattice noise at three scales with a per-block
+        dither, so each rock holds a patch and the patches meet in a ragged edge (owner, second flyover)."""
+        v = 0.0
+        for cell, w in ((17, 0.5), (7, 0.3), (3, 0.2)):
+            v += w * rng_for(seed, "rock", x // cell, y // max(2, cell // 2), z // cell).random()
+        v += rng_for(seed, "dither", x, y, z).uniform(-0.13, 0.13)
+        return rimpal[min(len(rimpal) - 1, max(0, int(v * len(rimpal))))]
+
     for (x, z), top in plan.crag.items():
         base = plan.old[(x, z)]
         for y in range(base + 1, top + 1):
-            band = (y // 4 + x // 9 + z // 11) % len(rimpal)
-            b_ = rimpal[band]
+            b_ = rock_at(x, y, z)
             if rng_for(seed, "streak", x // 6, y // 4, z // 6).randrange(rim["streak"]["one_in_bands"]) == 0:
                 b_ = streak
             plan.put[(x, y, z)] = b_
+
+    # debris: the other world's rock thrown out across the plateau when the ground tore upwards, densest at the
+    # rim and gone well before the prototype's own edge, so the wall does not end at a line
+    deb = spec["debris"]
+    for (x, z), (s, t, side, q) in inside.items():
+        dq = -q                                     # outside the lip, on the plateau
+        if not 0 < dq < deb["reach"] or (x, z) in plan.crag or (x, z) in plan.top or (x, z) in plan.path:
+            continue
+        if seg(side, s) == "gap":
+            continue                                # an entrance stays clear
+        p = deb["density"] * (1 - dq / deb["reach"]) ** deb["falloff"]
+        r = rng_for(seed, "debris", x, z)
+        if r.random() >= p:
+            continue
+        base = plan.old[(x, z)]
+        h = r.randint(*deb["lump_height"]) if r.randrange(deb["lump_one_in"]) == 0 else 1
+        for y in range(base + 1, base + h + 1):
+            plan.put[(x, y, z)] = rock_at(x, y, z)
+        plan.crag[(x, z)] = base + h
+        plan.count("debris blocks", h)
+        plan.count("debris lumps")
     for x, z, base, h in getattr(plan, "seams", []):
         for y in range(base + 2, base + int(h * 0.7)):
             plan.put[(x, y, z)] = pal["vein_bed"] if (y // 3) % 2 else pal["vein_seep"]
@@ -513,17 +582,32 @@ def build(source_root, server_dir=None):
         t_start = sd["rim_t"] - e_side * 14            # out on the plateau
         t_end = sd["edge_t"] - e_side * 4              # in on the floor
         legs, hwid = e["legs"], e["leg_half_width"]
+        e_fill = e["fill"] if e["fill"].startswith("minecraft:") or have is None or e["fill"] in have \
+            else e["fill_fallback"]
         corners = [(es - hwid if k % 2 == 0 else es + hwid, t_start + (t_end - t_start) * k / legs) for k in range(legs + 1)]
         corners[0] = (es, t_start)
-        pts = []
+        pts, turns = [], []
         for (s1, t1), (s2, t2) in zip(corners, corners[1:]):
             n = int(max(abs(s2 - s1), abs(t2 - t1)) * 2) + 1
             pts += [(s1 + (s2 - s1) * i / n, t1 + (t2 - t1) * i / n) for i in range(n)]
-        total = len(pts)
+            turns.append(len(pts))
         y_start = plan.old.get(tuple(map(round, fr.xz(es, t_start))))
         y_end = top_of(*map(round, fr.xz(es, t_end)))
+        # one staircase, not a rounded slope: a one-block step every fixed run, held level across each landing
+        land = e["landing"]
+        flat = {i for c in turns[:-1] for i in range(c - land // 2, c + land - land // 2)}
+        drop = max(1, y_start - y_end)
+        run = max(1, len([i for i in range(len(pts)) if i not in flat]) // drop)
+        ys, y_, left, since = [], y_start, drop, 0
+        for i in range(len(pts)):
+            if i not in flat and left > 0:
+                since += 1
+                if since >= run:
+                    since, y_, left = 0, y_ - 1, left - 1
+            ys.append(y_)
+        plan.count("staircase: one block every %d, %d steps, %d landings" % (run, drop, len(turns) - 1))
         for i, (s, t) in enumerate(pts):
-            y = int(round(y_start + (y_end - y_start) * i / max(1, total - 1)))
+            y = ys[i]
             for dw in range(-(e["width"] // 2), e["width"] - e["width"] // 2):
                 for ds_ in (-0.5, 0, 0.5):
                     x, z = map(round, fr.xz(s + ds_, t + dw))
@@ -547,7 +631,7 @@ def build(source_root, server_dir=None):
             else:
                 plan.top.pop((x, z), None)
                 for yy in range(old + 1, y):             # built out from the face: a ledge of rock
-                    plan.put[(x, yy, z)] = e["fill"]
+                    plan.put[(x, yy, z)] = e_fill
             plan.put[(x, y, z)] = e["surface"]
             plan.carve.setdefault((x, z), []).append((y + 1, y + 4))
         gx, gz = fr.xz(es, t_start - e_side * 2)
@@ -815,18 +899,47 @@ def build(source_root, server_dir=None):
     mid_y = (y_lo + y_hi) // 2
 
     def crack_line(pts, width):
+        # a line, not a tube: two blocks thick, so from below it reads as a tear rather than a glowing pipe
         n = 0
         for i, (s, t) in enumerate(pts):
             w = width + sk.randint(-2, 1)
-            th = skc["thickness"] + sk.randint(-1, 2)
+            th = max(1, skc["thickness"] + sk.randint(-1, 1))
             yc = mid_y + int(8 * math.sin(s / 90.0))
             for dw in range(-(w // 2), w - w // 2):
                 x, z = map(round, fr.xz(s, t + dw))
-                core = abs(dw) <= max(1, w // 5)
-                for yy in range(yc - th // 2, yc + th - th // 2):
-                    inner = core and abs(yy - yc) <= th // 4
-                    plan.put[(x, yy, z)] = pal["sky_core"] if inner else pal["sky_halo"]
+                core = abs(dw) <= max(1, w // 4)
+                for yy in range(yc, yc + th):
+                    plan.put[(x, yy, z)] = pal["sky_core"] if core else pal["sky_halo"]
                     n += 1
+        return n
+
+    def shards(pts):
+        """Torn rock hanging over the tear, so the sky above it is not empty (owner, second flyover)."""
+        sh = skc["shards"]
+        rock = sh["rock"] if have is None or sh["rock"] in have else sh["rock_fallback"]
+        n = 0
+        for _ in range(sh["count"]):
+            s, t = pts[sk.randrange(len(pts))]
+            t += sk.uniform(-sh["drift"], sh["drift"])
+            yb = mid_y + sk.randint(*sh["above"])
+            w, h = sk.randint(*sh["width"]), sk.randint(*sh["height"])
+            lean = sk.uniform(-0.5, 0.5)
+            for ds in range(-(w // 2), w - w // 2):
+                for dt in range(-(w // 2), w - w // 2):
+                    rr = math.hypot(ds / (w / 2), dt / (w / 2))
+                    if rr >= 1:
+                        continue
+                    x, z = map(round, fr.xz(s + ds, t + dt))
+                    top = yb + int(h * (1 - rr ** 1.7) + lean * ds)
+                    for yy in range(yb - int(h * 0.35 * (1 - rr)), top + 1):
+                        plan.put[(x, yy, z)] = rock
+                        n += 1
+                    if ds == 0 and dt == 0:
+                        plan.sky_shards.append((x, top, z, rock))
+            if sk.random() < 0.5:
+                x, z = map(round, fr.xz(s, t))
+                plan.put[(x, yb - int(h * 0.35) - 1, z)] = pal["sky_halo"]
+                n += 1
         return n
 
     skmain, tt = [], 0.0
@@ -847,11 +960,25 @@ def build(source_root, server_dir=None):
             bpts.append((ss, tt))
         plan.count("sky crack blocks", crack_line(bpts, skc["branch_width"]))
         s += sk.uniform(70, 140)
+    plan.count("sky shard blocks", shards(skmain))
     views["sky crack, under it"] = [round(fr.xz(fr.L / 2, 0)[0]), mid_y - 60, round(fr.xz(fr.L / 2, 0)[1])]
 
     # nothing that walks may be trapped: fill every pocket the build made to its spill level
     plan.frame, plan.spec = fr, spec
     plan.count("columns raised so everything can walk out", make_walkable(plan, rimpal))
+
+    # a light block buried in the ground lights nothing. Two of them ended up inside gravel on dryrun7 because the
+    # pool's floor sat above where the plan put them, so every light is re-seated on the final surface.
+    final = surfaces(plan)
+    moved = 0
+    for (x, y, z) in [k for k, b in plan.put.items() if b.startswith("minecraft:light")]:
+        g = final.get((x, z))
+        if g is not None and y <= g:
+            del plan.put[(x, y, z)]
+            if (x, g + 1, z) not in plan.put:
+                plan.put[(x, g + 1, z)] = "minecraft:light[level=15]"
+            moved += 1
+    plan.count("lights lifted clear of the ground", moved)
 
     # checks: sampled from the final plan
     rs = random.Random(seed + 9)
@@ -863,18 +990,21 @@ def build(source_root, server_dir=None):
                 plan.checks.append((x, y + 1, z, ["minecraft:air"], "cut: air above the new ground"))
     for (x, y, z), b in plan.put.items():
         base = b.split("[")[0]
-        if base in (pal["vein_core"], pal["vein_bed"]) and rs.random() < 0.1:
-            plan.checks.append((x, y, z, [base], "vein"))
-        elif base in (pal["sky_core"], pal["sky_halo"]) and rs.random() < 0.01:
+        # by height, not by block: the sky crack's halo and the floor's veins are the same block, so classifying by
+        # block alone let ground veins be counted as the sky crack, and the sky could have been missing entirely
+        if y >= skc["y"][0] - 40 and base in (pal["sky_core"], pal["sky_halo"]) and rs.random() < 0.01:
             plan.checks.append((x, y, z, [base], "sky crack"))
-        elif base == "minecraft:light" and rs.random() < 0.5:
-            plan.checks.append((x, y, z, [base], "light block"))
+        elif base in (pal["vein_core"], pal["vein_bed"]) and rs.random() < 0.1:
+            plan.checks.append((x, y, z, [base], "vein"))
+        elif base == "minecraft:light":
+            plan.checks.append((x, y, z, [base], "light block"))   # only a handful: check every one
     # the perimeter and its safety: crag tops, glass caps, the entrance path, each against the final plan
-    for kind, layer, share in (("crag top", plan.crag, 0.05), ("crack cap", plan.caps, 0.02),
-                               ("entrance path", plan.path, 0.1)):
+    for kind, layer, share in (("crag top", plan.crag, 0.05), ("entrance path", plan.path, 0.1)):
         for (x, z), y in sorted(layer.items()):
             if rs.random() < share and (x, y, z) in plan.put:
                 plan.checks.append((x, y, z, [plan.put[(x, y, z)]], kind))
+    for x, y, z, b in plan.sky_shards:
+        plan.checks.append((x, y, z, [b], "sky shard"))
     plan.fx_area = area
     plan.fx_box = None
     plan.views = views
@@ -993,7 +1123,7 @@ def block_functions(plan):
             add(x, z, "fill %d %d %d %d %d %d minecraft:air" % (x, y + 1, z, x, old + 3, z))
     # the seal: every void within `depth` behind a new surface made rock at run time, before any carving, so no
     # cave water runs into the cuts (the first prototype's audit found it did)
-    seal = plan.spec["seal"]
+    seal = dict(plan.spec["seal"], block=plan.seal_block)   # resolved against the installed jars at build time
     ring = ((1, 0), (-1, 0), (0, 1), (0, -1))
     for (x, z) in sorted(set(plan.top) | {(x + dx, z + dz) for x, z in plan.top for dx, dz in ring}):
         own = plan.top.get((x, z), plan.old.get((x, z)))
@@ -1006,6 +1136,12 @@ def block_functions(plan):
             # cut deeper here (or after a re-export) comes out the same
             add(x, z, "fill %d %d %d %d %d %d %s replace #cobblers:rift_void" % (
                 x, own - seal["restore"], z, x, own, z, seal["block"]))
+            # and the wall's body is the other world's rock, not ours: the plateau's own stone inside the cut band
+            # showed through the gaps between the face's bands as a pale grey apron (owner, second flyover). This
+            # also converts what an earlier run sealed with vanilla stone, which a voids-only fill would leave.
+            for was in seal["convert"]:
+                add(x, z, "fill %d %d %d %d %d %d %s replace %s" % (
+                    x, own - seal["restore"], z, x, own, z, seal["block"], was))
         elif own - 1 >= low - seal["depth"]:
             add(x, z, "fill %d %d %d %d %d %d %s replace #cobblers:rift_void" % (
                 x, low - seal["depth"], z, x, own - 1, z, seal["block"]))
@@ -1030,13 +1166,19 @@ def block_functions(plan):
             run = [y, y, b] if y is not None else None
     out, order = {}, []
     for t in sorted(tiles):
-        name = "blocks_%d_%d" % t
-        lines = FL.ensure_loaded(["# Generated by tools/rift_fracture.py: the chasm stretch, tile %d %d" % t] + tiles[t])
-        probs = FL.check_lines(lines, name)
-        if probs:
-            raise FractureError("function %s would be refused: %s" % (name, probs[:3]))
-        out[name] = lines
-        order.append(name)
+        # a tile of the taller rim can carry more than the 65,536 commands a function may hold, so it is cut into
+        # parts that run in order; the cut, the seal and the carve keep their place ahead of the blocks
+        body = tiles[t]
+        parts = [body[i:i + PART] for i in range(0, len(body), PART)] or [[]]
+        for k, part in enumerate(parts):
+            name = "blocks_%d_%d" % t + ("" if k == 0 else "_%d" % (k + 1))
+            lines = FL.ensure_loaded(["# Generated by tools/rift_fracture.py: the chasm stretch, tile %d %d part %d"
+                                      % (t[0], t[1], k + 1)] + part)
+            probs = FL.check_lines(lines, name)
+            if probs:
+                raise FractureError("function %s would be refused: %s" % (name, probs[:3]))
+            out[name] = lines
+            order.append(name)
     return out, order
 
 
@@ -1185,7 +1327,7 @@ def verify(world):
         return 1
     p = json.loads(PLAN.read_text(encoding="utf-8"))
     kinds = {c[4] for c in p["checks"]}
-    need = {"cut: air above the new ground", "vein", "sky crack", "light block", "crag top", "crack cap",
+    need = {"cut: air above the new ground", "vein", "sky crack", "sky shard", "light block", "crag top",
             "entrance path"}
     if not need <= kinds or not p.get("entities_expected"):
         print("FAIL: the plan checks %s and expects %s entities: not everything the build makes" %

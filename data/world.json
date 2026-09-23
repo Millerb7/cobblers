@@ -6,118 +6,129 @@
   "source_root": null,
 
   "heightmap": {
-    "path": "land_8k_16_rescaled_b145_pads.png",
-    "width": 8192,
-    "height": 8192,
-    "channel": "gray",
-    "bit_depth": 16,
-    "sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
-    "pressed_from": {
-      "path": "land_8k_16_rescaled_b145.png",
-      "sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-      "generator": "python tools/press_pads.py --apply",
-      "pads": [
-        {
-          "site": "the_scar",
-          "pressed_y": 280.3,
-          "centre": [
-            2110,
-            950
-          ],
-          "radius": 150,
-          "feather": 140,
-          "flat_columns": 73133,
-          "touched_columns": 264153,
-          "before_flat_zone_y": [
-            275.5,
-            277.5
-          ],
-          "after_flat_zone_y": [
-            280.3,
-            280.3
-          ],
-          "max_change_blocks": 23.5,
-          "authored_y": 194
-        },
-        {
-          "site": "frostpeak_shrine",
-          "pressed_y": 310.0,
-          "centre": [
-            682,
-            380
-          ],
-          "radius": 55,
-          "feather": 70,
-          "flat_columns": 9941,
-          "touched_columns": 49049,
-          "before_flat_zone_y": [
-            305.6,
-            310.0
-          ],
-          "after_flat_zone_y": [
-            310.0,
-            310.0
-          ],
-          "max_change_blocks": 23.9,
-          "authored_y": 200
-        },
-        {
-          "site": "gym3_town",
-          "pressed_y": 174.4,
-          "centre": [
-            1688,
-            1410
-          ],
-          "radius": 40,
-          "feather": 60,
-          "flat_columns": 5297,
-          "touched_columns": 31397,
-          "before_flat_zone_y": [
-            153.2,
-            219.5
-          ],
-          "after_flat_zone_y": [
-            174.4,
-            174.4
-          ],
-          "max_change_blocks": 59.5
-        }
-      ],
-      "note": "data/sculpt.json pads pressed on the rescaled heightmap: pre-rescale pads at their authored level carried through the rescale curve, post-rescale shelves at pressed_y. Columns outside the pad brushes are bit-identical to the rescaled heightmap."
-    },
-    "status": "ok",
-    "rescaled_from": {
-      "path": "land_8k_16_sculpted_relief.png",
-      "sha256": "fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81",
-      "generator": "python tools/rescale.py --apply",
-      "note": "Vertical rescale, option B: identity at or below y145, gain rising to 5 over a 55-block blend, so the peak goes y200 to y310 and the world tree reads 1.73x the tallest mountain instead of 2.67x. The gain is applied to the smoothed LANDFORM, not per column: per column it multiplies local relief too, and the largest adjacent step went 22.8 to 96.8 blocks, one-column walls rather than mountains. Quantisation is floor-preserving, so 0 columns at or below y145 change integer elevation; the nearest-value quantiser moved 48,568 of them. docs/world-building/VERTICAL_RESCALE.md"
-    },
-    "sculpted_from": {
-      "path": "land_8k_16_eroded_rivers.png",
-      "sha256": "f5ff054ee340a34a861d1790abe5824e22e5c9541c62563b06fc24d7d0c92afd",
-      "generator": "python tools/sculpt.py apply (data/sculpt.json)",
-      "note": "Local brushes on the river cut: coasts by class, massif asymmetry and summits, volcano cones, hillside relief against contour rings. Protected sites, river channels and lake basins keep their columns (checked: lake basins 0 changed, river water under 0.003 blocks, settlement footprints 0). docs/world-building/SCULPT.md"
-    },
-    "derived_from": {
-      "path": "land_8k_16_eroded.png",
-      "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
-      "generator": "python tools/grade_rivers.py plan && python tools/grade_rivers.py cut --replace",
-      "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
-    },
-    "previous_sha256": [
-      "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
-      "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
-      "fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81",
-      "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
-      "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
-      "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1",
-      "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
-      "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
-      "217d411c6ce31c8385b5797ac4e12cc764d3f46f0d78016622033ba62098b735",
-      "924253ad30e088ba4e18ea4c7b585e2bb6d3313e67cc80e833d28706cc7ac736"
+  "path": "land_8k_16_rescaled_b145_pads_rift.png",
+  "width": 8192,
+  "height": 8192,
+  "channel": "gray",
+  "bit_depth": 16,
+  "sha256": "8098ce618cb3e866a0f91d3cfe55980012f16f166473dc7508945f2d4067d80d",
+  "pressed_from": {
+    "path": "land_8k_16_rescaled_b145.png",
+    "sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "generator": "python tools/press_pads.py --apply",
+    "pads": [
+      {
+        "site": "the_scar",
+        "pressed_y": 280.3,
+        "centre": [
+          2110,
+          950
+        ],
+        "radius": 150,
+        "feather": 140,
+        "flat_columns": 73133,
+        "touched_columns": 264153,
+        "before_flat_zone_y": [
+          275.5,
+          277.5
+        ],
+        "after_flat_zone_y": [
+          280.3,
+          280.3
+        ],
+        "max_change_blocks": 23.5,
+        "authored_y": 194
+      },
+      {
+        "site": "frostpeak_shrine",
+        "pressed_y": 310.0,
+        "centre": [
+          682,
+          380
+        ],
+        "radius": 55,
+        "feather": 70,
+        "flat_columns": 9941,
+        "touched_columns": 49049,
+        "before_flat_zone_y": [
+          305.6,
+          310.0
+        ],
+        "after_flat_zone_y": [
+          310.0,
+          310.0
+        ],
+        "max_change_blocks": 23.9,
+        "authored_y": 200
+      },
+      {
+        "site": "gym3_town",
+        "pressed_y": 174.4,
+        "centre": [
+          1688,
+          1410
+        ],
+        "radius": 40,
+        "feather": 60,
+        "flat_columns": 5297,
+        "touched_columns": 31397,
+        "before_flat_zone_y": [
+          153.2,
+          219.5
+        ],
+        "after_flat_zone_y": [
+          174.4,
+          174.4
+        ],
+        "max_change_blocks": 59.5
+      }
     ],
-    "revision_note": "2026-09-16 (vertical rescale, option B): mountains raised without moving anything built. The elevation curve is the identity at or below y145 and gains to 5x over a 55-block blend, taking the peak y200 to y310, relief above y145 from 55 to 165 blocks, and massif slope above y145 from p90 0.390 to 0.854 (7.5 percent of that ground now over 45 degrees, from 0). y145 is where six independent constraints sit: the highest elder tree y144.4, the highest water y127.0, the cavern surface y134.7, the grove y114.9-118.1, the ridge governing the Pallet sightline y139.0, and the p90 of land elevation y144.14. 0 columns at or below y145 change integer elevation. 2026-09-15 (fourth, not exported): the major river starts where its path first runs between valley walls (10 blocks within 250 on both sides, three samples 48 apart), 817 blocks down the path at (3136, 1636) on the Glacial Tear trough floor, restoring the trough creek; the lower river keeps its original course (within 2 blocks) and reaches. Rivers cut f5ff054e. Previous files in cobblers-server-retired/2026-09-15-valley-head-files/. 2026-09-15 (third): the major river starts where its path first drains 0.13 km2, in the Glacial Tear valley at (3732, 2232), not 1,661 blocks higher on the flank above Merian, where the cut ran along the mountainside and straight across the plain (tools/grade_rivers.py HEAD_KM2); rivers re-cut (6b6352bc) and the sculpt re-applied; relief noise now normalised independently of terrain so edits stay local. Previous files in cobblers-server-retired/2026-09-15-river-head/. 2026-09-15 (second): hillside relief added to the sculpt (data/sculpt.json relief): amplitude 10 x regional grade, capped at 2.5 blocks, stretched down the fall line, so contour rings break into spurs and gullies; largest change 4.9 blocks; footprints, basins, channels and the hometown area unchanged. The previous sculpt file land_8k_16_sculpted.png stays beside it. 2026-09-15: the import is the sculpted derivative of the river cut: coasts by class, massif asymmetry and summits, volcano cones (tools/sculpt.py).2026-09-14 (third): the tarn at the head of the ravine above Peak Pond became a lake (level 127) with a graded outflow to the north coast; 2,786 columns changed, nothing raised. The previous cut file is in cobblers-server-retired/2026-09-14-tarn/. 2026-09-14 (second): the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png."
+    "note": "data/sculpt.json pads pressed on the rescaled heightmap: pre-rescale pads at their authored level carried through the rescale curve, post-rescale shelves at pressed_y. Columns outside the pad brushes are bit-identical to the rescaled heightmap."
   },
+  "status": "ok",
+  "rescaled_from": {
+    "path": "land_8k_16_sculpted_relief.png",
+    "sha256": "fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81",
+    "generator": "python tools/rescale.py --apply",
+    "note": "Vertical rescale, option B: identity at or below y145, gain rising to 5 over a 55-block blend, so the peak goes y200 to y310 and the world tree reads 1.73x the tallest mountain instead of 2.67x. The gain is applied to the smoothed LANDFORM, not per column: per column it multiplies local relief too, and the largest adjacent step went 22.8 to 96.8 blocks, one-column walls rather than mountains. Quantisation is floor-preserving, so 0 columns at or below y145 change integer elevation; the nearest-value quantiser moved 48,568 of them. docs/world-building/VERTICAL_RESCALE.md"
+  },
+  "sculpted_from": {
+    "path": "land_8k_16_eroded_rivers.png",
+    "sha256": "f5ff054ee340a34a861d1790abe5824e22e5c9541c62563b06fc24d7d0c92afd",
+    "generator": "python tools/sculpt.py apply (data/sculpt.json)",
+    "note": "Local brushes on the river cut: coasts by class, massif asymmetry and summits, volcano cones, hillside relief against contour rings. Protected sites, river channels and lake basins keep their columns (checked: lake basins 0 changed, river water under 0.003 blocks, settlement footprints 0). docs/world-building/SCULPT.md"
+  },
+  "derived_from": {
+    "path": "land_8k_16_eroded.png",
+    "sha256": "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+    "generator": "python tools/grade_rivers.py plan && python tools/grade_rivers.py cut --replace",
+    "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
+  },
+  "previous_sha256": [
+    "604de74e470569f8f0ac7bb7b42edc174c9f1fbee3bb92da318371a54e860ae7",
+    "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+    "a69df9e32b8ce4a4959f9ec1462618738367c36e90a38936ddb0271ba37a8313",
+    "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
+    "fd0db59b56dd1e9311ae85b16f2f3e99982ae03acd8ff1880b8a27999defea81",
+    "526fe220ad9c7919196d34329a43ab6d198225e41e61d60c7298550af7a860f6",
+    "acdc3d1d4e52a7093b4a3760c9a1278f5ee2aba2fab80a1d125176ab4ceb4df7",
+    "861d10ac38e2a1c21b998c55a0fd60b8d23122a90b07885979f01bea84c4c6d1",
+    "60b241d1ee658cce63c2bff056089f4c66b79260bd251707b1d5a51b6d7f4161",
+    "19abdd3924200c0f873659aba74b89cbcfb6d3aeed6a0f21a13479cbc48075f5",
+    "217d411c6ce31c8385b5797ac4e12cc764d3f46f0d78016622033ba62098b735",
+    "924253ad30e088ba4e18ea4c7b585e2bb6d3313e67cc80e833d28706cc7ac736"
+  ],
+  "revision_note": "2026-09-16 (vertical rescale, option B): mountains raised without moving anything built. The elevation curve is the identity at or below y145 and gains to 5x over a 55-block blend, taking the peak y200 to y310, relief above y145 from 55 to 165 blocks, and massif slope above y145 from p90 0.390 to 0.854 (7.5 percent of that ground now over 45 degrees, from 0). y145 is where six independent constraints sit: the highest elder tree y144.4, the highest water y127.0, the cavern surface y134.7, the grove y114.9-118.1, the ridge governing the Pallet sightline y139.0, and the p90 of land elevation y144.14. 0 columns at or below y145 change integer elevation. 2026-09-15 (fourth, not exported): the major river starts where its path first runs between valley walls (10 blocks within 250 on both sides, three samples 48 apart), 817 blocks down the path at (3136, 1636) on the Glacial Tear trough floor, restoring the trough creek; the lower river keeps its original course (within 2 blocks) and reaches. Rivers cut f5ff054e. Previous files in cobblers-server-retired/2026-09-15-valley-head-files/. 2026-09-15 (third): the major river starts where its path first drains 0.13 km2, in the Glacial Tear valley at (3732, 2232), not 1,661 blocks higher on the flank above Merian, where the cut ran along the mountainside and straight across the plain (tools/grade_rivers.py HEAD_KM2); rivers re-cut (6b6352bc) and the sculpt re-applied; relief noise now normalised independently of terrain so edits stay local. Previous files in cobblers-server-retired/2026-09-15-river-head/. 2026-09-15 (second): hillside relief added to the sculpt (data/sculpt.json relief): amplitude 10 x regional grade, capped at 2.5 blocks, stretched down the fall line, so contour rings break into spurs and gullies; largest change 4.9 blocks; footprints, basins, channels and the hometown area unchanged. The previous sculpt file land_8k_16_sculpted.png stays beside it. 2026-09-15: the import is the sculpted derivative of the river cut: coasts by class, massif asymmetry and summits, volcano cones (tools/sculpt.py).2026-09-14 (third): the tarn at the head of the ravine above Peak Pond became a lake (level 127) with a graded outflow to the north coast; 2,786 columns changed, nothing raised. The previous cut file is in cobblers-server-retired/2026-09-14-tarn/. 2026-09-14 (second): the import is now the river-cut derivative of the hand-carved revision: graded lake outflows and rivers with catchment-sized channels, and the major river's valley (docs/world-building/RIVERS.md). Earlier the same day: hand-carved revision (glacier, rift, lakes, rivers) saved as land_8k_16_eroded.png; the file before that survives as land_8k_16_eroded.png.bak and its annotation as land_8k_16_eroded_annotated_outdated.png.",
+  "rift_sculpted_from": {
+    "path": "land_8k_16_rescaled_b145_pads.png",
+    "sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+    "generator": "python tools/rift_heightmap.py --apply",
+    "spec": "data/rift_sculpt.json",
+    "blocks_moved": 10310920,
+    "columns_changed": 400787,
+    "note": "The Rift's shape: the lip of the low-ground basin, a cut band inside it, and the upthrust rim outside. Columns outside the Rift's box are bit-identical."
+  }
+},
 
   "import": {
     "input_units": "fraction_of_full_scale",

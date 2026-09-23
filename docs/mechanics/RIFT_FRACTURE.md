@@ -355,6 +355,61 @@ So the chasm prototype was rebuilt, perimeter first:
   waterfall falls off the highest sheer lip. Water conditions 84 species, and that is recorded in the data as the
   one exception: the Rift's pools are curated and none needs water.
 
+## 4b. The second flight, and what it changed (2026-09-22)
+
+The owner flew the reworked perimeter on `cobblers-dryrun6` and gave six notes. Each is answered below with what
+the build now does and what was measured.
+
+**"the peaks are too low for the basic ones, i like having giant ones every so often, but i think it might need
+more."** The ordinary crags were 20-80 over the plateau and only two peaks stood above them. Crags are now 45-110
+and there are seven peaks, 156-227 over the plateau, alternating rims and never within 70 blocks of each other, so
+they never pair into a gateway. Measured on the rebuilt plan: 15,717 crag columns, median 22 over the plateau, p90
+93, tallest 227, top block y359. From the floor the tallest wall is 275 blocks of rock. The build ceiling is y575,
+probed in world, so there is room to go further if the apex wants it.
+
+**"the small gaps in the rift wall defeats the purpose of verified entrances from towns."** Right, and it was a
+real hole: the mix put crags on only 45% of the rim, and the crags themselves stood apart. Every stretch now
+carries a **parapet** — a continuous upthrust ridge 14-30 high and 8-16 wide, waving along the rim — and the crags
+overlap. Measured: of 196 rim stations, exactly one run is under 8 blocks high, 14 stations long, and it is the
+rim post's entrance. `tests/test_rift_fracture.py` fails the build if a hole appears anywhere else.
+
+**"the stair case down would make more sense if it was one level not random looking."** It was a straight line from
+lip to floor rounded to whole blocks, so the risers fell wherever the rounding put them. It is now a real
+staircase: one block down every fixed run, held flat across a landing at each turn. Measured on this descent: one
+block every 5, 57 steps, 4 landings.
+
+**"the glass in cracks feels bad. make it an invisible block or just add some other block as filler."** Neither,
+in the end. The glass existed only to cap a crack deep enough to fall into; a crack **one block deep** needs no cap
+at all. Every crack is now one deep with its glow in the groove, which keeps the tears the owner liked and takes
+21,996 glass blocks out of the build. The only glass left is the wound's crust on the floor, one flat patch at y85.
+
+**"the sky rift is cool in its radiating light, but needs more going on above it... should be a 2d line
+basically."** The tear was 8 blocks thick, which read as a glowing pipe. It is now 2 thick and wider (16 for the
+main line, 9 for the branches), so from below it is a line; and 22 torn shards of distortion rock now hang 18-90
+blocks above it, each 8-18 across so Distant Horizons draws them.
+
+**"i still dont think we have found the perfect block to build the rift with. we have chisel mod, but maybe there
+is a mod out there."** Three findings, and no new mod:
+
+- **Rechiseled cannot do this.** All 3,627 of its blocks are dressed masonry — bricks, paving, beams, tiles,
+  polished — and it has no deepslate or tuff family at all. It is the right palette for the Deep's city and the
+  wrong tool for torn rock.
+- **The rock is now Legendary Monuments' distortion family**, which ships in the pack already and was being used
+  only as a thin streak: `distortion_stone`, `distortion_cobblestone` and `distortion_deepslate` for the rim and
+  the faces, `distortion_crystal_block` for the streak. Every band is a mod block on purpose, so the connected
+  textures below cover the whole rim; a vanilla block in the mix would keep its grid while its neighbours lost
+  theirs.
+- **The grid was half the problem.** A 200-block face of one 16×16 texture reads as a tiled wall however good the
+  texture is. The pack already ships **Continuity** and **Athena**, so connected textures cost a resource pack and
+  no new dependency. `tools/ctm_pack.py` builds one from the installed jars: for each rock, eight variants of the
+  mod's own texture (four rotations, each mirrored) under an OptiFine `method=random` entry.
+
+**A decision this raises.** The CTM pack derives from Legendary Monuments' art. That mod is **MPL-2.0**, which
+permits redistribution of modified files under the same licence with a notice, and the tool writes that notice.
+But the repository's rule is that only MIT-style sources are committed, so the pack is written to
+`build/resourcepacks/` and is **not committed**; it is rebuilt from the local jars. Whether we ship it to players
+in the overlay is an ADR, not a call for this tool.
+
 ## 5. The prototype
 
 - **What:** one stretch, "the chasm": the trunk from (4171, 3875) to (3911, 3583), 391 blocks, both walls, on a

@@ -1,0 +1,68 @@
+{
+  "schema": "cobblers.rift_sculpt/1",
+  "status": "the whole Rift, into the heightmap, so it lands in the live world's next export (owner, 2026-09-22)",
+  "design": "docs/mechanics/RIFT_FRACTURE.md",
+  "builder": "tools/rift_heightmap.py",
+  "supersedes": "data/rift_fracture.json's single stretch, whose values these are taken from after two flyovers",
+  "seed": 20260922,
+  "basin": {
+    "region": "the_rift",
+    "ground_at_or_below": 120,
+    "why": "The region polygon in data/regions.json is not the rim: 57% of its stations sit under 20 blocks above the floor. The lip is the boundary of the low ground instead. y120 keeps all eleven of the owner's traced places inside the lip (their grounds reach y121); y100 would cut three of them."
+  },
+  "ceiling": {
+    "peak_max_y": 305,
+    "world_max_y": 310,
+    "why": "The heightmap maps 16-bit samples onto y10..y310 for the whole world, so nothing sculpted can pass y310 without rescaling every existing landform. Measured 2026-09-22: from the hometown at 3,232 blocks a y305 peak stands 2.54 degrees above the skyline, which itself only reaches 0.74; going to y375 adds 1.24 degrees, about 19 pixels, and clears no horizon that y305 fails to clear. So every peak stays under the ceiling and nothing needs re-applying after an export."
+  },
+  "cut": {
+    "width": [22, 46],
+    "wave": 190,
+    "floor_percentile": 0.12,
+    "floor_reach": 150,
+    "why": "A band just inside the lip dropped to the local floor, so the lip is a sheer riser rather than a slope. The floor level is the 12th percentile of ground within 150 blocks inward, so the drop follows the basin instead of a flat number."
+  },
+  "rim": {
+    "mix": {"crags": 0.55, "sheer": 0.15, "plates": 0.3},
+    "segment_length": [60, 190],
+    "parapet": {"height": [14, 30], "width": [8, 16], "wave": 55},
+    "crags": {"height": [45, 110], "width": [10, 24], "length": [26, 55], "every": [8, 18], "set_back": [0, 6], "dip": [0.2, 0.8]},
+    "plates": {"height": [12, 28], "width": [10, 18], "length": [16, 30], "every": [7, 14], "set_back": [0, 12]},
+    "reach": 30,
+    "why": "The values the owner flew and approved on the chasm prototype, applied to the whole perimeter. Character varies by stretch along the arc: crags, the sheer drop, broken plates, with a continuous parapet under all of them so the wall has no holes."
+  },
+  "peaks": {
+    "count": 22,
+    "radius": [9, 16],
+    "apart": 260,
+    "height_over_plateau": [110, 190],
+    "forbidding": {
+      "apex_share": 0.45,
+      "why": "The high peaks go where the Rift should look forbidding: the apex above the League, and the stretches furthest from an entrance."
+    },
+    "why": "Capped at peak_max_y. 'i like having giant ones every so often, but i think it might need more' (owner, second flyover)."
+  },
+  "entrances": [
+    {"id": "rim_post_descent", "kind": "switchback", "near": [3877, 3824], "gap": 30, "legs": 5,
+     "leg_half_width": 12, "width": 3, "step_run": 3, "landing": 5, "guard": "Rim post guard",
+     "why": "The rim post's descent, flown and approved on the prototype."},
+    {"id": "victory_road_descent", "kind": "switchback", "near": [3738, 5082], "snap_route": "victory_road", "gap": 46, "legs": 4,
+     "leg_half_width": 14, "width": 4, "step_run": 3, "landing": 6, "guard": "Victory Road warden",
+     "why": "routes.json already carries a barrier on victory_road called rift_entry, kind rift_descent, at (3738, 86, 5082), and 17 of its 486 corridor points fall in the reshaped band. The route must stay walkable, so its crossing is a named entrance rather than a lethal lip."},
+    {"id": "excavation_haul_road", "kind": "landslide", "near": [3100, 3270], "gap": 40, "width": 6,
+     "guard": "Dig company foreman",
+     "why": "The excavation site's own way in and out, on the western arm."},
+    {"id": "gulch_mouth", "kind": "canyon", "near": [4240, 4740], "gap": 44, "width": 7,
+     "guard": "Gulch lookout",
+     "why": "A canyon mouth into the mega stone mine, on the south-east arm."},
+    {"id": "wilds_slip", "kind": "landslide", "near": [4200, 4300], "gap": 36, "width": 5,
+     "guard": "Wilds ranger",
+     "why": "A landslide slope into the Rift Wilds, on the east."}
+  ],
+  "entrance_policy": "Guards' trailheads are marked with an armour stand placeholder and not staffed; Codex writes them (docs/HANDOVER_CODEX.md item 23).",
+  "terrain_paint": {
+    "rim": "BLACKSTONE",
+    "scarp": "BASALT",
+    "why": "The export paints with WorldPainter's built-in Terrain enum, which has no modded blocks (tools/worldpainter/paint.js). Laying the sculpted shape in dark rock means the block pass only has to convert the visible skin to the distortion palette, never the solid interior."
+  }
+}
