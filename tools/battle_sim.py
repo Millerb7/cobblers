@@ -53,6 +53,9 @@ LIMITS, and they are still large.
   - no Protect, Substitute, Encore, Taunt, Pain Split, Trick Room, Tailwind or Baton Pass.
   - abilities outside the list above do nothing, including Static, Effect Spore, Cursed Body, Poison Point,
     Chlorophyll, Swift Swim and Solar Power.
+  - Dry Skin is modelled as the Water immunity only. Its 1.25x vulnerability to Fire and its weather tick are
+    not, so the holder reads as strictly better than it is. Nothing on an authored roster or in a catchable
+    pool has it today, so it moves no number; it would the moment a leader takes it.
   - IVs 15 and EVs 0 on both sides. Real wild catches roll 0-31 and real trainers may not.
   - the player's moves are the level-up list only, while every leader carries a hand-picked set including TM
     moves. TMCraft is in the pack. This biases the whole simulation AGAINST the player.
@@ -636,7 +639,7 @@ def take_hit(dfn, att, dmg, eff_super, contact):
         if dfn.item in ("sitrus_berry", "oran_berry") and not dfn.item_used and dfn.hp_now <= dfn.hp / 2:
             dfn.hp_now = min(float(dfn.hp), dfn.hp_now + (dfn.hp / 4.0 if dfn.item == "sitrus_berry" else 10.0))
             dfn.item_used = True
-        if contact and dfn.item == "rocky_helmet":
+        if contact and dfn.item == "rocky_helmet" and att.ability != "magicguard":
             att.hp_now -= att.hp / 6.0
     return dmg
 
@@ -649,7 +652,10 @@ def end_of_turn(mon, field):
         mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 16.0)
     elif mon.item == "black_sludge":
         poison = any(t.lower() == "poison" for t in mon.types)
-        mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 16.0) if poison else mon.hp_now - mon.hp / 8.0
+        if poison:
+            mon.hp_now = min(float(mon.hp), mon.hp_now + mon.hp / 16.0)
+        elif not guarded:
+            mon.hp_now -= mon.hp / 8.0
     if not guarded:
         if mon.item == "life_orb" and mon.hit_this_turn:
             mon.hp_now -= mon.hp / 10.0
