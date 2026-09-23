@@ -110,6 +110,15 @@ families available, not one** — the thinness is in the document, not in the wo
 regenerated to include waterway pools before its assessments are trusted, and `GYM_SUFFICIENCY_AUDIT.md`'s
 verdict on Gym 3 rests on the same omission.
 
+## A defect found and fixed in the tool
+
+The gendered Nidoran rows of `AVAILABILITY.md` did not reach a species: `key()` stripped the ♀ and ♂ signs, which
+collapsed two species onto one id the jar does not have, and the row regex could not match the signs at all. The
+candidate was then dropped with no message, so a shrinking pool looked exactly like a narrow one -- the very thing
+this tool exists to tell apart. All three are fixed: the signs map to "f" and "m", the regex accepts them, and an
+unresolved row is now counted and named in the report. No number above changed, because both rows belonged only to
+Gym 8, which has no roster to fight.
+
 ## What this cannot tell you
 
 The model is two Pokemon at full health hitting each other with their best damaging move until one faints.

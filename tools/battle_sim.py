@@ -90,8 +90,13 @@ def find_jar():
 
 def key(name):
     """Nidoran's gender sign, Mr. Mime's stop and Farfetch'd's apostrophe all have to fall out the same way
-    on both sides, or a roster entry silently finds no species."""
-    return re.sub(r"[^a-z0-9]", "", (name or "").lower())
+    on both sides, or a roster entry silently finds no species.
+
+    The gender signs carry meaning and cannot just be stripped: the jar has nidoranf and nidoranm, and dropping
+    the sign collapsed two species onto one id that does not exist in it.
+    """
+    s = (name or "").lower().replace("♀", "f").replace("♂", "m")
+    return re.sub(r"[^a-z0-9]", "", s)
 
 
 def load_pack(jar):
@@ -163,7 +168,7 @@ def effectiveness(chart, move_type, defender_types):
 # ------------------------------------------------------------------ availability
 
 GYM_HEAD = re.compile(r"^## Gym (\d+): (\S+) \((\w+)\)", re.M)
-ROW = re.compile(r"^\| ([A-Za-z'\u00e9. \-]+?) \| (\d+)-(\d+) \| ([^|]+?) \| ([^|]+?) \|$", re.M)
+ROW = re.compile(r"^\| ([A-Za-z'\u00e9\u2640\u2642. \-]+?) \| (\d+)-(\d+) \| ([^|]+?) \| ([^|]+?) \|$", re.M)
 
 
 def parse_availability(path):
@@ -476,14 +481,22 @@ def assess(gym, avail, leaders, species, moves, chart, ivs, stones, caps):
     foes = build_leader(t, species, moves, chart, ivs, stones)
     out["foes"] = foes
     seen = set()
+    # A candidate the jar does not know is COUNTED, not dropped in silence. Gendered Nidoran fell out of Gym 8's
+    # pool for exactly this reason and nothing said so (found by the test author, 2026-09-24): a shrinking pool
+    # looks the same as a narrow one, which is the very thing this tool is for.
+    out["unresolved"] = []
     for r in rows:
         k = key(r["species"])
-        if k in seen or k not in species:
+        if k in seen:
             continue
         seen.add(k)
+        if k not in species:
+            out["unresolved"].append(r["species"])
+            continue
         try:
             p = Mon(species, k, cap, moves, chart, ivs=ivs, stones=stones)
-        except SimError:
+        except SimError as e:
+            out["unresolved"].append("%s (%s)" % (r["species"], e))
             continue
         if not p.moveset:
             continue
@@ -605,6 +618,9 @@ def main(argv=None):
         beats_ace = [c for c in cands if ace in c["beats"]]
         say("  %d catchable candidates: %d beat the whole roster 1v1, %d beat some, %d beat none"
             % (len(cands), len(sweepers), len(partial), len(nothing)))
+        if r.get("unresolved"):
+            say("  !! %d availability rows did not resolve to a species and are NOT in the pool: %s"
+                % (len(r["unresolved"]), ", ".join(r["unresolved"][:6])))
         say("  beat the ace (%s): %d" % (ace, len(beats_ace)))
         say("  the ace is weak to: %s; %d catchable families can attack on one of those types"
             % (", ".join(r["ace_weak_to"]) or "nothing", len(r["on_type"])))
