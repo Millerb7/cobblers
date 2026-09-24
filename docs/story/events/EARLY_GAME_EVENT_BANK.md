@@ -1,8 +1,9 @@
 # Early-Game Event Bank — Pallet through Gym 3
 
-**Status:** Proposed event bank. These twenty-eight scenes supplement the
-fourteen encounters in `EARLY_GAME_ENCOUNTERS.md`. Exact placement, runtime
-mechanisms, item IDs, and Pokémon levels remain unverified.
+**Status:** Reconciled event bank. These nineteen scenes supplement the
+fourteen encounters in `EARLY_GAME_ENCOUNTERS.md`. Route 1–3 membership and
+positions are settled in `EARLY_ROUTE_RECONCILIATION.md`; runtime mechanisms,
+item IDs, and Pokémon levels remain unverified.
 
 These are deliberately smaller than full sidequests. Most should take one to
 five minutes, and several exist mainly to make a road or town feel occupied.
@@ -13,15 +14,15 @@ They never gate the route, gym, story, healing, or PC access.
 | Area | Existing detailed events | Added here | Total |
 | --- | ---: | ---: | ---: |
 | Pallet | 3 | 4 | 7 |
-| Route 1 | 2 | 4 | 6 |
+| Route 1 | 2 | 1 | 3 |
 | Brock's town | 2 | 4 | 6 |
-| Brock-to-Misty road | 1 | 4 | 5 |
+| Brock-to-Misty road | 1 | 1 | 2 |
 | Misty's town | 2 | 4 | 6 |
-| Misty-to-Surge climb | 2 | 4 | 6 |
+| Misty-to-Surge climb | 2 | 1 | 3 |
 | Surge's town | 2 | 4 | 6 |
-| **Total through Gym 3** | **14** | **28** | **42** |
+| **Total through Gym 3** | **14** | **19** | **33** |
 
-Not all forty-two events need equal visual weight. Large silhouettes belong to
+Not all thirty-three events need equal visual weight. Large silhouettes belong to
 the crushed house and ghost mansion. Most additions below need one small prop
 cluster, one or two actors, and a clear interaction.
 
@@ -89,20 +90,6 @@ later. Bulbasaur is an owned actor, not a capture reward.
 
 # Route 1 — Pallet to Brock
 
-## `EVT-ROUTE1-CATERPIE-CROSSING` — Green Traffic
-
-**Visible hook:** A slow line of Caterpie crosses the road toward a patch of
-fresh leaves while two travelers wait on opposite sides.
-
-**Interaction:** Move two fallen branches into a short leaf-covered crossing
-beside the road. The Caterpie turn onto it, clearing the main path without being
-attacked or collected.
-
-**Character beat:** One traveler is impatient until a Caterpie climbs onto their
-boot and falls asleep.
-
-**Reward and aftermath:** Common berries and a Bug-type encounter marker deeper
-in the grove, subject to route balance.
 
 ## `EVT-ROUTE1-RATTATA-PICNIC` — Lunch Tax
 
@@ -119,34 +106,7 @@ theft.
 **Reward and aftermath:** A food bundle and low-value capture supplies. Rattata
 occasionally inspect the stump afterward.
 
-## `EVT-ROUTE1-BUG-NET` — Catch and Release the Net
 
-**Visible hook:** A bug catcher's net moves through tall grass with nobody
-holding it.
-
-**Interaction:** Follow the moving handle and find a Metapod caught in the hoop
-while trying to climb through it. Brace the net and rotate it free; pulling
-straight makes no progress but causes no harm.
-
-**Character beat:** The embarrassed catcher has spent ten minutes tracking the
-net and never considered that the net had caught itself.
-
-**Reward and aftermath:** Repellent or field supplies and a route-tip dialogue
-about the nearby Bug habitat. Metapod remains wild and leaves.
-
-## `EVT-ROUTE1-SENTRET-WATCH` — The Second Lookout
-
-**Visible hook:** A Sentret stands on a stump mirroring a nervous traveler's
-every movement. A second Sentret watches from the opposite side of the path.
-
-**Interaction:** Turn toward each Sentret in sequence until both point toward a
-dropped satchel hidden in grass. Return it to the traveler.
-
-**Character beat:** The traveler thought the first Sentret was mocking them. It
-was trying to make them look the other way.
-
-**Reward and aftermath:** The recovered travel supplies are split with the
-player. Both Sentret return to their lookout stumps.
 
 # Brock's town
 
@@ -211,64 +171,28 @@ keeps ownership of every jar.
 
 # Brock-to-Misty road
 
-## `EVT-ROUTE2-BONSLY-MILESTONE` — Very Convincing Tree
 
-**Visible hook:** A newly painted route marker has apparently grown feet and is
-quietly moving away from the road.
 
-**Interaction:** Follow the “marker” to discover Bonsly imitating it. Place the
-real marker from the grass back into its stone socket and leave Bonsly beside a
-smaller decoy post.
 
-**Character beat:** The road worker refuses to discuss how long they spent
-painting Bonsly before noticing.
 
-**Reward and aftermath:** Route supplies and a harmless fake milestone cosmetic.
-Bonsly continues copying the decoy.
+## `EVT-ROUTE2-VILTRI-SOUNDING` — Viltri Sounding
 
-## `EVT-ROUTE2-BELLSPROUT-GAUGE` — Chance of Plants
+**Placement:** shore station at (1779, 3011), route distance 636.1, after the
+road enters Lake Viltri Hollow.
 
-**Visible hook:** A rain gauge reads full on a clear day because a Bellsprout has
-rooted inside it.
+**Visible hook:** Three depth staffs disagree, and a floating gauge drifts at
+the end of a loose tether while Lotad use the one safe shelf between them.
 
-**Interaction:** Prepare an adjacent damp soil patch and redirect a small drip
-line to it. Bellsprout moves when the new patch is wetter than the gauge.
+**Interaction:** Read the three water lines, follow the Lotad shelf, and reset
+the gauge after finding Corphish claw marks on the loosened knot.
 
-**Character beat:** The weather keeper has published “one hundred percent rain”
-for three days and blames the instrument professionally.
+**Character beat:** The shore keeper treats the first lake view as something
+worth learning rather than scenery to sprint through: “Look at the banks before
+the map.”
 
-**Reward and aftermath:** Weather supplies and a controlled Bellsprout encounter
-lead, pending pre-Misty balance review.
-
-## `EVT-ROUTE2-NINCADA-ROAD` — Quiet Underfoot
-
-**Visible hook:** A maintenance worker hears scratching beneath a cracked side
-path and has roped it off before the surface collapses.
-
-**Interaction:** Tap three marked stones to locate the hollow section, then move
-the rope around it. A Nincada emerges from the safe shoulder after traffic stops
-crossing its tunnel.
-
-**Character beat:** The worker values the road and the burrow equally: “Both
-were here before my shift started.”
-
-**Reward and aftermath:** Repair materials and a marked safe shortcut. Nincada
-is not automatically offered as a capture.
-
-## `EVT-ROUTE2-MUDBRAY-BOOT` — Keep the Other One
-
-**Visible hook:** A hiker wears one boot and carries the matching sock. Mudbray
-stands nearby with the missing boot stuck loosely over one hoof.
-
-**Interaction:** Lead Mudbray across a shallow mud patch so the suction holds
-the boot while it steps free. Pulling directly is refused because it scares the
-Pokémon.
-
-**Character beat:** The hiker admits the boot was stolen only after they tried
-to ride Mudbray without asking.
-
-**Reward and aftermath:** Climbing food and spare leather. Mudbray follows the
-hiker at a deliberately judgmental distance.
+**Reward and aftermath:** Regional food and ordinary shore supplies. The gauge
+remains aligned and the platform becomes a readable Lake Viltri stop; no
+special species is granted.
 
 # Misty's town
 
@@ -354,28 +278,11 @@ simplified route polyline and are approximate:
   into view on arrival. This is a scenery moment and deliberately carries no
   event, NPC, prompt, or reward. Nothing in this bank may be placed on it.
 
-Event order along the leg is Spoink (woods), then Swablu (Mt Clay foot), then
-Mareep and Sableye (Tri Peaks grade). The two detailed encounters share one
-stop at the pond shore: the Wooper scene at (2204, 1580) sits 29 blocks from
-the Nosepass signs at (2203, 1609), about 70% of the way.
+The two detailed encounters share one stop at the pond shore: the Wooper
+scene at (2204, 1580) sits about 32 blocks from the Nosepass signs at
+(2186, 1606), route distance 1469. Swablu marks the later forest-to-mountain
+transition. The final shelf lip remains empty.
 
-## `EVT-ROUTE3-SPOINK-PEARL` — Do Not Stop Bouncing
-
-**Placement:** a camper's clearing beside the Foothill Woods road, before the
-Nosepass signs. Keep it out of the signs' 40-block clearing and out of the
-sightline corridor to the array (see `EVT-ROUTE3-NOSEPASS-SIGNS`).
-
-**Visible hook:** A Spoink bounces in one tiny circle beside a pearl wedged under
-a flat root.
-
-**Interaction:** Place a soft bedroll beside Spoink, lift the root with the
-visible lever branch, and roll the pearl back without forcing Spoink to stop.
-
-**Character beat:** The camper, resting before the real climb starts, gives
-increasingly useless advice while refusing to touch the bouncing Pokémon.
-
-**Reward and aftermath:** A small Psychic-type utility item candidate and the
-camper's spare supplies. Spoink leaves with its pearl.
 
 ## `EVT-ROUTE3-SWABLU-NEST` — Blue Thread
 
@@ -396,44 +303,7 @@ bench a short way up the grade; the player receives feathers and climbing
 supplies. The bench has no healing, PC, progression flag, or route unlock, and
 it must not be the shelf lip. Route access is unchanged.
 
-## `EVT-ROUTE3-MAREEP-SHELTER` — Static in the Rain
 
-**Placement:** a switchback on the Tri Peaks grade, above the tree cover, where
-the road is exposed to weather.
-
-**Visible hook:** A shepherd has moved the flock under an overhang at the
-switchback, but one Mareep stands beneath a metal trail frame on the outer bend
-with its wool sparking.
-
-**Interaction:** Lower a nearby rope gate to open the inside of the bend toward
-the stone shelter, then remove the loose metal bell from the shelter fence.
-Mareep walks across once the route is clear.
-
-**Character beat:** The shepherd is calm about the sparks and furious about who
-put a metal bell on an exposed storm grade.
-
-**Reward and aftermath:** Wool, weather supplies, and a Mareep encounter lead
-away from the owned flock, pending balance review.
-
-## `EVT-ROUTE3-SABLEYE-REFLECTORS` — Shiny Way Up
-
-**Placement:** a rock cut on the upper Tri Peaks grade, below the shelf lip and
-out of sight of it.
-
-**Visible hook:** Every reflective marker has vanished from the switchbacks
-through a dim rock cut, the stretch climbers use after dark. Glints appear from
-a shallow side cavity.
-
-**Interaction:** Offer three ordinary polished stones from a maintenance box in
-exchange for the reflectors. Place the recovered markers on the inside edge of
-each switchback, where the grade is safe.
-
-**Character beat:** Sableye examines each replacement like a jeweler and rejects
-one chipped stone until the player turns its polished face outward.
-
-**Reward and aftermath:** A marked night line up the cut and a small mineral
-cache. The road is walkable without the markers. Sableye remains a rare
-noncapture actor; this event does not grant early access to it.
 
 # Surge's town
 
@@ -547,7 +417,7 @@ Gym 1–3 trainer and encounter review approves them.
 
 # Implementation grouping
 
-Build and test these as reusable families rather than twenty-eight unrelated
+Build and test these as reusable families rather than nineteen unrelated
 systems:
 
 - **Return or trade a prop:** laundry, picnic, Corphish tools, Spoink pearl,

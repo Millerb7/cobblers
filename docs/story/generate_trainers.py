@@ -153,6 +153,14 @@ def build_bosses(rules):
 
 
 def choose_team(placement_index, role, route, rules):
+    explicit = route["placements"][placement_index].get("team_species")
+    if explicit:
+        unknown = [species for species in explicit if species not in rules["species_kits"]]
+        if unknown:
+            raise ValueError(
+                f"{route['id']} placement {placement_index + 1}: unknown species kits {unknown}"
+            )
+        return explicit
     profile = rules["route_archetypes"][role]
     count = profile["member_count"]
     pool_name = profile.get("pool", "ambient_pool")
@@ -162,10 +170,12 @@ def choose_team(placement_index, role, route, rules):
     return selected
 
 
-def build_route_trainers(rules, routes_doc):
+def build_route_trainers(rules, routes_doc, route_orders=None):
     route_index = {route["id"]: route for route in routes_doc["routes"]}
     generated = []
     for route_rule in rules["routes"]:
+        if route_orders is not None and route_rule["order"] not in route_orders:
+            continue
         route = route_index[route_rule["id"]]
         polyline = route["corridor"]["polyline"]
         band = route["party_level_band"]
@@ -188,9 +198,16 @@ def build_route_trainers(rules, routes_doc):
             progress = distance / route["distance"]["computed_walked_blocks"]
             base_level = round(band["minimum"] + progress * (band["maximum"] - band["minimum"] - 1))
             selected = choose_team(index - 1, placement["role"], route_rule, rules)
+            move_overrides = placement.get("movesets")
+            if move_overrides is not None and len(move_overrides) != len(selected):
+                raise ValueError(
+                    f"{route_rule['id']} placement {index}: movesets must match team_species"
+                )
             team = []
             for team_index, species_key in enumerate(selected):
                 kit = deepcopy(rules["species_kits"][species_key])
+                if move_overrides is not None:
+                    kit["moveset"] = deepcopy(move_overrides[team_index])
                 kit["level"] = max(band["minimum"], base_level - (len(selected) - team_index - 1))
                 team.append(kit)
             trainer_id = f"route_{route_rule['order']:02d}_trainer_{index:02d}"
@@ -227,6 +244,7 @@ def build_route_trainers(rules, routes_doc):
                         "win": f"dlg_{trainer_id}_win",
                         "loss": f"dlg_{trainer_id}_loss",
                     },
+                    "dialogue_text": deepcopy(placement.get("dialogue_text", {})),
                     "rct": make_rct(source, rules),
                 }
             )
@@ -266,10 +284,60 @@ def main():
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true", help="write data/trainers.json")
     mode.add_argument("--check", action="store_true", help="check committed output is current")
+    mode.add_argument(
+        "--write-early",
+        action="store_true",
+        help="replace only route 1-3 trainer records in data/trainers.json",
+    )
+    mode.add_argument(
+        "--check-early",
+        action="store_true",
+        help="check only route 1-3 trainer records without evaluating later routes",
+    )
     args = parser.parse_args()
 
     rules = load_json(RULES_PATH)
     routes = load_json(ROUTES_PATH)
+    if args.write_early or args.check_early:
+        early = build_route_trainers(rules, routes, route_orders={1, 2, 3})
+        current_document = load_json(OUTPUT_PATH)
+        current_early = [
+            trainer
+            for trainer in current_document["trainers"]
+            if trainer.get("class") == "route" and trainer.get("route_order") in {1, 2, 3}
+        ]
+        if args.check_early:
+            if current_early != early:
+                print(
+                    f"stale early routes: run {Path(__file__).relative_to(ROOT)} --write-early",
+                    file=sys.stderr,
+                )
+                return 1
+            print(f"ok: {len(early)} route 1-3 trainers")
+            return 0
+        early_ids = {trainer["id"] for trainer in early}
+        rebuilt = []
+        inserted = False
+        for trainer in current_document["trainers"]:
+            if trainer["id"] in early_ids:
+                if not inserted:
+                    rebuilt.extend(early)
+                    inserted = True
+                continue
+            rebuilt.append(trainer)
+        if not inserted:
+            rebuilt.extend(early)
+        current_document["trainers"] = rebuilt
+        current_document["generation_contract"]["route_trainers"] = sum(
+            trainer.get("class") == "route" for trainer in current_document["trainers"]
+        )
+        OUTPUT_PATH.write_text(
+            json.dumps(current_document, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        print(f"updated {len(early)} route 1-3 trainers in {OUTPUT_PATH.relative_to(ROOT)}")
+        return 0
     rendered = json.dumps(build_document(rules, routes), indent=2, ensure_ascii=False) + "\n"
     if args.write:
         OUTPUT_PATH.write_text(rendered, encoding="utf-8", newline="\n")

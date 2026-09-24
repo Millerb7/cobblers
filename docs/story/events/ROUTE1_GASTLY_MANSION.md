@@ -9,31 +9,24 @@
 
 A large abandoned mansion stands off the forested part of the first route. The
 house is active with Ghost-type Pokémon. Near the entrance, a young Gastly is
-hiding from them. It became separated from its two parents during a pulse and
-is too frightened to cross the occupied rooms alone.
+hiding from them. It became separated from its two parents after the house's
+old protective ward collapsed and is too frightened to cross the occupied
+rooms alone.
 
 The player leads Gastly through the mansion to a Haunter and Gengar trapped in
 the far wing. The other Ghost Pokémon are not an evil army. Some defend nests,
-some play tricks, and some react to the same pulse that split the family.
+some play tricks, and some have claimed rooms the family once crossed safely.
+The mansion is a local ghost story, not evidence about who steered the
+Worldshift.
 
 ## Location and donor strategy
 
-The data defines the Pallet-to-Brock route but no mansion site. The exact
-coordinate must be selected on the built route before implementation.
-
-Donor candidates already cataloged:
-
-1. **`minecraft:mansion`** — preferred functional donor. Cobblemon already
-   associates mansion, bedroom, dining, and illager-structure spawn presets
-   with it. Placement must be tested to determine whether the authored world
-   retains the required structure context.
-2. **`repurposed_structures:mansion_birch`** — strong visual fit for the Viltri
-   Plateau’s birch country, but its catalog record does not carry the same
-   Cobblemon mansion spawn references. Use it only with explicit event spawns
-   or another verified spawn solution.
-
-The mansion should be visible from a short side path but should not sit across
-the required route.
+The authored manor is centred at `(1630, 5034)`, with footprint
+`x1614..1645, z5022..5045` and its main floor at `y114`. Its side trail leaves
+Route 1 at `(1468, 5018)`, route distance 284.9. The house is visible north of
+Pallet, lost behind the forest from the route mouth, and recovered by the
+junction signpost. Keep that sightline behavior; do not replace it with a
+woodland-mansion donor.
 
 ## Cast
 
@@ -91,8 +84,8 @@ Accepting starts the escort. Declining leaves Gastly safely at the foyer.
 ### Checkpoint 5 — Sealed ballroom: the family
 
 - Haunter is outside the unstable barrier, trying to reach Gengar.
-- The player resolves a short ring-resonance puzzle or defeats the event’s
-  strongest wild Ghost Pokémon.
+- The player restores three broken ward marks in the order indicated by the
+  ballroom floor, or defeats the event's strongest wild Ghost Pokémon.
 - The barrier drops, Gengar emerges, and Gastly crosses the room on its own.
 - The three reunite. None becomes a forced capture reward.
 
@@ -134,20 +127,18 @@ The player does not receive Pip or either parent as an automatic capture.
 
 ## Multiplayer behavior
 
-- Room completion should be shared for a party inside the mansion.
-- Each player can claim the normal item reward once.
-- Gastly occupies one authoritative checkpoint for the shared world.
-- A late-arriving player receives a brief recap and can join at the current
-  room rather than resetting the party.
-- Required battles must not start duplicate simultaneous encounters against the
-  same actor.
+- Each player owns an independent Gastly escort, checkpoint, dialogue cursor,
+  and reward claim.
+- Shared rooms and props remain in place, but one player's progress never
+  advances, resets, or hides another player's actor.
+- A reconnect restores that player's Gastly to their last saved checkpoint.
+- Required battles are player-local and must not target another player's
+  escort actor.
 
 ## Implementation gaps
 
-1. Exact mansion coordinate, orientation, side path, and terrain fit.
-2. Donor selection and proof that structure placement or explicit spawn areas
-   produce the intended Ghost Pokémon without flooding Route 1.
-3. Gastly, Haunter, and Gengar static actor method.
-4. Checkpoint state, restart recovery, and multiplayer battle ownership.
-5. Verified Spell Tag and cache item IDs.
-6. Final encounter levels and species list after Route 1 balance is known.
+1. Explicit mansion spawn control that does not flood Route 1.
+2. Player-local Gastly, Haunter, and Gengar actor method.
+3. Checkpoint restore and two-player isolation proof.
+4. Verified Spell Tag and cache item IDs.
+5. Final encounter levels and species list after Route 1 balance is approved.
