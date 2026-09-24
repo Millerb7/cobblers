@@ -54,9 +54,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the Rift. Every one of these was hand-applied to the staging world and had no step here at
                 # all until 2026-09-23, so a re-export would have erased all five silently (see EXCLUDED).
                 "cobblers_rift", "cobblers_rift_biome", "cobblers_league_tunnel", "cobblers_deep",
-                "cobblers_victory_road",
-                # Victory Road's regions, their Habitat Blocks and their finds (2026-09-23)
-                "cobblers_vr_regions", "cobblers_habitats", "cobblers_rewards",
+                # Victory Road as one cave network (2026-09-23; it replaced the spine and its regions), its Habitat
+                # Block tiles and its finds
+                "cobblers_vr_caves", "cobblers_habitats", "cobblers_rewards",
                 # the NPC classes and dialogues the placed NPCs use; no functions (see npcs())
                 "cobblers_dialogue")
 
@@ -75,7 +75,11 @@ EXCLUDED = {
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
     "cobblers_rewards": "self-driving: each find is an advancement that runs its own reward function as the player "
-                        "who earns it; it writes no blocks (the containers are placed by R9D)",
+                        "who earns it; it writes no blocks (the containers are placed by R9C)",
+    # Victory Road schema 2, retired 2026-09-23 when the owner chose a cave network (data/vr_caves.json)
+    "cobblers_victory_road": "retired: the schema 2 spine, replaced by cobblers_vr_caves (R9C)",
+    "cobblers_vr_regions": "retired: schema 2's five regions, folded into cobblers_vr_caves as its zones",
+    "cobblers_vr_clear": "staging only: rock back into what the retired spine and regions carved; a fresh export never had them",
 }
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
@@ -148,10 +152,9 @@ def prepare(a):
     py(TOOLS / "rift_skin.py", *src)
     py(TOOLS / "rift_league_tunnel.py", *src)
     py(TOOLS / "rift_deep.py", *src)
-    py(TOOLS / "victory_road.py", *src)
-    # the regions read the road's plan (derived/victory_road/plan.json), so they come after it; their Habitat
-    # Blocks and their finds are data the region build checks against its own model
-    py(TOOLS / "vr_regions.py", "build", *src)
+    # Victory Road: one cave network; its Habitat Block tiles and its finds are data the build checks against its
+    # own model (`vr_caves.py records --write` writes them)
+    py(TOOLS / "vr_caves.py", "build", *src)
     py(TOOLS / "habitat_blocks.py", "function")
     py(TOOLS / "rewards_pack.py")
     dlg = PACKS / "cobblers_dialogue"
@@ -334,13 +337,9 @@ def steps(with_spawns=False):
     # the Deep carved and the lot levelled first. Its backfill pack is staging-only and is excluded on purpose.
     out.append(("R9B", "the Windward Deep",
                 [("fn", "cobblers:deep/%s" % f) for f in indexed("cobblers_deep", "deep")]))
-    out.append(("R9C", "Victory Road",
-                [("fn", "cobblers:victory_road/%s" % f) for f in indexed("cobblers_victory_road", "victory_road")]))
-    # the regions open their forks through the road's own wall, so they come after it: re-running R9C alone would
-    # close every fork again (data/vr_regions.json re_apply_after)
-    out.append(("R9D", "Victory Road's five regions, after the road",
-                [("fn", "cobblers:vr_regions/%s" % f) for f in indexed("cobblers_vr_regions", "vr_regions")]))
-    # the Habitat Blocks, after everything that builds the floors they sit in (R9D's shell pass overwrites them). A
+    out.append(("R9C", "Victory Road's caves, from the Deep's mouth to the ravine onto the League's apron",
+                [("fn", "cobblers:vr_caves/%s" % f) for f in indexed("cobblers_vr_caves", "vr_caves")]))
+    # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
