@@ -99,6 +99,25 @@
 - **Jungle ruins cache and Sunset West story coordinates:** handed to Codex (`docs/HANDOVER_CODEX.md` items 17-18). Blocks nothing in the world.
 - **Gym matchup sufficiency:** the coordinated audit is complete in `docs/story/GYM_SUFFICIENCY_AUDIT.md`; decide the proposed `20/25/30/35/40/45/50/55` leader curve, cap offset zero, and minimal placement/roster package before changing encounters or trainers.
 - **The sculpt left cells.json and visibility.json behind:** `python tools/validate_data.py` has been red since the Rift sculpt changed the canonical heightmap. 100 `cell-terrain` errors (every cell in `data/cells.json` was computed from heightmap `5b9635676bb0`, not the canonical `0d9b5f1e8a01`) and 9 `visibility` errors, of which four matter: `patriarch_from_victory_road` 51 of 136 measures 12, `cherry_elder_from_victory_road` 26 of 91 measures 3, and `rift_rim_stop_from_its_leg_terrain` 40 of 272 measures 0, which makes a claim in `docs/world-building/SETTLEMENTS.md` false. Re-measuring is `tools/visibility_claims.py --write` plus a cells recompute, then a review of what genuinely stopped being visible: two of these read from Victory Road, which has since moved twice. Not caused by the road work of 2026-09-24; found by it. `python tools/validate.py` (file-level) is clean at 0 errors.
+
+  **The rim post, measured 2026-09-24, for the owner to choose.** It is a rest stop whose purpose is being seen
+  from the road, and it is seen from 0 of 272 observer points. The other stops manage 40 to 46 per cent.
+
+  - **A tall marker is ruled out, not merely expensive.** Raising the target roofline and re-measuring:
+    8, 12, 16, 20, 24, 30, 40 and 56 blocks all give **0 of 272**. The first height that registers anything is
+    **72 blocks**, for 10 of 272. The sculpt did not shave the sightline, it put the rim across it.
+  - **Move it 178 blocks, to (3814, 3791).** Ground y145-148, relief 3, still on the rim, and visible from
+    **50 of 272** (18%). The nearest flat ground that can be seen from the leg at all. Costs: re-site the town in
+    `data/towns.json` and `data/placements.json`, re-run `town_plan` and `place_town`, re-measure the claim and
+    the leg, and update `SETTLEMENTS.md`. It stays a rim post.
+  - **Move it about 400 blocks, to (3854, 3551) or nearby.** Visible from **85 of 272** (31%), the best score
+    anywhere within 400 blocks. But the ground there is y83-85: that is the Rift floor, not the rim, so it stops
+    being a rim post and becomes something else. Same re-siting cost.
+  - **Accept it.** Change the claim's `expect` to "not visible" and say in `SETTLEMENTS.md` that the post is
+    found rather than seen. Free, and the only option that makes the validator green without moving anything.
+
+  84 flat sites within 400 blocks can see the leg at all; every one that scores above 50 is down on the floor.
+  The claim has NOT been flipped and the validator's single remaining error is this.
 - **The League's town plan is still at the trunk head:** `data/placements.json` `settlements.league.plan` was not moved with the League on 2026-09-23. Its `centre` did move, to [3694, 2430], but the anchor rect [3513, 2587, 3640, 2702], the forecourt [3560, 2703, 3592, 2728] at y85, the `victory_approach` street and the reading all still describe the old site, and whatever was paved there on the staging world is a ghost forecourt 200 blocks south of the building. `tests/test_spawn_free_zones.py::test_the_league_precinct_is_a_zone` FAILS on exactly this and is the only red test in the suite (1,436 pass); it is right and must not be loosened. The spawn-free precinct itself was corrected on 2026-09-24. What is left is an authoring decision, not a patch: Victory Road now opens on the League's own apron at (3656, 89, 2486), three blocks from the lot, so there is nothing left to walk and the old forecourt-and-approach shape may not belong here at all. Measured in the world 2026-09-24, the apron is flat at y87-89 from x3620 to x3680 across z2484-2504, so a terrace IS possible -- but a street laid across it would have to avoid x3651-3661, where the road's ramp cuts down to y78, or street prep would seal the road. Emptying `plan.streets` instead drops the League out of `tools/reapply.py`'s place list, so that is not a free option either.
 
   **Three options, measured 2026-09-24, for the owner to choose between.** The apron in front of the door is
