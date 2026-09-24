@@ -153,7 +153,7 @@ leg points every 16 blocks; re-measured by `tools/validate_data.py`):
 | Merian hut | 86 of 216 points (visibility:merian_hut_from_its_leg_terrain) | 35 of 216 points (visibility:merian_hut_from_its_leg_canopy) |
 | Gorge hamlet | 55 of 129 points (visibility:gorge_hamlet_from_its_leg_terrain) | **fragile:** 1 of 129 points (visibility:gorge_hamlet_from_its_leg_canopy) |
 | Tableland stop | 88 of 191 points (visibility:tableland_stop_from_its_leg_terrain) | **fragile:** 5 of 191 points (visibility:tableland_stop_from_its_leg_canopy) |
-| Rift rim post | 40 of 272 points (visibility:rift_rim_stop_from_its_leg_terrain) | **not visible:** 0 of 272 points since Victory Road ends at the League on the trunk head, 2026-09-21 (visibility:rift_rim_stop_from_its_leg_canopy); needs a tall marker |
+| Rift rim post | **fragile, and currently not visible at all:** 0 of 272 points over bare terrain since the Rift sculpt raised the rim between the post and its leg, 2026-09-24 (visibility:rift_rim_stop_from_its_leg_terrain) | **not visible:** 0 of 272 points since Victory Road ends at the League on the trunk head, 2026-09-21 (visibility:rift_rim_stop_from_its_leg_canopy); needs a tall marker |
 
 The fragile three hold over the canopy on a handful of points, so a foliage pass can break them silently; each
 needs a tall marker or a kept sightline to read from the road, and the validator fails if the count moves. A player who walks past loses only the convenience.

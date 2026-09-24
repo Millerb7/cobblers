@@ -100,9 +100,59 @@
 - **Gym matchup sufficiency:** the coordinated audit is complete in `docs/story/GYM_SUFFICIENCY_AUDIT.md`; decide the proposed `20/25/30/35/40/45/50/55` leader curve, cap offset zero, and minimal placement/roster package before changing encounters or trainers.
 - **The sculpt left cells.json and visibility.json behind:** `python tools/validate_data.py` has been red since the Rift sculpt changed the canonical heightmap. 100 `cell-terrain` errors (every cell in `data/cells.json` was computed from heightmap `5b9635676bb0`, not the canonical `0d9b5f1e8a01`) and 9 `visibility` errors, of which four matter: `patriarch_from_victory_road` 51 of 136 measures 12, `cherry_elder_from_victory_road` 26 of 91 measures 3, and `rift_rim_stop_from_its_leg_terrain` 40 of 272 measures 0, which makes a claim in `docs/world-building/SETTLEMENTS.md` false. Re-measuring is `tools/visibility_claims.py --write` plus a cells recompute, then a review of what genuinely stopped being visible: two of these read from Victory Road, which has since moved twice. Not caused by the road work of 2026-09-24; found by it. `python tools/validate.py` (file-level) is clean at 0 errors.
 - **The League's town plan is still at the trunk head:** `data/placements.json` `settlements.league.plan` was not moved with the League on 2026-09-23. Its `centre` did move, to [3694, 2430], but the anchor rect [3513, 2587, 3640, 2702], the forecourt [3560, 2703, 3592, 2728] at y85, the `victory_approach` street and the reading all still describe the old site, and whatever was paved there on the staging world is a ghost forecourt 200 blocks south of the building. `tests/test_spawn_free_zones.py::test_the_league_precinct_is_a_zone` FAILS on exactly this and is the only red test in the suite (1,436 pass); it is right and must not be loosened. The spawn-free precinct itself was corrected on 2026-09-24. What is left is an authoring decision, not a patch: Victory Road now opens on the League's own apron at (3656, 89, 2486), three blocks from the lot, so there is nothing left to walk and the old forecourt-and-approach shape may not belong here at all. Measured in the world 2026-09-24, the apron is flat at y87-89 from x3620 to x3680 across z2484-2504, so a terrace IS possible -- but a street laid across it would have to avoid x3651-3661, where the road's ramp cuts down to y78, or street prep would seal the road. Emptying `plan.streets` instead drops the League out of `tools/reapply.py`'s place list, so that is not a free option either.
+
+  **Three options, measured 2026-09-24, for the owner to choose between.** The apron in front of the door is
+  flat at y87-89 from x3620 to x3680 across z2484-2504. The road's ramp cuts down to y78 through x3651-3661, the
+  lot is levelled to y88 with a 14-block skirt reaching z2499, and the road sets a player down at (3656, 89,
+  2486), three blocks south of the lot.
+
+  - **A. Two flanking terraces, no street.** Forecourt paving at x3620-3648 and x3664-3680, z2487-2502, both on
+    ground already flat at 87-89, with the ramp's cut between them as the way in. Keeps a forecourt, cannot seal
+    the road, and reads as a gate either side of the stair. Costs: two rects instead of one, and `plan.plaza`
+    takes a single rect today, so the schema grows a field.
+  - **B. One terrace east of the ramp.** x3664-3680, z2487-2502. Simplest, no schema change, and the asymmetry
+    is arguably better -- the player climbs out and the tower's forecourt opens to one side. Half the width.
+  - **C. Drop the approach entirely.** No plaza, no street: the road arrives at the door, which is what the
+    owner asked for ("nothing left to walk"). Cleanest reading. **Costs what nothing else does:**
+    `tools/reapply.py:67` selects places by a non-empty `plan.streets`, so emptying it drops the League out of
+    the re-apply place list and its prep function stops being generated. That needs a deliberate change to
+    reapply, not a silent one.
+
+  Whichever is chosen, `plan.anchors[0].rect` and `plan.entries[0].at` still have to move to the apex, and the
+  `reading` paragraph still describes the trunk head. `tests/test_spawn_free_zones.py::test_the_league_precinct_is_a_zone`
+  is left failing on purpose until then, and has not been patched.
 - **What actually spawns underground in the Rift is the pack's, not ours:** corrected 2026-09-24. `data/spawn_suppression.json` retains upstream defaults in "unauthored caves", which is what Victory Road and every unbuilt Rift cavity are, and the bounded-suppression override pack is not installed on the staging server. Measured over the server's own mods and datapacks: 2,662 readable `spawn_pool_world` files carry 5,850 underground-only spawn details (Cobblemon 3,657, COBBLEVERSE-DP-v31 2,037). 110 of them are Dark or Ghost, the only two types fightorflight's light rule moves, and Gastly, Haunter and Gengar each carry one gated on `#cobblemon:is_overworld`, which the Rift's rock satisfies. So Victory Road's dark is already dangerous; what is wrong is the level, since the highest of those bands is Gengar at 36-50 against a player at 50-59. Whether Cobbleverse scales wild levels is NOT VERIFIED. An earlier report in this session said nothing spawns there at all; that was true only of campaign-authored pools.
+- **Starters: `useConfigStarters: false` does NOT disable the starter config.** It is Cobblemon's own default and governs only whether a *datapack* starter list is merged with the config one; with no starter datapack present, `CobblemonStarterHandler.getStarterList` falls straight back to the config. The server has no starter datapack (checked directly: zero definitions), so the assumption that the flag made the file inert left **13 categories and 36 species** live on an unexamined default, spread 25 leader Pokemon beaten to 1. `modpack/config/cobblemon/starters.json` now overlays the base pack with Pallet, Lumya and Cosplay dropped: 10 categories, 27 distinct species, spread 29 to 14. Sources in `docs/research/notes/starter-selection.md`. NOT VERIFIED in a running game: EXP-029 counts the tabs on a fresh join.
+- **`relativeLevelCap` should be 0, and the data already assumes it is.** Proposal, not applied. `rctmod-server.toml` sets 5, and the rule is verbatim *"the level cap of a player is based off the strongest pokemon from the party of their NEXT required trainer ... The relativeLevelCap is added"* -- so a player meets every gym **five levels above its ace**. `data/trainers.json`'s own `generation_contract` records `relative_level_cap: 0` against `gym_ace_levels` 20/25/30/35/40/45/50/55, so the authored rosters were built for 0 and the runtime disagrees with them. Measured with `tools/battle_sim.py --cap-offset`: at **5**, every gym is won by both an informed and a walked six except Blaine against a walked team, and Misty falls to both without a single loss. At **0**, four of the seven flip back to a loss for the walked six and Blaine beats the informed six as well. That difference is the whole of `GYM_SUFFICIENCY_AUDIT.md`'s level complaint, now measured rather than asserted. It also moves Victory Road's cap from 65 to 60, since the cap there comes from the first Elite Four member's ace of 60. NOT VERIFIED: that RCT computes the cap as its own config documents, and that the Elite Four are in the required chain -- both need a runtime test.
 
 ## What is blocked
+
+- **What still blocks the live re-export**, listed 2026-09-24. In rough order of how hard each is to clear:
+
+  1. **`tools/reapply.py` does not know about five of the builds.** Its steps are R2-R16: cavern, world tree,
+     grove, elders, Route 1 forest, islet, hometown, towns, donors, lights, signposts, traders. There is **no
+     step for the Rift skin, the Rift biome, the Windward Deep, Victory Road or the League's lot**. Every one of
+     those is a block pass applied by hand to `cobblers-dryrun9`. A re-export writes fresh region files, so all
+     five vanish, and the supervised re-apply run would not put them back. This is the largest single blocker
+     and it is pure tooling: five more steps and their ordering.
+  2. **Codex's re-review of PR #36** (the fail-closed audits and the cavern shell). Outstanding; the owner
+     raised it.
+  3. **PR #40 is unmerged.** Victory Road, the Deep, the League move and the campaign tools are all on
+     `world/gym-waypoints-rift`, 26 commits off main.
+  4. **Zero Habitat Blocks are placed.** `data/habitat_blocks.json` has an empty `blocks` list, so all nine
+     habitat pools are inert. A re-export erases blocks placed in game (EXP-021), so the manifest is the only
+     durable form and it has nothing in it to re-apply.
+  5. **Two authoring calls open**, both above: the League's town plan still at the trunk head, and the Rift rim
+     post no longer visible from its own leg.
+  6. **The bounded-suppression override pack is not installed**, so upstream pools are live in unauthored caves
+     and off-route wilderness. That is by policy (`retain_defaults`), but it means Victory Road's encounters are
+     the pack's, not ours.
+  7. **`relativeLevelCap` disagrees with the authored rosters** (5 against the contract's 0). A config decision,
+     not a world one, but it should be settled before the fights are rewritten.
+
+  Cleared by the work of 2026-09-24: `validate_data.py` is green apart from item 5's rim-post claim, which was
+  109 errors of stale cells and visibility; the starter list is narrowed and recorded; and the Showdown damage
+  check is written and ready to run when the server is free.
 
 - **Pads in the world:** the Scar, Frostpeak shrine and Surge shelf pads exist in the canonical heightmap and on the staging exports; the live world and the disposable world predate them, so Surge's town, the Scar and the Frostpeak shrine wait for the live re-export, which is ready to run.
 - **Dialogue delivery:** per-player dialogue is proven single-player (EXP-022); the two-player run is blocked on a second account, and the crushed-house conversations are blocked on a design for world-scoped quest fields, which the compiler refuses.

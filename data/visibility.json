@@ -7,7 +7,7 @@
   "generated_by": "python tools/paint_maps.py --source-root <root> --out build/paint",
   "sha256": "ce7da822b7d14a7260a4fb431710b805b9c0aa7023c619d2d90edbdd64e56741"
  },
- "heightmap_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+ "heightmap_sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
  "rules": {
   "fragile_max_seen": 10,
   "fragile_max_share": 0.05,
@@ -142,7 +142,7 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 51,
+    "seen": 12,
     "of": 136,
     "unit": "observer points"
    },
@@ -194,11 +194,11 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 26,
+    "seen": 3,
     "of": 91,
     "unit": "observer points"
    },
-   "fragile": false
+   "fragile": true
   },
   {
    "id": "mt_vessu_summit_from_surge_town",
@@ -250,7 +250,7 @@
    },
    "surface": "terrain",
    "measured": {
-    "seen": 30,
+    "seen": 33,
     "of": 213,
     "unit": "target samples"
    },
@@ -565,11 +565,11 @@
    },
    "surface": "terrain",
    "measured": {
-    "seen": 40,
+    "seen": 0,
     "of": 272,
     "unit": "observer points"
    },
-   "fragile": false
+   "fragile": true
   },
   {
    "id": "rift_rim_stop_from_its_leg_canopy",
