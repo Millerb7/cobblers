@@ -85,6 +85,16 @@ def test_signposts_verify_with_no_posts_fails(monkeypatch, tmp_path):
     assert signposts.verify(SimpleNamespace(world=str(tmp_path))) == 1
 
 
+def test_signposts_verify_with_nonempty_truncated_report_fails(monkeypatch, tmp_path):
+    import signposts
+    rep = tmp_path / "signposts.json"
+    rep.write_text(json.dumps({"wood": "spruce", "posts": [{"id": "route_1_leaving_home"}]}))
+    monkeypatch.setattr(signposts, "REPORT", rep)
+    monkeypatch.setattr(signposts, "expected_post_ids",
+                        lambda: {"route_1_leaving_home", "route_1_leaving_gym1"})
+    assert signposts.verify(SimpleNamespace(world=str(tmp_path))) == 1
+
+
 def test_traders_verify_that_checks_no_trader_fails(monkeypatch, tmp_path):
     import traders
     monkeypatch.setattr(traders, "static_problems", lambda *a, **k: [])

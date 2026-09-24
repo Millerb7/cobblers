@@ -126,3 +126,42 @@ def test_reapply_audit_passes_a_clean_place(monkeypatch, tmp_path):
     monkeypatch.setattr(reapply, "OUT", tmp_path)
     monkeypatch.setattr(reapply, "places", lambda *a: ["gym4_town"])
     assert reapply.audit(SimpleNamespace(world=str(tmp_path), server_dir=str(tmp_path), source_root=None)) == 0
+
+
+def test_anchor_surface_is_independent_expected_paving():
+    plan = {"streets": {}, "plaza": None,
+            "anchors": [{"id": "west", "rect": [0, 0, 1, 1], "level": 88,
+                         "surface": "minecraft:polished_tuff"}]}
+    paving = TA.expected_paving(plan)
+    assert len(paving) == 4
+    assert set(paving.values()) == {(88, "minecraft:polished_tuff", "west")}
+
+
+def test_reapply_includes_a_place_with_only_anchors():
+    doc = {"settlements": {
+        "league": {"plan": {"streets": [], "plaza": None,
+                             "anchors": [{"id": "terrace", "rect": [0, 0, 1, 1]}]}},
+        "empty": {"plan": {"streets": [], "plaza": None, "anchors": []}},
+    }}
+    assert reapply.places(doc) == ["league"]
+
+
+def test_reapply_records_light_failures_without_gating_the_audit(monkeypatch, tmp_path):
+    def run(cmd, **kwargs):
+        tool = Path(cmd[1]).name
+        if tool == "town_audit.py":
+            return SimpleNamespace(returncode=0, stdout="   plan clean: every paving cell\n", stderr="")
+        if tool == "light_plan.py":
+            return SimpleNamespace(returncode=1, stdout="northlight: 14 at block light 0\n", stderr="")
+        return SimpleNamespace(returncode=0, stdout="ok\n", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    monkeypatch.setattr(reapply, "OUT", tmp_path)
+    monkeypatch.setattr(reapply, "places", lambda *args: ["league"])
+    monkeypatch.setattr(reapply, "placements", lambda: {"settlements": {"league": {"plan": {}}}, "placements": []})
+    args = SimpleNamespace(world=str(tmp_path), server_dir=str(tmp_path), source_root=None)
+    assert reapply.audit(args) == 0
+    report = json.loads(max(tmp_path.glob("audit_*.json")).read_text(encoding="utf-8"))
+    assert report["lights"]["exit"] == 1
+    assert report["lights"]["gate"] is False
+    assert report["clean"] is True
