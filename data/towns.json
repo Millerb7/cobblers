@@ -1830,29 +1830,29 @@
    "working_name": "Rift rim post",
    "display_name": null,
    "for": "A rangers' post with a Center on the Rift's east rim near the fork: the traditional stop before Victory Road, set off the road.",
-   "why_here": "Computed Victory Road is 5,248 blocks along the Rift waypoints; this rim post is 386 blocks from victory_road at fraction 0.628, so players climb out to rest.",
+   "why_here": "Moved 178 blocks from (3734, 3951) on 2026-09-23. A rest stop's purpose is being seen from the road, and after the Rift sculpt raised the rim the old site was visible from 0 of 272 observer points on its own leg. A taller marker was ruled out by measurement rather than by taste: 8, 12, 16, 20, 24, 30, 40 and 56 blocks of roofline all measure 0, and the first height that registers anything is 72. This is the nearest flat ground that can be seen from the leg at all, at 50 of 272. Sites scoring higher are 400 blocks away on the Rift floor at y83-85, where it would stop being a rim post.",
    "centre": {
-    "x": 3734,
-    "z": 3951,
-    "ground_y": 138.8
+    "x": 3814,
+    "z": 3791,
+    "ground_y": 147.6
    },
    "footprint": {
     "shape": "square",
     "class": "small",
-    "size_blocks": 123,
-    "min_x": 3673,
-    "min_z": 3890,
-    "max_x": 3795,
-    "max_z": 4012,
+    "size_blocks": 49,
+    "min_x": 3790,
+    "min_z": 3767,
+    "max_x": 3838,
+    "max_z": 3815,
     "ground_y": [
-     137.5,
-     143.3
+     144.8,
+     148.4
     ],
     "slope_degrees": {
-     "mean": 2.6,
-     "max": 5.0
+     "mean": 4.2,
+     "max": 15.6
     },
-    "basis": "largest square near the chosen point with slope under 5 degrees, clear of water by 24 blocks"
+    "basis": "49 blocks square at the new centre. Relief is 3 and the mean slope 3.9, so the pad is buildable with ordinary town prep, but 305 of the 2,401 cells exceed 12 degrees: the rim's own edge runs through the footprint. Nothing within 32 blocks of this centre holds a 49-square under 12 degrees, measured 2026-09-23 -- the site is visible BECAUSE it is on broken ground, and the two cannot be had separately here. The old 123-square at (3734, 3951) was flatter and could not be seen at all."
    },
    "subregion": "shrew_lake_shores",
    "region": "shrew_lakes",
@@ -1870,15 +1870,15 @@
      "distance_blocks": 936
     }
    ],
-   "distance_from_critical_path_blocks": 386,
+   "distance_from_critical_path_blocks": 216,
    "nearest_leg": {
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.743,
+    "at_fraction": 0.756,
     "nearest_point": {
-     "x": 4007,
-     "z": 3678
+     "x": 3967,
+     "z": 3638
     }
    },
    "waystone": {
@@ -1889,7 +1889,7 @@
    "gates": [],
    "nearest_settlement": {
     "id": "cherry_elder_shrew",
-    "distance_blocks": 344
+    "distance_blocks": 409
    },
    "buildability": "123-block square under 5 degrees"
   },
@@ -2544,7 +2544,7 @@
    "gates": [],
    "nearest_settlement": {
     "id": "rift_rim_stop",
-    "distance_blocks": 642
+    "distance_blocks": 496
    },
    "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_patriarch_dark_oak.nbt); the glade is left open",
    "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"
@@ -2617,7 +2617,7 @@
    "gates": [],
    "nearest_settlement": {
     "id": "rift_rim_stop",
-    "distance_blocks": 344
+    "distance_blocks": 409
    },
    "buildability": "no building: the tree is placed by the foliage paint (kits/structures/foliage/landmark_cherry_elder.nbt); the glade is left open",
    "sightlines": "derived/foliage/landmark_sightlines.json (tools/landmark_trees.py check)"

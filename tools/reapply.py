@@ -54,7 +54,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the Rift. Every one of these was hand-applied to the staging world and had no step here at
                 # all until 2026-09-23, so a re-export would have erased all five silently (see EXCLUDED).
                 "cobblers_rift", "cobblers_rift_biome", "cobblers_league_tunnel", "cobblers_deep",
-                "cobblers_victory_road")
+                # Victory Road as one cave network (2026-09-23; it replaced the spine and its regions), its Habitat
+                # Block tiles and its finds
+                "cobblers_vr_caves", "cobblers_habitats", "cobblers_rewards",
+                # the NPC classes and dialogues the placed NPCs use; no functions (see npcs())
+                "cobblers_dialogue")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -70,6 +74,12 @@ EXCLUDED = {
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
+    "cobblers_rewards": "self-driving: each find is an advancement that runs its own reward function as the player "
+                        "who earns it; it writes no blocks (the containers are placed by R9C)",
+    # Victory Road schema 2, retired 2026-09-23 when the owner chose a cave network (data/vr_caves.json)
+    "cobblers_victory_road": "retired: the schema 2 spine, replaced by cobblers_vr_caves (R9C)",
+    "cobblers_vr_regions": "retired: schema 2's five regions, folded into cobblers_vr_caves as its zones",
+    "cobblers_vr_clear": "staging only: rock back into what the retired spine and regions carved; a fresh export never had them",
 }
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
@@ -79,6 +89,28 @@ UNPLACED = {"hometown"}                          # has roads, not a town plan: p
 
 def placements():
     return json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+
+
+def npcs():
+    """[(conversation id, (x, y, z), npc class)] for every NPC a reward is given through (data/rewards.json npc_grant).
+
+    An NPC is an entity, so an export erases it like a block. It cannot be put back by a function: NPC classes load
+    only at server start, after functions are parsed, so a function naming the class fails to load
+    (tools/compile_dialogue.py). The class ships in cobblers_dialogue, installed before boot, and the NPC is placed by
+    a raw spawnnpcat over RCON in step R9F."""
+    rw = json.loads((ROOT / "data" / "rewards.json").read_text(encoding="utf-8"))
+    dl = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
+    out = []
+    for r in rw.get("rewards") or []:
+        if r.get("kind") != "npc_grant":
+            continue
+        conv = next((c for c in dl["conversations"] if c.get("quest_id") == r["quest"]), None)
+        if conv is None:
+            raise SystemExit("reward %s names quest %s, and no conversation in data/dialogue.json runs it" % (r["id"], r["quest"]))
+        if not (isinstance(r.get("npc_at"), list) and len(r["npc_at"]) == 3):
+            raise SystemExit("reward %s is an npc_grant with no npc_at [x, y, z]: nowhere to place it" % r["id"])
+        out.append((conv["id"], tuple(r["npc_at"]), "cobblers:%s" % conv["npc_id"]))
+    return out
 
 
 def places(doc=None):
@@ -124,7 +156,16 @@ def prepare(a):
     py(TOOLS / "rift_skin.py", *src)
     py(TOOLS / "rift_league_tunnel.py", *src)
     py(TOOLS / "rift_deep.py", *src)
-    py(TOOLS / "victory_road.py", *src)
+    # Victory Road: one cave network; its Habitat Block tiles and its finds are data the build checks against its
+    # own model (`vr_caves.py records --write` writes them)
+    py(TOOLS / "vr_caves.py", "build", *src)
+    py(TOOLS / "habitat_blocks.py", "function")
+    py(TOOLS / "rewards_pack.py")
+    dlg = PACKS / "cobblers_dialogue"
+    if dlg.exists():
+        shutil.rmtree(dlg)
+    for conv, _at, _cls in npcs():
+        py(TOOLS / "compile_dialogue.py", conv, "--out", dlg)
     py(TOOLS / "rematerial.py")
     py(TOOLS / "place_town.py", "hometown", *src)
     for s in places():
@@ -300,8 +341,16 @@ def steps(with_spawns=False):
     # the Deep carved and the lot levelled first. Its backfill pack is staging-only and is excluded on purpose.
     out.append(("R9B", "the Windward Deep",
                 [("fn", "cobblers:deep/%s" % f) for f in indexed("cobblers_deep", "deep")]))
-    out.append(("R9C", "Victory Road",
-                [("fn", "cobblers:victory_road/%s" % f) for f in indexed("cobblers_victory_road", "victory_road")]))
+    out.append(("R9C", "Victory Road's caves, from the Deep's mouth to the ravine onto the League's apron",
+                [("fn", "cobblers:vr_caves/%s" % f) for f in indexed("cobblers_vr_caves", "vr_caves")]))
+    # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
+    # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
+    # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
+    out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
+                [("fn", "cobblers:habitats/place"), ("wait", 20)]))
+    # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
+    out.append(("R9F", "NPCs a reward is given through (data/rewards.json npc_grant)",
+                [("npc", n) for n in npcs()]))
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
@@ -339,6 +388,33 @@ def run(a):
                     print("   !! %s -> %s" % (v, r[:120]), flush=True)
             elif kind == "wait":
                 time.sleep(v)
+            elif kind == "npc":
+                conv, (x, y, z), cls = v
+                rc("forceload add %d %d" % (x, z))
+                for _ in range(30):
+                    if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
+                        break
+                    time.sleep(1)
+                # once: an NPC already standing there (a re-run) is left alone rather than doubled. A chunk's
+                # entities load after its blocks, so "loaded" above does not mean the NPC is visible yet: a query
+                # the moment the chunk loaded missed one that was there (staging, 2026-09-23). Look for a while.
+                near = "@e[type=cobblemon:npc,x=%d,y=%d,z=%d,distance=..2]" % (x, y, z)
+                there = False
+                for _ in range(12):
+                    if "passed" in rc("execute if entity %s" % near):
+                        there = True
+                        break
+                    time.sleep(0.5)
+                if not there:
+                    r = rc("spawnnpcat %d %d %d %s" % (x, y, z, cls))
+                    print("   %s -> %s" % (cls, r[:120] or "(no reply)"), flush=True)
+                rc("execute store result storage cobblers:reapply npcs int 1 if entity %s" % near)
+                got = rc("data get storage cobblers:reapply npcs")
+                n = int(got.rsplit(":", 1)[-1].strip()) if got.rsplit(":", 1)[-1].strip().isdigit() else -1
+                if n != 1:
+                    bad.append("%s: %s NPCs at %s, not 1 (is cobblers_dialogue installed, and was the server "
+                               "restarted since?)" % (conv, n, (x, y, z)))
+                rc("forceload remove %d %d" % (x, z))
             elif kind == "check" and v == "crown":
                 x, y, z = CROWN
                 # hold the crown's chunk: the tree's functions release theirs when they finish, and a block test in

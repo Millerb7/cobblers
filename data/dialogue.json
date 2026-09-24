@@ -2781,6 +2781,175 @@
           "next": "league_repeat"
         }
       ]
+    },
+    {
+      "id": "dlg_vr_abandoned_cut",
+      "quest_id": "evt_vr_abandoned_cut",
+      "npc_id": "npc_vr_abandoned_cut_digger",
+      "source": "docs/world-building/VICTORY_ROAD_REGIONS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_vr_abandoned_cut.dialogue_cursor",
+        "initial_node": "c001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_vr_abandoned_cut.completed",
+            "value": true
+          },
+          "node": "repeat_still_here"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_vr_abandoned_cut.cache_claimed",
+            "value": true
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ],
+          "node": "repeat_still_here"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_vr_abandoned_cut.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_vr_abandoned_cut.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "c001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "Mind the rail. It does not go anywhere anymore.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "This was the deepest cut the camp ever made.",
+          "next": "c003"
+        },
+        {
+          "id": "c003",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "We followed a seam east. The rock got warmer every week.",
+          "next": "c004"
+        },
+        {
+          "id": "c004",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "Nobody liked that. Nobody stopped digging, either.",
+          "next": "c005"
+        },
+        {
+          "id": "c005",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "Then the props started creaking. Timber complains before it quits.",
+          "next": "c006"
+        },
+        {
+          "id": "c006",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "Everyone else ran. Sensible people.",
+          "next": "c007"
+        },
+        {
+          "id": "c007",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "I stayed to count the tools. Somebody has to.",
+          "next": "c008"
+        },
+        {
+          "id": "c008",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "The roof came down behind them, not on them. I checked twice.",
+          "next": "c009"
+        },
+        {
+          "id": "c009",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "Whatever we were cutting toward is under that heap now. Leave it there.",
+          "next": "c010"
+        },
+        {
+          "id": "c010",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "Here. A cap from the pay tin, and amber out of the spoil.",
+          "next": "c011",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_cache"
+            }
+          ]
+        },
+        {
+          "id": "c011",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "The camp will ask who has that amber. Tell them I said you could.",
+          "next": "c012"
+        },
+        {
+          "id": "c012",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "And tell them I am still counting. Do not tell them I am enjoying it.",
+          "next": "repeat_still_here",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "repeat_still_here",
+          "kind": "line",
+          "speaker": "digger",
+          "text": "Still here. Still counting shovels.",
+          "next": "repeat_still_here"
+        }
+      ]
     }
   ]
 }

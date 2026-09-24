@@ -25,3 +25,8 @@ def tracked_files(repo_root: Path) -> list[Path]:
 @pytest.fixture(scope="session")
 def python() -> str:
     return sys.executable
+
+
+def pytest_configure(config):
+    # registered so `-m "not slow"` deselects them and --strict-markers accepts the mark
+    config.addinivalue_line("markers", "slow: builds from the out-of-repo heightmap and takes seconds")

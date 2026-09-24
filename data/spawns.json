@@ -11673,6 +11673,2129 @@
       "eligibility_reason": "evolves from Paldean Wooper at 20; the band begins at 24",
       "biomes": [],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 20.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 14.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.steelix",
+      "species": "steelix",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.crobat",
+      "species": "crobat",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.golem",
+      "species": "golem",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.gigalith",
+      "species": "gigalith",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.whiscash",
+      "species": "whiscash",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 30; band begins at 58",
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "habitat.vrc_drowned.quagsire",
+      "species": "quagsire",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 20; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.lanturn",
+      "species": "lanturn",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 27; band begins at 58",
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "habitat.vrc_drowned.golisopod",
+      "species": "golisopod",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 30; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.politoed",
+      "species": "politoed",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Poliwhirl by trade holding King's Rock, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.steelix",
+      "species": "steelix",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.crobat",
+      "species": "crobat",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.golem",
+      "species": "golem",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.gigalith",
+      "species": "gigalith",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.whiscash",
+      "species": "whiscash",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 30; band begins at 58",
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.quagsire",
+      "species": "quagsire",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 20; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.lanturn",
+      "species": "lanturn",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 27; band begins at 58",
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.golisopod",
+      "species": "golisopod",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 30; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.politoed",
+      "species": "politoed",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Poliwhirl by trade holding King's Rock, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.milotic",
+      "species": "milotic",
+      "bucket": "rare",
+      "level": "60-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Feebas by trade holding Prism Scale, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "submerged",
+      "spawnable_position_authored": {
+        "position": "submerged",
+        "why": "Milotic has no spawn entry in Cobblemon's own data, so the derivation left it on dry land; it is the Drowned Gallery's prize and belongs in its lakes (owner's question, 2026-09-24)."
+      }
+    },
+    {
+      "id": "habitat.vrc_slagworks.magcargo",
+      "species": "magcargo",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 38; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.camerupt",
+      "species": "camerupt",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 33; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.torkoal",
+      "species": "torkoal",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.salazzle",
+      "species": "salazzle",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 33; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.coalossal",
+      "species": "coalossal",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 34; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.steelix",
+      "species": "steelix",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.crobat",
+      "species": "crobat",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.golem",
+      "species": "golem",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.gigalith",
+      "species": "gigalith",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.magcargo",
+      "species": "magcargo",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 38; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.camerupt",
+      "species": "camerupt",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 33; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.torkoal",
+      "species": "torkoal",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.salazzle",
+      "species": "salazzle",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 33; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.coalossal",
+      "species": "coalossal",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 34; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.garchomp",
+      "species": "garchomp",
+      "bucket": "rare",
+      "level": "60-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 48; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.amoonguss",
+      "species": "amoonguss",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 39; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.breloom",
+      "species": "breloom",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 23; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.shiinotic",
+      "species": "shiinotic",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 24; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.parasect",
+      "species": "parasect",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 24; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.ariados",
+      "species": "ariados",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.steelix",
+      "species": "steelix",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.crobat",
+      "species": "crobat",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.golem",
+      "species": "golem",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom.gigalith",
+      "species": "gigalith",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.amoonguss",
+      "species": "amoonguss",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 39; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.breloom",
+      "species": "breloom",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 23; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.shiinotic",
+      "species": "shiinotic",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 24; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.parasect",
+      "species": "parasect",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 24; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.ariados",
+      "species": "ariados",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.tangrowth",
+      "species": "tangrowth",
+      "bucket": "rare",
+      "level": "60-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Tangela by levelling up knowing ancientpower, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.claydol",
+      "species": "claydol",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 36; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.bronzong",
+      "species": "bronzong",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 33; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.duraludon",
+      "species": "duraludon",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.noivern",
+      "species": "noivern",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 48; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.sableye",
+      "species": "sableye",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.steelix",
+      "species": "steelix",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.crobat",
+      "species": "crobat",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.golem",
+      "species": "golem",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.gigalith",
+      "species": "gigalith",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.claydol",
+      "species": "claydol",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 36; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.bronzong",
+      "species": "bronzong",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 33; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.duraludon",
+      "species": "duraludon",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.noivern",
+      "species": "noivern",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 48; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.sableye",
+      "species": "sableye",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 5.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.dragapult",
+      "species": "dragapult",
+      "bucket": "rare",
+      "level": "60-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 60; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.klinklang",
+      "species": "klinklang",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 49; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.probopass",
+      "species": "probopass",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 14.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Nosepass with cobblemon:thunder_stone, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.aggron",
+      "species": "aggron",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 42; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.steelix",
+      "species": "steelix",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.crobat",
+      "species": "crobat",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.golem",
+      "species": "golem",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut.gigalith",
+      "species": "gigalith",
+      "bucket": "rare",
+      "level": "58-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.klinklang",
+      "species": "klinklang",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 16.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 49; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.probopass",
+      "species": "probopass",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 14.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Nosepass with cobblemon:thunder_stone, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.aggron",
+      "species": "aggron",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 42; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.golbat",
+      "species": "golbat",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 31; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.boldore",
+      "species": "boldore",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.graveler",
+      "species": "graveler",
+      "bucket": "common",
+      "level": "58-64",
+      "weight": 7.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 25; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.onix",
+      "species": "onix",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.marowak",
+      "species": "marowak",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 28; band begins at 58",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.swoobat",
+      "species": "swoobat",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.durant",
+      "species": "durant",
+      "bucket": "uncommon",
+      "level": "58-64",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_abandoned_cut_core.metagross",
+      "species": "metagross",
+      "bucket": "rare",
+      "level": "60-64",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "vrc_abandoned_cut_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 45; band begins at 60",
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [
@@ -24387,6 +26510,2732 @@
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "vrc_cave",
+      "display_name": "Victory Road: the Dark",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 20.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 14.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Steelix",
+          "pokemon": "steelix",
+          "types": [
+            "steel",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        },
+        {
+          "species": "Crobat",
+          "pokemon": "crobat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golem",
+          "pokemon": "golem",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gigalith",
+          "pokemon": "gigalith",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_drowned",
+      "display_name": "Victory Road: The Drowned Gallery",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 30; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Quagsire",
+          "pokemon": "quagsire",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "wooper",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 20; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Lanturn",
+          "pokemon": "lanturn",
+          "types": [
+            "water",
+            "electric"
+          ],
+          "family": "chinchou",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 27; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golisopod",
+          "pokemon": "golisopod",
+          "types": [
+            "bug",
+            "water"
+          ],
+          "family": "wimpod",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 30; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Politoed",
+          "pokemon": "politoed",
+          "types": [
+            "water"
+          ],
+          "family": "poliwag",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolves from Poliwhirl by trade holding King's Rock, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 4.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Steelix",
+          "pokemon": "steelix",
+          "types": [
+            "steel",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Crobat",
+          "pokemon": "crobat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golem",
+          "pokemon": "golem",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gigalith",
+          "pokemon": "gigalith",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_drowned_core",
+      "display_name": "Victory Road: The Drowned Gallery, deep",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 30; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Quagsire",
+          "pokemon": "quagsire",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "wooper",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 20; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Lanturn",
+          "pokemon": "lanturn",
+          "types": [
+            "water",
+            "electric"
+          ],
+          "family": "chinchou",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 27; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golisopod",
+          "pokemon": "golisopod",
+          "types": [
+            "bug",
+            "water"
+          ],
+          "family": "wimpod",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 30; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Politoed",
+          "pokemon": "politoed",
+          "types": [
+            "water"
+          ],
+          "family": "poliwag",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolves from Poliwhirl by trade holding King's Rock, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 4.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Milotic",
+          "pokemon": "milotic",
+          "types": [
+            "water"
+          ],
+          "family": "feebas",
+          "family_priority": "prize",
+          "ambient": true,
+          "eligibility_reason": "evolves from Feebas by trade holding Prism Scale, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "60-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_slagworks",
+      "display_name": "Victory Road: The Slagworks",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Magcargo",
+          "pokemon": "magcargo",
+          "types": [
+            "fire",
+            "rock"
+          ],
+          "family": "slugma",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 38; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Camerupt",
+          "pokemon": "camerupt",
+          "types": [
+            "fire",
+            "ground"
+          ],
+          "family": "numel",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 33; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Torkoal",
+          "pokemon": "torkoal",
+          "types": [
+            "fire"
+          ],
+          "family": "torkoal",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Salazzle",
+          "pokemon": "salazzle",
+          "types": [
+            "poison",
+            "fire"
+          ],
+          "family": "salandit",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 33; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Coalossal",
+          "pokemon": "coalossal",
+          "types": [
+            "rock",
+            "fire"
+          ],
+          "family": "rolycoly",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 34; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Steelix",
+          "pokemon": "steelix",
+          "types": [
+            "steel",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Crobat",
+          "pokemon": "crobat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golem",
+          "pokemon": "golem",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gigalith",
+          "pokemon": "gigalith",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_slagworks_core",
+      "display_name": "Victory Road: The Slagworks, deep",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Magcargo",
+          "pokemon": "magcargo",
+          "types": [
+            "fire",
+            "rock"
+          ],
+          "family": "slugma",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 38; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Camerupt",
+          "pokemon": "camerupt",
+          "types": [
+            "fire",
+            "ground"
+          ],
+          "family": "numel",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 33; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Torkoal",
+          "pokemon": "torkoal",
+          "types": [
+            "fire"
+          ],
+          "family": "torkoal",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Salazzle",
+          "pokemon": "salazzle",
+          "types": [
+            "poison",
+            "fire"
+          ],
+          "family": "salandit",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 33; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Coalossal",
+          "pokemon": "coalossal",
+          "types": [
+            "rock",
+            "fire"
+          ],
+          "family": "rolycoly",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 34; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Garchomp",
+          "pokemon": "garchomp",
+          "types": [
+            "dragon",
+            "ground"
+          ],
+          "family": "gible",
+          "family_priority": "prize",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 48; band begins at 60",
+          "level": "60-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_bloom",
+      "display_name": "Victory Road: The Bloom",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Amoonguss",
+          "pokemon": "amoonguss",
+          "types": [
+            "grass",
+            "poison"
+          ],
+          "family": "foongus",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 39; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Breloom",
+          "pokemon": "breloom",
+          "types": [
+            "grass",
+            "fighting"
+          ],
+          "family": "shroomish",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 23; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Shiinotic",
+          "pokemon": "shiinotic",
+          "types": [
+            "grass",
+            "fairy"
+          ],
+          "family": "morelull",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 24; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Parasect",
+          "pokemon": "parasect",
+          "types": [
+            "bug",
+            "grass"
+          ],
+          "family": "paras",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 24; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Ariados",
+          "pokemon": "ariados",
+          "types": [
+            "bug",
+            "poison"
+          ],
+          "family": "spinarak",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Steelix",
+          "pokemon": "steelix",
+          "types": [
+            "steel",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Crobat",
+          "pokemon": "crobat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golem",
+          "pokemon": "golem",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gigalith",
+          "pokemon": "gigalith",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_bloom_core",
+      "display_name": "Victory Road: The Bloom, deep",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Amoonguss",
+          "pokemon": "amoonguss",
+          "types": [
+            "grass",
+            "poison"
+          ],
+          "family": "foongus",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 39; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Breloom",
+          "pokemon": "breloom",
+          "types": [
+            "grass",
+            "fighting"
+          ],
+          "family": "shroomish",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 23; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Shiinotic",
+          "pokemon": "shiinotic",
+          "types": [
+            "grass",
+            "fairy"
+          ],
+          "family": "morelull",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 24; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Parasect",
+          "pokemon": "parasect",
+          "types": [
+            "bug",
+            "grass"
+          ],
+          "family": "paras",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 24; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Ariados",
+          "pokemon": "ariados",
+          "types": [
+            "bug",
+            "poison"
+          ],
+          "family": "spinarak",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Tangrowth",
+          "pokemon": "tangrowth",
+          "types": [
+            "grass"
+          ],
+          "family": "tangela",
+          "family_priority": "prize",
+          "ambient": true,
+          "eligibility_reason": "evolves from Tangela by levelling up knowing ancientpower, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "60-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_raw_tear",
+      "display_name": "Victory Road: The Raw Tear",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Claydol",
+          "pokemon": "claydol",
+          "types": [
+            "ground",
+            "psychic"
+          ],
+          "family": "baltoy",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 36; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Bronzong",
+          "pokemon": "bronzong",
+          "types": [
+            "steel",
+            "psychic"
+          ],
+          "family": "bronzor",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 33; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Duraludon",
+          "pokemon": "duraludon",
+          "types": [
+            "steel",
+            "dragon"
+          ],
+          "family": "duraludon",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Noivern",
+          "pokemon": "noivern",
+          "types": [
+            "flying",
+            "dragon"
+          ],
+          "family": "noibat",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 48; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Sableye",
+          "pokemon": "sableye",
+          "types": [
+            "dark",
+            "ghost"
+          ],
+          "family": "sableye",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Steelix",
+          "pokemon": "steelix",
+          "types": [
+            "steel",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Crobat",
+          "pokemon": "crobat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golem",
+          "pokemon": "golem",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gigalith",
+          "pokemon": "gigalith",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_raw_tear_core",
+      "display_name": "Victory Road: The Raw Tear, deep",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Claydol",
+          "pokemon": "claydol",
+          "types": [
+            "ground",
+            "psychic"
+          ],
+          "family": "baltoy",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 36; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Bronzong",
+          "pokemon": "bronzong",
+          "types": [
+            "steel",
+            "psychic"
+          ],
+          "family": "bronzor",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 33; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Duraludon",
+          "pokemon": "duraludon",
+          "types": [
+            "steel",
+            "dragon"
+          ],
+          "family": "duraludon",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Noivern",
+          "pokemon": "noivern",
+          "types": [
+            "flying",
+            "dragon"
+          ],
+          "family": "noibat",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 48; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Sableye",
+          "pokemon": "sableye",
+          "types": [
+            "dark",
+            "ghost"
+          ],
+          "family": "sableye",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 5.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dragapult",
+          "pokemon": "dragapult",
+          "types": [
+            "dragon",
+            "ghost"
+          ],
+          "family": "dreepy",
+          "family_priority": "prize",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 60; band begins at 60",
+          "level": "60-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_abandoned_cut",
+      "display_name": "Victory Road: The Abandoned Cut",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Klinklang",
+          "pokemon": "klinklang",
+          "types": [
+            "steel"
+          ],
+          "family": "klink",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 49; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Probopass",
+          "pokemon": "probopass",
+          "types": [
+            "rock",
+            "steel"
+          ],
+          "family": "nosepass",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolves from Nosepass with cobblemon:thunder_stone, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 14.0,
+          "conditions": {}
+        },
+        {
+          "species": "Aggron",
+          "pokemon": "aggron",
+          "types": [
+            "steel",
+            "rock"
+          ],
+          "family": "aron",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 42; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Steelix",
+          "pokemon": "steelix",
+          "types": [
+            "steel",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Onix by trade holding Metal Coat, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Crobat",
+          "pokemon": "crobat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Golbat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golem",
+          "pokemon": "golem",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Graveler by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gigalith",
+          "pokemon": "gigalith",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Boldore by trade, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vrc_abandoned_cut_core",
+      "display_name": "Victory Road: The Abandoned Cut, deep",
+      "intended_location": "Victory Road's cave network (data/vr_caves.json), on the tiles tools/vr_caves.py lays",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 58,
+        "maximum": 64
+      },
+      "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
+      "entries": [
+        {
+          "species": "Klinklang",
+          "pokemon": "klinklang",
+          "types": [
+            "steel"
+          ],
+          "family": "klink",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 49; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 16.0,
+          "conditions": {}
+        },
+        {
+          "species": "Probopass",
+          "pokemon": "probopass",
+          "types": [
+            "rock",
+            "steel"
+          ],
+          "family": "nosepass",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolves from Nosepass with cobblemon:thunder_stone, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 14.0,
+          "conditions": {}
+        },
+        {
+          "species": "Aggron",
+          "pokemon": "aggron",
+          "types": [
+            "steel",
+            "rock"
+          ],
+          "family": "aron",
+          "family_priority": "zone",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 42; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golbat",
+          "pokemon": "golbat",
+          "types": [
+            "poison",
+            "flying"
+          ],
+          "family": "zubat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 10.0,
+          "conditions": {}
+        },
+        {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 31; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Boldore",
+          "pokemon": "boldore",
+          "types": [
+            "rock"
+          ],
+          "family": "roggenrola",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Graveler",
+          "pokemon": "graveler",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "geodude",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 25; band begins at 58",
+          "level": "58-64",
+          "bucket": "common",
+          "weight": 7.0,
+          "conditions": {}
+        },
+        {
+          "species": "Onix",
+          "pokemon": "onix",
+          "types": [
+            "rock",
+            "ground"
+          ],
+          "family": "onix",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Marowak",
+          "pokemon": "marowak",
+          "types": [
+            "ground"
+          ],
+          "family": "cubone",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 28; band begins at 58",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swoobat",
+          "pokemon": "swoobat",
+          "types": [
+            "psychic",
+            "flying"
+          ],
+          "family": "woobat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Woobat by friendship, not by level: placed evolved as Victory Road's cave life at the endgame band",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Durant",
+          "pokemon": "durant",
+          "types": [
+            "bug",
+            "steel"
+          ],
+          "family": "durant",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "58-64",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Metagross",
+          "pokemon": "metagross",
+          "types": [
+            "steel",
+            "psychic"
+          ],
+          "family": "beldum",
+          "family_priority": "prize",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 45; band begins at 60",
+          "level": "60-64",
+          "bucket": "rare",
+          "weight": 1.0,
+          "conditions": {}
+        }
+      ]
     }
   ],
   "route_species_selection_note": "The species each critical route's pool may use: at most 20 per route (the 10-20 authored choices of the spawn philosophy). Recorded 2026-09-16 from the 2026-09-16 compilation, whose selection rule was not recorded; tools/compile_spawns.py reads this list and does not choose. A species a rerouted corridor newly reaches is excluded until it is added here.",

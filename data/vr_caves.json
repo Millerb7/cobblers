@@ -1,0 +1,398 @@
+{
+  "schema": "cobblers.vr-caves/1",
+  "status": "Victory Road as one cave network (owner, 2026-09-23), replacing the schema 2 spine and its forks (data/victory_road.json, data/vr_regions.json, both retired)",
+  "builder": "tools/vr_caves.py",
+  "seed": 90210,
+  "brief": "The owner flew the spine and its five regions: the regions were cool, the road still felt 'way too pathy', the tall stair at the end felt off, and a roster of nothing but strong species felt forced. Asked for 'colliding zones and a deep cave feel'. Chosen on 2026-09-23: a full cave network whose zones touch and bleed into each other, with no authored path; cave life everywhere and the headline species rare, deep in their own zone; a climb spread over the whole cave that ends in a ravine open to the sky onto the League's apron.",
+  "guarantees": "There is no path. What the build proves instead: a player can walk, swim and fall from the Deep's mouth to the League's apron; from anywhere they can reach they can get back; every floor cell is reachable; nothing carved or fluid touches unauthored rock; no floor touches lava without a lip; cover over every roof.",
+  "guide": {
+    "points": [
+      [
+        3560,
+        3064
+      ],
+      [
+        3560,
+        3000
+      ],
+      [
+        3546,
+        2966
+      ],
+      [
+        3546,
+        2934
+      ],
+      [
+        3540,
+        2900
+      ],
+      [
+        3540,
+        2868
+      ],
+      [
+        3552,
+        2838
+      ],
+      [
+        3552,
+        2802
+      ],
+      [
+        3538,
+        2758
+      ],
+      [
+        3538,
+        2736
+      ],
+      [
+        3542,
+        2716
+      ],
+      [
+        3548,
+        2678
+      ],
+      [
+        3536,
+        2650
+      ],
+      [
+        3570,
+        2620
+      ],
+      [
+        3598,
+        2598
+      ],
+      [
+        3620,
+        2578
+      ],
+      [
+        3644,
+        2546
+      ],
+      [
+        3656,
+        2514
+      ]
+    ],
+    "band": 95,
+    "why": "The schema 2 spine's line, from the Deep's mouth to the foot of the climb: not a path any more, only the band the network is grown in (within band blocks of it) and the measure of progress that sets how high the floor has climbed. The regions the owner approved sat 77-118 off it, so the band takes them in."
+  },
+  "mouth": {
+    "at": [
+      3560,
+      1,
+      3064
+    ],
+    "toward": "north",
+    "why": "Where the Deep's north face meets its floor (data/rift_deep.json): the one way in from below."
+  },
+  "exit": {
+    "at": [
+      3656,
+      89,
+      2486
+    ],
+    "foot": [
+      3656,
+      64,
+      2566
+    ],
+    "width": 11,
+    "lot_rect": [
+      3621,
+      2361,
+      3768,
+      2499
+    ],
+    "lot_y": 88,
+    "why": "The climb ends in a ravine open to the sky: from the foot (y64, still under rock) it cuts up through the Rift floor onto the League's apron at the old exit, between the two forecourt terraces (x3651-3661 is the gap they leave). Inside the lot and its skirt the ravine's walls stop at y87 so the apron's surface is not touched, and its floor is flush with the apron (y88) for the last stretch."
+  },
+  "cover": {
+    "min": 4,
+    "shell": 2,
+    "why": "4 of rock over every roof's shell (data/victory_road.json's rule), so a ceiling is at most ground - 6."
+  },
+  "floor": {
+    "from": 1,
+    "to": 64,
+    "curve": 0.9,
+    "max_grade": 0.35,
+    "step": 1,
+    "why": "The climb is spread over the whole cave instead of being saved for a stair: the floor trend rises from y1 at the mouth to y64 at the ravine's foot by progress along the guide. Every tunnel's grade is held under 0.35 and no two floor columns differ by more than one block, so the whole cave is walkable; drops and falls come from the ceiling's height and the lakes, not from cliffs."
+  },
+  "caverns": {
+    "spacing": 42,
+    "radius": [
+      15,
+      28
+    ],
+    "height": [
+      12,
+      30
+    ],
+    "terrace": 3,
+    "why": "Caverns scattered through the band (Poisson disc, spacing blocks apart at least) and ragged, big enough that neighbours overlap and merge into halls: the first cut, with 11-22 radii and round outlines, mapped as a metro diagram of beads on strings. Their height is what makes the deep feel: 12 to 30 of air over a broken floor."
+  },
+  "tunnels": {
+    "reach": 92,
+    "loops": 0.28,
+    "half_width": [
+      3,
+      6
+    ],
+    "height": [
+      6,
+      10
+    ],
+    "meander": 16,
+    "why": "Every cavern joined to its neighbours: a spanning tree so all are connected, plus loops (a share of the next-shortest links) so there is never one way through, but few enough not to read as a web. Galleries, not tubes: bent at a point every 22 blocks, swelling into pockets, 6 to 10 high."
+  },
+  "clearance": {
+    "pit": 12,
+    "rig": 22,
+    "why": "Rock between the network and the Windward Deep's traced pit (except at the mouth), and round the EXP-033 rig's shell and range."
+  },
+  "rig": {
+    "box": [
+      3448,
+      17,
+      2858,
+      3492,
+      47,
+      2902
+    ],
+    "habitat": [
+      3470,
+      20,
+      2880
+    ],
+    "range": 16
+  },
+  "zones": [
+    {
+      "id": "the_dark",
+      "name": "The Dark",
+      "core": null,
+      "why": "Where no theme holds: plain deep cave, dripstone and tuff, unlit. The ground the other zones collide across.",
+      "palette": {
+        "wall": "minecraft:deepslate",
+        "wall_alt": "minecraft:tuff",
+        "floor": "minecraft:tuff",
+        "floor_alt": "minecraft:deepslate",
+        "accent": "minecraft:dripstone_block",
+        "tip": "minecraft:pointed_dripstone"
+      },
+      "features": {
+        "dripstone": 0.012
+      }
+    },
+    {
+      "id": "drowned",
+      "name": "The Drowned Gallery",
+      "core": [
+        3478,
+        2986
+      ],
+      "reach": 70,
+      "floor_offset": -4,
+      "radius": 26,
+      "height": 18,
+      "why": "The Rift floor's water came down a fault: lakes in the low caverns, pillars standing in them, the dark kept. Nearest the Deep.",
+      "palette": {
+        "wall": "minecraft:deepslate",
+        "wall_alt": "minecraft:polished_deepslate",
+        "floor": "minecraft:smooth_basalt",
+        "floor_alt": "minecraft:mud",
+        "bed": "minecraft:mud",
+        "pillar": "minecraft:polished_deepslate",
+        "light": "minecraft:sea_lantern"
+      },
+      "features": {
+        "lakes": {
+          "depth": 10,
+          "share": 0.55
+        },
+        "pillars": 0.004,
+        "bed_lights": 0.01
+      },
+      "find": "vr_drowned_gallery"
+    },
+    {
+      "id": "slagworks",
+      "name": "The Slagworks",
+      "core": [
+        3616,
+        2908
+      ],
+      "reach": 65,
+      "floor_offset": -2,
+      "radius": 24,
+      "height": 20,
+      "why": "Where the heat shows: blackstone and basalt, lava pools with a lip all round and falls from the roof, magma underfoot. The lit refuge that burns (owner, kept): the lava lights the floor to calm, so no Dark or Ghost species here.",
+      "palette": {
+        "wall": "minecraft:blackstone",
+        "wall_alt": "minecraft:basalt",
+        "floor": "minecraft:basalt",
+        "floor_alt": "minecraft:blackstone",
+        "burn": "minecraft:magma_block",
+        "lip": "minecraft:polished_blackstone",
+        "bed": "minecraft:blackstone"
+      },
+      "features": {
+        "pools": {
+          "radius": 6,
+          "depth": 3,
+          "count": 2
+        },
+        "falls": 3,
+        "magma": 0.22
+      },
+      "find": "vr_slagworks"
+    },
+    {
+      "id": "bloom",
+      "name": "The Bloom",
+      "core": [
+        3468,
+        2790
+      ],
+      "reach": 60,
+      "floor_offset": 0,
+      "radius": 22,
+      "height": 15,
+      "why": "Where the water and the dark meet: moss, giant mushrooms whose caps carry the light, glow berries from the roof, puddles one deep.",
+      "palette": {
+        "wall": "minecraft:tuff",
+        "wall_alt": "minecraft:moss_block",
+        "floor": "minecraft:moss_block",
+        "floor_alt": "minecraft:rooted_dirt",
+        "carpet": "minecraft:moss_carpet",
+        "stem": "minecraft:mushroom_stem",
+        "cap_red": "minecraft:red_mushroom_block",
+        "cap_brown": "minecraft:brown_mushroom_block",
+        "cap_light": "minecraft:shroomlight",
+        "puddle_bed": "minecraft:clay"
+      },
+      "features": {
+        "mushrooms": 0.0022,
+        "vines": 0.02,
+        "blossoms": 0.002,
+        "bushes": 0.006,
+        "carpet": 0.3,
+        "puddles": 0.004
+      },
+      "find": "vr_bloom"
+    },
+    {
+      "id": "raw_tear",
+      "name": "The Raw Tear",
+      "core": [
+        3490,
+        2690
+      ],
+      "reach": 65,
+      "floor_offset": 2,
+      "radius": 26,
+      "height": 24,
+      "why": "Where the Rift did not heal: its own material floor to ceiling, crystal spires and teeth, and its veins the only light.",
+      "palette": {
+        "wall": "legendarymonuments:distortion_deepslate",
+        "wall_alt": "legendarymonuments:distortion_crystal_block",
+        "floor": "legendarymonuments:distortion_deepslate",
+        "floor_alt": "legendarymonuments:distortion_crystal_block",
+        "crystal": "legendarymonuments:distortion_crystal_block",
+        "vein": "legendarymonuments:galar_particle_block"
+      },
+      "fallbacks": {
+        "legendarymonuments:distortion_deepslate": "minecraft:deepslate",
+        "legendarymonuments:distortion_crystal_block": "minecraft:purple_terracotta",
+        "legendarymonuments:galar_particle_block": "minecraft:pearlescent_froglight"
+      },
+      "features": {
+        "spires": 0.004,
+        "teeth": 0.005,
+        "veins": 0.035
+      },
+      "find": "vr_raw_tear"
+    },
+    {
+      "id": "abandoned_cut",
+      "name": "The Abandoned Cut",
+      "core": [
+        3650,
+        2640
+      ],
+      "reach": 60,
+      "floor_offset": 1,
+      "radius": 20,
+      "height": 12,
+      "why": "The Rift dig camp's deepest workings, broken into the cave from the League side and left when the roof came down: timber props in its tunnels, a rail line, spoil heaps, lanterns, and the last digger, who gives its find through dialogue so the dig camp can speak of it.",
+      "palette": {
+        "wall": "minecraft:cobbled_deepslate",
+        "wall_alt": "minecraft:tuff",
+        "floor": "minecraft:coarse_dirt",
+        "floor_alt": "minecraft:cobbled_deepslate",
+        "post": "minecraft:oak_log",
+        "beam": "minecraft:stripped_oak_log",
+        "rail": "minecraft:rail",
+        "spoil": "minecraft:cobbled_deepslate",
+        "lamp": "minecraft:lantern"
+      },
+      "features": {
+        "props": 7,
+        "rails": true,
+        "spoil": 0.004
+      },
+      "find": "vr_abandoned_cut"
+    }
+  ],
+  "collide": {
+    "noise": 0.35,
+    "dither": 0.18,
+    "why": "Each zone's hold on a column falls off with distance from its core, pushed about by noise, and the strongest wins: so the borders are ragged and zones meet head on, heat against crystal, moss against water. Within dither of the runner-up, blocks mix."
+  },
+  "spawns": {
+    "band": [
+      58,
+      64
+    ],
+    "tile_ranges": [
+      28,
+      16,
+      10,
+      6
+    ],
+    "core_share": 0.55,
+    "why": "Cave life, not a showcase (owner, 2026-09-23). Every tile of the network carries the base cave pool; a zone's tiles add its flavour; only the tiles deep in a zone (zone strength over core_share) carry its prize, and there it is rare. Habitat Blocks laid greedily at tile_ranges, big first and small into the seams, never overlapping (EXP-021: an overlap spawns nothing). One size alone covered at most three quarters of the floor, whatever the size, because circles cannot tile a cave; the floor left outside every circle is where the pack's own cave pools still spawn, at their own levels, and the build reports how much."
+  },
+  "trainers": {
+    "count": 10,
+    "min_apart": 40,
+    "stand": "rechiseled:blackstone_polished_connecting",
+    "stand_fallback": "minecraft:polished_blackstone",
+    "why": "Ten fights, carried over: spread at even distances along the walked route from the mouth to the ravine, never nearer than min_apart, stepping round the rest station. Not five and five: in a braided cave the rest station sits wherever a cavern crosses the route nearest its middle, and the fights fall either side of it as the route puts them. Marked and unstaffed."
+  },
+  "rest": {
+    "size": 15,
+    "wall": "rechiseled:blackstone_polished_connecting",
+    "wall_fallback": "minecraft:polished_blackstone",
+    "floor": "rechiseled:basalt_bordered_polished",
+    "floor_fallback": "minecraft:polished_basalt",
+    "marker": "minecraft:crying_obsidian",
+    "why": "The one built room: a walled rest station in the cavern (or a dry zone's core) that the walked route crosses nearest its middle, found by building once, finding the route, and building again with that cavern holding the room; the network does not change between the two. Lit to calm over its floor."
+  },
+  "light": {
+    "block": "legendarymonuments:galar_particle_block",
+    "fallback": "minecraft:pearlescent_froglight",
+    "stand_radius": 6,
+    "stand_spacing": 3,
+    "dark_caverns": 13,
+    "why": "Dark by default, as a deep cave is: fightorflight makes Dark and Ghost hostile below block light 8. Lit to calm round each fight and in the rest station; elsewhere only what the zones give off (lava, the tear's veins, shroomlight and glow berries, the diggers' lanterns), and a sparse lattice of dark_caverns spacing in the Dark's own caverns so its size can be seen."
+  }
+}
