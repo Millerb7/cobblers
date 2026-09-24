@@ -8,6 +8,7 @@ capability. Each document states which experiment it rests on.
 | Document | What it covers | What it rests on |
 | --- | --- | --- |
 | `SPAWN_PHILOSOPHY.md` | Curated / full-dex / hybrid encounter models, and the evolution-item gap that stops the rosters completing | Measured pack data and `data/spawns.json`; the runtime questions are still open |
+| `EVOLUTION_STONES.md` | Where the ten evolution stones come from: seven sites, a mine face that resets, and the rate | Measured pack data, `data/spawns.json`, `data/spawn_blocks.json` and EXP-017 A1; **every runtime question is unrun** (ADR-003, Proposed) |
 | `RIFT_ZONES.md` | The Rift's zones | See the document |
 | `RIFT_FRACTURE.md` | The Rift's fracture pass (`tools/rift_fracture.py` is retired; see `docs/STATE.md`) | See the document |
 
