@@ -12231,7 +12231,11 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "evolves from Feebas by trade holding Prism Scale, not by level: placed evolved as Victory Road's cave life at the endgame band",
-      "spawnable_position": "grounded"
+      "spawnable_position": "submerged",
+      "spawnable_position_authored": {
+        "position": "submerged",
+        "why": "Milotic has no spawn entry in Cobblemon's own data, so the derivation left it on dry land; it is the Drowned Gallery's prize and belongs in its lakes (owner's question, 2026-09-24)."
+      }
     },
     {
       "id": "habitat.vrc_slagworks.magcargo",
