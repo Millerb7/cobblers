@@ -229,11 +229,14 @@ placement tool reads a world to decide.
 ## Verify before claiming
 
 A generated config, datapack or manifest is not proof that a feature works. A
-clean `python tools/validate.py` run proves validity, not behavior. Important
-features are tested in a running Minecraft (the `boot-test` skill, then a
-functional test recorded in `experiments/`). Report exactly what you ran and
-observed; mark everything else "not verified". Never accept the Minecraft EULA
-on the user's behalf.
+clean `python tools/validate.py` run proves validity, not behavior. **Any
+expectation derived from the artifact being checked is not an expectation:**
+audits compare generated output and world results with independent source or
+plan data, and permanent fixtures must include nonempty partial output.
+Important features are tested in a running Minecraft (the `boot-test` skill,
+then a functional test recorded in `experiments/`). Report exactly what you ran
+and observed; mark everything else "not verified". Never accept the Minecraft
+EULA on the user's behalf.
 
 ## Context boundaries
 
