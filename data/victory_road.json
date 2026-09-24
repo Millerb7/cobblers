@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.victory_road/2",
-  "status": "the gauntlet out of the wound: one road from the Deep's floor to the League's apron, through five caverns",
+  "status": "RETIRED 2026-09-23: the owner flew the spine and its regions and found it 'way too pathy'; Victory Road is now one cave network (data/vr_caves.json, tools/vr_caves.py). Kept because tools/vr_caves.py clear reads the pack this built to know what to put rock back into on staging. Was: the gauntlet out of the wound: one road from the Deep's floor to the League's apron, through five caverns",
   "builder": "tools/victory_road.py",
   "seed": 20260924,
   "brief": [

@@ -327,6 +327,39 @@
       "scope": "player",
       "initial": "league_locked",
       "allowed_values": "node ids from dlg_main_league_steward"
+    },
+    {
+      "id": "quest.evt_vr_abandoned_cut.started",
+      "quest_id": "evt_vr_abandoned_cut",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_vr_abandoned_cut.cache_claimed",
+      "quest_id": "evt_vr_abandoned_cut",
+      "field": "cache_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_vr_abandoned_cut.completed",
+      "quest_id": "evt_vr_abandoned_cut",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_vr_abandoned_cut.dialogue_cursor",
+      "quest_id": "evt_vr_abandoned_cut",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c001",
+      "allowed_values": "node ids from dlg_vr_abandoned_cut"
     }
   ],
   "gym_markers": {
