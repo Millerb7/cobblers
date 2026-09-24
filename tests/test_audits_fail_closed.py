@@ -48,17 +48,53 @@ def test_forest_with_no_plan_fails(repo):
 
 def test_world_tree_with_no_functions_fails(repo):
     (repo / "derived" / "sites" / "world_tree_foothill_woods.json").write_text(json.dumps(
-        {"centre": [0, 0], "trunk": [35, 35], "crown_radius": 78, "top_y": 535}))
+        {"centre": [0, 0], "trunk": [35, 35], "crown_radius": 78, "top_y": 535,
+         "blocks": 100, "functions": ["00_tree", "90_foundation"]}))
     (repo / "build" / "datapacks" / "cobblers_worldtree" / "data" / "cobblers" / "function" / "worldtree").mkdir(parents=True)
     assert BA.world_tree(BlankWorld())["problems"]
 
 
+def test_world_tree_with_one_matching_block_fails_the_canonical_plan_count(repo):
+    names = ["00_tree", "01_tree", "02_tree", "03_tree", "90_foundation"]
+    plan = {"centre": [0, 0], "trunk": [35, 35], "crown_radius": 78, "top_y": 10,
+            "blocks": 1_264_724, "functions": names}
+    (repo / "derived" / "sites" / "world_tree_foothill_woods.json").write_text(json.dumps(plan))
+    fdir = repo / "build" / "datapacks" / "cobblers_worldtree" / "data" / "cobblers" / "function" / "worldtree"
+    fdir.mkdir(parents=True)
+    for name in names:
+        body = "fill 0 10 0 0 10 0 minecraft:oak_leaves\n" if name == "00_tree" else ""
+        (fdir / (name + ".mcfunction")).write_text(body)
+
+    class OneBlockWorld(BlankWorld):
+        def block(self, x, y, z):
+            return "minecraft:oak_leaves" if (x, y, z) == (0, 10, 0) else "minecraft:air"
+
+    problems = BA.world_tree(OneBlockWorld())["problems"]
+    assert any("write 1 tree blocks, the plan expects 1264724" in p for p in problems)
+
+
 def test_islet_with_an_empty_function_fails(repo):
     (repo / "derived" / "sites" / "relic_island.json").write_text(json.dumps(
-        {"centre": [0, 0], "sea_level": 62, "radius": 10}))
+        {"centre": [0, 0], "sea_level": 62, "radius": 10, "columns": 10, "columns_above_water": 5}))
     (repo / "build" / "islet").mkdir(parents=True)
     (repo / "build" / "islet" / "relic_island.mcfunction").write_text("")
     assert BA.islet(BlankWorld())["problems"]
+
+
+def test_islet_with_one_matching_column_fails_the_canonical_plan_count(repo):
+    (repo / "derived" / "sites" / "relic_island.json").write_text(json.dumps(
+        {"centre": [0, 0], "sea_level": 62, "radius": 30, "columns": 2628, "columns_above_water": 1413}))
+    (repo / "build" / "islet").mkdir(parents=True)
+    (repo / "build" / "islet" / "relic_island.mcfunction").write_text(
+        "fill 0 63 0 0 63 0 minecraft:dirt\n")
+
+    class OneColumnWorld(BlankWorld):
+        def block(self, x, y, z):
+            return "minecraft:dirt" if (x, y, z) == (0, 63, 0) else "minecraft:air"
+
+    problems = BA.islet(OneColumnWorld())["problems"]
+    assert any("writes 1 columns, the plan expects 2628" in p for p in problems)
+    assert any("raises 1 columns above sea, the plan expects 1413" in p for p in problems)
 
 
 def _cavern_plan(repo, n=4, shell=True):

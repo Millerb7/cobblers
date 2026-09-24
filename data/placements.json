@@ -1740,72 +1740,72 @@
         2430
       ],
       "footprint_from": "data/towns.json",
-      "status": "moved into the Rift 2026-09-21 (the owner); laid out on the staging export; not in the live world; no traders until the badge-gated stock lands",
+      "status": "planned on the apex oval; not in the live world; no traders until badge-gated stock lands",
       "plan": {
-        "reading": "Victory Road's last stretch runs up the Rift's trunk on the dry floor, the walls closing in, and ends at a forecourt at the foot of the League. The building stands on the floor with the apex behind it, far taller than the chasm is deep, so its upper storeys rise out over the rim: you see it from the plateau, and you have to go down to reach it. Nobody lives here; the League carries its own Centre and Mart inside.",
+        "reading": "Victory Road climbs from the Windward Deep and opens directly onto the League apron. Two polished-tuff terraces flank the ramp, leaving its cut open as the threshold; the League fills the apex oval beyond them. Nobody lives here; the League carries its own Centre and Mart inside.",
         "entries": [
           {
             "from": "gym8_town",
             "at": [
-              3576,
-              2762
-            ],
-            "street": "victory_approach"
+              3656,
+              2486
+            ]
           }
         ],
         "exits": [],
         "footprint": {
           "rect": [
-            3486,
-            2585,
-            3666,
-            2765
+            3616,
+            2352,
+            3776,
+            2504
           ],
-          "why": "the League's lot, the forecourt and the approach, squared up"
+          "why": "the League lot, the two flanking terraces and Victory Road's arrival"
         },
-        "streets": [
-          {
-            "id": "victory_approach",
-            "polyline": [
-              [
-                3576,
-                2762
-              ],
-              [
-                3576,
-                2729
-              ]
-            ],
-            "width": 7,
-            "surface": "minecraft:tuff_bricks",
-            "max_grade": 0.1
-          }
-        ],
-        "plaza": {
-          "rect": [
-            3560,
-            2703,
-            3592,
-            2728
-          ],
-          "y": 85,
-          "surface": "minecraft:polished_tuff",
-          "why": "the forecourt at the League's door, where Victory Road ends"
-        },
+        "streets": [],
+        "plaza": null,
         "anchors": [
           {
             "id": "league_building",
             "role": "league",
             "template": "cobbleverse:kanto_league",
             "rect": [
-              3513,
-              2587,
-              3640,
-              2702
+              3635,
+              2375,
+              3754,
+              2485
             ],
             "facing": "south",
-            "level": 85,
-            "why": "Cobbleverse's own Kanto League, turned to face south down the trunk: 120 by 111 on the floor, 159 tall, so it reaches y243 over a rim at y120-150. Its Centre and Mart are inside it."
+            "level": 88,
+            "why": "Cobbleverse's Kanto League on the levelled apex oval, facing Victory Road's arrival."
+          },
+          {
+            "id": "league_forecourt_west",
+            "role": "forecourt",
+            "rect": [
+              3620,
+              2487,
+              3648,
+              2502
+            ],
+            "facing": "south",
+            "level": 88,
+            "surface": "minecraft:polished_tuff",
+            "why": "the west half of the arrival terrace; it stops before the ramp cut at x3651-3661."
+          },
+          {
+            "id": "league_forecourt_east",
+            "role": "forecourt",
+            "rect": [
+              3664,
+              2487,
+              3680,
+              2502
+            ],
+            "facing": "south",
+            "level": 88,
+            "surface": "minecraft:polished_tuff",
+            "why": "the east half of the arrival terrace; it starts beyond the ramp cut at x3651-3661."
           }
         ],
         "house_lots": {
@@ -1814,20 +1814,20 @@
         },
         "waystone": {
           "position": [
-            3576,
-            2724
+            3672,
+            2494
           ],
           "facing": "north",
-          "note": "proposed: opens with the League; on the forecourt, facing the door"
+          "note": "proposed: opens with the League; on the east terrace, facing the door"
         },
         "paving": {
-          "approach": "minecraft:tuff_bricks",
+          "approach": null,
           "plaza": "minecraft:polished_tuff",
           "lamp": "minecraft:sea_lantern",
-          "lamp_why": "the League's cold light, flush along the approach",
-          "why": "tuff and deepslate, the League's own stone; none is named by a spawn condition"
+          "lamp_why": "the League's cold light, kept off Victory Road's ramp cut",
+          "why": "the two terraces mark arrival without adding a redundant approach street"
         },
-        "prep_note": "The floor at the trunk head runs y80-91 under the lot; levelled to y85, the worst cut and fill a few blocks. The forecourt and approach are on the floor."
+        "prep_note": "Level only the League lot and the two forecourt terraces to y88. Leave x3651-3661 untouched so prep cannot seal Victory Road's ramp."
       }
     },
     "merian_hut": {
@@ -7541,7 +7541,7 @@
       "status": "planned",
       "facing": "south",
       "entrance_in_template": "east",
-      "chosen_because": "Cobbleverse's own Kanto League, 111 by 120 and 159 tall, on the Rift's floor at the trunk head (moved from the plateau, the owner, 2026-09-21: the League moves into the Rift, onto the floor at its apex; players descend into the chasm to reach it). Command position for clockwise_90: footprint x3517-3636 z2591-2701, seated one below the levelled floor as it was on the plateau.",
+      "chosen_because": "Cobbleverse's own Kanto League on the apex oval. With clockwise_90 at (3754, 88, 2375), its footprint is x3635-3754 z2375-2485 and its entrance faces south toward Victory Road.",
       "rotation_because": "its entrance stairs rise on the template's east side; turned clockwise to face south down the trunk, the way Victory Road arrives",
       "source": {
         "pack": "installed",
@@ -15737,48 +15737,6 @@
         "setblock 3360 41 1714 minecraft:carrots[age=2]",
         "setblock 3361 41 1714 minecraft:carrots[age=4]",
         "setblock 3362 41 1714 minecraft:carrots[age=0]"
-      ]
-    },
-    {
-      "id": "league_lights",
-      "settlement": "league",
-      "kind": "earthwork",
-      "cell": "C4",
-      "status": "planned",
-      "after": "donors",
-      "chosen_because": "no walkable position left at block light 0, where monsters spawn: 314 positions were dark, 30 lights placed by tools/light_plan.py from the model of what the data builds",
-      "commands": [
-        "# lights for league (tools/light_plan.py): no walkable position here is left at block light 0",
-        "setblock 3527 128 2601 minecraft:lantern[hanging=false]",
-        "setblock 3540 135 2640 minecraft:lantern[hanging=false]",
-        "setblock 3541 86 2620 minecraft:lantern[hanging=false]",
-        "setblock 3541 86 2671 minecraft:lantern[hanging=false]",
-        "setblock 3544 115 2676 minecraft:lantern[hanging=false]",
-        "setblock 3550 135 2653 minecraft:lantern[hanging=false]",
-        "setblock 3556 124 2646 minecraft:lantern[hanging=false]",
-        "setblock 3556 145 2646 minecraft:lantern[hanging=false]",
-        "setblock 3557 95 2653 minecraft:lantern[hanging=false]",
-        "setblock 3562 135 2639 minecraft:lantern[hanging=false]",
-        "setblock 3566 136 2619 minecraft:lantern[hanging=false]",
-        "setblock 3566 136 2657 minecraft:lantern[hanging=false]",
-        "setblock 3569 124 2630 minecraft:lantern[hanging=false]",
-        "setblock 3575 135 2646 minecraft:lantern[hanging=false]",
-        "setblock 3586 136 2669 minecraft:lantern[hanging=false]",
-        "setblock 3588 136 2619 minecraft:lantern[hanging=false]",
-        "setblock 3588 136 2639 minecraft:lantern[hanging=false]",
-        "setblock 3593 96 2645 minecraft:lantern[hanging=false]",
-        "setblock 3593 124 2650 minecraft:lantern[hanging=false]",
-        "setblock 3598 145 2646 minecraft:lantern[hanging=false]",
-        "setblock 3600 134 2632 minecraft:lantern[hanging=false]",
-        "setblock 3606 86 2614 minecraft:lantern[hanging=false]",
-        "setblock 3606 86 2678 minecraft:lantern[hanging=false]",
-        "setblock 3628 133 2692 minecraft:lantern[hanging=false]",
-        "setblock 3555 133 2655 minecraft:lantern[hanging=false]",
-        "setblock 3566 136 2634 minecraft:lantern[hanging=false]",
-        "setblock 3578 124 2624 minecraft:lantern[hanging=false]",
-        "setblock 3588 136 2654 minecraft:lantern[hanging=false]",
-        "setblock 3591 134 2626 minecraft:lantern[hanging=false]",
-        "setblock 3596 135 2655 minecraft:lantern[hanging=false]"
       ]
     }
   ]

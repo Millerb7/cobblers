@@ -133,6 +133,26 @@ def compare_columns(world, expected):
     return n, ok, bad
 
 
+def write_volume(lines):
+    """Number of block positions written by fill/setblock commands.
+
+    The plan records the expected size independently of the generated functions.
+    Comparing those values prevents a truncated function from defining its own
+    success criteria.
+    """
+    total = 0
+    for raw in lines:
+        line = raw.strip()
+        m = FILL.match(line)
+        if m:
+            x0, y0, z0, x1, y1, z1 = map(int, m.groups()[:6])
+            total += (abs(x1 - x0) + 1) * (abs(y1 - y0) + 1) * (abs(z1 - z0) + 1)
+            continue
+        if SETBLOCK.match(line):
+            total += 1
+    return total
+
+
 # ------------------------------------------------------------------ the four builds
 
 def built_over(settlement, margin=2):
@@ -313,9 +333,10 @@ def world_tree(world):
     cols = [(cx, cz), (cx - half, cz), (cx + half, cz), (cx, cz - half), (cx, cz + half)]
     r = rep["crown_radius"] // 2
     cols += [(cx + int(r * math.cos(a)), cz + int(r * math.sin(a))) for a in np.linspace(0, 2 * math.pi, 8, endpoint=False)]
-    lines = []
-    for f in sorted((BUILD / "datapacks" / "cobblers_worldtree" / "data" / "cobblers" / "function" / "worldtree").glob("*.mcfunction")):
-        lines += f.read_text(encoding="utf-8").splitlines()
+    fdir = BUILD / "datapacks" / "cobblers_worldtree" / "data" / "cobblers" / "function" / "worldtree"
+    files = sorted(fdir.glob("*.mcfunction"))
+    by_name = {f.stem: f.read_text(encoding="utf-8").splitlines() for f in files}
+    lines = [line for f in files for line in by_name[f.stem]]
     exp = replay(lines, cols)
     n, ok, bad = compare_columns(world, exp)
     # the crown's highest block, wherever the functions put it: it is not over the trunk. REEXPORT.md checked
@@ -329,6 +350,22 @@ def world_tree(world):
                 top_at, top_blk = (x0, max(y0, y1), z0), base(m.group(7))
     got = base(world.block(*top_at)) if top_at else None
     problems = []
+    expected_functions = rep.get("functions") or []
+    expected_blocks = int(rep.get("blocks") or 0)
+    actual_functions = sorted(by_name)
+    if not expected_functions:
+        problems.append("world tree: the plan names no functions")
+    elif set(actual_functions) != set(expected_functions):
+        problems.append("world tree: function set differs from the plan (missing %s, extra %s)"
+                        % (sorted(set(expected_functions) - set(actual_functions)),
+                           sorted(set(actual_functions) - set(expected_functions))))
+    body_lines = [line for name in expected_functions if name.endswith("_tree") for line in by_name.get(name, [])]
+    body_blocks = write_volume(body_lines)
+    if expected_blocks <= 0:
+        problems.append("world tree: the plan expects no tree blocks")
+    elif body_blocks != expected_blocks:
+        problems.append("world tree: the functions write %d tree blocks, the plan expects %d"
+                        % (body_blocks, expected_blocks))
     # fail closed: nothing replayed, or no crown found in the functions, is a failure, and the crown must be where
     # the plan (derived/sites/world_tree_foothill_woods.json top_y) says
     if n == 0:
@@ -342,7 +379,8 @@ def world_tree(world):
             problems.append("world tree: the functions' crown top is y%d, the plan's y%d" % (top_at[1], rep["top_y"]))
         if got != top_blk:
             problems.append("world tree: crown top %s holds %s, the function wrote %s" % (top_at, got, top_blk))
-    return {"columns": len(cols), "blocks_compared": n, "blocks_match": ok, "crown_top": [top_at, got],
+    return {"columns": len(cols), "planned_blocks": expected_blocks, "function_blocks": body_blocks,
+            "blocks_compared": n, "blocks_match": ok, "crown_top": [top_at, got],
             "first_mismatches": bad, "problems": problems}
 
 
@@ -352,23 +390,45 @@ def islet(world):
     sea = rep["sea_level"]
     lines = (BUILD / "islet" / "relic_island.mcfunction").read_text(encoding="utf-8").splitlines()
     r = rep["radius"]
+    all_cols = [(x, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)]
+    all_exp = replay(lines, all_cols)
+
+    def non_air_top(col):
+        ys = [y for y, b in col.items() if b not in AIR]
+        return max(ys) if ys else None
+
+    function_cols = {c: col for c, col in all_exp.items() if non_air_top(col) is not None}
+    function_dry = {c: col for c, col in function_cols.items() if non_air_top(col) > sea}
     cols = [(x, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)
             if (x - cx) ** 2 + (z - cz) ** 2 <= (r // 2) ** 2]
     exp = replay(lines, cols)
-    dry = {c: col for c, col in exp.items() if col and max(y for y, b in col.items() if b not in AIR) > sea}
+    dry = {c: col for c, col in exp.items() if non_air_top(col) is not None and non_air_top(col) > sea}
     rebuilt = built_over("relic_island")
     dry = {c: col for c, col in dry.items() if c not in rebuilt}           # the house, its walk and its seam stand here
     n, ok, bad = compare_columns(world, dry)
     wet_top = [c for c, col in dry.items()
                if base(world.block(c[0], max(y for y, b in col.items() if b not in AIR) + 1, c[1])) in FLUID]
     problems = []
+    expected_cols = int(rep.get("columns") or 0)
+    expected_dry = int(rep.get("columns_above_water") or 0)
+    if expected_cols <= 0 or expected_dry <= 0:
+        problems.append("islet: the plan has no positive column expectations")
+    else:
+        if len(function_cols) != expected_cols:
+            problems.append("islet: the function writes %d columns, the plan expects %d"
+                            % (len(function_cols), expected_cols))
+        if len(function_dry) != expected_dry:
+            problems.append("islet: the function raises %d columns above sea, the plan expects %d"
+                            % (len(function_dry), expected_dry))
     if not dry or n == 0:
         problems.append("islet: the function raises no column of the core above the sea: nothing to check")
     elif ok < COLUMNS_OK * n:
         problems.append("islet: %d of %d replayed blocks match in the dry core (%.2f%%)" % (ok, n, 100 * ok / n))
     if wet_top:
         problems.append("islet: %d dry-core columns have water standing on them" % len(wet_top))
-    return {"core_columns": len(dry), "blocks_compared": n, "blocks_match": ok, "first_mismatches": bad,
+    return {"planned_columns": expected_cols, "function_columns": len(function_cols),
+            "planned_columns_above_sea": expected_dry, "function_columns_above_sea": len(function_dry),
+            "core_columns": len(dry), "blocks_compared": n, "blocks_match": ok, "first_mismatches": bad,
             "problems": problems}
 
 

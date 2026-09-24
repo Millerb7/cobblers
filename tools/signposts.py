@@ -194,6 +194,56 @@ def sign_nbt(p, wood):
             % (wood, p["rotation"], q(p["front"]), q(p["back"])))
 
 
+def expected_post_ids():
+    """Post ids required by committed route, settlement and junction data.
+
+    This expectation is independent of the generated report and function, so
+    either artifact can be truncated without redefining success.
+    """
+    cfg = load("signposts.json")
+    routes = load("routes.json")["routes"]
+    plans = {s: (v.get("plan") or {}) for s, v in load("placements.json")["settlements"].items()}
+    ids = []
+    for route in routes:
+        ids += ["%s_leaving_%s" % (route["id"], route.get("from_town")),
+                "%s_leaving_%s" % (route["id"], route.get("to_town"))]
+        current, last_d = None, -10 ** 6
+        for n, transition in enumerate(route.get("geography", {}).get("transitions") or []):
+            here = transition.get("subregions") or []
+            if len(here) != 1:
+                continue
+            if current is None:
+                current = here[0]
+                continue
+            distance = transition["at_distance_blocks"]
+            if here[0] == current or distance - last_d < MIN_GAP:
+                current = here[0] if distance - last_d >= MIN_GAP else current
+                continue
+            ids.append("%s_transition_%d" % (route["id"], n))
+            current, last_d = here[0], distance
+    route_ids = {route["id"] for route in routes}
+    junctions = [{"route": entry["from"], "to": settlement}
+                 for settlement, plan in plans.items() for entry in plan.get("entries") or []
+                 if entry.get("from") in route_ids and settlement not in cfg.get("no_sign", {})]
+    junctions += cfg.get("junctions") or []
+    ids += ["junction_%s" % junction["to"] for junction in junctions]
+    return set(ids)
+
+
+def post_set_problems(posts_):
+    actual = [post.get("id") for post in posts_]
+    expected = expected_post_ids()
+    problems = []
+    duplicates = sorted({post_id for post_id in actual if actual.count(post_id) > 1})
+    if duplicates:
+        problems.append("duplicate post ids: %s" % duplicates)
+    missing = sorted(expected - set(actual))
+    extra = sorted(set(actual) - expected)
+    if missing or extra:
+        problems.append("post set differs from source data (missing %s, extra %s)" % (missing, extra))
+    return problems
+
+
 def function(a):
     import ground as G
     import function_limits
@@ -202,6 +252,9 @@ def function(a):
     g = G.Ground(a.source_root)
     wet = painted_water(g.heights, g.world)
     ps = posts(g, wet)
+    set_problems = post_set_problems(ps)
+    if set_problems:
+        raise SystemExit("refusing a partial signpost build: %s" % "; ".join(set_problems))
     wood = load("signposts.json").get("sign_wood", "spruce")
     cmds = ["# route signposts (tools/signposts.py): %d posts" % len(ps)]
     for p in ps:
@@ -223,15 +276,15 @@ def function(a):
 
 
 def verify(a):
-    """Every post: the fence at y, the sign at y+1, and the sign's front and back text as written."""
-    import nbt
+    """Every source-required post: the fence at y, the sign at y+1, and both faces' text."""
     if "cobblers-10240" in Path(a.world).as_posix():
         raise SystemExit("refusing to read the live world")
     rep = json.loads(REPORT.read_text(encoding="utf-8"))
-    if not rep.get("posts"):
-        # fail closed: nothing to check is not "0 of 0 standing"
-        print("no posts in %s: nothing to verify, which fails (run `signposts.py function` first)" % REPORT.name)
+    set_problems = post_set_problems(rep.get("posts") or [])
+    if set_problems:
+        print("partial signpost report fails: %s" % "; ".join(set_problems))
         return 1
+    import nbt
     wood = rep["wood"]
     by_region = {}
     for p in rep["posts"]:
