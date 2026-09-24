@@ -20,8 +20,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 import progression_pack as PP  # noqa: E402
 
 REAL_DATA = ROOT / "data" / "progression.json"
+REAL_PLACEMENTS = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf8"))
 NS = "cobblers"
-KNOWN_COMMANDS = {"execute", "function", "advancement", "tag", "schedule", "scoreboard", "waystones"}
+KNOWN_COMMANDS = {"execute", "function", "advancement", "tag", "schedule", "scoreboard", "waystones", "tellraw"}
 
 
 def _doc(**over):
@@ -435,7 +436,7 @@ def test_no_trigger_flags_means_no_trigger_objectives():
 
 
 def _all_packs():
-    real = PP.plan(PP.load(REAL_DATA))
+    real = PP.plan(PP.load(REAL_DATA), placements=REAL_PLACEMENTS)
     return [PP.files(PP.plan(_doc())), PP.files(PP.plan(_doc(), "johto")), PP.files(real)]
 
 
@@ -558,7 +559,7 @@ def real_doc():
 
 def test_real_progression_plans_for_active_series(real_doc):
     # Without this the checked-in data could stop building and only fail at server assembly.
-    p = PP.plan(real_doc)
+    p = PP.plan(real_doc, placements=REAL_PLACEMENTS)
     assert p["series"] == real_doc["active_series"]
     assert len(p["flags"]) == len(real_doc["flags"])
 
@@ -573,7 +574,7 @@ def test_real_every_flag_has_trainer_ids_for_every_declared_series(real_doc):
         for s in series:
             assert isinstance(ids.get(s), list) and ids[s], "%s lacks trainer_ids for %s" % (fl["id"], s)
     for s in series:
-        PP.plan(real_doc, s)
+        PP.plan(real_doc, s, REAL_PLACEMENTS)
 
 
 def test_real_trainer_ids_unique_across_flags_within_each_series(real_doc):
@@ -592,5 +593,71 @@ def test_real_waystone_positions_are_all_still_unplaced(real_doc):
     placed = {fl["id"]: fl["waystone"]["position"] for fl in real_doc["flags"]
               if fl.get("waystone") and fl["waystone"].get("position") is not None}
     assert placed == {}
-    p = PP.plan(real_doc)
+    p = PP.plan(real_doc, placements=REAL_PLACEMENTS)
     assert p["unplaced"] == sorted(p["waystones"])
+
+
+def _real_pack():
+    return PP.files(PP.plan(PP.load(REAL_DATA), placements=REAL_PLACEMENTS))
+
+
+def test_each_gym_flag_offers_the_next_gym_to_the_player_who_earned_it():
+    # One gym ahead (NAVIGATION.md section 6). Without this a cleared gym leaves the player with Cobbleverse's map to
+    # a gym this world does not have, or with nothing.
+    out = _real_pack()
+    order = ["Gym 2 Misty", "Gym 3 Lt Surge", "Gym 4 Erika", "Gym 5 Koga", "Gym 6 Sabrina", "Gym 7 Blaine",
+             "Gym 8 Giovanni", "Pokemon League"]
+    for i, name in enumerate(order, 1):
+        text = out["data/cobblers/function/flag/gym%d_cleared/granted.mcfunction" % i]
+        tell = [l for l in text.splitlines() if l.startswith("tellraw")]
+        assert len(tell) == 1 and tell[0].startswith("tellraw @s "), text
+        share = re.search(r"xaero-waypoint:([^\"]+)", tell[0]).group(0)
+        fields = share.split(":")
+        # Xaero 26.4.2 parses: name, initials, x, y, z, colour, rotation, yaw, destination
+        assert len(fields) == 10 and fields[1] == name and fields[-1] == "Internal-overworld-waypoints", share
+        assert all(re.fullmatch(r"-?\d+", f) for f in fields[3:7]) and fields[7] == "false"
+    assert "tellraw" not in out["data/cobblers/function/flag/champion_cleared/granted.mcfunction"]
+
+
+def test_the_league_marker_stands_on_the_league():
+    """The marker is the middle of the placed building, not the template corner or the town centre.
+
+    Taken from the placement rather than written down, so it follows the League when it moves: it went from the
+    Rift's floor at the trunk head to the apex oval on 2026-09-23, and this test caught that the building was
+    anchored 119 blocks off its own levelled lot (corner + clockwise_90 places it west of the position).
+    """
+    import sys
+    sys.path.insert(0, str(ROOT / "tools"))
+    import place_donor as PD
+    rec = [r for r in REAL_PLACEMENTS["placements"] if r.get("id") == "league_building"][0]
+    lo, hi = PD.box(rec)
+    league = PP.plan(PP.load(REAL_DATA), placements=REAL_PLACEMENTS)["markers"]["league"]
+    assert lo[0] <= league["x"] <= hi[0] and lo[2] <= league["z"] <= hi[2], (league, lo, hi)
+    lot = json.loads((ROOT / "data" / "rift_league_tunnel.json").read_text(encoding="utf-8"))["lot"]["box"]
+    assert (lo[0], lo[2], hi[0], hi[2]) == tuple(lot), (
+        "the League stands at %s but its levelled lot is %s" % ((lo[0], lo[2], hi[0], hi[2]), tuple(lot)))
+
+
+def test_a_marker_with_a_character_xaero_cannot_carry_fails():
+    # Xaero's share splits on ':' and rewrites '-' and '_': such a name would arrive mangled or not at all.
+    doc = PP.load(REAL_DATA)
+    doc["gym_markers"]["markers"]["gym2_town"]["name"] = "Gym 2: Misty"
+    with pytest.raises(PP.ProgressionError, match="Xaero"):
+        PP.plan(doc, placements=REAL_PLACEMENTS)
+
+
+def test_a_flag_offering_an_undefined_marker_fails():
+    doc = PP.load(REAL_DATA)
+    del doc["gym_markers"]["markers"]["league"]
+    with pytest.raises(PP.ProgressionError, match="does not define"):
+        PP.plan(doc, placements=REAL_PLACEMENTS)
+
+
+def test_cobbleverse_gym_maps_are_emptied_and_missing_rewards_defined():
+    # The gym maps point at naturally generated gyms this world does not have; the reward functions are named by
+    # Cobbleverse's leader advancements and defined nowhere. Both are overridden at the upstream paths.
+    out = _real_pack()
+    for region in ("gym_map", "johto_gym_map", "hoenn_gym_map", "sinnoh_gym_map"):
+        assert json.loads(out["data/cobbleverse/loot_table/%s.json" % region]) == {"pools": []}
+    for leader in ("brock", "misty", "ltsurge", "erika", "koga", "sabrina", "blaine", "giovanni"):
+        assert "data/cobbleverse/function/%s_defeated.mcfunction" % leader in out

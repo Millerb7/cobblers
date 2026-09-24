@@ -1,0 +1,287 @@
+{
+ "schema": "cobblers.rift_regions/1",
+ "status": "the owner's map of the Rift's regions, 2026-09-22: traced, measured, not yet built",
+ "source": {
+  "file": "land_8k_16_annotated_rift.png (in the source root, beside the heightmap; not in the repo)",
+  "sha256": "407f58f4c3ec144e8e94efe0fc889a0473c110b90f24b6db7a1160d06ef956ad",
+  "how": "black outlines drawn by the owner on the heightmap, 1 pixel = 1 block; each region is the flood fill of its outline from its seed",
+  "label_text": "The owner's annotation writes each region's name across it in the same black the outlines use, so a flood fill stops at the letters and they survive as islands inside the region. Carved, that left 'the deep (town)' standing in rock in the middle of the chamber (found on the owner's map, 2026-09-22). Every tracer must fill the holes; tools/rift_deep.py fill_holes does, and columns_with_label_holes keeps what each count was before."
+ },
+ "owner_intent": [
+  "The Deep sits very low in the ground: almost a futuristic city fuelled by the Rift. It hosts the evil group's HQ, among other things.",
+  "A tunnel runs from the Deep up to the Elite Four: it acts as Victory Road, where trainers stand.",
+  "The entrance to the Elite Four is sealed off unless you go through the town first.",
+  "A physical edge between the excavation site and the relic area and shrine stops new players.",
+  "The Deep's floor goes to y0, not y40: it should sit very low in the ground (owner, after the first flight of the whole Rift).",
+  "Hoopa's cradle and the Compact's HQ are sited now, so the HQ's position accounts for the passage before the HQ is built (owner, 2026-09-22)."
+ ],
+ "regions": {
+  "e4_tower": {
+   "seed": [
+    3640,
+    2450
+   ],
+   "columns": 53442,
+   "bbox": [
+    3527,
+    2335,
+    3792,
+    2653
+   ],
+   "ground": {
+    "min": 84,
+    "median": 89,
+    "max": 103
+   },
+   "columns_with_label_holes": 52271
+  },
+  "gate": {
+   "seed": [
+    3560,
+    2650
+   ],
+   "columns": 4119,
+   "bbox": [
+    3511,
+    2612,
+    3635,
+    2686
+   ],
+   "ground": {
+    "min": 83,
+    "median": 85,
+    "max": 90
+   },
+   "columns_with_label_holes": 3459
+  },
+  "entrance_to_e4": {
+   "seed": [
+    3540,
+    2800
+   ],
+   "columns": 46691,
+   "bbox": [
+    3462,
+    2661,
+    3613,
+    3025
+   ],
+   "ground": {
+    "min": 83,
+    "median": 85,
+    "max": 94
+   },
+   "columns_with_label_holes": 44790
+  },
+  "the_deep": {
+   "seed": [
+    3600,
+    3150
+   ],
+   "columns": 114180,
+   "bbox": [
+    3421,
+    3015,
+    3786,
+    3429
+   ],
+   "ground": {
+    "min": 82,
+    "median": 83,
+    "max": 112
+   },
+   "role": "town: a sunken city fuelled by the Rift; the evil group's HQ; the start of the tunnel",
+   "floor_y": 0,
+   "floor_y_why": "The owner, 2026-09-22, having flown the whole Rift: the earlier y40 becomes y0. Measured in world at the Deep's centre (3603, 3222): the surface is y83, the build floor is y-64 and the bottom layer is bedrock, so a floor at y0 leaves 83 blocks of rock overhead and 64 below for the cavern's shell. At y40 the cover was 43.",
+   "measured_in_world": {
+    "at": [
+     3603,
+     3222
+    ],
+    "surface_y": 83,
+    "world_floor_y": -64,
+    "bottom_block": "minecraft:bedrock",
+    "column": "gravel y82-78, stone y77-58, dirt y57-51, stone y50-38, diorite y37-28, stone y27-6, dirt y5-1, deepslate from y-2 down, bedrock at y-64",
+    "on": "cobblers-dryrun9, 2026-09-22"
+   },
+   "columns_with_label_holes": 111976
+  },
+  "relic_area_shrine": {
+   "seed": [
+    3340,
+    3310
+   ],
+   "columns": 13875,
+   "bbox": [
+    3285,
+    3229,
+    3429,
+    3384
+   ],
+   "ground": {
+    "min": 86,
+    "median": 90,
+    "max": 100
+   },
+   "columns_with_label_holes": 12298
+  },
+  "rift_excavation_site": {
+   "seed": [
+    3050,
+    3285
+   ],
+   "columns": 30839,
+   "bbox": [
+    2950,
+    3213,
+    3308,
+    3327
+   ],
+   "ground": {
+    "min": 87,
+    "median": 88,
+    "max": 98
+   },
+   "role": "the dig camp; a physical edge on its east side stops new players",
+   "columns_with_label_holes": 28230
+  },
+  "the_sink": {
+   "seed": [
+    3780,
+    3520
+   ],
+   "columns": 92229,
+   "bbox": [
+    3509,
+    3351,
+    4132,
+    3755
+   ],
+   "ground": {
+    "min": 82,
+    "median": 87,
+    "max": 120
+   },
+   "columns_with_label_holes": 91309
+  },
+  "upper_rift": {
+   "seed": [
+    4180,
+    3950
+   ],
+   "columns": 98715,
+   "bbox": [
+    3971,
+    3672,
+    4368,
+    4155
+   ],
+   "ground": {
+    "min": 85,
+    "median": 92,
+    "max": 121
+   },
+   "columns_with_label_holes": 97529
+  },
+  "rift_wilds": {
+   "seed": [
+    4230,
+    4380
+   ],
+   "columns": 57941,
+   "bbox": [
+    4064,
+    4140,
+    4360,
+    4547
+   ],
+   "ground": {
+    "min": 83,
+    "median": 89,
+    "max": 112
+   },
+   "columns_with_label_holes": 56929
+  },
+  "mega_stone_mine_the_gulch": {
+   "seed": [
+    4330,
+    4800
+   ],
+   "columns": 64272,
+   "bbox": [
+    4039,
+    4513,
+    4454,
+    4958
+   ],
+   "ground": {
+    "min": 83,
+    "median": 89,
+    "max": 110
+   },
+   "columns_with_label_holes": 61330
+  },
+  "hidden_rift_cavern": {
+   "seed": [
+    3850,
+    4870
+   ],
+   "columns": 118802,
+   "bbox": [
+    3658,
+    4574,
+    4125,
+    5079
+   ],
+   "ground": {
+    "min": 83,
+    "median": 88,
+    "max": 114
+   },
+   "columns_with_label_holes": 116699
+  }
+ },
+ "sited": {
+  "haven_compact_hq": {
+   "at": [
+    3427,
+    0,
+    3308
+   ],
+   "where": "on the Deep's floor, at its western edge: the chamber column nearest the relic area's middle",
+   "why": "The cradle is reachable only through the HQ, so the HQ has to sit where a passage to it is short and where nothing else would run. 70 blocks from the cradle's centre, on the floor deck.",
+   "faction": "the Haven Compact, which already exists and is not evil (owner, 2026-09-22). Do not invent a new one.",
+   "status": "sited, not built"
+  },
+  "hoopa_cradle": {
+   "centre": [
+    3357,
+    3306
+   ],
+   "floor_y": 12,
+   "under": "relic_area_shrine",
+   "cover": 76,
+   "below_sea_level": 50,
+   "why": "A sealed cavern beneath the relic area (owner). Ground above its centre is y88, so 76 blocks of cover; sea level is 62, so it is 50 below it and needs the Displaced City cavern's rock shell in every direction, not just under its floor.",
+   "zone": "opens on the finale's quest stage, not on badges. The zone check is what stops anyone digging in from elsewhere.",
+   "status": "sited, not built. Codex will send the chamber's needs."
+  },
+  "cradle_passage": {
+   "from": [
+    3427,
+    0,
+    3308
+   ],
+   "to": [
+    3357,
+    12,
+    3306
+   ],
+   "run": 70,
+   "climb": 12,
+   "grade": "about 1 in 6",
+   "why": "The only way in. It leaves the HQ on the Deep's floor and climbs 12 over 70 blocks to the cradle's floor. Nothing else may reach the cradle: the zone check covers digging in from above.",
+   "status": "sited, not built"
+  }
+ }
+}

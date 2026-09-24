@@ -82,7 +82,7 @@ def find_template(server_dir, template_id):
     for path in sources:
         try:
             z = zipfile.ZipFile(path)
-        except Exception:
+        except (zipfile.BadZipFile, OSError):  # not a readable jar
             continue
         for name in names:
             if name in z.namelist():

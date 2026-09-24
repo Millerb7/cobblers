@@ -1,0 +1,27 @@
+{
+  "schema": "cobblers.rift_league_tunnel/1",
+  "status": "the League's lot on the apex oval. Victory Road is its own build.",
+  "builder": "tools/rift_league_tunnel.py",
+  "seed": 20260923,
+  "lot": {
+    "box": [
+      3635,
+      2375,
+      3754,
+      2485
+    ],
+    "y": 88,
+    "measured": "cut 16,801, fill 7,044, 99% of it inside the traced e4_tower oval, ground min 86 median 88 max 99. The box first written here, x3675-3794 z2335-2445, was wrong: it carried the right figures from an earlier search but the wrong corner, and it runs into a y259 mountain -- levelling it would have cut 198,702 (found 2026-09-23).",
+    "for": "cobbleverse:kanto_league, 111 x 159 x 120, rotated clockwise_90 so its footprint is 120 by 111",
+    "skirt": 14,
+    "fill": "legendarymonuments:distortion_stone",
+    "fill_fallback": "minecraft:tuff",
+    "surface": "rechiseled:blackstone_polished_connecting",
+    "surface_fallback": "minecraft:polished_blackstone",
+    "why": "The apex oval, at the owner's direction (2026-09-23). The League was on the Rift's floor at the trunk head; on the apex it stands where the Rift is most forbidding and its upper storeys rise over the rim. The lot is levelled to y88 and skirted 14 blocks so the platform eases into the terrain instead of ending in a cliff. data/placements.json carries the position; tools/place_donor.py stamps the template."
+  },
+  "tunnel": {
+    "moved": "data/victory_road.json and tools/victory_road.py. It is a labyrinth now, not a road."
+  },
+  "not_here": "The League building itself is stamped by tools/place_donor.py from data/placements.json, not by this tool. This makes the ground it stands on."
+}

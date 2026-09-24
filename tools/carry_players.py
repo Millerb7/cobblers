@@ -161,7 +161,8 @@ def check_source(old: Path, rehearsal: bool) -> None:
 def _flag_trainers() -> dict:
     """{flag id: [trainer ids]} for every flag a trainer defeat sets, from data/progression.json."""
     import progression_pack as PP
-    p = PP.plan(PP.load(ROOT / "data" / "progression.json"))
+    p = PP.plan(PP.load(ROOT / "data" / "progression.json"),
+                placements=json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8")))
     return {f["id"]: f["trainer_ids"] for f in p["flags"] if f["kind"] == "trainer_defeat"}, p["namespace"]
 
 

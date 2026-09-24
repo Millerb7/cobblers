@@ -3354,7 +3354,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3370,7 +3370,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3386,7 +3386,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3402,7 +3402,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3418,7 +3418,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3434,7 +3434,7 @@
       "conditions": {},
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3450,7 +3450,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3466,7 +3466,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3482,7 +3482,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3498,7 +3498,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3514,7 +3514,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3530,7 +3530,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3546,7 +3546,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3562,7 +3562,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3578,7 +3578,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3594,7 +3594,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3610,7 +3610,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3626,7 +3626,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3642,7 +3642,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3658,7 +3658,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3674,7 +3674,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3690,7 +3690,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3706,7 +3706,7 @@
       "conditions": {},
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3722,7 +3722,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3738,7 +3738,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3754,7 +3754,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3770,7 +3770,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3786,7 +3786,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3802,7 +3802,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3818,7 +3818,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3834,7 +3834,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3850,7 +3850,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3866,7 +3866,7 @@
       "conditions": {},
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3882,7 +3882,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3898,7 +3898,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3914,7 +3914,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3930,7 +3930,7 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3946,7 +3946,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3962,7 +3962,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -3978,7 +3978,7 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "biomes": [
-        "minecraft:windswept_gravelly_hills"
+        "cobblers:the_rift"
       ],
       "spawnable_position": "grounded"
     },
@@ -25035,5 +25035,6 @@
     "recorded_gap_box_count": 36,
     "multi_subregion_box_count": 28,
     "simplified_centreline_fallback_box_count": 138
-  }
+  },
+  "rift_biome_note": "The four Rift sub-regions' entries are keyed to cobblers:the_rift, painted to the lip by tools/rift_skin.py. They were minecraft:windswept_gravelly_hills, which after the biome paint exists only outside the lip: leaving them would have spawned the Rift's roster on the plateau and nothing inside it (2026-09-22)."
 }

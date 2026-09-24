@@ -6,7 +6,10 @@ the unlock for its town's waystone, so both read the same data. The pack:
 
   advancement/flag/<id>.json           the flag. Set by an RCT defeat, by the
                                        first tick (run_start) or by command (trigger)
-  function/flag/<id>/granted           reward: re-sync this player's waystones
+  function/flag/<id>/granted           reward: re-sync this player's waystones, and offer that player a
+                                       Xaero's waypoint to the next gym (gym_markers, one gym ahead)
+  cobbleverse loot tables, functions   upstream_neutralised: Cobbleverse's gym maps emptied (they point at
+                                       naturally generated gyms), its missing leader reward functions defined empty
   function/navigation/reconcile        for each placed waystone: activate if the
                                        flag is set, forget if not (runs as a player)
   advancement/navigation/used_waystone re-syncs one tick after a waystone is
@@ -59,7 +62,7 @@ def _obj(value, what) -> dict:
     return value
 
 
-def plan(doc: dict, series: str | None = None) -> dict:
+def plan(doc: dict, series: str | None = None, placements: dict | None = None) -> dict:
     """Validate the parts the pack needs and return a normalised plan. Fails closed."""
     _obj(doc, "progression document")
     ns = doc.get("namespace") or "cobblers"
@@ -121,9 +124,65 @@ def plan(doc: dict, series: str | None = None) -> dict:
             if not isinstance(dim, str) or not re.match(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$", dim):
                 raise ProgressionError("flag %r: dimension %r is not a resource id" % (fid, dim))
             waystones[town] = {"flag": fid, "position": pos, "dimension": dim}
+        if fl.get("offers_marker") is not None:
+            entry["offers_marker"] = fl["offers_marker"]
         flags.append(entry)
+    markers = _markers(doc.get("gym_markers"), placements)
+    for f in flags:
+        if "offers_marker" in f and f["offers_marker"] not in markers:
+            raise ProgressionError("flag %r offers the marker %r, which gym_markers does not define"
+                                   % (f["id"], f["offers_marker"]))
+    neutral = doc.get("upstream_neutralised") or {}
+    rid = re.compile(r"^[a-z0-9_.-]+:[a-z0-9_./-]+$")
+    empty_loot = list(neutral.get("empty_loot_tables") or [])
+    empty_fn = list(neutral.get("empty_functions") or [])
+    for r in empty_loot + empty_fn:
+        if not isinstance(r, str) or not rid.match(r):
+            raise ProgressionError("upstream_neutralised: %r is not a resource id" % (r,))
     return {"namespace": ns, "series": active, "flags": flags,
-            "waystones": waystones, "unplaced": sorted(unplaced)}
+            "waystones": waystones, "unplaced": sorted(unplaced), "markers": markers,
+            "empty_loot_tables": empty_loot, "empty_functions": empty_fn}
+
+
+MARKER_NAME = re.compile(r"^[A-Za-z0-9 ]{1,32}$")      # Xaero's share: 1-32 characters, and no ':', '-' or '_'
+MARKER_INITIALS = re.compile(r"^[A-Za-z0-9]{1,3}$")    # 1-3 characters
+
+
+def _markers(spec, placements) -> dict:
+    """{town: {name, initials, color, x, y, z}}: each gym marker at the middle of its building's placed footprint
+    (tools/place_donor.py box, from the placement's position, size and rotation in data/placements.json)."""
+    if not spec:
+        return {}
+    if placements is None:
+        raise ProgressionError("gym_markers need data/placements.json to find the buildings")
+    sys.path.insert(0, str(ROOT / "tools"))
+    import place_donor
+    rows = placements.get("placements")
+    rows = rows if isinstance(rows, list) else list((rows or {}).values())
+    by_id = {r.get("id"): r for r in rows}
+    color = spec.get("color", 0)
+    if type(color) is not int or not 0 <= color <= 15:
+        raise ProgressionError("gym_markers.color must be a Xaero colour index 0-15")
+    out = {}
+    for town, m in (spec.get("markers") or {}).items():
+        m = _obj(m, "gym marker %r" % town)
+        if not MARKER_NAME.match(str(m.get("name", ""))) or not MARKER_INITIALS.match(str(m.get("initials", ""))):
+            raise ProgressionError("gym marker %r: name must be 1-32 letters, digits or spaces and initials 1-3 "
+                                   "letters or digits (Xaero's share format)" % town)
+        rec = by_id.get(m.get("placement"))
+        if not rec or not rec.get("position") or not rec.get("size"):
+            raise ProgressionError("gym marker %r: placement %r not found, or has no position and size"
+                                   % (town, m.get("placement")))
+        lo, hi = place_donor.box(rec)
+        out[town] = {"name": m["name"], "initials": m["initials"], "color": color,
+                     "x": (lo[0] + hi[0]) // 2, "y": rec["position"]["y"], "z": (lo[2] + hi[2]) // 2}
+    return out
+
+
+def xaero_share(m: dict) -> str:
+    """A Xaero's Minimap waypoint share, as xaerominimap 26.4.2 writes it (WaypointSharingHandler)."""
+    return "xaero-waypoint:%s:%s:%d:%d:%d:%d:false:0:Internal-overworld-waypoints" % (
+        m["name"], m["initials"], m["x"], m["y"], m["z"], m["color"])
 
 
 # ------------------------------------------------------------------ writing
@@ -160,8 +219,25 @@ def files(p: dict) -> dict:
     for flag in p["flags"]:
         out["data/%s/advancement/flag/%s.json" % (ns, flag["id"])] = \
             json.dumps(_flag_advancement(ns, flag), indent=2) + "\n"
-        out["data/%s/function/flag/%s/granted.mcfunction" % (ns, flag["id"])] = \
-            "function %s:navigation/reconcile\n" % ns
+        granted = ["function %s:navigation/reconcile" % ns]
+        if flag.get("offers_marker"):
+            # one gym ahead (NAVIGATION.md section 6): the reward runs as the player who earned the flag, so only
+            # they see the offer; Xaero's shows it as a shared waypoint with an [Add] button
+            m = p["markers"][flag["offers_marker"]]
+            granted.append("tellraw @s " + json.dumps(
+                ["", {"text": "Next: %s. " % m["name"], "color": "gold"},
+                 {"text": "Add it to your map: ", "color": "gray"},
+                 {"text": xaero_share(m), "color": "dark_gray"}]))
+        out["data/%s/function/flag/%s/granted.mcfunction" % (ns, flag["id"])] = "\n".join(granted) + "\n"
+
+    for rid in p.get("empty_loot_tables", []):
+        rns, path = rid.split(":", 1)
+        out["data/%s/loot_table/%s.json" % (rns, path)] = json.dumps({"pools": []}, indent=2) + "\n"
+    for rid in p.get("empty_functions", []):
+        rns, path = rid.split(":", 1)
+        out["data/%s/function/%s.mcfunction" % (rns, path)] = \
+            "# Named as an advancement reward by Cobbleverse and defined by no installed pack: kept empty on purpose\n" \
+            "# (data/progression.json upstream_neutralised).\n"
 
     lines = ["# Generated by tools/progression_pack.py. Runs as one player.",
              "# Placed waystones follow their flag; unplaced towns are listed and skipped."]
@@ -257,10 +333,12 @@ def main(argv=None) -> int:
                     help="print each player's flags from a stopped world copy instead of writing the pack")
     ap.add_argument("--data", type=Path, default=ROOT / "data" / "progression.json")
     ap.add_argument("--series", help="override active_series (prestige)")
+    ap.add_argument("--placements", type=Path, default=ROOT / "data" / "placements.json",
+                    help="where the gym markers find their buildings")
     ap.add_argument("--out", type=Path, default=ROOT / "build" / "datapacks" / "cobblers_progression")
     args = ap.parse_args(argv)
     try:
-        p = plan(load(args.data), args.series)
+        p = plan(load(args.data), args.series, json.loads(args.placements.read_text(encoding="utf8")))
         if args.report:
             return report(p, args.report)
         written = write(p, args.out)

@@ -24,42 +24,50 @@
     {
       "id": "gym1_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_brock"], "johto": ["johto_valerio"], "hoenn": ["hoenn_petra"], "sinnoh": ["sinnoh_pedro"]}},
-      "waystone": {"town": "gym1_town", "position": null}
+      "waystone": {"town": "gym1_town", "position": null},
+      "offers_marker": "gym2_town"
     },
     {
       "id": "gym2_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_misty"], "johto": ["johto_raffaello"], "hoenn": ["hoenn_rudi"], "sinnoh": ["sinnoh_gardenia"]}},
-      "waystone": {"town": "gym2_town", "position": null}
+      "waystone": {"town": "gym2_town", "position": null},
+      "offers_marker": "gym3_town"
     },
     {
       "id": "gym3_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_ltsurge"], "johto": ["johto_chiara"], "hoenn": ["hoenn_walter"], "sinnoh": ["sinnoh_marzia"]}},
-      "waystone": {"town": "gym3_town", "position": null}
+      "waystone": {"town": "gym3_town", "position": null},
+      "offers_marker": "gym4_town"
     },
     {
       "id": "gym4_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_erika"], "johto": ["johto_angelo"], "hoenn": ["hoenn_fiammetta"], "sinnoh": ["sinnoh_omar"]}},
-      "waystone": {"town": "gym4_town", "position": null}
+      "waystone": {"town": "gym4_town", "position": null},
+      "offers_marker": "gym5_town"
     },
     {
       "id": "gym5_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_koga"], "johto": ["johto_furio"], "hoenn": ["hoenn_norman"], "sinnoh": ["sinnoh_fannie"]}},
-      "waystone": {"town": "gym5_town", "position": null}
+      "waystone": {"town": "gym5_town", "position": null},
+      "offers_marker": "gym6_town"
     },
     {
       "id": "gym6_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_sabrina"], "johto": ["johto_jasmine"], "hoenn": ["hoenn_alice"], "sinnoh": ["sinnoh_ferruccio"]}},
-      "waystone": {"town": "gym6_town", "position": null}
+      "waystone": {"town": "gym6_town", "position": null},
+      "offers_marker": "gym7_town"
     },
     {
       "id": "gym7_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_blaine"], "johto": ["johto_alfredo"], "hoenn": ["hoenn_tell"], "sinnoh": ["sinnoh_bianca"]}},
-      "waystone": {"town": "gym7_town", "position": null}
+      "waystone": {"town": "gym7_town", "position": null},
+      "offers_marker": "gym8_town"
     },
     {
       "id": "gym8_cleared",
       "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_giovanni"], "johto": ["johto_sandra"], "hoenn": ["hoenn_adriano"], "sinnoh": ["sinnoh_corrado"]}},
-      "waystone": {"town": "gym8_town", "position": null}
+      "waystone": {"town": "gym8_town", "position": null},
+      "offers_marker": "league"
     },
     {
       "id": "champion_cleared",
@@ -320,5 +328,25 @@
       "initial": "league_locked",
       "allowed_values": "node ids from dlg_main_league_steward"
     }
-  ]
+  ],
+  "gym_markers": {
+    "why": "NAVIGATION.md section 6, one gym ahead: when gymN_cleared is granted the player is offered a Xaero's waypoint to the next gym, by a chat share they accept with a click. Gym 1's is Oak's to offer at the start (not built). The waypoint points at the middle of the gym building's placed footprint (tools/place_donor.py box). Replaces Cobbleverse's gym maps, which point at naturally generated gyms this world does not have.",
+    "share_format": "xaero-waypoint:<name>:<initials>:<x>:<y or ~>:<z>:<color>:<rotation>:<yaw>:Internal-overworld-waypoints, read from xaerominimap-fabric-1.21.1-26.4.2 WaypointSharingHandler (name 1-32 characters, initials 1-3, no '-', '_' or ':')",
+    "color": 14,
+    "markers": {
+      "gym2_town": {"placement": "gym2_misty_gym", "name": "Gym 2 Misty", "initials": "G2"},
+      "gym3_town": {"placement": "gym3_gym_building", "name": "Gym 3 Lt Surge", "initials": "G3"},
+      "gym4_town": {"placement": "gym4_gym_building", "name": "Gym 4 Erika", "initials": "G4"},
+      "gym5_town": {"placement": "gym5_gym_building", "name": "Gym 5 Koga", "initials": "G5"},
+      "gym6_town": {"placement": "gym6_gym_building", "name": "Gym 6 Sabrina", "initials": "G6"},
+      "gym7_town": {"placement": "gym7_gym_building", "name": "Gym 7 Blaine", "initials": "G7"},
+      "gym8_town": {"placement": "gym8_gym_building", "name": "Gym 8 Giovanni", "initials": "G8"},
+      "league": {"placement": "league_building", "name": "Pokemon League", "initials": "PL"}
+    }
+  },
+  "upstream_neutralised": {
+    "why": "Overrides at the upstream paths, deliberately (.claude/rules/datapacks.md). The four loot tables are exploration maps to Cobbleverse's naturally generated gyms, which this world does not generate: cobbleverse:gym_map is the reward of Cobbleverse's cobblemon:craft_pokedex (the first Pokedex a player holds), and the Johto, Hoenn and Sinnoh ones reward the previous region's Champion. They become empty. The reward functions are named by Cobbleverse's leader, Elite Four and Champion advancements (cobbleverse:trainer/*/defeat_*) and exist in no installed pack (checked 2026-09-21 across every pack and jar on the server); an empty function of each name means the advancement grants cleanly.",
+    "empty_loot_tables": ["cobbleverse:gym_map", "cobbleverse:johto_gym_map", "cobbleverse:hoenn_gym_map", "cobbleverse:sinnoh_gym_map"],
+    "empty_functions": ["cobbleverse:aaron_defeated", "cobbleverse:adriano_defeated", "cobbleverse:agatha_defeated", "cobbleverse:alfredo_defeated", "cobbleverse:alice_defeated", "cobbleverse:angelo_defeated", "cobbleverse:bianca_defeated", "cobbleverse:blaine_defeated", "cobbleverse:brock_defeated", "cobbleverse:bruno_defeated", "cobbleverse:bruno_johto_defeated", "cobbleverse:chiara_defeated", "cobbleverse:corrado_defeated", "cobbleverse:cyrus_defeated", "cobbleverse:drake_defeated", "cobbleverse:erika_defeated", "cobbleverse:ester_defeated", "cobbleverse:fannie_defeated", "cobbleverse:ferruccio_defeated", "cobbleverse:fiammetta_defeated", "cobbleverse:fosco_defeated", "cobbleverse:frida_defeated", "cobbleverse:furio_defeated", "cobbleverse:gardenia_defeated", "cobbleverse:giovanni_defeated", "cobbleverse:jasmine_defeated", "cobbleverse:jupiter_defeated", "cobbleverse:karen_defeated", "cobbleverse:koga_defeated", "cobbleverse:koga_johto_defeated", "cobbleverse:lance_defeated", "cobbleverse:lorelei_defeated", "cobbleverse:ltsurge_defeated", "cobbleverse:luciano_defeated", "cobbleverse:mars_defeated", "cobbleverse:marzia_defeated", "cobbleverse:misty_defeated", "cobbleverse:norman_defeated", "cobbleverse:omar_defeated", "cobbleverse:pedro_defeated", "cobbleverse:petra_defeated", "cobbleverse:pino_defeated", "cobbleverse:raffaello_defeated", "cobbleverse:rudi_defeated", "cobbleverse:sabrina_defeated", "cobbleverse:sandra_defeated", "cobbleverse:saturn_defeated", "cobbleverse:tell_defeated", "cobbleverse:terrie_defeated", "cobbleverse:valerio_defeated", "cobbleverse:vulcano_defeated", "cobbleverse:walter_defeated"]
+  }
 }
