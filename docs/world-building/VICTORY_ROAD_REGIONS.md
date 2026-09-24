@@ -1,7 +1,58 @@
-# Victory Road's regions — a proposal
+# Victory Road's regions — a proposal, and what was built
 
-**Status:** design only, nothing built, no roster changed. Written 2026-09-23 at the owner's direction after a
-flight found the road reading as "a path with a few spherical rooms — pleasant, but not a place a player earned".
+**Status:** approved by the owner and **built on staging** (`cobblers-dryrun9`) on 2026-09-23. The proposal below is
+kept as written; this section records what was built and every place the build differs from it. Written first on
+2026-09-23 at the owner's direction after a flight found the road reading as "a path with a few spherical rooms —
+pleasant, but not a place a player earned".
+
+## As built
+
+The owner's decisions: all five regions; the Abandoned Cut's find through dialogue so the dig camp can read it, the
+other four as ADR-002 advancement grants; the Slagworks' lava as a lit refuge that burns, kept. The source is
+`data/vr_regions.json`, the builder `tools/vr_regions.py`, re-applied after an export by `tools/reapply.py` R9D (the
+rooms), R9E (their Habitat Blocks) and R9F (the Digger).
+
+| Region | Fork from | Mouth → room | Floor | Cover | Rock to road | The find |
+|---|---|---|---|---|---|---|
+| Drowned Gallery | first_hall, west | (3523, 8, 2948) → 40 blocks | y8, lake 12 deep | 61 | 34 | on the island: Water Stone, 5 Net Balls |
+| Slagworks | first_hall, east | (3572, 8, 2923) → 36 | y8, shelf y10 | 59 | 27 | end of the magma shelf: Fire Stone, TM Overheat |
+| Raw Tear | the_vein, west | (3522, 44, 2687) → 33, down 4 | y40 ±2 | 27 | 24 | the seam at the back: Dragonium Z |
+| Bloom | the_lantern, west | (3517, 30, 2767) → 51 | y30 | 44 | 45 | under the largest cap: Leaf, Sun and Shiny Stones |
+| Abandoned Cut | the_last_gate | (3630, 44, 2601) → 94 | y44 | 40 | 69 | the Digger: Gold Bottle Cap, Old Amber |
+
+**Where the build differs from the proposal, and why:**
+
+- **Two mouths moved.** The road's landmark cavern, the_vein, has vein columns placed deterministically up to its rim
+  (`tools/victory_road.py`). Straight at the Raw Tear, the mouth leaves through one; swung 16 degrees round the rim it
+  clears them all. No mouth within 30 degrees of the straight line to the Abandoned Cut clears them on that side, so
+  the Cut forks from **the_last_gate** instead, the next cavern, with a 94-block passage.
+- **The Raw Tear's find is a Dragonium Z**, not a species-exclusive crystal or a Mega Stone: its anchor, Dragapult,
+  has neither. Garchompite and Metagrossite are in the jar and unplaced.
+- **The Drowned Gallery's Water Stone is not the only one in the game** if ADR-003 is accepted (Viltri Light, leg 1).
+- **The rosters are the first-listed anchor in each row of section 4**, with the supporting species listed there, at
+  60-65: Milotic, Garchomp, Dragapult, Tangrowth and Metagross, each in the uncommon bucket at weight 10 beside one
+  weight-6 support, with two common supports at 24. The anchors reached by trade, move or coins (Milotic, Tangrowth,
+  and Politoed, Slowking, Probopass and Gholdengo among the supports) are placed evolved on purpose and say so in their
+  `eligibility_reason`. Milotic, Gholdengo and Salazzle have no upstream spawn data, so `tools/position_types.py` leaves
+  them `grounded`; Milotic will stand on the shelf, not swim.
+
+**What the build proves before it writes anything:** cover over every shell; rock between every region and the
+road, the Deep's traced pit (the Drowned Gallery is the closest, 20), the other regions and the EXP-033 rig; every
+spawn-conditioning block in a palette whitelisted in `data/spawn_block_policy.json` with a reason (water, lava, magma
+block, rail, flowering azalea, spore blossom); every carved and fluid cell sealed on all six faces, including the
+lake's and the pool's surfaces at their own level; every water and lava cell bounded on every side but up; and, from
+each fork's mouth, a walk, swim and fall search with **0 traps**, every floor cell reachable, and no floor cell beside
+lava without the lip.
+
+**What was run on staging:** the 85 functions (45,367 commands) all answered; all **322,976** cells of the model match
+the saved world (`vr_regions.py verify --full`); Victory Road's own verify is still clean in all eleven categories; the
+five Habitat Blocks are present with their pools and ranges (`habitat_blocks.py verify --rcon`, 0 problems), resolved
+(`DisplaySpecies` lists each roster) and survived a restart; the four reward functions and the TM's component load; the
+Digger stands at (3684, 44, 2692), exactly one.
+
+**Not verified:** that any region's Habitat Block replaces the pool in sealed rock at its band (EXP-033, the owner in
+game); that the advancements fire and give; that the Digger's conversation runs and grants once; and that two players
+each receive once.
 
 Everything numbered here is measured from `data/victory_road.json`, the canonical heightmap through
 `tools/ground.py`, `data/spawn_blocks.json`, and the Cobblemon 1.8 jar. Nothing is estimated.

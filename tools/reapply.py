@@ -338,9 +338,9 @@ def steps(with_spawns=False):
     # close every fork again (data/vr_regions.json re_apply_after)
     out.append(("R9D", "Victory Road's five regions, after the road",
                 [("fn", "cobblers:vr_regions/%s" % f) for f in indexed("cobblers_vr_regions", "vr_regions")]))
-    # the Habitat Blocks, after everything that builds the floors they sit in. A block placed by command stays
-    # inert until its chunk reloads (EXP-021): the place function releases each chunk it loads, so with no player
-    # near, the chunk unloads and the block is live when it next loads; a restart does the same for certain.
+    # the Habitat Blocks, after everything that builds the floors they sit in (R9D's shell pass overwrites them). A
+    # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
+    # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
