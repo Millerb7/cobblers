@@ -1,7 +1,8 @@
 # Early-Game Encounters — Pallet through Gym 3
 
-**Status:** Narrative and gameplay design complete. Exact placement, item IDs, NPC
-IDs, and event-state implementation remain unverified.
+**Status:** Narrative and gameplay design complete. Route 1–3 positions are in
+`../EARLY_ROUTE_BUILD_HANDOFF.md`; item IDs, NPC IDs, and event-state
+implementation remain unverified.
 
 This package fills the required path from Pallet through Surge with optional,
 small encounters. These are not gym gates or story requirements. The player
@@ -16,13 +17,16 @@ should understand each problem by looking at the scene before reading dialogue.
 | Pallet | `EVT-PALLET-CORNER-MON` | 2–4 min | Gentle rescue; berries |
 | Route 1 | `EVT-ROUTE1-GASTLY-FAMILY` | 15–25 min | Ghost side dungeon; Gastly lead |
 | Route 1 | `EVT-ROUTE1-THIRSTY-STRANGER` | 3–6 min | Character joke; held-item candidate |
+| Route 1 | `EVT-ROUTE1-RATTATA-PICNIC` | 2–4 min | Ordinary route life; supplies |
 | Brock | `EVT-G1-MACHOP-SHIFT` | 5–8 min | Worksite scene; Machop encounter |
 | Brock | `EVT-G1-PEBBLE-LEAGUE` | 3–5 min | Town minigame; local ribbon |
 | Brock to Misty | `EVT-ROUTE2-ROLLAWAY-GEODUDE` | 5–8 min | Route chase; mining supplies |
+| Brock to Misty | `EVT-ROUTE2-VILTRI-SOUNDING` | 3–5 min | First-lake identity; shore supplies |
 | Misty | `EVT-G2-PSYDUCK-LAUNCH` | 4–6 min | Environmental solution; water supplies |
 | Misty | `EVT-G2-POLIWAG-COUNT` | 3–5 min | Search scene; Poliwag encounter |
 | Misty to Surge | `EVT-ROUTE3-CREEK-WOOPER` | 6–10 min | Pond-shore puzzle; controlled Wooper encounter |
 | Misty to Surge | `EVT-ROUTE3-NOSEPASS-SIGNS` | 5–8 min | Trail navigation; signal-array foreshadowing |
+| Misty to Surge | `EVT-ROUTE3-SWABLU-NEST` | 3–5 min | Mountain transition; climbing supplies |
 | Surge | `EVT-G3-MAGNEMITE-BOLTS` | 5–8 min | Town puzzle; electrical supplies |
 | Surge | `EVT-G3-KITE-LINE` | 3–6 min | Wind puzzle; cosmetic reward |
 
@@ -188,8 +192,11 @@ return path, spectators, and a controlled Roggenrola actor.
 
 ## `EVT-ROUTE2-ROLLAWAY-GEODUDE` — Downhill From Here
 
+**Placement:** miner and cart at `(1756, 3528)`, route distance 105.4; Geodude
+and the stopped cart around `(1767, 3517)`, route distance 120.9.
+
 **Visible hook:** A miner stands beside an empty handcart. Fresh scrape marks and
-scattered ore samples continue downhill toward Lake Viltri.
+scattered ore samples continue down the upper grade.
 
 **Flow**
 
@@ -197,8 +204,8 @@ scattered ore samples continue downhill toward Lake Viltri.
    when the brake slipped.
 2. Follow three obvious signs: a wheel rut, a split sample sack, and a newly
    chipped boulder.
-3. At the bottom, find Geodude holding the cart against a tree so it cannot roll
-   into the lake.
+3. Find Geodude holding the cart against a tree before it reaches the long
+   descent toward Lake Viltri.
 4. Secure the cart brake before asking Geodude to move.
 5. Walk back with the miner and Geodude; no escort fails because the player
    moved too quickly.
@@ -216,8 +223,8 @@ held-item candidate subject to early balance.
 its starting place for unfinished players or is represented by a second local
 state; implementation must not strand the event downhill after one completion.
 
-**Build needs:** A believable downhill spur off the Brock-to-Misty road, cart,
-three trail clues, safe stopping tree, and return dialogue point.
+**Build needs:** The measured upper-grade site, cart, three trail clues, safe
+stopping tree, and return dialogue point. Do not extend the chase to the lake.
 
 # Misty's town
 
@@ -299,9 +306,8 @@ there. The route profile and the four smaller events are in
 ## `EVT-ROUTE3-CREEK-WOOPER` — The Pond's Edge
 
 **Placement:** on the east shore of `pond_west_of_mt_clay`, at the pond
-polygon's (2204, 1580) shore vertex. The pond is about 100 blocks off
-`route_03_misty_to_surge`, and this shore site is 29 blocks from the
-Nosepass sign site at (2203, 1609). The two encounters form one natural
+polygon's (2204, 1580) shore vertex. The shore site is 26.5 blocks from the
+route and about 32 blocks from the Nosepass sign site at (2186, 1606). The two encounters form one natural
 stopping place. There is no separate creek spur and no return trip from
 Surge's town.
 
@@ -366,20 +372,20 @@ just clearing the trees.
    ground marks.
 4. Wait through one visible pulse at the mast. Two signs hold; the third
    reveals a second loose bracket.
-5. Fix the final bracket. Nosepass still turns toward the mast, pulse after
-   pulse. The signs were never the problem: whatever the array is receiving or
-   sending is strong enough to pull a living compass.
+5. Fix the final bracket. Nosepass still turns toward the mast after the next
+   received pulse. The signs were never the problem, but the event does not
+   identify a sender or prove deliberate steering.
 
 **Dialogue beats**
 
-- Keeper: “I trust Nosepass. I do not trust whatever Surge has up on that
-  shoulder.”
-- After the pulse: “The signs are fixed. The direction is not.”
+- Keeper: “The marks are right. The signs moved after the mast flashed.”
+- After the pulse: “The signs are fixed. Whatever they heard is still
+  north-west.”
 
 **Reward:** Climbing supplies and a marked shelter location on the remaining
-route to Surge. The scene foreshadows the directed signal without providing the
+route to Surge. The scene foreshadows signal interference without providing the
 main-story proof early. The player learns that the array reacts to something,
-not what the pulse contains.
+not what the pulse contains or who caused it.
 
 **State and reset:** Brackets are per-player interactions. Corrected signs are
 shared scenery and may remain fixed after first world completion.
@@ -390,8 +396,8 @@ visible from the signs, Nosepass actor, and the trail-keeper shelter.
 **Hard build constraint: array sightline.** This event depends on seeing the
 mast from the road. With the directional clearing below, the line from the signs
 clears the modelled canopy by 4.3 blocks; without it, by 1.5. The road's only
-canopy-clear view of the array is the roughly 40 blocks from (2203, 1609) to
-(2163, 1606), with the signs in the middle of it. Every build, foliage, and
+canopy-clear view of the array is the roughly 40-block road segment centred on
+the signs at (2186, 1606). Every build, foliage, and
 terrain pass must keep these true:
 
 1. **Clearing.** The signs and the trail-keeper shelter stand in a clearing with

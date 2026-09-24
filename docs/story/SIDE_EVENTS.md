@@ -26,10 +26,10 @@ routes, the Rift, or the League. Detailed prototypes live in `events/`.
 | Scope | Place | State | Detailed design |
 | --- | --- | --- | --- |
 | `EVT-PALLET-CRUSHED-HOUSE` | `hometown`, centre (1462, 5293) | Approved concept; exact house coordinate and ruin layout needed | [`events/PALLET_CRUSHED_HOUSE.md`](events/PALLET_CRUSHED_HOUSE.md) |
-| `EVT-ROUTE1-GASTLY-FAMILY` | Pallet-to-Brock route, (1462, 5293) to (1743, 3628) | Mansion site needed; donor candidates identified | [`events/ROUTE1_GASTLY_MANSION.md`](events/ROUTE1_GASTLY_MANSION.md) |
-| `EVT-ROUTE1-THIRSTY-STRANGER` | Pallet-to-Brock route, (1462, 5293) to (1743, 3628) | Hut site and accepted item IDs needed | [`events/ROUTE1_THIRSTY_STRANGER.md`](events/ROUTE1_THIRSTY_STRANGER.md) |
+| `EVT-ROUTE1-GASTLY-FAMILY` | Mansion centre (1630, 5034), spur from route distance 284.9 | Authored manor exists; player-local actors and checkpoints needed | [`events/ROUTE1_GASTLY_MANSION.md`](events/ROUTE1_GASTLY_MANSION.md) |
+| `EVT-ROUTE1-THIRSTY-STRANGER` | Hut entrance (1509, 4469), route distance 1039.4 | Site settled; NPC placement and accepted item handling needed | [`events/ROUTE1_THIRSTY_STRANGER.md`](events/ROUTE1_THIRSTY_STRANGER.md) |
 | Pallet through Gym 3 | Pallet, Routes 1–3, Brock, Misty, and Surge | Fourteen-event package designed; placement and technical proofs needed | [`events/EARLY_GAME_ENCOUNTERS.md`](events/EARLY_GAME_ENCOUNTERS.md) |
-| Expanded early event bank | Same early-game path | Twenty-eight additional small scenes designed; total is 42 through Gym 3 | [`events/EARLY_GAME_EVENT_BANK.md`](events/EARLY_GAME_EVENT_BANK.md) |
+| Reconciled early event bank | Same early-game path | Nineteen additional small scenes remain; total is 33 through Gym 3 | [`events/EARLY_GAME_EVENT_BANK.md`](events/EARLY_GAME_EVENT_BANK.md) |
 | Gyms 4–6 event bank | Surge-to-Erika through Sabrina | Thirty-six route and town events designed; placement and technical proofs needed | [`events/MIDGAME_EVENT_BANK.md`](events/MIDGAME_EVENT_BANK.md) |
 
 ## Pallet damage cluster
@@ -152,27 +152,15 @@ expanded small-event specifications are in
   through an abandoned mansion to find its parent.
 - **`EVT-ROUTE1-THIRSTY-STRANGER`: The Thirsty Stranger.** Bring water to a
   familiar-looking man who is definitely not Tupac.
-- **`EVT-ROUTE1-CATERPIE-CROSSING`: Green Traffic.** Create a leaf-covered
-  crossing beside the road for a slow Caterpie line.
 - **`EVT-ROUTE1-RATTATA-PICNIC`: Lunch Tax.** Follow crumbs to recover a neatly
   unwrapped picnic lunch.
-- **`EVT-ROUTE1-BUG-NET`: Catch and Release the Net.** Free a Metapod from a net
-  that appears to be moving by itself.
-- **`EVT-ROUTE1-SENTRET-WATCH`: The Second Lookout.** Follow the mirrored signals from two Sentret to a dropped satchel.
 
 ### Route 2 — Brock to Misty
 
 - **`EVT-ROUTE2-ROLLAWAY-GEODUDE`: Downhill From Here.** Follow an escaped
-  handcart downhill and discover that the missing Geodude stopped it before it
-  reached Lake Viltri.
-- **`EVT-ROUTE2-BONSLY-MILESTONE`: Very Convincing Tree.** Recover the real
-  route marker after a Bonsly imitates it and walks away.
-- **`EVT-ROUTE2-BELLSPROUT-GAUGE`: Chance of Plants.** Move Bellsprout from a
-  rain gauge into a better damp-soil patch.
-- **`EVT-ROUTE2-NINCADA-ROAD`: Quiet Underfoot.** Mark a hollow side path so
-  traffic stops crossing a Nincada burrow.
-- **`EVT-ROUTE2-MUDBRAY-BOOT`: Keep the Other One.** Use a mud patch to remove a
-  hiker's boot from Mudbray without frightening it.
+  handcart and discover that Geodude stopped it on the upper grade.
+- **`EVT-ROUTE2-VILTRI-SOUNDING`: Viltri Sounding.** Read the first lake's
+  water shelves and reset a floating gauge loosened by Corphish.
 
 ### Route 3 — Misty to Surge
 
@@ -181,19 +169,11 @@ expanded small-event specifications are in
   patch. The controlled Wooper encounter is an optional team-building reward
   before Surge.
 - **`EVT-ROUTE3-NOSEPASS-SIGNS`: North Keeps Moving.** At (2186, 1606), repair
-  trail signs that rotate during signal pulses while a Nosepass turns toward
-  the mast of Surge's signal array instead of north. The array must stay
-  visible from the signs; the build constraint is in the detailed spec.
-- **`EVT-ROUTE3-MAREEP-SHELTER`: Static in the Rain.** On an exposed switchback
-  of the Tri Peaks grade, clear a safe route from a metal trail frame to stone
-  cover.
-- **`EVT-ROUTE3-SPOINK-PEARL`: Do Not Stop Bouncing.** Recover Spoink's pearl
-  while giving it a safe place to keep moving.
+  trail signs disturbed when the array receives a pulse while Nosepass turns
+  toward the mast instead of north. The scene does not explain deliberate
+  steering before Surge.
 - **`EVT-ROUTE3-SWABLU-NEST`: Blue Thread.** Exchange soft nesting fiber for a
   route flag the Swablu used to reinforce their nest.
-- **`EVT-ROUTE3-SABLEYE-REFLECTORS`: Shiny Way Up.** Trade polished stones for
-  stolen trail reflectors and re-mark the switchbacks through a rock cut on the
-  climb.
 
 The last stretch into Surge's town, where the shelf lip reveals the summits, is
 kept free of events.

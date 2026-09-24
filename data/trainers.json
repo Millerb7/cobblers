@@ -2373,7 +2373,7 @@
       "route_order": 1,
       "trainer_order": 1,
       "archetype": "one_pokemon",
-      "lesson": "A single weak opponent introduces trainer sight lines.",
+      "lesson": "Introduces trainer sight lines, accuracy changes, and priority without threatening the first-route team.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 285,
@@ -2388,6 +2388,11 @@
         "pre": "dlg_route_01_trainer_01_pre",
         "win": "dlg_route_01_trainer_01_win",
         "loss": "dlg_route_01_trainer_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "First battle? Mine too. If our eyes meet on the road, we battle—ready?",
+        "player_win": "Sand Attack bought me a turn, but it could not fix a bad matchup.",
+        "player_loss": "Quick Attack closes a fight before nerves can."
       },
       "rct": {
         "identity": "route_01_trainer_01",
@@ -2427,25 +2432,24 @@
     },
     {
       "id": "route_01_trainer_02",
-      "display_name": "Bug Catcher",
+      "display_name": "Meadow Apiarist",
       "class": "route",
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "mareep",
+          "species": "combee",
           "moveset": [
-            "thundershock",
-            "growl",
-            "cottonspore"
+            "gust",
+            "sweetscent"
           ],
           "level": 9
         },
         {
-          "species": "wingull",
+          "species": "surskit",
           "moveset": [
             "watergun",
-            "wingattack",
-            "supersonic"
+            "quickattack",
+            "sweetscent"
           ],
           "level": 10
         }
@@ -2454,7 +2458,7 @@
       "route_order": 1,
       "trainer_order": 2,
       "archetype": "specialist",
-      "lesson": "Flying pressure is discoverable before Brock.",
+      "lesson": "Uses two gentle Bug-area species to teach switching and accessible Flying or Electric answers.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 733,
@@ -2470,10 +2474,15 @@
         "win": "dlg_route_01_trainer_02_win",
         "loss": "dlg_route_01_trainer_02_loss"
       },
+      "dialogue_text": {
+        "pre": "The Combee followed the flowers; Surskit followed the water. I learned to pack answers for both.",
+        "player_win": "You switched instead of forcing one partner through everything. That is the lesson.",
+        "player_loss": "Bug teams look gentle until you let them control the field."
+      },
       "rct": {
         "identity": "route_01_trainer_02",
         "name": {
-          "literal": "Bug Catcher"
+          "literal": "Meadow Apiarist"
         },
         "battleFormat": "GEN_9_SINGLES",
         "battleRules": {
@@ -2495,20 +2504,19 @@
         "bag": [],
         "team": [
           {
-            "species": "mareep",
+            "species": "combee",
             "moveset": [
-              "thundershock",
-              "growl",
-              "cottonspore"
+              "gust",
+              "sweetscent"
             ],
             "level": 9
           },
           {
-            "species": "wingull",
+            "species": "surskit",
             "moveset": [
               "watergun",
-              "wingattack",
-              "supersonic"
+              "quickattack",
+              "sweetscent"
             ],
             "level": 10
           }
@@ -2522,20 +2530,21 @@
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "fomantis",
+          "species": "krabby",
           "moveset": [
-            "leafage",
-            "furycutter",
-            "growth"
+            "watergun",
+            "leer",
+            "harden"
           ],
           "level": 13
         },
         {
-          "species": "pidgey",
+          "species": "staryu",
           "moveset": [
-            "gust",
-            "sandattack",
-            "quickattack"
+            "watergun",
+            "rapidspin",
+            "recover",
+            "harden"
           ],
           "level": 14
         }
@@ -2544,7 +2553,7 @@
       "route_order": 1,
       "trainer_order": 3,
       "archetype": "observer",
-      "lesson": "Water species telegraph the first gym's cleanest answer.",
+      "lesson": "Defensive turns and recovery advertise Water as a clean answer to Brock without making the fight mandatory.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 1247,
@@ -2559,6 +2568,11 @@
         "pre": "dlg_route_01_trainer_03_pre",
         "win": "dlg_route_01_trainer_03_win",
         "loss": "dlg_route_01_trainer_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "River Pokémon win by waiting for the opening. Show me you can make one.",
+        "player_win": "Good. Water gets through Brock's stone, but only if you keep your attacker standing.",
+        "player_loss": "Harden and Recover bought the river all the time it needed."
       },
       "rct": {
         "identity": "route_01_trainer_03",
@@ -2585,20 +2599,21 @@
         "bag": [],
         "team": [
           {
-            "species": "fomantis",
+            "species": "krabby",
             "moveset": [
-              "leafage",
-              "furycutter",
-              "growth"
+              "watergun",
+              "leer",
+              "harden"
             ],
             "level": 13
           },
           {
-            "species": "pidgey",
+            "species": "staryu",
             "moveset": [
-              "gust",
-              "sandattack",
-              "quickattack"
+              "watergun",
+              "rapidspin",
+              "recover",
+              "harden"
             ],
             "level": 14
           }
@@ -2612,11 +2627,12 @@
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "wingull",
+          "species": "wooloo",
           "moveset": [
-            "watergun",
-            "wingattack",
-            "supersonic"
+            "tackle",
+            "growl",
+            "defensecurl",
+            "copycat"
           ],
           "level": 15
         },
@@ -2630,11 +2646,11 @@
           "level": 16
         },
         {
-          "species": "mareep",
+          "species": "wingull",
           "moveset": [
-            "thundershock",
-            "growl",
-            "cottonspore"
+            "watergun",
+            "wingattack",
+            "supersonic"
           ],
           "level": 17
         }
@@ -2643,7 +2659,7 @@
       "route_order": 1,
       "trainer_order": 4,
       "archetype": "gym_prep",
-      "lesson": "Mixed Rock coverage teaches that super-effective attacks still need a plan.",
+      "lesson": "A bulky opener followed by Grass and Water pressure is the final rehearsal for Brock.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 1677,
@@ -2658,6 +2674,11 @@
         "pre": "dlg_route_01_trainer_04_pre",
         "win": "dlg_route_01_trainer_04_win",
         "loss": "dlg_route_01_trainer_04_loss"
+      },
+      "dialogue_text": {
+        "pre": "Brock survives the obvious first hit. Bring a second answer for what comes after.",
+        "player_win": "That is a team ready for stone: pressure from more than one direction.",
+        "player_loss": "One counter is a plan. Two counters are a team."
       },
       "rct": {
         "identity": "route_01_trainer_04",
@@ -2684,11 +2705,12 @@
         "bag": [],
         "team": [
           {
-            "species": "wingull",
+            "species": "wooloo",
             "moveset": [
-              "watergun",
-              "wingattack",
-              "supersonic"
+              "tackle",
+              "growl",
+              "defensecurl",
+              "copycat"
             ],
             "level": 15
           },
@@ -2702,11 +2724,11 @@
             "level": 16
           },
           {
-            "species": "mareep",
+            "species": "wingull",
             "moveset": [
-              "thundershock",
-              "growl",
-              "cottonspore"
+              "watergun",
+              "wingattack",
+              "supersonic"
             ],
             "level": 17
           }
@@ -2715,16 +2737,17 @@
     },
     {
       "id": "route_02_trainer_01",
-      "display_name": "Young Hiker",
+      "display_name": "Ravine Scrapper",
       "class": "route",
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "lombre",
+          "species": "corphish",
           "moveset": [
-            "fakeout",
-            "megadrain",
-            "bubblebeam"
+            "visegrip",
+            "bubblebeam",
+            "harden",
+            "taunt"
           ],
           "level": 18
         }
@@ -2733,7 +2756,7 @@
       "route_order": 2,
       "trainer_order": 1,
       "archetype": "one_pokemon",
-      "lesson": "A sturdy solo battler teaches setup windows.",
+      "lesson": "Shows that setup and recovery can be denied and that the resulting opening should be used immediately.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 268,
@@ -2749,10 +2772,15 @@
         "win": "dlg_route_02_trainer_01_win",
         "loss": "dlg_route_02_trainer_01_loss"
       },
+      "dialogue_text": {
+        "pre": "Corphish does not need a long plan. It denies yours and takes the opening.",
+        "player_win": "You attacked before Taunt stole your setup. Good.",
+        "player_loss": "You gave Corphish time, and it took all of it."
+      },
       "rct": {
         "identity": "route_02_trainer_01",
         "name": {
-          "literal": "Young Hiker"
+          "literal": "Ravine Scrapper"
         },
         "battleFormat": "GEN_9_SINGLES",
         "battleRules": {
@@ -2774,11 +2802,12 @@
         "bag": [],
         "team": [
           {
-            "species": "lombre",
+            "species": "corphish",
             "moveset": [
-              "fakeout",
-              "megadrain",
-              "bubblebeam"
+              "visegrip",
+              "bubblebeam",
+              "harden",
+              "taunt"
             ],
             "level": 18
           }
@@ -2787,25 +2816,26 @@
     },
     {
       "id": "route_02_trainer_02",
-      "display_name": "Power-Line Worker",
+      "display_name": "Glowbug Keeper",
       "class": "route",
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "mareep",
+          "species": "volbeat",
           "moveset": [
-            "thundershock",
-            "growl",
-            "cottonspore"
+            "quickattack",
+            "strugglebug",
+            "confuseray"
           ],
           "level": 19
         },
         {
-          "species": "lotad",
+          "species": "illumise",
           "moveset": [
-            "bubblebeam",
-            "absorb",
-            "astonish"
+            "quickattack",
+            "strugglebug",
+            "charm",
+            "moonlight"
           ],
           "level": 20
         }
@@ -2814,7 +2844,7 @@
       "route_order": 2,
       "trainer_order": 2,
       "archetype": "specialist",
-      "lesson": "Electric pressure previews Misty's weakness.",
+      "lesson": "Status, stat control, and recovery show how low damage becomes dangerous when tempo is lost.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 486,
@@ -2830,10 +2860,15 @@
         "win": "dlg_route_02_trainer_02_win",
         "loss": "dlg_route_02_trainer_02_loss"
       },
+      "dialogue_text": {
+        "pre": "The lake's glowbugs do not hit hard. They make sure you never hit cleanly.",
+        "player_win": "You broke the cycle before Charm, confusion, and Moonlight piled up.",
+        "player_loss": "A weak attack matters when the other side controls every turn."
+      },
       "rct": {
         "identity": "route_02_trainer_02",
         "name": {
-          "literal": "Power-Line Worker"
+          "literal": "Glowbug Keeper"
         },
         "battleFormat": "GEN_9_SINGLES",
         "battleRules": {
@@ -2855,20 +2890,21 @@
         "bag": [],
         "team": [
           {
-            "species": "mareep",
+            "species": "volbeat",
             "moveset": [
-              "thundershock",
-              "growl",
-              "cottonspore"
+              "quickattack",
+              "strugglebug",
+              "confuseray"
             ],
             "level": 19
           },
           {
-            "species": "lotad",
+            "species": "illumise",
             "moveset": [
-              "bubblebeam",
-              "absorb",
-              "astonish"
+              "quickattack",
+              "strugglebug",
+              "charm",
+              "moonlight"
             ],
             "level": 20
           }
@@ -2884,6 +2920,7 @@
         {
           "species": "lombre",
           "moveset": [
+            "raindance",
             "fakeout",
             "megadrain",
             "bubblebeam"
@@ -2894,7 +2931,7 @@
           "species": "mareep",
           "moveset": [
             "thundershock",
-            "growl",
+            "thunderwave",
             "cottonspore"
           ],
           "level": 21
@@ -2913,7 +2950,7 @@
       "route_order": 2,
       "trainer_order": 3,
       "archetype": "gym_prep",
-      "lesson": "Rain and Grass coverage rehearse the Water matchup.",
+      "lesson": "Rain, speed control, and a Water/Grass core rehearse Misty and show why Electric alone is incomplete.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 723,
@@ -2928,6 +2965,11 @@
         "pre": "dlg_route_02_trainer_03_pre",
         "win": "dlg_route_02_trainer_03_win",
         "loss": "dlg_route_02_trainer_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Rain changes this whole shore. Did you bring one answer, or two?",
+        "player_win": "Electric pressure handles open water. Flying or Bug pressure handles what grows in it.",
+        "player_loss": "Misty's lake will not give you one clean weakness to chase."
       },
       "rct": {
         "identity": "route_02_trainer_03",
@@ -2956,6 +2998,7 @@
           {
             "species": "lombre",
             "moveset": [
+              "raindance",
               "fakeout",
               "megadrain",
               "bubblebeam"
@@ -2966,7 +3009,7 @@
             "species": "mareep",
             "moveset": [
               "thundershock",
-              "growl",
+              "thunderwave",
               "cottonspore"
             ],
             "level": 21
@@ -3003,7 +3046,7 @@
       "route_order": 3,
       "trainer_order": 1,
       "archetype": "one_pokemon",
-      "lesson": "A Ground-capable Bunnelby is shown before Surge.",
+      "lesson": "Rock Tomb demonstrates speed control and Howl presents a visible setup turn to punish.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 247,
@@ -3018,6 +3061,11 @@
         "pre": "dlg_route_03_trainer_01_pre",
         "win": "dlg_route_03_trainer_01_win",
         "loss": "dlg_route_03_trainer_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "On a climb, controlling the footing matters more than moving first.",
+        "player_win": "You punished Howl before Rock Tomb could keep you slow.",
+        "player_loss": "One speed drop was enough to decide the slope."
       },
       "rct": {
         "identity": "route_03_trainer_01",
@@ -3057,25 +3105,25 @@
     },
     {
       "id": "route_03_trainer_02",
-      "display_name": "Mountaineer",
+      "display_name": "Grove Ranger",
       "class": "route",
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "skiddo",
+          "species": "heracross",
           "moveset": [
-            "razorleaf",
-            "bulldoze",
-            "synthesis"
+            "armthrust",
+            "aerialace",
+            "furyattack"
           ],
           "level": 22
         },
         {
-          "species": "bunnelby",
+          "species": "noctowl",
           "moveset": [
-            "mudshot",
-            "quickattack",
-            "takedown"
+            "peck",
+            "confusion",
+            "hypnosis"
           ],
           "level": 23
         }
@@ -3084,7 +3132,7 @@
       "route_order": 3,
       "trainer_order": 2,
       "archetype": "observer",
-      "lesson": "Rock and Fighting coverage teaches safe switches.",
+      "lesson": "Complementary Fighting and Flying/Psychic pressure teaches that one resistance is not a switching plan.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 607,
@@ -3100,10 +3148,15 @@
         "win": "dlg_route_03_trainer_02_win",
         "loss": "dlg_route_03_trainer_02_loss"
       },
+      "dialogue_text": {
+        "pre": "The grove punishes teams built around one resistance. Show me your second switch.",
+        "player_win": "You saw the partner behind the first matchup.",
+        "player_loss": "One safe switch led straight into the other threat."
+      },
       "rct": {
         "identity": "route_03_trainer_02",
         "name": {
-          "literal": "Mountaineer"
+          "literal": "Grove Ranger"
         },
         "battleFormat": "GEN_9_SINGLES",
         "battleRules": {
@@ -3125,20 +3178,20 @@
         "bag": [],
         "team": [
           {
-            "species": "skiddo",
+            "species": "heracross",
             "moveset": [
-              "razorleaf",
-              "bulldoze",
-              "synthesis"
+              "armthrust",
+              "aerialace",
+              "furyattack"
             ],
             "level": 22
           },
           {
-            "species": "bunnelby",
+            "species": "noctowl",
             "moveset": [
-              "mudshot",
-              "quickattack",
-              "takedown"
+              "peck",
+              "confusion",
+              "hypnosis"
             ],
             "level": 23
           }
@@ -3174,7 +3227,7 @@
       "route_order": 3,
       "trainer_order": 3,
       "archetype": "specialist",
-      "lesson": "Ground damage is demonstrated explicitly.",
+      "lesson": "Bunnelby demonstrates Ground damage while Skiddo demonstrates the Electric-resistant fallback.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 1029,
@@ -3189,6 +3242,11 @@
         "pre": "dlg_route_03_trainer_03_pre",
         "win": "dlg_route_03_trainer_03_win",
         "loss": "dlg_route_03_trainer_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Burrows and roots both carry current into the earth. That is how you face Surge.",
+        "player_win": "You found the opening before Ground and Grass could settle in.",
+        "player_loss": "Bunnelby can grow into your clean Ground answer. Skiddo is the fallback when Ground gets disrupted."
       },
       "rct": {
         "identity": "route_03_trainer_03",
@@ -3242,29 +3300,22 @@
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "machop",
+          "species": "pachirisu",
           "moveset": [
-            "lowkick",
-            "knockoff",
-            "bulldoze"
-          ],
-          "level": 24
-        },
-        {
-          "species": "skiddo",
-          "moveset": [
-            "razorleaf",
-            "bulldoze",
-            "synthesis"
+            "nuzzle",
+            "spark",
+            "charm",
+            "quickattack"
           ],
           "level": 25
         },
         {
-          "species": "bunnelby",
+          "species": "volbeat",
           "moveset": [
-            "mudshot",
+            "strugglebug",
+            "confuseray",
             "quickattack",
-            "takedown"
+            "moonlight"
           ],
           "level": 26
         }
@@ -3273,21 +3324,26 @@
       "route_order": 3,
       "trainer_order": 4,
       "archetype": "strategist",
-      "lesson": "Speed control and pivoting preview Surge's tempo.",
+      "lesson": "Paralysis and control preview Surge's tempo while the dialogue names Ground, Grass, and priority as answers.",
       "placement": {
         "status": "proposed",
-        "at_distance_blocks": 1314,
-        "progress_fraction": 0.6198,
-        "polyline_vertex_index": 51,
-        "x": 2231,
-        "z": 1746,
-        "sampled_y": 124.96,
+        "at_distance_blocks": 1469,
+        "progress_fraction": 0.6929,
+        "polyline_vertex_index": 57,
+        "x": 2199,
+        "z": 1606,
+        "sampled_y": 123.85,
         "route_measured_blocks": 2120.199
       },
       "dialogue": {
         "pre": "dlg_route_03_trainer_04_pre",
         "win": "dlg_route_03_trainer_04_win",
         "loss": "dlg_route_03_trainer_04_loss"
+      },
+      "dialogue_text": {
+        "pre": "That mast keeps changing the way everything moves. Let us see how your team handles lost tempo.",
+        "player_win": "Good. Do not race Surge—use Ground, Grass, or priority to take the turn back.",
+        "player_loss": "Paralysis makes speed unreliable. Bring an immunity or a way to act first anyway."
       },
       "rct": {
         "identity": "route_03_trainer_04",
@@ -3314,29 +3370,22 @@
         "bag": [],
         "team": [
           {
-            "species": "machop",
+            "species": "pachirisu",
             "moveset": [
-              "lowkick",
-              "knockoff",
-              "bulldoze"
-            ],
-            "level": 24
-          },
-          {
-            "species": "skiddo",
-            "moveset": [
-              "razorleaf",
-              "bulldoze",
-              "synthesis"
+              "nuzzle",
+              "spark",
+              "charm",
+              "quickattack"
             ],
             "level": 25
           },
           {
-            "species": "bunnelby",
+            "species": "volbeat",
             "moveset": [
-              "mudshot",
+              "strugglebug",
+              "confuseray",
               "quickattack",
-              "takedown"
+              "moonlight"
             ],
             "level": 26
           }
@@ -3350,29 +3399,30 @@
       "format": "GEN_9_SINGLES",
       "team": [
         {
+          "species": "wooper",
+          "moveset": [
+            "mudshot",
+            "watergun",
+            "yawn",
+            "slam"
+          ],
+          "level": 25
+        },
+        {
+          "species": "makuhita",
+          "moveset": [
+            "fakeout",
+            "forcepalm",
+            "knockoff"
+          ],
+          "level": 26
+        },
+        {
           "species": "skiddo",
           "moveset": [
             "razorleaf",
             "bulldoze",
             "synthesis"
-          ],
-          "level": 25
-        },
-        {
-          "species": "machop",
-          "moveset": [
-            "lowkick",
-            "knockoff",
-            "bulldoze"
-          ],
-          "level": 26
-        },
-        {
-          "species": "bunnelby",
-          "moveset": [
-            "mudshot",
-            "quickattack",
-            "takedown"
           ],
           "level": 27
         }
@@ -3381,7 +3431,7 @@
       "route_order": 3,
       "trainer_order": 5,
       "archetype": "gym_prep",
-      "lesson": "A resistance core is shown as the fallback to Ground immunity.",
+      "lesson": "A Ground immunity, action denial, and an Electric-resistant recovery user form the final Surge rehearsal.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 1690,
@@ -3396,6 +3446,11 @@
         "pre": "dlg_route_03_trainer_05_pre",
         "win": "dlg_route_03_trainer_05_win",
         "loss": "dlg_route_03_trainer_05_loss"
+      },
+      "dialogue_text": {
+        "pre": "The mountain's safest teams redirect electricity instead of trying to endure it.",
+        "player_win": "You brought immunity, resistance, and pressure. That is enough to challenge the shelf.",
+        "player_loss": "The pond behind you offers Wooper. Bunnelby stays on the critical path. Use one of them."
       },
       "rct": {
         "identity": "route_03_trainer_05",
@@ -3422,29 +3477,30 @@
         "bag": [],
         "team": [
           {
+            "species": "wooper",
+            "moveset": [
+              "mudshot",
+              "watergun",
+              "yawn",
+              "slam"
+            ],
+            "level": 25
+          },
+          {
+            "species": "makuhita",
+            "moveset": [
+              "fakeout",
+              "forcepalm",
+              "knockoff"
+            ],
+            "level": 26
+          },
+          {
             "species": "skiddo",
             "moveset": [
               "razorleaf",
               "bulldoze",
               "synthesis"
-            ],
-            "level": 25
-          },
-          {
-            "species": "machop",
-            "moveset": [
-              "lowkick",
-              "knockoff",
-              "bulldoze"
-            ],
-            "level": 26
-          },
-          {
-            "species": "bunnelby",
-            "moveset": [
-              "mudshot",
-              "quickattack",
-              "takedown"
             ],
             "level": 27
           }

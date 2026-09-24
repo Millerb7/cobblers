@@ -17,10 +17,10 @@ how he arrived or turns a real person into campaign lore.
 
 ## Location
 
-The hut belongs off the Pallet-to-Brock route without blocking it. No hut site
-exists in current geography data. Select an exact coordinate only after the
-road and mansion are placed, then use a small reusable donor hut or custom
-vanilla-block structure.
+Place the hut entrance at `(1509, 4469)`, route distance 1039.4 and route ground
+`y122.6`. Keep the footprint east of the road around `(1521, 4461)`, no larger
+than 9×7 blocks. This moves the scene away from Celebi's sapling at
+`(1380, 4628)` while preserving a visible roadside stop.
 
 ## Visual direction
 
@@ -118,9 +118,8 @@ mandatory.
 
 ## Implementation gaps
 
-1. Exact hut coordinate, orientation, and donor structure.
-2. NPC skin or model that evokes the joke without copied promotional art.
-3. Verified IDs for the water-bottle alternatives, Black Glasses, music disc,
+1. NPC skin or model that evokes the joke without copied promotional art.
+2. Verified IDs for the water-bottle alternatives, Black Glasses, music disc,
    and capture supplies.
-4. Conditional dialogue based on held or submitted items.
-5. Per-player completion and duplicate-safe rewards.
+3. Conditional dialogue based on held or submitted items.
+4. Per-player completion and duplicate-safe rewards.

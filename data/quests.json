@@ -381,7 +381,7 @@
       },
       "generation_blockers": [
         "Approve the reward quantities and the music disc (ids are verified).",
-        "Choose the hut coordinate and place npc_route1_thirsty_stranger."
+        "Build the hut at entrance (1509, 4469), footprint centre (1521, 4461), and place npc_route1_thirsty_stranger."
       ],
       "progression_field_refs": [
         "quest.evt_route1_thirsty_stranger.started",

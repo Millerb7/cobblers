@@ -455,6 +455,81 @@
         "feintattack",
         "headbutt"
       ]
+    },
+    "combee": {
+      "species": "combee",
+      "moveset": [
+        "gust",
+        "sweetscent"
+      ]
+    },
+    "surskit": {
+      "species": "surskit",
+      "moveset": [
+        "watergun",
+        "quickattack",
+        "sweetscent"
+      ]
+    },
+    "krabby": {
+      "species": "krabby",
+      "moveset": [
+        "watergun",
+        "leer",
+        "harden"
+      ]
+    },
+    "staryu": {
+      "species": "staryu",
+      "moveset": [
+        "watergun",
+        "rapidspin",
+        "recover",
+        "harden"
+      ]
+    },
+    "wooloo": {
+      "species": "wooloo",
+      "moveset": [
+        "tackle",
+        "growl",
+        "defensecurl",
+        "copycat"
+      ]
+    },
+    "illumise": {
+      "species": "illumise",
+      "moveset": [
+        "quickattack",
+        "strugglebug",
+        "charm",
+        "moonlight"
+      ]
+    },
+    "noctowl": {
+      "species": "noctowl",
+      "moveset": [
+        "peck",
+        "confusion",
+        "hypnosis"
+      ]
+    },
+    "pachirisu": {
+      "species": "pachirisu",
+      "moveset": [
+        "nuzzle",
+        "spark",
+        "charm",
+        "quickattack"
+      ]
+    },
+    "makuhita": {
+      "species": "makuhita",
+      "moveset": [
+        "fakeout",
+        "forcepalm",
+        "knockoff"
+      ]
     }
   },
   "bosses": [
@@ -1676,7 +1751,22 @@
           ],
           "role": "one_pokemon",
           "name": "Trail Novice",
-          "lesson": "A single weak opponent introduces trainer sight lines."
+          "lesson": "Introduces trainer sight lines, accuracy changes, and priority without threatening the first-route team.",
+          "team_species": [
+            "pidgey"
+          ],
+          "movesets": [
+            [
+              "gust",
+              "sandattack",
+              "quickattack"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "First battle? Mine too. If our eyes meet on the road, we battle—ready?",
+            "player_win": "Sand Attack bought me a turn, but it could not fix a bad matchup.",
+            "player_loss": "Quick Attack closes a fight before nerves can."
+          }
         },
         {
           "at_distance_blocks": 733,
@@ -1685,8 +1775,28 @@
             4714
           ],
           "role": "specialist",
-          "name": "Bug Catcher",
-          "lesson": "Flying pressure is discoverable before Brock."
+          "name": "Meadow Apiarist",
+          "lesson": "Uses two gentle Bug-area species to teach switching and accessible Flying or Electric answers.",
+          "team_species": [
+            "combee",
+            "surskit"
+          ],
+          "movesets": [
+            [
+              "gust",
+              "sweetscent"
+            ],
+            [
+              "watergun",
+              "quickattack",
+              "sweetscent"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "The Combee followed the flowers; Surskit followed the water. I learned to pack answers for both.",
+            "player_win": "You switched instead of forcing one partner through everything. That is the lesson.",
+            "player_loss": "Bug teams look gentle until you let them control the field."
+          }
         },
         {
           "at_distance_blocks": 1247,
@@ -1696,7 +1806,29 @@
           ],
           "role": "observer",
           "name": "River Angler",
-          "lesson": "Water species telegraph the first gym's cleanest answer."
+          "lesson": "Defensive turns and recovery advertise Water as a clean answer to Brock without making the fight mandatory.",
+          "team_species": [
+            "krabby",
+            "staryu"
+          ],
+          "movesets": [
+            [
+              "watergun",
+              "leer",
+              "harden"
+            ],
+            [
+              "watergun",
+              "rapidspin",
+              "recover",
+              "harden"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "River Pokémon win by waiting for the opening. Show me you can make one.",
+            "player_win": "Good. Water gets through Brock's stone, but only if you keep your attacker standing.",
+            "player_loss": "Harden and Recover bought the river all the time it needed."
+          }
         },
         {
           "at_distance_blocks": 1677,
@@ -1706,7 +1838,35 @@
           ],
           "role": "gym_prep",
           "name": "Plateau Guide",
-          "lesson": "Mixed Rock coverage teaches that super-effective attacks still need a plan."
+          "lesson": "A bulky opener followed by Grass and Water pressure is the final rehearsal for Brock.",
+          "team_species": [
+            "wooloo",
+            "fomantis",
+            "wingull"
+          ],
+          "movesets": [
+            [
+              "tackle",
+              "growl",
+              "defensecurl",
+              "copycat"
+            ],
+            [
+              "leafage",
+              "furycutter",
+              "growth"
+            ],
+            [
+              "watergun",
+              "wingattack",
+              "supersonic"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "Brock survives the obvious first hit. Bring a second answer for what comes after.",
+            "player_win": "That is a team ready for stone: pressure from more than one direction.",
+            "player_loss": "One counter is a plan. Two counters are a team."
+          }
         }
       ]
     },
@@ -1735,8 +1895,24 @@
             3372
           ],
           "role": "one_pokemon",
-          "name": "Young Hiker",
-          "lesson": "A sturdy solo battler teaches setup windows."
+          "name": "Ravine Scrapper",
+          "lesson": "Shows that setup and recovery can be denied and that the resulting opening should be used immediately.",
+          "team_species": [
+            "corphish"
+          ],
+          "movesets": [
+            [
+              "visegrip",
+              "bubblebeam",
+              "harden",
+              "taunt"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "Corphish does not need a long plan. It denies yours and takes the opening.",
+            "player_win": "You attacked before Taunt stole your setup. Good.",
+            "player_loss": "You gave Corphish time, and it took all of it."
+          }
         },
         {
           "at_distance_blocks": 486,
@@ -1745,8 +1921,30 @@
             3159
           ],
           "role": "specialist",
-          "name": "Power-Line Worker",
-          "lesson": "Electric pressure previews Misty's weakness."
+          "name": "Glowbug Keeper",
+          "lesson": "Status, stat control, and recovery show how low damage becomes dangerous when tempo is lost.",
+          "team_species": [
+            "volbeat",
+            "illumise"
+          ],
+          "movesets": [
+            [
+              "quickattack",
+              "strugglebug",
+              "confuseray"
+            ],
+            [
+              "quickattack",
+              "strugglebug",
+              "charm",
+              "moonlight"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "The lake's glowbugs do not hit hard. They make sure you never hit cleanly.",
+            "player_win": "You broke the cycle before Charm, confusion, and Moonlight piled up.",
+            "player_loss": "A weak attack matters when the other side controls every turn."
+          }
         },
         {
           "at_distance_blocks": 723,
@@ -1756,7 +1954,35 @@
           ],
           "role": "gym_prep",
           "name": "Lake Surveyor",
-          "lesson": "Rain and Grass coverage rehearse the Water matchup."
+          "lesson": "Rain, speed control, and a Water/Grass core rehearse Misty and show why Electric alone is incomplete.",
+          "team_species": [
+            "lombre",
+            "mareep",
+            "lotad"
+          ],
+          "movesets": [
+            [
+              "raindance",
+              "fakeout",
+              "megadrain",
+              "bubblebeam"
+            ],
+            [
+              "thundershock",
+              "thunderwave",
+              "cottonspore"
+            ],
+            [
+              "bubblebeam",
+              "absorb",
+              "astonish"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "Rain changes this whole shore. Did you bring one answer, or two?",
+            "player_win": "Electric pressure handles open water. Flying or Bug pressure handles what grows in it.",
+            "player_loss": "Misty's lake will not give you one clean weakness to chase."
+          }
         }
       ]
     },
@@ -1786,7 +2012,22 @@
           ],
           "role": "one_pokemon",
           "name": "Climbing Novice",
-          "lesson": "A Ground-capable Bunnelby is shown before Surge."
+          "lesson": "Rock Tomb demonstrates speed control and Howl presents a visible setup turn to punish.",
+          "team_species": [
+            "rockruff"
+          ],
+          "movesets": [
+            [
+              "rocktomb",
+              "bite",
+              "howl"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "On a climb, controlling the footing matters more than moving first.",
+            "player_win": "You punished Howl before Rock Tomb could keep you slow.",
+            "player_loss": "One speed drop was enough to decide the slope."
+          }
         },
         {
           "at_distance_blocks": 607,
@@ -1795,8 +2036,29 @@
             2306
           ],
           "role": "observer",
-          "name": "Mountaineer",
-          "lesson": "Rock and Fighting coverage teaches safe switches."
+          "name": "Grove Ranger",
+          "lesson": "Complementary Fighting and Flying/Psychic pressure teaches that one resistance is not a switching plan.",
+          "team_species": [
+            "heracross",
+            "noctowl"
+          ],
+          "movesets": [
+            [
+              "armthrust",
+              "aerialace",
+              "furyattack"
+            ],
+            [
+              "peck",
+              "confusion",
+              "hypnosis"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "The grove punishes teams built around one resistance. Show me your second switch.",
+            "player_win": "You saw the partner behind the first matchup.",
+            "player_loss": "One safe switch led straight into the other threat."
+          }
         },
         {
           "at_distance_blocks": 1029,
@@ -1806,17 +2068,61 @@
           ],
           "role": "specialist",
           "name": "Groundkeeper",
-          "lesson": "Ground damage is demonstrated explicitly."
+          "lesson": "Bunnelby demonstrates Ground damage while Skiddo demonstrates the Electric-resistant fallback.",
+          "team_species": [
+            "bunnelby",
+            "skiddo"
+          ],
+          "movesets": [
+            [
+              "mudshot",
+              "quickattack",
+              "takedown"
+            ],
+            [
+              "razorleaf",
+              "bulldoze",
+              "synthesis"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "Burrows and roots both carry current into the earth. That is how you face Surge.",
+            "player_win": "You found the opening before Ground and Grass could settle in.",
+            "player_loss": "Bunnelby can grow into your clean Ground answer. Skiddo is the fallback when Ground gets disrupted."
+          }
         },
         {
-          "at_distance_blocks": 1314,
+          "at_distance_blocks": 1469,
           "expected_coordinate": [
-            2231,
-            1746
+            2199,
+            1606
           ],
           "role": "strategist",
           "name": "Signal Watcher",
-          "lesson": "Speed control and pivoting preview Surge's tempo."
+          "lesson": "Paralysis and control preview Surge's tempo while the dialogue names Ground, Grass, and priority as answers.",
+          "team_species": [
+            "pachirisu",
+            "volbeat"
+          ],
+          "movesets": [
+            [
+              "nuzzle",
+              "spark",
+              "charm",
+              "quickattack"
+            ],
+            [
+              "strugglebug",
+              "confuseray",
+              "quickattack",
+              "moonlight"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "That mast keeps changing the way everything moves. Let us see how your team handles lost tempo.",
+            "player_win": "Good. Do not race Surge—use Ground, Grass, or priority to take the turn back.",
+            "player_loss": "Paralysis makes speed unreliable. Bring an immunity or a way to act first anyway."
+          }
         },
         {
           "at_distance_blocks": 1690,
@@ -1826,7 +2132,35 @@
           ],
           "role": "gym_prep",
           "name": "Vessu Ranger",
-          "lesson": "A resistance core is shown as the fallback to Ground immunity."
+          "lesson": "A Ground immunity, action denial, and an Electric-resistant recovery user form the final Surge rehearsal.",
+          "team_species": [
+            "wooper",
+            "makuhita",
+            "skiddo"
+          ],
+          "movesets": [
+            [
+              "mudshot",
+              "watergun",
+              "yawn",
+              "slam"
+            ],
+            [
+              "fakeout",
+              "forcepalm",
+              "knockoff"
+            ],
+            [
+              "razorleaf",
+              "bulldoze",
+              "synthesis"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "The mountain's safest teams redirect electricity instead of trying to endure it.",
+            "player_win": "You brought immunity, resistance, and pressure. That is enough to challenge the shelf.",
+            "player_loss": "The pond behind you offers Wooper. Bunnelby stays on the critical path. Use one of them."
+          }
         }
       ]
     },
