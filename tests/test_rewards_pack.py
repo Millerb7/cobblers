@@ -14,7 +14,9 @@ Not covered, and it needs a boot or a functional test:
     two-player grant is unproven);
   - that the item ids and the TM component exist in the installed jars (jar_problems needs --server-dir and the
     coordination lock, and is not run here);
-  - that the barrel really stands at container.at in a built world (tools/vr_regions.py checks its model).
+  - that the barrel really stands at container.at in a built world (tools/vr_caves.py checks its own model against
+    container.at, and tests/test_vr_caves.py runs that check; `vr_caves.py verify` on a stopped world copy is the
+    only check of the world itself).
 """
 import json
 import sys
