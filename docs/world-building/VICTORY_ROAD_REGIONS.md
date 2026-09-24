@@ -1,5 +1,7 @@
 # Victory Road's regions — a proposal, and what was built
 
+> **Superseded on 2026-09-23 by `VICTORY_ROAD_CAVES.md`.** The owner flew these regions, liked them, and found the road around them still too pathy and their rosters forced; Victory Road is now one cave network in which these five themes are colliding zones. Kept as the record of what was built first and why.
+
 **Status:** approved by the owner and **built on staging** (`cobblers-dryrun9`) on 2026-09-23. The proposal below is
 kept as written; this section records what was built and every place the build differs from it. Written first on
 2026-09-23 at the owner's direction after a flight found the road reading as "a path with a few spherical rooms —

@@ -1,18 +1,21 @@
-"""tools/reapply.py: the Victory Road regions, Habitat Block, reward and NPC steps (R9D, R9E, R9F) and their packs.
+"""tools/reapply.py: Victory Road's cave, Habitat Block and NPC steps (R9C, R9E, R9F) and their packs.
 
 Written by the test author, not by the session that wrote the tool.
 
-What is asserted: the regions run after the road and the Habitat Blocks after the regions, the NPC step last of
-the three; every generated pack that ships functions is run by a step or excluded with a reason (on the packs
-present in build/datapacks); npcs() derives each reward NPC from data/rewards.json and data/dialogue.json and fails
-closed when a reward names a quest nothing runs; and the new packs are installed on the server.
+What is asserted: the cave runs after the Deep, the Habitat Blocks after the cave, and the NPC step last of the
+three; R9C runs every function cobblers_vr_caves lists, in the order it lists them; no step runs a retired or
+staging-only Victory Road pack, and R9D is gone; every generated pack that ships functions is run by a step or
+excluded with a reason (on the packs present in build/datapacks), and the retired and staging-only packs are among
+the excluded with a reason that says which they are; npcs() derives each reward NPC from data/rewards.json and
+data/dialogue.json and fails closed when a reward names a quest nothing runs; and the packs the cave needs are
+installed on the server while the retired and staging-only ones are not.
 
 steps() reads each generated pack's index.txt, so the order and coverage tests SKIP when build/datapacks does not
 hold them (run `python tools/reapply.py prepare` first); that skip is not a pass.
 
 Not covered, and it needs a boot or a functional test:
   - that the steps actually run against a server (RCON, the lock, the waits), and that a re-export followed by
-    `reapply.py run` puts the regions, blocks and NPC back;
+    `reapply.py run` puts the cave, its Habitat Blocks and the NPC back;
   - that spawnnpcat places the NPC with its class loaded and its dialogue working (NPC classes load at server start);
   - that the Habitat Blocks are live after the 20 second wait (EXP-021 says a chunk reload is needed).
 """
@@ -29,7 +32,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 import reapply  # noqa: E402
 
 NEEDS_INDEX = ("cobblers_rift", "rift"), ("cobblers_rift_biome", "rift"), ("cobblers_league_tunnel", "league_tunnel"), \
-    ("cobblers_deep", "deep"), ("cobblers_victory_road", "victory_road"), ("cobblers_vr_regions", "vr_regions")
+    ("cobblers_deep", "deep"), ("cobblers_vr_caves", "vr_caves")
+RETIRED = ("cobblers_victory_road", "cobblers_vr_regions")
+STAGING_ONLY = ("cobblers_vr_clear",)
 
 
 @pytest.fixture(scope="module")
@@ -49,21 +54,30 @@ def _at(steps, sid):
     return ids.index(sid)
 
 
-# Without it a re-apply re-runs the road after its regions: the road's walls close every fork again and the five
-# regions are sealed off from the road (data/vr_regions.json re_apply_after); a Habitat Block is placed before the
-# floor it sits in is built, and the NPC before the room it stands in.
-@pytest.mark.parametrize("before,after", [("R9C", "R9D"), ("R9D", "R9E"), ("R9E", "R9F")])
-def test_the_regions_follow_the_road_the_habitat_blocks_the_regions_and_the_npcs_the_blocks(steps, before, after):
+# Without it a re-apply builds the cave before the Deep its mouth opens from, places a Habitat Block before the floor
+# it sits in is built (R9C's shell pass overwrites it), or places the NPC before the cavern it stands in exists.
+@pytest.mark.parametrize("before,after", [("R9B", "R9C"), ("R9C", "R9E"), ("R9E", "R9F")])
+def test_the_cave_follows_the_deep_the_habitat_blocks_the_cave_and_the_npcs_the_blocks(steps, before, after):
     assert _at(steps, before) < _at(steps, after)
 
 
-# Without it R9D is present but empty (an index.txt with nothing in it), and the order above holds for a step that
-# builds nothing.
-def test_r9d_runs_every_vr_regions_function_the_pack_lists(steps):
-    acts = steps[_at(steps, "R9D")][2]
-    listed = reapply.indexed("cobblers_vr_regions", "vr_regions")
-    assert listed
-    assert acts == [("fn", "cobblers:vr_regions/%s" % f) for f in listed]
+# Without it R9C is present but runs nothing (an empty index.txt), or a subset, or runs the cave's passes out of the
+# order the pack wrote them in (shell, air, floor, fluid, fittings), and the ordering above holds for a step that
+# builds nothing or builds it wrong.
+def test_r9c_runs_every_vr_caves_function_the_pack_lists_in_its_order(steps):
+    acts = steps[_at(steps, "R9C")][2]
+    listed = reapply.indexed("cobblers_vr_caves", "vr_caves")
+    assert listed, "cobblers_vr_caves lists no functions: the test would pass on nothing"
+    assert acts == [("fn", "cobblers:vr_caves/%s" % f) for f in listed]
+
+
+# Without it a step still runs a retired pack on a re-apply (the schema 2 spine or its regions, carving the old road
+# through the cave's rock) or the staging-only clear (filling the cave's surroundings with rock on a fresh export);
+# or R9D survives as a step reading an index nothing writes any more.
+def test_no_step_runs_a_retired_or_staging_only_victory_road_pack(steps):
+    ran = {v.split(":", 1)[1].split("/", 1)[0] for _s, _t, acts in steps for k, v in acts if k == "fn" and ":" in v}
+    assert not ran & {"victory_road", "vr_regions", "vr_clear"}, ran
+    assert "R9D" not in [s[0] for s in steps]
 
 
 # Without it R9F places no NPC, or a different set from the rewards that are given through one.
@@ -79,12 +93,12 @@ def test_every_function_pack_present_is_run_by_a_step_or_excluded_with_a_reason(
     assert reapply.uncovered(steps) == []
 
 
-# Without it uncovered() could be passing because it looks at nothing: it must see the regions pack, and must
-# report a pack no step runs.
-def test_uncovered_sees_the_regions_pack_and_reports_it_when_its_step_is_gone(steps):
-    assert "cobblers_vr_regions" in reapply.function_packs()
-    without = [s for s in steps if s[0] != "R9D"]
-    assert any(b.startswith("cobblers_vr_regions ") for b in reapply.uncovered(without))
+# Without it uncovered() could be passing because it looks at nothing: it must see the cave pack, and must report
+# it when its step is gone.
+def test_uncovered_sees_the_cave_pack_and_reports_it_when_its_step_is_gone(steps):
+    assert "cobblers_vr_caves" in reapply.function_packs()
+    without = [s for s in steps if s[0] != "R9C"]
+    assert any(b.startswith("cobblers_vr_caves ") for b in reapply.uncovered(without))
 
 
 # ------------------------------------------------------------------ npcs()
@@ -144,8 +158,31 @@ def test_the_rewards_pack_is_excluded_with_a_reason():
     assert str(reapply.EXCLUDED.get("cobblers_rewards", "")).strip()
 
 
-# Without it a pack is built but never installed on the server: the regions, their Habitat Blocks, the finds, or
-# the NPC classes and dialogue the reward NPC needs are missing from the running game.
-@pytest.mark.parametrize("pack", ["cobblers_dialogue", "cobblers_vr_regions", "cobblers_habitats", "cobblers_rewards"])
-def test_the_new_packs_are_installed_on_the_server(pack):
+# Without it a retired or staging-only Victory Road pack still sitting in build/datapacks falls into the fail-closed
+# check and `prepare` stops, or somebody gives it a step back to make the check pass.
+@pytest.mark.parametrize("pack", RETIRED + STAGING_ONLY)
+def test_the_retired_and_staging_only_victory_road_packs_are_excluded_with_a_reason(pack):
+    assert str(reapply.EXCLUDED.get(pack, "")).strip(), "%s is not in reapply.EXCLUDED with a reason" % pack
+
+
+# Without it the exclusion reason could say anything: a retired pack has to be marked retired and the clear pack
+# staging only, so neither is mistaken for the other when a re-export is planned.
+def test_the_exclusion_reasons_say_retired_or_staging_only():
+    for pack in RETIRED:
+        assert "retired" in reapply.EXCLUDED[pack].lower(), (pack, reapply.EXCLUDED[pack])
+    for pack in STAGING_ONLY:
+        assert "staging only" in reapply.EXCLUDED[pack].lower(), (pack, reapply.EXCLUDED[pack])
+
+
+# Without it a pack is built but never installed on the server: the cave, its Habitat Blocks, the finds, or the NPC
+# classes and dialogue the reward NPC needs are missing from the running game.
+@pytest.mark.parametrize("pack", ["cobblers_vr_caves", "cobblers_habitats", "cobblers_rewards", "cobblers_dialogue"])
+def test_the_packs_the_cave_needs_are_installed_on_the_server(pack):
     assert pack in reapply.SERVER_PACKS
+
+
+# Without it install() still copies a retired or staging-only pack onto the server, where its functions sit one
+# /function away from carving the old road through the cave, or from filling cells round it with rock.
+@pytest.mark.parametrize("pack", RETIRED + STAGING_ONLY)
+def test_no_retired_or_staging_only_victory_road_pack_is_installed_on_the_server(pack):
+    assert pack not in reapply.SERVER_PACKS

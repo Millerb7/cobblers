@@ -377,37 +377,37 @@
       "blocks": [
         "minecraft:water"
       ],
-      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
-      "why": "The Drowned Gallery's lake and the Bloom's three one-deep puddles: the water is the room. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: 42 species from Cobblemon and the Cobbleverse datapack, among them dragonite, greninja, inteleon, golisopod, politoed, quagsire, the poliwag, wooper, tympole and galarian slowpoke lines, and hisuian goomy."
+      "scope": "Victory Road's caves (tools/vr_caves.py, data/vr_caves.json): one sealed cave network from y-2 to y89 under the Rift, between the Windward Deep and the League",
+      "why": "The Drowned Gallery's lakes and the Bloom's one-deep puddles: the water is the room. Over 88% of the cave's floor a ReplaceSpawns Habitat Block (data/habitat_blocks.json vrc_*) replaces the ambient pool, so the block is scenery there; in the seams between tiles it does condition the pack's own pools: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: 42 species from Cobblemon and the Cobbleverse datapack, among them dragonite, greninja, inteleon, golisopod, politoed, quagsire, the poliwag, wooper, tympole and galarian slowpoke lines, and hisuian goomy."
     },
     {
       "blocks": [
         "minecraft:lava"
       ],
-      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
-      "why": "The Slagworks' pool and its two falls: the only lit refuge on a dark road (owner, 2026-09-23), lit BY the lava. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: magby, magmar, magmortar, slugma, magcargo, salandit and salazzle, a fire roster that suits the room either way."
+      "scope": "Victory Road's caves (tools/vr_caves.py, data/vr_caves.json): one sealed cave network from y-2 to y89 under the Rift, between the Windward Deep and the League",
+      "why": "The Slagworks' lava pools and their falls: the only lit refuge on a dark road (owner, 2026-09-23), lit BY the lava. Over 88% of the cave's floor a ReplaceSpawns Habitat Block (data/habitat_blocks.json vrc_*) replaces the ambient pool, so the block is scenery there; in the seams between tiles it does condition the pack's own pools: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: magby, magmar, magmortar, slugma, magcargo, salandit and salazzle, a fire roster that suits the room either way."
     },
     {
       "blocks": [
         "minecraft:magma_block"
       ],
-      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
-      "why": "The Slagworks' shelf, the only floor on the road that burns. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: gible, gabite, garchomp, magby, magmar and magmortar. Garchomp is the region's intended anchor, so on this block the terrain and the roster agree; the Habitat Block is there for the level band."
+      "scope": "Victory Road's caves (tools/vr_caves.py, data/vr_caves.json): one sealed cave network from y-2 to y89 under the Rift, between the Windward Deep and the League",
+      "why": "The Slagworks' burning floor, the only floor on the road that hurts. Over 88% of the cave's floor a ReplaceSpawns Habitat Block (data/habitat_blocks.json vrc_*) replaces the ambient pool, so the block is scenery there; in the seams between tiles it does condition the pack's own pools: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: gible, gabite, garchomp, magby, magmar and magmortar. Garchomp is the Slagworks' prize, so on this block the terrain and the roster agree; the Habitat Block is there for the level band."
     },
     {
       "blocks": [
         "minecraft:rail"
       ],
-      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
-      "why": "The Abandoned Cut's broken rail line: it is a dig. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: rolycoly, carkol and coalossal, which belong in an abandoned working."
+      "scope": "Victory Road's caves (tools/vr_caves.py, data/vr_caves.json): one sealed cave network from y-2 to y89 under the Rift, between the Windward Deep and the League",
+      "why": "The Abandoned Cut's broken rail lines: it is a dig. Over 88% of the cave's floor a ReplaceSpawns Habitat Block (data/habitat_blocks.json vrc_*) replaces the ambient pool, so the block is scenery there; in the seams between tiles it does condition the pack's own pools: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: rolycoly, carkol and coalossal, which belong in an abandoned working."
     },
     {
       "blocks": [
         "minecraft:flowering_azalea",
         "minecraft:spore_blossom"
       ],
-      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
-      "why": "The Bloom: the only green underground. Both are #cobblemon:flowers. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: combee, vespiquen, comfey, cutiefly, ribombee and every vivillon pattern, which would be wrong in a sealed cave; that is why the room's roster sits on a Habitat Block rather than on the terrain."
+      "scope": "Victory Road's caves (tools/vr_caves.py, data/vr_caves.json): one sealed cave network from y-2 to y89 under the Rift, between the Windward Deep and the League",
+      "why": "The Bloom: the only green underground. Both are #cobblemon:flowers. Over 88% of the cave's floor a ReplaceSpawns Habitat Block (data/habitat_blocks.json vrc_*) replaces the ambient pool, so the block is scenery there; in the seams between tiles it does condition the pack's own pools: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: combee, vespiquen, comfey, cutiefly, ribombee and every vivillon pattern, which would be wrong in a sealed cave; that is why the room's roster sits on a Habitat Block rather than on the terrain."
     }
   ],
   "checked_paving": {
