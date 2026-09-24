@@ -212,7 +212,7 @@ def build_model(settlement, doc, source_root, server_dir, extra=None):
             x0, z0, x1, z1 = l["rect"]
             for x in range(x0, x1 + 1):
                 for z in range(z0, z1 + 1):
-                    m.column(x, z, l["level"], "minecraft:grass_block")
+                    m.column(x, z, l["level"], l.get("surface", "minecraft:grass_block"))
     lamp = plan.get("lamp_block")
     for L in plan.get("lamps") or []:
         x, y, z = L["at"]

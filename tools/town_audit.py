@@ -75,6 +75,11 @@ def town_bounds(settlement, placements, margin=8):
         rect = pz.get("rect") or pz["box"]
         xs += [rect[0], rect[2]]
         zs += [rect[1], rect[3]]
+    for anchor in plan.get("anchors") or []:
+        rect = anchor.get("rect")
+        if rect:
+            xs += [rect[0], rect[2]]
+            zs += [rect[1], rect[3]]
     if not xs:
         raise SystemExit("%s: nothing placed and no streets, so there is nothing to audit" % settlement)
     return min(xs) - margin, min(zs) - margin, max(xs) + margin, max(zs) + margin
@@ -219,6 +224,12 @@ def expected_paving(plan):
         for x in range(x0, x1 + 1):
             for z in range(z0, z1 + 1):
                 out[(x, z)] = (pz["y"], pz["surface"], "plaza")
+    for anchor in plan.get("anchors") or []:
+        if anchor.get("surface") and anchor.get("level") is not None:
+            x0, z0, x1, z1 = anchor["rect"]
+            for x in range(x0, x1 + 1):
+                for z in range(z0, z1 + 1):
+                    out[(x, z)] = (anchor["level"], anchor["surface"], anchor["id"])
     return out
 
 
@@ -411,8 +422,8 @@ def plan_audit(settlement, world, server_dir=None):
     lamps = [tuple(L["at"]) for L in plan.get("lamps") or []]
     lamp_block = plan.get("lamp_block")
     buildings = expected_buildings(settlement, placements, server_dir)
-    if not any(st.get("cells") for st in (plan.get("streets") or {}).values()):
-        msg = "the plan predates recorded street cells; re-run tools/town_plan.py"
+    if not paving:
+        msg = "the plan records no paving cells; re-run tools/town_plan.py"
         return {"skipped": msg, "problems": [msg], "not_checkable": []}
 
     xs = [k[0] for k in paving] + [p[0] for _, s, r, _ in buildings if s for p in list(s) + list(r)]
