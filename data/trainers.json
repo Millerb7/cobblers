@@ -24,7 +24,7 @@
     "boss_slots": 13,
     "authored_boss_rosters": 12,
     "held_boss_slots": 1,
-    "route_trainers": 49,
+    "route_trainers": 50,
     "placement_status": "proposal_only",
     "dialogue_ids": "campaign metadata; RCT sidecars require a future compiler"
   },
@@ -2525,26 +2525,25 @@
     },
     {
       "id": "route_01_trainer_03",
-      "display_name": "River Angler",
+      "display_name": "Vale Naturalist",
       "class": "route",
       "format": "GEN_9_SINGLES",
       "team": [
         {
-          "species": "krabby",
+          "species": "buizel",
           "moveset": [
             "watergun",
-            "leer",
-            "harden"
+            "quickattack",
+            "growl"
           ],
           "level": 13
         },
         {
-          "species": "staryu",
+          "species": "surskit",
           "moveset": [
             "watergun",
-            "rapidspin",
-            "recover",
-            "harden"
+            "quickattack",
+            "sweetscent"
           ],
           "level": 14
         }
@@ -2553,7 +2552,7 @@
       "route_order": 1,
       "trainer_order": 3,
       "archetype": "observer",
-      "lesson": "Defensive turns and recovery advertise Water as a clean answer to Brock without making the fight mandatory.",
+      "lesson": "Uses two fast wetland species to reinforce Water as a Brock answer without pretending the dry River of Shrews vale contains a fishable river.",
       "placement": {
         "status": "proposed",
         "at_distance_blocks": 1247,
@@ -2570,14 +2569,14 @@
         "loss": "dlg_route_01_trainer_03_loss"
       },
       "dialogue_text": {
-        "pre": "River Pokémon win by waiting for the opening. Show me you can make one.",
-        "player_win": "Good. Water gets through Brock's stone, but only if you keep your attacker standing.",
-        "player_loss": "Harden and Recover bought the river all the time it needed."
+        "pre": "This vale holds water after every storm, even if the old river never did.",
+        "player_win": "You changed targets before Quick Attack could pin you down. Brock will not wait either.",
+        "player_loss": "Fast Water types turn a dry path into their own ground."
       },
       "rct": {
         "identity": "route_01_trainer_03",
         "name": {
-          "literal": "River Angler"
+          "literal": "Vale Naturalist"
         },
         "battleFormat": "GEN_9_SINGLES",
         "battleRules": {
@@ -2599,21 +2598,20 @@
         "bag": [],
         "team": [
           {
-            "species": "krabby",
+            "species": "buizel",
             "moveset": [
               "watergun",
-              "leer",
-              "harden"
+              "quickattack",
+              "growl"
             ],
             "level": 13
           },
           {
-            "species": "staryu",
+            "species": "surskit",
             "moveset": [
               "watergun",
-              "rapidspin",
-              "recover",
-              "harden"
+              "quickattack",
+              "sweetscent"
             ],
             "level": 14
           }
@@ -2912,6 +2910,115 @@
       }
     },
     {
+      "id": "route_02_shore_trainer_01",
+      "display_name": "North Bank Angler",
+      "class": "optional_route",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "krabby",
+          "moveset": [
+            "watergun",
+            "leer",
+            "harden",
+            "metalclaw"
+          ],
+          "level": 20
+        },
+        {
+          "species": "shellder",
+          "moveset": [
+            "watergun",
+            "withdraw",
+            "iciclespear",
+            "supersonic"
+          ],
+          "level": 21
+        }
+      ],
+      "route_id": "route_02_brock_to_misty",
+      "route_order": 2,
+      "trainer_order": 3,
+      "archetype": "specialist",
+      "lesson": "Rewards shoreline exploration and teaches that physical Water pressure and high physical Defence call for Grass or special Electric attacks before Misty.",
+      "placement": {
+        "status": "proposed",
+        "at_distance_blocks": 636.1,
+        "progress_fraction": 0.6738,
+        "polyline_vertex_index": 24,
+        "x": 1604,
+        "z": 3068,
+        "sampled_y": 104.4,
+        "route_measured_blocks": 943.902,
+        "off_route": true,
+        "route_anchor": {
+          "x": 1779,
+          "z": 3011
+        },
+        "off_route_gap_blocks": 184.1,
+        "shared_route_ids": [
+          "route_02_brock_to_misty",
+          "route_03_misty_to_surge"
+        ]
+      },
+      "dialogue": {
+        "pre": "dlg_route_02_shore_trainer_01_pre",
+        "win": "dlg_route_02_shore_trainer_01_win",
+        "loss": "dlg_route_02_shore_trainer_01_loss"
+      },
+      "dialogue_text": {
+        "pre": "Most people see Viltri from the south road and think they have seen the lake. The north bank disagrees.",
+        "player_win": "Krabby pushes hard and Shellder closes up. You changed the kind of pressure instead of repeating it.",
+        "player_loss": "The bank rewards a long walk, but it still expects the right answer."
+      },
+      "rct": {
+        "identity": "route_02_shore_trainer_01",
+        "name": {
+          "literal": "North Bank Angler"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "krabby",
+            "moveset": [
+              "watergun",
+              "leer",
+              "harden",
+              "metalclaw"
+            ],
+            "level": 20
+          },
+          {
+            "species": "shellder",
+            "moveset": [
+              "watergun",
+              "withdraw",
+              "iciclespear",
+              "supersonic"
+            ],
+            "level": 21
+          }
+        ]
+      }
+    },
+    {
       "id": "route_02_trainer_03",
       "display_name": "Lake Surveyor",
       "class": "route",
@@ -2948,7 +3055,7 @@
       ],
       "route_id": "route_02_brock_to_misty",
       "route_order": 2,
-      "trainer_order": 3,
+      "trainer_order": 4,
       "archetype": "gym_prep",
       "lesson": "Rain, speed control, and a Water/Grass core rehearse Misty and show why Electric alone is incomplete.",
       "placement": {
