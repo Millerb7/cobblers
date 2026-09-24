@@ -156,7 +156,7 @@ def guide_progress(pts, XS, ZS):
     return d, s
 
 
-def plan2d(spec, source_root, have):
+def plan2d(spec, source_root, have, rest_node=None):
     import ground as G
     import rift_deep as RD
     rng_seed = spec["seed"]
@@ -233,12 +233,14 @@ def plan2d(spec, source_root, have):
     for zi_, z in enumerate(zones):
         if z["core"] is not None:
             add(z["core"][0], z["core"][1], z["radius"], z["height"], "core", zone=zi_)
-    # the rest station: the cavern nearest the middle of the climb that is no zone's core
+    # the rest station is first guessed at the middle of the guide; in a braided cave the shortest way through need
+    # not pass there, so build() then hands the job to whichever existing cavern sits at the middle of the walked
+    # route (rest_node). The node list is the same either way, so the network does not change under it.
     ii = np.argwhere(env & (np.abs(prog - 0.5) < 0.03) & (dist < 20))
     if len(ii) == 0:
         raise CaveError("no column at the middle of the guide for the rest station")
     i0, k0 = ii[len(ii) // 2]
-    add(GX0 + i0, GZ0 + k0, 17, 12, "rest")
+    add(GX0 + int(i0), GZ0 + int(k0), 17, 12, "rest")
     cand = np.argwhere(env & (dist < spec["guide"]["band"] - 12))
     order_ = sorted(range(len(cand)), key=lambda n: u(rng_seed, int(cand[n][0]), int(cand[n][1])))
     for n in order_:
@@ -252,7 +254,7 @@ def plan2d(spec, source_root, have):
     fl = spec["floor"]
     for q in nodes:
         i, k = q["x"] - GX0, q["z"] - GZ0
-        if q["zone"] is None and q["kind"] == "cavern":
+        if q["zone"] is None and q["kind"] in ("cavern", "rest"):
             q["zone"] = int(net.zone[i, k])
         s = float(prog[i, k])
         trend = fl["from"] + (fl["to"] - fl["from"]) * (max(0.0, min(1.0, s)) ** fl["curve"])
@@ -267,6 +269,13 @@ def plan2d(spec, source_root, have):
         if q["floor"] + 6 > top:
             raise CaveError("cavern at (%d, %d) has no room under the rock: floor %d, roof limit %d"
                             % (q["x"], q["z"], q["floor"], top))
+    if rest_node is not None:
+        for q in nodes:
+            if q["kind"] == "rest":
+                q["kind"] = "cavern"
+        # a zone's core that takes the rest station is still its zone's core for the find (rest_and_finds)
+        nodes[rest_node]["was"] = nodes[rest_node]["kind"]
+        nodes[rest_node]["kind"] = "rest"
     net.nodes = nodes
 
     # tunnels: a spanning tree, then loops
@@ -576,8 +585,8 @@ class Blocks:
         return self.index[b]
 
 
-def build_model(spec, source_root, have):
-    net = plan2d(spec, source_root, have)
+def build_model(spec, source_root, have, rest_node=None):
+    net = plan2d(spec, source_root, have, rest_node)
     net.lock = np.zeros(net.F.shape, bool)
     ravine(net, spec)
     lock_flats(net, spec)
@@ -972,7 +981,7 @@ def rest_and_finds(net, spec):
     # the finds: in the core cavern of each zone, on the floor, clear of everything
     net.finds = {}
     for n, q in enumerate(net.nodes):
-        if q["kind"] != "core":
+        if q["kind"] != "core" and q.get("was") != "core":
             continue
         zname = zones[q["zone"]]["id"]
         mine = (net.owner == n) & net.foot & ~net.taken & (net.bed == 0)
@@ -1208,32 +1217,37 @@ def walkout(net, spec):
 
 
 def place_fights(net, spec, route):
-    """Ten stands along the walked route at even spacing, five either side of the rest station, lit to calm."""
+    """Ten stands at even spacing along the walked route, stepping round the rest station, lit to calm.
+
+    Not five and five: in a braided cave the rest station sits wherever a cavern crosses the route nearest its
+    middle, so the fights are spread by distance and fall either side of it as the route puts them."""
     tr, lt = spec["trainers"], spec["light"]
     have = net.have
     stand_b = pick(tr["stand"], tr["stand_fallback"], have)
     light = pick(lt["block"], lt["fallback"], have)
     n = tr["count"]
     L = len(route)
-    rb = net.rest_box
-    # the route index nearest the rest station splits the fights five and five
-    rx, rz = (rb[0] + rb[3]) / 2.0, (rb[2] + rb[4]) / 2.0
-    ri = min(range(L), key=lambda m: math.hypot(route[m][0] - rx, route[m][2] - rz))
-    halves = [(int(L * 0.04), ri - 12), (ri + 12, int(L * 0.9))]
+    lo, hi = int(L * 0.04), int(L * 0.94)
     stands = []
-    for lo, hi in halves:
-        for m in range(n // 2):
-            idx = lo + int((hi - lo) * (m + 0.5) / (n // 2))
+    for _half in (0,):
+        for m in range(n):
+            idx = lo + int((hi - lo) * (m + 0.5) / n)
             best = None
-            for d in range(0, 30):
-                for cand in (idx + d, idx - d):
-                    if lo <= cand < hi:
-                        x, y, z = route[cand]
-                        ok = at(net, x, y - 1, z) not in (None, AIR, WATER, LAVA) and at(net, x, y, z) == AIR and \
-                            all(math.hypot(x - a, z - c) >= tr["min_apart"] for a, _b, c in stands)
-                        if ok:
-                            best = (int(x), int(y), int(z))
-                            break
+            rb_ = net.rest_box
+            # never nearer than min_apart (the spec's rule); if nothing along the route fits, the build stops
+            for apart in (tr["min_apart"],):
+                for d in range(0, 90):
+                    for cand in (idx + d, idx - d):
+                        if lo <= cand < hi:
+                            x, y, z = route[cand]
+                            in_rest = rb_[0] - 3 <= x <= rb_[3] + 3 and rb_[2] - 3 <= z <= rb_[4] + 3
+                            ok = not in_rest and at(net, x, y - 1, z) not in (None, AIR, WATER, LAVA) and \
+                                at(net, x, y, z) == AIR and all(math.hypot(x - a, z - c) >= apart for a, _b, c in stands)
+                            if ok:
+                                best = (int(x), int(y), int(z))
+                                break
+                    if best:
+                        break
                 if best:
                     break
             if best is None:
@@ -1329,7 +1343,8 @@ def whitelisted():
     pol = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))
     out = {}
     for w in pol.get("whitelist") or []:
-        if SCOPE.lower() in str(w.get("scope", "")).lower():
+        # a whitelisting without a reason is not a decision (test_vr_caves found an empty why passing)
+        if SCOPE.lower() in str(w.get("scope", "")).lower() and isinstance(w.get("why"), str) and w["why"].strip():
             for b in w["blocks"]:
                 out[b] = w["why"]
     return out
@@ -1342,7 +1357,28 @@ def build(source_root=None, server_dir=None, strict=True):
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     have = installed_blocks(server_dir)
     Net.have = have
+    # two passes: the rest station belongs on the walked route, which is only known once the cave is built. The
+    # second pass makes the plain cavern the route crosses nearest its middle the rest station; nothing else moves.
     net = build_model(spec, source_root, have)
+    route = walkout(net, spec).get("route") or []
+    if route:
+        rx, rz = net.rest[0], net.rest[2]
+        if min(math.hypot(x - rx, z - rz) for x, _y, z in route) > 12:
+            mid = len(route) // 2
+            best = None
+            # a plain cavern or a dry zone's core (a rest room in the lava or the lake would be neither)
+            dry = {n for n, z in enumerate(spec["zones"]) if z["id"] not in ("slagworks", "drowned")}
+            for n, q in enumerate(net.nodes):
+                if q["kind"] not in ("cavern", "rest") and not (q["kind"] == "core" and q["zone"] in dry):
+                    continue
+                hits = [m for m, (x, _y, z) in enumerate(route) if math.hypot(x - q["x"], z - q["z"]) <= 8]
+                if hits:
+                    score = min(abs(m - mid) for m in hits)
+                    if best is None or score < best[0]:
+                        best = (score, n)
+            if best is None:
+                raise CaveError("no plain cavern lies on the walked route for the rest station")
+            net = build_model(spec, source_root, have, best[1])
     counts = {"caverns": len(net.nodes), "tunnels": len(net.edges), "lakes": len(net.lakes), "lava pools": len(net.pools),
               "island columns dropped": net.islands, "flats skipped": len(net.skipped_flats),
               "footprint columns": int(net.foot.sum()), "cells in the model": int((net.vol > 0).sum())}
@@ -1535,16 +1571,19 @@ def write(lns, out, folder, label):
 CMD = re.compile(r"^(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))? (\S+)")
 
 
-def clear_lines(net, spec):
+def clear_lines(net, spec, also=()):
     """Rock into every cell the retired spine and regions wrote that the network does not write itself.
 
-    Staging only: a fresh export never had them. Cells in the pit past the mouth, above the canonical ground, and in
-    the League's lot above its surface are left alone (the pit is the Deep's, the sky is nobody's, the lot is R8B's)."""
+    Staging only: a fresh export never had them. `also` adds function folders of earlier cuts of this network
+    already applied to the staging world, so a re-cut leaves no void where the previous one had air. Cells in the pit
+    past the mouth, above the canonical ground, and in the League's lot above its surface are left alone (the pit is
+    the Deep's, the sky is nobody's, the lot is R8B's)."""
     touched = np.zeros((NX, NZ, NY), bool)
-    for pack, folder in OLD_PACKS:
-        d = ROOT / "build" / "datapacks" / pack / "data" / "cobblers" / "function" / folder
+    dirs = [(ROOT / "build" / "datapacks" / pack / "data" / "cobblers" / "function" / folder, folder)
+            for pack, folder in OLD_PACKS] + [(Path(a), "an earlier cut") for a in also]
+    for d, folder in dirs:
         if not d.is_dir():
-            raise CaveError("no %s: rebuild the retired pack to know what it wrote (python tools/%s.py build)" % (d, folder))
+            raise CaveError("no %s: rebuild the retired pack to know what it wrote (%s)" % (d, folder))
         for f in sorted(d.glob("*.mcfunction")):
             for ln in f.read_text(encoding="utf-8").splitlines():
                 m = CMD.match(ln)
@@ -1622,6 +1661,8 @@ def main(argv=None):
     ap.add_argument("--server-dir")
     ap.add_argument("--world")
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--also", action="append", default=[],
+                    help="clear: the function folder of an earlier cut of the network already applied to the world")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "verify":
@@ -1643,7 +1684,7 @@ def main(argv=None):
     if a.cmd == "report":
         return 1 if [p for p in plan["problems"] if "records" not in p and "vrc_" not in p and "rewards.json" not in p] else 0
     if a.cmd == "clear":
-        lns, n = clear_lines(net, spec)
+        lns, n = clear_lines(net, spec, a.also)
         order = write({"clear": lns}, CLEAR_OUT, "vr_clear", "Victory Road schema 2, cleared (staging only)")
         print("clear: %d cells back to rock, %d functions, %d commands" % (n, len(order), len(lns)))
         return 0

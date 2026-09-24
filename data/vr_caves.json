@@ -376,7 +376,7 @@
     "min_apart": 40,
     "stand": "rechiseled:blackstone_polished_connecting",
     "stand_fallback": "minecraft:polished_blackstone",
-    "why": "Ten fights, carried over: spread along the walked route from the mouth to the ravine at even distances, never nearer than min_apart, five before the rest station and five after. Marked and unstaffed."
+    "why": "Ten fights, carried over: spread at even distances along the walked route from the mouth to the ravine, never nearer than min_apart, stepping round the rest station. Not five and five: in a braided cave the rest station sits wherever a cavern crosses the route nearest its middle, and the fights fall either side of it as the route puts them. Marked and unstaffed."
   },
   "rest": {
     "size": 15,
@@ -385,7 +385,7 @@
     "floor": "rechiseled:basalt_bordered_polished",
     "floor_fallback": "minecraft:polished_basalt",
     "marker": "minecraft:crying_obsidian",
-    "why": "The one built room: a walled rest station in the cavern nearest the middle of the walked route, lit to calm over its floor."
+    "why": "The one built room: a walled rest station in the cavern (or a dry zone's core) that the walked route crosses nearest its middle, found by building once, finding the route, and building again with that cavern holding the room; the network does not change between the two. Lit to calm over its floor."
   },
   "light": {
     "block": "legendarymonuments:galar_particle_block",
