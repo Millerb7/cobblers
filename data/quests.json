@@ -1742,6 +1742,169 @@
         "quest.main_worldshift_reveal.rift_cursor",
         "quest.main_worldshift_reveal.league_cursor"
       ]
+    },
+    {
+      "id": "evt_vr_abandoned_cut",
+      "source": "docs/world-building/VICTORY_ROAD_REGIONS.md",
+      "reward_record": "data/rewards.json vr_abandoned_cut",
+      "place": "data/vr_regions.json abandoned_cut",
+      "dialogue_id": "dlg_vr_abandoned_cut",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        3684,
+        44,
+        2692
+      ],
+      "objectives": [
+        {
+          "id": "hear_the_digger",
+          "active_when": {
+            "field": "quest.evt_vr_abandoned_cut.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_vr_abandoned_cut.cache_claimed",
+            "equals": true
+          },
+          "text": "Hear out the last digger at the foot of the collapse."
+        },
+        {
+          "id": "finish_conversation",
+          "active_when": {
+            "field": "quest.evt_vr_abandoned_cut.cache_claimed",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_vr_abandoned_cut.completed",
+            "equals": true
+          },
+          "text": "Hear what the digger wants the camp told."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_vr_abandoned_cut.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_vr_abandoned_cut.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_vr_abandoned_cut.dialogue_cursor",
+              "value": "c001"
+            }
+          ]
+        },
+        {
+          "id": "grant_cache",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_vr_abandoned_cut.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_vr_abandoned_cut.cache_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_vr_abandoned_cut",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_vr_abandoned_cut.cache_claimed",
+              "idempotency_key": "evt_vr_abandoned_cut:reward_vr_abandoned_cut:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_vr_abandoned_cut.dialogue_cursor",
+              "value": "c011"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_vr_abandoned_cut.cache_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_vr_abandoned_cut.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_vr_abandoned_cut.dialogue_cursor",
+              "value": "repeat_still_here"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_vr_abandoned_cut",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json vr_abandoned_cut (kind npc_grant); contents and verification strings copied from it",
+          "contents": [
+            {
+              "item": "obc:bottle_cap_gold",
+              "count": 1,
+              "verification": "assets/obc/models/item/bottle_cap_gold.json in Only Bottle Caps-1.5.0-fabric.jar"
+            },
+            {
+              "item": "cobblemon:old_amber_fossil",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/old_amber_fossil.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "repeat_dialogue": {
+        "after_claim": "repeat_still_here"
+      },
+      "claim_readers": "quest.evt_vr_abandoned_cut.cache_claimed is the per-player record that the digger gave the cache. Another NPC (the Rift dig camp) may read it with progression_equals once that NPC's quest lists it; nothing reads it yet.",
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Declare the four progression_field_refs in data/progression.json quest_fields (owner: minecraft-systems-dev). Until then the compiler refuses the conversation and validate_data reports them undeclared.",
+        "The Abandoned Cut is built on staging only; place npc_vr_abandoned_cut_digger at npc_at with spawnnpcat after a server restart (NPC classes load only at server start) on the target world.",
+        "Two players claiming independently is not runtime verified (ADR-002 records the two-player grant as unproven)."
+      ],
+      "progression_field_refs": [
+        "quest.evt_vr_abandoned_cut.started",
+        "quest.evt_vr_abandoned_cut.cache_claimed",
+        "quest.evt_vr_abandoned_cut.completed",
+        "quest.evt_vr_abandoned_cut.dialogue_cursor"
+      ]
     }
   ]
 }
