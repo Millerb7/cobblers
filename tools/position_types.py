@@ -102,6 +102,11 @@ def main(argv=None):
     changed, unknown = [], []
     for e in spawns["entries"]:
         pos, why = choose(e["species"], positions)
+        # an authored decision wins over the derivation, and must say why: a species with no upstream spawn data
+        # (Milotic, 2026-09-24) would otherwise stand on dry land wherever it is placed
+        auth = e.get("spawnable_position_authored")
+        if isinstance(auth, dict) and auth.get("position") and str(auth.get("why", "")).strip():
+            pos, why = auth["position"], "authored: %s" % auth["why"]
         if why == "no upstream spawn data":
             unknown.append(e["species"])
         if e.get("spawnable_position") != pos:

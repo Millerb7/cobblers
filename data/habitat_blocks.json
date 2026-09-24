@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.habitat-blocks/1",
-  "status": "Victory Road's cave tiled with 81 blocks; behaviour in sealed rock is EXP-033",
+  "status": "Victory Road's cave tiled with 80 blocks; behaviour in sealed rock is EXP-033",
   "note": "Every Habitat Block the campaign places. A re-export erases blocks placed in game (EXP-021), so this manifest is the source: tools/habitat_blocks.py function writes the placement function, and the post-export procedure in docs/world-building/REEXPORT.md re-applies it and restarts the server so each block's chunk reloads. tools/validate_data.py checks the static rules, and checks presence in a stopped world passed with --world-save. Blocks placed on the disposable proof world for EXP-021 are not campaign blocks and are not listed.",
   "fields": {
     "id": "stable id",
@@ -36,9 +36,9 @@
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3742,
+        "x": 3740,
         "y": 64,
-        "z": 2549
+        "z": 2546
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -51,9 +51,9 @@
       "replace_spawns": true,
       "range_of_influence": 16,
       "position": {
-        "x": 3648,
+        "x": 3649,
         "y": 66,
-        "z": 2556
+        "z": 2555
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -64,10 +64,10 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3625,
-        "y": 51,
+        "x": 3530,
+        "y": 50,
         "z": 2565
       },
       "status": "placed",
@@ -79,11 +79,11 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3535,
-        "y": 52,
-        "z": 2566
+        "x": 3625,
+        "y": 51,
+        "z": 2565
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -111,9 +111,9 @@
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3691,
-        "y": 60,
-        "z": 2573
+        "x": 3692,
+        "y": 57,
+        "z": 2575
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -127,8 +127,8 @@
       "range_of_influence": 28,
       "position": {
         "x": 3641,
-        "y": 57,
-        "z": 2600
+        "y": 58,
+        "z": 2599
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -150,37 +150,22 @@
     },
     {
       "id": "vrc_09",
-      "place": "Victory Road's cave, tile 9 (vrc_raw_tear)",
-      "pool": "cobblers:vrc_raw_tear",
+      "place": "Victory Road's cave, tile 9 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3485,
+        "x": 3486,
         "y": 46,
-        "z": 2613
+        "z": 2614
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_10",
-      "place": "Victory Road's cave, tile 10 (vrc_abandoned_cut_core)",
-      "pool": "cobblers:vrc_abandoned_cut_core",
-      "style": "natural",
-      "replace_spawns": true,
-      "range_of_influence": 6,
-      "position": {
-        "x": 3666,
-        "y": 56,
-        "z": 2624
-      },
-      "status": "placed",
-      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
-    },
-    {
-      "id": "vrc_11",
-      "place": "Victory Road's cave, tile 11 (vrc_abandoned_cut)",
+      "place": "Victory Road's cave, tile 10 (vrc_abandoned_cut)",
       "pool": "cobblers:vrc_abandoned_cut",
       "style": "natural",
       "replace_spawns": true,
@@ -188,7 +173,22 @@
       "position": {
         "x": 3595,
         "y": 51,
-        "z": 2632
+        "z": 2631
+      },
+      "status": "placed",
+      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
+    },
+    {
+      "id": "vrc_11",
+      "place": "Victory Road's cave, tile 11 (vrc_abandoned_cut_core)",
+      "pool": "cobblers:vrc_abandoned_cut_core",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 6,
+      "position": {
+        "x": 3633,
+        "y": 53,
+        "z": 2635
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -201,24 +201,24 @@
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3531,
+        "x": 3532,
         "y": 49,
-        "z": 2645
+        "z": 2646
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_13",
-      "place": "Victory Road's cave, tile 13 (vrc_raw_tear_core)",
-      "pool": "cobblers:vrc_raw_tear_core",
+      "place": "Victory Road's cave, tile 13 (vrc_abandoned_cut_core)",
+      "pool": "cobblers:vrc_abandoned_cut_core",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 6,
       "position": {
-        "x": 3494,
-        "y": 49,
-        "z": 2651
+        "x": 3629,
+        "y": 55,
+        "z": 2648
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -231,24 +231,24 @@
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3652,
-        "y": 52,
-        "z": 2655
+        "x": 3663,
+        "y": 57,
+        "z": 2651
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_15",
-      "place": "Victory Road's cave, tile 15 (vrc_abandoned_cut_core)",
-      "pool": "cobblers:vrc_abandoned_cut_core",
+      "place": "Victory Road's cave, tile 15 (vrc_raw_tear_core)",
+      "pool": "cobblers:vrc_raw_tear_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 10,
       "position": {
-        "x": 3618,
-        "y": 47,
-        "z": 2659
+        "x": 3494,
+        "y": 49,
+        "z": 2653
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -259,41 +259,41 @@
       "pool": "cobblers:vrc_raw_tear_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3501,
-        "y": 46,
-        "z": 2661
+        "x": 3457,
+        "y": 47,
+        "z": 2662
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_17",
-      "place": "Victory Road's cave, tile 17 (vrc_raw_tear_core)",
-      "pool": "cobblers:vrc_raw_tear_core",
+      "place": "Victory Road's cave, tile 17 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 16,
       "position": {
-        "x": 3461,
-        "y": 47,
-        "z": 2664
+        "x": 3576,
+        "y": 45,
+        "z": 2673
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_18",
-      "place": "Victory Road's cave, tile 18 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 18 (vrc_raw_tear)",
+      "pool": "cobblers:vrc_raw_tear",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 10,
       "position": {
-        "x": 3582,
-        "y": 45,
-        "z": 2675
+        "x": 3555,
+        "y": 44,
+        "z": 2689
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -304,9 +304,9 @@
       "pool": "cobblers:vrc_abandoned_cut",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3650,
+        "x": 3617,
         "y": 42,
         "z": 2689
       },
@@ -315,15 +315,15 @@
     },
     {
       "id": "vrc_20",
-      "place": "Victory Road's cave, tile 20 (vrc_raw_tear)",
-      "pool": "cobblers:vrc_raw_tear",
+      "place": "Victory Road's cave, tile 20 (vrc_raw_tear_core)",
+      "pool": "cobblers:vrc_raw_tear_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 28,
       "position": {
-        "x": 3551,
-        "y": 44,
-        "z": 2695
+        "x": 3503,
+        "y": 43,
+        "z": 2694
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -334,26 +334,26 @@
       "pool": "cobblers:vrc_raw_tear_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3507,
-        "y": 44,
-        "z": 2696
+        "x": 3469,
+        "y": 42,
+        "z": 2697
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_22",
-      "place": "Victory Road's cave, tile 22 (vrc_raw_tear_core)",
-      "pool": "cobblers:vrc_raw_tear_core",
+      "place": "Victory Road's cave, tile 22 (vrc_raw_tear)",
+      "pool": "cobblers:vrc_raw_tear",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3469,
-        "y": 43,
-        "z": 2699
+        "x": 3439,
+        "y": 40,
+        "z": 2720
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -364,11 +364,11 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3618,
-        "y": 42,
-        "z": 2701
+        "x": 3617,
+        "y": 41,
+        "z": 2723
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -381,54 +381,54 @@
       "replace_spawns": true,
       "range_of_influence": 6,
       "position": {
-        "x": 3537,
-        "y": 42,
-        "z": 2712
+        "x": 3516,
+        "y": 41,
+        "z": 2726
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_25",
-      "place": "Victory Road's cave, tile 25 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 25 (vrc_raw_tear)",
+      "pool": "cobblers:vrc_raw_tear",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3442,
-        "y": 40,
-        "z": 2720
+        "x": 3551,
+        "y": 37,
+        "z": 2727
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_26",
-      "place": "Victory Road's cave, tile 26 (vrc_raw_tear)",
-      "pool": "cobblers:vrc_raw_tear",
+      "place": "Victory Road's cave, tile 26 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 16,
       "position": {
-        "x": 3530,
-        "y": 39,
-        "z": 2722
+        "x": 3596,
+        "y": 40,
+        "z": 2731
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_27",
-      "place": "Victory Road's cave, tile 27 (vrc_raw_tear_core)",
-      "pool": "cobblers:vrc_raw_tear_core",
+      "place": "Victory Road's cave, tile 27 (vrc_raw_tear)",
+      "pool": "cobblers:vrc_raw_tear",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 10,
+      "range_of_influence": 6,
       "position": {
-        "x": 3480,
-        "y": 40,
-        "z": 2723
+        "x": 3522,
+        "y": 38,
+        "z": 2745
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -441,24 +441,24 @@
       "replace_spawns": true,
       "range_of_influence": 6,
       "position": {
-        "x": 3630,
-        "y": 36,
-        "z": 2733
+        "x": 3635,
+        "y": 27,
+        "z": 2746
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_29",
-      "place": "Victory Road's cave, tile 29 (vrc_raw_tear)",
-      "pool": "cobblers:vrc_raw_tear",
+      "place": "Victory Road's cave, tile 29 (vrc_bloom_core)",
+      "pool": "cobblers:vrc_bloom_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 10,
+      "range_of_influence": 28,
       "position": {
-        "x": 3512,
-        "y": 39,
-        "z": 2734
+        "x": 3488,
+        "y": 36,
+        "z": 2748
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -471,9 +471,9 @@
       "replace_spawns": true,
       "range_of_influence": 10,
       "position": {
-        "x": 3603,
-        "y": 40,
-        "z": 2736
+        "x": 3582,
+        "y": 39,
+        "z": 2753
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -484,11 +484,11 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
         "x": 3565,
-        "y": 36,
-        "z": 2738
+        "y": 34,
+        "z": 2758
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -501,84 +501,84 @@
       "replace_spawns": true,
       "range_of_influence": 6,
       "position": {
-        "x": 3636,
-        "y": 27,
-        "z": 2744
+        "x": 3652,
+        "y": 30,
+        "z": 2767
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_33",
-      "place": "Victory Road's cave, tile 33 (vrc_bloom)",
-      "pool": "cobblers:vrc_bloom",
+      "place": "Victory Road's cave, tile 33 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 16,
       "position": {
-        "x": 3515,
-        "y": 35,
-        "z": 2754
+        "x": 3546,
+        "y": 33,
+        "z": 2771
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_34",
-      "place": "Victory Road's cave, tile 34 (vrc_bloom_core)",
-      "pool": "cobblers:vrc_bloom_core",
+      "place": "Victory Road's cave, tile 34 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3481,
-        "y": 32,
-        "z": 2761
+        "x": 3619,
+        "y": 29,
+        "z": 2776
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_35",
-      "place": "Victory Road's cave, tile 35 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 35 (vrc_bloom)",
+      "pool": "cobblers:vrc_bloom",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 6,
       "position": {
-        "x": 3541,
-        "y": 35,
-        "z": 2763
+        "x": 3525,
+        "y": 34,
+        "z": 2778
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_36",
-      "place": "Victory Road's cave, tile 36 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 36 (vrc_bloom_core)",
+      "pool": "cobblers:vrc_bloom_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 16,
       "position": {
-        "x": 3584,
-        "y": 32,
-        "z": 2772
+        "x": 3459,
+        "y": 29,
+        "z": 2782
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_37",
-      "place": "Victory Road's cave, tile 37 (vrc_bloom_core)",
-      "pool": "cobblers:vrc_bloom_core",
+      "place": "Victory Road's cave, tile 37 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 10,
       "position": {
-        "x": 3449,
-        "y": 31,
-        "z": 2773
+        "x": 3657,
+        "y": 29,
+        "z": 2783
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -589,26 +589,26 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 16,
       "position": {
-        "x": 3618,
-        "y": 29,
-        "z": 2773
+        "x": 3575,
+        "y": 31,
+        "z": 2787
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_39",
-      "place": "Victory Road's cave, tile 39 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 39 (vrc_bloom_core)",
+      "pool": "cobblers:vrc_bloom_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 10,
+      "range_of_influence": 6,
       "position": {
-        "x": 3656,
+        "x": 3480,
         "y": 28,
-        "z": 2779
+        "z": 2789
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -619,11 +619,11 @@
       "pool": "cobblers:vrc_bloom_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 10,
       "position": {
-        "x": 3506,
+        "x": 3497,
         "y": 31,
-        "z": 2785
+        "z": 2792
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -636,52 +636,7 @@
       "replace_spawns": true,
       "range_of_influence": 10,
       "position": {
-        "x": 3583,
-        "y": 31,
-        "z": 2788
-      },
-      "status": "placed",
-      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
-    },
-    {
-      "id": "vrc_42",
-      "place": "Victory Road's cave, tile 42 (vrc_bloom_core)",
-      "pool": "cobblers:vrc_bloom_core",
-      "style": "natural",
-      "replace_spawns": true,
-      "range_of_influence": 16,
-      "position": {
-        "x": 3453,
-        "y": 29,
-        "z": 2795
-      },
-      "status": "placed",
-      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
-    },
-    {
-      "id": "vrc_43",
-      "place": "Victory Road's cave, tile 43 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
-      "style": "natural",
-      "replace_spawns": true,
-      "range_of_influence": 28,
-      "position": {
-        "x": 3546,
-        "y": 33,
-        "z": 2797
-      },
-      "status": "placed",
-      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
-    },
-    {
-      "id": "vrc_44",
-      "place": "Victory Road's cave, tile 44 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
-      "style": "natural",
-      "replace_spawns": true,
-      "range_of_influence": 16,
-      "position": {
-        "x": 3649,
+        "x": 3644,
         "y": 30,
         "z": 2805
       },
@@ -689,16 +644,61 @@
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
-      "id": "vrc_45",
-      "place": "Victory Road's cave, tile 45 (vrc_cave)",
+      "id": "vrc_42",
+      "place": "Victory Road's cave, tile 42 (vrc_cave)",
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 10,
+      "range_of_influence": 6,
       "position": {
-        "x": 3591,
+        "x": 3565,
         "y": 30,
         "z": 2807
+      },
+      "status": "placed",
+      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
+    },
+    {
+      "id": "vrc_43",
+      "place": "Victory Road's cave, tile 43 (vrc_bloom_core)",
+      "pool": "cobblers:vrc_bloom_core",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 6,
+      "position": {
+        "x": 3444,
+        "y": 22,
+        "z": 2809
+      },
+      "status": "placed",
+      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
+    },
+    {
+      "id": "vrc_44",
+      "place": "Victory Road's cave, tile 44 (vrc_bloom)",
+      "pool": "cobblers:vrc_bloom",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 28,
+      "position": {
+        "x": 3530,
+        "y": 29,
+        "z": 2812
+      },
+      "status": "placed",
+      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
+    },
+    {
+      "id": "vrc_45",
+      "place": "Victory Road's cave, tile 45 (vrc_bloom_core)",
+      "pool": "cobblers:vrc_bloom_core",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 6,
+      "position": {
+        "x": 3441,
+        "y": 27,
+        "z": 2821
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -711,9 +711,9 @@
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3492,
-        "y": 25,
-        "z": 2816
+        "x": 3475,
+        "y": 23,
+        "z": 2823
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -724,10 +724,10 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 28,
       "position": {
-        "x": 3619,
-        "y": 24,
+        "x": 3594,
+        "y": 29,
         "z": 2827
       },
       "status": "placed",
@@ -739,11 +739,11 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 6,
       "position": {
-        "x": 3532,
+        "x": 3557,
         "y": 25,
-        "z": 2839
+        "z": 2833
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -754,101 +754,101 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3578,
-        "y": 26,
-        "z": 2843
+        "x": 3627,
+        "y": 22,
+        "z": 2836
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_50",
-      "place": "Victory Road's cave, tile 50 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 50 (vrc_bloom)",
+      "pool": "cobblers:vrc_bloom",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3443,
-        "y": 26,
-        "z": 2844
+        "x": 3446,
+        "y": 24,
+        "z": 2841
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_51",
-      "place": "Victory Road's cave, tile 51 (vrc_bloom)",
-      "pool": "cobblers:vrc_bloom",
-      "style": "natural",
-      "replace_spawns": true,
-      "range_of_influence": 6,
-      "position": {
-        "x": 3477,
-        "y": 21,
-        "z": 2847
-      },
-      "status": "placed",
-      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
-    },
-    {
-      "id": "vrc_52",
-      "place": "Victory Road's cave, tile 52 (vrc_cave)",
+      "place": "Victory Road's cave, tile 51 (vrc_cave)",
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 10,
+      "range_of_influence": 16,
       "position": {
-        "x": 3507,
-        "y": 28,
+        "x": 3509,
+        "y": 27,
         "z": 2851
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
-      "id": "vrc_53",
-      "place": "Victory Road's cave, tile 53 (vrc_slagworks_core)",
-      "pool": "cobblers:vrc_slagworks_core",
+      "id": "vrc_52",
+      "place": "Victory Road's cave, tile 52 (vrc_bloom)",
+      "pool": "cobblers:vrc_bloom",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 6,
       "position": {
-        "x": 3620,
-        "y": 20,
-        "z": 2859
+        "x": 3484,
+        "y": 24,
+        "z": 2856
+      },
+      "status": "placed",
+      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
+    },
+    {
+      "id": "vrc_53",
+      "place": "Victory Road's cave, tile 53 (vrc_bloom)",
+      "pool": "cobblers:vrc_bloom",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 6,
+      "position": {
+        "x": 3472,
+        "y": 26,
+        "z": 2857
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_54",
-      "place": "Victory Road's cave, tile 54 (vrc_slagworks)",
-      "pool": "cobblers:vrc_slagworks",
+      "place": "Victory Road's cave, tile 54 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 16,
       "position": {
-        "x": 3565,
-        "y": 21,
-        "z": 2875
+        "x": 3561,
+        "y": 23,
+        "z": 2857
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_55",
-      "place": "Victory Road's cave, tile 55 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 55 (vrc_slagworks_core)",
+      "pool": "cobblers:vrc_slagworks_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 16,
       "position": {
-        "x": 3532,
-        "y": 19,
-        "z": 2885
+        "x": 3624,
+        "y": 20,
+        "z": 2860
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -859,11 +859,11 @@
       "pool": "cobblers:vrc_slagworks_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3590,
-        "y": 19,
-        "z": 2899
+        "x": 3625,
+        "y": 15,
+        "z": 2889
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -876,174 +876,174 @@
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3646,
-        "y": 17,
-        "z": 2900
+        "x": 3591,
+        "y": 18,
+        "z": 2890
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_58",
-      "place": "Victory Road's cave, tile 58 (vrc_drowned)",
-      "pool": "cobblers:vrc_drowned",
+      "place": "Victory Road's cave, tile 58 (vrc_slagworks_core)",
+      "pool": "cobblers:vrc_slagworks_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 10,
+      "range_of_influence": 6,
       "position": {
-        "x": 3471,
-        "y": 13,
-        "z": 2906
+        "x": 3637,
+        "y": 16,
+        "z": 2890
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_59",
-      "place": "Victory Road's cave, tile 59 (vrc_drowned)",
-      "pool": "cobblers:vrc_drowned",
+      "place": "Victory Road's cave, tile 59 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3487,
-        "y": 8,
-        "z": 2906
+        "x": 3535,
+        "y": 17,
+        "z": 2894
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_60",
-      "place": "Victory Road's cave, tile 60 (vrc_slagworks)",
-      "pool": "cobblers:vrc_slagworks",
+      "place": "Victory Road's cave, tile 60 (vrc_slagworks_core)",
+      "pool": "cobblers:vrc_slagworks_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 16,
       "position": {
-        "x": 3550,
+        "x": 3630,
         "y": 15,
-        "z": 2939
+        "z": 2911
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_61",
-      "place": "Victory Road's cave, tile 61 (vrc_drowned_core)",
-      "pool": "cobblers:vrc_drowned_core",
+      "place": "Victory Road's cave, tile 61 (vrc_slagworks_core)",
+      "pool": "cobblers:vrc_slagworks_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3488,
-        "y": 11,
-        "z": 2940
+        "x": 3565,
+        "y": 15,
+        "z": 2912
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_62",
-      "place": "Victory Road's cave, tile 62 (vrc_slagworks_core)",
-      "pool": "cobblers:vrc_slagworks_core",
+      "place": "Victory Road's cave, tile 62 (vrc_drowned)",
+      "pool": "cobblers:vrc_drowned",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3609,
-        "y": 11,
-        "z": 2952
+        "x": 3506,
+        "y": 9,
+        "z": 2921
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_63",
-      "place": "Victory Road's cave, tile 63 (vrc_slagworks)",
-      "pool": "cobblers:vrc_slagworks",
+      "place": "Victory Road's cave, tile 63 (vrc_slagworks_core)",
+      "pool": "cobblers:vrc_slagworks_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 10,
+      "range_of_influence": 6,
       "position": {
-        "x": 3647,
-        "y": 12,
-        "z": 2957
+        "x": 3574,
+        "y": 15,
+        "z": 2923
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_64",
-      "place": "Victory Road's cave, tile 64 (vrc_drowned_core)",
-      "pool": "cobblers:vrc_drowned_core",
+      "place": "Victory Road's cave, tile 64 (vrc_slagworks)",
+      "pool": "cobblers:vrc_slagworks",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 10,
       "position": {
-        "x": 3517,
-        "y": 10,
-        "z": 2966
+        "x": 3555,
+        "y": 14,
+        "z": 2927
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_65",
-      "place": "Victory Road's cave, tile 65 (vrc_slagworks)",
-      "pool": "cobblers:vrc_slagworks",
+      "place": "Victory Road's cave, tile 65 (vrc_drowned_core)",
+      "pool": "cobblers:vrc_drowned_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3578,
+        "x": 3472,
         "y": 11,
-        "z": 2966
+        "z": 2929
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_66",
-      "place": "Victory Road's cave, tile 66 (vrc_drowned)",
-      "pool": "cobblers:vrc_drowned",
+      "place": "Victory Road's cave, tile 66 (vrc_slagworks)",
+      "pool": "cobblers:vrc_slagworks",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 6,
       "position": {
-        "x": 3562,
-        "y": 9,
-        "z": 2971
+        "x": 3635,
+        "y": 13,
+        "z": 2936
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_67",
-      "place": "Victory Road's cave, tile 67 (vrc_drowned_core)",
-      "pool": "cobblers:vrc_drowned_core",
+      "place": "Victory Road's cave, tile 67 (vrc_slagworks)",
+      "pool": "cobblers:vrc_slagworks",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 10,
       "position": {
-        "x": 3462,
-        "y": 8,
-        "z": 2976
+        "x": 3564,
+        "y": 10,
+        "z": 2945
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_68",
-      "place": "Victory Road's cave, tile 68 (vrc_drowned_core)",
-      "pool": "cobblers:vrc_drowned_core",
+      "place": "Victory Road's cave, tile 68 (vrc_slagworks_core)",
+      "pool": "cobblers:vrc_slagworks_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3492,
-        "y": 8,
-        "z": 2977
+        "x": 3602,
+        "y": 11,
+        "z": 2945
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -1054,86 +1054,86 @@
       "pool": "cobblers:vrc_drowned",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 28,
       "position": {
-        "x": 3528,
+        "x": 3524,
         "y": 7,
-        "z": 2990
+        "z": 2950
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_70",
-      "place": "Victory Road's cave, tile 70 (vrc_drowned_core)",
-      "pool": "cobblers:vrc_drowned_core",
+      "place": "Victory Road's cave, tile 70 (vrc_slagworks)",
+      "pool": "cobblers:vrc_slagworks",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 16,
       "position": {
-        "x": 3457,
-        "y": 9,
-        "z": 2999
+        "x": 3644,
+        "y": 10,
+        "z": 2959
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_71",
-      "place": "Victory Road's cave, tile 71 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 71 (vrc_slagworks)",
+      "pool": "cobblers:vrc_slagworks",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3580,
-        "y": 5,
-        "z": 3000
+        "x": 3576,
+        "y": 11,
+        "z": 2967
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_72",
-      "place": "Victory Road's cave, tile 72 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 72 (vrc_slagworks)",
+      "pool": "cobblers:vrc_slagworks",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 6,
       "position": {
-        "x": 3641,
-        "y": 9,
-        "z": 3007
+        "x": 3626,
+        "y": 6,
+        "z": 2973
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_73",
-      "place": "Victory Road's cave, tile 73 (vrc_drowned_core)",
-      "pool": "cobblers:vrc_drowned_core",
+      "place": "Victory Road's cave, tile 73 (vrc_cave)",
+      "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 10,
       "position": {
-        "x": 3489,
-        "y": 8,
-        "z": 3011
+        "x": 3572,
+        "y": -1,
+        "z": 2984
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_74",
-      "place": "Victory Road's cave, tile 74 (vrc_drowned)",
-      "pool": "cobblers:vrc_drowned",
+      "place": "Victory Road's cave, tile 74 (vrc_drowned_core)",
+      "pool": "cobblers:vrc_drowned_core",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 16,
+      "range_of_influence": 28,
       "position": {
-        "x": 3541,
-        "y": 0,
-        "z": 3021
+        "x": 3481,
+        "y": -1,
+        "z": 2986
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -1144,56 +1144,56 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3562,
-        "y": 1,
-        "z": 3029
+        "x": 3606,
+        "y": 6,
+        "z": 3001
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_76",
-      "place": "Victory Road's cave, tile 76 (vrc_drowned_core)",
-      "pool": "cobblers:vrc_drowned_core",
+      "place": "Victory Road's cave, tile 76 (vrc_drowned)",
+      "pool": "cobblers:vrc_drowned",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 6,
+      "range_of_influence": 28,
       "position": {
-        "x": 3463,
-        "y": -1,
-        "z": 3033
+        "x": 3539,
+        "y": 6,
+        "z": 3004
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_77",
-      "place": "Victory Road's cave, tile 77 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 77 (vrc_drowned_core)",
+      "pool": "cobblers:vrc_drowned_core",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 6,
       "position": {
-        "x": 3663,
-        "y": 8,
-        "z": 3033
+        "x": 3506,
+        "y": 6,
+        "z": 3013
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
     },
     {
       "id": "vrc_78",
-      "place": "Victory Road's cave, tile 78 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
+      "place": "Victory Road's cave, tile 78 (vrc_drowned)",
+      "pool": "cobblers:vrc_drowned",
       "style": "natural",
       "replace_spawns": true,
       "range_of_influence": 28,
       "position": {
-        "x": 3556,
-        "y": 1,
-        "z": 3063
+        "x": 3466,
+        "y": 0,
+        "z": 3040
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
@@ -1204,26 +1204,11 @@
       "pool": "cobblers:vrc_cave",
       "style": "natural",
       "replace_spawns": true,
-      "range_of_influence": 28,
+      "range_of_influence": 16,
       "position": {
-        "x": 3478,
-        "y": -1,
-        "z": 3066
-      },
-      "status": "placed",
-      "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
-    },
-    {
-      "id": "vrc_80",
-      "place": "Victory Road's cave, tile 80 (vrc_cave)",
-      "pool": "cobblers:vrc_cave",
-      "style": "natural",
-      "replace_spawns": true,
-      "range_of_influence": 6,
-      "position": {
-        "x": 3560,
-        "y": 1,
-        "z": 3097
+        "x": 3558,
+        "y": 0,
+        "z": 3045
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."

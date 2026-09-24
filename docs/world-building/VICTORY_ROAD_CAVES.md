@@ -18,8 +18,8 @@ a deep cave feel". Chosen the same day, from three options each:
 
 ## What it is
 
-- **42 caverns** scattered through a band round the old spine's line, ragged enough and close enough that neighbours
-  merge into halls, joined by **75 galleries** that bend every 22 blocks and swell into pockets, with loops so there is
+- **40 caverns** scattered through a band round the old spine's line, ragged enough and close enough that neighbours
+  merge into halls, joined by **66 galleries** that bend every 22 blocks and swell into pockets, with loops so there is
   never one way through. The first cut (smaller, rounder caverns, near-straight tunnels) mapped as a metro diagram of
   beads on strings and was redone before anything was built.
 - **Six zones fight over every column.** Each core's hold falls off with distance, noise pushes the borders about,
@@ -38,10 +38,14 @@ a deep cave feel". Chosen the same day, from three options each:
 
 ## Spawns
 
-Eleven Habitat pools in `data/spawns.json`, on **81 Habitat Blocks** laid greedily over the floor at four scales
-(ranges 28, 16, 10 and 6), never overlapping, covering **88%** of the floor. The other 12% is seams between circles,
-where the pack's own cave pools still spawn at their own levels. One tile size alone never covered more than about
-three quarters, whatever the size.
+Eleven Habitat pools in `data/spawns.json`, on **80 Habitat Blocks** laid greedily over the floor at four scales
+(ranges 28, 16, 10 and 6), never overlapping, covering **89%** of the floor and **100% of the lake water**. The other
+11% is seams between circles on dry rock, where the pack's own cave pools still spawn at their own levels. One tile
+size alone never covered more than about three quarters, whatever the size. Water counts three times when the tiles
+are laid, because it is what summons the pack's 42 water species, and a tile may sit on a lake bed; a tile takes
+the pool of the zone holding most of what it covers. Whiscash and Lanturn are `submerged` (from Cobblemon's own
+data) and Milotic `submerged` by an authored override, since it has no upstream entry and would otherwise have stood
+on the shore.
 
 | Pool | Where | What |
 |---|---|---|
@@ -59,15 +63,23 @@ the Slagworks: its lava calms them.
 Cover of at least 4 over every roof's shell; rock between the network and the Deep's pit and the EXP-033 rig; every
 spawn-conditioning block whitelisted for Victory Road with a reason; every open cell's six faces inside the model (or
 open to the sky over the ravine, or to the pit at the mouth); every water and lava cell bounded; and from the mouth,
-a walk, swim and fall search that reaches the apron, with **0 traps**, every one of 72,693 floor cells reachable, and
-no floor beside lava without a lip.
+a walk, swim and fall search that starts on the Deep's floor in front of the face, reaches the apron, and finds **0
+traps**, every one of 65,661 floor cells reachable, and no floor beside lava without a lip; and **no cell of the cave
+inside the Deep's pit** but the mouth tunnel.
 
 ## What was run on staging
 
-The retired spine and regions (and the first cut of the cave) put back to rock by a staging-only clear pack (29
-functions); the cave carved (192 functions, 246,425 commands); **all 2,138,587 model cells match the saved world**
-(`vr_caves.py verify`); the 81 Habitat Blocks present (`habitat_blocks.py verify --rcon`) and all 11 pools resolved
-after a restart; the Digger moved to the Cut's core cavern, exactly one.
+The retired spine and regions and the earlier cuts of the cave put back to rock by a staging-only clear pack (41
+functions); the cave carved (177 functions, 223,997 commands); **all 1,936,430 model cells match the saved world**
+(`vr_caves.py verify`); the 80 Habitat Blocks present (`habitat_blocks.py verify --rcon`) and all 11 pools resolved
+after a restart; the Digger in the Cut's core cavern, exactly one; the mouth probed open from the pit floor.
+
+**A defect found and repaired on 2026-09-24.** The first cut let a cavern be scattered into the mouth strip, and its
+ragged outline spilled 35 blocks out into the open pit in front of the Deep's north face: 15,473 blocks of cave rock
+inside the pit (x3484-3588, z3065-3100, y-4 to 29). Every check passed, because each looked only at the cave, and the
+walk-out began inside the tunnel. It was found by checking the spawns. The tool now keeps every cavern 6 or more from
+the pit and checks it, and the walk-out begins on the pit floor. The pit was restored by re-running the Deep's own
+functions for the damaged tiles: replayed from those functions, the box's 122,800 cells now differ from them in 0.
 
 ## Not verified
 
