@@ -1,6 +1,6 @@
 # Gym matchup sufficiency audit
 
-> ## Review, 2026-09-24: read this first
+> ## Review, 2026-09-23: read this first
 >
 > This audit was written against **the inherited Cobbleverse RCT v20 leaders** and **a route-only reading of
 > availability**. Both of those inputs have since changed, and the audit's per-gym verdicts do not survive
@@ -34,7 +34,7 @@
 > quarry needs rock-dwelling fauna and extends the miner scene -- is a world-building argument and should be
 > decided on those grounds alone, or the quarry should be cut.
 >
-> **Neither addition was ever implemented, so there is nothing to cut.** Checked 2026-09-24 against the
+> **Neither addition was ever implemented, so there is nothing to cut.** Checked 2026-09-23 against the
 > encounter data: **Geodude, Graveler and Golem appear nowhere** in `data/spawns.json` -- no entry, no
 > sub-region, no habitat. The quarry population was never built.
 >

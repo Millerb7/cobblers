@@ -24,6 +24,7 @@ Status values: `Proposed`, `Accepted`, `Superseded by ADR-NNN`, `Rejected`.
 | ADR | Title | Status |
 | --- | ----- | ------ |
 | [ADR-001](ADR-001-modpack-base-strategy.md) | Modpack base strategy: Cobbleverse as upstream reference, overlay targeting Cobblemon 1.8.x | Proposed |
+| [ADR-002](ADR-002-reward-delivery-mechanism.md) | How a reward reaches a player: per-player advancement grants, containers as scenery | Proposed |
 
 Expected future ADRs (not yet written, pending experiments):
 

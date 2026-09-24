@@ -1,6 +1,6 @@
 # Gym battle simulation
 
-**Status:** a design input, not a verdict. Regenerated 2026-09-24 against the rebuilt
+**Status:** a design input, not a verdict. Regenerated 2026-09-23 against the rebuilt
 `docs/story/AVAILABILITY.md` and a battle engine that now models items, abilities, weather, status and stat
 stages. Run `python tools/battle_sim.py`.
 
@@ -16,7 +16,7 @@ Species counts before each gym roughly doubled: 19 / 24 / 44 / 74 / 91 / 110 / 1
 **No bag items on either side**, which is correct rather than a simplification: every authored leader sets
 `rct.battleRules.maxItemUses: 0` and carries an empty `bag`.
 
-**The cap, corrected 2026-09-24.** `rctmod-server.toml` says verbatim: *"The level cap of a player is based off
+**The cap, corrected 2026-09-23.** `rctmod-server.toml` says verbatim: *"The level cap of a player is based off
 the strongest pokemon from the party of their **next required trainer** ... The relativeLevelCap is added to the
 resulting value."* So entering gym N the cap is that gym's ace **+5**, not the ace. An earlier version of this
 document ran the player at the ace and understated them by five levels at every gym. The table below is at the

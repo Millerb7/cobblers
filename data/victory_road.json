@@ -4,7 +4,7 @@
   "builder": "tools/victory_road.py",
   "seed": 20260924,
   "brief": [
-    "Schema 1 was a labyrinth: four stacked galleries on a 16-block lattice, each a pruned spanning tree. The owner replaced it on 2026-09-24. It is not a maze and it does not stop short.",
+    "Schema 1 was a labyrinth: four stacked galleries on a 16-block lattice, each a pruned spanning tree. The owner replaced it on 2026-09-23. It is not a maze and it does not stop short.",
     "It runs all the way to the tower. The road ends on the League's own apron, not on a shelf a few hundred blocks short of it.",
     "Large corridors and gaping caves, not boxed passages. The corridor matches the Deep's tunnel mouth, 9 by 7, and the caverns are 42 to 55 across.",
     "Relatively straight: a spine of long runs with slow bends, inside the corridor the owner traced as entrance_to_e4 and then into e4_tower. A player always knows which way the tower is.",
@@ -123,7 +123,7 @@
     }
   ],
   "spine_why": "Authored, not routed, so the whole road can be read here without running anything. Every waypoint is checked against the owner's traced regions and against the canonical heightmap for rock cover; the tool refuses to build a road that leaves the corridor or breaks the surface where it should not.",
-  "deep_mouth_why": "y1, not y0, and z3064, not the pit region's edge. The Deep's floor tread is two blocks thick, so its walking level is y1 and a road at y0 would arrive a block low. And the traced region reaches far further north than the open floor does: measured in the world on 2026-09-24, the pit's floor at x3540-3620 begins around z3064, and everything north of it is rock under ring 0's tread. A mouth at z3042 was walled off from the pit by 22 blocks of it.",
+  "deep_mouth_why": "y1, not y0, and z3064, not the pit region's edge. The Deep's floor tread is two blocks thick, so its walking level is y1 and a road at y0 would arrive a block low. And the traced region reaches far further north than the open floor does: measured in the world on 2026-09-23, the pit's floor at x3540-3620 begins around z3064, and everything north of it is rock under ring 0's tread. A mouth at z3042 was walled off from the pit by 22 blocks of it.",
   "corridor": {
     "width": 9,
     "height": 7,
@@ -238,7 +238,7 @@
     "block": "legendarymonuments:galar_particle_block",
     "fallback": "minecraft:pearlescent_froglight",
     "emits": 15,
-    "emits_source": "LegendaryMonuments-Cobbleverse.jar, github/jorgaomc/ModBlocks: FabricBlockSettings.luminance(15) immediately before putstatic GALAR_PARTICLE_BLOCK (read 2026-09-24).",
+    "emits_source": "LegendaryMonuments-Cobbleverse.jar, github/jorgaomc/ModBlocks: FabricBlockSettings.luminance(15) immediately before putstatic GALAR_PARTICLE_BLOCK (read 2026-09-23).",
     "mechanic": "base-pack/cobbleverse/config/fightorflight.json5: do_pokemon_attack_unprovoked true, light_dependent_unprovoked_attack true, dark_light_level_aggro and ghost_light_level_aggro true, aggression_light_level_base_value 33 against an aggressive_threshold of 100. Light moves ONLY Dark and Ghost types: every other type is indifferent to it.",
     "tiers": {
       "rest": {
@@ -287,13 +287,13 @@
     ],
     "old_exit_radius": 12,
     "re_apply_after": "cobblers_deep, the functions whose tile is z47 (deep_*_47*). The box takes in the pit's northern rim, so the fill buries it and the Deep's own build puts it back. Those functions are deterministic and already applied once, so re-running them restores exactly what was there.",
-    "box_ends_at_3071": "not 3072, which is the first column of the NEXT chunk row: the box has to end inside tile z47 or the fill leaves a one-block wall of rock standing across the pit that the re-applied functions never reach. The staging world got that wall on 2026-09-24 and it was cleared by also running deep_*_48* once.",
+    "box_ends_at_3071": "not 3072, which is the first column of the NEXT chunk row: the box has to end inside tile z47 or the fill leaves a one-block wall of rock standing across the pit that the re-applied functions never reach. The staging world got that wall on 2026-09-23 and it was cleared by also running deep_*_48* once.",
     "why": "Schema 1's labyrinth was applied to the staging world: four galleries on a 16-block lattice inside x3470-3660 z2880-3060, six switchback shafts, a landmark chamber and an exit that broke the surface at y83. Schema 2 runs through the same rock, so the old corridors would open off the new road and its shafts would still be holes in the Deep's north face. This puts the box back to solid rock under the canonical ground before the new functions run. The old exit is refilled to the ground itself over a 12-block disc, because it was a hole in the surface and nothing else would close it; that leaves a patch of the Rift's own stone on the Rift's own floor. For a disposable world only: it overwrites everything in the box below ground."
   },
   "roster_finding": {
-    "corrected": "2026-09-24. This section first said nothing spawns here at all. That was wrong.",
+    "corrected": "2026-09-23. This section first said nothing spawns here at all. That was wrong.",
     "campaign_pools_reach_nothing_here": "true, and only that. Every compiled box carries canSeeSky true (tools/compile_spawns.py) and data/habitat_blocks.json places no block anywhere, so no COBBLERS-AUTHORED pool reaches the road.",
-    "the_packs_own_pools_do": "data/spawn_suppression.json retains the pack's defaults in 'unauthored caves', which is what Victory Road is, and the bounded-suppression override pack is not installed on the staging server. Measured 2026-09-24 over the server's mods and datapacks: 2,662 readable spawn_pool_world files carry 5,850 underground-only details (Cobblemon 3,657, COBBLEVERSE-DP-v31 2,037, three addons the rest).",
+    "the_packs_own_pools_do": "data/spawn_suppression.json retains the pack's defaults in 'unauthored caves', which is what Victory Road is, and the bounded-suppression override pack is not installed on the staging server. Measured 2026-09-23 over the server's mods and datapacks: 2,662 readable spawn_pool_world files carry 5,850 underground-only details (Cobblemon 3,657, COBBLEVERSE-DP-v31 2,037, three addons the rest).",
     "so_the_dark_already_bites": "110 of those details are Dark or Ghost, the only two types fightorflight's light rule moves. Gastly 6-31, Haunter 25-41 and Gengar 36-50 each carry an underground detail conditioned on #cobblemon:is_overworld, which the Rift's rock satisfies; so do Misdreavus, Spiritomb, Sableye, Murkrow, Zorua, Duskull, Yamask, Phantump, Shuppet, Honedge, Houndour and Purrloin.",
     "what_is_actually_wrong": "the level, not the presence. The highest of those bands is Gengar at 36-50 against a player at 50-59 here, so the dark is a nuisance rather than a threat. Whether Cobbleverse scales wild levels is NOT VERIFIED.",
     "if_the_road_gets_its_own_roster": "cobblers:rift_depths, weight 92: rock 80.4%, ground 16.3%, poison 13.0%, psychic 7.6%, ghost 7.6%, steel 3.3%, bug 2.2%, no Dark. It needs a Habitat Block to reach the road at all, and docs/research/notes/habitat-blocks-underground.md records what that costs: the block's influence is a SPHERE, overlapping ReplaceSpawns blocks spawn nothing (EXP-021), and tiling 666 blocks of road that climbs 88 with non-overlapping spheres is unsolved.",

@@ -52,7 +52,7 @@ OUT = ROOT / "derived" / "reapply"
 SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
                 "cobblers_signs", "cobblers_titles", "cobblers_progression",
                 # the Rift. Every one of these was hand-applied to the staging world and had no step here at
-                # all until 2026-09-24, so a re-export would have erased all five silently (see EXCLUDED).
+                # all until 2026-09-23, so a re-export would have erased all five silently (see EXCLUDED).
                 "cobblers_rift", "cobblers_rift_biome", "cobblers_league_tunnel", "cobblers_deep",
                 "cobblers_victory_road")
 
