@@ -1742,55 +1742,57 @@
       "footprint_from": "data/towns.json",
       "status": "moved into the Rift 2026-09-21 (the owner); laid out on the staging export; not in the live world; no traders until the badge-gated stock lands",
       "plan": {
-        "reading": "Victory Road's last stretch runs up the Rift's trunk on the dry floor, the walls closing in, and ends at a forecourt at the foot of the League. The building stands on the floor with the apex behind it, far taller than the chasm is deep, so its upper storeys rise out over the rim: you see it from the plateau, and you have to go down to reach it. Nobody lives here; the League carries its own Centre and Mart inside.",
+        "reading": "Victory Road comes up inside the rock and opens on the League's own apron, three blocks from the door, so there is no approach left to walk. The forecourt is two terraces either side of the stair's mouth rather than one square in front of it: the ramp cuts down through the middle of the apron and paving over it would seal the road a player just climbed. The building stands on the apex with the Rift falling away behind it, so its upper storeys are the first thing visible from the plateau and the last thing above you as you come out of the ground. Nobody lives here; the League carries its own Centre and Mart inside.",
         "entries": [
           {
             "from": "gym8_town",
             "at": [
-              3576,
-              2762
+              3656,
+              2486
             ],
-            "street": "victory_approach"
+            "street": "victory_approach",
+            "why": "where Victory Road sets a player down: the exit ramp's top step, on the apron"
           }
         ],
         "exits": [],
         "footprint": {
           "rect": [
-            3486,
-            2585,
-            3666,
-            2765
+            3612,
+            2367,
+            3762,
+            2510
           ],
-          "why": "the League's lot, the forecourt and the approach, squared up"
+          "why": "the League's lot, both forecourt terraces and the ramp mouth, squared up"
         },
         "streets": [
           {
             "id": "victory_approach",
             "polyline": [
               [
-                3576,
-                2762
+                3672,
+                2502
               ],
               [
-                3576,
-                2729
+                3672,
+                2495
               ]
             ],
-            "width": 7,
+            "width": 15,
             "surface": "minecraft:tuff_bricks",
-            "max_grade": 0.1
+            "max_grade": 0.1,
+            "why": "the east terrace, paved as a street so the town pass builds it. x3665-3679, four blocks clear of the ramp corridor at x3651-3661. It stops at z2495, not z2486: a street is drawn with a half-width cap at each end, and running it to the ramp mouth put 90 blocks of prep under the League building itself."
           }
         ],
         "plaza": {
           "rect": [
-            3560,
-            2703,
-            3592,
-            2728
+            3620,
+            2487,
+            3648,
+            2502
           ],
-          "y": 85,
+          "y": 88,
           "surface": "minecraft:polished_tuff",
-          "why": "the forecourt at the League's door, where Victory Road ends"
+          "why": "the west terrace. Ground is 86 to 88 across it, relief 2, and it stops at x3648, three blocks short of the ramp corridor"
         },
         "anchors": [
           {
@@ -1798,14 +1800,14 @@
             "role": "league",
             "template": "cobbleverse:kanto_league",
             "rect": [
-              3513,
-              2587,
-              3640,
-              2702
+              3635,
+              2375,
+              3754,
+              2485
             ],
             "facing": "south",
-            "level": 85,
-            "why": "Cobbleverse's own Kanto League, turned to face south down the trunk: 120 by 111 on the floor, 159 tall, so it reaches y243 over a rim at y120-150. Its Centre and Mart are inside it."
+            "level": 88,
+            "why": "Cobbleverse's own Kanto League on the apex oval, turned to face south down the Rift: 120 by 111 on the lot tools/rift_league_tunnel.py levels to y88. Its Centre and Mart are inside it. Moved here from the trunk-head floor on 2026-09-23; this plan followed on 2026-09-24."
           }
         ],
         "house_lots": {
@@ -1814,11 +1816,11 @@
         },
         "waystone": {
           "position": [
-            3576,
-            2724
+            3634,
+            2494
           ],
-          "facing": "north",
-          "note": "proposed: opens with the League; on the forecourt, facing the door"
+          "facing": "east",
+          "note": "proposed: on the west terrace, facing the ramp mouth a player arrives from"
         },
         "paving": {
           "approach": "minecraft:tuff_bricks",
@@ -1827,7 +1829,7 @@
           "lamp_why": "the League's cold light, flush along the approach",
           "why": "tuff and deepslate, the League's own stone; none is named by a spawn condition"
         },
-        "prep_note": "The floor at the trunk head runs y80-91 under the lot; levelled to y85, the worst cut and fill a few blocks. The forecourt and approach are on the floor."
+        "prep_note": "The apron is already levelled: tools/rift_league_tunnel.py cuts the lot to y88 and skirts it 14 blocks, which reaches z2499. Measured on the canonical heightmap, both terraces sit on ground of 86 to 89 with a relief of 2 and 3, so the prep is a few blocks of cut and fill. Nothing may pave x3651-3661: Victory Road's exit ramp cuts down to y78 through that corridor and street prep would fill it."
       }
     },
     "merian_hut": {
