@@ -184,7 +184,7 @@ def plan2d(spec, source_root, have, rest_node=None):
     pit[px[ok], pz[ok]] = True
     net.pit = pit
     mx, my, mz = spec["mouth"]["at"]
-    mouth_strip = (np.abs(XS - mx) <= 9) & (ZS >= mz - 60) & (ZS <= mz + 1)
+    mouth_strip = (np.abs(XS - mx) <= 9) & (ZS >= mz - 75) & (ZS <= mz + 1)
     keep_out = dilate(pit, spec["clearance"]["pit"]) & ~mouth_strip
     rb = spec["rig"]["box"]
     c = spec["clearance"]["rig"]
@@ -227,7 +227,7 @@ def plan2d(spec, source_root, have, rest_node=None):
     def add(x, z, r, hgt, kind, zone=None, floor=None):
         nodes.append({"x": int(x), "z": int(z), "r": int(r), "h": int(hgt), "kind": kind, "zone": zone, "floor": floor})
 
-    add(mx, mz - 44, 16, 16, "mouth_hall", floor=2)
+    add(mx, mz - 70, 16, 16, "mouth_hall", floor=2)      # back from the pit: its ragged outline reaches 26 blocks
     fx, fy, fz = ex["foot"]
     add(fx, fz, 14, 12, "foot", floor=fy)
     for zi_, z in enumerate(zones):
@@ -241,7 +241,8 @@ def plan2d(spec, source_root, have, rest_node=None):
         raise CaveError("no column at the middle of the guide for the rest station")
     i0, k0 = ii[len(ii) // 2]
     add(GX0 + int(i0), GZ0 + int(k0), 17, 12, "rest")
-    cand = np.argwhere(env & (dist < spec["guide"]["band"] - 12))
+    # never scattered into the mouth strip: a cavern there spills into the pit (see the footprint cut below)
+    cand = np.argwhere(env & ~mouth_strip & (dist < spec["guide"]["band"] - 12))
     order_ = sorted(range(len(cand)), key=lambda n: u(rng_seed, int(cand[n][0]), int(cand[n][1])))
     for n in order_:
         i, k = cand[n]
@@ -410,12 +411,19 @@ def plan2d(spec, source_root, have, rest_node=None):
     foot = wsum > 0
     F = np.where(foot, np.rint(fsum / np.maximum(wsum, 1e-9)), 0).astype(int)
     H = hmax
+    # nothing of the cave within 6 of the Deep's traced pit except the mouth tunnel: a cavern scattered into the
+    # mouth strip spilled 35 blocks out into the open pit and wrote 15,473 blocks of rock there, and the checks passed
+    # because they looked only at the cave (staging, 2026-09-24). Its outline, not its centre, is what must stay out.
+    foot = foot & ~dilate(net.pit, 6)
     # the mouth: from the pit's face at the Deep's floor north into the mouth hall
-    ms = mouth_strip & (np.abs(XS - mx) <= 3) & (ZS >= mz - 44) & (ZS <= mz + 1)
-    tt = np.clip((mz - ZS) / 44.0, 0, 1)
+    hall_z = nodes[0]["z"]
+    L = float(mz - hall_z)
+    ms = (np.abs(XS - mx) <= 3) & (ZS >= hall_z) & (ZS <= mz)
+    tt = np.clip((mz - ZS) / L, 0, 1)
     F = np.where(ms, np.rint(my + (nodes[0]["floor"] - my) * tt), F).astype(int)
     H = np.where(ms, np.maximum(H, 6), H)
     foot = foot | ms
+    net.mouth_tunnel = ms
     # one body of cave: a ragged outline can pinch off an island beside its cavern, sealed and unreachable.
     # Keep the component the mouth is in; everything else goes back to rock.
     seen = np.zeros(foot.shape, bool)
@@ -642,7 +650,8 @@ def build_model(spec, source_root, have, rest_node=None):
         bed = np.where(leak, 0, bed)
     net.bed = bed
     # the shell: over every footprint column and two round it, from under the deepest bed to over the highest roof
-    f2 = dilate(foot, 2)
+    # nothing past the face: the pit in front of the mouth is the Deep's, open air the tunnel opens onto
+    f2 = dilate(foot, 2) & ~(net.pit & (net.ZS > spec["mouth"]["at"][2]))
     big = 10 ** 6
     lo_src = np.where(foot, F - 1 - bed, big)
     # an open column's 'ceiling' is the sky; what its neighbours' shells have to cover is only up to the ground
@@ -1125,9 +1134,11 @@ def walkout(net, spec):
             j -= 1
         return None
 
-    start = settle(mx - GX0, mz - 3 - GZ0, int(net.F[mx - GX0, mz - 3 - GZ0]) - GY0)
+    # start on the Deep's floor in front of the face, outside the model, so the search proves the mouth opens onto
+    # the pit (it used to start inside the tunnel, which proved nothing about the way in)
+    start = settle(mx - GX0, mz + 2 - GZ0, my + 1 - GY0)
     if start is None:
-        return {"error": "no footing inside the mouth"}
+        return {"error": "no footing on the pit floor in front of the mouth"}
     ex, ey, ez = spec["exit"]["at"]
     exits = set()
     for xx in range(ex - 3, ex + 4):
@@ -1298,8 +1309,17 @@ def tiles(net, spec):
     zones = spec["zones"]
     floor = (net.foot & ~net.open_sky).astype(float)
     total = int(floor.sum())
-    uncovered = floor.copy()
-    base_ok = net.foot & ~net.open_sky & (net.bed == 0)
+    lava = np.zeros(net.foot.shape, bool)
+    for _n, px, _w, pz, pr in net.pools:
+        lava |= np.hypot(net.XS - px, net.ZS - pz) <= pr + 1
+    water = (net.bed > 0) & ~lava & net.foot
+    net.water_cols = water
+    # water counts three times: it is what summons the pack's own 42 water species (neededNearbyBlocks), so the
+    # seams between tiles should fall on dry rock, not in the lakes (owner's question about Whiscash, 2026-09-24)
+    weight = floor + 2.0 * water
+    uncovered = weight.copy()
+    # a tile may sit in a lake, its block on the lake bed; not in a lava pool
+    base_ok = net.foot & ~net.open_sky & ~lava
     chosen = []
     for R in ranges:
         Px, Pz = NX + 2 * R + 1, NZ + 2 * R + 1
@@ -1328,12 +1348,19 @@ def tiles(net, spec):
     out = []
     for (x, z, R, n) in chosen:
         i, k = x - GX0, z - GZ0
-        zi_ = int(net.zone[i, k])
+        # the pool of the zone holding most of the floor the tile covers (water three times over), not the zone that
+        # happens to be at its centre: a Slagworks tile had been governing most of a Drowned lake
+        inside = net.foot & ~net.open_sky & (np.hypot(net.XS - x, net.ZS - z) < R)
+        votes = np.bincount(net.zone[inside], weights=weight[inside], minlength=len(zones))
+        zi_ = int(np.argmax(votes))
         zname = zones[zi_]["id"]
         core = zones[zi_]["core"] is not None and float(net.W[zi_, i, k]) >= spec["spawns"]["core_share"]
         pool = "vrc_cave" if zname == "the_dark" else ("vrc_%s_core" % zname if core else "vrc_%s" % zname)
-        out.append({"x": x, "y": int(net.F[i, k]) - 1, "z": z, "range": R, "pool": pool, "covers": n})
-    share = 1.0 - float(uncovered.sum()) / max(1, total)
+        y = int(net.F[i, k]) - 1 - int(net.bed[i, k])          # on the lake bed when the tile sits in a lake
+        out.append({"x": x, "y": y, "z": z, "range": R, "pool": pool, "covers": n})
+    unc_floor = (uncovered > 0) & (floor > 0)
+    share = 1.0 - float(unc_floor.sum()) / max(1, total)
+    net.water_share = 1.0 - float(((uncovered > 0) & water).sum()) / max(1, int(water.sum()))
     return out, share
 
 
@@ -1392,6 +1419,17 @@ def build(source_root=None, server_dir=None, strict=True):
         problems.append("%d columns with under %d of rock over the shell, e.g. (%d, %d)"
                         % (thin.sum(), spec["cover"]["min"], GX0 + i, GZ0 + k))
     counts["least cover"] = int((net.roof_ground - top)[roofed].min())
+    # the Deep: no cell of the cave inside its traced pit except the mouth tunnel and its walls, and none at all past
+    # the face. The first cut wrote 15,473 blocks into the open pit and every other check passed (2026-09-24).
+    mz_ = spec["mouth"]["at"][2]
+    has = (net.vol > 0).any(axis=2)
+    past = has & net.pit & (net.ZS > mz_)
+    inside = has & net.pit & ~dilate(net.mouth_tunnel, 2)
+    counts["model columns in the pit (must be 0)"] = int((past | inside).sum())
+    if (past | inside).any():
+        i, k = np.argwhere(past | inside)[0]
+        problems.append("%d model columns inside the Deep's pit outside the mouth tunnel, e.g. (%d, %d)"
+                        % (int((past | inside).sum()), GX0 + i, GZ0 + k))
     # policy
     trig = json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"]
     ok = whitelisted()
@@ -1415,6 +1453,7 @@ def build(source_root=None, server_dir=None, strict=True):
     tl, share = tiles(net, spec)
     counts["habitat tiles"] = len(tl)
     counts["floor inside a tile (%)"] = int(round(100 * share))
+    counts["lake water inside a tile (%)"] = int(round(100 * net.water_share))
     records = check_records(net, spec, tl)
     if records and strict:
         problems += records
