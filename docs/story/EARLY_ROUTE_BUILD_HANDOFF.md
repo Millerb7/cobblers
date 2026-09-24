@@ -82,6 +82,28 @@ its route distance. Do not place anything on Route 3's final shelf lip.
   NPC names the wake item, no side event writes Celebi state, and the nearby
   road remains quiet enough that the player notices it.
 
+### `EVT-ROUTE1-FIRST-CAST`
+
+- **Shore position:** jetty anchor `(1066, 5349)`, terrain about `y62`, with
+  the deck at `y64`; 399.9 blocks from Route 1's origin at `(1462, 5293)`.
+  This is an intentional optional coast spur, not a replacement for the
+  critical path.
+- **Physical build:** a 5×9 timber jetty on piles, compact tackle rack or
+  open shelter, one stool, and a signed footpath from Pallet's west side. Keep
+  the silhouette small and do not add Relic Island, Rift, or Hoopa exposition.
+- **Dialogue:** add `dlg_route1_first_cast`; a local fisher shows the player
+  that this is usable water, hands over one basic rod, and points out that a
+  patient cast can be worthwhile without naming a rare catch.
+- **Quest:** add `evt_route1_first_cast`.
+- **Fields written:** `quest.evt_route1_first_cast.started`, `.rod_claimed`,
+  `.completed`, `.dialogue_cursor`.
+- **Reward:** one `minecraft:fishing_rod` per player, once. Do not substitute
+  Cobblemon's Poké Rod.
+- **Proof still required:** observe the actual early fishing pool and measure
+  the effect of Only Bottle Caps adding a 3% silver Bottle Cap chance to
+  vanilla treasure. Habitat Block fishing replacement is not yet runtime
+  proven.
+
 ## Route 2 events
 
 ### `EVT-ROUTE2-ROLLAWAY-GEODUDE`
@@ -128,6 +150,27 @@ its route distance. Do not place anything on Route 3's final shelf lip.
   schema needs no counter operation.
 - **Actors:** ambient Lotad/Lombre on the shelf and one posed noncapture
   Corphish; no special species reward.
+
+### `EVT-VILTRI-NORTH-BANK` — shared Route 2/3 shore stop
+
+- **Shore position:** `(1604, 3068)`, terrain `y104.4`, beside Lake Viltri's
+  `y103` water. Its Route 2 anchor is `(1779, 3011)` at distance `636.1`; the
+  measured shore spur is 184.1 blocks. It is also 267 blocks from Route 3's
+  origin at `(1605, 2801)`, so players may find it before Misty or revisit it
+  while starting the mountain leg.
+- **Physical build:** a 7×9 timber-and-stone bank platform, short ring trail
+  from the settled road, net rack, and either a beached skiff or tackle box.
+  Keep it visually and physically separate from the existing sounding station.
+- **Trainer:** place `route_02_shore_trainer_01`, the North Bank Angler, on the
+  platform with enough clear bank for a battle interaction.
+- **Dialogue:** add `dlg_viltri_north_bank`; the angler explains that seeing
+  Viltri from the south road is not the same as knowing its north bank, then
+  offers a battle.
+- **Quest:** add `evt_viltri_north_bank`.
+- **Fields written:** `quest.evt_viltri_north_bank.started`,
+  `.trainer_defeated`, `.reward_claimed`, `.completed`, `.dialogue_cursor`.
+- **Reward:** after a verified player win, grant one `cobblemon:lure_ball` per
+  player through the quest reward path, not the shared RCT bag.
 
 ## Route 3 events
 
@@ -194,11 +237,12 @@ Loss dialogue writes nothing. No trainer writes a mainline flag.
 | --- | --- | ---: | --- | --- | --- | --- |
 | `route_01_trainer_01` | Trail Novice | 285 | `(1468, 119, 5018)` | Pidgey | 7 | Road shoulder at the mansion junction; preserve the spur entrance. |
 | `route_01_trainer_02` | Meadow Apiarist | 733 | `(1385, 124, 4714)` | Combee, Surskit | 9, 10 | Flower boxes and two hives outside the road corridor. |
-| `route_01_trainer_03` | River Angler | 1247 | `(1581, 122, 4291)` | Krabby, Staryu | 13, 14 | Riverbank platform with no fishing collision across the road. |
+| `route_01_trainer_03` | Vale Naturalist | 1247 | `(1581, 122, 4291)` | Buizel, Surskit | 13, 14 | Dry-vale observation post; the planned River of Shrews does not exist as fishable water. |
 | `route_01_trainer_04` | Plateau Guide | 1677 | `(1594, 123, 3867)` | Wooloo, Fomantis, Wingull | 15, 16, 17 | Guide post and Brock warning board. |
 | `route_02_trainer_01` | Ravine Scrapper | 268 | `(1762, 133, 3372)` | Corphish | 18 | Small gravel turnout after the Geodude scene. |
 | `route_02_trainer_02` | Glowbug Keeper | 486 | `(1773, 131, 3159)` | Volbeat, Illumise | 19, 20 | Two hooded lantern posts at the lake-hollow boundary. |
 | `route_02_trainer_03` | Lake Surveyor | 723 | `(1774, 111, 2926)` | Lombre, Mareep, Lotad | 20, 21, 22 | Survey tripod and rain gauge after the sounding event. |
+| `route_02_shore_trainer_01` | North Bank Angler | 636 anchor | `(1604, 104, 3068)` | Krabby, Shellder | 20, 21 | Optional Lake Viltri platform, 184.1 blocks from its Route 2 anchor and shared with the Route 3 start. |
 | `route_03_trainer_01` | Climbing Novice | 247 | `(1747, 104, 2613)` | Rockruff | 21 | First ascent marker; clear sight line along the road. |
 | `route_03_trainer_02` | Grove Ranger | 607 | `(1876, 113, 2306)` | Heracross, Noctowl | 22, 23 | Ranger lean-to outside the world-tree protection area. |
 | `route_03_trainer_03` | Groundkeeper | 1029 | `(2034, 124, 1950)` | Bunnelby, Skiddo | 23, 24 | Burrow and root-cut display beside the road. |
@@ -214,7 +258,7 @@ per-player defeat field only from a verified RCT player-win callback.
 
 1. Re-export and reapply the existing Route 1 mansion and route infrastructure.
 2. Protect the Celebi sapling and Route 3 shelf-lip exclusion zones.
-3. Build the eight event prop clusters and trainer shoulders without actors.
+3. Build the ten event prop clusters and trainer shoulders without actors.
 4. Audit walking clearance, event spacing, mansion spur access, array
    sightline, and Swablu/Nosepass tree clearances.
 5. Register quest fields and compile dialogue.
@@ -229,5 +273,9 @@ per-player defeat field only from a verified RCT player-win callback.
 - The Nosepass scene never sets or bypasses Surge's mainline reveal.
 - Wooper can be claimed once per player and remains optional.
 - Event props remain usable after one player completes the scene.
-- All twelve trainer moves resolve in Cobblemon 1.8/RCT; this document does not
+- The First Cast rod grants once per player; the North Bank Lure Ball grants
+  only after that player wins and never twice.
+- Actual fishing catches and Bottle Cap treasure exposure are recorded before
+  the rod event is accepted for production balance.
+- All thirteen trainer movesets resolve in Cobblemon 1.8/RCT; this document does not
   claim learnset validation.

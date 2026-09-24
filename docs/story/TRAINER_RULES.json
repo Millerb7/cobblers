@@ -26,7 +26,7 @@
       "member_counts": "Length of each boss members array and route archetype member_count.",
       "items": "heldItem and max_item_uses fields.",
       "ai": "ai_profiles values; maxSelectMargin must stay positive.",
-      "route_density": "Route placements arrays; coordinates must remain existing polyline vertices."
+      "route_density": "Route placements arrays; ordinary coordinates must remain route-polyline vertices, while explicit off-route trainers must record and validate their route anchor and gap."
     }
   },
   "ai_profiles": {
@@ -529,6 +529,23 @@
         "fakeout",
         "forcepalm",
         "knockoff"
+      ]
+    },
+    "shellder": {
+      "species": "shellder",
+      "moveset": [
+        "watergun",
+        "withdraw",
+        "iciclespear",
+        "supersonic"
+      ]
+    },
+    "buizel": {
+      "species": "buizel",
+      "moveset": [
+        "watergun",
+        "quickattack",
+        "growl"
       ]
     }
   },
@@ -1805,29 +1822,28 @@
             4291
           ],
           "role": "observer",
-          "name": "River Angler",
-          "lesson": "Defensive turns and recovery advertise Water as a clean answer to Brock without making the fight mandatory.",
+          "name": "Vale Naturalist",
+          "lesson": "Uses two fast wetland species to reinforce Water as a Brock answer without pretending the dry River of Shrews vale contains a fishable river.",
           "team_species": [
-            "krabby",
-            "staryu"
+            "buizel",
+            "surskit"
           ],
           "movesets": [
             [
               "watergun",
-              "leer",
-              "harden"
+              "quickattack",
+              "growl"
             ],
             [
               "watergun",
-              "rapidspin",
-              "recover",
-              "harden"
+              "quickattack",
+              "sweetscent"
             ]
           ],
           "dialogue_text": {
-            "pre": "River Pokémon win by waiting for the opening. Show me you can make one.",
-            "player_win": "Good. Water gets through Brock's stone, but only if you keep your attacker standing.",
-            "player_loss": "Harden and Recover bought the river all the time it needed."
+            "pre": "This vale holds water after every storm, even if the old river never did.",
+            "player_win": "You changed targets before Quick Attack could pin you down. Brock will not wait either.",
+            "player_loss": "Fast Water types turn a dry path into their own ground."
           }
         },
         {
@@ -1873,7 +1889,7 @@
     {
       "id": "route_02_brock_to_misty",
       "order": 2,
-      "expected_count": 3,
+      "expected_count": 4,
       "pool_rotation": 1,
       "ambient_pool": [
         "lotad",
@@ -1912,7 +1928,8 @@
             "pre": "Corphish does not need a long plan. It denies yours and takes the opening.",
             "player_win": "You attacked before Taunt stole your setup. Good.",
             "player_loss": "You gave Corphish time, and it took all of it."
-          }
+          },
+          "id": "route_02_trainer_01"
         },
         {
           "at_distance_blocks": 486,
@@ -1944,6 +1961,52 @@
             "pre": "The lake's glowbugs do not hit hard. They make sure you never hit cleanly.",
             "player_win": "You broke the cycle before Charm, confusion, and Moonlight piled up.",
             "player_loss": "A weak attack matters when the other side controls every turn."
+          },
+          "id": "route_02_trainer_02"
+        },
+        {
+          "id": "route_02_shore_trainer_01",
+          "at_distance_blocks": 636.1,
+          "expected_coordinate": [
+            1604,
+            3068
+          ],
+          "route_anchor_coordinate": [
+            1779,
+            3011
+          ],
+          "off_route": true,
+          "off_route_gap_blocks": 184.1,
+          "shared_route_ids": [
+            "route_02_brock_to_misty",
+            "route_03_misty_to_surge"
+          ],
+          "sampled_y": 104.4,
+          "role": "specialist",
+          "name": "North Bank Angler",
+          "lesson": "Rewards shoreline exploration and teaches that physical Water pressure and high physical Defence call for Grass or special Electric attacks before Misty.",
+          "team_species": [
+            "krabby",
+            "shellder"
+          ],
+          "movesets": [
+            [
+              "watergun",
+              "leer",
+              "harden",
+              "metalclaw"
+            ],
+            [
+              "watergun",
+              "withdraw",
+              "iciclespear",
+              "supersonic"
+            ]
+          ],
+          "dialogue_text": {
+            "pre": "Most people see Viltri from the south road and think they have seen the lake. The north bank disagrees.",
+            "player_win": "Krabby pushes hard and Shellder closes up. You changed the kind of pressure instead of repeating it.",
+            "player_loss": "The bank rewards a long walk, but it still expects the right answer."
           }
         },
         {
@@ -1982,7 +2045,8 @@
             "pre": "Rain changes this whole shore. Did you bring one answer, or two?",
             "player_win": "Electric pressure handles open water. Flying or Bug pressure handles what grows in it.",
             "player_loss": "Misty's lake will not give you one clean weakness to chase."
-          }
+          },
+          "id": "route_02_trainer_03"
         }
       ]
     },

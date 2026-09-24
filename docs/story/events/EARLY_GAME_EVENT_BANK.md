@@ -1,6 +1,6 @@
 # Early-Game Event Bank — Pallet through Gym 3
 
-**Status:** Reconciled event bank. These nineteen scenes supplement the
+**Status:** Reconciled event bank. These twenty-one scenes supplement the
 fourteen encounters in `EARLY_GAME_ENCOUNTERS.md`. Route 1–3 membership and
 positions are settled in `EARLY_ROUTE_RECONCILIATION.md`; runtime mechanisms,
 item IDs, and Pokémon levels remain unverified.
@@ -14,15 +14,15 @@ They never gate the route, gym, story, healing, or PC access.
 | Area | Existing detailed events | Added here | Total |
 | --- | ---: | ---: | ---: |
 | Pallet | 3 | 4 | 7 |
-| Route 1 | 2 | 1 | 3 |
+| Route 1 | 2 | 2 | 4 |
 | Brock's town | 2 | 4 | 6 |
-| Brock-to-Misty road | 1 | 1 | 2 |
+| Brock-to-Misty road | 1 | 2 | 3 |
 | Misty's town | 2 | 4 | 6 |
 | Misty-to-Surge climb | 2 | 1 | 3 |
 | Surge's town | 2 | 4 | 6 |
-| **Total through Gym 3** | **14** | **19** | **33** |
+| **Total through Gym 3** | **14** | **21** | **35** |
 
-Not all thirty-three events need equal visual weight. Large silhouettes belong to
+Not all thirty-five events need equal visual weight. Large silhouettes belong to
 the crushed house and ghost mansion. Most additions below need one small prop
 cluster, one or two actors, and a clear interaction.
 
@@ -105,6 +105,28 @@ theft.
 
 **Reward and aftermath:** A food bundle and low-value capture supplies. Rattata
 occasionally inspect the stump afterward.
+
+## `EVT-ROUTE1-FIRST-CAST` — First Cast
+
+**Placement:** a signed coastal spur to the jetty at `(1066, 5349)`, about 400
+blocks from Route 1's origin. This uses real ocean water; the River of Shrews
+vale is dry in the current terrain.
+
+**Visible hook:** A fisher works from a small timber jetty while an unused rod
+rests in the tackle rack. The coast and nearby islets make the detour legible
+from the approach without putting it on the critical road.
+
+**Interaction:** Speak to the fisher, inspect the water and tackle rack, then
+receive one basic rod. The event ends after the first cast or after the player
+confirms they want to leave fishing for later.
+
+**Character beat:** The fisher treats patience as a route skill: “Roads show
+you where to walk. Water makes you decide where to wait.”
+
+**Reward and aftermath:** One `minecraft:fishing_rod` per player, once. The
+jetty remains a reusable fishing site. Actual catches, Habitat Block fishing
+replacement, and Only Bottle Caps' 3% silver Bottle Cap treasure chance still
+need a production balance proof.
 
 
 
@@ -193,6 +215,25 @@ the map.”
 **Reward and aftermath:** Regional food and ordinary shore supplies. The gauge
 remains aligned and the platform becomes a readable Lake Viltri stop; no
 special species is granted.
+
+## `EVT-VILTRI-NORTH-BANK` — The Other Shore
+
+**Placement:** Lake Viltri north bank at `(1604, 3068)`, 184.1 blocks from the
+Route 2 anchor `(1779, 3011)` and 267 blocks from Route 3's origin. It is a
+shared optional destination for the end of Route 2 and beginning of Route 3.
+
+**Visible hook:** A small platform, beached skiff and net rack sit across the
+water from the sounding station. An angler waits where the bank narrows.
+
+**Interaction:** Follow the short ring trail around the lake, challenge the
+North Bank Angler's Krabby and Shellder, then speak again after a player win.
+
+**Character beat:** “Most people see Viltri from the south road and think they
+have seen the lake. The north bank disagrees.”
+
+**Reward and aftermath:** One `cobblemon:lure_ball` per player after their first
+verified win. The reward is issued by the quest dialogue, never a shared
+trainer bag, and the platform remains an optional fishing and rest landmark.
 
 # Misty's town
 
@@ -417,11 +458,12 @@ Gym 1–3 trainer and encounter review approves them.
 
 # Implementation grouping
 
-Build and test these as reusable families rather than nineteen unrelated
+Build and test these as reusable families rather than twenty-one unrelated
 systems:
 
 - **Return or trade a prop:** laundry, picnic, Corphish tools, Spoink pearl,
   Sableye reflectors.
+- **One-time personal unlock:** First Cast rod and North Bank Lure Ball.
 - **Choose a safe destination:** Bulbasaur box, Caterpie crossing, Sandshrew
   bath, Onix shade, Bellsprout gauge, Psyduck cove, Mareep shelter, Skiddo rack.
 - **Inspect and match:** fossil casts, salvage objects, Azurill echoes, Shellos

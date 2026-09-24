@@ -18,10 +18,12 @@ should understand each problem by looking at the scene before reading dialogue.
 | Route 1 | `EVT-ROUTE1-GASTLY-FAMILY` | 15–25 min | Ghost side dungeon; Gastly lead |
 | Route 1 | `EVT-ROUTE1-THIRSTY-STRANGER` | 3–6 min | Character joke; held-item candidate |
 | Route 1 | `EVT-ROUTE1-RATTATA-PICNIC` | 2–4 min | Ordinary route life; supplies |
+| Route 1 | `EVT-ROUTE1-FIRST-CAST` | 3–5 min | Real shoreline use; basic fishing unlock |
 | Brock | `EVT-G1-MACHOP-SHIFT` | 5–8 min | Worksite scene; Machop encounter |
 | Brock | `EVT-G1-PEBBLE-LEAGUE` | 3–5 min | Town minigame; local ribbon |
 | Brock to Misty | `EVT-ROUTE2-ROLLAWAY-GEODUDE` | 5–8 min | Route chase; mining supplies |
 | Brock to Misty | `EVT-ROUTE2-VILTRI-SOUNDING` | 3–5 min | First-lake identity; shore supplies |
+| Routes 2/3 | `EVT-VILTRI-NORTH-BANK` | 4–7 min | Optional shore trainer; Lure Ball |
 | Misty | `EVT-G2-PSYDUCK-LAUNCH` | 4–6 min | Environmental solution; water supplies |
 | Misty | `EVT-G2-POLIWAG-COUNT` | 3–5 min | Search scene; Poliwag encounter |
 | Misty to Surge | `EVT-ROUTE3-CREEK-WOOPER` | 6–10 min | Pond-shore puzzle; controlled Wooper encounter |
@@ -511,11 +513,14 @@ off the shelf lip on the arrival road, which stays free of events.
 # Implementation order
 
 1. Place and prove the three Pallet damage scenes.
-2. Place Route 1's mansion and hut without narrowing the critical path.
+2. Place Route 1's mansion, hut, and signed First Cast coast spur without
+   narrowing the critical path.
 3. Block out the Brock worksite and pebble lane.
 4. Author the downhill Geodude trail after the Brock-to-Misty road grade is
    final.
-5. Build Misty's dock scenes around the final shoreline and boat placement.
+5. Build the Lake Viltri north-bank platform separately from the sounding
+   station, then build Misty's dock scenes around the final shoreline and boat
+   placement.
 6. Build the Wooper shore at (2204, 1580) and the Nosepass sign site at
    (2186, 1606) as one stopping place, together with the array mast. Verify the
    sightline before any foliage pass touches Foothill Woods (hard constraint in
@@ -536,6 +541,8 @@ off the shelf lip on the arrival road, which stays free of events.
 - Exact item IDs and quantities for every reward.
 - Exact placement coordinates outside established town centres, the Wooper
   shore site, the Nosepass sign site, and the signal-array anchor.
+- The actual vanilla fishing pool, the 3% silver Bottle Cap treasure exposure
+  added by Only Bottle Caps, and whether Habitat Blocks replace fishing pools.
 - A repeatable check of the sign-site sightline to the array mast, so a foliage
   or terrain pass that blocks it is caught instead of breaking the event
   silently.

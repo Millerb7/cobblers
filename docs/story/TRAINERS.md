@@ -11,7 +11,7 @@ python docs/story/generate_trainers.py --write-early
 python docs/story/generate_trainers.py --check-early
 ```
 
-The generator writes `data/trainers.json`. It currently emits 13 boss slots, 12 concrete boss rosters, one deliberately held Giovanni slot, and 49 proposed route trainers. Route coordinates are proposals on existing `routes.json` polyline vertices; nothing is placed in the world.
+The generator writes `data/trainers.json`. It currently emits 13 boss slots, 12 concrete boss rosters, one deliberately held Giovanni slot, and 50 proposed route trainers. Required route trainers use existing `routes.json` polyline vertices; optional destination trainers retain a verified route anchor plus an explicit measured off-route coordinate. Nothing is placed in the world.
 
 ## Difficulty rule set
 
@@ -25,7 +25,7 @@ The generator writes `data/trainers.json`. It currently emits 13 boss slots, 12 
 | Moves and items | Per species/member loadout | Edit one member or reusable route species kit. |
 | Ace | Exactly one per concrete boss | Mark one member `ace`; the generator rejects zero or multiple aces. |
 | AI | Six named profiles | Tune `moveBias`, `switchBias`, `statusMoveBias`, `itemBias`, and `maxSelectMargin`; all affected trainers regenerate. |
-| Route density | 49 configured distance pins | Add or remove a pin; every pin must resolve to its recorded route-polyline vertex. |
+| Route density | 49 required distance pins plus 1 optional shore placement | Add or remove a pin; required pins resolve to the route polyline, while an optional placement must record and verify its anchor and off-route gap. |
 | Route team size | Archetypes of 1, 2, or 3 members | Edit `route_archetypes`; every route team using that archetype regenerates. |
 
 `maxSelectMargin` is kept positive because RCT passes it as a random bound. The requested conceptual `stat_move_bias` maps to RCT's exact field name `statusMoveBias`; `statMoveBias` is not valid in the target API.
@@ -47,12 +47,12 @@ Every leader has stable `pre`, `win`, and `loss` dialogue IDs. RCT does not acce
 
 ## Route trainers
 
-The count rule is three required teaching roles, plus one trainer per full 1,000 walked blocks, plus a late-game density step. This yields 49 trainers across 21,849 walked blocks. Every route includes a one-Pokémon novice, a specialist or observer, and a trainer that rehearses the next major fight.
+The count rule is three required teaching roles, plus one trainer per full 1,000 walked blocks, plus a late-game density step. This yields 49 required trainers across 21,849 walked blocks. One optional Lake Viltri trainer brings the generated total to 50 without increasing critical-path density. Every route includes a one-Pokémon novice, a specialist or observer, and a trainer that rehearses the next major fight.
 
 | Leg | Walked length | Level band | Count | Proposed `(x,z)` positions |
 | --- | ---: | --- | ---: | --- |
 | Pallet → Brock | 1,978 | 5–20 | 4 | `(1468,5018)`, `(1385,4714)`, `(1581,4291)`, `(1594,3867)` |
-| Brock → Misty | 944 | 15–25 | 3 | `(1762,3372)`, `(1773,3159)`, `(1774,2926)` |
+| Brock → Misty | 944 | 15–25 | 3 required + 1 optional | `(1762,3372)`, `(1773,3159)`, `(1774,2926)`; north-bank spur `(1604,3068)` |
 | Misty → Surge | 2,120 | 20–30 | 5 | `(1747,2613)`, `(1876,2306)`, `(2034,1950)`, `(2199,1606)`, `(1978,1606)` |
 | Surge → Erika | 3,453 | 25–35 | 6 | `(1900,1571)`, `(2370,1301)`, `(3072,1368)`, `(3226,1561)`, `(3570,1886)`, `(3993,1844)` |
 | Erika → Koga | 1,051 | 30–40 | 4 | `(4383,1812)`, `(4358,1962)`, `(4366,2133)`, `(4434,2217)` |
@@ -61,7 +61,7 @@ The count rule is three required teaching roles, plus one trainer per full 1,000
 | Blaine → Giovanni | 3,050 | 45–55 | 7 | `(5853,5087)`, `(5661,5186)`, `(5295,5285)`, `(5018,5387)`, `(4615,5607)`, `(4158,6045)`, `(3894,6250)` |
 | Victory Road | 5,248 | 50–60 | 9 | `(3643,6214)`, `(3601,5591)`, `(3839,4895)`, `(4174,4496)`, `(4293,4076)`, `(3952,3623)`, `(3615,3259)`, `(3541,2766)`, `(3598,2575)` |
 
-The final data records the exact distance, progress fraction, route vertex, sampled elevation, lesson, archetype, generated team, AI and dialogue IDs for each trainer. Routes 1–3 also carry exact pre-, player-win-, and player-loss text. Their collision-aware build positions are in `EARLY_ROUTE_BUILD_HANDOFF.md`; none is placed in the world.
+The final data records the exact distance, progress fraction, route vertex or verified anchor, sampled elevation, lesson, archetype, generated team, AI and dialogue IDs for each trainer. Routes 1–3 also carry exact pre-, player-win-, and player-loss text. Their collision-aware build positions are in `EARLY_ROUTE_BUILD_HANDOFF.md`; none is placed in the world. Route 1's third trainer is a Vale Naturalist because the planned River of Shrews is dry terrain, while `route_02_shore_trainer_01` is explicitly optional and 184.1 blocks off its Route 2 anchor.
 
 ## Elite Four and Champion
 
@@ -100,7 +100,7 @@ No other gym failed the availability constraint at its new level ceiling.
 
 ## Validation boundary
 
-The generator checks deterministic output, exact gym ace curve, one ace per concrete boss, team size, level bounds, move count, IV/EV bounds, exact target RCT AI keys, positive selection margin, ordered route pins, and that each proposed coordinate is an existing route-polyline vertex. The twelve revised early trainers pass the bounded `--check-early` generation check and use species available on their route or an earlier critical-path leg. Their revised move lists still need the Cobblemon 1.8/RCT resolution pass.
+The generator checks deterministic output, exact gym ace curve, one ace per concrete boss, team size, level bounds, move count, IV/EV bounds, exact target RCT AI keys, positive selection margin, ordered route pins, and that each required coordinate is an existing route-polyline vertex. Explicit optional placements must have stable IDs and a measured gap matching their route anchor. The thirteen revised early trainers pass the bounded `--check-early` generation check and use species available on their route or an earlier critical-path leg. Their revised move lists still need the Cobblemon 1.8/RCT resolution pass.
 
 Full `--write`/`--check` currently stops on the stale Victory Road trainer pins: the trainer source still describes the former 5,248-block surface route while `data/routes.json` now contains the 666-block cave gauntlet. The bounded early mode exists so this pass does not weaken that failure or rewrite the later route; the Victory Road trainer owner must reconcile it separately.
 

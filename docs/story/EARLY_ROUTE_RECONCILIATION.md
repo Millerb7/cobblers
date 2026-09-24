@@ -11,7 +11,8 @@ as a Route 1–3 event.
 ## Current constraints
 
 - Route 1 is 1,978 blocks and already contains the maze forest, the mansion,
-  the sleeping Celebi sapling, and the thirsty stranger.
+  the sleeping Celebi sapling, and the thirsty stranger. Its named River of
+  Shrews vale is dry in the built terrain and cannot carry a fishing lesson.
 - Route 2 is 944 blocks and introduces Lake Viltri; its short length cannot
   support five side scenes plus three trainers without feeling staged.
 - Route 3 is 2,120 blocks and already contains the Wooper pond, the Nosepass
@@ -34,6 +35,7 @@ as a Route 1–3 event.
 | `EVT-ROUTE1-THIRSTY-STRANGER` | **KEEP** | The proven quest remains a joke with no Worldshift explanation. Move its hut away from Celebi to the exact site in the build handoff. |
 | `EVT-ROUTE1-CATERPIE-CROSSING` | **CUT** | Route 1 already has three major discoveries and four trainers; Caterpie is not in the current Route 1 pool, and an optional scene must not appear to block the main road. |
 | `EVT-ROUTE1-RATTATA-PICNIC` | **KEEP** | Rattata is in the current Route 1 pool. The small scene gives the road ordinary life without adding lore. |
+| `EVT-ROUTE1-FIRST-CAST` | **ADD** | A signed spur to the real coast west of Pallet gives the shoreline a purpose and introduces fishing with a basic rod. It is optional and does not imply Relic Island lore. |
 | `EVT-ROUTE1-BUG-NET` | **CUT** | It repeats the Bug lesson taught by the Meadow Apiarist and adds a non-roster Metapod actor beside an already crowded forest section. |
 | `EVT-ROUTE1-SENTRET-WATCH` | **CUT** | Sentret is not in the current route pool, and the dropped-item beat does not add enough to justify another actor cluster near Celebi and the hut. |
 | `EVT-ROUTE2-ROLLAWAY-GEODUDE` | **EDIT** | Keep as the handoff from Brock's stone country. The cart stops safely on the upper grade, well before the lake; the event no longer implies a 400-block uncontrolled roll to the shore. |
@@ -42,6 +44,7 @@ as a Route 1–3 event.
 | `EVT-ROUTE2-NINCADA-ROAD` | **CUT** | Nincada is not in the current Route 2 pool; the road-maintenance beat is less specific to this place than the lake event. |
 | `EVT-ROUTE2-MUDBRAY-BOOT` | **CUT** | Mudbray is not in the current Route 2 pool and the joke does not establish Lake Viltri. |
 | `EVT-ROUTE2-VILTRI-SOUNDING` | **EDIT** | Keep the existing event-bank concept and make it the player's first real lake activity, using ambient Lotad, Lombre, and Corphish rather than another generic road mishap. |
+| `EVT-VILTRI-NORTH-BANK` | **ADD** | A north-bank platform 184 blocks off Route 2 and 267 blocks from Route 3's origin is a shared optional destination with one trainer and one Lure Ball reward. |
 | `EVT-ROUTE3-CREEK-WOOPER` | **EDIT** | Keep at `(2204, 1580)`, about 32 blocks from the relocated signs. It is encountered on the outward trip and never becomes a return quest from Surge. |
 | `EVT-ROUTE3-NOSEPASS-SIGNS` | **EDIT** | Keep at `(2186, 1606)`. The array receives a visible pulse; the player observes directional interference but does not learn deliberate steering before Surge. |
 | `EVT-ROUTE3-SPOINK-PEARL` | **CUT** | Spoink is not in the current Route 3 pool and the generic camper clearing adds little to the mountain leg. |
@@ -56,33 +59,38 @@ the canonical event lists so later builders do not treat them as pending work.
 
 ### Route 1
 
-The leg lacked a clear first trainer lesson. It does not need another side
-event. `route_01_trainer_01` now introduces eye-contact battles, then three
-later trainers teach switching and the Water/Grass answers to Brock. The
-mansion, picnic, Celebi, and thirsty stranger supply enough noncombat life.
+The leg lacked a clear first trainer lesson and gave its real shoreline no
+purpose. `route_01_trainer_01` introduces eye-contact battles, then later
+trainers teach switching and the Water/Grass answers to Brock. First Cast is
+the owner-approved exception to the route's otherwise full event density: a
+signed coast spur and basic rod, rather than another critical-path scene. The
+former River Angler is now a Vale Naturalist because the River of Shrews was
+never cut into the terrain.
 
 ### Route 2
 
-The leg lacked an event about **Lake Viltri itself**. `EVT-ROUTE2-VILTRI-SOUNDING`
-adds a shore survey at route distance 636. The player reads three water-depth
-marks, follows the safe shelf indicated by Lotad, and resets a floating gauge
-that Corphish pulled loose. It is a place activity rather than a disguised gym
-counter delivery.
+The leg lacked enough reason to use **Lake Viltri's shore**.
+`EVT-ROUTE2-VILTRI-SOUNDING` adds a shore survey at route distance 636. The
+player reads three water-depth marks, follows the safe shelf indicated by
+Lotad, and resets a floating gauge that Corphish pulled loose. The North Bank
+adds a separate optional spur and trainer shared with Route 3. Both are place
+activities rather than disguised gym-counter delivery.
 
 ### Route 3
 
 The leg lacked a deliberate combat lesson connecting mountain travel to Surge.
-It does not need another side scene. The Groundkeeper, Signal Watcher, and
-Vessu Ranger now teach Ground immunity, Electric resistance, paralysis, and
-priority before the shelf. Wooper, Nosepass, and Swablu provide the leg's three
-physical events.
+Beyond the shared Lake Viltri north bank at its opening, it does not need
+another side scene. The Groundkeeper, Signal Watcher, and Vessu Ranger teach
+Ground immunity, Electric resistance, paralysis, and priority before the
+shelf. Wooper, Nosepass, and Swablu provide the leg's three dedicated physical
+events.
 
 ## Density after reconciliation
 
 | Leg | Length | Side events | Trainers | Protected discovery |
 | --- | ---: | ---: | ---: | --- |
-| Route 1 | 1,978 | 3 | 4 | Celebi sapling |
-| Route 2 | 944 | 2 | 3 | First Lake Viltri view |
-| Route 3 | 2,120 | 3 | 5 | Surge array and shelf reveal |
+| Route 1 | 1,978 | 4 | 4 | Celebi sapling and optional coast spur |
+| Route 2 | 944 | 3 | 4, including 1 optional | First Lake Viltri view and shared north bank |
+| Route 3 | 2,120 | 3, plus the shared north bank | 5 | Surge array and shelf reveal |
 
 The shelf lip remains empty. It is an arrival view, not an event pad.

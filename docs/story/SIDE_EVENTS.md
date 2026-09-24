@@ -154,6 +154,9 @@ expanded small-event specifications are in
   familiar-looking man who is definitely not Tupac.
 - **`EVT-ROUTE1-RATTATA-PICNIC`: Lunch Tax.** Follow crumbs to recover a neatly
   unwrapped picnic lunch.
+- **`EVT-ROUTE1-FIRST-CAST`: First Cast.** Follow a signed spur to Pallet's
+  western coast, meet a local fisher, and receive the campaign's first basic
+  fishing rod.
 
 ### Route 2 — Brock to Misty
 
@@ -161,6 +164,9 @@ expanded small-event specifications are in
   handcart and discover that Geodude stopped it on the upper grade.
 - **`EVT-ROUTE2-VILTRI-SOUNDING`: Viltri Sounding.** Read the first lake's
   water shelves and reset a floating gauge loosened by Corphish.
+- **`EVT-VILTRI-NORTH-BANK`: The Other Shore.** Take the optional north-bank
+  trail to an angler battle and a one-time Lure Ball. The site also serves the
+  opening of Route 3.
 
 ### Route 3 — Misty to Surge
 

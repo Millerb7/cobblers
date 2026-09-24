@@ -190,11 +190,24 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
             previous_distance = distance
             vertex_index, point, measured_total = nearest_vertex(polyline, distance)
             expected = placement["expected_coordinate"]
-            if [point["x"], point["z"]] != expected:
+            route_anchor = placement.get("route_anchor_coordinate", expected)
+            if [point["x"], point["z"]] != route_anchor:
                 raise ValueError(
                     f"{route_rule['id']} placement {index}: derived coordinate "
-                    f"{[point['x'], point['z']]} != configured {expected}"
+                    f"{[point['x'], point['z']]} != configured anchor {route_anchor}"
                 )
+            off_route = placement.get("off_route", False)
+            actual_x, actual_z = expected if off_route else [point["x"], point["z"]]
+            if off_route:
+                measured_gap = math.hypot(
+                    actual_x - point["x"], actual_z - point["z"]
+                )
+                expected_gap = placement["off_route_gap_blocks"]
+                if abs(measured_gap - expected_gap) > 0.6:
+                    raise ValueError(
+                        f"{route_rule['id']} placement {index}: off-route gap "
+                        f"{measured_gap:.1f} != configured {expected_gap}"
+                    )
             progress = distance / route["distance"]["computed_walked_blocks"]
             base_level = round(band["minimum"] + progress * (band["maximum"] - band["minimum"] - 1))
             selected = choose_team(index - 1, placement["role"], route_rule, rules)
@@ -210,18 +223,39 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
                     kit["moveset"] = deepcopy(move_overrides[team_index])
                 kit["level"] = max(band["minimum"], base_level - (len(selected) - team_index - 1))
                 team.append(kit)
-            trainer_id = f"route_{route_rule['order']:02d}_trainer_{index:02d}"
+            trainer_id = placement.get(
+                "id", f"route_{route_rule['order']:02d}_trainer_{index:02d}"
+            )
             source = {
                 "id": trainer_id,
                 "name": placement["name"],
                 "ai_profile": placement.get("ai_profile", "route_standard"),
                 "team": team,
             }
+            placement_payload = {
+                "status": "proposed",
+                "at_distance_blocks": distance,
+                "progress_fraction": round(progress, 4),
+                "polyline_vertex_index": vertex_index,
+                "x": actual_x,
+                "z": actual_z,
+                "sampled_y": placement.get("sampled_y", point.get("y")),
+                "route_measured_blocks": measured_total,
+            }
+            if off_route:
+                placement_payload.update(
+                    {
+                        "off_route": True,
+                        "route_anchor": {"x": point["x"], "z": point["z"]},
+                        "off_route_gap_blocks": placement["off_route_gap_blocks"],
+                        "shared_route_ids": placement.get("shared_route_ids", []),
+                    }
+                )
             generated.append(
                 {
                     "id": trainer_id,
                     "display_name": placement["name"],
-                    "class": "route",
+                    "class": "optional_route" if off_route else "route",
                     "format": "GEN_9_SINGLES",
                     "team": deepcopy(team),
                     "route_id": route_rule["id"],
@@ -229,16 +263,7 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
                     "trainer_order": index,
                     "archetype": placement["role"],
                     "lesson": placement["lesson"],
-                    "placement": {
-                        "status": "proposed",
-                        "at_distance_blocks": distance,
-                        "progress_fraction": round(progress, 4),
-                        "polyline_vertex_index": vertex_index,
-                        "x": point["x"],
-                        "z": point["z"],
-                        "sampled_y": point.get("y"),
-                        "route_measured_blocks": measured_total,
-                    },
+                    "placement": placement_payload,
                     "dialogue": {
                         "pre": f"dlg_{trainer_id}_pre",
                         "win": f"dlg_{trainer_id}_win",
@@ -304,7 +329,8 @@ def main():
         current_early = [
             trainer
             for trainer in current_document["trainers"]
-            if trainer.get("class") == "route" and trainer.get("route_order") in {1, 2, 3}
+            if trainer.get("class") in {"route", "optional_route"}
+            and trainer.get("route_order") in {1, 2, 3}
         ]
         if args.check_early:
             if current_early != early:
@@ -329,7 +355,8 @@ def main():
             rebuilt.extend(early)
         current_document["trainers"] = rebuilt
         current_document["generation_contract"]["route_trainers"] = sum(
-            trainer.get("class") == "route" for trainer in current_document["trainers"]
+            trainer.get("class") in {"route", "optional_route"}
+            for trainer in current_document["trainers"]
         )
         OUTPUT_PATH.write_text(
             json.dumps(current_document, indent=2, ensure_ascii=False) + "\n",
