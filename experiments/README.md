@@ -28,6 +28,7 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | EXP-022 | Can campaign dialogue run on Cobblemon's native dialogue with persistent per-player state? | run single-player: compiled thirsty stranger; disconnect restores the cursor; bucket and bottle consumed and returned; reward once; two-player not run |
 | EXP-026 | Does the whole re-application, driven by `tools/reapply.py`, build everything on a fresh export, judged by result? | run twice: the first found trees on streets and gravel falling from the cavern roof (fixed); the second ran every step without a stop, 24 of 24 places 0 gaps, audit clean |
 | EXP-021 | Do Habitat Blocks replace or add, how far, do they persist and stack? | run: replace; edge at the configured range; survive restart, lost on re-export unless transplanted or re-placed; overlapping ranges spawn nothing; command-placed blocks need a chunk reload |
+| EXP-033 | Does a Habitat Block replace in sealed rock at depth, give its pool's level band, and reach as a sphere or a column? | rig built on staging (3470, 20, 2880); block placed and resolved its pool (`DisplaySpecies` filled); the three questions need the owner at the stands |
 
 ## Template
 
