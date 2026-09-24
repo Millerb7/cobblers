@@ -11673,6 +11673,279 @@
       "eligibility_reason": "evolves from Paldean Wooper at 20; the band begins at 24",
       "biomes": [],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_drowned_gallery.quagsire",
+      "species": "quagsire",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_drowned_gallery",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 20; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_drowned_gallery.golisopod",
+      "species": "golisopod",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_drowned_gallery",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 30; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_drowned_gallery.politoed",
+      "species": "politoed",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vr_drowned_gallery",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Poliwhirl by trade holding King's Rock, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_drowned_gallery.slowking",
+      "species": "slowking",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vr_drowned_gallery",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Slowpoke by trade holding King's Rock, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_drowned_gallery.milotic",
+      "species": "milotic",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vr_drowned_gallery",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Feebas by trade holding Prism Scale, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_slagworks.magcargo",
+      "species": "magcargo",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 38; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_slagworks.torkoal",
+      "species": "torkoal",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_slagworks.salazzle",
+      "species": "salazzle",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vr_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 33; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_slagworks.garchomp",
+      "species": "garchomp",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vr_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 48; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_raw_tear.duraludon",
+      "species": "duraludon",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_raw_tear.noivern",
+      "species": "noivern",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 48; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_raw_tear.sableye",
+      "species": "sableye",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vr_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_raw_tear.dragapult",
+      "species": "dragapult",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vr_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 60; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_bloom.amoonguss",
+      "species": "amoonguss",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 39; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_bloom.shiinotic",
+      "species": "shiinotic",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 24; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_bloom.ariados",
+      "species": "ariados",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vr_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 22; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_bloom.tangrowth",
+      "species": "tangrowth",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vr_bloom",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Tangela by levelling up knowing ancientpower, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_abandoned_cut.klinklang",
+      "species": "klinklang",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 49; band begins at 60",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_abandoned_cut.probopass",
+      "species": "probopass",
+      "bucket": "common",
+      "level": "60-65",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "vr_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Nosepass with cobblemon:thunder_stone, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_abandoned_cut.gholdengo",
+      "species": "gholdengo",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vr_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolves from Gimmighoul on carrying 999 coins (gimmighoul_coins=999), not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vr_abandoned_cut.metagross",
+      "species": "metagross",
+      "bucket": "uncommon",
+      "level": "60-65",
+      "weight": 10.0,
+      "ambient": true,
+      "scope": "vr_abandoned_cut",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 45; band begins at 60",
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [
@@ -24387,6 +24660,407 @@
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "vr_drowned_gallery",
+      "display_name": "The Drowned Gallery",
+      "intended_location": "Victory Road, off first_hall: a flooded pillared hall at y8",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 60,
+        "maximum": 65
+      },
+      "placement_status": "planned in data/habitat_blocks.json; built by tools/vr_regions.py",
+      "entries": [
+        {
+          "species": "Quagsire",
+          "pokemon": "quagsire",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "wooper",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 20; band begins at 60",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Golisopod",
+          "pokemon": "golisopod",
+          "types": [
+            "bug",
+            "water"
+          ],
+          "family": "wimpod",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 30; band begins at 60",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Politoed",
+          "pokemon": "politoed",
+          "types": [
+            "water"
+          ],
+          "family": "poliwag",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "evolves from Poliwhirl by trade holding King's Rock, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Slowking",
+          "pokemon": "slowking",
+          "types": [
+            "water",
+            "psychic"
+          ],
+          "family": "slowpoke",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "evolves from Slowpoke by trade holding King's Rock, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Milotic",
+          "pokemon": "milotic",
+          "types": [
+            "water"
+          ],
+          "family": "feebas",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "evolves from Feebas by trade holding Prism Scale, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 10.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vr_slagworks",
+      "display_name": "The Slagworks",
+      "intended_location": "Victory Road, off first_hall: the lava cavern at y8",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 60,
+        "maximum": 65
+      },
+      "placement_status": "planned in data/habitat_blocks.json; built by tools/vr_regions.py",
+      "entries": [
+        {
+          "species": "Magcargo",
+          "pokemon": "magcargo",
+          "types": [
+            "fire",
+            "rock"
+          ],
+          "family": "slugma",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 38; band begins at 60",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Torkoal",
+          "pokemon": "torkoal",
+          "types": [
+            "fire"
+          ],
+          "family": "torkoal",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Salazzle",
+          "pokemon": "salazzle",
+          "types": [
+            "poison",
+            "fire"
+          ],
+          "family": "salandit",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 33; band begins at 60",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Garchomp",
+          "pokemon": "garchomp",
+          "types": [
+            "dragon",
+            "ground"
+          ],
+          "family": "gible",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 48; band begins at 60",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 10.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vr_raw_tear",
+      "display_name": "The Raw Tear",
+      "intended_location": "Victory Road, off the_vein: the Rift's unhealed material at y40",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 60,
+        "maximum": 65
+      },
+      "placement_status": "planned in data/habitat_blocks.json; built by tools/vr_regions.py",
+      "entries": [
+        {
+          "species": "Duraludon",
+          "pokemon": "duraludon",
+          "types": [
+            "steel",
+            "dragon"
+          ],
+          "family": "duraludon",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Noivern",
+          "pokemon": "noivern",
+          "types": [
+            "flying",
+            "dragon"
+          ],
+          "family": "noibat",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 48; band begins at 60",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Sableye",
+          "pokemon": "sableye",
+          "types": [
+            "dark",
+            "ghost"
+          ],
+          "family": "sableye",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dragapult",
+          "pokemon": "dragapult",
+          "types": [
+            "dragon",
+            "ghost"
+          ],
+          "family": "dreepy",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 60; band begins at 60",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 10.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vr_bloom",
+      "display_name": "The Bloom",
+      "intended_location": "Victory Road, off the_lantern: a fungal gallery at y30",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 60,
+        "maximum": 65
+      },
+      "placement_status": "planned in data/habitat_blocks.json; built by tools/vr_regions.py",
+      "entries": [
+        {
+          "species": "Amoonguss",
+          "pokemon": "amoonguss",
+          "types": [
+            "grass",
+            "poison"
+          ],
+          "family": "foongus",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 39; band begins at 60",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Shiinotic",
+          "pokemon": "shiinotic",
+          "types": [
+            "grass",
+            "fairy"
+          ],
+          "family": "morelull",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 24; band begins at 60",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Ariados",
+          "pokemon": "ariados",
+          "types": [
+            "bug",
+            "poison"
+          ],
+          "family": "spinarak",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 22; band begins at 60",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Tangrowth",
+          "pokemon": "tangrowth",
+          "types": [
+            "grass"
+          ],
+          "family": "tangela",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "evolves from Tangela by levelling up knowing ancientpower, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 10.0,
+          "conditions": {}
+        }
+      ]
+    },
+    {
+      "id": "vr_abandoned_cut",
+      "display_name": "The Abandoned Cut",
+      "intended_location": "Victory Road, off the_last_gate: the dig camp's collapsed gallery at y44",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 60,
+        "maximum": 65
+      },
+      "placement_status": "planned in data/habitat_blocks.json; built by tools/vr_regions.py",
+      "entries": [
+        {
+          "species": "Klinklang",
+          "pokemon": "klinklang",
+          "types": [
+            "steel"
+          ],
+          "family": "klink",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 49; band begins at 60",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Probopass",
+          "pokemon": "probopass",
+          "types": [
+            "rock",
+            "steel"
+          ],
+          "family": "nosepass",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Nosepass with cobblemon:thunder_stone, not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+          "level": "60-65",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gholdengo",
+          "pokemon": "gholdengo",
+          "types": [
+            "steel",
+            "ghost"
+          ],
+          "family": "gimmighoul",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "evolves from Gimmighoul on carrying 999 coins (gimmighoul_coins=999), not by level: placed evolved as Victory Road's endgame catch (docs/world-building/VICTORY_ROAD_REGIONS.md section 1)",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Metagross",
+          "pokemon": "metagross",
+          "types": [
+            "steel",
+            "psychic"
+          ],
+          "family": "beldum",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "evolution requires level 45; band begins at 60",
+          "level": "60-65",
+          "bucket": "uncommon",
+          "weight": 10.0,
+          "conditions": {}
+        }
+      ]
     }
   ],
   "route_species_selection_note": "The species each critical route's pool may use: at most 20 per route (the 10-20 authored choices of the spawn philosophy). Recorded 2026-09-16 from the 2026-09-16 compilation, whose selection rule was not recorded; tools/compile_spawns.py reads this list and does not choose. A species a rerouted corridor newly reaches is excluded until it is added here.",

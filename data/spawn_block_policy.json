@@ -372,6 +372,42 @@
       "why": "the gym's own interior, placed whole by resource id: four redstone torches and two lightning rods, the gym's electrics",
       "consequence": "none inside the gym: its interior is a spawn-free zone (data/spawn_suppression.json, the owner 2026-09-21), so the block draws nothing there. Before that: Electric types (Rotom among them) drawn inside the Electric gym, which is in keeping",
       "decided": "2026-09-21, by the implementing session, following the owner's gym exceptions; on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:water"
+      ],
+      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
+      "why": "The Drowned Gallery's lake and the Bloom's three one-deep puddles: the water is the room. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: 42 species from Cobblemon and the Cobbleverse datapack, among them dragonite, greninja, inteleon, golisopod, politoed, quagsire, the poliwag, wooper, tympole and galarian slowpoke lines, and hisuian goomy."
+    },
+    {
+      "blocks": [
+        "minecraft:lava"
+      ],
+      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
+      "why": "The Slagworks' pool and its two falls: the only lit refuge on a dark road (owner, 2026-09-23), lit BY the lava. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: magby, magmar, magmortar, slugma, magcargo, salandit and salazzle, a fire roster that suits the room either way."
+    },
+    {
+      "blocks": [
+        "minecraft:magma_block"
+      ],
+      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
+      "why": "The Slagworks' shelf, the only floor on the road that burns. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: gible, gabite, garchomp, magby, magmar and magmortar. Garchomp is the region's intended anchor, so on this block the terrain and the roster agree; the Habitat Block is there for the level band."
+    },
+    {
+      "blocks": [
+        "minecraft:rail"
+      ],
+      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
+      "why": "The Abandoned Cut's broken rail line: it is a dig. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: rolycoly, carkol and coalossal, which belong in an abandoned working."
+    },
+    {
+      "blocks": [
+        "minecraft:flowering_azalea",
+        "minecraft:spore_blossom"
+      ],
+      "scope": "Victory Road regions (tools/vr_regions.py, data/vr_regions.json): sealed rooms at y8-44 under the Rift",
+      "why": "The Bloom: the only green underground. Both are #cobblemon:flowers. Inside the room a ReplaceSpawns Habitat Block (data/habitat_blocks.json vr_*) replaces the ambient pool, so the block is scenery there: replace-not-add is proven on open ground (EXP-021) and pending in sealed rock (EXP-033). If EXP-033 fails, this is what the block summons at the upstream bands, against a player at the cap of 65: combee, vespiquen, comfey, cutiefly, ribombee and every vivillon pattern, which would be wrong in a sealed cave; that is why the room's roster sits on a Habitat Block rather than on the terrain."
     }
   ],
   "checked_paving": {

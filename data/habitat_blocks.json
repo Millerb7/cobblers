@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.habitat-blocks/1",
-  "status": "manifest_ready_no_blocks_placed",
+  "status": "five Victory Road region blocks recorded; the behaviour in sealed rock is EXP-033, pending the owner",
   "note": "Every Habitat Block the campaign places. A re-export erases blocks placed in game (EXP-021), so this manifest is the source: tools/habitat_blocks.py function writes the placement function, and the post-export procedure in docs/world-building/REEXPORT.md re-applies it and restarts the server so each block's chunk reloads. tools/validate_data.py checks the static rules, and checks presence in a stopped world passed with --world-save. Blocks placed on the disposable proof world for EXP-021 are not campaign blocks and are not listed.",
   "fields": {
     "id": "stable id",
@@ -12,5 +12,81 @@
     "position": "{x, y, z} of the block",
     "status": "planned (not in the world), placed (placed by the function), verified (presence and behaviour checked in game)"
   },
-  "blocks": []
+  "blocks": [
+    {
+      "id": "vr_drowned_gallery",
+      "place": "The Drowned Gallery, Victory Road: in the island's floor, under the cache: the lake and the shelf all inside its sphere",
+      "pool": "cobblers:vr_drowned_gallery",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 36,
+      "position": {
+        "x": 3469,
+        "y": 7,
+        "z": 2984
+      },
+      "status": "placed",
+      "why": "The region's roster at the endgame band (60-65). The room's own blocks summon upstream species at their own bands (data/spawn_block_policy.json, Victory Road regions); only a ReplaceSpawns block sets both roster and band. The range covers the room to its far rim, does not reach the road, and overlaps no other block. tools/vr_regions.py checks this record against the model."
+    },
+    {
+      "id": "vr_slagworks",
+      "place": "The Slagworks, Victory Road: in the floor at the room's centre, clear of the pool and its lip",
+      "pool": "cobblers:vr_slagworks",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 34,
+      "position": {
+        "x": 3624,
+        "y": 7,
+        "z": 2906
+      },
+      "status": "placed",
+      "why": "The region's roster at the endgame band (60-65). The room's own blocks summon upstream species at their own bands (data/spawn_block_policy.json, Victory Road regions); only a ReplaceSpawns block sets both roster and band. The range covers the room to its far rim, does not reach the road, and overlaps no other block. tools/vr_regions.py checks this record against the model."
+    },
+    {
+      "id": "vr_raw_tear",
+      "place": "The Raw Tear, Victory Road: in the floor at the room's centre",
+      "pool": "cobblers:vr_raw_tear",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 36,
+      "position": {
+        "x": 3470,
+        "y": 39,
+        "z": 2690
+      },
+      "status": "placed",
+      "why": "The region's roster at the endgame band (60-65). The room's own blocks summon upstream species at their own bands (data/spawn_block_policy.json, Victory Road regions); only a ReplaceSpawns block sets both roster and band. The range covers the room to its far rim, does not reach the road, and overlaps no other block. tools/vr_regions.py checks this record against the model."
+    },
+    {
+      "id": "vr_bloom",
+      "place": "The Bloom, Victory Road: in the moss at the room's centre, clear of the mushrooms and puddles",
+      "pool": "cobblers:vr_bloom",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 30,
+      "position": {
+        "x": 3452,
+        "y": 29,
+        "z": 2790
+      },
+      "status": "placed",
+      "why": "The region's roster at the endgame band (60-65). The room's own blocks summon upstream species at their own bands (data/spawn_block_policy.json, Victory Road regions); only a ReplaceSpawns block sets both roster and band. The range covers the room to its far rim, does not reach the road, and overlaps no other block. tools/vr_regions.py checks this record against the model."
+    },
+    {
+      "id": "vr_abandoned_cut",
+      "place": "The Abandoned Cut, Victory Road: in the gallery floor at its middle, three off the rail line",
+      "pool": "cobblers:vr_abandoned_cut",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 30,
+      "position": {
+        "x": 3672,
+        "y": 43,
+        "z": 2687
+      },
+      "status": "placed",
+      "why": "The region's roster at the endgame band (60-65). The room's own blocks summon upstream species at their own bands (data/spawn_block_policy.json, Victory Road regions); only a ReplaceSpawns block sets both roster and band. The range covers the room to its far rim, does not reach the road, and overlaps no other block. tools/vr_regions.py checks this record against the model."
+    }
+  ]
 }
