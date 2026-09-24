@@ -26,7 +26,7 @@ The pools, and how each one is placed on the progression:
 Not covered here, and it is a large hole: the PACK's own inherited pools. data/spawn_suppression.json retains
 upstream defaults in "unauthored caves" and off-route wilderness, and the bounded-suppression override pack is not
 installed, so Cobblemon's and COBBLEVERSE's own spawns are live everywhere we have not authored over. Measured
-2026-09-24: 2,662 readable spawn_pool_world files carrying 5,850 underground-only details. Those are not ordered
+2026-09-23: 2,662 readable spawn_pool_world files carrying 5,850 underground-only details. Those are not ordered
 by route and cannot be, so they are summarised at the foot of the document and not in the per-gym tables.
 
 Types come from the Cobblemon 1.8 jar, not from a table written here.
@@ -301,7 +301,7 @@ def report(margin, write):
     say()
     say("The pack's own inherited pools. `data/spawn_suppression.json` retains upstream defaults in \"unauthored")
     say("caves\", off-route wilderness, open ocean and the Nether and End, and the bounded-suppression override")
-    say("pack is not installed on the staging server. Measured 2026-09-24 over the server's mods and datapacks:")
+    say("pack is not installed on the staging server. Measured 2026-09-23 over the server's mods and datapacks:")
     say("**2,662 readable spawn pool files carrying 5,850 underground-only spawn details** (Cobblemon 3,657,")
     say("COBBLEVERSE-DP-v31 2,037, three addons the rest), naming 855 distinct species.")
     say()

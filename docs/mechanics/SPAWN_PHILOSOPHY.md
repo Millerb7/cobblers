@@ -252,3 +252,173 @@ region, which is more demanding than an all-or-nothing switch.
 2. Do `minX`/`maxX`/`minZ`/`maxZ` conditions behave as bounds on a live 1.8.0 server?
 3. Is there any level-scaling mechanism for wild spawns short of rewriting ranges?
 4. What happens to the malformed Pangoro alpha entry in game?
+
+---
+
+## The rosters carry families this world cannot finish
+
+**Status: a measured gap, recorded 2026-09-23. It decides nothing.** It came out of the
+Victory Road reward inventory (`docs/research/notes/reward-item-inventory.md` section 2) and
+is larger than Victory Road: it touches every roster in `data/spawns.json`. It belongs here
+because the encounter design is what depends on it — `evolution_policy` in
+`data/spawns.json:32-49` budgets weight across a family's stages on the assumption that a
+player who catches the base stage can reach the rest.
+
+Throughout, *placed* means "authored into a roster that `tools/compile_spawns.py` compiles",
+not "in the live world": **VERIFIED** 0 pools, blocks or suppression are installed in the
+live world (`docs/STATE.md` "Encounter data").
+
+### 1. No evolution-stone ore generates anywhere in this world
+
+- **VERIFIED** a WorldPainter export writes every chunk as already generated, so no placed
+  feature runs inside it: no ores, apricorn trees, berries, mints, fossils or wild waystones
+  (`docs/world-building/WORLDGEN_FEATURES.md:5-9`).
+- **VERIFIED** Cobblemon 1.8.0 contributes 103 placed features, **42 of them
+  evolution-stone ore features** (`WORLDGEN_FEATURES.md:25`). All 42 are absent from the
+  export.
+- **VERIFIED** the Nether and End generate normally and keep their features
+  (`WORLDGEN_FEATURES.md:7-8`), so `cobblemon:nether_fire_stone_ore` is the single
+  surviving stone ore in the game. It is the one stone with **no consumer at all** in the
+  rosters (below), which is the whole gap in one line.
+- **VERIFIED** the 23 blocks exist and are registered — `cobblemon:fire_stone_ore`,
+  `deepslate_*`, `dripstone_moon_stone_ore`, `terracotta_sun_stone_ore` and the rest
+  (`base-pack/cobbleverse/config/roughlyenoughitems/collapsible.json5:139-161`). Nothing
+  places them.
+
+### 2. The scatter pass that would put them back is specified and unwritten
+
+`WORLDGEN_FEATURES.md:115-171` specifies `tools/scatter.py` and a `data/scatter_rules.json`
+schema (`cobblers.scatter_rules/1`) with an `ore` rule kind that replaces by host-rock tag.
+
+**VERIFIED it does not exist:** there is no `tools/scatter.py` and no
+`data/scatter_rules.json` in the repository; the only matches for "scatter" under `tools/`
+are in `elder_trees.py` and `maze_forest.py`, which are unrelated. `WORLDGEN_FEATURES.md:99-113`
+also assigns ores to WorldPainter's Underground Pockets layer (**VERIFIED** to work in
+EXP-014, 202,287 fire-stone ore blocks placed), so there are two unbuilt routes, not one.
+
+Two things have changed since that specification was written and neither is recorded there:
+
+- Its stated blocker — *"it needs an NBT **writer**, and `tools/nbt.py` is read-only"*
+  (`WORLDGEN_FEATURES.md:125-126`) — no longer decides the question. Every large block pass
+  in this project is now generated `mcfunction` and re-run by `tools/reapply.py`
+  (`tools/reapply.py:267-311`, steps R1-R16), at a scale of 1,647,987 commands in 1,005
+  functions for the Rift skin alone (`docs/STATE.md` "The Rift overhaul"). An ore pass could
+  be functions, not NBT.
+- Anything written by hand into the world is erased by a re-export, so an ore pass has to be
+  a `data/` record with a `reapply.py` step, exactly like Habitat Blocks and traders, or it
+  will be lost on the next export. `reapply.py prepare` now fails closed on a pack with no
+  step (`docs/STATE.md`, 2026-09-23), so this cannot be added quietly.
+
+**This is a sequencing dependency, not just a gap.** If the scatter pass lands, stones stop
+being reward-worthy and become a mining chore; if reward caches land first, they are the
+economy. The two cannot be designed independently.
+
+### 3. How much of the roster this touches, measured
+
+Measured against `data/spawns.json` on 2026-09-23 (1,468 `species` rows across the `entries`
+and `subregions` blocks):
+
+| Measure | Value |
+| --- | ---: |
+| Roster rows carrying `"eligibility_reason": "player evolution (non-level method)"`, all at `weight: 0` | **168** (84 in `entries`, 84 mirrored in `subregions`) |
+| Distinct species behind those rows | **60** |
+| Distinct families behind those rows | **54** |
+| Of those families, gated on one of the ten **evolution stones** | **20** |
+| Gated on some other **item** (Link Cable, held item, apple, teacup) | **10** |
+| Gated on friendship, a move, time, gender, nature or walking — *unaffected by this gap* | **24** |
+
+So **30 of the 54 families whose last stage the wild will never produce are waiting on an
+item, and 20 of those on a stone that does not exist in this world.**
+
+**The stone-gated twenty** (grouped by the stone; the family id is the roster's `family`
+field, the blocked form in brackets):
+
+| Stone | Families |
+| --- | --- |
+| Water Stone | `poliwag` [poliwrath], `staryu` [starmie], `shellder` [cloyster], `lotad` [ludicolo] |
+| Sun Stone | `oddish` [bellossom], `petilil` [lilligant], `cottonee` [whimsicott], `helioptile` [heliolisk] |
+| Shiny Stone | `minccino` [cinccino], `budew` [roserade], `togepi` [togekiss] |
+| Ice Stone | `vulpix` (Alolan) [ninetales alolan], `crabrawler` [crabominable] |
+| Dusk Stone | `murkrow` [honchkrow], `misdreavus` [mismagius] |
+| Moon Stone | `nidoranf` [nidoqueen], `nidoranm` [nidoking] |
+| Leaf Stone | `seedot` [shiftry] |
+| Dawn Stone | `snorunt` [froslass] |
+| Thunder Stone | `pichu` [raichu] |
+| **Fire Stone** | **none** |
+
+**The other ten:** `roggenrola` [gigalith], `gastly` [gengar], `phantump` [trevenant],
+`karrablast` [escavalier], `shelmet` [accelgor] — all Link Cable; `magby` [magmortar] —
+Magmarizer plus Link Cable; `sneasel` [weavile] — Razor Claw; `gligar` [gliscor] — Razor
+Fang; `applin` [flapple, appletun] — Tart and Sweet Apple; `poltchageist` [sinistcha] — a
+teacup item.
+
+Three qualifications, all of which matter:
+
+1. **The count of rows and families is VERIFIED from `data/spawns.json`. The mapping from a
+   family to the item that gates it is ASSUMED** — it is mainline-Pokémon knowledge, not
+   read out of Cobblemon 1.8.0's own `data/cobblemon/species/**.json` `evolutions` blocks.
+   The reward inventory raised the same caveat and it is still open. `bergmite` [avalugg]
+   and `rowlet` [decidueye] carry the label for reasons this note cannot explain and are the
+   clearest test cases for the jar read.
+2. **54 is a floor, not a total.** The roster's own label is inconsistent for three-stage
+   families whose *last* step is item-gated: `machamp` is labelled
+   `"evolution requires level 28; band begins at 22"` (`data/spawns.json:3293-3301`) and
+   `gallade` `"evolution requires level 20; band begins at 10"` (`data/spawns.json:8519-8527`),
+   although the blocking step is a trade and a Dawn Stone respectively. The generator appears
+   to classify on a level threshold found somewhere in the chain rather than on the final
+   step. Both are already `weight: 0`, so nothing spawns wrongly — but the *diagnosis* in the
+   data is wrong, and any tool that counts item-gated families off `eligibility_reason` will
+   undercount.
+3. **`eevee` does not appear in `data/spawns.json` at all** (reward inventory section 2), so
+   the eeveelution stone economy has no consumer either. Together with the empty Fire Stone
+   row above, two of the stones that *would* be the easiest to justify placing have nothing
+   to evolve.
+
+### 4. What the stones' other sources do and do not settle
+
+The blunt claim "these families cannot be completed at all" is **not** established, and the
+repo's own jar scan is why:
+
+- **VERIFIED (this repo's scan of the installed jars and datapacks)** every one of the ten
+  stones is classified `loot and crafting`, with **6 recipes** and 3 to 8 loot tables each
+  (`docs/world-building/WORLDGEN_FEATURES_TABLE.md:16, 30, 32, 42, 44, 49, 66, 68, 71, 73`).
+  The recipe figure is a **floor**: `tools/worldgen_features.py:186` truncates both lists
+  (`[:6]` and `[:8]`).
+- **UNKNOWN** what those recipes take as input. If a stone is craftable from materials that
+  exist in this world, there is no gap at all, only an inconvenience; if the input is the ore
+  or a shard the ore drops, the gap is total. **This single question decides whether GAP 1 is
+  a blocker or a note**, and it is one `zipfile` read of
+  `Cobblemon-fabric-1.8.0+1.21.1.jar` `data/cobblemon/recipe/**`.
+- **The loot-table column is weaker than it looks.** `WORLDGEN_FEATURES.md:50-53` already
+  records that the loot tables carrying stones are *"mostly structure chests, trainer rewards
+  (`rctmod:generic/*/nature`) and raid dens"*. **VERIFIED** structures do not generate in a
+  WorldPainter export any more than features do, so structure chests are absent unless
+  placed; **VERIFIED** raid dens are removed from the 1.8 overlay as incompatible
+  (`modpack/manifest/overlay.json:527-535`). That leaves rctmod trainer rewards as the only
+  plausible live source — and **VERIFIED** 0 trainers are placed (`docs/STATE.md` "Campaign
+  content"). So on today's world the chain is: ore absent, structures absent, raids removed,
+  trainers unplaced.
+- **VERIFIED** the campaign is actively removing the remaining circulation: every donor
+  building is placed with `clear_loot: true` (`data/placements.json:8607-8609`) and the
+  trader stock policy withholds whole categories (`data/traders.json:227-245`).
+
+### 5. What has to be read or run before this is designed around
+
+Experiment candidates, in the order that collapses the most uncertainty per unit of work:
+
+1. **Read the jar.** For each of the 54 families, read `evolutions` out of
+   `data/cobblemon/species/**.json` in `Cobblemon-fabric-1.8.0+1.21.1.jar` and record the
+   `variant` and `requirements` of the blocking step. `tools/battle_sim.py:116-148` already
+   opens the jar and normalises species names; `tools/battle_sim.py:274-300` already walks
+   the `evolutions` block and distinguishes `level_up` from `item_interact` and `trade`.
+   This turns every ASSUMED mapping above into VERIFIED and fixes the two mislabelled rows.
+2. **Read the recipes.** `data/cobblemon/recipe/**` for the ten stones, plus Link Cable,
+   Razor Claw, Razor Fang, Magmarizer, Tart/Sweet Apple. Decides section 4.
+3. **Read the loot tables.** Which of the 3-8 tables per stone belong to a structure that is
+   placed, a trainer that could be placed, or a mob that exists in this pack.
+4. **Only then** decide the mechanism: scatter pass, placed caches, trainer reward tables,
+   trader stock, or a mix. That decision is entangled with the reward-delivery decision in
+   `docs/decisions/ADR-002-reward-delivery-mechanism.md` and should not be taken before it.
+
+Nothing above should be turned into content. No stone has been given to a player in a
+running game, and no id in this section has been resolved with `/give`.

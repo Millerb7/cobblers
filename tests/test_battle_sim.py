@@ -1091,7 +1091,7 @@ def test_the_switching_bound_only_swaps_a_losing_matchup_for_a_winning_one(pack)
 
 # removing this lets the gauntlet run past its guard, or lose count of what it did. The turn count is how the
 # report tells a two-turn kill from a grind, and it silently returned the cap for every fight until the count
-# was fixed (2026-09-24, caught by the Sturdy tests).
+# was fixed (2026-09-23, caught by the Sturdy tests).
 def test_the_gauntlet_reports_its_own_turns_and_switches(pack):
     chart = _chart(pack)
     a = _M(SYNTH_MOVES, chart, "a", ["normal"], moveset=["smash"], attack=200, speed=200)

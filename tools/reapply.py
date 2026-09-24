@@ -50,7 +50,27 @@ PACKS = BUILD / "datapacks"
 REAPPLY = PACKS / "cobblers_reapply"
 OUT = ROOT / "derived" / "reapply"
 SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobblers_donor", "cobblers_vendors", "cobblers_reapply",
-                "cobblers_signs", "cobblers_titles", "cobblers_progression")
+                "cobblers_signs", "cobblers_titles", "cobblers_progression",
+                # the Rift. Every one of these was hand-applied to the staging world and had no step here at
+                # all until 2026-09-23, so a re-export would have erased all five silently (see EXCLUDED).
+                "cobblers_rift", "cobblers_rift_biome", "cobblers_league_tunnel", "cobblers_deep",
+                "cobblers_victory_road")
+
+# Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
+# by a step makes `prepare` fail: that is the fail-closed check.
+EXCLUDED = {
+    "cobblers_reapply": "the loose-function container; its functions are run by the steps that own them",
+    "cobblers_vr_backfill": "staging only: it buries schema 1's labyrinth, which a fresh export never has",
+    "cobblers_restore": "disposable worlds only; install() deletes it if it is found",
+    "cobblers_rift_fracture": "retired, replaced by the sculpt in the heightmap",
+    "cobblers_worldtree": "a WORLD pack, installed into the world folder and run by R3",
+    "cobblers_height": "a WORLD pack: it raises the build limit and runs nothing",
+    "cobblers_suppress": "generated from the installed set on a disposable world; not part of a re-export",
+    # these three drive themselves and write no blocks: found by the check below the moment it was added
+    "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
+    "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
+    "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
+}
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -94,6 +114,13 @@ def prepare(a):
     py(TOOLS / "elder_trees.py", *src)
     py(TOOLS / "maze_forest.py", *src)
     py(TOOLS / "islet.py", *src)
+    # the Rift, in the order the world needs it: the skin lies over the sculpted shape, the biome is painted
+    # on top of it, the League's lot is levelled before the donor stamps the building on it, the Deep is sunk
+    # into the Rift floor, and Victory Road runs from the Deep to the League's apron and so needs both.
+    py(TOOLS / "rift_skin.py", *src)
+    py(TOOLS / "rift_league_tunnel.py", *src)
+    py(TOOLS / "rift_deep.py", *src)
+    py(TOOLS / "victory_road.py", *src)
     py(TOOLS / "rematerial.py")
     py(TOOLS / "place_town.py", "hometown", *src)
     for s in places():
@@ -118,13 +145,33 @@ def prepare(a):
     for path, name in loose:
         if not path.is_file():
             raise SystemExit("missing %s" % path)
+
         shutil.copyfile(path, fn / ("%s.mcfunction" % name))
     out = py(TOOLS / "function_limits.py", *[PACKS / p for p in SERVER_PACKS + ("cobblers_worldtree",)])
     last = out.strip().splitlines()[-1]
     print(last)
     if " 0 with problems" not in last:
         raise SystemExit("function_limits found problems: nothing may be installed until it reports 0")
-    print("prepared in %.0f s: %d places, %d pack donors" % (time.time() - t0, len(places()), len(donors())))
+    # FAIL CLOSED. A generated pack that ships functions and that no step runs is a build a re-export deletes and
+    # nothing puts back -- and the run stays green while it happens. That is not hypothetical: the Rift skin, the
+    # Rift biome, the Windward Deep, Victory Road and the League's lot were all in exactly that state while this
+    # procedure was twice reported as rehearsed end to end. Either a step runs a pack, or EXCLUDED says why not.
+    missing = uncovered(steps())
+    if missing:
+        raise SystemExit("no re-apply step runs these packs, and EXCLUDED does not say why:\n  %s\n"
+                         "Add a step in steps(), or add the pack to EXCLUDED with its reason."
+                         % "\n  ".join(missing))
+    # and every settlement and donor the placements name has to be reachable too, not only the packs
+    doc = placements()
+    ran = {v for _sid, _title, acts in steps() for kind, v in acts if kind == "fn"}
+    for s_ in places(doc):
+        if "cobblers:towns/%s" % s_ not in ran:
+            raise SystemExit("settlement %r has a plan in data/placements.json but no re-apply step" % s_)
+    for d in donors(doc):
+        if "cobblers:structures/place_%s" % d not in ran:
+            raise SystemExit("donor %r is placed in data/placements.json but no re-apply step stamps it" % d)
+    print("prepared in %.0f s: %d places, %d pack donors, %d steps, every function pack covered"
+          % (time.time() - t0, len(places()), len(donors()), len(steps())))
 
 
 def install(a):
@@ -172,10 +219,59 @@ class Rcon:
         return self.rcon.run([cmd], self.pw, timeout=timeout)[0].strip()
 
 
+def indexed(pack, folder):
+    """The function names a generated pack lists in its own index.txt, in the order it wrote them."""
+    idx = PACKS / pack / "data" / "cobblers" / "function" / folder / "index.txt"
+    if not idx.is_file():
+        raise SystemExit("no %s: run `reapply.py prepare` first" % idx)
+    return [x for x in idx.read_text(encoding="utf-8").split("\n") if x.strip()]
+
+
+def function_packs():
+    """Every generated pack that ships at least one .mcfunction, as {pack: [namespaced prefixes]}."""
+    out = {}
+    if not PACKS.is_dir():
+        return out
+    for pack in sorted(p.name for p in PACKS.iterdir() if p.is_dir()):
+        base = PACKS / pack / "data" / "cobblers" / "function"
+        if not base.is_dir():
+            continue
+        folders = [d.name for d in base.iterdir() if d.is_dir() and any(d.glob("*.mcfunction"))]
+        if folders:
+            out[pack] = folders
+    return out
+
+
+def uncovered(todo):
+    """Packs that ship functions, are not deliberately excluded, and no step runs.
+
+    This exists because five of the largest builds in the project -- the Rift skin, the Rift biome, the Windward
+    Deep, Victory Road and the League's lot -- were hand-applied to the staging world and had no step here, while
+    the re-export was twice reported as rehearsed end to end. A missing step is invisible: the run is green and
+    the build is simply gone after the next export. Fail closed instead.
+    """
+    run_ns = set()
+    for _sid, _title, acts in todo:
+        for kind, value in acts:
+            if kind == "fn" and ":" in value:
+                run_ns.add(value.split(":", 1)[1].split("/", 1)[0])
+    bad = []
+    for pack, folders in function_packs().items():
+        if pack in EXCLUDED:
+            continue
+        if not any(f in run_ns for f in folders):
+            bad.append("%s (functions in %s)" % (pack, ", ".join(folders)))
+    return bad
+
+
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
-    out = [("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
+    out = [("R1", "the Rift skin: the block pass over the sculpted shape",
+            [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift", "rift")]),
+           ("R1B", "the Rift biome, painted over the skin",
+            [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
+           ("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
            ("R3", "world tree", [("fn", "cobblers:worldtree/%02d_tree" % k) for k in range(4)]
             + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
            ("R4", "Foothill grove", [("fn", "cobblers:reapply/grove"), ("fn", "cobblers:reapply/grove_augment")]),
@@ -190,7 +286,18 @@ def steps(with_spawns=False):
     r9 = []
     for d in donors(doc):
         r9 += [("fn", "cobblers:structures/place_%s" % d), ("wait", 3)]
+    # After the towns and BEFORE the donors: the town pass would re-level ground under it, and place_donor
+    # stamps the League building onto the lot this levels.
+    out.append(("R8B", "the League's lot on the apex oval, levelled before its donor",
+                [("fn", "cobblers:league_tunnel/%s" % f)
+                 for f in indexed("cobblers_league_tunnel", "league_tunnel")]))
     out.append(("R9", "pack donors (%d)" % len(donors(doc)), r9))
+    # the Deep is sunk into the Rift floor; Victory Road runs from its floor to the League's apron, so it needs
+    # the Deep carved and the lot levelled first. Its backfill pack is staging-only and is excluded on purpose.
+    out.append(("R9B", "the Windward Deep",
+                [("fn", "cobblers:deep/%s" % f) for f in indexed("cobblers_deep", "deep")]))
+    out.append(("R9C", "Victory Road",
+                [("fn", "cobblers:victory_road/%s" % f) for f in indexed("cobblers_victory_road", "victory_road")]))
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))

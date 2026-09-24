@@ -7,7 +7,7 @@ ticks uphill, dips twice, climbs the last 36 in a switchback stair, and opens on
 blocks from the door. Ten trainer stands and one rest station, both marked and unstaffed.
 
 Schema 1 built a labyrinth here -- four stacked galleries on a 16-block lattice, each a pruned spanning tree,
-ending on a shelf 400 blocks short of the tower. The owner replaced it on 2026-09-24: large corridors and gaping
+ending on a shelf 400 blocks short of the tower. The owner replaced it on 2026-09-23: large corridors and gaping
 caves, relatively straight, all the way to the tower, about ten fights and a rest station inside.
 
 Light is a difficulty setting. fightorflight makes Dark and Ghost types more aggressive at or below block light 7
@@ -119,7 +119,7 @@ class Site:
     floor  the floor AFTER the air, not with the walls. On a climbing leg the air box of one step reaches down over
            the floor the next step lays, so a floor written in the first pass is eaten away wherever the road
            rises: the exit ramp came out as a four-deep trench and every graded leg had its floor dropped behind
-           the grade (found in the world on 2026-09-24, six audit mismatches).
+           the grade (found in the world on 2026-09-23, six audit mismatches).
     after  everything that stands in the finished space: the rest station, the landmark, the stands and the light.
     """
 
@@ -253,7 +253,7 @@ def carve_stair(site, sx, sy, sz, hw, hl, top_y, legs, wall, floor):
     # Consecutive legs run in SEPARATE LANES, west then east, joined by a landing across the whole hall. A stair
     # whose legs both used the full width put each leg's treads at the head height of the one below it near the
     # turn, where the two converge: air at the feet and rock at the head, and a player stopped dead (found by the
-    # test author on 2026-09-24, four positions at two turns).
+    # test author on 2026-09-23, four positions at two turns).
     lanes = (range(x0 + 1, sx), range(sx + 1, x1))
     rise = top_y - sy
     per = rise / float(legs)
@@ -502,7 +502,7 @@ def build(source_root, server_dir=None):
                 if (X, Z) not in site.floor_at:
                     continue
                 # on the column's own floor, not on the cavern's: the road ramps through this cavern, so a face
-                # laid at the cavern's floor level stands a block up in the road (found in the world 2026-09-24)
+                # laid at the cavern's floor level stands a block up in the road (found in the world 2026-09-23)
                 fy = site.floor_at[(X, Z)][1]
                 u = unit(X, cy, Z, 231)
                 if u < 0.34:
@@ -559,9 +559,9 @@ def build(source_root, server_dir=None):
     tiers = spec["light"]["tiers"]
     # Floor light is placed by COLUMN and then dropped onto that column's own floor, never at a height taken from
     # a route point: on a grade the route a few blocks away is a block or two higher, and a light at its level
-    # lands at standing height in the middle of the road (found in the world on 2026-09-24).
+    # lands at standing height in the middle of the road (found in the world on 2026-09-23).
     # a stand sits on the same lattice its own pool is lit from, and the light is written later, so without this
-    # five of the ten stands were buried under a light block (found in the world on 2026-09-24)
+    # five of the ten stands were buried under a light block (found in the world on 2026-09-23)
     on_a_stand = {(X, Z) for (X, _Y, Z) in stands}
     lit = []
     for _name, (cx, cy, cz, R, _HH, _ch) in chambers.items():

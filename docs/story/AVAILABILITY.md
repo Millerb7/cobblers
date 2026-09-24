@@ -854,7 +854,7 @@ A habitat pool only spawns where a Cobblemon Habitat Block stands. `data/habitat
 
 The pack's own inherited pools. `data/spawn_suppression.json` retains upstream defaults in "unauthored
 caves", off-route wilderness, open ocean and the Nether and End, and the bounded-suppression override
-pack is not installed on the staging server. Measured 2026-09-24 over the server's mods and datapacks:
+pack is not installed on the staging server. Measured 2026-09-23 over the server's mods and datapacks:
 **2,662 readable spawn pool files carrying 5,850 underground-only spawn details** (Cobblemon 3,657,
 COBBLEVERSE-DP-v31 2,037, three addons the rest), naming 855 distinct species.
 

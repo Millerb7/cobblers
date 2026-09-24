@@ -149,7 +149,7 @@ def load_pack(jar):
 
 
 # The LAST entry of each Showdown file has no trailing comma. Without the `,?` the water row of the type chart
-# was dropped, and every Water defender read as neutral to Electric and Grass (found 2026-09-24).
+# was dropped, and every Water defender read as neutral to Electric and Grass (found 2026-09-23).
 ENTRY = re.compile(r"^  (\w+): \{\n(.*?)^  \},?$", re.S | re.M)
 
 
@@ -885,7 +885,7 @@ def assess(gym, avail, leaders, species, moves, chart, ivs, stones, caps):
     # rctmod-server.toml, verbatim: "The level cap of a player is based off the strongest pokemon from the party
     # of their NEXT required trainer ... The relativeLevelCap is added to the resulting value." So entering gym N
     # the cap is that gym's ace PLUS relativeLevelCap, not the ace itself. Running it at the ace understated the
-    # player by five levels at every gym (found 2026-09-24).
+    # player by five levels at every gym (found 2026-09-23).
     cap = (max(m["level"] for m in t["team"]) + rel) if t and t["team"] else None
     if cap is not None:
         cap = max(cap, init if gym == 1 else 0)
@@ -898,7 +898,7 @@ def assess(gym, avail, leaders, species, moves, chart, ivs, stones, caps):
     out["foes"] = foes
     seen = set()
     # A candidate the jar does not know is COUNTED, not dropped in silence. Gendered Nidoran fell out of Gym 8's
-    # pool for exactly this reason and nothing said so (found by the test author, 2026-09-24): a shrinking pool
+    # pool for exactly this reason and nothing said so (found by the test author, 2026-09-23): a shrinking pool
     # looks the same as a narrow one, which is the very thing this tool is for.
     out["unresolved"] = []
     for r in rows:
