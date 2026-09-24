@@ -56,7 +56,8 @@ def problems(doc):
                 out.append("%s: an item needs a namespaced id" % rid)
             if not (isinstance(c.get("count"), int) and c["count"] > 0):
                 out.append("%s: %s needs a positive count" % (rid, c.get("item")))
-            if not str(c.get("verification", "")).strip():
+            # a string, not anything whose str() is non-empty: null would read as "None" (test_rewards_pack)
+            if not (isinstance(c.get("verification"), str) and c["verification"].strip()):
                 out.append("%s: %s has no verification" % (rid, c.get("item")))
         if not r.get("contents"):
             out.append("%s: no contents" % rid)
@@ -70,10 +71,16 @@ def problems(doc):
             if isinstance(at, list) and isinstance(lo, list) and isinstance(hi, list) and not all(
                     a - 1 <= v <= b + 1 for a, v, b in zip(lo, at, hi)):
                 out.append("%s: the container at %s is not beside its trigger box" % (rid, at))
-            if not str(r.get("message", "")).strip():
+            if not (isinstance(r.get("message"), str) and r["message"].strip()):
                 out.append("%s: no message" % rid)
+            ct = r.get("container")
+            if not (isinstance(ct, dict) and isinstance(ct.get("block"), str) and isinstance(ct.get("at"), list)
+                    and len(ct["at"]) == 3):
+                out.append("%s: a cache needs a container {block, at: [x, y, z]}" % rid)
         if kind == "npc_grant" and not r.get("quest"):
             out.append("%s: an npc_grant names its quest" % rid)
+        if kind == "npc_grant" and not (isinstance(r.get("npc_at"), list) and len(r["npc_at"]) == 3):
+            out.append("%s: an npc_grant needs npc_at [x, y, z]" % rid)
     return out
 
 

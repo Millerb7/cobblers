@@ -131,9 +131,12 @@ def room_columns(cx, cz, R, seed, ring=2):
     return out
 
 
-def smooth_heights(h, cols, passes=6):
-    """Clamp a floor so no column is more than one block above any neighbour: a broken floor, never a wall."""
-    for _ in range(passes):
+def smooth_heights(h, cols):
+    """Clamp a floor so no column is more than one block above any neighbour: a broken floor, never a wall.
+
+    Until nothing changes, not a fixed number of passes: a clamp can have to spread across the whole room, and six
+    passes left a 94-block cliff in a case the tests built (it only ever lowers, so it always stops)."""
+    while True:
         changed = False
         for (x, z) in cols:
             lo = min(h.get((x + dx, z + dz), h[(x, z)]) for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)))

@@ -103,6 +103,8 @@ def npcs():
         conv = next((c for c in dl["conversations"] if c.get("quest_id") == r["quest"]), None)
         if conv is None:
             raise SystemExit("reward %s names quest %s, and no conversation in data/dialogue.json runs it" % (r["id"], r["quest"]))
+        if not (isinstance(r.get("npc_at"), list) and len(r["npc_at"]) == 3):
+            raise SystemExit("reward %s is an npc_grant with no npc_at [x, y, z]: nowhere to place it" % r["id"])
         out.append((conv["id"], tuple(r["npc_at"]), "cobblers:%s" % conv["npc_id"]))
     return out
 
