@@ -10,11 +10,21 @@ every block it writes. It is not the vanilla woodland mansion: a manor house tha
   from just north of Pallet it is on the skyline at 220-240 blocks (Distant Horizons range), but from Route 1's
   mouth and the spur junction the forest hides it at any height (measured, settlement `seen_from`).
 
-  ground floor  foyer (centre) with the grand stair rising north to the landing; dining room (west wing) with a long
-                table; library (east wing), three aisles between two rows of shelves; the service corridor along the
-                rear, joining all three
-  upper floor   the bedroom hall, west to east through the landing, with five doors (four south, one north-west);
-                the sealed ballroom across the rear, reached from the landing through barred doors
+  ground floor  foyer (centre) with the grand stair rising north to the landing, and a hiding place behind it;
+                dining room (west wing), its long table still laid; library (east wing), three aisles between two rows
+                of shelves, and the servants' stair up its east wall; the service corridor along the rear, joining all
+  upper floor   the bedroom hall, west to east through the landing, with five doors (four south, one north-west) and
+                a candle stand by each; the sealed ballroom across the rear, its barred doors bent apart, its cold
+                hearth at the west end and an inlaid path across the floor through three broken ward marks
+
+The furnishing (furnish()) is an abandoned house rather than labelled rooms: a stopped clock, dust sheets, a table
+laid for a meal nobody ate, half-emptied shelves, leaf litter under the broken windows, pale moss where the damp got
+in. The Gastly escort's props and actor markers (data/scenes.json, scene route1_gastly_family) sit on and between
+these; tests check each marker is standable and each prop is on something this tool builds.
+
+The house's old ward is the Habitat Block in the landing floor (WARD_STONE): one natural ReplaceSpawns block with
+the ghost pool, its range reaching every floor of the house and ending inside the clearing, so no seam inside the
+house falls back to the forest's pool and the ghosts do not leak into the forest.
 
 Every room has soul lanterns, so no floor inside is at block light 0 and no hostile mob spawns in the house; the
 ghosts are the event's own. No block in it is a spawn condition (no cobweb, no white or yellow carpet or bed).
@@ -43,6 +53,204 @@ def weather(x, y, z):
     h = (x * 73856093 ^ y * 19349663 ^ z * 83492791) & 0xFFFF
     return ("minecraft:mossy_stone_bricks" if h % 7 == 0 else "minecraft:cracked_stone_bricks" if h % 5 == 0
             else "minecraft:stone_bricks")
+
+
+HC = "handcrafted:"
+TABLE = HC + "dark_oak_table[color=red,shape=%s,waterlogged=false]"
+CHAIR = HC + "dark_oak_chair[color=%s,facing=%s,waterlogged=false]"      # facing: where the sitter looks
+BED = HC + "dark_oak_fancy_bed[color=%s,facing=%s,occupied=false,part=%s,shape=single]"   # facing: toward the headboard
+PLATE = HC + "white_plate[facing=%s,pieces=1,waterlogged=false]"
+CUP = HC + "white_cup[facing=%s,pieces=1,waterlogged=false]"
+CANDLE = "minecraft:candle[candles=%d,lit=false,waterlogged=false]"
+MOSS = "minecraft:pale_moss_carpet[bottom=true,east=none,north=none,south=none,west=none]"
+LITTER = "minecraft:leaf_litter[facing=%s,segment_amount=%d]"
+HANGING_MOSS = "minecraft:pale_hanging_moss[tip=true]"
+FRAME = "beautify:dark_oak_picture_frame[facing=%s,frame_motive=%d]"
+CANDELABRA = "beautify:lamp_candelabra[facing=%s,hanging=false,on=false]"
+BOOKSTACK = "beautify:bookstack[bookstack_model=%d,facing=%s]"
+CHISELED = "minecraft:chiseled_bookshelf[facing=%s,slot_0_occupied=%s,slot_1_occupied=%s,slot_2_occupied=%s,slot_3_occupied=%s,slot_4_occupied=%s,slot_5_occupied=%s]"
+WARD_STONE = (1629, 120, 5033)                   # the Habitat Block, set in the landing floor (data/habitat_blocks.json)
+WARD_MARKS = [(1626, 5026), (1630, 5029), (1634, 5026)]   # the ballroom's three broken marks, in the inlay's order
+CANDLE_STANDS = [(1619, 5034), (1624, 5034), (1635, 5034), (1641, 5034), (1619, 5032)]   # doors A B C D and north
+
+
+def back_stair(fill, sb):
+    """The servants' stair: up the library's east wall into the south-east bedroom, one wide, rising north."""
+    for i in range(6):
+        z = 5041 - i
+        if i:
+            fill((1642, F + 1, z), (1642, F + i, z), "minecraft:dark_oak_planks")
+        sb(1642, F + 1 + i, z, "minecraft:dark_oak_stairs[facing=north]")
+    fill((1642, U, 5037), (1642, U, 5041), "minecraft:air")                     # its well through the bedroom floor
+    fill((1642, U + 1, 5037), (1642, U + 2, 5041), "minecraft:air")
+    fill((1641, U + 1, 5038), (1641, U + 1, 5041), "minecraft:dark_oak_fence")   # the well's rail (a lantern closes 5037)
+
+
+def chiseled(facing, h):
+    return CHISELED % ((facing,) + tuple("true" if (h >> k) & 1 else "false" for k in range(6)))
+
+
+def furnish(fill, sb):
+    """An abandoned house, not rooms: what the family left, where they left it, and what the years did to it.
+
+    Nothing here is a spawn condition that matters: the ward stone's ReplaceSpawns covers every floor of the house
+    (tools/route1_mansion.py WARD_STONE, range in data/habitat_blocks.json). Cobweb is still kept out: pale hanging
+    moss stands in for it."""
+    y = F + 1                                                                     # ground floor, feet
+    # ---------------------------------------------------------------- foyer
+    sb(1625, y, 5042, "cozyhome:dark_oak_grandfather_clock")                     # stopped
+    sb(1632, y, 5042, HC + "dark_oak_side_table[color=none,facing=west,waterlogged=false]")
+    sb(1632, y + 1, 5042, CANDELABRA % "west")
+    sb(1628, U - 1, 5042, "minecraft:chain[axis=y,waterlogged=false]")
+    sb(1628, U - 2, 5042, "beautify:lamp_candelabra[facing=north,hanging=true,on=false]")
+    sb(1627, y, 5042, LITTER % ("north", 3))                                     # blown in under the door
+    sb(1630, y, 5042, LITTER % ("east", 2))
+    sb(1631, y, 5041, LITTER % ("south", 1))
+    for z, m in ((5040, 3), (5033, 7)):
+        sb(1625, y + 2, z, FRAME % ("east", m))
+    for z, m in ((5040, 5), (5033, 9)):
+        sb(1632, y + 2, z, FRAME % ("west", m))
+    sb(1632, y + 1, 5036, "cozyhome:dark_oak_wall_mirror[facing=west,vertical_connection=single]")
+    # behind the grand stair, where Pip hides: crates, dust-sheeted chairs, a loose board
+    sb(1625, y, 5029, "minecraft:barrel[facing=up,open=false]")
+    sb(1625, y + 1, 5029, "minecraft:barrel[facing=north,open=false]")
+    sb(1626, y, 5029, "minecraft:barrel[facing=up,open=false]")
+    sb(1625, y, 5031, HC + "dark_oak_cupboard[facing=east,type=1]")
+    for z in (5030, 5032):                                                        # chairs under dust sheets
+        sb(1632, y, z, "minecraft:light_gray_wool")
+        sb(1632, y + 1, z, "minecraft:light_gray_carpet")
+    sb(1627, y, 5031, "minecraft:dark_oak_trapdoor[facing=north,half=bottom,open=false,powered=false,waterlogged=false]")
+    sb(1626, y, 5034, MOSS)
+    sb(1631, y, 5029, MOSS)
+    for x, z in ((1626, 5031), (1631, 5034), (1625, 5041)):
+        sb(x, U - 1, z, HANGING_MOSS)
+    # ---------------------------------------------------------------- dining room: the table still laid
+    for z in range(5031, 5041):
+        end = "north" if z == 5031 else "south" if z == 5040 else None
+        sb(1619, y, z, TABLE % ("%s_west_corner" % end if end else "west_center"))
+        sb(1620, y, z, TABLE % ("%s_east_corner" % end if end else "east_center"))
+    for z in (5032, 5034, 5036, 5038):
+        sb(1618, y, z, CHAIR % ("red", "east"))
+        if z != 5036:
+            sb(1621, y, z, CHAIR % ("red", "west"))
+    sb(1622, y, 5037, CHAIR % ("red", "east"))                                    # pushed back, turned to the wall
+    sb(1619, y, 5030, CHAIR % ("red", "south"))                                   # the head of the table
+    sb(1620, y, 5041, CHAIR % ("red", "north"))
+    for z in range(5032, 5040):                                                   # a place laid at every seat
+        sb(1619, y + 1, z, (PLATE if z % 2 == 0 else CUP) % "west")
+        sb(1620, y + 1, z, (PLATE if z % 2 == 0 else CUP) % "east")
+    sb(1619, y + 1, 5031, PLATE % "north")
+    sb(1620, y + 1, 5031, HC + "blue_cup[facing=north,pieces=1,waterlogged=false]")   # the marked cup (scene prop "cup")
+    sb(1619, y + 1, 5040, CANDELABRA % "north")
+    sb(1620, y + 1, 5040, CANDELABRA % "south")
+    sb(1619, U - 1, 5035, "minecraft:chain[axis=y,waterlogged=false]")
+    sb(1619, U - 2, 5035, "beautify:lamp_candelabra[facing=north,hanging=true,on=false]")
+    for z in range(5033, 5038):                                                   # the sideboard
+        sb(1617, y, z, HC + "dark_oak_counter[counter=dark_oak_planks,facing=east,type=1]")
+    sb(1617, y + 1, 5033, CANDLE % 2)
+    sb(1617, y + 1, 5034, HC + "berry_jam_jar[facing=east,jars=2]")
+    sb(1617, y + 1, 5036, HC + "white_bowl[facing=east,pieces=2,waterlogged=false]")
+    sb(1617, y + 2, 5035, FRAME % ("east", 1))
+    for z in (5031, 5032):
+        sb(1623, y, z, HC + "dark_oak_cupboard[facing=west,type=1]")
+    sb(1617, y, 5040, LITTER % ("west", 2))
+    sb(1622, y, 5029, LITTER % ("south", 1))
+    sb(1617, y, 5029, MOSS)
+    sb(1623, y, 5042, MOSS)
+    sb(1622, U - 1, 5041, HANGING_MOSS)
+    # ---------------------------------------------------------------- service corridor
+    for x in (1617, 1618):
+        sb(x, y, 5025, "minecraft:barrel[facing=up,open=false]")
+    for x in range(1621, 1626):
+        sb(x, y, 5025, HC + "dark_oak_counter[counter=smooth_stone,facing=south,type=1]")
+    sb(1622, y + 1, 5025, HC + "terracotta_thick_pot")
+    sb(1624, y + 1, 5025, HC + "wood_bowl[facing=south,pieces=3,waterlogged=false]")
+    sb(1642, y, 5025, "minecraft:cauldron")
+    sb(1642, y, 5027, "minecraft:smoker[facing=west,lit=false]")
+    sb(1641, y, 5025, "minecraft:barrel[facing=up,open=false]")
+    sb(1630, y, 5025, MOSS)
+    sb(1619, U - 1, 5026, HANGING_MOSS)
+    # ---------------------------------------------------------------- library: actually shelved
+    for x, face in ((1636, "west"), (1639, "east")):                             # half-emptied chiseled shelves
+        for z, h in ((5032, 0b101101), (5033, 0b011010), (5038, 0b110011), (5040, 0b000111)):
+            sb(x, y + 2, z, chiseled(face, h))
+    for x, face in ((1636, "east"), (1639, "west")):
+        for z, h in ((5037, 0b111000), (5041, 0b010101)):
+            sb(x, y, z, chiseled(face, h))
+    sb(1640, y, 5029, HC + "dark_oak_desk[color=green,facing=south,waterlogged=false]")
+    sb(1640, y, 5030, CHAIR % ("green", "north"))
+    sb(1640, y + 1, 5029, HC + "stackable_book[books=3,facing=south,seed=17]")
+    sb(1635, y, 5029, "minecraft:lectern[facing=south,has_book=false,powered=false]")
+    sb(1637, y, 5029, BOOKSTACK % (2, "north"))
+    sb(1642, y, 5030, BOOKSTACK % (5, "west"))
+    for x, m in ((1634, 1), (1637, 4), (1640, 6)):                               # the aisles' far ends (scene props)
+        sb(x, y, 5042, BOOKSTACK % (m, "north"))
+    sb(1634, y + 2, 5036, FRAME % ("east", 11))
+    sb(1638, U - 1, 5033, HANGING_MOSS)
+    sb(1634, U - 1, 5040, HANGING_MOSS)
+    sb(1641, y, 5033, LITTER % ("north", 2))
+    # ---------------------------------------------------------------- the bedroom hall
+    u = U + 1
+    for x in range(X0 + 1, X1):
+        if x not in (1629,):                                                      # the ward stone shows through
+            sb(x, u, 5033, "minecraft:red_carpet")
+    for x, z in CANDLE_STANDS:                                                    # Litwick candles by each door
+        sb(x, u, z, "minecraft:dark_oak_fence")
+        sb(x, u + 1, z, CANDLE % 3)
+    for x, m in ((1620, 2), (1625, 8), (1633, 10), (1637, 12)):
+        sb(x, u + 2, 5032, FRAME % ("south", m))
+    # bedroom A: the parents'
+    sb(1617, u, 5042, BED % ("red", "south", "head"))
+    sb(1617, u, 5041, BED % ("red", "south", "foot"))
+    sb(1618, u, 5042, HC + "dark_oak_nightstand[color=none,facing=north,waterlogged=false]")
+    sb(1619, u, 5039, HC + "dark_oak_cupboard[facing=west,type=1]")
+    sb(1617, u + 1, 5038, "cozyhome:dark_oak_wall_mirror[facing=east,vertical_connection=single]")
+    # bedroom B: a child's
+    sb(1621, u, 5042, BED % ("blue", "south", "head"))
+    sb(1621, u, 5041, BED % ("blue", "south", "foot"))
+    sb(1625, u, 5042, HC + "dark_oak_side_table[color=none,facing=west,waterlogged=false]")
+    sb(1625, u + 1, 5042, BOOKSTACK % (0, "west"))
+    sb(1625, u, 5039, CHAIR % ("blue", "west"))
+    sb(1622, u, 5038, MOSS)
+    # bedroom C: a study
+    sb(1632, u, 5042, HC + "dark_oak_desk[color=none,facing=north,waterlogged=false]")
+    sb(1632, u, 5041, CHAIR % ("none", "south"))
+    sb(1632, u + 1, 5042, HC + "stackable_book[books=2,facing=north,seed=88]")
+    sb(1635, u, 5042, BOOKSTACK % (3, "north"))
+    # bedroom D: the back stair comes up here
+    sb(1637, u, 5042, BED % ("gray", "south", "head"))
+    sb(1637, u, 5041, BED % ("gray", "south", "foot"))
+    sb(1638, u, 5042, HC + "dark_oak_nightstand[color=none,facing=north,waterlogged=false]")
+    sb(1639, u, 5038, MOSS)
+    # the north-west room: the family's, where they are found together afterwards
+    sb(1617, u, 5025, BED % ("purple", "north", "head"))
+    sb(1617, u, 5026, BED % ("purple", "north", "foot"))
+    sb(1620, u, 5025, CHAIR % ("purple", "south"))
+    for x in (1618, 1619):
+        for z in (5027, 5028):
+            sb(x, u, z, "minecraft:purple_carpet")
+    # ---------------------------------------------------------------- the ballroom
+    for z in (5027, 5029):                                                        # the hearth, cold
+        for yy in (u, u + 1, u + 2):
+            sb(1622, yy, z, "minecraft:bricks")
+    sb(1622, u + 1, 5028, "minecraft:bricks")
+    sb(1622, u + 2, 5028, "minecraft:bricks")
+    sb(1622, u, 5028, "minecraft:soul_campfire[facing=east,lit=false,signal_fire=false,waterlogged=false]")
+    inlay = [(1623, 5028), (1624, 5027), (1625, 5026), (1627, 5027), (1628, 5028), (1629, 5029), (1631, 5028),
+             (1632, 5027), (1633, 5026), (1635, 5027), (1636, 5028)]
+    for x, z in inlay:                                                            # hearth, A, B, C, to the barrier
+        sb(x, U, z, "minecraft:gilded_blackstone")
+    for x, z in WARD_MARKS:
+        sb(x, U, z, "minecraft:chiseled_polished_blackstone")
+        sb(x, u, z, CANDLE % 1)
+    for x in range(1624, 1636, 2):                                                # chairs along the north wall
+        sb(x, u, 5025, CHAIR % ("purple", "south"))
+    sb(1624, u, 5030, MOSS)
+    sb(1631, u, 5030, MOSS)
+    sb(1641, u, 5025, MOSS)
+    # the house's old ward, cracked in the landing floor: the Habitat Block that makes this a ghost house. The same
+    # block and state tools/habitat_blocks.py sets (R9E), which then gives it its pool and range
+    sb(*WARD_STONE, "cobblemon:habitat_block[cancels_regular_spawns=true,activated_style=false]")
 
 
 def build(g):
@@ -114,29 +322,10 @@ def build(g):
     fill((1627, U + 1, 5041), (1630, U + 1, 5041), "minecraft:dark_oak_fence")        # its railings
     fill((1626, U + 1, 5035), (1626, U + 1, 5041), "minecraft:dark_oak_fence")
     fill((1631, U + 1, 5035), (1631, U + 1, 5041), "minecraft:dark_oak_fence")
-    sb(1625, F + 1, 5042, "minecraft:dark_oak_stairs[facing=east]")                  # broken furniture
-    sb(1632, F + 1, 5037, "minecraft:dark_oak_slab")
-    sb(1625, F + 1, 5037, "minecraft:barrel[facing=up]")
-    # dining room (west wing): a long table and its chairs, cups on it
-    fill((1620, F + 1, 5031), (1620, F + 1, 5041), "minecraft:dark_oak_fence")
-    fill((1620, F + 2, 5031), (1620, F + 2, 5041), "minecraft:dark_oak_slab[type=bottom]")
-    fill((1620, F + 1, 5032), (1620, F + 1, 5040), "minecraft:air")
-    for z in range(5032, 5041, 2):
-        sb(1619, F + 1, z, "minecraft:dark_oak_stairs[facing=east]")
-        sb(1621, F + 1, z, "minecraft:dark_oak_stairs[facing=west]")
-        sb(1620, F + 3, z, "minecraft:flower_pot")
-    sb(1617, F + 1, 5041, "minecraft:dark_oak_stairs[facing=south]")                 # a chair knocked to the wall
     # library (east wing): two rows of shelves, three aisles
     for x in (1636, 1639):
         fill((x, F + 1, 5031), (x, F + 3, 5041), "minecraft:bookshelf")
         fill((x, F + 1, 5035), (x, F + 3, 5035), "minecraft:air")                     # a gap through each row
-    fill((1639, F + 3, 5038), (1639, F + 3, 5040), "minecraft:chiseled_bookshelf[facing=east]")
-    sb(1642, F + 1, 5041, "minecraft:lectern[facing=west]")
-    # the service corridor, the length of the rear
-    sb(X0 + 1, F + 1, Z0 + 1, "minecraft:barrel[facing=up]")
-    sb(X0 + 2, F + 1, Z0 + 1, "minecraft:barrel[facing=up]")
-    sb(X1 - 1, F + 1, Z0 + 1, "minecraft:cauldron")
-    sb(X1 - 1, F + 1, Z0 + 3, "minecraft:smoker[facing=west]")
 
     # ---- upper floor
     HALL0, HALL1 = 5032, 5034                      # the bedroom hall, z; the landing is its middle
@@ -152,19 +341,21 @@ def build(g):
     for x, z, face in doors:
         sb(x, U + 1, z, "minecraft:dark_oak_door[facing=%s,half=lower]" % face)
         sb(x, U + 2, z, "minecraft:dark_oak_door[facing=%s,half=upper]" % face)
-    beds = [(1617, 5041), (1623, 5041), (1634, 5041), (1641, 5041)]
-    for x, z in beds:                                              # a bed's facing points from its foot to its head
-        sb(x, U + 1, z + 1, "minecraft:red_bed[facing=north,part=foot]")
-        sb(x, U + 1, z, "minecraft:red_bed[facing=north,part=head]")
-    sb(1617, U + 1, Z0 + 1, "minecraft:brown_bed[facing=south,part=foot]")
-    sb(1617, U + 1, Z0 + 2, "minecraft:brown_bed[facing=south,part=head]")
-    # the sealed ballroom, across the rear from x 1622, open to the roof; its doors off the landing are barred
+    for y in range(U + 1, EAVE - 1):                               # the stairwell's sides close off bedrooms B and C
+        fill((1626, y, 5036), (1626, y, Z1 - 1), "minecraft:dark_oak_planks")
+        fill((1631, y, 5036), (1631, y, Z1 - 1), "minecraft:dark_oak_planks")
+    # the sealed ballroom, across the rear from x 1622, open to the roof. Its barred doors off the landing have been
+    # bent apart: one bar is gone, so the way in is a squeeze, not a door
     fill((1622, U, Z0 + 1), (X1 - 1, U, HALL0 - 2), "minecraft:polished_blackstone")
     for x in range(1622, X1, 2):
         for z in range(Z0 + 1 + (x % 4 == 0), HALL0 - 1, 2):
             sb(x, U, z, "minecraft:calcite")
-    fill((1628, U + 1, HALL0 - 1), (1629, U + 3, HALL0 - 1), "minecraft:iron_bars")
+    fill((1628, U + 1, HALL0 - 1), (1628, U + 3, HALL0 - 1), "minecraft:iron_bars")
+    fill((1629, U + 1, HALL0 - 1), (1629, U + 2, HALL0 - 1), "minecraft:air")
+    sb(1629, U + 3, HALL0 - 1, "minecraft:iron_bars")
     fill((1628, U + 4, HALL0 - 1), (1629, U + 4, HALL0 - 1), "minecraft:dark_oak_planks")
+    back_stair(fill, sb)
+    furnish(fill, sb)
     # ---- roof: a steep gable, ridge west to east, holes where it has fallen in
     for i in range(11):
         y = EAVE + i
@@ -186,7 +377,7 @@ def build(g):
     for x, z in ((1620, 5035), (1629, 5042), (1638, 5036), (1621, 5026), (1638, 5026), (1629, 5026)):
         sb(x, U - 1, z, "minecraft:soul_lantern[hanging=true]")
     # upstairs the rooms are open to the rafters, so their lanterns stand on the floor
-    for x, z in ((1619, 5037), (1624, 5037), (1633, 5037), (1641, 5037), (1619, 5027), (1623, 5033), (1640, 5033)):
+    for x, z in ((1619, 5037), (1624, 5037), (1633, 5037), (1641, 5037), (1620, 5029), (1623, 5033), (1640, 5033)):
         sb(x, U + 1, z, "minecraft:soul_lantern[hanging=false]")
     for x in (1626, 1632, 1638):                                                       # the ballroom's chandeliers
         fill((x, U + 3, 5027), (x, EAVE + 4, 5027), "minecraft:chain")

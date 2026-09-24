@@ -24647,7 +24647,7 @@
     {
       "id": "route_1_ghost_mansion",
       "display_name": "Route 1 haunted mansion",
-      "intended_location": "Route 1 event structure; exact coordinates pending structure placement",
+      "intended_location": "the Route 1 mansion (1630, 5034): one Habitat Block, route1_mansion_ward in data/habitat_blocks.json, set in the landing floor at (1629, 120, 5033), range 18",
       "mechanism": "habitat_block",
       "replace_spawns": true,
       "level_band": {

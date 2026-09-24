@@ -55,11 +55,14 @@
       "give_item",
       "grant_reward_once",
       "relocate_actor",
-      "set_progression"
+      "scene_function",
+      "set_progression",
+      "sync_scene"
     ],
     "transaction_rule": "Progression writes and inventory changes in a transition commit atomically for the triggering player. grant_reward_once must durably commit its per-player claim receipt with item delivery. World compare-and-set and actor relocation are idempotent and retryable; they are not represented as one cross-scope transaction.",
     "progression_registration_rule": "Every progression_field_refs id must be declared exactly once in data/progression.json quest_fields. That registry is authoritative for type, scope, initial value, and allowed values.",
-    "mixed_scope_rule": "A mixed quest declares scope per progression field. World effects use an idempotent compare-and-set transition; rewards and dialogue cursors remain per player."
+    "mixed_scope_rule": "A mixed quest declares scope per progression field. World effects use an idempotent compare-and-set transition; rewards and dialogue cursors remain per player.",
+    "scene_effect_rule": "sync_scene {scene} runs that scene's per-player beat for the triggering player at once, so an actor moves on the click that moved its state; scene_function {scene, function} runs one of the scene's named command lists as that player (data/scenes.json, tools/scenes_pack.py). Neither writes quest state."
   },
   "design_decisions": [
     {
@@ -1904,6 +1907,2834 @@
         "quest.evt_vr_abandoned_cut.cache_claimed",
         "quest.evt_vr_abandoned_cut.completed",
         "quest.evt_vr_abandoned_cut.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_route1_gastly_family",
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scene": "data/scenes.json route1_gastly_family",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route1_gastly_pip",
+        "dlg_route1_gastly_haunter",
+        "dlg_route1_gastly_gengar",
+        "dlg_route1_gastly_portrait",
+        "dlg_route1_gastly_cup",
+        "dlg_route1_gastly_aisle_west",
+        "dlg_route1_gastly_aisle_middle",
+        "dlg_route1_gastly_aisle_east",
+        "dlg_route1_gastly_candle_a",
+        "dlg_route1_gastly_candle_b",
+        "dlg_route1_gastly_candle_c",
+        "dlg_route1_gastly_candle_d",
+        "dlg_route1_gastly_candle_n",
+        "dlg_route1_gastly_ward_a",
+        "dlg_route1_gastly_ward_b",
+        "dlg_route1_gastly_ward_c",
+        "dlg_route1_gastly_board"
+      ],
+      "objectives": [
+        {
+          "id": "meet_pip",
+          "active_when": {
+            "field": "quest.evt_route1_gastly_family.started",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_gastly_family.started",
+            "equals": true
+          },
+          "text": "Find what is hiding behind the grand stair."
+        },
+        {
+          "id": "foyer",
+          "active_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "foyer"
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "stairs"
+          },
+          "text": "Find the one clear way across the foyer."
+        },
+        {
+          "id": "dining",
+          "active_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "stairs"
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "service"
+          },
+          "text": "Go through the dining room to the service corridor, and leave the table as you found it."
+        },
+        {
+          "id": "library",
+          "active_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "service"
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "library"
+          },
+          "text": "Follow the right voice in the library."
+        },
+        {
+          "id": "hall",
+          "active_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "library"
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "landing"
+          },
+          "text": "Light the bedroom hall's candles in the order the Litwick show."
+        },
+        {
+          "id": "ballroom",
+          "active_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "landing"
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "family"
+          },
+          "text": "Restore the ballroom's three ward marks in the order the floor gives."
+        },
+        {
+          "id": "reunion",
+          "active_when": {
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "equals": "family"
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_gastly_family.completed",
+            "equals": true
+          },
+          "text": "See the family together."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "foyer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.dialogue_cursor",
+              "value": "p_foyer"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
+          "id": "foyer_path",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "foyer"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "stairs"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.dialogue_cursor",
+              "value": "p_stairs_go"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
+          "id": "take_cup",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.cup_taken",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.cup_taken",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.prop_cursor",
+              "value": "c_taken"
+            }
+          ]
+        },
+        {
+          "id": "return_cup",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.cup_taken",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.cup_taken",
+              "value": false
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.prop_cursor",
+              "value": "c_returned"
+            }
+          ]
+        },
+        {
+          "id": "reach_service",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "stairs"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.cup_taken",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "service"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
+          "id": "right_aisle",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "service"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "library"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.prop_cursor",
+              "value": "am_right"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
+          "id": "lamp_first",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "library"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.lamp_1",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.lamp_1",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "lamp_second",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "library"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.lamp_1",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.lamp_2",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.lamp_2",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "lamp_third",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "library"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.lamp_1",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.lamp_2",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "landing"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.lamp_1",
+              "value": false
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.lamp_2",
+              "value": false
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
+          "id": "lamps_reset",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "library"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.lamp_1",
+              "value": false
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.lamp_2",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": "ward_first",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "landing"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.ward_1",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.ward_1",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "ward_second",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "landing"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.ward_1",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.ward_2",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.ward_2",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "barrier_down",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "landing"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.ward_1",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.ward_2",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "family"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.ward_1",
+              "value": false
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.ward_2",
+              "value": false
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.dialogue_cursor",
+              "value": "p_end1"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
+          "id": "wards_reset",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "landing"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.ward_1",
+              "value": false
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.ward_2",
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": "grant_tag",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "family"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_spell_tag",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route1_gastly_family.reward_claimed",
+              "idempotency_key": "evt_route1_gastly_family:reward_spell_tag:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.dialogue_cursor",
+              "value": "p_end7"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.dialogue_cursor",
+              "value": "p_done"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
+          "id": "grant_cache",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.completed",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.cache_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_mansion_cache",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route1_gastly_family.cache_claimed",
+              "idempotency_key": "evt_route1_gastly_family:reward_mansion_cache:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.prop_cursor",
+              "value": "b_empty"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_spell_tag",
+          "status": "item_ids_verified",
+          "contents": [
+            {
+              "item": "cobblemon:spell_tag",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/spell_tag.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "the design's primary reward (ROUTE1_GASTLY_MANSION.md); quantity one"
+        },
+        {
+          "id": "reward_mansion_cache",
+          "status": "item_ids_verified; quantity provisional",
+          "contents": [
+            {
+              "item": "cobblemon:dusk_ball",
+              "count": 3,
+              "verification": "assets/cobblemon/models/item/dusk_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "the design's secondary cache: early capture supplies left where Gastly hid; the quantity waits on the early economy review"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "actors": "Pip, Haunter and Gengar are per-player actors (data/scenes.json): each player has their own three, standing where that player's checkpoint says; one player's progress never moves, resets or hides another's",
+        "props": "shared props (cup, aisles, candles, wards, the loose board) open each clicker's own conversation",
+        "barrier": "per-player: the curtain is particles sent only to players whose ward is still up, and the push-back applies only to them",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields",
+        "caveat": "another player's actors are visible to everyone; vanilla has no per-player entity visibility. Clicking one that is not yours says so and opens nothing"
+      },
+      "reset_and_restore": "leaving the area, disconnecting or a restart removes the player's actors; back in the area, the next beat puts them where the saved checkpoint says. A wrong candle or ward resets that room's partial order only",
+      "not_built": [
+        "the optional tea battle in the dining room (and its tea reward): no per-player way to know that one specific wild Pokemon was beaten; returning the cup is the only dining-room path",
+        "beating 'the event's strongest wild Ghost' as the alternative to the ward marks: the same reason",
+        "a separate, non-family Gastly encounter outside the mansion: waits on Route 1 balance, as the design says"
+      ],
+      "progression_field_refs": [
+        "quest.evt_route1_gastly_family.started",
+        "quest.evt_route1_gastly_family.checkpoint",
+        "quest.evt_route1_gastly_family.cup_taken",
+        "quest.evt_route1_gastly_family.lamp_1",
+        "quest.evt_route1_gastly_family.lamp_2",
+        "quest.evt_route1_gastly_family.ward_1",
+        "quest.evt_route1_gastly_family.ward_2",
+        "quest.evt_route1_gastly_family.reward_claimed",
+        "quest.evt_route1_gastly_family.cache_claimed",
+        "quest.evt_route1_gastly_family.completed",
+        "quest.evt_route1_gastly_family.dialogue_cursor",
+        "quest.evt_route1_gastly_family.haunter_cursor",
+        "quest.evt_route1_gastly_family.gengar_cursor",
+        "quest.evt_route1_gastly_family.prop_cursor"
+      ]
+    },
+    {
+      "id": "evt_route1_rattata_picnic",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route1_rattata_picnic",
+        "dlg_route1_picnic_hollow_log",
+        "dlg_route1_picnic_bush",
+        "dlg_route1_picnic_crate",
+        "dlg_route1_picnic_stump"
+      ],
+      "objectives": [
+        {
+          "id": "find_lunch",
+          "active_when": {
+            "field": "quest.evt_route1_rattata_picnic.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_rattata_picnic.lunch_found",
+            "equals": true
+          },
+          "text": "Follow the crumbs to the stolen lunch."
+        },
+        {
+          "id": "return_lunch",
+          "active_when": {
+            "field": "quest.evt_route1_rattata_picnic.lunch_found",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_rattata_picnic.reward_claimed",
+            "equals": true
+          },
+          "text": "Bring the lunch back to its owner."
+        },
+        {
+          "id": "berry",
+          "active_when": {
+            "field": "quest.evt_route1_rattata_picnic.reward_claimed",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_rattata_picnic.berry_left",
+            "equals": true
+          },
+          "text": "Leave a berry at the old stump for the Rattata."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.dialogue_cursor",
+              "value": "o_hunt"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_rattata_picnic"
+            }
+          ]
+        },
+        {
+          "id": "find_lunch",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.lunch_found",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.lunch_found",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.prop_cursor",
+              "value": "hl_gone"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_rattata_picnic"
+            }
+          ]
+        },
+        {
+          "id": "grant_picnic",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.lunch_found",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_picnic",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route1_rattata_picnic.reward_claimed",
+              "idempotency_key": "evt_route1_rattata_picnic:reward_picnic:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.dialogue_cursor",
+              "value": "o_back4"
+            }
+          ]
+        },
+        {
+          "id": "leave_berry",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.reward_claimed",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.berry_left",
+              "value": false
+            },
+            {
+              "kind": "held_item",
+              "item_predicate": "#cobblemon:berries"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "consume_held_item",
+              "item_predicate": "#cobblemon:berries"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.berry_left",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.prop_cursor",
+              "value": "st_left"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_rattata_picnic"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_rattata_picnic.berry_left",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_rattata_picnic.dialogue_cursor",
+              "value": "o_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_picnic",
+          "status": "item_ids_verified; quantities provisional (the early economy review)",
+          "contents": [
+            {
+              "item": "cobblemon:oran_berry",
+              "count": 3,
+              "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "cobblemon:poke_ball",
+              "count": 3,
+              "verification": "assets/cobblemon/models/item/poke_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "a food bundle and low-value capture supplies"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route1_rattata_picnic.started",
+        "quest.evt_route1_rattata_picnic.lunch_found",
+        "quest.evt_route1_rattata_picnic.berry_left",
+        "quest.evt_route1_rattata_picnic.reward_claimed",
+        "quest.evt_route1_rattata_picnic.completed",
+        "quest.evt_route1_rattata_picnic.dialogue_cursor",
+        "quest.evt_route1_rattata_picnic.prop_cursor"
+      ],
+      "scene": "data/scenes.json route1_rattata_picnic"
+    },
+    {
+      "id": "evt_route1_first_cast",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route1_first_cast",
+        "dlg_route1_first_cast_rack"
+      ],
+      "objectives": [
+        {
+          "id": "meet",
+          "active_when": {
+            "field": "quest.evt_route1_first_cast.started",
+            "equals": false
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_first_cast.started",
+            "equals": true
+          },
+          "text": "Walk out to the jetty west of Pallet."
+        },
+        {
+          "id": "rod",
+          "active_when": {
+            "field": "quest.evt_route1_first_cast.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route1_first_cast.rod_claimed",
+            "equals": true
+          },
+          "text": "Take the spare rod."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_first_cast.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_first_cast.started",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "give_rod",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_first_cast.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_first_cast.rod_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_rod",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route1_first_cast.rod_claimed",
+              "idempotency_key": "evt_route1_first_cast:reward_rod:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_first_cast.dialogue_cursor",
+              "value": "f5"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_first_cast.rod_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_first_cast.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_first_cast.dialogue_cursor",
+              "value": "f_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_rod",
+          "status": "item_id_verified (vanilla)",
+          "contents": [
+            {
+              "item": "minecraft:fishing_rod",
+              "count": 1,
+              "verification": "vanilla item"
+            }
+          ],
+          "why": "one basic rod per player, once; not Cobblemon's Poke Rod (the handoff)"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route1_first_cast.started",
+        "quest.evt_route1_first_cast.rod_claimed",
+        "quest.evt_route1_first_cast.completed",
+        "quest.evt_route1_first_cast.dialogue_cursor",
+        "quest.evt_route1_first_cast.prop_cursor"
+      ],
+      "scene": "data/scenes.json route1_first_cast",
+      "proof_still_required": "the early fishing pool, and Only Bottle Caps' 3% silver Bottle Cap treasure chance; the jetty stands over flats about one block deep, so vanilla's open-water treasure check may not pass there"
+    },
+    {
+      "id": "evt_route2_rollaway_geodude",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route2_rollaway_geodude",
+        "dlg_route2_geodude_rut",
+        "dlg_route2_geodude_sack",
+        "dlg_route2_geodude_boulder",
+        "dlg_route2_geodude_brake",
+        "dlg_route2_geodude"
+      ],
+      "objectives": [
+        {
+          "id": "clues",
+          "active_when": {
+            "field": "quest.evt_route2_rollaway_geodude.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+            "equals": true
+          },
+          "text": "Follow the rut, the sack and the boulder to the cart, and set its brake."
+        },
+        {
+          "id": "back",
+          "active_when": {
+            "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route2_rollaway_geodude.reward_claimed",
+            "equals": true
+          },
+          "text": "Tell the miner."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+              "value": "m_hunt"
+            }
+          ]
+        },
+        {
+          "id": "clue_rut",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.started",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.clue_rut",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "clue_sack",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.started",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.clue_sack",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "clue_boulder",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.started",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.clue_boulder",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "secure_brake",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.clue_rut",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.clue_sack",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.clue_boulder",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.prop_cursor",
+              "value": "br_set"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route2_rollaway_geodude"
+            }
+          ]
+        },
+        {
+          "id": "grant",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_mining",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route2_rollaway_geodude.reward_claimed",
+              "idempotency_key": "evt_route2_rollaway_geodude:reward_mining:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+              "value": "m_back3"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_rollaway_geodude.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+              "value": "m_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_mining",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:everstone",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/everstone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "minecraft:torch",
+              "count": 8,
+              "verification": "vanilla item"
+            }
+          ],
+          "why": "mining supplies and a small stone the handoff calls a held-item candidate; the Everstone changes no battle before Brock"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route2_rollaway_geodude.started",
+        "quest.evt_route2_rollaway_geodude.clue_rut",
+        "quest.evt_route2_rollaway_geodude.clue_sack",
+        "quest.evt_route2_rollaway_geodude.clue_boulder",
+        "quest.evt_route2_rollaway_geodude.brake_secured",
+        "quest.evt_route2_rollaway_geodude.reward_claimed",
+        "quest.evt_route2_rollaway_geodude.completed",
+        "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+        "quest.evt_route2_rollaway_geodude.prop_cursor"
+      ],
+      "scene": "data/scenes.json route2_rollaway_geodude",
+      "lore_rule": "a work accident from Brock's stone country, not the Worldshift or the Haven Compact"
+    },
+    {
+      "id": "evt_route2_viltri_sounding",
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route2_viltri_sounding",
+        "dlg_route2_staff_shallow",
+        "dlg_route2_staff_middle",
+        "dlg_route2_staff_deep",
+        "dlg_route2_gauge",
+        "dlg_route2_claw_post",
+        "dlg_route2_corphish",
+        "dlg_route2_lotad"
+      ],
+      "objectives": [
+        {
+          "id": "staffs",
+          "active_when": {
+            "field": "quest.evt_route2_viltri_sounding.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route2_viltri_sounding.staff_deep",
+            "equals": true
+          },
+          "text": "Read the three depth staffs, shallow to deep."
+        },
+        {
+          "id": "gauge",
+          "active_when": {
+            "field": "quest.evt_route2_viltri_sounding.staff_deep",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+            "equals": true
+          },
+          "text": "Reset the floating gauge."
+        },
+        {
+          "id": "back",
+          "active_when": {
+            "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route2_viltri_sounding.reward_claimed",
+            "equals": true
+          },
+          "text": "Tell the shore keeper."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.dialogue_cursor",
+              "value": "k_task"
+            }
+          ]
+        },
+        {
+          "id": "read_shallow",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.staff_shallow",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.staff_shallow",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "read_middle",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.staff_shallow",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.staff_middle",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.staff_middle",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "read_deep",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.staff_middle",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.staff_deep",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.staff_deep",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "reset_gauge",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.staff_deep",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "grant",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_shore",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route2_viltri_sounding.reward_claimed",
+              "idempotency_key": "evt_route2_viltri_sounding:reward_shore:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.dialogue_cursor",
+              "value": "k_done2"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route2_viltri_sounding.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route2_viltri_sounding.dialogue_cursor",
+              "value": "k_repeat"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_shore",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:net_ball",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "minecraft:cooked_salmon",
+              "count": 3,
+              "verification": "vanilla item"
+            }
+          ],
+          "why": "regional food and ordinary shore supplies; no special species"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route2_viltri_sounding.started",
+        "quest.evt_route2_viltri_sounding.staff_shallow",
+        "quest.evt_route2_viltri_sounding.staff_middle",
+        "quest.evt_route2_viltri_sounding.staff_deep",
+        "quest.evt_route2_viltri_sounding.gauge_reset",
+        "quest.evt_route2_viltri_sounding.reward_claimed",
+        "quest.evt_route2_viltri_sounding.completed",
+        "quest.evt_route2_viltri_sounding.dialogue_cursor",
+        "quest.evt_route2_viltri_sounding.prop_cursor"
+      ],
+      "scene": "data/scenes.json route2_viltri_sounding",
+      "site_note": "the listed station (1779, 3011) is 11 blocks above Lake Viltri and 48 from its water; the keeper stands there, a stepped path goes down the bank, and the platform and staffs are at the waterline below"
+    },
+    {
+      "id": "evt_viltri_north_bank",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_viltri_north_bank"
+      ],
+      "objectives": [
+        {
+          "id": "battle",
+          "active_when": {
+            "field": "quest.evt_viltri_north_bank.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_viltri_north_bank.trainer_defeated",
+            "equals": true
+          },
+          "text": "Beat the North Bank Angler."
+        },
+        {
+          "id": "reward",
+          "active_when": {
+            "field": "quest.evt_viltri_north_bank.trainer_defeated",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_viltri_north_bank.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear what the angler says."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_viltri_north_bank.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_viltri_north_bank.started",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "grant_lure",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_viltri_north_bank.trainer_defeated",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_viltri_north_bank.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_lure",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_viltri_north_bank.reward_claimed",
+              "idempotency_key": "evt_viltri_north_bank:reward_lure:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_viltri_north_bank.dialogue_cursor",
+              "value": "n_win2"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_viltri_north_bank.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_viltri_north_bank.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_viltri_north_bank.dialogue_cursor",
+              "value": "n_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_lure",
+          "status": "item_id_verified",
+          "contents": [
+            {
+              "item": "cobblemon:lure_ball",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/lure_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "after the player's first verified win, through the quest reward path, never the shared RCT bag (the handoff)"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_viltri_north_bank.started",
+        "quest.evt_viltri_north_bank.trainer_defeated",
+        "quest.evt_viltri_north_bank.reward_claimed",
+        "quest.evt_viltri_north_bank.completed",
+        "quest.evt_viltri_north_bank.dialogue_cursor"
+      ],
+      "scene": "data/scenes.json viltri_north_bank",
+      "trainer_defeated_setter": "only the player-win callback: rctmod's defeat_count advancement for route_02_shore_trainer_01 (tools/route_trainers.py), which also tells the winner to look at the tackle box, where this conversation opens"
+    },
+    {
+      "id": "evt_route3_nosepass_signs",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route3_nosepass_signs",
+        "dlg_route3_sign_a",
+        "dlg_route3_sign_b",
+        "dlg_route3_sign_c",
+        "dlg_route3_nosepass"
+      ],
+      "objectives": [
+        {
+          "id": "two",
+          "active_when": {
+            "field": "quest.evt_route3_nosepass_signs.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+            "equals": true
+          },
+          "text": "Wedge two signs to their marks, then watch the mast."
+        },
+        {
+          "id": "third",
+          "active_when": {
+            "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+            "equals": true
+          },
+          "text": "Fix the third sign's hidden bracket."
+        },
+        {
+          "id": "back",
+          "active_when": {
+            "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_nosepass_signs.reward_claimed",
+            "equals": true
+          },
+          "text": "Tell the trail keeper."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+              "value": "t_task"
+            }
+          ]
+        },
+        {
+          "id": "fix_a",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.sign_a",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.sign_a",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "fix_b",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.sign_b",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.sign_b",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "observe_pulse",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.sign_a",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.sign_b",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+              "value": "t_pulse"
+            },
+            {
+              "kind": "scene_function",
+              "scene": "route3_nosepass_signs",
+              "function": "pulse"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route3_nosepass_signs"
+            }
+          ]
+        },
+        {
+          "id": "fix_c",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "grant",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_climb",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route3_nosepass_signs.reward_claimed",
+              "idempotency_key": "evt_route3_nosepass_signs:reward_climb:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+              "value": "t_done2"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_nosepass_signs.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+              "value": "t_repeat"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_climb",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "cobblemon:potion",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            },
+            {
+              "item": "minecraft:torch",
+              "count": 6,
+              "verification": "vanilla item"
+            }
+          ],
+          "why": "climbing supplies; the marked shelter is the Swablu guide's bench farther up, named in the keeper's last line"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route3_nosepass_signs.started",
+        "quest.evt_route3_nosepass_signs.sign_a",
+        "quest.evt_route3_nosepass_signs.sign_b",
+        "quest.evt_route3_nosepass_signs.pulse_observed",
+        "quest.evt_route3_nosepass_signs.brackets_fixed",
+        "quest.evt_route3_nosepass_signs.reward_claimed",
+        "quest.evt_route3_nosepass_signs.completed",
+        "quest.evt_route3_nosepass_signs.dialogue_cursor",
+        "quest.evt_route3_nosepass_signs.prop_cursor"
+      ],
+      "scene": "data/scenes.json route3_nosepass_signs",
+      "reveal_rule": "never reads or writes flags.surge_reveal_complete; the player sees a pulse and a direction, never who sent it or that it was steered",
+      "pulse_cue": "the mast is 441 blocks from the signs, past any client's render distance, so the pulse cannot be seen ON the mast: it is a flash sent to the player alone at a point 64 blocks along the line to the mast top, with a sound and Nosepass turning to face it (scene function pulse)"
+    },
+    {
+      "id": "evt_route3_creek_wooper",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route3_creek_wooper",
+        "dlg_route3_approach_feeding",
+        "dlg_route3_approach_mud",
+        "dlg_route3_approach_stones",
+        "dlg_route3_crate",
+        "dlg_route3_wooper"
+      ],
+      "objectives": [
+        {
+          "id": "path",
+          "active_when": {
+            "field": "quest.evt_route3_creek_wooper.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_creek_wooper.safe_path_found",
+            "equals": true
+          },
+          "text": "Find the way down that leaves the Wooper alone."
+        },
+        {
+          "id": "crate",
+          "active_when": {
+            "field": "quest.evt_route3_creek_wooper.safe_path_found",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_creek_wooper.crate_recovered",
+            "equals": true
+          },
+          "text": "Bring the crate out of the shallows."
+        },
+        {
+          "id": "back",
+          "active_when": {
+            "field": "quest.evt_route3_creek_wooper.crate_recovered",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_creek_wooper.reward_claimed",
+            "equals": true
+          },
+          "text": "Tell the courier."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.dialogue_cursor",
+              "value": "c_task"
+            }
+          ]
+        },
+        {
+          "id": "find_path",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.safe_path_found",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.safe_path_found",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "recover",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.safe_path_found",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.crate_recovered",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.crate_recovered",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "grant",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.crate_recovered",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_sand",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route3_creek_wooper.reward_claimed",
+              "idempotency_key": "evt_route3_creek_wooper:reward_sand:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.dialogue_cursor",
+              "value": "c_back2"
+            }
+          ]
+        },
+        {
+          "id": "claim_encounter",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.reward_claimed",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.encounter_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.encounter_claimed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.dialogue_cursor",
+              "value": "c_back3"
+            },
+            {
+              "kind": "scene_function",
+              "scene": "route3_creek_wooper",
+              "function": "encounter"
+            }
+          ]
+        },
+        {
+          "id": "decline",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_creek_wooper.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_creek_wooper.dialogue_cursor",
+              "value": "c_back4"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_sand",
+          "status": "item_id_verified; the design's candidate",
+          "contents": [
+            {
+              "item": "cobblemon:soft_sand",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/soft_sand.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "the event doc's Soft Sand candidate; the handoff lists no reward field, so reward_claimed is added for it"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route3_creek_wooper.started",
+        "quest.evt_route3_creek_wooper.safe_path_found",
+        "quest.evt_route3_creek_wooper.crate_recovered",
+        "quest.evt_route3_creek_wooper.reward_claimed",
+        "quest.evt_route3_creek_wooper.encounter_claimed",
+        "quest.evt_route3_creek_wooper.completed",
+        "quest.evt_route3_creek_wooper.dialogue_cursor",
+        "quest.evt_route3_creek_wooper.prop_cursor"
+      ],
+      "scene": "data/scenes.json route3_creek_wooper",
+      "encounter": "claimed once per player at the moment it is offered: the claim and the spawn are one dialogue action, so relogging cannot repeat it; the Wooper is an ordinary wild one that may be battled, caught or left",
+      "site_note": "the listed (2204, 1580) is a vertex of the pond's annotation outline, 8 blocks above and 54 from the water; the scene is on the water's nearest shore to the signs, (2182, 1630), 24 blocks south of them, inside their clearing, so it is the one stop the design asks for; walked distance unchanged (the signs' 1,469)",
+      "not_built": [
+        "crossing the wrong patch resetting the crate: no per-player way to see which ground a player walked on short of a zone per patch; the approaches are choices at their heads instead"
+      ]
+    },
+    {
+      "id": "evt_route3_swablu_nest",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_route3_swablu_nest",
+        "dlg_route3_fiber_1",
+        "dlg_route3_fiber_2",
+        "dlg_route3_fiber_3",
+        "dlg_route3_nest",
+        "dlg_route3_swablu"
+      ],
+      "objectives": [
+        {
+          "id": "fibers",
+          "active_when": {
+            "field": "quest.evt_route3_swablu_nest.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_swablu_nest.fiber_placed",
+            "equals": true
+          },
+          "text": "Gather three bundles of soft fiber and leave them by the nest."
+        },
+        {
+          "id": "flag",
+          "active_when": {
+            "field": "quest.evt_route3_swablu_nest.fiber_placed",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_swablu_nest.flag_recovered",
+            "equals": true
+          },
+          "text": "Take the route cloth the Swablu give back."
+        },
+        {
+          "id": "back",
+          "active_when": {
+            "field": "quest.evt_route3_swablu_nest.flag_recovered",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_route3_swablu_nest.reward_claimed",
+            "equals": true
+          },
+          "text": "Return the flag to the guide."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.dialogue_cursor",
+              "value": "s_task"
+            }
+          ]
+        },
+        {
+          "id": "take_fiber_1",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_1",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.fiber_1",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "take_fiber_2",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_2",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.fiber_2",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "take_fiber_3",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.started",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_3",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.fiber_3",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "place_fibers",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_1",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_2",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_3",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_placed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.fiber_placed",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "recover_flag",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.fiber_placed",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.flag_recovered",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.flag_recovered",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "grant",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.flag_recovered",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_feathers",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_route3_swablu_nest.reward_claimed",
+              "idempotency_key": "evt_route3_swablu_nest:reward_feathers:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.dialogue_cursor",
+              "value": "s_back2"
+            }
+          ]
+        },
+        {
+          "id": "complete",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route3_swablu_nest.reward_claimed",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.completed",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route3_swablu_nest.dialogue_cursor",
+              "value": "s_done"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_feathers",
+          "status": "item_ids_verified; quantities provisional",
+          "contents": [
+            {
+              "item": "minecraft:feather",
+              "count": 3,
+              "verification": "vanilla item"
+            },
+            {
+              "item": "cobblemon:potion",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ],
+          "why": "feathers and climbing supplies"
+        }
+      ],
+      "multiplayer": {
+        "state": "per_player",
+        "props": "shared props open each clicker's own conversation",
+        "actors": "posed Pokemon are per-player actors (data/scenes.json), never capture rewards",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "progression_field_refs": [
+        "quest.evt_route3_swablu_nest.started",
+        "quest.evt_route3_swablu_nest.fiber_1",
+        "quest.evt_route3_swablu_nest.fiber_2",
+        "quest.evt_route3_swablu_nest.fiber_3",
+        "quest.evt_route3_swablu_nest.fiber_placed",
+        "quest.evt_route3_swablu_nest.flag_recovered",
+        "quest.evt_route3_swablu_nest.reward_claimed",
+        "quest.evt_route3_swablu_nest.completed",
+        "quest.evt_route3_swablu_nest.dialogue_cursor",
+        "quest.evt_route3_swablu_nest.prop_cursor"
+      ],
+      "scene": "data/scenes.json route3_swablu_nest",
+      "bench": "the sheltered bench farther up has no healing, PC, waystone or progression function"
+    },
+    {
+      "id": "route_01_trainer_01",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_01_trainer_01 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_01_trainer_01, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_01_trainer_01.defeated"
+      ]
+    },
+    {
+      "id": "route_01_trainer_02",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_01_trainer_02 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_01_trainer_02, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_01_trainer_02.defeated"
+      ]
+    },
+    {
+      "id": "route_01_trainer_03",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_01_trainer_03 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_01_trainer_03, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_01_trainer_03.defeated"
+      ]
+    },
+    {
+      "id": "route_01_trainer_04",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_01_trainer_04 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_01_trainer_04, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_01_trainer_04.defeated"
+      ]
+    },
+    {
+      "id": "route_02_trainer_01",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_02_trainer_01 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_02_trainer_01, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_02_trainer_01.defeated"
+      ]
+    },
+    {
+      "id": "route_02_trainer_02",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_02_trainer_02 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_02_trainer_02, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_02_trainer_02.defeated"
+      ]
+    },
+    {
+      "id": "route_02_shore_trainer_01",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_02_shore_trainer_01 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_02_shore_trainer_01, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_02_shore_trainer_01.defeated"
+      ]
+    },
+    {
+      "id": "route_02_trainer_03",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_02_trainer_03 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_02_trainer_03, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_02_trainer_03.defeated"
+      ]
+    },
+    {
+      "id": "route_03_trainer_01",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_03_trainer_01 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_03_trainer_01, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_03_trainer_01.defeated"
+      ]
+    },
+    {
+      "id": "route_03_trainer_02",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_03_trainer_02 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_03_trainer_02, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_03_trainer_02.defeated"
+      ]
+    },
+    {
+      "id": "route_03_trainer_03",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_03_trainer_03 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_03_trainer_03, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_03_trainer_03.defeated"
+      ]
+    },
+    {
+      "id": "route_03_trainer_04",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_03_trainer_04 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_03_trainer_04, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_03_trainer_04.defeated"
+      ]
+    },
+    {
+      "id": "route_03_trainer_05",
+      "kind": "trainer_record",
+      "source": "data/trainers.json route_03_trainer_05 (docs/story/TRAINER_RULES.json)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "objectives": [],
+      "transitions": [],
+      "writer": "only the player-win callback: rctmod's defeat_count advancement cobblers:trainer/route_03_trainer_05, which rctmod fires for the players on the winning side and never on a loss or a forfeit (EXP-027); tools/route_trainers.py",
+      "readers": "none yet; RCT's own per-player memory decides whether the trainer battles again (maxTrainerDefeats 1)",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player's own defeat; RCT keeps its own per-player count too"
+      },
+      "progression_field_refs": [
+        "quest.route_03_trainer_05.defeated"
       ]
     }
   ]

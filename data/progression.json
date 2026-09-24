@@ -360,6 +360,738 @@
       "scope": "player",
       "initial": "c001",
       "allowed_values": "node ids from dlg_vr_abandoned_cut"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.started",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.checkpoint",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "checkpoint",
+      "type": "enum",
+      "scope": "player",
+      "initial": "foyer",
+      "allowed_values": "foyer|stairs|service|library|landing|family"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.cup_taken",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "cup_taken",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.lamp_1",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "lamp_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.lamp_2",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "lamp_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.ward_1",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "ward_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.ward_2",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "ward_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.reward_claimed",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.cache_claimed",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "cache_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.completed",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.dialogue_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "p_open1",
+      "allowed_values": "node ids from dlg_route1_gastly_pip"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.haunter_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "haunter_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h_wait",
+      "allowed_values": "node ids from dlg_route1_gastly_haunter"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.gengar_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "gengar_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "g_trapped",
+      "allowed_values": "node ids from dlg_route1_gastly_gengar"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.prop_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from the scene's prop conversations (dlg_route1_gastly_*): each prop conversation enters on an explicit node chosen by state and never restores from this field, so they share one"
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.started",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.lunch_found",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "lunch_found",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.berry_left",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "berry_left",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.reward_claimed",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.completed",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.dialogue_cursor",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "o1",
+      "allowed_values": "node ids from dlg_route1_rattata_picnic"
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.prop_cursor",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route1_first_cast.started",
+      "quest_id": "evt_route1_first_cast",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_first_cast.rod_claimed",
+      "quest_id": "evt_route1_first_cast",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_first_cast.completed",
+      "quest_id": "evt_route1_first_cast",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_first_cast.dialogue_cursor",
+      "quest_id": "evt_route1_first_cast",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "f1",
+      "allowed_values": "node ids from dlg_route1_first_cast"
+    },
+    {
+      "id": "quest.evt_route1_first_cast.prop_cursor",
+      "quest_id": "evt_route1_first_cast",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.started",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.clue_rut",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "clue_rut",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.clue_sack",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "clue_sack",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.clue_boulder",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "clue_boulder",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.brake_secured",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "brake_secured",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.reward_claimed",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.completed",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "m1",
+      "allowed_values": "node ids from dlg_route2_rollaway_geodude"
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.prop_cursor",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.started",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.staff_shallow",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "staff_shallow",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.staff_middle",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "staff_middle",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.staff_deep",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "staff_deep",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.gauge_reset",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "gauge_reset",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.reward_claimed",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.completed",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.dialogue_cursor",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "k1",
+      "allowed_values": "node ids from dlg_route2_viltri_sounding"
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.prop_cursor",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.started",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.trainer_defeated",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "trainer_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.reward_claimed",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.completed",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.dialogue_cursor",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "n1",
+      "allowed_values": "node ids from dlg_viltri_north_bank"
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.started",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.sign_a",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "sign_a",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.sign_b",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "sign_b",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.pulse_observed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "pulse_observed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.brackets_fixed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "brackets_fixed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.reward_claimed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.completed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t1",
+      "allowed_values": "node ids from dlg_route3_nosepass_signs"
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.prop_cursor",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.started",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.safe_path_found",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "safe_path_found",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.crate_recovered",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "crate_recovered",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.reward_claimed",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.encounter_claimed",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "encounter_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.completed",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.dialogue_cursor",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c1",
+      "allowed_values": "node ids from dlg_route3_creek_wooper"
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.prop_cursor",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.started",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_1",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_2",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_3",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_3",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_placed",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_placed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.flag_recovered",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "flag_recovered",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.reward_claimed",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.completed",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.dialogue_cursor",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "s1",
+      "allowed_values": "node ids from dlg_route3_swablu_nest"
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.prop_cursor",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.route_01_trainer_01.defeated",
+      "quest_id": "route_01_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_01_trainer_02.defeated",
+      "quest_id": "route_01_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_01_trainer_03.defeated",
+      "quest_id": "route_01_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_01_trainer_04.defeated",
+      "quest_id": "route_01_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_trainer_01.defeated",
+      "quest_id": "route_02_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_trainer_02.defeated",
+      "quest_id": "route_02_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_shore_trainer_01.defeated",
+      "quest_id": "route_02_shore_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_trainer_03.defeated",
+      "quest_id": "route_02_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_01.defeated",
+      "quest_id": "route_03_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_02.defeated",
+      "quest_id": "route_03_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_03.defeated",
+      "quest_id": "route_03_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_04.defeated",
+      "quest_id": "route_03_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_05.defeated",
+      "quest_id": "route_03_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
     }
   ],
   "gym_markers": {

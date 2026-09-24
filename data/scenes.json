@@ -1,0 +1,2212 @@
+{
+  "schema": "cobblers.scenes/1",
+  "status": "proposed",
+  "note": "What a quest needs in the world besides its dialogue: props anyone can click, actors each player owns, zones, per-player effects and named functions. tools/scenes_pack.py generates cobblers_scenes from this; positions come from the tool that builds the place (built_by), and tests check each marker is standable and each prop sits on something that tool builds (on).",
+  "fields": {
+    "area": "players inside run the scene's beat once a second; their actors exist only while they are inside",
+    "markers": "named positions: [x, y, z] (feet), yaw, and slots (offsets for several players' copies side by side)",
+    "actors": "Pokemon each player owns: species, level, conversation (opened on click by the owner), place rules (first whose condition holds)",
+    "props": "shared interaction boxes (at, size) opening the clicker's own conversation; on = the block the prop sits on",
+    "zones": "boxes that run named quest transitions for a player inside; no items",
+    "effects": "per-player particles, sequences and push-backs while their condition holds",
+    "npcs": "Cobblemon NPCs placed over RCON (classes load at server start)",
+    "functions": "named command lists a dialogue runs as the player (effect scene_function)"
+  },
+  "scenes": [
+    {
+      "id": "route1_gastly_family",
+      "quest_id": "evt_route1_gastly_family",
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "built_by": "tools/route1_mansion.py (the house and every object a prop or marker sits on)",
+      "area": {
+        "from": [
+          1602,
+          110,
+          5008
+        ],
+        "to": [
+          1658,
+          140,
+          5060
+        ]
+      },
+      "slots": [
+        [
+          0,
+          0
+        ],
+        [
+          0.9,
+          0
+        ],
+        [
+          -0.9,
+          0
+        ],
+        [
+          0,
+          -0.9
+        ]
+      ],
+      "markers": {
+        "foyer": {
+          "at": [
+            1628,
+            115,
+            5033
+          ],
+          "yaw": 0
+        },
+        "stairs": {
+          "at": [
+            1630,
+            115,
+            5041
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ],
+            [
+              -0.9,
+              0
+            ],
+            [
+              0,
+              0.9
+            ]
+          ]
+        },
+        "service": {
+          "at": [
+            1636,
+            115,
+            5026
+          ],
+          "yaw": 90
+        },
+        "library": {
+          "at": [
+            1642,
+            115,
+            5042
+          ],
+          "yaw": 180,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              -0.9,
+              0
+            ]
+          ]
+        },
+        "landing": {
+          "at": [
+            1628,
+            121,
+            5033
+          ],
+          "yaw": 180,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              -0.9,
+              0
+            ],
+            [
+              0,
+              -0.9
+            ],
+            [
+              0,
+              0.9
+            ]
+          ]
+        },
+        "haunter_wait": {
+          "at": [
+            1635,
+            121,
+            5029
+          ],
+          "yaw": -90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              -0.9
+            ]
+          ]
+        },
+        "gengar_trapped": {
+          "at": [
+            1640,
+            121,
+            5027
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0.9
+            ],
+            [
+              0,
+              1.8
+            ],
+            [
+              0.9,
+              0
+            ]
+          ]
+        },
+        "reunion_pip": {
+          "at": [
+            1634,
+            121,
+            5028
+          ],
+          "yaw": -90,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "reunion_haunter": {
+          "at": [
+            1635,
+            121,
+            5029
+          ],
+          "yaw": 180,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "reunion_gengar": {
+          "at": [
+            1636,
+            121,
+            5027
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "family_pip": {
+          "at": [
+            1618,
+            121,
+            5028
+          ],
+          "yaw": 180,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "family_haunter": {
+          "at": [
+            1619,
+            121,
+            5027
+          ],
+          "yaw": 180,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "family_gengar": {
+          "at": [
+            1619,
+            121,
+            5029
+          ],
+          "yaw": 180,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "ballroom_safe": {
+          "at": [
+            1633,
+            121,
+            5028
+          ],
+          "yaw": -90,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      "actors": [
+        {
+          "id": "pip",
+          "species": "gastly",
+          "level": 10,
+          "name": "Pip",
+          "conversation": "dlg_route1_gastly_pip",
+          "not_yours": "That Gastly is following someone else.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              "marker": "family_pip"
+            },
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "family"
+              },
+              "marker": "reunion_pip"
+            },
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              "marker": "landing"
+            },
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              "marker": "library"
+            },
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              "marker": "service"
+            },
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "stairs"
+              },
+              "marker": "stairs"
+            },
+            {
+              "marker": "foyer"
+            }
+          ]
+        },
+        {
+          "id": "haunter",
+          "species": "haunter",
+          "level": 25,
+          "conversation": "dlg_route1_gastly_haunter",
+          "not_yours": "That Haunter is waiting for someone else's Gastly.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              "marker": "family_haunter"
+            },
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "family"
+              },
+              "marker": "reunion_haunter"
+            },
+            {
+              "marker": "haunter_wait"
+            }
+          ]
+        },
+        {
+          "id": "gengar",
+          "species": "gengar",
+          "level": 30,
+          "conversation": "dlg_route1_gastly_gengar",
+          "hitbox": [
+            1.3,
+            1.8
+          ],
+          "not_yours": "That Gengar belongs to someone else's story.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              "marker": "family_gengar"
+            },
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "family"
+              },
+              "marker": "reunion_gengar"
+            },
+            {
+              "marker": "gengar_trapped"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "portrait",
+          "at": [
+            1632.5,
+            116,
+            5040.5
+          ],
+          "size": [
+            0.9,
+            1.6
+          ],
+          "conversation": "dlg_route1_gastly_portrait",
+          "on": [
+            1632,
+            117,
+            5040
+          ]
+        },
+        {
+          "id": "cup",
+          "at": [
+            1620.5,
+            116,
+            5031.5
+          ],
+          "size": [
+            0.6,
+            0.5
+          ],
+          "conversation": "dlg_route1_gastly_cup",
+          "on": [
+            1620,
+            116,
+            5031
+          ]
+        },
+        {
+          "id": "aisle_west",
+          "at": [
+            1635.0,
+            115,
+            5042.5
+          ],
+          "size": [
+            1.8,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_aisle_west",
+          "on": [
+            1634,
+            115,
+            5042
+          ]
+        },
+        {
+          "id": "aisle_middle",
+          "at": [
+            1638.0,
+            115,
+            5042.5
+          ],
+          "size": [
+            1.8,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_aisle_middle",
+          "on": [
+            1637,
+            115,
+            5042
+          ]
+        },
+        {
+          "id": "aisle_east",
+          "at": [
+            1640.5,
+            115,
+            5042.5
+          ],
+          "size": [
+            0.9,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_aisle_east",
+          "on": [
+            1640,
+            115,
+            5042
+          ]
+        },
+        {
+          "id": "candle_a",
+          "at": [
+            1619.5,
+            121,
+            5034.5
+          ],
+          "size": [
+            0.8,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_candle_a",
+          "on": [
+            1619,
+            122,
+            5034
+          ]
+        },
+        {
+          "id": "candle_b",
+          "at": [
+            1624.5,
+            121,
+            5034.5
+          ],
+          "size": [
+            0.8,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_candle_b",
+          "on": [
+            1624,
+            122,
+            5034
+          ]
+        },
+        {
+          "id": "candle_c",
+          "at": [
+            1635.5,
+            121,
+            5034.5
+          ],
+          "size": [
+            0.8,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_candle_c",
+          "on": [
+            1635,
+            122,
+            5034
+          ]
+        },
+        {
+          "id": "candle_d",
+          "at": [
+            1641.5,
+            121,
+            5034.5
+          ],
+          "size": [
+            0.8,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_candle_d",
+          "on": [
+            1641,
+            122,
+            5034
+          ]
+        },
+        {
+          "id": "candle_n",
+          "at": [
+            1619.5,
+            121,
+            5032.5
+          ],
+          "size": [
+            0.8,
+            2.0
+          ],
+          "conversation": "dlg_route1_gastly_candle_n",
+          "on": [
+            1619,
+            122,
+            5032
+          ]
+        },
+        {
+          "id": "ward_a",
+          "at": [
+            1626.5,
+            121,
+            5026.5
+          ],
+          "size": [
+            0.9,
+            0.6
+          ],
+          "conversation": "dlg_route1_gastly_ward_a",
+          "on": [
+            1626,
+            121,
+            5026
+          ]
+        },
+        {
+          "id": "ward_b",
+          "at": [
+            1630.5,
+            121,
+            5029.5
+          ],
+          "size": [
+            0.9,
+            0.6
+          ],
+          "conversation": "dlg_route1_gastly_ward_b",
+          "on": [
+            1630,
+            121,
+            5029
+          ]
+        },
+        {
+          "id": "ward_c",
+          "at": [
+            1634.5,
+            121,
+            5026.5
+          ],
+          "size": [
+            0.9,
+            0.6
+          ],
+          "conversation": "dlg_route1_gastly_ward_c",
+          "on": [
+            1634,
+            121,
+            5026
+          ]
+        },
+        {
+          "id": "board",
+          "at": [
+            1627.5,
+            115,
+            5031.5
+          ],
+          "size": [
+            0.9,
+            0.4
+          ],
+          "conversation": "dlg_route1_gastly_board",
+          "on": [
+            1627,
+            115,
+            5031
+          ]
+        }
+      ],
+      "zones": [
+        {
+          "id": "dining_rear_door",
+          "from": [
+            1617,
+            115,
+            5029
+          ],
+          "to": [
+            1623,
+            118,
+            5030
+          ],
+          "transitions": [
+            "reach_service"
+          ],
+          "why": "the dining room's back row by its rear door, so the room must be crossed (the corridor alone does not count): Pip moves on to the service corridor only if the cup is still on the table"
+        }
+      ],
+      "effects": [
+        {
+          "id": "barrier",
+          "kind": "particles",
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "progression_equals",
+                  "field": "quest.evt_route1_gastly_family.completed",
+                  "value": true
+                },
+                {
+                  "kind": "progression_equals",
+                  "field": "quest.evt_route1_gastly_family.checkpoint",
+                  "value": "family"
+                }
+              ]
+            }
+          },
+          "particles": [
+            {
+              "particle": "minecraft:soul_fire_flame",
+              "at": [
+                1636.6,
+                123,
+                5027.5
+              ],
+              "delta": [
+                0.05,
+                1.6,
+                2.6
+              ],
+              "count": 24
+            },
+            {
+              "particle": "minecraft:reverse_portal",
+              "at": [
+                1636.6,
+                123,
+                5027.5
+              ],
+              "delta": [
+                0.05,
+                1.6,
+                2.6
+              ],
+              "count": 30
+            }
+          ]
+        },
+        {
+          "id": "barrier_push",
+          "kind": "push",
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "progression_equals",
+                  "field": "quest.evt_route1_gastly_family.completed",
+                  "value": true
+                },
+                {
+                  "kind": "progression_equals",
+                  "field": "quest.evt_route1_gastly_family.checkpoint",
+                  "value": "family"
+                }
+              ]
+            }
+          },
+          "from": [
+            1637,
+            121,
+            5025
+          ],
+          "to": [
+            1642,
+            125,
+            5030
+          ],
+          "to_marker": "ballroom_safe",
+          "message": "The air thickens like cold water and pushes you back."
+        },
+        {
+          "id": "litwick",
+          "kind": "sequence",
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "library"
+          },
+          "steps": [
+            [
+              {
+                "particle": "minecraft:soul_fire_flame",
+                "at": [
+                  1635.5,
+                  122.9,
+                  5034.5
+                ],
+                "delta": [
+                  0.04,
+                  0.08,
+                  0.04
+                ],
+                "count": 10
+              }
+            ],
+            [
+              {
+                "particle": "minecraft:soul_fire_flame",
+                "at": [
+                  1619.5,
+                  122.9,
+                  5034.5
+                ],
+                "delta": [
+                  0.04,
+                  0.08,
+                  0.04
+                ],
+                "count": 10
+              }
+            ],
+            [
+              {
+                "particle": "minecraft:soul_fire_flame",
+                "at": [
+                  1641.5,
+                  122.9,
+                  5034.5
+                ],
+                "delta": [
+                  0.04,
+                  0.08,
+                  0.04
+                ],
+                "count": 10
+              }
+            ],
+            []
+          ]
+        },
+        {
+          "id": "lamp_1",
+          "kind": "particles",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.lamp_1",
+                "value": true
+              }
+            ]
+          },
+          "particles": [
+            {
+              "particle": "minecraft:small_flame",
+              "at": [
+                1635.5,
+                122.6,
+                5034.5
+              ],
+              "delta": [
+                0.02,
+                0.02,
+                0.02
+              ],
+              "count": 4
+            }
+          ]
+        },
+        {
+          "id": "lamp_2",
+          "kind": "particles",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.lamp_2",
+                "value": true
+              }
+            ]
+          },
+          "particles": [
+            {
+              "particle": "minecraft:small_flame",
+              "at": [
+                1619.5,
+                122.6,
+                5034.5
+              ],
+              "delta": [
+                0.02,
+                0.02,
+                0.02
+              ],
+              "count": 4
+            }
+          ]
+        },
+        {
+          "id": "ward_1",
+          "kind": "particles",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.ward_1",
+                "value": true
+              }
+            ]
+          },
+          "particles": [
+            {
+              "particle": "minecraft:soul_fire_flame",
+              "at": [
+                1626.5,
+                121.4,
+                5026.5
+              ],
+              "delta": [
+                0.1,
+                0.05,
+                0.1
+              ],
+              "count": 6
+            }
+          ]
+        },
+        {
+          "id": "ward_2",
+          "kind": "particles",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.ward_2",
+                "value": true
+              }
+            ]
+          },
+          "particles": [
+            {
+              "particle": "minecraft:soul_fire_flame",
+              "at": [
+                1630.5,
+                121.4,
+                5029.5
+              ],
+              "delta": [
+                0.1,
+                0.05,
+                0.1
+              ],
+              "count": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "route1_rattata_picnic",
+      "quest_id": "evt_route1_rattata_picnic",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "built_by": "tools/route_events.py picnic",
+      "area": {
+        "from": [
+          1434,
+          115,
+          4812
+        ],
+        "to": [
+          1460,
+          137,
+          4840
+        ]
+      },
+      "markers": {
+        "rattata_stump": {
+          "at": [
+            1441,
+            123,
+            4829
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0.9
+            ]
+          ]
+        },
+        "rattata_basket": {
+          "at": [
+            1451,
+            123,
+            4827
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "hollow_log",
+          "conversation": "dlg_route1_picnic_hollow_log",
+          "at": [
+            1443.5,
+            123.0,
+            4822.5
+          ],
+          "size": [
+            2.8,
+            1.2
+          ],
+          "on": [
+            1443,
+            123,
+            4822
+          ]
+        },
+        {
+          "id": "bush",
+          "conversation": "dlg_route1_picnic_bush",
+          "at": [
+            1444.5,
+            123.0,
+            4833.5
+          ],
+          "size": [
+            2.0,
+            2.0
+          ],
+          "on": [
+            1444,
+            123,
+            4833
+          ]
+        },
+        {
+          "id": "crate",
+          "conversation": "dlg_route1_picnic_crate",
+          "at": [
+            1447.5,
+            122.0,
+            4817.5
+          ],
+          "size": [
+            1.0,
+            1.1
+          ],
+          "on": [
+            1447,
+            122,
+            4817
+          ]
+        },
+        {
+          "id": "stump",
+          "conversation": "dlg_route1_picnic_stump",
+          "at": [
+            1440.5,
+            123.0,
+            4828.5
+          ],
+          "size": [
+            1.0,
+            1.2
+          ],
+          "on": [
+            1440,
+            123,
+            4828
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "rattata",
+          "species": "rattata",
+          "level": 5,
+          "conversation": "dlg_route1_picnic_rattata",
+          "not_yours": "That Rattata is somebody else's problem.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.berry_left",
+                "value": true
+              },
+              "marker": "rattata_stump"
+            },
+            {
+              "marker": "rattata_basket"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [
+        {
+          "id": "crumbs",
+          "kind": "particles",
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.lunch_found",
+                "value": false
+              }
+            ]
+          },
+          "particles": [
+            {
+              "particle": "minecraft:composter",
+              "at": [
+                1448.5,
+                123.1,
+                4827.5
+              ],
+              "delta": [
+                0.2,
+                0.05,
+                0.2
+              ],
+              "count": 3
+            },
+            {
+              "particle": "minecraft:composter",
+              "at": [
+                1447.3,
+                123.1,
+                4826.6
+              ],
+              "delta": [
+                0.2,
+                0.05,
+                0.2
+              ],
+              "count": 3
+            },
+            {
+              "particle": "minecraft:composter",
+              "at": [
+                1446.1,
+                123.1,
+                4825.7
+              ],
+              "delta": [
+                0.2,
+                0.05,
+                0.2
+              ],
+              "count": 3
+            },
+            {
+              "particle": "minecraft:composter",
+              "at": [
+                1444.9,
+                123.1,
+                4824.8
+              ],
+              "delta": [
+                0.2,
+                0.05,
+                0.2
+              ],
+              "count": 3
+            },
+            {
+              "particle": "minecraft:composter",
+              "at": [
+                1443.7,
+                123.1,
+                4823.9
+              ],
+              "delta": [
+                0.2,
+                0.05,
+                0.2
+              ],
+              "count": 3
+            },
+            {
+              "particle": "minecraft:composter",
+              "at": [
+                1442.5,
+                123.1,
+                4823.0
+              ],
+              "delta": [
+                0.2,
+                0.05,
+                0.2
+              ],
+              "count": 3
+            }
+          ]
+        }
+      ],
+      "npcs": [
+        {
+          "conversation": "dlg_route1_rattata_picnic",
+          "at": [
+            1448,
+            123,
+            4831
+          ],
+          "yaw": 180
+        }
+      ]
+    },
+    {
+      "id": "route1_thirsty_stranger",
+      "quest_id": "evt_route1_thirsty_stranger",
+      "source": "docs/story/events/ROUTE1_THIRSTY_STRANGER.md",
+      "built_by": "tools/route_events.py stranger_hut",
+      "area": {
+        "from": [
+          1508,
+          115,
+          4452
+        ],
+        "to": [
+          1530,
+          137,
+          4470
+        ]
+      },
+      "markers": {},
+      "props": [],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route1_thirsty_stranger",
+          "at": [
+            1521,
+            123,
+            4461
+          ],
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "id": "route1_first_cast",
+      "quest_id": "evt_route1_first_cast",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "built_by": "tools/route_events.py first_cast",
+      "area": {
+        "from": [
+          1046,
+          55,
+          5341
+        ],
+        "to": [
+          1064,
+          76,
+          5357
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "rack",
+          "conversation": "dlg_route1_first_cast_rack",
+          "at": [
+            1053.5,
+            65.0,
+            5351.5
+          ],
+          "size": [
+            0.9,
+            2.2
+          ],
+          "on": [
+            1053,
+            65,
+            5351
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route1_first_cast",
+          "at": [
+            1052,
+            65,
+            5349
+          ],
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "id": "route2_rollaway_geodude",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "built_by": "tools/route_events.py geodude",
+      "area": {
+        "from": [
+          1744,
+          130,
+          3506
+        ],
+        "to": [
+          1780,
+          152,
+          3540
+        ]
+      },
+      "markers": {
+        "geodude_cart": {
+          "at": [
+            1771,
+            138,
+            3515
+          ],
+          "yaw": 0,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ],
+            [
+              -0.9,
+              0
+            ]
+          ]
+        },
+        "geodude_home": {
+          "at": [
+            1753,
+            139,
+            3530
+          ],
+          "yaw": -90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0.9
+            ],
+            [
+              -0.9,
+              0
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "rut",
+          "conversation": "dlg_route2_geodude_rut",
+          "at": [
+            1763.5,
+            138,
+            3523.5
+          ],
+          "size": [
+            1.0,
+            1.0
+          ],
+          "on": [
+            1763,
+            137,
+            3523
+          ]
+        },
+        {
+          "id": "sack",
+          "conversation": "dlg_route2_geodude_sack",
+          "at": [
+            1764.5,
+            138.0,
+            3524.5
+          ],
+          "size": [
+            1.0,
+            1.1
+          ],
+          "on": [
+            1764,
+            138,
+            3524
+          ]
+        },
+        {
+          "id": "boulder",
+          "conversation": "dlg_route2_geodude_boulder",
+          "at": [
+            1771.5,
+            139.0,
+            3524.5
+          ],
+          "size": [
+            2.0,
+            1.2
+          ],
+          "on": [
+            1771,
+            139,
+            3524
+          ]
+        },
+        {
+          "id": "brake",
+          "conversation": "dlg_route2_geodude_brake",
+          "at": [
+            1769.5,
+            138.0,
+            3517.5
+          ],
+          "size": [
+            0.8,
+            0.9
+          ],
+          "on": [
+            1769,
+            138,
+            3517
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "geodude",
+          "species": "geodude",
+          "level": 14,
+          "conversation": "dlg_route2_geodude",
+          "not_yours": "That Geodude is holding someone else's cart.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+                "value": true
+              },
+              "marker": "geodude_home"
+            },
+            {
+              "marker": "geodude_cart"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route2_rollaway_geodude",
+          "at": [
+            1752,
+            139,
+            3528
+          ],
+          "yaw": -90
+        }
+      ]
+    },
+    {
+      "id": "route2_viltri_sounding",
+      "quest_id": "evt_route2_viltri_sounding",
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "built_by": "tools/route_events.py sounding",
+      "area": {
+        "from": [
+          1700,
+          82,
+          2998
+        ],
+        "to": [
+          1784,
+          130,
+          3028
+        ]
+      },
+      "markers": {
+        "corphish": {
+          "at": [
+            1727,
+            105,
+            3014
+          ],
+          "yaw": -90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0
+            ],
+            [
+              0,
+              -0.9
+            ]
+          ]
+        },
+        "lotad_shelf": {
+          "at": [
+            1716,
+            103,
+            3011
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0.9
+            ],
+            [
+              -0.9,
+              0.9
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "staff_shallow",
+          "conversation": "dlg_route2_staff_shallow",
+          "at": [
+            1722.5,
+            104.0,
+            3006.5
+          ],
+          "size": [
+            0.8,
+            3.0
+          ],
+          "on": [
+            1722,
+            104,
+            3006
+          ]
+        },
+        {
+          "id": "staff_middle",
+          "conversation": "dlg_route2_staff_middle",
+          "at": [
+            1716.5,
+            104.0,
+            3012.5
+          ],
+          "size": [
+            0.8,
+            3.0
+          ],
+          "on": [
+            1716,
+            104,
+            3012
+          ]
+        },
+        {
+          "id": "staff_deep",
+          "conversation": "dlg_route2_staff_deep",
+          "at": [
+            1708.5,
+            104.0,
+            3018.5
+          ],
+          "size": [
+            0.8,
+            3.0
+          ],
+          "on": [
+            1708,
+            104,
+            3018
+          ]
+        },
+        {
+          "id": "gauge",
+          "conversation": "dlg_route2_gauge",
+          "at": [
+            1721.5,
+            104.0,
+            3016.5
+          ],
+          "size": [
+            1.0,
+            1.0
+          ],
+          "on": [
+            1721,
+            104,
+            3016
+          ]
+        },
+        {
+          "id": "claw_post",
+          "conversation": "dlg_route2_claw_post",
+          "at": [
+            1725.5,
+            105.0,
+            3015.5
+          ],
+          "size": [
+            0.8,
+            1.1
+          ],
+          "on": [
+            1725,
+            105,
+            3015
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "corphish",
+          "species": "corphish",
+          "level": 16,
+          "conversation": "dlg_route2_corphish",
+          "not_yours": "That Corphish is busy.",
+          "place": [
+            {
+              "marker": "corphish"
+            }
+          ]
+        },
+        {
+          "id": "lotad",
+          "species": "lotad",
+          "level": 14,
+          "conversation": "dlg_route2_lotad",
+          "not_yours": "The Lotad drifts away.",
+          "place": [
+            {
+              "marker": "lotad_shelf"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route2_viltri_sounding",
+          "at": [
+            1773,
+            113,
+            3010
+          ],
+          "yaw": 90
+        }
+      ]
+    },
+    {
+      "id": "viltri_north_bank",
+      "quest_id": "evt_viltri_north_bank",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "built_by": "tools/route_events.py north_bank",
+      "area": {
+        "from": [
+          1586,
+          90,
+          3052
+        ],
+        "to": [
+          1620,
+          126,
+          3084
+        ]
+      },
+      "markers": {},
+      "props": [
+        {
+          "id": "tackle",
+          "conversation": "dlg_viltri_north_bank",
+          "at": [
+            1597.5,
+            106.0,
+            3068.5
+          ],
+          "size": [
+            1.0,
+            1.1
+          ],
+          "on": [
+            1597,
+            106,
+            3068
+          ]
+        }
+      ],
+      "actors": [],
+      "zones": [],
+      "effects": [],
+      "npcs": []
+    },
+    {
+      "id": "route3_nosepass_signs",
+      "quest_id": "evt_route3_nosepass_signs",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "built_by": "tools/route_events.py nosepass",
+      "area": {
+        "from": [
+          2164,
+          116,
+          1588
+        ],
+        "to": [
+          2208,
+          141,
+          1614
+        ]
+      },
+      "markers": {
+        "nosepass_north": {
+          "at": [
+            2186,
+            126,
+            1597
+          ],
+          "yaw": 180,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              1.2,
+              0
+            ],
+            [
+              -1.2,
+              0
+            ],
+            [
+              0,
+              -1.2
+            ]
+          ]
+        },
+        "nosepass_mast": {
+          "at": [
+            2186,
+            126,
+            1597
+          ],
+          "yaw": 144,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              1.2,
+              0
+            ],
+            [
+              -1.2,
+              0
+            ],
+            [
+              0,
+              -1.2
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "sign_a",
+          "conversation": "dlg_route3_sign_a",
+          "at": [
+            2182.5,
+            125.0,
+            1602.5
+          ],
+          "size": [
+            0.9,
+            2.0
+          ],
+          "on": [
+            2182,
+            125,
+            1602
+          ]
+        },
+        {
+          "id": "sign_b",
+          "conversation": "dlg_route3_sign_b",
+          "at": [
+            2186.5,
+            126.0,
+            1601.5
+          ],
+          "size": [
+            0.9,
+            2.0
+          ],
+          "on": [
+            2186,
+            126,
+            1601
+          ]
+        },
+        {
+          "id": "sign_c",
+          "conversation": "dlg_route3_sign_c",
+          "at": [
+            2190.5,
+            125.0,
+            1602.5
+          ],
+          "size": [
+            0.9,
+            2.0
+          ],
+          "on": [
+            2190,
+            125,
+            1602
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "nosepass",
+          "species": "nosepass",
+          "level": 22,
+          "conversation": "dlg_route3_nosepass",
+          "not_yours": "That Nosepass is listening for someone else.",
+          "place": [
+            {
+              "when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+                "value": true
+              },
+              "marker": "nosepass_mast"
+            },
+            {
+              "marker": "nosepass_north"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route3_nosepass_signs",
+          "at": [
+            2195,
+            126,
+            1599
+          ],
+          "yaw": 0
+        }
+      ],
+      "functions": {
+        "pulse": [
+          "particle minecraft:flash 2151.6 148.6 1558.1 0 0 0 0 1 force @s",
+          "particle minecraft:electric_spark 2151.6 148.6 1558.1 1.5 1.5 1.5 0.3 60 force @s",
+          "particle minecraft:flash 1928.5 297 1248.5 0 0 0 0 1 force @s",
+          "playsound minecraft:block.beacon.power_select master @s ~ ~ ~ 0.7 1.8",
+          "playsound minecraft:entity.lightning_bolt.thunder master @s ~-20 ~10 ~-28 0.25 1.9"
+        ]
+      }
+    },
+    {
+      "id": "route3_creek_wooper",
+      "quest_id": "evt_route3_creek_wooper",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "built_by": "tools/route_events.py creek_wooper",
+      "area": {
+        "from": [
+          2168,
+          109,
+          1612
+        ],
+        "to": [
+          2204,
+          137,
+          1642
+        ]
+      },
+      "markers": {
+        "wooper_feeding": {
+          "at": [
+            2178,
+            119,
+            1630
+          ],
+          "yaw": 90,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              0.9,
+              0.5
+            ],
+            [
+              -0.9,
+              0.5
+            ],
+            [
+              0,
+              -0.9
+            ]
+          ]
+        },
+        "wooper_pool": {
+          "at": [
+            2192,
+            120,
+            1631
+          ],
+          "yaw": 180
+        }
+      },
+      "props": [
+        {
+          "id": "approach_feeding",
+          "conversation": "dlg_route3_approach_feeding",
+          "at": [
+            2184.5,
+            120,
+            1626.5
+          ],
+          "size": [
+            1.2,
+            1.0
+          ],
+          "on": [
+            2184,
+            119,
+            1626
+          ]
+        },
+        {
+          "id": "approach_mud",
+          "conversation": "dlg_route3_approach_mud",
+          "at": [
+            2188.5,
+            120,
+            1628.5
+          ],
+          "size": [
+            1.2,
+            1.0
+          ],
+          "on": [
+            2188,
+            119,
+            1628
+          ]
+        },
+        {
+          "id": "approach_stones",
+          "conversation": "dlg_route3_approach_stones",
+          "at": [
+            2191.5,
+            121,
+            1627.5
+          ],
+          "size": [
+            1.2,
+            1.0
+          ],
+          "on": [
+            2191,
+            120,
+            1627
+          ]
+        },
+        {
+          "id": "crate",
+          "conversation": "dlg_route3_crate",
+          "at": [
+            2182.5,
+            118.0,
+            1632.5
+          ],
+          "size": [
+            1.0,
+            1.4
+          ],
+          "on": [
+            2182,
+            118,
+            1632
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "wooper",
+          "species": "wooper",
+          "level": 18,
+          "conversation": "dlg_route3_wooper",
+          "not_yours": "The Wooper keeps eating.",
+          "place": [
+            {
+              "marker": "wooper_feeding"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route3_creek_wooper",
+          "at": [
+            2190,
+            121,
+            1624
+          ],
+          "yaw": 180
+        }
+      ],
+      "functions": {
+        "encounter": [
+          "spawnpokemonat 2192 120 1631 wooper level=20",
+          "particle minecraft:splash 2192.5 120.5 1631.5 0.4 0.2 0.4 0.1 20 force @s"
+        ]
+      }
+    },
+    {
+      "id": "route3_swablu_nest",
+      "quest_id": "evt_route3_swablu_nest",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "built_by": "tools/route_events.py swablu",
+      "area": {
+        "from": [
+          1996,
+          122,
+          1588
+        ],
+        "to": [
+          2030,
+          148,
+          1612
+        ]
+      },
+      "markers": {
+        "swablu_nest": {
+          "at": [
+            2014,
+            134,
+            1601
+          ],
+          "yaw": 0,
+          "slots": [
+            [
+              0,
+              0
+            ],
+            [
+              1.0,
+              0
+            ],
+            [
+              -1.0,
+              0
+            ]
+          ]
+        }
+      },
+      "props": [
+        {
+          "id": "nest",
+          "conversation": "dlg_route3_nest",
+          "at": [
+            2014.5,
+            133.0,
+            1601.5
+          ],
+          "size": [
+            2.8,
+            1.2
+          ],
+          "on": [
+            2014,
+            133,
+            1601
+          ]
+        },
+        {
+          "id": "fiber_1",
+          "conversation": "dlg_route3_fiber_1",
+          "at": [
+            2004.5,
+            134.0,
+            1600.5
+          ],
+          "size": [
+            1.0,
+            0.6
+          ],
+          "on": [
+            2004,
+            134,
+            1600
+          ]
+        },
+        {
+          "id": "fiber_2",
+          "conversation": "dlg_route3_fiber_2",
+          "at": [
+            2023.5,
+            133.0,
+            1599.5
+          ],
+          "size": [
+            1.0,
+            0.6
+          ],
+          "on": [
+            2023,
+            133,
+            1599
+          ]
+        },
+        {
+          "id": "fiber_3",
+          "conversation": "dlg_route3_fiber_3",
+          "at": [
+            2009.5,
+            134.0,
+            1597.5
+          ],
+          "size": [
+            1.0,
+            0.6
+          ],
+          "on": [
+            2009,
+            134,
+            1597
+          ]
+        }
+      ],
+      "actors": [
+        {
+          "id": "swablu",
+          "species": "swablu",
+          "level": 20,
+          "conversation": "dlg_route3_swablu",
+          "not_yours": "The Swablu ignores you.",
+          "place": [
+            {
+              "marker": "swablu_nest"
+            }
+          ]
+        }
+      ],
+      "zones": [],
+      "effects": [],
+      "npcs": [
+        {
+          "conversation": "dlg_route3_swablu_nest",
+          "at": [
+            2016,
+            133,
+            1598
+          ],
+          "yaw": 0
+        }
+      ]
+    }
+  ]
+}

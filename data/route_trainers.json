@@ -1,0 +1,267 @@
+{
+  "schema": "cobblers.route-trainers/1",
+  "generated_by": "tools/route_events.py --write-scenes",
+  "note": "Where each Route 1-3 trainer stands (docs/story/EARLY_ROUTE_BUILD_HANDOFF.md): the listed point, or the nearest shoulder off the walked line (build/routes/paths.json) when the point is on it. tools/route_trainers.py generates the RCT data and reapply places each with summon_persistent.",
+  "trainers": [
+    {
+      "id": "route_01_trainer_01",
+      "name": "Trail Novice",
+      "listed": [
+        1468,
+        5018
+      ],
+      "seat": [
+        1465,
+        120,
+        5019
+      ],
+      "yaw": -108,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 284.9,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/camper_liam_008e.png",
+      "eye_contact": true,
+      "why": "the eye-contact lesson"
+    },
+    {
+      "id": "route_01_trainer_02",
+      "name": "Meadow Apiarist",
+      "listed": [
+        1385,
+        4714
+      ],
+      "seat": [
+        1382,
+        126,
+        4714
+      ],
+      "yaw": -90,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 733.0,
+      "moved_blocks": 3.0,
+      "skin": "rctmod:textures/trainers/single/bug_catcher_brandon_02ee.png",
+      "eye_contact": false,
+      "why": "in the apiary glade west of the walked line, by the hives"
+    },
+    {
+      "id": "route_01_trainer_03",
+      "name": "Vale Naturalist",
+      "listed": [
+        1581,
+        4291
+      ],
+      "seat": [
+        1584,
+        123,
+        4292
+      ],
+      "yaw": 108,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1247.2,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_01_trainer_04",
+      "name": "Plateau Guide",
+      "listed": [
+        1594,
+        3867
+      ],
+      "seat": [
+        1597,
+        124,
+        3867
+      ],
+      "yaw": 90,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1677.4,
+      "moved_blocks": 3.0,
+      "skin": "rctmod:textures/trainers/single/hiker_brice_00ba.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_02_trainer_01",
+      "name": "Ravine Scrapper",
+      "listed": [
+        1762,
+        3372
+      ],
+      "seat": [
+        1765,
+        134,
+        3371
+      ],
+      "yaw": 72,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 268.0,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_02_trainer_02",
+      "name": "Glowbug Keeper",
+      "listed": [
+        1773,
+        3159
+      ],
+      "seat": [
+        1776,
+        132,
+        3159
+      ],
+      "yaw": 90,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 485.6,
+      "moved_blocks": 3.0,
+      "skin": "rctmod:textures/trainers/single/bug_catcher_sammy_0068.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_02_shore_trainer_01",
+      "name": "North Bank Angler",
+      "listed": [
+        1604,
+        3068
+      ],
+      "seat": [
+        1604,
+        106,
+        3063
+      ],
+      "yaw": -90,
+      "listed_off_walked_line": 175.0,
+      "walked_distance": 584.1,
+      "moved_blocks": 5.0,
+      "skin": "rctmod:textures/trainers/single/fisherman_andrew_00e9.png",
+      "eye_contact": false,
+      "why": "on the north bank platform"
+    },
+    {
+      "id": "route_02_trainer_03",
+      "name": "Lake Surveyor",
+      "listed": [
+        1774,
+        2926
+      ],
+      "seat": [
+        1777,
+        112,
+        2925
+      ],
+      "yaw": 72,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 723.1,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_03_trainer_01",
+      "name": "Climbing Novice",
+      "listed": [
+        1747,
+        2613
+      ],
+      "seat": [
+        1750,
+        105,
+        2614
+      ],
+      "yaw": 108,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 246.8,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/hiker_nob_00b7.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_03_trainer_02",
+      "name": "Grove Ranger",
+      "listed": [
+        1876,
+        2306
+      ],
+      "seat": [
+        1879,
+        114,
+        2307
+      ],
+      "yaw": 108,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 607.3,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_03_trainer_03",
+      "name": "Groundkeeper",
+      "listed": [
+        2034,
+        1950
+      ],
+      "seat": [
+        2037,
+        125,
+        1951
+      ],
+      "yaw": 108,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1028.7,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": false,
+      "why": "on the flatter shoulder, off the walked line"
+    },
+    {
+      "id": "route_03_trainer_04",
+      "name": "Signal Watcher",
+      "listed": [
+        2199,
+        1606
+      ],
+      "seat": [
+        2200,
+        125,
+        1603
+      ],
+      "yaw": 18,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1469.0,
+      "moved_blocks": 3.2,
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "eye_contact": false,
+      "why": "on the route by the Nosepass shelter, as the handoff says"
+    },
+    {
+      "id": "route_03_trainer_05",
+      "name": "Vessu Ranger",
+      "listed": [
+        1978,
+        1606
+      ],
+      "seat": [
+        1980,
+        134,
+        1602
+      ],
+      "yaw": 0,
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1688.0,
+      "moved_blocks": 4.5,
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_taylor_0335.png",
+      "eye_contact": false,
+      "why": "at the Swablu guide bench"
+    }
+  ]
+}
