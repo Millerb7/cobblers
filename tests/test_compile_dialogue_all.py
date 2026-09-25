@@ -9,7 +9,8 @@ crushed-house conversations for their world-scoped field; a conversation with np
 an npc_id has exactly one, naming its own dialogue; every conversation a scene opens (prop, actor or NPC) is in the
 pack; a speaker mapped to null is narration (its page has no speaker); an enum's declared initial value also matches
 the unset key 0 and no other value does; sync_scene and scene_function compile to server-sourced commands whose
-function paths exist in the scene pack, and an id that is not [a-z0-9_]+ is refused.
+function paths exist in the scene pack, and an id that is not [a-z0-9_]+ is refused; every compiled Molang expression
+that reads t.d sets it from q.player.data() first, and every visible_when compiles to such an isVisible.
 
 Not covered, and it needs a running server (EXP-034): that /opendialogue opens a page for the clicker, that a
 narration page renders with no speaker, that the queued `function cobblers:scenes/<id>/beat` runs as that player.
@@ -189,3 +190,51 @@ def test_every_scene_function_a_dialogue_runs_exists_in_the_scene_pack(built):
     have = {"cobblers:" + k[len("data/cobblers/function/"):-len(".mcfunction")]
             for k in scene_files if k.endswith(".mcfunction")}
     assert sorted(calls - have) == []
+
+
+def _molang_strings(node, where=""):
+    """Every string in a compiled dialogue, with where it sits (a page's input, an option's action or isVisible...)."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            yield from _molang_strings(v, "%s.%s" % (where, k))
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            yield from _molang_strings(v, "%s[%d]" % (where, i))
+    elif isinstance(node, str):
+        yield where, node
+
+
+# Without it a Molang expression reads t.d before it is set in that expression. Each isVisible is evaluated on its own
+# (not after the page's actions), so an unset t.d reads 0 and a condition on a false field is true for everyone: both
+# of Pip's "Come with me." options showed at once in game (2026-09-24).
+def test_every_compiled_expression_reads_the_player_data_before_using_it(built):
+    files, done, _refused = built
+    checked, bad = 0, []
+    for cid in done:
+        for where, s in _molang_strings(files[dlg_path(cid)]):
+            if "t.d." not in s:
+                continue
+            checked += 1
+            load = s.find("t.d = q.player.data();")
+            if load < 0 or load > s.index("t.d."):
+                bad.append("%s%s: %s" % (cid, where, s[:120]))
+    assert checked > 100, "almost no expression reads player data: the rule was never exercised"
+    assert not bad, bad[:10]
+
+
+# Without it an option's visibility is a bare condition again (evaluated with t.d unset), or a response with
+# visible_when compiles with no isVisible at all and shows to everyone.
+def test_every_visible_when_compiles_to_an_isvisible_that_loads_the_data_and_returns(built):
+    files, done, _refused = built
+    seen = 0
+    for cid in done:
+        pages = {p["id"]: p for p in files[dlg_path(cid)]["pages"]}
+        for n in CONVS[cid]["nodes"]:
+            for r in n.get("responses") or []:
+                if not r.get("visible_when"):
+                    continue
+                opt = next(o for o in pages[n["id"]]["input"]["options"] if o["value"] == r["id"])
+                vis = opt.get("isVisible")
+                assert vis and vis.startswith("t.d = q.player.data(); return ") and vis.endswith(";"), (cid, r["id"], vis)
+                seen += 1
+    assert seen >= 2, "no response has visible_when: the rule was never exercised"

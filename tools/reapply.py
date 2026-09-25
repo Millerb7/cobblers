@@ -77,8 +77,9 @@ EXCLUDED = {
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
-    "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner; "
-                         "the trainers themselves are placed by R17 over RCON (summon_persistent), not by a function",
+    "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
+                         "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
+                         "placed by R17 over RCON (summon_persistent), not by a function",
     "cobblers_rewards": "self-driving: each find is an advancement that runs its own reward function as the player "
                         "who earns it; it writes no blocks (the containers are placed by R9C)",
     # Victory Road schema 2, retired 2026-09-23 when the owner chose a cave network (data/vr_caves.json)
@@ -504,14 +505,18 @@ def run(a):
                 print("   %s: %s of %d props" % (scene, got, n), flush=True)
                 rc("forceload remove " + hold)
             elif kind == "trainer":
-                # an rctmod trainer, persistent, at its seat, once: one already standing there (a re-run) is left
+                # an rctmod trainer, persistent, at its seat, once: one already standing there (a re-run) is left.
+                # Pinned: an rctmod trainer strolls (RandomStrollAwayGoal), and on staging a mansion guardian had
+                # climbed the grand stair within two minutes of being placed (2026-09-24). NoAI would also stop
+                # ForceIntoBattleGoal, the goal that battles on sight, so the goals keep running with nowhere to go:
+                # movement speed 0, which the entity saves with its attributes
                 tid, (x, y, z), yaw = v
                 rc("forceload add %d %d" % (x, z))
                 for _ in range(30):
                     if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
                         break
                     time.sleep(1)
-                near = "@e[type=rctmod:trainer,x=%d,y=%d,z=%d,distance=..3]" % (x, y, z)
+                near = '@e[type=rctmod:trainer,x=%d,y=%d,z=%d,distance=..24,nbt={TrainerId:"%s"}]' % (x, y, z, tid)
                 there = False
                 for _ in range(12):
                     if "passed" in rc("execute if entity %s" % near):
@@ -523,6 +528,9 @@ def run(a):
                     print("   %s -> %s" % (tid, r[:120] or "(no reply)"), flush=True)
                     time.sleep(1)
                 rc("tp %s %d.5 %d %d.5 %d 0" % (near, x, y, z, yaw))
+                rc("execute as %s run attribute @s minecraft:generic.movement_speed base set 0" % near)
+                # and unhurt: on staging a Channeler took damage in her own battle and could have been killed
+                rc("data merge entity %s {Invulnerable:1b}" % near.replace("]", ",limit=1]"))
                 rc("execute store result storage cobblers:reapply trainers int 1 if entity %s" % near)
                 got = rc("data get storage cobblers:reapply trainers").rsplit(":", 1)[-1].strip()
                 if got != "1":

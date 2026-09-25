@@ -59,9 +59,9 @@
         },
         "stairs": {
           "at": [
-            1630,
+            1625,
             115,
-            5041
+            5038
           ],
           "yaw": 90,
           "slots": [
@@ -70,16 +70,16 @@
               0
             ],
             [
-              0.9,
-              0
-            ],
-            [
-              -0.9,
-              0
+              0,
+              0.9
             ],
             [
               0,
-              0.9
+              -0.9
+            ],
+            [
+              0.9,
+              0
             ]
           ]
         },
@@ -137,11 +137,11 @@
         },
         "haunter_wait": {
           "at": [
-            1635,
+            1638,
             121,
             5029
           ],
-          "yaw": -90,
+          "yaw": 90,
           "slots": [
             [
               0,
@@ -270,6 +270,20 @@
             5028
           ],
           "yaw": -90,
+          "slots": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        "bars_outside": {
+          "at": [
+            1629,
+            121,
+            5032
+          ],
+          "yaw": 0,
           "slots": [
             [
               0,
@@ -676,6 +690,43 @@
       ],
       "effects": [
         {
+          "id": "ballroom_shut",
+          "kind": "push",
+          "when": {
+            "kind": "not",
+            "condition": {
+              "kind": "any",
+              "conditions": [
+                {
+                  "kind": "progression_equals",
+                  "field": "quest.evt_route1_gastly_family.completed",
+                  "value": true
+                },
+                {
+                  "kind": "progression_in",
+                  "field": "quest.evt_route1_gastly_family.checkpoint",
+                  "values": [
+                    "landing",
+                    "family"
+                  ]
+                }
+              ]
+            }
+          },
+          "from": [
+            1622,
+            121,
+            5025
+          ],
+          "to": [
+            1642,
+            125,
+            5030
+          ],
+          "to_marker": "bars_outside",
+          "message": "A cold draught pours out through the bent bars. You cannot make yourself go in yet."
+        },
+        {
           "id": "barrier",
           "kind": "particles",
           "when": {
@@ -960,6 +1011,21 @@
               "count": 6
             }
           ]
+        }
+      ],
+      "no_build": [
+        {
+          "from": [
+            1611,
+            110,
+            5019
+          ],
+          "to": [
+            1648,
+            140,
+            5048
+          ],
+          "why": "the owner, 2026-09-24: in the house a player cannot break or build (adventure mode); the house and five blocks round it, so its walls and roof cannot be broken from outside either"
         }
       ]
     },

@@ -1951,7 +1951,7 @@
             "field": "quest.evt_route1_gastly_family.started",
             "equals": true
           },
-          "text": "Find what is hiding behind the grand stair."
+          "text": "Find what is hiding among the crates at the back of the foyer."
         },
         {
           "id": "foyer",
@@ -1963,7 +1963,7 @@
             "field": "quest.evt_route1_gastly_family.checkpoint",
             "equals": "stairs"
           },
-          "text": "Find the one clear way across the foyer."
+          "text": "Find the one clear way across the foyer. (after beating Channeler Hope)"
         },
         {
           "id": "dining",
@@ -1975,7 +1975,7 @@
             "field": "quest.evt_route1_gastly_family.checkpoint",
             "equals": "service"
           },
-          "text": "Go through the dining room to the service corridor, and leave the table as you found it."
+          "text": "Go through the dining room to the service corridor, and leave the table as you found it. (after beating Channeler Paula)"
         },
         {
           "id": "library",
@@ -1987,7 +1987,7 @@
             "field": "quest.evt_route1_gastly_family.checkpoint",
             "equals": "library"
           },
-          "text": "Follow the right voice in the library."
+          "text": "Follow the right voice in the library. (after beating Channeler Laurel)"
         },
         {
           "id": "hall",
@@ -1999,7 +1999,7 @@
             "field": "quest.evt_route1_gastly_family.checkpoint",
             "equals": "landing"
           },
-          "text": "Light the bedroom hall's candles in the order the Litwick show."
+          "text": "Light the bedroom hall's candles in the order the Litwick show. (after beating Channeler Jody)"
         },
         {
           "id": "ballroom",
@@ -2011,7 +2011,7 @@
             "field": "quest.evt_route1_gastly_family.checkpoint",
             "equals": "family"
           },
-          "text": "Restore the ballroom's three ward marks in the order the floor gives."
+          "text": "Restore the ballroom's three ward marks in the order the floor gives. (after beating Channeler Carly)"
         },
         {
           "id": "reunion",
@@ -2034,6 +2034,11 @@
               "kind": "progression_equals",
               "field": "quest.evt_route1_gastly_family.started",
               "value": false
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.guard_1",
+              "value": true
             }
           ],
           "effects": [
@@ -2059,6 +2064,42 @@
           ]
         },
         {
+          "id": "start_guarded",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.started",
+              "value": false
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.guard_1",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.checkpoint",
+              "value": "foyer"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_route1_gastly_family.dialogue_cursor",
+              "value": "p_guard_1"
+            },
+            {
+              "kind": "sync_scene",
+              "scene": "route1_gastly_family"
+            }
+          ]
+        },
+        {
           "id": "foyer_path",
           "conditions": [
             {
@@ -2070,6 +2111,11 @@
               "kind": "progression_equals",
               "field": "quest.evt_route1_gastly_family.checkpoint",
               "value": "foyer"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.guard_1",
+              "value": true
             }
           ],
           "effects": [
@@ -2150,6 +2196,11 @@
               "kind": "progression_equals",
               "field": "quest.evt_route1_gastly_family.cup_taken",
               "value": false
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.guard_2",
+              "value": true
             }
           ],
           "effects": [
@@ -2171,6 +2222,11 @@
               "kind": "progression_equals",
               "field": "quest.evt_route1_gastly_family.checkpoint",
               "value": "service"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.guard_3",
+              "value": true
             }
           ],
           "effects": [
@@ -2255,6 +2311,11 @@
             {
               "kind": "progression_equals",
               "field": "quest.evt_route1_gastly_family.lamp_2",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.guard_4",
               "value": true
             }
           ],
@@ -2367,6 +2428,11 @@
             {
               "kind": "progression_equals",
               "field": "quest.evt_route1_gastly_family.ward_2",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_route1_gastly_family.guard_5",
               "value": true
             }
           ],
@@ -2538,7 +2604,8 @@
         "props": "shared props (cup, aisles, candles, wards, the loose board) open each clicker's own conversation",
         "barrier": "per-player: the curtain is particles sent only to players whose ward is still up, and the push-back applies only to them",
         "concurrent_players": "independent transitions; no player may read or write another player's fields",
-        "caveat": "another player's actors are visible to everyone; vanilla has no per-player entity visibility. Clicking one that is not yours says so and opens nothing"
+        "caveat": "another player's actors are visible to everyone; vanilla has no per-player entity visibility. Clicking one that is not yours says so and opens nothing",
+        "guardians": "per-player: each Channeler is an RCT trainer every player beats for themselves (maxTrainerDefeats 1, RCT's own per-player count); the win sets only that player's guard field (rctmod defeat_count, winning side only)"
       },
       "reset_and_restore": "leaving the area, disconnecting or a restart removes the player's actors; back in the area, the next beat puts them where the saved checkpoint says. A wrong candle or ward resets that room's partial order only",
       "not_built": [
@@ -2560,8 +2627,14 @@
         "quest.evt_route1_gastly_family.dialogue_cursor",
         "quest.evt_route1_gastly_family.haunter_cursor",
         "quest.evt_route1_gastly_family.gengar_cursor",
-        "quest.evt_route1_gastly_family.prop_cursor"
-      ]
+        "quest.evt_route1_gastly_family.prop_cursor",
+        "quest.evt_route1_gastly_family.guard_1",
+        "quest.evt_route1_gastly_family.guard_2",
+        "quest.evt_route1_gastly_family.guard_3",
+        "quest.evt_route1_gastly_family.guard_4",
+        "quest.evt_route1_gastly_family.guard_5"
+      ],
+      "guardians": "data/mansion_guardians.json"
     },
     {
       "id": "evt_route1_rattata_picnic",
@@ -2920,15 +2993,15 @@
       "rewards": [
         {
           "id": "reward_rod",
-          "status": "item_id_verified (vanilla)",
+          "status": "item_id_verified (Cobblemon 1.8.0 jar)",
           "contents": [
             {
-              "item": "minecraft:fishing_rod",
+              "item": "cobblemon:poke_rod",
               "count": 1,
-              "verification": "vanilla item"
+              "verification": "cobblemon:poke_rod: item model and recipe result in Cobblemon-fabric-1.8.0+1.21.1.jar"
             }
           ],
-          "why": "one basic rod per player, once; not Cobblemon's Poke Rod (the handoff)"
+          "why": "one Poke Rod per player, once: the owner's call, 2026-09-24, so a player can fish Pokemon from the first coast, and better rods come later at other waters. The story source (docs/story/events/EARLY_GAME_EVENT_BANK.md) gave a vanilla rod, not the Poke Rod"
         }
       ],
       "multiplayer": {

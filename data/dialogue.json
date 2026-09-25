@@ -3022,6 +3022,30 @@
           "node": "p_open1"
         },
         {
+          "priority": 38,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "foyer"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_1",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_1"
+        },
+        {
           "priority": 40,
           "when": {
             "kind": "progression_equals",
@@ -3029,6 +3053,30 @@
             "value": "foyer"
           },
           "node": "p_foyer"
+        },
+        {
+          "priority": 48,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "stairs"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_2",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_2"
         },
         {
           "priority": 50,
@@ -3059,6 +3107,30 @@
           "node": "p_stairs"
         },
         {
+          "priority": 58,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_3"
+        },
+        {
           "priority": 60,
           "when": {
             "kind": "progression_equals",
@@ -3068,6 +3140,30 @@
           "node": "p_service"
         },
         {
+          "priority": 68,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_4"
+        },
+        {
           "priority": 70,
           "when": {
             "kind": "progression_equals",
@@ -3075,6 +3171,30 @@
             "value": "library"
           },
           "node": "p_library"
+        },
+        {
+          "priority": 78,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_5"
         },
         {
           "priority": 80,
@@ -3098,7 +3218,7 @@
           "id": "p_open2",
           "kind": "line",
           "speaker": "narration",
-          "text": "A small Gastly peers out from behind the stair, then shrinks back as something crosses the hall above.",
+          "text": "A small Gastly peers out from behind the crates at the back of the foyer, then shrinks back as something creaks across the floor above.",
           "next": "p_open3"
         },
         {
@@ -3123,7 +3243,28 @@
                   "transition": "start"
                 }
               ],
-              "next": "p_foyer"
+              "next": "p_foyer",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_1",
+                "value": true
+              }
+            },
+            {
+              "id": "p_come_guarded",
+              "text": "Come with me.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_1",
+                "value": false
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "start_guarded"
+                }
+              ],
+              "next": "p_guard_1"
             },
             {
               "id": "p_later",
@@ -3140,7 +3281,7 @@
           "id": "p_foyer",
           "kind": "choice",
           "speaker": "narration",
-          "text": "Gastly drifts to your side. Three ways lead past the foyer: along the portraits, through the stair's shadow, or up the worn middle of the runner.",
+          "text": "Gastly drifts to your side. Three ways lead across the foyer to the dining room door: along the portraits, past the dust-sheeted chairs, or down the worn middle of the runner.",
           "responses": [
             {
               "id": "p_way_portraits",
@@ -3149,12 +3290,12 @@
             },
             {
               "id": "p_way_shadow",
-              "text": "Through the stair's shadow.",
+              "text": "Past the dust-sheeted chairs.",
               "next": "p_wrong_shadow"
             },
             {
               "id": "p_way_middle",
-              "text": "Up the worn middle.",
+              "text": "Down the worn middle.",
               "actions": [
                 {
                   "kind": "quest_transition",
@@ -3169,21 +3310,21 @@
           "id": "p_wrong_portraits",
           "kind": "line",
           "speaker": "narration",
-          "text": "A Shuppet unfolds out of a frame, grinning. Gastly bolts back behind the stair.",
+          "text": "A Shuppet unfolds out of a frame, grinning. Gastly bolts back behind the crates.",
           "next": "p_wrong_portraits"
         },
         {
           "id": "p_wrong_shadow",
           "kind": "line",
           "speaker": "narration",
-          "text": "Something cold moves in the stair's shadow. Gastly will not go near it.",
+          "text": "One of the dust sheets breathes in. Gastly will not go near the chairs.",
           "next": "p_wrong_shadow"
         },
         {
           "id": "p_stairs_go",
           "kind": "line",
           "speaker": "narration",
-          "text": "Gastly slips along the worn runner to the foot of the stair and waits, watching the dining room door.",
+          "text": "Gastly slips down the worn runner to the dining room door and waits, watching the table.",
           "next": "p_stairs_go"
         },
         {
@@ -3316,6 +3457,41 @@
           "speaker": "narration",
           "text": "Gastly is asleep between the other two. None of them looks up.",
           "next": "p_done"
+        },
+        {
+          "id": "p_guard_1",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly will not come out. Its eyes are on the woman by the front door, who stands too still and hums to someone who is not there.",
+          "next": "p_guard_1"
+        },
+        {
+          "id": "p_guard_2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly hangs back at the dining room door. The woman at the far end of the table has not stopped watching you.",
+          "next": "p_guard_2"
+        },
+        {
+          "id": "p_guard_3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly will not go near the shelves while the woman among the shelves is whispering to them.",
+          "next": "p_guard_3"
+        },
+        {
+          "id": "p_guard_4",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly will not climb any higher. Someone in the bedroom hall is pacing between the candles.",
+          "next": "p_guard_4"
+        },
+        {
+          "id": "p_guard_5",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly presses against the bent bars. Inside, a woman turns slow circles across the inlay, dancing with nobody.",
+          "next": "p_guard_5"
         }
       ],
       "speakers": {
@@ -3532,14 +3708,14 @@
           "id": "pt_look",
           "kind": "line",
           "speaker": "narration",
-          "text": "A family portrait: two tall shadows and a small round one. The paint along the edges of the room is scratched; the runner up the middle of the stair is worn clean.",
+          "text": "A family portrait: two tall shadows and a small round one. The paint along the edges of the room is scratched; the runner down the middle of the floor is worn clean.",
           "next": "pt_look"
         },
         {
           "id": "pt_later",
           "kind": "line",
           "speaker": "narration",
-          "text": "The painted family watches the stair.",
+          "text": "The painted family watches the dining room door.",
           "next": "pt_later"
         }
       ],
@@ -3698,6 +3874,25 @@
       },
       "entry_rules": [
         {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "aw_guarded"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "progression_equals",
@@ -3757,6 +3952,13 @@
           "speaker": "narration",
           "text": "Old books, a draft, and nothing else.",
           "next": "aw_idle"
+        },
+        {
+          "id": "aw_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Every voice in the aisles falls quiet while the woman among the shelves whispers. Nothing here will answer with her watching.",
+          "next": "aw_guarded"
         }
       ],
       "speakers": {
@@ -3780,6 +3982,25 @@
         "cursor_is": "next_unread_node"
       },
       "entry_rules": [
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "am_guarded"
+        },
         {
           "priority": 10,
           "when": {
@@ -3866,6 +4087,13 @@
           "speaker": "narration",
           "text": "Old books, a draft, and nothing else.",
           "next": "am_idle"
+        },
+        {
+          "id": "am_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Every voice in the aisles falls quiet while the woman among the shelves whispers. Nothing here will answer with her watching.",
+          "next": "am_guarded"
         }
       ],
       "speakers": {
@@ -3889,6 +4117,25 @@
         "cursor_is": "next_unread_node"
       },
       "entry_rules": [
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "ae_guarded"
+        },
         {
           "priority": 10,
           "when": {
@@ -3949,6 +4196,13 @@
           "speaker": "narration",
           "text": "Old books, a draft, and nothing else.",
           "next": "ae_idle"
+        },
+        {
+          "id": "ae_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Every voice in the aisles falls quiet while the woman among the shelves whispers. Nothing here will answer with her watching.",
+          "next": "ae_guarded"
         }
       ],
       "speakers": {
@@ -3993,6 +4247,25 @@
             ]
           },
           "node": "ka_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "ka_guarded"
         },
         {
           "priority": 10,
@@ -4075,6 +4348,13 @@
           "speaker": "narration",
           "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
           "next": "ka_idle"
+        },
+        {
+          "id": "ka_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "ka_guarded"
         }
       ],
       "speakers": {
@@ -4121,6 +4401,25 @@
           "node": "kb_steady"
         },
         {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kb_guarded"
+        },
+        {
           "priority": 20,
           "when": {
             "kind": "progression_equals",
@@ -4164,6 +4463,13 @@
           "speaker": "narration",
           "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
           "next": "kb_idle"
+        },
+        {
+          "id": "kb_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kb_guarded"
         }
       ],
       "speakers": {
@@ -4208,6 +4514,25 @@
             ]
           },
           "node": "kc_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kc_guarded"
         },
         {
           "priority": 10,
@@ -4285,6 +4610,13 @@
           "speaker": "narration",
           "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
           "next": "kc_idle"
+        },
+        {
+          "id": "kc_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kc_guarded"
         }
       ],
       "speakers": {
@@ -4329,6 +4661,25 @@
             ]
           },
           "node": "kd_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kd_guarded"
         },
         {
           "priority": 10,
@@ -4411,6 +4762,13 @@
           "speaker": "narration",
           "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
           "next": "kd_idle"
+        },
+        {
+          "id": "kd_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kd_guarded"
         }
       ],
       "speakers": {
@@ -4457,6 +4815,25 @@
           "node": "kn_steady"
         },
         {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kn_guarded"
+        },
+        {
           "priority": 20,
           "when": {
             "kind": "progression_equals",
@@ -4500,6 +4877,13 @@
           "speaker": "narration",
           "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
           "next": "kn_idle"
+        },
+        {
+          "id": "kn_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kn_guarded"
         }
       ],
       "speakers": {
@@ -4541,6 +4925,25 @@
             ]
           },
           "node": "wa_done"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "wa_guarded"
         },
         {
           "priority": 10,
@@ -4618,6 +5021,13 @@
           "speaker": "narration",
           "text": "A cracked ward mark in the floor. The inlaid path from the hearth runs through it.",
           "next": "wa_idle"
+        },
+        {
+          "id": "wa_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark lies dead under your hand. The dancer's circles pass over it, and it stays dead.",
+          "next": "wa_guarded"
         }
       ],
       "speakers": {
@@ -4659,6 +5069,25 @@
             ]
           },
           "node": "wb_done"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "wb_guarded"
         },
         {
           "priority": 10,
@@ -4741,6 +5170,13 @@
           "speaker": "narration",
           "text": "A cracked ward mark in the floor. The inlaid path from the hearth runs through it.",
           "next": "wb_idle"
+        },
+        {
+          "id": "wb_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark lies dead under your hand. The dancer's circles pass over it, and it stays dead.",
+          "next": "wb_guarded"
         }
       ],
       "speakers": {
@@ -4782,6 +5218,25 @@
             ]
           },
           "node": "wc_done"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "wc_guarded"
         },
         {
           "priority": 10,
@@ -4864,6 +5319,13 @@
           "speaker": "narration",
           "text": "A cracked ward mark in the floor. The inlaid path from the hearth runs through it.",
           "next": "wc_idle"
+        },
+        {
+          "id": "wc_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark lies dead under your hand. The dancer's circles pass over it, and it stays dead.",
+          "next": "wc_guarded"
         }
       ],
       "speakers": {

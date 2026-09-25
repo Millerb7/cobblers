@@ -11,80 +11,364 @@
   "namespace": "cobblers",
   "active_series": "kanto",
   "series": [
-    {"id": "kanto", "role": "main", "required_series": []},
-    {"id": "johto", "role": "prestige_candidate", "required_series": ["kanto"]},
-    {"id": "hoenn", "role": "prestige_candidate", "required_series": ["johto"]},
-    {"id": "sinnoh", "role": "prestige_candidate", "required_series": ["hoenn"]}
+    {
+      "id": "kanto",
+      "role": "main",
+      "required_series": []
+    },
+    {
+      "id": "johto",
+      "role": "prestige_candidate",
+      "required_series": [
+        "kanto"
+      ]
+    },
+    {
+      "id": "hoenn",
+      "role": "prestige_candidate",
+      "required_series": [
+        "johto"
+      ]
+    },
+    {
+      "id": "sinnoh",
+      "role": "prestige_candidate",
+      "required_series": [
+        "hoenn"
+      ]
+    }
   ],
   "open_questions": [
-    {"id": "hometown_waystone", "question": "Is the hometown waystone given at start (set_by run_start) or earned?", "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"},
-    {"id": "midpoint_waystones", "question": "Do waystones exist between gym towns, and if so what unlocks them?", "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"}
+    {
+      "id": "hometown_waystone",
+      "question": "Is the hometown waystone given at start (set_by run_start) or earned?",
+      "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"
+    },
+    {
+      "id": "midpoint_waystones",
+      "question": "Do waystones exist between gym towns, and if so what unlocks them?",
+      "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"
+    }
   ],
   "flags": [
     {
       "id": "gym1_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_brock"], "johto": ["johto_valerio"], "hoenn": ["hoenn_petra"], "sinnoh": ["sinnoh_pedro"]}},
-      "waystone": {"town": "gym1_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_brock"
+          ],
+          "johto": [
+            "johto_valerio"
+          ],
+          "hoenn": [
+            "hoenn_petra"
+          ],
+          "sinnoh": [
+            "sinnoh_pedro"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym1_town",
+        "position": null
+      },
       "offers_marker": "gym2_town"
     },
     {
       "id": "gym2_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_misty"], "johto": ["johto_raffaello"], "hoenn": ["hoenn_rudi"], "sinnoh": ["sinnoh_gardenia"]}},
-      "waystone": {"town": "gym2_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_misty"
+          ],
+          "johto": [
+            "johto_raffaello"
+          ],
+          "hoenn": [
+            "hoenn_rudi"
+          ],
+          "sinnoh": [
+            "sinnoh_gardenia"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym2_town",
+        "position": null
+      },
       "offers_marker": "gym3_town"
     },
     {
       "id": "gym3_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_ltsurge"], "johto": ["johto_chiara"], "hoenn": ["hoenn_walter"], "sinnoh": ["sinnoh_marzia"]}},
-      "waystone": {"town": "gym3_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_ltsurge"
+          ],
+          "johto": [
+            "johto_chiara"
+          ],
+          "hoenn": [
+            "hoenn_walter"
+          ],
+          "sinnoh": [
+            "sinnoh_marzia"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym3_town",
+        "position": null
+      },
       "offers_marker": "gym4_town"
     },
     {
       "id": "gym4_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_erika"], "johto": ["johto_angelo"], "hoenn": ["hoenn_fiammetta"], "sinnoh": ["sinnoh_omar"]}},
-      "waystone": {"town": "gym4_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_erika"
+          ],
+          "johto": [
+            "johto_angelo"
+          ],
+          "hoenn": [
+            "hoenn_fiammetta"
+          ],
+          "sinnoh": [
+            "sinnoh_omar"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym4_town",
+        "position": null
+      },
       "offers_marker": "gym5_town"
     },
     {
       "id": "gym5_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_koga"], "johto": ["johto_furio"], "hoenn": ["hoenn_norman"], "sinnoh": ["sinnoh_fannie"]}},
-      "waystone": {"town": "gym5_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_koga"
+          ],
+          "johto": [
+            "johto_furio"
+          ],
+          "hoenn": [
+            "hoenn_norman"
+          ],
+          "sinnoh": [
+            "sinnoh_fannie"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym5_town",
+        "position": null
+      },
       "offers_marker": "gym6_town"
     },
     {
       "id": "gym6_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_sabrina"], "johto": ["johto_jasmine"], "hoenn": ["hoenn_alice"], "sinnoh": ["sinnoh_ferruccio"]}},
-      "waystone": {"town": "gym6_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_sabrina"
+          ],
+          "johto": [
+            "johto_jasmine"
+          ],
+          "hoenn": [
+            "hoenn_alice"
+          ],
+          "sinnoh": [
+            "sinnoh_ferruccio"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym6_town",
+        "position": null
+      },
       "offers_marker": "gym7_town"
     },
     {
       "id": "gym7_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_blaine"], "johto": ["johto_alfredo"], "hoenn": ["hoenn_tell"], "sinnoh": ["sinnoh_bianca"]}},
-      "waystone": {"town": "gym7_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_blaine"
+          ],
+          "johto": [
+            "johto_alfredo"
+          ],
+          "hoenn": [
+            "hoenn_tell"
+          ],
+          "sinnoh": [
+            "sinnoh_bianca"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym7_town",
+        "position": null
+      },
       "offers_marker": "gym8_town"
     },
     {
       "id": "gym8_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_giovanni"], "johto": ["johto_sandra"], "hoenn": ["hoenn_adriano"], "sinnoh": ["sinnoh_corrado"]}},
-      "waystone": {"town": "gym8_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_giovanni"
+          ],
+          "johto": [
+            "johto_sandra"
+          ],
+          "hoenn": [
+            "hoenn_adriano"
+          ],
+          "sinnoh": [
+            "sinnoh_corrado"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym8_town",
+        "position": null
+      },
       "offers_marker": "league"
     },
     {
       "id": "champion_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_champion_blue"], "johto": ["johto_champion_lance"], "hoenn": ["hoenn_champion_rocco"], "sinnoh": ["sinnoh_champion_camilla"]}}
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_champion_blue"
+          ],
+          "johto": [
+            "johto_champion_lance"
+          ],
+          "hoenn": [
+            "hoenn_champion_rocco"
+          ],
+          "sinnoh": [
+            "sinnoh_champion_camilla"
+          ]
+        }
+      }
     }
   ],
   "chapters": [
-    {"id": "chapter_1", "order": 1, "unlocked_by": [], "unlocks": ["gym1_cleared"]},
-    {"id": "chapter_2", "order": 2, "unlocked_by": ["gym1_cleared"], "unlocks": ["gym2_cleared"]},
-    {"id": "chapter_3", "order": 3, "unlocked_by": ["gym2_cleared"], "unlocks": ["gym3_cleared"]},
-    {"id": "chapter_4", "order": 4, "unlocked_by": ["gym3_cleared"], "unlocks": ["gym4_cleared"]},
-    {"id": "chapter_5", "order": 5, "unlocked_by": ["gym4_cleared"], "unlocks": ["gym5_cleared"]},
-    {"id": "chapter_6", "order": 6, "unlocked_by": ["gym5_cleared"], "unlocks": ["gym6_cleared"]},
-    {"id": "chapter_7", "order": 7, "unlocked_by": ["gym6_cleared"], "unlocks": ["gym7_cleared"]},
-    {"id": "chapter_8", "order": 8, "unlocked_by": ["gym7_cleared"], "unlocks": ["gym8_cleared"]},
-    {"id": "league", "order": 9, "unlocked_by": ["gym8_cleared"], "unlocks": ["champion_cleared"]},
-    {"id": "postgame", "order": 10, "unlocked_by": ["champion_cleared"], "unlocks": []}
+    {
+      "id": "chapter_1",
+      "order": 1,
+      "unlocked_by": [],
+      "unlocks": [
+        "gym1_cleared"
+      ]
+    },
+    {
+      "id": "chapter_2",
+      "order": 2,
+      "unlocked_by": [
+        "gym1_cleared"
+      ],
+      "unlocks": [
+        "gym2_cleared"
+      ]
+    },
+    {
+      "id": "chapter_3",
+      "order": 3,
+      "unlocked_by": [
+        "gym2_cleared"
+      ],
+      "unlocks": [
+        "gym3_cleared"
+      ]
+    },
+    {
+      "id": "chapter_4",
+      "order": 4,
+      "unlocked_by": [
+        "gym3_cleared"
+      ],
+      "unlocks": [
+        "gym4_cleared"
+      ]
+    },
+    {
+      "id": "chapter_5",
+      "order": 5,
+      "unlocked_by": [
+        "gym4_cleared"
+      ],
+      "unlocks": [
+        "gym5_cleared"
+      ]
+    },
+    {
+      "id": "chapter_6",
+      "order": 6,
+      "unlocked_by": [
+        "gym5_cleared"
+      ],
+      "unlocks": [
+        "gym6_cleared"
+      ]
+    },
+    {
+      "id": "chapter_7",
+      "order": 7,
+      "unlocked_by": [
+        "gym6_cleared"
+      ],
+      "unlocks": [
+        "gym7_cleared"
+      ]
+    },
+    {
+      "id": "chapter_8",
+      "order": 8,
+      "unlocked_by": [
+        "gym7_cleared"
+      ],
+      "unlocks": [
+        "gym8_cleared"
+      ]
+    },
+    {
+      "id": "league",
+      "order": 9,
+      "unlocked_by": [
+        "gym8_cleared"
+      ],
+      "unlocks": [
+        "champion_cleared"
+      ]
+    },
+    {
+      "id": "postgame",
+      "order": 10,
+      "unlocked_by": [
+        "champion_cleared"
+      ],
+      "unlocks": []
+    }
   ],
   "state_namespaces": {
     "progression": {
@@ -414,6 +698,46 @@
       "id": "quest.evt_route1_gastly_family.ward_2",
       "quest_id": "evt_route1_gastly_family",
       "field": "ward_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_1",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_2",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_3",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_3",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_4",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_4",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_5",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_5",
       "type": "boolean",
       "scope": "player",
       "initial": false
@@ -1099,19 +1423,224 @@
     "share_format": "xaero-waypoint:<name>:<initials>:<x>:<y or ~>:<z>:<color>:<rotation>:<yaw>:Internal-overworld-waypoints, read from xaerominimap-fabric-1.21.1-26.4.2 WaypointSharingHandler (name 1-32 characters, initials 1-3, no '-', '_' or ':')",
     "color": 14,
     "markers": {
-      "gym2_town": {"placement": "gym2_misty_gym", "name": "Gym 2 Misty", "initials": "G2"},
-      "gym3_town": {"placement": "gym3_gym_building", "name": "Gym 3 Lt Surge", "initials": "G3"},
-      "gym4_town": {"placement": "gym4_gym_building", "name": "Gym 4 Erika", "initials": "G4"},
-      "gym5_town": {"placement": "gym5_gym_building", "name": "Gym 5 Koga", "initials": "G5"},
-      "gym6_town": {"placement": "gym6_gym_building", "name": "Gym 6 Sabrina", "initials": "G6"},
-      "gym7_town": {"placement": "gym7_gym_building", "name": "Gym 7 Blaine", "initials": "G7"},
-      "gym8_town": {"placement": "gym8_gym_building", "name": "Gym 8 Giovanni", "initials": "G8"},
-      "league": {"placement": "league_building", "name": "Pokemon League", "initials": "PL"}
+      "gym2_town": {
+        "placement": "gym2_misty_gym",
+        "name": "Gym 2 Misty",
+        "initials": "G2"
+      },
+      "gym3_town": {
+        "placement": "gym3_gym_building",
+        "name": "Gym 3 Lt Surge",
+        "initials": "G3"
+      },
+      "gym4_town": {
+        "placement": "gym4_gym_building",
+        "name": "Gym 4 Erika",
+        "initials": "G4"
+      },
+      "gym5_town": {
+        "placement": "gym5_gym_building",
+        "name": "Gym 5 Koga",
+        "initials": "G5"
+      },
+      "gym6_town": {
+        "placement": "gym6_gym_building",
+        "name": "Gym 6 Sabrina",
+        "initials": "G6"
+      },
+      "gym7_town": {
+        "placement": "gym7_gym_building",
+        "name": "Gym 7 Blaine",
+        "initials": "G7"
+      },
+      "gym8_town": {
+        "placement": "gym8_gym_building",
+        "name": "Gym 8 Giovanni",
+        "initials": "G8"
+      },
+      "league": {
+        "placement": "league_building",
+        "name": "Pokemon League",
+        "initials": "PL"
+      }
     }
   },
   "upstream_neutralised": {
     "why": "Overrides at the upstream paths, deliberately (.claude/rules/datapacks.md). The four loot tables are exploration maps to Cobbleverse's naturally generated gyms, which this world does not generate: cobbleverse:gym_map is the reward of Cobbleverse's cobblemon:craft_pokedex (the first Pokedex a player holds), and the Johto, Hoenn and Sinnoh ones reward the previous region's Champion. They become empty. The reward functions are named by Cobbleverse's leader, Elite Four and Champion advancements (cobbleverse:trainer/*/defeat_*) and exist in no installed pack (checked 2026-09-21 across every pack and jar on the server); an empty function of each name means the advancement grants cleanly.",
-    "empty_loot_tables": ["cobbleverse:gym_map", "cobbleverse:johto_gym_map", "cobbleverse:hoenn_gym_map", "cobbleverse:sinnoh_gym_map"],
-    "empty_functions": ["cobbleverse:aaron_defeated", "cobbleverse:adriano_defeated", "cobbleverse:agatha_defeated", "cobbleverse:alfredo_defeated", "cobbleverse:alice_defeated", "cobbleverse:angelo_defeated", "cobbleverse:bianca_defeated", "cobbleverse:blaine_defeated", "cobbleverse:brock_defeated", "cobbleverse:bruno_defeated", "cobbleverse:bruno_johto_defeated", "cobbleverse:chiara_defeated", "cobbleverse:corrado_defeated", "cobbleverse:cyrus_defeated", "cobbleverse:drake_defeated", "cobbleverse:erika_defeated", "cobbleverse:ester_defeated", "cobbleverse:fannie_defeated", "cobbleverse:ferruccio_defeated", "cobbleverse:fiammetta_defeated", "cobbleverse:fosco_defeated", "cobbleverse:frida_defeated", "cobbleverse:furio_defeated", "cobbleverse:gardenia_defeated", "cobbleverse:giovanni_defeated", "cobbleverse:jasmine_defeated", "cobbleverse:jupiter_defeated", "cobbleverse:karen_defeated", "cobbleverse:koga_defeated", "cobbleverse:koga_johto_defeated", "cobbleverse:lance_defeated", "cobbleverse:lorelei_defeated", "cobbleverse:ltsurge_defeated", "cobbleverse:luciano_defeated", "cobbleverse:mars_defeated", "cobbleverse:marzia_defeated", "cobbleverse:misty_defeated", "cobbleverse:norman_defeated", "cobbleverse:omar_defeated", "cobbleverse:pedro_defeated", "cobbleverse:petra_defeated", "cobbleverse:pino_defeated", "cobbleverse:raffaello_defeated", "cobbleverse:rudi_defeated", "cobbleverse:sabrina_defeated", "cobbleverse:sandra_defeated", "cobbleverse:saturn_defeated", "cobbleverse:tell_defeated", "cobbleverse:terrie_defeated", "cobbleverse:valerio_defeated", "cobbleverse:vulcano_defeated", "cobbleverse:walter_defeated"]
+    "empty_loot_tables": [
+      "cobbleverse:gym_map",
+      "cobbleverse:johto_gym_map",
+      "cobbleverse:hoenn_gym_map",
+      "cobbleverse:sinnoh_gym_map",
+      "rctmod:trainers/single/kanto_blaine",
+      "rctmod:trainers/single/kanto_brock",
+      "rctmod:trainers/single/kanto_champion_blue",
+      "rctmod:trainers/single/kanto_erika",
+      "rctmod:trainers/single/kanto_giovanni",
+      "rctmod:trainers/single/kanto_koga",
+      "rctmod:trainers/single/kanto_ltsurge",
+      "rctmod:trainers/single/kanto_misty",
+      "rctmod:trainers/single/kanto_sabrina"
+    ],
+    "empty_functions": [
+      "cobbleverse:aaron_defeated",
+      "cobbleverse:adriano_defeated",
+      "cobbleverse:agatha_defeated",
+      "cobbleverse:alfredo_defeated",
+      "cobbleverse:alice_defeated",
+      "cobbleverse:angelo_defeated",
+      "cobbleverse:bianca_defeated",
+      "cobbleverse:blaine_defeated",
+      "cobbleverse:brock_defeated",
+      "cobbleverse:bruno_defeated",
+      "cobbleverse:bruno_johto_defeated",
+      "cobbleverse:chiara_defeated",
+      "cobbleverse:corrado_defeated",
+      "cobbleverse:cyrus_defeated",
+      "cobbleverse:drake_defeated",
+      "cobbleverse:erika_defeated",
+      "cobbleverse:ester_defeated",
+      "cobbleverse:fannie_defeated",
+      "cobbleverse:ferruccio_defeated",
+      "cobbleverse:fiammetta_defeated",
+      "cobbleverse:fosco_defeated",
+      "cobbleverse:frida_defeated",
+      "cobbleverse:furio_defeated",
+      "cobbleverse:gardenia_defeated",
+      "cobbleverse:giovanni_defeated",
+      "cobbleverse:jasmine_defeated",
+      "cobbleverse:jupiter_defeated",
+      "cobbleverse:karen_defeated",
+      "cobbleverse:koga_defeated",
+      "cobbleverse:koga_johto_defeated",
+      "cobbleverse:lance_defeated",
+      "cobbleverse:lorelei_defeated",
+      "cobbleverse:ltsurge_defeated",
+      "cobbleverse:luciano_defeated",
+      "cobbleverse:mars_defeated",
+      "cobbleverse:marzia_defeated",
+      "cobbleverse:misty_defeated",
+      "cobbleverse:norman_defeated",
+      "cobbleverse:omar_defeated",
+      "cobbleverse:pedro_defeated",
+      "cobbleverse:petra_defeated",
+      "cobbleverse:pino_defeated",
+      "cobbleverse:raffaello_defeated",
+      "cobbleverse:rudi_defeated",
+      "cobbleverse:sabrina_defeated",
+      "cobbleverse:sandra_defeated",
+      "cobbleverse:saturn_defeated",
+      "cobbleverse:tell_defeated",
+      "cobbleverse:terrie_defeated",
+      "cobbleverse:valerio_defeated",
+      "cobbleverse:vulcano_defeated",
+      "cobbleverse:walter_defeated"
+    ],
+    "first_win_rewards": {
+      "why": "The owner, 2026-09-24: a leader's rewards are given once, on the first win, to the winner. Upstream they drop from the trainer's rctmod loot table on every win, as items on the ground: the badge (and Brock's badge box) guarded by rctmod:defeat_count == 1, the TM pool not guarded at all, and rctmod never refuses a persistent trainer's rematch, so on staging a second win over Brock dropped TM Rock Slide and paid again (docs/STATE.md). Here each leader's loot table is empty and the flag's one-time reward runs `loot give @s loot cobblers:first_win/<trainer>`: `items` each once, and one of `one_of` (duplicates kept, as upstream weighted them). Read from COBBLEVERSE-RCT-DP-v20, 2026-09-24. CobbleDollars still pays per win (earnCobbleDollarsFromNPC); not changed here.",
+      "series": "kanto",
+      "trainers": {
+        "kanto_blaine": {
+          "flag": "gym7_cleared",
+          "items": [
+            "cobbleversebadges:kanto_volcano_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_overheat",
+            "tmcraft:tm_fireblast"
+          ]
+        },
+        "kanto_brock": {
+          "flag": "gym1_cleared",
+          "items": [
+            "cobbleversebadges:kanto_boulder_badge",
+            "cobbleversebadges:kanto_badge_box"
+          ],
+          "one_of": [
+            "tmcraft:tm_bide",
+            "tmcraft:tm_rocktomb",
+            "tmcraft:tm_rockslide",
+            "tmcraft:tm_headbutt"
+          ]
+        },
+        "kanto_champion_blue": {
+          "flag": "champion_cleared",
+          "items": [
+            "cobbleversebadges:kanto_league_trophy",
+            "cobblemon:ancient_origin_ball"
+          ],
+          "one_of": []
+        },
+        "kanto_erika": {
+          "flag": "gym4_cleared",
+          "items": [
+            "cobbleversebadges:kanto_rainbow_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_megadrain",
+            "tmcraft:tm_gigadrain"
+          ]
+        },
+        "kanto_giovanni": {
+          "flag": "gym8_cleared",
+          "items": [
+            "cobbleversebadges:kanto_earth_badge",
+            "lumymon:ancient_dna",
+            "cobblemon:master_ball"
+          ],
+          "one_of": [
+            "tmcraft:tm_fissure",
+            "tmcraft:tm_earthquake",
+            "tmcraft:tm_fireblast",
+            "tmcraft:tm_fireblast"
+          ]
+        },
+        "kanto_koga": {
+          "flag": "gym5_cleared",
+          "items": [
+            "cobbleversebadges:kanto_soul_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_toxic",
+            "tmcraft:tm_poisonjab",
+            "tmcraft:tm_poisonfang",
+            "tmcraft:tm_poisongas"
+          ]
+        },
+        "kanto_ltsurge": {
+          "flag": "gym3_cleared",
+          "items": [
+            "cobbleversebadges:kanto_thunder_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_thunderbolt",
+            "tmcraft:tm_shockwave",
+            "tmcraft:tm_thunder"
+          ]
+        },
+        "kanto_misty": {
+          "flag": "gym2_cleared",
+          "items": [
+            "cobbleversebadges:kanto_cascade_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_bubblebeam",
+            "tmcraft:tm_waterpulse",
+            "tmcraft:tm_scald"
+          ]
+        },
+        "kanto_sabrina": {
+          "flag": "gym6_cleared",
+          "items": [
+            "cobbleversebadges:kanto_marsh_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_psywave",
+            "tmcraft:tm_calmmind",
+            "tmcraft:tm_skillswap"
+          ]
+        }
+      }
+    }
   }
 }

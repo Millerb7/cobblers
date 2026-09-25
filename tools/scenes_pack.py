@@ -18,6 +18,7 @@ A scene belongs to one quest and holds, inside an area:
   effects    things one player sees or feels: particles sent only to them (`force <player>`), a push back out of a box,
              a sequence of lights, a sound. Each runs while its condition holds for that player.
   functions  named command lists a dialogue can run as the player (effect scene_function in data/quests.json).
+  no_build   boxes (a building's interior) where a survival player is put in adventure mode, and back on leaving.
   npcs       Cobblemon NPCs (people) that open a conversation; shared and static. NPC classes load only at server
              start, so they are placed over RCON after a restart (tools/reapply.py), not by a function.
 
@@ -376,6 +377,31 @@ class Scene:
         cond = self.cond(e["when"]) if e.get("when") else "1"
         return "(%s) ? { %s };" % (cond, self.run_as("%s/fx/%s" % (self.fn, eid)))
 
+    def no_build(self, files, fn):
+        """Adventure mode inside the scene's no_build boxes: a survival player who steps in cannot break or place,
+        and goes back to survival on stepping out. Only survival is switched, and only a player this switched is
+        switched back, so creative and spectator are never touched. A player who dies or logs off inside keeps the
+        tag and is switched back on the first cycle they are outside. The cycle lines for the scene."""
+        boxes = self.doc.get("no_build") or []
+        if not boxes:
+            return []
+        for b in boxes:
+            if not (inside(b["from"], self.area) and inside(b["to"], self.area)):
+                raise SceneError("scene %s: a no_build box leaves the area" % self.id)
+        tag = "cobblers_nobuild_%s" % self.id
+        files[fn("%s/nobuild/enter" % self.id)] = [
+            "# %s: a survival player inside the house: adventure mode, remembered by a tag" % self.id,
+            "gamemode adventure @s", "tag @s add %s" % tag]
+        files[fn("%s/nobuild/leave" % self.id)] = [
+            "# %s: a player this switched, now outside: back to survival (unless something else changed the mode)" % self.id,
+            "execute if entity @s[gamemode=adventure] run gamemode survival @s", "tag @s remove %s" % tag]
+        lines = ["# %s: no building or breaking inside" % self.id]
+        for b in boxes:
+            lines.append("execute as @a[gamemode=survival,%s] run function %s:scenes/%s/nobuild/enter" % (sel(b), NS, self.id))
+        outside = " ".join("unless entity @s[%s]" % sel(b) for b in boxes)
+        lines.append("execute as @a[tag=%s] %s run function %s:scenes/%s/nobuild/leave" % (tag, outside, NS, self.id))
+        return lines
+
     def particle(self, p):
         if not PARTICLE.fullmatch(p["particle"]):
             raise SceneError("scene %s: particle %r" % (self.id, p["particle"]))
@@ -422,6 +448,7 @@ def build(data_dir=DATA):
                 files[fn("%s/%s" % (s.id, rel))] = content
         if s.doc.get("actors") or s.doc.get("effects") or s.doc.get("zones"):
             cycle.append("execute as @a[%s] at @s run function %s:scenes/%s/beat" % (sel(s.area), NS, s.id))
+        cycle += s.no_build(files, fn)
     files[fn("cycle")] = cycle
     return files, scenes
 

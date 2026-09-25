@@ -26,10 +26,12 @@ different actor mechanism before any mainline beat is built on it.
    open (EXP-022's retry).
 6. **Ghost house.** Inside the mansion `/checkspawn common` lists only the `route_1_ghost_mansion` pool; in the forest
    past the clearing it does not.
-7. **Trainers.** Each of the thirteen stands at its seat; each battle starts; a win writes `quest.<id>.defeated` for the
-   winner only (and the North Bank Angler's also writes `quest.evt_viltri_north_bank.trainer_defeated`); a loss writes
-   nothing; talking after a win gives the win line and no second battle; the Trail Novice starts a battle on sight;
-   no trainer drops an item.
+7. **Trainers.** Each of the thirteen route trainers and the five mansion Channelers stands at its seat; each battle
+   starts; a win writes `quest.<id>.defeated` for the winner only (the North Bank Angler's also writes
+   `quest.evt_viltri_north_bank.trainer_defeated`; a Channeler's writes only her room's
+   `quest.evt_route1_gastly_family.guard_N`, which opens that room's puzzle); a loss writes nothing; talking after a
+   win gives the win line and no second battle; the Trail Novice and every Channeler start a battle on sight, and
+   pinned trainers still do; no trainer drops an item.
 8. **Finds.** The four route caches grant once each, on reaching them.
 
 ## Setup
@@ -58,7 +60,8 @@ loaded by the live world.
   (1629, 120, 5033) resolved its pool after a restart: `DisplaySpecies` lists the 11 `route_1_ghost_mansion` species.
   `habitat_blocks.py verify --rcon`: 81 of 81 blocks, 0 problems.
 - The event sites: `route_events.py --verify-world`: 2,237 of 2,237 planned blocks, no tree left in a clearing.
-- Props, NPCs, trainers (R17): 41 of 41 props in 9 scenes, 8 NPCs, 13 trainers, one at each place.
+- Props, NPCs, trainers (R17): 41 of 41 props in 9 scenes, 8 NPCs, 18 trainers (13 route, 5 mansion Channelers),
+  one at each place, pinned (movement speed 0): all five Channelers were still on their seats 75 s after R17.
 - Brock's, Misty's and Surge's towns clean; the Route 1 forest 46,007 of 46,015 trunks (the eight missing are inside
   the mansion's footprint and under the forest's own lantern posts: the audit's allowance).
 - Not seen: any actor (they need a player in the area), any click, any battle.
@@ -67,31 +70,42 @@ loaded by the live world.
 Survival, a starter team around level 15-25 for the trainers. Teleports use feet coordinates.
 
 **A. The mansion** (`/tp @s 1628 115 5046`, outside the front door)
-1. Walk in. Behind the grand stair a Gastly named Pip should be waiting (and Haunter pacing in the ballroom upstairs,
-   Gengar behind a shimmer at its east end). Click Pip: accept.
-2. Choose the worn middle of the runner. Pip should vanish in a puff and reappear at the foot of the stair.
-3. Leave the house past the clearing's edge (about 25 blocks) and come back: Pip should be at the stair again.
-   Disconnect, reconnect: the same.
-4. Dining room: click the blue cup, take it, walk through the rear door into the corridor: Pip must not follow.
-   Put the cup back, walk into the corridor again: Pip appears by the library door.
-5. Click Pip (three notes). In the library, try the west aisle (a scare, nothing changes), then the middle one.
-6. Upstairs, watch the candle stands: blue flames light over three of them in turn. Touch them in that order (a wrong
+1. Walk in (survival): you should be switched to adventure mode at the door, and back to survival when you leave.
+   Channeler Hope, just inside the door, starts a battle once you and she have looked at each other for a moment.
+   Before beating her, click Pip among the crates at the back of the foyer and accept: the escort starts, and Pip
+   will not come out while she watches. (Haunter and Gengar are behind a shimmer at the ballroom's east end.)
+2. Beat Hope. Click Pip and choose the worn middle of the runner. Pip should vanish in a puff and reappear at the
+   dining room door.
+3. Leave the house past the clearing's edge (about 25 blocks) and come back: Pip should be at the dining room door
+   again. Disconnect, reconnect: the same.
+4. Dining room: Channeler Paula at the table battles on sight. Before beating her, walking into the corridor does
+   nothing. Beat her; then click the blue cup, take it, walk through the rear door into the corridor: Pip must not
+   follow. Put the cup back, walk into the corridor again: Pip appears by the library door.
+5. Click Pip (three notes). In the library, Channeler Laurel among the shelves battles; before she is beaten the
+   aisles answer nothing. Then try the west aisle (a scare, nothing changes), then the middle one.
+6. Up the servants' stair (the only way up), Channeler Jody waits outside the bedroom door; before she is beaten a
+   candle only says it is cold. Beat her,
+   then watch the candle stands: blue flames light over three of them in turn. Touch them in that order (a wrong
    one puts them out). Pip moves to the ballroom's bent bars.
-7. Walk toward Gengar's end of the ballroom: the shimmer should push you back. Touch the three ward marks along the
-   inlaid path from the hearth; the shimmer goes, Gengar comes out. Click Pip: the reunion, then a Spell Tag.
-8. Pip, Haunter and Gengar move to the north-west bedroom. The loose board behind the stair gives three Dusk Balls.
+7. Before the candles are done the ballroom pushes you back out through the bars. After them, Channeler Carly on
+   the inlay battles (three ghosts, up to 16). Walk toward Gengar's end of the ballroom: the shimmer should push you
+   back, with Haunter and Gengar both behind it. Touch the three ward marks along the inlaid path from the hearth; the shimmer goes,
+   Gengar comes out. Click Pip: the reunion, then a Spell Tag.
+8. Pip, Haunter and Gengar move to the north-west bedroom. The loose board among the crates at the back of the foyer gives three Dusk Balls.
    Neither reward comes a second time.
 9. `/checkspawn common` in the foyer and the ballroom: only the ghost pool. In the forest past the clearing: not it.
 10. Restart the server while standing in the house and rejoin: the family is in the bedroom.
 
 **B. Route 1** (from Pallet north)
+- The old mine (`/tp @s 1365 130 4121`, on its trail): walk into the portal, down the steps, to the barrel at
+  the cave's west end past the mud hollow: the find gives a Hard Stone, two Heavy Balls and two Potions, once.
 - The Trail Novice (`/tp @s 1465 120 5025`): walk into view; the battle should start on sight.
 - The mansion junction sign (`/tp @s 1469 119 5041`).
 - The picnic (`/tp @s 1448 123 4833`): the picnicker, crumbs (green specks) toward the hollow log, the lunch, back,
   then a berry at the stump (hold any berry). A Rattata should sit by the stump afterwards.
 - The Meadow Apiarist (`/tp @s 1384 126 4714`), the thirsty stranger's hut (`/tp @s 1514 123 4462`), the Vale
   Naturalist (`/tp @s 1586 123 4292`), the Plateau Guide (`/tp @s 1599 124 3867`).
-- First Cast (`/tp @s 1060 65 5349`): the fisher gives one fishing rod, once.
+- First Cast (`/tp @s 1060 65 5349`): the fisher gives one Poke Rod (`cobblemon:poke_rod`), once.
 - Finds: the fern glade (`/tp @s 1602 118 4938`), the west hollow (`/tp @s 1258 127 4798`), the north ring
   (`/tp @s 1662 120 4378`): standing by each barrel grants its contents once.
 
@@ -117,4 +131,10 @@ Survival, a starter team around level 15-25 for the trainers. Teleports use feet
 After each trainer win, `/runmolang "q.player.data().cobblers__quest__<id>__defeated" @s` should read 1.
 
 ## Result
-Pending the owner's run.
+Partial; the owner's run is in progress (staging `cobblers-dryrun9`, Cobblemon 1.8.0, rctmod 0.19.0-beta).
+
+- 2026-09-24, owner: a mansion Channeler, pinned at movement speed 0, starts the battle herself, after "a few
+  seconds" rather than at first sight. That is rctmod's rule, not a fault: player and trainer must look at each
+  other for `forceBattleLookTicks` (30 here, 1.5 s; the server config's own words: "stare at each other"), and the
+  trainer's idle look goals turn her away in between. Pinning does not stop it. Not yet seen: a win setting the
+  room's guard field, Pip moving on after it.

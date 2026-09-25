@@ -1,0 +1,478 @@
+{
+  "schema": "cobblers.mansion-guardians/1",
+  "source": "docs/world-building/EARLY_ROUTES.md (the Gastly mansion's gauntlet: the owner's choice, 2026-09-24)",
+  "note": "The five possessed Channelers of the Route 1 mansion, one per escort room. Each is a Radical Cobblemon Trainer (tools/route_trainers.py generates its RCT data beside the route trainers', and tools/reapply.py R17 places it at its seat) who battles on sight and is beaten once per player. Her sight_distance is the largest that reaches no standable cell outside her room on either floor, less 0.75: rctmod's battle on sight passes through walls (the owner, in game, 2026-09-24: Paula started a fight from the foyer). Beating one sets that player's guard field, and the room's puzzle stays shut until it is set: the transition it gates checks the field, and the room's props and Pip open on a guarded line. Movesets are level-up moves each species has at or below its level in Cobblemon 1.8.0's species data (read from the jar, 2026-09-24).",
+  "trainers": [
+    {
+      "id": "mansion_guardian_1",
+      "display_name": "Channeler Hope",
+      "room": "foyer",
+      "checkpoint": "foyer",
+      "gates": "foyer_path",
+      "sets": [
+        "quest.evt_route1_gastly_family.guard_1"
+      ],
+      "seat": [
+        1628,
+        115,
+        5041
+      ],
+      "yaw": 0,
+      "skin": "rctmod:textures/trainers/single/channeler_hope_01bb.png",
+      "eye_contact": true,
+      "sight_distance": 4.0,
+      "team": [
+        {
+          "species": "gastly",
+          "level": 8,
+          "moveset": [
+            "lick",
+            "confuseray",
+            "hypnosis",
+            "meanlook"
+          ]
+        },
+        {
+          "species": "shuppet",
+          "level": 8,
+          "moveset": [
+            "astonish",
+            "screech",
+            "nightshade"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Get out... get out... this house is spoken for!",
+        "player_win": "Where... the cold is gone from my hands. Something small was crying behind the crates.",
+        "player_loss": "The house keeps what it wins. Get out."
+      },
+      "after_win": "Hope sags against the front door, herself again. Behind the crates at the back of the foyer, something small is watching.",
+      "rct": {
+        "name": {
+          "literal": "Channeler Hope"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "gastly",
+            "level": 8,
+            "moveset": [
+              "lick",
+              "confuseray",
+              "hypnosis",
+              "meanlook"
+            ]
+          },
+          {
+            "species": "shuppet",
+            "level": 8,
+            "moveset": [
+              "astonish",
+              "screech",
+              "nightshade"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mansion_guardian_2",
+      "display_name": "Channeler Paula",
+      "room": "dining room",
+      "checkpoint": "stairs",
+      "gates": "reach_service",
+      "sets": [
+        "quest.evt_route1_gastly_family.guard_2"
+      ],
+      "seat": [
+        1618,
+        115,
+        5033
+      ],
+      "yaw": -90,
+      "skin": "rctmod:textures/trainers/single/channeler_paula_01bc.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "team": [
+        {
+          "species": "sinistea",
+          "level": 10,
+          "moveset": [
+            "astonish",
+            "withdraw",
+            "aromaticmist"
+          ]
+        },
+        {
+          "species": "gastly",
+          "level": 10,
+          "moveset": [
+            "lick",
+            "hypnosis",
+            "confuseray",
+            "meanlook"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Sit. Eat. Nobody leaves the table.",
+        "player_win": "The plates... were they always laid? Leave them as they are. Somebody is still coming back for them.",
+        "player_loss": "Nobody leaves the table."
+      },
+      "after_win": "Paula stares at the laid table as if seeing it for the first time.",
+      "rct": {
+        "name": {
+          "literal": "Channeler Paula"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "sinistea",
+            "level": 10,
+            "moveset": [
+              "astonish",
+              "withdraw",
+              "aromaticmist"
+            ]
+          },
+          {
+            "species": "gastly",
+            "level": 10,
+            "moveset": [
+              "lick",
+              "hypnosis",
+              "confuseray",
+              "meanlook"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mansion_guardian_3",
+      "display_name": "Channeler Laurel",
+      "room": "library",
+      "checkpoint": "service",
+      "gates": "right_aisle",
+      "sets": [
+        "quest.evt_route1_gastly_family.guard_3"
+      ],
+      "seat": [
+        1638,
+        115,
+        5040
+      ],
+      "yaw": 0,
+      "skin": "rctmod:textures/trainers/single/channeler_laurel_01bd.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "team": [
+        {
+          "species": "misdreavus",
+          "level": 12,
+          "moveset": [
+            "confusion",
+            "astonish",
+            "growl",
+            "psywave"
+          ]
+        },
+        {
+          "species": "duskull",
+          "level": 12,
+          "moveset": [
+            "astonish",
+            "disable",
+            "shadowsneak",
+            "confuseray"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Shh. The books are listening, and they do not like you.",
+        "player_win": "My head is clear. The voices in the aisles... only one of them was ever telling the truth.",
+        "player_loss": "Quiet now. Stay and read forever."
+      },
+      "after_win": "Laurel covers her ears. \"Not the loud ones. Never the loud ones.\"",
+      "rct": {
+        "name": {
+          "literal": "Channeler Laurel"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "misdreavus",
+            "level": 12,
+            "moveset": [
+              "confusion",
+              "astonish",
+              "growl",
+              "psywave"
+            ]
+          },
+          {
+            "species": "duskull",
+            "level": 12,
+            "moveset": [
+              "astonish",
+              "disable",
+              "shadowsneak",
+              "confuseray"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mansion_guardian_4",
+      "display_name": "Channeler Jody",
+      "room": "bedroom hall",
+      "checkpoint": "library",
+      "gates": "lamp_third",
+      "sets": [
+        "quest.evt_route1_gastly_family.guard_4"
+      ],
+      "seat": [
+        1638,
+        121,
+        5034
+      ],
+      "yaw": 90,
+      "skin": "rctmod:textures/trainers/single/channeler_jody_01be.png",
+      "eye_contact": true,
+      "sight_distance": 3.0,
+      "team": [
+        {
+          "species": "litwick",
+          "level": 13,
+          "moveset": [
+            "astonish",
+            "ember",
+            "minimize",
+            "confuseray"
+          ]
+        },
+        {
+          "species": "shuppet",
+          "level": 14,
+          "moveset": [
+            "astonish",
+            "screech",
+            "nightshade",
+            "spite"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "The candles are not for you. The candles are never for you.",
+        "player_win": "I was watching the Litwick, not the candles. Follow their flames, not your eyes.",
+        "player_loss": "Blow them out. Blow them all out."
+      },
+      "after_win": "Jody sits down hard against the wall, watching the candle stands.",
+      "rct": {
+        "name": {
+          "literal": "Channeler Jody"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "litwick",
+            "level": 13,
+            "moveset": [
+              "astonish",
+              "ember",
+              "minimize",
+              "confuseray"
+            ]
+          },
+          {
+            "species": "shuppet",
+            "level": 14,
+            "moveset": [
+              "astonish",
+              "screech",
+              "nightshade",
+              "spite"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mansion_guardian_5",
+      "display_name": "Channeler Carly",
+      "room": "ballroom",
+      "checkpoint": "landing",
+      "gates": "barrier_down",
+      "sets": [
+        "quest.evt_route1_gastly_family.guard_5"
+      ],
+      "seat": [
+        1630,
+        121,
+        5026
+      ],
+      "yaw": 0,
+      "skin": "rctmod:textures/trainers/single/channeler_carly_01ba.png",
+      "eye_contact": true,
+      "sight_distance": 4.0,
+      "team": [
+        {
+          "species": "misdreavus",
+          "level": 15,
+          "moveset": [
+            "confusion",
+            "astonish",
+            "confuseray",
+            "psywave"
+          ]
+        },
+        {
+          "species": "duskull",
+          "level": 15,
+          "moveset": [
+            "shadowsneak",
+            "disable",
+            "confuseray",
+            "astonish"
+          ]
+        },
+        {
+          "species": "gastly",
+          "level": 16,
+          "moveset": [
+            "lick",
+            "hypnosis",
+            "payback",
+            "spite"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "The dance is not over. It is never over.",
+        "player_win": "The music stopped... The marks in the floor were broken in an order. Mend them the same way.",
+        "player_loss": "Round and round, forever."
+      },
+      "after_win": "Carly stops turning. The gilded path in the floor runs on from the cold hearth.",
+      "rct": {
+        "name": {
+          "literal": "Channeler Carly"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.0,
+            "switchBias": 0.35,
+            "statusMoveBias": 0.75,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.35
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "misdreavus",
+            "level": 15,
+            "moveset": [
+              "confusion",
+              "astonish",
+              "confuseray",
+              "psywave"
+            ]
+          },
+          {
+            "species": "duskull",
+            "level": 15,
+            "moveset": [
+              "shadowsneak",
+              "disable",
+              "confuseray",
+              "astonish"
+            ]
+          },
+          {
+            "species": "gastly",
+            "level": 16,
+            "moveset": [
+              "lick",
+              "hypnosis",
+              "payback",
+              "spite"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

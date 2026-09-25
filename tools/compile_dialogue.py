@@ -270,7 +270,9 @@ class Compiler:
                 act += self.goto(r["next"])
             opt = {"text": r["text"], "value": r["id"], "action": act}
             if r.get("visible_when"):
-                opt["isVisible"] = self.cond(r["visible_when"], {})
+                # evaluated on its own, not after the page's actions: without reading the data here t.d is unset and
+                # both of Pip's "Come with me." options showed (the owner, in game, 2026-09-24)
+                opt["isVisible"] = "t.d = q.player.data(); return %s;" % self.cond(r["visible_when"], {})
             options.append(opt)
         page["input"] = {"type": "option", "vertical": True, "options": options}
         return page

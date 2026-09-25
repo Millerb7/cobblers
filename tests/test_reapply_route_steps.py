@@ -5,8 +5,8 @@ Written by the test author, not by the session that added the steps.
 What is asserted: R12 runs after the signposts (R15), R17 after R12 and after the towns (R8, which build the Route 1
 mansion the Gastly props sit in); R12 runs every function cobblers_route_events lists, in its order; R17 places every
 scene's props (with their count), every scene NPC (conversation, position, class) and every trainer seat (id,
-position, yaw), derived here from data/scenes.json, data/dialogue.json and data/route_trainers.json, not from
-reapply's own helpers; the three new packs are installed on the server; cobblers_trainers is excluded with a reason;
+position, yaw: the route trainers' and the Gastly mansion's guardians'), derived here from data/scenes.json,
+data/dialogue.json, data/route_trainers.json and data/mansion_guardians.json, not from reapply's own helpers; the three new packs are installed on the server; cobblers_trainers is excluded with a reason;
 and the fail-closed coverage check reports the event-site pack or the scene pack when its step is gone.
 
 steps() reads each generated pack's index.txt, so the order and coverage tests SKIP when build/datapacks does not
@@ -31,6 +31,7 @@ NEEDS_INDEX = (("cobblers_rift", "rift"), ("cobblers_rift_biome", "rift"), ("cob
 SCENES = json.loads((ROOT / "data" / "scenes.json").read_text(encoding="utf-8"))["scenes"]
 CONVS = {c["id"]: c for c in json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))["conversations"]}
 SEATS = json.loads((ROOT / "data" / "route_trainers.json").read_text(encoding="utf-8"))["trainers"]
+GUARDIANS = json.loads((ROOT / "data" / "mansion_guardians.json").read_text(encoding="utf-8"))["trainers"]
 
 
 @pytest.fixture(scope="module")
@@ -91,10 +92,11 @@ def test_r17_places_every_scene_npc_at_its_position_with_its_class(steps):
     assert sorted(_acts(steps, "R17", "npc")) == sorted(want)
 
 
-# Without it a route trainer is not placed after a re-export, or at a seat other than the recorded one.
+# Without it a route trainer or a mansion guardian is not placed after a re-export, or at a seat other than the
+# recorded one.
 def test_r17_places_every_trainer_at_its_seat(steps):
-    want = [(t["id"], tuple(t["seat"]), t["yaw"]) for t in SEATS]
-    assert len(want) == 13
+    want = [(t["id"], tuple(t["seat"]), t["yaw"]) for t in SEATS + GUARDIANS]
+    assert (len(SEATS), len(GUARDIANS)) == (13, 5)
     assert sorted(_acts(steps, "R17", "trainer")) == sorted(want)
 
 

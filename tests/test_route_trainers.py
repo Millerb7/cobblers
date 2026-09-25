@@ -10,6 +10,9 @@ the dialog keys carry the record's own three lines, one line per key; the defeat
 defeat_count for that trainer id alone at count 1; and the won function writes only the declared per-player fields
 (the trainer's own defeated field, plus the north-bank quest's for the shore angler).
 
+The Gastly mansion's five guardians, which the same tool generates from data/mansion_guardians.json, are asserted in
+tests/test_mansion_guardians.py.
+
 Not covered, and it needs a running server: that rctmod reads these files (mob keys, dialog keys, textureResource)
 the way the names suggest; that defeat_count fires for the winner and never on a loss or forfeit (EXP-027 covers the
 gym form); that `rctmod trainer summon_persistent` places the trainer at its seat (reapply.py R17).
@@ -75,6 +78,8 @@ def test_mobs_never_spawn_are_beaten_once_and_wear_an_rctmod_texture(files, tid)
 def test_exactly_the_first_route_1_trainer_forces_a_battle_on_sight(files):
     forced = sorted(t for t in ROUTE_IDS if files["data/rctmod/mobs/trainers/single/%s.json" % t].get("forceBattleOnSight"))
     assert forced == ["route_01_trainer_01"]
+    # the route trainer keeps the open-air reach; only the mansion's guardians are shortened (sight_distance)
+    assert files["data/rctmod/mobs/trainers/single/route_01_trainer_01.json"]["forceBattleMaxDistance"] == 8.0
 
 
 # Without it the trainer says the losing line when the player wins, or a line from another record.
@@ -84,7 +89,9 @@ def test_dialog_keys_carry_the_records_own_lines(files, tid):
     text = TRAINERS[tid]["dialogue_text"]
     want = {"on_battle_start": text["pre"],
             "on_battle_lost": text["player_win"], "trainer_lost": text["player_win"],
-            "on_battle_won": text["player_loss"], "trainer_won": text["player_loss"]}
+            "on_battle_won": text["player_loss"], "trainer_won": text["player_loss"],
+            # said while on cooldown, including the cycle's cooldown for a player who has beaten it
+            "on_cooldown": "Let me catch my breath."}
     assert set(d) == set(want)
     for k, line in want.items():
         assert d[k] == [{"text": line}], k
@@ -122,5 +129,6 @@ def test_the_won_function_sets_only_the_declared_defeat_fields(files, tid):
     assert all(f in FIELDS for f in want), [f for f in want if f not in FIELDS]
     assert assigned == {_key(f) for f in want}
     assert body.startswith("t.d = q.player.data();") and body.endswith("q.player.save_data();")
-    # nothing else in the function writes state
-    assert not [l for l in lines if l.split(" ", 1)[0] in ("scoreboard", "tag", "data", "advancement", "function")]
+    # the winner is tagged at once (the trainer cycle refreshes that tag from the field); nothing else writes state
+    assert [l for l in lines if l.startswith("tag ")] == ["tag @s add cobblers_beat_%s" % tid]
+    assert not [l for l in lines if l.split(" ", 1)[0] in ("scoreboard", "data", "advancement", "function")]

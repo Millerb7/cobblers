@@ -5,6 +5,13 @@ and fail-closed validation. It does NOT prove runtime behavior: whether
 rctmod:defeat_count fires, whether `waystones activate/forget` take effect, or
 whether the used_waystone re-sync beats a right-click unlock all need a player
 on a running server (EXP-020).
+
+Leaders' first-win rewards (upstream_neutralised.first_win_rewards): every first-win trainer's rctmod table is
+emptied, no emptied leader table lacks a record, each first-win table gives every `items` entry once and one of
+`one_of`, exactly the right flag's once-only reward gives it, other series give none, and plan() refuses a record
+whose table is not emptied, whose trainer is not the flag's, or which has no item ids. Not covered: that `loot give`
+with a generic-context table delivers these items, that this pack's empty rctmod tables override
+COBBLEVERSE-RCT-DP-v20's (datapack order on the server), and that CobbleDollars still pays per win (unchanged).
 """
 import copy
 import json
@@ -22,7 +29,9 @@ import progression_pack as PP  # noqa: E402
 REAL_DATA = ROOT / "data" / "progression.json"
 REAL_PLACEMENTS = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf8"))
 NS = "cobblers"
-KNOWN_COMMANDS = {"execute", "function", "advancement", "tag", "schedule", "scoreboard", "waystones", "tellraw"}
+# `loot` is here for the leaders' first-win rewards only, and in exactly one form: `loot give @s loot <ns>:first_win/<id>`
+# (test_loot_commands_are_only_first_win_gives_to_the_winner pins the form)
+KNOWN_COMMANDS = {"execute", "function", "advancement", "tag", "schedule", "scoreboard", "waystones", "tellraw", "loot"}
 
 
 def _doc(**over):
@@ -661,3 +670,142 @@ def test_cobbleverse_gym_maps_are_emptied_and_missing_rewards_defined():
         assert json.loads(out["data/cobbleverse/loot_table/%s.json" % region]) == {"pools": []}
     for leader in ("brock", "misty", "ltsurge", "erika", "koga", "sabrina", "blaine", "giovanni"):
         assert "data/cobbleverse/function/%s_defeated.mcfunction" % leader in out
+
+
+# ---------------------------------------------------------------- leaders' first-win rewards
+
+RCT_TABLE = "rctmod:trainers/single/%s"
+LOOT_GIVE = re.compile(r"loot give @s loot cobblers:first_win/([a-z0-9_]+)")
+
+
+def _fw_doc():
+    return PP.load(REAL_DATA)["upstream_neutralised"]["first_win_rewards"]
+
+
+def _entries(pool):
+    assert set(pool) == {"rolls", "entries"} and pool["rolls"] == 1, pool
+    for e in pool["entries"]:
+        assert set(e) == {"type", "name"} and e["type"] == "minecraft:item", e
+    return [e["name"] for e in pool["entries"]]
+
+
+# Without it a first-win trainer's own rctmod table still drops the badge and a TM on every win, rematches included,
+# and the first-win reward is a second copy on top (staging: a second win over Brock dropped TM Rock Slide again).
+def test_real_every_first_win_trainers_rctmod_table_is_emptied():
+    out = _real_pack()
+    trainers = _fw_doc()["trainers"]
+    assert len(trainers) >= 9
+    for tid in trainers:
+        assert json.loads(out["data/rctmod/loot_table/trainers/single/%s.json" % tid]) == {"pools": []}, tid
+
+
+# Without it a leader's reward drops an item twice, skips one, gives every TM of the pool instead of one, or none; or
+# gains a count, a condition or a weight the upstream table did not have.
+def test_real_each_first_win_table_gives_every_item_once_and_exactly_one_of_the_pool():
+    out = _real_pack()
+    for tid, r in _fw_doc()["trainers"].items():
+        pools = json.loads(out["data/cobblers/loot_table/first_win/%s.json" % tid])["pools"]
+        assert r["items"], tid
+        assert len(pools) == len(r["items"]) + (1 if r["one_of"] else 0), tid
+        item_pools = [_entries(p) for p in pools[:len(r["items"])]]
+        assert all(len(e) == 1 for e in item_pools), tid            # one entry, one roll: that item, once
+        assert sorted(e[0] for e in item_pools) == sorted(r["items"]), tid
+        if r["one_of"]:
+            assert _entries(pools[-1]) == r["one_of"], tid          # one roll; upstream's duplicates kept: its weighting
+
+
+# Without it a leader loses its badge (a table emptied with no first-win record), or a first-win record rewards
+# nothing the world counts as a badge or trophy.
+def test_real_no_emptied_leader_table_lacks_a_first_win_record_and_each_gives_a_badge():
+    doc = PP.load(REAL_DATA)
+    trainers = doc["upstream_neutralised"]["first_win_rewards"]["trainers"]
+    emptied = [r[len(RCT_TABLE % ""):] for r in doc["upstream_neutralised"]["empty_loot_tables"]
+               if r.startswith(RCT_TABLE % "")]
+    assert emptied, "no rctmod table is emptied: the rule was never exercised"
+    assert sorted(set(emptied) - set(trainers)) == []
+    series = doc["upstream_neutralised"]["first_win_rewards"]["series"]
+    leaders = [t for f in doc["flags"] if f["set_by"]["kind"] == "trainer_defeat"
+               for t in f["set_by"]["trainer_ids"][series]]
+    assert sorted(set(leaders) - set(trainers)) == [], "a %s leader has no first-win reward" % series
+    for tid, r in trainers.items():
+        assert any(i.startswith("cobbleversebadges:") for i in r["items"]), tid
+
+
+# Without it the reward is given by the wrong flag (Misty's badge for beating Brock), by two flags, twice by one, or
+# from some function other than the flag's once-only reward.
+def test_real_each_first_win_is_given_once_by_exactly_its_flags_reward():
+    out = _real_pack()
+    doc = PP.load(REAL_DATA)
+    trainers = doc["upstream_neutralised"]["first_win_rewards"]["trainers"]
+    series = doc["upstream_neutralised"]["first_win_rewards"]["series"]
+    gives = [(rel, m.group(1)) for rel, text in out.items() if rel.endswith(".mcfunction")
+             for m in map(LOOT_GIVE.fullmatch, text.splitlines()) if m]
+    assert sorted(t for _r, t in gives) == sorted(trainers)
+    for rel, tid in gives:
+        flag = trainers[tid]["flag"]
+        assert rel == "data/cobblers/function/flag/%s/granted.mcfunction" % flag, (tid, rel)
+        assert tid in _flag(doc, flag)["set_by"]["trainer_ids"][series], (tid, flag)
+        assert "data/cobblers/loot_table/first_win/%s.json" % tid in out
+
+
+# Without it a loot command gives to someone other than the winner (@a, @p), or from a table other than a first-win one.
+def test_loot_commands_are_only_first_win_gives_to_the_winner():
+    for out in _all_packs():
+        for rel, text in out.items():
+            if rel.endswith(".mcfunction"):
+                for line in text.splitlines():
+                    if line.startswith("loot"):
+                        assert LOOT_GIVE.fullmatch(line), "%s: %r" % (rel, line)
+
+
+# Without it building another series (prestige) gives the Kanto leaders' badges and TMs for beating Johto's leaders.
+@pytest.mark.parametrize("series", ["johto", "hoenn", "sinnoh"])
+def test_real_other_series_give_no_kanto_first_win_rewards(series):
+    out = PP.files(PP.plan(PP.load(REAL_DATA), series, REAL_PLACEMENTS))
+    assert not [rel for rel in out if "/first_win/" in rel]
+    assert not [l for rel, text in out.items() if rel.endswith(".mcfunction") for l in text.splitlines() if l.startswith("loot")]
+
+
+def _fw(doc, trainers, empty=None):
+    doc["upstream_neutralised"] = {"empty_loot_tables": list(empty or []),
+                                   "first_win_rewards": {"series": "kanto", "trainers": trainers}}
+    return doc
+
+
+BADGE = {"items": ["cobbleversebadges:kanto_boulder_badge"], "one_of": ["tmcraft:tm_rocktomb", "tmcraft:tm_rocktomb"]}
+
+
+# Guards the refusals below against a plan() that refuses every first-win record.
+def test_a_valid_first_win_record_builds_into_its_flags_reward():
+    doc = _fw(_doc(), {"kanto_brock": dict(BADGE, flag="gym1_cleared")}, [RCT_TABLE % "kanto_brock"])
+    out = PP.files(PP.plan(doc))
+    assert "loot give @s loot cobblers:first_win/kanto_brock" in _lines(out["data/cobblers/function/flag/gym1_cleared/granted.mcfunction"])
+    assert "loot give" not in out["data/cobblers/function/flag/gym2_cleared/granted.mcfunction"]
+    pools = json.loads(out["data/cobblers/loot_table/first_win/kanto_brock.json"])["pools"]
+    assert [_entries(p) for p in pools] == [["cobbleversebadges:kanto_boulder_badge"], ["tmcraft:tm_rocktomb"] * 2]
+
+
+# Without it a first-win reward is added while the leader's own table still drops: two badges and two TMs per win.
+def test_plan_refuses_a_first_win_trainer_whose_table_is_not_emptied():
+    doc = _fw(_doc(), {"kanto_brock": dict(BADGE, flag="gym1_cleared")}, [])
+    with pytest.raises(PP.ProgressionError, match="not emptied"):
+        PP.plan(doc)
+
+
+# Without it the reward is tied to a flag its trainer does not set: beating Brock would never give it, or another
+# leader's win would.
+@pytest.mark.parametrize("tid,flag", [("kanto_misty", "gym1_cleared"),       # another flag's trainer
+                                      ("johto_falkner", "gym1_cleared"),     # the flag's trainer in another series
+                                      ("kanto_brock", "no_such_flag")])
+def test_plan_refuses_a_first_win_trainer_who_is_not_the_flags_trainer(tid, flag):
+    doc = _fw(_doc(), {tid: dict(BADGE, flag=flag)}, [RCT_TABLE % tid])
+    with pytest.raises(PP.ProgressionError, match="is not a trainer of flag"):
+        PP.plan(doc)
+
+
+# Without it a record with no items (or a typo that is not a resource id) builds a reward that gives nothing.
+@pytest.mark.parametrize("items,one_of", [([], []), (["Not An Id"], [])])
+def test_plan_refuses_a_first_win_record_without_item_ids(items, one_of):
+    doc = _fw(_doc(), {"kanto_brock": {"flag": "gym1_cleared", "items": items, "one_of": one_of}}, [RCT_TABLE % "kanto_brock"])
+    with pytest.raises(PP.ProgressionError, match="needs item ids"):
+        PP.plan(doc)

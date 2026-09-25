@@ -355,6 +355,51 @@
           2279
         ]
       }
+    },
+    {
+      "id": "r1_old_mine",
+      "kind": "cache",
+      "place": "the old mine west of Route 1: the far west end of the cave under the hill, past the pool",
+      "contents": [
+        {
+          "item": "cobblemon:hard_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/hard_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:heavy_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/heavy_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:potion",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel the miners left at the back of the cave: a Hard Stone, two Heavy Balls and two Potions.",
+      "why": "the owner, 2026-09-24: a hill and mine to give the ground west of Route 1 some life; the find is the reason to walk all the way down. A Hard Stone is a natural source of a held item otherwise only bought or crafted (docs/STATE.md: every Cobblemon item obtainable without crafting)",
+      "built_by": "tools/route1_old_mine.py (the barrel, in the earthwork route1_old_mine_hill, reapply step R8)",
+      "trigger": {
+        "min": [
+          1307,
+          122,
+          4120
+        ],
+        "max": [
+          1311,
+          124,
+          4124
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          1309,
+          122,
+          4122
+        ]
+      }
     }
   ]
 }

@@ -10,10 +10,13 @@ every block it writes. It is not the vanilla woodland mansion: a manor house tha
   from just north of Pallet it is on the skyline at 220-240 blocks (Distant Horizons range), but from Route 1's
   mouth and the spur junction the forest hides it at any height (measured, settlement `seen_from`).
 
-  ground floor  foyer (centre) with the grand stair rising north to the landing, and a hiding place behind it;
+  ground floor  foyer (centre), open, its worn runner leading to the dining room door, and a hiding place among
+                the crates at its back;
                 dining room (west wing), its long table still laid; library (east wing), three aisles between two rows
                 of shelves, and the servants' stair up its east wall; the service corridor along the rear, joining all
-  upper floor   the bedroom hall, west to east through the landing, with five doors (four south, one north-west) and
+  upper floor   reached only by the servants' stair (the owner, 2026-09-24: no grand stair, so the house is walked
+                room by room in the escort's order); the bedroom hall, west to east through the landing, a sitting
+                nook off the landing to the south, five doors (four south, one north-west) and
                 a candle stand by each; the sealed ballroom across the rear, its barred doors bent apart, its cold
                 hearth at the west end and an inlaid path across the floor through three broken ward marks
 
@@ -111,7 +114,7 @@ def furnish(fill, sb):
     for z, m in ((5040, 5), (5033, 9)):
         sb(1632, y + 2, z, FRAME % ("west", m))
     sb(1632, y + 1, 5036, "cozyhome:dark_oak_wall_mirror[facing=west,vertical_connection=single]")
-    # behind the grand stair, where Pip hides: crates, dust-sheeted chairs, a loose board
+    # the back of the foyer, where Pip hides: crates, dust-sheeted chairs, a loose board
     sb(1625, y, 5029, "minecraft:barrel[facing=up,open=false]")
     sb(1625, y + 1, 5029, "minecraft:barrel[facing=north,open=false]")
     sb(1626, y, 5029, "minecraft:barrel[facing=up,open=false]")
@@ -217,6 +220,14 @@ def furnish(fill, sb):
     sb(1632, u, 5041, CHAIR % ("none", "south"))
     sb(1632, u + 1, 5042, HC + "stackable_book[books=2,facing=north,seed=88]")
     sb(1635, u, 5042, BOOKSTACK % (3, "north"))
+    # the sitting nook off the landing, over the foyer: two chairs at the front window, a table between
+    sb(1627, u, 5041, CHAIR % ("purple", "east"))
+    sb(1630, u, 5041, CHAIR % ("purple", "west"))
+    sb(1628, u, 5042, HC + "dark_oak_side_table[color=none,facing=north,waterlogged=false]")
+    sb(1628, u + 1, 5042, BOOKSTACK % (1, "north"))
+    sb(1629, u, 5042, "minecraft:soul_lantern[hanging=false]")
+    sb(1627, u + 2, 5038, FRAME % ("east", 3))
+    sb(1629, u, 5037, MOSS)
     # bedroom D: the back stair comes up here
     sb(1637, u, 5042, BED % ("gray", "south", "head"))
     sb(1637, u, 5041, BED % ("gray", "south", "foot"))
@@ -313,15 +324,7 @@ def build(g):
         fill((X0 + 1, y, REAR), (X1 - 1, y, REAR), "minecraft:stone_bricks")
     for x, z in ((WEST, 5038), (EAST, 5038), (1620, REAR), (1629, REAR), (1638, REAR)):     # doorways
         fill((x, F + 1, z), (x, F + 2, z), "minecraft:air")
-    fill((1625, F + 1, 5036), (1632, F + 1, 5042), "minecraft:red_carpet")                 # a runner, worn; the stair covers it
-    # foyer: the grand stair, 4 wide, rising north from z 5040 to the landing at z 5034
-    for i, z in enumerate(range(5040, 5034, -1)):
-        fill((1627, F + 1 + i, z), (1630, F + 1 + i, z), "minecraft:dark_oak_stairs[facing=north]")
-        fill((1627, F, z), (1630, F + i, z), "minecraft:dark_oak_planks")
-    fill((1627, U, 5036), (1630, U, 5040), "minecraft:air")                          # the stairwell (the top step is the floor)
-    fill((1627, U + 1, 5041), (1630, U + 1, 5041), "minecraft:dark_oak_fence")        # its railings
-    fill((1626, U + 1, 5035), (1626, U + 1, 5041), "minecraft:dark_oak_fence")
-    fill((1631, U + 1, 5035), (1631, U + 1, 5041), "minecraft:dark_oak_fence")
+    fill((1625, F + 1, 5036), (1632, F + 1, 5042), "minecraft:red_carpet")                 # a runner, worn down the middle
     # library (east wing): two rows of shelves, three aisles
     for x in (1636, 1639):
         fill((x, F + 1, 5031), (x, F + 3, 5041), "minecraft:bookshelf")
@@ -332,7 +335,7 @@ def build(g):
     for y in range(U + 1, EAVE - 1):
         fill((X0 + 1, y, HALL0 - 1), (X1 - 1, y, HALL0 - 1), "minecraft:dark_oak_planks")   # hall's north wall
         fill((X0 + 1, y, HALL1 + 1), (1625, y, HALL1 + 1), "minecraft:dark_oak_planks")     # its south wall, west
-        fill((1632, y, HALL1 + 1), (X1 - 1, y, HALL1 + 1), "minecraft:dark_oak_planks")     # and east of the stairwell
+        fill((1632, y, HALL1 + 1), (X1 - 1, y, HALL1 + 1), "minecraft:dark_oak_planks")     # and east of the nook
         for x in (1620, 1636):                                                             # bedroom partitions
             fill((x, y, HALL1 + 2), (x, y, Z1 - 1), "minecraft:dark_oak_planks")
         fill((1621, y, Z0 + 1), (1621, y, HALL0 - 2), "minecraft:dark_oak_planks")          # NW bedroom / ballroom
@@ -341,7 +344,7 @@ def build(g):
     for x, z, face in doors:
         sb(x, U + 1, z, "minecraft:dark_oak_door[facing=%s,half=lower]" % face)
         sb(x, U + 2, z, "minecraft:dark_oak_door[facing=%s,half=upper]" % face)
-    for y in range(U + 1, EAVE - 1):                               # the stairwell's sides close off bedrooms B and C
+    for y in range(U + 1, EAVE - 1):                               # the nook's sides close off bedrooms B and C
         fill((1626, y, 5036), (1626, y, Z1 - 1), "minecraft:dark_oak_planks")
         fill((1631, y, 5036), (1631, y, Z1 - 1), "minecraft:dark_oak_planks")
     # the sealed ballroom, across the rear from x 1622, open to the roof. Its barred doors off the landing have been
@@ -395,7 +398,7 @@ def main(argv=None):
     doc["settlements"][SID] = {
         "centre": [1630, 5034], "status": "authored 2026-09-21 and laid out on the disposable world; not in the live world",
         "plan": {
-            "reading": "Leaving Pallet, the forest's side path turns off Route 1's mouth to the east and opens into a clearing, and the house fills it: a manor two storeys high, stone below and dark timber above, its roof broken and its chimneys over the trees. The drive walks round to the front, which faces south. Inside, the foyer's stair climbs to the landing; the dining room is to the west, the library to the east, the service corridor behind. Upstairs, five doors off the bedroom hall, and at the back, behind barred doors off the landing, the ballroom.",
+            "reading": "Leaving Pallet, the forest's side path turns off Route 1's mouth to the east and opens into a clearing, and the house fills it: a manor two storeys high, stone below and dark timber above, its roof broken and its chimneys over the trees. The drive walks round to the front, which faces south. Inside, the foyer is open, its runner worn to the dining room door; the dining room is to the west, the library to the east, the service corridor behind, and the only stair is the servants' stair up the library's east wall. Upstairs, five doors off the bedroom hall, a sitting nook off the landing, and at the back, behind barred doors off the landing, the ballroom.",
             "entries": [{"from": "Route 1's mansion spur (tools/maze_forest.py spur_mansion)", "at": [1604, 5032], "street": "drive"}],
             "exits": [],
             "footprint": {"rect": [1604, 5010, 1656, 5058], "why": "the forest's mansion clearing, radius 22, round (1630, 5034)"},
@@ -420,7 +423,7 @@ def main(argv=None):
         },
     }
     # only the house, in its place: the settlement's other earthworks (its lights, tools/light_plan.py) are not this tool's
-    house = {"id": "route1_mansion_house", "settlement": SID, "kind": "earthwork", "cell": "F2",
+    house = {"id": "route1_mansion_house", "settlement": SID, "kind": "earthwork", "cell": "E2",       # z 4096-5119
              "status": "planned", "chosen_because": "the Gastly escort's house (docs/story/events/ROUTE1_GASTLY_MANSION.md), "
              "authored because the vanilla woodland mansion is the wrong house; see tools/route1_mansion.py",
              "commands": build(g)}

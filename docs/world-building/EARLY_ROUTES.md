@@ -42,11 +42,20 @@ state: every mutable field stays in the Cobblemon player data the dialogue compi
 ## The Gastly mansion
 
 **The house.** An abandoned house, not labelled rooms: the foyer's stopped clock, dust-sheeted chairs and portraits,
-and a hiding place behind the grand stair; the dining table still laid (Handcrafted plates and cups, a blue cup at
+and a hiding place among the crates at its back; the dining table still laid (Handcrafted plates and cups, a blue cup at
 the head); the library's shelves half emptied, with a servants' stair up its east wall; bedrooms with their beds and
-mirrors; the ballroom's barred doors bent apart, a cold hearth, and an inlaid path across the floor through three
+mirrors; a sitting nook off the landing, over the foyer; the ballroom's barred doors bent apart, a cold hearth, and an inlaid path across the floor through three
 cracked ward marks; leaf litter under the broken windows, pale moss where the damp got in. Pale hanging moss stands
 in for cobweb, which is a spawn condition.
+
+**One way up** (the owner, 2026-09-24). There is no grand stair: the servants' stair up the library's east wall is
+the only way between floors, so the house is walked in the escort's own order: foyer, dining room, the service
+corridor, the library, up into the bedroom hall, the ballroom. The story source
+(`docs/story/events/ROUTE1_GASTLY_MANSION.md`) moves Gastly from the foyer to "the staircase checkpoint"; here that
+checkpoint (still `stairs` in the data) is the foyer side of the dining room door.
+
+**No building inside.** A survival player who walks into the house is put in adventure mode, and back in survival on
+leaving (the scene's `no_build` box, `tools/scenes_pack.py`); creative and spectator are never touched.
 
 **The ghosts.** The pool `route_1_ghost_mansion` (Gastly, Misdreavus, Shuppet, Duskull, Litwick; levels 6-15) was
 authored and compiled but never placed. It is now one Habitat Block, the house's old ward, cracked in the landing
@@ -59,17 +68,40 @@ floor, applying what the Rift taught:
   inside the forest clearing (radius 22), so the ghosts keep to the house and its grounds and nothing reaches Route 1.
 
 **The escort** (`evt_route1_gastly_family`, scene `route1_gastly_family`). Five rooms, five conditions, one
-checkpoint field (`foyer|stairs|service|library|landing|family`):
+checkpoint field (`foyer|stairs|service|library|landing|family`). A puzzle and a fight gauntlet (the owner's call,
+2026-09-24): wild ghosts never force a battle, so each room also has a guardian, a possessed Channeler
+(`data/mansion_guardians.json`) who battles on sight, and the room's puzzle stays shut until that player has beaten her:
 
-1. Foyer: Pip hides behind the stair. Accept, then choose the one clear way (the portrait's hint: the runner's worn
+| Room | Channeler | Seat | Team | Gates |
+|---|---|---|---|---|
+| Foyer | Hope | (1628, 115, 5041), inside the front door, sight 4 | Gastly 8, Shuppet 8 | `foyer_path` |
+| Dining room | Paula | (1618, 115, 5033), the far side of the table, sight 4.5 | Sinistea 10, Gastly 10 | `reach_service` |
+| Library | Laurel | (1638, 115, 5038), among the shelves, sight 4 | Misdreavus 12, Duskull 12 | `right_aisle` |
+| Bedroom hall | Jody | (1638, 121, 5034), where the servants' stair comes out, sight 3 | Litwick 13, Shuppet 14 | `lamp_third` |
+| Ballroom | Carly | (1630, 121, 5026), on the inlay, sight 4 | Misdreavus 15, Duskull 15, Gastly 16 | `barrier_down` |
+
+rctmod's battle on sight goes through walls (the owner, in game: Paula started a fight from the foyer), so each
+seat and sight distance is chosen so no standable cell outside her room, on either floor, is in reach (0.75 margin);
+the price is a short reach, and the guarded lines send the player to find her.
+
+Each is a Radical Cobblemon Trainer (generated with the route trainers by `tools/route_trainers.py`, placed by R17),
+beaten once per player; her win sets that player's `guard_N`, which the gated transition requires. While she stands,
+Pip and the room's props open on a guarded line instead of the puzzle; beating a later one early is fine. Movesets
+are level-up moves the species has by that level in Cobblemon 1.8.0's species data. Her after-battle line hints at
+her room's puzzle. Trainers stroll by default, so R17 pins every placed trainer (movement speed 0; `NoAI` would also
+stop the goal that battles on sight).
+
+1. Foyer: Pip hides among the crates at the back. Accept, then choose the one clear way (the portrait's hint: the runner's worn
    middle). Wrong ways scare Pip back; nothing resets.
 2. Dining room: walk through to the service corridor without the blue cup (a zone). Take it and Pip will not follow;
    put it back and it will.
 3. Library: Pip hums three notes; follow the aisle whose call matches. Pip waits at the servants' stair.
 4. Bedroom hall: the Litwick light the candle stands in an order (particles only this player sees); touch the
    candles in that order. A wrong one puts the lit ones out.
-5. Ballroom: restore the three ward marks in the inlay's order, from the hearth. The barrier (a curtain and a
-   push-back, this player's only) drops, Gengar comes out, and the three reunite. Pip gives the Spell Tag; the family
+5. Ballroom: shut to the player (a push-back at the bent bars) until their candles are done. Restore the three
+   ward marks in the inlay's order, from the hearth. Haunter and Gengar are both behind the barrier (a curtain and a
+   push-back, this player's only) until it drops (the owner, 2026-09-24; the story source has Haunter outside it);
+   then they come out and the three reunite. Pip gives the Spell Tag; the family
    moves to the north-west bedroom; the loose board where Pip hid holds three Dusk Balls.
 
 Per-player throughout; the checkpoint restores on return. Fields beyond the handoff's five: the rooms' own
@@ -77,8 +109,22 @@ Per-player throughout; the checkpoint restores on return. Fields beyond the hand
 `prop_cursor` for the props' one-page conversations.
 
 **Not built, and why.** The optional tea battle in the dining room and "defeat the strongest wild ghost" instead of
-the wards: there is no per-player way to know that one particular wild Pokemon was beaten. The non-family Gastly
+the wards: there is no per-player way to know that one particular wild Pokemon was beaten (the Channelers are the
+fights instead). The non-family Gastly
 encounter outside waits on Route 1 balance, as the design says.
+
+## The old mine
+
+The owner, 2026-09-24: a hill that turns into a mineshaft cave at (1332, 130, 4120), to give the open ground west of
+Route 1 some life (the route passes 262 blocks east; nothing else was recorded within 250). `tools/route1_old_mine.py`,
+settlement `route1_old_mine`, built with the towns (R8) and audited by `town_audit`: a 48 x 40 hill 16 high (peak
+y146) with three spruces and boulders; a notch in its east face to a spruce portal; a level adit under timber sets
+with the old track's bed and sleepers (its rails taken up) and lanterns; eight steps down into a dripstone cave with
+copper and calcite in its walls, a mud hollow, and the find `r1_old_mine` (a Hard Stone, two Heavy Balls, two Potions,
+once per player); a coarse-dirt trail out toward the route. It places nothing that decides a spawn: no coal or iron
+ore, no rail, no water (they would draw Rolycoly, Carkol, Coalossal, Aron, Aggron, Alolan Geodude, Bidoof and
+Blastoise to Route 1, data/spawn_blocks.json), a balance call not taken here. On staging: 10,296 of 10,296 blocks and
+67 of 67 trail cells as planned, and three rebuilds in a row complete with nothing dropped.
 
 ## The events
 
