@@ -5,7 +5,7 @@
     "One flag per gym is both the badge ledger entry and the unlock for that town's waystone (docs/world-building/NAVIGATION.md).",
     "Badges themselves are items given by each leader's RCT loot table on first defeat; the flag records the defeat, it does not give the badge.",
     "Leader order is Cobbleverse's RCT requiredDefeats chain per series, read from COBBLEVERSE-RCT-DP-v20. Which leader sits in which town is a trainer-design decision still open.",
-    "Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 5 in config), so chapters carry no level_cap here.",
+    "Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 0 in modpack/config/rctmod-server.toml since 2026-09-24; Cobbleverse ships 5), so chapters carry no level_cap here.",
     "Waystone positions are null until town locations are placed after the next terrain rendition."
   ],
   "namespace": "cobblers",

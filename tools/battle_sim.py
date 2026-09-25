@@ -14,8 +14,9 @@ Where every number comes from:
   moves        the Pokemon Showdown data the jar ships and the battle actually runs:
                assets/cobblemon/showdown/node_modules/pokemon-showdown/data/moves.js
   type chart   the same, data/typechart.js. Nothing about types is written down here.
-  level cap    base-pack/cobbleverse/config/rctmod-server.toml: initialLevelCap 20, relativeLevelCap 5, so a
-               player arrives at each gym capped at exactly that gym's ace level.
+  level cap    modpack/config/rctmod-server.toml (our overlay; the base pack's file where there is none):
+               initialLevelCap 20, relativeLevelCap 0 since 2026-09-24 (Cobbleverse ships 5), so a player
+               arrives at each gym capped at exactly that gym's ace level.
 
 WHAT IS MODELLED. Enough to design a fight around abilities and items, which is what the gyms are built on.
 
@@ -93,7 +94,9 @@ GYM_NAMES = {1: ("kanto_brock", "Rock"), 2: ("kanto_misty", "Water"),
              7: ("kanto_blaine", "Fire"), 8: ("kanto_giovanni", "Ground")}
 STARTER_OVERLAY = ROOT / "modpack" / "config" / "cobblemon" / "starters.json"
 STARTER_CONFIG = ROOT / "base-pack" / "cobbleverse" / "config" / "cobblemon" / "starters.json"
-RCT_CONFIG = ROOT / "base-pack" / "cobbleverse" / "config" / "rctmod-server.toml"
+RCT_OVERLAY = ROOT / "modpack" / "config" / "rctmod-server.toml"
+RCT_BASE = ROOT / "base-pack" / "cobbleverse" / "config" / "rctmod-server.toml"
+RCT_CONFIG = RCT_OVERLAY if RCT_OVERLAY.exists() else RCT_BASE          # the overlay is what the server runs
 
 JAR_CANDIDATES = [
     Path(r"C:\Users\wnd\Documents\github\cobblers\.claude\worktrees\cobblemon-campaign-setup-64929d"

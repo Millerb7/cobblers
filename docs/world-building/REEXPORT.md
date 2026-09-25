@@ -174,6 +174,9 @@ islet are rebuilt from committed data; and every one of them is audited by resul
 3. `python tools/reapply.py prepare --source-root C:/Users/wnd/Documents --server-dir C:/Users/wnd/Documents/github/cobblers-server`
    — 4 minutes; it must end `216 function file(s) checked, 0 with problems`.
 4. `python tools/reapply.py plan` to see the steps and the 23 places.
+5. Copy the overlay configs the assembler does not carry into `<server>/config/`, at the same relative paths:
+   `modpack/config/rctmod-server.toml` (relativeLevelCap 0, 2026-09-24). With the server stopped; rctmod reads it at
+   boot.
 
 **The run** (about 35 minutes to an audited world, then Distant Horizons)
 
