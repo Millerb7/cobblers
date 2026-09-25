@@ -204,11 +204,13 @@ def ruin_template(src, dest, info, rec, site):
             eaves = y
     height = max(1, eaves - grade)
 
-    # remove: light, spawn blocks, belongings (above the ground layer; the floor is the house's)
+    # remove: light, spawn blocks, belongings, at every layer. In many of these houses the entrance layer is also the
+    # room's layer, so its beds (a respawn point), doors, chests (with loot tables) stand on it, and one keeps a well's
+    # water below it; the floor blocks themselves are never in these lists, so the house's floor is untouched
     rb = T["remove_blocks"]
     gone = [e for k in ("light", "spawn_blocks", "belongings") for e in rb[k]]
     for pos, (n, pr, nbt) in list(c.cells.items()):
-        if pos[1] > grade and any(_in_tag(n, e) for e in gone):
+        if any(_in_tag(n, e) for e in gone):
             del c.cells[pos]
             st["removed"] += 1
 
@@ -301,7 +303,9 @@ def ruin_template(src, dest, info, rec, site):
             ys = [y for (a, y, b) in c.cells if a == x and b == z and c.cells[(a, y, b)][0] not in AIRS]
             if ys:
                 y = max(ys)
-                if y + 1 < sy and _full(c.cells[(x, y, z)][0]):
+                # only on the floor or above: a column whose top is below the ground layer (a foundation step, the
+                # entrance jigsaw's void) would put snow into the layer the ruin keeps
+                if grade <= y and y + 1 < sy and _full(c.cells[(x, y, z)][0]):
                     tops.append((x, y, z))
     snowed = set()
     for (x, y, z) in tops:

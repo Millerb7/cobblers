@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.ruins/1",
-  "status": "design, 2026-09-25. No tool reads this file yet: the ruin transform it describes is not written, so tools/place_town.py still builds the Scar without houses. The towers, terrace walls and the cairn plinth are authored earthworks in data/placements.json (scar_towers, scar_walls, scar_cairn_plinth) and are built today.",
+  "status": "built on staging 2026-09-25: tools/ruins.py makes each ruined copy and tools/place_town.py places every data/placements.json record that names a ruin from it. The towers, terrace walls and the cairn plinth are authored earthworks in data/placements.json (scar_towers, scar_walls, scar_cairn_plinth).",
   "note": "A ruin is a donor house placed from a ruined copy of its template, the way a re-materialed house is placed from a re-materialed copy (tools/place_town.py rewrite_template, data/rematerial.json house_sets). This file is the authored half: which design stands on which lot, how far each has fallen, and the rules the copy is made by. The generator translates it; it decides nothing. Positions here are derived from the Displaced City's placement report (derived/towns/displaced_city_placement.json: each design's footprint under its rotation gives its size and its entrance side), not read from the NBT; tools/place_town.py re-derives both from the template and refuses a rotation that does not turn the entrance to the recorded facing.",
   "sites": {
     "the_scar": {
@@ -12,27 +12,51 @@
       "twin_rule": "each ruin names the Displaced City house of the same design as its twin. The first 24 Displaced City houses are in the donor's own materials, so a Scar ruin of one of those designs is the same house block for block before it fell; houses 25 to 42 are the cavern's re-materialed repeats (displaced_cherry, displaced_dark), and their Scar twins stay in the original spruce and cobble on purpose: the house as it was before it went down",
       "decay_classes": {
         "standing": {
-          "wall_top_fraction": [0.8, 1.0],
+          "wall_top_fraction": [
+            0.8,
+            1.0
+          ],
           "roof": "removed; at most one run of roof beam left per ruin",
-          "breaches_per_face": [0, 1],
+          "breaches_per_face": [
+            0,
+            1
+          ],
           "why": "the heart of the city, round the old square: walls to the eaves, open to the sky"
         },
         "shell": {
-          "wall_top_fraction": [0.5, 0.8],
+          "wall_top_fraction": [
+            0.5,
+            0.8
+          ],
           "roof": "removed",
-          "breaches_per_face": [1, 2],
+          "breaches_per_face": [
+            1,
+            2
+          ],
           "why": "the middle bands: rooms you can still read, windows gone, a wall or two open"
         },
         "half": {
-          "wall_top_fraction": [0.25, 0.5],
+          "wall_top_fraction": [
+            0.25,
+            0.5
+          ],
           "roof": "removed",
-          "breaches_per_face": [1, 2],
+          "breaches_per_face": [
+            1,
+            2
+          ],
           "why": "fallen to the sills: the plan of the house, a door frame, a chimney stub"
         },
         "stump": {
-          "wall_top_fraction": [0.0, 0.2],
+          "wall_top_fraction": [
+            0.0,
+            0.2
+          ],
           "roof": "removed",
-          "breaches_per_face": [0, 0],
+          "breaches_per_face": [
+            0,
+            0
+          ],
           "why": "the rim, where the wind has had the longest: one or two courses on the floor"
         }
       },
@@ -49,48 +73,171 @@
           "lay the rubble",
           "lay the overgrowth"
         ],
-        "keep": "the template's ground layer (the entrance jigsaw's layer, tools/place_town.py template_info grade_layer) and everything below it are never cut or swapped, except the floor swaps listed under overgrowth. The floor is what place_town seats on and what its verify tests at each corner, so the seating, the foundation columns and the corners come out as they do for the whole house.",
-        "wall_height": "eaves_y is the highest layer whose footprint perimeter ring is at least 60% non-air; the wall height of the ruin is eaves_y - grade_layer. Every layer above eaves_y is the roof and is removed in every class (standing keeps at most one straight run of roof beam, chosen by the seeded draw).",
+        "keep": "the template's ground layer (the entrance jigsaw's layer, tools/place_town.py template_info grade_layer) and everything below it are never cut or swapped, with two exceptions: the moss block floor swap under overgrowth, and remove_blocks, which apply at every layer because in many of these houses the entrance layer is also the room's layer (its beds, doors and chests stand on it) and one keeps a well's water below it. The floor blocks themselves are never in remove_blocks, so the seating, the foundation columns and the corners come out as they do for the whole house.",
+        "wall_height": "the wall columns are the template columns holding a block on both of the first two layers over the ground layer; eaves_y is the highest layer where at least 60% of them still hold a block, measured on the whole house before anything is removed (a window row is part of a wall); the wall height is eaves_y - grade_layer. Every layer above eaves_y is the roof and is removed in every class.",
         "decay_height": "per template column: grade_layer + max(1, round(wall_height * f)), f = the class's range sampled by 2D value noise over the template's x and z (lattice every 3 blocks, bilinear, seeded per ruin), so neighbouring columns fall together and a wall steps down rather than toothing. Blocks above a column's decay height are removed.",
         "removed_means": "dropped from the copy's block list, never written as air: a dropped cell leaves whatever is in the world (snow, the pad) and is not one of the template's rooms, so tools/town_audit.py does not read rubble or snow there as ground in a room. Air the template stores below the decay height (its rooms) stays.",
         "breaches": "per outer wall face, the class's count of gaps 2 to 4 blocks wide, from grade_layer + 1 + (0 to 2) up to the decay height, never on the entrance column and the one each side of it (the doorway stays walkable)",
         "remove_blocks": {
-          "light": ["minecraft:lantern", "minecraft:soul_lantern", "minecraft:torch", "minecraft:wall_torch", "minecraft:soul_torch", "minecraft:soul_wall_torch", "minecraft:campfire", "minecraft:soul_campfire", "minecraft:jack_o_lantern", "minecraft:glowstone", "minecraft:sea_lantern", "minecraft:shroomlight", "minecraft:redstone_lamp", "minecraft:candle", "minecraft:end_rod"],
+          "light": [
+            "minecraft:lantern",
+            "minecraft:soul_lantern",
+            "minecraft:torch",
+            "minecraft:wall_torch",
+            "minecraft:soul_torch",
+            "minecraft:soul_wall_torch",
+            "minecraft:campfire",
+            "minecraft:soul_campfire",
+            "minecraft:jack_o_lantern",
+            "minecraft:glowstone",
+            "minecraft:sea_lantern",
+            "minecraft:shroomlight",
+            "minecraft:redstone_lamp",
+            "minecraft:candle",
+            "minecraft:end_rod"
+          ],
           "light_why": "nothing lights the Scar (plan.lighting.dark_by_design); a donor house's lanterns are the one thing that would",
-          "spawn_blocks": ["minecraft:bell", "minecraft:cobweb"],
+          "spawn_blocks": [
+            "minecraft:bell",
+            "minecraft:cobweb"
+          ],
           "spawn_blocks_why": "the two blocks a village house or a ruin could carry that data/spawn_blocks.json lists; nothing in data/spawn_block_policy.json allows them at the Scar",
-          "belongings": ["minecraft:chest", "minecraft:trapped_chest", "minecraft:barrel", "#minecraft:beds", "#minecraft:doors", "#minecraft:wool_carpets", "#minecraft:banners", "#minecraft:flower_pots", "minecraft:furnace", "minecraft:smoker", "minecraft:blast_furnace", "minecraft:composter", "minecraft:lectern", "minecraft:loom", "minecraft:stonecutter", "minecraft:grindstone", "minecraft:cartography_table", "minecraft:fletching_table", "minecraft:smithing_table", "minecraft:crafting_table", "minecraft:brewing_stand", "minecraft:cauldron", "minecraft:water_cauldron", "minecraft:anvil", "minecraft:hay_block", "minecraft:bookshelf", "minecraft:glass", "minecraft:glass_pane", "#minecraft:crops", "minecraft:water"],
+          "belongings": [
+            "minecraft:chest",
+            "minecraft:trapped_chest",
+            "minecraft:barrel",
+            "#minecraft:beds",
+            "#minecraft:doors",
+            "#minecraft:wool_carpets",
+            "#minecraft:banners",
+            "#minecraft:flower_pots",
+            "minecraft:furnace",
+            "minecraft:smoker",
+            "minecraft:blast_furnace",
+            "minecraft:composter",
+            "minecraft:lectern",
+            "minecraft:loom",
+            "minecraft:stonecutter",
+            "minecraft:grindstone",
+            "minecraft:cartography_table",
+            "minecraft:fletching_table",
+            "minecraft:smithing_table",
+            "minecraft:crafting_table",
+            "minecraft:brewing_stand",
+            "minecraft:cauldron",
+            "minecraft:water_cauldron",
+            "minecraft:anvil",
+            "minecraft:hay_block",
+            "minecraft:bookshelf",
+            "minecraft:glass",
+            "minecraft:glass_pane",
+            "#minecraft:crops",
+            "minecraft:water"
+          ],
           "belongings_why": "the city went with its people: no container, no bed, no workstation, no door, no glass left in a frame. Removing the containers also removes every donor loot table, so there is nothing at the Scar for players to race each other to"
         },
         "weathering": {
           "rule": "each surviving block above the ground layer is swapped with the listed chance, else kept; a block with two swaps draws once across both (stone brick: 30% cracked, 15% mossy, 55% kept); a swap to null removes the block",
           "swaps": [
-            {"from": "minecraft:cobblestone", "to": "minecraft:mossy_cobblestone", "chance": 0.35},
-            {"from": "minecraft:cobblestone_stairs", "to": "minecraft:mossy_cobblestone_stairs", "chance": 0.3},
-            {"from": "minecraft:cobblestone_slab", "to": "minecraft:mossy_cobblestone_slab", "chance": 0.3},
-            {"from": "minecraft:cobblestone_wall", "to": "minecraft:mossy_cobblestone_wall", "chance": 0.3},
-            {"from": "minecraft:stone_bricks", "to": "minecraft:cracked_stone_bricks", "chance": 0.3},
-            {"from": "minecraft:stone_bricks", "to": "minecraft:mossy_stone_bricks", "chance": 0.15},
-            {"from": "minecraft:stone_brick_stairs", "to": "minecraft:mossy_stone_brick_stairs", "chance": 0.25},
-            {"from": "minecraft:spruce_planks", "to": null, "chance": 0.2, "why": "rotted through; removed as above"},
-            {"from": "minecraft:spruce_stairs", "to": null, "chance": 0.3},
-            {"from": "minecraft:spruce_slab", "to": null, "chance": 0.3},
-            {"from": "minecraft:spruce_fence", "to": null, "chance": 0.4},
-            {"from": "minecraft:spruce_trapdoor", "to": null, "chance": 1.0},
-            {"from": "minecraft:farmland", "to": "minecraft:coarse_dirt", "chance": 1.0}
+            {
+              "from": "minecraft:cobblestone",
+              "to": "minecraft:mossy_cobblestone",
+              "chance": 0.35
+            },
+            {
+              "from": "minecraft:cobblestone_stairs",
+              "to": "minecraft:mossy_cobblestone_stairs",
+              "chance": 0.3
+            },
+            {
+              "from": "minecraft:cobblestone_slab",
+              "to": "minecraft:mossy_cobblestone_slab",
+              "chance": 0.3
+            },
+            {
+              "from": "minecraft:cobblestone_wall",
+              "to": "minecraft:mossy_cobblestone_wall",
+              "chance": 0.3
+            },
+            {
+              "from": "minecraft:stone_bricks",
+              "to": "minecraft:cracked_stone_bricks",
+              "chance": 0.3
+            },
+            {
+              "from": "minecraft:stone_bricks",
+              "to": "minecraft:mossy_stone_bricks",
+              "chance": 0.15
+            },
+            {
+              "from": "minecraft:stone_brick_stairs",
+              "to": "minecraft:mossy_stone_brick_stairs",
+              "chance": 0.25
+            },
+            {
+              "from": "minecraft:spruce_planks",
+              "to": null,
+              "chance": 0.2,
+              "why": "rotted through; removed as above"
+            },
+            {
+              "from": "minecraft:spruce_stairs",
+              "to": null,
+              "chance": 0.3
+            },
+            {
+              "from": "minecraft:spruce_slab",
+              "to": null,
+              "chance": 0.3
+            },
+            {
+              "from": "minecraft:spruce_fence",
+              "to": null,
+              "chance": 0.4
+            },
+            {
+              "from": "minecraft:spruce_trapdoor",
+              "to": null,
+              "chance": 1.0
+            },
+            {
+              "from": "minecraft:farmland",
+              "to": "minecraft:coarse_dirt",
+              "chance": 1.0
+            }
           ],
           "states": "a swap keeps the block's properties (facing, half, shape) where the new block has them"
         },
         "rubble": {
           "rule": "inside the footprint only, on the first layer above the floor, in air cells within 2 blocks inside a breach or a wall cut by more than 2 courses; the count is 15% of the wall blocks the decay and breaches removed; never in the doorway (entrance column and one each side, three deep)",
           "palette": [
-            {"block": "minecraft:cobblestone", "weight": 3},
-            {"block": "minecraft:mossy_cobblestone", "weight": 3},
-            {"block": "minecraft:cobblestone_slab[type=bottom]", "weight": 2},
-            {"block": "minecraft:stone_brick_slab[type=bottom]", "weight": 1},
-            {"block": "minecraft:spruce_log[axis=x]", "weight": 1, "why": "a fallen beam; axis x or z by the draw"}
+            {
+              "block": "minecraft:cobblestone",
+              "weight": 3
+            },
+            {
+              "block": "minecraft:mossy_cobblestone",
+              "weight": 3
+            },
+            {
+              "block": "minecraft:cobblestone_slab[type=bottom]",
+              "weight": 2
+            },
+            {
+              "block": "minecraft:stone_brick_slab[type=bottom]",
+              "weight": 1
+            },
+            {
+              "block": "minecraft:spruce_log[axis=x]",
+              "weight": 1,
+              "why": "a fallen beam; axis x or z by the draw"
+            }
           ],
-          "never": ["minecraft:gravel", "minecraft:dirt", "minecraft:stone"],
+          "never": [
+            "minecraft:gravel",
+            "minecraft:dirt",
+            "minecraft:stone"
+          ],
           "never_why": "tools/town_audit.py counts those as ground inside a room (NATURAL_GROUND) and would report the ruin buried"
         },
         "overgrowth": {
@@ -98,7 +245,10 @@
           "moss_carpet": "on 15% of open floor cells without snow",
           "moss_block": "10% of the open floor's stone and cobble (the one swap allowed in the ground layer; still a full floor block, so the verify's corners hold)",
           "vine": "on 12% of the inner faces of the surviving north walls, between the second course and the decay height; only where the vine's cell is inside the template's bounds",
-          "not": ["minecraft:glow_lichen", "minecraft:cobweb"],
+          "not": [
+            "minecraft:glow_lichen",
+            "minecraft:cobweb"
+          ],
           "not_why": "glow lichen gives light (the Scar has none); cobweb decides spawns (data/spawn_blocks.json)"
         },
         "outside_the_footprint": "the transform writes nothing outside a ruin's footprint: the lot outlines (scar_foundations) and the streets stay as the plan draws them, and the rubble and walls between the lots are the authored earthworks",
@@ -111,39 +261,502 @@
         "plan_audit": "streets and plaza keep their paving: nothing in this design writes on a planned road cell except scar_cairn_plinth, on the plaza, which the audit exempts as an earthwork. No lamp: the plan's lamp is none"
       },
       "ruins": [
-        {"id": "scar_ruin_01", "lot": "cross_road_lot_01", "twin": "displaced_house_13", "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_3", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2002, 940, 2008, 944], "decay": "stump"},
-        {"id": "scar_ruin_02", "lot": "cross_road_lot_02", "twin": "displaced_house_22", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_8", "facing": "north", "rotation": "clockwise_90", "footprint": [2003, 955, 2007, 960], "decay": "stump"},
-        {"id": "scar_ruin_03", "lot": "cross_road_lot_03", "twin": "displaced_house_02", "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2030, 937, 2036, 944], "decay": "shell"},
-        {"id": "scar_ruin_04", "lot": "cross_road_lot_04", "twin": "displaced_house_16", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_2", "facing": "north", "rotation": "none", "footprint": [2030, 955, 2036, 961], "decay": "half"},
-        {"id": "scar_ruin_05", "lot": "cross_road_lot_05", "twin": "displaced_house_08", "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage", "facing": "south", "rotation": "none", "footprint": [2057, 938, 2065, 944], "decay": "standing"},
-        {"id": "scar_ruin_06", "lot": "cross_road_lot_06", "twin": "displaced_house_12", "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1", "facing": "north", "rotation": "counterclockwise_90", "footprint": [2058, 955, 2065, 961], "decay": "shell"},
-        {"id": "scar_ruin_07", "lot": "cross_road_lot_07", "twin": "displaced_house_24", "template": "repurposed_structures:villages/giant_taiga/houses/tool_smith_1", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2142, 937, 2148, 944], "decay": "standing"},
-        {"id": "scar_ruin_08", "lot": "cross_road_lot_08", "twin": "displaced_house_09", "template": "repurposed_structures:villages/giant_taiga/houses/fletcher_house_1", "facing": "north", "rotation": "clockwise_90", "footprint": [2142, 955, 2148, 963], "decay": "shell"},
-        {"id": "scar_ruin_09", "lot": "cross_road_lot_09", "twin": "displaced_house_18", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2170, 937, 2176, 944], "decay": "shell"},
-        {"id": "scar_ruin_10", "lot": "cross_road_lot_10", "twin": "displaced_house_29", "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1", "facing": "north", "rotation": "none", "footprint": [2170, 955, 2176, 963], "decay": "half"},
-        {"id": "scar_ruin_11", "lot": "cross_road_lot_11", "twin": "displaced_house_15", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1", "facing": "south", "rotation": "none", "footprint": [2198, 939, 2204, 944], "decay": "half"},
-        {"id": "scar_ruin_12", "lot": "cross_road_lot_12", "twin": "displaced_house_19", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_5", "facing": "north", "rotation": "clockwise_90", "footprint": [2199, 955, 2203, 961], "decay": "stump"},
-        {"id": "scar_ruin_13", "lot": "north_road_lot_13", "twin": "displaced_house_07", "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_2", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2037, 866, 2041, 874], "decay": "stump"},
-        {"id": "scar_ruin_14", "lot": "north_road_lot_14", "twin": "displaced_house_38", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1", "facing": "north", "rotation": "180", "footprint": [2036, 885, 2042, 890], "decay": "shell"},
-        {"id": "scar_ruin_15", "lot": "north_road_lot_15", "twin": "displaced_house_03", "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_2", "facing": "south", "rotation": "180", "footprint": [2064, 868, 2070, 874], "decay": "shell"},
-        {"id": "scar_ruin_16", "lot": "north_road_lot_16", "twin": "displaced_house_17", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_3", "facing": "north", "rotation": "180", "footprint": [2064, 885, 2070, 891], "decay": "half"},
-        {"id": "scar_ruin_17", "lot": "north_road_lot_17", "twin": "displaced_house_14", "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2091, 866, 2100, 874], "decay": "standing"},
-        {"id": "scar_ruin_18", "lot": "north_road_lot_18", "twin": "displaced_house_10", "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1", "facing": "north", "rotation": "180", "footprint": [2091, 885, 2100, 893], "decay": "standing"},
-        {"id": "scar_ruin_19", "lot": "north_road_lot_19", "twin": "displaced_house_11", "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2119, 866, 2127, 874], "decay": "standing"},
-        {"id": "scar_ruin_20", "lot": "north_road_lot_20", "twin": "displaced_house_23", "template": "repurposed_structures:villages/giant_taiga/houses/tannery_1", "facing": "north", "rotation": "clockwise_90", "footprint": [2119, 885, 2127, 892], "decay": "shell"},
-        {"id": "scar_ruin_21", "lot": "north_road_lot_21", "twin": "displaced_house_35", "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1", "facing": "south", "rotation": "clockwise_90", "footprint": [2148, 868, 2155, 874], "decay": "shell"},
-        {"id": "scar_ruin_22", "lot": "north_road_lot_22", "twin": "displaced_house_20", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_6", "facing": "north", "rotation": "clockwise_90", "footprint": [2148, 885, 2154, 891], "decay": "half"},
-        {"id": "scar_ruin_23", "lot": "south_road_lot_23", "twin": "displaced_house_27", "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2036, 1007, 2042, 1014], "decay": "stump"},
-        {"id": "scar_ruin_24", "lot": "south_road_lot_24", "twin": "displaced_house_41", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4", "facing": "north", "rotation": "clockwise_90", "footprint": [2036, 1025, 2042, 1032], "decay": "stump"},
-        {"id": "scar_ruin_25", "lot": "south_road_lot_25", "twin": "displaced_house_04", "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_1", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2063, 1007, 2071, 1014], "decay": "half"},
-        {"id": "scar_ruin_26", "lot": "south_road_lot_26", "twin": "displaced_house_21", "template": "repurposed_structures:villages/giant_taiga/houses/small_house_7", "facing": "north", "rotation": "clockwise_90", "footprint": [2064, 1025, 2070, 1030], "decay": "shell"},
-        {"id": "scar_ruin_27", "lot": "south_road_lot_27", "twin": "displaced_house_37", "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1", "facing": "south", "rotation": "counterclockwise_90", "footprint": [2091, 1006, 2100, 1014], "decay": "shell"},
-        {"id": "scar_ruin_28", "lot": "south_road_lot_28", "twin": "displaced_house_33", "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1", "facing": "north", "rotation": "180", "footprint": [2091, 1025, 2100, 1033], "decay": "half"},
-        {"id": "scar_ruin_29", "lot": "south_road_lot_29", "twin": "displaced_house_06", "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1", "facing": "south", "rotation": "180", "footprint": [2120, 1006, 2126, 1014], "decay": "standing"},
-        {"id": "scar_ruin_30", "lot": "south_road_lot_30", "twin": "displaced_house_34", "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2", "facing": "north", "rotation": "clockwise_90", "footprint": [2119, 1025, 2127, 1033], "decay": "shell"},
-        {"id": "scar_ruin_31", "lot": "south_road_lot_31", "twin": "displaced_house_05", "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_2", "facing": "south", "rotation": "180", "footprint": [2147, 1007, 2155, 1014], "decay": "half"},
-        {"id": "scar_ruin_32", "lot": "south_road_lot_32", "twin": "displaced_house_31", "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage", "facing": "north", "rotation": "180", "footprint": [2147, 1025, 2155, 1031], "decay": "shell"},
-        {"id": "scar_ruin_temple", "lot": null, "twin": "displaced_house_01", "template": "repurposed_structures:villages/giant_taiga/houses/temple_1", "facing": "east", "rotation": "180", "footprint": [2095, 836, 2104, 842], "decay": "standing", "why": "the temple is ten blocks deep and no lot's nine-block interior holds it, so it stands off the lots, on the west side of the avenue near its north end, its door to the road: the tallest house ruin, the last building before the road runs out"}
+        {
+          "id": "scar_ruin_01",
+          "lot": "cross_road_lot_01",
+          "twin": "displaced_house_13",
+          "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_3",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2002,
+            940,
+            2008,
+            944
+          ],
+          "decay": "stump"
+        },
+        {
+          "id": "scar_ruin_02",
+          "lot": "cross_road_lot_02",
+          "twin": "displaced_house_22",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_8",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2003,
+            955,
+            2007,
+            960
+          ],
+          "decay": "stump"
+        },
+        {
+          "id": "scar_ruin_03",
+          "lot": "cross_road_lot_03",
+          "twin": "displaced_house_02",
+          "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2030,
+            937,
+            2036,
+            944
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_04",
+          "lot": "cross_road_lot_04",
+          "twin": "displaced_house_16",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_2",
+          "facing": "north",
+          "rotation": "none",
+          "footprint": [
+            2030,
+            955,
+            2036,
+            961
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_05",
+          "lot": "cross_road_lot_05",
+          "twin": "displaced_house_08",
+          "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
+          "facing": "south",
+          "rotation": "none",
+          "footprint": [
+            2057,
+            938,
+            2065,
+            944
+          ],
+          "decay": "standing"
+        },
+        {
+          "id": "scar_ruin_06",
+          "lot": "cross_road_lot_06",
+          "twin": "displaced_house_12",
+          "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
+          "facing": "north",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2058,
+            955,
+            2065,
+            961
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_07",
+          "lot": "cross_road_lot_07",
+          "twin": "displaced_house_24",
+          "template": "repurposed_structures:villages/giant_taiga/houses/tool_smith_1",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2142,
+            937,
+            2148,
+            944
+          ],
+          "decay": "standing"
+        },
+        {
+          "id": "scar_ruin_08",
+          "lot": "cross_road_lot_08",
+          "twin": "displaced_house_09",
+          "template": "repurposed_structures:villages/giant_taiga/houses/fletcher_house_1",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2142,
+            955,
+            2148,
+            963
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_09",
+          "lot": "cross_road_lot_09",
+          "twin": "displaced_house_18",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2170,
+            937,
+            2176,
+            944
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_10",
+          "lot": "cross_road_lot_10",
+          "twin": "displaced_house_29",
+          "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1",
+          "facing": "north",
+          "rotation": "none",
+          "footprint": [
+            2170,
+            955,
+            2176,
+            963
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_11",
+          "lot": "cross_road_lot_11",
+          "twin": "displaced_house_15",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
+          "facing": "south",
+          "rotation": "none",
+          "footprint": [
+            2198,
+            939,
+            2204,
+            944
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_12",
+          "lot": "cross_road_lot_12",
+          "twin": "displaced_house_19",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_5",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2199,
+            955,
+            2203,
+            961
+          ],
+          "decay": "stump"
+        },
+        {
+          "id": "scar_ruin_13",
+          "lot": "north_road_lot_13",
+          "twin": "displaced_house_07",
+          "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_2",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2037,
+            866,
+            2041,
+            874
+          ],
+          "decay": "stump"
+        },
+        {
+          "id": "scar_ruin_14",
+          "lot": "north_road_lot_14",
+          "twin": "displaced_house_38",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
+          "facing": "north",
+          "rotation": "180",
+          "footprint": [
+            2036,
+            885,
+            2042,
+            890
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_15",
+          "lot": "north_road_lot_15",
+          "twin": "displaced_house_03",
+          "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_2",
+          "facing": "south",
+          "rotation": "180",
+          "footprint": [
+            2064,
+            868,
+            2070,
+            874
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_16",
+          "lot": "north_road_lot_16",
+          "twin": "displaced_house_17",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_3",
+          "facing": "north",
+          "rotation": "180",
+          "footprint": [
+            2064,
+            885,
+            2070,
+            891
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_17",
+          "lot": "north_road_lot_17",
+          "twin": "displaced_house_14",
+          "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2091,
+            866,
+            2100,
+            874
+          ],
+          "decay": "standing"
+        },
+        {
+          "id": "scar_ruin_18",
+          "lot": "north_road_lot_18",
+          "twin": "displaced_house_10",
+          "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
+          "facing": "north",
+          "rotation": "180",
+          "footprint": [
+            2091,
+            885,
+            2100,
+            893
+          ],
+          "decay": "standing"
+        },
+        {
+          "id": "scar_ruin_19",
+          "lot": "north_road_lot_19",
+          "twin": "displaced_house_11",
+          "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2119,
+            866,
+            2127,
+            874
+          ],
+          "decay": "standing"
+        },
+        {
+          "id": "scar_ruin_20",
+          "lot": "north_road_lot_20",
+          "twin": "displaced_house_23",
+          "template": "repurposed_structures:villages/giant_taiga/houses/tannery_1",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2119,
+            885,
+            2127,
+            892
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_21",
+          "lot": "north_road_lot_21",
+          "twin": "displaced_house_35",
+          "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
+          "facing": "south",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2148,
+            868,
+            2155,
+            874
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_22",
+          "lot": "north_road_lot_22",
+          "twin": "displaced_house_20",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_6",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2148,
+            885,
+            2154,
+            891
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_23",
+          "lot": "south_road_lot_23",
+          "twin": "displaced_house_27",
+          "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2036,
+            1007,
+            2042,
+            1014
+          ],
+          "decay": "stump"
+        },
+        {
+          "id": "scar_ruin_24",
+          "lot": "south_road_lot_24",
+          "twin": "displaced_house_41",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2036,
+            1025,
+            2042,
+            1032
+          ],
+          "decay": "stump"
+        },
+        {
+          "id": "scar_ruin_25",
+          "lot": "south_road_lot_25",
+          "twin": "displaced_house_04",
+          "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_1",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2063,
+            1007,
+            2071,
+            1014
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_26",
+          "lot": "south_road_lot_26",
+          "twin": "displaced_house_21",
+          "template": "repurposed_structures:villages/giant_taiga/houses/small_house_7",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2064,
+            1025,
+            2070,
+            1030
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_27",
+          "lot": "south_road_lot_27",
+          "twin": "displaced_house_37",
+          "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
+          "facing": "south",
+          "rotation": "counterclockwise_90",
+          "footprint": [
+            2091,
+            1006,
+            2100,
+            1014
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_28",
+          "lot": "south_road_lot_28",
+          "twin": "displaced_house_33",
+          "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
+          "facing": "north",
+          "rotation": "180",
+          "footprint": [
+            2091,
+            1025,
+            2100,
+            1033
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_29",
+          "lot": "south_road_lot_29",
+          "twin": "displaced_house_06",
+          "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1",
+          "facing": "south",
+          "rotation": "180",
+          "footprint": [
+            2120,
+            1006,
+            2126,
+            1014
+          ],
+          "decay": "standing"
+        },
+        {
+          "id": "scar_ruin_30",
+          "lot": "south_road_lot_30",
+          "twin": "displaced_house_34",
+          "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
+          "facing": "north",
+          "rotation": "clockwise_90",
+          "footprint": [
+            2119,
+            1025,
+            2127,
+            1033
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_31",
+          "lot": "south_road_lot_31",
+          "twin": "displaced_house_05",
+          "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_2",
+          "facing": "south",
+          "rotation": "180",
+          "footprint": [
+            2147,
+            1007,
+            2155,
+            1014
+          ],
+          "decay": "half"
+        },
+        {
+          "id": "scar_ruin_32",
+          "lot": "south_road_lot_32",
+          "twin": "displaced_house_31",
+          "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
+          "facing": "north",
+          "rotation": "180",
+          "footprint": [
+            2147,
+            1025,
+            2155,
+            1031
+          ],
+          "decay": "shell"
+        },
+        {
+          "id": "scar_ruin_temple",
+          "lot": null,
+          "twin": "displaced_house_01",
+          "template": "repurposed_structures:villages/giant_taiga/houses/temple_1",
+          "facing": "east",
+          "rotation": "180",
+          "footprint": [
+            2095,
+            836,
+            2104,
+            842
+          ],
+          "decay": "standing",
+          "why": "the temple is ten blocks deep and no lot's nine-block interior holds it, so it stands off the lots, on the west side of the avenue near its north end, its door to the road: the tallest house ruin, the last building before the road runs out"
+        }
       ],
       "lot_fit": "every footprint is inside its lot's interior (the lot rect less its one-block foundation outline, 10 by 9), set against the road side and centred along it, so scar_foundations (which runs after the templates) never overwrites a ruin and each outline reads as the plinth of the plot the house stood on",
       "file_rule": "each template's local copy is kits/structures/incoming/townkit/<namespace>/<path>.nbt, gitignored: Repurposed Structures' houses are not redistributable and are placed by id (the Displaced City's donor_source); the ruined copies exist only in build/",
