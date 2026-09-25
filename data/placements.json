@@ -2453,9 +2453,10 @@
         950
       ],
       "footprint_from": "data/towns.json",
-      "status": "approved; parked 2026-09-21: the disposable world does not carry this site's pressed pad (world ground 8 to 29 blocks off the heightmap), so it waits for an export that does",
+      "status": "approved; parked 2026-09-21: the disposable world does not carry this site's pressed pad (world ground 8 to 29 blocks off the heightmap), so it waits for an export that does. 2026-09-25, the owner: a ruined city, not a living one. Built today: the foundations, the towers, the terrace walls and the cairn plinth (earthworks scar_foundations, scar_towers, scar_walls, scar_cairn_plinth). Designed, not built: the 33 ruined houses in data/ruins.json, which wait for the ruin transform in tools/ that does not exist yet, and the avenue's end over the drop",
+      "ruins_from": "data/ruins.json",
       "plan": {
-        "reading": "The Scar is flat in the way nothing on a mountain is flat: a disc pressed out of Mt Vessu's shoulder, and on it what is left of a town that is not there. Roads of cracked stone brick cross it in a grid, and between them the foundations of houses, one course high, with nothing on them. One avenue runs north across the whole disc and stops at the cliff edge, in the air. No lamps, no people. This is where the Displaced City stood; the city is underground now, and this is the hole it left.",
+        "reading": "The Scar is flat in the way nothing on a mountain is flat: a disc pressed out of Mt Vessu's shoulder, and on it a whole city, dead. Roads of cracked stone brick cross it in a grid, and on every lot between them a house stands in ruin on its foundation: near the old square to the eaves with the roofs gone, further out to the sills, at the rim a course or two. They are the Displaced City's own houses, design for design; a player who has walked the cavern streets knows them. Two towers still stand, one lies full length where it fell, and a stump; broken terrace walls cross the bands between the roads; on the old square the plinth the summit cairn stood on is empty. One avenue runs north across the whole disc and stops at the cliff edge, in the air. Snow and moss, no lamps, no doors, no people. This is where the Displaced City stood; the city is underground now, and this is what it left.",
         "entries": [
           {
             "from": "the south slope",
@@ -2558,8 +2559,8 @@
           "setback": 2,
           "gap": 3,
           "max_lot_relief": 2,
-          "as": "foundations",
-          "why": "foundations only: a course of stone brick tracing each house that stood here, no building on it"
+          "as": "ruins",
+          "why": "a course of stone brick tracing each plot (scar_foundations), and inside it the ruin of the house that stood there, fallen by how far it is from the old square (data/ruins.json)"
         },
         "waystone": null,
         "npc": null,
@@ -2570,9 +2571,9 @@
           "lamp_why": "nothing lights the Scar",
           "why": "old broken stone; neither is a spawn condition"
         },
-        "prep_note": "The pad is pressed flat at y280; nothing to cut. The avenue's north end is left open at the cliff.",
+        "prep_note": "The pad is pressed flat at y280; nothing to cut. The avenue's north end is left open at the cliff; carrying it out over the drop is designed in data/ruins.json (avenue_end) and not built.",
         "lighting": {
-          "dark_by_design": "a foundation-only ruin on the Mt Vessu pad, one course of stone and no roofs: nothing covered to light, and left unlit on purpose"
+          "dark_by_design": "a ruined city on the Mt Vessu pad with no roof left over any floor: the towers are open to the sky and the fallen tower's lengths open at both ends, so nothing covered needs light, and the Scar is left unlit on purpose"
         }
       }
     },
@@ -13256,14 +13257,806 @@
       "materials_why": "Surge's own stone, not Sabrina's: the shelf town is cut from the flank"
     },
     {
+      "id": "scar_ruin_01",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_3.nbt",
+      "cell": "A2",
+      "kind": "house",
+      "lot": "cross_road_lot_01",
+      "position": {
+        "x": 2002,
+        "z": 940
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_01",
+      "chosen_because": "a ruin of displaced_house_13's design (medium_house_3), fallen to 'stump' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_02",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_8",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_8.nbt",
+      "cell": "A2",
+      "kind": "house",
+      "lot": "cross_road_lot_02",
+      "position": {
+        "x": 2003,
+        "z": 955
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_02",
+      "chosen_because": "a ruin of displaced_house_22's design (small_house_8), fallen to 'stump' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_03",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_1.nbt",
+      "cell": "A2",
+      "kind": "house",
+      "lot": "cross_road_lot_03",
+      "position": {
+        "x": 2030,
+        "z": 937
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_03",
+      "chosen_because": "a ruin of displaced_house_02's design (armorer_house_1), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_04",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_2.nbt",
+      "cell": "A2",
+      "kind": "house",
+      "lot": "cross_road_lot_04",
+      "position": {
+        "x": 2030,
+        "z": 955
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_04",
+      "chosen_because": "a ruin of displaced_house_16's design (small_house_2), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_05",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fisher_cottage.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_05",
+      "position": {
+        "x": 2057,
+        "z": 938
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_05",
+      "chosen_because": "a ruin of displaced_house_08's design (fisher_cottage), fallen to 'standing' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_06",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_06",
+      "position": {
+        "x": 2058,
+        "z": 955
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_06",
+      "chosen_because": "a ruin of displaced_house_12's design (medium_house_1), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_07",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/tool_smith_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/tool_smith_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_07",
+      "position": {
+        "x": 2142,
+        "z": 937
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_07",
+      "chosen_because": "a ruin of displaced_house_24's design (tool_smith_1), fallen to 'standing' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_08",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/fletcher_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fletcher_house_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_08",
+      "position": {
+        "x": 2142,
+        "z": 955
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_08",
+      "chosen_because": "a ruin of displaced_house_09's design (fletcher_house_1), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_09",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_4.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_09",
+      "position": {
+        "x": 2170,
+        "z": 937
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_09",
+      "chosen_because": "a ruin of displaced_house_18's design (small_house_4), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_10",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/butcher_shop_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_10",
+      "position": {
+        "x": 2170,
+        "z": 955
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_10",
+      "chosen_because": "a ruin of displaced_house_29's design (butcher_shop_1), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_11",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_11",
+      "position": {
+        "x": 2198,
+        "z": 939
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "none",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_11",
+      "chosen_because": "a ruin of displaced_house_15's design (small_house_1), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_12",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_5",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_5.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "cross_road_lot_12",
+      "position": {
+        "x": 2199,
+        "z": 955
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_12",
+      "chosen_because": "a ruin of displaced_house_19's design (small_house_5), fallen to 'stump' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_13",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/butcher_shop_2.nbt",
+      "cell": "A2",
+      "kind": "house",
+      "lot": "north_road_lot_13",
+      "position": {
+        "x": 2037,
+        "z": 866
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_13",
+      "chosen_because": "a ruin of displaced_house_07's design (butcher_shop_2), fallen to 'stump' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_14",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_1.nbt",
+      "cell": "A2",
+      "kind": "house",
+      "lot": "north_road_lot_14",
+      "position": {
+        "x": 2036,
+        "z": 885
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_14",
+      "chosen_because": "a ruin of displaced_house_38's design (small_house_1), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_15",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_2.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_15",
+      "position": {
+        "x": 2064,
+        "z": 868
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_15",
+      "chosen_because": "a ruin of displaced_house_03's design (armorer_house_2), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_16",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_3",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_3.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_16",
+      "position": {
+        "x": 2064,
+        "z": 885
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_16",
+      "chosen_because": "a ruin of displaced_house_17's design (small_house_3), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_17",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/shepherds_house_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_17",
+      "position": {
+        "x": 2091,
+        "z": 866
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_17",
+      "chosen_because": "a ruin of displaced_house_14's design (shepherds_house_1), fallen to 'standing' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_18",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_18",
+      "position": {
+        "x": 2091,
+        "z": 885
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_18",
+      "chosen_because": "a ruin of displaced_house_10's design (masons_house_1), fallen to 'standing' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_19",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_2.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_19",
+      "position": {
+        "x": 2119,
+        "z": 866
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_19",
+      "chosen_because": "a ruin of displaced_house_11's design (masons_house_2), fallen to 'standing' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_20",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/tannery_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/tannery_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_20",
+      "position": {
+        "x": 2119,
+        "z": 885
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_20",
+      "chosen_because": "a ruin of displaced_house_23's design (tannery_1), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_21",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/medium_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/medium_house_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_21",
+      "position": {
+        "x": 2148,
+        "z": 868
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_21",
+      "chosen_because": "a ruin of displaced_house_35's design (medium_house_1), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_22",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_6",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_6.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "north_road_lot_22",
+      "position": {
+        "x": 2148,
+        "z": 885
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_22",
+      "chosen_because": "a ruin of displaced_house_20's design (small_house_6), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_23",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/armorer_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/armorer_house_1.nbt",
+      "cell": "A2",
+      "kind": "house",
+      "lot": "south_road_lot_23",
+      "position": {
+        "x": 2036,
+        "z": 1007
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_23",
+      "chosen_because": "a ruin of displaced_house_27's design (armorer_house_1), fallen to 'stump' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_24",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_4",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_4.nbt",
+      "cell": "B2",
+      "kind": "house",
+      "lot": "south_road_lot_24",
+      "position": {
+        "x": 2036,
+        "z": 1025
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_24",
+      "chosen_because": "a ruin of displaced_house_41's design (small_house_4), fallen to 'stump' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_25",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/animal_pen_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "south_road_lot_25",
+      "position": {
+        "x": 2063,
+        "z": 1007
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_25",
+      "chosen_because": "a ruin of displaced_house_04's design (animal_pen_1), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_26",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/small_house_7",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/small_house_7.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "south_road_lot_26",
+      "position": {
+        "x": 2064,
+        "z": 1025
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_26",
+      "chosen_because": "a ruin of displaced_house_21's design (small_house_7), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_27",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/shepherds_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/shepherds_house_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "south_road_lot_27",
+      "position": {
+        "x": 2091,
+        "z": 1006
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "counterclockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_27",
+      "chosen_because": "a ruin of displaced_house_37's design (shepherds_house_1), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_28",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_1.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "south_road_lot_28",
+      "position": {
+        "x": 2091,
+        "z": 1025
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_28",
+      "chosen_because": "a ruin of displaced_house_33's design (masons_house_1), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_29",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/butcher_shop_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/butcher_shop_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "south_road_lot_29",
+      "position": {
+        "x": 2120,
+        "z": 1006
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_29",
+      "chosen_because": "a ruin of displaced_house_06's design (butcher_shop_1), fallen to 'standing' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_30",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/masons_house_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/masons_house_2.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "south_road_lot_30",
+      "position": {
+        "x": 2119,
+        "z": 1025
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "clockwise_90",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_30",
+      "chosen_because": "a ruin of displaced_house_34's design (masons_house_2), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_31",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/animal_pen_2",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/animal_pen_2.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": "south_road_lot_31",
+      "position": {
+        "x": 2147,
+        "z": 1007
+      },
+      "facing": "south",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_31",
+      "chosen_because": "a ruin of displaced_house_05's design (animal_pen_2), fallen to 'half' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_32",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/fisher_cottage",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/fisher_cottage.nbt",
+      "cell": "B3",
+      "kind": "house",
+      "lot": "south_road_lot_32",
+      "position": {
+        "x": 2147,
+        "z": 1025
+      },
+      "facing": "north",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_32",
+      "chosen_because": "a ruin of displaced_house_31's design (fisher_cottage), fallen to 'shell' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
+      "id": "scar_ruin_temple",
+      "settlement": "the_scar",
+      "template": "repurposed_structures:villages/giant_taiga/houses/temple_1",
+      "file": "kits/structures/incoming/townkit/repurposed_structures/villages/giant_taiga/houses/temple_1.nbt",
+      "cell": "A3",
+      "kind": "house",
+      "lot": null,
+      "position": {
+        "x": 2095,
+        "z": 836
+      },
+      "facing": "east",
+      "anchor_mode": "corner",
+      "y_mode": "surface",
+      "rotation": "180",
+      "mirror": "none",
+      "status": "planned",
+      "ruin": "scar_ruin_temple",
+      "chosen_because": "a ruin of displaced_house_01's design (temple_1), fallen to 'standing' (data/ruins.json)",
+      "donor_source": {
+        "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored; the ruined copy exists only in build/"
+      }
+    },
+    {
       "id": "scar_foundations",
       "settlement": "the_scar",
       "kind": "earthwork",
       "cell": "A3",
       "status": "planned",
-      "chosen_because": "foundations only, one course, on every lot the plan draws: the houses that were here",
+      "chosen_because": "one course on every lot the plan draws: the plot each house stood on; the ruin of the house stands inside it (data/ruins.json), clear of the course",
       "commands": [
-        "# the Scar: one course of stone brick tracing each house that stood here, nothing on it (authored)",
+        "# the Scar: one course of stone brick tracing each plot a house stood on (authored)",
         "fill 2000 281 935 2011 281 935 minecraft:mossy_stone_bricks",
         "fill 2000 281 945 2011 281 945 minecraft:mossy_stone_bricks",
         "fill 2000 281 935 2000 281 945 minecraft:mossy_stone_bricks",
@@ -13424,6 +14217,197 @@
         "fill 2146 281 1024 2146 281 1034 minecraft:cracked_stone_bricks",
         "fill 2157 281 1024 2157 281 1034 minecraft:cracked_stone_bricks",
         "setblock 2151 281 1024 minecraft:air"
+      ]
+    },
+    {
+      "id": "scar_towers",
+      "settlement": "the_scar",
+      "kind": "earthwork",
+      "cell": "A3",
+      "status": "planned",
+      "chosen_because": "the owner, 2026-09-25: a big ruined city, with a few fallen towers or tall ruins. Four towers on the free bands between the roads, clear of every lot, street and the plaza; ground y280 from the plan (derived/towns/the_scar_plan.json, every lot and street measured 280 off the heightmap) and the pad (radius 150 at y280; every tower is within 90 of the centre)",
+      "commands": [
+        "# the Scar's towers: one standing to twenty-two courses with its crown broken, one fallen full length along the ground, one standing roofless, one stump. Stone brick like the foundations; no roof, no light (authored)",
+        "# tower A, the tall one, on the north band west of the avenue, its door to the cross road",
+        "fill 2057 281 911 2063 302 917 minecraft:stone_bricks",
+        "fill 2058 282 912 2062 302 916 minecraft:air",
+        "fill 2057 281 911 2057 302 911 minecraft:air",
+        "fill 2063 281 911 2063 302 911 minecraft:air",
+        "fill 2057 281 917 2057 302 917 minecraft:air",
+        "fill 2063 281 917 2063 302 917 minecraft:air",
+        "fill 2058 282 912 2058 302 912 minecraft:stone_bricks",
+        "fill 2062 282 912 2062 302 912 minecraft:stone_bricks",
+        "fill 2058 282 916 2058 302 916 minecraft:stone_bricks",
+        "fill 2062 282 916 2062 302 916 minecraft:stone_bricks",
+        "fill 2057 281 911 2063 285 917 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "fill 2057 286 911 2057 297 917 minecraft:cracked_stone_bricks replace minecraft:stone_bricks",
+        "fill 2058 290 911 2062 294 911 minecraft:cracked_stone_bricks replace minecraft:stone_bricks",
+        "fill 2060 282 917 2060 284 917 minecraft:air",
+        "fill 2057 289 913 2057 295 915 minecraft:air",
+        "fill 2058 292 914 2060 292 914 minecraft:spruce_log[axis=x]",
+        "fill 2060 297 912 2060 297 913 minecraft:spruce_log[axis=z]",
+        "fill 2058 300 911 2060 302 911 minecraft:air",
+        "fill 2061 298 911 2062 302 912 minecraft:air",
+        "fill 2063 299 912 2063 302 914 minecraft:air",
+        "fill 2062 295 915 2063 302 916 minecraft:air",
+        "fill 2057 293 915 2059 302 917 minecraft:air",
+        "fill 2060 299 917 2062 302 917 minecraft:air",
+        "setblock 2056 281 918 minecraft:cobblestone",
+        "setblock 2056 282 918 minecraft:stone_brick_slab",
+        "setblock 2055 281 916 minecraft:mossy_cobblestone",
+        "setblock 2056 281 915 minecraft:stone_brick_slab",
+        "setblock 2054 281 918 minecraft:cracked_stone_bricks",
+        "setblock 2058 281 919 minecraft:mossy_stone_bricks",
+        "setblock 2057 281 920 minecraft:cobblestone_slab",
+        "setblock 2059 282 913 minecraft:cobblestone",
+        "setblock 2061 282 915 minecraft:stone_brick_slab",
+        "# tower B, fallen: its stump on the north band east of the avenue, its shaft lying west along the ground in three broken lengths",
+        "fill 2178 281 912 2182 288 916 minecraft:stone_bricks",
+        "fill 2179 282 913 2181 288 915 minecraft:air",
+        "fill 2178 281 912 2182 283 916 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "fill 2178 285 912 2180 288 912 minecraft:air",
+        "fill 2182 284 914 2182 288 916 minecraft:air",
+        "fill 2178 286 915 2179 288 916 minecraft:air",
+        "fill 2178 282 913 2178 284 915 minecraft:air",
+        "setblock 2177 281 914 minecraft:cobblestone",
+        "setblock 2176 281 913 minecraft:stone_brick_slab",
+        "setblock 2177 281 915 minecraft:mossy_cobblestone",
+        "setblock 2176 281 916 minecraft:cracked_stone_bricks",
+        "fill 2168 281 912 2175 285 916 minecraft:stone_bricks",
+        "fill 2168 282 913 2175 284 915 minecraft:air",
+        "fill 2170 285 913 2172 285 915 minecraft:air",
+        "fill 2168 281 912 2175 285 912 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "setblock 2166 281 914 minecraft:cobblestone",
+        "setblock 2166 282 914 minecraft:cobblestone_slab",
+        "setblock 2167 281 913 minecraft:stone_bricks",
+        "setblock 2165 281 915 minecraft:stone_brick_slab",
+        "fill 2157 281 913 2164 285 917 minecraft:cracked_stone_bricks",
+        "fill 2157 282 914 2164 284 916 minecraft:air",
+        "fill 2160 282 917 2162 284 917 minecraft:air",
+        "fill 2159 285 914 2160 285 916 minecraft:air",
+        "fill 2157 281 913 2164 285 913 minecraft:mossy_stone_bricks replace minecraft:cracked_stone_bricks",
+        "fill 2150 281 911 2154 284 915 minecraft:mossy_stone_bricks",
+        "fill 2150 282 912 2154 283 914 minecraft:air",
+        "fill 2150 284 911 2151 284 915 minecraft:air",
+        "fill 2152 284 912 2153 284 913 minecraft:air",
+        "setblock 2155 281 914 minecraft:cobblestone",
+        "setblock 2156 281 912 minecraft:mossy_cobblestone",
+        "setblock 2148 281 913 minecraft:cobblestone",
+        "setblock 2147 281 915 minecraft:mossy_cobblestone",
+        "setblock 2149 281 910 minecraft:stone_brick_slab",
+        "# tower C, on the south band east of the avenue: standing roofless to sixteen courses, slit windows, its door to the cross road",
+        "fill 2172 281 982 2178 296 988 minecraft:stone_bricks",
+        "fill 2173 282 983 2177 296 987 minecraft:air",
+        "fill 2172 281 982 2178 284 988 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "fill 2178 285 982 2178 293 988 minecraft:cracked_stone_bricks replace minecraft:stone_bricks",
+        "fill 2175 282 982 2175 284 982 minecraft:air",
+        "fill 2175 288 988 2175 289 988 minecraft:air",
+        "fill 2172 288 985 2172 289 985 minecraft:air",
+        "fill 2178 288 985 2178 289 985 minecraft:air",
+        "fill 2175 288 982 2175 289 982 minecraft:air",
+        "fill 2172 294 982 2175 296 982 minecraft:air",
+        "fill 2176 295 988 2178 296 988 minecraft:air",
+        "fill 2178 293 982 2178 296 984 minecraft:air",
+        "fill 2172 292 986 2172 296 988 minecraft:air",
+        "fill 2173 290 984 2176 290 984 minecraft:spruce_log[axis=x]",
+        "setblock 2179 281 990 minecraft:cobblestone",
+        "setblock 2180 281 989 minecraft:cracked_stone_bricks",
+        "setblock 2179 281 991 minecraft:stone_brick_slab",
+        "setblock 2171 281 981 minecraft:mossy_cobblestone",
+        "setblock 2174 282 986 minecraft:cobblestone",
+        "# tower D, a stump on the south band west of the avenue",
+        "fill 2043 281 983 2047 285 987 minecraft:mossy_stone_bricks",
+        "fill 2044 282 984 2046 285 986 minecraft:air",
+        "fill 2043 284 983 2045 285 983 minecraft:air",
+        "fill 2047 283 985 2047 285 987 minecraft:air",
+        "setblock 2048 281 986 minecraft:cobblestone",
+        "setblock 2049 281 987 minecraft:stone_brick_slab",
+        "setblock 2045 282 985 minecraft:cracked_stone_bricks"
+      ]
+    },
+    {
+      "id": "scar_walls",
+      "settlement": "the_scar",
+      "kind": "earthwork",
+      "cell": "A3",
+      "status": "planned",
+      "chosen_because": "the owner, 2026-09-25: broken walls. Two terrace walls across the bands between the roads, 25 blocks either side of the cross road, broken where they fell; the avenue and the plaza are left open, and no wall touches a lot, a street or a tower",
+      "commands": [
+        "# the Scar's terrace walls: two broken lines of stone brick, z925 and z975, one to four courses high, with gaps and rubble where they fell (authored)",
+        "fill 2006 281 925 2012 282 925 minecraft:stone_bricks",
+        "fill 2016 281 925 2021 283 925 minecraft:stone_bricks",
+        "fill 2025 281 925 2031 284 925 minecraft:stone_bricks",
+        "fill 2032 281 925 2033 281 925 minecraft:stone_bricks",
+        "fill 2034 281 925 2040 282 925 minecraft:stone_bricks",
+        "fill 2046 281 925 2052 283 925 minecraft:stone_bricks",
+        "fill 2053 281 925 2054 281 925 minecraft:stone_bricks",
+        "fill 2055 281 925 2066 284 925 minecraft:stone_bricks",
+        "fill 2071 281 925 2080 282 925 minecraft:stone_bricks",
+        "fill 2081 281 925 2083 281 925 minecraft:stone_bricks",
+        "fill 2084 281 925 2092 283 925 minecraft:stone_bricks",
+        "fill 2128 281 925 2133 283 925 minecraft:stone_bricks",
+        "fill 2137 281 925 2146 282 925 minecraft:stone_bricks",
+        "fill 2150 281 925 2158 284 925 minecraft:stone_bricks",
+        "fill 2163 281 925 2171 282 925 minecraft:stone_bricks",
+        "fill 2172 281 925 2174 281 925 minecraft:stone_bricks",
+        "fill 2180 281 925 2194 283 925 minecraft:stone_bricks",
+        "fill 2195 281 925 2200 281 925 minecraft:stone_bricks",
+        "fill 2006 281 925 2092 282 925 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "fill 2046 283 925 2066 284 925 minecraft:cracked_stone_bricks replace minecraft:stone_bricks",
+        "fill 2128 281 925 2200 281 925 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "fill 2150 282 925 2194 284 925 minecraft:cracked_stone_bricks replace minecraft:stone_bricks",
+        "setblock 2014 281 926 minecraft:cobblestone",
+        "setblock 2023 281 926 minecraft:cobblestone",
+        "setblock 2043 281 924 minecraft:mossy_cobblestone",
+        "setblock 2044 281 926 minecraft:stone_brick_slab",
+        "setblock 2068 281 926 minecraft:cobblestone",
+        "setblock 2069 281 924 minecraft:cracked_stone_bricks",
+        "setblock 2135 281 926 minecraft:stone_brick_slab",
+        "setblock 2160 281 924 minecraft:mossy_cobblestone",
+        "setblock 2177 281 926 minecraft:cobblestone",
+        "setblock 2028 285 925 minecraft:moss_carpet",
+        "setblock 2060 285 925 minecraft:moss_carpet",
+        "setblock 2088 284 925 minecraft:moss_carpet",
+        "fill 2006 281 975 2013 282 975 minecraft:stone_bricks",
+        "fill 2016 281 975 2024 282 975 minecraft:stone_bricks",
+        "fill 2030 281 975 2038 284 975 minecraft:stone_bricks",
+        "fill 2039 281 975 2040 281 975 minecraft:stone_bricks",
+        "fill 2041 281 975 2055 283 975 minecraft:stone_bricks",
+        "fill 2061 281 975 2072 282 975 minecraft:stone_bricks",
+        "fill 2073 281 975 2076 281 975 minecraft:stone_bricks",
+        "fill 2077 281 975 2092 284 975 minecraft:stone_bricks",
+        "fill 2128 281 975 2140 283 975 minecraft:stone_bricks",
+        "fill 2145 281 975 2152 282 975 minecraft:stone_bricks",
+        "fill 2153 281 975 2166 284 975 minecraft:stone_bricks",
+        "fill 2182 281 975 2190 283 975 minecraft:stone_bricks",
+        "fill 2191 281 975 2200 282 975 minecraft:stone_bricks",
+        "fill 2006 281 975 2092 282 975 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "fill 2030 283 975 2055 284 975 minecraft:cracked_stone_bricks replace minecraft:stone_bricks",
+        "fill 2128 281 975 2200 281 975 minecraft:mossy_stone_bricks replace minecraft:stone_bricks",
+        "fill 2153 282 975 2166 284 975 minecraft:cracked_stone_bricks replace minecraft:stone_bricks",
+        "setblock 2027 281 976 minecraft:cobblestone",
+        "setblock 2058 281 974 minecraft:mossy_cobblestone",
+        "setblock 2059 281 976 minecraft:stone_brick_slab",
+        "setblock 2142 281 976 minecraft:cracked_stone_bricks",
+        "setblock 2175 281 976 minecraft:cobblestone",
+        "setblock 2176 281 974 minecraft:stone_brick_slab",
+        "setblock 2035 285 975 minecraft:moss_carpet",
+        "setblock 2080 285 975 minecraft:moss_carpet"
+      ]
+    },
+    {
+      "id": "scar_cairn_plinth",
+      "settlement": "the_scar",
+      "kind": "earthwork",
+      "cell": "A3",
+      "status": "planned",
+      "chosen_because": "the old square's plinth, empty: the summit cairn stood on it and stands on the Displaced City's square now (displaced_cairn, 3 by 3). A player who has seen both can set one on the other",
+      "commands": [
+        "# the old square's plinth, a ring of chiseled stone brick round an empty 3 by 3 of the square's own paving, one corner cracked and one gone (authored)",
+        "fill 2108 281 948 2112 281 952 minecraft:chiseled_stone_bricks",
+        "fill 2109 281 949 2111 281 951 minecraft:air",
+        "setblock 2112 281 952 minecraft:cracked_stone_bricks",
+        "setblock 2108 281 948 minecraft:air"
       ]
     },
     {

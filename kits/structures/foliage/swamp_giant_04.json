@@ -1,0 +1,10 @@
+{
+ "group": "swamp_giant",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  9,
+  0,
+  9
+ ]
+}

@@ -1568,6 +1568,210 @@
    "type": "krummholz"
   }
  },
+ "overlays": {
+  "text": [
+   "Extra stems and debris laid over named sub-regions after every forest type is placed, each from its own random stream, so every other forest paints exactly as it did without them (tools/foliage.py place).",
+   "They only fill gaps: the same pairwise spacing from every standing stem, clear of debris, glades, settlements, water (water_clearance_blocks) and of every route centreline by path_clearance_blocks, so prop roots never wall a route.",
+   "density = edge ramp x patch noise (the top `share` of the noise inside the overlay, soft-edged) x near-water term (floor + (1 - floor) x exp(-distance / reach)) x slope, times the sub-region's scale. Overlays never paint a biome: the spawn pools key on it.",
+   "Owner's playtest notes 25 and 29 (experiments/EXP-035-first-playtest). Design and numbers: docs/world-building/FOLIAGE_MARSH_JUNGLE.md."
+  ],
+  "path_clearance_blocks": 5,
+  "layers": [
+   {
+    "id": "marsh_giants",
+    "identity": "Tall trees over the marsh: vine-hung swamp giants and tall mangroves in groves, twice the height of the swamp oaks.",
+    "from_inside": "Every so often the canopy lifts: a 2x2 oak twenty blocks tall on knotted knees, curtains of vines hanging to head height, or a tall mangrove on arching roots.",
+    "subregions": {
+     "marshy_marsh": 1.0,
+     "marsh_creek": 0.45
+    },
+    "stems_per_ha": 10,
+    "edge_width": 60,
+    "ragged": 30,
+    "patches": {
+     "scale": 160,
+     "share": 0.5,
+     "soft": 0.06
+    },
+    "slope_lo": 16,
+    "slope_hi": 28,
+    "classes": [
+     {
+      "group": "swamp_giant",
+      "core": 2,
+      "edge": 1,
+      "spacing": 12
+     },
+     {
+      "group": "tall_mangrove",
+      "core": 1.5,
+      "edge": 0.5,
+      "spacing": 10
+     }
+    ],
+    "debris": [
+     {
+      "group": "vine_snag",
+      "per_ha": 2.0,
+      "zone": "any",
+      "max_slope": 20
+     }
+    ]
+   },
+   {
+    "id": "marsh_mangroves",
+    "identity": "Mangroves: a root-floored mangrove wood, thickest at the water and thinning inland, the swamp's own tree.",
+    "from_inside": "You pick your way between arching prop roots and root knots under low crowns hung with propagules and vines; mud and moss underfoot, the pond and the outflow always close.",
+    "subregions": {
+     "marshy_marsh": 1.0,
+     "marsh_creek": 0.35
+    },
+    "stems_per_ha": 60,
+    "edge_width": 40,
+    "ragged": 24,
+    "near_water": {
+     "reach": 50,
+     "floor": 0.25
+    },
+    "slope_lo": 16,
+    "slope_hi": 28,
+    "classes": [
+     {
+      "group": "tall_mangrove",
+      "core": 0.6,
+      "edge": 0.0,
+      "spacing": 9
+     },
+     {
+      "group": "mangrove",
+      "core": 5,
+      "edge": 2,
+      "spacing": 6
+     }
+    ],
+    "debris": [
+     {
+      "group": "root_tangle",
+      "per_ha": 25,
+      "zone": "core",
+      "max_slope": 15
+     },
+     {
+      "group": "mangrove_scrub",
+      "per_ha": 14,
+      "zone": "any",
+      "max_slope": 20
+     },
+     {
+      "group": "vine_snag",
+      "per_ha": 2.0,
+      "zone": "core",
+      "max_slope": 20
+     }
+    ],
+    "floor": {
+     "threshold": 0.45,
+     "mix": [
+      [
+       "MUD",
+       0.5
+      ],
+      [
+       "MOSS",
+       0.3
+      ],
+      [
+       "GRASS",
+       0.2
+      ]
+     ]
+    },
+    "understory": {
+     "core": {
+      "set": "moss_mushroom",
+      "coverage": 0.12,
+      "clear": false
+     },
+     "mid": {
+      "set": "swamp_floor",
+      "coverage": 0.1,
+      "clear": false
+     }
+    }
+   },
+   {
+    "id": "jungle_thickets",
+    "identity": "Jungle thickets: dense patches of jungle trees under a closed canopy, between the open stands of giants.",
+    "from_inside": "Out of the open emergent jungle you walk into a wall of trunks, bushes and vines; inside, the light goes green and the next trunk is three or four blocks away.",
+    "subregions": {
+     "jungle_west": 1.0,
+     "jungle_east": 0.85
+    },
+    "stems_per_ha": 150,
+    "edge_width": 50,
+    "ragged": 30,
+    "patches": {
+     "scale": 120,
+     "share": 0.35,
+     "soft": 0.05
+    },
+    "slope_lo": 22,
+    "slope_hi": 36,
+    "classes": [
+     {
+      "group": "mega_jungle",
+      "core": 1.5,
+      "edge": 0.3,
+      "spacing": 8
+     },
+     {
+      "group": "jungle",
+      "core": 5,
+      "edge": 4,
+      "spacing": 3.5
+     }
+    ],
+    "debris": [
+     {
+      "group": "jungle_bush",
+      "per_ha": 60,
+      "zone": "core",
+      "max_slope": 25
+     },
+     {
+      "group": "fallen_log_broadleaf",
+      "per_ha": 2.0,
+      "zone": "core",
+      "max_slope": 7
+     }
+    ],
+    "floor": {
+     "threshold": 0.55,
+     "mix": [
+      [
+       "PODZOL",
+       0.45
+      ],
+      [
+       "MOSS",
+       0.25
+      ],
+      [
+       "GRASS",
+       0.3
+      ]
+     ]
+    },
+    "understory": {
+     "core": {
+      "set": "jungle_floor",
+      "coverage": 0.25,
+      "clear": false
+     }
+    }
+   }
+  ]
+ },
  "landmark_trees": [
   {
    "id": "great_oak_pallet",

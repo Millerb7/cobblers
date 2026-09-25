@@ -338,7 +338,19 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
             if materials not in sets:
                 raise SystemExit("%s names material set %r, which data/rematerial.json house_sets does not have" % (p["id"], materials))
             materials = sets[materials]["map"]
-        if info["waystones"] or p.get("dry") or materials:
+        ruined = None
+        if p.get("ruin"):
+            # a ruined copy (tools/ruins.py, data/ruins.json): seated as the whole house, placed from the copy, which
+            # has no jigsaws and no containers left for the steps below to put back
+            if out_dir is None:
+                raise SystemExit("%s needs a ruined template copy; building it needs an output datapack to hold it" % p["id"])
+            import ruins
+            rdoc = ruins.load()
+            site = rdoc["sites"][p["settlement"]]
+            template_id = "cobblers:towns/ruined/%s/%s__%s" % (ns, path_, p["ruin"])
+            ruined = ruins.ruin_template(ROOT / p["file"], Path(out_dir) / "data" / "cobblers" / "structure" / "towns" / "ruined"
+                                         / ns / (path_ + "__" + p["ruin"] + ".nbt"), info, ruins.ruin_of(site, p["ruin"]), site)
+        elif info["waystones"] or p.get("dry") or materials:
             if out_dir is None:
                 raise SystemExit("%s needs a rewritten template copy; building it needs an output datapack to hold it" % p["id"])
             # a re-materialed copy is this building's own: two houses of one design in two materials are two templates
@@ -354,13 +366,13 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / p["file"], dest)
         cmds.append("place template %s %d %d %d %s none 1.0 0" % (template_id, px, oy, pz, rot))
-        for (jx, jy, jz), final, _ in info["jigsaws"]:
+        for (jx, jy, jz), final, _ in ([] if ruined else info["jigsaws"]):
             wx, wz = world_xz(jx, jz)
             state = final if final != "minecraft:structure_void" else "minecraft:air"
             if state.split("[")[0] in materials:
                 state = materials[state.split("[")[0]] + state[len(state.split("[")[0]):]
             cmds.append("setblock %d %d %d %s" % (wx, oy + jy, wz, state))
-        for (lx, ly, lz) in info["loot"]:
+        for (lx, ly, lz) in ([] if ruined else info["loot"]):
             wx, wz = world_xz(lx, lz)
             cmds.append("data remove block %d %d %d LootTable" % (wx, oy + ly, wz))
         stripped = [list(q) for q in info["waystones"]]
@@ -398,7 +410,7 @@ def build(settlement, doc, ground_at, legs_doc=None, out_dir=None):
                                     "foundation_columns": found_cols, "foundation_max_height": found_max,
                                     "cut_into_ground_max": cut_max, "waystones_stripped_from_template": stripped, "template_placed": template_id,
                                     "columns": [[c[0], c[1], c[2]] for c in cols], "corners": corners,
-                                    "command_position": [px, oy, pz]})
+                                    "command_position": [px, oy, pz], **({"ruin": ruined} if ruined else {})})
 
     def surface(x, z):
         return seated.get((x, z), ground_at(x, z))
