@@ -218,7 +218,7 @@
         "maximum": 20,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -1926,7 +1926,7 @@
         "maximum": 25,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -2671,7 +2671,7 @@
         "maximum": 30,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -4596,7 +4596,7 @@
         "maximum": 35,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -7909,7 +7909,7 @@
         "maximum": 40,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -8899,7 +8899,7 @@
         "maximum": 45,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -11025,7 +11025,7 @@
         "maximum": 50,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -13359,7 +13359,7 @@
         "maximum": 55,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",
@@ -16123,7 +16123,7 @@
         "maximum": 60,
         "status": "provisional",
         "meaning": "Expected player-party band, not wild spawn levels.",
-        "basis": "RCT initialLevelCap 20 and relativeLevelCap 5 in data/progression.json; minimums await EXP-003."
+        "basis": "RCT initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml, 2026-09-24); minimums await EXP-003."
       },
       "corridor": {
         "derivation": "A* dense path simplified only for storage; y sampled from the canonical heightmap",

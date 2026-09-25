@@ -1158,9 +1158,11 @@ def test_availability_parses_eight_gyms_each_with_a_non_empty_species_list(pack)
 
 # removing this lets the level cap the whole simulation runs at be read from the wrong keys and silently
 # default; the cap decides every stat on both sides, so a misread here moves every number in the report.
+# Changed deliberately 2026-09-24: the owner set relativeLevelCap 0 in our overlay (modpack/config/rctmod-server.toml),
+# which the simulation now reads; Cobbleverse's own file still says 5 (tests/test_rct_config_overlay.py).
 def test_the_level_cap_comes_from_the_packs_own_rct_config():
     init, rel = B.level_caps(B.RCT_CONFIG)
-    assert (init, rel) == (20, 5), "rctmod-server.toml no longer says initial 20, relative +5"
+    assert (init, rel) == (20, 0), "the RCT config the simulation reads no longer says initial 20, relative 0"
 
 
 # removing this lets the trainers file the report reads drift out of the repository, which would turn every
