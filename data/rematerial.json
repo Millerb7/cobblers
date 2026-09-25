@@ -386,6 +386,34 @@
         "minecraft:stone_stairs": "minecraft:tuff_stairs",
         "minecraft:stone_slab": "minecraft:tuff_slab"
       }
+    },
+    "mining_deepslate": {
+      "why": "the owner, 2026-09-25: the Craters' mining town can't have wooden houses. Dark forest timber becomes deepslate brick walls on basalt posts, iron bars for fences, weathered copper doors and hatches (they still open by hand); nothing in it decides a spawn (data/spawn_blocks.json)",
+      "map": {
+        "minecraft:dark_oak_log": "minecraft:polished_basalt",
+        "minecraft:stripped_dark_oak_log": "minecraft:basalt",
+        "minecraft:dark_oak_fence": "minecraft:iron_bars",
+        "minecraft:dark_oak_door": "minecraft:waxed_weathered_copper_door",
+        "minecraft:dark_oak_trapdoor": "minecraft:waxed_weathered_copper_trapdoor",
+        "minecraft:dark_oak_pressure_plate": "minecraft:polished_blackstone_pressure_plate",
+        "minecraft:dark_oak_planks": "minecraft:deepslate_bricks",
+        "minecraft:dark_oak_stairs": "minecraft:deepslate_brick_stairs",
+        "minecraft:dark_oak_slab": "minecraft:deepslate_brick_slab"
+      }
+    },
+    "mining_tuff": {
+      "why": "the same working-town house in tuff brick, so the street is not one colour; posts, bars and copper as mining_deepslate",
+      "map": {
+        "minecraft:dark_oak_log": "minecraft:polished_basalt",
+        "minecraft:stripped_dark_oak_log": "minecraft:basalt",
+        "minecraft:dark_oak_fence": "minecraft:iron_bars",
+        "minecraft:dark_oak_door": "minecraft:waxed_weathered_copper_door",
+        "minecraft:dark_oak_trapdoor": "minecraft:waxed_weathered_copper_trapdoor",
+        "minecraft:dark_oak_pressure_plate": "minecraft:polished_blackstone_pressure_plate",
+        "minecraft:dark_oak_planks": "minecraft:tuff_bricks",
+        "minecraft:dark_oak_stairs": "minecraft:tuff_brick_stairs",
+        "minecraft:dark_oak_slab": "minecraft:tuff_brick_slab"
+      }
     }
   }
 }

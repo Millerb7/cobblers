@@ -9117,10 +9117,11 @@
       "rotation": "180",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_deepslate)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_deepslate"
     },
     {
       "id": "mining_house_02",
@@ -9140,10 +9141,11 @@
       "rotation": "180",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_tuff)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_tuff"
     },
     {
       "id": "mining_house_03",
@@ -9163,10 +9165,11 @@
       "rotation": "none",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_deepslate)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_deepslate"
     },
     {
       "id": "mining_house_04",
@@ -9186,10 +9189,11 @@
       "rotation": "180",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_tuff)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_tuff"
     },
     {
       "id": "mining_house_05",
@@ -9209,10 +9213,11 @@
       "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_deepslate)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_deepslate"
     },
     {
       "id": "mining_house_06",
@@ -9232,11 +9237,12 @@
       "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_tuff)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
       },
-      "dry": true
+      "dry": true,
+      "materials": "mining_tuff"
     },
     {
       "id": "mining_house_07",
@@ -9256,10 +9262,11 @@
       "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_deepslate)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_deepslate"
     },
     {
       "id": "mining_house_08",
@@ -9279,10 +9286,11 @@
       "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_tuff)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_tuff"
     },
     {
       "id": "mining_house_09",
@@ -9302,10 +9310,11 @@
       "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_deepslate)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_deepslate"
     },
     {
       "id": "mining_house_10",
@@ -9325,10 +9334,11 @@
       "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_tuff)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_tuff"
     },
     {
       "id": "mining_house_11",
@@ -9348,10 +9358,11 @@
       "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_deepslate)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_deepslate"
     },
     {
       "id": "mining_house_12",
@@ -9371,10 +9382,11 @@
       "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_tuff)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_tuff"
     },
     {
       "id": "mining_house_13",
@@ -9394,10 +9406,11 @@
       "rotation": "clockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_deepslate)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_deepslate"
     },
     {
       "id": "mining_house_14",
@@ -9417,10 +9430,11 @@
       "rotation": "counterclockwise_90",
       "mirror": "none",
       "status": "planned",
-      "chosen_because": "a working town on the cone: dark forest timber and cobble",
+      "chosen_because": "a working town on the cone, in the cone's own stone: dark forest houses re-materialed (mining_tuff)",
       "donor_source": {
         "licence": "not redistributable: placed by id; the local copy under kits/structures/incoming/ is gitignored"
-      }
+      },
+      "materials": "mining_tuff"
     },
     {
       "id": "tea_pokecenter",
