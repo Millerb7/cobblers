@@ -596,14 +596,15 @@ def test_real_trainer_ids_unique_across_flags_within_each_series(real_doc):
                 seen[tid] = fl["id"]
 
 
-def test_real_waystone_positions_are_all_still_unplaced(real_doc):
-    # Deliberate tripwire: positions are null until towns are placed after the next terrain
-    # rendition. When the first town is placed, update this test (and review reconcile output).
-    placed = {fl["id"]: fl["waystone"]["position"] for fl in real_doc["flags"]
-              if fl.get("waystone") and fl["waystone"].get("position") is not None}
-    assert placed == {}
+def test_real_waystone_positions_are_all_placed(real_doc):
+    # Tripwire, updated 2026-09-25 when the eight gym towns' waystones were placed (it asserted all were still null):
+    # without it a waystone slips back to null and reconcile silently skips it. Where each one is, and the reconcile
+    # lines at that spot, are checked against the town plans in tests/test_gym_waystones.py.
+    with_ws = [fl["id"] for fl in real_doc["flags"] if fl.get("waystone")]
+    assert len(with_ws) == 8
     p = PP.plan(real_doc, placements=REAL_PLACEMENTS)
-    assert p["unplaced"] == sorted(p["waystones"])
+    assert p["unplaced"] == []
+    assert len(p["waystones"]) == 8
 
 
 def _real_pack():

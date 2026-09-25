@@ -1227,6 +1227,21 @@
       },
       "status": "placed",
       "why": "One block, not a lattice, so no seam inside the house falls back to the forest pool. Range 18 from the landing floor (between the storeys) reaches every standable floor cell of the house as a sphere or a column: the farthest interior corner is 15.1 blocks away horizontally and 5 below, 15.9 in all (EXP-021 measured the horizontal edge at the configured range; the vertical shape is EXP-033, unrun). Its edge falls inside the forest clearing (radius 22 round (1630, 5034), tools/maze_forest.py), so the ghosts keep to the house and its grounds and nothing reaches Route 1, 160 blocks away; no other block is within 36, so no ranges overlap."
+    },
+    {
+      "id": "route1_sapling_crown",
+      "place": "the world-tree sapling in Route 1's maze forest: inside its trunk, below the crown",
+      "pool": "cobblers:route_1_sapling_crown",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 14,
+      "position": {
+        "x": 1380,
+        "y": 147,
+        "z": 4628
+      },
+      "status": "planned",
+      "why": "One block inside the trunk (hidden, and never broken by a player walking the clearing), 8 above the crown's lowest limbs and below its top: the prefab's branch floor is y139-143 and its crown y151-163 (kits/structures/prefabs/trees/tree_town/sapling_oak_a.json habitat, placed at y123 by tools/maze_forest.py). Range 14 reaches the crown radius (12) horizontally. Whether its reach is a sphere or a column is EXP-033, unrun: as a sphere the clearing floor (y124, 23 below) keeps the forest's pool; as a column the clearing gets birds too, which is acceptable. Whether a grounded spawn stands on leaves is not verified. No other ReplaceSpawns block is within 400 blocks (the mansion ward is at (1629, 120, 5033))."
     }
   ]
 }

@@ -18,6 +18,12 @@ every block it writes.
   the cave      a dripstone chamber under the hill's west half, walled in stone, andesite and tuff with copper and
                 calcite showing, a mud hollow at its west end, two old timber sets, the track bed's end at a buffer, and
                 the mine's find (data/rewards.json r1_old_mine: a barrel, scenery; the reward is an advancement)
+  the workings  (the owner, 2026-09-25: "like 100 blocks long with a few branches") drifts 3 wide and 4 high at the
+                chamber's floor: the main drift runs about 70 blocks west-north-west from the chamber on the old track
+                bed to the stope, a worked-out dome with the second find (r1_old_mine_stope); a north branch ends at
+                the copper face the miners were still working, a south branch in a fall of ground. They go under the
+                ground west of the hill, where the heightmap leaves 4 to 8 blocks over their roof, and the tool
+                refuses to write them if any roof or wall comes within MIN_COVER of the ground
 
 Lanterns are close enough that nothing walkable inside is at block light 0 (tools/light_plan.py checks places under a
 roof); there are no hostile mobs in this pack (docs/STATE.md), so the light is for looks. No block here is a spawn
@@ -52,6 +58,17 @@ CAVE_R = (9.0, 8.0)                  # its half-widths, x and z
 CAVE_H = 8                           # its height above its floor at the middle
 SLEEPER = "minecraft:spruce_trapdoor[facing=north,half=bottom,open=false,powered=false,waterlogged=false]"
 TRAIL = [(1357, 4120), (1366, 4121), (1374, 4123)]   # the carts' old way out of the notch, toward Route 1
+# The workings (the owner, 2026-09-25: "like 100 blocks long with a few branches"): drifts at the chamber's floor level,
+# 3 wide and 4 high, run west-north-west under the rising ground, where the heightmap leaves 4 to 8 blocks over their
+# roof (the ground east and south of the hill is too low to tunnel under). Centre lines, (x, z):
+MAIN = [(1310, 4115), (1296, 4110), (1276, 4104), (1256, 4098), (1245, 4094)]   # the main drift, to the stope
+NORTH = [(1278, 4104), (1280, 4088), (1284, 4073)]                                # to the old copper face
+SOUTH = [(1262, 4100), (1256, 4116), (1252, 4129)]                                # to the fall of ground
+STOPE = (1239, 4092)                  # the worked-out chamber at the main drift's end, and the second find
+STOPE_R = (6.0, 5.0)
+STOPE_H = 6
+MIN_COVER = 2                         # ground blocks that must stay over any roof block the workings add
+SET_EVERY = 6                         # a timber set, and its lantern, every this many blocks along a drift
 
 
 def h32(*v):
@@ -177,6 +194,7 @@ def build(g):
     for (x, z) in sorted({(x, z) for x, _, z in cells}):                            # hollowed a column at a time
         ys = [y for (xx, y, zz) in cells if xx == x and zz == z]
         fill((x, min(ys), z), (x, max(ys), z), "minecraft:air")
+    workings(g, top, cells, floor, c)
     # ---- the notch and the adit: cut from the hill's foot west into the face, at ground level
     feet = g(PORTAL_X + 1, Z_AXIS) + 1
     east_foot = max(x for (x, z) in top if z == Z_AXIS) + 1
@@ -287,6 +305,130 @@ def build(g):
     return c
 
 
+def centre_line(poly):
+    """[(x, z, (dx, dz))]: every block of a polyline, one step at a time, with the direction of its segment."""
+    out = []
+    for (x0, z0), (x1, z1) in zip(poly, poly[1:]):
+        n = max(abs(x1 - x0), abs(z1 - z0))
+        for i in range(n + (1 if (x1, z1) == poly[-1] else 0)):
+            out.append((int(round(x0 + (x1 - x0) * i / n)), int(round(z0 + (z1 - z0) * i / n)), (x1 - x0, z1 - z0)))
+    return out
+
+
+def stope_cells(floor):
+    """The stope's air: an irregular dome over the main drift's end."""
+    cells = set()
+    sx, sz = STOPE
+    for x in range(int(sx - STOPE_R[0]) - 1, int(sx + STOPE_R[0]) + 2):
+        for z in range(int(sz - STOPE_R[1]) - 1, int(sz + STOPE_R[1]) + 2):
+            th = math.atan2(z - sz, x - sx)
+            d = math.hypot((x - sx) / STOPE_R[0], (z - sz) / STOPE_R[1]) / (1 + 0.10 * math.sin(3 * th + 2.2))
+            if d < 1:
+                for y in range(floor + 1, floor + 1 + max(4, int(round(STOPE_H * math.sqrt(1 - d * d))))):
+                    cells.add((x, y, z))
+    return cells
+
+
+def workings(g, top, cave, floor, c):
+    """The drifts, the stope and the two branch ends, carved at the chamber's floor level. Raises if the heightmap
+    leaves less than MIN_COVER over any block the workings put a roof or a wall on: this tool never opens a hole in
+    the ground from below."""
+    fill = lambda a, b, blk: c.append("fill %d %d %d %d %d %d %s" % (a[0], a[1], a[2], b[0], b[1], b[2], blk))
+    sb = lambda x, y, z, blk: c.append("setblock %d %d %d %s" % (x, y, z, blk))
+    surf = lambda x, z: top.get((x, z), g(x, z))
+    cave_cols = {(x, z) for x, _, z in cave}
+    feet = floor + 1
+    lines = {"main": centre_line(MAIN), "north": centre_line(NORTH), "south": centre_line(SOUTH)}
+    air = set()                                            # (x, y, z) the workings hollow
+    for pts in lines.values():
+        for x, z, _ in pts:
+            for a in (-1, 0, 1):
+                for b in (-1, 0, 1):
+                    for y in range(feet, feet + 4):
+                        air.add((x + a, y, z + b))
+    air |= stope_cells(floor)
+    air = {q for q in air if (q[0], q[2]) not in cave_cols}  # the chamber is already open
+    cols = {(x, z) for x, _, z in air}
+    ring = {(x + a, z + b) for (x, z) in cols for a in (-1, 0, 1) for b in (-1, 0, 1)} - cols - cave_cols
+    roof = {}
+    for (x, z) in cols:
+        roof[(x, z)] = max(y for (xx, y, zz) in air if xx == x and zz == z) + 1
+    for (x, z) in ring:
+        near = [roof[q] for q in ((x + a, z + b) for a in (-1, 0, 1) for b in (-1, 0, 1)) if q in roof]
+        roof.setdefault((x, z), max(near))
+    thin = [(x, z, surf(x, z) - roof[(x, z)]) for (x, z) in sorted(roof) if surf(x, z) - roof[(x, z)] < MIN_COVER]
+    if thin:
+        raise SystemExit("the workings come within %d blocks of the ground at %d columns, e.g. %s"
+                         % (MIN_COVER, len(thin), thin[:5]))
+    # the rock round them first: walls and roof, a column at a time, then the veins a miner would have followed
+    for (x, z) in sorted(ring):
+        fill((x, floor, z), (x, roof[(x, z)], z), rock(x, floor, z))
+    for (x, z) in sorted(cols):
+        fill((x, floor - 1, z), (x, floor, z), "minecraft:stone")
+        sb(x, roof[(x, z)], z, rock(x, roof[(x, z)], z))
+    for (x, z) in sorted(ring):
+        for y in range(feet, roof[(x, z)] + 1):
+            k = wall(x, y, z)
+            if k != rock(x, y, z):
+                sb(x, y, z, k)
+    for (x, z) in sorted(cols):
+        ys = [y for (xx, y, zz) in air if xx == x and zz == z]
+        fill((x, min(ys), z), (x, max(ys), z), "minecraft:air")
+    # the main drift carries the old track bed, gravel on stone, and its sleepers, from the chamber to the stope
+    for i, (x, z, _) in enumerate(lines["main"]):
+        if (x, z) in cave_cols:
+            continue
+        sb(x, floor, z, "minecraft:gravel")
+        if i % 2 == 0:
+            sb(x, feet, z, SLEEPER)
+    # timber sets, a lantern under each cap
+    for name, pts in lines.items():
+        for i, (x, z, (dx, dz)) in enumerate(pts):
+            if i % SET_EVERY != SET_EVERY // 2 or (x, z) in cave_cols:
+                continue
+            px, pz = (0, 1) if abs(dx) >= abs(dz) else (1, 0)
+            for s in (-1, 1):
+                fill((x + s * px, feet, z + s * pz), (x + s * px, feet + 2, z + s * pz), "minecraft:spruce_fence")
+            fill((x - px, feet + 3, z - pz), (x + px, feet + 3, z + pz), "minecraft:spruce_planks")
+            sb(x, feet + 2, z, "minecraft:lantern[hanging=true]")
+    # the north branch ends at the face the miners were still working: copper thick in it, their lamp left burning
+    x, z, (dx, dz) = lines["north"][-1]
+    for (a, b) in ((a, b) for a in range(-2, 3) for b in (-2, -1)):
+        for y in range(feet, feet + 4):
+            if (x + a, y, z + b) not in air:
+                sb(x + a, y, z + b, "minecraft:copper_ore" if h32(x + a, y, z + b, 5) % 3 else rock(x + a, y, z + b))
+    sb(x, feet, z + 1, "minecraft:lantern[hanging=false]")
+    # the south branch ends in a fall of ground: rubble rising to the roof over its last four blocks
+    pts = lines["south"]
+    for i, (x, z, _) in enumerate(pts[-4:]):
+        for a in (-1, 0, 1):
+            for b in (-1, 0, 1):
+                for y in range(feet, feet + 1 + i):
+                    sb(x + a, y, z + b, rock(x + a, y + 3, z + b))
+    x, z, _ = pts[-6]
+    sb(x, feet, z, "minecraft:lantern[hanging=false]")
+    # the stope: two old sets, a rubble heap, floor lanterns, and the second find against its west wall
+    sx, sz = STOPE
+    for px in (sx + 3, sx - 2):
+        for z in (sz - 2, sz + 2):
+            fill((px, feet, z), (px, feet + 3, z), "minecraft:spruce_fence")
+        fill((px, feet + 4, sz - 2), (px, feet + 4, sz + 2), "minecraft:spruce_planks")
+        sb(px, feet + 3, sz, "minecraft:lantern[hanging=true]")
+    for (a, b, e) in ((1, 3, 0), (2, 3, 0), (1, 4, 0), (2, 3, 1)):
+        sb(sx + a, feet + e, sz + b, rock(sx + a, feet + e, sz + b))
+    for (a, b) in ((-3, -3), (3, 3)):
+        sb(sx + a, feet, sz + b, "minecraft:lantern[hanging=false]")
+    fx, fy, fz = stope_find_spot(g)
+    sb(fx, fy, fz, "minecraft:barrel[facing=up,open=false]")
+    sb(fx, fy, fz + 1, "minecraft:lantern[hanging=false]")
+
+
+def stope_find_spot(g):
+    """The second find's barrel: the stope's west end, on its floor."""
+    floor = g(PORTAL_X + 1, Z_AXIS) - DROP
+    return (int(STOPE[0] - STOPE_R[0]) + 2, floor + 1, STOPE[1])
+
+
 def find_spot(g):
     """The find's barrel: the chamber's west end, on its floor."""
     floor = g(PORTAL_X + 1, Z_AXIS) - DROP
@@ -299,7 +441,10 @@ def main(argv=None):
     a = p.parse_args(argv)
     g = G.Ground(a.source_root)
     top, clear = plan(g)
-    xs, zs = [x for x, _ in clear], [z for _, z in clear]
+    under = [(x, z) for poly in (MAIN, NORTH, SOUTH) for x, z in poly] + \
+        [(STOPE[0] + a * (STOPE_R[0] + 2), STOPE[1] + b * (STOPE_R[1] + 2)) for a in (-1, 1) for b in (-1, 1)]
+    xs = [x for x, _ in clear] + [int(x) - 2 for x, _ in under] + [int(x) + 2 for x, _ in under]
+    zs = [z for _, z in clear] + [int(z) - 2 for _, z in under] + [int(z) + 2 for _, z in under]
     path = ROOT / "data" / "placements.json"
     doc = json.loads(path.read_text(encoding="utf-8"))
     doc["settlements"][SID] = {
@@ -309,12 +454,16 @@ def main(argv=None):
                        "east face has been cut: a notch in the slope, a spruce portal, and an old track bed running into "
                        "the dark, its rails long taken up. The level goes in at ground height under timber sets, then "
                        "stairs drop into a cave under the hill, dripstone overhead, copper still in the walls, a mud "
-                       "hollow where water once stood, and a barrel the miners left.",
+                       "hollow where water once stood, and a barrel the miners left. Past it the workings go on west "
+                       "under the rising ground: the track bed runs down a long drift to a worked-out stope, with a "
+                       "branch north to a copper face still being cut and a branch south that ends where the roof "
+                       "came down.",
             "entries": [{"from": "Route 1, 262 blocks east (nearest walked point (1594, 4119)), across open ground",
                          "at": list(TRAIL[-1]), "street": "trail"}],
             "exits": [],
             "footprint": {"rect": [min(xs), min(zs), max(TRAIL[-1][0], max(xs)), max(zs)],
-                          "why": "the hill, the margin cleared round it and the trail out of the notch"},
+                          "why": "the hill, the margin cleared round it, the trail out of the notch and the workings "
+                                 "under the ground to the west"},
             "streets": [{"id": "trail", "polyline": [list(p) for p in TRAIL], "width": 2,
                          "surface": "minecraft:coarse_dirt", "max_grade": 0.15,
                          "why": "the carts' old way out, worn into the ground: it says the notch is a way in"}],
@@ -336,8 +485,8 @@ def main(argv=None):
     else:
         doc["placements"][at] = rec
     path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-    print("wrote %s: %d commands; hill %d columns, peak y%d; the find at %s" % (
-        SID, len(rec["commands"]), len(top), max(top.values()), find_spot(g)))
+    print("wrote %s: %d commands; hill %d columns, peak y%d; the finds at %s and %s" % (
+        SID, len(rec["commands"]), len(top), max(top.values()), find_spot(g), stope_find_spot(g)))
 
 
 if __name__ == "__main__":

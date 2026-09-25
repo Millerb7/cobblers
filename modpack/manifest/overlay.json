@@ -177,17 +177,17 @@
   {
    "mod_id": "rctapi",
    "from_version": "0.15.2-beta",
-   "to_version": "0.16.0-beta",
-   "to_file": "rctapi-fabric-1.21.1-0.16.0-beta.jar",
+   "to_version": "0.16.1-beta",
+   "to_file": "rctapi-fabric-1.21.1-0.16.1-beta.jar",
    "modrinth": {
     "slug": "rctapi",
     "project_id": "CBfM2yw7",
-    "version_id": "poXTxoNY",
-    "version_number": "0.16.0-beta",
-    "date_published": "2026-09-06T23:05:33.321353Z",
-    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/poXTxoNY/rctapi-fabric-1.21.1-0.16.0-beta.jar",
-    "filename": "rctapi-fabric-1.21.1-0.16.0-beta.jar",
-    "size": 257750,
+    "version_id": "bgmxNN26",
+    "version_number": "0.16.1-beta",
+    "date_published": "2026-09-14T03:37:31.074093Z",
+    "url": "https://cdn.modrinth.com/data/CBfM2yw7/versions/bgmxNN26/rctapi-fabric-1.21.1-0.16.1-beta.jar",
+    "filename": "rctapi-fabric-1.21.1-0.16.1-beta.jar",
+    "size": 267961,
     "dependencies": [
      {
       "version_id": null,
@@ -203,10 +203,10 @@
      }
     ]
    },
-   "sha512": "71dc2caeea39d5b76889e35cab882a00b5be49b98ccba3ad6f09eb6308e9851b4917c118ba0e5265831f891478dc33e777ecee3db5600c1b6ecf3923be6e94ba",
-   "sha1": "0f4b58e94373344cb3a61674488a6f537ec14e31",
-   "verification": "verified via Modrinth API 2026-09-08",
-   "reason": "Paired RCT API release published 2026-09-06 alongside rctmod 0.19.0-beta; assumed required by rctmod 0.19.0 (verify at boot: rctmod's fabric.mod.json rctapi constraint)."
+   "sha512": "a74e6b070b310e377e3775f2a484fdebe2b3bddee63146f1e2f8d47f3a2261fd698a4fdcb5ac8f1f95e9859b8a4bd4eea7d35a48fe5ea4496543d0a16a113b50",
+   "sha1": "194ffc5f183b3a1c4f21d02edbbcf67524492ee2",
+   "verification": "verified via Modrinth API 2026-09-25; the downloaded jar's sha512 and sha1 match",
+   "reason": "0.16.1-beta fixes 'Battle softlocks caused by pokemon fainting on both sides' (#132; commit 5fb66791 drops BattleActorMixin's postUpdate hook). A trainer battle froze on staging on a double knockout (2026-09-24; docs/research/notes/battle-freeze-double-ko.md). rctmod 0.19.0-beta requires rctapi >=0.16.0-beta."
   },
   {
    "mod_id": "mega_showdown",

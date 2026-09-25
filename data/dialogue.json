@@ -3373,7 +3373,7 @@
           "id": "p_library",
           "kind": "line",
           "speaker": "narration",
-          "text": "Gastly waits at the foot of the servants' stair. Upstairs, something keeps lighting the candles by the bedroom doors and blowing them out again.",
+          "text": "Gastly waits at the foot of the servants' stair and will not come up. The candles by the bedroom doors keep catching and going out. Light them in the order the Litwick do, and the hall will be safe for it.",
           "next": "p_library"
         },
         {

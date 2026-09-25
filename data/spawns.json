@@ -13796,6 +13796,32 @@
       "conditions": {},
       "eligibility_reason": "evolution requires level 45; band begins at 60",
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.route_1_sapling_crown.pidgey",
+      "species": "pidgey",
+      "bucket": "common",
+      "level": "5-8",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "route_1_sapling_crown",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.route_1_sapling_crown.hoothoot",
+      "species": "hoothoot",
+      "bucket": "uncommon",
+      "level": "5-8",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "route_1_sapling_crown",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [
@@ -29236,6 +29262,53 @@
           "conditions": {}
         }
       ]
+    },
+    {
+      "id": "route_1_sapling_crown",
+      "display_name": "Route 1 sapling crown",
+      "intended_location": "the world-tree sapling in Route 1's maze forest (1380, 4628; tools/maze_forest.py SAPLING): one Habitat Block, route1_sapling_crown in data/habitat_blocks.json, inside the trunk at (1380, 147, 4628), range 14",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 5,
+        "maximum": 8
+      },
+      "why": "the owner's playtest, 2026-09-24: 'birds not spawning on route 1 sapling'. Route 1's own birds (its roster in route_species_selection: pidgey, hoothoot; wingull and wattrel are coast birds) at the meadow's levels (surface.pallet_meadows.pidgey 5-8), perched in the one tree the forest is built round. A habitat pool carries no time condition (tools/compile_spawns.py compile_habitat), so Hoothoot is here by day too, and rarer than Pidgey for that",
+      "entries": [
+        {
+          "species": "Pidgey",
+          "pokemon": "pidgey",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "pidgey",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "5-8",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Hoothoot",
+          "pokemon": "hoothoot",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "hoothoot",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "5-8",
+          "bucket": "uncommon",
+          "weight": 9.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
     }
   ],
   "route_species_selection_note": "The species each critical route's pool may use: at most 20 per route (the 10-20 authored choices of the spawn philosophy). Recorded 2026-09-16 from the 2026-09-16 compilation, whose selection rule was not recorded; tools/compile_spawns.py reads this list and does not choose. A species a rerouted corridor newly reaches is excluded until it is added here.",

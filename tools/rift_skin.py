@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -581,6 +582,88 @@ def entity_count(world, tag):
     return n
 
 
+FN_REF = re.compile(r"(?:^|\s)function ([a-z0-9_.-]+:[a-z0-9_./-]+)")
+NUM3 = r"(-?\d+) (-?\d+) (-?\d+)"
+LATER_FILL = re.compile(r"fill %s %s (\S+)(?: (replace|keep|destroy|hollow|outline)(?: (\S+))?)?$" % (NUM3, NUM3))
+LATER_SET = re.compile(r"setblock %s (\S+)(?: (replace|keep|destroy))?$" % NUM3)
+OWN_STEPS = ("R1", "R1B")          # the steps this pack's functions run in (tools/reapply.py steps())
+
+
+def later_owned(points):
+    """{(x, y, z): step id} for the sampled positions a LATER re-apply step writes over, from those steps' own
+    generated functions, in the order tools/reapply.py runs them. Never from a world.
+
+    The skin is laid first (R1), and later steps rebuild parts of it on purpose: the League's lot and skirt (R8B)
+    re-level the apex oval, a town's prep levels its lots (R8), the Windward Deep (R9B) is dug through the floor.
+    A skin sample there asserts an intent a later step has replaced, and the verify reported it as a mismatch
+    (EXP-026 run 4: 13 such cells, 11 of them the League's skirt). A write counts only when it is certain to replace
+    the planned block: a plain setblock or fill, `destroy`, `hollow` (it writes its whole box), or `replace`/`keep`
+    whose filter is that exact block (or air, for keep). A tag filter, an `execute` prefix and a `place template`
+    are not replayed, so what they write stays expected here and a real overlap still shows as a mismatch."""
+    import reapply
+    try:
+        todo = reapply.steps()
+    except SystemExit as e:                                   # an unprepared pack: fail closed, say why
+        raise SkinError("cannot tell which later steps rebuild the skin: %s" % e)
+    ids = [s[0] for s in todo]
+    if not all(s in ids for s in OWN_STEPS):
+        raise SkinError("tools/reapply.py has no step %s: the skin's place in the order is unknown" % (OWN_STEPS,))
+    start = max(ids.index(s) for s in OWN_STEPS) + 1
+    files = {}
+    for pack in sorted(p for p in reapply.PACKS.iterdir() if p.is_dir()) if reapply.PACKS.is_dir() else []:
+        root = pack / "data"
+        for f in root.rglob("*.mcfunction"):
+            rel = f.relative_to(root).parts
+            if len(rel) > 2 and rel[1] == "function":
+                files.setdefault("%s:%s" % (rel[0], "/".join(rel[2:])[:-len(".mcfunction")]), []).append(f)
+    by_chunk = {}
+    for (x, y, z), planned in points.items():
+        by_chunk.setdefault((x >> 4, z >> 4), []).append(((x, y, z), planned))
+    owned = {}
+
+    def hit(sid, a, b, blk, mode, filt):
+        x0, y0, z0 = (min(a[i], b[i]) for i in range(3))
+        x1, y1, z1 = (max(a[i], b[i]) for i in range(3))
+        for cx in range(x0 >> 4, (x1 >> 4) + 1):
+            for cz in range(z0 >> 4, (z1 >> 4) + 1):
+                for (x, y, z), planned in by_chunk.get((cx, cz), ()):
+                    if not (x0 <= x <= x1 and y0 <= y <= y1 and z0 <= z <= z1) or (x, y, z) in owned:
+                        continue
+                    if mode == "outline" and x0 < x < x1 and y0 < y < y1 and z0 < z < z1:
+                        continue
+                    if mode == "replace" and filt and filt.split("[")[0] not in {b_.split("[")[0] for b_ in planned}:
+                        continue
+                    if mode == "keep" and not any(b_ in ("minecraft:air", "minecraft:cave_air") for b_ in planned):
+                        continue
+                    owned[(x, y, z)] = sid
+
+    for sid, _title, acts in todo[start:]:
+        seen, stack = set(), [v for kind, v in reversed(acts) if kind == "fn"]
+        while stack:
+            fid = stack.pop()
+            if fid in seen:
+                continue
+            seen.add(fid)
+            for f in files.get(fid, ()):
+                for ln in f.read_text(encoding="utf-8", errors="replace").splitlines():
+                    ln = ln.strip()
+                    if not ln or ln.startswith("#"):
+                        continue
+                    if ln.startswith("fill "):
+                        m = LATER_FILL.match(ln)
+                        if m:
+                            g = [int(v) for v in m.groups()[:6]]
+                            hit(sid, g[:3], g[3:6], m.group(7), m.group(8), m.group(9))
+                    elif ln.startswith("setblock "):
+                        m = LATER_SET.match(ln)
+                        if m:
+                            g = [int(v) for v in m.groups()[:3]]
+                            hit(sid, g, g, m.group(4), m.group(5) if m.group(5) == "keep" else None, None)
+                    else:
+                        stack.extend(FN_REF.findall(ln))
+    return owned
+
+
 def verify(world):
     """Fail closed: the plan's own samples, every kind of thing the build makes, and the entity count."""
     import build_audit
@@ -600,9 +683,27 @@ def verify(world):
         print("FAIL: the plan expects %s entities and %s biome cells" % (
             p.get("entities_expected"), p.get("biome_cells")))
         return 1
+    # the samples a later step rebuilds are that step's to check, not the skin's
+    try:
+        owned = later_owned({(x, y, z): allowed for x, y, z, allowed, _ in p["checks"]})
+    except SkinError as e:
+        print("FAIL: %s" % e)
+        return 1
+    if owned:
+        steps_ = {}
+        for sid in owned.values():
+            steps_[sid] = steps_.get(sid, 0) + 1
+        print("%-24s %7d samples, left to the later step that rebuilds them (%s)" % (
+            "rebuilt later", len(owned), ", ".join("%s %d" % kv for kv in sorted(steps_.items()))))
+    left = {c[4] for c in p["checks"] if (c[0], c[1], c[2]) not in owned}
+    if not need <= left:
+        print("FAIL: later steps rebuild every sample of %s: nothing of it is left to check" % sorted(need - left))
+        return 1
     W = build_audit.World(world)
     by, bad = {}, {}
     for x, y, z, allowed, what in p["checks"]:
+        if (x, y, z) in owned:
+            continue
         got = W.block(x, y, z)
         ok = got in allowed
         by.setdefault(what, [0, 0])[0 if ok else 1] += 1

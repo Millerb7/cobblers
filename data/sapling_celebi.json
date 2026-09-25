@@ -1,0 +1,37 @@
+{
+  "schema": "cobblers.sapling-celebi/1",
+  "status": "planned: built on staging 2026-09-25; the wake is not designed",
+  "note": "The Celebi asleep in Route 1's world-tree sapling: visible from the clearing, inert. The mechanism is EXP-023 candidate A, a Pokemon entity, with every flag that experiment proved kept: not catchable, not battleable, immobile, asleep, no name tag, never despawns. What it could not give, damage immunity, comes from the branch instead: a shell of barrier blocks round it (invisible and solid, so a hit, an arrow or a thrown ball stops short and the Celebi is still seen). It is an entity, so a re-export erases it; tools/reapply.py R14C summons it again over RCON (Cobblemon's spawn command does nothing from a function) and the pack walls and dresses it. The wake (EXP-023 follow-up 3) is not designed: nothing here reacts to an item, and the shell will have to open when it is.",
+  "species": "celebi",
+  "level": 70,
+  "position": [
+    1383.5,
+    144.0,
+    4630.5
+  ],
+  "yaw": 200.0,
+  "position_why": "the branch EXP-023 chose: the sapling prefab (kits/structures/prefabs/trees/tree_town/sapling_oak_a, placed at (1365, 123, 4612) by tools/maze_forest.py on ground y124) has oak log at (1383, 143, 4630) and air above it; at the crown top (y165) the Celebi could not be read from the ground, on this branch it is visible",
+  "spawn_properties": [
+    "uncatchable",
+    "no_ai"
+  ],
+  "nbt": {
+    "Unbattleable": "1b",
+    "NoAI": "1b",
+    "NoGravity": "1b",
+    "PoseType": "\"SLEEP\"",
+    "RecalculatePose": "0b",
+    "HideLabel": "1b",
+    "PersistenceRequired": "1b",
+    "Invulnerable": "1b",
+    "Silent": "1b"
+  },
+  "nbt_why": "EXP-023: Unbattleable, NoAI + NoGravity, PoseType SLEEP with RecalculatePose 0b, HideLabel and PersistenceRequired all proved to hold across a restart. Invulnerable is NOT honoured by Cobblemon's PokemonEntity (a sword killed it in three hits); it is set anyway so the flag is right if that changes, and the barrier shell is what actually protects it. Silent: a sleeping Pokemon does not call",
+  "keeper": {
+    "period_ticks": 40,
+    "player_radius": 48,
+    "home_tolerance": 0.5,
+    "why": "every two seconds while a player is within 48 blocks of the sapling: remove a second Celebi if a load race ever made two, and teleport it back to its branch if anything moved it. It cannot summon a missing one (functions cannot run Cobblemon's spawn command); the shell is what keeps it from being killed"
+  },
+  "shell_why": "barriers fill the air in the 3x4x3 box round the branch block, from the branch's own layer to two above the Celebi, and the Celebi's column is left open: every straight line from outside to its hitbox crosses a barrier or the branch log (tools/sapling_celebi.py shell_box)"
+}
