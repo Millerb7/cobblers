@@ -656,6 +656,31 @@ def run(a):
         print("no reload: the packs loaded at boot (a second /reload on this pack stack exhausted a 10 GB heap twice on staging, 2026-09-24)")
     else:
         print("reload:", rc("reload"))
+    # No drops while building. Every fill that replaces the block under a flower, a torch or a sapling pops it off as
+    # an item, and a falling block that lands on a torch drops both: the owner picked up seeds, flowers and torches all
+    # over staging after run 4 (2026-09-25). The rules come back as they were, even when a step stops the run.
+    drops = {}
+    for rule in DROP_RULES:
+        m = re.search(r"(true|false)\s*$", str(rc("gamerule %s" % rule)))
+        drops[rule] = m.group(1) if m else "true"
+        rc("gamerule %s false" % rule)
+    try:
+        _run_steps(a, rc, todo, rec, path)
+    finally:
+        for rule, value in drops.items():
+            rc("gamerule %s %s" % (rule, value))
+        print("drop rules restored:", drops, flush=True)
+    print(rc("save-all flush", timeout=600))
+    getattr(rc, "close", lambda: None)()
+    rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+    print("run complete:", path)
+
+
+DROP_RULES = ("doTileDrops", "doEntityDrops")
+
+
+def _run_steps(a, rc, todo, rec, path):
     for sid, title, actions in todo:
         t0 = time.time()
         print("== %s %s" % (sid, title), flush=True)
@@ -831,11 +856,6 @@ def run(a):
             path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
             raise SystemExit("stopped at %s. Re-run that step alone (--only %s) once, then continue with --from the next step"
                              % (sid, sid))
-    print(rc("save-all flush", timeout=600))
-    getattr(rc, "close", lambda: None)()
-    rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
-    path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
-    print("run complete:", path)
 
 
 def audit(a):
