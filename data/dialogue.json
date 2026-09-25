@@ -9,7 +9,9 @@
     "notes": [
       "This file is authored campaign data. A generator will translate it to Cobblemon native dialogue pages, Molang predicates, and server actions.",
       "Dialogue never owns mutable quest state. Conditions and actions reference progression fields declared by the quest contract.",
-      "The dialogue cursor is a first-class per-player progression field, not transient UI state."
+      "The dialogue cursor is a first-class per-player progression field, not transient UI state.",
+      "A conversation with npc_id null has no NPC: a prop or an actor in data/scenes.json opens it for the player who clicked.",
+      "An optional speakers map names each speaker; a speaker mapped to null is narration and its page names nobody."
     ]
   },
   "schema_definition": {
@@ -2950,6 +2952,6069 @@
           "next": "repeat_still_here"
         }
       ]
+    },
+    {
+      "id": "dlg_route1_gastly_pip",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.dialogue_cursor",
+        "initial_node": "p_open1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.completed",
+            "value": true
+          },
+          "node": "p_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "family"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route1_gastly_family.dialogue_cursor",
+                "values": [
+                  "p_end1",
+                  "p_end2",
+                  "p_end3",
+                  "p_end4",
+                  "p_end5",
+                  "p_end6",
+                  "p_end7"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "family"
+          },
+          "node": "p_end1"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.started",
+            "value": false
+          },
+          "node": "p_open1"
+        },
+        {
+          "priority": 38,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "foyer"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_1",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_1"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "foyer"
+          },
+          "node": "p_foyer"
+        },
+        {
+          "priority": 48,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "stairs"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_2",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_2"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "stairs"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.cup_taken",
+                "value": true
+              }
+            ]
+          },
+          "node": "p_cup_no"
+        },
+        {
+          "priority": 55,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "stairs"
+          },
+          "node": "p_stairs"
+        },
+        {
+          "priority": 58,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_3"
+        },
+        {
+          "priority": 60,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "service"
+          },
+          "node": "p_service"
+        },
+        {
+          "priority": 68,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_4"
+        },
+        {
+          "priority": 70,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "library"
+          },
+          "node": "p_library"
+        },
+        {
+          "priority": 78,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "p_guard_5"
+        },
+        {
+          "priority": 80,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "landing"
+          },
+          "node": "p_landing"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "p_open1",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Gaaas...?",
+          "next": "p_open2"
+        },
+        {
+          "id": "p_open2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A small Gastly peers out from behind the crates at the back of the foyer, then shrinks back as something creaks across the floor above.",
+          "next": "p_open3"
+        },
+        {
+          "id": "p_open3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "It keeps looking toward the upper hall.",
+          "next": "p_open_choice"
+        },
+        {
+          "id": "p_open_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "It is waiting to see what you do.",
+          "responses": [
+            {
+              "id": "p_come",
+              "text": "Come with me.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "start"
+                }
+              ],
+              "next": "p_foyer",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_1",
+                "value": true
+              }
+            },
+            {
+              "id": "p_come_guarded",
+              "text": "Come with me.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_1",
+                "value": false
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "start_guarded"
+                }
+              ],
+              "next": "p_guard_1"
+            },
+            {
+              "id": "p_later",
+              "text": "I'll come back.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "p_foyer",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "Gastly drifts to your side. Three ways lead across the foyer to the dining room door: along the portraits, past the dust-sheeted chairs, or down the worn middle of the runner.",
+          "responses": [
+            {
+              "id": "p_way_portraits",
+              "text": "Along the portraits.",
+              "next": "p_wrong_portraits"
+            },
+            {
+              "id": "p_way_shadow",
+              "text": "Past the dust-sheeted chairs.",
+              "next": "p_wrong_shadow"
+            },
+            {
+              "id": "p_way_middle",
+              "text": "Down the worn middle.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "foyer_path"
+                }
+              ],
+              "next": "p_stairs_go"
+            }
+          ]
+        },
+        {
+          "id": "p_wrong_portraits",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A Shuppet unfolds out of a frame, grinning. Gastly bolts back behind the crates.",
+          "next": "p_wrong_portraits"
+        },
+        {
+          "id": "p_wrong_shadow",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "One of the dust sheets breathes in. Gastly will not go near the chairs.",
+          "next": "p_wrong_shadow"
+        },
+        {
+          "id": "p_stairs_go",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly slips down the worn runner to the dining room door and waits, watching the table.",
+          "next": "p_stairs_go"
+        },
+        {
+          "id": "p_stairs",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Gas... gas.",
+          "next": "p_stairs2"
+        },
+        {
+          "id": "p_stairs2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "It looks at the dining room door, then at you. It wants you to go first.",
+          "next": "p_stairs2"
+        },
+        {
+          "id": "p_cup_no",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly won't come near you while you carry that cup. Every cup on the table is still turned your way.",
+          "next": "p_cup_no"
+        },
+        {
+          "id": "p_service",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Hmm... hmm... hmmm.",
+          "next": "p_service2"
+        },
+        {
+          "id": "p_service2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly hums three notes: low, low, then high. It did that when you found it, too.",
+          "next": "p_service3"
+        },
+        {
+          "id": "p_service3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Somewhere in the library, something answers.",
+          "next": "p_service3"
+        },
+        {
+          "id": "p_library",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly waits at the foot of the servants' stair. Upstairs, something keeps lighting the candles by the bedroom doors and blowing them out again.",
+          "next": "p_library"
+        },
+        {
+          "id": "p_landing",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Gas! Gastly!",
+          "next": "p_landing2"
+        },
+        {
+          "id": "p_landing2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly presses against the ballroom's bent bars. On the far side, a Haunter is pacing.",
+          "next": "p_landing2"
+        },
+        {
+          "id": "p_end1",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The ward's light gutters out. A Gengar steps through where it stood.",
+          "next": "p_end2"
+        },
+        {
+          "id": "p_end2",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Gastly!",
+          "next": "p_end3"
+        },
+        {
+          "id": "p_end3",
+          "kind": "line",
+          "speaker": "haunter",
+          "text": "Hau! Haunter!",
+          "next": "p_end4"
+        },
+        {
+          "id": "p_end4",
+          "kind": "line",
+          "speaker": "gengar",
+          "text": "Gengaaaaar.",
+          "next": "p_end5"
+        },
+        {
+          "id": "p_end5",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The three shadows overlap for a moment, then separate.",
+          "next": "p_end6"
+        },
+        {
+          "id": "p_end6",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly drops something in your hand: a strip of paper knotted around nothing. A Spell Tag.",
+          "next": "p_end7",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_tag"
+            }
+          ]
+        },
+        {
+          "id": "p_end7",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Then it curls up against Haunter and does not look back at you once. That is how you know it's fine.",
+          "next": "p_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "p_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly is asleep between the other two. None of them looks up.",
+          "next": "p_done"
+        },
+        {
+          "id": "p_guard_1",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly will not come out. Its eyes are on the woman by the front door, who stands too still and hums to someone who is not there.",
+          "next": "p_guard_1"
+        },
+        {
+          "id": "p_guard_2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly hangs back at the dining room door. The woman at the far end of the table has not stopped watching you.",
+          "next": "p_guard_2"
+        },
+        {
+          "id": "p_guard_3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly will not go near the shelves while the woman among the shelves is whispering to them.",
+          "next": "p_guard_3"
+        },
+        {
+          "id": "p_guard_4",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly will not climb any higher. Someone in the bedroom hall is pacing between the candles.",
+          "next": "p_guard_4"
+        },
+        {
+          "id": "p_guard_5",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gastly presses against the bent bars. Inside, a woman turns slow circles across the inlay, dancing with nobody.",
+          "next": "p_guard_5"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_haunter",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.haunter_cursor",
+        "initial_node": "h_wait",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.completed",
+            "value": true
+          },
+          "node": "h_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "family"
+          },
+          "node": "h_family"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "h_wait"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "h_wait",
+          "kind": "line",
+          "speaker": "haunter",
+          "text": "Hau? Haunter!",
+          "next": "h_wait2"
+        },
+        {
+          "id": "h_wait2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "It drifts to the shimmer across the room, flinches back, and drifts to it again.",
+          "next": "h_wait3"
+        },
+        {
+          "id": "h_wait3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An inlaid path runs across the floor from the cold hearth, through three cracked marks, to exactly where it cannot go.",
+          "next": "h_wait3"
+        },
+        {
+          "id": "h_family",
+          "kind": "line",
+          "speaker": "haunter",
+          "text": "Hau...",
+          "next": "h_family2"
+        },
+        {
+          "id": "h_family2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Haunter bumps against Gengar and does not move away.",
+          "next": "h_family2"
+        },
+        {
+          "id": "h_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Haunter keeps one eye on you and the other on the small one.",
+          "next": "h_done"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_gengar",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.gengar_cursor",
+        "initial_node": "g_trapped",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.completed",
+            "value": true
+          },
+          "node": "g_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "family"
+          },
+          "node": "g_family"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "g_trapped"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "g_trapped",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Behind the shimmer, a Gengar holds very still, keeping the other ghosts out of this end of the room.",
+          "next": "g_trapped"
+        },
+        {
+          "id": "g_family",
+          "kind": "line",
+          "speaker": "gengar",
+          "text": "Gengaaar.",
+          "next": "g_family"
+        },
+        {
+          "id": "g_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Gengar grins at you until you look away.",
+          "next": "g_done"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_portrait",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "pt_look",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.started",
+                "value": false
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "foyer"
+              }
+            ]
+          },
+          "node": "pt_look"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "pt_later"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "pt_look",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A family portrait: two tall shadows and a small round one. The paint along the edges of the room is scratched; the runner down the middle of the floor is worn clean.",
+          "next": "pt_look"
+        },
+        {
+          "id": "pt_later",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The painted family watches the dining room door.",
+          "next": "pt_later"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_cup",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "c_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.cup_taken",
+            "value": true
+          },
+          "node": "c_holding"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "stairs"
+          },
+          "node": "c_look"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "c_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "c_look",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A blue teacup at the head of the table, still warm. Something in it ripples, though the rest of the table is dust.",
+          "next": "c_choice"
+        },
+        {
+          "id": "c_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "The other cups are very still.",
+          "responses": [
+            {
+              "id": "c_take",
+              "text": "Take it.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "take_cup"
+                }
+              ],
+              "next": "c_taken"
+            },
+            {
+              "id": "c_leave",
+              "text": "Leave it.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c_taken",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The cup rattles in your hand. All along the table, every other cup has turned to face you.",
+          "next": "c_taken"
+        },
+        {
+          "id": "c_holding",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "You are still holding the blue cup. The table is still watching.",
+          "responses": [
+            {
+              "id": "c_put_back",
+              "text": "Put it back.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "return_cup"
+                }
+              ],
+              "next": "c_returned"
+            },
+            {
+              "id": "c_keep",
+              "text": "Keep it.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "c_returned",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You set it back. The cups settle. Something small and round sinks back into the tea, satisfied.",
+          "next": "c_returned"
+        },
+        {
+          "id": "c_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A blue teacup at the head of the table. It is warmer than it should be.",
+          "next": "c_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_aisle_west",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "aw_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "aw_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "service"
+          },
+          "node": "aw_call"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "aw_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "aw_call",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "From the end of the aisle: a high note, then a low one.",
+          "next": "aw_choice"
+        },
+        {
+          "id": "aw_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "It comes again.",
+          "responses": [
+            {
+              "id": "aw_follow",
+              "text": "Follow it.",
+              "next": "aw_wrong"
+            },
+            {
+              "id": "aw_leave",
+              "text": "Leave it.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "aw_wrong",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A Misdreavus bursts out of the shelf, shrieking with laughter, and is gone. Nothing here but books.",
+          "next": "aw_wrong"
+        },
+        {
+          "id": "aw_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Old books, a draft, and nothing else.",
+          "next": "aw_idle"
+        },
+        {
+          "id": "aw_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Every voice in the aisles falls quiet while the woman among the shelves whispers. Nothing here will answer with her watching.",
+          "next": "aw_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_aisle_middle",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "am_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "am_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "service"
+          },
+          "node": "am_call"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "values": [
+              "library",
+              "landing",
+              "family"
+            ]
+          },
+          "node": "am_after"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "am_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "am_call",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "From the end of the aisle: low, low, then high. You have heard that before.",
+          "next": "am_choice"
+        },
+        {
+          "id": "am_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "It comes again, the same three notes.",
+          "responses": [
+            {
+              "id": "am_follow",
+              "text": "Follow it.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "right_aisle"
+                }
+              ],
+              "next": "am_right"
+            },
+            {
+              "id": "am_leave",
+              "text": "Leave it.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "am_right",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Behind the last shelf there is nobody, only the servants' stair going up into the dark. Gastly is already at the bottom of it.",
+          "next": "am_right"
+        },
+        {
+          "id": "am_after",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The servants' stair goes up from the end of this aisle.",
+          "next": "am_after"
+        },
+        {
+          "id": "am_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Old books, a draft, and nothing else.",
+          "next": "am_idle"
+        },
+        {
+          "id": "am_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Every voice in the aisles falls quiet while the woman among the shelves whispers. Nothing here will answer with her watching.",
+          "next": "am_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_aisle_east",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "ae_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "service"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_3",
+                "value": false
+              }
+            ]
+          },
+          "node": "ae_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "service"
+          },
+          "node": "ae_call"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "ae_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "ae_call",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "From the end of the aisle: low, then high, then high.",
+          "next": "ae_choice"
+        },
+        {
+          "id": "ae_choice",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "It comes again.",
+          "responses": [
+            {
+              "id": "ae_follow",
+              "text": "Follow it.",
+              "next": "ae_wrong"
+            },
+            {
+              "id": "ae_leave",
+              "text": "Leave it.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ae_wrong",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A Duskull's single red eye opens between two books, and closes again.",
+          "next": "ae_wrong"
+        },
+        {
+          "id": "ae_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Old books, a draft, and nothing else.",
+          "next": "ae_idle"
+        },
+        {
+          "id": "ae_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Every voice in the aisles falls quiet while the woman among the shelves whispers. Nothing here will answer with her watching.",
+          "next": "ae_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_candle_a",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "ka_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "values": [
+                  "landing",
+                  "family"
+                ]
+              }
+            ]
+          },
+          "node": "ka_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "ka_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.lamp_1",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.lamp_2",
+                "value": false
+              }
+            ]
+          },
+          "node": "ka_lit",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamp_second"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "library"
+          },
+          "node": "ka_gutter",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamps_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "ka_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "ka_steady",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The candles by the doors burn low and steady now.",
+          "next": "ka_steady"
+        },
+        {
+          "id": "ka_lit",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The second wick catches. Somewhere a Litwick giggles.",
+          "next": "ka_lit"
+        },
+        {
+          "id": "ka_gutter",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The flame gutters. Down the hall, every lit candle goes out.",
+          "next": "ka_gutter"
+        },
+        {
+          "id": "ka_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
+          "next": "ka_idle"
+        },
+        {
+          "id": "ka_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "ka_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_candle_b",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "kb_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "values": [
+                  "landing",
+                  "family"
+                ]
+              }
+            ]
+          },
+          "node": "kb_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kb_guarded"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "library"
+          },
+          "node": "kb_gutter",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamps_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "kb_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "kb_steady",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The candles by the doors burn low and steady now.",
+          "next": "kb_steady"
+        },
+        {
+          "id": "kb_gutter",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The flame gutters. Down the hall, every lit candle goes out.",
+          "next": "kb_gutter"
+        },
+        {
+          "id": "kb_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
+          "next": "kb_idle"
+        },
+        {
+          "id": "kb_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kb_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_candle_c",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "kc_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "values": [
+                  "landing",
+                  "family"
+                ]
+              }
+            ]
+          },
+          "node": "kc_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kc_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.lamp_1",
+                "value": false
+              }
+            ]
+          },
+          "node": "kc_lit",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamp_first"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "library"
+          },
+          "node": "kc_gutter",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamps_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "kc_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "kc_steady",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The candles by the doors burn low and steady now.",
+          "next": "kc_steady"
+        },
+        {
+          "id": "kc_lit",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick catches: a small blue flame that gives no heat at all.",
+          "next": "kc_lit"
+        },
+        {
+          "id": "kc_gutter",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The flame gutters. Down the hall, every lit candle goes out.",
+          "next": "kc_gutter"
+        },
+        {
+          "id": "kc_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
+          "next": "kc_idle"
+        },
+        {
+          "id": "kc_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kc_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_candle_d",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "kd_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "values": [
+                  "landing",
+                  "family"
+                ]
+              }
+            ]
+          },
+          "node": "kd_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kd_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.lamp_1",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.lamp_2",
+                "value": true
+              }
+            ]
+          },
+          "node": "kd_lit",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamp_third"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "library"
+          },
+          "node": "kd_gutter",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamps_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "kd_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "kd_steady",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The candles by the doors burn low and steady now.",
+          "next": "kd_steady"
+        },
+        {
+          "id": "kd_lit",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The third flame holds. The hall goes quiet, and when you turn, Gastly is already waiting at the ballroom's bent bars.",
+          "next": "kd_lit"
+        },
+        {
+          "id": "kd_gutter",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The flame gutters. Down the hall, every lit candle goes out.",
+          "next": "kd_gutter"
+        },
+        {
+          "id": "kd_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
+          "next": "kd_idle"
+        },
+        {
+          "id": "kd_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kd_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_candle_n",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "kn_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "values": [
+                  "landing",
+                  "family"
+                ]
+              }
+            ]
+          },
+          "node": "kn_steady"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "library"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_4",
+                "value": false
+              }
+            ]
+          },
+          "node": "kn_guarded"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "library"
+          },
+          "node": "kn_gutter",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "lamps_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "kn_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "kn_steady",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The candles by the doors burn low and steady now.",
+          "next": "kn_steady"
+        },
+        {
+          "id": "kn_gutter",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The flame gutters. Down the hall, every lit candle goes out.",
+          "next": "kn_gutter"
+        },
+        {
+          "id": "kn_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An iron candle stand by the door. The candles are cold, burnt down a long time ago.",
+          "next": "kn_idle"
+        },
+        {
+          "id": "kn_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The wick is cold, and the woman pacing the hall is watching your hand.",
+          "next": "kn_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_ward_a",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "wa_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "family"
+              }
+            ]
+          },
+          "node": "wa_done"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "wa_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.ward_1",
+                "value": false
+              }
+            ]
+          },
+          "node": "wa_lit",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "ward_first"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "landing"
+          },
+          "node": "wa_reset",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "wards_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "wa_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "wa_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark is dark and whole.",
+          "next": "wa_done"
+        },
+        {
+          "id": "wa_lit",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You press the cracked mark back into place. It glows faintly, the colour of the shimmer across the room.",
+          "next": "wa_lit"
+        },
+        {
+          "id": "wa_reset",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark flares and goes dark. Across the floor, the others fade with it.",
+          "next": "wa_reset"
+        },
+        {
+          "id": "wa_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A cracked ward mark in the floor. The inlaid path from the hearth runs through it.",
+          "next": "wa_idle"
+        },
+        {
+          "id": "wa_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark lies dead under your hand. The dancer's circles pass over it, and it stays dead.",
+          "next": "wa_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_ward_b",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "wb_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "family"
+              }
+            ]
+          },
+          "node": "wb_done"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "wb_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.ward_1",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.ward_2",
+                "value": false
+              }
+            ]
+          },
+          "node": "wb_lit",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "ward_second"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "landing"
+          },
+          "node": "wb_reset",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "wards_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "wb_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "wb_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark is dark and whole.",
+          "next": "wb_done"
+        },
+        {
+          "id": "wb_lit",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The second mark takes. The shimmer thins.",
+          "next": "wb_lit"
+        },
+        {
+          "id": "wb_reset",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark flares and goes dark. Across the floor, the others fade with it.",
+          "next": "wb_reset"
+        },
+        {
+          "id": "wb_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A cracked ward mark in the floor. The inlaid path from the hearth runs through it.",
+          "next": "wb_idle"
+        },
+        {
+          "id": "wb_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark lies dead under your hand. The dancer's circles pass over it, and it stays dead.",
+          "next": "wb_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_ward_c",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "wc_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "any",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "family"
+              }
+            ]
+          },
+          "node": "wc_done"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.guard_5",
+                "value": false
+              }
+            ]
+          },
+          "node": "wc_guarded"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.checkpoint",
+                "value": "landing"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.ward_1",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_gastly_family.ward_2",
+                "value": true
+              }
+            ]
+          },
+          "node": "wc_lit",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "barrier_down"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.checkpoint",
+            "value": "landing"
+          },
+          "node": "wc_reset",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "wards_reset"
+            }
+          ]
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "wc_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "wc_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark is dark and whole.",
+          "next": "wc_done"
+        },
+        {
+          "id": "wc_lit",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The third mark catches. The air across the ballroom tears like wet paper, and the barrier is gone.",
+          "next": "wc_lit"
+        },
+        {
+          "id": "wc_reset",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark flares and goes dark. Across the floor, the others fade with it.",
+          "next": "wc_reset"
+        },
+        {
+          "id": "wc_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A cracked ward mark in the floor. The inlaid path from the hearth runs through it.",
+          "next": "wc_idle"
+        },
+        {
+          "id": "wc_guarded",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The mark lies dead under your hand. The dancer's circles pass over it, and it stays dead.",
+          "next": "wc_guarded"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_gastly_board",
+      "quest_id": "evt_route1_gastly_family",
+      "npc_id": null,
+      "source": "docs/story/events/ROUTE1_GASTLY_MANSION.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_gastly_family.prop_cursor",
+        "initial_node": "b_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.cache_claimed",
+            "value": true
+          },
+          "node": "b_empty"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_gastly_family.completed",
+            "value": true
+          },
+          "node": "b_find"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "b_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "b_find",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The loose board lifts. Underneath, where Gastly used to hide, someone has left a small bundle tied with the same knotted paper.",
+          "next": "b_empty",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_cache"
+            }
+          ]
+        },
+        {
+          "id": "b_empty",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Just the space under the board, and the shape of where something small used to hide.",
+          "next": "b_empty"
+        },
+        {
+          "id": "b_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A loose board. Something small has been sleeping on it.",
+          "next": "b_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null,
+        "pip": "Pip",
+        "haunter": "Haunter",
+        "gengar": "Gengar"
+      }
+    },
+    {
+      "id": "dlg_route1_rattata_picnic",
+      "quest_id": "evt_route1_rattata_picnic",
+      "npc_id": "npc_route1_picnicker",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_rattata_picnic.dialogue_cursor",
+        "initial_node": "o1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.completed",
+            "value": true
+          },
+          "node": "o_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.berry_left",
+            "value": true
+          },
+          "node": "o_thanks"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.reward_claimed",
+            "value": true
+          },
+          "node": "o_stump"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.lunch_found",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route1_rattata_picnic.dialogue_cursor",
+                "values": [
+                  "o_back1",
+                  "o_back2",
+                  "o_back3",
+                  "o_back4"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 45,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.lunch_found",
+            "value": true
+          },
+          "node": "o_back1"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.started",
+            "value": true
+          },
+          "node": "o_hunt"
+        },
+        {
+          "priority": 60,
+          "when": {
+            "kind": "always"
+          },
+          "node": "o1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "o1",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "My lunch!",
+          "next": "o2"
+        },
+        {
+          "id": "o2",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "They didn't just take it. They unwrapped it. Neatly. Then they took it.",
+          "next": "o3"
+        },
+        {
+          "id": "o3",
+          "kind": "choice",
+          "speaker": "owner",
+          "text": "I'm not chasing Rattata through a forest. Would you?",
+          "responses": [
+            {
+              "id": "o_yes",
+              "text": "I'll look.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "start"
+                }
+              ],
+              "next": "o_hunt"
+            },
+            {
+              "id": "o_no",
+              "text": "Not now.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "o_hunt",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "Crumbs, pawprints... they never go far. They're too pleased with themselves.",
+          "next": "o_hunt"
+        },
+        {
+          "id": "o_back1",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "My lunch! Still folded. They refolded it.",
+          "next": "o_back2"
+        },
+        {
+          "id": "o_back2",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "That's almost worse.",
+          "next": "o_back3"
+        },
+        {
+          "id": "o_back3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "She splits it with you, and adds a few things from her bag.",
+          "next": "o_back4",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_picnic"
+            }
+          ]
+        },
+        {
+          "id": "o_back4",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "They'll be back, you know. Unless they get their own. There's an old stump by the trees.",
+          "next": "o_back4"
+        },
+        {
+          "id": "o_stump",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "Leave something at that stump and they'll leave my basket alone.",
+          "next": "o_stump"
+        },
+        {
+          "id": "o_thanks",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "Look at them over there. Polite as anything.",
+          "next": "o_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "o_done",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "Lunch, undisturbed. A small miracle.",
+          "next": "o_done"
+        }
+      ],
+      "speakers": {
+        "owner": "Picnicker",
+        "narration": null
+      },
+      "npc_name": "Picnicker"
+    },
+    {
+      "id": "dlg_route1_picnic_hollow_log",
+      "quest_id": "evt_route1_rattata_picnic",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_rattata_picnic.prop_cursor",
+        "initial_node": "hl_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.lunch_found",
+                "value": false
+              }
+            ]
+          },
+          "node": "hl_find"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.lunch_found",
+            "value": true
+          },
+          "node": "hl_gone"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "hl_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "hl_find",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The crumbs end here. Inside the hollow log, folded back into its cloth: the lunch.",
+          "next": "hl_gone",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "find_lunch"
+            }
+          ]
+        },
+        {
+          "id": "hl_gone",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Just crumbs, now.",
+          "next": "hl_gone"
+        },
+        {
+          "id": "hl_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A hollow log. Something small has been in and out of it.",
+          "next": "hl_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route1_picnic_bush",
+      "quest_id": "evt_route1_rattata_picnic",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_rattata_picnic.prop_cursor",
+        "initial_node": "bu_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.lunch_found",
+                "value": false
+              }
+            ]
+          },
+          "node": "bu_hunt"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "bu_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "bu_hunt",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Rustling. A Rattata bolts out of the bush, empty-pawed, and looks offended.",
+          "next": "bu_hunt"
+        },
+        {
+          "id": "bu_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A thick bush.",
+          "next": "bu_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route1_picnic_crate",
+      "quest_id": "evt_route1_rattata_picnic",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_rattata_picnic.prop_cursor",
+        "initial_node": "cr_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route1_rattata_picnic.lunch_found",
+                "value": false
+              }
+            ]
+          },
+          "node": "cr_hunt"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "cr_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "cr_hunt",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An old crate on its side. Tooth marks, but no lunch.",
+          "next": "cr_hunt"
+        },
+        {
+          "id": "cr_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An old crate on its side.",
+          "next": "cr_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route1_picnic_stump",
+      "quest_id": "evt_route1_rattata_picnic",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_rattata_picnic.prop_cursor",
+        "initial_node": "st_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.berry_left",
+            "value": true
+          },
+          "node": "st_left"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.reward_claimed",
+            "value": true
+          },
+          "node": "st_offer"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "st_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "st_offer",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "An old stump, gnawed smooth on top. The Rattata's table.",
+          "responses": [
+            {
+              "id": "st_give",
+              "text": "Leave a berry.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "leave_berry"
+                }
+              ],
+              "next": "st_left",
+              "visible_when": {
+                "kind": "held_item",
+                "item_predicate": "#cobblemon:berries"
+              }
+            },
+            {
+              "id": "st_none",
+              "text": "Hold a berry, then come back.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "held_item",
+                  "item_predicate": "#cobblemon:berries"
+                }
+              }
+            },
+            {
+              "id": "st_later",
+              "text": "Leave.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "st_left",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The berry sits on the stump. By the time you look back, a Rattata is sitting beside it, guarding it.",
+          "next": "st_left"
+        },
+        {
+          "id": "st_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "An old stump, gnawed smooth on top.",
+          "next": "st_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route1_picnic_rattata",
+      "quest_id": "evt_route1_rattata_picnic",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_rattata_picnic.prop_cursor",
+        "initial_node": "ra_basket",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_rattata_picnic.berry_left",
+            "value": true
+          },
+          "node": "ra_stump"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "ra_basket"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "ra_basket",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A Rattata sniffs round the basket, looking pleased with itself. It is not going to help.",
+          "next": "ra_basket"
+        },
+        {
+          "id": "ra_stump",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Rattata has its berry and a stump of its own. It ignores the basket completely.",
+          "next": "ra_stump"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route1_first_cast",
+      "quest_id": "evt_route1_first_cast",
+      "npc_id": "npc_route1_first_cast_fisher",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_first_cast.dialogue_cursor",
+        "initial_node": "f1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_first_cast.completed",
+            "value": true
+          },
+          "node": "f_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_first_cast.rod_claimed",
+            "value": true
+          },
+          "node": "f5"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_first_cast.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "f1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "f1",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "You came all the way out from Pallet for the water? Good.",
+          "next": "f2"
+        },
+        {
+          "id": "f2",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Most people see the sea and keep walking.",
+          "next": "f3"
+        },
+        {
+          "id": "f3",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Roads show you where to walk. Water makes you decide where to wait.",
+          "next": "f4"
+        },
+        {
+          "id": "f4",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The fisher lifts the spare rod off the rack and holds it out.",
+          "next": "f5",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "give_rod"
+            }
+          ]
+        },
+        {
+          "id": "f5",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Cast off the end. Don't expect anything rare. Expect to wait.",
+          "next": "f_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "f_done",
+          "kind": "line",
+          "speaker": "fisher",
+          "text": "Patience is a route skill. Nobody believes that until they try it.",
+          "next": "f_done"
+        }
+      ],
+      "speakers": {
+        "fisher": "Fisher",
+        "narration": null
+      },
+      "npc_name": "Fisher"
+    },
+    {
+      "id": "dlg_route1_first_cast_rack",
+      "quest_id": "evt_route1_first_cast",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route1_first_cast.prop_cursor",
+        "initial_node": "rk_full",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route1_first_cast.rod_claimed",
+            "value": true
+          },
+          "node": "rk_gap"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "rk_full"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "rk_full",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A rack of rods, lines wound tight. One looks like it has never been used.",
+          "next": "rk_full"
+        },
+        {
+          "id": "rk_gap",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The rack is one rod lighter.",
+          "next": "rk_gap"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_rollaway_geodude",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "npc_id": "npc_route2_miner",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+        "initial_node": "m1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.completed",
+            "value": true
+          },
+          "node": "m_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+                "values": [
+                  "m_back1",
+                  "m_back2",
+                  "m_back3"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+            "value": true
+          },
+          "node": "m_back1"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.started",
+            "value": true
+          },
+          "node": "m_hunt"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "m1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "m1",
+          "kind": "line",
+          "speaker": "miner",
+          "text": "Good news: Geodude is extremely durable.",
+          "next": "m2"
+        },
+        {
+          "id": "m2",
+          "kind": "line",
+          "speaker": "miner",
+          "text": "Bad news: so is the cart, and both of them were going downhill.",
+          "next": "m3"
+        },
+        {
+          "id": "m3",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The brake chock lies empty beside the road. Fresh scrapes run away down the grade.",
+          "next": "m_hunt",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ]
+        },
+        {
+          "id": "m_hunt",
+          "kind": "line",
+          "speaker": "miner",
+          "text": "It'll be downhill. Everything's downhill from here.",
+          "next": "m_hunt"
+        },
+        {
+          "id": "m_back1",
+          "kind": "line",
+          "speaker": "miner",
+          "text": "Both of them, in one piece? It caught the cart? Of course it did.",
+          "next": "m_back2"
+        },
+        {
+          "id": "m_back2",
+          "kind": "line",
+          "speaker": "miner",
+          "text": "Here. Geodude dug this out of the sack. It won't let me have it, so you might as well.",
+          "next": "m_back3",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant"
+            }
+          ]
+        },
+        {
+          "id": "m_back3",
+          "kind": "line",
+          "speaker": "miner",
+          "text": "Next time I set the brake before lunch.",
+          "next": "m_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "m_done",
+          "kind": "line",
+          "speaker": "miner",
+          "text": "Geodude's back to sleeping in the cart. I've stopped arguing.",
+          "next": "m_done"
+        }
+      ],
+      "speakers": {
+        "miner": "Miner",
+        "narration": null
+      },
+      "npc_name": "Miner"
+    },
+    {
+      "id": "dlg_route2_geodude_rut",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_rollaway_geodude.prop_cursor",
+        "initial_node": "rut_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.started",
+            "value": true
+          },
+          "node": "rut_clue",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "clue_rut"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "rut_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "rut_clue",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A rut, fresh, straight down the grade. Something heavy and round rode this.",
+          "next": "rut_clue"
+        },
+        {
+          "id": "rut_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Old wheel ruts.",
+          "next": "rut_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_geodude_sack",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_rollaway_geodude.prop_cursor",
+        "initial_node": "sack_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.started",
+            "value": true
+          },
+          "node": "sack_clue",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "clue_sack"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "sack_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sack_clue",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A sample sack, split open. Ore across the ground, and a round dent in the middle of it.",
+          "next": "sack_clue"
+        },
+        {
+          "id": "sack_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A split sack.",
+          "next": "sack_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_geodude_boulder",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_rollaway_geodude.prop_cursor",
+        "initial_node": "boulder_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.started",
+            "value": true
+          },
+          "node": "boulder_clue",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "clue_boulder"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "boulder_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "boulder_clue",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A chipped boulder. The chip is fresh, and there is cart paint in it.",
+          "next": "boulder_clue"
+        },
+        {
+          "id": "boulder_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A chipped boulder.",
+          "next": "boulder_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_geodude_brake",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_rollaway_geodude.prop_cursor",
+        "initial_node": "br_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+            "value": true
+          },
+          "node": "br_set"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_rollaway_geodude.clue_rut",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_rollaway_geodude.clue_sack",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_rollaway_geodude.clue_boulder",
+                "value": true
+              }
+            ]
+          },
+          "node": "br_offer"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.started",
+            "value": true
+          },
+          "node": "br_early"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "br_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "br_offer",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "The cart's brake lever hangs loose. Geodude has both arms round the cart, braced against the tree.",
+          "responses": [
+            {
+              "id": "br_pull",
+              "text": "Set the brake.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "secure_brake"
+                }
+              ],
+              "next": "br_set"
+            },
+            {
+              "id": "br_wait",
+              "text": "Leave it.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "br_set",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The lever clacks home. Geodude uncurls, looks at you, and lets go of the cart.",
+          "next": "br_set"
+        },
+        {
+          "id": "br_early",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A handcart against a tree, and a Geodude holding it there. Work out what happened first: the signs are back up the grade.",
+          "next": "br_early"
+        },
+        {
+          "id": "br_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A handcart's brake lever.",
+          "next": "br_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_geodude",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_rollaway_geodude.prop_cursor",
+        "initial_node": "gd_cart",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_rollaway_geodude.brake_secured",
+            "value": true
+          },
+          "node": "gd_home"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "gd_cart"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "gd_cart",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "It did not run away. It caught the cart.",
+          "next": "gd_cart"
+        },
+        {
+          "id": "gd_home",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Geodude is asleep in a heap by the miner's boots.",
+          "next": "gd_home"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_viltri_sounding",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": "npc_route2_shore_keeper",
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.dialogue_cursor",
+        "initial_node": "k1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.completed",
+            "value": true
+          },
+          "node": "k_repeat"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route2_viltri_sounding.dialogue_cursor",
+                "values": [
+                  "k_done1",
+                  "k_done2"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+            "value": true
+          },
+          "node": "k_done1"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.staff_deep",
+            "value": true
+          },
+          "node": "k_gauge"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.started",
+            "value": true
+          },
+          "node": "k_task"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "always"
+          },
+          "node": "k1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "k1",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "First time at Viltri? Then look at the banks before the map.",
+          "next": "k2"
+        },
+        {
+          "id": "k2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Below the bank, three staffs stand in the water at three depths. None of them agrees with the others.",
+          "next": "k_task",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ]
+        },
+        {
+          "id": "k_task",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Read them from the platform. Shallow first. Deep water leaves a different line; watch the shelf the Lotad are using.",
+          "next": "k_task"
+        },
+        {
+          "id": "k_gauge",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Same lake, three depths. That is why one path never tells you the whole shore.",
+          "next": "k_gauge2"
+        },
+        {
+          "id": "k_gauge2",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Now the gauge. Corphish did not steal it. It improved the tether until it came loose.",
+          "next": "k_gauge2"
+        },
+        {
+          "id": "k_done1",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Now the marker agrees with the water. Welcome to Viltri.",
+          "next": "k_done2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant"
+            }
+          ]
+        },
+        {
+          "id": "k_done2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The keeper hands you a parcel of smoked fish and two spare Net Balls.",
+          "next": "k_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "k_repeat",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Look at the banks before the map. Always.",
+          "next": "k_repeat"
+        }
+      ],
+      "speakers": {
+        "keeper": "Shore keeper",
+        "narration": null
+      },
+      "npc_name": "Shore keeper"
+    },
+    {
+      "id": "dlg_route2_staff_shallow",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": null,
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.prop_cursor",
+        "initial_node": "sts_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.staff_shallow",
+            "value": true
+          },
+          "node": "sts_read"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.started",
+            "value": true
+          },
+          "node": "sts_new",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "read_shallow"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.started",
+            "value": true
+          },
+          "node": "sts_wrong"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "sts_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sts_new",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The band sits a hand below the surface. The Lotad drift over this shelf.",
+          "next": "sts_new"
+        },
+        {
+          "id": "sts_read",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You have read this one: shallow.",
+          "next": "sts_read"
+        },
+        {
+          "id": "sts_wrong",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Deep water leaves a different line. Start from the shelf the Lotad are using.",
+          "next": "sts_wrong"
+        },
+        {
+          "id": "sts_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A depth staff, banded at the water line.",
+          "next": "sts_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_staff_middle",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": null,
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.prop_cursor",
+        "initial_node": "stm_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.staff_middle",
+            "value": true
+          },
+          "node": "stm_read"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_viltri_sounding.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_viltri_sounding.staff_shallow",
+                "value": true
+              }
+            ]
+          },
+          "node": "stm_new",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "read_middle"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.started",
+            "value": true
+          },
+          "node": "stm_wrong"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "stm_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "stm_new",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Deeper. The band is an arm's length down, and the water darkens past it.",
+          "next": "stm_new"
+        },
+        {
+          "id": "stm_read",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You have read this one: middle.",
+          "next": "stm_read"
+        },
+        {
+          "id": "stm_wrong",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Deep water leaves a different line. Start from the shelf the Lotad are using.",
+          "next": "stm_wrong"
+        },
+        {
+          "id": "stm_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A depth staff, banded at the water line.",
+          "next": "stm_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_staff_deep",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": null,
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.prop_cursor",
+        "initial_node": "std_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.staff_deep",
+            "value": true
+          },
+          "node": "std_read"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_viltri_sounding.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route2_viltri_sounding.staff_middle",
+                "value": true
+              }
+            ]
+          },
+          "node": "std_new",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "read_deep"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.started",
+            "value": true
+          },
+          "node": "std_wrong"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "std_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "std_new",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The staff goes down past where you can see. The line on it is almost a guess.",
+          "next": "std_new"
+        },
+        {
+          "id": "std_read",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You have read this one: deep.",
+          "next": "std_read"
+        },
+        {
+          "id": "std_wrong",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Deep water leaves a different line. Start from the shelf the Lotad are using.",
+          "next": "std_wrong"
+        },
+        {
+          "id": "std_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A depth staff, banded at the water line.",
+          "next": "std_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_gauge",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": null,
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.prop_cursor",
+        "initial_node": "ga_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.gauge_reset",
+            "value": true
+          },
+          "node": "ga_done"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route2_viltri_sounding.staff_deep",
+            "value": true
+          },
+          "node": "ga_reset",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "reset_gauge"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "ga_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "ga_reset",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You haul the float back on its chain and knot the tether to the post again, tighter.",
+          "next": "ga_reset"
+        },
+        {
+          "id": "ga_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The gauge sits where it should, and agrees with the staffs.",
+          "next": "ga_done"
+        },
+        {
+          "id": "ga_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A floating gauge, drifted off its mark on a loose tether.",
+          "next": "ga_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_claw_post",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": null,
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.prop_cursor",
+        "initial_node": "cp_look",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "cp_look"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "cp_look",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Claw marks all along the tether post. Someone has been improving the knot.",
+          "next": "cp_look"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_corphish",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": null,
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.prop_cursor",
+        "initial_node": "co_look",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "co_look"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "co_look",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Corphish clicks its claws at the tether post, very pleased with its work.",
+          "next": "co_look"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route2_lotad",
+      "quest_id": "evt_route2_viltri_sounding",
+      "npc_id": null,
+      "source": "docs/story/EARLY_ROUTE_BUILD_HANDOFF.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route2_viltri_sounding.prop_cursor",
+        "initial_node": "lo_look",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "lo_look"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "lo_look",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Lotad keep to one shelf of the lake, where the water is shallow and warm.",
+          "next": "lo_look"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_viltri_north_bank",
+      "quest_id": "evt_viltri_north_bank",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_viltri_north_bank.dialogue_cursor",
+        "initial_node": "n1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_viltri_north_bank.completed",
+            "value": true
+          },
+          "node": "n_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_viltri_north_bank.reward_claimed",
+            "value": true
+          },
+          "node": "n_win2"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_viltri_north_bank.trainer_defeated",
+            "value": true
+          },
+          "node": "n_win1"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_viltri_north_bank.started",
+            "value": true
+          },
+          "node": "n_wait"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "always"
+          },
+          "node": "n1",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "id": "n1",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A tackle box, and a note on the lid: 'Most people see Viltri from the south road and think they have seen the lake. The north bank disagrees.'",
+          "next": "n2"
+        },
+        {
+          "id": "n2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The angler on the platform is watching you read it.",
+          "next": "n_wait"
+        },
+        {
+          "id": "n_wait",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The North Bank Angler is waiting on the platform.",
+          "next": "n_wait"
+        },
+        {
+          "id": "n_win1",
+          "kind": "line",
+          "speaker": "angler",
+          "text": "You walked the long way round and still brought the right answer. Take this.",
+          "next": "n_win2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_lure"
+            }
+          ]
+        },
+        {
+          "id": "n_win2",
+          "kind": "line",
+          "speaker": "angler",
+          "text": "A Lure Ball. For water that makes you wait.",
+          "next": "n_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "n_done",
+          "kind": "line",
+          "speaker": "angler",
+          "text": "The bank rewards a long walk.",
+          "next": "n_done"
+        }
+      ],
+      "speakers": {
+        "angler": "North Bank Angler",
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_nosepass_signs",
+      "quest_id": "evt_route3_nosepass_signs",
+      "npc_id": "npc_route3_trail_keeper",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+        "initial_node": "t1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.completed",
+            "value": true
+          },
+          "node": "t_repeat"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+                "values": [
+                  "t_done1",
+                  "t_done2"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+            "value": true
+          },
+          "node": "t_done1"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+            "value": true
+          },
+          "node": "t_third"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_nosepass_signs.sign_a",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_nosepass_signs.sign_b",
+                "value": true
+              }
+            ]
+          },
+          "node": "t_watch"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.started",
+            "value": true
+          },
+          "node": "t_task"
+        },
+        {
+          "priority": 60,
+          "when": {
+            "kind": "always"
+          },
+          "node": "t1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "t1",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "The marks are right. The signs moved after the mast flashed.",
+          "next": "t2"
+        },
+        {
+          "id": "t2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The keeper points north-west over the trees, at a thin mast on the mountain's shoulder.",
+          "next": "t3"
+        },
+        {
+          "id": "t3",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Wedge them back to their marks. Use the wood ones. The metal's humming.",
+          "next": "t_task",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ]
+        },
+        {
+          "id": "t_task",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Two signs to their marks, then we watch the mast.",
+          "next": "t_task"
+        },
+        {
+          "id": "t_watch",
+          "kind": "choice",
+          "speaker": "keeper",
+          "text": "Both holding. Now watch the mast.",
+          "responses": [
+            {
+              "id": "t_look",
+              "text": "Watch it.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "observe_pulse"
+                }
+              ],
+              "next": "t_pulse"
+            },
+            {
+              "id": "t_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t_pulse",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "There. The mast caught something, and Nosepass caught it too.",
+          "next": "t_pulse2"
+        },
+        {
+          "id": "t_pulse2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The third sign has swung off its mark. Its second bracket was loose all along.",
+          "next": "t_pulse2"
+        },
+        {
+          "id": "t_third",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "The third one. Mind the bracket under the bracket.",
+          "next": "t_third"
+        },
+        {
+          "id": "t_done1",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "The signs are fixed. Whatever they heard is still north-west.",
+          "next": "t_done2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant"
+            }
+          ]
+        },
+        {
+          "id": "t_done2",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Take these for the climb. There's a bench past the cut bank where the rangers sit out storms.",
+          "next": "t_repeat",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "t_repeat",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Nosepass keeps turning to it. So do I, now.",
+          "next": "t_repeat"
+        }
+      ],
+      "speakers": {
+        "keeper": "Trail keeper",
+        "narration": null
+      },
+      "npc_name": "Trail keeper"
+    },
+    {
+      "id": "dlg_route3_sign_a",
+      "quest_id": "evt_route3_nosepass_signs",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_nosepass_signs.prop_cursor",
+        "initial_node": "sa_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.sign_a",
+            "value": true
+          },
+          "node": "sa_held"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.started",
+            "value": true
+          },
+          "node": "sa_fix",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "fix_a"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "sa_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sa_fix",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The metal fastener buzzes under your fingers. You drive a wooden wedge in beside it, and the sign settles on its painted mark.",
+          "next": "sa_fix"
+        },
+        {
+          "id": "sa_held",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Wedged, and still.",
+          "next": "sa_held"
+        },
+        {
+          "id": "sa_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A trail sign, a little off its painted mark.",
+          "next": "sa_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_sign_b",
+      "quest_id": "evt_route3_nosepass_signs",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_nosepass_signs.prop_cursor",
+        "initial_node": "sb_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.sign_b",
+            "value": true
+          },
+          "node": "sb_held"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.started",
+            "value": true
+          },
+          "node": "sb_fix",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "fix_b"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "sb_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sb_fix",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The metal fastener buzzes under your fingers. You drive a wooden wedge in beside it, and the sign settles on its painted mark.",
+          "next": "sb_fix"
+        },
+        {
+          "id": "sb_held",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Wedged, and still.",
+          "next": "sb_held"
+        },
+        {
+          "id": "sb_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A trail sign, a little off its painted mark.",
+          "next": "sb_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_sign_c",
+      "quest_id": "evt_route3_nosepass_signs",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_nosepass_signs.prop_cursor",
+        "initial_node": "sc_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.brackets_fixed",
+            "value": true
+          },
+          "node": "sc_held"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+            "value": true
+          },
+          "node": "sc_fix",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "fix_c"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.started",
+            "value": true
+          },
+          "node": "sc_holds"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "sc_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sc_fix",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A second bracket, loose under the first. You wedge both. The sign stops trembling.",
+          "next": "sc_fix"
+        },
+        {
+          "id": "sc_held",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "All three hold.",
+          "next": "sc_held"
+        },
+        {
+          "id": "sc_holds",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "This one is on its mark. For now.",
+          "next": "sc_holds"
+        },
+        {
+          "id": "sc_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A trail sign on its painted mark.",
+          "next": "sc_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_nosepass",
+      "quest_id": "evt_route3_nosepass_signs",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_nosepass_signs.prop_cursor",
+        "initial_node": "np_north",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_nosepass_signs.pulse_observed",
+            "value": true
+          },
+          "node": "np_mast"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "np_north"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "np_north",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Nosepass stands very still, nose to the north. Every so often it twitches west.",
+          "next": "np_north"
+        },
+        {
+          "id": "np_mast",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Nosepass has turned. Its nose points north-west now, straight at the mast.",
+          "next": "np_mast"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_creek_wooper",
+      "quest_id": "evt_route3_creek_wooper",
+      "npc_id": "npc_route3_courier",
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_creek_wooper.dialogue_cursor",
+        "initial_node": "c1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.encounter_claimed",
+                "value": true
+              }
+            ]
+          },
+          "node": "c_done"
+        },
+        {
+          "priority": 15,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.completed",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.encounter_claimed",
+                "value": false
+              }
+            ]
+          },
+          "node": "c_offer"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.crate_recovered",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route3_creek_wooper.dialogue_cursor",
+                "values": [
+                  "c_back1",
+                  "c_back2",
+                  "c_offer"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_creek_wooper.crate_recovered",
+            "value": true
+          },
+          "node": "c_back1"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_creek_wooper.started",
+            "value": true
+          },
+          "node": "c_task"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "c1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "c1",
+          "kind": "line",
+          "speaker": "courier",
+          "text": "They were here first. The crate can wait five minutes.",
+          "next": "c2"
+        },
+        {
+          "id": "c2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A supply crate sits in the shallows by the Wooper's feeding patch. Three ways lead down to it.",
+          "next": "c3"
+        },
+        {
+          "id": "c3",
+          "kind": "line",
+          "speaker": "courier",
+          "text": "Don't chase them into the deep water. Pick your way.",
+          "next": "c_task",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ]
+        },
+        {
+          "id": "c_task",
+          "kind": "line",
+          "speaker": "courier",
+          "text": "Three ways down. Only one leaves the Wooper alone.",
+          "next": "c_task"
+        },
+        {
+          "id": "c_back1",
+          "kind": "line",
+          "speaker": "courier",
+          "text": "You brought the supplies back and left the pond where you found it. That is the whole job.",
+          "next": "c_back2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant"
+            }
+          ]
+        },
+        {
+          "id": "c_back2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "One of the Wooper has followed you up the bank. It sits by the muddy pool, watching you.",
+          "next": "c_offer"
+        },
+        {
+          "id": "c_offer",
+          "kind": "choice",
+          "speaker": "narration",
+          "text": "The Wooper is still watching.",
+          "responses": [
+            {
+              "id": "c_stay",
+              "text": "Stay with it.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "claim_encounter"
+                }
+              ],
+              "next": "c_back3"
+            },
+            {
+              "id": "c_leave",
+              "text": "Leave it be.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "decline"
+                }
+              ],
+              "next": "c_back4"
+            }
+          ]
+        },
+        {
+          "id": "c_back3",
+          "kind": "line",
+          "speaker": "courier",
+          "text": "Well. It picked you.",
+          "next": "c_back3"
+        },
+        {
+          "id": "c_back4",
+          "kind": "line",
+          "speaker": "courier",
+          "text": "It'll be here if you change your mind.",
+          "next": "c_back4"
+        },
+        {
+          "id": "c_done",
+          "kind": "line",
+          "speaker": "courier",
+          "text": "They were here first. They still are.",
+          "next": "c_done"
+        }
+      ],
+      "speakers": {
+        "courier": "Courier",
+        "narration": null
+      },
+      "npc_name": "Courier"
+    },
+    {
+      "id": "dlg_route3_approach_feeding",
+      "quest_id": "evt_route3_creek_wooper",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_creek_wooper.prop_cursor",
+        "initial_node": "apf_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.safe_path_found",
+                "value": false
+              }
+            ]
+          },
+          "node": "apf_no"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "apf_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "apf_no",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Bubbles and churned weed: the Wooper are feeding right here. Walk through and they scatter into the deep water.",
+          "next": "apf_no"
+        },
+        {
+          "id": "apf_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Bubbles and churned weed: the Wooper are feeding right here. Walk through and they scatter into the deep water.",
+          "next": "apf_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_approach_mud",
+      "quest_id": "evt_route3_creek_wooper",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_creek_wooper.prop_cursor",
+        "initial_node": "apm_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.started",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_creek_wooper.safe_path_found",
+                "value": false
+              }
+            ]
+          },
+          "node": "apm_no"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "apm_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "apm_no",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Dark, deep mud. You would sink to the knee, and the crate with you.",
+          "next": "apm_no"
+        },
+        {
+          "id": "apm_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Dark, deep mud. You would sink to the knee, and the crate with you.",
+          "next": "apm_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_approach_stones",
+      "quest_id": "evt_route3_creek_wooper",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_creek_wooper.prop_cursor",
+        "initial_node": "aps_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_creek_wooper.safe_path_found",
+            "value": true
+          },
+          "node": "aps_known"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_creek_wooper.started",
+            "value": true
+          },
+          "node": "aps_yes",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "find_path"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "aps_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "aps_yes",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Dry stones, crusted with lichen, a step apart. They reach the crate without touching the feeding patch.",
+          "next": "aps_yes"
+        },
+        {
+          "id": "aps_known",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The dry stones, out to the crate.",
+          "next": "aps_known"
+        },
+        {
+          "id": "aps_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Dry stones, crusted with lichen.",
+          "next": "aps_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_crate",
+      "quest_id": "evt_route3_creek_wooper",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_creek_wooper.prop_cursor",
+        "initial_node": "cr_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_creek_wooper.crate_recovered",
+            "value": true
+          },
+          "node": "cr_done"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_creek_wooper.safe_path_found",
+            "value": true
+          },
+          "node": "cr_take",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "recover"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_creek_wooper.started",
+            "value": true
+          },
+          "node": "cr_far"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "cr_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "cr_take",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You pick your way out along the dry stones and haul the crate in. The Wooper do not even look up.",
+          "next": "cr_take"
+        },
+        {
+          "id": "cr_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The crate is back on the bank.",
+          "next": "cr_done"
+        },
+        {
+          "id": "cr_far",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Out of reach without a way down that leaves the Wooper alone.",
+          "next": "cr_far"
+        },
+        {
+          "id": "cr_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A supply crate in the shallows.",
+          "next": "cr_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_wooper",
+      "quest_id": "evt_route3_creek_wooper",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_ENCOUNTERS.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_creek_wooper.prop_cursor",
+        "initial_node": "wo_look",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "wo_look"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "wo_look",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Wooper keep eating. They were here first.",
+          "next": "wo_look"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_swablu_nest",
+      "quest_id": "evt_route3_swablu_nest",
+      "npc_id": "npc_route3_guide",
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_swablu_nest.dialogue_cursor",
+        "initial_node": "s1",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.completed",
+            "value": true
+          },
+          "node": "s_done"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_swablu_nest.flag_recovered",
+                "value": true
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.evt_route3_swablu_nest.dialogue_cursor",
+                "values": [
+                  "s_back1",
+                  "s_back2"
+                ]
+              }
+            ]
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 25,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.flag_recovered",
+            "value": true
+          },
+          "node": "s_back1"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.fiber_placed",
+            "value": true
+          },
+          "node": "s_wait"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.started",
+            "value": true
+          },
+          "node": "s_task"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "always"
+          },
+          "node": "s1"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "s1",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "That was my route flag.",
+          "next": "s2"
+        },
+        {
+          "id": "s2",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Blue fibers trail from a torn flag into a nest in the cut bank. Two Swablu are working them into its walls.",
+          "next": "s3"
+        },
+        {
+          "id": "s3",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "They're weatherproofing before the storm. With my flag.",
+          "next": "s4"
+        },
+        {
+          "id": "s4",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Find them something softer and they'll trade. They're reasonable. Mostly.",
+          "next": "s_task",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ]
+        },
+        {
+          "id": "s_task",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Soft fallen fiber, along the bank. Three bundles should do it.",
+          "next": "s_task"
+        },
+        {
+          "id": "s_wait",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Go on, see if they'll trade.",
+          "next": "s_wait"
+        },
+        {
+          "id": "s_back1",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "The birds improved the stitching. Don't tell anyone.",
+          "next": "s_back2",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant"
+            }
+          ]
+        },
+        {
+          "id": "s_back2",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "There's a bench up the grade where the rangers sit out storms. Nothing else there. Just a good bench.",
+          "next": "s_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "complete"
+            }
+          ]
+        },
+        {
+          "id": "s_done",
+          "kind": "line",
+          "speaker": "guide",
+          "text": "Keep to the flags on the climb.",
+          "next": "s_done"
+        }
+      ],
+      "speakers": {
+        "guide": "Guide",
+        "narration": null
+      },
+      "npc_name": "Guide"
+    },
+    {
+      "id": "dlg_route3_fiber_1",
+      "quest_id": "evt_route3_swablu_nest",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_swablu_nest.prop_cursor",
+        "initial_node": "fb1_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.fiber_1",
+            "value": true
+          },
+          "node": "fb1_taken"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.started",
+            "value": true
+          },
+          "node": "fb1_take",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "take_fiber_1"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fb1_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fb1_take",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A tuft of soft fallen fiber. You gather it up.",
+          "next": "fb1_take"
+        },
+        {
+          "id": "fb1_taken",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You have taken what was here.",
+          "next": "fb1_taken"
+        },
+        {
+          "id": "fb1_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Soft plant fiber, fallen along the bank.",
+          "next": "fb1_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_fiber_2",
+      "quest_id": "evt_route3_swablu_nest",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_swablu_nest.prop_cursor",
+        "initial_node": "fb2_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.fiber_2",
+            "value": true
+          },
+          "node": "fb2_taken"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.started",
+            "value": true
+          },
+          "node": "fb2_take",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "take_fiber_2"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fb2_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fb2_take",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A tuft of soft fallen fiber. You gather it up.",
+          "next": "fb2_take"
+        },
+        {
+          "id": "fb2_taken",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You have taken what was here.",
+          "next": "fb2_taken"
+        },
+        {
+          "id": "fb2_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Soft plant fiber, fallen along the bank.",
+          "next": "fb2_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_fiber_3",
+      "quest_id": "evt_route3_swablu_nest",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_swablu_nest.prop_cursor",
+        "initial_node": "fb3_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.fiber_3",
+            "value": true
+          },
+          "node": "fb3_taken"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.started",
+            "value": true
+          },
+          "node": "fb3_take",
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "take_fiber_3"
+            }
+          ]
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "fb3_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fb3_take",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A tuft of soft fallen fiber. You gather it up.",
+          "next": "fb3_take"
+        },
+        {
+          "id": "fb3_taken",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You have taken what was here.",
+          "next": "fb3_taken"
+        },
+        {
+          "id": "fb3_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Soft plant fiber, fallen along the bank.",
+          "next": "fb3_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_nest",
+      "quest_id": "evt_route3_swablu_nest",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_swablu_nest.prop_cursor",
+        "initial_node": "ne_idle",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.flag_recovered",
+            "value": true
+          },
+          "node": "ne_done"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.fiber_placed",
+            "value": true
+          },
+          "node": "ne_trade"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_route3_swablu_nest.fiber_1",
+                    "value": true
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_route3_swablu_nest.fiber_2",
+                    "value": true
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_route3_swablu_nest.fiber_3",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.evt_route3_swablu_nest.fiber_placed",
+                "value": false
+              }
+            ]
+          },
+          "node": "ne_place"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.started",
+            "value": true
+          },
+          "node": "ne_glare"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "ne_idle"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "ne_place",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "You set the soft fiber beside the nest. The Swablu inspect it, one bundle at a time.",
+          "next": "ne_trade",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "place_fibers"
+            }
+          ]
+        },
+        {
+          "id": "ne_trade",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Then they pull the blue threads out of their walls and drop the route cloth at your feet.",
+          "next": "ne_done",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "recover_flag"
+            }
+          ]
+        },
+        {
+          "id": "ne_done",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The nest is lined with something softer now. The Swablu are asleep in it.",
+          "next": "ne_done"
+        },
+        {
+          "id": "ne_glare",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Swablu glare at you. You have nothing they want yet.",
+          "next": "ne_glare"
+        },
+        {
+          "id": "ne_idle",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "A nest in the cut bank, blue threads woven through it.",
+          "next": "ne_idle"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
+    },
+    {
+      "id": "dlg_route3_swablu",
+      "quest_id": "evt_route3_swablu_nest",
+      "npc_id": null,
+      "source": "docs/story/events/EARLY_GAME_EVENT_BANK.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_route3_swablu_nest.prop_cursor",
+        "initial_node": "sw_look",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_route3_swablu_nest.flag_recovered",
+            "value": true
+          },
+          "node": "sw_soft"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "sw_look"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "sw_look",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Swablu tuck a blue thread deeper into the wall and fluff up at you.",
+          "next": "sw_look"
+        },
+        {
+          "id": "sw_soft",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The Swablu are asleep in the new lining, very pleased with themselves.",
+          "next": "sw_soft"
+        }
+      ],
+      "speakers": {
+        "narration": null
+      }
     }
   ]
 }

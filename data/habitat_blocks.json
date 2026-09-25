@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.habitat-blocks/1",
-  "status": "Victory Road's cave tiled with 80 blocks; behaviour in sealed rock is EXP-033",
+  "status": "Victory Road's cave tiled with 80 blocks, and the Route 1 mansion's ward stone; behaviour in sealed rock is EXP-033",
   "note": "Every Habitat Block the campaign places. A re-export erases blocks placed in game (EXP-021), so this manifest is the source: tools/habitat_blocks.py function writes the placement function, and the post-export procedure in docs/world-building/REEXPORT.md re-applies it and restarts the server so each block's chunk reloads. tools/validate_data.py checks the static rules, and checks presence in a stopped world passed with --world-save. Blocks placed on the disposable proof world for EXP-021 are not campaign blocks and are not listed.",
   "fields": {
     "id": "stable id",
@@ -1212,6 +1212,21 @@
       },
       "status": "placed",
       "why": "One tile of the lattice tools/vr_caves.py lays over the network (data/vr_caves.json spawns): written by `vr_caves.py records --write` from the model, and checked against it on every build."
+    },
+    {
+      "id": "route1_mansion_ward",
+      "place": "the Route 1 mansion: the house's old ward, cracked in the landing floor (tools/route1_mansion.py WARD_STONE)",
+      "pool": "cobblers:route_1_ghost_mansion",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 18,
+      "position": {
+        "x": 1629,
+        "y": 120,
+        "z": 5033
+      },
+      "status": "placed",
+      "why": "One block, not a lattice, so no seam inside the house falls back to the forest pool. Range 18 from the landing floor (between the storeys) reaches every standable floor cell of the house as a sphere or a column: the farthest interior corner is 15.1 blocks away horizontally and 5 below, 15.9 in all (EXP-021 measured the horizontal edge at the configured range; the vertical shape is EXP-033, unrun). Its edge falls inside the forest clearing (radius 22 round (1630, 5034), tools/maze_forest.py), so the ghosts keep to the house and its grounds and nothing reaches Route 1, 160 blocks away; no other block is within 36, so no ranges overlap."
     }
   ]
 }

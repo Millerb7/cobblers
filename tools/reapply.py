@@ -11,7 +11,7 @@ with a check after each, and audit the result. docs/world-building/REEXPORT.md i
   python tools/reapply.py install --server-dir <server> --world-dir <world folder>
         with the server STOPPED: copy the packs into <server>/datapacks, and cobblers_height and cobblers_worldtree
         into the world folder's own datapacks (they raise the build limit the world tree's crown needs)
-  python tools/reapply.py run --server-dir <server> [--from R8] [--only R8] [--with-spawns]
+  python tools/reapply.py run --server-dir <server> [--from R8] [--only R8] [--with-spawns] [--no-reload]
         with the server running and the coordination lock held: R2 to R16 in order, timed, each function's reply
         checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
   python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
@@ -58,7 +58,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # Block tiles and its finds
                 "cobblers_vr_caves", "cobblers_habitats", "cobblers_rewards",
                 # the NPC classes and dialogues the placed NPCs use; no functions (see npcs())
-                "cobblers_dialogue")
+                "cobblers_dialogue",
+                # Routes 1-3 and the mansion (2026-09-24): the event sites, the scene runtime (props, per-player actors,
+                # zones, effects) and the route trainers
+                "cobblers_route_events", "cobblers_scenes", "cobblers_trainers")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -74,6 +77,9 @@ EXCLUDED = {
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
+    "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
+                         "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
+                         "placed by R17 over RCON (summon_persistent), not by a function",
     "cobblers_rewards": "self-driving: each find is an advancement that runs its own reward function as the player "
                         "who earns it; it writes no blocks (the containers are placed by R9C)",
     # Victory Road schema 2, retired 2026-09-23 when the owner chose a cave network (data/vr_caves.json)
@@ -81,6 +87,10 @@ EXCLUDED = {
     "cobblers_vr_regions": "retired: schema 2's five regions, folded into cobblers_vr_caves as its zones",
     "cobblers_vr_clear": "staging only: rock back into what the retired spine and regions carved; a fresh export never had them",
 }
+# server packs installed into the target world's own datapacks folder, not the server's: they act without being called
+# (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
+# world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
+WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -89,6 +99,32 @@ UNPLACED = {"hometown"}                          # has roads, not a town plan: p
 
 def placements():
     return json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+
+
+def scene_npcs():
+    """[(conversation id, (x, y, z), npc class)] for every NPC a scene places (data/scenes.json npcs)."""
+    sc = json.loads((ROOT / "data" / "scenes.json").read_text(encoding="utf-8"))
+    dl = {c["id"]: c for c in json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))["conversations"]}
+    out = []
+    for s in sc["scenes"]:
+        for n in s.get("npcs") or []:
+            c = dl.get(n["conversation"])
+            if c is None or not c.get("npc_id"):
+                raise SystemExit("scene %s places an NPC for %s, which has no NPC class" % (s["id"], n["conversation"]))
+            out.append((n["conversation"], tuple(n["at"]), "cobblers:%s" % c["npc_id"]))
+    return out
+
+
+def scene_props():
+    """[(scene id, box x0 z0 x1 z1, prop count)] for every scene with props (its place function)."""
+    sc = json.loads((ROOT / "data" / "scenes.json").read_text(encoding="utf-8"))
+    out = []
+    for s in sc["scenes"]:
+        props = s.get("props") or []
+        if props:
+            xs, zs = [int(q["at"][0]) for q in props], [int(q["at"][2]) for q in props]
+            out.append((s["id"], (min(xs), min(zs), max(xs), max(zs)), len(props)))
+    return out
 
 
 def npcs():
@@ -164,8 +200,13 @@ def prepare(a):
     dlg = PACKS / "cobblers_dialogue"
     if dlg.exists():
         shutil.rmtree(dlg)
-    for conv, _at, _cls in npcs():
-        py(TOOLS / "compile_dialogue.py", conv, "--out", dlg)
+    # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
+    py(TOOLS / "compile_dialogue.py", "--all", "--out", dlg)
+    # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
+    # build, or anything stands on the walked line), then the scene runtime and the trainers
+    py(TOOLS / "route_events.py", *src)
+    py(TOOLS / "scenes_pack.py")
+    py(TOOLS / "route_trainers.py")
     py(TOOLS / "rematerial.py")
     py(TOOLS / "place_town.py", "hometown", *src)
     for s in places():
@@ -240,13 +281,20 @@ def install(a):
     if (dp / "cobblers_restore").exists():
         shutil.rmtree(dp / "cobblers_restore")
         print("removed", dp / "cobblers_restore", "(disposable worlds only)")
-    for name in SERVER_PACKS:
-        if (dp / name).exists():
-            shutil.rmtree(dp / name)
-        shutil.copytree(PACKS / name, dp / name)
-        print("installed", dp / name)
     wdp = Path(a.world_dir) / "datapacks"
     wdp.mkdir(exist_ok=True)
+    for name in SERVER_PACKS:
+        # a pack that acts on its own (the scene runtime's tick) belongs to the world it was built for: the global
+        # folder is loaded by every world this server runs, the live one included
+        dest = (wdp if name in WORLD_LOCAL else dp) / name
+        stale = dp / name if name in WORLD_LOCAL else None
+        if stale is not None and stale.exists():
+            shutil.rmtree(stale)
+            print("removed", stale, "(it belongs in the world folder)")
+        if dest.exists():
+            shutil.rmtree(dest)
+        shutil.copytree(PACKS / name, dest)
+        print("installed", dest)
     for src in WORLD_PACKS:
         if (wdp / src.name).exists():
             shutil.rmtree(wdp / src.name)
@@ -300,6 +348,8 @@ def uncovered(todo):
         for kind, value in acts:
             if kind == "fn" and ":" in value:
                 run_ns.add(value.split(":", 1)[1].split("/", 1)[0])
+            if kind == "props":
+                run_ns.add("scenes")
     bad = []
     for pack, folders in function_packs().items():
         if pack in EXCLUDED:
@@ -357,6 +407,16 @@ def steps(with_spawns=False):
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
+    # Routes 1-3's event sites after the signposts and every town, and before the things that stand in them
+    out.append(("R12", "Routes 1-3 event sites (tools/route_events.py)",
+                [("fn", "cobblers:route_events/%s" % f) for f in indexed("cobblers_route_events", "route_events")]))
+    # what stands in the sites and the mansion: the scenes' props (interaction boxes, once each), their NPCs, and
+    # the route trainers; entities, so an export erases them like blocks, and NPC classes and trainer data load at
+    # boot, so these run over RCON after the restart that followed install
+    import route_trainers
+    out.append(("R17", "scene props, scene NPCs and the route trainers",
+                [("props", p) for p in scene_props()] + [("npc", n) for n in scene_npcs()]
+                + [("trainer", t) for t in route_trainers.placements()]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -375,7 +435,10 @@ def run(a):
         todo = [s for s in todo if s[0] == a.only]
     elif getattr(a, "from_step", None):
         todo = todo[ids.index(a.from_step):]
-    print("reload:", rc("reload"))
+    if getattr(a, "no_reload", False):
+        print("no reload: the packs loaded at boot (a second /reload on this pack stack exhausted a 10 GB heap twice on staging, 2026-09-24)")
+    else:
+        print("reload:", rc("reload"))
     for sid, title, actions in todo:
         t0 = time.time()
         print("== %s %s" % (sid, title), flush=True)
@@ -414,6 +477,64 @@ def run(a):
                 if n != 1:
                     bad.append("%s: %s NPCs at %s, not 1 (is cobblers_dialogue installed, and was the server "
                                "restarted since?)" % (conv, n, (x, y, z)))
+                rc("forceload remove %d %d" % (x, z))
+            elif kind == "props":
+                # a scene's interaction boxes: load the chunks, give their entities time to load (they load after the
+                # blocks), run the place function (it kills the old boxes, then summons), then count them. The place
+                # function releases its own forceload at the end, which clears this step's too (a chunk is forced or
+                # not, there is no count), so the chunks are held again for the count
+                scene, (x0, z0, x1, z1), n = v
+                hold = "%d %d %d %d" % (x0, z0, x1, z1)
+                rc("forceload add " + hold)
+                for _ in range(30):
+                    if "passed" in rc("execute if loaded %d 64 %d" % (x0, z0)) and "passed" in rc("execute if loaded %d 64 %d" % (x1, z1)):
+                        break
+                    time.sleep(1)
+                time.sleep(4)
+                r = rc("function cobblers:scenes/%s/place" % scene)
+                if not r.startswith("Running function"):
+                    bad.append("%s props: %s" % (scene, r[:120]))
+                rc("forceload add " + hold)
+                time.sleep(2)
+                box = "x=%d,y=-64,z=%d,dx=%d,dy=640,dz=%d" % (x0 - 1, z0 - 1, x1 - x0 + 2, z1 - z0 + 2)
+                rc("execute store result storage cobblers:reapply props int 1 if entity "
+                   "@e[type=minecraft:interaction,tag=cobblers_prop,%s]" % box)
+                got = rc("data get storage cobblers:reapply props").rsplit(":", 1)[-1].strip()
+                if got != str(n):
+                    bad.append("%s: %s props standing, %d expected" % (scene, got, n))
+                print("   %s: %s of %d props" % (scene, got, n), flush=True)
+                rc("forceload remove " + hold)
+            elif kind == "trainer":
+                # an rctmod trainer, persistent, at its seat, once: one already standing there (a re-run) is left.
+                # Pinned: an rctmod trainer strolls (RandomStrollAwayGoal), and on staging a mansion guardian had
+                # climbed the grand stair within two minutes of being placed (2026-09-24). NoAI would also stop
+                # ForceIntoBattleGoal, the goal that battles on sight, so the goals keep running with nowhere to go:
+                # movement speed 0, which the entity saves with its attributes
+                tid, (x, y, z), yaw = v
+                rc("forceload add %d %d" % (x, z))
+                for _ in range(30):
+                    if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
+                        break
+                    time.sleep(1)
+                near = '@e[type=rctmod:trainer,x=%d,y=%d,z=%d,distance=..24,nbt={TrainerId:"%s"}]' % (x, y, z, tid)
+                there = False
+                for _ in range(12):
+                    if "passed" in rc("execute if entity %s" % near):
+                        there = True
+                        break
+                    time.sleep(0.5)
+                if not there:
+                    r = rc("rctmod trainer summon_persistent %s %d %d %d" % (tid, x, y, z))
+                    print("   %s -> %s" % (tid, r[:120] or "(no reply)"), flush=True)
+                    time.sleep(1)
+                rc("tp %s %d.5 %d %d.5 %d 0" % (near, x, y, z, yaw))
+                rc("execute as %s run attribute @s minecraft:generic.movement_speed base set 0" % near)
+                # and unhurt: on staging a Channeler took damage in her own battle and could have been killed
+                rc("data merge entity %s {Invulnerable:1b}" % near.replace("]", ",limit=1]"))
+                rc("execute store result storage cobblers:reapply trainers int 1 if entity %s" % near)
+                got = rc("data get storage cobblers:reapply trainers").rsplit(":", 1)[-1].strip()
+                if got != "1":
+                    bad.append("%s: %s trainers at %s, not 1" % (tid, got, (x, y, z)))
                 rc("forceload remove %d %d" % (x, z))
             elif kind == "check" and v == "crown":
                 x, y, z = CROWN
@@ -560,6 +681,7 @@ def main(argv=None):
     q.add_argument("--from", dest="from_step")
     q.add_argument("--only")
     q.add_argument("--with-spawns", action="store_true", help="not yet part of the run: spawn pools are a separate decision")
+    q.add_argument("--no-reload", action="store_true", help="skip the /reload: run straight after a boot, the packs are loaded")
     q = sub.add_parser("audit")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world", required=True)
