@@ -111,15 +111,15 @@ per theme now repeats a line anywhere, and never within 1,000 blocks.**
 
 | elder | was | becomes | levels | why |
 |---|---|---|---|---|
-| elder_south_pine_isle_1 | Rowlet | Hoothoot, Noctowl | 25-30 | 773 from the Decidueye tree. The owl isle keeps Rowlet and Decidueye on _3. |
-| elder_south_pine_isle_2 | Rowlet | Starly, Staravia | 25-30 | 730 from _3. The nearest Starly is 1,511 away. |
-| elder_north_pine_isle_2 | Delibird | Swablu | 25-30 | 999 from _1. This was the doc's own alternative (decision 8). |
-| elder_jungle_west_1 | Pikipek | Tropius | 25-30 | 515 from the Toucannon tree. A banana-necked flyer in the emergent jungle. |
-| elder_foothill_woods_4 | Spearow | Ledyba, Ledian | 21-23 | 487 from the plateau's Spearow. |
-| elder_shrew_lake_shores_2 | Natu | Combee | 10-15 | 848 from the Wedge's Natu. Bees among the blossom. |
-| elder_shrew_lake_shores_3 | Taillow | Hoppip | 10-15 | 775 from the plateau's Taillow. It floats on the cherry vale's air. |
-| elder_lake_viltri_hollow_2 | Hoothoot | Yanma | 18-21 | 880 from Foothill's Hoothoot. A dragonfly by the lake. |
-| elder_long_isle_north_1 | Rookidee | Wingull, Pelipper | 44-50 | 780 from the Corviknight tree. A sea bird on the coast. |
+| `elder_south_pine_isle_1` | Rowlet | Hoothoot, Noctowl | 25-30 | 773 from the Decidueye tree. The owl isle keeps Rowlet and Decidueye on _3. |
+| `elder_south_pine_isle_2` | Rowlet | Starly, Staravia | 25-30 | 730 from _3. The nearest Starly is 1,511 away. |
+| `elder_north_pine_isle_2` | Delibird | Swablu | 25-30 | 999 from _1. This was the doc's own alternative (decision 8). |
+| `elder_jungle_west_1` | Pikipek | Tropius | 25-30 | 515 from the Toucannon tree. A banana-necked flyer in the emergent jungle. |
+| `elder_foothill_woods_4` | Spearow | Ledyba, Ledian | 21-23 | 487 from the plateau's Spearow. |
+| `elder_shrew_lake_shores_2` | Natu | Combee | 10-15 | 848 from the Wedge's Natu. Bees among the blossom. |
+| `elder_shrew_lake_shores_3` | Taillow | Hoppip | 10-15 | 775 from the plateau's Taillow. It floats on the cherry vale's air. |
+| `elder_lake_viltri_hollow_2` | Hoothoot | Yanma | 18-21 | 880 from Foothill's Hoothoot. A dragonfly by the lake. |
+| `elder_long_isle_north_1` | Rookidee | Wingull, Pelipper | 44-50 | 780 from the Corviknight tree. A sea bird on the coast. |
 
 The owner found the Swanna tree "way better" and it is unchanged, as are the Fletchling elder and the Route 1
 sapling.
@@ -141,6 +141,63 @@ habitats `route_1_sapling_crown` and `tree_town_canopy`, `route_species_selectio
 `data/routes.json` (sub-regions per leg), `tools/tree_grove.py` (`TIERS`, `big_tree`), `tools/elder_trees.py`,
 `kits/structures/prefabs/trees/tree_town/elder_oak_a.json`, `modpack/config/cobblemon/main.json` and
 `starters.json`, `docs/story/ENCOUNTER_GAPS.md`.
+
+### Balance review (trainer-balance-designer)
+
+2026-09-26. This is the "too much or too early" check on the 14 themed trees and the 9 elder swaps, with the owner's two
+later calls applied: Vullaby on the Long Isle desert tree, and non-bird flyers allowed where the place makes sense.
+
+- **Caps.** Each leg's cap is the next gym's ace: 20/25/30/35/40/45/50/55, then 60 for the Elite Four
+  (`docs/story/GYM_SUFFICIENCY_AUDIT.md:122`, `docs/story/TRAINER_RULES.json:7-23`). This assumes `relativeLevelCap`
+  0 (`data/routes.json:16096`); EXP-003 has not run.
+- **A nest is a sure source.** It keeps up to 24-32 of its bird alive, so an uncommon roster species becomes a certain
+  catch for every player.
+- **Symbols.** ‡ marks a mainline threshold or learnset, not read from the jar.
+
+| Tree (x, z) | Species, levels | Verdict | Reason | Replacement |
+|---|---|---|---|---|
+| `sapling_palm_sunset_east` (3408, 7400) | Oricorio 25-30 | ok | **Reach:** Sunset isle, by boat. The nearest leg is leg 8 at 930, by Giovanni's town (cap 55). **Balance:** Oricorio is the isle's own common bird (`ROSTER_AUDIT.md:1208`), so the nest adds numbers, not a new answer. Baile is a Fire/Flying Erika answer only for a player who sails there, and Erika already faces 24 families (`BATTLE_SIM.md:37`). **Fit:** dancers at a palm in a flower meadow. **Band:** the same question as the west palm. | none |
+| `sapling_palm_sunset_west` (1456, 6680) | Wingull, Pelipper 25-30 | owner decision | **The level-cap trap tree.** The nearest leg is Route 1 (the sub-region is 1,361 from it, `AVAILABILITY.md:832`). The palm is 1,387 by sea due south of Pallet, so a day-one sailor at Brock's cap of 20 finds a nest where every bird is over cap (`docs/STATE.md:92`). The isle is post-game in content (`LONG_ISLE.md:60-61`, `data/towns.json:1274`), yet it carries the 25-45 placeholder band. **The species is safe:** Wingull is Route 1's common bird (`AVAILABILITY.md:38`), Drizzle Pelipper already comes from it at 25, and the harbour's "Wingull lead" reward points here (`SIDE_EVENTS.md:323-325`). | Keep Wingull. Until the trap fix lands, Wingull only at 16-20 (Pelipper evolves at 25, so it is not eligible). After the fix, 25-30 as proposed, or the isle's post-game band |
+| `sapling_palm_east_coast_dunes` (7032, 4784) | Cramorant 25-30 | ok | **Reach:** mainland, 729 off legs 7/8, about 980 from Blaine's town (cap 50, then 55). Its sub-region is 33 from Route 7 (`AVAILABILITY.md:567-570`). **Balance:** it spawns 20 or more levels under cap, is a single stage, and adds nothing to the Water that Tilpey already gives for Blaine (`GYM_SUFFICIENCY_AUDIT.md:66-68`). **Fit:** a fisher on a beach palm. | none |
+| `sapling_lakeshore_arrow_lake_shores` (2512, 4520) | Ducklett 10-15 | ok | **Reach:** mainland, about 1,300 on foot from Pallet. It is 950 off legs 1-2, and the sub-region is 721 from Route 2 (`AVAILABILITY.md:825`). **Balance:** under Brock's 20. Water/Flying is the same typing as Route 1's Wingull, which Brock's design already expects (`TRAINER_RULES.json:564-572`), and Swanna (35) is out of reach. This is the third Ducklett tree; Lake Viltri 1 is 1,817 away, which the spacing rule allows. | none |
+| `sapling_lakeshore_tilpey_south_shore` (4976, 4944) | Flamigo 42-44 | ok | **Reach:** the sub-region is on Route 7 (`AVAILABILITY.md:583`), and the tree is 476 off leg 8 (cap 50, then 55); the band sits under both. **Balance:** Marsh 1 already has Flamigo at 34-39, a leg earlier. **Fit:** a wading flock under a weeping tree is the best fit on the list. | none |
+| `sapling_scorched_great_crater` (5856, 5424) | Fletchinder, Talonflame 44-52 | change (levels) | **Reach:** 276 off leg 8 (cap 55), but 481 from Blaine's town (`data/towns.json:965-967`). A player walks to a skyline landmark that close before fighting Blaine, whose cap is 50. **Over cap:** 51 and 52, 2 of the 9 levels, are over it, and this nest is the only wild Talonflame (`ENCOUNTER_GAPS.md:12`). **No undercut:** Blaine's team is all Fire, and Magcargo walls Flying (`TRAINER_RULES.json:1107-1173`). | Same line at 44-50. Talonflame is still eligible (35 ≤ 44) |
+| `sapling_frost_frostpeak` (872, 744) | Delibird 25-30 | ok | **Reach:** mainland, over the neck. It is 1,058 off a leg, about 1,050 from Surge's town (cap 30, then 35); the sub-region is 665 from Route 4 (`AVAILABILITY.md:823`). **Balance:** under cap. Ice/Flying hits Erika doubly, but Delibird is weak, and Route 4's Bergmite, Cryogonal and Smoochum come first (`AVAILABILITY.md:193-195`). **Fit:** it is the roster's own bird (`ROSTER_AUDIT.md:394`) and matches the Merian courier (`SIDE_EVENTS.md:249`). | none |
+| `sapling_frost_glacier_foot_fields` (4872, 2600) | Swablu 34-36 | ok | **Reach:** 41 off leg 5, 273 from Koga's town (cap 40). **Balance:** a player can reach Altaria (35) one level into the nest before Koga, but Altaria is already the Route 3 answer (`AVAILABILITY.md:128`, `BATTLE_SIM.md:293`). **Repeats:** this is the fourth Swablu tree, and Route 3 has its own Swablu-nest event (`SIDE_EVENTS.md:181`); the spacing rule allows it. | none |
+| `sapling_storm_rift_trunk` (3808, 3560) | Emolga 55-57 | ok | **Reach:** 40 off Victory Road (cap 60, `TRAINER_RULES.json:17-23`). The Rift is not gated, since rift_trunk is 313 from Route 4 (`AVAILABILITY.md:809`), but the sub-region's band is already 55-57 (`ENCOUNTERS.md:63`). **Balance:** Emolga is weak, single-stage and common at Peak Pond (`AVAILABILITY.md:207`): a low-value find, not an undercut. The only other Electric/Flying line is Wattrel, which is at the Rift foot. | none |
+| `sapling_storm_rift_foot` (3752, 5488) | Wattrel, Kilowattrel 49-51 | ok | **Reach:** 40 off Victory Road, and the sub-region is on Route 8 (cap 55, `AVAILABILITY.md:783-788`). **Balance:** Kilowattrel is Ground-immune for Giovanni, but Route 8 already has it at 50-52 (`AVAILABILITY.md:793`). **Fit:** inland ground with no water (`ROSTER_AUDIT.md:38`); the standing storm is their reason to gather. | none |
+| `sapling_crag_the_crags` (3184, 1592) | Skarmory 28-30 | ok | **Reach:** 212 off leg 4 (cap 35). **Balance:** already an uncommon in this sub-region on the corridor (`AVAILABILITY.md:199`), and the gym simulation counts it for gyms 4 and 6 (`BATTLE_SIM.md:264-266`, `:310`). The nest makes it a sure catch before Erika and Koga; the owner allowed Skarmory. **Fit:** `ROSTER_AUDIT.md:47` flags the biome, not the steel crags. | none |
+| `sapling_crag_mt_vessu` (1864, 1424) | Noibat 24-26 | ok | **Reach:** 164 off leg 3, 177 from Surge's town (cap 30). **Balance:** neutral to Electric. Noivern needs 48, so the strong stage arrives around Blaine, not early. **New** to the map (`ENCOUNTER_GAPS.md:12`). **Fit:** a roosting colony in a high pine. | none |
+| `sapling_desert_south_east_dunes` (5896, 6032) | Gligar 25-30 | ok | **Reach:** 876 off leg 8 (cap 55); the sub-region is 441 from Route 8 (`AVAILABILITY.md:817`). **Surge:** Gligar is immune to Electric, so it could pivot at Surge, the narrowest gym (`BATTLE_SIM.md:49-50`). But it learns no Ground move by level-up‡, and the tree is about 4,500 from Pallet, so nobody on leg 3 reaches it. **Home:** its roster home is the Rift's south-east arm at 54-56 (`ROSTER_AUDIT.md:1017`). This is earlier, but under every cap on the way. **Evolution:** Gliscor needs a Razor Fang (`SPAWN_PHILOSOPHY.md:351`). **Fit:** gliders hanging in a bone tree read well, though its upstream country is badlands. | none |
+| `sapling_desert_long_isle_north` (7656, 4800) | Vullaby 44-50 | ok (owner's call) | **Reach:** Long Isle, by boat; the nearest leg is leg 7 at 1,303 (cap 50). The band and the early-boat risk were accepted in D5 (`LONG_ISLE.md:66-68`, `:249`). **Balance:** Dark/Flying against Sabrina, but the Wedge's Vullaby and Marsh 2's Bombirdier come first (C3, answer check A6). Mandibuzz (54‡) keeps it base-only. **Fit:** vultures on a bleached tree. | none |
+| `elder_south_pine_isle_1` (7232, 1992) | Hoothoot, Noctowl 25-30 | ok | **Reach:** by boat, 1,746 from Sabrina's town (leg 6, cap 45; `AVAILABILITY.md:831`), and post-game in content (`data/towns.json:1274`). **Balance:** Noctowl is already common on Route 3. **Fit:** an owl on the owl isle. **Repeats:** this is the fourth Hoothoot tree, and Hoothoot is the most repeated anchor on the map (`ENCOUNTERS.md:416-421`). | none |
+| `elder_south_pine_isle_2` (6768, 1208) | Starly, Staravia 25-30 | ok | **Reach:** same isle. **Balance:** Staravia is on leg 4 at 32-34 anyway (`AVAILABILITY.md:219`), and Staraptor (34) is not in the pool. **Fit:** a winter flock, the best grouping on the isle. | none |
+| `elder_north_pine_isle_2` (6998, 312) | Swablu 25-30 | ok | **Reach:** North Pine Isle, 1,929 or more from Route 6 (`AVAILABILITY.md:834`). **Balance:** base only (Altaria 35), and Route 3 has Swablu at 22-25. It also ends the Delibird repeat that stood 999 apart. | none |
+| `elder_jungle_west_1` (4464, 7312) | Tropius 25-30 | ok | **Reach:** Jungle Isle, by boat, 1,154 from Giovanni's town. **Balance:** it is the roster's own uncommon (`ROSTER_AUDIT.md:555`). As a Grass/Flying Misty answer it helps only at exactly 25, and only a player who sailed there; Routes 1-2 already give Grass (`AVAILABILITY.md:44-47`, `:81-82`). **Fit:** a fruit-eating herd, but 32 big bodies crowd one trunk; fewer nest blocks would read better. | none |
+| `elder_foothill_woods_4` (2136, 2624) | Ledyba, Ledian 21-23 | ok | **Reach:** the leg 3 woods (cap 30). **Balance:** Ledian (18‡) is a final stage in the wild at 21, but a weak one, and Bug/Flying is weak to Surge. **New** to the map (`ENCOUNTER_GAPS.md:8`). **Fit:** a ladybird swarm on an oak. | none |
+| `elder_shrew_lake_shores_2` (3760, 3932) | Combee 10-15 | ok | **Reach:** the sub-region touches Route 2 at 385 (`AVAILABILITY.md:812`); this elder is 363 from Victory Road's Field Medic stop (`TRAINER_RULES.json:2685-2689`). **Balance:** under every cap. Combee is Route 1's common bee (`AVAILABILITY.md:45`), so it adds little, and Vespiquen (21, female only) is not in the pool. **Fit:** bees at blossom. Erika's Combee event gives a "habitat lead" (`MIDGAME_EVENT_BANK.md:180`) that could point here. | none |
+| `elder_shrew_lake_shores_3` (3104, 3624) | Hoppip 10-15 | ok | **Reach:** the same vale. **Balance:** base only (Skiploom 18‡). Hoppip is already common at 5-15 beside Pallet (`ROSTER_AUDIT.md:1194`), so Relic Island's Hoppip reward (`SIDE_EVENTS.md:395-397`) is redundant with or without this tree. **Fit:** seeds drifting round blossom. | none |
+| `elder_lake_viltri_hollow_2` (1824, 3056) | Yanma 18-21 | ok | **Reach:** 60 off legs 2/3 (cap 25, then 30), the most visible elder on leg 2. **Earlier:** it moves Yanma from Route 6 (39-41, `AVAILABILITY.md:439`) to before Misty. **Yanmega:** it needs Ancient Power (about 33‡), so it can be ready for Erika. That is one more Flying answer to a gym built to fall to Flying (`GYM_SUFFICIENCY_AUDIT.md:181-183`), not an undercut. **Fit:** dragonflies over a lake. | none |
+| `elder_long_isle_north_1` (7886, 4492) | Wingull, Pelipper 44-50 | ok | **Reach:** Long Isle (D5, as above). **Balance:** Drizzle Pelipper (ASSUMED from mainline abilities) is the rain answer to Blaine's Drought wall (`BATTLE_SIM.md:43-47`), but Route 1's Wingull already becomes Pelipper at 25, so nothing arrives earlier. **Fit:** a sea bird on a coast. **Spacing:** it stands 384 from the Long Isle desert tree (below). | none |
+
+**Recommended changes:**
+
+1. **The Great Crater tree:** drop the band to 44-50.
+2. **The Sunset West palm:** the owner decides its band together with the trap fix (C2). Do not place it at 25-30 before that fix.
+3. **Implementation check before authoring pools:** nine species are named in no current habitat pool: Emolga, Noibat, Gligar, Tropius, Ledyba, Ledian, Combee, Hoppip and Yanma. Whether each is `implemented` in the 1.8.0 jar is NOT VERIFIED; `tests/test_elder_birds.py:476-499` checks it once they are in pools. Every other species above is already in an elder or first-pass pool.
+
+**Spacing, found in passing** (coordinates from `data/themed_saplings.json` and the elder tables; for the world author):
+
+- **Rule 3, 800 between themed trees.** Two pairs break it:
+  - Great Crater to South-East Dunes, 609.
+  - East coast palm to Long Isle north, 624.
+
+  The "609 from the dunes" under "Dropped from the first pass" belongs to the crater pair: the plateau-west tree is 1,050 from the dunes.
+- **Rule 3, 400 from an elder.** Three trees break it:
+  - glacier foot to `elder_marshy_marsh_3`, 357;
+  - Rift trunk to `elder_shrew_lake_shores_2`, 375;
+  - Long Isle north to `elder_long_isle_north_1`, 384.
+- **Rule 2, a line 1,000 apart.** It holds for every line in v2 that was checked. Neither recommendation changes a species.
 
 ## What was counted: 53 saplings
 

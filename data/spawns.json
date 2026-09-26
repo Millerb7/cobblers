@@ -2501,6 +2501,36 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.the_crags.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "28-30",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "the_crags",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the tarn's carp, where the tarn lies in the crags' cells. No biome filter: the entry reaches only water, and this sub-region holds no water but the ravine-head tarn and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.the_crags.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "28-30",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "the_crags",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the tarn's carp, where the tarn lies in the crags' cells. No biome filter: the entry reaches only water, and this sub-region holds no water but the ravine-head tarn and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
       "id": "surface.upper_trough.bergmite",
       "species": "bergmite",
       "bucket": "common",
@@ -2829,6 +2859,83 @@
         "minecraft:snowy_plains"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.lower_trough.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "27-38",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "lower_trough",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp in the arm under the glacier foot, at this trough's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey (its glacier-foot arm) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lower_trough.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "27-38",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "lower_trough",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp in the arm under the glacier foot, at this trough's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey (its glacier-foot arm) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lower_trough.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "27-38",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "lower_trough",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's goldfish in the same arm. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey (its glacier-foot arm) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lower_trough.seaking",
+      "species": "seaking",
+      "bucket": "ultra-rare",
+      "level": "27-38",
+      "weight": 0,
+      "ambient": false,
+      "scope": "lower_trough",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's goldfish in the same arm. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey (its glacier-foot arm) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 33; band begins at 27",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lower_trough.dondozo",
+      "species": "dondozo",
+      "bucket": "rare",
+      "level": "27-38",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "lower_trough",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 69
+      },
+      "conditions_basis": "Lake Tilpey's deep giant, where the arm is deep. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey (its glacier-foot arm) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 69: at least 8 blocks under Lake Tilpey (its glacier-foot arm)'s surface (water level y77), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.the_tri_peaks.swablu",
@@ -5394,10 +5501,9 @@
       "scope": "tilpey_north_shore",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:birch_forest\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:birch_forest"
-      ],
+      "biomes": [],
       "spawnable_position": "surface"
     },
     {
@@ -5481,6 +5587,83 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.tilpey_north_shore.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "39-41",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish where its water lies in this shore's cells, at this shore's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_north_shore.seaking",
+      "species": "seaking",
+      "bucket": "uncommon",
+      "level": "39-41",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish where its water lies in this shore's cells, at this shore's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_north_shore.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "39-41",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp where its water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_north_shore.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "39-41",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp where its water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_north_shore.dondozo",
+      "species": "dondozo",
+      "bucket": "rare",
+      "level": "39-41",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "tilpey_north_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 69
+      },
+      "conditions_basis": "Lake Tilpey's deep giant, where its deep water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 69: at least 8 blocks under Lake Tilpey's surface (water level y77), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
       "id": "surface.tilpey_waters.psyduck",
       "species": "psyduck",
       "bucket": "common",
@@ -5506,10 +5689,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5522,10 +5704,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "level evolution eligible",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5538,10 +5719,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5554,10 +5734,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "level evolution eligible",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5570,10 +5749,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5586,10 +5764,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5602,10 +5779,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5618,10 +5794,9 @@
       "scope": "tilpey_waters",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:river\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Lake Tilpey's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "level evolution eligible",
-      "biomes": [
-        "minecraft:river"
-      ],
+      "biomes": [],
       "spawnable_position": "submerged"
     },
     {
@@ -5639,6 +5814,53 @@
         "minecraft:river"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.tilpey_waters.surskit",
+      "species": "surskit",
+      "bucket": "common",
+      "level": "39-48",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_waters",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "a surface skater for the open lake, which had no surface spawn. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "surface"
+    },
+    {
+      "id": "surface.tilpey_waters.masquerain",
+      "species": "masquerain",
+      "bucket": "uncommon",
+      "level": "39-48",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_waters",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "a surface skater for the open lake, which had no surface spawn. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "surface"
+    },
+    {
+      "id": "surface.tilpey_waters.dondozo",
+      "species": "dondozo",
+      "bucket": "rare",
+      "level": "39-48",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "tilpey_waters",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 69
+      },
+      "conditions_basis": "the good find in the deep: the great lake's giant, Paldea's big-lake fish (the owner, 2026-09-26: 'some good spawns deeper'). No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 69: at least 8 blocks under Lake Tilpey's surface (water level y77), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.tilpey_south_shore.psyduck",
@@ -5805,6 +6027,83 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.tilpey_south_shore.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "42-44",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_south_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish where its water lies in this shore's cells, at this shore's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_south_shore.seaking",
+      "species": "seaking",
+      "bucket": "uncommon",
+      "level": "42-44",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_south_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish where its water lies in this shore's cells, at this shore's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_south_shore.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "42-44",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_south_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp where its water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_south_shore.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "42-44",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_south_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp where its water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_south_shore.dondozo",
+      "species": "dondozo",
+      "bucket": "rare",
+      "level": "42-44",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "tilpey_south_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 69
+      },
+      "conditions_basis": "Lake Tilpey's deep giant, where its deep water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 69: at least 8 blocks under Lake Tilpey's surface (water level y77), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
       "id": "surface.tilpey_west_meadows.psyduck",
       "species": "psyduck",
       "bucket": "common",
@@ -5965,6 +6264,66 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.tilpey_west_meadows.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "39-48",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_west_meadows",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish in the meadow's shallow margin of the lake. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_west_meadows.seaking",
+      "species": "seaking",
+      "bucket": "uncommon",
+      "level": "39-48",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_west_meadows",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish in the meadow's shallow margin of the lake. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_west_meadows.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "39-48",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_west_meadows",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp in the same margin. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_west_meadows.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "39-48",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_west_meadows",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp in the same margin. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
       "id": "surface.tilpey_east_shore.psyduck",
       "species": "psyduck",
       "bucket": "common",
@@ -6123,6 +6482,83 @@
         "minecraft:forest"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.tilpey_east_shore.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "41-43",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_east_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish where its water lies in this shore's cells, at this shore's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_east_shore.seaking",
+      "species": "seaking",
+      "bucket": "uncommon",
+      "level": "41-43",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_east_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's fish where its water lies in this shore's cells, at this shore's band. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_east_shore.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "41-43",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "tilpey_east_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp where its water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_east_shore.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "41-43",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "tilpey_east_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Lake Tilpey's carp where its water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.tilpey_east_shore.dondozo",
+      "species": "dondozo",
+      "bucket": "rare",
+      "level": "41-43",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "tilpey_east_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 69
+      },
+      "conditions_basis": "Lake Tilpey's deep giant, where its deep water lies in this shore's cells. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Tilpey and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 69: at least 8 blocks under Lake Tilpey's surface (water level y77), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.wedge_north.phantump",
@@ -6633,6 +7069,117 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.peak_pond_hollow.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "30-32",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "peak_pond_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Peak Pond's carp (and the ravine-head tarn's, which lies in this sub-region too). No biome filter: the entry reaches only water, and this sub-region holds no water but Peak Pond and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.peak_pond_hollow.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "30-32",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "peak_pond_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Peak Pond's carp (and the ravine-head tarn's, which lies in this sub-region too). No biome filter: the entry reaches only water, and this sub-region holds no water but Peak Pond and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.peak_pond_hollow.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "30-32",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "peak_pond_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the mountain ponds' goldfish. No biome filter: the entry reaches only water, and this sub-region holds no water but Peak Pond and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.peak_pond_hollow.seaking",
+      "species": "seaking",
+      "bucket": "ultra-rare",
+      "level": "30-32",
+      "weight": 0,
+      "ambient": false,
+      "scope": "peak_pond_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the mountain ponds' goldfish. No biome filter: the entry reaches only water, and this sub-region holds no water but Peak Pond and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 33; band begins at 30",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.peak_pond_hollow.barboach",
+      "species": "barboach",
+      "bucket": "common",
+      "level": "30-32",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "peak_pond_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 97
+      },
+      "conditions_basis": "the mud-bottom catfish of Peak Pond's deep water. No biome filter: the entry reaches only water, and this sub-region holds no water but Peak Pond and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 97: at least 8 blocks under Peak Pond's surface (water level y105), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.peak_pond_hollow.whiscash",
+      "species": "whiscash",
+      "bucket": "uncommon",
+      "level": "30-32",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "peak_pond_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 97
+      },
+      "conditions_basis": "the mud-bottom catfish of Peak Pond's deep water. No biome filter: the entry reaches only water, and this sub-region holds no water but Peak Pond and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 97: at least 8 blocks under Peak Pond's surface (water level y105), so it is a deep-water spawn only",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.peak_pond_hollow.basculin",
+      "species": "basculin",
+      "bucket": "uncommon",
+      "level": "30-32",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "peak_pond_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 97
+      },
+      "conditions_basis": "the good find in the deep: a cold-water fighting fish in Peak Pond's deep water. No biome filter: the entry reaches only water, and this sub-region holds no water but Peak Pond and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 97: at least 8 blocks under Peak Pond's surface (water level y105), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
       "id": "surface.north_shore_downs.wooloo",
       "species": "wooloo",
       "bucket": "common",
@@ -7115,6 +7662,117 @@
         "minecraft:swamp"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.marshy_marsh.surskit",
+      "species": "surskit",
+      "bucket": "common",
+      "level": "34-44",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "marshy_marsh",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "a pond skater for the marsh water's surface. No biome filter: the entry reaches only water, and this sub-region holds no water but Marshy Marsh and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "surface"
+    },
+    {
+      "id": "surface.marshy_marsh.masquerain",
+      "species": "masquerain",
+      "bucket": "uncommon",
+      "level": "34-44",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "marshy_marsh",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "a pond skater for the marsh water's surface. No biome filter: the entry reaches only water, and this sub-region holds no water but Marshy Marsh and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "surface"
+    },
+    {
+      "id": "surface.marshy_marsh.barboach",
+      "species": "barboach",
+      "bucket": "common",
+      "level": "34-44",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "marshy_marsh",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the marsh's mud-bottom catfish in all of its water (as marsh_creek next door). No biome filter: the entry reaches only water, and this sub-region holds no water but Marshy Marsh and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.marshy_marsh.whiscash",
+      "species": "whiscash",
+      "bucket": "uncommon",
+      "level": "34-44",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "marshy_marsh",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the marsh's mud-bottom catfish in all of its water (as marsh_creek next door). No biome filter: the entry reaches only water, and this sub-region holds no water but Marshy Marsh and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.marshy_marsh.carvanha",
+      "species": "carvanha",
+      "bucket": "uncommon",
+      "level": "34-44",
+      "weight": 4.5,
+      "ambient": true,
+      "scope": "marshy_marsh",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 92
+      },
+      "conditions_basis": "piranha in the marsh's deep channels; Cobblemon's own Carvanha lives in swamps. No biome filter: the entry reaches only water, and this sub-region holds no water but Marshy Marsh and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 92: at least 8 blocks under Marshy Marsh's surface (water level y100), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.marshy_marsh.sharpedo",
+      "species": "sharpedo",
+      "bucket": "rare",
+      "level": "34-44",
+      "weight": 1.5,
+      "ambient": true,
+      "scope": "marshy_marsh",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 92
+      },
+      "conditions_basis": "piranha in the marsh's deep channels; Cobblemon's own Carvanha lives in swamps. No biome filter: the entry reaches only water, and this sub-region holds no water but Marshy Marsh and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 92: at least 8 blocks under Marshy Marsh's surface (water level y100), so it is a deep-water spawn only",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.marshy_marsh.dondozo",
+      "species": "dondozo",
+      "bucket": "ultra-rare",
+      "level": "34-44",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "marshy_marsh",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 92
+      },
+      "conditions_basis": "the good find in the deep: Cobblemon's own Dondozo lives in swamps. No biome filter: the entry reaches only water, and this sub-region holds no water but Marshy Marsh and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 92: at least 8 blocks under Marshy Marsh's surface (water level y100), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.marsh_creek.wooper",
@@ -7765,6 +8423,134 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.lake_viltri_hollow.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Misty's lake: the carp in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lake_viltri_hollow.gyarados",
+      "species": "gyarados",
+      "bucket": "ultra-rare",
+      "level": "18-21",
+      "weight": 0,
+      "ambient": false,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Misty's lake: the carp in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 20; band begins at 18",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lake_viltri_hollow.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Misty's goldfish, in all of Lake Viltri's water. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lake_viltri_hollow.seaking",
+      "species": "seaking",
+      "bucket": "ultra-rare",
+      "level": "18-21",
+      "weight": 0,
+      "ambient": false,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Misty's goldfish, in all of Lake Viltri's water. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 33; band begins at 18",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lake_viltri_hollow.barboach",
+      "species": "barboach",
+      "bucket": "uncommon",
+      "level": "18-21",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 95
+      },
+      "conditions_basis": "the lakebed catfish the Viltri sounding's staffs reach, in the deep water. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 95: at least 8 blocks under Lake Viltri's surface (water level y103), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lake_viltri_hollow.whiscash",
+      "species": "whiscash",
+      "bucket": "ultra-rare",
+      "level": "18-21",
+      "weight": 0,
+      "ambient": false,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 95
+      },
+      "conditions_basis": "the lakebed catfish the Viltri sounding's staffs reach, in the deep water. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 95: at least 8 blocks under Lake Viltri's surface (water level y103), so it is a deep-water spawn only",
+      "eligibility_reason": "evolution requires level 30; band begins at 18",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lake_viltri_hollow.chinchou",
+      "species": "chinchou",
+      "bucket": "rare",
+      "level": "18-21",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 95
+      },
+      "conditions_basis": "the good find in the deep, and a Water/Electric answer to Misty's Water gym on the lake's own shore. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 95: at least 8 blocks under Lake Viltri's surface (water level y103), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lake_viltri_hollow.lanturn",
+      "species": "lanturn",
+      "bucket": "ultra-rare",
+      "level": "18-21",
+      "weight": 0,
+      "ambient": false,
+      "scope": "lake_viltri_hollow",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 95
+      },
+      "conditions_basis": "the good find in the deep, and a Water/Electric answer to Misty's Water gym on the lake's own shore. No biome filter: the entry reaches only water, and this sub-region holds no water but Lake Viltri and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 95: at least 8 blocks under Lake Viltri's surface (water level y103), so it is a deep-water spawn only",
+      "eligibility_reason": "evolution requires level 27; band begins at 18",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
       "id": "surface.viltris_path_valley.hoothoot",
       "species": "hoothoot",
       "bucket": "common",
@@ -8089,6 +8875,100 @@
         "minecraft:windswept_forest"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.foothill_woods.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "21-23",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "foothill_woods",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the Wooper creek's source pond: carp in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but the pond west of Mt Clay and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.foothill_woods.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "21-23",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "foothill_woods",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the Wooper creek's source pond: carp in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but the pond west of Mt Clay and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.foothill_woods.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "21-23",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "foothill_woods",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the pond's goldfish. No biome filter: the entry reaches only water, and this sub-region holds no water but the pond west of Mt Clay and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.foothill_woods.seaking",
+      "species": "seaking",
+      "bucket": "ultra-rare",
+      "level": "21-23",
+      "weight": 0,
+      "ambient": false,
+      "scope": "foothill_woods",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the pond's goldfish. No biome filter: the entry reaches only water, and this sub-region holds no water but the pond west of Mt Clay and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 33; band begins at 21",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.foothill_woods.barboach",
+      "species": "barboach",
+      "bucket": "common",
+      "level": "21-23",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "foothill_woods",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 111
+      },
+      "conditions_basis": "a clay-bottom catfish under Mt Clay, in the pond's deep water. No biome filter: the entry reaches only water, and this sub-region holds no water but the pond west of Mt Clay and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 111: at least 8 blocks under the pond west of Mt Clay's surface (water level y119), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.foothill_woods.whiscash",
+      "species": "whiscash",
+      "bucket": "ultra-rare",
+      "level": "21-23",
+      "weight": 0,
+      "ambient": false,
+      "scope": "foothill_woods",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 111
+      },
+      "conditions_basis": "a clay-bottom catfish under Mt Clay, in the pond's deep water. No biome filter: the entry reaches only water, and this sub-region holds no water but the pond west of Mt Clay and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 111: at least 8 blocks under the pond west of Mt Clay's surface (water level y119), so it is a deep-water spawn only",
+      "eligibility_reason": "evolution requires level 30; band begins at 21",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.north_west_coast.hoothoot",
@@ -8424,10 +9304,9 @@
       "scope": "shrew_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:cherry_grove\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Shrew Lake's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:cherry_grove"
-      ],
+      "biomes": [],
       "spawnable_position": "surface"
     },
     {
@@ -8575,6 +9454,151 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.shrew_lake_shores.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "10-22",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Shrew Lake's anchor fish: a koi pond under the cherry blossom, the carp in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.gyarados",
+      "species": "gyarados",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Shrew Lake's anchor fish: a koi pond under the cherry blossom, the carp in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 20; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "10-22",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the pond's goldfish beside the koi, in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.seaking",
+      "species": "seaking",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the pond's goldfish beside the koi, in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 33; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.barboach",
+      "species": "barboach",
+      "bucket": "common",
+      "level": "10-22",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 98
+      },
+      "conditions_basis": "the mud-bottom catfish of the deep pit, the deep water's common fish. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 98: at least 8 blocks under Shrew Lake's surface (water level y106), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.whiscash",
+      "species": "whiscash",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 98
+      },
+      "conditions_basis": "the mud-bottom catfish of the deep pit, the deep water's common fish. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 98: at least 8 blocks under Shrew Lake's surface (water level y106), so it is a deep-water spawn only",
+      "eligibility_reason": "evolution requires level 30; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.dratini",
+      "species": "dratini",
+      "bucket": "rare",
+      "level": "10-22",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 98
+      },
+      "conditions_basis": "the good find in the deep: the koi-to-dragon legend of the cherry vale, Dratini in the pit (the owner, 2026-09-26: 'some good spawns deeper'). No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 98: at least 8 blocks under Shrew Lake's surface (water level y106), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.dragonair",
+      "species": "dragonair",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 98
+      },
+      "conditions_basis": "the good find in the deep: the koi-to-dragon legend of the cherry vale, Dratini in the pit (the owner, 2026-09-26: 'some good spawns deeper'). No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 98: at least 8 blocks under Shrew Lake's surface (water level y106), so it is a deep-water spawn only",
+      "eligibility_reason": "evolution requires level 30; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.shrew_lake_shores.dragonite",
+      "species": "dragonite",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "shrew_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 98
+      },
+      "conditions_basis": "the good find in the deep: the koi-to-dragon legend of the cherry vale, Dratini in the pit (the owner, 2026-09-26: 'some good spawns deeper'). No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 98: at least 8 blocks under Shrew Lake's surface (water level y106), so it is a deep-water spawn only",
+      "eligibility_reason": "evolution requires level 55; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.arrow_lake_shores.surskit",
       "species": "surskit",
       "bucket": "common",
@@ -8584,10 +9608,9 @@
       "scope": "arrow_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
+      "conditions_basis": "biome filter [\"minecraft:flower_forest\"] removed 2026-09-26: tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted; with it the entry reached only Arrow Lake's shallow margin, not its ocean-painted deep water",
       "eligibility_reason": "base stage",
-      "biomes": [
-        "minecraft:flower_forest"
-      ],
+      "biomes": [],
       "spawnable_position": "surface"
     },
     {
@@ -8733,6 +9756,117 @@
         "minecraft:flower_forest"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.arrow_lake_shores.arrokuda",
+      "species": "arrokuda",
+      "bucket": "common",
+      "level": "10-22",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "arrow_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Arrow Lake's own fish: the arrow-fish, Galar's lake barracuda, in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Arrow Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_lake_shores.barraskewda",
+      "species": "barraskewda",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "arrow_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Arrow Lake's own fish: the arrow-fish, Galar's lake barracuda, in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Arrow Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 26; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_lake_shores.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "10-22",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "arrow_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the flower-country lake's goldfish, in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Arrow Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_lake_shores.seaking",
+      "species": "seaking",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "arrow_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the flower-country lake's goldfish, in all of its water. No biome filter: the entry reaches only water, and this sub-region holds no water but Arrow Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 33; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_lake_shores.barboach",
+      "species": "barboach",
+      "bucket": "common",
+      "level": "10-22",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "arrow_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 92
+      },
+      "conditions_basis": "the mud-bottom catfish of the deep pit, the deep water's common fish. No biome filter: the entry reaches only water, and this sub-region holds no water but Arrow Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 92: at least 8 blocks under Arrow Lake's surface (water level y100), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_lake_shores.whiscash",
+      "species": "whiscash",
+      "bucket": "ultra-rare",
+      "level": "10-22",
+      "weight": 0,
+      "ambient": false,
+      "scope": "arrow_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 92
+      },
+      "conditions_basis": "the mud-bottom catfish of the deep pit, the deep water's common fish. No biome filter: the entry reaches only water, and this sub-region holds no water but Arrow Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 92: at least 8 blocks under Arrow Lake's surface (water level y100), so it is a deep-water spawn only",
+      "eligibility_reason": "evolution requires level 30; band begins at 10",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_lake_shores.relicanth",
+      "species": "relicanth",
+      "bucket": "rare",
+      "level": "10-22",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "arrow_lake_shores",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 92
+      },
+      "conditions_basis": "the good find in the deep: an ancient fish at the bottom of Arrow Lake's pit (the owner, 2026-09-26: 'some good spawns deeper'). No biome filter: the entry reaches only water, and this sub-region holds no water but Arrow Lake and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 92: at least 8 blocks under Arrow Lake's surface (water level y100), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.river_of_shrews_vale.surskit",
@@ -8893,6 +10027,66 @@
         "minecraft:plains"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.river_of_shrews_vale.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "9-12",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "river_of_shrews_vale",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Shrew Lake's carp in the lake's shallow west end, which lies in the vale. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake (its shallow west end) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.river_of_shrews_vale.gyarados",
+      "species": "gyarados",
+      "bucket": "ultra-rare",
+      "level": "9-12",
+      "weight": 0,
+      "ambient": false,
+      "scope": "river_of_shrews_vale",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Shrew Lake's carp in the lake's shallow west end, which lies in the vale. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake (its shallow west end) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 20; band begins at 9",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.river_of_shrews_vale.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "9-12",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "river_of_shrews_vale",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Shrew Lake's goldfish in the same shallows. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake (its shallow west end) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.river_of_shrews_vale.seaking",
+      "species": "seaking",
+      "bucket": "ultra-rare",
+      "level": "9-12",
+      "weight": 0,
+      "ambient": false,
+      "scope": "river_of_shrews_vale",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Shrew Lake's goldfish in the same shallows. No biome filter: the entry reaches only water, and this sub-region holds no water but Shrew Lake (its shallow west end) and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "evolution requires level 33; band begins at 9",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.pallet_meadows.pidgey",
@@ -9859,6 +11053,100 @@
         "minecraft:savanna"
       ],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.arrow_creeks.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "49-56",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "arrow_creeks",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the savanna Watering Hole's fish, at this late band. No biome filter: the entry reaches only water, and this sub-region holds no water but the Watering Hole and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_creeks.seaking",
+      "species": "seaking",
+      "bucket": "uncommon",
+      "level": "49-56",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "arrow_creeks",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the savanna Watering Hole's fish, at this late band. No biome filter: the entry reaches only water, and this sub-region holds no water but the Watering Hole and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_creeks.magikarp",
+      "species": "magikarp",
+      "bucket": "common",
+      "level": "49-56",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "arrow_creeks",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the Watering Hole's carp. No biome filter: the entry reaches only water, and this sub-region holds no water but the Watering Hole and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_creeks.gyarados",
+      "species": "gyarados",
+      "bucket": "uncommon",
+      "level": "49-56",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "arrow_creeks",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "the Watering Hole's carp. No biome filter: the entry reaches only water, and this sub-region holds no water but the Watering Hole and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_creeks.barboach",
+      "species": "barboach",
+      "bucket": "uncommon",
+      "level": "49-56",
+      "weight": 4.5,
+      "ambient": true,
+      "scope": "arrow_creeks",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 87
+      },
+      "conditions_basis": "a mud-bottom catfish in the Watering Hole's deepest water. No biome filter: the entry reaches only water, and this sub-region holds no water but the Watering Hole and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 87: at least 8 blocks under the Watering Hole's surface (water level y95), so it is a deep-water spawn only",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.arrow_creeks.whiscash",
+      "species": "whiscash",
+      "bucket": "rare",
+      "level": "49-56",
+      "weight": 1.5,
+      "ambient": true,
+      "scope": "arrow_creeks",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "maxY": 87
+      },
+      "conditions_basis": "a mud-bottom catfish in the Watering Hole's deepest water. No biome filter: the entry reaches only water, and this sub-region holds no water but the Watering Hole and its outflow, while tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. maxY 87: at least 8 blocks under the Watering Hole's surface (water level y95), so it is a deep-water spawn only",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.south_strand.wattrel",
@@ -18665,12 +19953,44 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "28-30",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "28-30",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
         }
       ],
       "biomes": [
         "minecraft:grove",
         "minecraft:jagged_peaks"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in the ravine-head tarn's water no entry could spawn in the 3,658 columns of the ravine-head tarn here. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and no deep-water entries (the water here is shallow or small). The water entries carry no biome filter."
     },
     {
       "id": "upper_trough",
@@ -19010,11 +20330,90 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "27-38",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "27-38",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "27-38",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 33; band begins at 27",
+          "level": "27-38",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Dondozo",
+          "pokemon": "dondozo",
+          "types": [
+            "water"
+          ],
+          "family": "dondozo",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "27-38",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 69
+          }
         }
       ],
       "biomes": [
         "minecraft:snowy_plains"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Lake Tilpey's glacier-foot arm no entry could spawn in the 184,700 columns of Lake Tilpey here. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 69 (the lake's water level y77 less 8). The water entries carry no biome filter."
     },
     {
       "id": "the_tri_peaks",
@@ -21804,11 +23203,90 @@
           "bucket": "authored-only",
           "weight": 0,
           "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "39-41",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "39-41",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "39-41",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "39-41",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dondozo",
+          "pokemon": "dondozo",
+          "types": [
+            "water"
+          ],
+          "family": "dondozo",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "39-41",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 69
+          }
         }
       ],
       "biomes": [
         "minecraft:birch_forest"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Lake Tilpey's water the only water entry was Yanma (surface), filtered to minecraft:birch_forest, 32,430 of the 50,754 water columns here. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 69 (the lake's water level y77 less 8). The water entries carry no biome filter. The existing yanma entry lost its biome filter for the same reason."
     },
     {
       "id": "tilpey_waters",
@@ -21974,11 +23452,61 @@
           "bucket": "rare",
           "weight": 2.0,
           "conditions": {}
+        },
+        {
+          "species": "Surskit",
+          "pokemon": "surskit",
+          "types": [
+            "bug",
+            "water"
+          ],
+          "family": "surskit",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "39-48",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Masquerain",
+          "pokemon": "masquerain",
+          "types": [
+            "bug",
+            "flying"
+          ],
+          "family": "surskit",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "39-48",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dondozo",
+          "pokemon": "dondozo",
+          "types": [
+            "water"
+          ],
+          "family": "dondozo",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "39-48",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 69
+          }
         }
       ],
       "biomes": [
         "minecraft:river"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Lake Tilpey's water the fish carried the biome filter minecraft:river, which the paint gives 86,397 of this sub-region's 658,478 water columns; 563,129 are ocean and 8,952 cold_ocean, so 87% of the lake had no roster. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 69 (the lake's water level y77 less 8). The water entries carry no biome filter. The existing goldeen, seaking, magikarp, gyarados, basculin, basculegion, arrokuda, barraskewda entries lost their biome filter for the same reason."
     },
     {
       "id": "tilpey_south_shore",
@@ -22152,11 +23680,90 @@
           "bucket": "authored-only",
           "weight": 0,
           "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "42-44",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "42-44",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "42-44",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "42-44",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dondozo",
+          "pokemon": "dondozo",
+          "types": [
+            "water"
+          ],
+          "family": "dondozo",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "42-44",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 69
+          }
         }
       ],
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Lake Tilpey's water no entry could spawn in the 97,702 water columns here. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 69 (the lake's water level y77 less 8). The water entries carry no biome filter."
     },
     {
       "id": "tilpey_west_meadows",
@@ -22324,11 +23931,73 @@
           "bucket": "rare",
           "weight": 1.5,
           "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "39-48",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "39-48",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "39-48",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "39-48",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
         }
       ],
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Lake Tilpey's water no entry could spawn in the 7,765 water columns here. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and no deep-water entries (the water here is shallow or small). The water entries carry no biome filter."
     },
     {
       "id": "tilpey_east_shore",
@@ -22497,11 +24166,90 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "41-43",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "41-43",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "41-43",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "41-43",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dondozo",
+          "pokemon": "dondozo",
+          "types": [
+            "water"
+          ],
+          "family": "dondozo",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "41-43",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 69
+          }
         }
       ],
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Lake Tilpey's water no entry could spawn in the 114,341 water columns here. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 69 (the lake's water level y77 less 8). The water entries carry no biome filter. Known leak: Lake Tilpey's outflow runs through this sub-region with its surface at or below the deep line over 3,711 of its columns (build/paint river levels), so the deep entries can spawn in that creek too, where there is room."
     },
     {
       "id": "wedge_north",
@@ -23044,11 +24792,126 @@
           "bucket": "rare",
           "weight": 1.5,
           "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "30-32",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "30-32",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "30-32",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 33; band begins at 30",
+          "level": "30-32",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Barboach",
+          "pokemon": "barboach",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "30-32",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {
+            "maxY": 97
+          }
+        },
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "30-32",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {
+            "maxY": 97
+          }
+        },
+        {
+          "species": "Basculin",
+          "pokemon": "basculin",
+          "types": [
+            "water"
+          ],
+          "family": "basculin",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "30-32",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "maxY": 97
+          }
         }
       ],
       "biomes": [
         "minecraft:old_growth_spruce_taiga"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Peak Pond's water no entry could spawn in the 57,647 columns of Peak Pond or the 24,974 of the ravine-head tarn. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 97 (the lake's water level y105 less 8). The water entries carry no biome filter. The ravine-head tarn (water level y127, bed y105 and up) lies in this sub-region too; the maxY is Peak Pond's, so the tarn takes the common fish and none of the deep entries. Known leak: the ravine-head tarn's outflow runs through this sub-region with its surface at or below the deep line over 173 of its columns (build/paint river levels), so the deep entries can spawn in that creek too, where there is room."
     },
     {
       "id": "north_shore_downs",
@@ -23565,11 +25428,129 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Surskit",
+          "pokemon": "surskit",
+          "types": [
+            "bug",
+            "water"
+          ],
+          "family": "surskit",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "34-44",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Masquerain",
+          "pokemon": "masquerain",
+          "types": [
+            "bug",
+            "flying"
+          ],
+          "family": "surskit",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "34-44",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Barboach",
+          "pokemon": "barboach",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "34-44",
+          "bucket": "common",
+          "weight": 18.0,
+          "conditions": {}
+        },
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "34-44",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Carvanha",
+          "pokemon": "carvanha",
+          "types": [
+            "water",
+            "dark"
+          ],
+          "family": "carvanha",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "34-44",
+          "bucket": "uncommon",
+          "weight": 4.5,
+          "conditions": {
+            "maxY": 92
+          }
+        },
+        {
+          "species": "Sharpedo",
+          "pokemon": "sharpedo",
+          "types": [
+            "water",
+            "dark"
+          ],
+          "family": "carvanha",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "34-44",
+          "bucket": "rare",
+          "weight": 1.5,
+          "conditions": {
+            "maxY": 92
+          }
+        },
+        {
+          "species": "Dondozo",
+          "pokemon": "dondozo",
+          "types": [
+            "water"
+          ],
+          "family": "dondozo",
+          "family_priority": "ultra-rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "34-44",
+          "bucket": "ultra-rare",
+          "weight": 1.0,
+          "conditions": {
+            "maxY": 92
+          }
         }
       ],
       "biomes": [
         "minecraft:swamp"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Marshy Marsh's water no entry could spawn in the 129,833 water columns (marsh_creek's Barboach is another sub-region's, and the marshy_marsh_basin Habitat pool has no placed block). The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 92 (the lake's water level y100 less 8). The water entries carry no biome filter. Known leak: the marsh's outflow runs through this sub-region with its surface at or below the deep line over 1,089 of its columns (build/paint river levels), so the deep entries can spawn in that creek too, where there is room."
     },
     {
       "id": "marsh_creek",
@@ -24266,11 +26247,145 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "18-21",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 20; band begins at 18",
+          "level": "18-21",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "18-21",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 33; band begins at 18",
+          "level": "18-21",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Barboach",
+          "pokemon": "barboach",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "18-21",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {
+            "maxY": 95
+          }
+        },
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "uncommon",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 30; band begins at 18",
+          "level": "18-21",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "maxY": 95
+          }
+        },
+        {
+          "species": "Chinchou",
+          "pokemon": "chinchou",
+          "types": [
+            "water",
+            "electric"
+          ],
+          "family": "chinchou",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "18-21",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 95
+          }
+        },
+        {
+          "species": "Lanturn",
+          "pokemon": "lanturn",
+          "types": [
+            "water",
+            "electric"
+          ],
+          "family": "chinchou",
+          "family_priority": "rare",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 27; band begins at 18",
+          "level": "18-21",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "maxY": 95
+          }
         }
       ],
       "biomes": [
         "minecraft:forest"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Lake Viltri's water the only water entry was Surskit (surface) on 33,232 water columns, median 10 blocks deep. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 95 (the lake's water level y103 less 8). The water entries carry no biome filter. Known leak: Lake Viltri's outflow runs through this sub-region with its surface at or below the deep line over 589 of its columns (build/paint river levels), so the deep entries can spawn in that creek too, where there is room."
     },
     {
       "id": "viltris_path_valley",
@@ -24617,11 +26732,109 @@
           "bucket": "rare",
           "weight": 2.0,
           "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "21-23",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "21-23",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "21-23",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 33; band begins at 21",
+          "level": "21-23",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Barboach",
+          "pokemon": "barboach",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "21-23",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {
+            "maxY": 111
+          }
+        },
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 30; band begins at 21",
+          "level": "21-23",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "maxY": 111
+          }
         }
       ],
       "biomes": [
         "minecraft:windswept_forest"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in the pond west of Mt Clay no entry could spawn in the pond's 32,851 columns (the Wooper creek's roster is the waterway's, data/waterways.json, and does not reach the pond). The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 111 (the lake's water level y119 less 8). The water entries carry no biome filter. Known leak: the pond's outflow (the Wooper creek) runs through this sub-region with its surface at or below the deep line over 3,189 of its columns (build/paint river levels), so the deep entries can spawn in that creek too, where there is room."
     },
     {
       "id": "north_west_coast",
@@ -25145,11 +27358,161 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "anchor",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 20; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 33; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Barboach",
+          "pokemon": "barboach",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {
+            "maxY": 98
+          }
+        },
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 30; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "maxY": 98
+          }
+        },
+        {
+          "species": "Dratini",
+          "pokemon": "dratini",
+          "types": [
+            "dragon"
+          ],
+          "family": "dratini",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 98
+          }
+        },
+        {
+          "species": "Dragonair",
+          "pokemon": "dragonair",
+          "types": [
+            "dragon"
+          ],
+          "family": "dratini",
+          "family_priority": "rare",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 30; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "maxY": 98
+          }
+        },
+        {
+          "species": "Dragonite",
+          "pokemon": "dragonite",
+          "types": [
+            "dragon",
+            "flying"
+          ],
+          "family": "dratini",
+          "family_priority": "rare",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 55; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "maxY": 98
+          }
         }
       ],
       "biomes": [
         "minecraft:cherry_grove"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Shrew Lake's water the only water entry was Surskit (surface), filtered to minecraft:cherry_grove, which the paint gives 132,606 of the lake's 156,054 water columns here; the deep middle (23,329 columns) is cold_ocean. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 98 (the lake's water level y106 less 8). The water entries carry no biome filter. The existing surskit entry lost its biome filter for the same reason."
     },
     {
       "id": "arrow_lake_shores",
@@ -25322,11 +27685,126 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Arrokuda",
+          "pokemon": "arrokuda",
+          "types": [
+            "water"
+          ],
+          "family": "arrokuda",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Barraskewda",
+          "pokemon": "barraskewda",
+          "types": [
+            "water"
+          ],
+          "family": "arrokuda",
+          "family_priority": "anchor",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 26; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 33; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Barboach",
+          "pokemon": "barboach",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {
+            "maxY": 92
+          }
+        },
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 30; band begins at 10",
+          "level": "10-22",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "maxY": 92
+          }
+        },
+        {
+          "species": "Relicanth",
+          "pokemon": "relicanth",
+          "types": [
+            "water",
+            "rock"
+          ],
+          "family": "relicanth",
+          "family_priority": "rare",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "10-22",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {
+            "maxY": 92
+          }
         }
       ],
       "biomes": [
         "minecraft:flower_forest"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Arrow Lake's water the only water entry was Surskit (surface), filtered to minecraft:flower_forest, which the paint gives 93,839 of the lake's 113,408 water columns; 19,491 are ocean. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 92 (the lake's water level y100 less 8). The water entries carry no biome filter. The existing surskit entry lost its biome filter for the same reason."
     },
     {
       "id": "river_of_shrews_vale",
@@ -25496,11 +27974,73 @@
           "bucket": "authored-only",
           "weight": 0,
           "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "9-12",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 20; band begins at 9",
+          "level": "9-12",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "9-12",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 33; band begins at 9",
+          "level": "9-12",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
         }
       ],
       "biomes": [
         "minecraft:plains"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in Shrew Lake's shallow west end the only water entry was Surskit (surface); the lake's 26,929 columns here are shallow (median 3 blocks). The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and no deep-water entries (the water here is shallow or small). The water entries carry no biome filter."
     },
     {
       "id": "pallet_meadows",
@@ -26530,11 +29070,109 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "49-56",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "49-56",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Magikarp",
+          "pokemon": "magikarp",
+          "types": [
+            "water"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "49-56",
+          "bucket": "common",
+          "weight": 9.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gyarados",
+          "pokemon": "gyarados",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "magikarp",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "49-56",
+          "bucket": "uncommon",
+          "weight": 3.0,
+          "conditions": {}
+        },
+        {
+          "species": "Barboach",
+          "pokemon": "barboach",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "49-56",
+          "bucket": "uncommon",
+          "weight": 4.5,
+          "conditions": {
+            "maxY": 87
+          }
+        },
+        {
+          "species": "Whiscash",
+          "pokemon": "whiscash",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "barboach",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "49-56",
+          "bucket": "rare",
+          "weight": 1.5,
+          "conditions": {
+            "maxY": 87
+          }
         }
       ],
       "biomes": [
         "minecraft:savanna"
-      ]
+      ],
+      "conditions_note": "2026-09-26, the owner's playtest ('the two lakes next to cherry grove spawn nothing or just surskits near the edges'): in the Watering Hole's water no entry could spawn in the Watering Hole's 22,684 columns. The inherited water spawns are cancelled over every sub-region polygon by the installed suppression pack (tools/suppress_inherited_spawns.py --subregions), whatever the policy says, and tools/paint_maps.py paints every column whose ground is below sea level (y62) as an ocean biome (land = heights >= sea_level; biome[sea] = sea_biome), lake beds included, so a lake's deep middle is ocean-painted. Water entries added at this sub-region's band: common fish in all of the water, and deep-water entries bounded by maxY 87 (the lake's water level y95 less 8). The water entries carry no biome filter. Known leak: the Watering Hole's and Arrow Lake's outflows run through this sub-region with their surface at or below the deep line over 2,400 of its columns (build/paint river levels), so the deep entries can spawn in that creek too, where there is room."
     },
     {
       "id": "south_strand",
