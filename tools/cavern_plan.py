@@ -523,8 +523,17 @@ def main(argv=None):
     # station's carve takes out an earlier station's floor if the floor is laid as it goes (it did, at every step)
     RUBBLE = ["minecraft:cobblestone", "minecraft:cobblestone", "minecraft:stone", "minecraft:gravel",
               "minecraft:andesite", "minecraft:coarse_dirt"]
+    # Water, and the falling blocks too. The cavern's seal (00) turns gravel and sand to stone only inside the
+    # cavern's box, and the tunnel runs outside it: the export's gravel pockets over the bore fell into it the moment
+    # it was dug (the owner, staging 2026-09-25: "a bunch of gravel fell into the path down to the cavern town").
+    # The falling blocks are capped 2 under the heightmap's ground at the station, so the surface over the open cut at
+    # the mouth keeps its gravel and sand; the water seal is as it was.
     for xi, y, zi, _ in stations[::4]:
         cmds.append("fill %d %d %d %d %d %d minecraft:stone replace minecraft:water" % (xi - 5, y - 2, zi - 5, xi + 5, y + 8, zi + 5))
+        top_ = min(y + 10, ground(xi, zi) - 2)
+        if top_ >= y - 2:
+            for blk in ("minecraft:gravel", "minecraft:sand", "minecraft:red_sand"):
+                cmds.append("fill %d %d %d %d %d %d minecraft:stone replace %s" % (xi - 5, y - 2, zi - 5, xi + 5, top_, zi + 5, blk))
     trng = np.random.default_rng(a.seed + 91)                          # its own stream, so the bore does not shift
     bore = []                                                          # when the tree count changes
     for s, (xi, y, zi, _) in enumerate(stations):

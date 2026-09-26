@@ -37,6 +37,24 @@ what was done, and what is still open.
 | 16 | **Reached the third gym town within an hour** (owner) | Route lengths and the level curve, not yet measured against play time | Nothing yet | **open: flagged for the route-length and level-curve work. The owner thinks it may be the game's biggest structural problem** |
 | 17 | Few Wooper, Quagsire or Clodsire at the river | Cobbleverse's default spawns again | Our waterway and route pools installed | **owner to check** |
 
+## Round 2 (2026-09-25, after PR #51): the owner flew the world
+
+| # | Note (the owner's words, shortened) | Cause | Status |
+|---|---|---|---|
+| 18 | Dropped seeds, flowers and torches everywhere: every place the builds touched | Block drops during the re-apply. A fill that replaces the block under a plant or a torch pops it off as an item, and a falling block landing on a torch drops both | Fixed in the driver: `reapply.py run` turns `doTileDrops` and `doEntityDrops` off for the run and restores them after. Staging swept: loaded chunks, then every 256-block tile holding a build |
+| 19 | The Rift's mining town (the dig camp) is far too small, with not enough mines. It wants ore piles, and something an early player can use to craft the Cobbleverse items the Rift could yield | Built as a small outpost (`rift_dig_camp`) | open: design |
+| 20 | The Rift's starter area has no physical barrier against exploring the rest | Not designed | open: design |
+| 21 | The Deep needs a vast, intricate city spanning its elevations, a futuristic lighting system, and the relic area where Hoopa goes | The Deep is terraced rings only; the buildings and the Haven Compact are sited, not built | open: design |
+| 22 | The southern Rift is not built: its town and the mega stone mine. In the mine, wild Mega Pokémon, uncatchable and enraged | Not built | open: design, plus a mechanism question (can a wild Pokémon be in Mega form and aggressive?) |
+| 23 | The Craters' mining town can't have wooden houses | Donor houses placed as their templates came | open: re-material (as the Displaced City's were) |
+| 24 | The Craters' mining town needs mine rails, ore piles, tons of theatrics | Not dressed | open: design. Rails and coal or iron ore decide spawns (`data/spawn_blocks.json`), so each needs a policy decision |
+| 25 | The swamp marshes need a far more distinct feel: tall trees, vines everywhere, mangroves | Painted as generic swamp | open: foliage design |
+| 26 | A lot of gravel fell into the path down to the cavern town | Not yet traced | open: defect |
+| 27 | The Merian hut needs work (the owner's screenshot: a long T of paving and three small buildings on a bare snowfield in the cirque) | Built as a rest stop: a Centre, a building and a plaza strip | open: design |
+| 28 | The Scar on the Tri Peaks should be a big city, as its layout shows (streets and lots are drawn, nothing stands) | The plan is paved; no buildings placed | open: design, build |
+| 29 | The jungle isle should be thicker in places | Foliage density | open: foliage |
+| 30 | The Long Isle feels pointless. Idea: a desert island and a jungle island, the jungle one becoming a town on the sea, Pacifidlog from Hoenn expanded and moved here, about fishing, boating and surfing (Pokémon surfing, maybe real surfing) | No design | open: design |
+
 ## Done on staging, 2026-09-25
 
 - **Route spawns and suppression** (`tools/reapply.py`):

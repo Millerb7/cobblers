@@ -240,6 +240,24 @@ def settlement_clearance(towns_path, margin):
     return mask
 
 
+def route_lanes(routes_path, clearance):
+    """True within clearance blocks of every route's stored centreline (data/routes.json corridor.polyline). Foliage
+    overlays keep their ground contact (prop roots, knees, tangles) off it, so a dense overlay never walls a route."""
+    if not routes_path or not Path(routes_path).exists():
+        raise SystemExit("foliage overlays keep %d blocks off the routes, but the routes file %r is absent"
+                         % (clearance, routes_path))
+    doc = json.loads(Path(routes_path).read_text(encoding="utf-8"))
+    img = Image.new("L", (N, N), 0)
+    d = ImageDraw.Draw(img)
+    for r in doc.get("routes") or []:
+        pts = [(float(p["x"]), float(p["z"])) for p in ((r.get("corridor") or {}).get("polyline") or [])]
+        if len(pts) >= 2:
+            d.line(pts, fill=1, width=2 * clearance + 1, joint="curve")
+        for x, z in pts:
+            d.ellipse((x - clearance, z - clearance, x + clearance, z + clearance), fill=1)
+    return np.asarray(img).astype(bool)
+
+
 def paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr, plants, speck, nz, allowed, lake_depth, water, land):
     import foliage as F
     doc = json.loads(Path(a.foliage).read_text(encoding="utf-8"))
@@ -251,15 +269,19 @@ def paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr, plant
     c = int(doc["density_model"]["water_clearance_blocks"])
     near_water = np.asarray(Image.fromarray(water.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(2 * c + 1))) > 0
     allowed = allowed & ~near_water
-    res = F.place(doc, library, subs, presets, idx, heights, slope, allowed, lake_depth, water, excl, a.seed)
+    layers, lane = F.overlay_layers(doc)
+    paths = route_lanes(getattr(a, "routes", None), lane) if layers and lane > 0 else None
+    res = F.place(doc, library, subs, presets, idx, heights, slope, allowed, lake_depth, water, excl, a.seed, paths=paths)
     G = F.G
 
     def up(grid):
         return np.repeat(np.repeat(grid, G, axis=0), G, axis=1)
 
-    for ti, t in enumerate(res["type_ids"]):
-        spec = doc["types"][t]
-        f = res["fields"][t]
+    # forest types, then overlays (floor and understory only: an overlay never paints a biome)
+    covers = [(doc["types"][t], res["fields"][t]) for t in res["type_ids"]]
+    covers += [(next(lay for lay in layers if lay["id"] == oid), res["overlay_fields"][oid])
+               for oid in res.get("overlay_ids", [])]
+    for spec, f in covers:
         z0, z1, x0, x1 = f["box"]
         bz0, bz1, bx0, bx1 = z0 * G, min(N, z1 * G), x0 * G, min(N, x1 * G)
         view = (slice(bz0, bz1), slice(bx0, bx1))
@@ -317,6 +339,10 @@ def paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr, plant
     np.savez_compressed(out / "canopy.npz", canopy=res["canopy"], grid_blocks=G)
     stats = {"types": res["stats"], "objects": {e["layer"]: e["count"] for e in manifest},
              "total_objects": int(sum(e["count"] for e in manifest))}
+    if res.get("overlay_stats"):
+        stats["overlays"] = res["overlay_stats"]
+    if res.get("by_subregion"):
+        stats["by_subregion"] = res["by_subregion"]
     return manifest, stats
 
 
@@ -331,6 +357,8 @@ def main(argv=None):
     p.add_argument("--foliage", default=str(ROOT / "data" / "foliage.json"), help="forest types; '' to place no trees")
     p.add_argument("--library", default=str(ROOT / "kits" / "structures" / "foliage" / "library.json"))
     p.add_argument("--towns", default=str(ROOT / "data" / "towns.json"), help="settlement footprints kept clear of trees")
+    p.add_argument("--routes", default=str(ROOT / "data" / "routes.json"),
+                   help="route centrelines foliage overlays keep clear of (data/foliage.json overlays.path_clearance_blocks)")
     p.add_argument("--coast-class", default=str(ROOT / "build" / "sculpt" / "coast_class.png"),
                    help="coast classes from tools/sculpt.py apply; '' for the uniform beach rule")
     a = p.parse_args(argv)
