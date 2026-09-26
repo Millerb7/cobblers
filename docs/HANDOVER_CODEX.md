@@ -323,6 +323,49 @@ For Codex to pick up. Claude has not edited any of the files named here.
 
     Claude has not written story or dialogue, and none of the Deep, the tunnel, the cradle or the League move is built.
 
+## Handover, 2026-09-25 (Claude, the playtest sessions)
+
+27. **The Scar now stands in ruin: a story change, for Codex to decide.** The owner flew the Scar in the first
+    playtest (`experiments/EXP-035-first-playtest/README.md` row 28) and asked for "a big city as seen by the layout".
+    Offered a ruined city, a living one, or no change, the owner chose ruins, and on reading the result said: "the
+    ruins are better than bare foundations: the buildings came down when the town went under, and these are what
+    stayed. But that is a story change." Nothing in `docs/story/` has been edited.
+
+    **What stands at the Scar now** (staging only, `cobblers-dryrun10`, 2026-09-25; `data/ruins.json`,
+    `tools/ruins.py`, `data/placements.json` the_scar):
+    - **33 ruined houses** on the drawn lots, one per lot and one beside the avenue's north end. Each is a copy of a
+      Displaced City house design, and the data names its twin in the cavern (`twin`). They are in the donor's own
+      spruce and cobble, where the cavern's repeats are re-materialed in cherry and dark oak.
+    - **The roofs are all gone,** so the houses read low: 2 to 7 blocks, mostly 2 to 3, because these village houses
+      have short walls under tall roofs. By distance from the old square they stand to the eaves (7), as shells (12),
+      fallen to the sills (8) and as stumps (6). Snow, moss and a few vines. No light, no doors, beds, chests or glass:
+      "everything that was the people's went with them".
+    - **Four towers carry the height:** one standing 22 courses with a broken crown, one fallen full length along the
+      ground, one standing roofless to 16 courses, one a stump.
+    - Broken terrace walls between the roads, the plan's cracked-stone-brick grid, and an **empty cairn plinth** on
+      the old square, the size of the Displaced City's summit cairn.
+
+    **What the docs say now, and no longer match:**
+    - `docs/story/ARC.md:666`: "Shows the summit footprint of the displaced city".
+    - `docs/story/SIDEQUESTS.md` (`the_scar`): the surviving foundations line up with the cavern city's streets.
+    - `docs/world-building/AUDIT_TOUR.md`: "Foundations only".
+    - The settlement's plan reading, which Claude has rewritten for the ruins.
+
+    **Needed from Codex:**
+    - **Why ruined copies of the cavern's houses stand at the Scar.** The owner's reading is that the buildings came
+      down when the town went under, and these are what stayed. Is that the story, or is it something else, e.g. an
+      imperfect exchange that left an echo behind?
+    - **What a player should conclude from seeing both places:** the same houses whole underground and broken on
+      the mountain. Does that change the reveal in `SIDEQUESTS.md` ("the Scar and Displaced City are the two sides
+      of one exchange") or the reveal ladder in `ARC.md`, and at which stage may a player understand it?
+    - **Whether the look is right for the place.** The ruins read low because the roofs are gone, and the four
+      towers carry the height. If that is wrong for the story (a city should still show its roofs, or no towers stood
+      there), say so now, before anything else is built on it.
+    - **The plinth:** the cairn's empty footprint on the old square assumes the cairn went down with the city.
+      Confirm or replace.
+    - The Sun Stone faces proposed for the Scar (`docs/mechanics/EVOLUTION_STONES.md`) must not be covered by ruins;
+      name where they go if they stay.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.
