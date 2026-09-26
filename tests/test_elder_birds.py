@@ -1,32 +1,38 @@
-"""The 52 elder sapling nests: habitats elder_* in data/spawns.json, their three activated Habitat Blocks each
-(elder_<tree>, elder_<tree>_mid, elder_<tree>_crown) in data/habitat_blocks.json, the elder trees they sit in, and
-the pools tools/compile_spawns.py compiles for them.
+"""The 52 elder sapling nests: habitats elder_* in data/spawns.json, their four activated Habitat Blocks each
+(elder_<tree>, elder_<tree>_mid, elder_<tree>_crown in the trunk, elder_<tree>_top in the crown's leaves) in
+data/habitat_blocks.json, the elder trees they sit in, and the pools tools/compile_spawns.py compiles for them.
 
 Written by the test author, not by the session that authored the habitats, the blocks or the prefabs.
 
 Independent sources: docs/world-building/SAPLING_BIRDS.md, the owner-approved table (one row per tree: id, (x, z,
-ground), tree species, band / pool, bird) and its status paragraph (the owner, 2026-09-26: each sapling a nest of one
-species, three blocks per elder at ground + 12, + 35, + 58, up to 7 alive each within 16 blocks, "at least 20" per
-tree; Farfetch'd and Oricorio trees without co-residents; owls and crows by day); data/elder_trees.json (the 48
-pinned standalone elders: species, variant, rotation, ground); derived/sites/tree_grove_foothill_woods.json (the 4
-grove elders); the elder prefabs' NBT and trunk_origin; vanilla `place template` rotation (StructureTemplate.transform
-about the placement position: clockwise_90 (x, z) -> (-z, x), 180 -> (-x, -z), counterclockwise_90 -> (z, -x)),
-written here, not imported from the tools that place the trees; and the Cobblemon 1.8.0 jar (EXP-000 runtime copy,
-tools/battle_sim.JAR_CANDIDATES) for species ids, implementation, evolution families and level-up evolutions.
+ground), tree species, band / pool, bird) and its status paragraph (one species per tree; Farfetch'd and Oricorio trees
+without co-residents; owls and crows by day; "at least 20 ... spread vertically along the tree"); the owner's
+2026-09-26 request to raise the spawns and put birds at the top of the tree, as recorded in docs/STATE.md and commit
+ab3cf01 (four blocks per elder at ground + 12, + 35, + 58 in trunk log and + 74 in the crown's leaves, up to 8 alive
+each within 16 blocks, refilling 2 at a time; the staging probe: leaves from + 63 to + 81 at every elder's centre);
+data/elder_trees.json (the 48 pinned standalone elders: species, variant, rotation, ground);
+derived/sites/tree_grove_foothill_woods.json (the 4 grove elders); the elder prefabs' NBT and trunk_origin; vanilla
+`place template` rotation (StructureTemplate.transform about the placement position: clockwise_90 (x, z) -> (-z, x),
+180 -> (-x, -z), counterclockwise_90 -> (z, -x)), written here, not imported from the tools that place the trees; and
+the Cobblemon 1.8.0 jar (EXP-000 runtime copy, tools/battle_sim.JAR_CANDIDATES) for species ids, implementation,
+evolution families and level-up evolutions.
 
-What is asserted: the doc, the blocks and the habitats name the same 52 trees; each tree has exactly its three
-blocks, activated, replace_spawns false, on the doc's trunk (x, z) at ground + 12, + 35, + 58, with the stated
-activated settings and at least 20 max_spawns between them; each block sits in solid trunk log of the prefab as
-seated (the cell and its six face neighbours), and its mimic is that log; each pool is one evolution family, holds
-the doc's bird at the doc's levels, and carries no time condition; species are valid resource paths and implemented.
+What is asserted: the doc, the blocks and the habitats name the same 52 trees; each tree has exactly its four blocks,
+activated, replace_spawns false, on the doc's trunk (x, z) at ground + 12, + 35, + 58, + 74, with the stated activated
+settings and at least 20 max_spawns between them; each trunk block sits in solid trunk log of the prefab as seated
+(the cell and its six face neighbours) and its mimic is that log; the top block sits in that wood's persistent leaves
+(the cell and its six face neighbours) inside a centre column of leaves from + 63 to + 81, and its mimic is those
+leaves; the doc's status paragraph states the layout the data holds; each pool is one evolution family, holds the
+doc's bird at the doc's levels, and carries no time condition; species are valid resource paths and implemented.
 
 derived/ is gitignored and disposable: without the site files the grove trees' seat test and the site-file test SKIP
 (a skip is not a pass). Without the Cobblemon jar the species tests SKIP.
 
 Not covered, and it needs a running server: that the blocks are in the world (tools/habitat_blocks.py verify), that
-birds actually spread up the tree rather than drifting to the forest floor (docs/STATE.md: not achieved yet), that 7
-per block are held under real player load and mob caps, whether a spawn stands on leaves or limbs, and whether an
-activated block survives a chunk reload.
+birds actually spread up the tree rather than drifting to the forest floor (docs/STATE.md: the + 58 and + 74 blocks
+put no birds in the crown on staging, cause not found), that 8 per block are held under real player load and mob
+caps, whether a spawn stands on leaves or limbs, whether a habitat block mimicking leaves counts as leaves for its
+neighbours, and whether an activated block survives a chunk reload.
 """
 from __future__ import annotations
 
@@ -53,10 +59,12 @@ PINNED = {e["id"]: e for e in json.loads((ROOT / "data" / "elder_trees.json").re
 DOC = (ROOT / "docs" / "world-building" / "SAPLING_BIRDS.md").read_text(encoding="utf-8")
 SITES = ROOT / "derived" / "sites"
 PREFABS = ROOT / "kits" / "structures" / "prefabs" / "trees" / "tree_town"
-# SAPLING_BIRDS.md status (the owner, 2026-09-26): three blocks per elder, and what each keeps alive
-NEST = {"": 12, "_mid": 35, "_crown": 58}
-ACTIVATED = {"spawn_range": 16, "max_spawns": 7, "max_spawns_per_activation": 1, "chance": 1.0, "trigger": "TICK",
+# the owner, 2026-09-26 (docs/STATE.md, commit ab3cf01): four blocks per elder, suffix -> (height above ground, the
+# block kind its mimic and its surroundings are), and what each keeps alive
+NEST = {"": (12, "log"), "_mid": (35, "log"), "_crown": (58, "log"), "_top": (74, "leaves")}
+ACTIVATED = {"spawn_range": 16, "max_spawns": 8, "max_spawns_per_activation": 2, "chance": 1.0, "trigger": "TICK",
              "cancel_range": -1}
+LEAVES_RUN = (63, 81)           # the staging probe (docs/STATE.md): leaves at every elder's centre, ground + 63 to + 81
 AT_LEAST_PER_TREE = 20          # the owner: "at least 20 ... spread vertically along the tree"
 # SAPLING_BIRDS.md status: these two lost their co-resident; the find is the tree's one bird
 SINGLE = {"elder_viltris_path_valley_2": "farfetchd", "elder_long_isle_south_3": "oricorio"}
@@ -100,10 +108,31 @@ def test_the_doc_table_lists_the_52_elders_and_the_one_species_status():
     assert len(ROWS) == 52, len(ROWS)
     assert sum(1 for i in ROWS if i.startswith("elder_foothill_grove_")) == 4
     assert all(r["bird"] for r in ROWS.values()), [i for i, r in ROWS.items() if not r["bird"]]
-    assert "ground + 12, + 35, + 58" in DOC and "up to 7" in DOC
     assert "`elder_viltris_path_valley_2` Farfetch'd only" in DOC
     assert "`elder_long_isle_south_3` Oricorio only" in DOC
     assert {r["wood"] for r in ROWS.values()} >= {"oak", "birch", "spruce", "dark_oak", "jungle", "mangrove", "cherry"}
+
+
+def _status_paragraph():
+    start = DOC.index("Status:")
+    return " ".join(DOC[start:DOC.index("\n\n", start)].split())
+
+
+# Without it the doc that maps the nests ("Pool and bird: docs/world-building/SAPLING_BIRDS.md" in every block's why)
+# goes on stating a layout the data no longer holds, and the next session builds or balances from the stale numbers:
+# its status paragraph must name every nest height and state no per-block cap other than the data's (8 an elder
+# block, 12 a Route 1 block).
+def test_the_doc_status_states_the_nest_layout_the_data_holds():
+    st = _status_paragraph()
+    heights = [h for h, _ in NEST.values()]
+    missing = [h for h in heights if "+ %d" % h not in st]
+    caps = {int(n) for n in re.findall(r"up to (\d+)", st)}
+    data_caps = {b["activated"]["max_spawns"] for b in ALL_BLOCKS
+                 if b.get("style") == "activated" and (b["id"].startswith("elder_") or "sapling" in b["id"])}
+    assert data_caps == {8, 12}, data_caps
+    assert not missing and caps and caps <= data_caps, (
+        "SAPLING_BIRDS.md status paragraph", "heights not named", missing,
+        "caps stated", sorted(caps), "caps in the data", sorted(data_caps), st)
 
 
 # Without it the doc and the pinned standalone elders drift apart: a block seated on the doc's ground or wood while
@@ -117,9 +146,9 @@ def test_the_doc_agrees_with_the_pinned_elders_on_trunk_ground_and_wood():
     assert not bad, bad[:5]
 
 
-# Without it a tree loses a nest block, a stray elder block appears, or a block points at another tree's pool: the
-# nest is the tree's one species, three blocks high.
-def test_three_blocks_and_one_habitat_per_elder_none_missing_none_extra():
+# Without it a tree loses a nest block (the crown-top block in the leaves included), a stray elder block appears, or a
+# block points at another tree's pool: the nest is the tree's one species, four blocks high.
+def test_four_blocks_and_one_habitat_per_elder_none_missing_none_extra():
     want = {"%s%s" % (t, s) for t in ROWS for s in NEST}
     assert set(BLOCKS) == want, (sorted(want - set(BLOCKS))[:10], sorted(set(BLOCKS) - want)[:10])
     assert set(HABITATS) == set(ROWS), (sorted(set(ROWS) - set(HABITATS)), sorted(set(HABITATS) - set(ROWS)))
@@ -130,7 +159,8 @@ def test_three_blocks_and_one_habitat_per_elder_none_missing_none_extra():
 
 
 # Without it an elder block goes back to the natural style (redirecting the forest's own spawns, a bird now and then)
-# or turns ReplaceSpawns on, and three stacked natural ReplaceSpawns blocks would cancel each other (EXP-021).
+# or turns ReplaceSpawns on (four stacked natural ReplaceSpawns blocks would cancel each other, EXP-021), or drops back
+# to the smaller nest (7 alive, 1 per refill) the owner asked to raise.
 @pytest.mark.parametrize("tid", IDS)
 def test_every_elder_block_is_activated_with_the_nest_settings(tid):
     for s in NEST:
@@ -140,29 +170,30 @@ def test_every_elder_block_is_activated_with_the_nest_settings(tid):
         assert b.get("status") in ("placed", "verified"), (tid + s, b.get("status"))
 
 
-# Without it a tree holds fewer birds than the owner asked for (at least 20 in the tree).
+# Without it a tree holds fewer birds than the owner asked for (at least 20 in the tree; 32 as authored).
 @pytest.mark.parametrize("tid", IDS)
 def test_each_elder_keeps_at_least_20_birds(tid):
     total = sum(BLOCKS[tid + s]["activated"]["max_spawns"] for s in NEST)
     assert total >= AT_LEAST_PER_TREE, (tid, total)
 
 
-# Without it a block drifts off the tree the owner approved (wrong x, z) or off the three heights that spread the
-# birds up the trunk (the retired ground + 21, or a crown height outside the solid trunk).
+# Without it a block drifts off the tree the owner approved (wrong x, z) or off the four heights that spread the
+# birds up the tree (the retired ground + 21, a trunk height outside the solid trunk, or a top block below the crown).
 @pytest.mark.parametrize("tid", IDS)
-def test_blocks_stand_on_the_docs_trunk_at_ground_plus_12_35_58(tid):
+def test_blocks_stand_on_the_docs_trunk_at_ground_plus_12_35_58_74(tid):
     r = ROWS[tid]
-    for s, h in NEST.items():
+    for s, (h, _kind) in NEST.items():
         p = BLOCKS[tid + s]["position"]
         assert (p["x"], p["z"], p["y"]) == (r["x"], r["z"], r["ground"] + h), (tid + s, p, r)
 
 
-# Without it a block is placed as the wrong wood: the mimic is what the first setblock puts in the trunk, so a birch
-# tree would carry an oak log patch (tools/habitat_blocks.py commands()).
+# Without it a block is placed as the wrong wood or the wrong kind: the mimic is what the first setblock puts in the
+# tree (tools/habitat_blocks.py commands()), so a birch tree would carry an oak log patch, or the crown-top block a log
+# cube in the leaves (or a trunk block a leaf in the trunk).
 @pytest.mark.parametrize("tid", IDS)
-def test_the_mimic_is_the_trees_own_log(tid):
-    want = "minecraft:%s_log" % ROWS[tid]["wood"]
-    for s in NEST:
+def test_the_mimic_is_the_trees_own_log_or_leaves_by_block_kind(tid):
+    for s, (_h, kind) in NEST.items():
+        want = "minecraft:%s_%s" % (ROWS[tid]["wood"], kind)
         assert BLOCKS[tid + s]["mimic"] == want, (tid + s, BLOCKS[tid + s]["mimic"], want)
 
 
@@ -202,8 +233,9 @@ def _prefab(template_id):
         _, doc = nbt.load(PREFABS / (name + ".nbt"))
         pal = doc["palette"]
         blocks = {tuple(b["pos"]): pal[b["state"]]["Name"] for b in doc["blocks"]}
+        props = {tuple(b["pos"]): pal[b["state"]].get("Properties") or {} for b in doc["blocks"]}
         assert len(blocks) > 1000, name
-        _PREFAB[name] = (side, blocks)
+        _PREFAB[name] = (side, blocks, props)
     return _PREFAB[name]
 
 
@@ -225,25 +257,37 @@ def test_every_elder_tree_the_doc_names_is_still_placed_by_a_site_file():
 
 
 # Without it a block is set beside its tree (in the open, where a player sees and breaks it, or in air) instead of
-# buried in the trunk: each block's cell and its six face neighbours must be log of the prefab as `place template`
-# seats it (origin = centre - rotate(trunk_origin + half trunk), y = ground + 1 - origin y), and the log must be the
-# mimic, so the first setblock does not change the tree's wood.
+# buried in it: each trunk block's cell and its six face neighbours must be log of the prefab as `place template`
+# seats it (origin = centre - rotate(trunk_origin + half trunk), y = ground + 1 - origin y), and each top block's must
+# be leaves (above the trunk's end, in the crown), and in both cases the mimic, so the first setblock does not change
+# the tree's wood. The top block's leaves must be persistent: a non-log block in their midst must not let them decay.
+# The centre column holds leaves from + 63 to + 81 as seated, the run the staging probe found (a control that the top
+# block is inside the crown and not in a pocket of leaves).
 @pytest.mark.parametrize("tid", IDS)
-def test_every_block_is_buried_in_its_trees_trunk_log_as_seated(tid):
+def test_every_block_is_buried_in_its_trees_trunk_log_or_crown_leaves_as_seated(tid):
     obj, rot, ground = _seat(tid)
-    side, blocks = _prefab(obj)
+    side, blocks, props = _prefab(obj)
     ox, oy, oz = side["trunk_origin"]
     c = side["habitat"]["trunk"][0] // 2
     r = ROWS[tid]
     qx, qz = ROT[rot](ox + c, oz + c)
     px, pz, py = r["x"] - qx, r["z"] - qz, ground + 1 - oy
-    for s in NEST:
+    for s, (_h, kind) in NEST.items():
         b = BLOCKS[tid + s]
         p = b["position"]
         tx, tz = ROT[INVERSE[rot]](p["x"] - px, p["z"] - pz)
         ty = p["y"] - py
-        got = [blocks.get((tx + dx, ty + dy, tz + dz)) for dx, dy, dz in FACES]
-        assert all(g == b["mimic"] for g in got), (tid + s, obj, rot, (tx, ty, tz), got, b["mimic"])
+        cells = [(tx + dx, ty + dy, tz + dz) for dx, dy, dz in FACES]
+        got = [blocks.get(q) for q in cells]
+        assert all(g == b["mimic"] and g.endswith("_" + kind) for g in got), (tid + s, obj, rot, (tx, ty, tz), got,
+                                                                              b["mimic"])
+        if kind == "leaves":
+            loose = [q for q in cells if props[q].get("persistent") != "true"]
+            assert not loose, (tid + s, obj, "non-persistent leaves round the top block", loose)
+            column = {k: blocks.get((tx, ground + k - py, tz)) for k in range(LEAVES_RUN[0], LEAVES_RUN[1] + 1)}
+            gaps = sorted(k for k, n in column.items() if n != b["mimic"])
+            assert not gaps, (tid, obj, "centre column not leaves at ground +", gaps)
+            assert LEAVES_RUN[0] < p["y"] - ground < LEAVES_RUN[1], (tid + s, p["y"] - ground, LEAVES_RUN)
     # the control that the seat is the trunk's centre and not merely some log: at h30, between the storeys, the trunk
     # is a disc of radius 3 with no limbs, so the centre is log and a cell 5 off it in each direction is not
     p = BLOCKS[tid]["position"]

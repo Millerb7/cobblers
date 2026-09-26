@@ -63,10 +63,13 @@ def problems(*blocks):
 
 # ------------------------------------------------------------------------------------------------ static rules
 
-# Without it the validator rejects the nests the manifest holds (158 blocks), or passes them only because a rule
-# stopped running; a clean activated block, with no range_of_influence, must raise nothing.
+# Without it the validator rejects the nests the manifest holds (210 blocks), or passes them only because a rule
+# stopped running; a clean activated block, with no range_of_influence, must raise nothing, whether it mimics a log
+# (the trunk blocks) or leaves (the crown-top blocks), and whatever its capacity and refill.
 def test_a_well_formed_activated_block_has_no_problems():
     assert problems(act()) == []
+    assert problems(act(mimic="minecraft:birch_leaves",
+                        activated=dict(act()["activated"], max_spawns=8, max_spawns_per_activation=2))) == []
     assert problems(act(activated=dict(act()["activated"], trigger="REDSTONE", chance=0.25, cancel_range=8))) == []
 
 
@@ -122,10 +125,12 @@ def test_an_unknown_style_is_refused():
 
 # ------------------------------------------------------------------------------------------------ overlap
 
-# Without it the three nest blocks stacked in one trunk (0 apart horizontally, 23 apart vertically) are reported as
-# overlapping and the manifest cannot hold them; activated blocks do not cancel one another, nor a natural block.
+# Without it the four nest blocks stacked in one tree (0 apart horizontally, 23 and then 16 apart vertically) are
+# reported as overlapping and the manifest cannot hold them; activated blocks do not cancel one another, nor a
+# natural block.
 def test_activated_blocks_are_never_reported_as_overlapping():
-    stacked = [act("a", y=134), act("b", y=157), act("c", y=180, pool="cobblers:elder_y")]
+    stacked = [act("a", y=134), act("b", y=157), act("c", y=180, pool="cobblers:elder_y"),
+               act("d", y=196, mimic="minecraft:oak_leaves")]
     assert problems(*stacked) == [], problems(*stacked)
     mixed = [act("a", x=1746, y=109, z=4815), nat("n")]
     assert not any("overlap" in m for _, m in problems(*mixed)), problems(*mixed)
@@ -193,12 +198,16 @@ def _check_activated_commands(b):
 def test_an_activated_block_is_the_mimic_then_one_full_nbt_setblock():
     _check_activated_commands(act())
     _check_activated_commands(act(mimic="minecraft:dark_oak_log", activated=dict(act()["activated"], max_spawns=10)))
+    top = act(mimic="minecraft:cherry_leaves",
+              activated=dict(act()["activated"], max_spawns=8, max_spawns_per_activation=2))
+    _check_activated_commands(top)
+    assert "MaxSpawnsPerActivation:2," in HB.commands(top)[1], HB.commands(top)[1]
 
 
 # Without it one of the placed nests in the manifest is written with a merge or without its PhaseOrder.
 def test_every_activated_manifest_block_places_without_a_merge():
     acts = [b for b in MANIFEST["blocks"] if b.get("style") == "activated"]
-    assert len(acts) >= 150, len(acts)
+    assert len(acts) >= 210, len(acts)      # 52 elders x 4 + the Route 1 sapling's 2
     for b in acts:
         _check_activated_commands(b)
 

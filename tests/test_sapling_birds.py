@@ -4,24 +4,26 @@ for it.
 
 Written by the test author, not by the session that authored the habitat or the blocks.
 
-Independent sources: the owner, 2026-09-26 (docs/world-building/SAPLING_BIRDS.md status: "two in the Route 1 sapling,
-up to 10 each", "at least 20", "Route 1 is Pidgey only"); Route 1's own roster
+Independent sources: the owner, 2026-09-26 (docs/world-building/SAPLING_BIRDS.md status: "at least 20", "Route 1 is
+Pidgey only"; the request to raise the spawns, recorded in docs/STATE.md and commit ab3cf01: two blocks in the Route 1
+sapling at y134 and y150, up to 12 each, refilling 2 at a time); Route 1's own roster
 (route_species_selection.route_01_pallet_to_brock); the sapling prefab (kits/structures/prefabs/trees/tree_town/
 sapling_oak_a) placed the way tools/maze_forest.py places it (origin from maze_forest.SAPLING, the prefab's
 trunk_origin and trunk, and the rounded heightmap ground, tools/ground.py).
 
 What is asserted: the habitat is Pidgey alone at 5-8, from Route 1's roster, with no time condition; exactly two
-blocks name its pool, activated, replace_spawns false, on the sapling's trunk centre at y134 and y150, with up to 10
-each (20 in the tree), spawn_range 16, mimic oak_log; as seated, each block's cell and its six face neighbours are
-oak_log (buried in the trunk), and the trunk's log column is one run whose ends bracket both blocks (the "why" quotes
-log y124-154 as read on staging; the prefab as seated gives y123-155); compile_spawns.build writes the pool with Pidgey alone at 5-8.
+blocks name its pool, activated, replace_spawns false, on the sapling's trunk centre at y134 and y150, with up to 12
+each (24 in the tree, at least the owner's 20), refilling 2 at a time, spawn_range 16, mimic oak_log; as seated, each
+block's cell and its six face neighbours are oak_log (buried in the trunk), and the trunk's log column is one run
+whose ends bracket both blocks (the "why" quotes log y124-154 as read on staging; the prefab as seated gives
+y123-155); compile_spawns.build writes the pool with Pidgey alone at 5-8.
 
 The heightmap is outside the repository (COBBLERS_SOURCE_ROOT); without it the in-the-trunk tests SKIP, and a skip is
 not a pass.
 
 Not covered, and it needs a running server: that the blocks are in the world, that Pidgey spread up the tree rather
-than settling on the clearing floor (docs/STATE.md: not achieved yet), whether a bird stands on leaves, and whether
-an activated block survives a chunk reload.
+than settling on the clearing floor, whether 12 per block are held under real mob caps, whether a bird stands on
+leaves, and whether an activated block survives a chunk reload.
 """
 from __future__ import annotations
 
@@ -68,9 +70,10 @@ def test_the_sapling_bird_is_route_1s_pidgey_alone_at_5_to_8_by_day_and_night():
     assert BIRD in roster
 
 
-# Without it a nest block goes missing, a third appears, one is moved off the trunk centre or to another height, or
-# the tree ends up holding fewer than the owner's 20 birds.
-def test_two_activated_blocks_on_the_trunk_at_y134_and_y150_holding_20():
+# Without it a nest block goes missing, a third appears, one is moved off the trunk centre or to another height, the
+# tree ends up holding fewer than the owner's 20 birds, or the blocks drop back to the smaller nest (10 alive, 1 per
+# refill) the owner asked to raise.
+def test_two_activated_blocks_on_the_trunk_at_y134_and_y150_holding_at_least_20():
     import maze_forest
     sx, sz = maze_forest.SAPLING
     assert set(BLOCKS) == set(NEST_Y), sorted(BLOCKS)
@@ -80,7 +83,8 @@ def test_two_activated_blocks_on_the_trunk_at_y134_and_y150_holding_20():
         assert b["style"] == "activated" and b["replace_spawns"] is False, bid
         assert b["mimic"] == MIMIC, (bid, b["mimic"])
         a = b["activated"]
-        assert (a["max_spawns"], a["spawn_range"], a["trigger"], a["chance"]) == (10, 16, "TICK", 1.0), (bid, a)
+        assert (a["max_spawns"], a["max_spawns_per_activation"], a["spawn_range"], a["trigger"], a["chance"],
+                a["cancel_range"]) == (12, 2, 16, "TICK", 1.0, -1), (bid, a)
     assert sum(BLOCKS[b]["activated"]["max_spawns"] for b in NEST_Y) >= 20
     assert not any(b["id"] == "route1_sapling_crown" and b["style"] == "natural" for b in ALL_BLOCKS)
 
