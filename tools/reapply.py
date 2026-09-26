@@ -72,7 +72,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # never installed. The structure templates every `place template` step uses (elders, themed saplings,
                 # the maze forest's sapling) - a server rebuilt from the repo had none of them; the spawn biome tags;
                 # and the size outliers (self-driving, so world-local below)
-                "cobblers_kits", "cobblers_spawn_tags", "cobblers_sizes")
+                "cobblers_kits", "cobblers_spawn_tags", "cobblers_sizes",
+                # 2026-09-26: blackout, recovery claims and the water ladder (tools/blackout_pack.py, EXP-042);
+                # self-driving and it sets keepInventory, so world-local below
+                "cobblers_blackout")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -88,6 +91,8 @@ EXCLUDED = {
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
+    "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
+                         "it writes no blocks",
     "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
     "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
                          "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
@@ -103,7 +108,7 @@ EXCLUDED = {
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
-               "cobblers_sizes")
+               "cobblers_sizes", "cobblers_blackout")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -249,6 +254,8 @@ def prepare(a):
     py(TOOLS / "kit.py", "pack")
     py(TOOLS / "spawn_tag_pack.py", "--check-paint", str(BUILD / "paint" / "biomes.png"))
     py(TOOLS / "size_outliers.py")
+    # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
+    py(TOOLS / "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)

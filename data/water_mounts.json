@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "status": "read from the installed data 2026-09-26 (EXP-038); in-game riding not yet checked",
+  "source": "experiments/EXP-038-riding-capability/README.md: species whose merged riding.behaviours has a LIQUID key, from the Cobblemon 1.8.0 jar, COBBLEVERSE-DP v31 and mega_showdown-fabric-1.0.2+1.8+1.21.1. boat and dolphin carry the rider on or near the surface (Surf); submarine travels underwater (Dive)",
+  "rule": "docs/mechanics/DEATH_AND_WIPE.md 'Ability model': a capable Pokemon in the active party, not fainted, plus the per-player training. Dive-capable species also give Surf's benefit.",
+  "surf": [
+    "arctovish", "armaldo", "basculegion", "carracosta", "clawitzer", "crawdaunt", "dewgong", "dracovish",
+    "dragapult", "dragonite", "drednaw", "empoleon", "feraligatr", "garchomp", "golduck", "golisopod",
+    "greninja", "gyarados", "jellicent", "kingdra", "koraidon", "kyogre", "lanturn", "lapras", "latias",
+    "latios", "lugia", "lumineon", "mantine", "milotic", "miraidon", "poliwrath", "primarina", "rayquaza",
+    "samurott", "sharpedo", "slowbro", "slowking", "suicune", "swampert", "swanna", "vaporeon", "walrein",
+    "whiscash", "yveltal"
+  ],
+  "dive": [
+    "blastoise", "cloyster", "dhelmise", "dondozo", "kingler", "relicanth", "seaking", "toxapex", "wailmer",
+    "wailord"
+  ]
+}
