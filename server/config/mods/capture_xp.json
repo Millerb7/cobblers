@@ -1,0 +1,11 @@
+{
+  "inBattleExpAll": false,
+  "inBattleExpMultiplier": 0.4,
+  "inBattleGrantEvs": true,
+  "inBattleAwardExperienceToFaintedPokemon": false,
+  "outOfBattleExpAll": false,
+  "outOfBattleExpMultiplier": 0.2,
+  "outOfBattleGrantEvs": false,
+  "outOfBattleAwardExperienceToFaintedPokemon": false,
+  "debug": false
+}
