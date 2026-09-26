@@ -14,6 +14,10 @@ Route files (spawn_pool_world/routes/<route>.json), per spawns.json compilation.
 
 Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the habitat.
 
+Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zones: open sea no sub-region, route or
+waterway covers, split into bands by distance from land (marine_bands below); every ambient entry scoped to a band
+(mechanism marine_coordinate_boxes). The first is the Windward Sea off Route 1 (2026-09-26).
+
   python tools/compile_spawns.py                          # write build/datapacks/cobblers_spawns
   python tools/compile_spawns.py --out <dir>              # write elsewhere
   python tools/compile_spawns.py --routes <routes.json> --check <dir>   # compare with an existing compilation
@@ -49,6 +53,7 @@ PACK_MCMETA = {"pack": {"pack_format": 48, "description": "Cobblers compiled enc
 SAMPLE_STEP = 4.0
 SUBREGION_GRID = 32
 WATERWAY_GRID = 16
+MARINE_GRID = 32
 
 
 def dumps(doc):
@@ -361,6 +366,119 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
     return files, summaries
 
 
+def _grid_cells_of(sub, grid):
+    """{(gx, gz)} global grid cells a sub-region's raster holds (the same raster compile_subregion uses)."""
+    cells, x0, z0, _, _ = subregion_boxes.rasterise(sub["polygons"], grid)
+    return {((x0 + ix * grid) // grid, (z0 + iz * grid) // grid) for ix, iz in cells}
+
+
+def marine_bands(spawns, regions, routes, waterways=(), grid=MARINE_GRID):
+    """{band id: [(minX, maxX, minZ, maxZ)]} for every marine zone in data/spawns.json marine_zones.
+
+    A marine zone is open sea no sub-region roster reaches: the grid cells whose centre lies in the zone's clip box,
+    minus every land sub-region's raster cell, every cell whose centre a route corridor box covers, and every cell a
+    waterway or spawn-free zone touches (the same exclusions compile_subregion applies, so a marine box and a
+    sub-region, route or waterway box never cover the same block and no weight doubles). Each remaining cell goes to
+    the first band whose [from_blocks, to_blocks) holds its distance from land: the distance from the cell's centre to
+    the nearest land sub-region cell's centre, less half a cell. The land sub-region polygons were drawn to the
+    coast; measured 2026-09-26 over 3,959 Windward Sea cells (to z5199) against the heightmap coast (tools/ground.py,
+    heightmap 0d9b5f1e, land = ground >= y62 on an 8-block raster), this distance is the coast distance within
+    -20 / 0 / +41 blocks at p5 / p50 / p95, so the bands need no heightmap at compile time.
+    """
+    zones = spawns.get("marine_zones") or []
+    if not zones:
+        return {}
+    import numpy as np
+    land = set()
+    for sub in regions["subregions"]:
+        land |= _grid_cells_of(sub, grid)
+    corridor = subregion_boxes.route_boxes(routes)
+    narrow = list(waterways) + spawn_free_zones()
+    out = {}
+    for zone in zones:
+        x0, x1, z0, z1 = zone["clip_box"]["min_x"], zone["clip_box"]["max_x"], zone["clip_box"]["min_z"], zone["clip_box"]["max_z"]
+        cells = []
+        for gx in range(x0 // grid, x1 // grid + 1):
+            for gz in range(z0 // grid, z1 // grid + 1):
+                mx, mz = gx * grid + grid / 2.0, gz * grid + grid / 2.0
+                if not (x0 <= mx <= x1 and z0 <= mz <= z1) or (gx, gz) in land:
+                    continue
+                if any(b[0] <= mx <= b[1] and b[2] <= mz <= b[3] for b in corridor):
+                    continue
+                cx0, cz0 = gx * grid, gz * grid
+                if any(not (b[1] < cx0 or cx0 + grid - 1 < b[0] or b[3] < cz0 or cz0 + grid - 1 < b[2]) for b in narrow):
+                    continue
+                cells.append((gx, gz))
+        bands = zone["bands"]
+        reach = max(b["from_blocks"] for b in bands) + grid
+        near = [(gx, gz) for gx, gz in land
+                if x0 - reach <= gx * grid <= x1 + reach and z0 - reach <= gz * grid <= z1 + reach]
+        by_band = {b["id"]: set() for b in bands}
+        if cells:
+            pts = np.array([(gx * grid + grid / 2.0, gz * grid + grid / 2.0) for gx, gz in cells])
+            lp = np.array([(gx * grid + grid / 2.0, gz * grid + grid / 2.0) for gx, gz in near]) if near else None
+            dist = np.full(len(cells), float("inf"))
+            if lp is not None:
+                for i in range(0, len(pts), 1024):
+                    d = np.sqrt(((pts[i:i + 1024, None, :] - lp[None, :, :]) ** 2).sum(-1)).min(1) - grid / 2.0
+                    dist[i:i + 1024] = d
+            for (gx, gz), d in zip(cells, dist):
+                for b in bands:
+                    if b["from_blocks"] <= d < (b.get("to_blocks") if b.get("to_blocks") is not None else float("inf")):
+                        by_band[b["id"]].add((gx, gz))
+                        break
+        for bid, bc in by_band.items():
+            out[bid] = sorted((int(ix0 * grid), int((ix1 + 1) * grid - 1), int(iz0 * grid), int((iz1 + 1) * grid - 1))
+                              for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(bc))
+    return out
+
+
+def marine_condition(min_x, max_x, min_z, max_z, entry):
+    """A marine spawn condition: the box and whatever the entry authored, and nothing forced.
+
+    Unlike box_condition this does not add canSeeSky: the marine rosters spawn only in water, where there is no cave
+    to keep them out of, and Cobblemon 1.8.0's CobblemonSpawningZoneGenerator records a column's sky flag once, at
+    the top of the spawning zone (bytecode: the world sky test is called at IntProgression.getFirst of the zone's
+    reversed Y range). Whether that flag reads true under 20 or more blocks of water is not known, and a forced
+    canSeeSky could silently empty every deep entry. Surface entries author canSeeSky themselves.
+    """
+    cond = {"minX": min_x, "maxX": max_x, "minZ": min_z, "maxZ": max_z}
+    if entry.get("biomes"):
+        cond["biomes"] = list(entry["biomes"])
+    cond.update(entry.get("conditions") or {})
+    return cond
+
+
+def build_marine(spawns, regions, routes, waterways=()):
+    """The marine half of the pack: each marine band's roster over its own boxes."""
+    bands = marine_bands(spawns, regions, routes, waterways)
+    by_scope = {}
+    for e in spawns["entries"]:
+        if e["mechanism"] == "marine_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
+            by_scope.setdefault(e["scope"], []).append(e)
+    unknown = sorted(set(by_scope) - set(bands))
+    if unknown:
+        raise SystemExit("marine entries name bands no marine zone defines: %s" % unknown)
+    files, summaries = {}, []
+    for bid, boxes in sorted(bands.items()):
+        ents = by_scope.get(bid, [])
+        if not ents or not boxes:
+            continue
+        spawns_out = []
+        for n, b in enumerate(boxes):
+            for e in ents:
+                spawns_out.append({"id": "%s_b%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": e["species"],
+                                   "type": "pokemon", "spawnablePositionType": position_type(e),
+                                   "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
+                                   "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
+        doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
+        files["data/cobblers/spawn_pool_world/marine/%s.json" % bid] = dumps(doc)
+        summaries.append({"band_id": bid, "box_count": len(boxes), "compiled_entry_count": len(spawns_out),
+                          "species": sorted({e["species"] for e in ents}), "covered_blocks": subregion_boxes.area(boxes),
+                          "output": "spawn_pool_world/marine/%s.json" % bid})
+    return files, summaries
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--spawns", default=str(ROOT / "data" / "spawns.json"))
@@ -392,11 +510,13 @@ def main(argv=None):
                    != [(s["condition"]["minX"], s["condition"]["maxX"], s["condition"]["minZ"], s["condition"]["maxZ"])]
                    for s in d["spawns"] if "minX" in s["condition"]):
                 raise SystemExit("%s reaches into a spawn-free zone; cut the waterway short of it" % rel)
-    ss = []
+    ss, ms = [], []
     if not a.no_subregions:
         regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
         subfiles, ss = build_subregions(spawns, routes, regions, a.grid, water_boxes)
         files.update(subfiles)
+        marinefiles, ms = build_marine(spawns, regions, routes, water_boxes)
+        files.update(marinefiles)
     if a.check:
         base = Path(a.check)
         same = diff = missing = 0
@@ -432,6 +552,7 @@ def main(argv=None):
                 "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))},
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
                 "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
+                "marine_files": ms,
                 "subregion_grid": a.grid,
                 "subregion_box_count": sum(q["box_count"] for q in ss),
                 "subregion_spawn_entry_count": sum(q["compiled_entry_count"] for q in ss),
@@ -443,6 +564,9 @@ def main(argv=None):
     for q in ws:
         print("  waterway %s: %d boxes, %d entries, weight x%.2f at the head to x%.2f at the mouth"
               % (q["waterway_id"], q["box_count"], q["compiled_entry_count"], *q["weight_multiplier"]))
+    for q in ms:
+        print("  marine %s: %d boxes, %d entries, %s blocks" % (q["band_id"], q["box_count"], q["compiled_entry_count"],
+                                                            format(q["covered_blocks"], ",")))
     return 0
 
 

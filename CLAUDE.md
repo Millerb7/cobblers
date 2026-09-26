@@ -17,6 +17,16 @@ without adding history; if no state category changed, report that it was
 reviewed and remains current. Follow its file-ownership table when making the
 update.
 
+At session start, after the live-server safety checks below, run
+`python tools/install_check.py --server-dir <server>`, adding
+`--world-dir <staging world>` for staging (never the live world). It checks
+packs and configs. It reads the server's `config/` and `datapacks/` folders,
+and a world's folder only when passed a staging one. Report every problem it
+lists before doing other work. Work done in the repo that never reached the
+running game has happened four times: the spawn tables; five config overlays,
+starters among them; the re-apply steps; and the structures pack, present only
+because it had been copied by hand.
+
 ## Live server safety (hard gate)
 
 Before any command that could access the local `cobblers-server` runtime, make
@@ -60,8 +70,13 @@ owning process or handle before recovery.
 - **World-critical (blocks/worldgen):** Rechiseled, CobbleFurnies, Carved
   Wood, Pokeblocks, Cozy Home, Handcrafted, Moar Concrete, VanillaBackport,
   LumyMon, Beautify, LegendaryMonuments, Waystones, Comforts,
-  cobblemon-additions, Repurposed Structures, Biome Replacer, the Terralith
-  datapack, and the region datapacks in `base-pack/cobbleverse/datapacks/extra`.
+  cobblemon-additions, Repurposed Structures, Biome Replacer. **Not**
+  world-critical here: the Terralith datapack and the Hoenn, Johto and Sinnoh
+  region datapacks (`datapacks/extra`). Cobbleverse ships them optional
+  (`global_packs.toml`), our world has had them disabled since its first
+  export, and they are almost all world generation for new chunks, which a
+  pre-exported WorldPainter world inside its border never makes. No authored
+  data references a Terralith biome (checked 2026-09-26).
 - **No KubeJS or scripting layer exists in the base pack.** Cobblemon itself
   has Molang-scriptable NPCs and datapack folders (1.8 adds `party_pools`,
   `party_compositions`, `moveset_builders`, and a Habitat Block for spawn

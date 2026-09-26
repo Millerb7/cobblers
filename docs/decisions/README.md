@@ -26,7 +26,9 @@ Status values: `Proposed`, `Accepted`, `Superseded by ADR-NNN`, `Rejected`.
 | [ADR-001](ADR-001-modpack-base-strategy.md) | Modpack base strategy: Cobbleverse as upstream reference, overlay targeting Cobblemon 1.8.x | Proposed |
 | [ADR-002](ADR-002-reward-delivery-mechanism.md) | How a reward reaches a player: per-player advancement grants, containers as scenery | Proposed |
 | [ADR-003](ADR-003-evolution-stone-supply.md) | Where evolution stones come from: ore in the rock at seven sites, in faces a generated function resets | Proposed |
+| [ADR-004](ADR-004-pocket-spaces.md) | Hidden spaces: carved in place where the fiction says they are, a pocket dimension only for spaces that are really elsewhere; no far-overworld pockets (Xaero caches through its effects, and Distant Horizons shows them) | Accepted |
 | [ADR-005](ADR-005-death-wipe-water-mechanism.md) | Death, wipe and water: datapack functions and MoLang first; a server-side module only where an experiment proves the game will not do it | Proposed |
+| [ADR-006](ADR-006-server-delivered-client-pack.md) | One client resource pack delivered by the server (`resource-pack` in server.properties); the AllTheMons part needs the author's written permission (licence v3.2) or a no-redistribution variant | Proposed |
 
 Expected future ADRs (not yet written, pending experiments):
 
