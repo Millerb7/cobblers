@@ -58,6 +58,14 @@ Versions: Cobblemon 1.8.0 (`Cobblemon-fabric-1.8.0+1.21.1.jar`), COBBLEVERSE-DP 
 3. A callback in our own namespace (`data/cobblers/callbacks/player_tick_pre/water_probe.molang`) fires, throttled,
    and writes a score or `save_data`. This confirms custom-namespace callbacks and their tick cost.
 
+## Correction (EXP-042, 2026-09-26)
+
+- **Step 3 assumed wrongly** that a callback in our own namespace runs. A file under `data/cobblers/callbacks/<event>/`
+  registers but never fires. Only files under `data/cobblemon/callbacks/<event>/` do; ours now use `cobblers_*`
+  filenames there.
+- **Step 1 is confirmed** in game: MoLang reads each party member's `species.identifier` (for example
+  `cobblemon:lapras`) and `current_hp`.
+
 ## Result
 
 Static: **capability is identifiable** from the data, and readable at runtime by species through MoLang. The in-game

@@ -117,6 +117,8 @@
     "breath_reset_why": "the Surf bonus resets only after the player's eyes stay in air, with full vanilla air, this long",
     "pulse_ticks": 20,
     "pulse_fraction": "half of maximum health, as drown damage (bypasses armour); vanilla's own 2-point drowning hit lands in the same second and is absorbed by the damage cooldown",
+    "pulse_regen_margin": 2,
+    "pulse_regen_margin_why": "a hit landing on a player at or below half health plus this is lethal, so two hits from full health knock out whatever natural regeneration adds between them (EXP-042 run 1: 20 to 10, regenerated to 11, the second hit left 2)",
     "air_warning": 60,
     "air_warning_why": "20% of vanilla's 300"
   },

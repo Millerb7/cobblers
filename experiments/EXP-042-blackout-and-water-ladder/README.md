@@ -12,7 +12,7 @@ with the pack installed world-local.
 | Part | Mechanism |
 |---|---|
 | Death | vanilla `deathCount`; charged the tick it happens, then returned on the first living tick |
-| Full-party battle loss | `data/cobblers/callbacks/battle_victory/blackout.molang`: each player loser runs `battle_loss_wild`, `battle_loss_npc` or `battle_loss_other` with the victor's UUID |
+| Full-party battle loss | `data/cobblemon/callbacks/battle_victory/cobblers_blackout.molang`: each player loser runs `battle_loss_wild`, `battle_loss_npc` or `battle_loss_other` with the victor's UUID |
 | One incident | a second blackout report within 200 ticks is dropped |
 | Money | `cobbledollars query` into a score; `ceil(balance * 10 / 100)` removed by macro |
 | Checkpoint: Center | vanilla `any_block_use` on `cobblemon:healing_machine` inside a Center's 48-block box; the saved point is where the player stood; also their spawnpoint |
@@ -23,7 +23,7 @@ with the pack installed world-local.
 | Guardian | vanilla `PersistenceRequired`, tag `cobblers.guardian`, a guardian number (score `bo.g`, tag `cobblers.g<N>`) |
 | Maintenance, every 100 ticks | a guardian more than 24 blocks from its site is walked back; a duplicate is removed; one absent while its site is loaded, on two passes in a row, is rebuilt from the ledger |
 | Resolution | the guardian beaten (`battle_victory`) or caught (`pokemon_captured`) resolves every open claim it holds; the stacks drop at the owner's feet as owner-only, non-despawning items, now or at next login |
-| Water | eyes 5+ blocks under water is depth. With no support: vanilla air, then a drown hit of half maximum health every 20 ticks. Surf training plus a capable party member: 900 ticks of water breathing per submersion. Dive: unlimited. The party is read once a second by `callbacks/player_tick_pre/water_mounts.molang` |
+| Water | eyes 5+ blocks under water is depth. With no support: vanilla air, then a drown hit of half maximum health every 20 ticks. Surf training plus a capable party member: 900 ticks of water breathing per submersion. Dive: unlimited. The party is read once a second by `data/cobblemon/callbacks/player_tick_pre/cobblers_water_mounts.molang` |
 
 ## Results so far (staging, 2026-09-26, no player online; run over RCON)
 
@@ -46,8 +46,48 @@ with the pack installed world-local.
    - Fixed: `defeated` refuses a guardian with no number, resolves first, and releases after.
    - Rerun: the claim moved to `deliver` with the resolver recorded, and the guardian lost its tag, number and
      persistence. A pass later, nothing was rebuilt for the settled claim.
-6. **Not yet run: everything that needs a player.** That is the charge, the checkpoints, a real battle loss, capture,
-   delivery, and the whole water ladder.
+6. **The callbacks did not run at first: FIXED.** Files under `data/cobblers/callbacks/<event>/` register (the count
+   rose) but never fire. A tracer at the top of the script counted 0. Moved beside Cobblemon's own files as
+   `data/cobblemon/callbacks/<event>/cobblers_*.molang`, the same tracer counted every tick. This corrects EXP-038's
+   assumption that a custom namespace works. The files are additions (`cobblers_` names), not overrides.
+
+## Results in game (the owner, staging, 2026-09-26)
+
+Party: Marshtomp, Finneon, Dubwool, Swablu, Phantump, Voltorb, then a level-40 Lapras in place of one. Balance
+$725. Logged over RCON every half-second.
+
+**Run 1: drowning with no mount, Shrew Lake. Mostly PASS; one fix.**
+- The party read gave mount level 0 (no water mount), which is correct.
+- At depth, the air-low warning fired at air 60.
+- At air 0, the first hit took **20 → 10**, exactly half.
+- **FAIL:** natural regeneration healed the player to 11, the second hit left 2 and a third killed. The spec wants two
+  hits from full health.
+  - Fixed: a hit landing at or below half health plus `pulse_regen_margin` (2) is lethal.
+  - Not rerun yet.
+- Death: charged **$73** (10% of 725, rounded up), balance **$652**, once.
+- The return: respawned at Hometown `(1461, 118, 5306)` with no checkpoint saved, spawnpoint set there. The owner
+  reported the respawn.
+- Passive sinking, not swimming: 0.55 blocks per second.
+
+**Run 2: Surf, Shrew Lake. PASS.**
+- With the Surf training and the Lapras in the party, the party read gave mount level **1** and qualification **1**.
+- The owner reached the floor at **y56**, 50 blocks below the surface at y106.
+- The Surf timer used its whole **900 ticks** (45 s) with air held full.
+- After it, vanilla air was draining (216 of 300 when read).
+- The owner: "it works". The Lapras did not know the move Surf, and it does not have to: capability is the species'
+  riding data (spec: "not merely knowledge of a move").
+- The owner logged off before drowning, so the second-hit fix is still unrun.
+
+**Not registered: the Center checkpoint.** The checkpoint stayed at 0. The owner is unsure whether they used the
+healing machine, so this is not a result either way; rerun it.
+
+Still to run:
+- the Center and waystone checkpoints;
+- Dive;
+- swapping the water Pokemon out mid-dive;
+- the lethal second hit;
+- a wild battle loss, recovery by defeat and by capture, and delivery;
+- a timed sprint-swim down and up, for the water map's no-mount reach.
 
 ## In-game test (the owner; staging)
 
