@@ -15,7 +15,7 @@
   "stellarShardDropRate": 1.0,
   "teraHats": true,
   "legacyTeraEffect": false,
-  "likoPendentDuration": 1440000,
+  "likoPendentDuration": 72000,
   "minBondingRequired": 200,
   "showBattleHUD": false,
   "showStatChanges": true,

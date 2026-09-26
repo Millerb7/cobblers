@@ -67,7 +67,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the sleeping Celebi in the Route 1 sapling and its keeper (2026-09-25)
                 "cobblers_celebi",
                 # the Rift's own storm: thunder and lightning for players inside the Rift (2026-09-25)
-                "cobblers_rift_storm")
+                "cobblers_rift_storm",
+                # 2026-09-26, the install sweep: three packs the game needs that were only ever copied by hand, or
+                # never installed. The structure templates every `place template` step uses (elders, themed saplings,
+                # the maze forest's sapling) - a server rebuilt from the repo had none of them; the spawn biome tags;
+                # and the size outliers (self-driving, so world-local below)
+                "cobblers_kits", "cobblers_spawn_tags", "cobblers_sizes")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -97,7 +102,8 @@ EXCLUDED = {
 # server packs installed into the target world's own datapacks folder, not the server's: they act without being called
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
-WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm")
+WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
+               "cobblers_sizes")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -238,6 +244,11 @@ def prepare(a):
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     py(TOOLS / "compile_spawns.py")
+    # the structure templates the placement steps use, the spawn biome tags, and the size outliers: all three were
+    # on the server only by hand, or not at all, until 2026-09-26 (install sweep)
+    py(TOOLS / "kit.py", "pack")
+    py(TOOLS / "spawn_tag_pack.py", "--check-paint", str(BUILD / "paint" / "biomes.png"))
+    py(TOOLS / "size_outliers.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
@@ -349,6 +360,31 @@ def install(a):
             shutil.rmtree(wdp / name)
         shutil.copytree(src, wdp / name)
         print("installed into the world folder", wdp / name)
+    # The configs, last, and fail-closed. Until 2026-09-26 nothing copied modpack/config to the server: five committed
+    # overlay files had never reached it (starters.json still offered the starters dropped on 2026-09-23). Install the
+    # overlay, then require that every config the server runs is recorded in the repo exactly as it runs
+    # (tools/server_config_record.py: the overlay, server/config/mods/ or the base pack)
+    import server_config_record as SCR
+    cfg = Path(a.server_dir) / "config"
+    print("installed %d overlay config files" % SCR.install(cfg))
+    # the riding-patched COBBLEVERSE datapack (Cobblemon 1.8 seat migration): the server's copy had been patched by
+    # hand in another checkout, and no step made it (install sweep, 2026-09-26)
+    import install_check as IC
+    src = Path(a.cobbleverse_dp) if a.cobbleverse_dp else None
+    if src is None or not src.is_file():
+        raise SystemExit("no upstream COBBLEVERSE-DP-v31.zip at %s: pass --cobbleverse-dp <the pack's own zip>" % src)
+    IC.PATCHED_DP.parent.mkdir(parents=True, exist_ok=True)
+    py(TOOLS / "patch_cobbleverse_riding.py", str(src), str(IC.PATCHED_DP), "--cobblemon-jar",
+       str(Path(a.server_dir) / "mods" / "Cobblemon-fabric-1.8.0+1.21.1.jar"), "--expect-patched", "51")
+    shutil.copyfile(IC.PATCHED_DP, dp / IC.PATCHED_DP.name)
+    print("installed", dp / IC.PATCHED_DP.name, "(riding-patched)")
+    # last, fail-closed: everything the repo builds for this server is installed and current, packs and configs
+    problems = IC.packs(a.server_dir, a.world_dir) + IC.configs(a.server_dir)
+    if problems:
+        raise SystemExit("the server does not hold what the repo builds (%d):\n  %s\nfix the install, or record a "
+                         "deliberate server value with `tools/server_config_record.py record`"
+                         % (len(problems), "\n  ".join(problems)))
+    print("install check: every pack and config the repo builds is installed and current")
 
 
 class Rcon:
@@ -971,6 +1007,11 @@ def main(argv=None):
     q.add_argument("--world-dir", required=True)
     q.add_argument("--no-players", action="store_true",
                    help="install into a staging world nobody has played, with no players carried")
+    q.add_argument("--cobbleverse-dp", default=str(ROOT.parent.parent.parent / "COBBLEVERSE" / "datapacks"
+                                                  / "COBBLEVERSE-DP-v31.zip")
+                   if (ROOT.parent.parent.parent / "COBBLEVERSE").is_dir()
+                   else str(ROOT / "COBBLEVERSE" / "datapacks" / "COBBLEVERSE-DP-v31.zip"),
+                   help="the upstream COBBLEVERSE-DP-v31.zip (not committed: no-redistribution), patched at install")
     q = sub.add_parser("run")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--from", dest="from_step")

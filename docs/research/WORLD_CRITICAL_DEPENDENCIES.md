@@ -28,8 +28,8 @@ Removing a block provider after it has been used can replace map content with ai
 
 | Component | Persistent effect | Cobblemon 1.8 position | Required check before freeze |
 | --- | --- | --- | --- |
-| Terralith datapack | overworld terrain and biomes | preserve provisionally | generate a fixed-seed fresh world and compare representative chunks |
-| Regional datapacks (Hoenn, Johto, Sinnoh) | spawn/region data loaded through Global Packs | preserve for functional test | confirm pack load order, tags, and spawn behavior |
+| Terralith datapack | overworld terrain and biomes, for **newly generated** chunks | **not world-critical here** (2026-09-26). Optional in Cobbleverse (`global_packs.toml`) and disabled in our world since its first export. The world is a pre-exported WorldPainter canvas inside its border, and no authored data names a Terralith biome | none; enable only if chunks are ever generated again |
+| Regional datapacks (Hoenn, Johto, Sinnoh) | mostly worldgen: region structures and biomes; also region advancements, recipes and trades | **not world-critical here** (2026-09-26). Optional in Cobbleverse and disabled in our world since its first export. Their structures never generate in a pre-exported world, and the campaign owns its own gyms and progression | none unless their items or advancements are wanted |
 | Cobblemon Additions | Pokémon villages and spawn pools | preserve; UNKNOWN | locate villages and verify spawn-pool loading |
 | Repurposed Structures | broad structure generation | preserve provisionally | locate representative structures in fresh chunks |
 | Biome Replacer | maps Terralith biomes to biome categories used by the pack | freeze with its config | verify mappings and biome-dependent spawns |
