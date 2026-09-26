@@ -28,6 +28,7 @@ import function_limits as FL
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "rift_league_tunnel.json"
+PLACEMENTS = ROOT / "data" / "placements.json"
 REGIONS = ROOT / "data" / "rift_regions.json"
 OUT = ROOT / "build" / "datapacks" / "cobblers_league_tunnel"
 PLAN = ROOT / "derived" / "rift_league_tunnel" / "plan.json"
@@ -81,9 +82,34 @@ def pick(block, fallback, have):
     return block if block.startswith("minecraft:") or have is None or block in have else fallback
 
 
+def town_owned(lot, doc):
+    """[(anchor id, rect)] the lot's skirt leaves alone: the anchors of `leave_to_the_town` (data/placements.json), which
+    the town step (R8) lays and the town audit checks. Fails when the spec names anchors the placements do not have."""
+    own = lot.get("leave_to_the_town")
+    if not own:
+        return []
+    plan = ((doc["settlements"].get(own["settlement"]) or {}).get("plan")) or {}
+    roles = set(own.get("roles") or [])
+    out = [(a["id"], a["rect"]) for a in plan.get("anchors") or [] if a.get("role") in roles and a.get("rect")]
+    if not out:
+        raise LeagueError("leave_to_the_town names %s anchors of %s, and data/placements.json has none"
+                          % (sorted(roles), own["settlement"]))
+    return out
+
+
+def donor_volume(lot, doc):
+    """The inclusive box ((x0, y0, z0), (x1, y1, z1)) the lot's donor is stamped over, from its placement record."""
+    import place_donor
+    rec = next((q for q in doc["placements"] if q.get("id") == lot.get("donor")), None)
+    if rec is None:
+        raise LeagueError("the lot's donor %r is not in data/placements.json" % lot.get("donor"))
+    return place_donor.box(rec)
+
+
 def build(source_root, server_dir=None):
     import ground as G
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
+    doc = json.loads(PLACEMENTS.read_text(encoding="utf-8"))
     have = installed_blocks(server_dir)
     g = G.load(source_root)
     lines, checks, counts = [], [], {}
@@ -98,12 +124,18 @@ def build(source_root, server_dir=None):
     fill_b = pick(lot["fill"], lot["fill_fallback"], have)
     top_b = pick(lot["surface"], lot["surface_fallback"], have)
     skirt = lot["skirt"]
+    # the town's cells inside the skirt, and the donor's volume (it is stamped whole over the lot, after it)
+    towns = town_owned(lot, doc)
+    (dx0, dy0, dz0), (dx1, dy1, dz1) = donor_volume(lot, doc)
     H = g.box(x0 - skirt, z0 - skirt, x1 + skirt, z1 + skirt)
     cut = fill = 0
     for iz in range(H.shape[0]):
         for ix in range(H.shape[1]):
             x, z = x0 - skirt + ix, z0 - skirt + iz
             inside = x0 <= x <= x1 and z0 <= z <= z1
+            if any(r[0] <= x <= r[2] and r[1] <= z <= r[3] for _, r in towns):
+                count("skirt columns left to the town (%s)" % ", ".join(a for a, _ in towns))
+                continue
             gy = int(H[iz, ix])
             if inside:
                 want = Y
@@ -121,7 +153,11 @@ def build(source_root, server_dir=None):
             lines.append("setblock %d %d %d %s" % (x, want, z, top_b))
             if inside and unit(x, want, z, 81) < 0.004:
                 checks.append((x, want, z, [top_b], "lot surface"))
-            if inside and unit(x, want, z, 82) < 0.004:
+            # air only where the lot cut, and not inside the donor's volume: R9 stamps the building there whole, so
+            # a sample inside it read the building's floor as a mismatch (EXP-026 run 4: 20 of 48, e.g. obsidian at
+            # (3690, 89, 2390)). Sampled over the whole lot and skirt, so the skirt's cuts are checked too.
+            in_donor = dx0 <= x <= dx1 and dy0 <= want + 1 <= dy1 and dz0 <= z <= dz1
+            if want < gy and not in_donor and unit(x, want, z, 82) < 0.02:
                 checks.append((x, want + 1, z, ["minecraft:air"], "lot clear"))
     count("lot columns", (x1 - x0 + 1) * (z1 - z0 + 1))
     count("blocks cut for the lot", cut)
@@ -132,7 +168,9 @@ def build(source_root, server_dir=None):
     # road's corridors overwriting this tool's stands and lights (2026-09-23).
 
     return {"lines": lines, "checks": checks, "counts": counts,
-            "lot": lot["box"], "lot_y": Y}, spec
+            "lot": lot["box"], "lot_y": Y, "skirt": skirt,
+            "left_to_the_town": [[a, r] for a, r in towns],
+            "donor_volume": [[dx0, dy0, dz0], [dx1, dy1, dz1]]}, spec
 
 
 def write(plan):

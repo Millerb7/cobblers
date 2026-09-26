@@ -400,6 +400,51 @@
           4122
         ]
       }
+    },
+    {
+      "id": "r1_old_mine_stope",
+      "kind": "cache",
+      "place": "the old mine west of Route 1: the stope at the end of the main drift, against its west wall",
+      "contents": [
+        {
+          "item": "cobblemon:everstone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/everstone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:great_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/great_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the back of the stope: an Everstone, two Great Balls and a Super Potion.",
+      "why": "the owner, 2026-09-25: the mine made about 100 blocks long with a few branches; the stope at the far end is the reason to walk the whole drift. An Everstone is a held item otherwise only bought or crafted (docs/STATE.md: every Cobblemon item obtainable without crafting)",
+      "built_by": "tools/route1_old_mine.py (the barrel, in the earthwork route1_old_mine_hill, reapply step R8)",
+      "trigger": {
+        "min": [
+          1234,
+          122,
+          4090
+        ],
+        "max": [
+          1238,
+          124,
+          4094
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          1235,
+          122,
+          4092
+        ]
+      }
     }
   ]
 }

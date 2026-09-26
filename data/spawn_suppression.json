@@ -40,8 +40,8 @@
       "box": [
         3616,
         2352,
-        3776,
-        2504
+        3783,
+        2511
       ],
       "why": "the owner, 2026-09-21: nothing wanders the champion's approach. The League moved onto the Rift's apex oval on 2026-09-23 and this box did NOT move with it: until 2026-09-23 it still covered the trunk-head floor at [3496, 2568, 3655, 2783], which is empty ground now, and left the lot and the approach open. It is the League's lot (data/rift_league_tunnel.json) with 16 blocks round it, snapped out to the 8-block grid the route boxes share, and it takes in Victory Road's exit onto the apron.",
       "mechanism": "tools/compile_spawns.py cuts it out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes, so neither the campaign's rosters nor Cobblemon's and Cobbleverse's defaults spawn inside it",

@@ -173,7 +173,8 @@ class Scene:
         beat.append('runmolang "%s" @s' % " ".join(m for m in mol if m))
         for z in self.doc.get("zones") or []:
             beat += self.zone(z)
-        out["beat"] = beat
+        if self.doc.get("actors") or self.doc.get("effects") or self.doc.get("zones"):
+            out["beat"] = beat                 # the cycle calls a beat only for these (build()); none is written unused
         for p in self.doc.get("props") or []:
             self.prop(p, out)
         place = ["# %s: its props, once (a re-run replaces them); the chunks must be loaded" % self.id]

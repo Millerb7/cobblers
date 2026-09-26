@@ -6,7 +6,7 @@
     "Badges themselves are items given by each leader's RCT loot table on first defeat; the flag records the defeat, it does not give the badge.",
     "Leader order is Cobbleverse's RCT requiredDefeats chain per series, read from COBBLEVERSE-RCT-DP-v20. Which leader sits in which town is a trainer-design decision still open.",
     "Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 0 in modpack/config/rctmod-server.toml since 2026-09-24; Cobbleverse ships 5), so chapters carry no level_cap here.",
-    "Waystone positions are null until town locations are placed after the next terrain rendition."
+    "Gym waystone positions are the block tools/place_town.py sets (the lower half): x and z from the town plan in data/placements.json, y the plan's surface + 1 as its placement report records. tests check they agree."
   ],
   "namespace": "cobblers",
   "active_series": "kanto",
@@ -72,7 +72,7 @@
       },
       "waystone": {
         "town": "gym1_town",
-        "position": null
+        "position": [1756, 139, 3606]
       },
       "offers_marker": "gym2_town"
     },
@@ -97,7 +97,7 @@
       },
       "waystone": {
         "town": "gym2_town",
-        "position": null
+        "position": [1620, 109, 2800]
       },
       "offers_marker": "gym3_town"
     },
@@ -122,7 +122,7 @@
       },
       "waystone": {
         "town": "gym3_town",
-        "position": null
+        "position": [1662, 175, 1388]
       },
       "offers_marker": "gym4_town"
     },
@@ -147,7 +147,7 @@
       },
       "waystone": {
         "town": "gym4_town",
-        "position": null
+        "position": [4276, 110, 1554]
       },
       "offers_marker": "gym5_town"
     },
@@ -172,7 +172,7 @@
       },
       "waystone": {
         "town": "gym5_town",
-        "position": null
+        "position": [4668, 118, 2422]
       },
       "offers_marker": "gym6_town"
     },
@@ -197,7 +197,7 @@
       },
       "waystone": {
         "town": "gym6_town",
-        "position": null
+        "position": [6186, 95, 3386]
       },
       "offers_marker": "gym7_town"
     },
@@ -222,7 +222,7 @@
       },
       "waystone": {
         "town": "gym7_town",
-        "position": null
+        "position": [6064, 109, 4984]
       },
       "offers_marker": "gym8_town"
     },
@@ -247,7 +247,7 @@
       },
       "waystone": {
         "town": "gym8_town",
-        "position": null
+        "position": [3594, 114, 6444]
       },
       "offers_marker": "league"
     },

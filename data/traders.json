@@ -4,14 +4,16 @@
   "note": "Every trader the campaign stands in a town. A trader is an entity, and a re-export regenerates every region and entity file from the WorldPainter project, so a trader summoned in game is erased by every export. This manifest is the source: tools/traders.py function writes the re-application function, and the post-export procedure in docs/world-building/REEXPORT.md (R14) runs it. Nothing is summoned by hand. tools/validate_data.py checks the static rules, and exactly-one presence in a stopped world passed with --world-save.",
   "fields": {
     "id": "stable id; the entity carries the tags cobblers_vendor and cobblers_vendor_<id>",
-    "settlement": "the town in data/placements.json whose plaza the trader stands on",
+    "settlement": "the town in data/placements.json whose plaza, or building, the trader stands in",
     "cell": "planning cell",
     "template": "the installed shopkeeper template the trader's entity is read from (its trade list, name and look)",
     "source": "where that template ships, and its licence: placed by resource id, never copied into the repo",
-    "position": "{x, y, z}: the block the trader stands in, one above the plaza paving the town plan grades",
+    "position": "{x, y, z}: the block the trader stands in: one above the plaza paving the town plan grades, or, for a trader in a building, one above the floor of its template's shopkeeper jigsaw",
     "status": "planned (not in the campaign world), placed (re-applied by the function), verified (checked in game)",
     "chosen_because": "why this trader, in this town",
-    "stock": "regional (sells what the stock policy leaves) or withdrawn (the policy leaves nothing, so the trader is not summoned and any copy standing is removed); tools/traders.py refuses to write a function if this disagrees with the policy"
+    "stock": "regional (sells what the stock policy leaves), withdrawn (the policy leaves nothing, so the trader is not summoned and any copy standing is removed) or mart (sells exactly the policy's Mart items); tools/traders.py refuses to write a function if this disagrees with the policy",
+    "building": "optional: the placed building (a tools/place_town.py building id) the trader stands in; its position is that template's shopkeeper jigsaw carried through the placement",
+    "facing": "optional: which way a NoAI trader looks (south, west, north, east): a Mart clerk faces its door"
   },
   "traders": [
     {
@@ -222,6 +224,279 @@
       "status": "planned",
       "chosen_because": "the general stall",
       "stock": "withdrawn"
+    },
+    {
+      "id": "gym1_mart",
+      "settlement": "gym1_town",
+      "cell": "D2",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1793,
+        "y": 139,
+        "z": 3611
+      },
+      "building": "gym1_pokemart",
+      "facing": "west",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/lavender_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "gym2_mart",
+      "settlement": "gym2_town",
+      "cell": "C2",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1641,
+        "y": 108,
+        "z": 2775
+      },
+      "building": "gym2_pokemart",
+      "facing": "west",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/cherrygrove_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "gym3_mart",
+      "settlement": "gym3_town",
+      "cell": "B2",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1687,
+        "y": 176,
+        "z": 1458
+      },
+      "building": "gym3_pokemart",
+      "facing": "north",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/floaroma_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "gym4_mart",
+      "settlement": "gym4_town",
+      "cell": "B5",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 4309,
+        "y": 112,
+        "z": 1617
+      },
+      "building": "gym4_pokemart",
+      "facing": "north",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/floaroma_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "gym5_mart",
+      "settlement": "gym5_town",
+      "cell": "C5",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 4721,
+        "y": 121,
+        "z": 2476
+      },
+      "building": "gym5_pokemart",
+      "facing": "west",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/koga_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "gym6_mart",
+      "settlement": "gym6_town",
+      "cell": "D7",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 6227,
+        "y": 95,
+        "z": 3376
+      },
+      "building": "gym6_pokemart",
+      "facing": "south",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/sabrina_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "gym7_mart",
+      "settlement": "gym7_town",
+      "cell": "E6",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 6055,
+        "y": 109,
+        "z": 5059
+      },
+      "building": "gym7_pokemart",
+      "facing": "north",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/blaine_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "gym8_mart",
+      "settlement": "gym8_town",
+      "cell": "G4",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 3637,
+        "y": 113,
+        "z": 6483
+      },
+      "building": "gym8_pokemart",
+      "facing": "north",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/giovanni_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "hometown_mart",
+      "settlement": "hometown",
+      "cell": "F2",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 1482,
+        "y": 119,
+        "z": 5243
+      },
+      "building": "hometown_pokemart",
+      "facing": "west",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/structure_pokemart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "mining_mart",
+      "settlement": "mining_town",
+      "cell": "F7",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 6656,
+        "y": 139,
+        "z": 5695
+      },
+      "building": "mining_pokemart",
+      "facing": "south",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/mining_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "northlight_mart",
+      "settlement": "northlight",
+      "cell": "B8",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 7280,
+        "y": 116,
+        "z": 1523
+      },
+      "building": "northlight_pokemart",
+      "facing": "south",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/northlight_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "sunset_west_mart",
+      "settlement": "sunset_west",
+      "cell": "G3",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 2682,
+        "y": 66,
+        "z": 6492
+      },
+      "building": "sunset_pokemart",
+      "facing": "west",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/sunset_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
+    },
+    {
+      "id": "tea_mart",
+      "settlement": "tea_town",
+      "cell": "D3",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 2581,
+        "y": 116,
+        "z": 3604
+      },
+      "building": "tea_pokemart",
+      "facing": "east",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/tea_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
     }
   ],
   "stock_policy": {
@@ -241,6 +516,16 @@
       "cobblemon:heal_powder",
       "cobblemon:big_root"
     ],
-    "withhold_items_why": "the herbs that are cheap battle medicine or a held item: a revival herb is a revive for 400 against the Mart's 2,000, energy root and heal powder are a hyper potion and a full heal, big root is a held item"
+    "withhold_items_why": "the herbs that are cheap battle medicine or a held item: a revival herb is a revive for 400 against the Mart's 2,000, energy root and heal powder are a hyper potion and a full heal, big root is a held item",
+    "mart": {
+      "items": [
+        "cobblemon:poke_ball",
+        "cobblemon:potion",
+        "cobblemon:antidote"
+      ],
+      "name": "Poké Mart",
+      "status": "owner decision 2026-09-25: basic stock in every town from the start; badge-gated stock comes later",
+      "why": "A town with no balls is not a town. Every Mart sells Poké Balls, Potions and Antidotes from the first visit, at the general shopkeeper's prices (200, 200, 100); what wins battles stays withheld until the badge-gated stock replaces this policy."
+    }
   }
 }

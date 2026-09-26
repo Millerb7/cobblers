@@ -106,6 +106,50 @@ The second audit (`derived/reapply/audit_20260921_182200.json`):
 
 **Result: not clean, on the light check alone.** Everything else passes.
 
+### Run 4: `cobblers-dryrun10` (2026-09-24), a fresh export from main `55e7505`, then the playtest
+
+The full driver ran on a fresh staging export (`--no-reload`, one boot), then `audit` on a stopped copy. Two
+operational stops on the way:
+
+- The server's 60 s watchdog killed it at R5, on forceloads waiting behind the Rift's lighting backlog. The run
+  completed with `max-tick-time=-1`, restored afterwards.
+- V failed with WinError 10048: R17's hundreds of one-connection RCON calls exhausted the ephemeral ports. V ran clean
+  after the ports drained: 26 of 26 places, 0 gaps.
+
+| Check | Result |
+| --- | --- |
+| Victory Road caves | 1,936,430 of 1,936,430 |
+| the Deep | clean |
+| route events | 2,237 blocks, 0 problems |
+| signposts | 50 of 50 |
+| habitat blocks | 81 of 81 after a restart |
+| forest | 46,006 of 46,015 |
+| world tree, cavern, mansion, old mine | clean |
+| towns | clean except `league` and `rift_rim_stop` |
+| rift skin | entities **0 of 14**; 13 cell mismatches |
+| League lot | "lot clear" 28 of 48 |
+| islet | 2,404 of 2,628 columns |
+
+**Defects found, all fixed on 2026-09-25 and checked offline against a copy of the audited world. None has been
+re-run on a rebuilt world.**
+
+- **Rift entities 0 of 14:** `rift/fx` was never run by any step. R1 now runs it and waits for all 14 to register.
+- **League forecourt:** R8B's lot skirt repaved 211 forecourt cells in blackstone, and erased the forecourt waystone's
+  upper half. The lot now leaves the town's forecourt rects alone (`data/rift_league_tunnel.json`
+  `lot.leave_to_the_town`), and the waystone is seated on the anchor level.
+- **Rim overlook:** paved anchors were never cleared above, unlike streets. `tools/town_plan.py` now clears over them.
+- **Watchdog:** `reapply.py run` refuses unless `max-tick-time=-1`, and REEXPORT.md has the set and restore steps
+  (5b, 8a).
+- **RCON:** the driver keeps one connection and reconnects when the server drops it (302 commands, 1 connection,
+  against a fake server).
+- **False alarms:**
+  - The rift skin verify excludes the 13 cells later steps own.
+  - "Lot clear" excludes the League building's volume.
+  - The islet replay honours `replace` filters: 2,628 of 2,628.
+- **Runbook:** it named the old heightmap.
+
+The owner then played it: EXP-035.
+
 ## Limitations
 - A staging export, not the live world. The live run adds retiring the world and its datapack list.
 - Not in the driver and not run: Habitat Blocks (0 recorded), `waystones.dat` (a fresh export has none), spawn pools
@@ -117,6 +161,8 @@ The second audit (`derived/reapply/audit_20260921_182200.json`):
 
 ## Decision
 Run 2's decision ("ready") is withdrawn: its clean audit rested on checks that passed when they had nothing to check.
-After run 3 the re-application is not yet ready for the live world. It waits on (1) Codex's re-review of the fixes,
+After run 4 (2026-09-25): not ready until a fifth fresh rehearsal runs the fixed driver clean end to end, with the
+watchdog off and the spawn packs installed by `install`; the owner-supervised live run follows that.
+After run 3 the re-application was not yet ready for the live world. It waits on (1) Codex's re-review of the fixes,
 and (2) the owner's call on the light check's 81 snow-layer positions, which have no gameplay effect since vanilla
 hostiles cannot spawn in this pack. The live run is the owner's to start once both are done.

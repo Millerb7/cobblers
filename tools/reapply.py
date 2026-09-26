@@ -12,7 +12,8 @@ with a check after each, and audit the result. docs/world-building/REEXPORT.md i
         with the server STOPPED: copy the packs into <server>/datapacks, and cobblers_height and cobblers_worldtree
         into the world folder's own datapacks (they raise the build limit the world tree's crown needs)
   python tools/reapply.py run --server-dir <server> [--from R8] [--only R8] [--with-spawns] [--no-reload]
-        with the server running and the coordination lock held: R2 to R16 in order, timed, each function's reply
+        with the server running, booted with max-tick-time=-1 in its server.properties (the run refuses otherwise;
+        restore it afterwards), and the coordination lock held: R2 to R16 in order, timed, each function's reply
         checked, the checkpoints below enforced; writes derived/reapply/run_<time>.json
   python tools/reapply.py audit --server-dir <server> --world <stopped world copy>
         with the server STOPPED: build_audit (cavern, forest, world tree, islet), town_audit for every place, the
@@ -35,6 +36,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -61,7 +63,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_dialogue",
                 # Routes 1-3 and the mansion (2026-09-24): the event sites, the scene runtime (props, per-player actors,
                 # zones, effects) and the route trainers
-                "cobblers_route_events", "cobblers_scenes", "cobblers_trainers")
+                "cobblers_route_events", "cobblers_scenes", "cobblers_trainers",
+                # the sleeping Celebi in the Route 1 sapling and its keeper (2026-09-25)
+                "cobblers_celebi")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -72,7 +76,7 @@ EXCLUDED = {
     "cobblers_rift_fracture": "retired, replaced by the sculpt in the heightmap",
     "cobblers_worldtree": "a WORLD pack, installed into the world folder and run by R3",
     "cobblers_height": "a WORLD pack: it raises the build limit and runs nothing",
-    "cobblers_suppress": "generated from the installed set on a disposable world; not part of a re-export",
+    "cobblers_suppress": "spawn data, no functions to run: generated and installed by `install` (SPAWN_PACKS)",
     # these three drive themselves and write no blocks: found by the check below the moment it was added
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
@@ -90,7 +94,10 @@ EXCLUDED = {
 # server packs installed into the target world's own datapacks folder, not the server's: they act without being called
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
-WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events")
+WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi")
+# the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
+# (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
+SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
 CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
@@ -214,10 +221,14 @@ def prepare(a):
         py(TOOLS / "place_town.py", s, *src)
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
+    py(TOOLS / "sapling_celebi.py")
     py(TOOLS / "signposts.py", "function", *src)
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     py(TOOLS / "progression_pack.py")
+    # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
+    # only thing spawning there is generated at install, against the server and world it will run on)
+    py(TOOLS / "compile_spawns.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
@@ -247,6 +258,12 @@ def prepare(a):
         raise SystemExit("no re-apply step runs these packs, and EXCLUDED does not say why:\n  %s\n"
                          "Add a step in steps(), or add the pack to EXCLUDED with its reason."
                          % "\n  ".join(missing))
+    # and inside a covered pack, every function has to be run by a step or named by something that runs
+    orphans = unreferenced(steps())
+    if orphans:
+        raise SystemExit("these functions are run by no step and named by nothing in any pack:\n  %s\n"
+                         "Run each from a step, call it from one that is, or exclude its pack with a reason."
+                         % "\n  ".join(orphans))
     # and every settlement and donor the placements name has to be reachable too, not only the packs
     doc = placements()
     ran = {v for _sid, _title, acts in steps() for kind, v in acts if kind == "fn"}
@@ -300,16 +317,150 @@ def install(a):
             shutil.rmtree(wdp / src.name)
         shutil.copytree(src, wdp / src.name)
         print("installed into the world folder", wdp / src.name)
+    # Our wild spawns, and the suppression that makes them the only thing spawning on the routes and in the
+    # sub-regions (the owner, 2026-09-24: the playtest had been Cobbleverse's defaults, a level-44 Ursaluna before
+    # Misty and no Wooper at the creek). The suppression pack re-emits every inherited spawn file the server can load
+    # with the corridors and sub-region polygons as anticonditions (EXP-012), so it is generated here, against the
+    # mods, global packs and world packs this server will actually load, and never committed (upstream data).
+    # Both go in the world's own folder: a world pack first seen is enabled above every other pack, so these win
+    # over the upstream spawn files, and the global folder the live world shares is left alone
+    for name in SPAWN_PACKS:
+        if (dp / name).exists():
+            shutil.rmtree(dp / name)
+            print("removed", dp / name, "(it belongs in the world folder)")
+    py(TOOLS / "suppress_inherited_spawns.py", "--server", a.server_dir, "--world", a.world_dir,
+       "--subregions", "--boxes", "merged", "--grid", "16")
+    for name in SPAWN_PACKS:
+        src = PACKS / name
+        if not (src / "pack.mcmeta").is_file():
+            raise SystemExit("no %s: the spawn packs were not generated" % src)
+        if (wdp / name).exists():
+            shutil.rmtree(wdp / name)
+        shutil.copytree(src, wdp / name)
+        print("installed into the world folder", wdp / name)
 
 
 class Rcon:
+    """One RCON connection for the whole run, reconnected when it drops.
+
+    The server directory's client (`rcon.run`) opens a connection per call. R17 makes hundreds of calls (every prop,
+    NPC and trainer is placed, polled and counted), and on Windows each closed connection holds its local port in
+    TIME_WAIT: the rehearsal of 2026-09-24 ran out of ephemeral ports (WinError 10048) and the verify after R17
+    could not connect. The wire protocol is the one that client speaks (a login packet, then one command packet and
+    its reply per command); only the connection is kept. The reply is the command's whole output: the server splits
+    one over 4096 bytes into several packets, which one call per connection used to cut off at the first.
+
+    A command is sent at most once. A connection found dead before sending is replaced and the command sent on the
+    new one; a failure after sending (the command may have run) closes the connection and raises, as a failed call
+    did before, and the next command opens a fresh one."""
+
+    CHUNK = 4096                                  # the server's largest reply body per packet
+    MARKER = 200                                  # a packet type the server does not handle: it answers it at once
+
     def __init__(self, server_dir):
         sys.path.insert(0, str(TOOLS))
         import runtime_guard
         self.rcon, self.pw = runtime_guard.rcon(server_dir)
+        self.host = getattr(self.rcon, "HOST", "127.0.0.1")
+        self.port = getattr(self.rcon, "PORT", 25575)
+        self.sock = None
+        self.rid = 1
+
+    @staticmethod
+    def _packet(rid, kind, body):
+        import struct
+        payload = struct.pack("<ii", rid, kind) + body.encode("utf8") + b"\x00\x00"
+        return struct.pack("<i", len(payload)) + payload
+
+    def _read(self):
+        """(request id, body bytes) of the next packet."""
+        import struct
+
+        def exact(n):
+            buf = b""
+            while len(buf) < n:
+                chunk = self.sock.recv(n - len(buf))
+                if not chunk:
+                    raise EOFError("RCON connection closed by the server")
+                buf += chunk
+            return buf
+        (length,) = struct.unpack("<i", exact(4))
+        data = exact(length)
+        rid, _kind = struct.unpack("<ii", data[:8])
+        return rid, data[8:-2]
+
+    def _connect(self, timeout):
+        import socket
+        last = None
+        for attempt in range(5):
+            try:
+                s = socket.create_connection((self.host, self.port), timeout=timeout)
+                break
+            except OSError as e:                       # the server busy, or ports briefly short: wait and retry
+                last = e
+                time.sleep(2 * (attempt + 1))
+        else:
+            raise SystemExit("RCON: cannot connect to %s:%d: %s" % (self.host, self.port, last))
+        self.sock = s
+        self.rid += 1
+        s.sendall(self._packet(self.rid, 3, self.pw))
+        rid, _ = self._read()
+        if rid == -1:
+            self.close()
+            raise SystemExit("RCON auth failed")
+
+    def _alive(self):
+        """False when the server has closed the idle connection (a read would return nothing)."""
+        import select
+        import socket
+        try:
+            readable, _, _ = select.select([self.sock], [], [], 0)
+            return not readable or self.sock.recv(1, socket.MSG_PEEK) != b""
+        except OSError:
+            return False
+
+    def close(self):
+        if self.sock is not None:
+            try:
+                self.sock.close()
+            except OSError:
+                pass
+            self.sock = None
 
     def __call__(self, cmd, timeout=3600):
-        return self.rcon.run([cmd], self.pw, timeout=timeout)[0].strip()
+        if self.sock is not None and not self._alive():
+            self.close()
+        for attempt in (0, 1):
+            if self.sock is None:
+                self._connect(timeout)
+            self.sock.settimeout(timeout)
+            self.rid += 1
+            rid = self.rid
+            try:
+                self.sock.sendall(self._packet(rid, 2, cmd))
+            except OSError:
+                self.close()                               # not sent: safe to send once more on a new connection
+                if attempt:
+                    raise
+                continue
+            try:
+                got, body = self._read()
+                parts = [body] if got == rid else []
+                if len(body) >= self.CHUNK or got != rid:
+                    # possibly split: ask for a marker the server answers after the rest of this reply
+                    self.rid += 1
+                    mark = self.rid
+                    self.sock.sendall(self._packet(mark, self.MARKER, ""))
+                    while True:
+                        got, body = self._read()
+                        if got == mark:
+                            break
+                        if got == rid:
+                            parts.append(body)
+            except (OSError, EOFError):
+                self.close()                               # sent: it may have run, so never sent twice
+                raise
+            return b"".join(parts).decode("utf8", "replace").strip()
 
 
 def indexed(pack, folder):
@@ -359,11 +510,44 @@ def uncovered(todo):
     return bad
 
 
+FUNCTION_REF = re.compile(r"([a-z0-9_.-]+:[a-z0-9_./-]+)")
+
+
+def unreferenced(todo):
+    """Functions that no step runs and no file of any pack names: not called, scheduled, tagged, rewarded by an
+    advancement or run by a dialogue. A pack with a step can still hold a function nothing runs: the Rift's entities
+    (`cobblers:rift/fx`) sat beside its 1,005 block functions, the pack counted as covered, and the 2026-09-24
+    rehearsal found 0 of 14 in the world. Packs in EXCLUDED are skipped with their reason."""
+    names, text = {}, []
+    for pack in sorted(p.name for p in PACKS.iterdir() if p.is_dir()) if PACKS.is_dir() else []:
+        root = PACKS / pack / "data"
+        for f in root.rglob("*"):
+            if not f.is_file():
+                continue
+            if f.suffix == ".mcfunction":
+                rel = f.relative_to(root).parts
+                if len(rel) > 2 and rel[1] == "function":
+                    names["%s:%s" % (rel[0], "/".join(rel[2:])[:-len(".mcfunction")])] = pack
+            if f.suffix in (".mcfunction", ".json"):
+                text.append(f.read_text(encoding="utf-8", errors="replace"))
+    run = {v for _s, _t, acts in todo for k, v in acts if k == "fn"}
+    if any(k == "props" for _s, _t, acts in todo for k, _v in acts):
+        run |= {n for n in names if n.startswith("cobblers:scenes/") and n.endswith("/place")}
+    referenced = set()
+    for t in text:
+        referenced.update(FUNCTION_REF.findall(t))
+    return sorted(n for n, pack in names.items() if pack not in EXCLUDED and n not in run and n not in referenced)
+
+
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
-    out = [("R1", "the Rift skin: the block pass over the sculpted shape",
-            [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift", "rift")]),
+    # the Rift's entities (the trailhead guards' placeholders and the portal sheets) after its blocks: fx force-loads
+    # their chunks and schedules fx_go 60 ticks on, which summons them and counts them. No step ran it until the
+    # 2026-09-24 rehearsal found 0 of 14 on a fresh export: they had been placed by hand on staging
+    out = [("R1", "the Rift skin: the block pass over the sculpted shape, then its entities",
+            [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift", "rift")]
+            + [("fn", "cobblers:rift/fx"), ("wait", 8), ("check", "rift_fx")]),
            ("R1B", "the Rift biome, painted over the skin",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
            ("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
@@ -420,8 +604,41 @@ def steps(with_spawns=False):
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
+    # the sleeping Celebi: an entity, so the export erased it; summoned over RCON because Cobblemon's spawn command
+    # does nothing from a function (tools/sapling_celebi.py), then walled and dressed by its pack
+    import sapling_celebi
+    out.append(("R14C", "the Celebi in the Route 1 sapling", sapling_celebi.placement_steps(sapling_celebi.load())
+                + [("check", "celebi")]))
     out.append(("V", "floor verify and trader verify", [("check", "verify")]))
     return out
+
+
+def watchdog_setting(server_dir):
+    """The max-tick-time value in <server>/server.properties (only that key is read), or None when it is not set,
+    which leaves the server's default watchdog of 60 s."""
+    props = runtime_guard.check(Path(server_dir) / "server.properties", "read the watchdog setting in")
+    if not props.is_file():
+        raise SystemExit("no server.properties in %s: is --server-dir the server?" % server_dir)
+    for line in props.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = line.strip()
+        if not line.startswith("#") and line.split("=", 1)[0].strip() == "max-tick-time":
+            return line.split("=", 1)[1].strip() if "=" in line else ""
+    return None
+
+
+def require_watchdog_off(server_dir):
+    """Refuse the run unless the server's watchdog is off. The Rift's functions leave a lighting backlog that held one
+    tick past the 60 s watchdog at R5 on 2026-09-24, and the server killed itself mid-run. The file is what the server
+    read at boot only if nobody edited it since: it is set before the boot, and restored after the run."""
+    wd = watchdog_setting(server_dir)
+    if wd != "-1":
+        raise SystemExit(
+            "server.properties has max-tick-time=%s: the re-apply run needs the watchdog off. With the server "
+            "stopped, set max-tick-time=-1 in %s, boot, and run again; after the run, with the server stopped again, "
+            "%s. docs/world-building/REEXPORT.md, the run table, steps 5b and 8a."
+            % ("(not set: the default 60000)" if wd is None else wd, Path(server_dir) / "server.properties",
+               "remove the line again" if wd is None else "put back max-tick-time=%s" % wd))
+    print("watchdog: max-tick-time=-1 in server.properties (restore it after the run)")
 
 
 def run(a):
@@ -451,6 +668,20 @@ def run(a):
                     print("   !! %s -> %s" % (v, r[:120]), flush=True)
             elif kind == "wait":
                 time.sleep(v)
+            elif kind == "cmd":
+                # a command a function cannot run for us (Cobblemon's spawn command does nothing inside one)
+                r = rc(v)
+                print("   %s -> %s" % (v[:100], r[:120] or "(no output)"), flush=True)
+            elif kind == "check" and v == "celebi":
+                import sapling_celebi
+                x, y, z = (int(q // 1) for q in sapling_celebi.load()["position"])
+                rc("forceload add %d %d" % (x, z))
+                time.sleep(2)
+                n = rc("execute if entity @e[tag=%s]" % sapling_celebi.TAG)
+                rc("forceload remove %d %d" % (x, z))
+                print("   celebi: %s" % n, flush=True)
+                if "count: 1" not in n:
+                    bad.append("celebi: expected one tagged Celebi on its branch, got %r" % n)
             elif kind == "npc":
                 conv, (x, y, z), cls = v
                 rc("forceload add %d %d" % (x, z))
@@ -549,6 +780,21 @@ def run(a):
                 rc("forceload remove %d %d" % (x, z))
                 if "passed" not in r:
                     bad.append("the world tree's crown block at %s is missing: cobblers_height is not in the world folder" % (CROWN,))
+            elif kind == "check" and v == "rift_fx":
+                # fx_go counts what it summoned into a score; the plan says how many there must be
+                want = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))["entities_expected"]
+                got = None
+                for _ in range(10):
+                    r = rc("scoreboard players get #rift_fx_all cobblers.rift_fx")
+                    m = re.search(r"has (\d+) ", r)
+                    if m:
+                        got = int(m.group(1))
+                        if got == want:
+                            break
+                    time.sleep(2)
+                print("   the Rift's entities: %s of %d" % (got, want), flush=True)
+                if got != want:
+                    bad.append("the Rift's entities: %s of %d summoned (cobblers:rift/fx)" % (got, want))
             elif kind == "check" and v == "verify":
                 time.sleep(5)
                 print(rc("save-all flush", timeout=600))
@@ -586,6 +832,7 @@ def run(a):
             raise SystemExit("stopped at %s. Re-run that step alone (--only %s) once, then continue with --from the next step"
                              % (sid, sid))
     print(rc("save-all flush", timeout=600))
+    getattr(rc, "close", lambda: None)()
     rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
     path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
     print("run complete:", path)
@@ -696,6 +943,8 @@ def main(argv=None):
     # Every subcommand but `plan` reads or writes the server or a world (prepare reads the installed packs' donor
     # templates; install writes the packs; run drives RCON; audit reads a world): the lock first, before anything.
     runtime_guard.require_lock("reapply %s" % a.cmd)
+    if a.cmd == "run":
+        require_watchdog_off(a.server_dir)             # before the first RCON command (REEXPORT.md step 5b)
     return {"carry": carry, "prepare": prepare, "install": install, "run": run, "audit": audit}[a.cmd](a) or 0
 
 

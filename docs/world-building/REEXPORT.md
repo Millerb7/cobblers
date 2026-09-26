@@ -15,7 +15,7 @@ world before the dry run passes.
 | # | Content | Carried because |
 | --- | --- | --- |
 | C1 | Terrain, coasts, massifs, river cuts, the vertical rescale | the canonical heightmap is the export input (`data/world.json` sha256) |
-| C2 | Pads: the Scar y280, Frostpeak shrine y310, Surge's shelf y174.4 | pressed into the canonical heightmap by `tools/press_pads.py` |
+| C2 | Pads: the Scar y280, Frostpeak shrine y310, Surge's shelf y174.4; the Rift's shape | pressed into the canonical heightmap by `tools/press_pads.py`, and the Rift sculpted into it by `tools/rift_heightmap.py`: `land_8k_16_rescaled_b145_pads_rift.png` (`data/world.json`) |
 | C3 | Biomes, surface materials, snow and scree, the thinned grass | the paint manifest passed with `--paint` |
 | C4 | 77,750 foliage objects, including the painted landmark trees | WorldPainter custom-object layers from the same manifest |
 | C5 | Lakes, rivers and water levels | paint |
@@ -170,7 +170,9 @@ islet are rebuilt from committed data; and every one of them is audited by resul
 
 **Before the day** (none of this touches the server)
 1. Free about 3 GiB for the retired world.
-2. `python tools/heightmap_check.py C:/Users/wnd/Documents/land_8k_16_rescaled_b145_pads.png`: 0 tears. Regenerate the paint if it changed (`tools/paint_maps.py`).
+2. `python tools/heightmap_check.py C:/Users/wnd/Documents/land_8k_16_rescaled_b145_pads_rift.png`: 0 tears. This is the
+   canonical heightmap `data/world.json` pins (sha256 `0d9b5f1e8a01…`: the pads and the Rift's sculpted shape);
+   `tools/reexport.py` exports the file named there and checks its hash. Regenerate the paint if it changed (`tools/paint_maps.py`).
 3. `python tools/reapply.py prepare --source-root C:/Users/wnd/Documents --server-dir C:/Users/wnd/Documents/github/cobblers-server`
    — 4 minutes; it must end `216 function file(s) checked, 0 with problems`.
 4. `python tools/reapply.py plan` to see the steps and the 23 places.
@@ -189,9 +191,11 @@ islet are rebuilt from committed data; and every one of them is audited by resul
 | 4a | **Carry the players, before the first boot.** `python tools/reapply.py carry --old-world <the world retired in step 2> --world-dir C:/Users/wnd/Documents/github/cobblers-server-next/cobblers-10240` (server stopped). It must end `carried: N players, every file present, non-empty and matching by sha256`, with N the number of people who have played. It refuses a source last saved more than 12 hours ago or any retained snapshot (those are for rehearsals, `--rehearsal`, never this run), and fails if any player's badge flags and rctmod defeat records disagree. Anything else stops the run: fix it and carry again (it refuses a world that already holds player files, so move a half-carried world's player folders aside first). See "Carrying the players" below | 1 min |
 | 5 | `python tools/reapply.py install --server-dir <server> --world-dir C:/Users/wnd/Documents/github/cobblers-server-next/cobblers-10240` (server stopped): the packs, `cobblers_height` and `cobblers_worldtree` into the world folder, and the disposable-only restore pack removed. It refuses a world with no player in it (step 4a not done) | 1 min |
 | 5a | Move `cobblers-server-next/cobblers-10240` to `<server>/cobblers-10240` (the folder step 2 emptied) | 1 min |
+| 5b | **Watchdog off for the run.** With the server stopped, note the `max-tick-time` line in `<server>/server.properties` (absent means the default, 60000) and set `max-tick-time=-1`. The Rift's functions leave a lighting backlog that held one tick past the 60 s watchdog at R5 and crashed the staging server mid-run (EXP-026 run 4, 2026-09-24). `reapply.py run` reads that one key and refuses to start unless it is `-1`; the server reads the file at boot, so set it before step 6 | 1 min |
 | 6 | Boot the server | 30 s |
 | 7 | `python tools/reapply.py run --server-dir <server>` | 4.5 min |
 | 8 | Stop the server; copy the world folder (the audit tools refuse to read the live save) | 3 min |
+| 8a | **Watchdog back on.** With the server stopped, restore the `max-tick-time` line noted in 5b (or remove the line if there was none), before the boot in step 10 | 1 min |
 | 9 | `python tools/reapply.py audit --server-dir <server> --world <the copy>` | 2 min |
 | 10 | Boot; Distant Horizons pregen over the border; retire the client LOD cache | 10-60 min |
 | 11 | The audit tour (`docs/world-building/AUDIT_TOUR.md`) | you |
