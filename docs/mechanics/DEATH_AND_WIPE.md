@@ -1,109 +1,118 @@
-# Death, blackout and recovery
+# Death, wipe, recovery and water depth
 
-**Status:** proposed design; nothing in this document is implemented or runtime-proven.
+**Status:** approved design direction; no runtime handler, recovery claim,
+checkpoint hook or water-depth rule in this document is implemented or
+runtime-proven.
 
-## Decision
+This is the single specification for blackout, recoverable losses and deep
+water. It supersedes earlier death-only wording in this file.
 
-Use one wipe pipeline for both Minecraft death and a full-party Cobblemon loss.
-The player returns to the last Pokemon Center they healed at or town waystone
-they travelled through, keeps protected infrastructure, permanently loses 10%
-of their CobbleDollars, and temporarily loses a bounded selection of ordinary
-consumables.
+## Rules that must survive implementation
 
-The consumables belong to a persistent **recovery claim** at the defeat site.
-When a wild Pokemon caused the wipe, that exact Pokemon becomes the claim's
-guardian and appears to carry the most notable lost item. Beating or catching
-the guardian returns the full claim. The entity is presentation and encounter;
-the saved claim is the authority. If the entity disappears, the claim recreates
-it rather than deleting the player's property.
+1. A Minecraft player knockout and a full-party Cobblemon loss use the same
+   blackout pipeline.
+2. The player returns to the last Pokemon Center they successfully used or the
+   last town waystone they successfully travelled through.
+3. The player's ordinary inventory is kept. The blackout handler removes only
+   the bounded eligible items described below.
+4. Every blackout loses 10% of current CobbleDollars, whether the cause was a
+   Pokemon, trainer, fall, lava, drowning or another environment hazard.
+5. **Items are lost only when a Pokemon or trainer defeated the player. The
+   Pokemon or trainer that won holds the recovery claim. Environmental death
+   never loses items.** Drowning, falling, lava, the void, suffocation, commands,
+   PvP and damage with no confidently identified Pokemon or trainer cost money
+   and a checkpoint return only.
+6. TMs, permanent move unlocks and Minecraft tools are never eligible. Balls,
+   medicine, consumable battle supplies and evolution stones may be eligible.
+7. Recoverable items never decay. Recovery requires the victor to be defeated
+   or caught. The saved claim, rather than an entity held-item slot, is the
+   authority.
+8. Shorelines, rivers and shallow water remain ordinary water. The harsh air
+   rule begins only at actual depth.
+9. With no qualifying mount Pokemon, a player has vanilla air. When it is gone,
+   each drowning pulse deals half the player's maximum health; two pulses knock
+   out a player who entered them at full health.
+10. An unlocked Surf ability plus a qualifying Pokemon in the active party gives
+    bonus air. An unlocked Dive ability plus a qualifying Pokemon gives unlimited
+    air.
 
-Recovery claims do not expire. A player may return when prepared. The permanent
-money loss supplies the unavoidable cost; deleting the recoverable items on a
-timer would turn an intended rematch into an offline-time penalty.
+If cause attribution is uncertain, the system must choose the environmental
+outcome: money and teleport, with no item removal. It must never guess a holder.
 
-## Why this recovery model
+## Terms and attribution
 
-| Model | Feel | Reliability | Decision |
-| --- | --- | --- | --- |
-| Natural victor literally owns every lost item | Best story when it works | One held-item slot; natural despawn, capture and re-export can destroy or duplicate the loss | Do not use as authority |
-| Item entities on the ground | Familiar corpse run | Generic, time-limited, vulnerable to lava, other players and re-export | Fallback presentation only |
-| Timed recovery claim | Urgent | Punishes logout and can force an unwinnable immediate rematch | Reject |
-| Permanent claim with a bound guardian | The victor still has the player's things and creates a rematch | Survives restart, disappearance and re-export when the claim is carried | **Use** |
+- **Blackout:** the common transaction caused by Minecraft player death or a
+  full-party Cobblemon battle loss.
+- **Battle defeat:** an explicit Cobblemon loss callback with a stable opposing
+  wild Pokemon or trainer identity.
+- **Pokemon knockout:** a Minecraft death whose direct damage source is a
+  specific Cobblemon Pokemon entity.
+- **Environmental death:** every death without a confidently identified Pokemon
+  or trainer victor, including environmental damage shortly after combat.
+- **Recovery claim:** the persistent owner-and-victor record containing the
+  removed item stacks.
+- **Guardian:** the exact wild Pokemon bound to a recovery claim.
 
-For a small private server, indefinite records are cheap and unresolved claims
-are useful stories. Guardians only need to exist while their area is loaded.
-There is no arbitrary three-claim cap. Repeated wipes can therefore leave more
-than one unresolved recovery encounter.
+Do not use a “recently attacked” timeout to turn later drowning, lava or fall
+damage into a Pokemon defeat. Only the explicit battle result or the direct
+lethal Pokemon source can create an item claim. A single incident ID deduplicates
+a battle-loss callback and a player-death callback from the same defeat.
 
-## Trigger and blackout flow
+## Blackout transaction
 
-Two events enter the same idempotent transaction:
+The server performs one idempotent transaction:
 
-1. **Player knockout:** a Minecraft player death caused by a wild Pokemon,
-   terrain, environment or another supported hazard.
-2. **Party wipe:** the player loses a Cobblemon battle with no conscious party
-   member. Cobblemon does not kill or teleport the player for this on its own.
-
-The handler records a wipe ID before changing money or inventory. If a physical
-knockout and battle-loss callback arrive for the same incident, the second sees
-the completed ID and cannot charge the player twice.
-
-The transaction is:
-
-1. Capture the cause, dimension, safe defeat coordinate, battle and opposing
-   Pokemon UUIDs, and the player's current checkpoint.
-2. Calculate the money charge and recovery items from one inventory snapshot.
-3. Persist the recovery claim before removing anything.
-4. Debit the money and remove the selected items on the server thread.
-5. Commit the claim and bind its guardian or fallback satchel.
-6. Return the player to the checkpoint, clear combat pursuit, and give short
+1. Record an incident ID, cause, player UUID, dimension, safe defeat coordinate,
+   current checkpoint and, when present, the wild Pokemon UUID or stable trainer
+   ID.
+2. Read the CobbleDollars balance and calculate 10%, rounded up, with a minimum
+   loss of 1 when the balance is above zero.
+3. If and only if the cause has a Pokemon or trainer victor, select recoverable
+   items from one complete inventory snapshot and prepare a claim.
+4. Persist the incident and any claim before debiting money or removing items.
+5. Debit money and remove the selected items atomically on the server thread.
+6. Bind the claim to the wild guardian or trainer. Environmental incidents skip
+   this step and have no claim.
+7. Teleport the player to their checkpoint, clear combat pursuit and grant short
    arrival protection.
-7. In standard play, heal the party as a Pokemon Center blackout would.
+8. In standard play, heal the party as a Pokemon Center blackout would. Formal
+   Nuzlocke handling is different below.
+9. Deliver the player-facing result after the destination loads.
 
-If claim persistence fails, the transaction aborts before charging the player.
-If teleporting fails after the charge commits, reconnect recovery completes the
-return rather than charging again.
+If persistence fails, abort before charging anything. If teleporting fails after
+commit, reconnect recovery completes the teleport without charging again.
 
 ## Checkpoints
 
-Each player stores one `last_safe_checkpoint` with a stable place ID,
-dimension, coordinates, facing, source type and update time.
+Each player stores one `last_safe_checkpoint` with a stable place ID, dimension,
+coordinates, facing, source type and update time.
 
 - A Pokemon Center becomes the checkpoint only after a successful healer use.
-- A town waystone becomes the checkpoint after successful travel through that
-  waystone. Discovering or merely walking near it is insufficient.
-- Route midpoint waystones are excluded unless the later navigation decision
-  explicitly promotes them to safe checkpoints.
-- A new player with no record falls back to the Pallet/Hometown campaign spawn.
-- A checkpoint is validated against the current place manifest before use. A
+- A town waystone becomes the checkpoint only after successful travel through
+  that waystone. Discovery and proximity are insufficient.
+- Route midpoint waystones are not safe checkpoints unless later promoted by an
+  explicit campaign decision.
+- A player with no record returns to the Pallet/Hometown campaign spawn.
+- Before use, validate the checkpoint against the current placement manifest. A
   moved or removed checkpoint falls back to Pallet rather than an obsolete
   coordinate.
 
 The Center and Waystones hooks are not yet proven in this pack.
 
-## Cost
+## Money and eligible items
 
-### Money
+Money loss is permanent and never enters a recovery claim. The initial value is
+**10% of current CobbleDollars, rounded up**, minimum 1 above a zero balance and
+with no cap. Keep the percentage configurable for playtesting.
 
-Lose **10% of current CobbleDollars, rounded up**, with a minimum loss of 1 when
-the balance is above zero and no cap. Money is the permanent part of the wipe;
-it is not included in the recovery claim.
+Item selection is calculated by category across the entire carried inventory,
+not per stack, so splitting stacks does not reduce the loss.
 
-CobbleDollars 2.0.0 Beta 5.1 exposes balance reads and writes and its own remove
-command performs a synchronous read/subtract/write. A percentage still needs a
-server-side transaction that reads the balance and writes the calculated result
-in one tick; the stock command accepts an amount, not a percentage.
-
-### Recoverable consumables
-
-Selection is calculated across each category, not per stack, so splitting a
-stack does not reduce the loss.
-
-| Category | Amount placed in claim | Included | Excluded |
+| Category | Initial amount placed in the claim | Included | Excluded |
 | --- | --- | --- | --- |
-| Ordinary Poke Balls | 15% of carried quantity, rounded up, maximum 10 | purchasable and craftable balls | Master Ball, Ancient Origin Ball, unique/story balls |
-| Medicine | 15%, rounded up, maximum 6 | healing, status cure, Ether-like and revive consumables | key/story medicine |
-| Battle and evolution consumables | one random eligible item, 35% chance when any are carried | evolution stones and consumable battle items | permanent unlocks and quest items |
+| Ordinary Poke Balls | 15% of carried quantity, rounded up, maximum 10 | Purchasable and craftable balls | Master Ball, Ancient Origin Ball, unique and story balls |
+| Medicine | 15%, rounded up, maximum 6 | Healing, status cures, Ether-like supplies and revives | Key and story medicine |
+| Battle and evolution consumables | One random eligible item, 35% chance when any are carried | Evolution stones and consumable battle items | Permanent unlocks and quest items |
 
 Never select:
 
@@ -114,222 +123,367 @@ Never select:
 - a Pokemon's held item;
 - backpacks or other storage containers themselves.
 
-Eligible supplies inside a protected backpack must still count. Otherwise a
-backpack becomes free wipe insurance. Nested modded inventories are therefore a
-required proof, not an optional refinement. Until that scan is reliable, the
-system is not ready for production.
+Eligible supplies inside a protected backpack still count. Otherwise a backpack
+is free wipe insurance. Nested inventories are a required proof before release.
+Evolution stones are eligible only because claims do not expire and cannot be
+stolen; if either guarantee fails, evolution stones must be removed from the
+loss pool.
 
-The percentages are initial tuning values. They should be data/config values so
-a playtest can change severity without changing the transaction code.
+An environmental death does not run item selection at all. It does not create an
+empty claim, a satchel or a later recovery objective.
 
-## Recovery claim
+## Recovery claims
 
 The authoritative record contains:
 
 - claim ID and transaction state;
 - owner UUID and display name;
-- defeat dimension, exact point and ground-safe recovery point;
-- cause (`wild_battle`, `wild_attack`, `trainer_battle`, `environment` or
-  `other`);
-- all removed item stacks, including components;
-- guardian Pokemon UUID plus a serialized Pokemon snapshot when applicable;
-- original natural held item, if any;
+- victor kind and stable victor identity;
+- defeat dimension, exact point and ground-safe guardian point;
+- all removed stacks, including item components;
+- for a wild guardian, its UUID, serialized Pokemon snapshot and original held
+  item;
+- for a trainer, its stable campaign trainer ID;
 - resolution state, resolver UUID and timestamps;
-- source world/export generation so a re-export can rematerialize it once.
+- source world/export generation for re-export rematerialization.
 
-### Wild defeat
+Claims persist indefinitely. Repeated wipes may create multiple claims. Losing
+again to the same unresolved guardian appends newly selected items to that
+owner's existing claim after a new money charge; it never duplicates old items.
 
-The exact wild victor is tagged with the claim ID and exempted from normal
-despawn. In a multi-Pokemon wild battle, use the surviving opponent that landed
-the final faint; if that cannot be determined, use the surviving active
-opponent. The guardian remains at or patrols a small radius around the defeat
-site.
+### Wild Pokemon victor
 
-The guardian presents the most recognizable claimed item, preferring an
-evolution item over medicine and medicine over a Ball. That presentation is a
-non-droppable mirror of the claim, not the sole copy. Its original natural held
-item is recorded and restored when the claim ends. A label or recovery particle
-must identify it without revealing the entire cache from across the map.
+The exact victor is tagged with the claim ID and exempted from normal despawn. In
+a multi-Pokemon battle, use the surviving opponent that landed the final faint;
+if the event cannot prove that, use the surviving active opponent. If neither is
+known, create no item claim.
 
-Winning a battle against it or catching it resolves the claim atomically:
+The guardian remains near the defeat site and visibly presents the most
+recognizable claimed item, preferring an evolution item over medicine and
+medicine over a Ball. This is a non-droppable display mirror, not the stored
+item. Preserve and restore the Pokemon's natural held item.
 
-1. lock the claim;
-2. remove the presentation item/tag;
-3. grant all stored stacks to the owner, putting overflow in an owner-only
-   recovery package at their feet or checkpoint;
-4. mark the claim resolved;
-5. only then complete the normal defeat/capture consequences.
+Defeating or catching the guardian resolves the claim atomically: lock the
+claim, strip the display item and tag, deliver all stacks to the owner, mark the
+claim resolved, then finish normal defeat or capture consequences. Overflow
+becomes an owner-only package at the owner's feet or checkpoint.
 
-If the original entity is absent when its chunk loads, recreate it from the
-snapshot with the same claim ID. Duplicate guardians are removed by claim ID.
+If the entity despawns, unloads incorrectly or is absent after restart, the
+claim remains and recreates exactly one guardian from its snapshot when the
+area next loads. Duplicate entities with the same claim ID are removed. A catch
+must strip the display item before the Pokemon enters storage so it cannot be
+duplicated.
 
-### No wild victor
+### Trainer victor
 
-Trainer losses and environmental deaths create a visible lost satchel at the
-nearest safe ground to the defeat point. The satchel is still backed by the
-claim record. Touching it resolves the claim; the physical marker may be rebuilt
-after restart or re-export. PvP never transfers recovery ownership to the other
-player.
+A trainer loss binds the claim to that trainer's stable campaign ID. No ground
+satchel is created. The trainer must remain available for a recovery rematch even
+if its ordinary battle is one-time or on cooldown. Beating that trainer resolves
+only the viewing player's claims bound to it; a shared NPC must never expose one
+player's inventory to another.
 
-### Repeated defeat
+The trainer may show a generic owner-only cue that it is holding supplies. The
+claim ledger remains authoritative because one shared trainer can hold separate
+claims for several players and cannot represent them safely in one physical
+item slot.
 
-Losing to a recovery guardian creates a second charge and appends the newly
-selected consumables to that guardian's existing unresolved claim. It does not
-duplicate the first claim or reset its contents. Losing elsewhere creates a
-separate claim.
+### Persistence, restart and re-export
 
-## Multiplayer
+Chunk unload, server restart and player logout do not age or delete a claim.
+Store claims in campaign recovery data keyed by player UUID, mirror active IDs in
+player-persistent data, and include the recovery store in the explicit re-export
+carry manifest. The carry step must hash-check every claim file. On first boot of
+the rebuilt world, validate coordinates and recreate guardians when their chunks
+load; trainer claims rebind by stable trainer ID.
+
+If terrain moved, search vertically and within a small bounded radius for safe
+ground. If no valid guardian site or trainer exists, fail safe by returning the
+items directly to their owner and logging the broken claim. Do not turn them into
+environmental ground drops; that would violate the holder rule and risk loss.
+
+## Multiplayer policy
 
 Default to **rescue without theft**:
 
-- any trusted server player may defeat or catch a recovery guardian;
-- the Pokemon goes to the catcher if the normal capture is legal;
-- the cached items always return to the claim owner;
-- if the owner is offline, the claim becomes `resolved_pending_delivery` and
-  pays out when that owner next joins;
-- a helper cannot inspect or withdraw another player's cache.
+- another player may defeat or catch a wild recovery guardian;
+- the Pokemon goes to that player if the capture is otherwise legal;
+- every cached item goes to the claim owner, never the helper;
+- an offline owner receives the items once on next login;
+- helpers cannot inspect another player's cache;
+- trainer claims remain per player even though the trainer entity is shared.
 
-This keeps the good emergent moment—“I found and caught the Ursaluna that wiped
-you”—without allowing a friend to take the Thunder Stone. It also avoids adding
-party membership infrastructure that this campaign deliberately does not have.
+This keeps the useful co-op story—“I found the Pokemon that wiped you”—without
+turning a private campaign into theft or allowing accidental capture to delete a
+friend's Thunder Stone. If the owner wants the literal rematch, friends can leave
+the guardian alone. Owner-only resolution may be offered as a server policy, but
+helper theft must not be the default.
 
-An optional server policy could make only the owner able to resolve a guardian,
-or make the resolver take the goods. The latter is a theft/PvP rule and should
-never be the campaign default.
+Authored one-time Pokemon and capture locks take precedence. A helper may return
+the items without receiving an encounter that is normally non-catchable.
 
-Authored one-time Pokemon may already have capture ownership rules. Those rules
-win: a helper may defeat the guardian and return the items without receiving a
-normally non-catchable encounter.
+## Player-facing messages
 
-## What the installed systems already do
+Messages are short and explicit. Item-loss text appears only after an attributed
+Pokemon or trainer defeat.
 
-### Cobblemon 1.8
+| Moment | Required information | Recommended copy |
+| --- | --- | --- |
+| Any blackout | Destination and money loss | `You blacked out and returned to <checkpoint>. Lost ₽<amount>.` |
+| Environmental death | Explicitly confirm the scoping rule | `No items were lost. Nothing defeated you.` |
+| Pokemon or trainer defeat with a claim | Holder, items and recovery action | `<victor> took <summary>. Defeat or catch it to recover everything.` |
+| Attributed defeat with no eligible items | Confirm no hidden claim | `<victor> defeated you, but you had no eligible supplies to lose.` |
+| Claim resolved by owner | Full return | `You recovered <summary> from <victor>.` |
+| Claim resolved by helper | Both players understand ownership | Owner: `<helper> recovered your supplies from <victor>.` Helper: `Recovered supplies for <owner>.` |
+| Air at 20% | First warning | `Your air is running low. Surface now or rely on a trained water mount.` |
+| Air reaches zero | Harsh rule before damage | `You are out of air. Drowning here is lethal.` |
+| First drowning pulse | One-pulse warning from full health | `One more drowning hit will knock you out.` |
+| Surf or Dive interaction lacks unlock | Progress refusal | `You have not learned how to travel safely at this depth.` |
+| Ability unlocked but no qualifying party Pokemon | Party refusal | `No Pokemon in your party can support you at this depth.` |
 
-- A Pokemon faint is Pokemon state, not Minecraft player death. The current
-  config gives fainted Pokemon a 300-second faint timer and wakes them at 20%
-  health. A full party loss does not provide this blackout system.
-- The jar exposes battle faint/victory events, Pokemon entity save/load events,
-  a persistent-data compound, held-item access and an entity despawner. Those
-  are sufficient extension points for a companion implementation.
-- Pokemon properties can describe a held item and the API can set one. No stock
-  command was verified that safely targets the exact existing wild victor and
-  replaces its Cobblemon held item. Direct vanilla `/data` edits are not an
-  acceptable persistence contract.
-- A saved Pokemon carries its held-item data through normal entity
-  serialization, so chunk unload/restart should preserve it when the entity is
-  saved. This is **not runtime-proven here**.
-- `savePokemonToWorld: true` does not make a natural spawn safe escrow. Cobblemon
-  has its own age/distance despawner, and upstream reports show wild Pokemon can
-  still be removed under spawn pressure. A no-despawn guardian plus a recovery
-  record both need proof.
+Ordinary open water is not blocked. A new player may swim toward a visible deep
+reward and discover the risk. Refusal messages apply to marked Surf/Dive
+interactions and destinations that require controlled descent, not an invisible
+wall around every lake.
 
-### Lenient Death
+## Water and depth
 
-Cobbleverse already ships Lenient Death 1.2.5. Its current config preserves
-listed key items, can preserve tools by type, can split stacks probabilistically,
-marks dropped items, extends their lifetime, reports death coordinates and keeps
-inventory snapshots. It is useful policy and a safety net for Minecraft deaths.
-It does not handle a Cobblemon party wipe, CobbleDollars, bind drops to a Pokemon,
-or make those drops survive a world re-export.
+### What is gated
 
-Vanilla `keepInventory` and Lenient Death must not be treated as the design. If
-`keepInventory` keeps everything, there are no selected vanilla drops to become
-a recovery claim; if it is false, ordinary death handling can drop items before
-the claim owns them. The implementation must snapshot and remove the selected
-items itself and suppress their ordinary drop path. The current runtime value of
-`keepInventory` has not been read from the live world and remains unverified.
+This system gates **depth**, not access to water. Wading, shorelines, rivers,
+surface swimming and shallow lake shelves use ordinary Minecraft behavior. Deep
+lake floors, trenches and authored submerged sites create the risk.
 
-## Re-export
+The initial depth boundary is the player's eyes at least **five contiguous water
+blocks below the local water surface**. Above that boundary, use vanilla air and
+damage. This number is a tuning value and must be checked at Lake Viltri, a river,
+the visible Dratini site and an ocean trench before it becomes final. A local
+water-column measurement is preferable to a global Y threshold because the
+region's lakes sit at different elevations.
 
-World entities do not survive this project's re-export. A guardian-only design
-therefore loses claims even if restart persistence works.
+### Ability model
 
-Store claims in campaign recovery data keyed by player UUID, mirror the active
-claim IDs in player-persistent data, and add the recovery store to the explicit
-re-export carry manifest. The carry step must hash-check every claim file. On the
-new world's first boot, claims validate their coordinates and recreate guardians
-or satchels when the relevant chunk next loads.
+Depth access has two requirements:
 
-If terrain changed so the saved point is unsafe, search vertically and within a
-small radius for safe ground. If none exists, retain the claim and route it to an
-owner-only recovery clerk at the saved checkpoint. This fallback prevents loss;
-it is not the normal recovery loop.
+1. the per-player Surf or Dive training has been unlocked; and
+2. a Pokemon with the corresponding verified water-mount capability is in the
+   player's active party.
+
+The Pokemon does not need to be visibly mounted while the player swims. “Mount
+gated” means the party supplies a capable partner; it is not a level check and
+not merely knowledge of a move named Surf or Dive. Dive includes Surf's benefit.
+The exact capability source must be proven from the installed mount system; do
+not infer a species list from mainline Pokemon games.
+
+| State at depth | Air behavior | Drowning behavior |
+| --- | --- | --- |
+| No qualifying partner | Vanilla 300-tick air supply | After air reaches zero, each normal drowning pulse removes 50% of maximum health, bypassing armour; two pulses knock out a full-health player |
+| Surf unlocked and Surf-capable partner in party | Hold vanilla air full for 900 bonus ticks, then allow the normal 300 ticks: about 60 seconds total | Same 50%-maximum-health pulse after the full allowance expires |
+| Dive unlocked and Dive-capable partner in party | Keep air full while submerged | No drowning damage while qualification remains valid |
+
+The 900-tick Surf bonus is an initial tuning value. It should permit work at a
+lake bottom while preserving route choice and the danger of trenches. Dive is
+the point where air stops constraining exploration.
+
+Each 50% pulse is based on maximum health, not five fixed hearts. From less than
+half health, the first pulse can knock the player out. The rule must be
+server-authoritative and must not be weakened by armour. Whether Resistance or
+other effects should mitigate it is an open implementation proof; the intended
+result is two pulses from full health.
+
+### Entering, swapping and leaving depth
+
+- Re-evaluate ability and party qualification promptly while submerged. Prefer a
+  party-change event plus a low-frequency safety check over a full party scan
+  every tick.
+- Surf bonus time belongs to one continuous submersion and does not reset when
+  the player swaps Pokemon, crosses the deep boundary or relogs underwater. It
+  resets only after the player's eyes remain in breathable air long enough for
+  vanilla air to refill.
+- Removing the qualifying Pokemon underwater starts a five-second warning grace,
+  then downgrades to the best remaining state. It does not grant a fresh Surf
+  timer.
+- Logging out underwater stores the current exposure timer. Login rechecks the
+  party before restoring the benefit.
+- Death at depth follows the environmental rule unless a Pokemon or trainer was
+  the explicit victor: money and checkpoint teleport, no item claim.
+
+### Where Surf and Dive come from
+
+**Surf:** Misty grants the player's Surf training after `gym2_cleared` at Lake
+Viltri, as part of the lake-rescue chapter. It becomes useful immediately in the
+first major lake and on previously seen deep shelves. It provides time to work
+underwater without making trenches safe. The benefit activates only with a
+verified Surf-capable partner in the active party.
+
+**Dive:** after `gym6_cleared`, Sabrina directs the player to a glacial survey
+diver on Lake Tilpey's north shore. The diver teaches the technique because the
+player now understands the linked water, glacier and Rift evidence and is being
+sent toward places where submerged investigation matters. Dive provides
+unlimited air with a verified Dive-capable partner.
+
+This timing changes the whole map:
+
+- before Gym 2, visible deep rewards are warnings and future hooks;
+- after Gym 2, lake bottoms become workable for a limited time;
+- after Gym 6, air no longer protects any deep-water content from the player;
+- late underwater set pieces such as the Lugia trench still need their own story
+  gates if Dive alone must not open them.
+
+Surf and Dive are traversal training, not TMs and not items that can be lost.
 
 ## Nuzlocke compatibility
 
-The item-and-money recovery loop can coexist with a Nuzlocke, but the current
-Cobblemon faint rules cannot enforce one. Fainted Pokemon automatically wake
-after 300 seconds at 20% health.
+A formal Nuzlocke distinguishes player death from Pokemon death:
 
-Use two policy profiles if a formal Nuzlocke mode is added later:
+- A Pokemon faint in battle is that Pokemon's Nuzlocke death. It does not create
+  a blackout or recovery claim unless the whole party loses or the player is
+  also knocked out.
+- A full-party battle loss retires every fainted party member, then applies the
+  same money loss and recoverable claim. The checkpoint return must not revive
+  those Pokemon. The player withdraws legal reserves; with none, the run ends
+  under that ruleset.
+- Drowning, falling, lava and other environmental player deaths are **player
+  deaths, not Pokemon deaths**. They lose money and return the player, but do not
+  retire party members and never lose items.
+- Riding or being supported by a Pokemon when the player drowns does not turn the
+  event into a Pokemon faint unless Cobblemon separately reports that Pokemon as
+  fainted.
 
-- **Standard campaign:** checkpoint return heals the whole party.
-- **Nuzlocke:** the same money and recovery claim apply, but the wipe handler
-  never revives fainted Pokemon. A separate death/retirement system must mark or
-  box them and suppress passive awakening. A total wipe returns the player with
-  no restored team so they must withdraw legal reserves.
+The item system does not make a Nuzlocke inherently unplayable because claimed
+items are recoverable indefinitely and cannot be stolen. It does compound the
+cost of a full-party wipe, which is already the harshest Nuzlocke outcome. Start
+with the same recoverable-loss rules so the campaign has one understandable
+economy; add a reduced-loss Nuzlocke profile only if playtests show the rematch
+loop prevents rebuilding a legal reserve team. Never solve that by reviving
+fainted Pokemon or by making claims expire.
 
-Self-imposed Nuzlocke rules can use the standard system only if players retire
-Pokemon manually before the five-minute awakening. The recovery design does not
-make Nuzlocke mandatory and does not count a captured recovery guardian as the
-owner's route encounter unless that ruleset says it does.
+The installed Cobblemon configuration wakes fainted Pokemon after 300 seconds at
+20% health, so a formal Nuzlocke still needs a separate retirement mechanism.
+Self-imposed runs must retire Pokemon before that timer completes.
 
-## Ursaluna cave example
+## Existing runtime behavior and implementation boundary
 
-1. Ursaluna knocks out the player in the Tri Peaks cave.
-2. The player loses 10% of their balance, eight ordinary Balls, three medicines
-   and—on the utility roll—a Thunder Stone.
-3. They wake at the last used town waystone with their pickaxe, TMs and all other
-   infrastructure.
-4. Ursaluna remains bound to that cave and visibly presents the Thunder Stone.
-5. The player may rebuild their team and return days later. Beating or catching
-   Ursaluna returns every cached item. A friend may resolve it, but the items go
-   back to the wiped player.
-6. If the world is re-exported first, the claim recreates Ursaluna in the rebuilt
-   cave rather than deleting the cache.
+- Cobblemon 1.8 exposes battle faint/victory events, Pokemon persistent data,
+  held-item access, entity save/load events and despawner interfaces. These are
+  useful extension points, not proof of this design.
+- A saved Pokemon appears to carry held-item data through normal serialization,
+  but natural spawns can still be removed under spawn pressure. A held item on
+  the entity is therefore presentation only.
+- Cobbleverse ships Lenient Death 1.2.5, which can preserve key items and tools
+  and manage ordinary drops. It does not handle Cobblemon party wipes,
+  CobbleDollars, victor-bound claims or re-export persistence.
+- Vanilla `keepInventory` cannot implement selective recovery. The companion
+  handler must snapshot the inventory, suppress ordinary drops and remove only
+  selected stacks after claim persistence succeeds.
 
-## Implementation boundary and required proofs
+The combined event attribution, atomic money and inventory transaction,
+persistent claim ledger, guardian reconstruction, trainer binding, per-player
+air state and party capability checks justify one small server-side companion
+module unless an existing addon proves the entire state machine. Commands and
+datapacks alone are not a safe escrow system.
 
-Configuration and Lenient Death cover only part of this. The combined battle
-hook, atomic currency/inventory transaction, persistent claim, bound guardian,
-multiplayer ownership and re-export rematerialization justify a small server-side
-companion module unless an existing addon is found that provides the same state
-machine. Datapack commands alone are not a reliable implementation.
+## Design risks that must not be hidden
 
-Before production, a disposable-world experiment must prove:
+- A literal held item on a wild Pokemon is not durable enough to be the player's
+  property. The claim ledger must be authoritative even though the fiction says
+  the victor holds the items.
+- A trainer is one shared entity while losses are per player. Any global trainer
+  inventory or visible owner name would leak state; trainer presentation and
+  recovery must be viewer-specific or generic.
+- “Mount gated” and “in the party” are not the same as “currently riding.” This
+  specification chooses unlocked training plus a capable active-party Pokemon.
+  If the installed mount system cannot expose Surf and Dive capability, Claude
+  must stop and return that finding instead of guessing species.
+- Half maximum health per drowning pulse can feel instantaneous under lag or a
+  missed warning. The severity is intentional, but it is acceptable only if the
+  shallow/deep boundary, client warning and server pulse timing are proven
+  together.
+- Dive at Gym 6 removes air as a gate everywhere. Any underwater place intended
+  for later progression needs an independent story gate; hiding it behind depth
+  after Gym 6 will not work.
+- Evolution stones are unusually scarce in the pregenerated world. Keeping them
+  eligible is defensible only because recovery is indefinite and theft-free.
+  Any implementation that can permanently lose a claim must exclude them.
 
-1. Minecraft death and full-party loss each invoke exactly one wipe transaction.
-2. Center and town-waystone use update only the correct player's checkpoint.
-3. A fixed-percentage CobbleDollars debit and item removal are atomic across
-   disconnect/restart and cannot double-charge.
-4. Every protected category stays; Balls, medicine and an evolution stone enter
-   the claim; stack splitting and nested backpacks cannot evade it.
-5. The exact victor survives chunk unload and restart, and forced natural
-   despawn causes one reconstruction without duplication.
-6. Owner defeat, owner capture, helper defeat and helper capture each resolve
-   once; the helper never receives the owner's items.
-7. An offline owner receives a helper-resolved claim once on next login.
-8. Multiple unresolved claims and a repeated loss to the same guardian neither
-   overwrite nor duplicate items.
-9. Re-export carry preserves claims and rematerializes their guardians at safe
-   coordinates.
-10. Inventory overflow, a full party, server crash between transaction phases,
-    authored capture locks and the Nuzlocke policy all fail safely.
+## Open technical questions for Claude
 
-Until those pass, the design is approved only as a direction, not a working
-campaign mechanic.
+These must be answered in disposable-world experiments before implementation is
+called complete:
 
-## Evidence read for this design
+1. Which exact Cobblemon callbacks distinguish a full-party loss, a direct wild
+   Pokemon knockout and a trainer loss, and do they provide stable victor IDs?
+2. Can CobbleDollars balance read and percentage deduction be committed in the
+   same server-thread transaction as claim persistence and inventory removal?
+3. Can Center healer use and successful town-waystone travel update the correct
+   player's checkpoint without false updates from proximity?
+4. Can a wild guardian be excluded from Cobblemon's despawner and reconstructed
+   exactly once after chunk unload, restart and a forced removal?
+5. Does a Pokemon's real held item survive chunk unload and restart, and can the
+   visual recovery item be stripped before capture without duplicating or
+   deleting the natural held item?
+6. Can a shared trainer expose and resolve owner-specific claims, including a
+   recovery rematch that bypasses ordinary one-time or cooldown rules?
+7. Can air supply be changed per player while keeping the client bubble display
+   accurate, or should Surf use a separate server timer with explicit UI?
+8. Can party contents and verified mount capabilities be read on party-change
+   events and at a safe polling rate? What API identifies Surf-capable and
+   Dive-capable mounts in this installed pack?
+9. What happens when a player swaps the qualifying Pokemon, changes dimension,
+   disconnects or dies while the water timer is active?
+10. Can the server apply a 50%-of-maximum-health drowning pulse that bypasses
+    armour consistently, and how do Resistance, regeneration and lag affect the
+    promised two-pulse result?
+11. Does five blocks below the local surface correctly separate shallow water
+    from depth across rivers, Lake Viltri, Lake Tilpey, the ocean and trenches?
+12. Can helper defeat and helper capture resolve a wild claim exactly once and
+    deliver only to an online or offline owner?
+13. Does the re-export carry step preserve claims and water exposure state, and
+    can it rebind every guardian and trainer claim without touching the live
+    world during preparation?
+14. Can nested modded inventories be scanned and modified atomically without
+    losing item components or creating a backpack-based exemption?
+15. How will a formal Nuzlocke suppress Cobblemon's five-minute passive revival?
 
-- Repository runtime and re-export facts: `docs/STATE.md`.
-- Cobblemon config: `modpack/config/cobblemon/main.json` and the reference pack's
-  matching `base-pack/cobbleverse/config/cobblemon/main.json`.
+## Required functional proof
+
+A disposable-world test must demonstrate:
+
+1. Battle loss and Minecraft death from one incident charge once.
+2. Wild and trainer defeats create claims; drowning, fall and lava deaths never
+   remove an item even when they occur immediately after combat.
+3. Protected items remain, eligible items enter a claim, and nested containers
+   cannot evade the policy.
+4. The exact wild guardian survives or reconstructs after unload, restart and
+   forced despawn without duplication.
+5. Trainer rematch returns the correct player's items and exposes no other
+   player's claim.
+6. Owner defeat/capture and helper defeat/capture each resolve once, with offline
+   owner delivery and no helper theft.
+7. Re-export carry rematerializes unresolved claims at valid locations.
+8. A river and shoreline remain vanilla; a deep unassisted player gets vanilla
+   air and the two-pulse drowning rule.
+9. Surf supplies the configured finite bonus and Dive supplies unlimited air.
+10. Party swapping and relogging cannot reset the timer or retain a benefit
+    without a qualifying Pokemon.
+11. Standard blackout heals the party; Nuzlocke blackout does not revive or
+    unretire any Pokemon.
+12. Every warning and result message is sent only to the affected player and
+    names the correct checkpoint, charge, holder and recovery outcome.
+
+Until those pass, this document is an implementation specification, not a claim
+that the campaign mechanic works.
+
+## Evidence carried forward
+
+- Repository runtime and world facts: `docs/STATE.md`.
+- Cobblemon configuration: `modpack/config/cobblemon/main.json` and the reference
+  pack's matching `base-pack/cobbleverse/config/cobblemon/main.json`.
 - Lenient Death policy: `base-pack/cobbleverse/config/lenientdeath.json5` and
   [Lenient Death source](https://github.com/JackFred2/LenientDeath).
 - Installed Cobblemon 1.8.0 jar: battle events, Pokemon persistent data,
   held-item access, entity save/load events and despawner interfaces.
 - Installed CobbleDollars 2.0.0 Beta 5.1 jar: balance getter/setter and
-  read/subtract/write remove path.
-- Cobblemon upstream persistence caveat:
+  synchronous remove path.
+- Cobblemon persistence caveats:
   [save-to-world issue](https://gitlab.com/cable-mc/cobblemon/-/issues/269) and
   [forced-despawn issue](https://gitlab.com/cable-mc/cobblemon/-/issues/1686).
