@@ -65,7 +65,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # zones, effects) and the route trainers
                 "cobblers_route_events", "cobblers_scenes", "cobblers_trainers",
                 # the sleeping Celebi in the Route 1 sapling and its keeper (2026-09-25)
-                "cobblers_celebi")
+                "cobblers_celebi",
+                # the Rift's own storm: thunder and lightning for players inside the Rift (2026-09-25)
+                "cobblers_rift_storm")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -80,6 +82,7 @@ EXCLUDED = {
     # these three drive themselves and write no blocks: found by the check below the moment it was added
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
+    "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
     "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
                          "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
@@ -94,7 +97,7 @@ EXCLUDED = {
 # server packs installed into the target world's own datapacks folder, not the server's: they act without being called
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
-WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi")
+WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -191,6 +194,7 @@ def prepare(a):
     py(TOOLS / "tree_grove.py", *src, "--site", "2016,2272", "--id", "foothill_woods")
     py(TOOLS / "tree_grove.py", *src, "--augment", "foothill_woods")
     py(TOOLS / "elder_trees.py", *src)
+    py(TOOLS / "themed_saplings.py", *src)                            # placed from data/themed_saplings.json's pins
     py(TOOLS / "maze_forest.py", *src)
     py(TOOLS / "islet.py", *src)
     # the Rift, in the order the world needs it: the skin lies over the sculpted shape, the biome is painted
@@ -215,6 +219,10 @@ def prepare(a):
     py(TOOLS / "scenes_pack.py")
     py(TOOLS / "route_trainers.py")
     py(TOOLS / "rematerial.py")
+    # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
+    # data/traders.json from data/sea_town.json and the heightmap; stop here if the committed records are stale. The
+    # town itself is then built with every other place (R8: prep_sea_town, towns/sea_town; its clerk in R14)
+    py(TOOLS / "sea_town.py", "check", *src)
     py(TOOLS / "place_town.py", "hometown", *src)
     for s in places():
         py(TOOLS / "town_plan.py", s, *src)
@@ -222,6 +230,7 @@ def prepare(a):
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "sapling_celebi.py")
+    py(TOOLS / "rift_storm.py")
     py(TOOLS / "signposts.py", "function", *src)
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
@@ -236,7 +245,9 @@ def prepare(a):
     fn.mkdir(parents=True)
     (REAPPLY / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: loose re-application functions (tools/reapply.py)"}}) + "\n", encoding="utf-8")
     loose = [(BUILD / "town_prep" / ("prep_%s.mcfunction" % s), "prep_%s" % s) for s in places()]
-    loose += [(BUILD / "elders" / "elders.mcfunction", "elders"), (BUILD / "grove" / "grove_foothill_woods.mcfunction", "grove"),
+    loose += [(BUILD / "elders" / "elders.mcfunction", "elders"),
+              (BUILD / "themed_saplings" / "themed_saplings.mcfunction", "themed_saplings"),
+              (BUILD / "grove" / "grove_foothill_woods.mcfunction", "grove"),
               (BUILD / "grove" / "grove_foothill_woods_augment.mcfunction", "grove_augment"),
               (BUILD / "islet" / "relic_island.mcfunction", "islet")]
     for path, name in loose:
@@ -555,6 +566,8 @@ def steps(with_spawns=False):
             + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
            ("R4", "Foothill grove", [("fn", "cobblers:reapply/grove"), ("fn", "cobblers:reapply/grove_augment")]),
            ("R5", "elders", [("fn", "cobblers:reapply/elders")]),
+           # the themed saplings (tools/themed_saplings.py): before R9E, which puts their nest blocks in their trunks
+           ("R5B", "themed saplings", [("fn", "cobblers:reapply/themed_saplings")]),
            ("R6", "Route 1 maze forest", [("fn", "cobblers:route1/tile_%d_%d" % (i, j)) for i in range(4) for j in range(4)]),
            ("R10", "Relic Island islet (before the towns: the house stands on it)", [("fn", "cobblers:reapply/islet")]),
            ("R7", "hometown", [("fn", "cobblers:towns/hometown")])]
@@ -658,11 +671,12 @@ def run(a):
         print("reload:", rc("reload"))
     # No drops while building. Every fill that replaces the block under a flower, a torch or a sapling pops it off as
     # an item, and a falling block that lands on a torch drops both: the owner picked up seeds, flowers and torches all
-    # over staging after run 4 (2026-09-25). The rules come back as they were, even when a step stops the run.
+    # over staging after run 4 (2026-09-25). The rules come back on afterwards, even when a step stops the run, and
+    # always to true, never to what was found: a run that died with the server (run 5, out of memory) left them off in
+    # the world, and the next run would have "restored" that
     drops = {}
     for rule in DROP_RULES:
-        m = re.search(r"(true|false)\s*$", str(rc("gamerule %s" % rule)))
-        drops[rule] = m.group(1) if m else "true"
+        drops[rule] = "true"
         rc("gamerule %s false" % rule)
     try:
         _run_steps(a, rc, todo, rec, path)
@@ -846,6 +860,15 @@ def _run_steps(a, rc, todo, rec, path):
                 print("   traders verify exit %d" % r.returncode, flush=True)
                 if r.returncode:
                     bad.append("traders verify: %s" % r.stdout[-400:])
+                # the sea town's decks, posts, huts and lanterns against its model, and no water standing on a deck
+                r = subprocess.run([sys.executable, str(TOOLS / "sea_town.py"), "verify", "--rcon", a.server_dir],
+                                   cwd=ROOT, capture_output=True, text=True)
+                print("   sea town verify exit %d" % r.returncode, flush=True)
+                if r.returncode:
+                    bad.append("sea town verify: %s" % (r.stdout or r.stderr)[-400:])
+        # save after every step: run 5's server ran out of memory at R17 and every step since its last autosave (R12,
+        # R15, R16 and the lamps) was gone from the world although the run had reported each one done
+        rc("save-all")
         dt = time.time() - t0
         rec["steps"].append({"step": sid, "title": title, "seconds": round(dt, 1), "commands": sum(1 for k, _ in actions if k == "fn"),
                              "problems": bad})
@@ -882,6 +905,11 @@ def audit(a):
     r = subprocess.run([sys.executable, str(TOOLS / "signposts.py"), "verify", "--world", a.world], cwd=ROOT, capture_output=True, text=True)
     res["signposts"] = {"exit": r.returncode, "tail": r.stdout.strip().splitlines()[-6:]}
     print("signposts:", " | ".join(res["signposts"]["tail"]))
+    # the sea town block by block against its model, water on a deck, flowing water round it (tools/sea_town.py)
+    r = subprocess.run([sys.executable, str(TOOLS / "sea_town.py"), "verify", "--world", a.world], cwd=ROOT,
+                       capture_output=True, text=True)
+    res["sea_town"] = {"exit": r.returncode, "tail": (r.stdout or r.stderr).strip().splitlines()[-12:]}
+    print("sea town exit", r.returncode)
     # no walkable position under a roof, or anywhere in the cavern, at block light 0 (tools/light_plan.py check, from
     # the saved world's own light arrays)
     # every place but those whose plan says dark by design (the Scar, the jungle ruins): asking the check about one of
@@ -901,7 +929,7 @@ def audit(a):
     # play, and vanilla hostiles are disabled. It is evidence for builders, not a re-export gate.
     res["clean"] = (res["build_audit"]["exit"] == 0 and len(res["towns"]) == len(places()) > 0
                     and all(v["clean"] for v in res["towns"].values())
-                    and res["signposts"]["exit"] == 0)
+                    and res["signposts"]["exit"] == 0 and res["sea_town"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")
     print("audit %s: %s" % ("CLEAN" if res["clean"] else "NOT CLEAN", path))

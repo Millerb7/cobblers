@@ -19,9 +19,9 @@ nearest route. Habitat pools are not placed by geography at all and are listed s
 
 ## Gym 1: kanto_brock (Rock)
 
-19 species catchable before this gym; 19 of them are new since the last.
+21 species catchable before this gym; 21 of them are new since the last.
 
-Types available at the cap (L20), on the form a player would have evolved to: bug (2), dragon (1), electric (3), fighting (1), flying (5), grass (4), normal (6), water (7).
+Types available at the cap (L20), on the form a player would have evolved to: bug (2), dragon (1), electric (3), fighting (1), flying (6), grass (4), normal (6), water (9).
 Reached only by evolving, invisible if you read the caught form: fighting.
 Absent: dark, fairy, fire, ghost, ground, ice, poison, psychic, rock, steel.
 
@@ -31,29 +31,31 @@ Absent: dark, fairy, fire, ghost, ground, ice, poison, psychic, rock, steel.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it | yes |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it | yes |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it | yes |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it | yes |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it | yes |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it | yes |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it | yes |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it | yes |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it | yes |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it | yes |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it | yes |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it | yes |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it | yes |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks | yes |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it | yes |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks | yes |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks | yes |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks | yes |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks | yes |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it | yes |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it | yes |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it | yes |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it | yes |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it | yes |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it | yes |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it | yes |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it | yes |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it | yes |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it | yes |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it | yes |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it | yes |
 
 ## Gym 2: kanto_misty (Water)
 
-24 species catchable before this gym; 5 of them are new since the last.
+28 species catchable before this gym; 7 of them are new since the last.
 
-Types available at the cap (L25), on the form a player would have evolved to: bug (4), dragon (1), electric (3), fighting (1), flying (6), grass (5), normal (6), water (8).
+Types available at the cap (L25), on the form a player would have evolved to: bug (4), dragon (1), electric (4), fighting (1), flying (7), grass (5), ground (1), normal (6), water (12).
 Reached only by evolving, invisible if you read the caught form: fighting.
-Absent: dark, fairy, fire, ghost, ground, ice, poison, psychic, rock, steel.
+Absent: dark, fairy, fire, ghost, ice, poison, psychic, rock, steel.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -61,21 +63,25 @@ Absent: dark, fairy, fire, ghost, ground, ice, poison, psychic, rock, steel.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks |  |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
+| barboach | water/ground | 18-21 | uncommon | lake_viltri_hollow | subregion | on it | yes |
+| chinchou | water/electric | 18-21 | rare | lake_viltri_hollow | subregion | on it | yes |
 | corphish | water | 18-21 | common | route_02_brock_to_misty | route | on it | yes |
 | illumise | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it | yes |
 | lombre | water/grass | 18-21 | uncommon | route_02_brock_to_misty | route | on it | yes |
@@ -84,9 +90,9 @@ Absent: dark, fairy, fire, ghost, ground, ice, poison, psychic, rock, steel.
 
 ## Gym 3: kanto_ltsurge (Electric)
 
-44 species catchable before this gym; 20 of them are new since the last.
+49 species catchable before this gym; 21 of them are new since the last.
 
-Types available at the cap (L30), on the form a player would have evolved to: bug (6), dark (2), dragon (2), electric (4), fighting (5), flying (10), grass (6), ground (3), normal (11), poison (1), psychic (1), rock (1), water (9).
+Types available at the cap (L30), on the form a player would have evolved to: bug (6), dark (2), dragon (2), electric (5), fighting (5), flying (11), grass (6), ground (4), normal (11), poison (1), psychic (1), rock (1), water (13).
 Absent: fairy, fire, ghost, ice, steel.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
@@ -95,27 +101,32 @@ Absent: fairy, fire, ghost, ice, steel.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks |  |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
+| barboach | water/ground | 18-21 | uncommon | lake_viltri_hollow | subregion | on it |  |
+| chinchou | water/electric | 18-21 | rare | lake_viltri_hollow | subregion | on it |  |
 | corphish | water | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | illumise | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lombre | water/grass | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lotad | water/grass | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | volbeat | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | bunnelby | normal | 21-23 | common | route_03_misty_to_surge | route | on it | yes |
+| gyarados | water/flying | 21-23 | uncommon | foothill_woods | subregion | on it | yes |
 | heracross | bug/fighting | 21-23 | common | route_03_misty_to_surge | route | on it | yes |
 | noctowl | normal/flying | 21-23 | uncommon | route_03_misty_to_surge | route | on it | yes |
 | pachirisu | electric | 21-23 | rare | foothill_woods | subregion | on it | yes |
@@ -138,9 +149,9 @@ Absent: fairy, fire, ghost, ice, steel.
 
 ## Gym 4: kanto_erika (Grass)
 
-74 species catchable before this gym; 30 of them are new since the last.
+81 species catchable before this gym; 32 of them are new since the last.
 
-Types available at the cap (L35), on the form a player would have evolved to: bug (7), dark (4), dragon (3), electric (6), fighting (5), fire (1), flying (15), grass (7), ground (3), ice (7), normal (14), poison (2), psychic (3), rock (3), steel (3), water (9).
+Types available at the cap (L35), on the form a player would have evolved to: bug (7), dark (4), dragon (3), electric (7), fighting (5), fire (1), flying (16), grass (7), ground (4), ice (7), normal (14), poison (2), psychic (3), rock (3), steel (3), water (14).
 Reached only by evolving, invisible if you read the caught form: fire.
 Absent: fairy, ghost.
 
@@ -150,27 +161,32 @@ Absent: fairy, ghost.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks |  |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
+| barboach | water/ground | 18-21 | uncommon | lake_viltri_hollow | subregion | on it |  |
+| chinchou | water/electric | 18-21 | rare | lake_viltri_hollow | subregion | on it |  |
 | corphish | water | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | illumise | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lombre | water/grass | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lotad | water/grass | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | volbeat | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | bunnelby | normal | 21-23 | common | route_03_misty_to_surge | route | on it |  |
+| gyarados | water/flying | 21-23 | uncommon | foothill_woods | subregion | on it |  |
 | heracross | bug/fighting | 21-23 | common | route_03_misty_to_surge | route | on it |  |
 | noctowl | normal/flying | 21-23 | uncommon | route_03_misty_to_surge | route | on it |  |
 | pachirisu | electric | 21-23 | rare | foothill_woods | subregion | on it |  |
@@ -202,6 +218,7 @@ Absent: fairy, ghost.
 | snorunt | ice | 29-31 | common | route_04_surge_to_erika | route | on it | yes |
 | vanillite | ice | 29-31 | common | route_04_surge_to_erika | route | on it | yes |
 | ampharos | electric | 30-32 | ultra-rare | route_04_surge_to_erika | route | on it | yes |
+| basculin | water | 30-32 | uncommon | peak_pond_hollow | subregion | on it | yes |
 | buneary | normal | 30-38 | common | north_shore_downs | subregion | 65 blocks | yes |
 | dubwool | normal | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks | yes |
 | emolga | electric/flying | 30-32 | common | peak_pond_hollow | subregion | on it | yes |
@@ -213,6 +230,7 @@ Absent: fairy, ghost.
 | pichu | electric | 30-32 | common | peak_pond_hollow | subregion | on it | yes |
 | skiploom | grass/flying | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks | yes |
 | ursaring | normal | 30-32 | rare | peak_pond_hollow | subregion | on it | yes |
+| whiscash | water/ground | 30-32 | uncommon | peak_pond_hollow | subregion | on it | yes |
 | furret | normal | 32-34 | uncommon | north_east_downs | subregion | 97 blocks | yes |
 | nickit | dark | 32-34 | uncommon | north_east_downs | subregion | 97 blocks | yes |
 | sentret | normal | 32-34 | common | north_east_downs | subregion | 97 blocks | yes |
@@ -223,9 +241,9 @@ Absent: fairy, ghost.
 
 ## Gym 5: kanto_koga (Poison)
 
-91 species catchable before this gym; 17 of them are new since the last.
+102 species catchable before this gym; 21 of them are new since the last.
 
-Types available at the cap (L40), on the form a player would have evolved to: bug (8), dark (4), dragon (3), electric (7), fighting (6), fire (1), flying (15), grass (8), ground (3), ice (8), normal (15), poison (5), psychic (4), rock (3), steel (5), water (12).
+Types available at the cap (L40), on the form a player would have evolved to: bug (8), dark (5), dragon (3), electric (8), fighting (6), fire (1), flying (16), grass (8), ground (4), ice (8), normal (15), poison (5), psychic (4), rock (3), steel (5), water (19).
 Reached only by evolving, invisible if you read the caught form: fire.
 Absent: fairy, ghost.
 
@@ -235,27 +253,32 @@ Absent: fairy, ghost.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks |  |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
+| barboach | water/ground | 18-21 | uncommon | lake_viltri_hollow | subregion | on it |  |
+| chinchou | water/electric | 18-21 | rare | lake_viltri_hollow | subregion | on it |  |
 | corphish | water | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | illumise | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lombre | water/grass | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lotad | water/grass | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | volbeat | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | bunnelby | normal | 21-23 | common | route_03_misty_to_surge | route | on it |  |
+| gyarados | water/flying | 21-23 | uncommon | foothill_woods | subregion | on it |  |
 | heracross | bug/fighting | 21-23 | common | route_03_misty_to_surge | route | on it |  |
 | noctowl | normal/flying | 21-23 | uncommon | route_03_misty_to_surge | route | on it |  |
 | pachirisu | electric | 21-23 | rare | foothill_woods | subregion | on it |  |
@@ -287,6 +310,7 @@ Absent: fairy, ghost.
 | snorunt | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | vanillite | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | ampharos | electric | 30-32 | ultra-rare | route_04_surge_to_erika | route | on it |  |
+| basculin | water | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | buneary | normal | 30-38 | common | north_shore_downs | subregion | 65 blocks |  |
 | dubwool | normal | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | emolga | electric/flying | 30-32 | common | peak_pond_hollow | subregion | on it |  |
@@ -298,6 +322,7 @@ Absent: fairy, ghost.
 | pichu | electric | 30-32 | common | peak_pond_hollow | subregion | on it |  |
 | skiploom | grass/flying | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | ursaring | normal | 30-32 | rare | peak_pond_hollow | subregion | on it |  |
+| whiscash | water/ground | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | furret | normal | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | nickit | dark | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | sentret | normal | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
@@ -305,11 +330,13 @@ Absent: fairy, ghost.
 | starly | normal/flying | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | stunky | poison/dark | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | thievul | dark | 32-34 | rare | north_east_downs | subregion | 97 blocks |  |
+| dondozo | water | 27-38 | rare | lower_trough | subregion | 81 blocks | yes |
 | floatzel | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks | yes |
 | piplup | water | 27-38 | common | lower_trough | subregion | 81 blocks | yes |
 | prinplup | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks | yes |
 | spheal | ice/water | 27-38 | common | lower_trough | subregion | 81 blocks | yes |
 | carnivine | grass | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks | yes |
+| carvanha | water/dark | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks | yes |
 | croagunk | poison/fighting | 34-44 | common | marshy_marsh | subregion | 121 blocks | yes |
 | croconaw | water | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks | yes |
 | feraligatr | water | 34-44 | ultra-rare | marshy_marsh | subregion | 121 blocks | yes |
@@ -317,6 +344,8 @@ Absent: fairy, ghost.
 | hatenna | psychic | 34-36 | common | route_05_erika_to_koga | route | on it | yes |
 | hattrem | psychic | 34-36 | uncommon | route_05_erika_to_koga | route | on it | yes |
 | lechonk | normal | 34-36 | common | route_05_erika_to_koga | route | on it | yes |
+| masquerain | bug/flying | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks | yes |
+| sharpedo | water/dark | 34-44 | rare | marshy_marsh | subregion | 121 blocks | yes |
 | spidops | bug | 34-36 | uncommon | route_05_erika_to_koga | route | on it | yes |
 | swalot | poison | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks | yes |
 | tarountula | bug | 34-36 | common | route_05_erika_to_koga | route | on it | yes |
@@ -325,9 +354,9 @@ Absent: fairy, ghost.
 
 ## Gym 6: kanto_sabrina (Psychic)
 
-110 species catchable before this gym; 19 of them are new since the last.
+120 species catchable before this gym; 18 of them are new since the last.
 
-Types available at the cap (L45), on the form a player would have evolved to: bug (10), dark (5), dragon (3), electric (7), fairy (1), fighting (6), fire (1), flying (17), grass (10), ground (5), ice (8), normal (16), poison (5), psychic (4), rock (3), steel (5), water (17).
+Types available at the cap (L45), on the form a player would have evolved to: bug (10), dark (6), dragon (3), electric (8), fairy (1), fighting (6), fire (1), flying (18), grass (10), ground (5), ice (8), normal (16), poison (5), psychic (4), rock (3), steel (5), water (23).
 Reached only by evolving, invisible if you read the caught form: fairy, fire.
 Absent: ghost.
 
@@ -337,27 +366,32 @@ Absent: ghost.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks |  |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
+| barboach | water/ground | 18-21 | uncommon | lake_viltri_hollow | subregion | on it |  |
+| chinchou | water/electric | 18-21 | rare | lake_viltri_hollow | subregion | on it |  |
 | corphish | water | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | illumise | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lombre | water/grass | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lotad | water/grass | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | volbeat | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | bunnelby | normal | 21-23 | common | route_03_misty_to_surge | route | on it |  |
+| gyarados | water/flying | 21-23 | uncommon | foothill_woods | subregion | on it |  |
 | heracross | bug/fighting | 21-23 | common | route_03_misty_to_surge | route | on it |  |
 | noctowl | normal/flying | 21-23 | uncommon | route_03_misty_to_surge | route | on it |  |
 | pachirisu | electric | 21-23 | rare | foothill_woods | subregion | on it |  |
@@ -389,6 +423,7 @@ Absent: ghost.
 | snorunt | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | vanillite | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | ampharos | electric | 30-32 | ultra-rare | route_04_surge_to_erika | route | on it |  |
+| basculin | water | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | buneary | normal | 30-38 | common | north_shore_downs | subregion | 65 blocks |  |
 | dubwool | normal | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | emolga | electric/flying | 30-32 | common | peak_pond_hollow | subregion | on it |  |
@@ -400,6 +435,7 @@ Absent: ghost.
 | pichu | electric | 30-32 | common | peak_pond_hollow | subregion | on it |  |
 | skiploom | grass/flying | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | ursaring | normal | 30-32 | rare | peak_pond_hollow | subregion | on it |  |
+| whiscash | water/ground | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | furret | normal | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | nickit | dark | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | sentret | normal | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
@@ -407,11 +443,13 @@ Absent: ghost.
 | starly | normal/flying | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | stunky | poison/dark | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | thievul | dark | 32-34 | rare | north_east_downs | subregion | 97 blocks |  |
+| dondozo | water | 27-38 | rare | lower_trough | subregion | 81 blocks |  |
 | floatzel | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks |  |
 | piplup | water | 27-38 | common | lower_trough | subregion | 81 blocks |  |
 | prinplup | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks |  |
 | spheal | ice/water | 27-38 | common | lower_trough | subregion | 81 blocks |  |
 | carnivine | grass | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
+| carvanha | water/dark | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | croagunk | poison/fighting | 34-44 | common | marshy_marsh | subregion | 121 blocks |  |
 | croconaw | water | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | feraligatr | water | 34-44 | ultra-rare | marshy_marsh | subregion | 121 blocks |  |
@@ -419,22 +457,23 @@ Absent: ghost.
 | hatenna | psychic | 34-36 | common | route_05_erika_to_koga | route | on it |  |
 | hattrem | psychic | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
 | lechonk | normal | 34-36 | common | route_05_erika_to_koga | route | on it |  |
+| masquerain | bug/flying | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
+| sharpedo | water/dark | 34-44 | rare | marshy_marsh | subregion | 121 blocks |  |
 | spidops | bug | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
 | swalot | poison | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | tarountula | bug | 34-36 | common | route_05_erika_to_koga | route | on it |  |
 | totodile | water | 34-44 | common | marshy_marsh | subregion | 121 blocks |  |
 | toxel | electric/poison | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
-| barboach | water/ground | 37-39 | common | route_06_koga_to_sabrina | route | on it | yes |
 | palpitoad | water/ground | 37-39 | uncommon | route_06_koga_to_sabrina | route | on it | yes |
 | poliwag | water | 37-39 | common | route_06_koga_to_sabrina | route | on it | yes |
 | poliwhirl | water | 37-39 | uncommon | route_06_koga_to_sabrina | route | on it | yes |
 | seismitoad | water/ground | 37-39 | ultra-rare | route_06_koga_to_sabrina | route | on it | yes |
 | tympole | water | 37-39 | common | route_06_koga_to_sabrina | route | on it | yes |
-| whiscash | water/ground | 37-39 | uncommon | marsh_creek | subregion | on it | yes |
 | bibarel | normal/water | 39-41 | common | route_06_koga_to_sabrina | route | on it | yes |
 | ducklett | water/flying | 39-41 | common | route_06_koga_to_sabrina | route | on it | yes |
 | golduck | water | 39-41 | uncommon | route_06_koga_to_sabrina | route | on it | yes |
 | psyduck | water | 39-41 | common | route_06_koga_to_sabrina | route | on it | yes |
+| seaking | water | 39-41 | uncommon | tilpey_north_shore | subregion | on it | yes |
 | swanna | water/flying | 39-41 | uncommon | route_06_koga_to_sabrina | route | on it | yes |
 | yanma | bug/flying | 39-41 | common | route_06_koga_to_sabrina | route | on it | yes |
 | greedent | normal | 41-43 | uncommon | tilpey_east_shore | subregion | 73 blocks | yes |
@@ -446,9 +485,9 @@ Absent: ghost.
 
 ## Gym 7: kanto_blaine (Fire)
 
-146 species catchable before this gym; 36 of them are new since the last.
+151 species catchable before this gym; 31 of them are new since the last.
 
-Types available at the cap (L50), on the form a player would have evolved to: bug (15), dark (7), dragon (5), electric (8), fairy (1), fighting (6), fire (8), flying (19), ghost (1), grass (12), ground (9), ice (8), normal (16), poison (8), psychic (4), rock (6), steel (5), water (22).
+Types available at the cap (L50), on the form a player would have evolved to: bug (15), dark (8), dragon (5), electric (9), fairy (1), fighting (6), fire (8), flying (19), ghost (1), grass (12), ground (9), ice (8), normal (16), poison (8), psychic (4), rock (6), steel (5), water (25).
 Reached only by evolving, invisible if you read the caught form: fairy.
 Absent: none.
 
@@ -458,27 +497,32 @@ Absent: none.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks |  |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
+| barboach | water/ground | 18-21 | uncommon | lake_viltri_hollow | subregion | on it |  |
+| chinchou | water/electric | 18-21 | rare | lake_viltri_hollow | subregion | on it |  |
 | corphish | water | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | illumise | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lombre | water/grass | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lotad | water/grass | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | volbeat | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | bunnelby | normal | 21-23 | common | route_03_misty_to_surge | route | on it |  |
+| gyarados | water/flying | 21-23 | uncommon | foothill_woods | subregion | on it |  |
 | heracross | bug/fighting | 21-23 | common | route_03_misty_to_surge | route | on it |  |
 | noctowl | normal/flying | 21-23 | uncommon | route_03_misty_to_surge | route | on it |  |
 | pachirisu | electric | 21-23 | rare | foothill_woods | subregion | on it |  |
@@ -510,6 +554,7 @@ Absent: none.
 | snorunt | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | vanillite | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | ampharos | electric | 30-32 | ultra-rare | route_04_surge_to_erika | route | on it |  |
+| basculin | water | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | buneary | normal | 30-38 | common | north_shore_downs | subregion | 65 blocks |  |
 | dubwool | normal | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | emolga | electric/flying | 30-32 | common | peak_pond_hollow | subregion | on it |  |
@@ -521,6 +566,7 @@ Absent: none.
 | pichu | electric | 30-32 | common | peak_pond_hollow | subregion | on it |  |
 | skiploom | grass/flying | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | ursaring | normal | 30-32 | rare | peak_pond_hollow | subregion | on it |  |
+| whiscash | water/ground | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | furret | normal | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | nickit | dark | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | sentret | normal | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
@@ -528,11 +574,13 @@ Absent: none.
 | starly | normal/flying | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | stunky | poison/dark | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | thievul | dark | 32-34 | rare | north_east_downs | subregion | 97 blocks |  |
+| dondozo | water | 27-38 | rare | lower_trough | subregion | 81 blocks |  |
 | floatzel | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks |  |
 | piplup | water | 27-38 | common | lower_trough | subregion | 81 blocks |  |
 | prinplup | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks |  |
 | spheal | ice/water | 27-38 | common | lower_trough | subregion | 81 blocks |  |
 | carnivine | grass | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
+| carvanha | water/dark | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | croagunk | poison/fighting | 34-44 | common | marshy_marsh | subregion | 121 blocks |  |
 | croconaw | water | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | feraligatr | water | 34-44 | ultra-rare | marshy_marsh | subregion | 121 blocks |  |
@@ -540,22 +588,23 @@ Absent: none.
 | hatenna | psychic | 34-36 | common | route_05_erika_to_koga | route | on it |  |
 | hattrem | psychic | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
 | lechonk | normal | 34-36 | common | route_05_erika_to_koga | route | on it |  |
+| masquerain | bug/flying | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
+| sharpedo | water/dark | 34-44 | rare | marshy_marsh | subregion | 121 blocks |  |
 | spidops | bug | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
 | swalot | poison | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | tarountula | bug | 34-36 | common | route_05_erika_to_koga | route | on it |  |
 | totodile | water | 34-44 | common | marshy_marsh | subregion | 121 blocks |  |
 | toxel | electric/poison | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
-| barboach | water/ground | 37-39 | common | route_06_koga_to_sabrina | route | on it |  |
 | palpitoad | water/ground | 37-39 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | poliwag | water | 37-39 | common | route_06_koga_to_sabrina | route | on it |  |
 | poliwhirl | water | 37-39 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | seismitoad | water/ground | 37-39 | ultra-rare | route_06_koga_to_sabrina | route | on it |  |
 | tympole | water | 37-39 | common | route_06_koga_to_sabrina | route | on it |  |
-| whiscash | water/ground | 37-39 | uncommon | marsh_creek | subregion | on it |  |
 | bibarel | normal/water | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
 | ducklett | water/flying | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
 | golduck | water | 39-41 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | psyduck | water | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
+| seaking | water | 39-41 | uncommon | tilpey_north_shore | subregion | on it |  |
 | swanna | water/flying | 39-41 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | yanma | bug/flying | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
 | greedent | normal | 41-43 | uncommon | tilpey_east_shore | subregion | 73 blocks |  |
@@ -574,11 +623,6 @@ Absent: none.
 | arrokuda | water | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks | yes |
 | barraskewda | water | 39-48 | rare | tilpey_waters | subregion | 1 blocks | yes |
 | basculegion | water/ghost | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks | yes |
-| basculin | water | 39-48 | common | tilpey_waters | subregion | 1 blocks | yes |
-| goldeen | water | 39-48 | common | tilpey_waters | subregion | 1 blocks | yes |
-| gyarados | water/flying | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks | yes |
-| magikarp | water | 39-48 | common | tilpey_waters | subregion | 1 blocks | yes |
-| seaking | water | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks | yes |
 | tadbulb | electric | 39-48 | rare | tilpey_waters | subregion | 1 blocks | yes |
 | beedrill | bug/poison | 42-44 | ultra-rare | tilpey_south_shore | subregion | on it | yes |
 | butterfree | bug/flying | 42-44 | ultra-rare | route_07_sabrina_to_blaine | route | on it | yes |
@@ -603,9 +647,9 @@ Absent: none.
 
 ## Gym 8: kanto_giovanni (Ground)
 
-184 species catchable before this gym; 38 of them are new since the last.
+189 species catchable before this gym; 38 of them are new since the last.
 
-Types available at the cap (L55), on the form a player would have evolved to: bug (17), dark (10), dragon (5), electric (9), fairy (1), fighting (7), fire (11), flying (21), ghost (2), grass (14), ground (12), ice (8), normal (16), poison (12), psychic (4), rock (8), steel (5), water (25).
+Types available at the cap (L55), on the form a player would have evolved to: bug (17), dark (11), dragon (5), electric (10), fairy (1), fighting (7), fire (11), flying (21), ghost (2), grass (14), ground (12), ice (8), normal (16), poison (12), psychic (4), rock (8), steel (5), water (28).
 Reached only by evolving, invisible if you read the caught form: fairy.
 Absent: none.
 
@@ -615,27 +659,32 @@ Absent: none.
 | pidgey | normal/flying | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | rattata | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
 | wooloo | normal | 5-8 | common | route_01_pallet_to_brock | route | on it |  |
-| krabby | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| shellder | water | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| staryu | water | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
-| wattrel | electric/flying | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| wingull | water/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| applin | grass/dragon | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| combee | bug/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| deerling | normal/grass | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| fomantis | grass | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| hoothoot | normal/flying | 7-10 | common | route_01_pallet_to_brock | route | on it |  |
+| krabby | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| pawmi | electric | 7-10 | uncommon | route_01_pallet_to_brock | route | on it |  |
+| shellder | water | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| staryu | water | 7-10 | common | west_shore | subregion | 33 blocks |  |
+| wattrel | electric/flying | 7-10 | uncommon | west_shore | subregion | 33 blocks |  |
+| wingull | water/flying | 7-10 | common | west_shore | subregion | 33 blocks |  |
 | bidoof | normal | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
 | buizel | water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| deerling | normal/grass | 9-12 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| pawmi | electric | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
+| goldeen | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
+| magikarp | water | 9-12 | common | river_of_shrews_vale | subregion | on it |  |
 | surskit | bug/water | 9-12 | common | route_01_pallet_to_brock | route | on it |  |
-| applin | grass/dragon | 12-15 | uncommon | route_01_pallet_to_brock | route | on it |  |
-| combee | bug/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| fomantis | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
 | gossifleur | grass | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
-| hoothoot | normal/flying | 12-15 | common | route_01_pallet_to_brock | route | on it |  |
+| barboach | water/ground | 18-21 | uncommon | lake_viltri_hollow | subregion | on it |  |
+| chinchou | water/electric | 18-21 | rare | lake_viltri_hollow | subregion | on it |  |
 | corphish | water | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | illumise | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lombre | water/grass | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | lotad | water/grass | 18-21 | common | route_02_brock_to_misty | route | on it |  |
 | volbeat | bug | 18-21 | uncommon | route_02_brock_to_misty | route | on it |  |
 | bunnelby | normal | 21-23 | common | route_03_misty_to_surge | route | on it |  |
+| gyarados | water/flying | 21-23 | uncommon | foothill_woods | subregion | on it |  |
 | heracross | bug/fighting | 21-23 | common | route_03_misty_to_surge | route | on it |  |
 | noctowl | normal/flying | 21-23 | uncommon | route_03_misty_to_surge | route | on it |  |
 | pachirisu | electric | 21-23 | rare | foothill_woods | subregion | on it |  |
@@ -667,6 +716,7 @@ Absent: none.
 | snorunt | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | vanillite | ice | 29-31 | common | route_04_surge_to_erika | route | on it |  |
 | ampharos | electric | 30-32 | ultra-rare | route_04_surge_to_erika | route | on it |  |
+| basculin | water | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | buneary | normal | 30-38 | common | north_shore_downs | subregion | 65 blocks |  |
 | dubwool | normal | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | emolga | electric/flying | 30-32 | common | peak_pond_hollow | subregion | on it |  |
@@ -678,6 +728,7 @@ Absent: none.
 | pichu | electric | 30-32 | common | peak_pond_hollow | subregion | on it |  |
 | skiploom | grass/flying | 30-38 | uncommon | north_shore_downs | subregion | 65 blocks |  |
 | ursaring | normal | 30-32 | rare | peak_pond_hollow | subregion | on it |  |
+| whiscash | water/ground | 30-32 | uncommon | peak_pond_hollow | subregion | on it |  |
 | furret | normal | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | nickit | dark | 32-34 | uncommon | north_east_downs | subregion | 97 blocks |  |
 | sentret | normal | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
@@ -685,11 +736,13 @@ Absent: none.
 | starly | normal/flying | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | stunky | poison/dark | 32-34 | common | north_east_downs | subregion | 97 blocks |  |
 | thievul | dark | 32-34 | rare | north_east_downs | subregion | 97 blocks |  |
+| dondozo | water | 27-38 | rare | lower_trough | subregion | 81 blocks |  |
 | floatzel | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks |  |
 | piplup | water | 27-38 | common | lower_trough | subregion | 81 blocks |  |
 | prinplup | water | 27-38 | uncommon | lower_trough | subregion | 81 blocks |  |
 | spheal | ice/water | 27-38 | common | lower_trough | subregion | 81 blocks |  |
 | carnivine | grass | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
+| carvanha | water/dark | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | croagunk | poison/fighting | 34-44 | common | marshy_marsh | subregion | 121 blocks |  |
 | croconaw | water | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | feraligatr | water | 34-44 | ultra-rare | marshy_marsh | subregion | 121 blocks |  |
@@ -697,22 +750,23 @@ Absent: none.
 | hatenna | psychic | 34-36 | common | route_05_erika_to_koga | route | on it |  |
 | hattrem | psychic | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
 | lechonk | normal | 34-36 | common | route_05_erika_to_koga | route | on it |  |
+| masquerain | bug/flying | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
+| sharpedo | water/dark | 34-44 | rare | marshy_marsh | subregion | 121 blocks |  |
 | spidops | bug | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
 | swalot | poison | 34-44 | uncommon | marshy_marsh | subregion | 121 blocks |  |
 | tarountula | bug | 34-36 | common | route_05_erika_to_koga | route | on it |  |
 | totodile | water | 34-44 | common | marshy_marsh | subregion | 121 blocks |  |
 | toxel | electric/poison | 34-36 | uncommon | route_05_erika_to_koga | route | on it |  |
-| barboach | water/ground | 37-39 | common | route_06_koga_to_sabrina | route | on it |  |
 | palpitoad | water/ground | 37-39 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | poliwag | water | 37-39 | common | route_06_koga_to_sabrina | route | on it |  |
 | poliwhirl | water | 37-39 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | seismitoad | water/ground | 37-39 | ultra-rare | route_06_koga_to_sabrina | route | on it |  |
 | tympole | water | 37-39 | common | route_06_koga_to_sabrina | route | on it |  |
-| whiscash | water/ground | 37-39 | uncommon | marsh_creek | subregion | on it |  |
 | bibarel | normal/water | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
 | ducklett | water/flying | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
 | golduck | water | 39-41 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | psyduck | water | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
+| seaking | water | 39-41 | uncommon | tilpey_north_shore | subregion | on it |  |
 | swanna | water/flying | 39-41 | uncommon | route_06_koga_to_sabrina | route | on it |  |
 | yanma | bug/flying | 39-41 | common | route_06_koga_to_sabrina | route | on it |  |
 | greedent | normal | 41-43 | uncommon | tilpey_east_shore | subregion | 73 blocks |  |
@@ -731,11 +785,6 @@ Absent: none.
 | arrokuda | water | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks |  |
 | barraskewda | water | 39-48 | rare | tilpey_waters | subregion | 1 blocks |  |
 | basculegion | water/ghost | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks |  |
-| basculin | water | 39-48 | common | tilpey_waters | subregion | 1 blocks |  |
-| goldeen | water | 39-48 | common | tilpey_waters | subregion | 1 blocks |  |
-| gyarados | water/flying | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks |  |
-| magikarp | water | 39-48 | common | tilpey_waters | subregion | 1 blocks |  |
-| seaking | water | 39-48 | uncommon | tilpey_waters | subregion | 1 blocks |  |
 | tadbulb | electric | 39-48 | rare | tilpey_waters | subregion | 1 blocks |  |
 | beedrill | bug/poison | 42-44 | ultra-rare | tilpey_south_shore | subregion | on it |  |
 | butterfree | bug/flying | 42-44 | ultra-rare | route_07_sabrina_to_blaine | route | on it |  |
@@ -808,8 +857,8 @@ Reachable by walking, but nothing gates when, so they are not assigned to a gym.
 | north_west_coast | subregion | route_03_misty_to_surge | 281 | binacle, hoothoot, inkay, krabby, shellder, wingull |
 | rift_trunk | subregion | route_04_surge_to_erika | 313 | boldore, carkol, coalossal, garganacl, nacli, naclstack, orthworm, roggenrola, rolycoly |
 | south_west_fields | subregion | route_01_pallet_to_brock | 337 | caterpie, cottonee, hoppip, pidgey, smoliv |
-| arrow_creeks | subregion | route_08_blaine_to_giovanni | 377 | blitzle, dodrio, doduo, donphan, flamigo, girafarig, phanpy, wattrel, zebstrika |
-| shrew_lake_shores | subregion | route_02_brock_to_misty | 385 | cherubi, poltchageist, ralts, surskit, togepi |
+| arrow_creeks | subregion | route_08_blaine_to_giovanni | 377 | barboach, blitzle, dodrio, doduo, donphan, flamigo, girafarig, goldeen, gyarados, magikarp, phanpy, seaking, wattrel, whiscash ... |
+| shrew_lake_shores | subregion | route_02_brock_to_misty | 385 | barboach, cherubi, dratini, goldeen, magikarp, poltchageist, ralts, surskit, togepi |
 | plateau_east | subregion | route_08_blaine_to_giovanni | 401 | cacnea, durant, heatmor, houndoom, houndour, larvesta, litleo, orthworm, pyroar |
 | fungal_north | subregion | route_01_pallet_to_brock | 425 | breloom, foongus, morelull, paras, parasect, shiinotic, shroomish, toedscool |
 | frostpeak_strand | subregion | route_04_surge_to_erika | 433 | delibird, sandshrew, sandslash, spheal, stantler, vulpix |
@@ -817,20 +866,20 @@ Reachable by walking, but nothing gates when, so they are not assigned to a gym.
 | south_east_dunes | subregion | route_08_blaine_to_giovanni | 441 | flittle, helioptile, hippopotas, rellor, sandile, sigilyph |
 | wedge_south | subregion | route_08_blaine_to_giovanni | 449 | duskull, golbat, phantump, shuppet, venonat, zubat |
 | wedge_north | subregion | route_06_koga_to_sabrina | 457 | gastly, haunter, impidimp, misdreavus, murkrow, phantump |
-| tilpey_west_meadows | subregion | route_06_koga_to_sabrina | 561 | cherrim, cherubi, cutiefly, gloom, oddish, petilil, psyduck, ribombee |
+| tilpey_west_meadows | subregion | route_06_koga_to_sabrina | 561 | cherrim, cherubi, cutiefly, gloom, goldeen, gyarados, magikarp, oddish, petilil, psyduck, ribombee, seaking |
 | rift_west_spur | subregion | route_04_surge_to_erika | 569 | bisharp, bronzong, bronzor, klang, klink, klinklang, pawniard, revavroom, rolycoly, varoom |
 | sunset_east | subregion | route_08_blaine_to_giovanni | 601 | comfey, cutiefly, fomantis, oricorio, petilil, ribombee, smoliv |
 | frostpeak | subregion | route_04_surge_to_erika | 665 | absol, crabrawler, delibird, drampa, sneasel, snorunt |
 | jungle_west | subregion | route_08_blaine_to_giovanni | 689 | aipom, heracross, kecleon, pikipek, slakoth, tropius, trumbeak, vigoroth |
-| arrow_lake_shores | subregion | route_02_brock_to_misty | 721 | audino, azurill, budew, surskit |
+| arrow_lake_shores | subregion | route_02_brock_to_misty | 721 | arrokuda, audino, azurill, barboach, budew, goldeen, relicanth, surskit |
 | northgate_west | subregion | route_05_erika_to_koga | 753 | ariados, hoothoot, noctowl, phantump, pineco, spinarak, stantler, teddiursa |
 | northgate_east | subregion | route_05_erika_to_koga | 793 | deerling, furret, greedent, pachirisu, pineco, sentret, skwovet, staravia, starly |
 | jungle_east | subregion | route_08_blaine_to_giovanni | 857 | hawlucha, komala, oranguru, passimian, pikipek, shroodle |
-| long_isle_north | subregion | route_07_sabrina_to_blaine | 913 | corvisquire, deerling, greedent, linoone, nickit, rookidee, skwovet, thievul, zigzagoon |
-| long_isle_middle | subregion | route_07_sabrina_to_blaine | 1049 | applin, deerling, nincada, ninjask, nuzleaf, seedot, shedinja |
+| long_isle_north | subregion | route_07_sabrina_to_blaine | 913 | castform, cofagrigus, palossand, sandygast, seviper, yamask, zangoose |
+| long_isle_middle | subregion | route_07_sabrina_to_blaine | 1049 | castform, cofagrigus, palossand, sandygast, seviper, yamask, zangoose |
 | south_pine_isle | subregion | route_06_koga_to_sabrina | 1057 | buneary, dartrix, rowlet, snover, vulpix, zorua |
 | sunset_west | subregion | route_01_pallet_to_brock | 1361 | blitzle, doduo, girafarig, litleo, mudbray, oricorio |
-| long_isle_south | subregion | route_08_blaine_to_giovanni | 1585 | bounsweet, chatot, deerling, fomantis, squawkabilly, steenee, wimpod |
+| long_isle_south | subregion | route_08_blaine_to_giovanni | 1585 | araquanid, bounsweet, charjabug, chatot, dewpider, fomantis, golisopod, grubbin, squawkabilly, steenee, wimpod |
 | north_pine_isle | subregion | route_06_koga_to_sabrina | 1929 | delibird, sandshrew, sneasel, snom, snover, stantler, vulpix |
 
 ## Habitat pools: none of them reach a player
@@ -841,14 +890,98 @@ A habitat pool only spawns where a Cobblemon Habitat Block stands. `data/habitat
 | Pool | Blocks placed | Species |
 | --- | --- | --- |
 | displaced_city_cavern | 0 |  |
+| elder_foothill_grove_1 | 4 |  |
+| elder_foothill_grove_2 | 4 |  |
+| elder_foothill_grove_3 | 4 |  |
+| elder_foothill_grove_4 | 4 |  |
+| elder_foothill_woods_1 | 4 |  |
+| elder_foothill_woods_2 | 4 |  |
+| elder_foothill_woods_3 | 4 |  |
+| elder_foothill_woods_4 | 4 |  |
+| elder_jungle_east_1 | 4 |  |
+| elder_jungle_east_2 | 4 |  |
+| elder_jungle_west_1 | 4 |  |
+| elder_jungle_west_2 | 4 |  |
+| elder_lake_viltri_hollow_1 | 4 |  |
+| elder_lake_viltri_hollow_2 | 4 |  |
+| elder_long_isle_middle_1 | 4 |  |
+| elder_long_isle_middle_2 | 4 |  |
+| elder_long_isle_north_1 | 4 |  |
+| elder_long_isle_north_2 | 4 |  |
+| elder_long_isle_south_1 | 4 |  |
+| elder_long_isle_south_2 | 4 |  |
+| elder_long_isle_south_3 | 4 |  |
+| elder_marshy_marsh_1 | 4 |  |
+| elder_marshy_marsh_2 | 4 |  |
+| elder_marshy_marsh_3 | 4 |  |
+| elder_north_pine_isle_1 | 4 |  |
+| elder_north_pine_isle_2 | 4 |  |
+| elder_northgate_east_1 | 4 |  |
+| elder_northgate_east_2 | 4 |  |
+| elder_northgate_west_1 | 4 |  |
+| elder_northgate_west_2 | 4 |  |
+| elder_peak_pond_hollow_1 | 4 |  |
+| elder_peak_pond_hollow_2 | 4 |  |
+| elder_peak_pond_hollow_3 | 4 |  |
+| elder_shrew_lake_shores_1 | 4 |  |
+| elder_shrew_lake_shores_2 | 4 |  |
+| elder_shrew_lake_shores_3 | 4 |  |
+| elder_south_pine_isle_1 | 4 |  |
+| elder_south_pine_isle_2 | 4 |  |
+| elder_south_pine_isle_3 | 4 |  |
+| elder_tilpey_east_shore_1 | 4 |  |
+| elder_tilpey_east_shore_2 | 4 |  |
+| elder_tilpey_north_shore_1 | 4 |  |
+| elder_tilpey_north_shore_2 | 4 |  |
+| elder_viltri_plateau_1 | 4 |  |
+| elder_viltri_plateau_2 | 4 |  |
+| elder_viltri_plateau_3 | 4 |  |
+| elder_viltris_path_valley_1 | 4 |  |
+| elder_viltris_path_valley_2 | 4 |  |
+| elder_wedge_north_1 | 4 |  |
+| elder_wedge_north_2 | 4 |  |
+| elder_wedge_south_1 | 4 |  |
+| elder_wedge_south_2 | 4 |  |
 | glacial_tear_deep_valley | 0 |  |
 | great_crater_bowls | 0 |  |
 | marshy_marsh_basin | 0 |  |
 | mining_town_fossil_levels | 0 |  |
 | northgate_old_growth_grove | 0 |  |
 | rift_depths | 0 |  |
-| route_1_ghost_mansion | 0 |  |
+| route_1_ghost_mansion | 1 |  |
+| route_1_sapling_crown | 2 |  |
+| sapling_crag_mt_vessu | 3 |  |
+| sapling_crag_the_crags | 3 |  |
+| sapling_crag_the_tri_peaks | 0 |  |
+| sapling_desert_long_isle_north | 3 |  |
+| sapling_desert_plateau_west | 0 |  |
+| sapling_desert_south_east_dunes | 3 |  |
+| sapling_frost_frostpeak | 3 |  |
+| sapling_frost_frostpeak_strand | 0 |  |
+| sapling_frost_glacier_foot_fields | 3 |  |
+| sapling_lakeshore_arrow_lake_shores | 3 |  |
+| sapling_lakeshore_tilpey_south_shore | 3 |  |
+| sapling_palm_east_coast_dunes | 3 |  |
+| sapling_palm_sunset_east | 3 |  |
+| sapling_palm_sunset_west | 3 |  |
+| sapling_scorched_crater_rim_north_west | 0 |  |
+| sapling_scorched_east_cones | 0 |  |
+| sapling_scorched_great_crater | 3 |  |
+| sapling_storm_rift_foot | 3 |  |
+| sapling_storm_rift_trunk | 3 |  |
+| sapling_storm_rift_west_spur | 0 |  |
 | tree_town_canopy | 0 |  |
+| vrc_abandoned_cut | 2 |  |
+| vrc_abandoned_cut_core | 4 |  |
+| vrc_bloom | 5 |  |
+| vrc_bloom_core | 7 |  |
+| vrc_cave | 31 |  |
+| vrc_drowned | 4 |  |
+| vrc_drowned_core | 3 |  |
+| vrc_raw_tear | 6 |  |
+| vrc_raw_tear_core | 4 |  |
+| vrc_slagworks | 6 |  |
+| vrc_slagworks_core | 8 |  |
 
 ## What this document still does not cover
 

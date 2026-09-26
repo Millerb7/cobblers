@@ -1,0 +1,27 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/themed/young_desert_a",
+ "kind": "trees",
+ "set": "themed",
+ "name": "young_desert_a",
+ "author": "tools/themed_saplings.py",
+ "source": {
+  "file": "generated",
+  "size": [
+   7,
+   10,
+   4
+  ],
+  "blocks": 19
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  3,
+  1,
+  3
+ ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
+ "tier": "themed_young",
+ "theme": "desert"
+}

@@ -906,9 +906,10 @@
         "subregions": [
           "pallet_meadows",
           "river_of_shrews_vale",
-          "viltri_plateau",
-          "west_shore"
+          "route1_maze_forest",
+          "viltri_plateau"
         ],
+        "transitions_note": "2026-09-25: the maze forest was carved out of west_shore, pallet_meadows and river_of_shrews_vale as route1_maze_forest (data/regions.json, the tools/maze_forest.py BOX). The two forest transitions were written by hand from the stored polyline: the route runs due north on x1468 from (1468, 5116) at 186.94, so it enters the box's south edge (z5060, inside from z5059) at 186.94 + 57; and it leaves the north edge after (1572, 4300) at 1234.48, one diagonal step on. tools/build_routes.py --geography-only recomputes them from the dense path.",
         "transitions": [
           {
             "at_distance_blocks": 0.0,
@@ -922,44 +923,29 @@
             "from_subregions": []
           },
           {
-            "at_distance_blocks": 691.33,
+            "at_distance_blocks": 243.94,
             "at": {
-              "x": 1406,
-              "z": 4747
+              "x": 1468,
+              "z": 5059
             },
             "subregions": [
-              "pallet_meadows",
-              "west_shore"
+              "route1_maze_forest"
             ],
             "from_subregions": [
               "pallet_meadows"
             ]
           },
           {
-            "at_distance_blocks": 696.98,
+            "at_distance_blocks": 1235.89,
             "at": {
-              "x": 1402,
-              "z": 4743
-            },
-            "subregions": [
-              "west_shore"
-            ],
-            "from_subregions": [
-              "pallet_meadows",
-              "west_shore"
-            ]
-          },
-          {
-            "at_distance_blocks": 1037.97,
-            "at": {
-              "x": 1508,
-              "z": 4470
+              "x": 1573,
+              "z": 4299
             },
             "subregions": [
               "river_of_shrews_vale"
             ],
             "from_subregions": [
-              "west_shore"
+              "route1_maze_forest"
             ]
           },
           {
@@ -998,52 +984,36 @@
         {
           "kind": "subregion_boundary",
           "at": {
-            "x": 1406,
-            "z": 4747,
-            "y": 122.2
+            "x": 1468,
+            "z": 5059,
+            "y": 118.42
           },
-          "at_distance_blocks": 691.33,
+          "at_distance_blocks": 243.94,
           "from": [
             "pallet_meadows"
           ],
           "to": [
-            "pallet_meadows",
-            "west_shore"
+            "route1_maze_forest"
           ],
-          "name": "Pallet Meadows / West Shore"
+          "name": "Maze Forest",
+          "y_basis": "interpolated along the stored polyline (written by hand 2026-09-25); tools/build_routes.py --geography-only reads it from the heightmap"
         },
         {
           "kind": "subregion_boundary",
           "at": {
-            "x": 1402,
-            "z": 4743,
-            "y": 122.85
+            "x": 1573,
+            "z": 4299,
+            "y": 121.87
           },
-          "at_distance_blocks": 696.98,
+          "at_distance_blocks": 1235.89,
           "from": [
-            "pallet_meadows",
-            "west_shore"
-          ],
-          "to": [
-            "west_shore"
-          ],
-          "name": "West Shore"
-        },
-        {
-          "kind": "subregion_boundary",
-          "at": {
-            "x": 1508,
-            "z": 4470,
-            "y": 122.65
-          },
-          "at_distance_blocks": 1037.97,
-          "from": [
-            "west_shore"
+            "route1_maze_forest"
           ],
           "to": [
             "river_of_shrews_vale"
           ],
-          "name": "River of Shrews Vale"
+          "name": "River of Shrews Vale",
+          "y_basis": "interpolated along the stored polyline (written by hand 2026-09-25); tools/build_routes.py --geography-only reads it from the heightmap"
         },
         {
           "kind": "subregion_boundary",

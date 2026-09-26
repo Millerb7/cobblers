@@ -1,0 +1,229 @@
+{
+ "schema": "cobblers.sea_town/1",
+ "settlement": "sea_town",
+ "status": "authored 2026-09-26 (the owner: \"add the sea town from hoenn\"); generated into data/placements.json by tools/sea_town.py write; not built on staging; not in the live world",
+ "source": "docs/world-building/LONG_ISLE.md section 4 (the design), with every open decision taken at its recommended default",
+ "note": "The authored layout of the raft town in the Sound. A template has no position; this file is the placement data. tools/sea_town.py translates it into the settlement record, the Centre and Mart placements and one earthwork per district in data/placements.json (so tools/place_town.py builds it as a town, re-apply step R8), refuses a raft over land or over water shallower than its rule, overlapping elements, a bridge that does not join two decks, and a deck walk cell below min_light in its lantern model. Ground is the canonical heightmap (tools/ground.py, rounded), never a world: the seabed under a post is round(h) and the deck is the world's sea level from data/world.json. Coordinates are inclusive [x0, z0, x1, z1] rectangles.",
+ "decisions": [
+  {"id": "D1", "question": "two islands or one", "taken": "one island with two faces: paint only (option A), no channel and no heightmap change. The town floats on water that already exists", "status": "owner approved; recommended default taken", "date": "2026-09-26", "implemented_here": false, "why_not_here": "island paint is data/regions.json and data/foliage.json, another session's files"},
+  {"id": "D2", "question": "where the desert ends", "taken": "north and middle desert, south jungle (the middle/south cover boundary)", "status": "owner approved; recommended default taken", "date": "2026-09-26", "implemented_here": false, "why_not_here": "paint, as D1"},
+  {"id": "D3", "question": "name", "taken": "Pacifidlog stays the working name; display_name null until the owner names it, like every other town", "status": "owner approved; recommended default taken (the doc gives no preference, so the working name it uses)", "date": "2026-09-26", "implemented_here": true},
+  {"id": "D4", "question": "access and fast travel", "taken": "water only, no causeway: boats from the mainland jetty; one discovery waystone on the town square (first visit activates it, no flag: an off-path place may not be tied to progression, data/towns.json rules)", "status": "owner approved; recommended default taken (the waystone: discovery, as for every island place)", "date": "2026-09-26", "implemented_here": true},
+  {"id": "D5", "question": "level band and early arrival", "taken": "44-50, the badge-6-to-8 detour; early arrival by boat accepted and left to the level-cap trap's fix", "status": "owner approved; recommended default taken", "date": "2026-09-26", "implemented_here": false, "why_not_here": "rosters are data/spawns.json, another session's file"},
+  {"id": "D6", "question": "rods and shops", "taken": "the Mart only, with the standard Mart stock; the fishing-supply trader, the boatwright and the rods wait for the rod research", "status": "owner approved; recommended default taken", "date": "2026-09-26", "implemented_here": true},
+  {"id": "D7", "question": "real surfing", "taken": "water-mount riding and boats, no new mod; the current lane is not built (flowing water decides spawns, data/spawn_blocks.json, and the lane is NOT VERIFIED to read as surfing)", "status": "owner approved; recommended default taken", "date": "2026-09-26", "implemented_here": true},
+  {"id": "D8", "question": "spawn policy over the Sound", "taken": "overlay on Cobbleverse's ocean pools for now (no suppression boxes added); curating the Sound exclusively is the roster work's call", "status": "owner approved; recommended default taken (the cheaper default)", "date": "2026-09-26", "implemented_here": false, "why_not_here": "data/spawns.json and the suppression are another session's files"},
+  {"id": "D9", "question": "coral reef", "taken": "no reef: coral decides spawns", "status": "owner approved; recommended default taken (nothing placed that decides a spawn)", "date": "2026-09-26", "implemented_here": true},
+  {"id": "D10", "question": "timing of the island paint", "taken": "with the pending live re-export", "status": "owner approved; recommended default taken", "date": "2026-09-26", "implemented_here": false, "why_not_here": "paint, as D1"},
+  {"id": "D11", "question": "the rafts' protection", "taken": "survival: a friend can break a deck, and the re-application puts it back", "status": "owner approved; recommended default taken", "date": "2026-09-26", "implemented_here": true}
+ ],
+ "site": {
+  "estimate_was": [7120, 6880],
+  "estimate_depth_blocks": 32,
+  "centre": [7210, 6960],
+  "why_here": "Measured on the canonical heightmap (tools/sea_town.py plan). The doc's estimate (7120, 6880) is over the bay's deep hole, 32 blocks of water, with the deepest water (36 to 39) just south-west of it; rafts there would stand on 30-block posts and nothing would reach from the shore. The jungle island's north-west shelf, 90 blocks east-south-east, is 3 to 20 deep across x7150-7250 z6900-7015 and falls into the hole on its west side, so the Old Rafts sit on the shelf, reach from the jungle shore into open water, and Fishers' Row runs west off the shelf into the Sound's deepest water (36+). The mainland jetty is on the South-East Dunes' beach at (7092, 6711), not at the doc's (7150, 6620), which is dry ground y64+ behind the beach; the town is about 190 blocks across the water from its landing. The Current Gate is at the bay's south-west mouth, off the jungle island's shore at (7094, 7230)."
+ },
+ "levels": {"deck": "data/world.json vertical.sea_level (y62): the deck replaces the top water layer", "walk": "deck + 1 (y63)", "stilt_floor": 64},
+ "rules": {
+  "min_depth": {"raft": 3, "pier": 3, "bridge": 2, "breakwater": 2, "jetty": 0, "wharf": 1, "boardwalk": 1, "landing": 1, "stilt_house": 1, "moored": 2},
+  "landfall_max_ground": 62,
+  "bridge_width": 3,
+  "bridge_lamp_from_length": 7,
+  "raft_post_every": 5,
+  "walk_post_every": 4,
+  "lamp_every": 8,
+  "min_light": 5,
+  "why": "Rafts, piers and the gate's raft float over at least 3 blocks of water, so a boat passes round them and the posts are visible; the walks that come ashore (the jetty, the yard's wharf, the stilt boardwalk) may reach the beach, never ground above the deck. Lanterns (never light blocks): one on a post at every raft corner and every lamp_every blocks along the edges and walks, and the tool refuses the plan if its model leaves any open deck cell at the walk level below min_light."
+ },
+ "materials": {
+  "raft": {"deck": "minecraft:jungle_log", "frame": "minecraft:stripped_jungle_log", "sub": "minecraft:stripped_jungle_log", "post": "minecraft:jungle_log"},
+  "square": {"surface": "minecraft:jungle_planks", "sub": "minecraft:stripped_jungle_log", "post": "minecraft:jungle_log"},
+  "bridge": {"deck": "minecraft:stripped_bamboo_block", "post": "minecraft:bamboo_block"},
+  "pier": {"deck": "minecraft:mangrove_planks", "frame": "minecraft:stripped_mangrove_log", "post": "minecraft:mangrove_log"},
+  "boardwalk": {"deck": "minecraft:mangrove_planks", "frame": "minecraft:stripped_mangrove_log", "post": "minecraft:mangrove_log"},
+  "landing": {"deck": "minecraft:mangrove_planks", "post": "minecraft:mangrove_log"},
+  "wharf": {"deck": "minecraft:spruce_planks", "frame": "minecraft:stripped_spruce_log", "post": "minecraft:spruce_log"},
+  "jetty": {"deck": "minecraft:bamboo_planks", "frame": "minecraft:stripped_bamboo_block", "post": "minecraft:bamboo_block"},
+  "breakwater": {"deck": "minecraft:spruce_log", "frame": "minecraft:stripped_spruce_log", "post": "minecraft:spruce_log"},
+  "moored": {"deck": "minecraft:bamboo_block"},
+  "lamp": {"post": "minecraft:jungle_fence", "light": "minecraft:lantern[hanging=false]", "hanging": "minecraft:lantern[hanging=true]"},
+  "stilt": {"post": "minecraft:mangrove_log", "roots": "minecraft:mangrove_roots"}
+ },
+ "hut_palettes": {
+  "jungle": {"floor": "minecraft:jungle_planks", "wall": "minecraft:jungle_planks", "corner": "minecraft:stripped_jungle_log", "roof": "minecraft:bamboo_mosaic", "roof_stairs": "minecraft:bamboo_mosaic_stairs", "door": "minecraft:jungle_door", "window": "minecraft:glass_pane"},
+  "bamboo": {"floor": "minecraft:bamboo_planks", "wall": "minecraft:bamboo_planks", "corner": "minecraft:stripped_bamboo_block", "roof": "minecraft:jungle_planks", "roof_stairs": "minecraft:jungle_stairs", "door": "minecraft:bamboo_door", "window": "minecraft:glass_pane"},
+  "mangrove": {"floor": "minecraft:mangrove_planks", "wall": "minecraft:mangrove_planks", "corner": "minecraft:stripped_mangrove_log", "roof": "minecraft:bamboo_mosaic", "roof_stairs": "minecraft:bamboo_mosaic_stairs", "door": "minecraft:mangrove_door", "window": "minecraft:glass_pane"},
+  "guild": {"floor": "minecraft:spruce_planks", "wall": "minecraft:spruce_planks", "corner": "minecraft:stripped_spruce_log", "roof": "minecraft:mangrove_planks", "roof_stairs": "minecraft:mangrove_stairs", "door": "minecraft:spruce_door", "window": "minecraft:glass_pane"},
+  "smoke": {"floor": "minecraft:mud_bricks", "wall": "minecraft:mud_bricks", "corner": "minecraft:packed_mud", "roof": "minecraft:mud_bricks", "roof_stairs": "minecraft:mud_brick_stairs", "door": null, "window": null}
+ },
+ "districts": [
+  {"id": "old_rafts", "name": "Old Rafts", "what": "the Pacifidlog core: sixteen log rafts on the jungle island's north-west shelf, joined by bamboo bridges; the Centre and the Mart on the two largest, a hut on each of twelve, the town square with the waystone"},
+  {"id": "fishers_row", "name": "Fishers' Row", "what": "a mangrove pier 5 wide and 120 long west off the shelf into the Sound's deepest water, a T-head at its end, a fishing station every 8 blocks, and the Fishing Guild hall and its smokehouse at the root"},
+  {"id": "boatwrights_yard", "name": "Boatwright's Yard", "what": "a spruce wharf against the jungle shore north-east of the rafts: an open boat shed over a hull in frame, a slipway into the water, a boat rack and a barrel of boats, bamboo rafts moored off it"},
+  {"id": "stilt_quarter", "name": "Stilt Quarter", "what": "seven houses and the inn on mangrove stilts along a boardwalk in the shallows south of the rafts, mangrove roots round the stilts; the inn has beds"},
+  {"id": "current_gate", "name": "Current Gate", "what": "a floating spruce breakwater off the jungle island's shore at the bay's south-west mouth, a raft at its end with a lookout tower, the swimmer's hut and three stations facing the open sea"},
+  {"id": "mainland_jetty", "name": "Mainland jetty", "what": "the way in: a bamboo jetty from the South-East Dunes' beach out to a landing in 3-5 blocks of water, a boat rack, a barrel of boats, a signpost to the Mining Town and one pointing across the Sound"}
+ ],
+ "rafts": [
+  {"id": "centre_raft", "district": "old_rafts", "rect": [7198, 6922, 7222, 6946], "why": "the Pokemon Centre's raft, one of the two largest; its door faces the square"},
+  {"id": "mart_raft", "district": "old_rafts", "rect": [7224, 6946, 7246, 6974], "why": "the Mart's raft, the other large one; its door faces the square across a bridge"},
+  {"id": "square", "district": "old_rafts", "rect": [7202, 6952, 7218, 6968], "square": true, "lamps": [[7203, 6953], [7217, 6953], [7203, 6967], [7217, 6967], [7210, 6960]], "why": "the town square (Pacifidlog's bell raft, without the bell: a bell draws Chimecho, data/spawn_blocks.json): paved as the town plan's plaza, the waystone on it"},
+  {"id": "raft_01", "district": "old_rafts", "rect": [7178, 6926, 7192, 6940], "hut": "hut_01"},
+  {"id": "raft_02", "district": "old_rafts", "rect": [7226, 6928, 7240, 6942], "hut": "hut_02"},
+  {"id": "raft_03", "district": "old_rafts", "rect": [7202, 6902, 7216, 6916], "hut": "hut_03"},
+  {"id": "raft_04", "district": "old_rafts", "rect": [7222, 6898, 7236, 6912], "hut": "hut_04"},
+  {"id": "raft_05", "district": "old_rafts", "rect": [7180, 6900, 7194, 6914], "hut": "hut_05"},
+  {"id": "raft_06", "district": "old_rafts", "rect": [7180, 6950, 7194, 6964], "hut": "hut_06"},
+  {"id": "raft_07", "district": "old_rafts", "rect": [7180, 6976, 7194, 6990], "hut": "hut_07"},
+  {"id": "raft_08", "district": "old_rafts", "rect": [7202, 6976, 7216, 6990], "hut": "hut_08"},
+  {"id": "raft_09", "district": "old_rafts", "rect": [7224, 6982, 7238, 6996], "hut": "hut_09"},
+  {"id": "raft_10", "district": "old_rafts", "rect": [7160, 6980, 7174, 6994], "hut": "hut_10"},
+  {"id": "raft_11", "district": "old_rafts", "rect": [7188, 6998, 7202, 7012], "hut": "hut_11"},
+  {"id": "raft_12", "district": "old_rafts", "rect": [7210, 7000, 7224, 7014], "hut": "hut_12"},
+  {"id": "guild_raft", "district": "fishers_row", "rect": [7150, 6947, 7172, 6969], "extra_lamps": [[7161, 6962]], "why": "the Fishing Guild's raft at the root of Fishers' Row"},
+  {"id": "gate_raft", "district": "current_gate", "rect": [7024, 7222, 7039, 7238], "why": "the lookout raft at the breakwater's end, facing the open sea"}
+ ],
+ "bridges": [
+  {"between": ["centre_raft", "square"], "at": 7210},
+  {"between": ["square", "mart_raft"], "at": 6958},
+  {"between": ["centre_raft", "raft_03"]},
+  {"between": ["centre_raft", "raft_01"]},
+  {"between": ["centre_raft", "raft_02"]},
+  {"between": ["raft_03", "raft_05"]},
+  {"between": ["raft_03", "raft_04"]},
+  {"between": ["raft_05", "raft_01"]},
+  {"between": ["raft_01", "raft_06"]},
+  {"between": ["raft_06", "square"], "at": 6958},
+  {"between": ["raft_06", "guild_raft"]},
+  {"between": ["square", "raft_08"], "at": 7209},
+  {"between": ["raft_08", "raft_07"]},
+  {"between": ["raft_07", "raft_10"]},
+  {"between": ["raft_10", "guild_raft"]},
+  {"between": ["raft_07", "raft_11"]},
+  {"between": ["raft_08", "raft_12"]},
+  {"between": ["raft_11", "raft_12"]},
+  {"between": ["raft_08", "raft_09"]},
+  {"between": ["mart_raft", "raft_09"]},
+  {"between": ["mart_raft", "raft_02"]},
+  {"between": ["raft_04", "yard_wharf"]}
+ ],
+ "walks": [
+  {"id": "fishers_row", "district": "fishers_row", "kind": "pier", "rect": [7030, 6956, 7149, 6960], "why": "Fishers' Row, 120 blocks west off the guild's raft into 36+ blocks of water"},
+  {"id": "fishers_row_head", "district": "fishers_row", "kind": "pier", "rect": [7020, 6950, 7029, 6966], "why": "the T-head at the Row's end"},
+  {"id": "yard_wharf", "district": "boatwrights_yard", "kind": "wharf", "rect": [7256, 6868, 7280, 6908], "why": "the yard's wharf against the jungle shore"},
+  {"id": "stilt_boardwalk", "district": "stilt_quarter", "kind": "boardwalk", "rect": [7211, 7015, 7213, 7089], "why": "the boardwalk south from raft 12 through the Stilt Quarter to the inn"},
+  {"id": "landing_w1", "district": "stilt_quarter", "kind": "landing", "rect": [7208, 7022, 7210, 7024]},
+  {"id": "landing_w2", "district": "stilt_quarter", "kind": "landing", "rect": [7208, 7040, 7210, 7042]},
+  {"id": "landing_w3", "district": "stilt_quarter", "kind": "landing", "rect": [7208, 7058, 7210, 7060]},
+  {"id": "landing_w4", "district": "stilt_quarter", "kind": "landing", "rect": [7208, 7076, 7210, 7078]},
+  {"id": "landing_e1", "district": "stilt_quarter", "kind": "landing", "rect": [7214, 7028, 7216, 7030]},
+  {"id": "landing_e2", "district": "stilt_quarter", "kind": "landing", "rect": [7214, 7048, 7216, 7050]},
+  {"id": "landing_e3", "district": "stilt_quarter", "kind": "landing", "rect": [7214, 7066, 7216, 7068]},
+  {"id": "breakwater", "district": "current_gate", "kind": "breakwater", "rect": [7040, 7229, 7093, 7231], "landfall": true, "why": "a floating spruce boom from the island's shore out to the lookout raft"},
+  {"id": "jetty", "district": "mainland_jetty", "kind": "jetty", "rect": [7092, 6710, 7163, 6712], "landfall": true, "why": "from the dunes' beach out over the shallow shelf"},
+  {"id": "jetty_landing", "district": "mainland_jetty", "kind": "pier", "rect": [7164, 6704, 7172, 6718], "min_depth": 3, "why": "the landing at the jetty's end, where boats put out for the town"},
+  {"id": "moored_raft_1", "district": "boatwrights_yard", "kind": "moored", "rect": [7262, 6861, 7266, 6863], "decor": true, "why": "a bamboo raft moored off the wharf"},
+  {"id": "moored_raft_2", "district": "boatwrights_yard", "kind": "moored", "rect": [7270, 6860, 7274, 6862], "decor": true, "why": "another"}
+ ],
+ "services": [
+  {"id": "sea_town_pokecenter", "role": "pokecenter", "raft": "centre_raft", "template": "cobblers:f4/services/towns/lentimas_center", "file": "kits/structures/campaign/f4/services/towns/lentimas_center.nbt", "position": [7201, 6925], "facing": "south", "materials": "centre", "why": "on the north raft, its door on the square's bridge"},
+  {"id": "sea_town_pokemart", "role": "pokemart", "raft": "mart_raft", "template": "cobblers:f4/services/towns/lavender_mart", "file": "kits/structures/campaign/f4/services/towns/lavender_mart.nbt", "position": [7227, 6949], "facing": "west", "materials": "mart", "why": "on the east raft, its door on the square's bridge"}
+ ],
+ "service_materials": {
+  "why": "Re-materialed in the placement (tools/place_town.py writes the copy into the build pack, never into kits/): the Centre keeps its red roof and the Mart its blue one, which are what name them; walls, trim, floor course and planting take the raft town's bamboo and jungle wood, like for like (stairs for stairs, slab for slab, a tall plant for a tall plant). The gardens lose their flowers for ferns and moss: nothing a raft carries decides a spawn beyond the Centre's machines, which are whitelisted.",
+  "centre": {
+   "minecraft:smooth_quartz": "minecraft:bamboo_planks",
+   "minecraft:smooth_quartz_stairs": "minecraft:bamboo_stairs",
+   "minecraft:smooth_quartz_slab": "minecraft:bamboo_slab",
+   "minecraft:quartz_block": "minecraft:stripped_jungle_wood",
+   "minecraft:gray_terracotta": "minecraft:jungle_planks",
+   "minecraft:white_terracotta": "minecraft:bamboo_mosaic",
+   "minecraft:coarse_dirt": "minecraft:moss_block",
+   "minecraft:podzol": "minecraft:moss_block",
+   "minecraft:dirt_path": "minecraft:jungle_planks",
+   "minecraft:rose_bush": "minecraft:large_fern"
+  },
+  "mart": {
+   "minecraft:smooth_quartz": "minecraft:bamboo_planks",
+   "minecraft:smooth_quartz_stairs": "minecraft:bamboo_stairs",
+   "minecraft:smooth_quartz_slab": "minecraft:bamboo_slab",
+   "minecraft:chiseled_quartz_block": "minecraft:bamboo_mosaic",
+   "minecraft:gray_terracotta": "minecraft:jungle_planks",
+   "minecraft:dirt": "minecraft:rooted_dirt",
+   "minecraft:grass_block": "minecraft:moss_block",
+   "minecraft:coarse_dirt": "minecraft:moss_block",
+   "minecraft:mud": "minecraft:jungle_planks",
+   "minecraft:allium": "minecraft:fern",
+   "minecraft:azure_bluet": "minecraft:fern",
+   "minecraft:lily_of_the_valley": "minecraft:fern",
+   "minecraft:tall_grass": "minecraft:large_fern",
+   "minecraft:lilac": "minecraft:large_fern",
+   "minecraft:peony": "minecraft:large_fern"
+  }
+ },
+ "buildings": [
+  {"id": "hut_01", "district": "old_rafts", "type": "hut", "rect": [7182, 6930, 7188, 6936], "doors": ["east"], "palette": "jungle"},
+  {"id": "hut_02", "district": "old_rafts", "type": "hut", "rect": [7230, 6932, 7236, 6938], "doors": ["west"], "palette": "bamboo"},
+  {"id": "hut_03", "district": "old_rafts", "type": "hut", "rect": [7205, 6906, 7213, 6912], "doors": ["south"], "palette": "mangrove"},
+  {"id": "hut_04", "district": "old_rafts", "type": "hut", "rect": [7226, 6902, 7232, 6908], "doors": ["west"], "palette": "jungle"},
+  {"id": "hut_05", "district": "old_rafts", "type": "hut", "rect": [7184, 6904, 7190, 6910], "doors": ["east"], "palette": "bamboo"},
+  {"id": "hut_06", "district": "old_rafts", "type": "hut", "rect": [7184, 6954, 7190, 6960], "doors": ["east"], "palette": "mangrove"},
+  {"id": "hut_07", "district": "old_rafts", "type": "hut", "rect": [7183, 6980, 7191, 6986], "doors": ["north"], "palette": "jungle"},
+  {"id": "hut_08", "district": "old_rafts", "type": "hut", "rect": [7206, 6980, 7212, 6986], "doors": ["north"], "palette": "bamboo"},
+  {"id": "hut_09", "district": "old_rafts", "type": "hut", "rect": [7228, 6986, 7234, 6992], "doors": ["north"], "palette": "mangrove"},
+  {"id": "hut_10", "district": "old_rafts", "type": "hut", "rect": [7164, 6984, 7170, 6990], "doors": ["east"], "palette": "bamboo"},
+  {"id": "hut_11", "district": "old_rafts", "type": "hut", "rect": [7192, 7002, 7198, 7008], "doors": ["north"], "palette": "jungle"},
+  {"id": "hut_12", "district": "old_rafts", "type": "hut", "rect": [7214, 7004, 7220, 7010], "doors": ["north"], "palette": "mangrove"},
+  {"id": "guild_hall", "district": "fishers_row", "type": "guild_hall", "rect": [7155, 6952, 7169, 6960], "doors": ["east", "west"], "palette": "guild", "why": "the Fishing Guild: rod racks, the catch board, barrels of the catch and a smoker; the rod master is not placed (no dialogue yet, D6)"},
+  {"id": "smokehouse", "district": "fishers_row", "type": "smokehouse", "rect": [7155, 6963, 7159, 6967], "doors": ["north"], "palette": "smoke", "why": "the guild's smokehouse: a campfire under a mud-brick roof"},
+  {"id": "boat_shed", "district": "boatwrights_yard", "type": "boat_shed", "rect": [7260, 6869, 7276, 6881], "why": "an open shed over the hull in frame, at the head of the slipway"},
+  {"id": "stilt_w1", "district": "stilt_quarter", "type": "stilt_house", "rect": [7201, 7020, 7207, 7026], "doors": ["east"], "palette": "mangrove"},
+  {"id": "stilt_w2", "district": "stilt_quarter", "type": "stilt_house", "rect": [7201, 7038, 7207, 7044], "doors": ["east"], "palette": "bamboo"},
+  {"id": "stilt_w3", "district": "stilt_quarter", "type": "stilt_house", "rect": [7201, 7056, 7207, 7062], "doors": ["east"], "palette": "mangrove"},
+  {"id": "stilt_w4", "district": "stilt_quarter", "type": "stilt_house", "rect": [7201, 7074, 7207, 7080], "doors": ["east"], "palette": "jungle"},
+  {"id": "stilt_e1", "district": "stilt_quarter", "type": "stilt_house", "rect": [7217, 7026, 7223, 7032], "doors": ["west"], "palette": "bamboo"},
+  {"id": "stilt_e2", "district": "stilt_quarter", "type": "stilt_house", "rect": [7217, 7046, 7223, 7052], "doors": ["west"], "palette": "mangrove"},
+  {"id": "stilt_e3", "district": "stilt_quarter", "type": "stilt_house", "rect": [7217, 7064, 7223, 7070], "doors": ["west"], "palette": "jungle"},
+  {"id": "stilt_inn", "district": "stilt_quarter", "type": "inn", "rect": [7200, 7090, 7212, 7098], "doors": ["north"], "door_at": {"north": 7211}, "palette": "mangrove", "beds": 4, "why": "the inn, with beds (red: a white bed decides spawns) so a player can set a respawn in town"},
+  {"id": "gate_lookout", "district": "current_gate", "type": "lookout", "rect": [7026, 7224, 7030, 7228], "why": "a log tower with a ladder and a railed platform, looking out over the bay's mouth"},
+  {"id": "swimmers_hut", "district": "current_gate", "type": "hut", "rect": [7031, 7230, 7037, 7236], "doors": ["north"], "palette": "bamboo", "why": "the swimmer's hut"}
+ ],
+ "stations": {
+  "why": "A fishing station is a seat facing the water, a barrel beside it and a lantern on a post: 14 along Fishers' Row every 8 blocks on alternate sides, 3 on its T-head and 3 on the Current Gate's raft, all facing open water",
+  "runs": [
+   {"walk": "fishers_row", "from": 7142, "to": 7038, "every": 8, "sides": ["north", "south"]}
+  ],
+  "at": [
+   {"at": [7020, 6953], "water": "west"},
+   {"at": [7020, 6958], "water": "west"},
+   {"at": [7020, 6963], "water": "west"},
+   {"at": [7024, 7226], "water": "west"},
+   {"at": [7024, 7232], "water": "west"},
+   {"at": [7024, 7237], "water": "west"}
+  ]
+ },
+ "yard": {
+  "slipway": {"rect": [7248, 6872, 7255, 6878], "down": "west", "why": "stairs from the wharf's deck down into the water, 7 wide, at the shed's open west end"},
+  "hull": {"keel": [[7262, 6875], [7272, 6875]], "why": "a hull in frame on the wharf under the shed: a keel of stripped spruce, fence ribs, a stem and a sternpost"}
+ },
+ "racks": [
+  {"id": "yard_rack", "at": [7266, 6900], "along": "x", "length": 5, "boats": 6, "why": "the boatwright's rack; its barrel holds boats"},
+  {"id": "jetty_rack", "at": [7166, 6716], "along": "x", "length": 5, "boats": 6, "why": "the way in: boats for anyone who arrives without one"}
+ ],
+ "boats_why": "A boat is an entity: one taken from a rack is gone from it. The racks are blocks, and each has a barrel beside it holding six oak boats; the barrel is shared, and only the re-application refills it (a keeper function, as the Celebi's, is the doc's open idea, NOT VERIFIED). Boats are vanilla, not Cobblemon items, and the town is otherwise reachable only by swimming or a water mount.",
+ "signs": [
+  {"id": "jetty_to_mining_town", "at": [7093, 6710], "rotation": 12, "wood": "bamboo", "front": ["Mining Town", "north-west,", "about 1,100", "blocks"], "back": ["", "Pacifidlog", "across the Sound", ""]},
+  {"id": "landing_to_town", "at": [7171, 6705], "rotation": 8, "wood": "bamboo", "front": ["Pacifidlog", "south by boat,", "about 190", "blocks"], "back": ["", "", "", ""]},
+  {"id": "guild_catch_board", "at": [7163, 6953], "rotation": 0, "wood": "spruce", "front": ["Catch Board", "", "biggest this", "season: -"], "back": ["", "", "", ""]}
+ ],
+ "waystone": {"position": [7210, 6964], "facing": "north", "note": "discovery: first visit activates it (Waystones' own behaviour); no flag"},
+ "not_built": [
+  {"what": "the bell on the square and at the jetty", "why": "a bell decides spawns (Chimecho, data/spawn_blocks.json); its policy entry would be the owner's call"},
+  {"what": "the Current Gate's current lane (the surf spot)", "why": "flowing water decides spawns and the lane is NOT VERIFIED to read as surfing (D7)"},
+  {"what": "the rod master, the fishing-supply trader and the boatwright", "why": "no dialogue and no stock yet: the rods are unresearched (D6)"},
+  {"what": "fishing spawn boxes and the Sound's rosters", "why": "data/spawns.json, another session's file (D5, D8)"},
+  {"what": "hammocks, rope and furniture from the pack's mods", "why": "their block ids are not read from the jars yet (LONG_ISLE.md section 4); every block here is vanilla"},
+  {"what": "lily pads and coral", "why": "both decide spawns (D9)"},
+  {"what": "the desert lagoon", "why": "a heightmap change (phase 4)"}
+ ]
+}

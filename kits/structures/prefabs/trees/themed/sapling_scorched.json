@@ -1,0 +1,54 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/themed/sapling_scorched",
+ "kind": "trees",
+ "set": "themed",
+ "name": "sapling_scorched",
+ "author": "tools/themed_saplings.py",
+ "source": {
+  "file": "generated",
+  "size": [
+   40,
+   84,
+   39
+  ],
+  "blocks": 17257
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  20,
+  2,
+  19
+ ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
+ "tier": "themed_sapling",
+ "theme": "scorched",
+ "height": 81,
+ "nests": [
+  {
+   "at": [
+    0,
+    11,
+    0
+   ],
+   "mimic": "minecraft:polished_basalt"
+  },
+  {
+   "at": [
+    0,
+    34,
+    0
+   ],
+   "mimic": "minecraft:polished_basalt"
+  },
+  {
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "mimic": "minecraft:nether_wart_block"
+  }
+ ]
+}

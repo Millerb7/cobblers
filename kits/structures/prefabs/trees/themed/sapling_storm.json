@@ -1,0 +1,54 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/themed/sapling_storm",
+ "kind": "trees",
+ "set": "themed",
+ "name": "sapling_storm",
+ "author": "tools/themed_saplings.py",
+ "source": {
+  "file": "generated",
+  "size": [
+   40,
+   87,
+   39
+  ],
+  "blocks": 15010
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  20,
+  2,
+  20
+ ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
+ "tier": "themed_sapling",
+ "theme": "storm",
+ "height": 84,
+ "nests": [
+  {
+   "at": [
+    0,
+    11,
+    0
+   ],
+   "mimic": "minecraft:oak_log"
+  },
+  {
+   "at": [
+    0,
+    34,
+    0
+   ],
+   "mimic": "minecraft:oak_log"
+  },
+  {
+   "at": [
+    3,
+    62,
+    2
+   ],
+   "mimic": "minecraft:dark_oak_leaves"
+  }
+ ]
+}

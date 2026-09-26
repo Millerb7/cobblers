@@ -218,8 +218,10 @@ SCHEMAS = {
     ),
     "habitat_blocks.json": (
         "cobblers.habitat-blocks/1", "blocks",
-        ["id", "pool", "style", "replace_spawns", "range_of_influence", "position", "status"],
-        {"style": {"natural"}, "status": {"planned", "placed", "verified"}},
+        # range_of_influence (natural) and mimic/activated (activated) are required per style by
+        # tools/habitat_blocks.py static_problems, which the habitat-blocks check runs
+        ["id", "pool", "style", "replace_spawns", "position", "status"],
+        {"style": {"natural", "activated"}, "status": {"planned", "placed", "verified"}},
     ),
     "traders.json": (
         "cobblers.traders/1", "traders",

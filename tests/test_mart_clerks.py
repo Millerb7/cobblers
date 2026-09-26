@@ -90,8 +90,14 @@ def _shopkeeper_cells(template_id):
 
 
 # Without it the manifest could shrink to nothing and every per-clerk check below would pass on an empty list.
-def test_the_manifest_has_the_thirteen_mart_clerks_and_the_policy_names_the_three_items():
-    assert len(MARTS) == 13
+# Updated 2026-09-26: the count was hard-coded 13; the sea town added a fourteenth Mart (sea_town_mart in
+# data/traders.json, sea_town_pokemart in its placement). The expectation now comes from the placement reports, an
+# independent source (a town's layout, not the traders manifest), so a new town's Mart does not need this edited.
+def test_the_manifest_has_one_mart_clerk_per_placed_mart_and_the_policy_names_the_three_items():
+    placed = _marts_placed()
+    # a floor, not the expectation: the reports themselves must not shrink (14 placed Marts on 2026-09-26)
+    assert len(placed) >= 14, "the placement reports place fewer Marts than before: %s" % sorted(placed)
+    assert len(MARTS) == len(placed), (len(MARTS), sorted(placed))
     assert set(POLICY["mart"]["items"]) == MART_ITEMS
     assert POLICY["mart"]["name"] == "Poké Mart"
 
@@ -100,7 +106,7 @@ def test_the_manifest_has_the_thirteen_mart_clerks_and_the_policy_names_the_thre
 # no town places (summoned into thin air or someone's house).
 def test_every_placed_mart_has_exactly_one_clerk_and_every_clerk_has_a_placed_mart():
     placed = _marts_placed()
-    assert len(placed) >= 13, "fewer Marts placed than clerks authored: %s" % sorted(placed)
+    assert placed, "no Mart in any placement report"
     by_building = {}
     for t in MARTS:
         by_building.setdefault(t.get("building"), []).append(t["id"])

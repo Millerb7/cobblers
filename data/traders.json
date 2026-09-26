@@ -497,6 +497,27 @@
       "status": "planned",
       "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/tea_mart's shopkeeper jigsaw, which a template placed by command never fills",
       "stock": "mart"
+    },
+    {
+      "id": "sea_town_mart",
+      "settlement": "sea_town",
+      "cell": "G8",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 7239,
+        "y": 63,
+        "z": 6958
+      },
+      "building": "sea_town_pokemart",
+      "facing": "west",
+      "status": "planned",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/towns/lavender_mart's shopkeeper jigsaw, which a template placed by command never fills",
+      "stock": "mart"
     }
   ],
   "stock_policy": {

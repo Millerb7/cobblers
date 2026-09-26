@@ -46,14 +46,28 @@ what was done, and what is still open.
 | 20 | The Rift's starter area has no physical barrier against exploring the rest | Not designed | open: design |
 | 21 | The Deep needs a vast, intricate city spanning its elevations, a futuristic lighting system, and the relic area where Hoopa goes | The Deep is terraced rings only; the buildings and the Haven Compact are sited, not built | open: design |
 | 22 | The southern Rift is not built: its town and the mega stone mine. In the mine, wild Mega Pokémon, uncatchable and enraged | Not built | open: design, plus a mechanism question (can a wild Pokémon be in Mega form and aggressive?) |
-| 23 | The Craters' mining town can't have wooden houses | Donor houses placed as their templates came | open: re-material (as the Displaced City's were) |
-| 24 | The Craters' mining town needs mine rails, ore piles, tons of theatrics | Not dressed | open: design. Rails and coal or iron ore decide spawns (`data/spawn_blocks.json`), so each needs a policy decision |
+| 23 | The Craters' mining town can't have wooden houses | Donor houses placed as their templates came | built on staging: 14 houses in deepslate or tuff brick on basalt, iron bars, copper doors (`data/rematerial.json` `mining_deepslate`, `mining_tuff`) |
+| 24 | The Craters' mining town needs mine rails, ore piles, tons of theatrics | Not dressed | built on staging (`tools/mining_works.py`, earthwork `mining_town_works`): 184 rails from the adit down the spur and along the ore road to the yard, a headframe over a capped shaft in the yard, four ore piles, a slag heap, smoke at the adit. The owner let the rails and ore draw mining Pokémon (`data/spawn_block_policy.json`); inside east_cones the suppression leaves our roster, which has the same families |
 | 25 | The swamp marshes need a far more distinct feel: tall trees, vines everywhere, mangroves | Painted as generic swamp | open: foliage design |
 | 26 | A lot of gravel fell into the path down to the cavern town | Not yet traced | open: defect |
-| 27 | The Merian hut needs work (the owner's screenshot: a long T of paving and three small buildings on a bare snowfield in the cirque) | Built as a rest stop: a Centre, a building and a plaza strip | open: design |
-| 28 | The Scar on the Tri Peaks should be a big city, as its layout shows (streets and lots are drawn, nothing stands) | The plan is paved; no buildings placed | open: design, build |
+| 27 | The Merian hut needs work (the owner's screenshot: a long T of paving and three small buildings on a bare snowfield in the cirque) | Built as a rest stop: a Centre, a building and a plaza strip | open: the story docs already give it a purpose (below); the build has to catch up |
+| 28 | The Scar on the Tri Peaks should be a big city, as its layout shows (streets and lots are drawn, nothing stands) | The plan is paved; no buildings placed | built on staging as a ruined city (the owner's choice): 33 ruins, four towers, broken walls. The story change is with Codex (`docs/HANDOVER_CODEX.md` item 27) |
 | 29 | The jungle isle should be thicker in places | Foliage density | open: foliage |
 | 30 | The Long Isle feels pointless. Idea: a desert island and a jungle island, the jungle one becoming a town on the sea, Pacifidlog from Hoenn expanded and moved here, about fishing, boating and surfing (Pokémon surfing, maybe real surfing) | No design | open: design |
+
+### The Merian hut: what the story already says (row 27)
+The docs give it a purpose; the build does not show it yet.
+- **What it is:** an alpine hut in the cirque at the major river's source, the optional rest stop on the Surge to Erika
+  leg (`docs/world-building/SETTLEMENTS.md`, `docs/story/ARC.md`). The plan: the path leaves Route 4 and walks 200
+  blocks north up a swept-flat floor to the hut's door; stable, hut and woodshed in one row with their backs to the
+  cliff; "the keeper knows where the river starts. The walk in is the point."
+- **Its keeper and two quests** (`docs/story/SIDEQUESTS.md`): `SQ-MERIAN-01` *First Water* (verify which trickle really
+  becomes the major river; a source-water keepsake) and `SQ-MERIAN-02` *A Bed Kept Ready* (the keeper keeps one bunk
+  for a traveller who stopped coming after the city exchange; carry the name to the Displaced City).
+- **An event** (`docs/story/SIDE_EVENTS.md`): `EVT-R4-MERIAN-DELIBIRD` *Wrong Hut Again*, a Delibird's parcel with a
+  three-arch symbol and a trail marker to correct.
+- **What stands:** the mountain village Centre as "the hut", a stable and a woodshed, the gravel path. No keeper, no
+  bunk, no spring, no marker: none of what the story needs is built.
 
 ## Done on staging, 2026-09-25
 
