@@ -108,12 +108,16 @@
   - All six effects (`xaerominimap:no_minimap`, `no_entity_radar`, `no_waypoints` and `no_cave_maps`, plus `xaeroworldmap:no_world_map` and `no_cave_maps`) are accepted by the server and are per-player.
   - With all six on, the owner visited a marker at (-640, 4096) in the western ocean. The world map showed it afterwards, and the client wrote `-2_8.zip` on logout.
   - The jars scope the cache per dimension only (a world id in `xaeromap.txt`, one folder per dimension). Nothing scopes it per area, and the server cannot clear a client's cache.
-  - This answers open question 1 of Codex's gated-interactions spec. The pocket approach is the owner's decision.
+  - This answers open question 1 of Codex's gated-interactions spec.
+  - **Decided (ADR-004, the owner):** carve in place anything the fiction says is right there, and use a pocket dimension only for spaces bigger than their entrance or per-player, as places really elsewhere. The western-ocean grid is dropped.
+  - Distant Horizons is a second, independent leak. The pregenerated LODs would show far-overworld chambers from the coast (inferred, not tested with chambers). That alone rules out far-overworld pockets.
 - **Committed configs against the running server** (2026-09-26; `docs/research/notes/config-drift-2026-09-26.md`).
   - `modpack/config/DistantHorizons.toml` now says `enableServerGeneration = false`, as the server has run since the 10240 export.
-  - **The server directory runs `white-list=false`**, and staging and the live server share it. This is left to the owner.
-  - The server's `defaultoptions` copies still list ATMxMSD RP. They are client-only, so this is harmless.
-  - A few server-only config values the repo does not record: Mega Showdown's `likoPendentDuration`, `capture_xp`'s no-XP-to-fainted, and a dead `c2me.toml`.
+  - The whitelist is now **on**: `white-list=true` and `enforce-whitelist=true`. It was set over RCON (`whitelist on`, which saves `server.properties`), and the owner is whitelisted.
+  - The server had never received five committed overlay files, including `starters.json`, which still offered the dropped Pallet, Lumya and Cosplay starters. It has them now; starters reload at the next restart.
+  - `c2me.toml` is deleted.
+  - Every other value the server runs is recorded in `server/config/mods/`. `python tools/server_config_record.py check --server-dir <server>` reports 0 disagreements.
+  - Mega Showdown's `likoPendentDuration` runs at 1,440,000 ticks (20 h). The mod's own default and the base pack are both 72,000. Its origin is unknown, and it is kept until the owner decides.
 - **Every painted lake has a water roster** (2026-09-26, the owner: the lakes by the cherry grove "spawn nothing or just surskits near the edges"). The cause:
   - the lake rosters held almost only `grounded` entries;
   - `suppress_inherited_spawns.py --subregions` cancels the pack's own water spawns over every sub-region, whatever its `policy` says, which contradicts `spawn_suppression.json`'s "off-route wilderness keeps its defaults";
