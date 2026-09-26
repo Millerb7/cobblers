@@ -1,6 +1,14 @@
 # Sapling birds: one bird per world-tree sapling (proposal)
 
-Status: **AUTHORED 2026-09-26, not placed.** The owner approved it ("i like those birds ... add the birds"), and every
+Status: **PLACED ON STAGING 2026-09-26 as nests; the block placement below is superseded.** Each sapling is now a
+nest of its one species: activated Habitat Blocks in its trunk (three per elder at ground + 12, + 35, + 58, up to 7
+birds alive each within 16 blocks; two in the Route 1 sapling, up to 10 each), `data/habitat_blocks.json`. The owner:
+a player should "see and feel like a sapling belongs to a species", with "at least 20 ... spread vertically along the
+tree". One species per tree: Route 1 is Pidgey only, `elder_viltris_path_valley_2` Farfetch'd only,
+`elder_long_isle_south_3` Oricorio only (so C6 and decisions 5 and 10 are settled that way: no co-residents, owls and
+crows by day too). The "Block y", "Range" and "How it would be built" steps 2-4 describe the retired natural blocks.
+
+Earlier status: AUTHORED 2026-09-26, not placed. The owner approved it ("i like those birds ... add the birds"), and every
 open decision took this document's recommendation, except two. The 52 elders are habitats `elder_*` in
 `data/spawns.json` and Habitat Blocks in `data/habitat_blocks.json` (status `planned`). **Block height:** the first
 storey, ground + 21, not the crown's ground + 57, because Cobblemon spawns within about 16 blocks of the player's

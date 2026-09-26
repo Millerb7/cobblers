@@ -14165,19 +14165,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.route_1_sapling_crown.hoothoot",
-      "species": "hoothoot",
-      "bucket": "uncommon",
-      "level": "5-8",
-      "weight": 9.0,
-      "ambient": true,
-      "scope": "route_1_sapling_crown",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.elder_viltri_plateau_1.fletchling",
       "species": "fletchling",
       "bucket": "common",
@@ -14360,8 +14347,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.elder_viltris_path_valley_2.fletchling",
-      "species": "fletchling",
+      "id": "habitat.elder_viltris_path_valley_2.farfetchd",
+      "species": "farfetchd",
       "bucket": "common",
       "level": "15-20",
       "weight": 24.0,
@@ -14369,46 +14356,7 @@
       "scope": "elder_viltris_path_valley_2",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_viltris_path_valley_2.fletchinder",
-      "species": "fletchinder",
-      "bucket": "ultra-rare",
-      "level": "15-20",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_viltris_path_valley_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 17; band begins at 15",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_viltris_path_valley_2.talonflame",
-      "species": "talonflame",
-      "bucket": "ultra-rare",
-      "level": "15-20",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_viltris_path_valley_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 35; band begins at 15",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_viltris_path_valley_2.farfetchd",
-      "species": "farfetchd",
-      "bucket": "rare",
-      "level": "15-20",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "elder_viltris_path_valley_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "authored rare find (docs/world-building/SAPLING_BIRDS.md): Farfetch'd at the rare family weight 2 beside a common co-resident",
+      "eligibility_reason": "the tree's one species (one bird per sapling, the owner 2026-09-26)",
       "spawnable_position": "grounded"
     },
     {
@@ -15673,8 +15621,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.elder_long_isle_south_3.chatot",
-      "species": "chatot",
+      "id": "habitat.elder_long_isle_south_3.oricorio",
+      "species": "oricorio",
       "bucket": "common",
       "level": "44-50",
       "weight": 24.0,
@@ -15682,20 +15630,7 @@
       "scope": "elder_long_isle_south_3",
       "mechanism": "habitat_block",
       "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_long_isle_south_3.oricorio",
-      "species": "oricorio",
-      "bucket": "rare",
-      "level": "44-50",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "elder_long_isle_south_3",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "authored rare find (docs/world-building/SAPLING_BIRDS.md): Oricorio at the rare family weight 2 beside a common co-resident",
+      "eligibility_reason": "the tree's one species (one bird per sapling, the owner 2026-09-26)",
       "spawnable_position": "grounded"
     }
   ],
@@ -31508,7 +31443,7 @@
         "minimum": 5,
         "maximum": 8
       },
-      "why": "the owner's playtest, 2026-09-24: 'birds not spawning on route 1 sapling'. Route 1's own birds (its roster in route_species_selection: pidgey, hoothoot; wingull and wattrel are coast birds) at the meadow's levels (surface.pallet_meadows.pidgey 5-8), perched in the one tree the forest is built round. A habitat pool carries no time condition (tools/compile_spawns.py compile_habitat), so Hoothoot is here by day too, and rarer than Pidgey for that",
+      "why": "the owner's playtest, 2026-09-24: 'birds not spawning on route 1 sapling'. Route 1's own bird at the meadow's levels (surface.pallet_meadows.pidgey 5-8), perched in the one tree the forest is built round. One species per sapling (the owner, 2026-09-26: 'a species of bird pokemon lives in the sapling'), so the Hoothoot co-resident this pool first carried is gone; Hoothoot stays in Route 1's ambient roster",
       "entries": [
         {
           "species": "Pidgey",
@@ -31524,22 +31459,6 @@
           "level": "5-8",
           "bucket": "common",
           "weight": 24.0,
-          "conditions": {}
-        },
-        {
-          "species": "Hoothoot",
-          "pokemon": "hoothoot",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "hoothoot",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "level": "5-8",
-          "bucket": "uncommon",
-          "weight": 9.0,
           "conditions": {}
         }
       ],
@@ -31869,56 +31788,8 @@
         "minimum": 15,
         "maximum": 20
       },
-      "why": "A remote riverside tree with a leek bird in the reeds: the first \"find\". (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 15-28 / 15-20); pool: Fletchling 24, Farfetch'd 2; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; rare find kept at weight 2 against 24 (owner decision 5: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken); the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "A remote riverside tree with a leek bird in the reeds: the first \"find\". (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 15-28 / 15-20); pool: Fletchling 24, Farfetch'd 2; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; rare find kept at weight 2 against 24 (owner decision 5: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken); the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One species per sapling (the owner, 2026-09-26: 'a species of bird pokemon lives in the sapling'): the tree's co-resident (Fletchling, Fletchinder, Talonflame) is gone and its find is the tree's bird.",
       "entries": [
-        {
-          "species": "Fletchling",
-          "pokemon": "fletchling",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "fletchling",
-          "family_priority": "anchor",
-          "level": "15-20",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 24.0
-        },
-        {
-          "species": "Fletchinder",
-          "pokemon": "fletchinder",
-          "types": [
-            "fire",
-            "flying"
-          ],
-          "family": "fletchling",
-          "family_priority": "anchor",
-          "level": "15-20",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 17; band begins at 15",
-          "bucket": "authored-only",
-          "weight": 0
-        },
-        {
-          "species": "Talonflame",
-          "pokemon": "talonflame",
-          "types": [
-            "fire",
-            "flying"
-          ],
-          "family": "fletchling",
-          "family_priority": "anchor",
-          "level": "15-20",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 35; band begins at 15",
-          "bucket": "authored-only",
-          "weight": 0
-        },
         {
           "species": "Farfetch'd",
           "pokemon": "farfetchd",
@@ -31929,10 +31800,10 @@
           "family": "farfetchd",
           "family_priority": "rare",
           "ambient": true,
-          "eligibility_reason": "authored rare find (docs/world-building/SAPLING_BIRDS.md): Farfetch'd at the rare family weight 2 beside a common co-resident",
+          "eligibility_reason": "the tree's one species (one bird per sapling, the owner 2026-09-26)",
           "level": "15-20",
-          "bucket": "rare",
-          "weight": 2.0,
+          "bucket": "common",
+          "weight": 24.0,
           "conditions": {}
         }
       ],
@@ -34152,24 +34023,8 @@
         "minimum": 44,
         "maximum": 50
       },
-      "why": "The highest and most remote elder on the map (y135, 2,668 off a leg): a dancer on the summit. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels 44-50, not the table's 25-30: the table narrowed the island's old 25-45 placeholder band; the island's band is now 44-50 (docs/world-building/LONG_ISLE.md D5, taken by default 2026-09-26), under 10 wide, so by the table's own rule the pool is the band, and the stages follow the evolution policy at 44; pool: Chatot 24, Oricorio 2; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; NOT VERIFIED that Oricorio spawns: its Cobblemon 1.8.0 species file has no `implemented: true` and Cobblemon ships no spawn data for it, so unless an installed pack implements it only the co-resident spawns; rare find kept at weight 2 against 24 (owner decision 5: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken); Oricorio's style is not pinned (C4, not verified that a spawn entry can pin it by aspect; owner decision 8: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "The highest and most remote elder on the map (y135, 2,668 off a leg): a dancer on the summit. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels 44-50, not the table's 25-30: the table narrowed the island's old 25-45 placeholder band; the island's band is now 44-50 (docs/world-building/LONG_ISLE.md D5, taken by default 2026-09-26), under 10 wide, so by the table's own rule the pool is the band, and the stages follow the evolution policy at 44; pool: Chatot 24, Oricorio 2; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; NOT VERIFIED that Oricorio spawns: its Cobblemon 1.8.0 species file has no `implemented: true` and Cobblemon ships no spawn data for it, so unless an installed pack implements it only the co-resident spawns; rare find kept at weight 2 against 24 (owner decision 5: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken); Oricorio's style is not pinned (C4, not verified that a spawn entry can pin it by aspect; owner decision 8: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One species per sapling (the owner, 2026-09-26: 'a species of bird pokemon lives in the sapling'): the tree's co-resident (Chatot) is gone and its find is the tree's bird.",
       "entries": [
-        {
-          "species": "Chatot",
-          "pokemon": "chatot",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "chatot",
-          "family_priority": "anchor",
-          "level": "44-50",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 24.0
-        },
         {
           "species": "Oricorio",
           "pokemon": "oricorio",
@@ -34180,10 +34035,10 @@
           "family": "oricorio",
           "family_priority": "rare",
           "ambient": true,
-          "eligibility_reason": "authored rare find (docs/world-building/SAPLING_BIRDS.md): Oricorio at the rare family weight 2 beside a common co-resident",
+          "eligibility_reason": "the tree's one species (one bird per sapling, the owner 2026-09-26)",
           "level": "44-50",
-          "bucket": "rare",
-          "weight": 2.0,
+          "bucket": "common",
+          "weight": 24.0,
           "conditions": {}
         }
       ],

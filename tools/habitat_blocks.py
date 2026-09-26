@@ -5,11 +5,20 @@ A re-export regenerates every region file from the WorldPainter project, which n
 so a Habitat Block is erased by every export (EXP-021). This tool makes each block reproducible from data, like
 the cavern, the world tree and the islet:
 
-  function   write a datapack function that places every manifest block with the two commands EXP-021 proved:
+  function   write a datapack function that places every manifest block.
+             natural, with the two commands EXP-021 proved:
                setblock <pos> cobblemon:habitat_block[cancels_regular_spawns=<replace>,activated_style=false] replace
                data merge block <pos> {SpawningStyle:"cobblemon:natural",ReplaceSpawns:..,RangeOfInfluence:..,PoolId:..}
-             A block placed by command stays inert until its chunk reloads, so the post-export procedure runs the
-             function and then restarts the server (docs/world-building/REEXPORT.md).
+             A natural block placed by command stays inert until its chunk reloads, so the post-export procedure runs
+             the function and then restarts the server (docs/world-building/REEXPORT.md).
+             activated, with its whole block entity in one setblock, after the position is set to its mimic block:
+               setblock <pos> <mimic> replace
+               setblock <pos> cobblemon:habitat_block[cancels_regular_spawns=false,activated_style=true]{..all..} replace
+             Cobblemon 1.8.0's HabitatBlockEntity builds its spawner once, on its first tick (an `initialized` flag
+             that is not saved). A `data merge` onto a block that has ticked hands it an activated style whose spawner
+             was never built, and every tick then throws (staging, 2026-09-26: Neruina kicked the player). Setting
+             the mimic first makes the second setblock a new block entity rather than the old one re-read, and the
+             NBT must carry PhaseOrder, which the loader reads with valueOf and does not default.
   verify     check that every placed or verified manifest block is present, with its style, pool, range, ReplaceSpawns
              and blockstate:
                --world <stopped world>   read from region files (an offline snapshot or disposable copy; the live world
@@ -21,7 +30,10 @@ the cavern, the world tree and the islet:
 
 Static rules (also enforced by the habitat-blocks check in tools/validate_data.py): the pool is a Habitat pool that
 data/spawns.json defines; only the natural style is recorded; ranges of ReplaceSpawns blocks must not overlap
-(EXP-021: an overlap spawns nothing), measured horizontally because vertical reach is untested.
+(EXP-021: an overlap spawns nothing), measured in three dimensions: the reach is a sphere. Activated blocks keep up to
+max_spawns of their pool alive within spawn_range of themselves, refill as those go, and do not cancel one another. Staging, 2026-09-26: three
+blocks stacked on one trunk (ground + 12, + 35, + 58, range 11, 23 apart vertically, 0 apart horizontally) still spawned
+their pool's Fletchling in the trunk's column; had the reach been a column, the three would overlap and spawn nothing.
 """
 from __future__ import annotations
 
@@ -72,14 +84,36 @@ def static_problems(manifest_doc, spawns_doc):
         if not (isinstance(pos, dict) and all(isinstance(pos.get(k), int) for k in "xyz")):
             out.append((bid, "position must be {x, y, z} integers"))
             continue
-        if b.get("style") != "natural":
-            out.append((bid, 'style must be "natural" (the activated style is untested)'))
+        style = b.get("style")
+        if style not in ("natural", "activated"):
+            out.append((bid, 'style must be "natural" or "activated"'))
+            continue
         if not isinstance(b.get("replace_spawns"), bool):
             out.append((bid, "replace_spawns must be true or false"))
-        r = b.get("range_of_influence")
-        if not isinstance(r, int) or isinstance(r, bool) or r <= 0:
-            out.append((bid, "range_of_influence must be a positive integer"))
-            continue
+        if style == "natural":
+            r = b.get("range_of_influence")
+            if not isinstance(r, int) or isinstance(r, bool) or r <= 0:
+                out.append((bid, "range_of_influence must be a positive integer"))
+                continue
+        else:
+            if b.get("replace_spawns") is not False:
+                out.append((bid, "an activated block has replace_spawns false"))
+            if not (isinstance(b.get("mimic"), str) and ":" in b["mimic"]):
+                out.append((bid, "an activated block needs mimic, a namespaced block id"))
+            act = b.get("activated")
+            if not isinstance(act, dict):
+                out.append((bid, "an activated block needs its activated settings"))
+                continue
+            for k in ("spawn_range", "max_spawns", "max_spawns_per_activation", "cancel_range"):
+                v = act.get(k)
+                if not isinstance(v, int) or isinstance(v, bool) or (v <= 0 and not (k == "cancel_range" and v == -1)):
+                    out.append((bid, "activated.%s must be a positive integer%s"
+                                % (k, " or -1" if k == "cancel_range" else "")))
+            if act.get("trigger") not in ("TICK", "REDSTONE"):
+                out.append((bid, "activated.trigger must be TICK or REDSTONE"))
+            c = act.get("chance")
+            if not isinstance(c, (int, float)) or isinstance(c, bool) or not 0 < c <= 1:
+                out.append((bid, "activated.chance must be in (0, 1]"))
         if b.get("pool") not in pools:
             out.append((bid, "pool %r is not a Habitat pool in data/spawns.json (%s)" % (b.get("pool"), ", ".join(sorted(pools)) or "none")))
         if b.get("status") not in STATUSES:
@@ -87,17 +121,31 @@ def static_problems(manifest_doc, spawns_doc):
         good.append(b)
     for i, a in enumerate(good):
         for c in good[i + 1:]:
-            if not (a.get("replace_spawns") and c.get("replace_spawns")):
+            if not (a.get("replace_spawns") and c.get("replace_spawns")
+                    and a.get("style") == c.get("style") == "natural"):
                 continue
-            d = math.hypot(a["position"]["x"] - c["position"]["x"], a["position"]["z"] - c["position"]["z"])
+            d = math.dist([a["position"][k] for k in "xyz"], [c["position"][k] for k in "xyz"])
             if d < a["range_of_influence"] + c["range_of_influence"]:
                 out.append((a["id"], "range overlaps %s: %.1f blocks apart, ranges %d + %d (EXP-021: an overlap spawns nothing)"
                             % (c["id"], d, a["range_of_influence"], c["range_of_influence"])))
     return out
 
 
+def activated_nbt(b):
+    a = b["activated"]
+    return ('{MimicId:"%s",PhaseOrder:"SIMPLE",LevelRange:"",Modifiers:"",SpawningStyle:"cobblemon:activated",'
+            'Chance:%sf,Trigger:"%s",CancelRange:%d,SpawnRange:%d,MaxSpawns:%d,MaxSpawnsPerActivation:%d,PoolId:"%s"}'
+            % (b["mimic"], float(a["chance"]), a["trigger"], a["cancel_range"], a["spawn_range"], a["max_spawns"],
+               a["max_spawns_per_activation"], b["pool"]))
+
+
 def commands(b):
     x, y, z = (b["position"][k] for k in "xyz")
+    if b["style"] == "activated":
+        cancels = "true" if b["activated"]["cancel_range"] > 0 else "false"
+        return ["setblock %d %d %d %s replace" % (x, y, z, b["mimic"]),
+                "setblock %d %d %d %s[cancels_regular_spawns=%s,activated_style=true]%s replace"
+                % (x, y, z, BLOCK, cancels, activated_nbt(b))]
     replace = "true" if b["replace_spawns"] else "false"
     return [
         "setblock %d %d %d %s[cancels_regular_spawns=%s,activated_style=false] replace" % (x, y, z, BLOCK, replace),
@@ -107,9 +155,18 @@ def commands(b):
 
 
 def expected(b):
+    if b["style"] == "activated":
+        a = b["activated"]
+        return {"id": BLOCK, "SpawningStyle": "cobblemon:activated", "PoolId": b["pool"], "MimicId": b["mimic"],
+                "SpawnRange": a["spawn_range"], "MaxSpawns": a["max_spawns"],
+                "MaxSpawnsPerActivation": a["max_spawns_per_activation"], "CancelRange": a["cancel_range"],
+                "Trigger": a["trigger"], "cancels_regular_spawns": "true" if a["cancel_range"] > 0 else "false"}
     return {"id": BLOCK, "SpawningStyle": "cobblemon:natural", "PoolId": b["pool"],
             "RangeOfInfluence": b["range_of_influence"], "ReplaceSpawns": 1 if b["replace_spawns"] else 0,
             "cancels_regular_spawns": "true" if b["replace_spawns"] else "false"}
+
+
+INT_KEYS = ("RangeOfInfluence", "ReplaceSpawns", "SpawnRange", "MaxSpawns", "MaxSpawnsPerActivation", "CancelRange")
 
 
 def compare(b, found):
@@ -119,7 +176,7 @@ def compare(b, found):
     msgs = []
     for k, v in expected(b).items():
         got = found.get(k)
-        if k in ("RangeOfInfluence", "ReplaceSpawns") and got is not None:
+        if k in INT_KEYS and got is not None:
             got = int(got)
         if got != v:
             msgs.append("%s is %r, manifest says %r" % (k, got, v))
@@ -187,13 +244,22 @@ def rcon_problems(manifest_doc, server_dir):
                 out.append((b["id"], "absent: %s" % got.strip()))
                 continue
             found = {"id": BLOCK if '"%s"' % BLOCK in got else None}
-            for k in ("SpawningStyle", "PoolId"):
-                m = re.search(r'%s: "([^"]*)"' % k, got)
+            for k in ("SpawningStyle", "PoolId", "MimicId", "Trigger"):
+                m = re.search(r'\b%s: "([^"]*)"' % k, got)
                 found[k] = m.group(1) if m else None
-            for k in ("RangeOfInfluence", "ReplaceSpawns"):
-                m = re.search(r"%s: (\d+)b?" % k, got)
+            for k in INT_KEYS:
+                m = re.search(r"\b%s: (-?\d+)b?" % k, got)
                 found[k] = int(m.group(1)) if m else None
-            state = "true" if "passed" in run("execute if block %d %d %d %s[cancels_regular_spawns=true]" % (x, y, z, BLOCK)) else "false"
+            want_true = expected(b)["cancels_regular_spawns"] == "true"
+            # retried: straight after a forceload the state test read "false" for a block that read "true" a moment
+            # later, and a different handful of blocks every run (staging, 2026-09-26: 9, then 21, then 8 of 237)
+            state = "false"
+            for _ in range(4 if want_true else 1):
+                if "passed" in run("execute if block %d %d %d %s[cancels_regular_spawns=true]" % (x, y, z, BLOCK)):
+                    state = "true"
+                    break
+                import time
+                time.sleep(1)
             found["cancels_regular_spawns"] = state
             out.extend((b["id"], m) for m in compare(b, found))
         finally:
@@ -225,7 +291,7 @@ def main(argv=None):
         out = Path(a.out)
         fn = out / "data" / "cobblers" / "function" / "habitats" / "place.mcfunction"
         fn.parent.mkdir(parents=True, exist_ok=True)
-        lines = ["# generated by tools/habitat_blocks.py from data/habitat_blocks.json; restart the server afterwards so each block's chunk reloads (EXP-021)"]
+        lines = ["# generated by tools/habitat_blocks.py from data/habitat_blocks.json; restart the server afterwards so each natural block's chunk reloads (EXP-021)"]
         for b in blocks:
             x, z = b["position"]["x"], b["position"]["z"]
             lines += ["# %s (%s)" % (b["id"], b["pool"]), "forceload add %d %d" % (x, z)] + commands(b) + ["forceload remove %d %d" % (x, z)]
