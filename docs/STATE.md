@@ -117,7 +117,11 @@
   - The server had never received five committed overlay files, including `starters.json`, which still offered the dropped Pallet, Lumya and Cosplay starters. It has them now; starters reload at the next restart.
   - `c2me.toml` is deleted.
   - Every other value the server runs is recorded in `server/config/mods/`. `python tools/server_config_record.py check --server-dir <server>` reports 0 disagreements.
-  - Mega Showdown's `likoPendentDuration` runs at 1,440,000 ticks (20 h). The mod's own default and the base pack are both 72,000. Its origin is unknown, and it is kept until the owner decides.
+  - **Drift cannot sit unnoticed now:**
+    - `tools/reapply.py install` copies `modpack/config` onto the server and fails unless the check reports 0 (REEXPORT step 5).
+    - `CLAUDE.md` makes the check part of the session start.
+    - The check ignores comment lines, because RCT rewrites its file without ours.
+  - Mega Showdown's `likoPendentDuration` is set back to 72,000 (1 h), the mod default, from an unexplained 1,440,000 (the owner). It takes effect at the next restart.
 - **Every painted lake has a water roster** (2026-09-26, the owner: the lakes by the cherry grove "spawn nothing or just surskits near the edges"). The cause:
   - the lake rosters held almost only `grounded` entries;
   - `suppress_inherited_spawns.py --subregions` cancels the pack's own water spawns over every sub-region, whatever its `policy` says, which contradicts `spawn_suppression.json`'s "off-route wilderness keeps its defaults";

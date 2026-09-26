@@ -13,6 +13,8 @@ Where each value lives:
 
   python tools/server_config_record.py check  --server-dir <server>   report every disagreement; exit 1 on any
   python tools/server_config_record.py record --server-dir <server>   rewrite server/config/mods from the server
+  python tools/server_config_record.py install --server-dir <server>  copy modpack/config onto the server, then check
+                                                                     (tools/reapply.py install runs this, fail-closed)
 
 Run it under the coordination lock (CLAUDE.md, live server safety). It reads the server's `config/` folder only,
 never the world. `check` treats the Distant Horizons `serverId` as the server's own: DH generates it, and it must not
@@ -50,7 +52,10 @@ def comparable(rel, data):
             return json.dumps(json.loads(text), sort_keys=True)
         except ValueError:
             pass
-    return "\n".join(line.rstrip() for line in text.strip().splitlines())
+    # comment lines are not values, and mods that rewrite their own file drop ours (rctmod-server.toml, 2026-09-26)
+    comment = ("#",) if rel.endswith((".toml", ".properties", ".cfg")) else ()
+    return "\n".join(line.rstrip() for line in text.strip().splitlines()
+                     if line.strip() and not (comment and line.strip().startswith(comment)))
 
 
 def expected(rel):
@@ -79,6 +84,29 @@ def check(server_config):
     return problems
 
 
+def install(server_config):
+    """Copy the overlay (modpack/config) onto the server's config, keeping each file's server-owned keys (OWN_KEYS).
+    Until 2026-09-26 nothing did this: five overlay files, starters.json among them, had never reached the server."""
+    n = 0
+    for rel, src in sorted(files(OVERLAY).items()):
+        if rel.endswith(".md"):
+            continue
+        dest = server_config / rel
+        data = src.read_bytes()
+        pat = OWN_KEYS.get(rel)
+        if pat is not None and dest.is_file():
+            own = pat.search(dest.read_text(encoding="utf-8", errors="replace"))
+            if own:
+                data = pat.sub(lambda m: own.group(0), data.decode("utf-8")).encode("utf-8")
+        if dest.is_file() and comparable(rel, dest.read_bytes()) == comparable(rel, data):
+            continue                                                  # same values (a mod may have dropped comments)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(data)
+        print("installed", rel)
+        n += 1
+    return n
+
+
 def record(server_config):
     for p in sorted(MIRROR.rglob("*"), reverse=True) if MIRROR.exists() else []:   # contents, not the folder
         if p.is_file() and p.name != "README.md":
@@ -102,12 +130,15 @@ def record(server_config):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("cmd", choices=["check", "record"])
+    ap.add_argument("cmd", choices=["check", "record", "install"])
     ap.add_argument("--server-dir", required=True)
     a = ap.parse_args(argv)
     cfg = Path(a.server_dir) / "config"
     if not cfg.is_dir():
         sys.exit("no config folder at %s" % cfg)
+    if a.cmd == "install":
+        print("installed %d overlay files" % install(cfg))
+        a.cmd = "check"
     if a.cmd == "record":
         print("recorded %d files in %s" % (record(cfg), MIRROR.relative_to(ROOT)))
         return 0

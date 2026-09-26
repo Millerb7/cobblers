@@ -19,7 +19,7 @@ These are records, not decisions. A file here holds whatever the server runs, wh
 
 | File | Value | Base pack | Origin |
 |---|---|---|---|
-| `mega_showdown/config.json` | `likoPendentDuration` 1,440,000 ticks (20 h) | 72,000 (1 h) | **Unknown.** Mega Showdown 1.0.2's own default is also 72,000 (`MegaShowdownConfig`, read from the jar), so neither a default nor a migration explains it. The file was last written on 2026-09-09. It is 20 times the default. Kept as it runs until the owner decides. |
+| `mega_showdown/config.json` | `likoPendentDuration` 72,000 ticks (1 h), **set back from 1,440,000 (20 h)** on 2026-09-26 by the owner: "nothing records why it was 20 hours and a mod default is a better baseline than an unexplained value" | 72,000 | Mega Showdown 1.0.2's own default is also 72,000 (`MegaShowdownConfig`, read from the jar). The 20 h value had been written on 2026-09-09 with no record of who set it or why. It takes effect at the next restart. |
 | `capture_xp.json` | `inBattleAwardExperienceToFaintedPokemon` false, `outOfBattleAwardExperienceToFaintedPokemon` false | keys absent | Probably a newer mod version's keys, with its defaults |
 | `obc-common.toml` | `breedingBuff` false | key absent | Probably a newer mod version's key |
 | `playerxp/playerxp.json` | daily cap keys gone; exp share on at 35 blocks | daily cap keys present | Probably a newer mod version |

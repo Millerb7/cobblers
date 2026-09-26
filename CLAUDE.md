@@ -17,6 +17,13 @@ without adding history; if no state category changed, report that it was
 reviewed and remains current. Follow its file-ownership table when making the
 update.
 
+At session start, after the live-server safety checks below, run
+`python tools/server_config_record.py check --server-dir <server>`. It reads the
+server's `config/` folder only, never a world. Report any disagreement between
+what the server runs and what the repo records before doing other work. Work
+done in the repo that never reached the running game has happened twice: the
+spawn tables, and five config overlays including the starters.
+
 ## Live server safety (hard gate)
 
 Before any command that could access the local `cobblers-server` runtime, make

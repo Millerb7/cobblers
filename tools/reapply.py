@@ -349,6 +349,19 @@ def install(a):
             shutil.rmtree(wdp / name)
         shutil.copytree(src, wdp / name)
         print("installed into the world folder", wdp / name)
+    # The configs, last, and fail-closed. Until 2026-09-26 nothing copied modpack/config to the server: five committed
+    # overlay files had never reached it (starters.json still offered the starters dropped on 2026-09-23). Install the
+    # overlay, then require that every config the server runs is recorded in the repo exactly as it runs
+    # (tools/server_config_record.py: the overlay, server/config/mods/ or the base pack)
+    import server_config_record as SCR
+    cfg = Path(a.server_dir) / "config"
+    print("installed %d overlay config files" % SCR.install(cfg))
+    drift = SCR.check(cfg)
+    if drift:
+        raise SystemExit("the server's config disagrees with the repo (%d):\n  %s\nrecord a deliberate server value with "
+                         "`tools/server_config_record.py record`, or put it in modpack/config" % (len(drift),
+                                                                                                  "\n  ".join(drift)))
+    print("server config: 0 disagreements with the repo")
 
 
 class Rcon:

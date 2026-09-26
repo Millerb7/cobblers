@@ -27,6 +27,10 @@ receive the pregenerated LODs by sync. The comment DH writes above the key is it
 `rctmod-server.toml` is Cobbleverse's file with one change: `relativeLevelCap` 0 instead of 5 (the owner,
 2026-09-24). The authored rosters and leader teams assume a player's cap is exactly the next required leader's
 strongest Pokemon; 5 let players arrive five levels over every ace. `tests/test_rct_config_overlay.py` fails if
-anything else in the file drifts from the base. Nothing copies this folder to the server by itself
-(`server/scripts/assemble-server.ps1` builds `mods/` only): copy the file into `<server>/config/` before a boot
-(`docs/world-building/REEXPORT.md`, before the day).
+anything else in the file drifts from the base.
+
+**Getting this folder onto the server.** `tools/reapply.py install` copies it onto `<server>/config/` and then fails
+unless `tools/server_config_record.py check` finds the server's config recorded exactly. The same copy can be run on
+its own with `python tools/server_config_record.py install --server-dir <server>`. Until 2026-09-26 nothing did this
+(`server/scripts/assemble-server.ps1` builds `mods/` only). Five of these files had never reached the server, and a
+playtest offered the starters this folder drops.
