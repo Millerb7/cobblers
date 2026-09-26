@@ -73,15 +73,37 @@ The in-game test is set up on staging (`cobblers-dryrun11`).
      the player logs out);
    - in game, whether the world map shows the pad.
 
-Result: _not yet run_.
+**Result (VERIFIED, 2026-09-26, staging, the owner's client; Xaero's Minimap 26.4.2, World Map 1.44.2, Cobblemon
+1.8.0, Minecraft 1.21.1 Fabric): the effects do not stop the cache.**
+- All six effects were applied. The server answered "Applied effect No Minimap ... No WM Cave Maps".
+- The player was teleported to the pad and stood there for 35 s. They were brought back, and the effects were
+  cleared.
+- The owner then opened the world map: "its there on the map". The magenta pad showed at (-640, 4096).
+- After the owner logged out, the cache held four new regions: `-2_8.zip` (the pad's region), `-2_7.zip`, `-1_7.zip`
+  and `-1_8.zip`, all written at 14:07:01. The folder went from 108 to 113 region files.
+- The pad was removed from staging afterwards. The owner's cache keeps it.
+
+## What the jars allow for scoping the cache (VERIFIED unless marked)
+
+- **Per dimension, yes.** The client keeps one cache folder per dimension under a world-id folder:
+  `Multiplayer_localhost/null/mw$<id>` for the overworld, and `DIM-1` for the Nether. The world id is an int in
+  `xaeromap.txt`, which the world map writes to the server's world save and sends to each joining player
+  (`LevelMapProperties`, `CommonEvents.onPlayerWorldJoin`). A custom dimension gets its own map. The world map screen
+  can still switch to any dimension the player has visited, so that map is separate but not hidden.
+- **Per area, no.** No effect, id or config option is keyed on coordinates. The one per-dimension option,
+  `CAVE_MODE_ALLOWED_DIMENSIONS`, is about cave mode only.
+- **Changing the world id** (`xaeromap.txt`) orphans every player's whole map for that world. It cannot be scoped.
+- **Clearing a client's cache** is client-side only. Nothing on the server can delete it.
+- **`usable`** in `LevelMapProperties` is not a switch. It records whether the id file loaded, and the server kicks
+  the player with `gui.xaero_wm_error_loading_properties` when it did not (`MapRunner`, `CommonEvents`).
+- **A server-enforced config profile** could in principle force `WRITING_DISTANCE` or `LOAD_NEW_CHUNKS`. It would apply
+  everywhere, not to one area. Whether a profile can be pushed per player is NOT VERIFIED.
+- **Distant Horizons is a second leak** for anything built on the overworld surface far away. The server pregenerates
+  LODs over the whole border (`dh pregen ... 4096 4096 320`), and clients sync them. A surface grid of chambers in the
+  western ocean would show in DH from a distance, with no map needed. ASSUMED from REEXPORT.md's pregen; not tested
+  for this case.
 
 ## What it means for the gated-interactions design
 
-If the test confirms the reading above, these effects cannot hide the pockets from the map; they only blank the map
-while a player is inside. Ways out, to be judged in the spec:
-- keep the pockets where the map shows nothing distinctive (for example deep under a uniform seabed, the surface only);
-- build the pockets so their top-down surface reads as ordinary terrain;
-- use a server-enforced Xaero config for the pocket area, if the per-server profile can limit writing. The world map's
-  options are "profiled", and whether a server profile can force `LOAD_NEW_CHUNKS` or `WRITING_DISTANCE` for its players
-  is NOT VERIFIED;
-- accept that the map remembers.
+These effects cannot hide pockets from the map. They only blank the map while a player is inside. The options were
+weighed in the reply of 2026-09-26, and the decision is the owner's.
