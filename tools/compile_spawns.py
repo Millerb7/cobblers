@@ -65,8 +65,15 @@ def box_condition(min_x, max_x, min_z, max_z, entry):
 
     An entry with no biomes leaves the key out rather than sending an empty list, which would match
     no biome at all. The waterway rosters rely on that: a creek is defined by its water, not its biome.
+
+    canSeeSky is forced only on entries that stand on land or on the water's surface. Cobblemon 1.8.0 takes a
+    column's sky flag once, at the top of the spawning zone around the player (see marine_condition), so under a
+    deep lake it is false and a forced canSeeSky empties every submerged and seafloor entry: on staging
+    2026-09-26 /checkspawn on the floor of Lake Viltri and Shrew Lake found nothing at all.
     """
-    cond = {"minX": min_x, "maxX": max_x, "minZ": min_z, "maxZ": max_z, "canSeeSky": True}
+    cond = {"minX": min_x, "maxX": max_x, "minZ": min_z, "maxZ": max_z}
+    if position_type(entry) not in ("submerged", "seafloor"):
+        cond["canSeeSky"] = True
     if entry.get("biomes"):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
