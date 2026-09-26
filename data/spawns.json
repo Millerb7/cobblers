@@ -9083,7 +9083,12 @@
       "ambient": true,
       "scope": "west_shore",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "conditions_basis": "shore-only: a grounded crab with no water condition walked the Route 1 forest floor (owner playtest 2026-09-25). neededNearbyBlocks water keeps it at the water's edge, as on the Mt Clay outflow (EXP-025, seen in game); the nearby radius is Cobblemon's and is not measured.",
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
@@ -9099,7 +9104,11 @@
       "ambient": false,
       "scope": "west_shore",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
       "eligibility_reason": "evolution requires level 28; band begins at 7",
       "biomes": [
         "minecraft:plains"
@@ -9115,7 +9124,12 @@
       "ambient": true,
       "scope": "west_shore",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
+      "conditions_basis": "shore-only: a grounded starfish with no water condition walked the Route 1 forest floor (owner playtest 2026-09-25). neededNearbyBlocks water keeps it at the water's edge, as on the Mt Clay outflow (EXP-025, seen in game); the nearby radius is Cobblemon's and is not measured.",
       "eligibility_reason": "base stage",
       "biomes": [
         "minecraft:plains"
@@ -9131,7 +9145,11 @@
       "ambient": false,
       "scope": "west_shore",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
+      "conditions": {
+        "neededNearbyBlocks": [
+          "minecraft:water"
+        ]
+      },
       "eligibility_reason": "player evolution (non-level method)",
       "biomes": [
         "minecraft:plains"
@@ -9181,6 +9199,314 @@
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
       "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.pidgey",
+      "species": "pidgey",
+      "bucket": "common",
+      "level": "7-10",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.pidgeotto",
+      "species": "pidgeotto",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 18; band begins at 7",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.pidgeot",
+      "species": "pidgeot",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 18; band begins at 7",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.combee",
+      "species": "combee",
+      "bucket": "common",
+      "level": "7-10",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.vespiquen",
+      "species": "vespiquen",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.rattata",
+      "species": "rattata",
+      "bucket": "common",
+      "level": "7-10",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.raticate",
+      "species": "raticate",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 20; band begins at 7",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.fomantis",
+      "species": "fomantis",
+      "bucket": "common",
+      "level": "7-10",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.lurantis",
+      "species": "lurantis",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.hoothoot",
+      "species": "hoothoot",
+      "bucket": "common",
+      "level": "7-10",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "timeRange": "night"
+      },
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.noctowl",
+      "species": "noctowl",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {
+        "timeRange": "night"
+      },
+      "eligibility_reason": "evolution requires level 20; band begins at 7",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.deerling",
+      "species": "deerling",
+      "bucket": "uncommon",
+      "level": "7-10",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.sawsbuck",
+      "species": "sawsbuck",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 34; band begins at 7",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.applin",
+      "species": "applin",
+      "bucket": "uncommon",
+      "level": "7-10",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.flapple",
+      "species": "flapple",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.appletun",
+      "species": "appletun",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.pawmi",
+      "species": "pawmi",
+      "bucket": "uncommon",
+      "level": "7-10",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.pawmo",
+      "species": "pawmo",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 18; band begins at 7",
+      "biomes": [
+        "minecraft:plains"
+      ],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.pawmot",
+      "species": "pawmot",
+      "bucket": "ultra-rare",
+      "level": "7-10",
+      "weight": 0,
+      "ambient": false,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolution requires level 18; band begins at 7",
       "biomes": [
         "minecraft:plains"
       ],
@@ -23464,6 +23790,7 @@
         "maximum": 10,
         "basis_route": "route_01_pallet_to_brock"
       },
+      "conditions_note": "2026-09-25: Krabby and Staryu (and their evolutions) carry neededNearbyBlocks minecraft:water, so they spawn only beside water; before it both walked the Route 1 maze forest's floor (owner playtest), which has since left this sub-region (data/regions.json route1_maze_forest). Shellder is already seafloor and needs water. Wingull and Wattrel keep no water condition on purpose: coastal-grass seabirds are where the games put them, and with them tied to the water the inland scrub would spawn Pidgey alone.",
       "entries": [
         {
           "species": "Pidgey",
@@ -23526,7 +23853,11 @@
           "level": "7-10",
           "bucket": "common",
           "weight": 12.0,
-          "conditions": {}
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
         },
         {
           "species": "Kingler",
@@ -23541,7 +23872,11 @@
           "level": "7-10",
           "bucket": "authored-only",
           "weight": 0,
-          "conditions": {}
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
         },
         {
           "species": "Staryu",
@@ -23556,7 +23891,11 @@
           "level": "7-10",
           "bucket": "common",
           "weight": 12.0,
-          "conditions": {}
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
         },
         {
           "species": "Starmie",
@@ -23572,7 +23911,11 @@
           "level": "7-10",
           "bucket": "authored-only",
           "weight": 0,
-          "conditions": {}
+          "conditions": {
+            "neededNearbyBlocks": [
+              "minecraft:water"
+            ]
+          }
         },
         {
           "species": "Shellder",
@@ -23619,6 +23962,328 @@
           "level": "7-10",
           "bucket": "uncommon",
           "weight": 6.0,
+          "conditions": {}
+        }
+      ],
+      "biomes": [
+        "minecraft:plains"
+      ]
+    },
+    {
+      "id": "route1_maze_forest",
+      "display_name": "Maze Forest",
+      "region": "pallet_fields",
+      "terrain_basis": "the Route 1 maze forest (tools/maze_forest.py): oak and birch packed at 2 blocks along the corridors, 6 beyond, on painted plains; elevation not yet measured",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "policy": "exclusive_curated",
+      "level_band": {
+        "minimum": 7,
+        "maximum": 10,
+        "basis_route": "route_01_pallet_to_brock"
+      },
+      "roster_basis": "Authored 2026-09-25 from route_species_selection route_01_pallet_to_brock, forest species only, after the owner found West Shore's crabs and starfish on the forest floor. Band 7-10: the forest lies between Pallet Meadows (5-8) and the River of Shrews vale (9-12) and takes West Shore's band, which covered its northern half. Pidgey and Combee anchor it (the Meadow Apiarist's hives stand in it); Rattata for the picnic glade; Fomantis and Hoothoot (night) as the woodland commons; Deerling, Applin and Pawmi uncommon. The sapling crown's Habitat Block (route1_sapling_crown, 5-8) and the mansion ward (route1_mansion_ward) still replace this roster inside their ranges.",
+      "entries": [
+        {
+          "species": "Pidgey",
+          "pokemon": "pidgey",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "pidgey",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Pidgeotto",
+          "pokemon": "pidgeotto",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "pidgey",
+          "family_priority": "anchor",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 18; band begins at 7",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Pidgeot",
+          "pokemon": "pidgeot",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "pidgey",
+          "family_priority": "anchor",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 18; band begins at 7",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Combee",
+          "pokemon": "combee",
+          "types": [
+            "bug",
+            "flying"
+          ],
+          "family": "combee",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Vespiquen",
+          "pokemon": "vespiquen",
+          "types": [
+            "bug",
+            "flying"
+          ],
+          "family": "combee",
+          "family_priority": "anchor",
+          "ambient": false,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Rattata",
+          "pokemon": "rattata",
+          "types": [
+            "normal"
+          ],
+          "family": "rattata",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Raticate",
+          "pokemon": "raticate",
+          "types": [
+            "normal"
+          ],
+          "family": "rattata",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 20; band begins at 7",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Fomantis",
+          "pokemon": "fomantis",
+          "types": [
+            "grass"
+          ],
+          "family": "fomantis",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Lurantis",
+          "pokemon": "lurantis",
+          "types": [
+            "grass"
+          ],
+          "family": "fomantis",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Hoothoot",
+          "pokemon": "hoothoot",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "hoothoot",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {
+            "timeRange": "night"
+          }
+        },
+        {
+          "species": "Noctowl",
+          "pokemon": "noctowl",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "hoothoot",
+          "family_priority": "common",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 20; band begins at 7",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {
+            "timeRange": "night"
+          }
+        },
+        {
+          "species": "Deerling",
+          "pokemon": "deerling",
+          "types": [
+            "normal",
+            "grass"
+          ],
+          "family": "deerling",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Sawsbuck",
+          "pokemon": "sawsbuck",
+          "types": [
+            "normal",
+            "grass"
+          ],
+          "family": "deerling",
+          "family_priority": "uncommon",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 34; band begins at 7",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Applin",
+          "pokemon": "applin",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Flapple",
+          "pokemon": "flapple",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "uncommon",
+          "ambient": false,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Appletun",
+          "pokemon": "appletun",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "uncommon",
+          "ambient": false,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Pawmi",
+          "pokemon": "pawmi",
+          "types": [
+            "electric"
+          ],
+          "family": "pawmi",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "7-10",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Pawmo",
+          "pokemon": "pawmo",
+          "types": [
+            "electric",
+            "fighting"
+          ],
+          "family": "pawmi",
+          "family_priority": "uncommon",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 18; band begins at 7",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
+          "conditions": {}
+        },
+        {
+          "species": "Pawmot",
+          "pokemon": "pawmot",
+          "types": [
+            "electric",
+            "fighting"
+          ],
+          "family": "pawmi",
+          "family_priority": "uncommon",
+          "ambient": false,
+          "eligibility_reason": "evolution requires level 18; band begins at 7",
+          "level": "7-10",
+          "bucket": "authored-only",
+          "weight": 0,
           "conditions": {}
         }
       ],

@@ -4498,7 +4498,8 @@
    "subregions": [
     "pallet_meadows",
     "west_shore",
-    "south_west_fields"
+    "south_west_fields",
+    "route1_maze_forest"
    ],
    "measured": {
     "area_km2": 1.789,
@@ -17721,6 +17722,11 @@
      "channel_share": 0.0,
      "ridge_share": 0.0,
      "neighbour": "arrow_creeks"
+    },
+    {
+     "basis": "planted change of cover: the Route 1 maze forest's edge (tools/maze_forest.py BOX), carved out 2026-09-25",
+     "length_blocks": 969,
+     "neighbour": "route1_maze_forest"
     }
    ],
    "encounters": {
@@ -17770,12 +17776,16 @@
       4952
      ],
      [
-      1712,
-      4880
+      1820,
+      4941
      ],
      [
-      1512,
-      4472
+      1820,
+      4300
+     ],
+     [
+      1492,
+      4300
      ],
      [
       1472,
@@ -17839,78 +17849,6 @@
       1584,
       4092
      ]
-    ],
-    [
-     [
-      1508,
-      4448
-     ],
-     [
-      1512,
-      4448
-     ],
-     [
-      1512,
-      4452
-     ],
-     [
-      1508,
-      4452
-     ]
-    ],
-    [
-     [
-      1504,
-      4452
-     ],
-     [
-      1512,
-      4452
-     ],
-     [
-      1512,
-      4464
-     ],
-     [
-      1504,
-      4464
-     ]
-    ],
-    [
-     [
-      1508,
-      4464
-     ],
-     [
-      1512,
-      4464
-     ],
-     [
-      1512,
-      4472
-     ],
-     [
-      1508,
-      4472
-     ]
-    ],
-    [
-     [
-      1508,
-      4472
-     ],
-     [
-      1516,
-      4472
-     ],
-     [
-      1516,
-      4480
-     ],
-     [
-      1508,
-      4480
-     ]
     ]
    ]
   },
@@ -17971,6 +17909,11 @@
      "channel_share": 0.0,
      "ridge_share": 0.0,
      "neighbour": "arrow_creeks"
+    },
+    {
+     "basis": "planted change of cover: the Route 1 maze forest's edge (tools/maze_forest.py BOX), carved out 2026-09-25",
+     "length_blocks": 816,
+     "neighbour": "route1_maze_forest"
     }
    ],
    "encounters": {
@@ -17984,16 +17927,8 @@
    "polygons": [
     [
      [
-      1608,
-      4648
-     ],
-     [
-      1600,
-      4696
-     ],
-     [
-      1704,
-      4880
+      1820,
+      4969
      ],
      [
       2016,
@@ -18040,192 +17975,16 @@
       5112
      ],
      [
-      1192,
-      4968
+      1180,
+      4975
      ],
      [
-      1408,
-      4744
-     ]
-    ],
-    [
-     [
-      1384,
-      4760
+      1180,
+      5060
      ],
      [
-      1392,
-      4760
-     ],
-     [
-      1392,
-      4764
-     ],
-     [
-      1384,
-      4764
-     ]
-    ],
-    [
-     [
-      1380,
-      4764
-     ],
-     [
-      1388,
-      4764
-     ],
-     [
-      1388,
-      4768
-     ],
-     [
-      1380,
-      4768
-     ]
-    ],
-    [
-     [
-      1376,
-      4768
-     ],
-     [
-      1388,
-      4768
-     ],
-     [
-      1388,
-      4772
-     ],
-     [
-      1376,
-      4772
-     ]
-    ],
-    [
-     [
-      1372,
-      4772
-     ],
-     [
-      1384,
-      4772
-     ],
-     [
-      1384,
-      4776
-     ],
-     [
-      1372,
-      4776
-     ]
-    ],
-    [
-     [
-      1372,
-      4776
-     ],
-     [
-      1380,
-      4776
-     ],
-     [
-      1380,
-      4780
-     ],
-     [
-      1372,
-      4780
-     ]
-    ],
-    [
-     [
-      1372,
-      4780
-     ],
-     [
-      1376,
-      4780
-     ],
-     [
-      1376,
-      4784
-     ],
-     [
-      1372,
-      4784
-     ]
-    ],
-    [
-     [
-      1404,
-      4740
-     ],
-     [
-      1416,
-      4740
-     ],
-     [
-      1416,
-      4744
-     ],
-     [
-      1404,
-      4744
-     ]
-    ],
-    [
-     [
-      1400,
-      4744
-     ],
-     [
-      1408,
-      4744
-     ],
-     [
-      1408,
-      4748
-     ],
-     [
-      1400,
-      4748
-     ]
-    ],
-    [
-     [
-      1396,
-      4748
-     ],
-     [
-      1408,
-      4748
-     ],
-     [
-      1408,
-      4752
-     ],
-     [
-      1396,
-      4752
-     ]
-    ],
-    [
-     [
-      1396,
-      4752
-     ],
-     [
-      1404,
-      4752
-     ],
-     [
-      1404,
-      4756
-     ],
-     [
-      1396,
-      4756
+      1820,
+      5060
      ]
     ]
    ]
@@ -18287,6 +18046,11 @@
      "channel_share": 0.0,
      "ridge_share": 0.0,
      "neighbour": "viltri_plateau"
+    },
+    {
+     "basis": "planted change of cover: the Route 1 maze forest's edge (tools/maze_forest.py BOX), carved out 2026-09-25",
+     "length_blocks": 971,
+     "neighbour": "route1_maze_forest"
     }
    ],
    "encounters": {
@@ -18308,20 +18072,16 @@
       4128
      ],
      [
-      1504,
-      4472
+      1484,
+      4300
      ],
      [
-      1600,
-      4648
+      1180,
+      4300
      ],
      [
-      1408,
-      4736
-     ],
-     [
-      1192,
-      4960
+      1180,
+      4967
      ],
      [
       944,
@@ -18448,312 +18208,6 @@
      [
       1464,
       4132
-     ]
-    ],
-    [
-     [
-      1392,
-      4748
-     ],
-     [
-      1396,
-      4748
-     ],
-     [
-      1396,
-      4752
-     ],
-     [
-      1392,
-      4752
-     ]
-    ],
-    [
-     [
-      1388,
-      4752
-     ],
-     [
-      1396,
-      4752
-     ],
-     [
-      1396,
-      4756
-     ],
-     [
-      1388,
-      4756
-     ]
-    ],
-    [
-     [
-      1384,
-      4756
-     ],
-     [
-      1396,
-      4756
-     ],
-     [
-      1396,
-      4760
-     ],
-     [
-      1384,
-      4760
-     ]
-    ],
-    [
-     [
-      1380,
-      4760
-     ],
-     [
-      1392,
-      4760
-     ],
-     [
-      1392,
-      4764
-     ],
-     [
-      1380,
-      4764
-     ]
-    ],
-    [
-     [
-      1376,
-      4764
-     ],
-     [
-      1388,
-      4764
-     ],
-     [
-      1388,
-      4768
-     ],
-     [
-      1376,
-      4768
-     ]
-    ],
-    [
-     [
-      1372,
-      4768
-     ],
-     [
-      1384,
-      4768
-     ],
-     [
-      1384,
-      4772
-     ],
-     [
-      1372,
-      4772
-     ]
-    ],
-    [
-     [
-      1372,
-      4772
-     ],
-     [
-      1380,
-      4772
-     ],
-     [
-      1380,
-      4776
-     ],
-     [
-      1372,
-      4776
-     ]
-    ],
-    [
-     [
-      1372,
-      4776
-     ],
-     [
-      1376,
-      4776
-     ],
-     [
-      1376,
-      4780
-     ],
-     [
-      1372,
-      4780
-     ]
-    ],
-    [
-     [
-      1504,
-      4452
-     ],
-     [
-      1508,
-      4452
-     ],
-     [
-      1508,
-      4456
-     ],
-     [
-      1504,
-      4456
-     ]
-    ],
-    [
-     [
-      1500,
-      4456
-     ],
-     [
-      1508,
-      4456
-     ],
-     [
-      1508,
-      4464
-     ],
-     [
-      1500,
-      4464
-     ]
-    ],
-    [
-     [
-      1504,
-      4464
-     ],
-     [
-      1508,
-      4464
-     ],
-     [
-      1508,
-      4472
-     ],
-     [
-      1504,
-      4472
-     ]
-    ],
-    [
-     [
-      1504,
-      4472
-     ],
-     [
-      1512,
-      4472
-     ],
-     [
-      1512,
-      4480
-     ],
-     [
-      1504,
-      4480
-     ]
-    ],
-    [
-     [
-      1508,
-      4480
-     ],
-     [
-      1512,
-      4480
-     ],
-     [
-      1512,
-      4484
-     ],
-     [
-      1508,
-      4484
-     ]
-    ],
-    [
-     [
-      1404,
-      4736
-     ],
-     [
-      1412,
-      4736
-     ],
-     [
-      1412,
-      4740
-     ],
-     [
-      1404,
-      4740
-     ]
-    ],
-    [
-     [
-      1400,
-      4740
-     ],
-     [
-      1412,
-      4740
-     ],
-     [
-      1412,
-      4744
-     ],
-     [
-      1400,
-      4744
-     ]
-    ],
-    [
-     [
-      1396,
-      4744
-     ],
-     [
-      1408,
-      4744
-     ],
-     [
-      1408,
-      4748
-     ],
-     [
-      1396,
-      4748
-     ]
-    ],
-    [
-     [
-      1396,
-      4748
-     ],
-     [
-      1404,
-      4748
-     ],
-     [
-      1404,
-      4752
-     ],
-     [
-      1396,
-      4752
      ]
     ]
    ]
@@ -20152,6 +19606,77 @@
      [
       6712,
       5920
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "route1_maze_forest",
+   "display_name": "Maze Forest",
+   "parent": "pallet_fields",
+   "extent": {
+    "source": "tools/maze_forest.py BOX (1180, 4300, 1820, 5060): the whole box is planted (the maze band within 80-120 blocks of the corridor network at 2-block spacing, outer woodland at 6 over the rest), so the planted forest's edge is the box's edge",
+    "carved_from": {
+     "west_shore": "north-west and middle of the forest, roughly 36% of the box (estimated from the old polygons, not measured)",
+     "river_of_shrews_vale": "north-east, roughly 30%",
+     "pallet_meadows": "south, roughly 34%"
+    },
+    "why": "Owner playtest 2026-09-25 at the Route 1 sapling (1385, 137, 4662): the forest spawned West Shore's coast roster (Krabby, Staryu, Shellder, Wingull, Wattrel) because the middle of the maze, the sapling and Route 1 from distance 691 to 1038 lay inside that sub-region; its south spawned Pallet Meadows' roster and its north-east the vale's. The forest now has its own roster (data/spawns.json route1_maze_forest). Each neighbour's polygon was cut along the box edge, and its gap-closure rings inside the box removed, so no two sub-regions cover the same ground.",
+    "paint_note": "preset plains keeps the biome minecraft:plains everywhere in the box (both former presets paint plains) and changes nothing in the former pallet_meadows and river_of_shrews_vale parts; in the former west_shore part a repaint (tools/paint_maps.py) would swap coast_scrub's sand patches, shrubs and heath_scrub foliage for plains grassland and open_lone foliage, and so move the planned canopy. Nothing is repainted until someone runs it.",
+    "date": "2026-09-25",
+    "measured_note": "measured.area_km2 is the box's geometric area and measured.bounds the 8-block cells round it, written by hand; elevation and slope are not yet measured, and the three neighbours' measured blocks still describe their uncut polygons. tools/region_measure.py --source-root <root> --write re-measures them from the polygons on the canonical heightmap."
+   },
+   "measured": {
+    "area_km2": 0.486,
+    "bounds": {
+     "min_x": 1176,
+     "min_z": 4296,
+     "max_x": 1823,
+     "max_z": 5063
+    }
+   },
+   "boundaries": [
+    {
+     "basis": "planted change of cover: the maze forest's edge (tools/maze_forest.py BOX)",
+     "length_blocks": 971,
+     "neighbour": "west_shore"
+    },
+    {
+     "basis": "planted change of cover: the maze forest's edge (tools/maze_forest.py BOX)",
+     "length_blocks": 969,
+     "neighbour": "river_of_shrews_vale"
+    },
+    {
+     "basis": "planted change of cover: the maze forest's edge (tools/maze_forest.py BOX)",
+     "length_blocks": 816,
+     "neighbour": "pallet_meadows"
+    }
+   ],
+   "encounters": {
+    "table": null,
+    "status": "empty",
+    "note": "the roster is authored in data/spawns.json (subregions route1_maze_forest); this slot stays null as on every sub-region"
+   },
+   "paint": {
+    "preset": "plains"
+   },
+   "polygons": [
+    [
+     [
+      1180,
+      4300
+     ],
+     [
+      1820,
+      4300
+     ],
+     [
+      1820,
+      5060
+     ],
+     [
+      1180,
+      5060
      ]
     ]
    ]
