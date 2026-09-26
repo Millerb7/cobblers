@@ -57,6 +57,45 @@ delivery question.
 - **Checked like everything else.** `tools/install_check.py` will verify that `server.properties`' sha1 matches the
   built pack, so a stale or missing pack fails the same way an uninstalled datapack does.
 
+## Distribution by a Modrinth pack (researched 2026-09-26)
+
+The owner will give the players a `.mrpack`. That changes the AllTheMons question:
+
+- **Bundling any AllTheMons file in the `.mrpack` (its `overrides/`) is an upload of a copy** under v3.2 §1.3, and
+  needs Lvnatic's written permission. Sending the file only to friends does not avoid this. The licence's own
+  "Public Distribution" definition leaves out "a private, pre-approved group", but §1.3's "upload copies" has no
+  such exception. Read conservatively: permission first. (Not legal advice.)
+- **Referencing it needs no permission, because we host nothing.** The author publishes it on Modrinth: "AllTheMons x
+  Mega Showdown", slug `allthemons-x-mega-showdown-legacy`, project `odZZdRCE`, by Lvnatic, under the same v3.2 licence,
+  loaders `datapack, minecraft`. A `.mrpack` lists a file by its `cdn.modrinth.com` URL and hashes, and the launcher
+  downloads it from Modrinth. Allowed download domains for a pack uploaded to Modrinth: `cdn.modrinth.com`,
+  `github.com`, `raw.githubusercontent.com`, `gitlab.com` (Modrinth's `.mrpack` format page). COBBLEVERSE 1.7.42 itself
+  lists `odZZdRCE` among its 186 dependencies.
+- **The file differs from ours.** Modrinth hosts the unified zip, "ATM x MSD [v3.6.1].zip" (6,126,613 bytes, sha1
+  `146545cb…`), with data and assets. Our `ATMxMSD RP.zip` (4,301,923 bytes, sha1 `071256e8…`) is Cobbleverse's own
+  resource-only repack (Cobbleverse's licence listing marks it "Permission"). No Modrinth file has our hash.
+- **v4.0 (2026-09-08) may remove the reason it was disabled.** Its changelog says "Updated to Cobblemon 1.8!" and
+  "Compatible with MSD 1.0+ (for 1.8)". It drops models Cobblemon 1.8 now has and adds CobbleMotion animations. The
+  3.6.1 we hold predates both, and its Mega Mewtwo resolver is what broke the first 1.8 resource reload. **NOT
+  VERIFIED:**
+  - that v4.0 reloads cleanly on our client;
+  - that it models the 11 doll species in our tables;
+  - that its forms match the species data COBBLEVERSE-DP serves;
+  - how its CobbleMotion copy stacks with the CobbleMotion pack we already run.
+
+  That is one client experiment, and it is the next step.
+- **If v4.0 fails and no permission comes,** option 2 above still works with a `.mrpack`. Each player's pack
+  references ATM x MSD from Modrinth, and our own pack of Cobblemon files, which the `.mrpack` may carry in
+  `overrides/`, is enabled above it to neutralise what breaks. Nobody installs anything by hand in either case.
+- **By hand, the worst case:** each player downloads the pack from Modrinth, drops it into `resourcepacks/`, and
+  enables it above COBBLEVERSE RP. A one-time step, about two minutes, and a support burden on every update.
+- **The Cobblemon-only part fixes none of the 11 dolls.** The Cobblemon 1.8.0 jar has no model, texture or animation
+  for Vullaby, Mandibuzz, Oranguru, Passimian, Gulpin, Swalot, Charjabug, Grubbin, Vikavolt, Greavard or Bombirdier
+  (control: Bulbasaur, 13 files). It fixes the 16 mis-assembled forms and the 7 crash forms only.
+- **ATMxMSD was never on the server.** It is a client resource pack from each player's Cobbleverse install. The server
+  tree has no copy, and `server.properties` delivers no pack. The server runs no AllTheMons files, and nothing so far
+  has been distributed. The fix pack on one player's machine was built locally from that player's own copy.
+
 ## Hosting (the owner decides)
 
 The URL must be reachable by every player's client, over HTTPS, without login.
