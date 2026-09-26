@@ -58,6 +58,16 @@
 - **Dialogue:** native Cobblemon dialogue rather than KantoNPCs, compiled from campaign data by `tools/compile_dialogue.py`; quest fields and the cursor live in Cobblemon player data (`q.player.data()`, persisted per player); item checks use the vanilla item predicate run as the server; every give reports success and a reward claim depends on it (EXP-022: disconnect restore, bucket and bottle hand-over, reward once all pass single-player).
 - **Dialogue cursors:** store long-sequence position as first-class per-player state and persist it after each line or short segment.
 - **Legendary side content:** paste a compatible structure into a fitting biome and gate it by badge count; only the authored Regis/Regigigas/Groudon/Lugia encounters and the mainline Celebi sapling receive bespoke treatment.
+- **Water legendaries (the owner, 2026-09-26):**
+  - Lugia needs Dive **and** `champion_cleared`.
+  - The lake trio live **in** the lakes, one early, one mid and one late. Proposed in `docs/mechanics/WATER_MAP.md`: Mesprit under Arrow Lake at 3 badges, Azelf under Marshy Marsh at 5, Uxie under Lake Tilpey at 7, each in a grotto with an air chamber, because a battle outlasts Surf's air.
+  - Their story line is for Codex (`ARC.md`).
+- **Vanilla air items are removed (the owner, 2026-09-26):**
+  - Respiration is neutralised by a data override.
+  - Water Breathing and Conduit Power are cleared the tick they land.
+  - The ladder holds air with an `oxygen_bonus` modifier instead.
+
+  Built in `cobblers_blackout`; the in-game check is EXP-042.
 - **Quest namespaces:** reserve progression gates as `flags.<id>` and side-quest fields as `quest.<quest_id>.<field>`.
 - **Gastly escort:** each player owns and advances an independent Gastly escort; there is no shared-party quest state.
 - **Every Cobblemon item is obtainable without crafting** (the owner, 2026-09-24): crafting stays allowed, but the game must be completable, and every Cobblemon item reachable, through natural sources alone (world finds, rewards, trainers, shops, fishing, events), so a no-crafting run such as a Nuzlocke works. Rods follow it: First Cast gives the Poke Rod and better rods are placed at other waters. No audit of which items lack a natural source exists yet.

@@ -56,7 +56,7 @@ OBJECTIVES = {
     "bo.px": "dummy", "bo.pz": "dummy", "bo.ox": "dummy", "bo.oz": "dummy",
     "bo.mount": "dummy", "bo.raw": "dummy", "bo.qual": "dummy", "bo.grace": "dummy",
     "bo.deep": "dummy", "bo.sub": "dummy", "bo.air": "dummy", "bo.surf": "dummy", "bo.breath": "dummy",
-    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy",
+    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy",
 }
 
 # the inventory slots a claim may take from: the hotbar and main inventory, and the offhand. Armour never.
@@ -125,6 +125,14 @@ def build(cfg, mounts, placements, progression):
     files["data/minecraft/tags/function/tick.json"] = json.dumps({"values": ["%s:blackout/tick" % NS]}, indent=2) + "\n"
     for cat in ("balls", "medicine", "consumables"):
         files["data/%s/tags/item/claim/%s.json" % (NS, cat)] = json.dumps({"values": sorted(claims[cat])}, indent=2) + "\n"
+    # Respiration, neutralised (the owner, 2026-09-26): vanilla's own definition (server-1.21.1.jar) with no effect and
+    # nothing it can be applied to, so no table offers it and no anvil applies it; an old book or helmet does nothing
+    files["data/minecraft/enchantment/respiration.json"] = json.dumps({
+        "anvil_cost": 4, "description": {"translate": "enchantment.minecraft.respiration"},
+        "max_cost": {"base": 40, "per_level_above_first": 10}, "max_level": 3,
+        "min_cost": {"base": 10, "per_level_above_first": 10}, "slots": ["head"],
+        "supported_items": "#%s:enchantable/none" % NS, "weight": 2}, indent=2) + "\n"
+    files["data/%s/tags/item/enchantable/none.json" % NS] = json.dumps({"values": []}, indent=2) + "\n"
     files["data/%s/tags/block/water.json" % NS] = json.dumps({"values": [
         "minecraft:water", "minecraft:bubble_column", "minecraft:kelp", "minecraft:kelp_plant",
         "minecraft:seagrass", "minecraft:tall_seagrass"]}, indent=2) + "\n"
@@ -515,10 +523,13 @@ def build(cfg, mounts, placements, progression):
         "scoreboard players set @s bo.deep 0",
         "execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #%s:water run scoreboard players set @s bo.sub 1" % NS,
         "execute if score @s bo.sub matches 1 anchored eyes positioned ^ ^ ^ %s run scoreboard players set @s bo.deep 1" % deep_chain,
+        "scoreboard players set @s bo.brth 0",
         "function %s:water/qualify" % NS,
-        "execute if score @s bo.sub matches 0 run return run function %s:water/surfaced" % NS,
-        "execute store result score @s bo.air run data get entity @s Air",
-        "execute if score @s bo.deep matches 1 run function %s:water/deep" % NS])
+        "execute if score @s bo.sub matches 0 run function %s:water/surfaced" % NS,
+        "execute if score @s bo.sub matches 1 store result score @s bo.air run data get entity @s Air",
+        "execute if score @s bo.sub matches 1 if score @s bo.deep matches 1 run function %s:water/deep" % NS,
+        "execute if score @s bo.brth matches 0 if score @s bo.hasmod matches 1 run function %s:water/unbreathe" % NS,
+        "function %s:water/strip_vanilla" % NS])
     fn("water/qualify", [
         "# bo.raw: what the training and the party support now; bo.qual: what applies, lowered only after a grace",
         "scoreboard players set @s bo.raw 0",
@@ -550,9 +561,24 @@ def build(cfg, mounts, placements, progression):
         "execute if score @s bo.air <= #airwarn bo.cfg if score @s bo.warn matches 0 run function %s:water/warn_low" % NS,
         "execute if score @s bo.air matches ..0 run function %s:water/out" % NS])
     fn("water/breathing", [
+        "# the ladder's air: a large oxygen_bonus (vanilla keeps air with chance bonus/(bonus+1) each tick), not the",
+        "# Water Breathing effect, which the pack removes from everything else (the owner, 2026-09-26)",
         "scoreboard players set @s bo.pulse 0",
         "scoreboard players set @s bo.warn 0",
-        "execute if score #m10 bo.tmp matches 0 run effect give @s minecraft:water_breathing 2 0 true"])
+        "scoreboard players set @s bo.brth 1",
+        "execute unless score @s bo.hasmod matches 1 run attribute @s minecraft:generic.oxygen_bonus modifier add cobblers:ladder %d add_value" % water["ladder_oxygen_bonus"],
+        "scoreboard players set @s bo.hasmod 1"])
+    fn("water/unbreathe", [
+        "attribute @s minecraft:generic.oxygen_bonus modifier remove cobblers:ladder",
+        "scoreboard players set @s bo.hasmod 0"])
+    fn("water/strip_vanilla", [
+        "# vanilla air is not a way round the ladder: Water Breathing (potions, turtle shells) and Conduit Power are",
+        "# cleared the tick they land; Respiration is neutralised by the enchantment override in this pack",
+        "execute store success score #wb bo.tmp run effect clear @s minecraft:water_breathing",
+        "execute store success score #cp bo.tmp run effect clear @s minecraft:conduit_power",
+        "scoreboard players operation #wb bo.tmp += #cp bo.tmp",
+        "execute if score #wb bo.tmp matches 1.. unless entity @s[tag=cobblers.air_told] run tellraw @s %s" % text(msg["vanilla_air"], "yellow"),
+        "execute if score #wb bo.tmp matches 1.. run tag @s add cobblers.air_told"])
     fn("water/warn_low", ["tellraw @s %s" % text(msg["air_low"], "yellow"), "scoreboard players set @s bo.warn 1"])
     fn("water/out", [
         "execute if score @s bo.warn matches ..1 run tellraw @s %s" % text(msg["air_out"], "red"),

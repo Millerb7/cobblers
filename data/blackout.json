@@ -119,6 +119,14 @@
     "pulse_fraction": "half of maximum health, as drown damage (bypasses armour); vanilla's own 2-point drowning hit lands in the same second and is absorbed by the damage cooldown",
     "pulse_regen_margin": 2,
     "pulse_regen_margin_why": "a hit landing on a player at or below half health plus this is lethal, so two hits from full health knock out whatever natural regeneration adds between them (EXP-042 run 1: 20 to 10, regenerated to 11, the second hit left 2)",
+    "ladder_oxygen_bonus": 1000,
+    "ladder_oxygen_bonus_why": "vanilla keeps a tick's air with chance bonus/(bonus+1): at 1000 a player loses about one air in 50 seconds, so the Surf bonus and Dive hold air full without the Water Breathing effect",
+    "vanilla_air": {
+      "decision": "removed (the owner, 2026-09-26): 'Respiration and Water Breathing route around the whole ladder, and the ladder is now progression. A mount-gated system with a potion bypass is not gated.'",
+      "respiration": "the enchantment is overridden with no effect and no supported items: no enchanting table offers it, no anvil applies it, an existing helmet or book does nothing",
+      "water_breathing_and_conduit_power": "cleared from survival players the tick they land (potions, turtle shells, conduits), with a one-time message",
+      "sources_checked": "vanilla (enchanting, librarian trades, loot books, fishing, brewing, turtle shells, conduits) plus seven mod loot tables that can roll a Water Breathing potion; no mod grants either effect in code (a class search of every jar for the effect fields found none; the control, Speed, found three)"
+    },
     "air_warning": 60,
     "air_warning_why": "20% of vanilla's 300"
   },
@@ -135,6 +143,7 @@
     "air_low": "Your air is running low. Surface now or rely on a trained water mount.",
     "air_out": "You are out of air. Drowning here is lethal.",
     "one_more": "One more drowning hit will knock you out.",
-    "partner_gone": "No Pokemon in your party can support you at this depth."
+    "partner_gone": "No Pokemon in your party can support you at this depth.",
+    "vanilla_air": "Potions, turtle shells and conduits do not help you breathe in this region. Only a trained water partner does."
   }
 }

@@ -71,11 +71,11 @@ means what exists or compiles; nothing underwater is built anywhere.
 |---|---|---|---|---|---|---|
 | **Lake Viltri** (1654, 3004) | Misty's lake, a 30-deep closed basin at the head of Viltri's Path (`landmarks.json:1977`) | y103, 27 | Barboach, Chinchou, Goldeen, Magikarp; Surskit. Levels 18-21. Sounding, north bank, Lake Surveyor (staging) | Surf lesson; floor survey (`SQ-G2-01`); a cache | Wading from S1; depth needs Surf (S2) | On Route 2's end (Misty's town, 86 blocks) |
 | **Shrew Lake** (2873, 3988) | A 52-deep pit in the cherry vale (`landmarks.json:2149`) | y106, 46 (the deepest lake) | Barboach, Dratini (rare, deep only), Goldeen, Magikarp; Surskit. Levels 10-22 | Deep find; the lost surveyor's case (`SQ-DIG-02`); a cache | Swimming from S0; the floor needs Surf time or Dive | Off Route 2 by 385 blocks (`docs/story/AVAILABILITY.md:861`) |
-| **Arrow Lake** (2711, 4613) | A 46-deep pit (`landmarks.json:2433`) | y100, 41 | Arrokuda, Barboach, Goldeen, Relicanth (rare, deep); Surskit. Levels 10-22 | A shore shrine; a sunken ruin | Swimming from S0; the deep needs Surf | Off Route 2 by 721 (`AVAILABILITY.md:874`) |
+| **Arrow Lake** (2711, 4613) | A 46-deep pit (`landmarks.json:2433`) | y100, 41 | Arrokuda, Barboach, Goldeen, Relicanth (rare, deep); Surskit. Levels 10-22 | Mesprit's grotto (decided: in the lake) | Swimming from S0; the deep needs Surf | Off Route 2 by 721 (`AVAILABILITY.md:874`) |
 | **Pond west of Mt Clay** (2080, 1733) | Unnamed closed basin; the Route 3 Wooper pond (vertex (2204, 1580), `landmarks.json:2802-2803`) | y119, 18 | The foothill_woods roster; the Wooper stop (staging) | Nothing more: "players are not sent back to this pond" (`STATE.md:69`) | None; S2 | On Route 3 |
 | **Ravine Head Tarn** (3286, 938) | Hollow at the head of the dry ravine; drains north (`landmarks.json:2939`) | y127, 4 measured. The landmark gives 23 deep (floor y105, spill y128.3): the samples may have missed the middle | The Peak Pond Hollow roster reaches it (`spawns.json:7096`) | Story evidence only (`SQ-G4-01`, the Sentinel `SQ-G4-03`) | None; S3-S4 | Off-route, Erika's quest |
-| **Peak Pond** (4018, 1448) | Erika's pond, a 20-deep basin in the northern downs (`landmarks.json:1777`) | y105, 18 | Barboach, Basculin, Goldeen, Gyarados, Magikarp, Whiscash. Levels 30-32 | A shore shrine; a cache | Swimming; S4 | At Route 4's end (Erika's town) |
-| **Marshy Marsh** (5158, 2166) | A 38-deep pit ringed by swamp, "not a shallow wetland" (`landmarks.json:3188`) | Not measured this session (spill y101.6) | Whiscash; Dondozo ultra-rare. Levels 34-44 (`spawns.json:7712-7772`). Marsh foliage on staging | A shore shrine ("drained lake"); `SQ-G6-01` | Swimming; S5 | Off Route 5 (311 blocks from Koga's town, `ARC.md:417`) |
+| **Peak Pond** (4018, 1448) | Erika's pond, a 20-deep basin in the northern downs (`landmarks.json:1777`) | y105, 18 | Barboach, Basculin, Goldeen, Gyarados, Magikarp, Whiscash. Levels 30-32 | A cache; fishing | Swimming; S4 | At Route 4's end (Erika's town) |
+| **Marshy Marsh** (5158, 2166) | A 38-deep pit ringed by swamp, "not a shallow wetland" (`landmarks.json:3188`) | Not measured this session (spill y101.6) | Whiscash; Dondozo ultra-rare. Levels 34-44 (`spawns.json:7712-7772`). Marsh foliage on staging | Azelf's grotto (decided: in the lake); `SQ-G6-01` | Swimming; S5 | Off Route 5 (311 blocks from Koga's town, `ARC.md:417`) |
 | **Lake Tilpey** (5964, 4135) | The largest lake, a closed basin at the glacier's end with two islands (`landmarks.json:1297`) | y77, 25 | Arrokuda, Barraskewda, Basculin, Basculegion, Dondozo, Goldeen, Gyarados, Magikarp, Seaking; Surskit, Masquerain. Levels 39-48 | The Dive school; the Weeping Elder island | Swimming; the Dive school after S6 | Sabrina's town, north shore; Route 7 crosses its outflow |
 | **Watering Hole** (2983, 5273) | A small 14-deep basin on the Arrow Lake creek (`landmarks.json:2609`) | y95, 9 | The arrow_creeks roster | Fishing water; a rod find | None; S7-S8 | Off Route 8 by 377 (`AVAILABILITY.md:860`) |
 | **Drowned Gallery**, Victory Road | The cave's lake, all of it inside Drowned tiles (`STATE.md:211`) | Not measured | Milotic, submerged, as the zone's prize (staging) | Nothing more | The Victory Road gauntlet; L | On the critical path |
@@ -120,12 +120,12 @@ and at most one set piece.
 | 4 | Lake Viltri | **The Surf school**: Misty's training, the sounding, the floor survey | none | Surf (S2) for the floor | S1-S2 |
 | 5 | Viltri's Path | The water road to the sea | none | none (shallow) | S2 |
 | 6 | Shrew Lake | **The dragon's pit**: deep Dratini, the lost surveyor's case on the floor | none | Surf (measured: its floor is reachable) | S2 |
-| 7 | Arrow Lake | **Mesprit's lake** (a tier-B shrine) | Mesprit | Badge count 2 | S2 |
+| 7 | Arrow Lake | **Mesprit's grotto**, the first of the lake trio, under the lake | Mesprit | Surf, and 3 badges | S3 |
 | 8 | Mt Clay pond | The Wooper stop (decided) | none | none | S2 |
 | 9 | Ravine Head Tarn | Story evidence (the channel, the Sentinel) | none | none | S4 |
-| 10 | Peak Pond | **Uxie's lake** (a tier-B shrine) | Uxie | Badge count 4 | S4 |
-| 11 | Marshy Marsh | **Azelf's drained lake** (a tier-B shrine) | Azelf | Badge count 5 | S5 |
-| 12 | Lake Tilpey | **The Dive school** (the survey diver on the north shore). Its floor is Surf-reachable, so the school teaches on the lake and sends the player to the sea | none | Surf for the floor; the Dive training itself | S6 |
+| 10 | Peak Pond | Erika's pond: fishing water and the tarn's story (no legendary; the trio moved) | none | none | S4 |
+| 11 | Marshy Marsh | **Azelf's grotto**, the second of the trio, under the 38-deep pit | Azelf | Surf, and 5 badges | S5 |
+| 12 | Lake Tilpey | **Uxie's grotto**, the last of the trio, under the glacial basin. The Dive school stays on the north shore as a teaching post; the lake's own content is Uxie (the one exception to one role per body, see below) | Uxie | Surf, and 7 badges | S7 |
 | 13 | Major river and the other creeks | Barrier and scenery; nothing underwater | none | A bridge | S6-S7 |
 | 14 | Relic Island reef, Southern Shallows | **The Dive reef**: coral, Corsola, a reef cache | reef cache | Dive | S6 |
 | 15 | Windward deep | **The far water**: Lapras and Wailmer; the forge ruin | forge ruin; the only Strength room, if Strength exists | Distance; Dive inside | S2 / S6 |
@@ -133,7 +133,7 @@ and at most one set piece.
 | 17 | Watering Hole | Fishing water: a rod find | none | none | S7-S8 |
 | 18 | The Sound (Pacifidlog) | The fishing town; base for the trench | none | none | S7 |
 | 19 | Victory Road's Drowned Gallery | Milotic's lake (built) | Milotic (not a legendary) | The gauntlet | L |
-| 20 | Outer Deep trench | **Lugia** | Lugia | Dive, three keys, `champion_cleared` | P |
+| 20 | Outer Deep trench | **Lugia** | Lugia | Dive, three keys, `champion_cleared` (**decided**) | P |
 | 21 | Appearing island, off Sunset West | **Manaphy and Phione** | both | A postgame event | P |
 
 ### Lugia, the Maelstrom Trench
@@ -147,22 +147,38 @@ coves. **Proposal:** add `champion_cleared` as the story gate. Two reasons:
 The keys stay findable earlier, so the search can start before the League. The sea town is the base. Nothing
 else in the trench.
 
-### The lake trio: Mesprit, Uxie and Azelf
+### The lake trio: Mesprit, Azelf and Uxie (decided: in the lakes, at three stages)
 
-**Proposal**, and the decision the owner is most likely to reject. LegendaryMonuments ships `lake_verity`,
-`lake_acuity` and `lake_valor` (`data/structures.json:6235-6359`). Each carries a LumyMon altar and a Pokémon trial
-spawner. None of them generates in this pack, and each is marked "hand-place ... only if chosen". That is exactly
-tier B at `STATE.md:54`: paste the structure and gate it by badge count, with no puzzle.
+**The owner, 2026-09-26:** "Put Mesprit, Uxie and Azelf IN the lakes. A scavenger hunt across three bodies of water is
+the point ... three lakes, one each, and at DIFFERENT stages of the journey ... one early, one mid, one late."
 
-- One shrine per act, on the shore or an island and never underwater:
-  - Arrow Lake: Mesprit, the lake nearest the start;
-  - Peak Pond: Uxie, the northern lake, with Erika's records ("knowledge");
-  - Marshy Marsh: Azelf, a pit that reads as a drained lake.
-- Levels at the cap of the gating badge.
-- None of the three is a Dive site or a Strength site.
+| Order | Lake | Legendary | Stage (badge gate) | Why this lake |
+|---|---|---|---|---|
+| Early | **Arrow Lake** (2711, 4613), 41 deep | **Mesprit** | 3 badges, soon after Surf (gym 2) | The nearest deep lake to the start (off Route 2): a player sees it before they can use it. At 41 deep it is out of reach without Surf (section 0), so the first find is also the first reason to use the new training. Mesprit is Sinnoh's lake nearest the start |
+| Mid | **Marshy Marsh** (5158, 2166), 38 deep | **Azelf** | 5 badges, around Koga | A true pit, "not a shallow wetland" (`landmarks.json:3188`), off Route 5 in the middle of the game. It is the region's strangest water, which suits the willpower legendary |
+| Late | **Lake Tilpey** (5964, 4135), 25 deep | **Uxie** | 7 badges, after Blaine | The glacial basin, as Uxie's Lake Acuity is Sinnoh's frozen lake. Sabrina's and Blaine's towns sit either side of it, and Route 7 crosses its outflow, so a player passes it twice: once on the way to Blaine, and once to come back with the seventh badge |
 
-The alternative is no lake shrines at all: the lakes keep their fish and their one role, and the water legendaries
-are Lugia and the appearing island only.
+Rejected: Peak Pond (18 deep, so a player with no mount can nearly reach its floor, and it would not be Surf content);
+Shrew Lake (the dragon pit already has its one role); Lake Viltri (the Surf school).
+
+**How each one is met:** in a **flooded grotto under the lake floor whose inner chamber holds air**. A legendary battle
+lasts minutes, and Surf gives about 61 seconds at depth (section 0). A legendary met in open water could only be
+fought with Dive, which would make the trio Dive content. So the player dives with Surf, finds the grotto's
+mouth on the floor, swims up into the air chamber, and fights there. This is carving in place, as ADR-004 allows.
+Whether a battle pauses the air timer is not known and should be tested (it would not change this plan).
+
+**The badge gate** makes the stages hold in an open world: the legendary is present only for a player with enough
+badges. That uses the badge flags `cobblers_progression` already sets. Shared or per player is an open decision.
+
+**Tilpey's exception:** Uxie and the Dive school share the lake. They do not compete: the school is a teaching post on
+the north shore and sends the player to the sea, Uxie's grotto is in the lake, and the lake needs no Dive (25 deep,
+Surf-reachable).
+
+**For Codex (the arc):** three legendaries hidden under three lakes is story material, not three encounters with no
+context. The questions are what they are, why they are here, and whether anyone in the world knows. A line in
+`docs/story/ARC.md` should answer them. For example: someone at Viltri Light or the Lake Surveyor knows the old
+three-lakes story, and each grotto holds a trace tied to the Worldshift. The owner asked for this; it is not yet
+written.
 
 ### Manaphy and Phione, the appearing island
 
@@ -190,10 +206,10 @@ Strength crevice in the game, holding a cache and never a legendary.
 
 | Kind | Count | Where | Stages |
 |---|---|---|---|
-| Shrines | 4 (1 if the trio is dropped) | The trench, Arrow Lake, Peak Pond, Marshy Marsh | S2, S4, S5, P |
-| Water legendaries and mythicals | 6 species at 5 sites | Lugia; Mesprit, Uxie, Azelf; Manaphy and Phione | S2, S4, S5, P, P |
+| Shrines on land | 1 | The trench's flooded shrine (Lugia) | P |
+| Water legendaries and mythicals | 6 species at 5 sites | Mesprit (Arrow Lake), Azelf (Marshy Marsh), Uxie (Lake Tilpey), each in an air-chambered grotto; Lugia; Manaphy and Phione | S3, S5, S7, P, P |
 | Dive-required sites | 7 | The Tilpey school, the Relic reef, the forge ruin, three coves, the trench | all S6 or later, by construction |
-| Surf-time depth sites | 3 | The Viltri floor, the Shrew pit, the Arrow deep (Relicanth) | S2-S5 |
+| Surf depth sites | 6 | The Viltri floor survey, the Shrew pit (Dratini, the surveyor's case), and the three trio grottos (Arrow, Marshy Marsh, Tilpey) | S2-S7 |
 | Strength crevices | 0 or 1 | The forge ruin, only if Strength exists | S6 |
 | Bodies with nothing added | 9 | Mt Clay pond, the tarn, Watering Hole, all rivers, the shallows | — |
 
@@ -210,8 +226,8 @@ Strength. The trench combines Dive and keys, but the keys are its whole puzzle.
 1. **Which legendaries live in water, where, and how are they reached?**
    - Lugia in the SE trench: Dive, three cove keys, and (proposed) `champion_cleared`.
    - Manaphy and Phione on the appearing island off Sunset West, postgame (proposal).
-   - Optionally Mesprit, Uxie and Azelf in shore shrines at Arrow Lake, Peak Pond and Marshy Marsh, gated by 2, 4
-     and 5 badges.
+   - Mesprit, Azelf and Uxie under Arrow Lake, Marshy Marsh and Lake Tilpey, in air-chambered grottos reached with
+     Surf, gated by 3, 5 and 7 badges (decided: in the lakes, one early, one mid, one late).
    - Kyogre and Suicune stay unplaced (`STRUCTURE_DECISIONS.md:85, 182`).
 2. **Which water needs Dive, and which is reachable by Surf or swimming?**
    - Swimming: every surface, every shore, every river, and the top 5 blocks of any lake or sea
@@ -221,7 +237,7 @@ Strength. The trench combines Dive and keys, but the keys are its whole puzzle.
    - Dive: only the sea's long or enclosed places: the reef, the forge ruin, the coves and the trench.
    - Open sea beyond the shallows needs a ridden mount (the owner, `spawns.json:30298`); that is not the Surf unlock.
 3. **Where do shrines go, if at all?** On land beside water, never underwater: the trench's flooded shrine
-   (decided), plus at most the three lake shrines. No shrine in a river, the ocean bands or the Dive schools.
+   (decided). The lake trio are not shrines: they wait in air-chambered grottos under their lakes. No shrine in a river, the ocean bands or the Dive schools.
 4. **Where does an underwater Strength crevice make sense?**
    - At most one: the windward forge ruin's inner room, a cache.
    - Never at a legendary, a school or on the critical path.
@@ -253,17 +269,24 @@ Strength. The trench combines Dive and keys, but the keys are its whole puzzle.
 
 ## 6. Open decisions for the owner
 
-1. **The lake trio.** Place Mesprit, Uxie and Azelf as tier-B shore shrines at Arrow Lake, Peak Pond and Marshy
-   Marsh, or have no lake shrines. *Recommend:* the trio, one per act, if the altar proof passes; otherwise none.
-2. **Lugia's gate.** Keys plus Dive only (OCEAN.md), or add `champion_cleared`. *Recommend:* add it.
+1. **The lake trio.** *Decided* (the owner, 2026-09-26): in the lakes, not on the shore, one early, one mid, one late.
+   Proposed: Mesprit at Arrow Lake (3 badges), Azelf at Marshy Marsh (5) and Uxie at Lake Tilpey (7), each in an
+   air-chambered grotto. Still open: shared or per player, and the arc line (for Codex).
+2. **Lugia's gate.** *Decided* (the owner): Dive **and** `champion_cleared`. "It is the deepest thing in the world
+   and it should not be reachable before the League." 
 3. **The appearing island.** Postgame, off Sunset West, holding Manaphy and Phione, as shared world state. *Recommend:*
    yes, and build nothing until the client models and EXP-006 land.
 4. **The Relic Island reef.** A Dive reef in the island's deeper water (seabed y35), with a sunlit edge visible from
    S0 as a hook. *Recommend:* yes, as a cache and the Corsola home, not a legendary.
 5. **Strength.** *Recommend:* research first; with no mechanism, no crevices; with one, only the forge ruin.
-6. **Vanilla air items.** *Recommend:* keep the items, but place hearts of the sea and Water Breathing sources only
-   after S6, so they cannot undercut the ladder. The rule that every item must be obtainable without crafting
-   (`STATE.md:57`) needs this too.
+6. **Vanilla air items.** *Decided* (the owner): removed. "A mount-gated system with a potion bypass is not
+   gated." The cost was checked and is low:
+   - Respiration's whole effect is data, so it is overridden to nothing with nothing to apply it to;
+   - Water Breathing and Conduit Power are cleared the tick they land, with a one-time message;
+   - no mod grants either effect in code;
+   - seven mod loot tables can still roll a now-useless Water Breathing potion.
+
+   Built in `cobblers_blackout` (EXP-042).
 7. **The name collision.** *Recommend:* rename the marine region to "the Windward Sea", the display name
    `spawns.json` already uses, and keep "the Windward Deep" for the Rift pit.
 8. **Shrew Lake's floor.** *Settled by measurement:* Surf reaches it (EXP-042 run 2, 50 deep), so the surveyor's case
