@@ -199,10 +199,13 @@ def skin(theme, rng):
                                          *_leaf("jungle"))
                     if u > 0.5:
                         b.setdefault(round(x), round(y) - 1, round(z), *_leaf("jungle"))
-        for y in (head - 4, head - 5):
-            for dx, dz, facing in ((2, 0, "west"), (-2, 0, "east"), (0, 2, "north"), (0, -2, "south")):
-                if b.get(dx, y, dz) is None and is_log(b.get(dx // 2, y, dz // 2) or "") and rng.random() < 0.7:
-                    b.set(dx, y, dz, "minecraft:cocoa", {"age": "2", "facing": facing})
+        for y in (head - 5, head - 6):                                # coconuts on the trunk's face, under the crown
+            for ux, uz, facing in ((1, 0, "west"), (-1, 0, "east"), (0, 1, "north"), (0, -1, "south")):
+                r = 1
+                while is_log(b.get(ux * r, y, uz * r) or "") and r < 6:  # walk out to the first open cell
+                    r += 1
+                if r > 1 and b.get(ux * r, y, uz * r) is None and rng.random() < 0.8:
+                    b.set(ux * r, y, uz * r, "minecraft:cocoa", {"age": "2", "facing": facing})
         crown_nest = (0, head, 0)
         top = head + 8
     elif theme == "lakeshore":
@@ -307,6 +310,7 @@ def skin(theme, rng):
         nests += _nest_points(b, [crown_nest], crown_block)
     if len(nests) < 3:                                                # a crownless tree gets a third trunk nest
         nests += _nest_points(b, [(0, 22, 0)], trunk_prefix)
+    nests.sort(key=lambda n: n["at"][1])                              # low, mid, top name heights, bottom up
     return b, nests, int(max(y for (x, y, z) in b.blocks))
 
 

@@ -5069,7 +5069,7 @@
         "max_spawns": 5
       },
       "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
     },
     {
       "id": "elder_jungle_west_1_mid",
@@ -5092,7 +5092,7 @@
         "max_spawns": 5
       },
       "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
     },
     {
       "id": "elder_jungle_west_1_crown",
@@ -5115,7 +5115,7 @@
         "max_spawns": 5
       },
       "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
     },
     {
       "id": "elder_jungle_west_1_top",
@@ -5138,7 +5138,7 @@
         "max_spawns": 5
       },
       "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
     },
     {
       "id": "elder_jungle_west_2",
@@ -6919,7 +6919,7 @@
       "replace_spawns": false,
       "position": {
         "x": 6192,
-        "y": 176,
+        "y": 164,
         "z": 6112
       },
       "mimic": "minecraft:bone_block",
@@ -6942,7 +6942,7 @@
       "replace_spawns": false,
       "position": {
         "x": 6192,
-        "y": 164,
+        "y": 176,
         "z": 6112
       },
       "mimic": "minecraft:bone_block",
@@ -6988,7 +6988,7 @@
       "replace_spawns": false,
       "position": {
         "x": 7936,
-        "y": 135,
+        "y": 123,
         "z": 4896
       },
       "mimic": "minecraft:bone_block",
@@ -7011,7 +7011,7 @@
       "replace_spawns": false,
       "position": {
         "x": 7936,
-        "y": 123,
+        "y": 135,
         "z": 4896
       },
       "mimic": "minecraft:bone_block",

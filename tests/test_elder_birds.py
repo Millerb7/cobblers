@@ -19,7 +19,8 @@ evolution families and level-up evolutions.
 
 What is asserted: the doc, the blocks and the habitats name the same 52 trees; each tree has exactly its four blocks,
 activated, replace_spawns false, on the doc's trunk (x, z) at ground + 12, + 35, + 58, + 74, with the stated activated
-settings and at least 20 max_spawns between them; each trunk block sits in solid trunk log of the prefab as seated
+settings (8 a block, except a per-tree cap stated in the doc's status and in each of the tree's blocks' why: the
+Tropius elder's 5) and at least 20 max_spawns between them; each trunk block sits in solid trunk log of the prefab as seated
 (the cell and its six face neighbours) and its mimic is that log; the top block sits in that wood's persistent leaves
 (the cell and its six face neighbours) inside a centre column of leaves from + 63 to + 81, and its mimic is those
 leaves; the doc's status paragraph states the layout the data holds; each pool is one evolution family, holds the
@@ -66,6 +67,12 @@ ACTIVATED = {"spawn_range": 16, "max_spawns": 8, "max_spawns_per_activation": 2,
              "cancel_range": -1}
 LEAVES_RUN = (63, 81)           # the staging probe (docs/STATE.md): leaves at every elder's centre, ground + 63 to + 81
 AT_LEAST_PER_TREE = 20          # the owner: "at least 20 ... spread vertically along the tree"
+# Per-tree exceptions to the 8-a-block nest: tree -> max_spawns on each of its four blocks. An exception counts only
+# when it is documented twice, in SAPLING_BIRDS.md and in every one of the tree's blocks' `why`, by the phrase
+# CAP_PHRASE builds from the numbers, and it still holds at least AT_LEAST_PER_TREE in the tree. Plan v2's status:
+# "the Tropius elder keeps 5 per block, 20 in the tree" (balance review: 32 of a Pokemon this large crowd one trunk).
+CAP_EXCEPTIONS = {"elder_jungle_west_1": 5}
+CAP_PHRASE = "keeps %d per block, %d in the tree"
 # SAPLING_BIRDS.md status: these two lost their co-resident; the find is the tree's one bird
 SINGLE = {"elder_viltris_path_valley_2": "farfetchd", "elder_long_isle_south_3": "oricorio"}
 LONG_ISLE_LEVELS = "44-50"      # SAPLING_BIRDS.md earlier status: "Long Isle levels: 44-50" (LONG_ISLE.md D5)
@@ -118,10 +125,20 @@ def _status_paragraph():
     return " ".join(DOC[start:DOC.index("\n\n", start)].split())
 
 
+def _status_paragraphs():
+    return [" ".join(DOC[m.start():DOC.find("\n\n", m.start())].split()) for m in re.finditer(r"(?m)^Status:", DOC)]
+
+
+def _exception_phrase(tid):
+    cap = CAP_EXCEPTIONS[tid]
+    return CAP_PHRASE % (cap, cap * len(NEST))
+
+
 # Without it the doc that maps the nests ("Pool and bird: docs/world-building/SAPLING_BIRDS.md" in every block's why)
 # goes on stating a layout the data no longer holds, and the next session builds or balances from the stale numbers:
 # its status paragraph must name every nest height and state no per-block cap other than the data's (8 an elder
-# block, 12 a Route 1 block).
+# block, 12 a Route 1 block), and every per-tree exception's cap (5 for the Tropius elder) must be stated in a status
+# paragraph of the doc; a cap in the data that neither the layout nor a documented exception gives fails.
 def test_the_doc_status_states_the_nest_layout_the_data_holds():
     st = _status_paragraph()
     heights = [h for h, _ in NEST.values()]
@@ -129,10 +146,14 @@ def test_the_doc_status_states_the_nest_layout_the_data_holds():
     caps = {int(n) for n in re.findall(r"up to (\d+)", st)}
     data_caps = {b["activated"]["max_spawns"] for b in ALL_BLOCKS
                  if b.get("style") == "activated" and (b["id"].startswith("elder_") or "sapling" in b["id"])}
-    assert data_caps == {8, 12}, data_caps
+    assert data_caps == {8, 12} | set(CAP_EXCEPTIONS.values()), data_caps
     assert not missing and caps and caps <= data_caps, (
         "SAPLING_BIRDS.md status paragraph", "heights not named", missing,
         "caps stated", sorted(caps), "caps in the data", sorted(data_caps), st)
+    statuses = " ".join(_status_paragraphs())
+    undocumented = [t for t in CAP_EXCEPTIONS if _exception_phrase(t) not in statuses]
+    assert not undocumented, ("per-tree cap exceptions no SAPLING_BIRDS.md status states",
+                              {t: _exception_phrase(t) for t in undocumented})
 
 
 # Without it the doc and the pinned standalone elders drift apart: a block seated on the doc's ground or wood while
@@ -160,14 +181,33 @@ def test_four_blocks_and_one_habitat_per_elder_none_missing_none_extra():
 
 # Without it an elder block goes back to the natural style (redirecting the forest's own spawns, a bird now and then)
 # or turns ReplaceSpawns on (four stacked natural ReplaceSpawns blocks would cancel each other, EXP-021), or drops back
-# to the smaller nest (7 alive, 1 per refill) the owner asked to raise.
+# to the smaller nest (7 alive, 1 per refill) the owner asked to raise. A tree may hold another per-block cap only as
+# a documented exception (CAP_EXCEPTIONS): its every block's `why` and the doc state the cap and the tree's total.
 @pytest.mark.parametrize("tid", IDS)
 def test_every_elder_block_is_activated_with_the_nest_settings(tid):
+    want = dict(ACTIVATED)
+    if tid in CAP_EXCEPTIONS:
+        want["max_spawns"] = CAP_EXCEPTIONS[tid]
+        assert _exception_phrase(tid) in DOC, (tid, "exception not in SAPLING_BIRDS.md", _exception_phrase(tid))
     for s in NEST:
         b = BLOCKS[tid + s]
         assert b["style"] == "activated" and b["replace_spawns"] is False, (tid + s, b["style"], b["replace_spawns"])
-        assert b["activated"] == ACTIVATED, (tid + s, b["activated"])
+        assert b["activated"] == want, (tid + s, b["activated"], want)
         assert b.get("status") in ("placed", "verified"), (tid + s, b.get("status"))
+        if tid in CAP_EXCEPTIONS:
+            assert _exception_phrase(tid) in b["why"], (tid + s, "why does not state the exception",
+                                                        _exception_phrase(tid))
+
+
+# Without it the exception list outgrows its purpose: an exception that would take a tree under the owner's 20, or one
+# for a tree the doc does not map, is refused here, and the list must not be empty-handed (a name typo would exempt
+# nothing while the Tropius tree failed elsewhere).
+def test_every_cap_exception_is_a_mapped_elder_that_still_holds_at_least_20():
+    assert set(CAP_EXCEPTIONS) <= set(ROWS), sorted(set(CAP_EXCEPTIONS) - set(ROWS))
+    low = {t: c * len(NEST) for t, c in CAP_EXCEPTIONS.items() if c * len(NEST) < AT_LEAST_PER_TREE}
+    assert not low, low
+    # teeth: the phrase is built from the numbers, so a doc saying "keeps 5 per block, 32 in the tree" would not match
+    assert _exception_phrase("elder_jungle_west_1") == "keeps 5 per block, 20 in the tree"
 
 
 # Without it a tree holds fewer birds than the owner asked for (at least 20 in the tree; 32 as authored).

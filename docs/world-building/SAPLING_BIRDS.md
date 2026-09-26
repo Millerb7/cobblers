@@ -20,7 +20,7 @@ Cobblemon 1.8.0 jar, and every ‡ value below matched it. The tables below are 
 2026-09-25: "i want to make each sapling in the world have a bird attached to it. can we go through each and map
 them". The Route 1 sapling already has one (`route1_sapling_crown`: Pidgey 24 + Hoothoot 9 at 5-8).
 
-## Plan v2 (PROPOSED 2026-09-26): one map of saplings, planned for discovery
+## Plan v2 (BUILT ON STAGING 2026-09-26): one map of saplings, planned for discovery
 
 Status: **BUILT ON STAGING 2026-09-26.** The owner approved it: non-bird flyers are allowed "if it makes sense for it
 to group around a tree", and the first pass is to be removed. The first pass's 20 trees are cleared from staging. The
@@ -157,6 +157,8 @@ habitats `route_1_sapling_crown` and `tree_town_canopy`, `route_species_selectio
 `starters.json`, `docs/story/ENCOUNTER_GAPS.md`.
 
 ### Balance review (trainer-balance-designer)
+
+**Note (after the build):** the coordinates and the 'spacing, found in passing' list in this review are the proposal's sites. The built pins (`data/themed_saplings.json`) were picked afresh under the v2 rules and pass them all (`tests/test_themed_saplings.py`).
 
 2026-09-26. This is the "too much or too early" check on the 14 themed trees and the 9 elder swaps, with the owner's two
 later calls applied: Vullaby on the Long Isle desert tree, and non-bird flyers allowed where the place makes sense.
