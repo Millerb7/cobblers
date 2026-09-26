@@ -122,6 +122,11 @@
   - The server had never received five committed overlay files, including `starters.json`, which still offered the dropped Pallet, Lumya and Cosplay starters. It has them now; starters reload at the next restart.
   - `c2me.toml` is deleted.
   - Every other value the server runs is recorded in `server/config/mods/`. `python tools/server_config_record.py check --server-dir <server>` reports 0 disagreements.
+  - **Packs too (2026-09-26).** `tools/reapply.py` now builds and installs `cobblers_kits` (the structure templates every `place template` step uses, previously on the server by hand only), `cobblers_spawn_tags` (hand only) and `cobblers_sizes` (world-local, previously on no world). It patches the upstream COBBLEVERSE-DP at install with `tools/patch_cobbleverse_riding.py`; the result is byte-identical to the hand-made copy, sha256 `91b2f6d6…`.
+    - Install ends with `tools/install_check.py`: every pack reapply installs must be installed and byte-identical to its build, no stray `cobblers_*` pack may be in the global folder, the patched datapack must be in place, plus the config check.
+    - Staging after prepare and install: **0 problems**.
+    - Retired from the global folder, which the live world loads (kept in `cobblers-server-retired/2026-09-26-global-packs`): `cobblers_vr_backfill` and `cobblers_vr_clear` (staging-only), and `cobblers_campaign` and `cobblers_build` (legacy, built by nothing).
+    - The owner's client runs rctapi 0.16.1, matching the server.
   - **Drift cannot sit unnoticed now:**
     - `tools/reapply.py install` copies `modpack/config` onto the server and fails unless the check reports 0 (REEXPORT step 5).
     - `CLAUDE.md` makes the check part of the session start.
@@ -148,7 +153,7 @@
   - 14 new pools, 9 elder bird swaps and 42 nest blocks, all placed with 0 problems. No bird line repeats within 1,000 blocks.
   - A trainer-balance-designer review found nothing given too early. It set the crater to 44-50 and the Sunset west palm to 16-20 as a trap guard.
   - Not yet seen by the owner.
-  - The trees' placement function is `cobblers:reapply/themed_saplings` (R5B).
+  - The trees' placement function is `cobblers:reapply/themed_saplings` (R5B). It is in the installed `cobblers_reapply` since the 2026-09-26 prepare and install (the earlier build lacked it; install sweep).
 - **Client models: 40 spawnable species render as the substitute doll, and 16 forms are mis-textured** (client-only; `docs/research/COBBLEVERSE_COMPATIBILITY.md` "Client model audit, 2026-09-26").
   - The doll: `modpack/config/resourcepackoverrides.json` disabled `ATMxMSD RP.zip`, the only source of models for 40 species that Cobbleverse's datapack implements. 11 of them are in our spawn tables: Vullaby, Mandibuzz, Oranguru, Passimian, Gulpin, Swalot, Charjabug, Grubbin, Vikavolt, Greavard (including the Route 1 ghost mansion) and Bombirdier.
   - The mis-textured forms: COBBLEVERSE RP's 1.7.3 models wear Cobblemon 1.8's redrawn textures, among them Pidgeot, Talonflame, Skarmory and Tyranitar.
