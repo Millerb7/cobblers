@@ -1,36 +1,36 @@
-"""The 52 elder sapling birds: habitats elder_* in data/spawns.json, their Habitat Blocks elder_* in
-data/habitat_blocks.json, the elder trees they sit in (derived/sites/elder_trees.json regions[].sites[] and
-derived/sites/tree_grove_foothill_woods.json elders[]) and the pools tools/compile_spawns.py compiles for them.
+"""The 52 elder sapling nests: habitats elder_* in data/spawns.json, their three activated Habitat Blocks each
+(elder_<tree>, elder_<tree>_mid, elder_<tree>_crown) in data/habitat_blocks.json, the elder trees they sit in, and
+the pools tools/compile_spawns.py compiles for them.
 
 Written by the test author, not by the session that authored the habitats, the blocks or the prefabs.
 
 Independent sources: docs/world-building/SAPLING_BIRDS.md, the owner-approved table (one row per tree: id, (x, z,
-ground), band / pool, bird), whose status paragraph records the two changes to it (block at the first storey,
-ground + 21; Long Isle levels 44-50 per LONG_ISLE.md D5); the elder prefabs' NBT and trunk_origin; vanilla
-`place template` rotation (StructureTemplate.transform about the placement position: clockwise_90 (x, z) -> (-z, x),
-180 -> (-x, -z), counterclockwise_90 -> (z, -x)), written here, not imported from the tools that place the trees; and
-the Cobblemon 1.8.0 jar (EXP-000 runtime copy, tools/battle_sim.JAR_CANDIDATES) for species ids, implementation and
-level-up evolutions.
+ground), tree species, band / pool, bird) and its status paragraph (the owner, 2026-09-26: each sapling a nest of one
+species, three blocks per elder at ground + 12, + 35, + 58, up to 7 alive each within 16 blocks, "at least 20" per
+tree; Farfetch'd and Oricorio trees without co-residents; owls and crows by day); data/elder_trees.json (the 48
+pinned standalone elders: species, variant, rotation, ground); derived/sites/tree_grove_foothill_woods.json (the 4
+grove elders); the elder prefabs' NBT and trunk_origin; vanilla `place template` rotation (StructureTemplate.transform
+about the placement position: clockwise_90 (x, z) -> (-z, x), 180 -> (-x, -z), counterclockwise_90 -> (z, -x)),
+written here, not imported from the tools that place the trees; and the Cobblemon 1.8.0 jar (EXP-000 runtime copy,
+tools/battle_sim.JAR_CANDIDATES) for species ids, implementation, evolution families and level-up evolutions.
 
-What is asserted: the doc, the blocks and the habitats name the same 52 trees; every block stands at the doc's
-(x, z) and ground + 21; every block is on the trunk centre of a tree the site files still place, and that cell is a
-log in the prefab as seated there; ranges 19 standalone and 14 in the grove; no two ReplaceSpawns blocks anywhere in
-the manifest overlap (horizontal distance under the sum of their ranges, EXP-021's measured edge); every habitat in
-data/spawns.json compiles to a non-empty pool whose species are valid resource paths (the Farfetch'd bug) and
-Cobblemon species that some loaded source implements; each elder pool's birds and levels are the doc's.
+What is asserted: the doc, the blocks and the habitats name the same 52 trees; each tree has exactly its three
+blocks, activated, replace_spawns false, on the doc's trunk (x, z) at ground + 12, + 35, + 58, with the stated
+activated settings and at least 20 max_spawns between them; each block sits in solid trunk log of the prefab as
+seated (the cell and its six face neighbours), and its mimic is that log; each pool is one evolution family, holds
+the doc's bird at the doc's levels, and carries no time condition; species are valid resource paths and implemented.
 
-derived/ is gitignored and disposable: without the site files the tree tests SKIP (a skip is not a pass). Without
-the Cobblemon jar the species tests SKIP.
+derived/ is gitignored and disposable: without the site files the grove trees' seat test and the site-file test SKIP
+(a skip is not a pass). Without the Cobblemon jar the species tests SKIP.
 
-Not covered, and it needs a running server: that a block placed at ground + 21 is inside the trunk in the world (the
-tree might not be there), the vertical shape of the reach (EXP-033), whether a grounded bird spawns on the limbs,
-whether the pools load (a species id that is valid but unknown to the server), and whether the block survives a
-chunk reload (EXP-021).
+Not covered, and it needs a running server: that the blocks are in the world (tools/habitat_blocks.py verify), that
+birds actually spread up the tree rather than drifting to the forest floor (docs/STATE.md: not achieved yet), that 7
+per block are held under real player load and mob caps, whether a spawn stands on leaves or limbs, and whether an
+activated block survives a chunk reload.
 """
 from __future__ import annotations
 
 import json
-import math
 import re
 import sys
 import zipfile
@@ -49,12 +49,20 @@ ROUTES = json.loads((ROOT / "data" / "routes.json").read_text(encoding="utf-8"))
 ALL_BLOCKS = json.loads((ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8"))["blocks"]
 BLOCKS = {b["id"]: b for b in ALL_BLOCKS if b["id"].startswith("elder_")}
 HABITATS = {h["id"]: h for h in SPAWNS["habitats"] if h["id"].startswith("elder_")}
+PINNED = {e["id"]: e for e in json.loads((ROOT / "data" / "elder_trees.json").read_text(encoding="utf-8"))["elders"]}
 DOC = (ROOT / "docs" / "world-building" / "SAPLING_BIRDS.md").read_text(encoding="utf-8")
 SITES = ROOT / "derived" / "sites"
 PREFABS = ROOT / "kits" / "structures" / "prefabs" / "trees" / "tree_town"
-STOREY = 21                     # SAPLING_BIRDS.md status: "the first storey, ground + 21" (the parent's decision)
-LONG_ISLE_LEVELS = "44-50"      # SAPLING_BIRDS.md status: "Long Isle levels: 44-50" (LONG_ISLE.md D5)
+# SAPLING_BIRDS.md status (the owner, 2026-09-26): three blocks per elder, and what each keeps alive
+NEST = {"": 12, "_mid": 35, "_crown": 58}
+ACTIVATED = {"spawn_range": 16, "max_spawns": 7, "max_spawns_per_activation": 1, "chance": 1.0, "trigger": "TICK",
+             "cancel_range": -1}
+AT_LEAST_PER_TREE = 20          # the owner: "at least 20 ... spread vertically along the tree"
+# SAPLING_BIRDS.md status: these two lost their co-resident; the find is the tree's one bird
+SINGLE = {"elder_viltris_path_valley_2": "farfetchd", "elder_long_isle_south_3": "oricorio"}
+LONG_ISLE_LEVELS = "44-50"      # SAPLING_BIRDS.md earlier status: "Long Isle levels: 44-50" (LONG_ISLE.md D5)
 RESOURCE_PATH = re.compile(r"[a-z0-9_./-]+")
+WOODS = ("dark oak", "mangrove", "jungle", "cherry", "spruce", "birch", "oak")
 
 
 def _norm(name):
@@ -62,7 +70,7 @@ def _norm(name):
 
 
 def _doc_rows():
-    """{tree id: {x, z, ground, pool, bird, rare}} from the elder tables of SAPLING_BIRDS.md."""
+    """{tree id: {x, z, ground, wood, pool, bird, rare}} from the elder tables of SAPLING_BIRDS.md."""
     rows = {}
     for line in DOC.splitlines():
         if not line.startswith("| elder_"):
@@ -70,11 +78,15 @@ def _doc_rows():
         cols = [c.strip() for c in line.strip().strip("|").split("|")]
         tid = cols[0].replace("★", "").strip()
         x, z, g = (int(v) for v in re.findall(r"-?\d+", cols[1])[:3])
+        wood = next(w for w in WOODS if cols[3].startswith(w))
         pool = cols[4].split("/", 1)[1].strip()
         bird = cols[5]
         rare = {_norm(m) for m in re.findall(r"\*\*([^*]+)\*\*\s*\(rare\)", bird)}
-        names = re.findall(r"[A-Z][A-Za-z']+", bird.replace("**", ""))
-        rows[tid] = {"x": x, "z": z, "ground": g, "pool": pool, "bird": {_norm(n) for n in names}, "rare": rare}
+        names = {_norm(n) for n in re.findall(r"[A-Z][A-Za-z']+", bird.replace("**", ""))}
+        if tid in SINGLE:
+            names, rare = {SINGLE[tid]}, set()
+        rows[tid] = {"x": x, "z": z, "ground": g, "wood": wood.replace(" ", "_"), "pool": pool, "bird": names,
+                     "rare": rare}
     return rows
 
 
@@ -82,56 +94,76 @@ ROWS = _doc_rows()
 IDS = sorted(ROWS)
 
 
-# Without it the table could fail to parse (a changed column) and every per-tree check below would pass on nothing.
-def test_the_doc_table_lists_the_52_elders_and_parses():
+# Without it the table could fail to parse (a changed column) and every per-tree check below would pass on nothing,
+# or the status's one-species exceptions could be removed from the doc while this file still assumes them.
+def test_the_doc_table_lists_the_52_elders_and_the_one_species_status():
     assert len(ROWS) == 52, len(ROWS)
     assert sum(1 for i in ROWS if i.startswith("elder_foothill_grove_")) == 4
     assert all(r["bird"] for r in ROWS.values()), [i for i, r in ROWS.items() if not r["bird"]]
-    assert {_norm("Farfetch'd")} <= ROWS["elder_viltris_path_valley_2"]["bird"]
+    assert "ground + 12, + 35, + 58" in DOC and "up to 7" in DOC
+    assert "`elder_viltris_path_valley_2` Farfetch'd only" in DOC
+    assert "`elder_long_isle_south_3` Oricorio only" in DOC
+    assert {r["wood"] for r in ROWS.values()} >= {"oak", "birch", "spruce", "dark_oak", "jungle", "mangrove", "cherry"}
 
 
-# Without it a tree loses its bird (no block or no pool) or a stray block/pool is authored for a tree that is not
-# in the owner-approved mapping.
-def test_one_block_and_one_habitat_per_elder_none_missing_none_extra():
-    assert set(BLOCKS) == set(ROWS), (sorted(set(ROWS) - set(BLOCKS)), sorted(set(BLOCKS) - set(ROWS)))
+# Without it the doc and the pinned standalone elders drift apart: a block seated on the doc's ground or wood while
+# the tree the tools place stands on another (a block in air or buried under the trunk base, a mimic of the wrong log).
+def test_the_doc_agrees_with_the_pinned_elders_on_trunk_ground_and_wood():
+    standalone = [t for t in IDS if not t.startswith("elder_foothill_grove_")]
+    assert set(standalone) == set(PINNED), (sorted(set(standalone) ^ set(PINNED)))
+    bad = [(t, ROWS[t], PINNED[t]) for t in standalone
+           if (ROWS[t]["x"], ROWS[t]["z"], ROWS[t]["ground"], ROWS[t]["wood"])
+           != (PINNED[t]["x"], PINNED[t]["z"], PINNED[t]["ground_y"], PINNED[t]["species"])]
+    assert not bad, bad[:5]
+
+
+# Without it a tree loses a nest block, a stray elder block appears, or a block points at another tree's pool: the
+# nest is the tree's one species, three blocks high.
+def test_three_blocks_and_one_habitat_per_elder_none_missing_none_extra():
+    want = {"%s%s" % (t, s) for t in ROWS for s in NEST}
+    assert set(BLOCKS) == want, (sorted(want - set(BLOCKS))[:10], sorted(set(BLOCKS) - want)[:10])
     assert set(HABITATS) == set(ROWS), (sorted(set(ROWS) - set(HABITATS)), sorted(set(HABITATS) - set(ROWS)))
-    for tid, b in BLOCKS.items():
-        assert b["pool"] == "cobblers:%s" % tid, (tid, b["pool"])
-        assert HABITATS[tid]["mechanism"] == "habitat_block", tid
-        assert b.get("replace_spawns") is True and b.get("style") == "natural", tid
-    # one pool per tree (owner decision 9); Victory Road's tiles share one pool by design, so only elders are counted
-    pools = [b["pool"] for b in BLOCKS.values()]
-    assert len(pools) == len(set(pools)), "two elder blocks share a pool"
+    for t in ROWS:
+        assert HABITATS[t]["mechanism"] == "habitat_block", t
+        for s in NEST:
+            assert BLOCKS[t + s]["pool"] == "cobblers:%s" % t, (t + s, BLOCKS[t + s]["pool"])
 
 
-# Without it a block drifts off the tree the owner approved (wrong x, z) or back to the rejected crown height.
+# Without it an elder block goes back to the natural style (redirecting the forest's own spawns, a bird now and then)
+# or turns ReplaceSpawns on, and three stacked natural ReplaceSpawns blocks would cancel each other (EXP-021).
 @pytest.mark.parametrize("tid", IDS)
-def test_block_stands_at_the_docs_trunk_and_the_first_storey(tid):
-    r, p = ROWS[tid], BLOCKS[tid]["position"]
-    assert (p["x"], p["z"], p["y"]) == (r["x"], r["z"], r["ground"] + STOREY), (tid, p, r)
+def test_every_elder_block_is_activated_with_the_nest_settings(tid):
+    for s in NEST:
+        b = BLOCKS[tid + s]
+        assert b["style"] == "activated" and b["replace_spawns"] is False, (tid + s, b["style"], b["replace_spawns"])
+        assert b["activated"] == ACTIVATED, (tid + s, b["activated"])
+        assert b.get("status") in ("placed", "verified"), (tid + s, b.get("status"))
 
 
-# Without it a grove block's reach is not held under the canopy giants' budget (14) or a standalone block's reach
-# no longer matches the crown radius (19): the owner's decision 3.
+# Without it a tree holds fewer birds than the owner asked for (at least 20 in the tree).
 @pytest.mark.parametrize("tid", IDS)
-def test_ranges_are_19_standalone_and_14_in_the_grove(tid):
-    want = 14 if tid.startswith("elder_foothill_grove_") else 19
-    assert BLOCKS[tid]["range_of_influence"] == want, (tid, BLOCKS[tid]["range_of_influence"])
+def test_each_elder_keeps_at_least_20_birds(tid):
+    total = sum(BLOCKS[tid + s]["activated"]["max_spawns"] for s in NEST)
+    assert total >= AT_LEAST_PER_TREE, (tid, total)
 
 
-# Without it two ReplaceSpawns blocks overlap and the overlap spawns nothing at all (EXP-021). Measured horizontally
-# (Euclidean), as EXP-021 measured the edge; the vertical shape is unverified (EXP-033). A square reach would make
-# Victory Road's tiles overlap by design, so this is the only measure the manifest is built to.
-def test_no_two_replace_spawns_blocks_overlap_anywhere_in_the_manifest():
-    rs = [b for b in ALL_BLOCKS if b.get("replace_spawns")]
-    assert len(rs) >= 100, len(rs)
-    bad = []
-    for i, a in enumerate(rs):
-        for c in rs[i + 1:]:
-            d = math.hypot(a["position"]["x"] - c["position"]["x"], a["position"]["z"] - c["position"]["z"])
-            if d < a["range_of_influence"] + c["range_of_influence"]:
-                bad.append((a["id"], c["id"], round(d, 1)))
-    assert not bad, bad[:10]
+# Without it a block drifts off the tree the owner approved (wrong x, z) or off the three heights that spread the
+# birds up the trunk (the retired ground + 21, or a crown height outside the solid trunk).
+@pytest.mark.parametrize("tid", IDS)
+def test_blocks_stand_on_the_docs_trunk_at_ground_plus_12_35_58(tid):
+    r = ROWS[tid]
+    for s, h in NEST.items():
+        p = BLOCKS[tid + s]["position"]
+        assert (p["x"], p["z"], p["y"]) == (r["x"], r["z"], r["ground"] + h), (tid + s, p, r)
+
+
+# Without it a block is placed as the wrong wood: the mimic is what the first setblock puts in the trunk, so a birch
+# tree would carry an oak log patch (tools/habitat_blocks.py commands()).
+@pytest.mark.parametrize("tid", IDS)
+def test_the_mimic_is_the_trees_own_log(tid):
+    want = "minecraft:%s_log" % ROWS[tid]["wood"]
+    for s in NEST:
+        assert BLOCKS[tid + s]["mimic"] == want, (tid + s, BLOCKS[tid + s]["mimic"], want)
 
 
 # ------------------------------------------------------------------------------------------ the trees as seated
@@ -139,21 +171,25 @@ def test_no_two_replace_spawns_blocks_overlap_anywhere_in_the_manifest():
 ROT = {"none": lambda x, z: (x, z), "clockwise_90": lambda x, z: (-z, x), "180": lambda x, z: (-x, -z),
        "counterclockwise_90": lambda x, z: (z, -x)}
 INVERSE = {"none": "none", "clockwise_90": "counterclockwise_90", "180": "180", "counterclockwise_90": "clockwise_90"}
+FACES = ((0, 0, 0), (1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))
 
 
-def _sites():
-    """{(x, z): (source, region, site)} for every elder tree the site files place."""
-    et, gr = SITES / "elder_trees.json", SITES / "tree_grove_foothill_woods.json"
-    if not et.is_file() or not gr.is_file():
-        pytest.skip("no derived/sites/elder_trees.json or tree_grove_foothill_woods.json: run tools/elder_trees.py "
-                    "and tools/tree_grove.py (derived/ is gitignored)")
-    out = {}
-    for r in json.loads(et.read_text(encoding="utf-8"))["regions"]:
-        for s in r["sites"]:
-            out[(s["x"], s["z"])] = ("elder_trees", r["id"], s)
-    for s in json.loads(gr.read_text(encoding="utf-8"))["elders"]:
-        out[(s["x"], s["z"])] = ("grove", "foothill_grove", s)
-    return out
+def _grove_sites():
+    gr = SITES / "tree_grove_foothill_woods.json"
+    if not gr.is_file():
+        pytest.skip("no derived/sites/tree_grove_foothill_woods.json: run tools/tree_grove.py (derived/ is gitignored)")
+    return {(s["x"], s["z"]): s for s in json.loads(gr.read_text(encoding="utf-8"))["elders"]}
+
+
+def _seat(tid):
+    """(template id, rotation, ground_y) of the tree at tid: the pinned file for the 48, the grove file for the 4."""
+    if tid in PINNED:
+        e = PINNED[tid]
+        return "cobblers:kits/trees/tree_town/elder_%s_%s" % (e["species"], e["variant"]), e["rotation"], e["ground_y"]
+    r = ROWS[tid]
+    s = _grove_sites().get((r["x"], r["z"]))
+    assert s is not None, "%s: no grove elder at the doc's (%d, %d)" % (tid, r["x"], r["z"])
+    return s["object"], s["rotation"], s["ground_y"]
 
 
 _PREFAB = {}
@@ -172,44 +208,46 @@ def _prefab(template_id):
 
 
 # Without it the site files and the tree ids drift apart: an elder the doc and the blocks name is no longer placed by
-# any site file (a re-apply builds no tree there, and its block is set into bare ground or air), or a new elder is
+# any site file (a re-apply builds no tree there, and its blocks are set into bare ground or air), or a new elder is
 # placed with no bird.
 def test_every_elder_tree_the_doc_names_is_still_placed_by_a_site_file():
-    sites = _sites()
-    assert len(sites) >= 40, len(sites)
-    by_region = {}
-    for src, region, _s in sites.values():
-        by_region[region] = by_region.get(region, 0) + 1
-    want = {}
-    for tid in ROWS:
-        region = re.sub(r"_\d+$", "", tid[len("elder_"):])
-        want[region] = want.get(region, 0) + 1
-    assert by_region == want, {k: (by_region.get(k), want.get(k)) for k in set(by_region) | set(want)
-                               if by_region.get(k) != want.get(k)}
+    et = SITES / "elder_trees.json"
+    if not et.is_file():
+        pytest.skip("no derived/sites/elder_trees.json: run tools/elder_trees.py (derived/ is gitignored)")
+    sites = {(s["x"], s["z"]): s for r in json.loads(et.read_text(encoding="utf-8"))["regions"] for s in r["sites"]}
+    sites.update(_grove_sites())
+    missing = [t for t in IDS if (ROWS[t]["x"], ROWS[t]["z"]) not in sites]
+    assert not missing, missing
+    wrong_ground = [(t, sites[(ROWS[t]["x"], ROWS[t]["z"])]["ground_y"], ROWS[t]["ground"]) for t in IDS
+                    if sites[(ROWS[t]["x"], ROWS[t]["z"])]["ground_y"] != ROWS[t]["ground"]]
+    assert not wrong_ground, wrong_ground
+    assert len(sites) == len(IDS), (len(sites), len(IDS))
 
 
-# Without it a block is set beside its tree (in the open, where a player breaks it, or in air) instead of hidden in
-# the trunk: its x, z must be a placed tree's trunk centre, its y that tree's ground + 21, and the cell a log of the
-# prefab as `place template` seats it (origin = centre - rotate(trunk_origin + half trunk), y = ground + 1 - origin y).
+# Without it a block is set beside its tree (in the open, where a player sees and breaks it, or in air) instead of
+# buried in the trunk: each block's cell and its six face neighbours must be log of the prefab as `place template`
+# seats it (origin = centre - rotate(trunk_origin + half trunk), y = ground + 1 - origin y), and the log must be the
+# mimic, so the first setblock does not change the tree's wood.
 @pytest.mark.parametrize("tid", IDS)
-def test_block_is_a_log_at_its_trees_trunk_centre_as_seated(tid):
-    sites = _sites()
-    p = BLOCKS[tid]["position"]
-    hit = sites.get((p["x"], p["z"]))
-    assert hit is not None, "%s at (%d, %d): no elder tree in derived/sites has its trunk centre there" % (
-        tid, p["x"], p["z"])
-    _src, _region, s = hit
-    assert p["y"] == s["ground_y"] + STOREY, (tid, p["y"], s["ground_y"])
-    side, blocks = _prefab(s["object"])
+def test_every_block_is_buried_in_its_trees_trunk_log_as_seated(tid):
+    obj, rot, ground = _seat(tid)
+    side, blocks = _prefab(obj)
     ox, oy, oz = side["trunk_origin"]
     c = side["habitat"]["trunk"][0] // 2
-    qx, qz = ROT[s["rotation"]](ox + c, oz + c)
-    px, pz, py = s["x"] - qx, s["z"] - qz, s["ground_y"] + 1 - oy
-    tx, tz = ROT[INVERSE[s["rotation"]]](p["x"] - px, p["z"] - pz)
-    got = blocks.get((tx, p["y"] - py, tz))
-    assert got is not None and got.endswith("_log"), (tid, s["object"], s["rotation"], (tx, p["y"] - py, tz), got)
+    r = ROWS[tid]
+    qx, qz = ROT[rot](ox + c, oz + c)
+    px, pz, py = r["x"] - qx, r["z"] - qz, ground + 1 - oy
+    for s in NEST:
+        b = BLOCKS[tid + s]
+        p = b["position"]
+        tx, tz = ROT[INVERSE[rot]](p["x"] - px, p["z"] - pz)
+        ty = p["y"] - py
+        got = [blocks.get((tx + dx, ty + dy, tz + dz)) for dx, dy, dz in FACES]
+        assert all(g == b["mimic"] for g in got), (tid + s, obj, rot, (tx, ty, tz), got, b["mimic"])
     # the control that the seat is the trunk's centre and not merely some log: at h30, between the storeys, the trunk
     # is a disc of radius 3 with no limbs, so the centre is log and a cell 5 off it in each direction is not
+    p = BLOCKS[tid]["position"]
+    tx, tz = ROT[INVERSE[rot]](p["x"] - px, p["z"] - pz)
     h30 = oy + 30
     assert (blocks.get((tx, h30, tz)) or "").endswith("_log"), (tid, "no trunk at h30 over the block")
     for dx, dz in ((5, 0), (-5, 0), (0, 5), (0, -5)):
@@ -230,7 +268,7 @@ def compiled():
 
 
 # Without it a habitat is authored with no top-level entries (mechanism habitat_block, scope = its id) and compiles to
-# an empty pool: with ReplaceSpawns on, its block turns the tree into a place where nothing spawns.
+# an empty pool: an activated block with an empty pool is a nest that never holds a bird.
 def test_every_habitat_has_top_level_entries_and_a_non_empty_compiled_pool(compiled):
     assert len(SPAWNS["habitats"]) >= 52 + 2
     scoped = {}
@@ -257,6 +295,16 @@ def test_every_compiled_habitat_species_is_a_valid_resource_path(compiled):
     assert any(s["species"] == "farfetchd" for s in compiled["elder_viltris_path_valley_2"])
 
 
+# Without it an owl or crow tree goes back to night-only (the owner settled C6 / decision 10: by day too), and a nest
+# stands empty for the whole day.
+def test_no_elder_pool_or_entry_carries_a_time_condition(compiled):
+    timed = [(t, s["species"]) for t in IDS for s in compiled[t] if "timeRange" in s]
+    assert not timed, timed
+    authored = [e["id"] for e in SPAWNS["entries"]
+                if e.get("scope", "").startswith("elder_") and (e.get("conditions") or {}).get("timeRange")]
+    assert not authored, authored
+
+
 def _level_range(pool_col, species):
     """The doc's level range for a species: '12-15', or 'Rowlet 25-30, Decidueye 36-40' per species (the rest of the
     family at the first one's range)."""
@@ -268,15 +316,17 @@ def _level_range(pool_col, species):
 
 
 def _pool_min(tid):
-    return int(LONG_ISLE_LEVELS.split("-")[0]) if tid.startswith("elder_long_isle_")         else int(re.findall(r"\d+", ROWS[tid]["pool"])[0])
+    if tid.startswith("elder_long_isle_"):
+        return int(LONG_ISLE_LEVELS.split("-")[0])
+    return int(re.findall(r"\d+", ROWS[tid]["pool"])[0])
 
 
-# Without it a tree's pool drifts from the owner-approved mapping: a bird the doc does not name for that tree, a
-# named bird or rare find dropped, or levels off the table. A stage the doc does not spell out in the bird column may
-# appear only as the doc's "stages at pool" rule allows (checked against the jar in the next test). The Long Isle's
-# trees were deliberately moved to 44-50 (LONG_ISLE.md D5, SAPLING_BIRDS.md status): every species there is at 44-50.
+# Without it a tree's pool drifts from the owner-approved mapping: a bird the doc does not name for that tree, the
+# named bird dropped, or levels off the table. The two trees the status made single-species hold their find alone, as
+# a common spawn at the tree's full weight (a lone rare entry would still be the only thing the block can spawn, but
+# the pool would no longer say what it is). The Long Isle's trees were moved to 44-50 (LONG_ISLE.md D5).
 @pytest.mark.parametrize("tid", IDS)
-def test_the_pool_holds_the_docs_birds_at_the_docs_levels(tid, compiled):
+def test_the_pool_holds_the_docs_bird_at_the_docs_levels(tid, compiled):
     row, pool = ROWS[tid], compiled[tid]
     got = {s["species"] for s in pool}
     assert row["bird"] <= got, (tid, "named in the doc, missing from the pool", sorted(row["bird"] - got))
@@ -285,6 +335,8 @@ def test_the_pool_holds_the_docs_birds_at_the_docs_levels(tid, compiled):
         assert s["levelRange"] == want, (tid, s["species"], s["levelRange"], want)
         if s["species"] in row["rare"]:
             assert s["bucket"] == "rare", (tid, s)
+    if tid in SINGLE:
+        assert [(s["species"], s["bucket"], s["weight"]) for s in pool] == [(SINGLE[tid], "common", 24.0)], (tid, pool)
 
 
 def _jar():
@@ -295,18 +347,59 @@ def _jar():
     pytest.skip("no Cobblemon-fabric-1.8.0 jar outside the live server (EXP-000 runtime copy)")
 
 
-def _species_files(jar):
-    z = zipfile.ZipFile(jar)
-    return z, {n.rsplit("/", 1)[1][:-5]: n for n in z.namelist()
-               if n.startswith("data/cobblemon/species/") and n.endswith(".json")}
+@pytest.fixture(scope="module")
+def species_files():
+    z = zipfile.ZipFile(_jar())
+    files = {n.rsplit("/", 1)[1][:-5]: n for n in z.namelist()
+             if n.startswith("data/cobblemon/species/") and n.endswith(".json")}
+    return z, files
 
 
-# Without it an unnamed species could slip into a tree's pool in the name of "now eligible": a bird of another family,
-# or a stage that needs an item or is above the pool's floor. Every species the doc's bird column does not name must
-# be a level-up evolution (a level requirement only) of a named bird, reachable by the pool's minimum level: the doc's
-# "stages at pool" rule (Dartrix eligible at 17 in a 25-30 pool), and on the Long Isle the same rule at 44.
-def test_unnamed_species_are_level_up_stages_of_the_docs_bird_reachable_by_the_pool_floor(compiled):
-    z, files = _species_files(_jar())
+def _families(z, files):
+    """{species: family root} from the jar's evolutions and preEvolution links (union-find)."""
+    parent = {sp: sp for sp in files}
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    def union(a, b):
+        if a in parent and b in parent:
+            parent[find(a)] = find(b)
+
+    for sp, n in files.items():
+        d = json.loads(z.read(n))
+        for ev in d.get("evolutions") or []:
+            union(sp, _norm(ev.get("result", "").split(" ")[0]))
+        if d.get("preEvolution"):
+            union(sp, _norm(d["preEvolution"].split(" ")[0]))
+    return {sp: find(sp) for sp in files}
+
+
+# Without it a sapling stops being one species' nest: a co-resident of another family (Fletchling back under the
+# Farfetch'd, Chatot under the Oricorio, Hoothoot in the Route 1 sapling) dilutes the tree. Stages of one family
+# (Pidgey, Pidgeotto, Pidgeot) are one line and allowed. Families come from the jar's evolution links.
+def test_every_sapling_pool_is_one_evolution_family(compiled, species_files):
+    z, files = species_files
+    fam = _families(z, files)
+    # teeth: the pairs this rule must tell apart
+    assert fam["pidgey"] == fam["pidgeot"] and fam["rowlet"] == fam["decidueye"]
+    assert fam["pidgey"] != fam["hoothoot"] and fam["farfetchd"] != fam["fletchling"] and fam["oricorio"] != fam["chatot"]
+    mixed = {}
+    for hid in IDS + ["route_1_sapling_crown"]:
+        roots = {fam.get(s["species"], "?" + s["species"]) for s in compiled[hid]}
+        if len(roots) != 1:
+            mixed[hid] = sorted(s["species"] for s in compiled[hid])
+    assert not mixed, mixed
+
+
+# Without it an unnamed species could slip into a tree's pool in the name of "now eligible": a stage that needs an
+# item or is above the pool's floor. Every species the doc's bird column does not name must be a level-up evolution
+# (a level requirement only) of a named bird, reachable by the pool's minimum level: the doc's "stages at pool" rule.
+def test_unnamed_species_are_level_up_stages_of_the_docs_bird_reachable_by_the_pool_floor(compiled, species_files):
+    z, files = species_files
 
     def evolves(sp, lo):
         d = json.loads(z.read(files[sp]))
@@ -336,9 +429,9 @@ def test_unnamed_species_are_level_up_stages_of_the_docs_bird_reachable_by_the_p
 # Without it a pool names a species the server has no data for, or one Cobblemon ships unimplemented (no model; it
 # never spawns) with nothing in the pack implementing it. Implementation is read from the jar and from any
 # species_additions in the EXP-000 runtime's datapacks and mods (Cobbleverse's DP, Mega Showdown).
-def test_every_habitat_species_is_a_cobblemon_species_something_implements(compiled):
+def test_every_habitat_species_is_a_cobblemon_species_something_implements(compiled, species_files):
+    z, files = species_files
     jar = _jar()
-    z, files = _species_files(jar)
     implemented = {sp for sp, n in files.items() if json.loads(z.read(n)).get("implemented") is True}
     server = jar.parent.parent
     for f in sorted(server.glob("datapacks/*.zip")) + sorted(server.glob("mods/*.jar")):

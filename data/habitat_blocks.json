@@ -1251,7 +1251,7 @@
         "max_spawns": 10
       },
       "status": "placed",
-      "why": "One of two activated blocks in the Route 1 sapling's trunk (log y124-154, read on staging 2026-09-26; kits/structures/prefabs/trees/tree_town/sapling_oak_a.json placed at y123 by tools/maze_forest.py): y134 reaches the clearing floor (y124) and the branch floor (y139-143), y150 the crown (y151-163). Each keeps up to 10 Pidgey within 16 blocks, about 20 in the tree. The natural block that stood at y147 is replaced by trunk log. Nest rationale: the elder records."
+      "why": "One of two activated blocks in the Route 1 sapling's trunk (log at every even y from 124 to 154 read on staging 2026-09-26, and y123-155 in the prefab as seated; kits/structures/prefabs/trees/tree_town/sapling_oak_a.json placed at y123 by tools/maze_forest.py): y134 reaches the clearing floor (y124) and the branch floor (y139-143), y150 the crown (y151-163). Each keeps up to 10 Pidgey within 16 blocks, about 20 in the tree. The natural block that stood at y147 is replaced by trunk log. Nest rationale: the elder records."
     },
     {
       "id": "route1_sapling_crown",
@@ -1274,7 +1274,7 @@
         "max_spawns": 10
       },
       "status": "placed",
-      "why": "One of two activated blocks in the Route 1 sapling's trunk (log y124-154, read on staging 2026-09-26; kits/structures/prefabs/trees/tree_town/sapling_oak_a.json placed at y123 by tools/maze_forest.py): y134 reaches the clearing floor (y124) and the branch floor (y139-143), y150 the crown (y151-163). Each keeps up to 10 Pidgey within 16 blocks, about 20 in the tree. The natural block that stood at y147 is replaced by trunk log. Nest rationale: the elder records."
+      "why": "One of two activated blocks in the Route 1 sapling's trunk (log at every even y from 124 to 154 read on staging 2026-09-26, and y123-155 in the prefab as seated; kits/structures/prefabs/trees/tree_town/sapling_oak_a.json placed at y123 by tools/maze_forest.py): y134 reaches the clearing floor (y124) and the branch floor (y139-143), y150 the crown (y151-163). Each keeps up to 10 Pidgey within 16 blocks, about 20 in the tree. The natural block that stood at y147 is replaced by trunk log. Nest rationale: the elder records."
     },
     {
       "id": "elder_viltri_plateau_1",

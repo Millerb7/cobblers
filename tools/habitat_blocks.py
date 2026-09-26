@@ -29,11 +29,12 @@ the cavern, the world tree and the islet:
   python tools/habitat_blocks.py verify --world <world dir> | --rcon <server dir>
 
 Static rules (also enforced by the habitat-blocks check in tools/validate_data.py): the pool is a Habitat pool that
-data/spawns.json defines; only the natural style is recorded; ranges of ReplaceSpawns blocks must not overlap
-(EXP-021: an overlap spawns nothing), measured in three dimensions: the reach is a sphere. Activated blocks keep up to
-max_spawns of their pool alive within spawn_range of themselves, refill as those go, and do not cancel one another. Staging, 2026-09-26: three
-blocks stacked on one trunk (ground + 12, + 35, + 58, range 11, 23 apart vertically, 0 apart horizontally) still spawned
-their pool's Fletchling in the trunk's column; had the reach been a column, the three would overlap and spawn nothing.
+data/spawns.json defines; the style is natural or activated, each with its own fields; ranges of natural ReplaceSpawns
+blocks must not overlap (EXP-021: an overlap spawns nothing), measured in three dimensions: the reach is taken as a
+sphere. The evidence is thin: on staging, 2026-09-26, three NATURAL blocks stacked on one trunk (ground + 12, + 35,
++ 58, range 11, 23 apart vertically, 0 apart horizontally) still gave one Fletchling by the trunk, which a column reach
+would have cancelled; EXP-033 (the reach's shape) is still unrun. Activated blocks keep up to max_spawns of their pool
+alive within spawn_range of themselves, refill as those go, and do not cancel one another or natural blocks.
 """
 from __future__ import annotations
 
