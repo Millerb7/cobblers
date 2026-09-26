@@ -13,7 +13,8 @@ applies it to every inherited file:
   - add one coordinate anticondition per box to every spawn detail, keeping any anticondition it already has
     (a singular "anticondition" object moves into the plural list)
 
-With --subregions the box set is the route corridors plus every sub-region polygon from data/regions.json. Without it,
+With --subregions the box set is the route corridors plus every sub-region polygon from data/regions.json, plus every
+marine band box data/spawns.json marine_zones defines (tools/compile_spawns.py marine_bands). Without it,
 only the corridors are suppressed, so the 43 million blocks the sub-region rosters cover keep their inherited spawns
 and our rosters merely add to them: the regions read as vanilla with sprinkles.
 
@@ -153,6 +154,9 @@ def main(argv=None):
     p.add_argument("--world", required=True, help="a DISPOSABLE world directory (its datapacks/ are read)")
     p.add_argument("--routes", default=str(ROOT / "data" / "routes.json"))
     p.add_argument("--regions", default=str(ROOT / "data" / "regions.json"))
+    p.add_argument("--spawns", default=str(ROOT / "data" / "spawns.json"),
+                   help="read for its marine_zones, whose band boxes are suppressed with --subregions")
+    p.add_argument("--waterways", default=str(ROOT / "data" / "waterways.json"))
     p.add_argument("--subregions", action="store_true",
                    help="suppress inside every sub-region polygon too, not only the route corridors: without this, "
                         "the 43 million blocks the sub-region rosters cover keep their inherited spawns and our "
@@ -167,12 +171,27 @@ def main(argv=None):
         raise SystemExit("refusing to read the live world")
     boxes = route_boxes(json.loads(Path(a.routes).read_text(encoding="utf-8")))
     route_box_count = len(boxes)
+    import compile_spawns
+    marine_box_count = 0
     if a.subregions:
         regions = json.loads(Path(a.regions).read_text(encoding="utf-8"))
         for sub in regions["subregions"]:
             boxes.extend(subregion_boxes.boxes_for(sub["polygons"], a.subregion_grid))
+        # the marine bands (data/spawns.json marine_zones) are authored rosters too: without them the pack's own sea
+        # spawns stay live over the band and swamp it (2026-09-26, the Windward Sea: Cobblemon's Magikarp herd at
+        # weight 59.4, Wishiwashi's at 100 and Relicanth's at 1000 in the common bucket, against our 24s)
+        spawns_doc = json.loads(Path(a.spawns).read_text(encoding="utf-8"))
+        water = []
+        if Path(a.waterways).is_file():
+            import waterways as waterways_mod
+            for w in json.loads(Path(a.waterways).read_text(encoding="utf-8"))["waterways"]:
+                for _, _, bs in waterways_mod.boxes_by_segment(w["polyline"], w["half_width"], compile_spawns.WATERWAY_GRID):
+                    water.extend(bs)
+        marine = [b for bs in compile_spawns.marine_bands(spawns_doc, regions, json.loads(Path(a.routes).read_text(encoding="utf-8")),
+                                                          water).values() for b in bs]
+        marine_box_count = len(marine)
+        boxes.extend(marine)
     # a spawn-free zone is suppressed whatever covers it: our compiled pools stay out of it too, so nothing spawns there
-    import compile_spawns
     boxes.extend(compile_spawns.spawn_free_zones())
     if a.boxes == "merged":
         boxes = merge_boxes(boxes, a.grid)
@@ -184,7 +203,7 @@ def main(argv=None):
         effective[path + "\0raw"] = raw
     out = Path(a.out)
     stats = {"box_set": a.boxes, "grid": a.grid if a.boxes == "merged" else None, "boxes": len(boxes),
-             "route_boxes": route_box_count, "subregions": bool(a.subregions),
+             "route_boxes": route_box_count, "subregions": bool(a.subregions), "marine_boxes": marine_box_count,
              "subregion_grid": a.subregion_grid if a.subregions else None, "source_files": len(sources), "paths": 0, "written": 0,
              "skipped_disabled": 0, "details": 0, "bytes": 0, "multi_source_paths": 0, "unparsed": []}
     for key in sorted(k for k in effective if "\0" not in k):

@@ -18,11 +18,14 @@ reviewed and remains current. Follow its file-ownership table when making the
 update.
 
 At session start, after the live-server safety checks below, run
-`python tools/server_config_record.py check --server-dir <server>`. It reads the
-server's `config/` folder only, never a world. Report any disagreement between
-what the server runs and what the repo records before doing other work. Work
-done in the repo that never reached the running game has happened twice: the
-spawn tables, and five config overlays including the starters.
+`python tools/install_check.py --server-dir <server>`, adding
+`--world-dir <staging world>` for staging (never the live world). It checks
+packs and configs. It reads the server's `config/` and `datapacks/` folders,
+and a world's folder only when passed a staging one. Report every problem it
+lists before doing other work. Work done in the repo that never reached the
+running game has happened four times: the spawn tables; five config overlays,
+starters among them; the re-apply steps; and the structures pack, present only
+because it had been copied by hand.
 
 ## Live server safety (hard gate)
 
