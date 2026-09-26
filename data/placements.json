@@ -1303,7 +1303,7 @@
               3518
             ],
             "facing": "north",
-            "why": "the lake end, east of the axis where Route 7 leaves: 40 by 72 and 41 tall, the region's one big city building, closing the view south from the square. BCA's, placed from the installed mod",
+            "why": "the lake end, east of the axis where Route 7 leaves: 40 by 72 and 41 tall, the region's one big city building, closing the view south from the square. BCA's, placed from the installed mod. Its fountain garden is the lot's west end, on the axis and the lake street, towards the square (the owner, 2026-09-26)",
             "level": 95
           }
         ],
@@ -6056,24 +6056,24 @@
       "kind": "landmark",
       "lot": "gym6_department_store",
       "position": {
-        "x": 6274,
+        "x": 6203,
         "y": 94,
-        "z": 3477
+        "z": 3516
       },
       "size": [
         40,
         41,
         72
       ],
-      "rotation": "clockwise_90",
+      "rotation": "counterclockwise_90",
       "mirror": "none",
       "anchor_mode": "corner",
       "y_mode": "absolute",
       "status": "planned",
       "facing": "north",
-      "entrance_in_template": "west",
+      "entrance_in_template": "east",
       "chosen_because": "the lake end, east of the axis where Route 7 leaves: 40 by 72 and 41 tall, the region's one big city building, closing the view south from the square. BCA's, placed from the installed mod",
-      "rotation_because": "its street connections are on the long west and east sides; turned to face north",
+      "rotation_because": "the template is a fountain garden (template z 0-34, the fountain at x 19 z 19) in front of the store (z 35-67), with path connections on all four sides. Turned counterclockwise so the garden is the lot's west end, x 6203-6237, on the axis and the lake street, the corner that faces the square, and the fountain stands at (6222, 3497); the store's long sides face north and south. Clockwise (until 2026-09-26) put the garden at the far east end, x 6240-6274, away from the square (the owner, staging playtest 2026-09-26: 'the mall at sabrinas should rotate to have the fountain near town square'). Same box, x 6203-6274 z 3477-3516, either way",
       "source": {
         "pack": "installed",
         "licence": "placed by resource id from the installed pack; never copied into the repo"
