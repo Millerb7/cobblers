@@ -32,9 +32,10 @@ So in practice:
 - **Dive** matters where a place is longer or more enclosed than one 60-second breath: a wreck's rooms, a ruin's
   corridors, the trench's descent.
 
-Not measured yet: how fast a player swims down and up. Run 1's passive sinking was 0.55 blocks per second. The
-no-mount reach above assumes a vanilla sprint-swim of roughly 5 blocks per second (ASSUMED), and one timed dive would
-settle it. Also ASSUMED: that a player riding a submarine-style mount (Wailmer, Relicanth) does not keep air
+**Measured (EXP-042 session 3):**
+- **A sprint-swim is 5 blocks per second,** down 5.0 and up 4.9. So a no-mount player can reach about 37 deep with no
+  time at the bottom, and the 41-46-deep pits are out of reach.
+- **Dive adds a swim boost the owner chose:** about 10 blocks per second, below Dolphin's Grace. Also ASSUMED: that a player riding a submarine-style mount (Wailmer, Relicanth) does not keep air
 underwater (EXP-038 step 2, not run). If they do, that mount bypasses the ladder.
 
 **The design rule this gives:** content on a lake floor is Surf content (S2). Content that needs more than one

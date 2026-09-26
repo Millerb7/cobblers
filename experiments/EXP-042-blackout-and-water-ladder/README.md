@@ -81,6 +81,32 @@ $725. Logged over RCON every half-second.
 **Not registered: the Center checkpoint.** The checkpoint stayed at 0. The owner is unsure whether they used the
 healing machine, so this is not a result either way; rerun it.
 
+**Session 3 (the owner, staging, 2026-09-26). PASS except as noted.**
+- **Center checkpoint:** "Checkpoint: the Hometown Pokemon Center" on the action bar when the owner used the healing
+  machine (checkpoint id 1). The later drowning returned them inside the Center at (1438, 120, 5248).
+- **Vanilla air removed:** one yellow message. The Water Breathing potion's effect was stripped. Air drained at the
+  vanilla rate, 300 to 0 in about 14.5 s, with the Respiration III helmet given for the test (worn, per the owner).
+  The Respiration override needed a restart: enchantments are registry data, which `/reload` does not refresh.
+- **Lethal second hit:** 20 → 10 at air 0, regenerated to 11, then the second hit killed. Fix confirmed.
+- **Charge:** $59, 10% of 586 rounded up, once.
+- **Dive:** Wailmer in the party, Dive training: mount level 2, qualification 2.
+  - Air held flat for over two minutes at the floor (248 of 300: the oxygen bonus holds air, it does not refill it).
+  - The Surf timer counted up under Dive, reaching 900, so a swap cannot hand out a fresh Surf bonus. Fix made this
+    session.
+- **Swim speed, no boost (survival):**
+  - down 47 blocks in 9.4 s, about 5.0 blocks per second;
+  - up 50 blocks in 10.1 s, about 4.9 blocks per second;
+  - peaks 6-7.
+
+  **The map's assumed 5 blocks per second holds.**
+- **Dive swim boost (the owner's request):**
+  - Water movement efficiency 0.5 alone felt like nothing: the owner said "it feels slow". It is Depth Strider's
+    attribute, which mostly helps walking in water.
+  - Adding +50% movement speed in water: about **10 blocks per second** sustained over 2 s (diagonal).
+  - The owner: "its good".
+- **Not run: the mid-dive swap.** The owner declined.
+- The owner switched to creative now and then. Those samples (mode 1) are excluded from every speed figure.
+
 Still to run:
 - the Center and waystone checkpoints;
 - Dive;

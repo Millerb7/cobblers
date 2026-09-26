@@ -56,7 +56,7 @@ OBJECTIVES = {
     "bo.px": "dummy", "bo.pz": "dummy", "bo.ox": "dummy", "bo.oz": "dummy",
     "bo.mount": "dummy", "bo.raw": "dummy", "bo.qual": "dummy", "bo.grace": "dummy",
     "bo.deep": "dummy", "bo.sub": "dummy", "bo.air": "dummy", "bo.surf": "dummy", "bo.breath": "dummy",
-    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy",
+    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy", "bo.swim": "dummy",
 }
 
 # the inventory slots a claim may take from: the hotbar and main inventory, and the offhand. Armour never.
@@ -525,6 +525,12 @@ def build(cfg, mounts, placements, progression):
         "execute if score @s bo.sub matches 1 anchored eyes positioned ^ ^ ^ %s run scoreboard players set @s bo.deep 1" % deep_chain,
         "scoreboard players set @s bo.brth 0",
         "function %s:water/qualify" % NS,
+        "# Dive's swim speed: in any water, with the Dive training and a Dive partner (the owner, 2026-09-26)",
+        "scoreboard players set #swim bo.tmp 0",
+        "execute if score @s bo.qual matches 2 if block ~ ~ ~ #%s:water run scoreboard players set #swim bo.tmp 1" % NS,
+        "execute if score @s bo.qual matches 2 if score @s bo.sub matches 1 run scoreboard players set #swim bo.tmp 1",
+        "execute if score #swim bo.tmp matches 1 unless score @s bo.swim matches 1 run function %s:water/swim_on" % NS,
+        "execute if score #swim bo.tmp matches 0 if score @s bo.swim matches 1 run function %s:water/swim_off" % NS,
         "execute if score @s bo.sub matches 0 run function %s:water/surfaced" % NS,
         "execute if score @s bo.sub matches 1 store result score @s bo.air run data get entity @s Air",
         "execute if score @s bo.sub matches 1 if score @s bo.deep matches 1 run function %s:water/deep" % NS,
@@ -555,6 +561,9 @@ def build(cfg, mounts, placements, progression):
         "execute if score @s bo.breath >= #breath bo.cfg run scoreboard players set @s bo.breath 0"])
     fn("water/deep", [
         "# eyes at least %d blocks under: Dive is unlimited, Surf a bonus per submersion, otherwise the harsh rule" % water["deep_blocks"],
+        "# time under Dive counts against the Surf bonus too: it belongs to one submersion, so losing the Dive partner",
+        "# underwater never hands out a fresh Surf timer (spec 'Entering, swapping and leaving depth')",
+        "execute if score @s bo.qual matches 2 if score @s bo.surf < #surf bo.cfg run scoreboard players add @s bo.surf 1",
         "execute if score @s bo.qual matches 2 run return run function %s:water/breathing" % NS,
         "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run scoreboard players add @s bo.surf 1",
         "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run return run function %s:water/breathing" % NS,
@@ -568,6 +577,17 @@ def build(cfg, mounts, placements, progression):
         "scoreboard players set @s bo.brth 1",
         "execute unless score @s bo.hasmod matches 1 run attribute @s minecraft:generic.oxygen_bonus modifier add cobblers:ladder %d add_value" % water["ladder_oxygen_bonus"],
         "scoreboard players set @s bo.hasmod 1"])
+    fn("water/swim_on", [
+        "attribute @s minecraft:generic.water_movement_efficiency modifier add cobblers:dive_swim %s add_value" % water["dive_swim_efficiency"],
+        "# efficiency (Depth Strider's attribute) mostly helps walking in water and is halved while swimming; the swim",
+        "# speed itself comes from movement_speed, which water movement scales by that efficiency (the owner felt no",
+        "# difference with efficiency alone, 2026-09-26)",
+        "attribute @s minecraft:generic.movement_speed modifier add cobblers:dive_swim %s add_multiplied_base" % water["dive_swim_speed"],
+        "scoreboard players set @s bo.swim 1"])
+    fn("water/swim_off", [
+        "attribute @s minecraft:generic.water_movement_efficiency modifier remove cobblers:dive_swim",
+        "attribute @s minecraft:generic.movement_speed modifier remove cobblers:dive_swim",
+        "scoreboard players set @s bo.swim 0"])
     fn("water/unbreathe", [
         "attribute @s minecraft:generic.oxygen_bonus modifier remove cobblers:ladder",
         "scoreboard players set @s bo.hasmod 0"])

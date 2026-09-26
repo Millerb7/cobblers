@@ -119,6 +119,10 @@
     "pulse_fraction": "half of maximum health, as drown damage (bypasses armour); vanilla's own 2-point drowning hit lands in the same second and is absorbed by the damage cooldown",
     "pulse_regen_margin": 2,
     "pulse_regen_margin_why": "a hit landing on a player at or below half health plus this is lethal, so two hits from full health knock out whatever natural regeneration adds between them (EXP-042 run 1: 20 to 10, regenerated to 11, the second hit left 2)",
+    "dive_swim_speed": 0.5,
+    "dive_swim_speed_why": "a +50% movement_speed modifier (add_multiplied_base) while the Dive swim state holds: vanilla water movement accelerates toward movement speed in proportion to water_movement_efficiency, so the two together make the boost; efficiency alone felt like nothing (the owner, EXP-042 session 3). Estimated about 1.5-1.7x a normal sprint-swim, below Dolphin's Grace (about 2.5x); to be measured",
+    "dive_swim_efficiency": 0.5,
+    "dive_swim_efficiency_why": "the owner, 2026-09-26: someone with Dive should swim faster, 'it shouldnt be the max level though'. generic.water_movement_efficiency is what Depth Strider uses, 0 to 1 with 1.0 = Depth Strider III; 0.5 sits between Depth Strider I and II. Applied in any water while the Dive training and a Dive-capable party member hold",
     "ladder_oxygen_bonus": 1000,
     "ladder_oxygen_bonus_why": "vanilla keeps a tick's air with chance bonus/(bonus+1): at 1000 a player loses about one air in 50 seconds, so the Surf bonus and Dive hold air full without the Water Breathing effect",
     "vanilla_air": {
