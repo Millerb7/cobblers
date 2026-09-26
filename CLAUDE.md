@@ -67,8 +67,13 @@ owning process or handle before recovery.
 - **World-critical (blocks/worldgen):** Rechiseled, CobbleFurnies, Carved
   Wood, Pokeblocks, Cozy Home, Handcrafted, Moar Concrete, VanillaBackport,
   LumyMon, Beautify, LegendaryMonuments, Waystones, Comforts,
-  cobblemon-additions, Repurposed Structures, Biome Replacer, the Terralith
-  datapack, and the region datapacks in `base-pack/cobbleverse/datapacks/extra`.
+  cobblemon-additions, Repurposed Structures, Biome Replacer. **Not**
+  world-critical here: the Terralith datapack and the Hoenn, Johto and Sinnoh
+  region datapacks (`datapacks/extra`). Cobbleverse ships them optional
+  (`global_packs.toml`), our world has had them disabled since its first
+  export, and they are almost all world generation for new chunks, which a
+  pre-exported WorldPainter world inside its border never makes. No authored
+  data references a Terralith biome (checked 2026-09-26).
 - **No KubeJS or scripting layer exists in the base pack.** Cobblemon itself
   has Molang-scriptable NPCs and datapack folders (1.8 adds `party_pools`,
   `party_compositions`, `moveset_builders`, and a Habitat Block for spawn
