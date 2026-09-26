@@ -104,6 +104,16 @@
   - **The Scar's ruins are a story change** put to Codex (`docs/HANDOVER_CODEX.md` item 27): why ruined copies of the cavern's houses stand there, what a player concludes, and whether low roofless ruins with four towers are right.
 - **Answers to Brock on Route 1 (the owner, 2026-09-25):** the forest path need not carry Water types. Before Brock a player can reach the ocean or a pond nearby (Krabby and Staryu at the water on the west shore), and Route 1 has Grass types.
 - **Route 1's maze forest has its own sub-region** (`route1_maze_forest`, the whole forest box, 2026-09-25): it had been split between west_shore, pallet_meadows and the vale, so crabs and starfish walked the forest floor. Its roster is Route 1's woodland species at 7-10; west_shore's Krabby and Staryu now need water nearby (`neededNearbyBlocks`, as EXP-025's Wooper). Installed on staging, not yet seen in game. Re-measured 2026-09-25 (`tools/region_measure.py --write` on heightmap 0d9b: the forest median y120, slope p90 7.4 degrees, 0.498 km2; 21 records moved, the forest's three neighbours for their smaller area and the Rift's sub-regions and neighbours for the sculpt). Open: Route 1's transitions by `build_routes.py --geography-only`, `availability.py --write` to refresh the numbers, and the same shore problem at north_west_coast (Krabby, Binacle) and south_strand (Clauncher).
+- **Xaero's map effects hide the maps but do not stop the cache** (tested on staging, 2026-09-26; `docs/research/notes/xaero-map-effects.md`).
+  - All six effects (`xaerominimap:no_minimap`, `no_entity_radar`, `no_waypoints` and `no_cave_maps`, plus `xaeroworldmap:no_world_map` and `no_cave_maps`) are accepted by the server and are per-player.
+  - With all six on, the owner visited a marker at (-640, 4096) in the western ocean. The world map showed it afterwards, and the client wrote `-2_8.zip` on logout.
+  - The jars scope the cache per dimension only (a world id in `xaeromap.txt`, one folder per dimension). Nothing scopes it per area, and the server cannot clear a client's cache.
+  - This answers open question 1 of Codex's gated-interactions spec. The pocket approach is the owner's decision.
+- **Committed configs against the running server** (2026-09-26; `docs/research/notes/config-drift-2026-09-26.md`).
+  - `modpack/config/DistantHorizons.toml` now says `enableServerGeneration = false`, as the server has run since the 10240 export.
+  - **The server directory runs `white-list=false`**, and staging and the live server share it. This is left to the owner.
+  - The server's `defaultoptions` copies still list ATMxMSD RP. They are client-only, so this is harmless.
+  - A few server-only config values the repo does not record: Mega Showdown's `likoPendentDuration`, `capture_xp`'s no-XP-to-fainted, and a dead `c2me.toml`.
 - **Every painted lake has a water roster** (2026-09-26, the owner: the lakes by the cherry grove "spawn nothing or just surskits near the edges"). The cause:
   - the lake rosters held almost only `grounded` entries;
   - `suppress_inherited_spawns.py --subregions` cancels the pack's own water spawns over every sub-region, whatever its `policy` says, which contradicts `spawn_suppression.json`'s "off-route wilderness keeps its defaults";
