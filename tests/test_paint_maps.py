@@ -837,6 +837,10 @@ KNOWN_PLANTS = {
     "Rose Bush", "Peony", "Red Mushroom", "Brown Mushroom", "Lily Pad", "Cornflower", "Lily of the Valley",
     "Sweet Berry Bush", "Bamboo", "Azalea", "Flowering Azalea", "Glow Lichen", "Moss Carpet", "Big Dripleaf",
     "Cherry Sapling", "Pink Petals",
+    # added 2026-09-26 for the xeric_scrub set; verified in the installed WorldPainter's WPCore.jar
+    # (org/pepsoft/worldpainter/layers/plants/Plants.class holds the exact constant "Cactus"). Not verified: that the
+    # painted cactus survives in game (it needs sand under it and no solid block beside it).
+    "Cactus",
 }
 # in WorldPainter's list, but on this server they exist only because VanillaBackport registers them under minecraft:
 BACKPORT_ONLY = {"Leaf Litter", "Bush", "Firefly Bush", "Cactus Flower", "Short Dry Grass", "Tall Dry Grass",

@@ -57,7 +57,8 @@ WP_BIOMES = {
 }
 TERRAIN_CODES = {"GRASS": 1, "SAND": 2, "DESERT": 3, "RED_SAND": 4, "MESA": 5, "ROCK": 6, "STONE_MIX": 7, "GRAVEL": 8,
                  "SNOW": 9, "DEEP_SNOW": 10, "PODZOL": 11, "MUD": 12, "MYCELIUM": 13, "BASALT": 14, "BLACKSTONE": 15,
-                 "BEACHES": 16, "PERMADIRT": 17, "MAGMA": 18, "CLAY": 19, "MOSS": 20, "RED_DESERT": 21, "BARE_GRASS": 22}
+                 "BEACHES": 16, "PERMADIRT": 17, "MAGMA": 18, "CLAY": 19, "MOSS": 20, "RED_DESERT": 21, "BARE_GRASS": 22,
+                 "SANDSTONE": 23}
 # one mask, 1 where a trunk may stand; the painting steps below clear it where nothing may grow
 TREE_LAYERS = ("allowed",)
 # Plant names are WorldPainter's (org.pepsoft.worldpainter.layers.plants.Plants). "Short Grass" is avoided:
@@ -86,6 +87,13 @@ PLANT_SETS = {
     "lily_valley": {"Lily of the Valley": 3, "Fern": 2, "Tall Grass": 3},
     "petals": {"Pink Petals": 5, "Tall Grass": 2},
     "jungle_floor": {"Fern": 4, "Large Fern": 3, "Tall Grass": 2},
+    # New sets are named to sort after every earlier one: a preset's plant noise is salted by the set's sorted
+    # position (main, "salt = 307 + ..."), so a name sorting earlier would reshuffle every plant on the map.
+    # bamboo groves in the jungle isles' understory (data/foliage.json overlay jungle_bamboo): vanilla bamboo decides
+    # no loaded spawn condition (data/spawn_blocks.json), and no bamboo_jungle biome is painted
+    "understory_bamboo": {"Bamboo": 6, "Fern": 3, "Large Fern": 2},
+    # the Long Isle's desert island (docs/world-building/LONG_ISLE.md): dead shrubs and the odd cactus on the sand
+    "xeric_scrub": {"Dead Shrub": 6, "Cactus": 2},
 }
 # how WorldPainter renders each object group (tools/worldpainter/paint.js); groups not listed get the defaults:
 # random rotation, trunks extended down to uneven ground
@@ -469,7 +477,8 @@ def main(argv=None):
         cg = g2
     cold_near = np.repeat(np.repeat(cg, 8, 0), 8, 1)[:cold.shape[0], :cold.shape[1]]
     cold = cold | (sea & cold_near)
-    arid = np.isin(terr, [TERRAIN_CODES[k] for k in ("DESERT", "RED_DESERT", "MESA", "RED_SAND", "SAND")])
+    arid = np.isin(terr, [TERRAIN_CODES[k] for k in ("DESERT", "RED_DESERT", "MESA", "RED_SAND", "SAND",
+                                                   "SANDSTONE")])
     coast_class = None
     if a.coast_class and Path(a.coast_class).exists():
         coast_class = np.asarray(Image.open(a.coast_class))

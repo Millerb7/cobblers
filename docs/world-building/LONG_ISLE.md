@@ -1,6 +1,15 @@
 # The Long Isle: a desert island, a jungle island and a sea town
 
-**Status: design proposal, 2026-09-25. Nothing here is built, sited in data, or decided.**
+**Status: design proposal, 2026-09-25. Phase 2's data was authored on 2026-09-26, and every open decision here took
+its recommended default** (the owner: "go and update the isles and add the sea town from hoenn").
+- **D1 and D2:** paint only. The north is `desert_isle`, the middle is `sandstone_uplands` (sandstone above y128 and on
+  slopes of 26° or more), and the south is `jungle`, all in `data/regions.json`.
+- **Foliage** (`data/foliage.json`): `desert_scatter` in the north and middle, and `emergent_jungle` plus the jungle
+  overlays in the south.
+- **D5 and section 6:** band 44-50, with the rosters rewritten from section 6's desert and jungle candidates
+  (`data/spawns.json`).
+
+None of this is in any world until the next WorldPainter export. The sea town is a separate piece of work.
 Answers EXP-035 row 30. The owner's note:
 *"the long isle feels pointless as a biome/region. need to have a design for it. im thinking maybe make the long isle a
 desert and jungle island and have the jungle island become a town on the sea. specifically pacifidlog from hoenn
@@ -248,3 +257,72 @@ island's east coast at about (8200, 7400). A town of fishers and divers is its n
 10. **D10: timing.** Land the paint with the pending live re-export (another staging rehearsal), or wait for a later one.
 11. **D11: the rafts' protection.** Survival, where a friend can break a deck and re-apply restores it; or adventure
     mode inside the town, as in the mansion.
+
+## 10. The sea town as authored (2026-09-26)
+
+The owner (2026-09-26): *"add the sea town from hoenn"*. Every open decision took its recommended default, recorded
+in `data/sea_town.json` `decisions` as "owner approved; recommended default taken". For the sea town that means water
+only, one discovery waystone, the Mart only (D6), no current lane (D7), no reef (D9) and survival (D11). D3 keeps
+"Pacifidlog" as the working name, with `display_name` null. D1, D2, D5, D8 and D10 are the island's paint and rosters,
+and belong to the paint-and-roster work in the status note above.
+
+**Site, measured on the canonical heightmap** (`python tools/sea_town.py plan`):
+- The estimate (7120, 6880) is over the bay's deep hole, 32 blocks deep.
+- The town is centred 90 blocks east-south-east, on the jungle island's north-west shelf, at (7210, 6960).
+- Under the sixteen rafts the water is 3 to 19 deep: the Mart's raft and raft 9 have 3, and the rest have 4 or more.
+- Fishers' Row runs west off the shelf over 17 to 37 blocks of water.
+- The mainland jetty starts on the dunes' beach at (7092, 6711), because (7150, 6620) is dry ground behind the beach.
+  Its landing is about 190 blocks from the town.
+- The Current Gate is off the island's shore at the bay's south-west mouth, (7024-7093, 7222-7238).
+- Footprint: x7020-7280, z6704-7238.
+
+| District | Built as |
+|---|---|
+| Old Rafts | 15 double-log rafts (a stripped-log sub-deck at y61 and a log deck at y62) with posts to the seabed; with the guild's raft that makes 16 on the shelf, and the gate's raft 17 in all. 22 bamboo bridges 3 wide join them. The Centre (`lentimas_center`) and the Mart (`lavender_mart`) are re-materialed in bamboo and jungle wood and seated at y62 by `tools/place_town.py`. There are 12 huts, and a square paved as the town plan's plaza with the waystone on it |
+| Fishers' Row | a mangrove pier 5 wide and 120 long, a T-head, 17 fishing stations (a seat, a barrel and a lantern post each), the guild hall (rod racks, barrels, a smoker, the catch board) and a mud-brick smokehouse with a campfire |
+| Boatwright's Yard | a spruce wharf, an open boat shed over a hull in frame, a slipway into the water, a boat rack with a barrel of 6 boats, and two bamboo rafts moored off it |
+| Stilt Quarter | a boardwalk, 7 stilt houses and the inn (4 red beds) on mangrove stilts with roots at the waterline |
+| Current Gate | a spruce breakwater from the shore to a raft with a lookout tower 10 high, the swimmer's hut and 3 stations facing the open sea |
+| Mainland jetty | a bamboo jetty to a landing with a boat rack, a barrel of 6 boats, a signpost to the Mining Town and one across the Sound |
+
+- **Light:** 246 outdoor lanterns on posts, one in every building. The tool's lantern model leaves no open deck cell
+  under light 5.
+- **Blocks that decide spawns:** none is placed except the water the Centre and the Mart displace, which is put back
+  (`data/spawn_block_policy.json`, scope `sea_town`).
+- **Clerk:** the Mart's clerk is `sea_town_mart` in `data/traders.json`, at (7239, 63, 6958), facing west.
+
+**How it is built and re-applied.**
+- `tools/sea_town.py write` turns `data/sea_town.json` into the `sea_town` settlement, the two service placements and
+  six district earthworks in `data/placements.json` (2,546 commands), plus the clerk.
+- The settlement's `"ground": "sea_deck"` makes `tools/ground.py` lay the decks over the heightmap at the sea level.
+  That is how `tools/town_plan.py` and `tools/place_town.py` seat the Centre and the Mart on a raft, not on the seabed.
+- The re-application builds it with every other place in step R8 (`prep_sea_town`, then `towns/sea_town`, about
+  2,850 commands) and stands the clerk in step R14.
+- `reapply.py prepare` runs `sea_town.py check` and stops if the committed records no longer match the data.
+- Step V runs `sea_town.py verify --rcon`, and `audit` runs `sea_town.py verify --world`. Each compares the world with
+  the model block by block and looks for water standing on a deck or flowing round the town. `tools/town_audit.py`
+  also checks it as a place.
+
+To build it on staging alone, after `/reload`:
+- `function cobblers:reapply/prep_sea_town`
+- `function cobblers:towns/sea_town`
+- `function cobblers:towns/vendors_sea_town`
+
+**Not built, and why:**
+- The bells (a bell draws Chimecho).
+- The current lane (flowing water decides spawns).
+- The rod master, the fishing trader and the boatwright (D6).
+- Fishing boxes and rosters (`data/spawns.json`).
+- Mod furniture (the block ids are not read from the jars).
+- Lily pads and coral.
+- The lagoon.
+
+**Principle 20:** section 8 limited the first build to phase 1's slice. The owner's request is the whole town, so the
+whole layout is authored. Staging should still prove the deck, the boats and the fishing before the town reaches the
+live world.
+
+**NOT VERIFIED.** Nothing here has been built in a world or seen in game. The unverified points are:
+- that the export's top water block is y62;
+- that the deck holds with no leak;
+- that the boats in the barrels work;
+- that the clerk trades.

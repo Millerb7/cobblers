@@ -270,6 +270,32 @@ def main(argv=None):
     by_id = {s["id"]: s for s in subs}
 
     written, regions, chosen, notes = {}, [], [], []
+    # Pinned elders (data/elder_trees.json): placed where they stand, never re-sited. Picking afresh on every run
+    # moved or dropped trees whenever the foliage or regions changed (the Long Isle repaint, 2026-09-26), under the
+    # birds whose Habitat Blocks sit in their trunks
+    pins_path = ROOT / "data" / "elder_trees.json"
+    pins = json.loads(pins_path.read_text(encoding="utf-8"))["elders"] if pins_path.is_file() else None
+    if pins:
+        rows_by = {r["id"]: r for r in included}
+        for sub_id in dict.fromkeys(p["subregion"] for p in pins):
+            ps = [p for p in pins if p["subregion"] == sub_id]
+            kind = ps[0]["species"]
+            for v in "abc":
+                if (kind, v) not in written:
+                    bld, dims = big_tree(kind, v, TIER)
+                    written[(kind, v)] = write_prefab(kind, v, bld, dims, TIER)
+            sites = []
+            for p in ps:
+                pad = ground_of.box(p["x"] - PAD, p["z"] - PAD, p["x"] + PAD, p["z"] + PAD)
+                sites.append({"x": p["x"], "z": p["z"], "ground_y": p["ground_y"], "pad_relief": float(pad.max() - pad.min()),
+                              "distance_to_nearest_leg": None, "object": written[(kind, p["variant"])]["template_id"],
+                              "rotation": p["rotation"], "variant": p["variant"], "pinned": p["id"]})
+                chosen.append((p["x"], p["z"]))
+            row = rows_by.get(sub_id) or {}
+            regions.append({"id": sub_id, "foliage": row.get("foliage"), "species": kind, "area_km2": row.get("area_km2"),
+                            "stems_per_ha": row.get("stems_per_ha"), "wanted": len(ps), "placed": len(ps),
+                            "passing_cells": None, "relaxed": [], "pinned": True, "sites": sites})
+        included = []
     for row in included:
         sub = by_id[row["id"]]
         b = sub["measured"]["bounds"]

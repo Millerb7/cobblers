@@ -1491,6 +1491,26 @@
      "spacing": 6
     }
    ]
+  },
+  "desert_scatter": {
+   "identity": "Desert island: open sand and sandstone with bleached dead trunks standing alone, the dunes' dry country carried across the Sound.",
+   "from_inside": "Nothing overhead: dead shrubs and the odd cactus underfoot, a white snag every hundred blocks or so, the sea on both hands.",
+   "stems_per_ha": 0.6,
+   "edge_width": 40,
+   "ragged": 30,
+   "glade_share": 0.2,
+   "clumping": 0.5,
+   "slope_lo": 20,
+   "slope_hi": 32,
+   "classes": [
+    {
+     "group": "snag_broadleaf",
+     "core": 1,
+     "edge": 1,
+     "spacing": 24
+    }
+   ],
+   "debris": []
   }
  },
  "preset_defaults": {
@@ -1544,10 +1564,12 @@
    "why": "The old growth's fringe east of Peak Pond."
   },
   "long_isle_north": {
-   "type": "coastal_spruce"
+   "type": "desert_scatter",
+   "why": "The Long Isle's desert island (docs/world-building/LONG_ISLE.md section 3, D2: north and middle desert, taken by default 2026-09-26 (the owner approved LONG_ISLE.md's direction: 'go and update the isles and add the sea town from hoenn')): no living wood, only dead trunks, in keeping with the East Coast Dunes across the Sound, which carry no forest type at all. The four elders already built here (spruce on the north, dark oak on the middle, derived/sites/elder_trees.json) are prefabs, not paint, and stay; tools/elder_trees.py would no longer choose this sub-region if it were re-run (0.6 stems/ha, under its 25)."
   },
   "long_isle_middle": {
-   "type": "mossy_broadleaf"
+   "type": "desert_scatter",
+   "why": "The Long Isle's desert island (docs/world-building/LONG_ISLE.md section 3, D2: north and middle desert, taken by default 2026-09-26 (the owner approved LONG_ISLE.md's direction: 'go and update the isles and add the sea town from hoenn')): no living wood, only dead trunks, in keeping with the East Coast Dunes across the Sound, which carry no forest type at all. The four elders already built here (spruce on the north, dark oak on the middle, derived/sites/elder_trees.json) are prefabs, not paint, and stay; tools/elder_trees.py would no longer choose this sub-region if it were re-run (0.6 stems/ha, under its 25)."
   },
   "tilpey_south_shore": {
    "type": "oak_parkland"
@@ -1566,6 +1588,10 @@
   },
   "frostpeak_strand": {
    "type": "krummholz"
+  },
+  "long_isle_south": {
+   "type": "emergent_jungle",
+   "why": "The Long Isle's jungle island (docs/world-building/LONG_ISLE.md section 3: 'jungle paint in place of sparse_jungle, thicker', taken by default 2026-09-26 (the owner approved LONG_ISLE.md's direction: 'go and update the isles and add the sea town from hoenn')): the Jungle Isle's emergent jungle, with its overlays (jungle_emergents, jungle_thickets, jungle_bamboo)."
   }
  },
  "overlays": {
@@ -1573,7 +1599,8 @@
    "Extra stems and debris laid over named sub-regions after every forest type is placed, each from its own random stream, so every other forest paints exactly as it did without them (tools/foliage.py place).",
    "They only fill gaps: the same pairwise spacing from every standing stem, clear of debris, glades, settlements, water (water_clearance_blocks) and of every route centreline by path_clearance_blocks, so prop roots never wall a route.",
    "density = edge ramp x patch noise (the top `share` of the noise inside the overlay, soft-edged) x near-water term (floor + (1 - floor) x exp(-distance / reach)) x slope, times the sub-region's scale. Overlays never paint a biome: the spawn pools key on it.",
-   "Owner's playtest notes 25 and 29 (experiments/EXP-035-first-playtest). Design and numbers: docs/world-building/FOLIAGE_MARSH_JUNGLE.md."
+   "Owner's playtest notes 25 and 29 (experiments/EXP-035-first-playtest). Design and numbers: docs/world-building/FOLIAGE_MARSH_JUNGLE.md.",
+   "2026-09-26 (the owner: 'go and update the isles'): jungle_emergents puts generated emergent giants (kits/structures/foliage/jungle_emergent_*, tools/foliage_objects.py, crowns at 34-46 over vanilla's 14-31 mega jungle) and more mega jungle through the jungle isle and the Long Isle's south; jungle_bamboo lays bamboo groves with ferns in the understory; jungle_thickets reaches the Long Isle's south. Bamboo decides no loaded spawn condition (data/spawn_blocks.json) and no bamboo_jungle biome is painted."
   ],
   "path_clearance_blocks": 5,
   "layers": [
@@ -1700,12 +1727,49 @@
     }
    },
    {
+    "id": "jungle_emergents",
+    "identity": "Emergent giants: jungle trees half again the height of the mega jungle, their flat crowns standing clear of the canopy.",
+    "from_inside": "Buttressed trunks you walk round, vines and cocoa climbing them, vine curtains hanging out of a roof thirty blocks up; from a hill or a boat the crowns stand proud of the canopy, one or two to the hectare.",
+    "subregions": {
+     "jungle_west": 1.0,
+     "jungle_east": 1.0,
+     "long_isle_south": 0.9
+    },
+    "stems_per_ha": 8,
+    "edge_width": 50,
+    "ragged": 30,
+    "slope_lo": 18,
+    "slope_hi": 30,
+    "classes": [
+     {
+      "group": "jungle_emergent",
+      "core": 1.0,
+      "edge": 0.3,
+      "spacing": 8
+     },
+     {
+      "group": "mega_jungle",
+      "core": 1.0,
+      "edge": 0.6,
+      "spacing": 8
+     }
+    ],
+    "understory": {
+     "core": {
+      "set": "jungle_floor",
+      "coverage": 0.12,
+      "clear": false
+     }
+    }
+   },
+   {
     "id": "jungle_thickets",
     "identity": "Jungle thickets: dense patches of jungle trees under a closed canopy, between the open stands of giants.",
     "from_inside": "Out of the open emergent jungle you walk into a wall of trunks, bushes and vines; inside, the light goes green and the next trunk is three or four blocks away.",
     "subregions": {
      "jungle_west": 1.0,
-     "jungle_east": 0.85
+     "jungle_east": 0.85,
+     "long_isle_south": 0.75
     },
     "stems_per_ha": 150,
     "edge_width": 50,
@@ -1766,6 +1830,59 @@
      "core": {
       "set": "jungle_floor",
       "coverage": 0.25,
+      "clear": false
+     }
+    }
+   },
+   {
+    "id": "jungle_bamboo",
+    "identity": "Bamboo groves: stands of bamboo and ferns in the jungle's understory, between the thickets.",
+    "from_inside": "Off the fern floor you push into a grove of bamboo two and three times your height, the odd jungle tree standing in it.",
+    "subregions": {
+     "jungle_west": 1.0,
+     "jungle_east": 1.0,
+     "long_isle_south": 0.9
+    },
+    "stems_per_ha": 10,
+    "edge_width": 40,
+    "ragged": 24,
+    "patches": {
+     "scale": 56,
+     "share": 0.18,
+     "soft": 0.06
+    },
+    "slope_lo": 18,
+    "slope_hi": 30,
+    "classes": [
+     {
+      "group": "jungle",
+      "core": 1,
+      "edge": 1,
+      "spacing": 6
+     }
+    ],
+    "floor": {
+     "threshold": 0.6,
+     "mix": [
+      [
+       "PODZOL",
+       0.5
+      ],
+      [
+       "GRASS",
+       0.5
+      ]
+     ]
+    },
+    "understory": {
+     "core": {
+      "set": "understory_bamboo",
+      "coverage": 0.35,
+      "clear": true
+     },
+     "mid": {
+      "set": "jungle_floor",
+      "coverage": 0.15,
       "clear": false
      }
     }

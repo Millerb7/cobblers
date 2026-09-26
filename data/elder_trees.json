@@ -1,0 +1,487 @@
+{
+  "schema": "cobblers.elder-trees/1",
+  "status": "pinned 2026-09-26",
+  "note": "The 48 standalone elders (world-tree saplings) as they stand: tools/elder_trees.py places these and no longer re-sites them. It used to pick sites afresh on every run from the foliage and region data, so the Long Isle repaint (2026-09-26) silently dropped the four elders on long_isle_north and long_isle_middle (now desert) and moved six more, while each tree's bird (data/habitat_blocks.json elder_*, docs/world-building/SAPLING_BIRDS.md) stays at its trunk. Positions are the trunk centres the bird blocks were placed at (verified in the prefab as seated); variant and rotation are what the tool assigned (variant by site order, rotation from the region's seeded rng), which reproduce all 38 unchanged sites exactly. To move or add an elder, edit this file and its bird together.",
+  "elders": [
+    {
+      "id": "elder_foothill_woods_1",
+      "subregion": "foothill_woods",
+      "x": 1440,
+      "z": 2264,
+      "ground_y": 100,
+      "species": "oak",
+      "variant": "a",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_foothill_woods_2",
+      "subregion": "foothill_woods",
+      "x": 2912,
+      "z": 2440,
+      "ground_y": 107,
+      "species": "oak",
+      "variant": "b",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_foothill_woods_3",
+      "subregion": "foothill_woods",
+      "x": 2236,
+      "z": 1622,
+      "ground_y": 124,
+      "species": "oak",
+      "variant": "c",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_foothill_woods_4",
+      "subregion": "foothill_woods",
+      "x": 2136,
+      "z": 2624,
+      "ground_y": 117,
+      "species": "oak",
+      "variant": "a",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_jungle_east_1",
+      "subregion": "jungle_east",
+      "x": 5216,
+      "z": 7904,
+      "ground_y": 81,
+      "species": "jungle",
+      "variant": "a",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_jungle_east_2",
+      "subregion": "jungle_east",
+      "x": 5248,
+      "z": 6976,
+      "ground_y": 77,
+      "species": "jungle",
+      "variant": "b",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_jungle_west_1",
+      "subregion": "jungle_west",
+      "x": 4464,
+      "z": 7312,
+      "ground_y": 70,
+      "species": "jungle",
+      "variant": "a",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_jungle_west_2",
+      "subregion": "jungle_west",
+      "x": 4968,
+      "z": 7416,
+      "ground_y": 126,
+      "species": "jungle",
+      "variant": "b",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_lake_viltri_hollow_1",
+      "subregion": "lake_viltri_hollow",
+      "x": 1280,
+      "z": 3184,
+      "ground_y": 110,
+      "species": "oak",
+      "variant": "a",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_lake_viltri_hollow_2",
+      "subregion": "lake_viltri_hollow",
+      "x": 1824,
+      "z": 3056,
+      "ground_y": 121,
+      "species": "oak",
+      "variant": "b",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_long_isle_middle_1",
+      "subregion": "long_isle_middle",
+      "x": 8104,
+      "z": 5978,
+      "ground_y": 76,
+      "species": "dark_oak",
+      "variant": "a",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_long_isle_middle_2",
+      "subregion": "long_isle_middle",
+      "x": 7376,
+      "z": 6790,
+      "ground_y": 86,
+      "species": "dark_oak",
+      "variant": "b",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_long_isle_north_1",
+      "subregion": "long_isle_north",
+      "x": 7886,
+      "z": 4492,
+      "ground_y": 70,
+      "species": "spruce",
+      "variant": "a",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_long_isle_north_2",
+      "subregion": "long_isle_north",
+      "x": 7778,
+      "z": 5264,
+      "ground_y": 93,
+      "species": "spruce",
+      "variant": "b",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_long_isle_south_1",
+      "subregion": "long_isle_south",
+      "x": 7128,
+      "z": 7936,
+      "ground_y": 75,
+      "species": "jungle",
+      "variant": "a",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_long_isle_south_2",
+      "subregion": "long_isle_south",
+      "x": 7920,
+      "z": 7512,
+      "ground_y": 88,
+      "species": "jungle",
+      "variant": "b",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_long_isle_south_3",
+      "subregion": "long_isle_south",
+      "x": 7336,
+      "z": 7376,
+      "ground_y": 135,
+      "species": "jungle",
+      "variant": "c",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_marshy_marsh_1",
+      "subregion": "marshy_marsh",
+      "x": 4906,
+      "z": 1850,
+      "ground_y": 110,
+      "species": "mangrove",
+      "variant": "a",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_marshy_marsh_2",
+      "subregion": "marshy_marsh",
+      "x": 5434,
+      "z": 2414,
+      "ground_y": 128,
+      "species": "mangrove",
+      "variant": "b",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_marshy_marsh_3",
+      "subregion": "marshy_marsh",
+      "x": 5014,
+      "z": 2272,
+      "ground_y": 111,
+      "species": "mangrove",
+      "variant": "c",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_north_pine_isle_1",
+      "subregion": "north_pine_isle",
+      "x": 7986,
+      "z": 458,
+      "ground_y": 73,
+      "species": "spruce",
+      "variant": "a",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_north_pine_isle_2",
+      "subregion": "north_pine_isle",
+      "x": 6998,
+      "z": 312,
+      "ground_y": 75,
+      "species": "spruce",
+      "variant": "b",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_northgate_east_1",
+      "subregion": "northgate_east",
+      "x": 5472,
+      "z": 432,
+      "ground_y": 127,
+      "species": "spruce",
+      "variant": "a",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_northgate_east_2",
+      "subregion": "northgate_east",
+      "x": 5936,
+      "z": 840,
+      "ground_y": 82,
+      "species": "spruce",
+      "variant": "b",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_northgate_west_1",
+      "subregion": "northgate_west",
+      "x": 4792,
+      "z": 272,
+      "ground_y": 77,
+      "species": "spruce",
+      "variant": "a",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_northgate_west_2",
+      "subregion": "northgate_west",
+      "x": 5250,
+      "z": 62,
+      "ground_y": 70,
+      "species": "spruce",
+      "variant": "b",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_peak_pond_hollow_1",
+      "subregion": "peak_pond_hollow",
+      "x": 3912,
+      "z": 1776,
+      "ground_y": 111,
+      "species": "spruce",
+      "variant": "a",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_peak_pond_hollow_2",
+      "subregion": "peak_pond_hollow",
+      "x": 4008,
+      "z": 1040,
+      "ground_y": 112,
+      "species": "spruce",
+      "variant": "b",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_peak_pond_hollow_3",
+      "subregion": "peak_pond_hollow",
+      "x": 4346,
+      "z": 2296,
+      "ground_y": 114,
+      "species": "spruce",
+      "variant": "c",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_shrew_lake_shores_1",
+      "subregion": "shrew_lake_shores",
+      "x": 3928,
+      "z": 4272,
+      "ground_y": 144,
+      "species": "cherry",
+      "variant": "a",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_shrew_lake_shores_2",
+      "subregion": "shrew_lake_shores",
+      "x": 3760,
+      "z": 3932,
+      "ground_y": 140,
+      "species": "cherry",
+      "variant": "b",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_shrew_lake_shores_3",
+      "subregion": "shrew_lake_shores",
+      "x": 3104,
+      "z": 3624,
+      "ground_y": 117,
+      "species": "cherry",
+      "variant": "c",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_south_pine_isle_1",
+      "subregion": "south_pine_isle",
+      "x": 7232,
+      "z": 1992,
+      "ground_y": 76,
+      "species": "spruce",
+      "variant": "a",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_south_pine_isle_2",
+      "subregion": "south_pine_isle",
+      "x": 6768,
+      "z": 1208,
+      "ground_y": 112,
+      "species": "spruce",
+      "variant": "b",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_south_pine_isle_3",
+      "subregion": "south_pine_isle",
+      "x": 7496,
+      "z": 1266,
+      "ground_y": 73,
+      "species": "spruce",
+      "variant": "c",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_tilpey_east_shore_1",
+      "subregion": "tilpey_east_shore",
+      "x": 6848,
+      "z": 3792,
+      "ground_y": 95,
+      "species": "oak",
+      "variant": "a",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_tilpey_east_shore_2",
+      "subregion": "tilpey_east_shore",
+      "x": 6488,
+      "z": 4776,
+      "ground_y": 117,
+      "species": "oak",
+      "variant": "b",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_tilpey_north_shore_1",
+      "subregion": "tilpey_north_shore",
+      "x": 5880,
+      "z": 3248,
+      "ground_y": 96,
+      "species": "birch",
+      "variant": "a",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_tilpey_north_shore_2",
+      "subregion": "tilpey_north_shore",
+      "x": 5224,
+      "z": 3040,
+      "ground_y": 117,
+      "species": "birch",
+      "variant": "b",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_viltri_plateau_1",
+      "subregion": "viltri_plateau",
+      "x": 1730,
+      "z": 3960,
+      "ground_y": 121,
+      "species": "birch",
+      "variant": "a",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_viltri_plateau_2",
+      "subregion": "viltri_plateau",
+      "x": 2332,
+      "z": 3560,
+      "ground_y": 118,
+      "species": "birch",
+      "variant": "b",
+      "rotation": "counterclockwise_90"
+    },
+    {
+      "id": "elder_viltri_plateau_3",
+      "subregion": "viltri_plateau",
+      "x": 2344,
+      "z": 3064,
+      "ground_y": 108,
+      "species": "birch",
+      "variant": "c",
+      "rotation": "clockwise_90"
+    },
+    {
+      "id": "elder_viltris_path_valley_1",
+      "subregion": "viltris_path_valley",
+      "x": 1016,
+      "z": 3864,
+      "ground_y": 138,
+      "species": "oak",
+      "variant": "a",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_viltris_path_valley_2",
+      "subregion": "viltris_path_valley",
+      "x": 1094,
+      "z": 3496,
+      "ground_y": 122,
+      "species": "oak",
+      "variant": "b",
+      "rotation": "none"
+    },
+    {
+      "id": "elder_wedge_north_1",
+      "subregion": "wedge_north",
+      "x": 3846,
+      "z": 2912,
+      "ground_y": 134,
+      "species": "dark_oak",
+      "variant": "a",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_wedge_north_2",
+      "subregion": "wedge_north",
+      "x": 4160,
+      "z": 3184,
+      "ground_y": 142,
+      "species": "dark_oak",
+      "variant": "b",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_wedge_south_1",
+      "subregion": "wedge_south",
+      "x": 4784,
+      "z": 4408,
+      "ground_y": 112,
+      "species": "dark_oak",
+      "variant": "a",
+      "rotation": "180"
+    },
+    {
+      "id": "elder_wedge_south_2",
+      "subregion": "wedge_south",
+      "x": 4692,
+      "z": 3896,
+      "ground_y": 91,
+      "species": "dark_oak",
+      "variant": "b",
+      "rotation": "none"
+    }
+  ]
+}

@@ -201,6 +201,17 @@
     2.8
    ]
   },
+  "jungle_emergent": {
+   "objects": 4,
+   "height": [
+    35,
+    47
+   ],
+   "crown_radius": [
+    11.3,
+    15.3
+   ]
+  },
   "krummholz": {
    "objects": 7,
    "height": [
@@ -3115,6 +3126,106 @@
    "ground_radius": 0,
    "crown_radius": 2.8,
    "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_emergent_01",
+   "file": "jungle_emergent_01.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    10,
+    0,
+    8
+   ],
+   "sha256": "1f011ed1c76d25067947ad201dfa8eec33e5f8dbe66ed7290a7db30f1ddfbe3f",
+   "size": [
+    21,
+    35,
+    19
+   ],
+   "blocks": 1553,
+   "height": 35,
+   "eye_width": 5,
+   "ground_radius": 3,
+   "crown_radius": 11.3,
+   "trunk_footprint": 8,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_emergent_02",
+   "file": "jungle_emergent_02.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    9,
+    0,
+    12
+   ],
+   "sha256": "e6af74d0aa88598d0dd75747f15446ba23b0aee2181d11527f604bb1db28cdcf",
+   "size": [
+    21,
+    39,
+    26
+   ],
+   "blocks": 2427,
+   "height": 39,
+   "eye_width": 6,
+   "ground_radius": 4,
+   "crown_radius": 12.7,
+   "trunk_footprint": 13,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_emergent_03",
+   "file": "jungle_emergent_03.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    12,
+    0,
+    10
+   ],
+   "sha256": "4ec08181acf78d4dbac1693d9661f40c3937dd0b9abbc04f39dc9055c7c12d71",
+   "size": [
+    26,
+    43,
+    24
+   ],
+   "blocks": 2549,
+   "height": 43,
+   "eye_width": 6,
+   "ground_radius": 4,
+   "crown_radius": 13.6,
+   "trunk_footprint": 13,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_emergent_04",
+   "file": "jungle_emergent_04.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    13,
+    0,
+    15
+   ],
+   "sha256": "1d300a8e3f7ed15c055ea41575295caf55af3f97ff10a898ac5884132afc6fde",
+   "size": [
+    27,
+    47,
+    31
+   ],
+   "blocks": 3664,
+   "height": 47,
+   "eye_width": 6,
+   "ground_radius": 3,
+   "crown_radius": 15.3,
+   "trunk_footprint": 9,
    "depth_below_origin": 0
   },
   {

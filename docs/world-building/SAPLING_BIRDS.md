@@ -1,6 +1,12 @@
 # Sapling birds: one bird per world-tree sapling (proposal)
 
-Status: **PROPOSAL, nothing authored.** No record in `data/` is changed by this document. Asked by the owner on
+Status: **AUTHORED 2026-09-26, not placed.** The owner approved it ("i like those birds ... add the birds"), and every
+open decision took this document's recommendation, except two. The 52 elders are habitats `elder_*` in
+`data/spawns.json` and Habitat Blocks in `data/habitat_blocks.json` (status `planned`). **Block height:** the first
+storey, ground + 21, not the crown's ground + 57, because Cobblemon spawns within about 16 blocks of the player's
+height (the parent session's decision). **Long Isle levels:** 44-50, not 25-30, because `LONG_ISLE.md` D5 moved the
+island's band there, and this document's own rule then gives the band. Evolution thresholds are read from the
+Cobblemon 1.8.0 jar, and every ‡ value below matched it. The tables below are the proposal as written. Asked by the owner on
 2026-09-25: "i want to make each sapling in the world have a bird attached to it. can we go through each and map
 them". The Route 1 sapling already has one (`route1_sapling_crown`: Pidgey 24 + Hoothoot 9 at 5-8).
 

@@ -475,6 +475,57 @@ def root_tangle(rng, r):
     return b
 
 
+def jungle_emergent(rng, height, crown_r, limbs):
+    """An emergent jungle giant for the jungle isles (docs/world-building/FOLIAGE_MARSH_JUNGLE.md): a 2x2 jungle trunk
+    well above vanilla's tallest mega jungle tree (31), log buttresses at its foot, bare to its upper third, limbs out
+    to a flat umbrella crown that stands clear of the canopy, vine curtains under the crown, vines and cocoa up the
+    trunk. Vanilla Minecraft 1.21.1 blocks only."""
+    b = S.Builder()
+    kind = "jungle"
+    trunk(b, 0, 0, 2, 0, height - 2, kind)
+    # buttresses: fins of log running out from the trunk's faces, tallest against the trunk
+    for (sx, sz, dx, dz) in ((0, 0, -1, 0), (0, 0, 0, -1), (1, 0, 1, 0), (1, 0, 0, -1),
+                             (0, 1, -1, 0), (0, 1, 0, 1), (1, 1, 1, 0), (1, 1, 0, 1)):
+        if rng.random() < 0.7:
+            reach = int(rng.integers(1, 4))
+            for k in range(1, reach + 1):
+                for y in range(max(1, int(round((reach - k + 1) * rng.uniform(1.2, 2.0))))):
+                    b.set(sx + dx * k, y, sz + dz * k, *log(kind))
+    base_ang = rng.uniform(0, 2 * math.pi)
+    tips = []
+    for k in range(limbs):
+        ang = base_ang + 2 * math.pi * (k + rng.uniform(-0.2, 0.2)) / limbs
+        yb = int(height * rng.uniform(0.66, 0.82))
+        L = crown_r * rng.uniform(0.55, 0.85)
+        sx, sz = (1 if math.cos(ang) > 0 else 0), (1 if math.sin(ang) > 0 else 0)
+        tip = (int(round(0.5 + math.cos(ang) * L)), min(height - 3, yb + int(round(L * 0.45))),
+               int(round(0.5 + math.sin(ang) * L)))
+        line(b, (sx, yb, sz), tip, lambda ax: log(kind, ax))
+        tips.append(tip)
+    # the umbrella: a broad flat layer with a lower rim and a shallow dome
+    disk(b, 0.5, height - 3, 0.5, crown_r, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height - 2, 0.5, crown_r * 0.8, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height - 1, 0.5, crown_r * 0.55, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height, 0.5, crown_r * 0.3, leaves(kind), rng, ragged=0.3)
+    for (cx, cy, cz) in tips:
+        r = crown_r * rng.uniform(0.35, 0.5)
+        blob(b, cx, cy + 1, cz, r, 1.8, r, leaves(kind), rng, ragged=0.25)
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0].endswith("_leaves")):
+        if math.hypot(x - 0.5, z - 0.5) > crown_r - 1.5 and (x, y - 1, z) not in b.blocks and rng.random() < 0.25:
+            for k in range(1, int(rng.integers(2, 4))):
+                b.setdefault(x, y - k, z, *leaves(kind))
+    # cocoa on the lower trunk (facing names the log it hangs on), then vines
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0] == "minecraft:jungle_log" and 3 <= k[1] <= 12
+                            and 0 <= k[0] <= 1 and 0 <= k[2] <= 1):
+        for dx, dz in SIDES:
+            cx_, cz_ = x + dx, z + dz
+            if (cx_, y, cz_) not in b.blocks and rng.random() < 0.05:
+                b.set(cx_, y, cz_, "minecraft:cocoa", {"age": str(int(rng.integers(0, 3))), "facing": FACE[(-dx, -dz)]})
+    vine_curtains(b, rng, 0.22, 4, 14)
+    climbing_vines(b, rng, 0.28, min_y=3)
+    return b
+
+
 def generated_objects():
     """name -> (group, builder). Seeds are fixed per object so the files regenerate byte for byte."""
     out = {}
@@ -529,6 +580,10 @@ def generated_objects():
     for i, r in enumerate((2.0, 2.5, 3.0, 3.0)):
         n = "root_tangle_%02d" % (i + 1)
         out[n] = ("root_tangle", root_tangle(rng_for(n), r))
+    # jungle isles (data/foliage.json overlay jungle_emergents): crowns at 34-46, over vanilla's 14-31 mega jungle
+    for i, (h, cr, limbs) in enumerate(((34, 9.0, 4), (38, 10.0, 5), (42, 11.0, 5), (46, 12.0, 6))):
+        n = "jungle_emergent_%02d" % (i + 1)
+        out[n] = ("jungle_emergent", jungle_emergent(rng_for(n), h, cr, limbs))
     import landmark_trees as LT
     for n, (group, builder) in LT.designs().items():
         out[n] = (group, builder)

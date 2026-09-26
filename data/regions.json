@@ -1868,6 +1868,57 @@
      "coverage": 0.2
     }
    ]
+  },
+  "desert_isle": {
+   "biome": "minecraft:desert",
+   "terrain": "DESERT",
+   "patches": [
+    {
+     "terrain": "SAND",
+     "coverage": 0.35,
+     "scale": 64
+    }
+   ],
+   "rock_slope_deg": 34,
+   "rock": "SANDSTONE",
+   "plants": [
+    {
+     "set": "xeric_scrub",
+     "coverage": 0.03,
+     "scale": 48
+    }
+   ]
+  },
+  "sandstone_uplands": {
+   "biome": "minecraft:desert",
+   "terrain": "DESERT",
+   "patches": [
+    {
+     "terrain": "SAND",
+     "coverage": 0.3,
+     "scale": 64
+    },
+    {
+     "terrain": "SANDSTONE",
+     "coverage": 0.2,
+     "scale": 40
+    }
+   ],
+   "terrain_above": [
+    [
+     128,
+     "SANDSTONE"
+    ]
+   ],
+   "rock_slope_deg": 26,
+   "rock": "SANDSTONE",
+   "plants": [
+    {
+     "set": "xeric_scrub",
+     "coverage": 0.02,
+     "scale": 48
+    }
+   ]
   }
  },
  "regions": [
@@ -6054,7 +6105,7 @@
     "note": "spawn philosophy open; not populated"
    },
    "paint": {
-    "preset": "taiga_sparse"
+    "preset": "desert_isle"
    },
    "polygons": [
     [
@@ -6168,7 +6219,7 @@
     "note": "spawn philosophy open; not populated"
    },
    "paint": {
-    "preset": "forest"
+    "preset": "sandstone_uplands"
    },
    "polygons": [
     [
@@ -6267,7 +6318,7 @@
     "note": "spawn philosophy open; not populated"
    },
    "paint": {
-    "preset": "sparse_jungle"
+    "preset": "jungle"
    },
    "polygons": [
     [

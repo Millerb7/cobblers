@@ -251,8 +251,10 @@ def compile_subregion(sub, entries, exclude, grid, waterways=()):
 def compile_habitat(h, entries):
     display = {e["pokemon"]: e["species"] for e in h["entries"]}
     compiled = [e for e in entries if e["ambient"] and e["weight"] > 0]
+    # the species id, never the display name: a display name is not always an id ("Farfetch'd" made the server read
+    # cobblemon:farfetch'd, an invalid location, and the whole data load stopped on staging, 2026-09-26)
     doc = {"name": "cobblers.habitat.%s.name" % h["id"], "type": "cobblemon:natural",
-           "spawns": [{"species": display.get(e["species"], e["species"]), "bucket": e["bucket"],
+           "spawns": [{"species": e["species"], "bucket": e["bucket"],
                        "spawnablePositionType": position_type(e),
                        "weight": e["weight"], "levelRange": e["level"], "phases": "1-25"} for e in compiled]}
     compiled_names = {display.get(e["species"], e["species"]) for e in compiled}

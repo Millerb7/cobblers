@@ -1,0 +1,10 @@
+{
+ "group": "jungle_emergent",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  13,
+  0,
+  15
+ ]
+}

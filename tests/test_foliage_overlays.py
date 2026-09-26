@@ -1,4 +1,4 @@
-"""data/foliage.json "overlays" (marsh_giants, marsh_mangroves, jungle_thickets) through tools/foliage.py
+"""data/foliage.json "overlays" (marsh_giants, marsh_mangroves, jungle_emergents, jungle_thickets, jungle_bamboo) through tools/foliage.py
 overlay_layers() and place(), and the swamp objects tools/foliage_objects.py generates for them.
 
 Written by the test author, not by the session that wrote the overlays or the swamp objects.
@@ -6,8 +6,9 @@ Written by the test author, not by the session that wrote the overlays or the sw
 Speed and scope: place() runs on the real data (data/foliage.json, data/regions.json sub-region polygons rasterised by
 tools/paint_maps.py, data/towns.json clearances, the committed object library) but on two square windows of the map,
 not the whole 8192 x 8192: the marsh window (x 4160..6847, z 960..3647: marshy_marsh, marsh_creek and the forest
-types around them) and the jungle window (x 4256..6047, z 6656..8447: jungle_west, jungle_east; the map ends at
-z 8191 and the rest is empty). Landmark tree sites are shifted into window coordinates. The ground is synthetic: flat
+types around them), the jungle window (x 4256..6047, z 6656..8447: jungle_west, jungle_east; the map ends at
+z 8191 and the rest is empty) and the Long Isle window (x 6784..8191, z 6784..8191: long_isle_south, the south end of
+long_isle_middle and the sea; added 2026-09-26 when the three jungle overlays reached long_isle_south). Landmark tree sites are shifted into window coordinates. The ground is synthetic: flat
 at y100, slope 0, no water and every column allowed, because the heightmap lives outside the repository. paint_maps'
 fill_gaps (unassigned land joined to its neighbours) is not applied, since land comes from the heightmap. About 4
 seconds in all.
@@ -16,8 +17,9 @@ The route lane mask handed to place() is tools/paint_maps.py route_lanes (the to
 checked here against the route centrelines in data/routes.json by plain point-to-segment geometry.
 
 Not covered: the real terrain's slopes, water and treelines (they only remove stems, but the counts here are not the
-map's), the floor and understory painting of overlays in paint_maps, the jungle overlay's route clearance (no route in
-data/routes.json reaches the jungle isle, so that case is vacuous and reported as such), WorldPainter placing the
+map's), the floor and understory painting of overlays in paint_maps (jungle_bamboo's bamboo itself is understory, so
+only its jungle stems are seen here), the jungle overlays' route clearance (no route in data/routes.json reaches the
+jungle isle or the Long Isle's south, so those cases are vacuous and reported as such), WorldPainter placing the
 objects, and how anything looks in game.
 """
 import copy
@@ -45,7 +47,13 @@ REGIONS = json.loads((ROOT / "data" / "regions.json").read_text(encoding="utf-8"
 SUBS, PRESETS = REGIONS["subregions"], REGIONS["paint_presets"]
 ROUTES = json.loads((ROOT / "data" / "routes.json").read_text(encoding="utf-8"))
 SEED = 20260914                                   # tools/paint_maps.py --seed default
-WINDOWS = {"marsh": (4160, 960, 2688), "jungle": (4256, 6656, 1792)}
+WINDOWS = {"marsh": (4160, 960, 2688), "jungle": (4256, 6656, 1792), "long_isle": (6784, 6784, 1408)}
+# which overlays reach each window: the marsh pair (playtest notes 25 and 29), and since 2026-09-26 the owner's "go and
+# update the isles" (docs/world-building/LONG_ISLE.md section 3) put the three jungle overlays on the jungle isle and
+# on the Long Isle's south
+EXPECTED_OVERLAYS = {"marsh": {"marsh_giants", "marsh_mangroves"},
+                     "jungle": {"jungle_emergents", "jungle_thickets", "jungle_bamboo"},
+                     "long_isle": {"jungle_emergents", "jungle_thickets", "jungle_bamboo"}}
 LAYERS = {lay["id"]: lay for lay in DOC["overlays"]["layers"]}
 SWAMP_GROUPS = {"mangrove", "tall_mangrove", "mangrove_scrub", "swamp_giant", "vine_snag", "root_tangle"}
 GROUND_R = {}
@@ -98,14 +106,22 @@ def runs(full_masks):
     return out
 
 
-# removing this lets every property below pass on windows where the overlays placed nothing
+# removing this lets every property below pass on windows where the overlays placed nothing.
+# Updated 2026-09-26: the jungle window expected only jungle_thickets; jungle_emergents and jungle_bamboo were added
+# to data/foliage.json and all three now reach long_isle_south, so the Long Isle window was added and every expected
+# overlay must place at least one stem in its window (an overlay listed in overlay_ids but empty proves nothing).
 def test_windows_hold_forest_types_and_overlay_stems(runs):
     for w, r in runs.items():
         base = sum(len(p) for p in r["without"]["positions"].values())
         added = sum(len(p) for p in r["added"].values())
         assert base > 1000 and added > 500, (w, base, added)
-    assert set(runs["marsh"]["with"]["overlay_ids"]) == {"marsh_giants", "marsh_mangroves"}
-    assert set(runs["jungle"]["with"]["overlay_ids"]) == {"jungle_thickets"}
+        assert set(r["with"]["overlay_ids"]) == EXPECTED_OVERLAYS[w], (w, r["with"]["overlay_ids"])
+        for oid in EXPECTED_OVERLAYS[w]:
+            assert r["with"]["overlay_stats"][oid]["stems_added"] > 0, (w, oid, r["with"]["overlay_stats"][oid])
+    # the new emergent giants are actually drawn, on both isles
+    for w in ("jungle", "long_isle"):
+        n = len(runs[w]["added"].get("jungle_emergent", []))
+        assert n > 50, (w, n)
 
 
 # removing this lets an overlay draw from the forest types' random stream or reorder their draws, so adding a marsh
@@ -195,9 +211,10 @@ def test_nothing_an_overlay_adds_is_within_route_clearance(runs, full_masks):
     without = runs["marsh"]["without"]["positions"]
     free_added = {g: pts[len(without.get(g, [])):] for g, pts in free["positions"].items()}
     assert _near_routes(free_added, "marsh", clearance)[0]
-    # the jungle window has no route; recorded so a route added there later is checked here too
-    jnear, _ = _near_routes(runs["jungle"]["added"], "jungle", clearance)
-    assert not jnear, jnear[:8]
+    # the jungle and Long Isle windows have no route; recorded so a route added there later is checked here too
+    for w in ("jungle", "long_isle"):
+        jnear, _ = _near_routes(runs[w]["added"], w, clearance)
+        assert not jnear, (w, jnear[:8])
 
 
 # removing this lets an overlay paint a biome, and every spawn pool that keys on biome changes under it

@@ -218,6 +218,10 @@ def prepare(a):
     py(TOOLS / "scenes_pack.py")
     py(TOOLS / "route_trainers.py")
     py(TOOLS / "rematerial.py")
+    # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
+    # data/traders.json from data/sea_town.json and the heightmap; stop here if the committed records are stale. The
+    # town itself is then built with every other place (R8: prep_sea_town, towns/sea_town; its clerk in R14)
+    py(TOOLS / "sea_town.py", "check", *src)
     py(TOOLS / "place_town.py", "hometown", *src)
     for s in places():
         py(TOOLS / "town_plan.py", s, *src)
@@ -851,6 +855,12 @@ def _run_steps(a, rc, todo, rec, path):
                 print("   traders verify exit %d" % r.returncode, flush=True)
                 if r.returncode:
                     bad.append("traders verify: %s" % r.stdout[-400:])
+                # the sea town's decks, posts, huts and lanterns against its model, and no water standing on a deck
+                r = subprocess.run([sys.executable, str(TOOLS / "sea_town.py"), "verify", "--rcon", a.server_dir],
+                                   cwd=ROOT, capture_output=True, text=True)
+                print("   sea town verify exit %d" % r.returncode, flush=True)
+                if r.returncode:
+                    bad.append("sea town verify: %s" % (r.stdout or r.stderr)[-400:])
         # save after every step: run 5's server ran out of memory at R17 and every step since its last autosave (R12,
         # R15, R16 and the lamps) was gone from the world although the run had reported each one done
         rc("save-all")
@@ -890,6 +900,11 @@ def audit(a):
     r = subprocess.run([sys.executable, str(TOOLS / "signposts.py"), "verify", "--world", a.world], cwd=ROOT, capture_output=True, text=True)
     res["signposts"] = {"exit": r.returncode, "tail": r.stdout.strip().splitlines()[-6:]}
     print("signposts:", " | ".join(res["signposts"]["tail"]))
+    # the sea town block by block against its model, water on a deck, flowing water round it (tools/sea_town.py)
+    r = subprocess.run([sys.executable, str(TOOLS / "sea_town.py"), "verify", "--world", a.world], cwd=ROOT,
+                       capture_output=True, text=True)
+    res["sea_town"] = {"exit": r.returncode, "tail": (r.stdout or r.stderr).strip().splitlines()[-12:]}
+    print("sea town exit", r.returncode)
     # no walkable position under a roof, or anywhere in the cavern, at block light 0 (tools/light_plan.py check, from
     # the saved world's own light arrays)
     # every place but those whose plan says dark by design (the Scar, the jungle ruins): asking the check about one of
@@ -909,7 +924,7 @@ def audit(a):
     # play, and vanilla hostiles are disabled. It is evidence for builders, not a re-export gate.
     res["clean"] = (res["build_audit"]["exit"] == 0 and len(res["towns"]) == len(places()) > 0
                     and all(v["clean"] for v in res["towns"].values())
-                    and res["signposts"]["exit"] == 0)
+                    and res["signposts"]["exit"] == 0 and res["sea_town"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")
     print("audit %s: %s" % ("CLEAN" if res["clean"] else "NOT CLEAN", path))
