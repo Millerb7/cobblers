@@ -18,6 +18,15 @@
     "fill_fallback": "minecraft:tuff",
     "surface": "rechiseled:blackstone_polished_connecting",
     "surface_fallback": "minecraft:polished_blackstone",
+    "donor": "league_building",
+    "donor_why": "The placement in data/placements.json the lot is levelled for. R9 stamps it whole over the lot, air and all, so the lot's 'lot clear' samples are taken only where the lot cuts outside the donor's volume (EXP-026 run 4: 20 samples inside the building read as mismatches).",
+    "leave_to_the_town": {
+      "settlement": "league",
+      "roles": [
+        "forecourt"
+      ],
+      "why": "The two polished-tuff forecourt terraces (data/placements.json, the league plan's forecourt anchors) are the town's: R8 lays them and the town audit checks them. The skirt ran over them and repaved 211 of their cells in blackstone (EXP-026 run 4), so the skirt leaves every column of a forecourt rect alone."
+    },
     "why": "The apex oval, at the owner's direction (2026-09-23). The League was on the Rift's floor at the trunk head; on the apex it stands where the Rift is most forbidding and its upper storeys rise over the rim. The lot is levelled to y88 and skirted 14 blocks so the platform eases into the terrain instead of ending in a cliff. data/placements.json carries the position; tools/place_donor.py stamps the template."
   },
   "tunnel": {

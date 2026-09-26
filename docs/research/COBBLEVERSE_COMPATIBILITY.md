@@ -61,6 +61,155 @@ All replacement downloads are pinned by URL, Modrinth version ID, SHA-1, and SHA
 - **Fix:** seven forms are flagged, and `cobblers-model-fixes.zip` restores Cobblemon's own models for them. The pack is built and installed with `tools/client_model_fix.py`.
 - **Recheck** after every modpack, resource pack or Cobblemon update. The log and procedure are in [`CLIENT_MODEL_FIXES.md`](CLIENT_MODEL_FIXES.md).
 
+## Client model audit, 2026-09-26: placeholder and mis-assembled Pokémon
+
+**Report (owner, staging playtest, Cobblemon 1.8.0 client):**
+- Some wild Pokémon render as Cobblemon's green substitute doll with "??? Lv.N" above them, including Vullaby and Oranguru.
+- Others are mis-assembled, including Talonflame and Pidgeot.
+
+**Instance audited:** the Modrinth profile `%APPDATA%/ModrinthApp/profiles/Fabric 1.21.10`. It is the only local client with `Cobblemon-fabric-1.8.0+1.21.1.jar`. Its `logs/latest.log` (2026-09-26) shows the campaign's habitat-pool ids, so it is the staging client.
+
+The folder at `C:\Users\wnd\Documents\github\cobblers\COBBLEVERSE` is not this client. It still has Cobblemon 1.7.3 and has no `options.txt` or logs. It was used only as the 1.7.3 reference jar.
+
+**Method:** read-only Python `zipfile` over the jars, the resource packs, `options.txt` and `config/`, plus `javap` over classes extracted from the Cobblemon 1.8.0 jar. Nothing was executed and nothing in the client was changed.
+
+**How the stack was rebuilt:**
+- Layers come from the `options.txt` `resourcePacks` order: mod jars under `fabric`, built-in mod packs, then the `file/` packs.
+- Asset ids are resolved the way `VaryingModelRepository` resolves them.
+- The rebuild reproduces the client's own load counts exactly: 1,583 model registrations and 1,284 animation groups (`latest.log`: "Loaded 1583 models", "Loaded 13919 animations from 1284 animation groups").
+
+### VERIFIED: mechanism (Cobblemon 1.8.0 bytecode)
+
+- **Substitute fallback:** `VaryingModelRepository.getPoser` looks up the species' resolver in `variations`. If there is none, or the resolver throws `IllegalStateException` (no matching variation, or a missing poser, model or texture), it returns the resolver named by the `fallback` field, whose constant is `substitute`. That is the green doll.
+- **Last match wins:** `VaryingRenderableResolver.getVariationValue` walks the variation list from the end and takes the last variation that `fits` the aspects and has the field set.
+- **Models and posers are keyed by file name:** the id is the file name without its extension (`FilesKt.getNameWithoutExtension`), stored with `Map.put`.
+- **Animation groups are keyed by file name without a namespace:** the id is `substringAfterLast('/')` minus `.animation.json`, stored with `Map.put`.
+- **Consequence of file-name keys:** a pack file at a *different* path with the same file name replaces Cobblemon's.
+  - Example: CobbleMotion's `posers/talonflame.json` replaces 1.8's `posers/0663_talonflame/talonflame.json`.
+  - Pack priority applies only when the paths are identical.
+- **"???" is not an error:** `PokemonRenderer` reads `displayNameForUnknownPokemon`, which is `false` in the client's `config/cobblemon/main.json`. The lang tooltip reads "Whether to display the name above a Pokémon if it has not been scanned with the Pokédex yet." Any unscanned species shows "???".
+
+### VERIFIED: cause 1, substitute doll (40 species with no client resolver)
+
+**Log:** there is no model, poser or resolver error. The substitute fallback is silent.
+
+**Why the 40 species have no assets:**
+- Cobblemon 1.8.0 ships species data for all 40 species but no client assets (no resolver, model, poser or texture). For example, `data/cobblemon/species/generation5/vullaby.json` is present and nothing under `assets/cobblemon/bedrock/pokemon/**/vullaby*` is.
+- `COBBLEVERSE-DP-v31.zip` (`data/cobblemon/species_additions/*.json`, `implemented: true`) enables all 40 and gives them spawn pools.
+- Among resource packs, only `ATMxMSD RP.zip` supplies their resolvers, models, posers, animations and textures.
+
+**Why that pack is off:**
+- `ATMxMSD RP.zip` is not in the client's `resourcePacks`.
+- It was removed on purpose by our overlay `modpack/config/resourcepackoverrides.json`, which is identical to the client's `config/resourcepackoverrides.json` apart from whitespace.
+- Base Cobbleverse lists it at line 33 of `base-pack/cobbleverse/config/resourcepackoverrides.json`.
+- The reason for removing it (see the ATMxMSD row below): its Mega Mewtwo resolver broke the first 1.8 resource reload.
+- The side effect was not recorded: those 40 species lost their only client assets.
+
+**Every species in the server data now has a client resolver except these 40, and all 40 are spawnable:**
+arctibax, blacephalon, bombirdier, brutebonnet, buzzwole, charjabug, fluttermane, frigibax, gougingfire, greattusk, greavard, grubbin, gulpin, guzzlord, houndstone, ironbundle, ironcrown, ironmoth, ironthorns, irontreads, ironvaliant, jirachi, manaphy, mandibuzz, nihilego, oranguru, passimian, pecharunt, pheromosa, phione, ragingbolt, roaringmoon, sandyshocks, screamtail, slitherwing, stakataka, swalot, vikavolt, vullaby, xurkitree.
+
+**Eleven of them are in the campaign's own encounter tables (`data/spawns.json`):**
+
+| Species | Where |
+| --- | --- |
+| vullaby | plateau_west; the elder_wedge_south_1 habitat; three desert saplings |
+| mandibuzz | plateau_west |
+| oranguru, passimian | jungle_east |
+| gulpin, swalot | marshy_marsh |
+| charjabug, grubbin, vikavolt | long_isle_south |
+| greavard | the Route 1 ghost mansion; the Displaced City cavern |
+| bombirdier | the elder_marshy_marsh_2 habitat |
+
+**Re-enabling `ATMxMSD RP.zip` as a whole is not the fix.** Simulated at its Cobbleverse position, it would:
+- add the 40 species;
+- take over 89 species that Cobblemon 1.8 already covers. For those it replaces 1.8's resolvers, and for most also the models, posers and textures, with 1.7-era files. Examples: lucario, growlithe, arcanine, the legendary birds, mewtwo.
+- break two resolvers again:
+  - mewtwo: `MODEL_MISSING cobblemon:mewtwo_mega_x.geo` and `…mega_y.geo`, plus `POSER_MISSING`;
+  - greninja: `POSER_MISSING cobblemon:ashgreninja`.
+
+**A subset pack is clean.** The 40 species need 223 files from ATMxMSD, and none of their ids collide with the current stack. The only exceptions are the `screamtail` and `ironcrown` model paths, which COBBLEVERSE RP also ships; its models there match ATMxMSD's texture layout 100%.
+
+### VERIFIED: cause 2, mis-assembled models (file-level; visuals verified only for Talonflame and Pidgeot)
+
+**What goes wrong:** a pack model is combined with a texture drawn for a different model. The texture test compares normalized cube UV rectangles between models: the result is bimodal, 296 pack models at 95% or more and 35 below 20%.
+
+**Class A, 1.8 remodel regression.** COBBLEVERSE RP overrides the model at the same path. Its UV layout matches Cobblemon 1.7.3's model 100%. Cobblemon 1.8 remodelled the species (0–20% of 1.7.3's UV rectangles kept) and redrew the texture, so the old model now wears the new texture.
+
+| Form | Evidence |
+| --- | --- |
+| **pidgeot** | pack UV = 1.7.3; 1.8 texture 256×256 (1.7.3: 128×128); 28 animated bones absent from the pack model |
+| **talonflame** | pack UV = 1.7.3; 1.8 texture 128×128 (1.7.3: 128×64); poser and animations are CobbleMotion's (`posers/talonflame.json`, `animations/talonflame/…`), shadowing 1.8's by file name |
+| arbok | 1.8 texture 128×128 vs 1.7.3 128×64 |
+| crobat, cofagrigus, skarmory, tyranitar | UV 0–1% of the 1.8 texture's model |
+| garganacl, goodra, primarina | 1.8 textures widened to 256×128 |
+| nidoking | 1.8 texture 256×256 (1.7.3: 128×128) |
+| goodra (hisuian), samurott (hisuian) | UV 0% and 20% of the 1.8 texture's model |
+| turtonator | 1.8 texture 256×256 (1.7.3: 256×128) |
+| appletun, archaludon | species new to Cobblemon 1.8's models; COBBLEVERSE RP's model shares 0% of the 1.8 texture's UV |
+
+**CobbleMotion also shadows the 1.8 poser and animation group** for talonflame, goodra, goodra (hisuian), nidoking, primarina, samurott (hisuian) and tyranitar.
+
+**Class B, female forms (beautifly, dustox).** COBBLEVERSE RP replaces the whole species set: resolver, model, poser, animations and texture. Cobblemon 1.8 adds a separate `resolvers/…/1_<species>_female.json` that sets only `model: <species>_female.geo`, a model new in 1.8. Females therefore get the 1.8 model with COBBLEVERSE RP's texture and poser: texture 128×128 on a 64×128 or 128×64 UV space, and 11 of 13 or 6 of 7 animated bones absent.
+
+**Special forms with the same defect:** pidgeot (mega), skarmory (mega) and appletun (gmax) inherit the Class A model. Mega and gmax cases where the Mega Showdown texture or poser does not fit a COBBLEVERSE RP model: altaria, manectric, slowbro, sceptile, blaziken, clefable and gengar (mega).
+
+**The 2026-09-14 check could not catch this.** `tools/client_model_fix.py scan` exits 0 on this instance. Its rule only covers the crash class (a built-in poser missing a part), not texture/UV or JSON-poser mismatches.
+
+### Weaker file evidence (NEEDS FUNCTIONAL TEST; visible effect not verified)
+
+**Animation mismatch.** The effective animations animate at least 5 bones (and at least 20% of those animated) that are absent from the effective model, beyond the 1.8-only baseline of the same form.
+- Expected effect (ASSUMED): stiff or unanimated parts, not broken textures.
+
+| Species | Source of the mismatched poser/model |
+| --- | --- |
+| eevee, jolteon, leafeon, vaporeon | EeveelutionsReimagined posers |
+| gliscor, sceptile, typhlosion | CobbleMotion |
+| aggron, lairon | HydroReanimodel |
+| sudowoodo | OJsAnimations |
+| probopass | COBBLEVERSE RP model |
+
+**Missing root bone.** The JSON poser's `rootBone` is absent from the model, and a JSON poser falls back rather than crashing (see `CLIENT_MODEL_FIXES.md`).
+- Affected: muk (alolan), typhlosion (hisuian), samurott (hisuian), dartrix and dewott (region-bias-hisui), hakamoo, jangmoo, scrafty, mr. mime (galarian), mr. rime.
+
+### Recommended fix (client only; the server is not involved)
+
+**Why only the client:** resolvers, models, posers, animations and textures are client assets. The server's only role is that it spawns these species, which is correct.
+
+**Two ways to hide the problem on the server, not recommended:** suppress the 40 species, or drop `implemented: true` from `COBBLEVERSE-DP-v31`. Either removes campaign encounters.
+
+**Every player's client needs the same fix.**
+
+1. **Do not re-enable `ATMxMSD RP.zip`.**
+   - Build a local-only subset pack from the installed zip, for example `cobblers-missing-mons.zip`, holding only the 223 files for the 40 species above.
+   - Enable it just below COBBLEVERSE RP, which is Cobbleverse's intended relative order for screamtail and ironcrown.
+   - It is never committed, because it holds ATMxMSD assets.
+2. **Extend `cobblers-model-fixes.zip`, which stays at the top of the list:**
+   - Class A: Cobblemon 1.8's own `.geo.json` at COBBLEVERSE RP's model path, for all 16 forms.
+   - The seven CobbleMotion-shadowed forms: also Cobblemon 1.8's poser JSON at CobbleMotion's poser path (e.g. `posers/talonflame.json`) and 1.8's animation file at CobbleMotion's animation path (e.g. `animations/talonflame/talonflame.animation.json`). Restoring only the model would leave CobbleMotion's old-bone animations on the new model.
+   - Class B: shadow `resolvers/0267_beautifly/1_beautifly_female.json` and `resolvers/0269_dustox/1_dustox_female.json` with a resolver that has an empty `variations` list. Females then use COBBLEVERSE RP's unisex set.
+     - The alternative is to restore Cobblemon's full beautifly and dustox sets.
+     - ASSUMED: a resolver with no variations is accepted. Test it.
+   - **The trade:** these forms show Cobblemon 1.8's look instead of COBBLEVERSE RP's or CobbleMotion's.
+3. **Build both packs with a tool, not by hand.** `tools/client_model_fix.py` needs two more rules:
+   - spawnable species with no client resolver;
+   - a model whose UV layout does not match the model its texture was drawn for.
+   Rebuild and rescan after every pack or Cobblemon update. The prototype audit scripts are not in the repository.
+4. **Verify in game, then record the incident** in `CLIENT_MODEL_FIXES.md`.
+   - Restart the client and spawn vullaby, oranguru, pidgeot and talonflame in a singleplayer test world.
+   - Spot-check the weaker-evidence forms before deciding whether to patch them.
+5. **Once proven, ship it to all players.** The modpack overlay should carry the build step. `modpack/config/README.md` should also state what disabling ATMxMSD costs.
+
+### Not verified
+
+- The rendered result of any fix, and every form except Talonflame and Pidgeot (reported by the owner).
+- Minecraft's `listResources` ordering.
+  - ASSUMED: sorted by id. It decides which of two same-named files at different paths wins.
+  - The client's registration counts match this model exactly, but the ordering itself was not read from Minecraft's code.
+- Resolver ordering when two resolver files share an `order` (ASSUMED: stable in listing order).
+- That ATMxMSD's 1.7-era JSON posers for the 40 species animate correctly under 1.8 (NEEDS FUNCTIONAL TEST).
+- That the staging server loads the same `COBBLEVERSE-DP-v31` as the client's `datapacks/` folder. The server directory was not read.
+- Whether Resource Pack Overrides reorders packs at launch. `options.txt` already has the fix pack on top.
+
 ## Preserved systems requiring functional tests
 
 The retained functional scope contains 26 Cobblemon-integrating addons and libraries after removing Raid Dens. PlayerXP is client-optional and needs a client connection test before it can be kept safely. Server boot cannot validate PlayerXP, Catch Indicator, Catch Rate Display, or LumyREI. High-risk server checks include RCT trainer lifecycle and multiplayer behavior, Mega Showdown plus ZAMegas, CobbleNav, Cobbreeding, CobbleDollars, Capture XP, TMCraft, and world-critical CobbleFurnies/LumyMon/Legendary Monuments/Cobblemon Additions.
@@ -226,7 +375,7 @@ This matrix covers all 138 jar records, including the disabled legacy Particular
 | datapacks/extra/COBBLEVERSE-Johto-DP.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
 | datapacks/extra/COBBLEVERSE-Sinnoh-DP.zip | GAMEPLAY-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
 | datapacks/extra/Terralith-DP.zip | WORLD-CRITICAL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; FRESH-WORLD TEST | datapack |
-| resourcepacks/ATMxMSD RP.zip | OPTIONAL / CLIENT-QOL | 3.6.1 in base 1.7.42 | 1.21.1 | Fabric | Cobblemon model resolvers; Mega Showdown assets | INCOMPATIBLE | PRESERVE INSTALLED; DISABLE BY DEFAULT | First 1.8 client launch failed its resource reload because the pack resolves Mega Mewtwo X as `cobblemon:mewtwo_mega_x.geo`; Mega Showdown 1.0.2 for Cobblemon 1.8 provides `cobblemon:mewtwo_x.geo`. The fallback reload reached the title/welcome screen but left the custom splash visible. Retest a newer or patched pack separately. |
+| resourcepacks/ATMxMSD RP.zip | OPTIONAL / CLIENT-QOL | 3.6.1 in base 1.7.42 | 1.21.1 | Fabric | Cobblemon model resolvers; Mega Showdown assets | INCOMPATIBLE | PRESERVE INSTALLED; DISABLE BY DEFAULT | First 1.8 client launch failed its resource reload because the pack resolves Mega Mewtwo X as `cobblemon:mewtwo_mega_x.geo`; Mega Showdown 1.0.2 for Cobblemon 1.8 provides `cobblemon:mewtwo_x.geo`. The fallback reload reached the title/welcome screen but left the custom splash visible. Retest a newer or patched pack separately. 2026-09-26: it is also the only client source of assets for 40 spawnable species (vullaby, oranguru, …), which render as the substitute doll while it is disabled. A subset pack of those species' files is recommended instead of re-enabling it; see the client model audit above. |
 | resourcepacks/COBBLEVERSE RCTmod RP.zip | OPTIONAL / CLIENT-QOL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; CLIENT TEST | resourcepack |
 | resourcepacks/COBBLEVERSE RP.zip | OPTIONAL / CLIENT-QOL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; CLIENT TEST | resourcepack |
 | resourcepacks/COBBLEVERSE Soundtrack.zip | OPTIONAL / CLIENT-QOL | base 1.7.42 asset | 1.21.1 | Fabric | data/resource compatibility | NEEDS FUNCTIONAL TEST | PRESERVE; CLIENT TEST | resourcepack |

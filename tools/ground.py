@@ -68,12 +68,13 @@ def load(source_root=None, world_path=None):
     return Ground(source_root, world_path)
 
 
-# Two settlements do not stand on the heightmap. The Displaced City is on the cavern floor, 60 to 100 blocks under the
-# surface, and Relic Island is on an islet built over seabed. Their ground is still never read from a world: it is
-# the measured plan data the tool that builds them computes from the heightmap. A settlement names it in
-# data/placements.json as "ground": "cavern_floor" or "islet", and gets that ground inside its box and the
-# heightmap everywhere else.
-GROUND_KINDS = ("cavern_floor", "islet")
+# Three settlements do not stand on the heightmap. The Displaced City is on the cavern floor, 60 to 100 blocks under
+# the surface, Relic Island is on an islet built over seabed, and the sea town floats on log decks at the sea level
+# over the Sound. Their ground is still never read from a world: it is the measured plan data the tool that builds
+# them computes from the heightmap (the sea town's decks are pure geometry from data/sea_town.json and the sea level
+# in data/world.json). A settlement names it in data/placements.json as "ground": "cavern_floor", "islet" or
+# "sea_deck", and gets that ground inside its box and the heightmap everywhere else.
+GROUND_KINDS = ("cavern_floor", "islet", "sea_deck")
 
 
 def cavern_floor():
@@ -115,10 +116,16 @@ def for_settlement(settlement, source_root=None, placements=None, base=None):
         (x0, z0, x1, z1), floor, ceiling = cavern_floor()
         h[z0 - g.oz:z1 - g.oz + 1, x0 - g.ox:x1 - g.ox + 1] = floor
         g.ceiling = {"box": (x0, z0, x1, z1), "grid": ceiling}
-    else:
+    elif kind == "islet":
         (x0, z0, x1, z1), top = islet_top(g)
         sub = h[z0 - g.oz:z1 - g.oz + 1, x0 - g.ox:x1 - g.ox + 1]
         sub[~np.isnan(top)] = top[~np.isnan(top)]
+    else:
+        # the sea town: every deck cell is ground at the sea level (tools/sea_town.py deck_ground)
+        import sea_town
+        level, deck = sea_town.deck_ground(g.world)
+        for x, z in deck:
+            h[z - g.oz, x - g.ox] = level
     g.heights = h
     g.kind = kind
     return g

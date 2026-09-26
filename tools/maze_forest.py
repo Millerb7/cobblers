@@ -122,6 +122,12 @@ CLEARINGS = [
     {"id": "braid1_join", "at": (1460, 4895), "r": 10, "kind": "glade"},
     {"id": "braid2_join", "at": (1420, 4590), "r": 11, "kind": "glade"},
     {"id": "braid3_join", "at": (1540, 4420), "r": 10, "kind": "glade"},
+    # Route 1's event glades (docs/story/EARLY_ROUTE_BUILD_HANDOFF.md, built by tools/route_events.py): the picnic
+    # beside mid_1, the Meadow Apiarist's hives off braid 2 west, the thirsty stranger's hut off braid 3 north-west.
+    # Each opens just enough of the pack for its footprint and the space to walk round it; the path is unchanged
+    {"id": "picnic", "at": (1449, 4826), "r": 10, "kind": "event glade"},
+    {"id": "apiary", "at": (1381, 4715), "r": 8, "kind": "event glade"},
+    {"id": "stranger_hut", "at": (1521, 4461), "r": 8, "kind": "event glade"},
     {"id": "fern_glade", "at": (1600, 4940), "r": 9, "kind": "secret"},
     {"id": "west_hollow", "at": (1260, 4800), "r": 9, "kind": "secret"},
     {"id": "north_ring", "at": (1660, 4380), "r": 8, "kind": "secret"},

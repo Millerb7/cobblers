@@ -1,0 +1,10 @@
+{
+ "group": "tall_mangrove",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  8,
+  0,
+  9
+ ]
+}

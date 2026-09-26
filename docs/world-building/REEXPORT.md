@@ -15,7 +15,7 @@ world before the dry run passes.
 | # | Content | Carried because |
 | --- | --- | --- |
 | C1 | Terrain, coasts, massifs, river cuts, the vertical rescale | the canonical heightmap is the export input (`data/world.json` sha256) |
-| C2 | Pads: the Scar y280, Frostpeak shrine y310, Surge's shelf y174.4 | pressed into the canonical heightmap by `tools/press_pads.py` |
+| C2 | Pads: the Scar y280, Frostpeak shrine y310, Surge's shelf y174.4; the Rift's shape | pressed into the canonical heightmap by `tools/press_pads.py`, and the Rift sculpted into it by `tools/rift_heightmap.py`: `land_8k_16_rescaled_b145_pads_rift.png` (`data/world.json`) |
 | C3 | Biomes, surface materials, snow and scree, the thinned grass | the paint manifest passed with `--paint` |
 | C4 | 77,750 foliage objects, including the painted landmark trees | WorldPainter custom-object layers from the same manifest |
 | C5 | Lakes, rivers and water levels | paint |
@@ -84,6 +84,8 @@ anything is installed.
 | R12 | Waystones | re-registered by R7 and R8; clear stale entries from `waystones.dat` before the first boot | the hometown waystone is claimable and no duplicate appears (an in-game check; not automated) |
 | R13 | Spawn pools, suppression, spawn-free zones (datapacks, not blocks) | regenerate if routes or the mod set changed: `python tools/compile_spawns.py`; `python tools/suppress_inherited_spawns.py --server <server> --world <world> --subregions` (grid 16) | no compiled pool detail reaches a spawn-free zone, and every column of each zone is under the suppression boxes (`tests/test_spawn_free_zones.py` on the compiled pack). In game: EXP-012's `/checkspawn` on a corridor shows the authored roster only; nothing spawns in the League's precinct in the Rift (not yet tested with a player) |
 | R14 | Town traders | `python tools/traders.py function --server-dir <server>`, install `build/datapacks/cobblers_vendors`, `/reload`, then `/function cobblers:towns/vendors_<settlement>` per town and wait 8 seconds. Safe to re-run. Never summon a trader by hand. Regional stock only, and none in gym4-gym8, the League or the batch 2 places, until the badge-gated stock lands | `python tools/traders.py verify --rcon <server>`: every trader `1 tagged, 1 on its spot, 0 untagged copies`, withdrawn ones absent, and no withheld item for sale |
+
+**Routes 1-3 and the Gastly mansion, added to the driver on 2026-09-24** (`docs/world-building/EARLY_ROUTES.md`). **R12 the event sites** (after R15): `route_events/00_clear` first, every site's vegetation cleared before any site builds, then each site; `python tools/route_events.py --verify-world <stopped copy>` checks every planned block and that no tree is left in a clearing. **R17 the scenes' props, NPCs and the route trainers**, after the restart that followed install (NPC classes and rctmod trainer data load at boot): each scene's interaction boxes counted, each NPC by `spawnnpcat`, each trainer by `rctmod trainer summon_persistent`, one at each place. `cobblers_scenes`, `cobblers_trainers` and `cobblers_route_events` are server packs; on staging they are installed in the staging world's own datapacks folder instead, because the scene runtime has a tick function and the global folder is also the live world's. The mansion writes its ward stone as a bare Habitat Block in R8 and R9E gives it its pool, so **any re-run of R8 must be followed by R9E and a restart**. And **one `/reload` per boot**: a second exhausted the 10 GB heap twice on staging with this pack stack; `reapply.py run --no-reload` runs straight after a boot.
 
 **The Rift and Victory Road, added to the driver on 2026-09-23.** `tools/reapply.py` numbers these in its own sequence, which does not match this table's R-numbers (its R1 is the Rift skin, not the world datapacks): R1 the Rift skin, R1B the Rift biome, R8B the League's lot (after the towns, before the donors), R9B the Windward Deep, **R9C Victory Road's caves** (one cave network from the Deep's mouth to a ravine onto the League's apron; it replaced the schema 2 spine and its regions the same day), **R9E the Habitat Blocks** (this table's R11, run by the driver; the rules below still hold, and the audit's stop is the restart they need), and **R9F the NPCs a reward is given through** (`spawnnpcat` over RCON, because an NPC class loads only at boot: `cobblers_dialogue` must be installed before the server starts). `python tools/vr_caves.py verify --world <stopped copy> --source-root <root>` checks every cell of the cave. On staging only, `vr_caves.py clear` put rock back into what the retired spine and regions carved; a fresh export never had them.
 
@@ -168,10 +170,15 @@ islet are rebuilt from committed data; and every one of them is audited by resul
 
 **Before the day** (none of this touches the server)
 1. Free about 3 GiB for the retired world.
-2. `python tools/heightmap_check.py C:/Users/wnd/Documents/land_8k_16_rescaled_b145_pads.png`: 0 tears. Regenerate the paint if it changed (`tools/paint_maps.py`).
+2. `python tools/heightmap_check.py C:/Users/wnd/Documents/land_8k_16_rescaled_b145_pads_rift.png`: 0 tears. This is the
+   canonical heightmap `data/world.json` pins (sha256 `0d9b5f1e8a01…`: the pads and the Rift's sculpted shape);
+   `tools/reexport.py` exports the file named there and checks its hash. Regenerate the paint if it changed (`tools/paint_maps.py`).
 3. `python tools/reapply.py prepare --source-root C:/Users/wnd/Documents --server-dir C:/Users/wnd/Documents/github/cobblers-server`
    — 4 minutes; it must end `216 function file(s) checked, 0 with problems`.
 4. `python tools/reapply.py plan` to see the steps and the 23 places.
+5. Copy the overlay configs the assembler does not carry into `<server>/config/`, at the same relative paths:
+   `modpack/config/rctmod-server.toml` (relativeLevelCap 0, 2026-09-24). With the server stopped; rctmod reads it at
+   boot.
 
 **The run** (about 35 minutes to an audited world, then Distant Horizons)
 
@@ -184,9 +191,11 @@ islet are rebuilt from committed data; and every one of them is audited by resul
 | 4a | **Carry the players, before the first boot.** `python tools/reapply.py carry --old-world <the world retired in step 2> --world-dir C:/Users/wnd/Documents/github/cobblers-server-next/cobblers-10240` (server stopped). It must end `carried: N players, every file present, non-empty and matching by sha256`, with N the number of people who have played. It refuses a source last saved more than 12 hours ago or any retained snapshot (those are for rehearsals, `--rehearsal`, never this run), and fails if any player's badge flags and rctmod defeat records disagree. Anything else stops the run: fix it and carry again (it refuses a world that already holds player files, so move a half-carried world's player folders aside first). See "Carrying the players" below | 1 min |
 | 5 | `python tools/reapply.py install --server-dir <server> --world-dir C:/Users/wnd/Documents/github/cobblers-server-next/cobblers-10240` (server stopped): the packs, `cobblers_height` and `cobblers_worldtree` into the world folder, and the disposable-only restore pack removed. It refuses a world with no player in it (step 4a not done) | 1 min |
 | 5a | Move `cobblers-server-next/cobblers-10240` to `<server>/cobblers-10240` (the folder step 2 emptied) | 1 min |
-| 6 | Boot the server | 30 s |
+| 5b | **Watchdog off for the run.** With the server stopped, note the `max-tick-time` line in `<server>/server.properties` (absent means the default, 60000) and set `max-tick-time=-1`. The Rift's functions leave a lighting backlog that held one tick past the 60 s watchdog at R5 and crashed the staging server mid-run (EXP-026 run 4, 2026-09-24). `reapply.py run` reads that one key and refuses to start unless it is `-1`; the server reads the file at boot, so set it before step 6 | 1 min |
+| 6 | Boot the server **with at least a 16 GB heap** (`-Xmx16G`). With the spawn suppression installed (about 3.8 GB of heap on its own), a 10 GB heap ran out of memory at R17 and hung the staging server (EXP-026 run 5, 2026-09-25); 16 GB is what the run was completed on | 30 s |
 | 7 | `python tools/reapply.py run --server-dir <server>` | 4.5 min |
 | 8 | Stop the server; copy the world folder (the audit tools refuse to read the live save) | 3 min |
+| 8a | **Watchdog back on.** With the server stopped, restore the `max-tick-time` line noted in 5b (or remove the line if there was none), before the boot in step 10 | 1 min |
 | 9 | `python tools/reapply.py audit --server-dir <server> --world <the copy>` | 2 min |
 | 10 | Boot; Distant Horizons pregen over the border; retire the client LOD cache | 10-60 min |
 | 11 | The audit tour (`docs/world-building/AUDIT_TOUR.md`) | you |

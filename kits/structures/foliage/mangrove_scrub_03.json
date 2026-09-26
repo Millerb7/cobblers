@@ -1,0 +1,10 @@
+{
+ "group": "mangrove_scrub",
+ "source": "generated",
+ "generator": "tools/foliage_objects.py",
+ "origin": [
+  4,
+  0,
+  3
+ ]
+}

@@ -90,9 +90,36 @@ class World:
         return names[int(idx[y & 15, z & 15, x & 15])]
 
 
-def replay(lines, columns):
+TAGS = {"#minecraft:air": AIR}    # the block tags the replay can evaluate without the game's tag files
+
+
+class Maybe(str):
+    """A block a `replace <filter>` fill writes only where the world's own block matched the filter: the replay
+    cannot know what the world held before the function ran. The position then holds this block, or whatever it
+    held before, which matched none of `filters` (every filter tried there, in order)."""
+
+    def __new__(cls, block, filters):
+        s = super().__new__(cls, block)
+        s.filters = tuple(filters)
+        return s
+
+
+def _matches(block, filt):
+    """True/False when the replay can tell whether `block` matches the replace filter, None when it cannot."""
+    if filt.startswith("#"):
+        tag = TAGS.get(filt)
+        return None if tag is None else base(block) in tag
+    return base(block) == base(filt)
+
+
+def replay(lines, columns, conditional=False):
     """{(x, z): {y: block}} for the given columns, from a function's fills and setblocks, last write winning, with
-    the replace filter honoured only as 'replace <block>' against what the replay itself has written."""
+    the replace filter honoured as 'replace <block>' against what the replay itself has written.
+
+    With conditional=True a replace-filtered fill over a position the replay has not written (so the filter is
+    tested against the world's own block, which the replay does not know) is kept as a Maybe instead of dropped:
+    the islet raises its underwater columns with `fill ... stone replace #minecraft:air` and `... replace water`
+    only, and the audit counted 2404 of the plan's 2628 columns for that reason alone (EXP-026 run 4)."""
     out = {c: {} for c in columns}
     for raw in lines:
         l = raw.strip()
@@ -104,7 +131,16 @@ def replay(lines, columns):
                 if min(x0, x1) <= x <= max(x0, x1) and min(z0, z1) <= z <= max(z0, z1):
                     for y in range(min(y0, y1), max(y0, y1) + 1):
                         if mode == "replace" and filt:
-                            if filt.startswith("#") or col.get(y) != base(filt):
+                            prior = col.get(y)
+                            if conditional and (prior is None or isinstance(prior, Maybe)):
+                                # the same block again under another filter widens what it replaced (stone over
+                                # air, then over water); a different one keeps only its own filter, which is still
+                                # sound: the position holds it, or a block that filter did not match
+                                keep = prior.filters if isinstance(prior, Maybe) and prior == blk else ()
+                                col[y] = Maybe(blk, keep + (filt,))
+                                continue
+                            if prior is None or not (_matches(prior, filt) if conditional else
+                                                     (not filt.startswith("#") and prior == base(filt))):
                                 continue
                         if mode == "keep" and y in col:
                             continue
@@ -124,12 +160,17 @@ def compare_columns(world, expected):
     bad = []
     for (x, z), col in expected.items():
         for y, blk in col.items():
+            if isinstance(blk, Maybe) and any(f.startswith("#") and f not in TAGS for f in blk.filters):
+                continue                        # a tag the replay cannot evaluate: nothing certain to compare
             got = base(world.block(x, y, z))
             n += 1
             if got == blk or (blk in AIR and got in AIR):
                 ok += 1
+            elif isinstance(blk, Maybe) and not any(_matches(got, f) for f in blk.filters):
+                ok += 1                         # the filter did not match here, so the world keeps its own block
             elif len(bad) < 5:
-                bad.append("(%d, %d, %d) holds %s, the function wrote %s" % (x, y, z, got, blk))
+                bad.append("(%d, %d, %d) holds %s, the function wrote %s%s" % (
+                    x, y, z, got, blk, " (replace %s)" % " / ".join(blk.filters) if isinstance(blk, Maybe) else ""))
     return n, ok, bad
 
 
@@ -391,7 +432,7 @@ def islet(world):
     lines = (BUILD / "islet" / "relic_island.mcfunction").read_text(encoding="utf-8").splitlines()
     r = rep["radius"]
     all_cols = [(x, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)]
-    all_exp = replay(lines, all_cols)
+    all_exp = replay(lines, all_cols, conditional=True)
 
     def non_air_top(col):
         ys = [y for y, b in col.items() if b not in AIR]
@@ -401,8 +442,8 @@ def islet(world):
     function_dry = {c: col for c, col in function_cols.items() if non_air_top(col) > sea}
     cols = [(x, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)
             if (x - cx) ** 2 + (z - cz) ** 2 <= (r // 2) ** 2]
-    exp = replay(lines, cols)
-    dry = {c: col for c, col in exp.items() if non_air_top(col) is not None and non_air_top(col) > sea}
+    exp = replay(lines, cols, conditional=True)
+    dry ={c: col for c, col in exp.items() if non_air_top(col) is not None and non_air_top(col) > sea}
     rebuilt = built_over("relic_island")
     dry = {c: col for c, col in dry.items() if c not in rebuilt}           # the house, its walk and its seam stand here
     n, ok, bad = compare_columns(world, dry)

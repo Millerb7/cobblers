@@ -16,6 +16,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -182,6 +183,8 @@ SCHEMAS = {
             "class": {
                 "gym_leader", "elite_four", "champion", "rival",
                 "admin", "grunt", "route",
+                # an optional trainer off the critical path (the Lake Viltri north-bank angler, PR #48)
+                "optional_route",
             },
             "format": {"GEN_9_SINGLES", "GEN_9_DOUBLES"},
         },
@@ -215,8 +218,10 @@ SCHEMAS = {
     ),
     "habitat_blocks.json": (
         "cobblers.habitat-blocks/1", "blocks",
-        ["id", "pool", "style", "replace_spawns", "range_of_influence", "position", "status"],
-        {"style": {"natural"}, "status": {"planned", "placed", "verified"}},
+        # range_of_influence (natural) and mimic/activated (activated) are required per style by
+        # tools/habitat_blocks.py static_problems, which the habitat-blocks check runs
+        ["id", "pool", "style", "replace_spawns", "position", "status"],
+        {"style": {"natural", "activated"}, "status": {"planned", "placed", "verified"}},
     ),
     "traders.json": (
         "cobblers.traders/1", "traders",
@@ -232,7 +237,13 @@ SCHEMAS = {
         ["id", "source", "scope", "optional", "progression_field_refs",
          "availability", "objectives", "transitions", "multiplayer"], {},
     ),
+    "scenes.json": ("cobblers.scenes/1", "scenes", ["id", "quest_id", "area"], {}),
 }
+
+# Required fields that may be present with the value null. A conversation with "npc_id": null has no NPC: a scene
+# prop or actor opens it (data/dialogue.json mechanism.notes); the key must still be there, so a forgotten npc_id is
+# not read as a deliberate one. check_scenes() makes sure something opens every such conversation.
+NULLABLE = {"dialogue.json": {"npc_id"}}
 
 REQUIRED_FILES = {"world.json"}
 
@@ -318,8 +329,9 @@ def check_schema(ctx: Context):
             if coll_key == "placements" and rec.get("kind") == "earthwork":
                 # an earthwork is authored commands (a wall, a railing), not a template at a position
                 need = ["id", "cell", "commands"]
+            nullable = NULLABLE.get(name, set())
             for field in need:
-                if field not in rec or rec[field] is None:
+                if field not in rec or (rec[field] is None and field not in nullable):
                     rep.error(
                         "schema",
                         'record "%s" is missing required field "%s"'
@@ -745,6 +757,242 @@ def check_quest_dialogue(ctx: Context):
                 for child in value:
                     walk_dialogue(child, key)
         walk_dialogue(conv)
+
+
+SCENE_ID = re.compile(r"[a-z0-9_]+")
+# condition kinds a scene beat cannot evaluate (the item probe would be read before its queued command runs) and
+# effect kinds only a dialogue may run (tools/scenes_pack.py zone())
+SCENE_ITEM_CONDITIONS = {"held_item", "inventory_contains"}
+SCENE_ITEM_EFFECTS = {"consume_held_item", "give_item", "grant_reward_once"}
+SCENE_EFFECT_KINDS = {"particles", "sequence", "push"}
+
+
+def _box(b):
+    """(lo, hi) block corners of a {"from": [x, y, z], "to": [x, y, z]} box, or None if it is malformed."""
+    if not isinstance(b, dict):
+        return None
+    a, c = b.get("from"), b.get("to")
+    if not all(isinstance(v, list) and len(v) == 3 and all(isinstance(n, (int, float)) for n in v) for v in (a, c)):
+        return None
+    return [min(a[i], c[i]) for i in range(3)], [max(a[i], c[i]) for i in range(3)]
+
+
+def _in_box(p, box):
+    lo, hi = box
+    return all(lo[i] <= p[i] <= hi[i] for i in range(3))
+
+
+def _conditions(value):
+    """Every condition dict under a condition tree (not/any/all nest them)."""
+    if isinstance(value, dict):
+        yield value
+        for child in value.values():
+            yield from _conditions(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _conditions(child)
+
+
+def check_scenes(ctx: Context):
+    """data/scenes.json (tools/scenes_pack.py) against the quests and dialogue it runs.
+
+    Every scene names a quest that exists; every prop's and actor's conversation exists, runs the scene's quest and
+    has npc_id null (a click opens it, never an NPC), every NPC's has an npc_id; markers, props, NPCs and zones lie
+    inside the area (an actor's slots too: a copy standing outside the area is never refreshed and vanishes); place
+    rules name markers that exist and none follows an unconditional one; zones run transitions of the quest that
+    check no item and move none; every field a condition reads is declared and listed by the quest, with a value of
+    its type; every sync_scene and scene_function effect in data/quests.json names a scene of its own quest (and a
+    function it has). And no conversation with npc_id null is orphaned: some prop or actor opens it."""
+    rep = ctx.report
+    C = "scenes"
+    sf = ctx.files.get("scenes.json")
+    df = ctx.files.get("dialogue.json")
+    qf = ctx.files.get("quests.json")
+    pf = ctx.files.get("progression.json")
+    if not (df and qf and pf):
+        return
+    convs = {c.get("id"): c for c in df.doc.get("conversations") or [] if isinstance(c, dict)}
+    quests = {q.get("id"): q for q in qf.doc.get("quests") or [] if isinstance(q, dict)}
+    fields = {f.get("id"): f for f in pf.doc.get("quest_fields") or [] if isinstance(f, dict)}
+    scenes = [s for s in (sf.doc.get("scenes") or [] if sf else []) if isinstance(s, dict)]
+    opened = set()
+    by_id = {}
+
+    for s in scenes:
+        sid = s.get("id")
+        line = sf.line_of_id(sid)
+
+        def err(msg):
+            rep.error(C, "scene %s: %s" % (sid, msg), file=sf.rel, line=line, where=sid)
+
+        if not isinstance(sid, str) or not SCENE_ID.fullmatch(sid):
+            err("id must be [a-z0-9_]+ (it is a function path)")
+            continue
+        if sid in by_id:
+            err("duplicate scene id")
+            continue
+        by_id[sid] = s
+        qid = s.get("quest_id")
+        quest = quests.get(qid)
+        if quest is None:
+            err('quest "%s" does not exist in data/quests.json' % qid)
+            continue
+        refs = set(quest.get("progression_field_refs") or [])
+        tids = {t.get("id"): t for t in quest.get("transitions") or [] if isinstance(t, dict)}
+        area = _box(s.get("area"))
+        if area is None:
+            err('area must be {"from": [x, y, z], "to": [x, y, z]}')
+            continue
+
+        def conversation(cid, opener):
+            c = convs.get(cid)
+            if c is None:
+                err('%s opens conversation "%s", which data/dialogue.json does not have' % (opener, cid))
+                return
+            if c.get("quest_id") != qid:
+                err('%s opens "%s", which runs quest "%s", not the scene\'s "%s"' % (opener, cid, c.get("quest_id"), qid))
+            if opener.startswith("npc"):
+                if not c.get("npc_id"):
+                    err('%s places an NPC for "%s", which has no npc_id (no NPC class to spawn)' % (opener, cid))
+            elif c.get("npc_id"):
+                err('%s opens "%s", which has npc_id "%s": a clicked conversation must have npc_id null'
+                    % (opener, cid, c.get("npc_id")))
+            else:
+                opened.add(cid)
+
+        # markers: [x, y, z], [x, y, z, yaw] or {"at": [x, y, z], "yaw": .., "slots": [[dx, dz], ..]}
+        default_slots = s.get("slots") or [[0, 0], [0.9, 0], [0, 0.9], [-0.9, 0]]
+        markers = s.get("markers") or {}
+        if not isinstance(markers, dict):
+            err("markers must be an object")
+            markers = {}
+        for name, m in markers.items():
+            at, slots = (m.get("at"), m.get("slots") or default_slots) if isinstance(m, dict) else (
+                (m[:3] if isinstance(m, list) and len(m) in (3, 4) else None), default_slots)
+            if not (isinstance(at, list) and len(at) == 3 and all(isinstance(n, (int, float)) for n in at)):
+                err("marker %s needs [x, y, z]" % name)
+                continue
+            if not _in_box(at, area):
+                err("marker %s %s is outside the area" % (name, at))
+            if not (isinstance(slots, list) and slots and all(isinstance(o, list) and len(o) == 2 for o in slots)):
+                err("marker %s: slots must be a non-empty list of [dx, dz]" % name)
+                continue
+            lo, hi = area
+            for o in slots:
+                px, pz = at[0] + 0.5 + o[0], at[2] + 0.5 + o[1]
+                if not (lo[0] <= px < hi[0] + 1 and lo[2] <= pz < hi[2] + 1):
+                    err("marker %s: slot %s stands at (%.1f, %.1f), outside the area" % (name, o, px, pz))
+
+        def cond_fields(tree, where):
+            for c in _conditions(tree):
+                fid = c.get("field")
+                if not (isinstance(fid, str) and fid.startswith("quest.")):
+                    continue
+                fdef = fields.get(fid)
+                if fdef is None:
+                    err('%s reads "%s", which data/progression.json does not declare' % (where, fid))
+                    continue
+                if fid not in refs:
+                    err('%s reads "%s", which quest "%s" does not list' % (where, fid, qid))
+                if c.get("kind") != "progression_equals" or "value" not in c:
+                    continue
+                v = c["value"]
+                if fdef.get("type") == "boolean" and not isinstance(v, bool):
+                    err('%s compares boolean "%s" with %r' % (where, fid, v))
+                allowed = fdef.get("allowed_values")
+                if fdef.get("type") == "enum" and isinstance(allowed, str) and "|" in allowed \
+                        and v not in allowed.split("|"):
+                    err('%s compares "%s" with %r, not one of %s' % (where, fid, v, allowed))
+
+        seen = set()
+        for p in s.get("props") or []:
+            pid = p.get("id")
+            if pid in seen:
+                err("duplicate prop/actor id %s" % pid)
+            seen.add(pid)
+            conversation(p.get("conversation"), "prop %s" % pid)
+            if not (isinstance(p.get("at"), list) and len(p["at"]) == 3 and _in_box(p["at"], area)):
+                err("prop %s at %s is not inside the area" % (pid, p.get("at")))
+            on = p.get("on")
+            if not (isinstance(on, list) and len(on) == 3 and all(isinstance(n, int) for n in on)):
+                err("prop %s needs on = [x, y, z], the block it sits on" % pid)
+        for a in s.get("actors") or []:
+            aid = a.get("id")
+            if aid in seen:
+                err("duplicate prop/actor id %s" % aid)
+            seen.add(aid)
+            conversation(a.get("conversation"), "actor %s" % aid)
+            rules = a.get("place") or []
+            if not rules:
+                err("actor %s has no place rules" % aid)
+            for k, r in enumerate(rules):
+                if r.get("marker") not in markers:
+                    err('actor %s place rule %d names marker "%s", which the scene does not have' % (aid, k, r.get("marker")))
+                if not r.get("when") and k != len(rules) - 1:
+                    err("actor %s place rule %d is unconditional, so rules %d.. can never apply" % (aid, k, k + 1))
+                cond_fields(r.get("when"), "actor %s place rule %d" % (aid, k))
+        for n in s.get("npcs") or []:
+            conversation(n.get("conversation"), "npc %s" % n.get("conversation"))
+            if not (isinstance(n.get("at"), list) and len(n["at"]) == 3 and _in_box(n["at"], area)):
+                err("npc %s at %s is not inside the area" % (n.get("conversation"), n.get("at")))
+        for z in s.get("zones") or []:
+            zid = z.get("id")
+            zb = _box(z)
+            if zb is None or not (_in_box(zb[0], area) and _in_box(zb[1], area)):
+                err("zone %s is not a box inside the area" % zid)
+            for tid in z.get("transitions") or []:
+                t = tids.get(tid)
+                if t is None:
+                    err('zone %s runs transition "%s", which quest "%s" does not have' % (zid, tid, qid))
+                    continue
+                if any(c.get("kind") in SCENE_ITEM_CONDITIONS for c in _conditions(t.get("conditions"))):
+                    err('zone %s runs "%s", which checks an item: a beat cannot' % (zid, tid))
+                if any(e.get("kind") in SCENE_ITEM_EFFECTS for e in _conditions(t.get("effects"))):
+                    err('zone %s runs "%s", which moves items: only a dialogue may' % (zid, tid))
+        for e in s.get("effects") or []:
+            eid = e.get("id")
+            if e.get("kind") not in SCENE_EFFECT_KINDS:
+                err("effect %s has kind %r, not one of %s" % (eid, e.get("kind"), ", ".join(sorted(SCENE_EFFECT_KINDS))))
+            if e.get("kind") == "push":
+                if e.get("to_marker") not in markers:
+                    err('effect %s pushes to marker "%s", which the scene does not have' % (eid, e.get("to_marker")))
+                eb = _box(e)
+                if eb is None or not (_in_box(eb[0], area) and _in_box(eb[1], area)):
+                    err("effect %s: its push box is not inside the area" % eid)
+            cond_fields(e.get("when"), "effect %s" % eid)
+        funcs = s.get("functions") or {}
+        for name, cmds in (funcs.items() if isinstance(funcs, dict) else []):
+            if not SCENE_ID.fullmatch(str(name)):
+                err("function name %r must be [a-z0-9_]+" % name)
+            if not (isinstance(cmds, list) and cmds and all(isinstance(c, str) and c and not c.startswith("/") for c in cmds)):
+                err("function %s must be a non-empty list of commands without a leading /" % name)
+
+    # the quests' own reach into the scene runtime: a sync_scene or scene_function to a scene or function that is not
+    # there compiles, runs, and does nothing
+    for qid, q in quests.items():
+        for e in _conditions(q):
+            if e.get("kind") not in ("sync_scene", "scene_function"):
+                continue
+            target = by_id.get(e.get("scene"))
+            line = qf.line_of_id(qid)
+            if target is None:
+                rep.error(C, 'quest %s: %s names scene "%s", which data/scenes.json does not have'
+                          % (qid, e["kind"], e.get("scene")), file=qf.rel, line=line, where=qid)
+            elif target.get("quest_id") != qid:
+                rep.error(C, 'quest %s: %s names scene "%s", which belongs to quest "%s"'
+                          % (qid, e["kind"], e.get("scene"), target.get("quest_id")), file=qf.rel, line=line, where=qid)
+            elif e["kind"] == "scene_function" and e.get("function") not in (target.get("functions") or {}):
+                rep.error(C, 'quest %s: scene_function names "%s", which scene %s does not define'
+                          % (qid, e.get("function"), e.get("scene")), file=qf.rel, line=line, where=qid)
+
+    # a conversation with no NPC that nothing opens can never be reached
+    for cid, c in convs.items():
+        if "npc_id" in c and c["npc_id"] is None and cid not in opened:
+            rep.error(C, 'conversation "%s" has npc_id null, but no scene prop or actor in data/scenes.json opens it'
+                      % cid, file=df.rel, line=df.line_of_id(cid), where=cid)
+    if sf:
+        rep.info(C, "checked %d scenes; %d NPC-less conversations, each opened by a prop or an actor"
+                 % (len(by_id), len(opened)), file=sf.rel)
 
 
 def check_progression(ctx: Context):
@@ -2888,6 +3136,7 @@ CHECKS = [
     ("referential", check_referential),
     ("progression", check_progression),
     ("quest-dialogue", check_quest_dialogue),
+    ("scenes", check_scenes),
     ("rivers", check_rivers),
     ("towns", check_towns),
     ("foliage", check_foliage),

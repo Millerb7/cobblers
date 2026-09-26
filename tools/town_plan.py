@@ -249,6 +249,10 @@ def main(argv=None):
             if lot.get("surface"):
                 # an open lot that is a square, not a building plot: Sabrina's market is paved at its level
                 cmds.append("fill %d %d %d %d %d %d %s" % (x0, yl, z0, x1, yl, z1, lot["surface"]))
+                # and walkable, as a street or the plaza is: headroom, and any tree over it gone. Without it an
+                # export-painted cherry at the Rift rim post stood its trunk and leaves on the overlook's planks
+                # (EXP-026 run 4: 4 cells). From the plan's rect and level, never from a world
+                cmds += clear_above(x0, z0, x1, z1, yl)
                 row["surface"] = lot["surface"]
             row.update({"level": yl, "cut_blocks": cut, "fill_blocks": fill})
         occupied.append((lot["id"], box, "anchor"))

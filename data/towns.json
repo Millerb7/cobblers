@@ -1598,6 +1598,68 @@
    "buildability": "248-block square under 8 degrees with 9 blocks of relief: tea terraces use it"
   },
   {
+   "id": "sea_town",
+   "order": null,
+   "role": "major_town",
+   "tier": "major",
+   "critical_path": false,
+   "status": "proposed",
+   "working_name": "Pacifidlog (the raft town in the Sound; working name)",
+   "display_name": null,
+   "for": "The east's fishing and boating town, Hoenn's Pacifidlog expanded: sixteen log rafts in the Sound with the Centre and Mart, Fishers' Row out into the deepest water, the boatwright's yard, the Stilt Quarter and its inn, the Current Gate at the bay's mouth, reached only by boat from a jetty on the desert shore (docs/world-building/LONG_ISLE.md section 4; the owner, 2026-09-26: \"add the sea town from hoenn\").",
+   "why_here": "Measured on the canonical heightmap by tools/sea_town.py plan (2026-09-26). The design's estimate (7120, 6880) is over the bay's deep hole, 32 blocks of water. The jungle island's north-west shelf 90 blocks east-south-east holds 3 to 19 blocks of water under every raft (the Mart's and raft 9's 3, the rest 4 to 19), falls away west into the Sound's deepest water (Fishers' Row stands in 17 to 37), and meets the jungle shore on the east, so the rafts reach from the shore into open water as the design asks. The mainland jetty starts on the South-East Dunes' beach at (7092, 6711); the design's (7150, 6620) is dry ground behind the beach.",
+   "centre": {
+    "x": 7210,
+    "z": 6960,
+    "ground_y": 53.8,
+    "ground_note": "SEABED: the town's ground is its log decks at the sea level (y62, players walk at y63), laid by tools/sea_town.py and named \"ground\": \"sea_deck\" in data/placements.json. The heights recorded here are the heightmap's seabed, as for Relic Island's heightmap_seabed_y, because data/towns.json measures the heightmap"
+   },
+   "footprint": {
+    "shape": "rect",
+    "class": "large",
+    "min_x": 7020,
+    "min_z": 6704,
+    "max_x": 7280,
+    "max_z": 7238,
+    "ground_y": [
+     23.7,
+     107.0
+    ],
+    "slope_degrees": {
+     "mean": 12.3,
+     "max": 44.4
+    },
+    "basis": "every district of data/sea_town.json: the jetty's landing in the north, the rafts, the yard and the Stilt Quarter, Fishers' Row to the west and the Current Gate at the bay's mouth in the south-west; mostly water on purpose (tools/sea_town.py footprint)"
+   },
+   "subregion": null,
+   "region": "long_isle",
+   "region_note": "in the Sound, off long_isle_south's north-west shore: the rafts are over water, outside every region polygon",
+   "distance_from_critical_path_blocks": 2246,
+   "nearest_leg": {
+    "route_id": "route_08_blaine_to_giovanni",
+    "from": "gym7_town",
+    "to": "gym8_town",
+    "at_fraction": 0.033,
+    "nearest_point": {
+     "x": 6002,
+     "z": 5067
+    }
+   },
+   "waystone": {
+    "kind": "discovery",
+    "unlock": "first visit activates it (Waystones' own behaviour); no flag",
+    "reason": "a town reached only by water: the waystone is what the crossing earns (LONG_ISLE.md D4, owner approved; recommended default taken)"
+   },
+   "gates": [],
+   "access": "by water only: a boat from the mainland jetty on the South-East Dunes' beach (7092, 6711), about 190 blocks across the Sound; boats wait in a barrel on the jetty's landing; not locked. An optional detour between badge 6 and badge 8 (LONG_ISLE.md section 2)",
+   "nearest_settlement": {
+    "id": "mining_town",
+    "distance_blocks": 1371
+   },
+   "buildability": "no ground to build on: every deck is an earthwork at the sea level over 3 to 37 blocks of water, posts to the seabed (tools/sea_town.py); the Centre and Mart are seated on double-log rafts by tools/place_town.py",
+   "sea_site": true
+  },
+  {
    "id": "merian_hut",
    "order": null,
    "role": "rest_stop",

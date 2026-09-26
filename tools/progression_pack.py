@@ -6,8 +6,10 @@ the unlock for its town's waystone, so both read the same data. The pack:
 
   advancement/flag/<id>.json           the flag. Set by an RCT defeat, by the
                                        first tick (run_start) or by command (trigger)
-  function/flag/<id>/granted           reward: re-sync this player's waystones, and offer that player a
-                                       Xaero's waypoint to the next gym (gym_markers, one gym ahead)
+  function/flag/<id>/granted           reward: re-sync this player's waystones, offer that player a
+                                       Xaero's waypoint to the next gym (gym_markers, one gym ahead), and
+                                       give the leader's rewards once (loot_table/first_win/<trainer>)
+  rctmod leader loot tables            emptied: upstream drops them on every win, rematches included
   cobbleverse loot tables, functions   upstream_neutralised: Cobbleverse's gym maps emptied (they point at
                                        naturally generated gyms), its missing leader reward functions defined empty
   function/navigation/reconcile        for each placed waystone: activate if the
@@ -139,9 +141,25 @@ def plan(doc: dict, series: str | None = None, placements: dict | None = None) -
     for r in empty_loot + empty_fn:
         if not isinstance(r, str) or not rid.match(r):
             raise ProgressionError("upstream_neutralised: %r is not a resource id" % (r,))
+    first_win = {}
+    fw = neutral.get("first_win_rewards")
+    if fw and fw.get("series") == active:
+        by_flag = {f["id"]: f for f in flags}
+        for tid, r in (fw.get("trainers") or {}).items():
+            f = by_flag.get(r.get("flag"))
+            if f is None or tid not in (f.get("trainer_ids") or []):
+                raise ProgressionError("first_win_rewards: %s is not a trainer of flag %r in series %r"
+                                       % (tid, r.get("flag"), active))
+            items = list(r.get("items") or []) + list(r.get("one_of") or [])
+            if not items or not all(isinstance(i, str) and rid.match(i) for i in items):
+                raise ProgressionError("first_win_rewards: %s needs item ids" % tid)
+            if "rctmod:trainers/single/%s" % tid not in empty_loot:
+                # without it the leader's own table still drops on every win, and the reward is given twice
+                raise ProgressionError("first_win_rewards: %s's rctmod loot table is not emptied" % tid)
+            first_win[tid] = {"flag": r["flag"], "items": list(r.get("items") or []), "one_of": list(r.get("one_of") or [])}
     return {"namespace": ns, "series": active, "flags": flags,
             "waystones": waystones, "unplaced": sorted(unplaced), "markers": markers,
-            "empty_loot_tables": empty_loot, "empty_functions": empty_fn}
+            "empty_loot_tables": empty_loot, "empty_functions": empty_fn, "first_win": first_win}
 
 
 MARKER_NAME = re.compile(r"^[A-Za-z0-9 ]{1,32}$")      # Xaero's share: 1-32 characters, and no ':', '-' or '_'
@@ -228,6 +246,16 @@ def files(p: dict) -> dict:
                 ["", {"text": "Next: %s. " % m["name"], "color": "gold"},
                  {"text": "Add it to your map: ", "color": "gray"},
                  {"text": xaero_share(m), "color": "dark_gray"}]))
+        for tid, fw in sorted(p.get("first_win", {}).items()):
+            if fw["flag"] != flag["id"]:
+                continue
+            # the leader's rewards, once, to the winner: this reward runs only when the flag is first granted
+            # (upstream_neutralised.first_win_rewards; the leader's own rctmod loot table is emptied)
+            granted.append("loot give @s loot %s:first_win/%s" % (ns, tid))
+            pools = [{"rolls": 1, "entries": [{"type": "minecraft:item", "name": i}]} for i in fw["items"]]
+            if fw["one_of"]:
+                pools.append({"rolls": 1, "entries": [{"type": "minecraft:item", "name": i} for i in fw["one_of"]]})
+            out["data/%s/loot_table/first_win/%s.json" % (ns, tid)] = json.dumps({"pools": pools}, indent=2) + "\n"
         out["data/%s/function/flag/%s/granted.mcfunction" % (ns, flag["id"])] = "\n".join(granted) + "\n"
 
     for rid in p.get("empty_loot_tables", []):

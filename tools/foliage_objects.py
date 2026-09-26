@@ -301,6 +301,231 @@ def litter_patch(rng, r):
     return b
 
 
+# ------------------------------------------------------------------ swamp: mangroves, tall vine-hung trees, snags
+# Vanilla Minecraft 1.21.1 blocks only. A hanging propagule survives under mangrove leaves; a vine names the face it
+# clings to, and a vine under another vine with the same face hangs from it, which is how a curtain holds.
+
+MANGROVE_ROOTS = ("minecraft:mangrove_roots", {"waterlogged": "false"})
+MUDDY_ROOTS = ("minecraft:muddy_mangrove_roots", {"axis": "y"})
+PROPAGULE = ("minecraft:mangrove_propagule", {"age": "4", "hanging": "true", "stage": "0", "waterlogged": "false"})
+MOSS_CARPET = "minecraft:moss_carpet"
+SIDES = ((1, 0), (-1, 0), (0, 1), (0, -1))
+FACE = {(1, 0): "east", (-1, 0): "west", (0, 1): "south", (0, -1): "north"}
+
+
+def hang_propagules(b, rng, share, floor_y=2):
+    """A hanging propagule under a share of the mangrove leaves that have air below, never lower than floor_y."""
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0] == "minecraft:mangrove_leaves"):
+        if y - 1 >= floor_y and (x, y - 1, z) not in b.blocks and rng.random() < share:
+            b.set(x, y - 1, z, *PROPAGULE)
+
+
+def vine_curtains(b, rng, share, lo, hi, floor_y=2):
+    """Vine chains on the open sides of leaves: each clings to its leaf (the face it names points at the leaf) and
+    hangs straight down lo..hi blocks, stopping at anything already there and never below floor_y, so a curtain is
+    never ground contact and never in the eye-level layer."""
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0].endswith("_leaves")):
+        for dx, dz in SIDES:
+            vx, vz = x + dx, z + dz
+            if (vx, y, vz) in b.blocks or (vx, y - 1, vz) in b.blocks or y < floor_y:
+                continue
+            if rng.random() >= share:
+                continue
+            face = FACE[(-dx, -dz)]
+            for k in range(int(rng.integers(lo, hi + 1))):
+                vy = y - k
+                if vy < floor_y or (vx, vy, vz) in b.blocks:
+                    break
+                b.set(vx, vy, vz, "minecraft:vine", {face: "true"})
+
+
+def climbing_vines(b, rng, share, min_y=2):
+    """Vines up the faces of logs from min_y: each names the face of the log it clings to."""
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0].endswith("_log") and k[1] >= min_y):
+        for dx, dz in SIDES:
+            vx, vz = x + dx, z + dz
+            if (vx, y, vz) not in b.blocks and rng.random() < share:
+                b.set(vx, y, vz, "minecraft:vine", {FACE[(-dx, -dz)]: "true"})
+
+
+def moss_on_roots(b, rng, share):
+    """Moss carpet on top of a share of the root blocks with air above (vanilla puts moss over mangrove roots)."""
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0] in ("minecraft:mangrove_roots",
+                                                                        "minecraft:muddy_mangrove_roots")):
+        if (x, y + 1, z) not in b.blocks and rng.random() < share:
+            b.set(x, y + 1, z, MOSS_CARPET)
+
+
+def prop_root(b, cx, cz, ang, top, reach):
+    """An arching prop root: leaves the raised trunk nearly level at height top and plunges to a foot reach blocks
+    out on the origin layer. The foot is muddy roots, the object's lowest layer, which WorldPainter's extend
+    foundation carries down to uneven ground."""
+    n = int(3 * (reach + top)) + 2
+    for i in range(n + 1):
+        t = i / n
+        y = int(round(top * (1 - t * t)))
+        r = 0.6 + reach * t
+        x, z = int(round(cx + math.cos(ang) * r)), int(round(cz + math.sin(ang) * r))
+        if y <= 0:
+            b.set(x, 0, z, *MUDDY_ROOTS)
+        else:
+            b.setdefault(x, y, z, *MANGROVE_ROOTS)
+
+
+def mangrove(rng, top, trunk_h, roots, reach, crown_r, branches, propagules=0.05, vines=(0.12, 2, 7)):
+    """A mangrove on prop roots: a 1x1 trunk raised top blocks on a root column and arching roots, leaning a little,
+    branching into leaf clouds, hung with propagules and vine curtains, moss on the roots."""
+    b = S.Builder()
+    b.set(0, 0, 0, *MUDDY_ROOTS)
+    for y in range(1, top):
+        b.set(0, y, 0, *MANGROVE_ROOTS)
+    for k in range(roots):
+        ang = 2 * math.pi * (k + rng.uniform(-0.25, 0.25)) / roots
+        prop_root(b, 0, 0, ang, max(1, top - int(rng.integers(0, 2))), reach * rng.uniform(0.75, 1.1))
+    lean_ang = rng.uniform(0, 2 * math.pi)
+    lean = rng.uniform(0.0, 0.12)
+    col = {}
+    px, pz = 0, 0
+    for y in range(top, top + trunk_h):
+        tx = int(round(math.cos(lean_ang) * lean * (y - top)))
+        tz = int(round(math.sin(lean_ang) * lean * (y - top)))
+        if (tx, tz) != (px, pz):
+            b.set(px, y, pz, *log("mangrove"))          # keep the leaning trunk joined face to face
+        b.set(tx, y, tz, *log("mangrove"))
+        col[y] = (tx, tz)
+        px, pz = tx, tz
+    y_top = top + trunk_h - 1
+    tips = [(px, y_top, pz)]
+    base_ang = rng.uniform(0, 2 * math.pi)
+    for k in range(branches):
+        ang = base_ang + 2 * math.pi * (k + rng.uniform(-0.2, 0.2)) / branches
+        yb = top + int(trunk_h * rng.uniform(0.5, 0.8))
+        bx, bz = col.get(yb, (px, pz))
+        L = crown_r * rng.uniform(0.6, 1.0)
+        tip = (int(round(bx + math.cos(ang) * L)), yb + int(round(L * 0.7)), int(round(bz + math.sin(ang) * L)))
+        line(b, (bx, yb, bz), tip, lambda ax: log("mangrove", ax))
+        tips.append(tip)
+    for (cx, cy, cz) in tips:
+        r = crown_r * rng.uniform(0.75, 1.0)
+        blob(b, cx, cy + 1, cz, r, max(1.6, crown_r * 0.45), r, leaves("mangrove"), rng, ragged=0.25)
+    hang_propagules(b, rng, propagules)
+    vine_curtains(b, rng, *vines)
+    moss_on_roots(b, rng, 0.35)
+    return b
+
+
+def swamp_giant(rng, height, crown_r, limbs):
+    """A tall swamp oak: 2x2 trunk on log knees, limbs to a broad flat crown, a drooping rim and heavy vine
+    curtains, moss on the knees."""
+    b = S.Builder()
+    kind = "oak"
+    trunk(b, 0, 0, 2, 0, height - 2, kind)
+    for (x, z) in ((-1, 0), (-1, 1), (2, 0), (2, 1), (0, -1), (1, -1), (0, 2), (1, 2)):
+        for y in range(int(rng.integers(1, 4))):
+            b.set(x, y, z, *log(kind))
+    for (x, z) in ((-2, 0), (3, 1), (1, -2), (0, 3)):
+        if rng.random() < 0.6:
+            b.set(x, 0, z, *log(kind))
+    base_ang = rng.uniform(0, 2 * math.pi)
+    tips = []
+    for k in range(limbs):
+        ang = base_ang + 2 * math.pi * (k + rng.uniform(-0.2, 0.2)) / limbs
+        yb = int(height * rng.uniform(0.55, 0.75))
+        L = crown_r * rng.uniform(0.55, 0.85)
+        sx, sz = (1 if math.cos(ang) > 0 else 0), (1 if math.sin(ang) > 0 else 0)
+        tip = (int(round(0.5 + math.cos(ang) * L)), yb + int(round(L * 0.5)), int(round(0.5 + math.sin(ang) * L)))
+        line(b, (sx, yb, sz), tip, lambda ax: log(kind, ax))
+        tips.append(tip)
+    disk(b, 0.5, height - 2, 0.5, crown_r, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height - 1, 0.5, crown_r * 0.7, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height, 0.5, crown_r * 0.4, leaves(kind), rng, ragged=0.3)
+    for (cx, cy, cz) in tips:
+        r = crown_r * rng.uniform(0.4, 0.55)
+        blob(b, cx, cy + 1, cz, r, 1.6, r, leaves(kind), rng, ragged=0.25)
+    # a drooping rim: leaves hang one or two blocks under the crown's outer edge
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0].endswith("_leaves")):
+        if math.hypot(x - 0.5, z - 0.5) > crown_r - 1.5 and (x, y - 1, z) not in b.blocks and rng.random() < 0.3:
+            for k in range(1, int(rng.integers(2, 4))):
+                b.setdefault(x, y - k, z, *leaves(kind))
+    vine_curtains(b, rng, 0.3, 3, 12)
+    climbing_vines(b, rng, 0.2)
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0].endswith("_log") and k[1] <= 2):
+        if (x, y + 1, z) not in b.blocks and rng.random() < 0.5:
+            b.set(x, y + 1, z, MOSS_CARPET)
+    return b
+
+
+def vine_snag(rng, height, kind):
+    """A dead standing trunk wrapped in vines."""
+    b = snag(rng, height, kind)
+    climbing_vines(b, rng, 0.45)
+    return b
+
+
+def root_tangle(rng, r):
+    """A knee-high knot of mangrove roots with moss: the root floor between the trees."""
+    b = S.Builder()
+    b.set(0, 0, 0, *MUDDY_ROOTS)
+    b.set(0, 1, 0, *MANGROVE_ROOTS)
+    n = int(rng.integers(3, 6))
+    for k in range(n):
+        ang = 2 * math.pi * (k + rng.uniform(-0.3, 0.3)) / n
+        prop_root(b, 0, 0, ang, int(rng.integers(1, 3)), r * rng.uniform(0.7, 1.0))
+    moss_on_roots(b, rng, 0.45)
+    return b
+
+
+def jungle_emergent(rng, height, crown_r, limbs):
+    """An emergent jungle giant for the jungle isles (docs/world-building/FOLIAGE_MARSH_JUNGLE.md): a 2x2 jungle trunk
+    well above vanilla's tallest mega jungle tree (31), log buttresses at its foot, bare to its upper third, limbs out
+    to a flat umbrella crown that stands clear of the canopy, vine curtains under the crown, vines and cocoa up the
+    trunk. Vanilla Minecraft 1.21.1 blocks only."""
+    b = S.Builder()
+    kind = "jungle"
+    trunk(b, 0, 0, 2, 0, height - 2, kind)
+    # buttresses: fins of log running out from the trunk's faces, tallest against the trunk
+    for (sx, sz, dx, dz) in ((0, 0, -1, 0), (0, 0, 0, -1), (1, 0, 1, 0), (1, 0, 0, -1),
+                             (0, 1, -1, 0), (0, 1, 0, 1), (1, 1, 1, 0), (1, 1, 0, 1)):
+        if rng.random() < 0.7:
+            reach = int(rng.integers(1, 4))
+            for k in range(1, reach + 1):
+                for y in range(max(1, int(round((reach - k + 1) * rng.uniform(1.2, 2.0))))):
+                    b.set(sx + dx * k, y, sz + dz * k, *log(kind))
+    base_ang = rng.uniform(0, 2 * math.pi)
+    tips = []
+    for k in range(limbs):
+        ang = base_ang + 2 * math.pi * (k + rng.uniform(-0.2, 0.2)) / limbs
+        yb = int(height * rng.uniform(0.66, 0.82))
+        L = crown_r * rng.uniform(0.55, 0.85)
+        sx, sz = (1 if math.cos(ang) > 0 else 0), (1 if math.sin(ang) > 0 else 0)
+        tip = (int(round(0.5 + math.cos(ang) * L)), min(height - 3, yb + int(round(L * 0.45))),
+               int(round(0.5 + math.sin(ang) * L)))
+        line(b, (sx, yb, sz), tip, lambda ax: log(kind, ax))
+        tips.append(tip)
+    # the umbrella: a broad flat layer with a lower rim and a shallow dome
+    disk(b, 0.5, height - 3, 0.5, crown_r, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height - 2, 0.5, crown_r * 0.8, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height - 1, 0.5, crown_r * 0.55, leaves(kind), rng, ragged=0.3)
+    disk(b, 0.5, height, 0.5, crown_r * 0.3, leaves(kind), rng, ragged=0.3)
+    for (cx, cy, cz) in tips:
+        r = crown_r * rng.uniform(0.35, 0.5)
+        blob(b, cx, cy + 1, cz, r, 1.8, r, leaves(kind), rng, ragged=0.25)
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0].endswith("_leaves")):
+        if math.hypot(x - 0.5, z - 0.5) > crown_r - 1.5 and (x, y - 1, z) not in b.blocks and rng.random() < 0.25:
+            for k in range(1, int(rng.integers(2, 4))):
+                b.setdefault(x, y - k, z, *leaves(kind))
+    # cocoa on the lower trunk (facing names the log it hangs on), then vines
+    for (x, y, z) in sorted(k for k, v in b.blocks.items() if v[0] == "minecraft:jungle_log" and 3 <= k[1] <= 12
+                            and 0 <= k[0] <= 1 and 0 <= k[2] <= 1):
+        for dx, dz in SIDES:
+            cx_, cz_ = x + dx, z + dz
+            if (cx_, y, cz_) not in b.blocks and rng.random() < 0.05:
+                b.set(cx_, y, cz_, "minecraft:cocoa", {"age": str(int(rng.integers(0, 3))), "facing": FACE[(-dx, -dz)]})
+    vine_curtains(b, rng, 0.22, 4, 14)
+    climbing_vines(b, rng, 0.28, min_y=3)
+    return b
+
+
 def generated_objects():
     """name -> (group, builder). Seeds are fixed per object so the files regenerate byte for byte."""
     out = {}
@@ -332,6 +557,33 @@ def generated_objects():
     for i, r in enumerate((1, 2, 2, 3)):
         n = "litter_%02d" % (i + 1)
         out[n] = ("leaf_litter", litter_patch(rng_for(n), r))
+    # swamp (data/foliage.json overlays; docs/world-building/FOLIAGE_MARSH_JUNGLE.md)
+    for i, (top, th, roots, reach, cr, br) in enumerate(((3, 5, 5, 3.0, 3.5, 2), (3, 6, 6, 3.5, 3.8, 2),
+                                                         (4, 6, 6, 3.5, 4.0, 3), (4, 7, 7, 4.0, 4.2, 2),
+                                                         (4, 8, 7, 4.0, 4.5, 3), (5, 8, 8, 4.5, 4.5, 3))):
+        n = "mangrove_%02d" % (i + 1)
+        out[n] = ("mangrove", mangrove(rng_for(n), top, th, roots, reach, cr, br))
+    for i, (top, th, roots, reach, cr, br) in enumerate(((5, 13, 7, 4.5, 4.8, 3), (5, 15, 8, 5.0, 5.0, 3),
+                                                         (6, 16, 8, 5.0, 5.3, 4), (6, 18, 9, 5.5, 5.5, 4))):
+        n = "tall_mangrove_%02d" % (i + 1)
+        out[n] = ("tall_mangrove", mangrove(rng_for(n), top, th, roots, reach, cr, br, propagules=0.04,
+                                            vines=(0.16, 3, 10)))
+    for i, (th, reach, cr, br) in enumerate(((2, 2.0, 2.0, 0), (3, 2.2, 2.3, 1), (3, 2.5, 2.4, 1))):
+        n = "mangrove_scrub_%02d" % (i + 1)
+        out[n] = ("mangrove_scrub", mangrove(rng_for(n), 2, th, 4, reach, cr, br, propagules=0.06, vines=(0.08, 1, 3)))
+    for i, (h, cr, limbs) in enumerate(((16, 6.5, 4), (18, 7.0, 4), (20, 7.5, 5), (22, 8.0, 5))):
+        n = "swamp_giant_%02d" % (i + 1)
+        out[n] = ("swamp_giant", swamp_giant(rng_for(n), h, cr, limbs))
+    for i, (h, kind) in enumerate(((6, "oak"), (8, "mangrove"), (10, "oak"))):
+        n = "vine_snag_%s_%02d" % (kind, i + 1)
+        out[n] = ("vine_snag", vine_snag(rng_for(n), h, kind))
+    for i, r in enumerate((2.0, 2.5, 3.0, 3.0)):
+        n = "root_tangle_%02d" % (i + 1)
+        out[n] = ("root_tangle", root_tangle(rng_for(n), r))
+    # jungle isles (data/foliage.json overlay jungle_emergents): crowns at 34-46, over vanilla's 14-31 mega jungle
+    for i, (h, cr, limbs) in enumerate(((34, 9.0, 4), (38, 10.0, 5), (42, 11.0, 5), (46, 12.0, 6))):
+        n = "jungle_emergent_%02d" % (i + 1)
+        out[n] = ("jungle_emergent", jungle_emergent(rng_for(n), h, cr, limbs))
     import landmark_trees as LT
     for n, (group, builder) in LT.designs().items():
         out[n] = (group, builder)

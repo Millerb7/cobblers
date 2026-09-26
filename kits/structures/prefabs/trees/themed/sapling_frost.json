@@ -1,0 +1,54 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/themed/sapling_frost",
+ "kind": "trees",
+ "set": "themed",
+ "name": "sapling_frost",
+ "author": "tools/themed_saplings.py",
+ "source": {
+  "file": "generated",
+  "size": [
+   41,
+   85,
+   41
+  ],
+  "blocks": 22469
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  20,
+  2,
+  20
+ ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
+ "tier": "themed_sapling",
+ "theme": "frost",
+ "height": 82,
+ "nests": [
+  {
+   "at": [
+    0,
+    11,
+    0
+   ],
+   "mimic": "minecraft:spruce_log"
+  },
+  {
+   "at": [
+    0,
+    34,
+    0
+   ],
+   "mimic": "minecraft:spruce_log"
+  },
+  {
+   "at": [
+    0,
+    64,
+    0
+   ],
+   "mimic": "minecraft:spruce_leaves"
+  }
+ ]
+}

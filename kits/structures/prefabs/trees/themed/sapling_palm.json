@@ -1,0 +1,54 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/themed/sapling_palm",
+ "kind": "trees",
+ "set": "themed",
+ "name": "sapling_palm",
+ "author": "tools/themed_saplings.py",
+ "source": {
+  "file": "generated",
+  "size": [
+   51,
+   71,
+   49
+  ],
+  "blocks": 6628
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  25,
+  2,
+  26
+ ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
+ "tier": "themed_sapling",
+ "theme": "palm",
+ "height": 68,
+ "nests": [
+  {
+   "at": [
+    0,
+    11,
+    0
+   ],
+   "mimic": "minecraft:jungle_log"
+  },
+  {
+   "at": [
+    0,
+    34,
+    0
+   ],
+   "mimic": "minecraft:jungle_log"
+  },
+  {
+   "at": [
+    0,
+    63,
+    0
+   ],
+   "mimic": "minecraft:jungle_leaves"
+  }
+ ]
+}

@@ -5,86 +5,370 @@
     "One flag per gym is both the badge ledger entry and the unlock for that town's waystone (docs/world-building/NAVIGATION.md).",
     "Badges themselves are items given by each leader's RCT loot table on first defeat; the flag records the defeat, it does not give the badge.",
     "Leader order is Cobbleverse's RCT requiredDefeats chain per series, read from COBBLEVERSE-RCT-DP-v20. Which leader sits in which town is a trainer-design decision still open.",
-    "Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 5 in config), so chapters carry no level_cap here.",
-    "Waystone positions are null until town locations are placed after the next terrain rendition."
+    "Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 0 in modpack/config/rctmod-server.toml since 2026-09-24; Cobbleverse ships 5), so chapters carry no level_cap here.",
+    "Gym waystone positions are the block tools/place_town.py sets (the lower half): x and z from the town plan in data/placements.json, y the plan's surface + 1 as its placement report records. tests check they agree."
   ],
   "namespace": "cobblers",
   "active_series": "kanto",
   "series": [
-    {"id": "kanto", "role": "main", "required_series": []},
-    {"id": "johto", "role": "prestige_candidate", "required_series": ["kanto"]},
-    {"id": "hoenn", "role": "prestige_candidate", "required_series": ["johto"]},
-    {"id": "sinnoh", "role": "prestige_candidate", "required_series": ["hoenn"]}
+    {
+      "id": "kanto",
+      "role": "main",
+      "required_series": []
+    },
+    {
+      "id": "johto",
+      "role": "prestige_candidate",
+      "required_series": [
+        "kanto"
+      ]
+    },
+    {
+      "id": "hoenn",
+      "role": "prestige_candidate",
+      "required_series": [
+        "johto"
+      ]
+    },
+    {
+      "id": "sinnoh",
+      "role": "prestige_candidate",
+      "required_series": [
+        "hoenn"
+      ]
+    }
   ],
   "open_questions": [
-    {"id": "hometown_waystone", "question": "Is the hometown waystone given at start (set_by run_start) or earned?", "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"},
-    {"id": "midpoint_waystones", "question": "Do waystones exist between gym towns, and if so what unlocks them?", "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"}
+    {
+      "id": "hometown_waystone",
+      "question": "Is the hometown waystone given at start (set_by run_start) or earned?",
+      "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"
+    },
+    {
+      "id": "midpoint_waystones",
+      "question": "Do waystones exist between gym towns, and if so what unlocks them?",
+      "analysis": "docs/world-building/NAVIGATION.md#3-two-open-questions"
+    }
   ],
   "flags": [
     {
       "id": "gym1_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_brock"], "johto": ["johto_valerio"], "hoenn": ["hoenn_petra"], "sinnoh": ["sinnoh_pedro"]}},
-      "waystone": {"town": "gym1_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_brock"
+          ],
+          "johto": [
+            "johto_valerio"
+          ],
+          "hoenn": [
+            "hoenn_petra"
+          ],
+          "sinnoh": [
+            "sinnoh_pedro"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym1_town",
+        "position": [1756, 139, 3606]
+      },
       "offers_marker": "gym2_town"
     },
     {
       "id": "gym2_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_misty"], "johto": ["johto_raffaello"], "hoenn": ["hoenn_rudi"], "sinnoh": ["sinnoh_gardenia"]}},
-      "waystone": {"town": "gym2_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_misty"
+          ],
+          "johto": [
+            "johto_raffaello"
+          ],
+          "hoenn": [
+            "hoenn_rudi"
+          ],
+          "sinnoh": [
+            "sinnoh_gardenia"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym2_town",
+        "position": [1620, 109, 2800]
+      },
       "offers_marker": "gym3_town"
     },
     {
       "id": "gym3_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_ltsurge"], "johto": ["johto_chiara"], "hoenn": ["hoenn_walter"], "sinnoh": ["sinnoh_marzia"]}},
-      "waystone": {"town": "gym3_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_ltsurge"
+          ],
+          "johto": [
+            "johto_chiara"
+          ],
+          "hoenn": [
+            "hoenn_walter"
+          ],
+          "sinnoh": [
+            "sinnoh_marzia"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym3_town",
+        "position": [1662, 175, 1388]
+      },
       "offers_marker": "gym4_town"
     },
     {
       "id": "gym4_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_erika"], "johto": ["johto_angelo"], "hoenn": ["hoenn_fiammetta"], "sinnoh": ["sinnoh_omar"]}},
-      "waystone": {"town": "gym4_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_erika"
+          ],
+          "johto": [
+            "johto_angelo"
+          ],
+          "hoenn": [
+            "hoenn_fiammetta"
+          ],
+          "sinnoh": [
+            "sinnoh_omar"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym4_town",
+        "position": [4276, 110, 1554]
+      },
       "offers_marker": "gym5_town"
     },
     {
       "id": "gym5_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_koga"], "johto": ["johto_furio"], "hoenn": ["hoenn_norman"], "sinnoh": ["sinnoh_fannie"]}},
-      "waystone": {"town": "gym5_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_koga"
+          ],
+          "johto": [
+            "johto_furio"
+          ],
+          "hoenn": [
+            "hoenn_norman"
+          ],
+          "sinnoh": [
+            "sinnoh_fannie"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym5_town",
+        "position": [4668, 118, 2422]
+      },
       "offers_marker": "gym6_town"
     },
     {
       "id": "gym6_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_sabrina"], "johto": ["johto_jasmine"], "hoenn": ["hoenn_alice"], "sinnoh": ["sinnoh_ferruccio"]}},
-      "waystone": {"town": "gym6_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_sabrina"
+          ],
+          "johto": [
+            "johto_jasmine"
+          ],
+          "hoenn": [
+            "hoenn_alice"
+          ],
+          "sinnoh": [
+            "sinnoh_ferruccio"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym6_town",
+        "position": [6186, 95, 3386]
+      },
       "offers_marker": "gym7_town"
     },
     {
       "id": "gym7_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_blaine"], "johto": ["johto_alfredo"], "hoenn": ["hoenn_tell"], "sinnoh": ["sinnoh_bianca"]}},
-      "waystone": {"town": "gym7_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_blaine"
+          ],
+          "johto": [
+            "johto_alfredo"
+          ],
+          "hoenn": [
+            "hoenn_tell"
+          ],
+          "sinnoh": [
+            "sinnoh_bianca"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym7_town",
+        "position": [6064, 109, 4984]
+      },
       "offers_marker": "gym8_town"
     },
     {
       "id": "gym8_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_giovanni"], "johto": ["johto_sandra"], "hoenn": ["hoenn_adriano"], "sinnoh": ["sinnoh_corrado"]}},
-      "waystone": {"town": "gym8_town", "position": null},
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_giovanni"
+          ],
+          "johto": [
+            "johto_sandra"
+          ],
+          "hoenn": [
+            "hoenn_adriano"
+          ],
+          "sinnoh": [
+            "sinnoh_corrado"
+          ]
+        }
+      },
+      "waystone": {
+        "town": "gym8_town",
+        "position": [3594, 114, 6444]
+      },
       "offers_marker": "league"
     },
     {
       "id": "champion_cleared",
-      "set_by": {"kind": "trainer_defeat", "trainer_ids": {"kanto": ["kanto_champion_blue"], "johto": ["johto_champion_lance"], "hoenn": ["hoenn_champion_rocco"], "sinnoh": ["sinnoh_champion_camilla"]}}
+      "set_by": {
+        "kind": "trainer_defeat",
+        "trainer_ids": {
+          "kanto": [
+            "kanto_champion_blue"
+          ],
+          "johto": [
+            "johto_champion_lance"
+          ],
+          "hoenn": [
+            "hoenn_champion_rocco"
+          ],
+          "sinnoh": [
+            "sinnoh_champion_camilla"
+          ]
+        }
+      }
     }
   ],
   "chapters": [
-    {"id": "chapter_1", "order": 1, "unlocked_by": [], "unlocks": ["gym1_cleared"]},
-    {"id": "chapter_2", "order": 2, "unlocked_by": ["gym1_cleared"], "unlocks": ["gym2_cleared"]},
-    {"id": "chapter_3", "order": 3, "unlocked_by": ["gym2_cleared"], "unlocks": ["gym3_cleared"]},
-    {"id": "chapter_4", "order": 4, "unlocked_by": ["gym3_cleared"], "unlocks": ["gym4_cleared"]},
-    {"id": "chapter_5", "order": 5, "unlocked_by": ["gym4_cleared"], "unlocks": ["gym5_cleared"]},
-    {"id": "chapter_6", "order": 6, "unlocked_by": ["gym5_cleared"], "unlocks": ["gym6_cleared"]},
-    {"id": "chapter_7", "order": 7, "unlocked_by": ["gym6_cleared"], "unlocks": ["gym7_cleared"]},
-    {"id": "chapter_8", "order": 8, "unlocked_by": ["gym7_cleared"], "unlocks": ["gym8_cleared"]},
-    {"id": "league", "order": 9, "unlocked_by": ["gym8_cleared"], "unlocks": ["champion_cleared"]},
-    {"id": "postgame", "order": 10, "unlocked_by": ["champion_cleared"], "unlocks": []}
+    {
+      "id": "chapter_1",
+      "order": 1,
+      "unlocked_by": [],
+      "unlocks": [
+        "gym1_cleared"
+      ]
+    },
+    {
+      "id": "chapter_2",
+      "order": 2,
+      "unlocked_by": [
+        "gym1_cleared"
+      ],
+      "unlocks": [
+        "gym2_cleared"
+      ]
+    },
+    {
+      "id": "chapter_3",
+      "order": 3,
+      "unlocked_by": [
+        "gym2_cleared"
+      ],
+      "unlocks": [
+        "gym3_cleared"
+      ]
+    },
+    {
+      "id": "chapter_4",
+      "order": 4,
+      "unlocked_by": [
+        "gym3_cleared"
+      ],
+      "unlocks": [
+        "gym4_cleared"
+      ]
+    },
+    {
+      "id": "chapter_5",
+      "order": 5,
+      "unlocked_by": [
+        "gym4_cleared"
+      ],
+      "unlocks": [
+        "gym5_cleared"
+      ]
+    },
+    {
+      "id": "chapter_6",
+      "order": 6,
+      "unlocked_by": [
+        "gym5_cleared"
+      ],
+      "unlocks": [
+        "gym6_cleared"
+      ]
+    },
+    {
+      "id": "chapter_7",
+      "order": 7,
+      "unlocked_by": [
+        "gym6_cleared"
+      ],
+      "unlocks": [
+        "gym7_cleared"
+      ]
+    },
+    {
+      "id": "chapter_8",
+      "order": 8,
+      "unlocked_by": [
+        "gym7_cleared"
+      ],
+      "unlocks": [
+        "gym8_cleared"
+      ]
+    },
+    {
+      "id": "league",
+      "order": 9,
+      "unlocked_by": [
+        "gym8_cleared"
+      ],
+      "unlocks": [
+        "champion_cleared"
+      ]
+    },
+    {
+      "id": "postgame",
+      "order": 10,
+      "unlocked_by": [
+        "champion_cleared"
+      ],
+      "unlocks": []
+    }
   ],
   "state_namespaces": {
     "progression": {
@@ -360,6 +644,778 @@
       "scope": "player",
       "initial": "c001",
       "allowed_values": "node ids from dlg_vr_abandoned_cut"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.started",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.checkpoint",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "checkpoint",
+      "type": "enum",
+      "scope": "player",
+      "initial": "foyer",
+      "allowed_values": "foyer|stairs|service|library|landing|family"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.cup_taken",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "cup_taken",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.lamp_1",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "lamp_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.lamp_2",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "lamp_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.ward_1",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "ward_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.ward_2",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "ward_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_1",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_2",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_3",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_3",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_4",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_4",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.guard_5",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "guard_5",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.reward_claimed",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.cache_claimed",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "cache_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.completed",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.dialogue_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "p_open1",
+      "allowed_values": "node ids from dlg_route1_gastly_pip"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.haunter_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "haunter_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h_wait",
+      "allowed_values": "node ids from dlg_route1_gastly_haunter"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.gengar_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "gengar_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "g_trapped",
+      "allowed_values": "node ids from dlg_route1_gastly_gengar"
+    },
+    {
+      "id": "quest.evt_route1_gastly_family.prop_cursor",
+      "quest_id": "evt_route1_gastly_family",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from the scene's prop conversations (dlg_route1_gastly_*): each prop conversation enters on an explicit node chosen by state and never restores from this field, so they share one"
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.started",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.lunch_found",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "lunch_found",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.berry_left",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "berry_left",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.reward_claimed",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.completed",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.dialogue_cursor",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "o1",
+      "allowed_values": "node ids from dlg_route1_rattata_picnic"
+    },
+    {
+      "id": "quest.evt_route1_rattata_picnic.prop_cursor",
+      "quest_id": "evt_route1_rattata_picnic",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route1_first_cast.started",
+      "quest_id": "evt_route1_first_cast",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_first_cast.rod_claimed",
+      "quest_id": "evt_route1_first_cast",
+      "field": "rod_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_first_cast.completed",
+      "quest_id": "evt_route1_first_cast",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route1_first_cast.dialogue_cursor",
+      "quest_id": "evt_route1_first_cast",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "f1",
+      "allowed_values": "node ids from dlg_route1_first_cast"
+    },
+    {
+      "id": "quest.evt_route1_first_cast.prop_cursor",
+      "quest_id": "evt_route1_first_cast",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.started",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.clue_rut",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "clue_rut",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.clue_sack",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "clue_sack",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.clue_boulder",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "clue_boulder",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.brake_secured",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "brake_secured",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.reward_claimed",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.completed",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.dialogue_cursor",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "m1",
+      "allowed_values": "node ids from dlg_route2_rollaway_geodude"
+    },
+    {
+      "id": "quest.evt_route2_rollaway_geodude.prop_cursor",
+      "quest_id": "evt_route2_rollaway_geodude",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.started",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.staff_shallow",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "staff_shallow",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.staff_middle",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "staff_middle",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.staff_deep",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "staff_deep",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.gauge_reset",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "gauge_reset",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.reward_claimed",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.completed",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.dialogue_cursor",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "k1",
+      "allowed_values": "node ids from dlg_route2_viltri_sounding"
+    },
+    {
+      "id": "quest.evt_route2_viltri_sounding.prop_cursor",
+      "quest_id": "evt_route2_viltri_sounding",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.started",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.trainer_defeated",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "trainer_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.reward_claimed",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.completed",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_viltri_north_bank.dialogue_cursor",
+      "quest_id": "evt_viltri_north_bank",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "n1",
+      "allowed_values": "node ids from dlg_viltri_north_bank"
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.started",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.sign_a",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "sign_a",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.sign_b",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "sign_b",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.pulse_observed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "pulse_observed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.brackets_fixed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "brackets_fixed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.reward_claimed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.completed",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.dialogue_cursor",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t1",
+      "allowed_values": "node ids from dlg_route3_nosepass_signs"
+    },
+    {
+      "id": "quest.evt_route3_nosepass_signs.prop_cursor",
+      "quest_id": "evt_route3_nosepass_signs",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.started",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.safe_path_found",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "safe_path_found",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.crate_recovered",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "crate_recovered",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.reward_claimed",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.encounter_claimed",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "encounter_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.completed",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.dialogue_cursor",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c1",
+      "allowed_values": "node ids from dlg_route3_creek_wooper"
+    },
+    {
+      "id": "quest.evt_route3_creek_wooper.prop_cursor",
+      "quest_id": "evt_route3_creek_wooper",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.started",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_1",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_1",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_2",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_2",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_3",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_3",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.fiber_placed",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "fiber_placed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.flag_recovered",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "flag_recovered",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.reward_claimed",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.completed",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.dialogue_cursor",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "s1",
+      "allowed_values": "node ids from dlg_route3_swablu_nest"
+    },
+    {
+      "id": "quest.evt_route3_swablu_nest.prop_cursor",
+      "quest_id": "evt_route3_swablu_nest",
+      "field": "prop_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "idle",
+      "allowed_values": "node ids from this quest's prop conversations; each enters on an explicit node and never restores"
+    },
+    {
+      "id": "quest.route_01_trainer_01.defeated",
+      "quest_id": "route_01_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_01_trainer_02.defeated",
+      "quest_id": "route_01_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_01_trainer_03.defeated",
+      "quest_id": "route_01_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_01_trainer_04.defeated",
+      "quest_id": "route_01_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_trainer_01.defeated",
+      "quest_id": "route_02_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_trainer_02.defeated",
+      "quest_id": "route_02_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_shore_trainer_01.defeated",
+      "quest_id": "route_02_shore_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_02_trainer_03.defeated",
+      "quest_id": "route_02_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_01.defeated",
+      "quest_id": "route_03_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_02.defeated",
+      "quest_id": "route_03_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_03.defeated",
+      "quest_id": "route_03_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_04.defeated",
+      "quest_id": "route_03_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
+    },
+    {
+      "id": "quest.route_03_trainer_05.defeated",
+      "quest_id": "route_03_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false
     }
   ],
   "gym_markers": {
@@ -367,19 +1423,224 @@
     "share_format": "xaero-waypoint:<name>:<initials>:<x>:<y or ~>:<z>:<color>:<rotation>:<yaw>:Internal-overworld-waypoints, read from xaerominimap-fabric-1.21.1-26.4.2 WaypointSharingHandler (name 1-32 characters, initials 1-3, no '-', '_' or ':')",
     "color": 14,
     "markers": {
-      "gym2_town": {"placement": "gym2_misty_gym", "name": "Gym 2 Misty", "initials": "G2"},
-      "gym3_town": {"placement": "gym3_gym_building", "name": "Gym 3 Lt Surge", "initials": "G3"},
-      "gym4_town": {"placement": "gym4_gym_building", "name": "Gym 4 Erika", "initials": "G4"},
-      "gym5_town": {"placement": "gym5_gym_building", "name": "Gym 5 Koga", "initials": "G5"},
-      "gym6_town": {"placement": "gym6_gym_building", "name": "Gym 6 Sabrina", "initials": "G6"},
-      "gym7_town": {"placement": "gym7_gym_building", "name": "Gym 7 Blaine", "initials": "G7"},
-      "gym8_town": {"placement": "gym8_gym_building", "name": "Gym 8 Giovanni", "initials": "G8"},
-      "league": {"placement": "league_building", "name": "Pokemon League", "initials": "PL"}
+      "gym2_town": {
+        "placement": "gym2_misty_gym",
+        "name": "Gym 2 Misty",
+        "initials": "G2"
+      },
+      "gym3_town": {
+        "placement": "gym3_gym_building",
+        "name": "Gym 3 Lt Surge",
+        "initials": "G3"
+      },
+      "gym4_town": {
+        "placement": "gym4_gym_building",
+        "name": "Gym 4 Erika",
+        "initials": "G4"
+      },
+      "gym5_town": {
+        "placement": "gym5_gym_building",
+        "name": "Gym 5 Koga",
+        "initials": "G5"
+      },
+      "gym6_town": {
+        "placement": "gym6_gym_building",
+        "name": "Gym 6 Sabrina",
+        "initials": "G6"
+      },
+      "gym7_town": {
+        "placement": "gym7_gym_building",
+        "name": "Gym 7 Blaine",
+        "initials": "G7"
+      },
+      "gym8_town": {
+        "placement": "gym8_gym_building",
+        "name": "Gym 8 Giovanni",
+        "initials": "G8"
+      },
+      "league": {
+        "placement": "league_building",
+        "name": "Pokemon League",
+        "initials": "PL"
+      }
     }
   },
   "upstream_neutralised": {
     "why": "Overrides at the upstream paths, deliberately (.claude/rules/datapacks.md). The four loot tables are exploration maps to Cobbleverse's naturally generated gyms, which this world does not generate: cobbleverse:gym_map is the reward of Cobbleverse's cobblemon:craft_pokedex (the first Pokedex a player holds), and the Johto, Hoenn and Sinnoh ones reward the previous region's Champion. They become empty. The reward functions are named by Cobbleverse's leader, Elite Four and Champion advancements (cobbleverse:trainer/*/defeat_*) and exist in no installed pack (checked 2026-09-21 across every pack and jar on the server); an empty function of each name means the advancement grants cleanly.",
-    "empty_loot_tables": ["cobbleverse:gym_map", "cobbleverse:johto_gym_map", "cobbleverse:hoenn_gym_map", "cobbleverse:sinnoh_gym_map"],
-    "empty_functions": ["cobbleverse:aaron_defeated", "cobbleverse:adriano_defeated", "cobbleverse:agatha_defeated", "cobbleverse:alfredo_defeated", "cobbleverse:alice_defeated", "cobbleverse:angelo_defeated", "cobbleverse:bianca_defeated", "cobbleverse:blaine_defeated", "cobbleverse:brock_defeated", "cobbleverse:bruno_defeated", "cobbleverse:bruno_johto_defeated", "cobbleverse:chiara_defeated", "cobbleverse:corrado_defeated", "cobbleverse:cyrus_defeated", "cobbleverse:drake_defeated", "cobbleverse:erika_defeated", "cobbleverse:ester_defeated", "cobbleverse:fannie_defeated", "cobbleverse:ferruccio_defeated", "cobbleverse:fiammetta_defeated", "cobbleverse:fosco_defeated", "cobbleverse:frida_defeated", "cobbleverse:furio_defeated", "cobbleverse:gardenia_defeated", "cobbleverse:giovanni_defeated", "cobbleverse:jasmine_defeated", "cobbleverse:jupiter_defeated", "cobbleverse:karen_defeated", "cobbleverse:koga_defeated", "cobbleverse:koga_johto_defeated", "cobbleverse:lance_defeated", "cobbleverse:lorelei_defeated", "cobbleverse:ltsurge_defeated", "cobbleverse:luciano_defeated", "cobbleverse:mars_defeated", "cobbleverse:marzia_defeated", "cobbleverse:misty_defeated", "cobbleverse:norman_defeated", "cobbleverse:omar_defeated", "cobbleverse:pedro_defeated", "cobbleverse:petra_defeated", "cobbleverse:pino_defeated", "cobbleverse:raffaello_defeated", "cobbleverse:rudi_defeated", "cobbleverse:sabrina_defeated", "cobbleverse:sandra_defeated", "cobbleverse:saturn_defeated", "cobbleverse:tell_defeated", "cobbleverse:terrie_defeated", "cobbleverse:valerio_defeated", "cobbleverse:vulcano_defeated", "cobbleverse:walter_defeated"]
+    "empty_loot_tables": [
+      "cobbleverse:gym_map",
+      "cobbleverse:johto_gym_map",
+      "cobbleverse:hoenn_gym_map",
+      "cobbleverse:sinnoh_gym_map",
+      "rctmod:trainers/single/kanto_blaine",
+      "rctmod:trainers/single/kanto_brock",
+      "rctmod:trainers/single/kanto_champion_blue",
+      "rctmod:trainers/single/kanto_erika",
+      "rctmod:trainers/single/kanto_giovanni",
+      "rctmod:trainers/single/kanto_koga",
+      "rctmod:trainers/single/kanto_ltsurge",
+      "rctmod:trainers/single/kanto_misty",
+      "rctmod:trainers/single/kanto_sabrina"
+    ],
+    "empty_functions": [
+      "cobbleverse:aaron_defeated",
+      "cobbleverse:adriano_defeated",
+      "cobbleverse:agatha_defeated",
+      "cobbleverse:alfredo_defeated",
+      "cobbleverse:alice_defeated",
+      "cobbleverse:angelo_defeated",
+      "cobbleverse:bianca_defeated",
+      "cobbleverse:blaine_defeated",
+      "cobbleverse:brock_defeated",
+      "cobbleverse:bruno_defeated",
+      "cobbleverse:bruno_johto_defeated",
+      "cobbleverse:chiara_defeated",
+      "cobbleverse:corrado_defeated",
+      "cobbleverse:cyrus_defeated",
+      "cobbleverse:drake_defeated",
+      "cobbleverse:erika_defeated",
+      "cobbleverse:ester_defeated",
+      "cobbleverse:fannie_defeated",
+      "cobbleverse:ferruccio_defeated",
+      "cobbleverse:fiammetta_defeated",
+      "cobbleverse:fosco_defeated",
+      "cobbleverse:frida_defeated",
+      "cobbleverse:furio_defeated",
+      "cobbleverse:gardenia_defeated",
+      "cobbleverse:giovanni_defeated",
+      "cobbleverse:jasmine_defeated",
+      "cobbleverse:jupiter_defeated",
+      "cobbleverse:karen_defeated",
+      "cobbleverse:koga_defeated",
+      "cobbleverse:koga_johto_defeated",
+      "cobbleverse:lance_defeated",
+      "cobbleverse:lorelei_defeated",
+      "cobbleverse:ltsurge_defeated",
+      "cobbleverse:luciano_defeated",
+      "cobbleverse:mars_defeated",
+      "cobbleverse:marzia_defeated",
+      "cobbleverse:misty_defeated",
+      "cobbleverse:norman_defeated",
+      "cobbleverse:omar_defeated",
+      "cobbleverse:pedro_defeated",
+      "cobbleverse:petra_defeated",
+      "cobbleverse:pino_defeated",
+      "cobbleverse:raffaello_defeated",
+      "cobbleverse:rudi_defeated",
+      "cobbleverse:sabrina_defeated",
+      "cobbleverse:sandra_defeated",
+      "cobbleverse:saturn_defeated",
+      "cobbleverse:tell_defeated",
+      "cobbleverse:terrie_defeated",
+      "cobbleverse:valerio_defeated",
+      "cobbleverse:vulcano_defeated",
+      "cobbleverse:walter_defeated"
+    ],
+    "first_win_rewards": {
+      "why": "The owner, 2026-09-24: a leader's rewards are given once, on the first win, to the winner. Upstream they drop from the trainer's rctmod loot table on every win, as items on the ground: the badge (and Brock's badge box) guarded by rctmod:defeat_count == 1, the TM pool not guarded at all, and rctmod never refuses a persistent trainer's rematch, so on staging a second win over Brock dropped TM Rock Slide and paid again (docs/STATE.md). Here each leader's loot table is empty and the flag's one-time reward runs `loot give @s loot cobblers:first_win/<trainer>`: `items` each once, and one of `one_of` (duplicates kept, as upstream weighted them). Read from COBBLEVERSE-RCT-DP-v20, 2026-09-24. CobbleDollars still pays per win (earnCobbleDollarsFromNPC); not changed here.",
+      "series": "kanto",
+      "trainers": {
+        "kanto_blaine": {
+          "flag": "gym7_cleared",
+          "items": [
+            "cobbleversebadges:kanto_volcano_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_overheat",
+            "tmcraft:tm_fireblast"
+          ]
+        },
+        "kanto_brock": {
+          "flag": "gym1_cleared",
+          "items": [
+            "cobbleversebadges:kanto_boulder_badge",
+            "cobbleversebadges:kanto_badge_box"
+          ],
+          "one_of": [
+            "tmcraft:tm_bide",
+            "tmcraft:tm_rocktomb",
+            "tmcraft:tm_rockslide",
+            "tmcraft:tm_headbutt"
+          ]
+        },
+        "kanto_champion_blue": {
+          "flag": "champion_cleared",
+          "items": [
+            "cobbleversebadges:kanto_league_trophy",
+            "cobblemon:ancient_origin_ball"
+          ],
+          "one_of": []
+        },
+        "kanto_erika": {
+          "flag": "gym4_cleared",
+          "items": [
+            "cobbleversebadges:kanto_rainbow_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_megadrain",
+            "tmcraft:tm_gigadrain"
+          ]
+        },
+        "kanto_giovanni": {
+          "flag": "gym8_cleared",
+          "items": [
+            "cobbleversebadges:kanto_earth_badge",
+            "lumymon:ancient_dna",
+            "cobblemon:master_ball"
+          ],
+          "one_of": [
+            "tmcraft:tm_fissure",
+            "tmcraft:tm_earthquake",
+            "tmcraft:tm_fireblast",
+            "tmcraft:tm_fireblast"
+          ]
+        },
+        "kanto_koga": {
+          "flag": "gym5_cleared",
+          "items": [
+            "cobbleversebadges:kanto_soul_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_toxic",
+            "tmcraft:tm_poisonjab",
+            "tmcraft:tm_poisonfang",
+            "tmcraft:tm_poisongas"
+          ]
+        },
+        "kanto_ltsurge": {
+          "flag": "gym3_cleared",
+          "items": [
+            "cobbleversebadges:kanto_thunder_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_thunderbolt",
+            "tmcraft:tm_shockwave",
+            "tmcraft:tm_thunder"
+          ]
+        },
+        "kanto_misty": {
+          "flag": "gym2_cleared",
+          "items": [
+            "cobbleversebadges:kanto_cascade_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_bubblebeam",
+            "tmcraft:tm_waterpulse",
+            "tmcraft:tm_scald"
+          ]
+        },
+        "kanto_sabrina": {
+          "flag": "gym6_cleared",
+          "items": [
+            "cobbleversebadges:kanto_marsh_badge"
+          ],
+          "one_of": [
+            "tmcraft:tm_psywave",
+            "tmcraft:tm_calmmind",
+            "tmcraft:tm_skillswap"
+          ]
+        }
+      }
+    }
   }
 }

@@ -44,6 +44,9 @@ later script) can reproduce the server exactly.
 
 - Java 21. Check with `java -version`; `boot-test.ps1` refuses anything older.
 - Memory: start with `-Xms4G -Xmx6G` for 4-8 players (Cobblemon + Terralith + ~100 server-side mods).
+  With the campaign's spawn suppression installed, allow far more: it costs about 3.8 GB of heap by itself, and the
+  post-export re-application (`tools/reapply.py run`) ran a 10 GB heap out of memory on staging (2026-09-25). Run the
+  re-application at `-Xmx16G`.
   Raise to 8G if the log shows long GC pauses. Do not exceed roughly half the host RAM.
 - Flags: the plain `-Xms/-Xmx -jar fabric-server-launch.jar -nogui` is enough for a first boot.
   Aikar-style G1 flags are an optimisation for later, not a requirement.

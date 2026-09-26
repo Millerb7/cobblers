@@ -201,6 +201,17 @@
     2.8
    ]
   },
+  "jungle_emergent": {
+   "objects": 4,
+   "height": [
+    35,
+    47
+   ],
+   "crown_radius": [
+    11.3,
+    15.3
+   ]
+  },
   "krummholz": {
    "objects": 7,
    "height": [
@@ -289,6 +300,28 @@
     0
    ]
   },
+  "mangrove": {
+   "objects": 6,
+   "height": [
+    11,
+    17
+   ],
+   "crown_radius": [
+    5.8,
+    8.5
+   ]
+  },
+  "mangrove_scrub": {
+   "objects": 3,
+   "height": [
+    6,
+    9
+   ],
+   "crown_radius": [
+    1.4,
+    4.5
+   ]
+  },
   "mega_jungle": {
    "objects": 8,
    "height": [
@@ -344,6 +377,17 @@
     3.6
    ]
   },
+  "root_tangle": {
+   "objects": 4,
+   "height": [
+    4,
+    4
+   ],
+   "crown_radius": [
+    0.0,
+    0
+   ]
+  },
   "snag_broadleaf": {
    "objects": 3,
    "height": [
@@ -377,6 +421,17 @@
     3.6
    ]
   },
+  "swamp_giant": {
+   "objects": 4,
+   "height": [
+    17,
+    23
+   ],
+   "crown_radius": [
+    8.1,
+    10.6
+   ]
+  },
   "swamp_oak": {
    "objects": 8,
    "height": [
@@ -397,6 +452,28 @@
    "crown_radius": [
     2.2,
     2.8
+   ]
+  },
+  "tall_mangrove": {
+   "objects": 4,
+   "height": [
+    22,
+    27
+   ],
+   "crown_radius": [
+    8.6,
+    9.5
+   ]
+  },
+  "vine_snag": {
+   "objects": 3,
+   "height": [
+    6,
+    10
+   ],
+   "crown_radius": [
+    0.0,
+    0
    ]
   }
  },
@@ -3052,6 +3129,106 @@
    "depth_below_origin": 0
   },
   {
+   "name": "jungle_emergent_01",
+   "file": "jungle_emergent_01.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    10,
+    0,
+    8
+   ],
+   "sha256": "1f011ed1c76d25067947ad201dfa8eec33e5f8dbe66ed7290a7db30f1ddfbe3f",
+   "size": [
+    21,
+    35,
+    19
+   ],
+   "blocks": 1553,
+   "height": 35,
+   "eye_width": 5,
+   "ground_radius": 3,
+   "crown_radius": 11.3,
+   "trunk_footprint": 8,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_emergent_02",
+   "file": "jungle_emergent_02.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    9,
+    0,
+    12
+   ],
+   "sha256": "e6af74d0aa88598d0dd75747f15446ba23b0aee2181d11527f604bb1db28cdcf",
+   "size": [
+    21,
+    39,
+    26
+   ],
+   "blocks": 2427,
+   "height": 39,
+   "eye_width": 6,
+   "ground_radius": 4,
+   "crown_radius": 12.7,
+   "trunk_footprint": 13,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_emergent_03",
+   "file": "jungle_emergent_03.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    12,
+    0,
+    10
+   ],
+   "sha256": "4ec08181acf78d4dbac1693d9661f40c3937dd0b9abbc04f39dc9055c7c12d71",
+   "size": [
+    26,
+    43,
+    24
+   ],
+   "blocks": 2549,
+   "height": 43,
+   "eye_width": 6,
+   "ground_radius": 4,
+   "crown_radius": 13.6,
+   "trunk_footprint": 13,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "jungle_emergent_04",
+   "file": "jungle_emergent_04.nbt",
+   "group": "jungle_emergent",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    13,
+    0,
+    15
+   ],
+   "sha256": "1d300a8e3f7ed15c055ea41575295caf55af3f97ff10a898ac5884132afc6fde",
+   "size": [
+    27,
+    47,
+    31
+   ],
+   "blocks": 3664,
+   "height": 47,
+   "eye_width": 6,
+   "ground_radius": 3,
+   "crown_radius": 15.3,
+   "trunk_footprint": 9,
+   "depth_below_origin": 0
+  },
+  {
    "name": "krummholz_01",
    "file": "krummholz_01.nbt",
    "group": "krummholz",
@@ -3473,6 +3650,231 @@
    "eye_width": 0,
    "ground_radius": 3,
    "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_01",
+   "file": "mangrove_01.nbt",
+   "group": "mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    6,
+    0,
+    6
+   ],
+   "sha256": "b01e5d8273b9ad6fa0c827049fd1e723c3c3fb398b273b97a1dce76f68ad4544",
+   "size": [
+    12,
+    11,
+    11
+   ],
+   "blocks": 246,
+   "height": 11,
+   "eye_width": 7,
+   "ground_radius": 4,
+   "crown_radius": 5.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_02",
+   "file": "mangrove_02.nbt",
+   "group": "mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    4,
+    0,
+    5
+   ],
+   "sha256": "93e92b22545a5fa24d8ced6b0bdbeb37f556c29e9741bdecc94d7d5299baae1d",
+   "size": [
+    9,
+    12,
+    12
+   ],
+   "blocks": 274,
+   "height": 12,
+   "eye_width": 8,
+   "ground_radius": 4,
+   "crown_radius": 6.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_03",
+   "file": "mangrove_03.nbt",
+   "group": "mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    7,
+    0,
+    7
+   ],
+   "sha256": "ecd6e09315aa0f6b03f46e8b3a04d4d6f766286b1b92bd6272a3fc80da28508a",
+   "size": [
+    13,
+    14,
+    14
+   ],
+   "blocks": 372,
+   "height": 14,
+   "eye_width": 8,
+   "ground_radius": 4,
+   "crown_radius": 6.7,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_04",
+   "file": "mangrove_04.nbt",
+   "group": "mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    7,
+    0,
+    7
+   ],
+   "sha256": "63e6915cf438f8e674f4286eb556517cf147a7002ea10f69ad49333ee07b8975",
+   "size": [
+    13,
+    14,
+    15
+   ],
+   "blocks": 388,
+   "height": 14,
+   "eye_width": 8,
+   "ground_radius": 4,
+   "crown_radius": 7.3,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_05",
+   "file": "mangrove_05.nbt",
+   "group": "mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    8,
+    0,
+    6
+   ],
+   "sha256": "f62d800a7684f011e85a06dd3091e2abd0bd2d779730101f37763ec9a8498beb",
+   "size": [
+    15,
+    16,
+    14
+   ],
+   "blocks": 582,
+   "height": 16,
+   "eye_width": 9,
+   "ground_radius": 5,
+   "crown_radius": 8.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_06",
+   "file": "mangrove_06.nbt",
+   "group": "mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    7,
+    0,
+    8
+   ],
+   "sha256": "8bbcdfda4548dc203624b0426b95e7a79712a0deb42c5a83509e845afdf687ce",
+   "size": [
+    15,
+    17,
+    14
+   ],
+   "blocks": 551,
+   "height": 17,
+   "eye_width": 10,
+   "ground_radius": 5,
+   "crown_radius": 8.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_scrub_01",
+   "file": "mangrove_scrub_01.nbt",
+   "group": "mangrove_scrub",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    3,
+    0,
+    2
+   ],
+   "sha256": "0e5a61ece18660aa7270ebf8d355ac3c2415f65f234c68f2009e930dc5d5fed2",
+   "size": [
+    6,
+    6,
+    5
+   ],
+   "blocks": 34,
+   "height": 6,
+   "eye_width": 5,
+   "ground_radius": 3,
+   "crown_radius": 1.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_scrub_02",
+   "file": "mangrove_scrub_02.nbt",
+   "group": "mangrove_scrub",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    4,
+    0,
+    3
+   ],
+   "sha256": "90b5fade1ff52dd161e76be409eb664743bf1bb4f98d4cc9372d6a775f44a6fc",
+   "size": [
+    8,
+    8,
+    8
+   ],
+   "blocks": 74,
+   "height": 8,
+   "eye_width": 5,
+   "ground_radius": 3,
+   "crown_radius": 4.1,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "mangrove_scrub_03",
+   "file": "mangrove_scrub_03.nbt",
+   "group": "mangrove_scrub",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    4,
+    0,
+    3
+   ],
+   "sha256": "e9e8647834e0da30b8882bf0ec17e846516064daaae2a30f8278b1714abfb456",
+   "size": [
+    8,
+    9,
+    7
+   ],
+   "blocks": 95,
+   "height": 9,
+   "eye_width": 5,
+   "ground_radius": 3,
+   "crown_radius": 4.5,
    "trunk_footprint": 1,
    "depth_below_origin": 0
   },
@@ -4627,6 +5029,106 @@
    "depth_below_origin": 0
   },
   {
+   "name": "root_tangle_01",
+   "file": "root_tangle_01.nbt",
+   "group": "root_tangle",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    2
+   ],
+   "sha256": "bdb507d07667514f76ed42b6014a3fcd9cb08e784463a941c9d904f63adb80b5",
+   "size": [
+    5,
+    4,
+    5
+   ],
+   "blocks": 22,
+   "height": 4,
+   "eye_width": 5,
+   "ground_radius": 2,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "root_tangle_02",
+   "file": "root_tangle_02.nbt",
+   "group": "root_tangle",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    1
+   ],
+   "sha256": "d808d582930a4ef1980daeac146dd5fee12c03c163e83070dddb6bc0d6b986d3",
+   "size": [
+    6,
+    4,
+    4
+   ],
+   "blocks": 24,
+   "height": 4,
+   "eye_width": 6,
+   "ground_radius": 3,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "root_tangle_03",
+   "file": "root_tangle_03.nbt",
+   "group": "root_tangle",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    3,
+    0,
+    3
+   ],
+   "sha256": "3872a67dd49026da027b443740ef33687c2c8501ebe71eea37bd9030d0d08440",
+   "size": [
+    8,
+    4,
+    7
+   ],
+   "blocks": 33,
+   "height": 4,
+   "eye_width": 7,
+   "ground_radius": 4,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "root_tangle_04",
+   "file": "root_tangle_04.nbt",
+   "group": "root_tangle",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    2,
+    0,
+    3
+   ],
+   "sha256": "4fed42ddddc53b4d3a9b0fbe65520b25cbebe7da44b6195acd9ffc10c03f325d",
+   "size": [
+    6,
+    4,
+    7
+   ],
+   "blocks": 36,
+   "height": 4,
+   "eye_width": 6,
+   "ground_radius": 3,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
    "name": "snag_birch_05",
    "file": "snag_birch_05.nbt",
    "group": "snag_broadleaf",
@@ -5027,6 +5529,106 @@
    "depth_below_origin": 0
   },
   {
+   "name": "swamp_giant_01",
+   "file": "swamp_giant_01.nbt",
+   "group": "swamp_giant",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    6,
+    0,
+    6
+   ],
+   "sha256": "1a94aa76a0c20a9db538053c4309fb220ffb367c921052bfa4933ed4ad1d8b25",
+   "size": [
+    14,
+    17,
+    15
+   ],
+   "blocks": 906,
+   "height": 17,
+   "eye_width": 4,
+   "ground_radius": 3,
+   "crown_radius": 8.1,
+   "trunk_footprint": 15,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_giant_02",
+   "file": "swamp_giant_02.nbt",
+   "group": "swamp_giant",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    8,
+    0,
+    8
+   ],
+   "sha256": "7ec69ee438181faadac55fbe4996e16d53ce7beff9f4338f3238a6e1cb9ce9f8",
+   "size": [
+    17,
+    19,
+    18
+   ],
+   "blocks": 1219,
+   "height": 19,
+   "eye_width": 4,
+   "ground_radius": 3,
+   "crown_radius": 8.6,
+   "trunk_footprint": 15,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_giant_03",
+   "file": "swamp_giant_03.nbt",
+   "group": "swamp_giant",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    8,
+    0,
+    9
+   ],
+   "sha256": "d353a69d20252f394b8dbf8e1b4777e392fa1f2e9b5a72eafb402ce1ef75fc27",
+   "size": [
+    18,
+    21,
+    19
+   ],
+   "blocks": 1056,
+   "height": 21,
+   "eye_width": 4,
+   "ground_radius": 3,
+   "crown_radius": 8.9,
+   "trunk_footprint": 14,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "swamp_giant_04",
+   "file": "swamp_giant_04.nbt",
+   "group": "swamp_giant",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    9,
+    0,
+    9
+   ],
+   "sha256": "c4283f975fd3e258b85a7ea7af27d28068592f761405d65958c2a81ff1c84e8a",
+   "size": [
+    19,
+    23,
+    19
+   ],
+   "blocks": 1533,
+   "height": 23,
+   "eye_width": 4,
+   "ground_radius": 3,
+   "crown_radius": 10.6,
+   "trunk_footprint": 14,
+   "depth_below_origin": 0
+  },
+  {
    "name": "swamp_oak_01",
    "file": "swamp_oak_01.nbt",
    "group": "swamp_oak",
@@ -5423,6 +6025,181 @@
    "eye_width": 1,
    "ground_radius": 0,
    "crown_radius": 2.8,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_mangrove_01",
+   "file": "tall_mangrove_01.nbt",
+   "group": "tall_mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    7,
+    0,
+    7
+   ],
+   "sha256": "cb4211e6231e02cfb17ef04451cf6c1acc0885712a6fb876209dce785bfc96eb",
+   "size": [
+    16,
+    22,
+    16
+   ],
+   "blocks": 725,
+   "height": 22,
+   "eye_width": 10,
+   "ground_radius": 5,
+   "crown_radius": 9.4,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_mangrove_02",
+   "file": "tall_mangrove_02.nbt",
+   "group": "tall_mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    6,
+    0,
+    7
+   ],
+   "sha256": "b7985ba4fa70181207c8949ba1c3e095fdaaf60858ac3dbdc36a04b40473ee7b",
+   "size": [
+    15,
+    23,
+    16
+   ],
+   "blocks": 812,
+   "height": 23,
+   "eye_width": 12,
+   "ground_radius": 6,
+   "crown_radius": 8.6,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_mangrove_03",
+   "file": "tall_mangrove_03.nbt",
+   "group": "tall_mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    8,
+    0,
+    9
+   ],
+   "sha256": "2b0e12b4f91770b503893d5ad7a12f7ac59e8950387999ca45800a98cfa24d44",
+   "size": [
+    19,
+    25,
+    18
+   ],
+   "blocks": 1173,
+   "height": 25,
+   "eye_width": 11,
+   "ground_radius": 6,
+   "crown_radius": 9.5,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "tall_mangrove_04",
+   "file": "tall_mangrove_04.nbt",
+   "group": "tall_mangrove",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    8,
+    0,
+    9
+   ],
+   "sha256": "a4d642aefa955363911aa15b075a59fd7f5647bff88d62c5142315617d61274b",
+   "size": [
+    19,
+    27,
+    20
+   ],
+   "blocks": 1281,
+   "height": 27,
+   "eye_width": 13,
+   "ground_radius": 7,
+   "crown_radius": 9.2,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "vine_snag_mangrove_02",
+   "file": "vine_snag_mangrove_02.nbt",
+   "group": "vine_snag",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    1
+   ],
+   "sha256": "d52a5e2295b2e0b7ef884bfe2ba738c17f229d80d0e35978a5ebec0420748e55",
+   "size": [
+    5,
+    8,
+    3
+   ],
+   "blocks": 22,
+   "height": 8,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "vine_snag_oak_01",
+   "file": "vine_snag_oak_01.nbt",
+   "group": "vine_snag",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    1,
+    0,
+    2
+   ],
+   "sha256": "147a642db430452f10c44548920dd708f2be97ae73336988eb7f7ee23e1b172b",
+   "size": [
+    3,
+    6,
+    5
+   ],
+   "blocks": 16,
+   "height": 6,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
+   "trunk_footprint": 1,
+   "depth_below_origin": 0
+  },
+  {
+   "name": "vine_snag_oak_03",
+   "file": "vine_snag_oak_03.nbt",
+   "group": "vine_snag",
+   "source": "generated",
+   "feature": null,
+   "origin": [
+    3,
+    0,
+    1
+   ],
+   "sha256": "4c3b0ccbb4d9b56a7f7999d530009196d486a48bf8f1ba174071ed5ba04e5ffb",
+   "size": [
+    6,
+    10,
+    4
+   ],
+   "blocks": 31,
+   "height": 10,
+   "eye_width": 1,
+   "ground_radius": 0,
+   "crown_radius": 0.0,
    "trunk_footprint": 1,
    "depth_below_origin": 0
   }

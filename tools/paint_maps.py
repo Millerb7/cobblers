@@ -57,7 +57,8 @@ WP_BIOMES = {
 }
 TERRAIN_CODES = {"GRASS": 1, "SAND": 2, "DESERT": 3, "RED_SAND": 4, "MESA": 5, "ROCK": 6, "STONE_MIX": 7, "GRAVEL": 8,
                  "SNOW": 9, "DEEP_SNOW": 10, "PODZOL": 11, "MUD": 12, "MYCELIUM": 13, "BASALT": 14, "BLACKSTONE": 15,
-                 "BEACHES": 16, "PERMADIRT": 17, "MAGMA": 18, "CLAY": 19, "MOSS": 20, "RED_DESERT": 21, "BARE_GRASS": 22}
+                 "BEACHES": 16, "PERMADIRT": 17, "MAGMA": 18, "CLAY": 19, "MOSS": 20, "RED_DESERT": 21, "BARE_GRASS": 22,
+                 "SANDSTONE": 23}
 # one mask, 1 where a trunk may stand; the painting steps below clear it where nothing may grow
 TREE_LAYERS = ("allowed",)
 # Plant names are WorldPainter's (org.pepsoft.worldpainter.layers.plants.Plants). "Short Grass" is avoided:
@@ -86,6 +87,13 @@ PLANT_SETS = {
     "lily_valley": {"Lily of the Valley": 3, "Fern": 2, "Tall Grass": 3},
     "petals": {"Pink Petals": 5, "Tall Grass": 2},
     "jungle_floor": {"Fern": 4, "Large Fern": 3, "Tall Grass": 2},
+    # New sets are named to sort after every earlier one: a preset's plant noise is salted by the set's sorted
+    # position (main, "salt = 307 + ..."), so a name sorting earlier would reshuffle every plant on the map.
+    # bamboo groves in the jungle isles' understory (data/foliage.json overlay jungle_bamboo): vanilla bamboo decides
+    # no loaded spawn condition (data/spawn_blocks.json), and no bamboo_jungle biome is painted
+    "understory_bamboo": {"Bamboo": 6, "Fern": 3, "Large Fern": 2},
+    # the Long Isle's desert island (docs/world-building/LONG_ISLE.md): dead shrubs and the odd cactus on the sand
+    "xeric_scrub": {"Dead Shrub": 6, "Cactus": 2},
 }
 # how WorldPainter renders each object group (tools/worldpainter/paint.js); groups not listed get the defaults:
 # random rotation, trunks extended down to uneven ground
@@ -240,6 +248,24 @@ def settlement_clearance(towns_path, margin):
     return mask
 
 
+def route_lanes(routes_path, clearance):
+    """True within clearance blocks of every route's stored centreline (data/routes.json corridor.polyline). Foliage
+    overlays keep their ground contact (prop roots, knees, tangles) off it, so a dense overlay never walls a route."""
+    if not routes_path or not Path(routes_path).exists():
+        raise SystemExit("foliage overlays keep %d blocks off the routes, but the routes file %r is absent"
+                         % (clearance, routes_path))
+    doc = json.loads(Path(routes_path).read_text(encoding="utf-8"))
+    img = Image.new("L", (N, N), 0)
+    d = ImageDraw.Draw(img)
+    for r in doc.get("routes") or []:
+        pts = [(float(p["x"]), float(p["z"])) for p in ((r.get("corridor") or {}).get("polyline") or [])]
+        if len(pts) >= 2:
+            d.line(pts, fill=1, width=2 * clearance + 1, joint="curve")
+        for x, z in pts:
+            d.ellipse((x - clearance, z - clearance, x + clearance, z + clearance), fill=1)
+    return np.asarray(img).astype(bool)
+
+
 def paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr, plants, speck, nz, allowed, lake_depth, water, land):
     import foliage as F
     doc = json.loads(Path(a.foliage).read_text(encoding="utf-8"))
@@ -251,15 +277,19 @@ def paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr, plant
     c = int(doc["density_model"]["water_clearance_blocks"])
     near_water = np.asarray(Image.fromarray(water.astype(np.uint8) * 255).filter(ImageFilter.MaxFilter(2 * c + 1))) > 0
     allowed = allowed & ~near_water
-    res = F.place(doc, library, subs, presets, idx, heights, slope, allowed, lake_depth, water, excl, a.seed)
+    layers, lane = F.overlay_layers(doc)
+    paths = route_lanes(getattr(a, "routes", None), lane) if layers and lane > 0 else None
+    res = F.place(doc, library, subs, presets, idx, heights, slope, allowed, lake_depth, water, excl, a.seed, paths=paths)
     G = F.G
 
     def up(grid):
         return np.repeat(np.repeat(grid, G, axis=0), G, axis=1)
 
-    for ti, t in enumerate(res["type_ids"]):
-        spec = doc["types"][t]
-        f = res["fields"][t]
+    # forest types, then overlays (floor and understory only: an overlay never paints a biome)
+    covers = [(doc["types"][t], res["fields"][t]) for t in res["type_ids"]]
+    covers += [(next(lay for lay in layers if lay["id"] == oid), res["overlay_fields"][oid])
+               for oid in res.get("overlay_ids", [])]
+    for spec, f in covers:
         z0, z1, x0, x1 = f["box"]
         bz0, bz1, bx0, bx1 = z0 * G, min(N, z1 * G), x0 * G, min(N, x1 * G)
         view = (slice(bz0, bz1), slice(bx0, bx1))
@@ -317,6 +347,10 @@ def paint_foliage(a, out, heights, slope, idx, subs, presets, biome, terr, plant
     np.savez_compressed(out / "canopy.npz", canopy=res["canopy"], grid_blocks=G)
     stats = {"types": res["stats"], "objects": {e["layer"]: e["count"] for e in manifest},
              "total_objects": int(sum(e["count"] for e in manifest))}
+    if res.get("overlay_stats"):
+        stats["overlays"] = res["overlay_stats"]
+    if res.get("by_subregion"):
+        stats["by_subregion"] = res["by_subregion"]
     return manifest, stats
 
 
@@ -331,6 +365,8 @@ def main(argv=None):
     p.add_argument("--foliage", default=str(ROOT / "data" / "foliage.json"), help="forest types; '' to place no trees")
     p.add_argument("--library", default=str(ROOT / "kits" / "structures" / "foliage" / "library.json"))
     p.add_argument("--towns", default=str(ROOT / "data" / "towns.json"), help="settlement footprints kept clear of trees")
+    p.add_argument("--routes", default=str(ROOT / "data" / "routes.json"),
+                   help="route centrelines foliage overlays keep clear of (data/foliage.json overlays.path_clearance_blocks)")
     p.add_argument("--coast-class", default=str(ROOT / "build" / "sculpt" / "coast_class.png"),
                    help="coast classes from tools/sculpt.py apply; '' for the uniform beach rule")
     a = p.parse_args(argv)
@@ -441,7 +477,8 @@ def main(argv=None):
         cg = g2
     cold_near = np.repeat(np.repeat(cg, 8, 0), 8, 1)[:cold.shape[0], :cold.shape[1]]
     cold = cold | (sea & cold_near)
-    arid = np.isin(terr, [TERRAIN_CODES[k] for k in ("DESERT", "RED_DESERT", "MESA", "RED_SAND", "SAND")])
+    arid = np.isin(terr, [TERRAIN_CODES[k] for k in ("DESERT", "RED_DESERT", "MESA", "RED_SAND", "SAND",
+                                                   "SANDSTONE")])
     coast_class = None
     if a.coast_class and Path(a.coast_class).exists():
         coast_class = np.asarray(Image.open(a.coast_class))

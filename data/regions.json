@@ -2,7 +2,7 @@
  "schema": "cobblers.regions/3",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+ "computed_from_sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
  "landmarks": "data/landmarks.json",
  "geometry": {
   "raster_cell_blocks": 8,
@@ -1868,6 +1868,57 @@
      "coverage": 0.2
     }
    ]
+  },
+  "desert_isle": {
+   "biome": "minecraft:desert",
+   "terrain": "DESERT",
+   "patches": [
+    {
+     "terrain": "SAND",
+     "coverage": 0.35,
+     "scale": 64
+    }
+   ],
+   "rock_slope_deg": 34,
+   "rock": "SANDSTONE",
+   "plants": [
+    {
+     "set": "xeric_scrub",
+     "coverage": 0.03,
+     "scale": 48
+    }
+   ]
+  },
+  "sandstone_uplands": {
+   "biome": "minecraft:desert",
+   "terrain": "DESERT",
+   "patches": [
+    {
+     "terrain": "SAND",
+     "coverage": 0.3,
+     "scale": 64
+    },
+    {
+     "terrain": "SANDSTONE",
+     "coverage": 0.2,
+     "scale": 40
+    }
+   ],
+   "terrain_above": [
+    [
+     128,
+     "SANDSTONE"
+    ]
+   ],
+   "rock_slope_deg": 26,
+   "rock": "SANDSTONE",
+   "plants": [
+    {
+     "set": "xeric_scrub",
+     "coverage": 0.02,
+     "scale": 48
+    }
+   ]
   }
  },
  "regions": [
@@ -2647,14 +2698,14 @@
     },
     "elevation": {
      "p10": 79.2,
-     "median": 108.7,
-     "p90": 145.3,
+     "median": 108.8,
+     "p90": 145.4,
      "max": 238.6
     },
     "slope_degrees": {
-     "mean": 10.7,
-     "p90": 23.1,
-     "flat_under_5_pct": 34.6
+     "mean": 10.9,
+     "p90": 23.4,
+     "flat_under_5_pct": 34.4
     }
    },
    "biomes": [
@@ -3030,15 +3081,15 @@
      "max_z": 5407
     },
     "elevation": {
-     "p10": 85.4,
-     "median": 109.5,
-     "p90": 132.7,
-     "max": 151.0
+     "p10": 84.9,
+     "median": 101.8,
+     "p90": 137.7,
+     "max": 273.1
     },
     "slope_degrees": {
-     "mean": 10.0,
-     "p90": 21.2,
-     "flat_under_5_pct": 34.0
+     "mean": 17.0,
+     "p90": 52.7,
+     "flat_under_5_pct": 31.6
     }
    },
    "biomes": [
@@ -3792,14 +3843,14 @@
     },
     "elevation": {
      "p10": 109.4,
-     "median": 123.9,
-     "p90": 144.6,
-     "max": 151.9
+     "median": 124.4,
+     "p90": 144.7,
+     "max": 206.8
     },
     "slope_degrees": {
-     "mean": 4.6,
-     "p90": 8.0,
-     "flat_under_5_pct": 63.1
+     "mean": 5.0,
+     "p90": 8.1,
+     "flat_under_5_pct": 63.0
     }
    },
    "biomes": [
@@ -4180,13 +4231,13 @@
     "elevation": {
      "p10": 90.7,
      "median": 113.2,
-     "p90": 131.7,
-     "max": 158.1
+     "p90": 131.8,
+     "max": 266.9
     },
     "slope_degrees": {
-     "mean": 5.6,
-     "p90": 12.4,
-     "flat_under_5_pct": 61.3
+     "mean": 5.7,
+     "p90": 12.6,
+     "flat_under_5_pct": 61.1
     }
    },
    "biomes": [
@@ -4364,9 +4415,9 @@
      "max": 151.7
     },
     "slope_degrees": {
-     "mean": 5.9,
-     "p90": 14.3,
-     "flat_under_5_pct": 62.9
+     "mean": 6.0,
+     "p90": 14.7,
+     "flat_under_5_pct": 62.8
     }
    },
    "biomes": [
@@ -4498,7 +4549,8 @@
    "subregions": [
     "pallet_meadows",
     "west_shore",
-    "south_west_fields"
+    "south_west_fields",
+    "route1_maze_forest"
    ],
    "measured": {
     "area_km2": 1.789,
@@ -4641,13 +4693,13 @@
     "elevation": {
      "p10": 79.9,
      "median": 105.8,
-     "p90": 128.6,
-     "max": 148.5
+     "p90": 128.9,
+     "max": 237.7
     },
     "slope_degrees": {
-     "mean": 5.9,
-     "p90": 11.6,
-     "flat_under_5_pct": 55.9
+     "mean": 6.3,
+     "p90": 12.0,
+     "flat_under_5_pct": 55.4
     }
    },
    "biomes": [
@@ -6053,7 +6105,7 @@
     "note": "spawn philosophy open; not populated"
    },
    "paint": {
-    "preset": "taiga_sparse"
+    "preset": "desert_isle"
    },
    "polygons": [
     [
@@ -6167,7 +6219,7 @@
     "note": "spawn philosophy open; not populated"
    },
    "paint": {
-    "preset": "forest"
+    "preset": "sandstone_uplands"
    },
    "polygons": [
     [
@@ -6266,7 +6318,7 @@
     "note": "spawn philosophy open; not populated"
    },
    "paint": {
-    "preset": "sparse_jungle"
+    "preset": "jungle"
    },
    "polygons": [
     [
@@ -7138,14 +7190,14 @@
     },
     "elevation": {
      "p10": 87.8,
-     "median": 102.3,
-     "p90": 121.8,
-     "max": 158.2
+     "median": 102.4,
+     "p90": 122.2,
+     "max": 204.1
     },
     "slope_degrees": {
-     "mean": 8.7,
-     "p90": 20.5,
-     "flat_under_5_pct": 43.5
+     "mean": 9.4,
+     "p90": 21.6,
+     "flat_under_5_pct": 43.0
     }
    },
    "boundaries": [
@@ -9299,15 +9351,15 @@
      "max_z": 3903
     },
     "elevation": {
-     "p10": 83.6,
-     "median": 97.5,
-     "p90": 135.7,
-     "max": 151.5
+     "p10": 83.4,
+     "median": 90.9,
+     "p90": 140.2,
+     "max": 270.9
     },
     "slope_degrees": {
-     "mean": 12.3,
-     "p90": 24.5,
-     "flat_under_5_pct": 25.9
+     "mean": 17.1,
+     "p90": 50.4,
+     "flat_under_5_pct": 30.9
     }
    },
    "boundaries": [
@@ -9945,15 +9997,15 @@
      "max_z": 3919
     },
     "elevation": {
-     "p10": 85.9,
-     "median": 107.3,
-     "p90": 129.3,
-     "max": 147.1
+     "p10": 85.2,
+     "median": 104.0,
+     "p90": 132.3,
+     "max": 268.6
     },
     "slope_degrees": {
-     "mean": 7.5,
-     "p90": 16.1,
-     "flat_under_5_pct": 41.5
+     "mean": 13.6,
+     "p90": 37.7,
+     "flat_under_5_pct": 35.1
     }
    },
    "boundaries": [
@@ -10596,15 +10648,15 @@
      "max_z": 5407
     },
     "elevation": {
-     "p10": 86.9,
-     "median": 115.3,
-     "p90": 137.6,
-     "max": 149.2
+     "p10": 86.3,
+     "median": 110.4,
+     "p90": 144.4,
+     "max": 263.5
     },
     "slope_degrees": {
-     "mean": 8.6,
-     "p90": 18.5,
-     "flat_under_5_pct": 41.1
+     "mean": 19.1,
+     "p90": 58.3,
+     "flat_under_5_pct": 30.5
     }
    },
    "boundaries": [
@@ -10875,15 +10927,15 @@
      "max_z": 5375
     },
     "elevation": {
-     "p10": 87.7,
-     "median": 115.4,
-     "p90": 131.9,
-     "max": 146.3
+     "p10": 86.9,
+     "median": 105.9,
+     "p90": 136.8,
+     "max": 273.1
     },
     "slope_degrees": {
-     "mean": 11.1,
-     "p90": 22.1,
-     "flat_under_5_pct": 29.2
+     "mean": 18.0,
+     "p90": 55.5,
+     "flat_under_5_pct": 30.4
     }
    },
    "boundaries": [
@@ -14087,14 +14139,14 @@
     },
     "elevation": {
      "p10": 106.7,
-     "median": 116.7,
-     "p90": 130.2,
-     "max": 147.9
+     "median": 116.8,
+     "p90": 130.5,
+     "max": 197.4
     },
     "slope_degrees": {
-     "mean": 5.0,
-     "p90": 8.7,
-     "flat_under_5_pct": 57.0
+     "mean": 5.4,
+     "p90": 8.9,
+     "flat_under_5_pct": 56.9
     }
    },
    "boundaries": [
@@ -16311,13 +16363,13 @@
     "elevation": {
      "p10": 103.0,
      "median": 114.6,
-     "p90": 126.6,
-     "max": 158.1
+     "p90": 126.8,
+     "max": 258.9
     },
     "slope_degrees": {
-     "mean": 4.8,
-     "p90": 9.6,
-     "flat_under_5_pct": 66.7
+     "mean": 5.2,
+     "p90": 10.0,
+     "flat_under_5_pct": 66.1
     }
    },
    "boundaries": [
@@ -16993,9 +17045,9 @@
      "max": 142.4
     },
     "slope_degrees": {
-     "mean": 3.5,
+     "mean": 3.6,
      "p90": 6.3,
-     "flat_under_5_pct": 78.0
+     "flat_under_5_pct": 77.9
     }
    },
    "boundaries": [
@@ -17354,14 +17406,14 @@
     },
     "elevation": {
      "p10": 98.0,
-     "median": 116.7,
+     "median": 116.9,
      "p90": 142.6,
      "max": 151.7
     },
     "slope_degrees": {
-     "mean": 6.6,
-     "p90": 17.3,
-     "flat_under_5_pct": 57.9
+     "mean": 6.9,
+     "p90": 18.3,
+     "flat_under_5_pct": 57.4
     }
    },
    "boundaries": [
@@ -17660,7 +17712,7 @@
    "display_name": "River of Shrews Vale",
    "parent": "shrew_lakes",
    "measured": {
-    "area_km2": 1.004,
+    "area_km2": 0.864,
     "bounds": {
      "min_x": 1472,
      "min_z": 3832,
@@ -17668,15 +17720,15 @@
      "max_z": 5271
     },
     "elevation": {
-     "p10": 106.4,
-     "median": 113.9,
-     "p90": 122.4,
+     "p10": 106.6,
+     "median": 114.0,
+     "p90": 122.6,
      "max": 129.7
     },
     "slope_degrees": {
-     "mean": 3.7,
-     "p90": 6.9,
-     "flat_under_5_pct": 77.0
+     "mean": 3.5,
+     "p90": 6.5,
+     "flat_under_5_pct": 79.4
     }
    },
    "boundaries": [
@@ -17721,6 +17773,11 @@
      "channel_share": 0.0,
      "ridge_share": 0.0,
      "neighbour": "arrow_creeks"
+    },
+    {
+     "basis": "planted change of cover: the Route 1 maze forest's edge (tools/maze_forest.py BOX), carved out 2026-09-25",
+     "length_blocks": 969,
+     "neighbour": "route1_maze_forest"
     }
    ],
    "encounters": {
@@ -17770,12 +17827,16 @@
       4952
      ],
      [
-      1712,
-      4880
+      1820,
+      4941
      ],
      [
-      1512,
-      4472
+      1820,
+      4300
+     ],
+     [
+      1492,
+      4300
      ],
      [
       1472,
@@ -17839,78 +17900,6 @@
       1584,
       4092
      ]
-    ],
-    [
-     [
-      1508,
-      4448
-     ],
-     [
-      1512,
-      4448
-     ],
-     [
-      1512,
-      4452
-     ],
-     [
-      1508,
-      4452
-     ]
-    ],
-    [
-     [
-      1504,
-      4452
-     ],
-     [
-      1512,
-      4452
-     ],
-     [
-      1512,
-      4464
-     ],
-     [
-      1504,
-      4464
-     ]
-    ],
-    [
-     [
-      1508,
-      4464
-     ],
-     [
-      1512,
-      4464
-     ],
-     [
-      1512,
-      4472
-     ],
-     [
-      1508,
-      4472
-     ]
-    ],
-    [
-     [
-      1508,
-      4472
-     ],
-     [
-      1516,
-      4472
-     ],
-     [
-      1516,
-      4480
-     ],
-     [
-      1508,
-      4480
-     ]
     ]
    ]
   },
@@ -17919,23 +17908,23 @@
    "display_name": "Pallet Meadows",
    "parent": "pallet_fields",
    "measured": {
-    "area_km2": 0.769,
+    "area_km2": 0.614,
     "bounds": {
      "min_x": 952,
-     "min_z": 4648,
+     "min_z": 4968,
      "max_x": 2167,
      "max_z": 5799
     },
     "elevation": {
-     "p10": 86.2,
-     "median": 112.2,
-     "p90": 122.2,
+     "p10": 79.0,
+     "median": 109.9,
+     "p90": 120.9,
      "max": 134.8
     },
     "slope_degrees": {
-     "mean": 6.5,
-     "p90": 15.0,
-     "flat_under_5_pct": 53.3
+     "mean": 7.2,
+     "p90": 16.4,
+     "flat_under_5_pct": 47.4
     }
    },
    "boundaries": [
@@ -17971,6 +17960,11 @@
      "channel_share": 0.0,
      "ridge_share": 0.0,
      "neighbour": "arrow_creeks"
+    },
+    {
+     "basis": "planted change of cover: the Route 1 maze forest's edge (tools/maze_forest.py BOX), carved out 2026-09-25",
+     "length_blocks": 816,
+     "neighbour": "route1_maze_forest"
     }
    ],
    "encounters": {
@@ -17984,16 +17978,8 @@
    "polygons": [
     [
      [
-      1608,
-      4648
-     ],
-     [
-      1600,
-      4696
-     ],
-     [
-      1704,
-      4880
+      1820,
+      4969
      ],
      [
       2016,
@@ -18040,192 +18026,16 @@
       5112
      ],
      [
-      1192,
-      4968
+      1180,
+      4975
      ],
      [
-      1408,
-      4744
-     ]
-    ],
-    [
-     [
-      1384,
-      4760
+      1180,
+      5060
      ],
      [
-      1392,
-      4760
-     ],
-     [
-      1392,
-      4764
-     ],
-     [
-      1384,
-      4764
-     ]
-    ],
-    [
-     [
-      1380,
-      4764
-     ],
-     [
-      1388,
-      4764
-     ],
-     [
-      1388,
-      4768
-     ],
-     [
-      1380,
-      4768
-     ]
-    ],
-    [
-     [
-      1376,
-      4768
-     ],
-     [
-      1388,
-      4768
-     ],
-     [
-      1388,
-      4772
-     ],
-     [
-      1376,
-      4772
-     ]
-    ],
-    [
-     [
-      1372,
-      4772
-     ],
-     [
-      1384,
-      4772
-     ],
-     [
-      1384,
-      4776
-     ],
-     [
-      1372,
-      4776
-     ]
-    ],
-    [
-     [
-      1372,
-      4776
-     ],
-     [
-      1380,
-      4776
-     ],
-     [
-      1380,
-      4780
-     ],
-     [
-      1372,
-      4780
-     ]
-    ],
-    [
-     [
-      1372,
-      4780
-     ],
-     [
-      1376,
-      4780
-     ],
-     [
-      1376,
-      4784
-     ],
-     [
-      1372,
-      4784
-     ]
-    ],
-    [
-     [
-      1404,
-      4740
-     ],
-     [
-      1416,
-      4740
-     ],
-     [
-      1416,
-      4744
-     ],
-     [
-      1404,
-      4744
-     ]
-    ],
-    [
-     [
-      1400,
-      4744
-     ],
-     [
-      1408,
-      4744
-     ],
-     [
-      1408,
-      4748
-     ],
-     [
-      1400,
-      4748
-     ]
-    ],
-    [
-     [
-      1396,
-      4748
-     ],
-     [
-      1408,
-      4748
-     ],
-     [
-      1408,
-      4752
-     ],
-     [
-      1396,
-      4752
-     ]
-    ],
-    [
-     [
-      1396,
-      4752
-     ],
-     [
-      1404,
-      4752
-     ],
-     [
-      1404,
-      4756
-     ],
-     [
-      1396,
-      4756
+      1820,
+      5060
      ]
     ]
    ]
@@ -18235,23 +18045,23 @@
    "display_name": "West Shore",
    "parent": "pallet_fields",
    "measured": {
-    "area_km2": 0.805,
+    "area_km2": 0.626,
     "bounds": {
      "min_x": 472,
      "min_z": 4024,
-     "max_x": 1607,
+     "max_x": 1487,
      "max_z": 5111
     },
     "elevation": {
-     "p10": 79.0,
-     "median": 120.0,
-     "p90": 127.7,
+     "p10": 74.4,
+     "median": 118.0,
+     "p90": 128.4,
      "max": 134.8
     },
     "slope_degrees": {
-     "mean": 6.9,
-     "p90": 16.5,
-     "flat_under_5_pct": 53.3
+     "mean": 7.9,
+     "p90": 17.8,
+     "flat_under_5_pct": 45.0
     }
    },
    "boundaries": [
@@ -18287,6 +18097,11 @@
      "channel_share": 0.0,
      "ridge_share": 0.0,
      "neighbour": "viltri_plateau"
+    },
+    {
+     "basis": "planted change of cover: the Route 1 maze forest's edge (tools/maze_forest.py BOX), carved out 2026-09-25",
+     "length_blocks": 971,
+     "neighbour": "route1_maze_forest"
     }
    ],
    "encounters": {
@@ -18308,20 +18123,16 @@
       4128
      ],
      [
-      1504,
-      4472
+      1484,
+      4300
      ],
      [
-      1600,
-      4648
+      1180,
+      4300
      ],
      [
-      1408,
-      4736
-     ],
-     [
-      1192,
-      4960
+      1180,
+      4967
      ],
      [
       944,
@@ -18449,312 +18260,6 @@
       1464,
       4132
      ]
-    ],
-    [
-     [
-      1392,
-      4748
-     ],
-     [
-      1396,
-      4748
-     ],
-     [
-      1396,
-      4752
-     ],
-     [
-      1392,
-      4752
-     ]
-    ],
-    [
-     [
-      1388,
-      4752
-     ],
-     [
-      1396,
-      4752
-     ],
-     [
-      1396,
-      4756
-     ],
-     [
-      1388,
-      4756
-     ]
-    ],
-    [
-     [
-      1384,
-      4756
-     ],
-     [
-      1396,
-      4756
-     ],
-     [
-      1396,
-      4760
-     ],
-     [
-      1384,
-      4760
-     ]
-    ],
-    [
-     [
-      1380,
-      4760
-     ],
-     [
-      1392,
-      4760
-     ],
-     [
-      1392,
-      4764
-     ],
-     [
-      1380,
-      4764
-     ]
-    ],
-    [
-     [
-      1376,
-      4764
-     ],
-     [
-      1388,
-      4764
-     ],
-     [
-      1388,
-      4768
-     ],
-     [
-      1376,
-      4768
-     ]
-    ],
-    [
-     [
-      1372,
-      4768
-     ],
-     [
-      1384,
-      4768
-     ],
-     [
-      1384,
-      4772
-     ],
-     [
-      1372,
-      4772
-     ]
-    ],
-    [
-     [
-      1372,
-      4772
-     ],
-     [
-      1380,
-      4772
-     ],
-     [
-      1380,
-      4776
-     ],
-     [
-      1372,
-      4776
-     ]
-    ],
-    [
-     [
-      1372,
-      4776
-     ],
-     [
-      1376,
-      4776
-     ],
-     [
-      1376,
-      4780
-     ],
-     [
-      1372,
-      4780
-     ]
-    ],
-    [
-     [
-      1504,
-      4452
-     ],
-     [
-      1508,
-      4452
-     ],
-     [
-      1508,
-      4456
-     ],
-     [
-      1504,
-      4456
-     ]
-    ],
-    [
-     [
-      1500,
-      4456
-     ],
-     [
-      1508,
-      4456
-     ],
-     [
-      1508,
-      4464
-     ],
-     [
-      1500,
-      4464
-     ]
-    ],
-    [
-     [
-      1504,
-      4464
-     ],
-     [
-      1508,
-      4464
-     ],
-     [
-      1508,
-      4472
-     ],
-     [
-      1504,
-      4472
-     ]
-    ],
-    [
-     [
-      1504,
-      4472
-     ],
-     [
-      1512,
-      4472
-     ],
-     [
-      1512,
-      4480
-     ],
-     [
-      1504,
-      4480
-     ]
-    ],
-    [
-     [
-      1508,
-      4480
-     ],
-     [
-      1512,
-      4480
-     ],
-     [
-      1512,
-      4484
-     ],
-     [
-      1508,
-      4484
-     ]
-    ],
-    [
-     [
-      1404,
-      4736
-     ],
-     [
-      1412,
-      4736
-     ],
-     [
-      1412,
-      4740
-     ],
-     [
-      1404,
-      4740
-     ]
-    ],
-    [
-     [
-      1400,
-      4740
-     ],
-     [
-      1412,
-      4740
-     ],
-     [
-      1412,
-      4744
-     ],
-     [
-      1400,
-      4744
-     ]
-    ],
-    [
-     [
-      1396,
-      4744
-     ],
-     [
-      1408,
-      4744
-     ],
-     [
-      1408,
-      4748
-     ],
-     [
-      1396,
-      4748
-     ]
-    ],
-    [
-     [
-      1396,
-      4748
-     ],
-     [
-      1404,
-      4748
-     ],
-     [
-      1404,
-      4752
-     ],
-     [
-      1396,
-      4752
-     ]
     ]
    ]
   },
@@ -18873,14 +18378,14 @@
     },
     "elevation": {
      "p10": 92.0,
-     "median": 109.7,
-     "p90": 132.0,
-     "max": 148.5
+     "median": 109.6,
+     "p90": 132.4,
+     "max": 234.0
     },
     "slope_degrees": {
-     "mean": 4.9,
-     "p90": 9.1,
-     "flat_under_5_pct": 61.3
+     "mean": 5.4,
+     "p90": 9.4,
+     "flat_under_5_pct": 60.6
     }
    },
    "boundaries": [
@@ -19355,13 +18860,13 @@
     "elevation": {
      "p10": 95.7,
      "median": 112.3,
-     "p90": 131.4,
-     "max": 139.7
+     "p90": 131.6,
+     "max": 237.7
     },
     "slope_degrees": {
-     "mean": 7.9,
-     "p90": 17.0,
-     "flat_under_5_pct": 42.2
+     "mean": 8.5,
+     "p90": 17.7,
+     "flat_under_5_pct": 41.2
     }
    },
    "boundaries": [
@@ -20152,6 +19657,88 @@
      [
       6712,
       5920
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "route1_maze_forest",
+   "display_name": "Maze Forest",
+   "parent": "pallet_fields",
+   "extent": {
+    "source": "tools/maze_forest.py BOX (1180, 4300, 1820, 5060): the whole box is planted (the maze band within 80-120 blocks of the corridor network at 2-block spacing, outer woodland at 6 over the rest), so the planted forest's edge is the box's edge",
+    "carved_from": {
+     "west_shore": "north-west and middle of the forest, roughly 36% of the box (estimated from the old polygons, not measured)",
+     "river_of_shrews_vale": "north-east, roughly 30%",
+     "pallet_meadows": "south, roughly 34%"
+    },
+    "why": "Owner playtest 2026-09-25 at the Route 1 sapling (1385, 137, 4662): the forest spawned West Shore's coast roster (Krabby, Staryu, Shellder, Wingull, Wattrel) because the middle of the maze, the sapling and Route 1 from distance 691 to 1038 lay inside that sub-region; its south spawned Pallet Meadows' roster and its north-east the vale's. The forest now has its own roster (data/spawns.json route1_maze_forest). Each neighbour's polygon was cut along the box edge, and its gap-closure rings inside the box removed, so no two sub-regions cover the same ground.",
+    "paint_note": "preset plains keeps the biome minecraft:plains everywhere in the box (both former presets paint plains) and changes nothing in the former pallet_meadows and river_of_shrews_vale parts; in the former west_shore part a repaint (tools/paint_maps.py) would swap coast_scrub's sand patches, shrubs and heath_scrub foliage for plains grassland and open_lone foliage, and so move the planned canopy. Nothing is repainted until someone runs it.",
+    "date": "2026-09-25",
+    "measured_note": "measured.area_km2 is the box's geometric area and measured.bounds the 8-block cells round it, written by hand; elevation and slope are not yet measured, and the three neighbours' measured blocks still describe their uncut polygons. tools/region_measure.py --source-root <root> --write re-measures them from the polygons on the canonical heightmap."
+   },
+   "measured": {
+    "area_km2": 0.498,
+    "bounds": {
+     "min_x": 1176,
+     "min_z": 4296,
+     "max_x": 1823,
+     "max_z": 5063
+    },
+    "elevation": {
+     "p10": 108.1,
+     "median": 120.2,
+     "p90": 125.9,
+     "max": 131.8
+    },
+    "slope_degrees": {
+     "mean": 3.9,
+     "p90": 7.4,
+     "flat_under_5_pct": 74.5
+    }
+   },
+   "boundaries": [
+    {
+     "basis": "planted change of cover: the maze forest's edge (tools/maze_forest.py BOX)",
+     "length_blocks": 971,
+     "neighbour": "west_shore"
+    },
+    {
+     "basis": "planted change of cover: the maze forest's edge (tools/maze_forest.py BOX)",
+     "length_blocks": 969,
+     "neighbour": "river_of_shrews_vale"
+    },
+    {
+     "basis": "planted change of cover: the maze forest's edge (tools/maze_forest.py BOX)",
+     "length_blocks": 816,
+     "neighbour": "pallet_meadows"
+    }
+   ],
+   "encounters": {
+    "table": null,
+    "status": "empty",
+    "note": "the roster is authored in data/spawns.json (subregions route1_maze_forest); this slot stays null as on every sub-region"
+   },
+   "paint": {
+    "preset": "plains"
+   },
+   "polygons": [
+    [
+     [
+      1180,
+      4300
+     ],
+     [
+      1820,
+      4300
+     ],
+     [
+      1820,
+      5060
+     ],
+     [
+      1180,
+      5060
      ]
     ]
    ]
