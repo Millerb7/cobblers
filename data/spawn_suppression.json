@@ -25,10 +25,20 @@
     "placement": "setblock cobblemon:habitat_block[cancels_regular_spawns=true,activated_style=false] then data merge {SpawningStyle:\"cobblemon:natural\",ReplaceSpawns:1b,RangeOfInfluence:N,PoolId:\"cobblers:<pool>\"}",
     "experiment": "experiments/EXP-021-habitat-block-influence"
   },
+  "marine_zones": {
+    "policy": "suppress inherited/default pools over every marine band box and use the compiled marine pools",
+    "source": "data/spawns.json marine_zones (the first: windward_sea, 2026-09-26)",
+    "native_expression": "the same per-detail coordinate anticonditions as the route and sub-region boxes; the band boxes join the box set before merging",
+    "generated": true,
+    "generator": "tools/suppress_inherited_spawns.py --subregions (the band boxes come from tools/compile_spawns.py marine_bands, so the suppressed area and the compiled marine pools are the same boxes)",
+    "why": "the owner, 2026-09-26, about 300 blocks off the west shore in deep_ocean: 'i dont think it should be magikarps and small frys'. No roster reached that water, so the pack's own ocean pools ran there: Cobblemon's Magikarp herd (weight 59.4) and single (6.9, 1-20), Wishiwashi's herd (100) and single (10, 1-18), and Relicanth's herd (1000) in the common bucket. Added beside our rosters instead of suppressed, those weights would swamp them",
+    "box_count": "111 marine band boxes at the 32-block grid; merged with the rest at grid 16 the whole suppression set is 931 boxes (939 without them: the sea is simpler than the coast it fills in)",
+    "runtime_status": "not installed; generated only against an empty server directory to count boxes (2026-09-26)"
+  },
   "retain_defaults": [
     "off-route wilderness",
     "optional islands",
-    "open ocean outside authored sites",
+    "open ocean outside authored sites and marine_zones",
     "unauthored caves",
     "Nether",
     "End",

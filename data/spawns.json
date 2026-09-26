@@ -17024,6 +17024,703 @@
       "conditions": {},
       "eligibility_reason": "level evolution eligible (25 <= 44, Cobblemon 1.8.0 jar)",
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "marine.windward_shallows.tentacool",
+      "species": "tentacool",
+      "bucket": "common",
+      "level": "16-20",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The jellyfish of every coast: the sea's commonest sight from the first swim. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_shallows.tentacruel",
+      "species": "tentacruel",
+      "bucket": "ultra-rare",
+      "level": "16-20",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The jellyfish of every coast: the sea's commonest sight from the first swim. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 30; band begins at 16",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_shallows.wingull",
+      "species": "wingull",
+      "bucket": "common",
+      "level": "16-20",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Windward Sea: the shallows. The gull over the water, resting on the surface. canSeeSky authored: marine entries get no forced sky condition (tools/compile_spawns.py marine_condition), and a surface spawn under open sky is the pack's own shape. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "a seabird over the open sea: upstream it spawns only grounded on beaches, which open water has none of, so here it rests on the surface (not yet seen in game)"
+      }
+    },
+    {
+      "id": "marine.windward_shallows.pelipper",
+      "species": "pelipper",
+      "bucket": "ultra-rare",
+      "level": "16-20",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Windward Sea: the shallows. The gull over the water, resting on the surface. canSeeSky authored: marine entries get no forced sky condition (tools/compile_spawns.py marine_condition), and a surface spawn under open sky is the pack's own shape. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 25; band begins at 16",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "a seabird over the open sea: upstream it spawns only grounded on beaches, which open water has none of, so here it rests on the surface (not yet seen in game)"
+      }
+    },
+    {
+      "id": "marine.windward_shallows.horsea",
+      "species": "horsea",
+      "bucket": "common",
+      "level": "16-20",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The seahorse of the shallow shelf. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_shallows.seadra",
+      "species": "seadra",
+      "bucket": "ultra-rare",
+      "level": "16-20",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The seahorse of the shallow shelf. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 32; band begins at 16",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_shallows.kingdra",
+      "species": "kingdra",
+      "bucket": "ultra-rare",
+      "level": "16-20",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The seahorse of the shallow shelf. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "player evolution (non-level method)",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_shallows.staryu",
+      "species": "staryu",
+      "bucket": "common",
+      "level": "16-20",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The starfish of the shallows, the same one that lives at the west shore's waterline. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "spawnable_position_authored": {
+        "position": "submerged",
+        "why": "upstream one entry of several stands on a beach, so tools/position_types.py's rule would ground it; in the open sea there is no beach, and its other upstream entries are all in the water (submerged)"
+      }
+    },
+    {
+      "id": "marine.windward_shallows.starmie",
+      "species": "starmie",
+      "bucket": "ultra-rare",
+      "level": "16-20",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The starfish of the shallows, the same one that lives at the west shore's waterline. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "player evolution (non-level method)",
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "spawnable_position_authored": {
+        "position": "submerged",
+        "why": "upstream one entry of several stands on a beach, so tools/position_types.py's rule would ground it; in the open sea there is no beach, and its other upstream entries are all in the water (submerged)"
+      }
+    },
+    {
+      "id": "marine.windward_shallows.remoraid",
+      "species": "remoraid",
+      "bucket": "common",
+      "level": "16-20",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The little jet-fish of the shelf. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_shallows.octillery",
+      "species": "octillery",
+      "bucket": "ultra-rare",
+      "level": "16-20",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The little jet-fish of the shelf. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 25; band begins at 16",
+      "biomes": [],
+      "spawnable_position": "seafloor"
+    },
+    {
+      "id": "marine.windward_shallows.clobbopus",
+      "species": "clobbopus",
+      "bucket": "uncommon",
+      "level": "16-20",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The tide-pool octopus on the shallow bottom, a Fighting type in the sea. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "seafloor",
+      "spawnable_position_authored": {
+        "position": "seafloor",
+        "why": "upstream one entry of several stands on a beach, so tools/position_types.py's rule would ground it; in the open sea there is no beach, and its other upstream entries are all in the water (seafloor)"
+      }
+    },
+    {
+      "id": "marine.windward_shallows.grapploct",
+      "species": "grapploct",
+      "bucket": "ultra-rare",
+      "level": "16-20",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The tide-pool octopus on the shallow bottom, a Fighting type in the sea. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "player evolution (non-level method)",
+      "biomes": [],
+      "spawnable_position": "seafloor",
+      "spawnable_position_authored": {
+        "position": "seafloor",
+        "why": "upstream one entry of several stands on a beach, so tools/position_types.py's rule would ground it; in the open sea there is no beach, and its other upstream entries are all in the water (seafloor)"
+      }
+    },
+    {
+      "id": "marine.windward_shallows.luvdisc",
+      "species": "luvdisc",
+      "bucket": "rare",
+      "level": "16-20",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the shallows. The small pink find of the shallows. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.tentacool",
+      "species": "tentacool",
+      "bucket": "common",
+      "level": "20-25",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: open water. The jellyfish again, thinning as the water deepens. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.tentacruel",
+      "species": "tentacruel",
+      "bucket": "ultra-rare",
+      "level": "20-25",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: open water. The jellyfish again, thinning as the water deepens. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 30; band begins at 20",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.carvanha",
+      "species": "carvanha",
+      "bucket": "common",
+      "level": "20-25",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: open water. The Sharpedo line's young: the sharks of the slope. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.sharpedo",
+      "species": "sharpedo",
+      "bucket": "ultra-rare",
+      "level": "20-25",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: open water. The Sharpedo line's young: the sharks of the slope. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 30; band begins at 20",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.wingull",
+      "species": "wingull",
+      "bucket": "common",
+      "level": "20-25",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Windward Sea: open water. The gull still follows a rider this far out. canSeeSky authored: marine entries get no forced sky condition (tools/compile_spawns.py marine_condition), and a surface spawn under open sky is the pack's own shape. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "a seabird over the open sea: upstream it spawns only grounded on beaches, which open water has none of, so here it rests on the surface (not yet seen in game)"
+      }
+    },
+    {
+      "id": "marine.windward_open.pelipper",
+      "species": "pelipper",
+      "bucket": "ultra-rare",
+      "level": "20-25",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Windward Sea: open water. The gull still follows a rider this far out. canSeeSky authored: marine entries get no forced sky condition (tools/compile_spawns.py marine_condition), and a surface spawn under open sky is the pack's own shape. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 25; band begins at 20",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "a seabird over the open sea: upstream it spawns only grounded on beaches, which open water has none of, so here it rests on the surface (not yet seen in game)"
+      }
+    },
+    {
+      "id": "marine.windward_open.chinchou",
+      "species": "chinchou",
+      "bucket": "common",
+      "level": "20-25",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: open water. The lantern-fish of the dim water below the shelf. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.lanturn",
+      "species": "lanturn",
+      "bucket": "ultra-rare",
+      "level": "20-25",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: open water. The lantern-fish of the dim water below the shelf. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 27; band begins at 20",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.qwilfish",
+      "species": "qwilfish",
+      "bucket": "uncommon",
+      "level": "20-25",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: open water. The pufferfish of open water. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.wailmer",
+      "species": "wailmer",
+      "bucket": "uncommon",
+      "level": "20-25",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: open water. The first whale: a sign of the big water beyond. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.wailord",
+      "species": "wailord",
+      "bucket": "ultra-rare",
+      "level": "20-25",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: open water. The first whale: a sign of the big water beyond. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 40; band begins at 20",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.finneon",
+      "species": "finneon",
+      "bucket": "uncommon",
+      "level": "20-25",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: open water. The wing-fish of the dim water. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "spawnable_position_authored": {
+        "position": "submerged",
+        "why": "no spawn data in the Cobblemon 1.8.0 jar (COBBLEVERSE-DP-v31 adds it); every COBBLEVERSE-DP-v31 Finneon entry that reaches the ocean is submerged"
+      }
+    },
+    {
+      "id": "marine.windward_open.lumineon",
+      "species": "lumineon",
+      "bucket": "ultra-rare",
+      "level": "20-25",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: open water. The wing-fish of the dim water. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 31; band begins at 20",
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "spawnable_position_authored": {
+        "position": "submerged",
+        "why": "no spawn data in the Cobblemon 1.8.0 jar (COBBLEVERSE-DP-v31 adds it); every COBBLEVERSE-DP-v31 Lumineon entry that reaches the ocean is submerged"
+      }
+    },
+    {
+      "id": "marine.windward_open.frillish",
+      "species": "frillish",
+      "bucket": "rare",
+      "level": "20-25",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: open water. The jellyfish ghost drifting in the dim water. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_open.jellicent",
+      "species": "jellicent",
+      "bucket": "ultra-rare",
+      "level": "20-25",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: open water. The jellyfish ghost drifting in the dim water. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 40; band begins at 20",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.wailmer",
+      "species": "wailmer",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the deep. The whales of the open ocean: the deep's common sight (the owner, 2026-09-26: not Magikarp 300 blocks out). No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.wailord",
+      "species": "wailord",
+      "bucket": "ultra-rare",
+      "level": "25-30",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the deep. The whales of the open ocean: the deep's common sight (the owner, 2026-09-26: not Magikarp 300 blocks out). No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 40; band begins at 25",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.wingull",
+      "species": "wingull",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 9.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Windward Sea: the deep. The gull and, this far out, the pelican: Pelipper is eligible at the band floor of 25. canSeeSky authored: marine entries get no forced sky condition (tools/compile_spawns.py marine_condition), and a surface spawn under open sky is the pack's own shape. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "a seabird over the open sea: upstream it spawns only grounded on beaches, which open water has none of, so here it rests on the surface (not yet seen in game)"
+      }
+    },
+    {
+      "id": "marine.windward_depths.pelipper",
+      "species": "pelipper",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Windward Sea: the deep. The gull and, this far out, the pelican: Pelipper is eligible at the band floor of 25. canSeeSky authored: marine entries get no forced sky condition (tools/compile_spawns.py marine_condition), and a surface spawn under open sky is the pack's own shape. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "level evolution eligible",
+      "biomes": [],
+      "spawnable_position": "surface",
+      "spawnable_position_authored": {
+        "position": "surface",
+        "why": "a seabird over the open sea: upstream it spawns only grounded on beaches, which open water has none of, so here it rests on the surface (not yet seen in game)"
+      }
+    },
+    {
+      "id": "marine.windward_depths.carvanha",
+      "species": "carvanha",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the deep. The sharks follow into the deep. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.sharpedo",
+      "species": "sharpedo",
+      "bucket": "ultra-rare",
+      "level": "25-30",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the deep. The sharks follow into the deep. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 30; band begins at 25",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.alomomola",
+      "species": "alomomola",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea: the deep. The great gentle fish of the open sea. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.chinchou",
+      "species": "chinchou",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: the deep. The lights of the dark water under the deep. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.lanturn",
+      "species": "lanturn",
+      "bucket": "ultra-rare",
+      "level": "25-30",
+      "weight": 0,
+      "ambient": false,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: the deep. The lights of the dark water under the deep. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "evolution requires level 27; band begins at 25",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.relicanth",
+      "species": "relicanth",
+      "bucket": "rare",
+      "level": "25-30",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: the deep. The ancient fish of the basin floor. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.dhelmise",
+      "species": "dhelmise",
+      "bucket": "rare",
+      "level": "25-30",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "maxY": 40
+      },
+      "conditions_basis": "Windward Sea: the deep. The anchor-weed of the deep, a Ghost and Grass find. maxY 40: at least 22 blocks under the sea's surface (y62), below the shelf, so a deep-water spawn only. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "marine.windward_depths.lapras",
+      "species": "lapras",
+      "bucket": "ultra-rare",
+      "level": "25-30",
+      "weight": 1.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {
+        "canSeeSky": true
+      },
+      "conditions_basis": "Windward Sea: the deep. The ferry of the open sea: ultra-rare, and a water mount of its own. canSeeSky authored: marine entries get no forced sky condition (tools/compile_spawns.py marine_condition), and a surface spawn under open sky is the pack's own shape. No biome filter: the band's boxes hold only open sea, and tools/paint_maps.py paints it ocean or deep_ocean by depth",
+      "eligibility_reason": "base stage",
+      "biomes": [],
+      "spawnable_position": "surface"
     }
   ],
   "subregions": [
@@ -29578,6 +30275,744 @@
       ],
       "biomes": [
         "minecraft:desert"
+      ]
+    }
+  ],
+  "marine_zones": [
+    {
+      "id": "windward_sea",
+      "display_name": "The Windward Sea",
+      "marine_region": "windward_deep",
+      "status": "authored 2026-09-26; compiled, not seen in game",
+      "clip_box": {
+        "min_x": -1024,
+        "max_x": 991,
+        "min_z": 2592,
+        "max_z": 5215
+      },
+      "clip_basis": "data/regions.json marine_regions windward_deep: its landmass stretch (z2592-5200, x to 984; the south edge taken to z5215, the end of the 32-block cell row the zone boundary falls in, so no 16-block strip is left to the pack) and its border margin, carried on west to the world border at x-1024 across the Outer Deep's strip behind it, so no pack default is left anywhere west of Route 1 and the west shore",
+      "mechanism": "marine_coordinate_boxes",
+      "grid": 32,
+      "distance_measure": "blocks from the nearest land sub-region cell (tools/compile_spawns.py marine_bands); the sub-region polygons were drawn to the coast, and over the 3,959 cells of this zone to z5199 that distance matches the heightmap coast distance within -20 / 0 / +41 blocks at p5 / p50 / p95 (measured 2026-09-26)",
+      "policy": "exclusive_curated: the pack's inherited spawns are suppressed over every band box (tools/suppress_inherited_spawns.py --subregions)",
+      "access": "Open water needs a Pokemon that carries a player on water (the owner, 2026-09-26: 'a player on Route 1 for the first time can't swim without a surf mon'). No data in the repo gates riding; ASSUMED from the rosters and the Cobblemon 1.8.0 jar and COBBLEVERSE-DP-v31 riding data: the earliest water mounts are a rare Relicanth at Arrow Lake (10-22, before Brock), Gyarados from a lake Magikarp at level 20 (the gym 1 cap) and Kingler from the west shore's Krabby at 28; water starters' mounts come at 30-36. So a first ride falls around gym 1 to 2, cap 20 to 25, and the bands are set to caps 20, 25 and 30 outward.",
+      "level_logic": "levels rise with distance from land, one gym cap per band: shallows 16-20 (gym 1 cap), open water 20-25 (gym 2 cap), the deep 25-30 (gym 3 cap). The cap curve is docs/story/GYM_SUFFICIENCY_AUDIT.md's recommended 20/25/30 with relativeLevelCap 0 (modpack/config/rctmod-server.toml).",
+      "depth": "deep-water entries carry maxY 40 (22 blocks under the surface, below the shelf break at y46): in open water the seabed median is y21 and in the deep y14, so 19 to 26 blocks of water qualify. Surface entries carry canSeeSky true.",
+      "bands": [
+        {
+          "id": "windward_shallows",
+          "display_name": "Windward Sea: the shallows",
+          "from_blocks": 0,
+          "to_blocks": 96,
+          "level_band": {
+            "minimum": 16,
+            "maximum": 20
+          },
+          "basis": "the shelf within 96 blocks of land; measured seabed p10/p50/p90 y42/y54/y62 (tools/ground.py heightmap 0d9b5f1e, 8-block raster). Small, common coastal Pokemon, all at or under the gym 1 cap of 20, so a player on their first water mount meets nothing over the cap here.",
+          "entries": [
+            {
+              "species": "Tentacool",
+              "pokemon": "tentacool",
+              "types": [
+                "water",
+                "poison"
+              ],
+              "family": "tentacool",
+              "family_priority": "anchor",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "16-20",
+              "bucket": "common",
+              "weight": 24.0,
+              "conditions": {}
+            },
+            {
+              "species": "Tentacruel",
+              "pokemon": "tentacruel",
+              "types": [
+                "water",
+                "poison"
+              ],
+              "family": "tentacool",
+              "family_priority": "anchor",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 30; band begins at 16",
+              "level": "16-20",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Wingull",
+              "pokemon": "wingull",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "wingull",
+              "family_priority": "anchor",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "16-20",
+              "bucket": "common",
+              "weight": 24.0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            },
+            {
+              "species": "Pelipper",
+              "pokemon": "pelipper",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "wingull",
+              "family_priority": "anchor",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 25; band begins at 16",
+              "level": "16-20",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            },
+            {
+              "species": "Horsea",
+              "pokemon": "horsea",
+              "types": [
+                "water"
+              ],
+              "family": "horsea",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "16-20",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {}
+            },
+            {
+              "species": "Seadra",
+              "pokemon": "seadra",
+              "types": [
+                "water"
+              ],
+              "family": "horsea",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 32; band begins at 16",
+              "level": "16-20",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Kingdra",
+              "pokemon": "kingdra",
+              "types": [
+                "water",
+                "dragon"
+              ],
+              "family": "horsea",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "player evolution (non-level method)",
+              "level": "16-20",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Staryu",
+              "pokemon": "staryu",
+              "types": [
+                "water"
+              ],
+              "family": "staryu",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "16-20",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {}
+            },
+            {
+              "species": "Starmie",
+              "pokemon": "starmie",
+              "types": [
+                "water",
+                "psychic"
+              ],
+              "family": "staryu",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "player evolution (non-level method)",
+              "level": "16-20",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Remoraid",
+              "pokemon": "remoraid",
+              "types": [
+                "water"
+              ],
+              "family": "remoraid",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "16-20",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {}
+            },
+            {
+              "species": "Octillery",
+              "pokemon": "octillery",
+              "types": [
+                "water"
+              ],
+              "family": "remoraid",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 25; band begins at 16",
+              "level": "16-20",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Clobbopus",
+              "pokemon": "clobbopus",
+              "types": [
+                "fighting"
+              ],
+              "family": "clobbopus",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "16-20",
+              "bucket": "uncommon",
+              "weight": 6.0,
+              "conditions": {}
+            },
+            {
+              "species": "Grapploct",
+              "pokemon": "grapploct",
+              "types": [
+                "fighting"
+              ],
+              "family": "clobbopus",
+              "family_priority": "uncommon",
+              "ambient": false,
+              "eligibility_reason": "player evolution (non-level method)",
+              "level": "16-20",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Luvdisc",
+              "pokemon": "luvdisc",
+              "types": [
+                "water"
+              ],
+              "family": "luvdisc",
+              "family_priority": "rare",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "16-20",
+              "bucket": "rare",
+              "weight": 2.0,
+              "conditions": {}
+            }
+          ]
+        },
+        {
+          "id": "windward_open",
+          "display_name": "Windward Sea: open water",
+          "from_blocks": 96,
+          "to_blocks": 256,
+          "level_band": {
+            "minimum": 20,
+            "maximum": 25
+          },
+          "basis": "the slope from 96 to 256 blocks out; measured seabed p10/p50/p90 y16/y21/y34. At the gym 2 cap of 25: a player who first rides the water after Brock (cap 25) meets nothing over the cap here.",
+          "entries": [
+            {
+              "species": "Tentacool",
+              "pokemon": "tentacool",
+              "types": [
+                "water",
+                "poison"
+              ],
+              "family": "tentacool",
+              "family_priority": "anchor",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "common",
+              "weight": 24.0,
+              "conditions": {}
+            },
+            {
+              "species": "Tentacruel",
+              "pokemon": "tentacruel",
+              "types": [
+                "water",
+                "poison"
+              ],
+              "family": "tentacool",
+              "family_priority": "anchor",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 30; band begins at 20",
+              "level": "20-25",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Carvanha",
+              "pokemon": "carvanha",
+              "types": [
+                "water",
+                "dark"
+              ],
+              "family": "carvanha",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {}
+            },
+            {
+              "species": "Sharpedo",
+              "pokemon": "sharpedo",
+              "types": [
+                "water",
+                "dark"
+              ],
+              "family": "carvanha",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 30; band begins at 20",
+              "level": "20-25",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Wingull",
+              "pokemon": "wingull",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "wingull",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            },
+            {
+              "species": "Pelipper",
+              "pokemon": "pelipper",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "wingull",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 25; band begins at 20",
+              "level": "20-25",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            },
+            {
+              "species": "Chinchou",
+              "pokemon": "chinchou",
+              "types": [
+                "water",
+                "electric"
+              ],
+              "family": "chinchou",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Lanturn",
+              "pokemon": "lanturn",
+              "types": [
+                "water",
+                "electric"
+              ],
+              "family": "chinchou",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 27; band begins at 20",
+              "level": "20-25",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Qwilfish",
+              "pokemon": "qwilfish",
+              "types": [
+                "water",
+                "poison"
+              ],
+              "family": "qwilfish",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "uncommon",
+              "weight": 6.0,
+              "conditions": {}
+            },
+            {
+              "species": "Wailmer",
+              "pokemon": "wailmer",
+              "types": [
+                "water"
+              ],
+              "family": "wailmer",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "uncommon",
+              "weight": 6.0,
+              "conditions": {}
+            },
+            {
+              "species": "Wailord",
+              "pokemon": "wailord",
+              "types": [
+                "water"
+              ],
+              "family": "wailmer",
+              "family_priority": "uncommon",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 40; band begins at 20",
+              "level": "20-25",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Finneon",
+              "pokemon": "finneon",
+              "types": [
+                "water"
+              ],
+              "family": "finneon",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "uncommon",
+              "weight": 6.0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Lumineon",
+              "pokemon": "lumineon",
+              "types": [
+                "water"
+              ],
+              "family": "finneon",
+              "family_priority": "uncommon",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 31; band begins at 20",
+              "level": "20-25",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Frillish",
+              "pokemon": "frillish",
+              "types": [
+                "water",
+                "ghost"
+              ],
+              "family": "frillish",
+              "family_priority": "rare",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "20-25",
+              "bucket": "rare",
+              "weight": 2.0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Jellicent",
+              "pokemon": "jellicent",
+              "types": [
+                "water",
+                "ghost"
+              ],
+              "family": "frillish",
+              "family_priority": "rare",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 40; band begins at 20",
+              "level": "20-25",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {
+                "maxY": 40
+              }
+            }
+          ]
+        },
+        {
+          "id": "windward_depths",
+          "display_name": "Windward Sea: the deep",
+          "from_blocks": 256,
+          "to_blocks": null,
+          "level_band": {
+            "minimum": 25,
+            "maximum": 30
+          },
+          "basis": "the basin 256 or more blocks out, to the world border; measured seabed p10/p50/p90 y11/y14/y15 inside the heightmap (beyond x0 the canvas is ASSUMED open sea). Bigger and rarer; at the gym 3 cap of 30, so a player at the gym 2 cap of 25 meets Pokemon up to 5 levels over it here: deep water is the reward for going far, and a catch there is over the cap until Misty is beaten (docs/STATE.md, the level-cap trap).",
+          "entries": [
+            {
+              "species": "Wailmer",
+              "pokemon": "wailmer",
+              "types": [
+                "water"
+              ],
+              "family": "wailmer",
+              "family_priority": "anchor",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "common",
+              "weight": 24.0,
+              "conditions": {}
+            },
+            {
+              "species": "Wailord",
+              "pokemon": "wailord",
+              "types": [
+                "water"
+              ],
+              "family": "wailmer",
+              "family_priority": "anchor",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 40; band begins at 25",
+              "level": "25-30",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Wingull",
+              "pokemon": "wingull",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "wingull",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "common",
+              "weight": 9.0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            },
+            {
+              "species": "Pelipper",
+              "pokemon": "pelipper",
+              "types": [
+                "water",
+                "flying"
+              ],
+              "family": "wingull",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "level evolution eligible",
+              "level": "25-30",
+              "bucket": "uncommon",
+              "weight": 3.0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            },
+            {
+              "species": "Carvanha",
+              "pokemon": "carvanha",
+              "types": [
+                "water",
+                "dark"
+              ],
+              "family": "carvanha",
+              "family_priority": "common",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "common",
+              "weight": 12.0,
+              "conditions": {}
+            },
+            {
+              "species": "Sharpedo",
+              "pokemon": "sharpedo",
+              "types": [
+                "water",
+                "dark"
+              ],
+              "family": "carvanha",
+              "family_priority": "common",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 30; band begins at 25",
+              "level": "25-30",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {}
+            },
+            {
+              "species": "Alomomola",
+              "pokemon": "alomomola",
+              "types": [
+                "water"
+              ],
+              "family": "alomomola",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "uncommon",
+              "weight": 6.0,
+              "conditions": {}
+            },
+            {
+              "species": "Chinchou",
+              "pokemon": "chinchou",
+              "types": [
+                "water",
+                "electric"
+              ],
+              "family": "chinchou",
+              "family_priority": "uncommon",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "uncommon",
+              "weight": 6.0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Lanturn",
+              "pokemon": "lanturn",
+              "types": [
+                "water",
+                "electric"
+              ],
+              "family": "chinchou",
+              "family_priority": "uncommon",
+              "ambient": false,
+              "eligibility_reason": "evolution requires level 27; band begins at 25",
+              "level": "25-30",
+              "bucket": "authored-only",
+              "weight": 0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Relicanth",
+              "pokemon": "relicanth",
+              "types": [
+                "water",
+                "rock"
+              ],
+              "family": "relicanth",
+              "family_priority": "rare",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "rare",
+              "weight": 2.0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Dhelmise",
+              "pokemon": "dhelmise",
+              "types": [
+                "ghost",
+                "grass"
+              ],
+              "family": "dhelmise",
+              "family_priority": "rare",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "rare",
+              "weight": 2.0,
+              "conditions": {
+                "maxY": 40
+              }
+            },
+            {
+              "species": "Lapras",
+              "pokemon": "lapras",
+              "types": [
+                "water",
+                "ice"
+              ],
+              "family": "lapras",
+              "family_priority": "ultra-rare",
+              "ambient": true,
+              "eligibility_reason": "base stage",
+              "level": "25-30",
+              "bucket": "ultra-rare",
+              "weight": 1.0,
+              "conditions": {
+                "canSeeSky": true
+              }
+            }
+          ]
+        }
       ]
     }
   ],
