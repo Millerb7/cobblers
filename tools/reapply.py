@@ -662,11 +662,12 @@ def run(a):
         print("reload:", rc("reload"))
     # No drops while building. Every fill that replaces the block under a flower, a torch or a sapling pops it off as
     # an item, and a falling block that lands on a torch drops both: the owner picked up seeds, flowers and torches all
-    # over staging after run 4 (2026-09-25). The rules come back as they were, even when a step stops the run.
+    # over staging after run 4 (2026-09-25). The rules come back on afterwards, even when a step stops the run, and
+    # always to true, never to what was found: a run that died with the server (run 5, out of memory) left them off in
+    # the world, and the next run would have "restored" that
     drops = {}
     for rule in DROP_RULES:
-        m = re.search(r"(true|false)\s*$", str(rc("gamerule %s" % rule)))
-        drops[rule] = m.group(1) if m else "true"
+        drops[rule] = "true"
         rc("gamerule %s false" % rule)
     try:
         _run_steps(a, rc, todo, rec, path)
