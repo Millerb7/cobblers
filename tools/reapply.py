@@ -194,6 +194,7 @@ def prepare(a):
     py(TOOLS / "tree_grove.py", *src, "--site", "2016,2272", "--id", "foothill_woods")
     py(TOOLS / "tree_grove.py", *src, "--augment", "foothill_woods")
     py(TOOLS / "elder_trees.py", *src)
+    py(TOOLS / "themed_saplings.py", *src)                            # placed from data/themed_saplings.json's pins
     py(TOOLS / "maze_forest.py", *src)
     py(TOOLS / "islet.py", *src)
     # the Rift, in the order the world needs it: the skin lies over the sculpted shape, the biome is painted
@@ -244,7 +245,9 @@ def prepare(a):
     fn.mkdir(parents=True)
     (REAPPLY / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: loose re-application functions (tools/reapply.py)"}}) + "\n", encoding="utf-8")
     loose = [(BUILD / "town_prep" / ("prep_%s.mcfunction" % s), "prep_%s" % s) for s in places()]
-    loose += [(BUILD / "elders" / "elders.mcfunction", "elders"), (BUILD / "grove" / "grove_foothill_woods.mcfunction", "grove"),
+    loose += [(BUILD / "elders" / "elders.mcfunction", "elders"),
+              (BUILD / "themed_saplings" / "themed_saplings.mcfunction", "themed_saplings"),
+              (BUILD / "grove" / "grove_foothill_woods.mcfunction", "grove"),
               (BUILD / "grove" / "grove_foothill_woods_augment.mcfunction", "grove_augment"),
               (BUILD / "islet" / "relic_island.mcfunction", "islet")]
     for path, name in loose:
@@ -563,6 +566,8 @@ def steps(with_spawns=False):
             + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
            ("R4", "Foothill grove", [("fn", "cobblers:reapply/grove"), ("fn", "cobblers:reapply/grove_augment")]),
            ("R5", "elders", [("fn", "cobblers:reapply/elders")]),
+           # the themed saplings (tools/themed_saplings.py): before R9E, which puts their nest blocks in their trunks
+           ("R5B", "themed saplings", [("fn", "cobblers:reapply/themed_saplings")]),
            ("R6", "Route 1 maze forest", [("fn", "cobblers:route1/tile_%d_%d" % (i, j)) for i in range(4) for j in range(4)]),
            ("R10", "Relic Island islet (before the towns: the house stands on it)", [("fn", "cobblers:reapply/islet")]),
            ("R7", "hometown", [("fn", "cobblers:towns/hometown")])]

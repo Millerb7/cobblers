@@ -1,0 +1,226 @@
+{
+  "schema": "cobblers.themed-saplings/1",
+  "note": "Pinned sites of the themed saplings (tools/themed_saplings.py picked them; placed from here after that, so a tree never moves out from under its nest blocks). ground_y is tools/ground.py's.",
+  "saplings": [
+    {
+      "id": "sapling_palm_sunset_east",
+      "theme": "palm",
+      "subregion": "sunset_east",
+      "x": 3408,
+      "z": 7400,
+      "ground_y": 65,
+      "rotation": "clockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 930
+    },
+    {
+      "id": "sapling_palm_sunset_west",
+      "theme": "palm",
+      "subregion": "sunset_west",
+      "x": 1456,
+      "z": 6680,
+      "ground_y": 65,
+      "rotation": "180",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 1388
+    },
+    {
+      "id": "sapling_palm_east_coast_dunes",
+      "theme": "palm",
+      "subregion": "east_coast_dunes",
+      "x": 7032,
+      "z": 4784,
+      "ground_y": 65,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 729
+    },
+    {
+      "id": "sapling_lakeshore_arrow_lake_shores",
+      "theme": "lakeshore",
+      "subregion": "arrow_lake_shores",
+      "x": 2512,
+      "z": 4520,
+      "ground_y": 105,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 950
+    },
+    {
+      "id": "sapling_lakeshore_tilpey_south_shore",
+      "theme": "lakeshore",
+      "subregion": "tilpey_south_shore",
+      "x": 4976,
+      "z": 4944,
+      "ground_y": 112,
+      "rotation": "counterclockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 476
+    },
+    {
+      "id": "sapling_scorched_great_crater",
+      "theme": "scorched",
+      "subregion": "great_crater",
+      "x": 5856,
+      "z": 5424,
+      "ground_y": 136,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 276
+    },
+    {
+      "id": "sapling_scorched_crater_rim_north_west",
+      "theme": "scorched",
+      "subregion": "crater_rim_north_west",
+      "x": 5712,
+      "z": 5208,
+      "ground_y": 121,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 41
+    },
+    {
+      "id": "sapling_scorched_east_cones",
+      "theme": "scorched",
+      "subregion": "east_cones",
+      "x": 6504,
+      "z": 5472,
+      "ground_y": 140,
+      "rotation": "180",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 639
+    },
+    {
+      "id": "sapling_frost_frostpeak",
+      "theme": "frost",
+      "subregion": "frostpeak",
+      "x": 872,
+      "z": 744,
+      "ground_y": 87,
+      "rotation": "counterclockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 1058
+    },
+    {
+      "id": "sapling_frost_frostpeak_strand",
+      "theme": "frost",
+      "subregion": "frostpeak_strand",
+      "x": 1504,
+      "z": 536,
+      "ground_y": 86,
+      "rotation": "clockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 896
+    },
+    {
+      "id": "sapling_frost_glacier_foot_fields",
+      "theme": "frost",
+      "subregion": "glacier_foot_fields",
+      "x": 4872,
+      "z": 2600,
+      "ground_y": 132,
+      "rotation": "counterclockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 41
+    },
+    {
+      "id": "sapling_storm_rift_trunk",
+      "theme": "storm",
+      "subregion": "rift_trunk",
+      "x": 3808,
+      "z": 3560,
+      "ground_y": 85,
+      "rotation": "180",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 40
+    },
+    {
+      "id": "sapling_storm_rift_west_spur",
+      "theme": "storm",
+      "subregion": "rift_west_spur",
+      "x": 3600,
+      "z": 3344,
+      "ground_y": 82,
+      "rotation": "clockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 40
+    },
+    {
+      "id": "sapling_storm_rift_foot",
+      "theme": "storm",
+      "subregion": "rift_foot",
+      "x": 3752,
+      "z": 5488,
+      "ground_y": 118,
+      "rotation": "180",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 40
+    },
+    {
+      "id": "sapling_crag_the_crags",
+      "theme": "crag",
+      "subregion": "the_crags",
+      "x": 3184,
+      "z": 1592,
+      "ground_y": 104,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 212
+    },
+    {
+      "id": "sapling_crag_mt_vessu",
+      "theme": "crag",
+      "subregion": "mt_vessu",
+      "x": 1864,
+      "z": 1424,
+      "ground_y": 244,
+      "rotation": "counterclockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 164
+    },
+    {
+      "id": "sapling_crag_the_tri_peaks",
+      "theme": "crag",
+      "subregion": "the_tri_peaks",
+      "x": 1648,
+      "z": 1544,
+      "ground_y": 140,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 44
+    },
+    {
+      "id": "sapling_desert_south_east_dunes",
+      "theme": "desert",
+      "subregion": "south_east_dunes",
+      "x": 5896,
+      "z": 6032,
+      "ground_y": 135,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 876
+    },
+    {
+      "id": "sapling_desert_plateau_west",
+      "theme": "desert",
+      "subregion": "plateau_west",
+      "x": 5064,
+      "z": 5392,
+      "ground_y": 145,
+      "rotation": "clockwise_90",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 41
+    },
+    {
+      "id": "sapling_desert_long_isle_north",
+      "theme": "desert",
+      "subregion": "long_isle_north",
+      "x": 7656,
+      "z": 4800,
+      "ground_y": 68,
+      "rotation": "none",
+      "pad_relief": 0.0,
+      "distance_to_nearest_leg": 1303
+    }
+  ]
+}

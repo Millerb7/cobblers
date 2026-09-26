@@ -6059,6 +6059,1455 @@
       },
       "status": "placed",
       "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+    },
+    {
+      "id": "sapling_palm_sunset_east_low",
+      "place": "the palm sapling sapling_palm_sunset_east: inside its trunk",
+      "pool": "cobblers:sapling_palm_sunset_east",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3408,
+        "y": 76,
+        "z": 7400
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_sunset_east_mid",
+      "place": "the palm sapling sapling_palm_sunset_east: inside its trunk",
+      "pool": "cobblers:sapling_palm_sunset_east",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3406,
+        "y": 93,
+        "z": 7400
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_sunset_east_high",
+      "place": "the palm sapling sapling_palm_sunset_east: inside its trunk",
+      "pool": "cobblers:sapling_palm_sunset_east",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3402,
+        "y": 111,
+        "z": 7399
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_sunset_east_top",
+      "place": "the palm sapling sapling_palm_sunset_east: inside its crown",
+      "pool": "cobblers:sapling_palm_sunset_east",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3400,
+        "y": 118,
+        "z": 7399
+      },
+      "mimic": "minecraft:jungle_leaves",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own crown, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_sunset_west_low",
+      "place": "the palm sapling sapling_palm_sunset_west: inside its trunk",
+      "pool": "cobblers:sapling_palm_sunset_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1456,
+        "y": 76,
+        "z": 6680
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_sunset_west_mid",
+      "place": "the palm sapling sapling_palm_sunset_west: inside its trunk",
+      "pool": "cobblers:sapling_palm_sunset_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1456,
+        "y": 93,
+        "z": 6678
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_sunset_west_high",
+      "place": "the palm sapling sapling_palm_sunset_west: inside its trunk",
+      "pool": "cobblers:sapling_palm_sunset_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1457,
+        "y": 111,
+        "z": 6674
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_sunset_west_top",
+      "place": "the palm sapling sapling_palm_sunset_west: inside its crown",
+      "pool": "cobblers:sapling_palm_sunset_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1457,
+        "y": 118,
+        "z": 6672
+      },
+      "mimic": "minecraft:jungle_leaves",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own crown, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_east_coast_dunes_low",
+      "place": "the palm sapling sapling_palm_east_coast_dunes: inside its trunk",
+      "pool": "cobblers:sapling_palm_east_coast_dunes",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7032,
+        "y": 76,
+        "z": 4784
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_east_coast_dunes_mid",
+      "place": "the palm sapling sapling_palm_east_coast_dunes: inside its trunk",
+      "pool": "cobblers:sapling_palm_east_coast_dunes",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7032,
+        "y": 93,
+        "z": 4786
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_east_coast_dunes_high",
+      "place": "the palm sapling sapling_palm_east_coast_dunes: inside its trunk",
+      "pool": "cobblers:sapling_palm_east_coast_dunes",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7031,
+        "y": 111,
+        "z": 4790
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_palm_east_coast_dunes_top",
+      "place": "the palm sapling sapling_palm_east_coast_dunes: inside its crown",
+      "pool": "cobblers:sapling_palm_east_coast_dunes",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7031,
+        "y": 118,
+        "z": 4792
+      },
+      "mimic": "minecraft:jungle_leaves",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own crown, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_palm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_lakeshore_arrow_lake_shores_low",
+      "place": "the lakeshore sapling sapling_lakeshore_arrow_lake_shores: inside its trunk",
+      "pool": "cobblers:sapling_lakeshore_arrow_lake_shores",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2512,
+        "y": 114,
+        "z": 4520
+      },
+      "mimic": "minecraft:mangrove_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_lakeshore, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_lakeshore_arrow_lake_shores_mid",
+      "place": "the lakeshore sapling sapling_lakeshore_arrow_lake_shores: inside its trunk",
+      "pool": "cobblers:sapling_lakeshore_arrow_lake_shores",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2512,
+        "y": 128,
+        "z": 4521
+      },
+      "mimic": "minecraft:mangrove_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_lakeshore, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_lakeshore_arrow_lake_shores_high",
+      "place": "the lakeshore sapling sapling_lakeshore_arrow_lake_shores: inside its crown",
+      "pool": "cobblers:sapling_lakeshore_arrow_lake_shores",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2512,
+        "y": 150,
+        "z": 4520
+      },
+      "mimic": "minecraft:mangrove_leaves",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own crown, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_lakeshore, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_lakeshore_tilpey_south_shore_low",
+      "place": "the lakeshore sapling sapling_lakeshore_tilpey_south_shore: inside its trunk",
+      "pool": "cobblers:sapling_lakeshore_tilpey_south_shore",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4976,
+        "y": 121,
+        "z": 4944
+      },
+      "mimic": "minecraft:mangrove_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_lakeshore, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_lakeshore_tilpey_south_shore_mid",
+      "place": "the lakeshore sapling sapling_lakeshore_tilpey_south_shore: inside its trunk",
+      "pool": "cobblers:sapling_lakeshore_tilpey_south_shore",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4977,
+        "y": 135,
+        "z": 4944
+      },
+      "mimic": "minecraft:mangrove_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_lakeshore, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_lakeshore_tilpey_south_shore_high",
+      "place": "the lakeshore sapling sapling_lakeshore_tilpey_south_shore: inside its crown",
+      "pool": "cobblers:sapling_lakeshore_tilpey_south_shore",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4976,
+        "y": 157,
+        "z": 4944
+      },
+      "mimic": "minecraft:mangrove_leaves",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own crown, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_lakeshore, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_great_crater_low",
+      "place": "the scorched sapling sapling_scorched_great_crater: inside its trunk",
+      "pool": "cobblers:sapling_scorched_great_crater",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5856,
+        "y": 147,
+        "z": 5424
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_great_crater_mid",
+      "place": "the scorched sapling sapling_scorched_great_crater: inside its trunk",
+      "pool": "cobblers:sapling_scorched_great_crater",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5856,
+        "y": 165,
+        "z": 5424
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_great_crater_high",
+      "place": "the scorched sapling sapling_scorched_great_crater: inside its trunk",
+      "pool": "cobblers:sapling_scorched_great_crater",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5856,
+        "y": 183,
+        "z": 5424
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_crater_rim_north_west_low",
+      "place": "the scorched sapling sapling_scorched_crater_rim_north_west: inside its trunk",
+      "pool": "cobblers:sapling_scorched_crater_rim_north_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5712,
+        "y": 132,
+        "z": 5208
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_crater_rim_north_west_mid",
+      "place": "the scorched sapling sapling_scorched_crater_rim_north_west: inside its trunk",
+      "pool": "cobblers:sapling_scorched_crater_rim_north_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5712,
+        "y": 150,
+        "z": 5208
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_crater_rim_north_west_high",
+      "place": "the scorched sapling sapling_scorched_crater_rim_north_west: inside its trunk",
+      "pool": "cobblers:sapling_scorched_crater_rim_north_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5712,
+        "y": 168,
+        "z": 5208
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_east_cones_low",
+      "place": "the scorched sapling sapling_scorched_east_cones: inside its trunk",
+      "pool": "cobblers:sapling_scorched_east_cones",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6504,
+        "y": 151,
+        "z": 5472
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_east_cones_mid",
+      "place": "the scorched sapling sapling_scorched_east_cones: inside its trunk",
+      "pool": "cobblers:sapling_scorched_east_cones",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6504,
+        "y": 169,
+        "z": 5472
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_scorched_east_cones_high",
+      "place": "the scorched sapling sapling_scorched_east_cones: inside its trunk",
+      "pool": "cobblers:sapling_scorched_east_cones",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6504,
+        "y": 187,
+        "z": 5472
+      },
+      "mimic": "minecraft:polished_basalt",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_scorched, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_frostpeak_low",
+      "place": "the frost sapling sapling_frost_frostpeak: inside its trunk",
+      "pool": "cobblers:sapling_frost_frostpeak",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 872,
+        "y": 100,
+        "z": 744
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_frostpeak_mid",
+      "place": "the frost sapling sapling_frost_frostpeak: inside its trunk",
+      "pool": "cobblers:sapling_frost_frostpeak",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 872,
+        "y": 122,
+        "z": 744
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_frostpeak_high",
+      "place": "the frost sapling sapling_frost_frostpeak: inside its trunk",
+      "pool": "cobblers:sapling_frost_frostpeak",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 872,
+        "y": 144,
+        "z": 744
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_frostpeak_strand_low",
+      "place": "the frost sapling sapling_frost_frostpeak_strand: inside its trunk",
+      "pool": "cobblers:sapling_frost_frostpeak_strand",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1504,
+        "y": 99,
+        "z": 536
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_frostpeak_strand_mid",
+      "place": "the frost sapling sapling_frost_frostpeak_strand: inside its trunk",
+      "pool": "cobblers:sapling_frost_frostpeak_strand",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1504,
+        "y": 121,
+        "z": 536
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_frostpeak_strand_high",
+      "place": "the frost sapling sapling_frost_frostpeak_strand: inside its trunk",
+      "pool": "cobblers:sapling_frost_frostpeak_strand",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1504,
+        "y": 143,
+        "z": 536
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_glacier_foot_fields_low",
+      "place": "the frost sapling sapling_frost_glacier_foot_fields: inside its trunk",
+      "pool": "cobblers:sapling_frost_glacier_foot_fields",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4872,
+        "y": 145,
+        "z": 2600
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_glacier_foot_fields_mid",
+      "place": "the frost sapling sapling_frost_glacier_foot_fields: inside its trunk",
+      "pool": "cobblers:sapling_frost_glacier_foot_fields",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4872,
+        "y": 167,
+        "z": 2600
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_frost_glacier_foot_fields_high",
+      "place": "the frost sapling sapling_frost_glacier_foot_fields: inside its trunk",
+      "pool": "cobblers:sapling_frost_glacier_foot_fields",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4872,
+        "y": 189,
+        "z": 2600
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_frost, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_trunk_low",
+      "place": "the storm sapling sapling_storm_rift_trunk: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_trunk",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3808,
+        "y": 96,
+        "z": 3560
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_trunk_mid",
+      "place": "the storm sapling sapling_storm_rift_trunk: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_trunk",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3808,
+        "y": 110,
+        "z": 3560
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_trunk_high",
+      "place": "the storm sapling sapling_storm_rift_trunk: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_trunk",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3811,
+        "y": 134,
+        "z": 3561
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_west_spur_low",
+      "place": "the storm sapling sapling_storm_rift_west_spur: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_west_spur",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3600,
+        "y": 93,
+        "z": 3344
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_west_spur_mid",
+      "place": "the storm sapling sapling_storm_rift_west_spur: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_west_spur",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3600,
+        "y": 107,
+        "z": 3344
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_west_spur_high",
+      "place": "the storm sapling sapling_storm_rift_west_spur: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_west_spur",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3601,
+        "y": 131,
+        "z": 3341
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_foot_low",
+      "place": "the storm sapling sapling_storm_rift_foot: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_foot",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3752,
+        "y": 129,
+        "z": 5488
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_foot_mid",
+      "place": "the storm sapling sapling_storm_rift_foot: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_foot",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3752,
+        "y": 143,
+        "z": 5488
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_storm_rift_foot_high",
+      "place": "the storm sapling sapling_storm_rift_foot: inside its trunk",
+      "pool": "cobblers:sapling_storm_rift_foot",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3755,
+        "y": 167,
+        "z": 5489
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_storm, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_the_crags_low",
+      "place": "the crag sapling sapling_crag_the_crags: inside its trunk",
+      "pool": "cobblers:sapling_crag_the_crags",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3183,
+        "y": 115,
+        "z": 1594
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_the_crags_mid",
+      "place": "the crag sapling sapling_crag_the_crags: inside its trunk",
+      "pool": "cobblers:sapling_crag_the_crags",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3182,
+        "y": 127,
+        "z": 1595
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_the_crags_high",
+      "place": "the crag sapling sapling_crag_the_crags: inside its trunk",
+      "pool": "cobblers:sapling_crag_the_crags",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3183,
+        "y": 139,
+        "z": 1594
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_mt_vessu_low",
+      "place": "the crag sapling sapling_crag_mt_vessu: inside its trunk",
+      "pool": "cobblers:sapling_crag_mt_vessu",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1866,
+        "y": 255,
+        "z": 1425
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_mt_vessu_mid",
+      "place": "the crag sapling sapling_crag_mt_vessu: inside its trunk",
+      "pool": "cobblers:sapling_crag_mt_vessu",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1867,
+        "y": 267,
+        "z": 1426
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_mt_vessu_high",
+      "place": "the crag sapling sapling_crag_mt_vessu: inside its trunk",
+      "pool": "cobblers:sapling_crag_mt_vessu",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1866,
+        "y": 279,
+        "z": 1425
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_the_tri_peaks_low",
+      "place": "the crag sapling sapling_crag_the_tri_peaks: inside its trunk",
+      "pool": "cobblers:sapling_crag_the_tri_peaks",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1647,
+        "y": 151,
+        "z": 1546
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_the_tri_peaks_mid",
+      "place": "the crag sapling sapling_crag_the_tri_peaks: inside its trunk",
+      "pool": "cobblers:sapling_crag_the_tri_peaks",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1646,
+        "y": 163,
+        "z": 1547
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_crag_the_tri_peaks_high",
+      "place": "the crag sapling sapling_crag_the_tri_peaks: inside its trunk",
+      "pool": "cobblers:sapling_crag_the_tri_peaks",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1647,
+        "y": 175,
+        "z": 1546
+      },
+      "mimic": "minecraft:spruce_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_crag, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_south_east_dunes_low",
+      "place": "the desert sapling sapling_desert_south_east_dunes: inside its trunk",
+      "pool": "cobblers:sapling_desert_south_east_dunes",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5896,
+        "y": 146,
+        "z": 6032
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_south_east_dunes_mid",
+      "place": "the desert sapling sapling_desert_south_east_dunes: inside its trunk",
+      "pool": "cobblers:sapling_desert_south_east_dunes",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5896,
+        "y": 158,
+        "z": 6032
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_south_east_dunes_high",
+      "place": "the desert sapling sapling_desert_south_east_dunes: inside its trunk",
+      "pool": "cobblers:sapling_desert_south_east_dunes",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5896,
+        "y": 168,
+        "z": 6032
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_plateau_west_low",
+      "place": "the desert sapling sapling_desert_plateau_west: inside its trunk",
+      "pool": "cobblers:sapling_desert_plateau_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5064,
+        "y": 156,
+        "z": 5392
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_plateau_west_mid",
+      "place": "the desert sapling sapling_desert_plateau_west: inside its trunk",
+      "pool": "cobblers:sapling_desert_plateau_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5064,
+        "y": 168,
+        "z": 5392
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_plateau_west_high",
+      "place": "the desert sapling sapling_desert_plateau_west: inside its trunk",
+      "pool": "cobblers:sapling_desert_plateau_west",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 5064,
+        "y": 178,
+        "z": 5392
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_long_isle_north_low",
+      "place": "the desert sapling sapling_desert_long_isle_north: inside its trunk",
+      "pool": "cobblers:sapling_desert_long_isle_north",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7656,
+        "y": 79,
+        "z": 4800
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_long_isle_north_mid",
+      "place": "the desert sapling sapling_desert_long_isle_north: inside its trunk",
+      "pool": "cobblers:sapling_desert_long_isle_north",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7656,
+        "y": 91,
+        "z": 4800
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "sapling_desert_long_isle_north_high",
+      "place": "the desert sapling sapling_desert_long_isle_north: inside its trunk",
+      "pool": "cobblers:sapling_desert_long_isle_north",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 7656,
+        "y": 101,
+        "z": 4800
+      },
+      "mimic": "minecraft:bone_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns": 8,
+        "max_spawns_per_activation": 2
+      },
+      "status": "planned",
+      "why": "A nest in a themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: themed saplings per region, each the home of one bird). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
     }
   ]
 }

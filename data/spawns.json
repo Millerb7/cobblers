@@ -15632,6 +15632,396 @@
       "conditions": {},
       "eligibility_reason": "the tree's one species (one bird per sapling, the owner 2026-09-26)",
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_palm_sunset_east.wingull",
+      "species": "wingull",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_palm_sunset_east",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_palm_sunset_east.pelipper",
+      "species": "pelipper",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_palm_sunset_east",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_palm_sunset_west.wingull",
+      "species": "wingull",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_palm_sunset_west",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_palm_sunset_west.pelipper",
+      "species": "pelipper",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_palm_sunset_west",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_palm_east_coast_dunes.wingull",
+      "species": "wingull",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_palm_east_coast_dunes",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_palm_east_coast_dunes.pelipper",
+      "species": "pelipper",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_palm_east_coast_dunes",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_lakeshore_arrow_lake_shores.ducklett",
+      "species": "ducklett",
+      "bucket": "common",
+      "level": "10-15",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_lakeshore_arrow_lake_shores",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_lakeshore_tilpey_south_shore.ducklett",
+      "species": "ducklett",
+      "bucket": "common",
+      "level": "42-44",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_lakeshore_tilpey_south_shore",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_lakeshore_tilpey_south_shore.swanna",
+      "species": "swanna",
+      "bucket": "uncommon",
+      "level": "42-44",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_lakeshore_tilpey_south_shore",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (35 <= 42, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_scorched_great_crater.fletchinder",
+      "species": "fletchinder",
+      "bucket": "common",
+      "level": "44-52",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_scorched_great_crater",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_scorched_great_crater.talonflame",
+      "species": "talonflame",
+      "bucket": "uncommon",
+      "level": "44-52",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_scorched_great_crater",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_scorched_crater_rim_north_west.fletchinder",
+      "species": "fletchinder",
+      "bucket": "common",
+      "level": "44-46",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_scorched_crater_rim_north_west",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_scorched_crater_rim_north_west.talonflame",
+      "species": "talonflame",
+      "bucket": "uncommon",
+      "level": "44-46",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_scorched_crater_rim_north_west",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_scorched_east_cones.fletchinder",
+      "species": "fletchinder",
+      "bucket": "common",
+      "level": "44-52",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_scorched_east_cones",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_scorched_east_cones.talonflame",
+      "species": "talonflame",
+      "bucket": "uncommon",
+      "level": "44-52",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_scorched_east_cones",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_frost_frostpeak.delibird",
+      "species": "delibird",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_frost_frostpeak",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_frost_frostpeak_strand.delibird",
+      "species": "delibird",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_frost_frostpeak_strand",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_frost_glacier_foot_fields.delibird",
+      "species": "delibird",
+      "bucket": "common",
+      "level": "34-36",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_frost_glacier_foot_fields",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_storm_rift_trunk.wattrel",
+      "species": "wattrel",
+      "bucket": "common",
+      "level": "55-57",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_storm_rift_trunk",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_storm_rift_trunk.kilowattrel",
+      "species": "kilowattrel",
+      "bucket": "uncommon",
+      "level": "55-57",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_storm_rift_trunk",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (25 <= 55, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_storm_rift_west_spur.wattrel",
+      "species": "wattrel",
+      "bucket": "common",
+      "level": "56-58",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_storm_rift_west_spur",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_storm_rift_west_spur.kilowattrel",
+      "species": "kilowattrel",
+      "bucket": "uncommon",
+      "level": "56-58",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_storm_rift_west_spur",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (25 <= 56, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_storm_rift_foot.wattrel",
+      "species": "wattrel",
+      "bucket": "common",
+      "level": "49-51",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "sapling_storm_rift_foot",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_storm_rift_foot.kilowattrel",
+      "species": "kilowattrel",
+      "bucket": "uncommon",
+      "level": "49-51",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "sapling_storm_rift_foot",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (25 <= 49, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_crag_the_crags.skarmory",
+      "species": "skarmory",
+      "bucket": "common",
+      "level": "28-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_crag_the_crags",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_crag_mt_vessu.skarmory",
+      "species": "skarmory",
+      "bucket": "common",
+      "level": "24-26",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_crag_mt_vessu",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_crag_the_tri_peaks.skarmory",
+      "species": "skarmory",
+      "bucket": "common",
+      "level": "24-29",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_crag_the_tri_peaks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_desert_south_east_dunes.vullaby",
+      "species": "vullaby",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_desert_south_east_dunes",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_desert_plateau_west.vullaby",
+      "species": "vullaby",
+      "bucket": "common",
+      "level": "47-49",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_desert_plateau_west",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.sapling_desert_long_isle_north.vullaby",
+      "species": "vullaby",
+      "bucket": "common",
+      "level": "44-50",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "sapling_desert_long_isle_north",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [
@@ -31436,7 +31826,7 @@
     {
       "id": "route_1_sapling_crown",
       "display_name": "Route 1 sapling crown",
-      "intended_location": "the world-tree sapling in Route 1's maze forest (1380, 4628; tools/maze_forest.py SAPLING): a nest of 2 activated Habitat Blocks (route1_sapling_low, route1_sapling_crown in data/habitat_blocks.json) inside its trunk at (1380, y134/150, 4628), up to 20 of its bird alive at once",
+      "intended_location": "the world-tree sapling in Route 1's maze forest (1380, 4628; tools/maze_forest.py SAPLING): a nest of 2 activated Habitat Blocks (route1_sapling_low, route1_sapling_crown in data/habitat_blocks.json) inside its trunk at (1380, y134/150, 4628), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31467,7 +31857,7 @@
     {
       "id": "elder_viltri_plateau_1",
       "display_name": "Elder Viltri Plateau 1",
-      "intended_location": "the elder tree at (1730, 3960) (elder_birch_a, none): a nest of 3 activated Habitat Blocks (elder_viltri_plateau_1, elder_viltri_plateau_1_mid, elder_viltri_plateau_1_crown in data/habitat_blocks.json) inside its trunk at (1730, y133/156/179, 3960), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1730, 3960) (elder_birch_a, none): a nest of 4 activated Habitat Blocks (elder_viltri_plateau_1, elder_viltri_plateau_1_mid, elder_viltri_plateau_1_crown, elder_viltri_plateau_1_top in data/habitat_blocks.json) inside its trunk at (1730, y133/156/179/195, 3960), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31530,7 +31920,7 @@
     {
       "id": "elder_viltri_plateau_2",
       "display_name": "Elder Viltri Plateau 2",
-      "intended_location": "the elder tree at (2332, 3560) (elder_birch_b, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_viltri_plateau_2, elder_viltri_plateau_2_mid, elder_viltri_plateau_2_crown in data/habitat_blocks.json) inside its trunk at (2332, y130/153/176, 3560), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (2332, 3560) (elder_birch_b, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_viltri_plateau_2, elder_viltri_plateau_2_mid, elder_viltri_plateau_2_crown, elder_viltri_plateau_2_top in data/habitat_blocks.json) inside its trunk at (2332, y130/153/176/192, 3560), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31577,7 +31967,7 @@
     {
       "id": "elder_viltri_plateau_3",
       "display_name": "Elder Viltri Plateau 3",
-      "intended_location": "the elder tree at (2344, 3064) (elder_birch_c, clockwise_90): a nest of 3 activated Habitat Blocks (elder_viltri_plateau_3, elder_viltri_plateau_3_mid, elder_viltri_plateau_3_crown in data/habitat_blocks.json) inside its trunk at (2344, y120/143/166, 3064), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (2344, 3064) (elder_birch_c, clockwise_90): a nest of 4 activated Habitat Blocks (elder_viltri_plateau_3, elder_viltri_plateau_3_mid, elder_viltri_plateau_3_crown, elder_viltri_plateau_3_top in data/habitat_blocks.json) inside its trunk at (2344, y120/143/166/182, 3064), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31624,7 +32014,7 @@
     {
       "id": "elder_lake_viltri_hollow_1",
       "display_name": "Elder Lake Viltri Hollow 1",
-      "intended_location": "the elder tree at (1280, 3184) (elder_oak_a, 180): a nest of 3 activated Habitat Blocks (elder_lake_viltri_hollow_1, elder_lake_viltri_hollow_1_mid, elder_lake_viltri_hollow_1_crown in data/habitat_blocks.json) inside its trunk at (1280, y122/145/168, 3184), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1280, 3184) (elder_oak_a, 180): a nest of 4 activated Habitat Blocks (elder_lake_viltri_hollow_1, elder_lake_viltri_hollow_1_mid, elder_lake_viltri_hollow_1_crown, elder_lake_viltri_hollow_1_top in data/habitat_blocks.json) inside its trunk at (1280, y122/145/168/184, 3184), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31671,7 +32061,7 @@
     {
       "id": "elder_lake_viltri_hollow_2",
       "display_name": "Elder Lake Viltri Hollow 2",
-      "intended_location": "the elder tree at (1824, 3056) (elder_oak_b, clockwise_90): a nest of 3 activated Habitat Blocks (elder_lake_viltri_hollow_2, elder_lake_viltri_hollow_2_mid, elder_lake_viltri_hollow_2_crown in data/habitat_blocks.json) inside its trunk at (1824, y133/156/179, 3056), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1824, 3056) (elder_oak_b, clockwise_90): a nest of 4 activated Habitat Blocks (elder_lake_viltri_hollow_2, elder_lake_viltri_hollow_2_mid, elder_lake_viltri_hollow_2_crown, elder_lake_viltri_hollow_2_top in data/habitat_blocks.json) inside its trunk at (1824, y133/156/179/195, 3056), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31718,7 +32108,7 @@
     {
       "id": "elder_viltris_path_valley_1",
       "display_name": "Elder Viltris Path Valley 1",
-      "intended_location": "the elder tree at (1016, 3864) (elder_oak_a, none): a nest of 3 activated Habitat Blocks (elder_viltris_path_valley_1, elder_viltris_path_valley_1_mid, elder_viltris_path_valley_1_crown in data/habitat_blocks.json) inside its trunk at (1016, y150/173/196, 3864), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1016, 3864) (elder_oak_a, none): a nest of 4 activated Habitat Blocks (elder_viltris_path_valley_1, elder_viltris_path_valley_1_mid, elder_viltris_path_valley_1_crown, elder_viltris_path_valley_1_top in data/habitat_blocks.json) inside its trunk at (1016, y150/173/196/212, 3864), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31781,7 +32171,7 @@
     {
       "id": "elder_viltris_path_valley_2",
       "display_name": "Elder Viltris Path Valley 2",
-      "intended_location": "the elder tree at (1094, 3496) (elder_oak_b, none): a nest of 3 activated Habitat Blocks (elder_viltris_path_valley_2, elder_viltris_path_valley_2_mid, elder_viltris_path_valley_2_crown in data/habitat_blocks.json) inside its trunk at (1094, y134/157/180, 3496), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1094, 3496) (elder_oak_b, none): a nest of 4 activated Habitat Blocks (elder_viltris_path_valley_2, elder_viltris_path_valley_2_mid, elder_viltris_path_valley_2_crown, elder_viltris_path_valley_2_top in data/habitat_blocks.json) inside its trunk at (1094, y134/157/180/196, 3496), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31812,7 +32202,7 @@
     {
       "id": "elder_foothill_woods_1",
       "display_name": "Elder Foothill Woods 1",
-      "intended_location": "the elder tree at (1440, 2264) (elder_oak_a, none): a nest of 3 activated Habitat Blocks (elder_foothill_woods_1, elder_foothill_woods_1_mid, elder_foothill_woods_1_crown in data/habitat_blocks.json) inside its trunk at (1440, y112/135/158, 2264), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1440, 2264) (elder_oak_a, none): a nest of 4 activated Habitat Blocks (elder_foothill_woods_1, elder_foothill_woods_1_mid, elder_foothill_woods_1_crown, elder_foothill_woods_1_top in data/habitat_blocks.json) inside its trunk at (1440, y112/135/158/174, 2264), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31859,7 +32249,7 @@
     {
       "id": "elder_foothill_woods_2",
       "display_name": "Elder Foothill Woods 2",
-      "intended_location": "the elder tree at (2912, 2440) (elder_oak_b, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_foothill_woods_2, elder_foothill_woods_2_mid, elder_foothill_woods_2_crown in data/habitat_blocks.json) inside its trunk at (2912, y119/142/165, 2440), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (2912, 2440) (elder_oak_b, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_foothill_woods_2, elder_foothill_woods_2_mid, elder_foothill_woods_2_crown, elder_foothill_woods_2_top in data/habitat_blocks.json) inside its trunk at (2912, y119/142/165/181, 2440), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31922,7 +32312,7 @@
     {
       "id": "elder_foothill_woods_3",
       "display_name": "Elder Foothill Woods 3",
-      "intended_location": "the elder tree at (2236, 1622) (elder_oak_c, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_foothill_woods_3, elder_foothill_woods_3_mid, elder_foothill_woods_3_crown in data/habitat_blocks.json) inside its trunk at (2236, y136/159/182, 1622), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (2236, 1622) (elder_oak_c, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_foothill_woods_3, elder_foothill_woods_3_mid, elder_foothill_woods_3_crown, elder_foothill_woods_3_top in data/habitat_blocks.json) inside its trunk at (2236, y136/159/182/198, 1622), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31969,7 +32359,7 @@
     {
       "id": "elder_foothill_woods_4",
       "display_name": "Elder Foothill Woods 4",
-      "intended_location": "the elder tree at (2136, 2624) (elder_oak_a, none): a nest of 3 activated Habitat Blocks (elder_foothill_woods_4, elder_foothill_woods_4_mid, elder_foothill_woods_4_crown in data/habitat_blocks.json) inside its trunk at (2136, y129/152/175, 2624), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (2136, 2624) (elder_oak_a, none): a nest of 4 activated Habitat Blocks (elder_foothill_woods_4, elder_foothill_woods_4_mid, elder_foothill_woods_4_crown, elder_foothill_woods_4_top in data/habitat_blocks.json) inside its trunk at (2136, y129/152/175/191, 2624), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32016,7 +32406,7 @@
     {
       "id": "elder_foothill_grove_1",
       "display_name": "Elder Foothill Grove 1",
-      "intended_location": "the elder tree at (2078, 2262) (elder_oak_a, none): a nest of 3 activated Habitat Blocks (elder_foothill_grove_1, elder_foothill_grove_1_mid, elder_foothill_grove_1_crown in data/habitat_blocks.json) inside its trunk at (2078, y130/153/176, 2262), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (2078, 2262) (elder_oak_a, none): a nest of 4 activated Habitat Blocks (elder_foothill_grove_1, elder_foothill_grove_1_mid, elder_foothill_grove_1_crown, elder_foothill_grove_1_top in data/habitat_blocks.json) inside its trunk at (2078, y130/153/176/192, 2262), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32063,7 +32453,7 @@
     {
       "id": "elder_foothill_grove_2",
       "display_name": "Elder Foothill Grove 2",
-      "intended_location": "the elder tree at (2034, 2330) (elder_oak_b, 180): a nest of 3 activated Habitat Blocks (elder_foothill_grove_2, elder_foothill_grove_2_mid, elder_foothill_grove_2_crown in data/habitat_blocks.json) inside its trunk at (2034, y129/152/175, 2330), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (2034, 2330) (elder_oak_b, 180): a nest of 4 activated Habitat Blocks (elder_foothill_grove_2, elder_foothill_grove_2_mid, elder_foothill_grove_2_crown, elder_foothill_grove_2_top in data/habitat_blocks.json) inside its trunk at (2034, y129/152/175/191, 2330), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32126,7 +32516,7 @@
     {
       "id": "elder_foothill_grove_3",
       "display_name": "Elder Foothill Grove 3",
-      "intended_location": "the elder tree at (1958, 2294) (elder_oak_c, none): a nest of 3 activated Habitat Blocks (elder_foothill_grove_3, elder_foothill_grove_3_mid, elder_foothill_grove_3_crown in data/habitat_blocks.json) inside its trunk at (1958, y128/151/174, 2294), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1958, 2294) (elder_oak_c, none): a nest of 4 activated Habitat Blocks (elder_foothill_grove_3, elder_foothill_grove_3_mid, elder_foothill_grove_3_crown, elder_foothill_grove_3_top in data/habitat_blocks.json) inside its trunk at (1958, y128/151/174/190, 2294), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32189,7 +32579,7 @@
     {
       "id": "elder_foothill_grove_4",
       "display_name": "Elder Foothill Grove 4",
-      "intended_location": "the elder tree at (1958, 2234) (elder_oak_a, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_foothill_grove_4, elder_foothill_grove_4_mid, elder_foothill_grove_4_crown in data/habitat_blocks.json) inside its trunk at (1958, y127/150/173, 2234), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (1958, 2234) (elder_oak_a, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_foothill_grove_4, elder_foothill_grove_4_mid, elder_foothill_grove_4_crown, elder_foothill_grove_4_top in data/habitat_blocks.json) inside its trunk at (1958, y127/150/173/189, 2234), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32236,7 +32626,7 @@
     {
       "id": "elder_shrew_lake_shores_1",
       "display_name": "Elder Shrew Lake Shores 1",
-      "intended_location": "the elder tree at (3928, 4272) (elder_cherry_a, 180): a nest of 3 activated Habitat Blocks (elder_shrew_lake_shores_1, elder_shrew_lake_shores_1_mid, elder_shrew_lake_shores_1_crown in data/habitat_blocks.json) inside its trunk at (3928, y156/179/202, 4272), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (3928, 4272) (elder_cherry_a, 180): a nest of 4 activated Habitat Blocks (elder_shrew_lake_shores_1, elder_shrew_lake_shores_1_mid, elder_shrew_lake_shores_1_crown, elder_shrew_lake_shores_1_top in data/habitat_blocks.json) inside its trunk at (3928, y156/179/202/218, 4272), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32283,7 +32673,7 @@
     {
       "id": "elder_shrew_lake_shores_2",
       "display_name": "Elder Shrew Lake Shores 2",
-      "intended_location": "the elder tree at (3760, 3932) (elder_cherry_b, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_shrew_lake_shores_2, elder_shrew_lake_shores_2_mid, elder_shrew_lake_shores_2_crown in data/habitat_blocks.json) inside its trunk at (3760, y152/175/198, 3932), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (3760, 3932) (elder_cherry_b, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_shrew_lake_shores_2, elder_shrew_lake_shores_2_mid, elder_shrew_lake_shores_2_crown, elder_shrew_lake_shores_2_top in data/habitat_blocks.json) inside its trunk at (3760, y152/175/198/214, 3932), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32330,7 +32720,7 @@
     {
       "id": "elder_shrew_lake_shores_3",
       "display_name": "Elder Shrew Lake Shores 3",
-      "intended_location": "the elder tree at (3104, 3624) (elder_cherry_c, 180): a nest of 3 activated Habitat Blocks (elder_shrew_lake_shores_3, elder_shrew_lake_shores_3_mid, elder_shrew_lake_shores_3_crown in data/habitat_blocks.json) inside its trunk at (3104, y129/152/175, 3624), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (3104, 3624) (elder_cherry_c, 180): a nest of 4 activated Habitat Blocks (elder_shrew_lake_shores_3, elder_shrew_lake_shores_3_mid, elder_shrew_lake_shores_3_crown, elder_shrew_lake_shores_3_top in data/habitat_blocks.json) inside its trunk at (3104, y129/152/175/191, 3624), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32377,7 +32767,7 @@
     {
       "id": "elder_peak_pond_hollow_1",
       "display_name": "Elder Peak Pond Hollow 1",
-      "intended_location": "the elder tree at (3912, 1776) (elder_spruce_a, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_peak_pond_hollow_1, elder_peak_pond_hollow_1_mid, elder_peak_pond_hollow_1_crown in data/habitat_blocks.json) inside its trunk at (3912, y123/146/169, 1776), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (3912, 1776) (elder_spruce_a, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_peak_pond_hollow_1, elder_peak_pond_hollow_1_mid, elder_peak_pond_hollow_1_crown, elder_peak_pond_hollow_1_top in data/habitat_blocks.json) inside its trunk at (3912, y123/146/169/185, 1776), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32440,7 +32830,7 @@
     {
       "id": "elder_peak_pond_hollow_2",
       "display_name": "Elder Peak Pond Hollow 2",
-      "intended_location": "the elder tree at (4008, 1040) (elder_spruce_b, none): a nest of 3 activated Habitat Blocks (elder_peak_pond_hollow_2, elder_peak_pond_hollow_2_mid, elder_peak_pond_hollow_2_crown in data/habitat_blocks.json) inside its trunk at (4008, y124/147/170, 1040), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4008, 1040) (elder_spruce_b, none): a nest of 4 activated Habitat Blocks (elder_peak_pond_hollow_2, elder_peak_pond_hollow_2_mid, elder_peak_pond_hollow_2_crown, elder_peak_pond_hollow_2_top in data/habitat_blocks.json) inside its trunk at (4008, y124/147/170/186, 1040), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32503,7 +32893,7 @@
     {
       "id": "elder_peak_pond_hollow_3",
       "display_name": "Elder Peak Pond Hollow 3",
-      "intended_location": "the elder tree at (4346, 2296) (elder_spruce_c, none): a nest of 3 activated Habitat Blocks (elder_peak_pond_hollow_3, elder_peak_pond_hollow_3_mid, elder_peak_pond_hollow_3_crown in data/habitat_blocks.json) inside its trunk at (4346, y126/149/172, 2296), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4346, 2296) (elder_spruce_c, none): a nest of 4 activated Habitat Blocks (elder_peak_pond_hollow_3, elder_peak_pond_hollow_3_mid, elder_peak_pond_hollow_3_crown, elder_peak_pond_hollow_3_top in data/habitat_blocks.json) inside its trunk at (4346, y126/149/172/188, 2296), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32564,7 +32954,7 @@
     {
       "id": "elder_marshy_marsh_1",
       "display_name": "Elder Marshy Marsh 1",
-      "intended_location": "the elder tree at (4906, 1850) (elder_mangrove_a, 180): a nest of 3 activated Habitat Blocks (elder_marshy_marsh_1, elder_marshy_marsh_1_mid, elder_marshy_marsh_1_crown in data/habitat_blocks.json) inside its trunk at (4906, y122/145/168, 1850), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4906, 1850) (elder_mangrove_a, 180): a nest of 4 activated Habitat Blocks (elder_marshy_marsh_1, elder_marshy_marsh_1_mid, elder_marshy_marsh_1_crown, elder_marshy_marsh_1_top in data/habitat_blocks.json) inside its trunk at (4906, y122/145/168/184, 1850), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32595,7 +32985,7 @@
     {
       "id": "elder_marshy_marsh_2",
       "display_name": "Elder Marshy Marsh 2",
-      "intended_location": "the elder tree at (5434, 2414) (elder_mangrove_b, clockwise_90): a nest of 3 activated Habitat Blocks (elder_marshy_marsh_2, elder_marshy_marsh_2_mid, elder_marshy_marsh_2_crown in data/habitat_blocks.json) inside its trunk at (5434, y140/163/186, 2414), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5434, 2414) (elder_mangrove_b, clockwise_90): a nest of 4 activated Habitat Blocks (elder_marshy_marsh_2, elder_marshy_marsh_2_mid, elder_marshy_marsh_2_crown, elder_marshy_marsh_2_top in data/habitat_blocks.json) inside its trunk at (5434, y140/163/186/202, 2414), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32626,7 +33016,7 @@
     {
       "id": "elder_marshy_marsh_3",
       "display_name": "Elder Marshy Marsh 3",
-      "intended_location": "the elder tree at (5014, 2272) (elder_mangrove_c, clockwise_90): a nest of 3 activated Habitat Blocks (elder_marshy_marsh_3, elder_marshy_marsh_3_mid, elder_marshy_marsh_3_crown in data/habitat_blocks.json) inside its trunk at (5014, y123/146/169, 2272), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5014, 2272) (elder_mangrove_c, clockwise_90): a nest of 4 activated Habitat Blocks (elder_marshy_marsh_3, elder_marshy_marsh_3_mid, elder_marshy_marsh_3_crown, elder_marshy_marsh_3_top in data/habitat_blocks.json) inside its trunk at (5014, y123/146/169/185, 2272), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32657,7 +33047,7 @@
     {
       "id": "elder_tilpey_north_shore_1",
       "display_name": "Elder Tilpey North Shore 1",
-      "intended_location": "the elder tree at (5880, 3248) (elder_birch_a, clockwise_90): a nest of 3 activated Habitat Blocks (elder_tilpey_north_shore_1, elder_tilpey_north_shore_1_mid, elder_tilpey_north_shore_1_crown in data/habitat_blocks.json) inside its trunk at (5880, y108/131/154, 3248), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5880, 3248) (elder_birch_a, clockwise_90): a nest of 4 activated Habitat Blocks (elder_tilpey_north_shore_1, elder_tilpey_north_shore_1_mid, elder_tilpey_north_shore_1_crown, elder_tilpey_north_shore_1_top in data/habitat_blocks.json) inside its trunk at (5880, y108/131/154/170, 3248), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32704,7 +33094,7 @@
     {
       "id": "elder_tilpey_north_shore_2",
       "display_name": "Elder Tilpey North Shore 2",
-      "intended_location": "the elder tree at (5224, 3040) (elder_birch_b, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_tilpey_north_shore_2, elder_tilpey_north_shore_2_mid, elder_tilpey_north_shore_2_crown in data/habitat_blocks.json) inside its trunk at (5224, y129/152/175, 3040), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5224, 3040) (elder_birch_b, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_tilpey_north_shore_2, elder_tilpey_north_shore_2_mid, elder_tilpey_north_shore_2_crown, elder_tilpey_north_shore_2_top in data/habitat_blocks.json) inside its trunk at (5224, y129/152/175/191, 3040), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32767,7 +33157,7 @@
     {
       "id": "elder_tilpey_east_shore_1",
       "display_name": "Elder Tilpey East Shore 1",
-      "intended_location": "the elder tree at (6848, 3792) (elder_oak_a, clockwise_90): a nest of 3 activated Habitat Blocks (elder_tilpey_east_shore_1, elder_tilpey_east_shore_1_mid, elder_tilpey_east_shore_1_crown in data/habitat_blocks.json) inside its trunk at (6848, y107/130/153, 3792), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (6848, 3792) (elder_oak_a, clockwise_90): a nest of 4 activated Habitat Blocks (elder_tilpey_east_shore_1, elder_tilpey_east_shore_1_mid, elder_tilpey_east_shore_1_crown, elder_tilpey_east_shore_1_top in data/habitat_blocks.json) inside its trunk at (6848, y107/130/153/169, 3792), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32814,7 +33204,7 @@
     {
       "id": "elder_tilpey_east_shore_2",
       "display_name": "Elder Tilpey East Shore 2",
-      "intended_location": "the elder tree at (6488, 4776) (elder_oak_b, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_tilpey_east_shore_2, elder_tilpey_east_shore_2_mid, elder_tilpey_east_shore_2_crown in data/habitat_blocks.json) inside its trunk at (6488, y129/152/175, 4776), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (6488, 4776) (elder_oak_b, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_tilpey_east_shore_2, elder_tilpey_east_shore_2_mid, elder_tilpey_east_shore_2_crown, elder_tilpey_east_shore_2_top in data/habitat_blocks.json) inside its trunk at (6488, y129/152/175/191, 4776), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32877,7 +33267,7 @@
     {
       "id": "elder_wedge_north_1",
       "display_name": "Elder Wedge North 1",
-      "intended_location": "the elder tree at (3846, 2912) (elder_dark_oak_a, 180): a nest of 3 activated Habitat Blocks (elder_wedge_north_1, elder_wedge_north_1_mid, elder_wedge_north_1_crown in data/habitat_blocks.json) inside its trunk at (3846, y146/169/192, 2912), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (3846, 2912) (elder_dark_oak_a, 180): a nest of 4 activated Habitat Blocks (elder_wedge_north_1, elder_wedge_north_1_mid, elder_wedge_north_1_crown, elder_wedge_north_1_top in data/habitat_blocks.json) inside its trunk at (3846, y146/169/192/208, 2912), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32924,7 +33314,7 @@
     {
       "id": "elder_wedge_north_2",
       "display_name": "Elder Wedge North 2",
-      "intended_location": "the elder tree at (4160, 3184) (elder_dark_oak_b, 180): a nest of 3 activated Habitat Blocks (elder_wedge_north_2, elder_wedge_north_2_mid, elder_wedge_north_2_crown in data/habitat_blocks.json) inside its trunk at (4160, y154/177/200, 3184), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4160, 3184) (elder_dark_oak_b, 180): a nest of 4 activated Habitat Blocks (elder_wedge_north_2, elder_wedge_north_2_mid, elder_wedge_north_2_crown, elder_wedge_north_2_top in data/habitat_blocks.json) inside its trunk at (4160, y154/177/200/216, 3184), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -32971,7 +33361,7 @@
     {
       "id": "elder_wedge_south_1",
       "display_name": "Elder Wedge South 1",
-      "intended_location": "the elder tree at (4784, 4408) (elder_dark_oak_a, 180): a nest of 3 activated Habitat Blocks (elder_wedge_south_1, elder_wedge_south_1_mid, elder_wedge_south_1_crown in data/habitat_blocks.json) inside its trunk at (4784, y124/147/170, 4408), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4784, 4408) (elder_dark_oak_a, 180): a nest of 4 activated Habitat Blocks (elder_wedge_south_1, elder_wedge_south_1_mid, elder_wedge_south_1_crown, elder_wedge_south_1_top in data/habitat_blocks.json) inside its trunk at (4784, y124/147/170/186, 4408), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33018,7 +33408,7 @@
     {
       "id": "elder_wedge_south_2",
       "display_name": "Elder Wedge South 2",
-      "intended_location": "the elder tree at (4692, 3896) (elder_dark_oak_b, none): a nest of 3 activated Habitat Blocks (elder_wedge_south_2, elder_wedge_south_2_mid, elder_wedge_south_2_crown in data/habitat_blocks.json) inside its trunk at (4692, y103/126/149, 3896), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4692, 3896) (elder_dark_oak_b, none): a nest of 4 activated Habitat Blocks (elder_wedge_south_2, elder_wedge_south_2_mid, elder_wedge_south_2_crown, elder_wedge_south_2_top in data/habitat_blocks.json) inside its trunk at (4692, y103/126/149/165, 3896), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33065,7 +33455,7 @@
     {
       "id": "elder_northgate_west_1",
       "display_name": "Elder Northgate West 1",
-      "intended_location": "the elder tree at (4792, 272) (elder_spruce_a, none): a nest of 3 activated Habitat Blocks (elder_northgate_west_1, elder_northgate_west_1_mid, elder_northgate_west_1_crown in data/habitat_blocks.json) inside its trunk at (4792, y89/112/135, 272), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4792, 272) (elder_spruce_a, none): a nest of 4 activated Habitat Blocks (elder_northgate_west_1, elder_northgate_west_1_mid, elder_northgate_west_1_crown, elder_northgate_west_1_top in data/habitat_blocks.json) inside its trunk at (4792, y89/112/135/151, 272), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33112,7 +33502,7 @@
     {
       "id": "elder_northgate_west_2",
       "display_name": "Elder Northgate West 2",
-      "intended_location": "the elder tree at (5250, 62) (elder_spruce_b, 180): a nest of 3 activated Habitat Blocks (elder_northgate_west_2, elder_northgate_west_2_mid, elder_northgate_west_2_crown in data/habitat_blocks.json) inside its trunk at (5250, y82/105/128, 62), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5250, 62) (elder_spruce_b, 180): a nest of 4 activated Habitat Blocks (elder_northgate_west_2, elder_northgate_west_2_mid, elder_northgate_west_2_crown, elder_northgate_west_2_top in data/habitat_blocks.json) inside its trunk at (5250, y82/105/128/144, 62), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33173,7 +33563,7 @@
     {
       "id": "elder_northgate_east_1",
       "display_name": "Elder Northgate East 1",
-      "intended_location": "the elder tree at (5472, 432) (elder_spruce_a, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_northgate_east_1, elder_northgate_east_1_mid, elder_northgate_east_1_crown in data/habitat_blocks.json) inside its trunk at (5472, y139/162/185, 432), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5472, 432) (elder_spruce_a, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_northgate_east_1, elder_northgate_east_1_mid, elder_northgate_east_1_crown, elder_northgate_east_1_top in data/habitat_blocks.json) inside its trunk at (5472, y139/162/185/201, 432), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33236,7 +33626,7 @@
     {
       "id": "elder_northgate_east_2",
       "display_name": "Elder Northgate East 2",
-      "intended_location": "the elder tree at (5936, 840) (elder_spruce_b, clockwise_90): a nest of 3 activated Habitat Blocks (elder_northgate_east_2, elder_northgate_east_2_mid, elder_northgate_east_2_crown in data/habitat_blocks.json) inside its trunk at (5936, y94/117/140, 840), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5936, 840) (elder_spruce_b, clockwise_90): a nest of 4 activated Habitat Blocks (elder_northgate_east_2, elder_northgate_east_2_mid, elder_northgate_east_2_crown, elder_northgate_east_2_top in data/habitat_blocks.json) inside its trunk at (5936, y94/117/140/156, 840), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33283,7 +33673,7 @@
     {
       "id": "elder_north_pine_isle_1",
       "display_name": "Elder North Pine Isle 1",
-      "intended_location": "the elder tree at (7986, 458) (elder_spruce_a, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_north_pine_isle_1, elder_north_pine_isle_1_mid, elder_north_pine_isle_1_crown in data/habitat_blocks.json) inside its trunk at (7986, y85/108/131, 458), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7986, 458) (elder_spruce_a, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_north_pine_isle_1, elder_north_pine_isle_1_mid, elder_north_pine_isle_1_crown, elder_north_pine_isle_1_top in data/habitat_blocks.json) inside its trunk at (7986, y85/108/131/147, 458), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33314,7 +33704,7 @@
     {
       "id": "elder_north_pine_isle_2",
       "display_name": "Elder North Pine Isle 2",
-      "intended_location": "the elder tree at (6998, 312) (elder_spruce_b, none): a nest of 3 activated Habitat Blocks (elder_north_pine_isle_2, elder_north_pine_isle_2_mid, elder_north_pine_isle_2_crown in data/habitat_blocks.json) inside its trunk at (6998, y87/110/133, 312), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (6998, 312) (elder_spruce_b, none): a nest of 4 activated Habitat Blocks (elder_north_pine_isle_2, elder_north_pine_isle_2_mid, elder_north_pine_isle_2_crown, elder_north_pine_isle_2_top in data/habitat_blocks.json) inside its trunk at (6998, y87/110/133/149, 312), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33345,7 +33735,7 @@
     {
       "id": "elder_south_pine_isle_1",
       "display_name": "Elder South Pine Isle 1",
-      "intended_location": "the elder tree at (7232, 1992) (elder_spruce_a, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_south_pine_isle_1, elder_south_pine_isle_1_mid, elder_south_pine_isle_1_crown in data/habitat_blocks.json) inside its trunk at (7232, y88/111/134, 1992), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7232, 1992) (elder_spruce_a, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_south_pine_isle_1, elder_south_pine_isle_1_mid, elder_south_pine_isle_1_crown, elder_south_pine_isle_1_top in data/habitat_blocks.json) inside its trunk at (7232, y88/111/134/150, 1992), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33408,7 +33798,7 @@
     {
       "id": "elder_south_pine_isle_2",
       "display_name": "Elder South Pine Isle 2",
-      "intended_location": "the elder tree at (6768, 1208) (elder_spruce_b, none): a nest of 3 activated Habitat Blocks (elder_south_pine_isle_2, elder_south_pine_isle_2_mid, elder_south_pine_isle_2_crown in data/habitat_blocks.json) inside its trunk at (6768, y124/147/170, 1208), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (6768, 1208) (elder_spruce_b, none): a nest of 4 activated Habitat Blocks (elder_south_pine_isle_2, elder_south_pine_isle_2_mid, elder_south_pine_isle_2_crown, elder_south_pine_isle_2_top in data/habitat_blocks.json) inside its trunk at (6768, y124/147/170/186, 1208), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33471,7 +33861,7 @@
     {
       "id": "elder_south_pine_isle_3",
       "display_name": "Elder South Pine Isle 3",
-      "intended_location": "the elder tree at (7496, 1266) (elder_spruce_c, 180): a nest of 3 activated Habitat Blocks (elder_south_pine_isle_3, elder_south_pine_isle_3_mid, elder_south_pine_isle_3_crown in data/habitat_blocks.json) inside its trunk at (7496, y85/108/131, 1266), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7496, 1266) (elder_spruce_c, 180): a nest of 4 activated Habitat Blocks (elder_south_pine_isle_3, elder_south_pine_isle_3_mid, elder_south_pine_isle_3_crown, elder_south_pine_isle_3_top in data/habitat_blocks.json) inside its trunk at (7496, y85/108/131/147, 1266), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33534,7 +33924,7 @@
     {
       "id": "elder_jungle_west_1",
       "display_name": "Elder Jungle West 1",
-      "intended_location": "the elder tree at (4464, 7312) (elder_jungle_a, 180): a nest of 3 activated Habitat Blocks (elder_jungle_west_1, elder_jungle_west_1_mid, elder_jungle_west_1_crown in data/habitat_blocks.json) inside its trunk at (4464, y82/105/128, 7312), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4464, 7312) (elder_jungle_a, 180): a nest of 4 activated Habitat Blocks (elder_jungle_west_1, elder_jungle_west_1_mid, elder_jungle_west_1_crown, elder_jungle_west_1_top in data/habitat_blocks.json) inside its trunk at (4464, y82/105/128/144, 7312), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33597,7 +33987,7 @@
     {
       "id": "elder_jungle_west_2",
       "display_name": "Elder Jungle West 2",
-      "intended_location": "the elder tree at (4968, 7416) (elder_jungle_b, none): a nest of 3 activated Habitat Blocks (elder_jungle_west_2, elder_jungle_west_2_mid, elder_jungle_west_2_crown in data/habitat_blocks.json) inside its trunk at (4968, y138/161/184, 7416), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (4968, 7416) (elder_jungle_b, none): a nest of 4 activated Habitat Blocks (elder_jungle_west_2, elder_jungle_west_2_mid, elder_jungle_west_2_crown, elder_jungle_west_2_top in data/habitat_blocks.json) inside its trunk at (4968, y138/161/184/200, 7416), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33660,7 +34050,7 @@
     {
       "id": "elder_jungle_east_1",
       "display_name": "Elder Jungle East 1",
-      "intended_location": "the elder tree at (5216, 7904) (elder_jungle_a, none): a nest of 3 activated Habitat Blocks (elder_jungle_east_1, elder_jungle_east_1_mid, elder_jungle_east_1_crown in data/habitat_blocks.json) inside its trunk at (5216, y93/116/139, 7904), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5216, 7904) (elder_jungle_a, none): a nest of 4 activated Habitat Blocks (elder_jungle_east_1, elder_jungle_east_1_mid, elder_jungle_east_1_crown, elder_jungle_east_1_top in data/habitat_blocks.json) inside its trunk at (5216, y93/116/139/155, 7904), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33691,7 +34081,7 @@
     {
       "id": "elder_jungle_east_2",
       "display_name": "Elder Jungle East 2",
-      "intended_location": "the elder tree at (5248, 6976) (elder_jungle_b, none): a nest of 3 activated Habitat Blocks (elder_jungle_east_2, elder_jungle_east_2_mid, elder_jungle_east_2_crown in data/habitat_blocks.json) inside its trunk at (5248, y89/112/135, 6976), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (5248, 6976) (elder_jungle_b, none): a nest of 4 activated Habitat Blocks (elder_jungle_east_2, elder_jungle_east_2_mid, elder_jungle_east_2_crown, elder_jungle_east_2_top in data/habitat_blocks.json) inside its trunk at (5248, y89/112/135/151, 6976), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33722,7 +34112,7 @@
     {
       "id": "elder_long_isle_north_1",
       "display_name": "Elder Long Isle North 1",
-      "intended_location": "the elder tree at (7886, 4492) (elder_spruce_a, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_long_isle_north_1, elder_long_isle_north_1_mid, elder_long_isle_north_1_crown in data/habitat_blocks.json) inside its trunk at (7886, y82/105/128, 4492), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7886, 4492) (elder_spruce_a, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_long_isle_north_1, elder_long_isle_north_1_mid, elder_long_isle_north_1_crown, elder_long_isle_north_1_top in data/habitat_blocks.json) inside its trunk at (7886, y82/105/128/144, 4492), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33783,7 +34173,7 @@
     {
       "id": "elder_long_isle_north_2",
       "display_name": "Elder Long Isle North 2",
-      "intended_location": "the elder tree at (7778, 5264) (elder_spruce_b, 180): a nest of 3 activated Habitat Blocks (elder_long_isle_north_2, elder_long_isle_north_2_mid, elder_long_isle_north_2_crown in data/habitat_blocks.json) inside its trunk at (7778, y105/128/151, 5264), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7778, 5264) (elder_spruce_b, 180): a nest of 4 activated Habitat Blocks (elder_long_isle_north_2, elder_long_isle_north_2_mid, elder_long_isle_north_2_crown, elder_long_isle_north_2_top in data/habitat_blocks.json) inside its trunk at (7778, y105/128/151/167, 5264), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33844,7 +34234,7 @@
     {
       "id": "elder_long_isle_middle_1",
       "display_name": "Elder Long Isle Middle 1",
-      "intended_location": "the elder tree at (8104, 5978) (elder_dark_oak_a, counterclockwise_90): a nest of 3 activated Habitat Blocks (elder_long_isle_middle_1, elder_long_isle_middle_1_mid, elder_long_isle_middle_1_crown in data/habitat_blocks.json) inside its trunk at (8104, y88/111/134, 5978), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (8104, 5978) (elder_dark_oak_a, counterclockwise_90): a nest of 4 activated Habitat Blocks (elder_long_isle_middle_1, elder_long_isle_middle_1_mid, elder_long_isle_middle_1_crown, elder_long_isle_middle_1_top in data/habitat_blocks.json) inside its trunk at (8104, y88/111/134/150, 5978), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33907,7 +34297,7 @@
     {
       "id": "elder_long_isle_middle_2",
       "display_name": "Elder Long Isle Middle 2",
-      "intended_location": "the elder tree at (7376, 6790) (elder_dark_oak_b, 180): a nest of 3 activated Habitat Blocks (elder_long_isle_middle_2, elder_long_isle_middle_2_mid, elder_long_isle_middle_2_crown in data/habitat_blocks.json) inside its trunk at (7376, y98/121/144, 6790), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7376, 6790) (elder_dark_oak_b, 180): a nest of 4 activated Habitat Blocks (elder_long_isle_middle_2, elder_long_isle_middle_2_mid, elder_long_isle_middle_2_crown, elder_long_isle_middle_2_top in data/habitat_blocks.json) inside its trunk at (7376, y98/121/144/160, 6790), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33954,7 +34344,7 @@
     {
       "id": "elder_long_isle_south_1",
       "display_name": "Elder Long Isle South 1",
-      "intended_location": "the elder tree at (7128, 7936) (elder_jungle_a, none): a nest of 3 activated Habitat Blocks (elder_long_isle_south_1, elder_long_isle_south_1_mid, elder_long_isle_south_1_crown in data/habitat_blocks.json) inside its trunk at (7128, y87/110/133, 7936), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7128, 7936) (elder_jungle_a, none): a nest of 4 activated Habitat Blocks (elder_long_isle_south_1, elder_long_isle_south_1_mid, elder_long_isle_south_1_crown, elder_long_isle_south_1_top in data/habitat_blocks.json) inside its trunk at (7128, y87/110/133/149, 7936), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -33985,7 +34375,7 @@
     {
       "id": "elder_long_isle_south_2",
       "display_name": "Elder Long Isle South 2",
-      "intended_location": "the elder tree at (7920, 7512) (elder_jungle_b, clockwise_90): a nest of 3 activated Habitat Blocks (elder_long_isle_south_2, elder_long_isle_south_2_mid, elder_long_isle_south_2_crown in data/habitat_blocks.json) inside its trunk at (7920, y100/123/146, 7512), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7920, 7512) (elder_jungle_b, clockwise_90): a nest of 4 activated Habitat Blocks (elder_long_isle_south_2, elder_long_isle_south_2_mid, elder_long_isle_south_2_crown, elder_long_isle_south_2_top in data/habitat_blocks.json) inside its trunk at (7920, y100/123/146/162, 7512), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -34016,7 +34406,7 @@
     {
       "id": "elder_long_isle_south_3",
       "display_name": "Elder Long Isle South 3",
-      "intended_location": "the elder tree at (7336, 7376) (elder_jungle_c, clockwise_90): a nest of 3 activated Habitat Blocks (elder_long_isle_south_3, elder_long_isle_south_3_mid, elder_long_isle_south_3_crown in data/habitat_blocks.json) inside its trunk at (7336, y147/170/193, 7376), up to 21 of its bird alive at once",
+      "intended_location": "the elder tree at (7336, 7376) (elder_jungle_c, clockwise_90): a nest of 4 activated Habitat Blocks (elder_long_isle_south_3, elder_long_isle_south_3_mid, elder_long_isle_south_3_crown, elder_long_isle_south_3_top in data/habitat_blocks.json) inside its trunk at (7336, y147/170/193/209, 7376), up to 32 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -34040,6 +34430,786 @@
           "bucket": "common",
           "weight": 24.0,
           "conditions": {}
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_palm_sunset_east",
+      "display_name": "Palm sapling, sunset east",
+      "intended_location": "the palm sapling at (3408, 7400): a nest of 4 activated Habitat Blocks (sapling_palm_sunset_east_low, sapling_palm_sunset_east_mid, sapling_palm_sunset_east_high, sapling_palm_sunset_east_top in data/habitat_blocks.json) inside its trunk at (3408, y76/93/111/118, 7400), up to 32 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 25,
+        "maximum": 30
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a sea bird in a palm over the shore. One species line per sapling. Levels: the sunset_east roster's band 25-45, narrowed to 25-30. Pool: Wingull 18, Pelipper 6.",
+      "entries": [
+        {
+          "species": "Wingull",
+          "pokemon": "wingull",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "wingull",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Pelipper",
+          "pokemon": "pelipper",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "wingull",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_palm_sunset_west",
+      "display_name": "Palm sapling, sunset west",
+      "intended_location": "the palm sapling at (1456, 6680): a nest of 4 activated Habitat Blocks (sapling_palm_sunset_west_low, sapling_palm_sunset_west_mid, sapling_palm_sunset_west_high, sapling_palm_sunset_west_top in data/habitat_blocks.json) inside its trunk at (1456, y76/93/111/118, 6680), up to 32 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 25,
+        "maximum": 30
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a sea bird in a palm over the shore. One species line per sapling. Levels: the sunset_west roster's band 25-45, narrowed to 25-30. Pool: Wingull 18, Pelipper 6.",
+      "entries": [
+        {
+          "species": "Wingull",
+          "pokemon": "wingull",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "wingull",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Pelipper",
+          "pokemon": "pelipper",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "wingull",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_palm_east_coast_dunes",
+      "display_name": "Palm sapling, east coast dunes",
+      "intended_location": "the palm sapling at (7032, 4784): a nest of 4 activated Habitat Blocks (sapling_palm_east_coast_dunes_low, sapling_palm_east_coast_dunes_mid, sapling_palm_east_coast_dunes_high, sapling_palm_east_coast_dunes_top in data/habitat_blocks.json) inside its trunk at (7032, y76/93/111/118, 4784), up to 32 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 25,
+        "maximum": 30
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a sea bird in a palm over the shore. One species line per sapling. Levels: the east_coast_dunes roster's band 25-45, narrowed to 25-30. Pool: Wingull 18, Pelipper 6.",
+      "entries": [
+        {
+          "species": "Wingull",
+          "pokemon": "wingull",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "wingull",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Pelipper",
+          "pokemon": "pelipper",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "wingull",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_lakeshore_arrow_lake_shores",
+      "display_name": "Lakeshore sapling, arrow lake shores",
+      "intended_location": "the lakeshore sapling at (2512, 4520): a nest of 3 activated Habitat Blocks (sapling_lakeshore_arrow_lake_shores_low, sapling_lakeshore_arrow_lake_shores_mid, sapling_lakeshore_arrow_lake_shores_high in data/habitat_blocks.json) inside its trunk at (2512, y114/128/150, 4520), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 10,
+        "maximum": 15
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a water bird in a weeping tree over the lake. One species line per sapling. Levels: the arrow_lake_shores roster's band 10-22, narrowed to 10-15. Pool: Ducklett 24.",
+      "entries": [
+        {
+          "species": "Ducklett",
+          "pokemon": "ducklett",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "ducklett",
+          "family_priority": "anchor",
+          "level": "10-15",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_lakeshore_tilpey_south_shore",
+      "display_name": "Lakeshore sapling, tilpey south shore",
+      "intended_location": "the lakeshore sapling at (4976, 4944): a nest of 3 activated Habitat Blocks (sapling_lakeshore_tilpey_south_shore_low, sapling_lakeshore_tilpey_south_shore_mid, sapling_lakeshore_tilpey_south_shore_high in data/habitat_blocks.json) inside its trunk at (4976, y121/135/157, 4944), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 42,
+        "maximum": 44
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a water bird in a weeping tree over the lake. One species line per sapling. Levels: the tilpey_south_shore roster's band 42-44. Pool: Ducklett 18, Swanna 6.",
+      "entries": [
+        {
+          "species": "Ducklett",
+          "pokemon": "ducklett",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "ducklett",
+          "family_priority": "anchor",
+          "level": "42-44",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Swanna",
+          "pokemon": "swanna",
+          "types": [
+            "water",
+            "flying"
+          ],
+          "family": "ducklett",
+          "family_priority": "anchor",
+          "level": "42-44",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (35 <= 42, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_scorched_great_crater",
+      "display_name": "Scorched sapling, great crater",
+      "intended_location": "the scorched sapling at (5856, 5424): a nest of 3 activated Habitat Blocks (sapling_scorched_great_crater_low, sapling_scorched_great_crater_mid, sapling_scorched_great_crater_high in data/habitat_blocks.json) inside its trunk at (5856, y147/165/183, 5424), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 44,
+        "maximum": 52
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the fire bird in a charred tree in the crater country ('a scorch sapling for fire types in the south near craters'). One species line per sapling. Levels: the great_crater roster's band 44-52. Pool: Fletchinder 18, Talonflame 6.",
+      "entries": [
+        {
+          "species": "Fletchinder",
+          "pokemon": "fletchinder",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "fletchinder",
+          "family_priority": "anchor",
+          "level": "44-52",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Talonflame",
+          "pokemon": "talonflame",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "fletchinder",
+          "family_priority": "anchor",
+          "level": "44-52",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_scorched_crater_rim_north_west",
+      "display_name": "Scorched sapling, crater rim north west",
+      "intended_location": "the scorched sapling at (5712, 5208): a nest of 3 activated Habitat Blocks (sapling_scorched_crater_rim_north_west_low, sapling_scorched_crater_rim_north_west_mid, sapling_scorched_crater_rim_north_west_high in data/habitat_blocks.json) inside its trunk at (5712, y132/150/168, 5208), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 44,
+        "maximum": 46
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the fire bird in a charred tree in the crater country ('a scorch sapling for fire types in the south near craters'). One species line per sapling. Levels: the crater_rim_north_west roster's band 44-46. Pool: Fletchinder 18, Talonflame 6.",
+      "entries": [
+        {
+          "species": "Fletchinder",
+          "pokemon": "fletchinder",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "fletchinder",
+          "family_priority": "anchor",
+          "level": "44-46",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Talonflame",
+          "pokemon": "talonflame",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "fletchinder",
+          "family_priority": "anchor",
+          "level": "44-46",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_scorched_east_cones",
+      "display_name": "Scorched sapling, east cones",
+      "intended_location": "the scorched sapling at (6504, 5472): a nest of 3 activated Habitat Blocks (sapling_scorched_east_cones_low, sapling_scorched_east_cones_mid, sapling_scorched_east_cones_high in data/habitat_blocks.json) inside its trunk at (6504, y151/169/187, 5472), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 44,
+        "maximum": 52
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the fire bird in a charred tree in the crater country ('a scorch sapling for fire types in the south near craters'). One species line per sapling. Levels: the east_cones roster's band 44-52. Pool: Fletchinder 18, Talonflame 6.",
+      "entries": [
+        {
+          "species": "Fletchinder",
+          "pokemon": "fletchinder",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "fletchinder",
+          "family_priority": "anchor",
+          "level": "44-52",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Talonflame",
+          "pokemon": "talonflame",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "fletchinder",
+          "family_priority": "anchor",
+          "level": "44-52",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_frost_frostpeak",
+      "display_name": "Frost sapling, frostpeak",
+      "intended_location": "the frost sapling at (872, 744): a nest of 3 activated Habitat Blocks (sapling_frost_frostpeak_low, sapling_frost_frostpeak_mid, sapling_frost_frostpeak_high in data/habitat_blocks.json) inside its trunk at (872, y100/122/144, 744), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 25,
+        "maximum": 30
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the snow bird in a snow-loaded spruce. One species line per sapling. Levels: the frostpeak roster's band 25-45, narrowed to 25-30. Pool: Delibird 24.",
+      "entries": [
+        {
+          "species": "Delibird",
+          "pokemon": "delibird",
+          "types": [
+            "ice",
+            "flying"
+          ],
+          "family": "delibird",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_frost_frostpeak_strand",
+      "display_name": "Frost sapling, frostpeak strand",
+      "intended_location": "the frost sapling at (1504, 536): a nest of 3 activated Habitat Blocks (sapling_frost_frostpeak_strand_low, sapling_frost_frostpeak_strand_mid, sapling_frost_frostpeak_strand_high in data/habitat_blocks.json) inside its trunk at (1504, y99/121/143, 536), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 25,
+        "maximum": 30
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the snow bird in a snow-loaded spruce. One species line per sapling. Levels: the frostpeak_strand roster's band 25-45, narrowed to 25-30. Pool: Delibird 24.",
+      "entries": [
+        {
+          "species": "Delibird",
+          "pokemon": "delibird",
+          "types": [
+            "ice",
+            "flying"
+          ],
+          "family": "delibird",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_frost_glacier_foot_fields",
+      "display_name": "Frost sapling, glacier foot fields",
+      "intended_location": "the frost sapling at (4872, 2600): a nest of 3 activated Habitat Blocks (sapling_frost_glacier_foot_fields_low, sapling_frost_glacier_foot_fields_mid, sapling_frost_glacier_foot_fields_high in data/habitat_blocks.json) inside its trunk at (4872, y145/167/189, 2600), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 34,
+        "maximum": 36
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the snow bird in a snow-loaded spruce. One species line per sapling. Levels: the glacier_foot_fields roster's band 34-36. Pool: Delibird 24.",
+      "entries": [
+        {
+          "species": "Delibird",
+          "pokemon": "delibird",
+          "types": [
+            "ice",
+            "flying"
+          ],
+          "family": "delibird",
+          "family_priority": "anchor",
+          "level": "34-36",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_storm_rift_trunk",
+      "display_name": "Storm sapling, rift trunk",
+      "intended_location": "the storm sapling at (3808, 3560): a nest of 3 activated Habitat Blocks (sapling_storm_rift_trunk_low, sapling_storm_rift_trunk_mid, sapling_storm_rift_trunk_high in data/habitat_blocks.json) inside its trunk at (3808, y96/110/134, 3560), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 55,
+        "maximum": 57
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the storm petrel in a lightning-struck tree under the Rift's standing thunderstorm. One species line per sapling. Levels: the rift_trunk roster's band 55-57. Pool: Wattrel 18, Kilowattrel 6.",
+      "entries": [
+        {
+          "species": "Wattrel",
+          "pokemon": "wattrel",
+          "types": [
+            "electric",
+            "flying"
+          ],
+          "family": "wattrel",
+          "family_priority": "anchor",
+          "level": "55-57",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Kilowattrel",
+          "pokemon": "kilowattrel",
+          "types": [
+            "electric",
+            "flying"
+          ],
+          "family": "wattrel",
+          "family_priority": "anchor",
+          "level": "55-57",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (25 <= 55, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_storm_rift_west_spur",
+      "display_name": "Storm sapling, rift west spur",
+      "intended_location": "the storm sapling at (3600, 3344): a nest of 3 activated Habitat Blocks (sapling_storm_rift_west_spur_low, sapling_storm_rift_west_spur_mid, sapling_storm_rift_west_spur_high in data/habitat_blocks.json) inside its trunk at (3600, y93/107/131, 3344), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 56,
+        "maximum": 58
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the storm petrel in a lightning-struck tree under the Rift's standing thunderstorm. One species line per sapling. Levels: the rift_west_spur roster's band 56-58. Pool: Wattrel 18, Kilowattrel 6.",
+      "entries": [
+        {
+          "species": "Wattrel",
+          "pokemon": "wattrel",
+          "types": [
+            "electric",
+            "flying"
+          ],
+          "family": "wattrel",
+          "family_priority": "anchor",
+          "level": "56-58",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Kilowattrel",
+          "pokemon": "kilowattrel",
+          "types": [
+            "electric",
+            "flying"
+          ],
+          "family": "wattrel",
+          "family_priority": "anchor",
+          "level": "56-58",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (25 <= 56, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_storm_rift_foot",
+      "display_name": "Storm sapling, rift foot",
+      "intended_location": "the storm sapling at (3752, 5488): a nest of 3 activated Habitat Blocks (sapling_storm_rift_foot_low, sapling_storm_rift_foot_mid, sapling_storm_rift_foot_high in data/habitat_blocks.json) inside its trunk at (3752, y129/143/167, 5488), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 49,
+        "maximum": 51
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the storm petrel in a lightning-struck tree under the Rift's standing thunderstorm. One species line per sapling. Levels: the rift_foot roster's band 49-51. Pool: Wattrel 18, Kilowattrel 6.",
+      "entries": [
+        {
+          "species": "Wattrel",
+          "pokemon": "wattrel",
+          "types": [
+            "electric",
+            "flying"
+          ],
+          "family": "wattrel",
+          "family_priority": "anchor",
+          "level": "49-51",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 18.0
+        },
+        {
+          "species": "Kilowattrel",
+          "pokemon": "kilowattrel",
+          "types": [
+            "electric",
+            "flying"
+          ],
+          "family": "wattrel",
+          "family_priority": "anchor",
+          "level": "49-51",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible (25 <= 49, Cobblemon 1.8.0 jar)",
+          "bucket": "uncommon",
+          "weight": 6.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_crag_the_crags",
+      "display_name": "Crag sapling, the crags",
+      "intended_location": "the crag sapling at (3184, 1592): a nest of 3 activated Habitat Blocks (sapling_crag_the_crags_low, sapling_crag_the_crags_mid, sapling_crag_the_crags_high in data/habitat_blocks.json) inside its trunk at (3183, y115/127/139, 1594), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 28,
+        "maximum": 30
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the steel bird in a windswept pine on the peaks. One species line per sapling. Levels: the the_crags roster's band 28-30. Pool: Skarmory 24.",
+      "entries": [
+        {
+          "species": "Skarmory",
+          "pokemon": "skarmory",
+          "types": [
+            "steel",
+            "flying"
+          ],
+          "family": "skarmory",
+          "family_priority": "anchor",
+          "level": "28-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_crag_mt_vessu",
+      "display_name": "Crag sapling, mt vessu",
+      "intended_location": "the crag sapling at (1864, 1424): a nest of 3 activated Habitat Blocks (sapling_crag_mt_vessu_low, sapling_crag_mt_vessu_mid, sapling_crag_mt_vessu_high in data/habitat_blocks.json) inside its trunk at (1866, y255/267/279, 1425), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 24,
+        "maximum": 26
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the steel bird in a windswept pine on the peaks. One species line per sapling. Levels: the mt_vessu roster's band 24-26. Pool: Skarmory 24.",
+      "entries": [
+        {
+          "species": "Skarmory",
+          "pokemon": "skarmory",
+          "types": [
+            "steel",
+            "flying"
+          ],
+          "family": "skarmory",
+          "family_priority": "anchor",
+          "level": "24-26",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_crag_the_tri_peaks",
+      "display_name": "Crag sapling, the tri peaks",
+      "intended_location": "the crag sapling at (1648, 1544): a nest of 3 activated Habitat Blocks (sapling_crag_the_tri_peaks_low, sapling_crag_the_tri_peaks_mid, sapling_crag_the_tri_peaks_high in data/habitat_blocks.json) inside its trunk at (1647, y151/163/175, 1546), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 24,
+        "maximum": 29
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the steel bird in a windswept pine on the peaks. One species line per sapling. Levels: the the_tri_peaks roster's band 24-35, narrowed to 24-29. Pool: Skarmory 24.",
+      "entries": [
+        {
+          "species": "Skarmory",
+          "pokemon": "skarmory",
+          "types": [
+            "steel",
+            "flying"
+          ],
+          "family": "skarmory",
+          "family_priority": "anchor",
+          "level": "24-29",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_desert_south_east_dunes",
+      "display_name": "Desert sapling, south east dunes",
+      "intended_location": "the desert sapling at (5896, 6032): a nest of 3 activated Habitat Blocks (sapling_desert_south_east_dunes_low, sapling_desert_south_east_dunes_mid, sapling_desert_south_east_dunes_high in data/habitat_blocks.json) inside its trunk at (5896, y146/158/168, 6032), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 25,
+        "maximum": 30
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the vulture in a dead, bleached tree. One species line per sapling. Levels: the south_east_dunes roster's band 25-45, narrowed to 25-30. Pool: Vullaby 24.",
+      "entries": [
+        {
+          "species": "Vullaby",
+          "pokemon": "vullaby",
+          "types": [
+            "dark",
+            "flying"
+          ],
+          "family": "vullaby",
+          "family_priority": "anchor",
+          "level": "25-30",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_desert_plateau_west",
+      "display_name": "Desert sapling, plateau west",
+      "intended_location": "the desert sapling at (5064, 5392): a nest of 3 activated Habitat Blocks (sapling_desert_plateau_west_low, sapling_desert_plateau_west_mid, sapling_desert_plateau_west_high in data/habitat_blocks.json) inside its trunk at (5064, y156/168/178, 5392), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 47,
+        "maximum": 49
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the vulture in a dead, bleached tree. One species line per sapling. Levels: the plateau_west roster's band 47-49. Pool: Vullaby 24.",
+      "entries": [
+        {
+          "species": "Vullaby",
+          "pokemon": "vullaby",
+          "types": [
+            "dark",
+            "flying"
+          ],
+          "family": "vullaby",
+          "family_priority": "anchor",
+          "level": "47-49",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
+        }
+      ],
+      "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "sapling_desert_long_isle_north",
+      "display_name": "Desert sapling, long isle north",
+      "intended_location": "the desert sapling at (7656, 4800): a nest of 3 activated Habitat Blocks (sapling_desert_long_isle_north_low, sapling_desert_long_isle_north_mid, sapling_desert_long_isle_north_high in data/habitat_blocks.json) inside its trunk at (7656, y79/91/101, 4800), up to 24 of its bird alive at once",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 44,
+        "maximum": 50
+      },
+      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the vulture in a dead, bleached tree. One species line per sapling. Levels: the long_isle_north roster's band 44-50. Pool: Vullaby 24.",
+      "entries": [
+        {
+          "species": "Vullaby",
+          "pokemon": "vullaby",
+          "types": [
+            "dark",
+            "flying"
+          ],
+          "family": "vullaby",
+          "family_priority": "anchor",
+          "level": "44-50",
+          "conditions": {},
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "bucket": "common",
+          "weight": 24.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"

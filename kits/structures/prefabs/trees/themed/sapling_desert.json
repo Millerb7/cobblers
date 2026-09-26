@@ -1,0 +1,54 @@
+{
+ "schema": "cobblers.prefab/1",
+ "template_id": "cobblers:kits/trees/themed/sapling_desert",
+ "kind": "trees",
+ "set": "themed",
+ "name": "sapling_desert",
+ "author": "tools/themed_saplings.py",
+ "source": {
+  "file": "generated",
+  "size": [
+   45,
+   62,
+   52
+  ],
+  "blocks": 1402
+ },
+ "entrance": null,
+ "grade_layer": null,
+ "trunk_origin": [
+  21,
+  2,
+  23
+ ],
+ "tier": "themed_sapling",
+ "theme": "desert",
+ "height": 59,
+ "nests": [
+  {
+   "at": [
+    0,
+    10,
+    0
+   ],
+   "mimic": "minecraft:bone_block"
+  },
+  {
+   "at": [
+    0,
+    22,
+    0
+   ],
+   "mimic": "minecraft:bone_block"
+  },
+  {
+   "at": [
+    0,
+    32,
+    0
+   ],
+   "mimic": "minecraft:bone_block"
+  }
+ ],
+ "notes": "the trunk centre's base is builder (0, 0, 0): template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)"
+}
