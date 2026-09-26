@@ -8,17 +8,25 @@ Read [docs/vision/GAME_VISION.md](docs/vision/GAME_VISION.md) for what we are ma
 and [CLAUDE.md](CLAUDE.md) for the working rules every contributor (human or agent)
 follows.
 
-## Status
+## Where to find things
 
-**Bootstrap / compatibility audit.** No campaign content exists yet, on purpose.
+**What is built, decided and open right now:** [docs/STATE.md](docs/STATE.md). It is the one current record; every
+other document is background.
 
-| Milestone | State |
+| You want | Read |
 | --- | --- |
-| Repository structure, docs, agent system | done (this commit) |
-| Base pack inventory and compatibility matrix | done, see `docs/research/` |
-| EXP-000 boot test of Cobbleverse on Cobblemon 1.8 | **server boot passed** with 101 jars; client and functional tests remain |
-| EXP-001 to EXP-007 capability experiments | backlog only |
-| Route 1, gyms, dungeons, story | not started, gated on EXP-000 |
+| The game we are making | [docs/vision/GAME_VISION.md](docs/vision/GAME_VISION.md) |
+| The story: acts, towns, leaders, side quests | [docs/story/ARC.md](docs/story/ARC.md), [docs/story/SIDEQUESTS.md](docs/story/SIDEQUESTS.md) |
+| How a mechanic works: death and wipe, water, level caps, rewards | [docs/mechanics/](docs/mechanics/), in particular [DEATH_AND_WIPE.md](docs/mechanics/DEATH_AND_WIPE.md) and [WATER_MAP.md](docs/mechanics/WATER_MAP.md) |
+| Why something was chosen | [docs/decisions/](docs/decisions/README.md) (the ADRs) |
+| Whether a feature was proven in game | [experiments/](experiments/): one folder per proof, with its results |
+| The world: towns, routes, the ocean, structures | [docs/world-building/](docs/world-building/) |
+| What Cobblemon and the addons really support | [docs/research/](docs/research/) |
+| The data the game is generated from | [data/](data/) (authored); `tools/` turns it into `build/` (disposable) |
+| The server and how staging is rebuilt | [server/README.md](server/README.md), [docs/world-building/REEXPORT.md](docs/world-building/REEXPORT.md) |
+
+Work in progress lives on branches with draft pull requests until the owner merges it; a document linked from a PR
+is readable on GitHub even before it reaches `main`.
 
 ## Relationship to Cobbleverse
 
