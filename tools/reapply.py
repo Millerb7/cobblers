@@ -851,6 +851,9 @@ def _run_steps(a, rc, todo, rec, path):
                 print("   traders verify exit %d" % r.returncode, flush=True)
                 if r.returncode:
                     bad.append("traders verify: %s" % r.stdout[-400:])
+        # save after every step: run 5's server ran out of memory at R17 and every step since its last autosave (R12,
+        # R15, R16 and the lamps) was gone from the world although the run had reported each one done
+        rc("save-all")
         dt = time.time() - t0
         rec["steps"].append({"step": sid, "title": title, "seconds": round(dt, 1), "commands": sum(1 for k, _ in actions if k == "fn"),
                              "problems": bad})
