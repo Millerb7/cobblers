@@ -2,7 +2,7 @@
  "schema": "cobblers.regions/3",
  "schema_status": "proposed",
  "status": "draft",
- "computed_from_sha256": "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
+ "computed_from_sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
  "landmarks": "data/landmarks.json",
  "geometry": {
   "raster_cell_blocks": 8,
@@ -2647,14 +2647,14 @@
     },
     "elevation": {
      "p10": 79.2,
-     "median": 108.7,
-     "p90": 145.3,
+     "median": 108.8,
+     "p90": 145.4,
      "max": 238.6
     },
     "slope_degrees": {
-     "mean": 10.7,
-     "p90": 23.1,
-     "flat_under_5_pct": 34.6
+     "mean": 10.9,
+     "p90": 23.4,
+     "flat_under_5_pct": 34.4
     }
    },
    "biomes": [
@@ -3030,15 +3030,15 @@
      "max_z": 5407
     },
     "elevation": {
-     "p10": 85.4,
-     "median": 109.5,
-     "p90": 132.7,
-     "max": 151.0
+     "p10": 84.9,
+     "median": 101.8,
+     "p90": 137.7,
+     "max": 273.1
     },
     "slope_degrees": {
-     "mean": 10.0,
-     "p90": 21.2,
-     "flat_under_5_pct": 34.0
+     "mean": 17.0,
+     "p90": 52.7,
+     "flat_under_5_pct": 31.6
     }
    },
    "biomes": [
@@ -3792,14 +3792,14 @@
     },
     "elevation": {
      "p10": 109.4,
-     "median": 123.9,
-     "p90": 144.6,
-     "max": 151.9
+     "median": 124.4,
+     "p90": 144.7,
+     "max": 206.8
     },
     "slope_degrees": {
-     "mean": 4.6,
-     "p90": 8.0,
-     "flat_under_5_pct": 63.1
+     "mean": 5.0,
+     "p90": 8.1,
+     "flat_under_5_pct": 63.0
     }
    },
    "biomes": [
@@ -4180,13 +4180,13 @@
     "elevation": {
      "p10": 90.7,
      "median": 113.2,
-     "p90": 131.7,
-     "max": 158.1
+     "p90": 131.8,
+     "max": 266.9
     },
     "slope_degrees": {
-     "mean": 5.6,
-     "p90": 12.4,
-     "flat_under_5_pct": 61.3
+     "mean": 5.7,
+     "p90": 12.6,
+     "flat_under_5_pct": 61.1
     }
    },
    "biomes": [
@@ -4364,9 +4364,9 @@
      "max": 151.7
     },
     "slope_degrees": {
-     "mean": 5.9,
-     "p90": 14.3,
-     "flat_under_5_pct": 62.9
+     "mean": 6.0,
+     "p90": 14.7,
+     "flat_under_5_pct": 62.8
     }
    },
    "biomes": [
@@ -4642,13 +4642,13 @@
     "elevation": {
      "p10": 79.9,
      "median": 105.8,
-     "p90": 128.6,
-     "max": 148.5
+     "p90": 128.9,
+     "max": 237.7
     },
     "slope_degrees": {
-     "mean": 5.9,
-     "p90": 11.6,
-     "flat_under_5_pct": 55.9
+     "mean": 6.3,
+     "p90": 12.0,
+     "flat_under_5_pct": 55.4
     }
    },
    "biomes": [
@@ -7139,14 +7139,14 @@
     },
     "elevation": {
      "p10": 87.8,
-     "median": 102.3,
-     "p90": 121.8,
-     "max": 158.2
+     "median": 102.4,
+     "p90": 122.2,
+     "max": 204.1
     },
     "slope_degrees": {
-     "mean": 8.7,
-     "p90": 20.5,
-     "flat_under_5_pct": 43.5
+     "mean": 9.4,
+     "p90": 21.6,
+     "flat_under_5_pct": 43.0
     }
    },
    "boundaries": [
@@ -9300,15 +9300,15 @@
      "max_z": 3903
     },
     "elevation": {
-     "p10": 83.6,
-     "median": 97.5,
-     "p90": 135.7,
-     "max": 151.5
+     "p10": 83.4,
+     "median": 90.9,
+     "p90": 140.2,
+     "max": 270.9
     },
     "slope_degrees": {
-     "mean": 12.3,
-     "p90": 24.5,
-     "flat_under_5_pct": 25.9
+     "mean": 17.1,
+     "p90": 50.4,
+     "flat_under_5_pct": 30.9
     }
    },
    "boundaries": [
@@ -9946,15 +9946,15 @@
      "max_z": 3919
     },
     "elevation": {
-     "p10": 85.9,
-     "median": 107.3,
-     "p90": 129.3,
-     "max": 147.1
+     "p10": 85.2,
+     "median": 104.0,
+     "p90": 132.3,
+     "max": 268.6
     },
     "slope_degrees": {
-     "mean": 7.5,
-     "p90": 16.1,
-     "flat_under_5_pct": 41.5
+     "mean": 13.6,
+     "p90": 37.7,
+     "flat_under_5_pct": 35.1
     }
    },
    "boundaries": [
@@ -10597,15 +10597,15 @@
      "max_z": 5407
     },
     "elevation": {
-     "p10": 86.9,
-     "median": 115.3,
-     "p90": 137.6,
-     "max": 149.2
+     "p10": 86.3,
+     "median": 110.4,
+     "p90": 144.4,
+     "max": 263.5
     },
     "slope_degrees": {
-     "mean": 8.6,
-     "p90": 18.5,
-     "flat_under_5_pct": 41.1
+     "mean": 19.1,
+     "p90": 58.3,
+     "flat_under_5_pct": 30.5
     }
    },
    "boundaries": [
@@ -10876,15 +10876,15 @@
      "max_z": 5375
     },
     "elevation": {
-     "p10": 87.7,
-     "median": 115.4,
-     "p90": 131.9,
-     "max": 146.3
+     "p10": 86.9,
+     "median": 105.9,
+     "p90": 136.8,
+     "max": 273.1
     },
     "slope_degrees": {
-     "mean": 11.1,
-     "p90": 22.1,
-     "flat_under_5_pct": 29.2
+     "mean": 18.0,
+     "p90": 55.5,
+     "flat_under_5_pct": 30.4
     }
    },
    "boundaries": [
@@ -14088,14 +14088,14 @@
     },
     "elevation": {
      "p10": 106.7,
-     "median": 116.7,
-     "p90": 130.2,
-     "max": 147.9
+     "median": 116.8,
+     "p90": 130.5,
+     "max": 197.4
     },
     "slope_degrees": {
-     "mean": 5.0,
-     "p90": 8.7,
-     "flat_under_5_pct": 57.0
+     "mean": 5.4,
+     "p90": 8.9,
+     "flat_under_5_pct": 56.9
     }
    },
    "boundaries": [
@@ -16312,13 +16312,13 @@
     "elevation": {
      "p10": 103.0,
      "median": 114.6,
-     "p90": 126.6,
-     "max": 158.1
+     "p90": 126.8,
+     "max": 258.9
     },
     "slope_degrees": {
-     "mean": 4.8,
-     "p90": 9.6,
-     "flat_under_5_pct": 66.7
+     "mean": 5.2,
+     "p90": 10.0,
+     "flat_under_5_pct": 66.1
     }
    },
    "boundaries": [
@@ -16994,9 +16994,9 @@
      "max": 142.4
     },
     "slope_degrees": {
-     "mean": 3.5,
+     "mean": 3.6,
      "p90": 6.3,
-     "flat_under_5_pct": 78.0
+     "flat_under_5_pct": 77.9
     }
    },
    "boundaries": [
@@ -17355,14 +17355,14 @@
     },
     "elevation": {
      "p10": 98.0,
-     "median": 116.7,
+     "median": 116.9,
      "p90": 142.6,
      "max": 151.7
     },
     "slope_degrees": {
-     "mean": 6.6,
-     "p90": 17.3,
-     "flat_under_5_pct": 57.9
+     "mean": 6.9,
+     "p90": 18.3,
+     "flat_under_5_pct": 57.4
     }
    },
    "boundaries": [
@@ -17661,7 +17661,7 @@
    "display_name": "River of Shrews Vale",
    "parent": "shrew_lakes",
    "measured": {
-    "area_km2": 1.004,
+    "area_km2": 0.864,
     "bounds": {
      "min_x": 1472,
      "min_z": 3832,
@@ -17669,15 +17669,15 @@
      "max_z": 5271
     },
     "elevation": {
-     "p10": 106.4,
-     "median": 113.9,
-     "p90": 122.4,
+     "p10": 106.6,
+     "median": 114.0,
+     "p90": 122.6,
      "max": 129.7
     },
     "slope_degrees": {
-     "mean": 3.7,
-     "p90": 6.9,
-     "flat_under_5_pct": 77.0
+     "mean": 3.5,
+     "p90": 6.5,
+     "flat_under_5_pct": 79.4
     }
    },
    "boundaries": [
@@ -17857,23 +17857,23 @@
    "display_name": "Pallet Meadows",
    "parent": "pallet_fields",
    "measured": {
-    "area_km2": 0.769,
+    "area_km2": 0.614,
     "bounds": {
      "min_x": 952,
-     "min_z": 4648,
+     "min_z": 4968,
      "max_x": 2167,
      "max_z": 5799
     },
     "elevation": {
-     "p10": 86.2,
-     "median": 112.2,
-     "p90": 122.2,
+     "p10": 79.0,
+     "median": 109.9,
+     "p90": 120.9,
      "max": 134.8
     },
     "slope_degrees": {
-     "mean": 6.5,
-     "p90": 15.0,
-     "flat_under_5_pct": 53.3
+     "mean": 7.2,
+     "p90": 16.4,
+     "flat_under_5_pct": 47.4
     }
    },
    "boundaries": [
@@ -17994,23 +17994,23 @@
    "display_name": "West Shore",
    "parent": "pallet_fields",
    "measured": {
-    "area_km2": 0.805,
+    "area_km2": 0.626,
     "bounds": {
      "min_x": 472,
      "min_z": 4024,
-     "max_x": 1607,
+     "max_x": 1487,
      "max_z": 5111
     },
     "elevation": {
-     "p10": 79.0,
-     "median": 120.0,
-     "p90": 127.7,
+     "p10": 74.4,
+     "median": 118.0,
+     "p90": 128.4,
      "max": 134.8
     },
     "slope_degrees": {
-     "mean": 6.9,
-     "p90": 16.5,
-     "flat_under_5_pct": 53.3
+     "mean": 7.9,
+     "p90": 17.8,
+     "flat_under_5_pct": 45.0
     }
    },
    "boundaries": [
@@ -18327,14 +18327,14 @@
     },
     "elevation": {
      "p10": 92.0,
-     "median": 109.7,
-     "p90": 132.0,
-     "max": 148.5
+     "median": 109.6,
+     "p90": 132.4,
+     "max": 234.0
     },
     "slope_degrees": {
-     "mean": 4.9,
-     "p90": 9.1,
-     "flat_under_5_pct": 61.3
+     "mean": 5.4,
+     "p90": 9.4,
+     "flat_under_5_pct": 60.6
     }
    },
    "boundaries": [
@@ -18809,13 +18809,13 @@
     "elevation": {
      "p10": 95.7,
      "median": 112.3,
-     "p90": 131.4,
-     "max": 139.7
+     "p90": 131.6,
+     "max": 237.7
     },
     "slope_degrees": {
-     "mean": 7.9,
-     "p90": 17.0,
-     "flat_under_5_pct": 42.2
+     "mean": 8.5,
+     "p90": 17.7,
+     "flat_under_5_pct": 41.2
     }
    },
    "boundaries": [
@@ -19627,12 +19627,23 @@
     "measured_note": "measured.area_km2 is the box's geometric area and measured.bounds the 8-block cells round it, written by hand; elevation and slope are not yet measured, and the three neighbours' measured blocks still describe their uncut polygons. tools/region_measure.py --source-root <root> --write re-measures them from the polygons on the canonical heightmap."
    },
    "measured": {
-    "area_km2": 0.486,
+    "area_km2": 0.498,
     "bounds": {
      "min_x": 1176,
      "min_z": 4296,
      "max_x": 1823,
      "max_z": 5063
+    },
+    "elevation": {
+     "p10": 108.1,
+     "median": 120.2,
+     "p90": 125.9,
+     "max": 131.8
+    },
+    "slope_degrees": {
+     "mean": 3.9,
+     "p90": 7.4,
+     "flat_under_5_pct": 74.5
     }
    },
    "boundaries": [
