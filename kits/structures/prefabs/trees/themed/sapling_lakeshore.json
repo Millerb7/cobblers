@@ -8,27 +8,28 @@
  "source": {
   "file": "generated",
   "size": [
-   45,
-   49,
-   45
+   39,
+   83,
+   39
   ],
-  "blocks": 15313
+  "blocks": 28431
  },
  "entrance": null,
  "grade_layer": null,
  "trunk_origin": [
-  22,
+  19,
   2,
-  22
+  19
  ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
  "tier": "themed_sapling",
  "theme": "lakeshore",
- "height": 46,
+ "height": 80,
  "nests": [
   {
    "at": [
     0,
-    8,
+    11,
     0
    ],
    "mimic": "minecraft:mangrove_log"
@@ -36,19 +37,18 @@
   {
    "at": [
     0,
-    22,
-    1
+    34,
+    0
    ],
    "mimic": "minecraft:mangrove_log"
   },
   {
    "at": [
     0,
-    44,
+    64,
     0
    ],
    "mimic": "minecraft:mangrove_leaves"
   }
- ],
- "notes": "the trunk centre's base is builder (0, 0, 0): template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)"
+ ]
 }

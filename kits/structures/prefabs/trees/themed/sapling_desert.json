@@ -8,27 +8,36 @@
  "source": {
   "file": "generated",
   "size": [
-   45,
-   62,
-   52
+   52,
+   78,
+   57
   ],
-  "blocks": 1402
+  "blocks": 4556
  },
  "entrance": null,
  "grade_layer": null,
  "trunk_origin": [
-  21,
+  25,
   2,
-  23
+  27
  ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
  "tier": "themed_sapling",
  "theme": "desert",
- "height": 59,
+ "height": 75,
  "nests": [
   {
    "at": [
     0,
-    10,
+    11,
+    0
+   ],
+   "mimic": "minecraft:bone_block"
+  },
+  {
+   "at": [
+    0,
+    34,
     0
    ],
    "mimic": "minecraft:bone_block"
@@ -40,15 +49,6 @@
     0
    ],
    "mimic": "minecraft:bone_block"
-  },
-  {
-   "at": [
-    0,
-    32,
-    0
-   ],
-   "mimic": "minecraft:bone_block"
   }
- ],
- "notes": "the trunk centre's base is builder (0, 0, 0): template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)"
+ ]
 }

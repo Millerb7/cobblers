@@ -8,27 +8,28 @@
  "source": {
   "file": "generated",
   "size": [
-   29,
-   80,
-   29
+   41,
+   85,
+   41
   ],
-  "blocks": 9507
+  "blocks": 22469
  },
  "entrance": null,
  "grade_layer": null,
  "trunk_origin": [
-  14,
+  20,
   2,
-  14
+  20
  ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
  "tier": "themed_sapling",
  "theme": "frost",
- "height": 78,
+ "height": 82,
  "nests": [
   {
    "at": [
     0,
-    12,
+    11,
     0
    ],
    "mimic": "minecraft:spruce_log"
@@ -44,11 +45,10 @@
   {
    "at": [
     0,
-    56,
+    64,
     0
    ],
-   "mimic": "minecraft:spruce_log"
+   "mimic": "minecraft:spruce_leaves"
   }
- ],
- "notes": "the trunk centre's base is builder (0, 0, 0): template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)"
+ ]
 }

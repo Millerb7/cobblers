@@ -22,8 +22,22 @@ them". The Route 1 sapling already has one (`route1_sapling_crown`: Pidgey 24 + 
 
 ## Plan v2 (PROPOSED 2026-09-26): one map of saplings, planned for discovery
 
-Status: **PROPOSED, awaiting the owner.** It replaces the first pass of themed saplings (commit db6cb43: 20 trees
-placed on staging) and changes 9 elders' birds. Nothing below is built yet.
+Status: **BUILT ON STAGING 2026-09-26.** The owner approved it: non-bird flyers are allowed "if it makes sense for it
+to group around a tree", and the first pass is to be removed. The first pass's 20 trees are cleared from staging. The
+14 themed trees stand with their settings and 42 nest blocks: `tools/themed_saplings.py`, pins in
+`data/themed_saplings.json`, pools in `data/spawns.json`. The 9 elder swaps are in the pools and in the map tables below.
+Changes from the proposal:
+- the Long Isle desert tree is Vullaby, not Sigilyph, because a Sigilyph guards ruins, not trees;
+- the balance review set the Great Crater to 44-50 and the Sunset west palm to Wingull only at 16-20 (the level-cap
+  trap);
+- the Tropius elder keeps 5 per block, 20 in the tree.
+Not seen by the owner yet.
+
+Two birds need a client fix before they look right:
+- Vullaby renders as the substitute doll on a client without the ATMxMSD models;
+- Skarmory's pack model is mis-textured under 1.8.
+
+See `docs/research/COBBLEVERSE_COMPATIBILITY.md`, "Client model audit, 2026-09-26".
 
 ### What the owner asked for
 
@@ -253,13 +267,13 @@ giants (4 landmark trees and the Weeping Elder).
 | elder_viltri_plateau_2 | (2332, 3560, 118) | 175 | birch / birch_plateau | 12-15 / 12-15 | **Taillow** | N (no home) | base only (Swellow 22‡) | A meadow swallow. Guts is a real early pick. |
 | elder_viltri_plateau_3 | (2344, 3064, 108) | 165 | birch / birch_plateau | 12-15 / 12-15 | **Spearow** | N (no home) | base only (Fearow 20‡) | Kanto's field bird, which the map never had. |
 | elder_lake_viltri_hollow_1 | (1280, 3184, 110) | 167 | oak / riparian_woods | 18-21 / 18-21 | **Ducklett** | N (tilpey_north_shore 39-41) | base only (Swanna 35‡) | A lake bird in the lake's wood. Earlier than its roster home (conflict C3). |
-| elder_lake_viltri_hollow_2 | (1824, 3056, 121) | 178 | oak / riparian_woods | 18-21 / 18-21 | **Hoothoot** | R | base only (Noctowl 20 > 18) | 60 off legs 2/3, the most visible elder in the region. The hollow's own owl. |
+| elder_lake_viltri_hollow_2 | (1824, 3056, 121) | 178 | oak / riparian_woods | 18-21 / 18-21 | **Yanma** | v2 | base only (Yanmega by move) | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: 60 off legs 2/3, the most visible elder in the region. The hollow's own owl. |
 | elder_viltris_path_valley_1 | (1016, 3864, 138) | 195 | oak / riparian_woods | 15-28 / 15-20 | **Pidove** | N (no home) | base only (Tranquill 21‡) | A common pigeon for the far valley. |
 | elder_viltris_path_valley_2 ★ | (1094, 3496, 122) | 179 | oak / riparian_woods | 15-28 / 15-20 | **Farfetch'd** (rare) over Fletchling 24 | N (no home) / R | single stage (Kanto form) | A remote riverside tree with a leek bird in the reeds: the first "find". |
 | elder_foothill_woods_1 | (1440, 2264, 100) | 157 | oak / foothill_mixed | 21-23 / 21-23 | **Hoothoot** + Noctowl | R | Noctowl eligible (20 ≤ 21) | The roster's own pair in the region's biggest wood. |
 | elder_foothill_woods_2 | (2912, 2440, 107) | 164 | oak / foothill_mixed | 21-23 / 21-23 | **Pidove** + Tranquill | N | Tranquill eligible (21‡ ≤ 21) | The Pidove line's second tree, now one stage on. |
 | elder_foothill_woods_3 | (2236, 1622, 124) | 181 | oak / foothill_mixed | 21-23 / 21-23 | **Rufflet** | N to region (mt_clay; in Route 3's selection) | base only (repo marks Braviary non-level) | 207 off leg 3, under the Tri Peaks. The mountain eagle come down to the woods' edge. |
-| elder_foothill_woods_4 | (2136, 2624, 117) | 174 | oak / foothill_mixed | 21-23 / 21-23 | **Spearow** + Fearow | N | Fearow eligible (20‡ ≤ 21) | Spearow's line grows up along the road. |
+| elder_foothill_woods_4 | (2136, 2624, 117) | 174 | oak / foothill_mixed | 21-23 / 21-23 | **Ledyba** + Ledian | v2 | Ledian eligible (18 <= 21) | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: Spearow's line grows up along the road. |
 
 ### Viltri Woods: the Foothill grove round the world tree (Route 3, 29.5 blocks off the road)
 
@@ -278,8 +292,8 @@ starter-spread fix in coverage, not in more Grass. It stays on the Pine Isles, w
 | id | (x, z, ground) | block y | tree | band / pool | bird | src | stages at pool | why |
 |---|---|---|---|---|---|---|---|---|
 | elder_shrew_lake_shores_1 | (3928, 4272, 144) | 201 | cherry / cherry_vale | 10-22 / 10-15 | **Swablu** | N | base only | Cotton wings among the blossom. |
-| elder_shrew_lake_shores_2 | (3760, 3932, 140) | 197 | cherry / cherry_vale | 10-22 / 10-15 | **Natu** | N | base only | Sits beside the roster's Psychic cherry things (Ralts, Poltchageist). |
-| elder_shrew_lake_shores_3 | (3104, 3624, 117) | 174 | cherry / cherry_vale | 10-22 / 10-15 | **Taillow** | N | base only | The region's plainest bird, at its lowest band. |
+| elder_shrew_lake_shores_2 | (3760, 3932, 140) | 197 | cherry / cherry_vale | 10-22 / 10-15 | **Combee** | v2 | base only (Vespiquen 21, female) | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: Sits beside the roster's Psychic cherry things (Ralts, Poltchageist). |
+| elder_shrew_lake_shores_3 | (3104, 3624, 117) | 174 | cherry / cherry_vale | 10-22 / 10-15 | **Hoppip** | v2 | base only (Skiploom 18 > 10) | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: The region's plainest bird, at its lowest band. |
 
 `shrew_lake_shores` is on no leg's `subregions` list in `data/routes.json`. Its elders are 326-599 blocks off some
 leg that this pass did not identify.
@@ -332,16 +346,16 @@ leg that this pass did not identify.
 | id | (x, z, ground) | block y | tree | band / pool | bird | src | stages at pool | why |
 |---|---|---|---|---|---|---|---|---|
 | elder_north_pine_isle_1 | (7986, 458, 73) | 130 | spruce / snow_pine | 25-45 / 25-30 | **Delibird** | R | single stage | The roster's only bird. |
-| elder_north_pine_isle_2 | (6998, 312, 75) | 132 | spruce / snow_pine | 25-45 / 25-30 | **Delibird** | R | single stage | Same pool as _1. Alternative: Swablu (owner decision 8). |
-| elder_south_pine_isle_1 | (7232, 1992, 76) | 133 | spruce / snow_pine | 25-45 / 25-30 | **Rowlet** + Dartrix | R | Dartrix eligible (17‡) | The owl isle. |
-| elder_south_pine_isle_2 | (6768, 1208, 112) | 169 | spruce / snow_pine | 25-45 / 25-30 | **Rowlet** + Dartrix | R | as above | Same pool as _1. |
+| elder_north_pine_isle_2 | (6998, 312, 75) | 132 | spruce / snow_pine | 25-45 / 25-30 | **Swablu** | v2 | base only (Altaria 35) | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: Same pool as _1. Alternative: Swablu (owner decision 8). |
+| elder_south_pine_isle_1 | (7232, 1992, 76) | 133 | spruce / snow_pine | 25-45 / 25-30 | **Hoothoot** + Noctowl | v2 | Noctowl eligible (20 <= 25) | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: The owl isle. |
+| elder_south_pine_isle_2 | (6768, 1208, 112) | 169 | spruce / snow_pine | 25-45 / 25-30 | **Starly** + Staravia | v2 | Staravia eligible (14). Staraptor 34 > 25 | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: Same pool as _1. |
 | elder_south_pine_isle_3 ★ | (7496, 1266, 73) | 130 | spruce / snow_pine | 25-45 / Rowlet 25-30, Decidueye 36-40 | **Decidueye** (rare) over Rowlet 24 | R (authored-only in the roster) | authored final stage | 2,481 off a leg, the isle's far tip: the owl isle's grown owl. |
 
 ### Jungle Isle (remote, 1154-2104 off any leg)
 
 | id | (x, z, ground) | block y | tree | band / pool | bird | src | stages at pool | why |
 |---|---|---|---|---|---|---|---|---|
-| elder_jungle_west_1 | (4464, 7312, 70) | 127 | jungle / emergent_jungle | 25-45 / 25-30 | **Pikipek** + Trumbeak | R | Trumbeak eligible. Toucannon 28 > 25 | The roster's woodpecker in the emergent canopy. |
+| elder_jungle_west_1 | (4464, 7312, 70) | 127 | jungle / emergent_jungle | 25-45 / 25-30 | **Tropius** | v2 | single stage | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: The roster's woodpecker in the emergent canopy. |
 | elder_jungle_west_2 ★ | (4968, 7416, 126) | 183 | jungle / emergent_jungle | 25-45 / Pikipek 25-30, Toucannon 30-34 | **Toucannon** (rare) over Pikipek 24 | R (authored-only in the roster) | authored final stage | The isle's high ground (y126): the toucan at the top. |
 | elder_jungle_east_1 | (5216, 7904, 81) | 138 | jungle / jungle_edge | 25-45 / 25-30 | **Hawlucha** | R | single stage | The roster's anchor, a wrestler on the jungle edge. |
 | elder_jungle_east_2 | (5248, 6976, 77) | 134 | jungle / jungle_edge | 25-45 / 25-30 | **Squawkabilly** | N to isle (long_isle_south) | single stage | Parrots on the jungle's edge. |
@@ -350,7 +364,7 @@ leg that this pass did not identify.
 
 | id | (x, z, ground) | block y | tree | band / pool | bird | src | stages at pool | why |
 |---|---|---|---|---|---|---|---|---|
-| elder_long_isle_north_1 | (7886, 4492, 70) | 127 | spruce / coastal_spruce | 25-45 / 25-30 | **Rookidee** + Corvisquire | R | Corvisquire eligible | The roster's crow. |
+| elder_long_isle_north_1 | (7886, 4492, 70) | 127 | spruce / coastal_spruce | 25-45 / 25-30 | **Wingull** + Pelipper | v2 | Pelipper eligible (25 <= 44) | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: The roster's crow. |
 | elder_long_isle_north_2 ★ | (7778, 5264, 93) | 150 | spruce / coastal_spruce | 25-45 / Rookidee 25-30, Corviknight 38-40 | **Corviknight** (rare) over Rookidee 24 | N stage (authored-only on tri_peaks) | authored final stage | The Galar taxi bird, grown, on a far coast. |
 | elder_long_isle_middle_1 | (8104, 5978, 76) | 133 | dark oak / mossy_broadleaf | 25-45 / 25-30 | **Pidove** + Tranquill | N | Tranquill eligible. Unfezant 32‡ | The roster has no bird. A woodland pigeon for the mossy wood. |
 | elder_long_isle_middle_2 | (7376, 6790, 86) | 143 | dark oak / mossy_broadleaf | 25-45 / 25-30 | **Spearow** + Fearow | N | Fearow eligible | The Spearow line's third tree. |

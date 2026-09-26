@@ -8,27 +8,28 @@
  "source": {
   "file": "generated",
   "size": [
-   37,
-   57,
-   35
+   51,
+   71,
+   49
   ],
-  "blocks": 1224
+  "blocks": 6621
  },
  "entrance": null,
  "grade_layer": null,
  "trunk_origin": [
-  18,
+  25,
   2,
-  9
+  26
  ],
+ "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)",
  "tier": "themed_sapling",
  "theme": "palm",
- "height": 55,
+ "height": 68,
  "nests": [
   {
    "at": [
     0,
-    10,
+    11,
     0
    ],
    "mimic": "minecraft:jungle_log"
@@ -36,27 +37,18 @@
   {
    "at": [
     0,
-    27,
-    2
+    34,
+    0
    ],
    "mimic": "minecraft:jungle_log"
   },
   {
    "at": [
-    -1,
-    45,
-    6
-   ],
-   "mimic": "minecraft:jungle_log"
-  },
-  {
-   "at": [
-    -1,
-    52,
-    8
+    0,
+    63,
+    0
    ],
    "mimic": "minecraft:jungle_leaves"
   }
- ],
- "notes": "the trunk centre's base is builder (0, 0, 0): template trunk_origin; nest `at` is in builder coordinates (add trunk_origin for template coordinates)"
+ ]
 }

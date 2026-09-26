@@ -15570,32 +15570,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.elder_lake_viltri_hollow_2.hoothoot",
-      "species": "hoothoot",
-      "bucket": "common",
-      "level": "18-21",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "elder_lake_viltri_hollow_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_lake_viltri_hollow_2.noctowl",
-      "species": "noctowl",
-      "bucket": "ultra-rare",
-      "level": "18-21",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_lake_viltri_hollow_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 20; band begins at 18",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.elder_viltris_path_valley_1.pidove",
       "species": "pidove",
       "bucket": "common",
@@ -15736,32 +15710,6 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "evolution requires level 54; band begins at 21",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_foothill_woods_4.spearow",
-      "species": "spearow",
-      "bucket": "common",
-      "level": "21-23",
-      "weight": 18.0,
-      "ambient": true,
-      "scope": "elder_foothill_woods_4",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_foothill_woods_4.fearow",
-      "species": "fearow",
-      "bucket": "uncommon",
-      "level": "21-23",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "elder_foothill_woods_4",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible",
       "spawnable_position": "grounded"
     },
     {
@@ -15918,58 +15866,6 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "evolution requires level 35; band begins at 10",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_shrew_lake_shores_2.natu",
-      "species": "natu",
-      "bucket": "common",
-      "level": "10-15",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "elder_shrew_lake_shores_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_shrew_lake_shores_2.xatu",
-      "species": "xatu",
-      "bucket": "ultra-rare",
-      "level": "10-15",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_shrew_lake_shores_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 25; band begins at 10",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_shrew_lake_shores_3.taillow",
-      "species": "taillow",
-      "bucket": "common",
-      "level": "10-15",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "elder_shrew_lake_shores_3",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_shrew_lake_shores_3.swellow",
-      "species": "swellow",
-      "bucket": "ultra-rare",
-      "level": "10-15",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_shrew_lake_shores_3",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 22; band begins at 10",
       "spawnable_position": "grounded"
     },
     {
@@ -16506,97 +16402,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.elder_north_pine_isle_2.delibird",
-      "species": "delibird",
-      "bucket": "common",
-      "level": "25-30",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "elder_north_pine_isle_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_south_pine_isle_1.rowlet",
-      "species": "rowlet",
-      "bucket": "common",
-      "level": "25-30",
-      "weight": 18.0,
-      "ambient": true,
-      "scope": "elder_south_pine_isle_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_south_pine_isle_1.dartrix",
-      "species": "dartrix",
-      "bucket": "uncommon",
-      "level": "25-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "elder_south_pine_isle_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_south_pine_isle_1.decidueye",
-      "species": "decidueye",
-      "bucket": "ultra-rare",
-      "level": "25-30",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_south_pine_isle_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 34; band begins at 25",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_south_pine_isle_2.rowlet",
-      "species": "rowlet",
-      "bucket": "common",
-      "level": "25-30",
-      "weight": 18.0,
-      "ambient": true,
-      "scope": "elder_south_pine_isle_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_south_pine_isle_2.dartrix",
-      "species": "dartrix",
-      "bucket": "uncommon",
-      "level": "25-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "elder_south_pine_isle_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_south_pine_isle_2.decidueye",
-      "species": "decidueye",
-      "bucket": "ultra-rare",
-      "level": "25-30",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_south_pine_isle_2",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 34; band begins at 25",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.elder_south_pine_isle_3.rowlet",
       "species": "rowlet",
       "bucket": "common",
@@ -16633,45 +16438,6 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "authored rare find (docs/world-building/SAPLING_BIRDS.md): evolves from Dartrix at level 34 (Cobblemon 1.8.0 jar); placed evolved at 36-40 as the tree's find, at the rare family weight 2",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_jungle_west_1.pikipek",
-      "species": "pikipek",
-      "bucket": "common",
-      "level": "25-30",
-      "weight": 18.0,
-      "ambient": true,
-      "scope": "elder_jungle_west_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_jungle_west_1.trumbeak",
-      "species": "trumbeak",
-      "bucket": "uncommon",
-      "level": "25-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "elder_jungle_west_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_jungle_west_1.toucannon",
-      "species": "toucannon",
-      "bucket": "ultra-rare",
-      "level": "25-30",
-      "weight": 0,
-      "ambient": false,
-      "scope": "elder_jungle_west_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolution requires level 28; band begins at 25",
       "spawnable_position": "grounded"
     },
     {
@@ -16737,45 +16503,6 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_long_isle_north_1.rookidee",
-      "species": "rookidee",
-      "bucket": "common",
-      "level": "44-50",
-      "weight": 16.8,
-      "ambient": true,
-      "scope": "elder_long_isle_north_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_long_isle_north_1.corvisquire",
-      "species": "corvisquire",
-      "bucket": "uncommon",
-      "level": "44-50",
-      "weight": 5.52,
-      "ambient": true,
-      "scope": "elder_long_isle_north_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.elder_long_isle_north_1.corviknight",
-      "species": "corviknight",
-      "bucket": "ultra-rare",
-      "level": "44-50",
-      "weight": 1.68,
-      "ambient": true,
-      "scope": "elder_long_isle_north_1",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible",
       "spawnable_position": "grounded"
     },
     {
@@ -16922,37 +16649,24 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_palm_sunset_east.wingull",
-      "species": "wingull",
+      "id": "habitat.sapling_palm_sunset_east.oricorio",
+      "species": "oricorio",
       "bucket": "common",
       "level": "25-30",
-      "weight": 18.0,
+      "weight": 24.0,
       "ambient": true,
       "scope": "sapling_palm_sunset_east",
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_palm_sunset_east.pelipper",
-      "species": "pelipper",
-      "bucket": "uncommon",
-      "level": "25-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_palm_sunset_east",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
       "spawnable_position": "grounded"
     },
     {
       "id": "habitat.sapling_palm_sunset_west.wingull",
       "species": "wingull",
       "bucket": "common",
-      "level": "25-30",
-      "weight": 18.0,
+      "level": "16-20",
+      "weight": 24.0,
       "ambient": true,
       "scope": "sapling_palm_sunset_west",
       "mechanism": "habitat_block",
@@ -16961,42 +16675,16 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_palm_sunset_west.pelipper",
-      "species": "pelipper",
-      "bucket": "uncommon",
-      "level": "25-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_palm_sunset_west",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_palm_east_coast_dunes.wingull",
-      "species": "wingull",
+      "id": "habitat.sapling_palm_east_coast_dunes.cramorant",
+      "species": "cramorant",
       "bucket": "common",
       "level": "25-30",
-      "weight": 18.0,
+      "weight": 24.0,
       "ambient": true,
       "scope": "sapling_palm_east_coast_dunes",
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_palm_east_coast_dunes.pelipper",
-      "species": "pelipper",
-      "bucket": "uncommon",
-      "level": "25-30",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_palm_east_coast_dunes",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
       "spawnable_position": "grounded"
     },
     {
@@ -17013,11 +16701,11 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_lakeshore_tilpey_south_shore.ducklett",
-      "species": "ducklett",
+      "id": "habitat.sapling_lakeshore_tilpey_south_shore.flamigo",
+      "species": "flamigo",
       "bucket": "common",
       "level": "42-44",
-      "weight": 18.0,
+      "weight": 24.0,
       "ambient": true,
       "scope": "sapling_lakeshore_tilpey_south_shore",
       "mechanism": "habitat_block",
@@ -17026,23 +16714,10 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_lakeshore_tilpey_south_shore.swanna",
-      "species": "swanna",
-      "bucket": "uncommon",
-      "level": "42-44",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_lakeshore_tilpey_south_shore",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (35 <= 42, Cobblemon 1.8.0 jar)",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.sapling_scorched_great_crater.fletchinder",
       "species": "fletchinder",
       "bucket": "common",
-      "level": "44-52",
+      "level": "44-50",
       "weight": 18.0,
       "ambient": true,
       "scope": "sapling_scorched_great_crater",
@@ -17055,62 +16730,10 @@
       "id": "habitat.sapling_scorched_great_crater.talonflame",
       "species": "talonflame",
       "bucket": "uncommon",
-      "level": "44-52",
+      "level": "44-50",
       "weight": 6.0,
       "ambient": true,
       "scope": "sapling_scorched_great_crater",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_scorched_crater_rim_north_west.fletchinder",
-      "species": "fletchinder",
-      "bucket": "common",
-      "level": "44-46",
-      "weight": 18.0,
-      "ambient": true,
-      "scope": "sapling_scorched_crater_rim_north_west",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_scorched_crater_rim_north_west.talonflame",
-      "species": "talonflame",
-      "bucket": "uncommon",
-      "level": "44-46",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_scorched_crater_rim_north_west",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_scorched_east_cones.fletchinder",
-      "species": "fletchinder",
-      "bucket": "common",
-      "level": "44-52",
-      "weight": 18.0,
-      "ambient": true,
-      "scope": "sapling_scorched_east_cones",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_scorched_east_cones.talonflame",
-      "species": "talonflame",
-      "bucket": "uncommon",
-      "level": "44-52",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_scorched_east_cones",
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
@@ -17130,21 +16753,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_frost_frostpeak_strand.delibird",
-      "species": "delibird",
-      "bucket": "common",
-      "level": "25-30",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "sapling_frost_frostpeak_strand",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_frost_glacier_foot_fields.delibird",
-      "species": "delibird",
+      "id": "habitat.sapling_frost_glacier_foot_fields.swablu",
+      "species": "swablu",
       "bucket": "common",
       "level": "34-36",
       "weight": 24.0,
@@ -17156,55 +16766,16 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_storm_rift_trunk.wattrel",
-      "species": "wattrel",
+      "id": "habitat.sapling_storm_rift_trunk.emolga",
+      "species": "emolga",
       "bucket": "common",
       "level": "55-57",
-      "weight": 18.0,
+      "weight": 24.0,
       "ambient": true,
       "scope": "sapling_storm_rift_trunk",
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_storm_rift_trunk.kilowattrel",
-      "species": "kilowattrel",
-      "bucket": "uncommon",
-      "level": "55-57",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_storm_rift_trunk",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (25 <= 55, Cobblemon 1.8.0 jar)",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_storm_rift_west_spur.wattrel",
-      "species": "wattrel",
-      "bucket": "common",
-      "level": "56-58",
-      "weight": 18.0,
-      "ambient": true,
-      "scope": "sapling_storm_rift_west_spur",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_storm_rift_west_spur.kilowattrel",
-      "species": "kilowattrel",
-      "bucket": "uncommon",
-      "level": "56-58",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "sapling_storm_rift_west_spur",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "level evolution eligible (25 <= 56, Cobblemon 1.8.0 jar)",
       "spawnable_position": "grounded"
     },
     {
@@ -17247,8 +16818,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_crag_mt_vessu.skarmory",
-      "species": "skarmory",
+      "id": "habitat.sapling_crag_mt_vessu.noibat",
+      "species": "noibat",
       "bucket": "common",
       "level": "24-26",
       "weight": 24.0,
@@ -17260,39 +16831,13 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.sapling_crag_the_tri_peaks.skarmory",
-      "species": "skarmory",
-      "bucket": "common",
-      "level": "24-29",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "sapling_crag_the_tri_peaks",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_desert_south_east_dunes.vullaby",
-      "species": "vullaby",
+      "id": "habitat.sapling_desert_south_east_dunes.gligar",
+      "species": "gligar",
       "bucket": "common",
       "level": "25-30",
       "weight": 24.0,
       "ambient": true,
       "scope": "sapling_desert_south_east_dunes",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "base stage",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.sapling_desert_plateau_west.vullaby",
-      "species": "vullaby",
-      "bucket": "common",
-      "level": "47-49",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "sapling_desert_plateau_west",
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "base stage",
@@ -17309,6 +16854,175 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_south_pine_isle_1.hoothoot",
+      "species": "hoothoot",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "elder_south_pine_isle_1",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_south_pine_isle_1.noctowl",
+      "species": "noctowl",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "elder_south_pine_isle_1",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (20 <= 25, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_south_pine_isle_2.starly",
+      "species": "starly",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "elder_south_pine_isle_2",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_south_pine_isle_2.staravia",
+      "species": "staravia",
+      "bucket": "uncommon",
+      "level": "25-30",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "elder_south_pine_isle_2",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (14 <= 25, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_north_pine_isle_2.swablu",
+      "species": "swablu",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "elder_north_pine_isle_2",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_jungle_west_1.tropius",
+      "species": "tropius",
+      "bucket": "common",
+      "level": "25-30",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "elder_jungle_west_1",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_foothill_woods_4.ledyba",
+      "species": "ledyba",
+      "bucket": "common",
+      "level": "21-23",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "elder_foothill_woods_4",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_foothill_woods_4.ledian",
+      "species": "ledian",
+      "bucket": "uncommon",
+      "level": "21-23",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "elder_foothill_woods_4",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (18 <= 21, Cobblemon 1.8.0 jar)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_shrew_lake_shores_2.combee",
+      "species": "combee",
+      "bucket": "common",
+      "level": "10-15",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "elder_shrew_lake_shores_2",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_shrew_lake_shores_3.hoppip",
+      "species": "hoppip",
+      "bucket": "common",
+      "level": "10-15",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "elder_shrew_lake_shores_3",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_lake_viltri_hollow_2.yanma",
+      "species": "yanma",
+      "bucket": "common",
+      "level": "18-21",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "elder_lake_viltri_hollow_2",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_long_isle_north_1.wingull",
+      "species": "wingull",
+      "bucket": "common",
+      "level": "44-50",
+      "weight": 18.0,
+      "ambient": true,
+      "scope": "elder_long_isle_north_1",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.elder_long_isle_north_1.pelipper",
+      "species": "pelipper",
+      "bucket": "uncommon",
+      "level": "44-50",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "elder_long_isle_north_1",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible (25 <= 44, Cobblemon 1.8.0 jar)",
       "spawnable_position": "grounded"
     }
   ],
@@ -34706,16 +34420,16 @@
         "minimum": 18,
         "maximum": 21
       },
-      "why": "60 off legs 2/3, the most visible elder in the region. The hollow's own owl. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 18-21 / 18-21); pool: Hoothoot 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; a habitat pool carries no time condition (tools/compile_spawns.py compile_habitat), so it is here by day as well (conflict C6, owner decision 10: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "60 off legs 2/3, the most visible elder in the region. The hollow's own owl. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 18-21 / 18-21); pool: Hoothoot 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; a habitat pool carries no time condition (tools/compile_spawns.py compile_habitat), so it is here by day as well (conflict C6, owner decision 10: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Hoothoot/Noctowl to Yanma, a dragonfly by the lake, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Hoothoot",
-          "pokemon": "hoothoot",
+          "species": "Yanma",
+          "pokemon": "yanma",
           "types": [
-            "normal",
+            "bug",
             "flying"
           ],
-          "family": "hoothoot",
+          "family": "yanma",
           "family_priority": "anchor",
           "level": "18-21",
           "conditions": {},
@@ -34723,22 +34437,6 @@
           "eligibility_reason": "base stage",
           "bucket": "common",
           "weight": 24.0
-        },
-        {
-          "species": "Noctowl",
-          "pokemon": "noctowl",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "hoothoot",
-          "family_priority": "anchor",
-          "level": "18-21",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 20; band begins at 18",
-          "bucket": "authored-only",
-          "weight": 0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -35004,16 +34702,16 @@
         "minimum": 21,
         "maximum": 23
       },
-      "why": "Spearow's line grows up along the road. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 21-23 / 21-23); pool: Spearow 18, Fearow 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files. One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "Spearow's line grows up along the road. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 21-23 / 21-23); pool: Spearow 18, Fearow 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files. One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Spearow/Fearow to Ledyba/Ledian, ladybirds in the oak, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Spearow",
-          "pokemon": "spearow",
+          "species": "Ledyba",
+          "pokemon": "ledyba",
           "types": [
-            "normal",
+            "bug",
             "flying"
           ],
-          "family": "spearow",
+          "family": "ledyba",
           "family_priority": "anchor",
           "level": "21-23",
           "conditions": {},
@@ -35023,18 +34721,18 @@
           "weight": 18.0
         },
         {
-          "species": "Fearow",
-          "pokemon": "fearow",
+          "species": "Ledian",
+          "pokemon": "ledian",
           "types": [
-            "normal",
+            "bug",
             "flying"
           ],
-          "family": "spearow",
+          "family": "ledyba",
           "family_priority": "anchor",
           "level": "21-23",
           "conditions": {},
           "ambient": true,
-          "eligibility_reason": "level evolution eligible",
+          "eligibility_reason": "level evolution eligible (18 <= 21, Cobblemon 1.8.0 jar)",
           "bucket": "uncommon",
           "weight": 6.0
         }
@@ -35318,16 +35016,16 @@
         "minimum": 10,
         "maximum": 15
       },
-      "why": "Sits beside the roster's Psychic cherry things (Ralts, Poltchageist). (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 10-22 / 10-15); pool: Natu 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "Sits beside the roster's Psychic cherry things (Ralts, Poltchageist). (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 10-22 / 10-15); pool: Natu 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Natu/Xatu to Combee, bees among the blossom, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Natu",
-          "pokemon": "natu",
+          "species": "Combee",
+          "pokemon": "combee",
           "types": [
-            "psychic",
+            "bug",
             "flying"
           ],
-          "family": "natu",
+          "family": "combee",
           "family_priority": "anchor",
           "level": "10-15",
           "conditions": {},
@@ -35335,22 +35033,6 @@
           "eligibility_reason": "base stage",
           "bucket": "common",
           "weight": 24.0
-        },
-        {
-          "species": "Xatu",
-          "pokemon": "xatu",
-          "types": [
-            "psychic",
-            "flying"
-          ],
-          "family": "natu",
-          "family_priority": "anchor",
-          "level": "10-15",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 25; band begins at 10",
-          "bucket": "authored-only",
-          "weight": 0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -35365,16 +35047,16 @@
         "minimum": 10,
         "maximum": 15
       },
-      "why": "The region's plainest bird, at its lowest band. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 10-22 / 10-15); pool: Taillow 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "The region's plainest bird, at its lowest band. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 10-22 / 10-15); pool: Taillow 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Taillow/Swellow to Hoppip, floating on the cherry vale's air, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Taillow",
-          "pokemon": "taillow",
+          "species": "Hoppip",
+          "pokemon": "hoppip",
           "types": [
-            "normal",
+            "grass",
             "flying"
           ],
-          "family": "taillow",
+          "family": "hoppip",
           "family_priority": "anchor",
           "level": "10-15",
           "conditions": {},
@@ -35382,22 +35064,6 @@
           "eligibility_reason": "base stage",
           "bucket": "common",
           "weight": 24.0
-        },
-        {
-          "species": "Swellow",
-          "pokemon": "swellow",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "taillow",
-          "family_priority": "anchor",
-          "level": "10-15",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 22; band begins at 10",
-          "bucket": "authored-only",
-          "weight": 0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -36349,16 +36015,16 @@
         "minimum": 25,
         "maximum": 30
       },
-      "why": "Same pool as _1. Alternative: Swablu (owner decision 8). (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Delibird 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "Same pool as _1. Alternative: Swablu (owner decision 8). (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Delibird 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Delibird to Swablu, cloud wings, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Delibird",
-          "pokemon": "delibird",
+          "species": "Swablu",
+          "pokemon": "swablu",
           "types": [
-            "ice",
+            "normal",
             "flying"
           ],
-          "family": "delibird",
+          "family": "swablu",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
@@ -36380,16 +36046,16 @@
         "minimum": 25,
         "maximum": 30
       },
-      "why": "The owl isle. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Rowlet 18, Dartrix 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "The owl isle. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Rowlet 18, Dartrix 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Rowlet/Dartrix/Decidueye to Hoothoot/Noctowl, the owl isle's owl, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Rowlet",
-          "pokemon": "rowlet",
+          "species": "Hoothoot",
+          "pokemon": "hoothoot",
           "types": [
-            "grass",
+            "normal",
             "flying"
           ],
-          "family": "rowlet",
+          "family": "hoothoot",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
@@ -36399,36 +36065,20 @@
           "weight": 18.0
         },
         {
-          "species": "Dartrix",
-          "pokemon": "dartrix",
+          "species": "Noctowl",
+          "pokemon": "noctowl",
           "types": [
-            "grass",
+            "normal",
             "flying"
           ],
-          "family": "rowlet",
+          "family": "hoothoot",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
           "ambient": true,
-          "eligibility_reason": "level evolution eligible",
+          "eligibility_reason": "level evolution eligible (20 <= 25, Cobblemon 1.8.0 jar)",
           "bucket": "uncommon",
           "weight": 6.0
-        },
-        {
-          "species": "Decidueye",
-          "pokemon": "decidueye",
-          "types": [
-            "grass",
-            "ghost"
-          ],
-          "family": "rowlet",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 34; band begins at 25",
-          "bucket": "authored-only",
-          "weight": 0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -36443,16 +36093,16 @@
         "minimum": 25,
         "maximum": 30
       },
-      "why": "Same pool as _1. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Rowlet 18, Dartrix 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "Same pool as _1. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Rowlet 18, Dartrix 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Rowlet/Dartrix/Decidueye to Starly/Staravia, starlings in the snow pines, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Rowlet",
-          "pokemon": "rowlet",
+          "species": "Starly",
+          "pokemon": "starly",
           "types": [
-            "grass",
+            "normal",
             "flying"
           ],
-          "family": "rowlet",
+          "family": "starly",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
@@ -36462,36 +36112,20 @@
           "weight": 18.0
         },
         {
-          "species": "Dartrix",
-          "pokemon": "dartrix",
+          "species": "Staravia",
+          "pokemon": "staravia",
           "types": [
-            "grass",
+            "normal",
             "flying"
           ],
-          "family": "rowlet",
+          "family": "starly",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
           "ambient": true,
-          "eligibility_reason": "level evolution eligible",
+          "eligibility_reason": "level evolution eligible (14 <= 25, Cobblemon 1.8.0 jar)",
           "bucket": "uncommon",
           "weight": 6.0
-        },
-        {
-          "species": "Decidueye",
-          "pokemon": "decidueye",
-          "types": [
-            "grass",
-            "ghost"
-          ],
-          "family": "rowlet",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 34; band begins at 25",
-          "bucket": "authored-only",
-          "weight": 0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -36562,62 +36196,30 @@
     {
       "id": "elder_jungle_west_1",
       "display_name": "Elder Jungle West 1",
-      "intended_location": "the elder tree at (4464, 7312) (elder_jungle_a, 180): a nest of 4 activated Habitat Blocks (elder_jungle_west_1, elder_jungle_west_1_mid, elder_jungle_west_1_crown, elder_jungle_west_1_top in data/habitat_blocks.json) inside its trunk at (4464, y82/105/128/144, 7312), up to 32 of its bird alive at once",
+      "intended_location": "the elder tree at (4464, 7312) (elder_jungle_a, 180): a nest of 4 activated Habitat Blocks (elder_jungle_west_1, elder_jungle_west_1_mid, elder_jungle_west_1_crown, elder_jungle_west_1_top in data/habitat_blocks.json) inside its trunk at (4464, y82/105/128/144, 7312), up to 20 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 25,
         "maximum": 30
       },
-      "why": "The roster's woodpecker in the emergent canopy. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Pikipek 18, Trumbeak 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "The roster's woodpecker in the emergent canopy. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Pikipek 18, Trumbeak 6; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Pikipek/Trumbeak/Toucannon to Tropius, a banana-necked flyer in the emergent jungle, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Pikipek",
-          "pokemon": "pikipek",
+          "species": "Tropius",
+          "pokemon": "tropius",
           "types": [
-            "normal",
+            "grass",
             "flying"
           ],
-          "family": "pikipek",
+          "family": "tropius",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
           "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Trumbeak",
-          "pokemon": "trumbeak",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "pikipek",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible",
-          "bucket": "uncommon",
-          "weight": 6.0
-        },
-        {
-          "species": "Toucannon",
-          "pokemon": "toucannon",
-          "types": [
-            "normal",
-            "flying"
-          ],
-          "family": "pikipek",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": false,
-          "eligibility_reason": "evolution requires level 28; band begins at 25",
-          "bucket": "authored-only",
-          "weight": 0
+          "weight": 24.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -36757,53 +36359,39 @@
         "minimum": 44,
         "maximum": 50
       },
-      "why": "The roster's crow. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels 44-50, not the table's 25-30: the table narrowed the island's old 25-45 placeholder band; the island's band is now 44-50 (docs/world-building/LONG_ISLE.md D5, taken by default 2026-09-26), under 10 wide, so by the table's own rule the pool is the band, and the stages follow the evolution policy at 44; pool: Rookidee 16.8, Corvisquire 5.52, Corviknight 1.68; evolution thresholds read from the Cobblemon 1.8.0 jar's species files. One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "The roster's crow. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels 44-50, not the table's 25-30: the table narrowed the island's old 25-45 placeholder band; the island's band is now 44-50 (docs/world-building/LONG_ISLE.md D5, taken by default 2026-09-26), under 10 wide, so by the table's own rule the pool is the band, and the stages follow the evolution policy at 44; pool: Rookidee 16.8, Corvisquire 5.52, Corviknight 1.68; evolution thresholds read from the Cobblemon 1.8.0 jar's species files. One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Plan v2 (SAPLING_BIRDS.md, 2026-09-26): the bird changes from Rookidee/Corvisquire/Corviknight to Wingull/Pelipper, the sea bird, so no line repeats within 1,000 blocks.",
       "entries": [
         {
-          "species": "Rookidee",
-          "pokemon": "rookidee",
+          "species": "Wingull",
+          "pokemon": "wingull",
           "types": [
+            "water",
             "flying"
           ],
-          "family": "rookidee",
+          "family": "wingull",
           "family_priority": "anchor",
           "level": "44-50",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
           "bucket": "common",
-          "weight": 16.8
+          "weight": 18.0
         },
         {
-          "species": "Corvisquire",
-          "pokemon": "corvisquire",
+          "species": "Pelipper",
+          "pokemon": "pelipper",
           "types": [
+            "water",
             "flying"
           ],
-          "family": "rookidee",
+          "family": "wingull",
           "family_priority": "anchor",
           "level": "44-50",
           "conditions": {},
           "ambient": true,
-          "eligibility_reason": "level evolution eligible",
+          "eligibility_reason": "level evolution eligible (25 <= 44, Cobblemon 1.8.0 jar)",
           "bucket": "uncommon",
-          "weight": 5.52
-        },
-        {
-          "species": "Corviknight",
-          "pokemon": "corviknight",
-          "types": [
-            "flying",
-            "steel"
-          ],
-          "family": "rookidee",
-          "family_priority": "anchor",
-          "level": "44-50",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible",
-          "bucket": "ultra-rare",
-          "weight": 1.68
+          "weight": 6.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -37075,46 +36663,30 @@
     {
       "id": "sapling_palm_sunset_east",
       "display_name": "Palm sapling, sunset east",
-      "intended_location": "the palm sapling at (3408, 7400): a nest of 4 activated Habitat Blocks (sapling_palm_sunset_east_low, sapling_palm_sunset_east_mid, sapling_palm_sunset_east_high, sapling_palm_sunset_east_top in data/habitat_blocks.json) inside its trunk at (3408, y76/93/111/118, 7400), up to 32 of its bird alive at once",
+      "intended_location": "the palm sapling at (2840, 7080): a nest of 3 activated Habitat Blocks (sapling_palm_sunset_east_low, sapling_palm_sunset_east_mid, sapling_palm_sunset_east_top in data/habitat_blocks.json) inside its trunk at (2840, y77/100/129, 7080), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 25,
         "maximum": 30
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a sea bird in a palm over the shore. One species line per sapling. Levels: the sunset_east roster's band 25-45, narrowed to 25-30. Pool: Wingull 18, Pelipper 6.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the dancer of the warm isles, in their roster. One species line per sapling, none repeated within 1,000 blocks. Levels: the sunset_east roster's band 25-45, narrowed to 25-30. Pool: Oricorio 24.",
       "entries": [
         {
-          "species": "Wingull",
-          "pokemon": "wingull",
+          "species": "Oricorio",
+          "pokemon": "oricorio",
           "types": [
-            "water",
+            "fire",
             "flying"
           ],
-          "family": "wingull",
+          "family": "oricorio",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
           "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Pelipper",
-          "pokemon": "pelipper",
-          "types": [
-            "water",
-            "flying"
-          ],
-          "family": "wingull",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
+          "weight": 24.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -37122,14 +36694,14 @@
     {
       "id": "sapling_palm_sunset_west",
       "display_name": "Palm sapling, sunset west",
-      "intended_location": "the palm sapling at (1456, 6680): a nest of 4 activated Habitat Blocks (sapling_palm_sunset_west_low, sapling_palm_sunset_west_mid, sapling_palm_sunset_west_high, sapling_palm_sunset_west_top in data/habitat_blocks.json) inside its trunk at (1456, y76/93/111/118, 6680), up to 32 of its bird alive at once",
+      "intended_location": "the palm sapling at (1448, 6680): a nest of 3 activated Habitat Blocks (sapling_palm_sunset_west_low, sapling_palm_sunset_west_mid, sapling_palm_sunset_west_top in data/habitat_blocks.json) inside its trunk at (1448, y77/100/129, 6680), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
-        "minimum": 25,
-        "maximum": 30
+        "minimum": 16,
+        "maximum": 20
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a sea bird in a palm over the shore. One species line per sapling. Levels: the sunset_west roster's band 25-45, narrowed to 25-30. Pool: Wingull 18, Pelipper 6.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the sea bird. One species line per sapling, none repeated within 1,000 blocks. Levels: the sunset_west roster's band 25-45; 16-20 (balance review: 1,387 by sea from Pallet, so the level-cap trap on day one; the safe default until the Sunset isle's band is decided). Pool: Wingull 24.",
       "entries": [
         {
           "species": "Wingull",
@@ -37140,28 +36712,12 @@
           ],
           "family": "wingull",
           "family_priority": "anchor",
-          "level": "25-30",
+          "level": "16-20",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
           "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Pelipper",
-          "pokemon": "pelipper",
-          "types": [
-            "water",
-            "flying"
-          ],
-          "family": "wingull",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
+          "weight": 24.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -37169,46 +36725,30 @@
     {
       "id": "sapling_palm_east_coast_dunes",
       "display_name": "Palm sapling, east coast dunes",
-      "intended_location": "the palm sapling at (7032, 4784): a nest of 4 activated Habitat Blocks (sapling_palm_east_coast_dunes_low, sapling_palm_east_coast_dunes_mid, sapling_palm_east_coast_dunes_high, sapling_palm_east_coast_dunes_top in data/habitat_blocks.json) inside its trunk at (7032, y76/93/111/118, 4784), up to 32 of its bird alive at once",
+      "intended_location": "the palm sapling at (7376, 5512): a nest of 3 activated Habitat Blocks (sapling_palm_east_coast_dunes_low, sapling_palm_east_coast_dunes_mid, sapling_palm_east_coast_dunes_top in data/habitat_blocks.json) inside its trunk at (7376, y78/101/130, 5512), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 25,
         "maximum": 30
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a sea bird in a palm over the shore. One species line per sapling. Levels: the east_coast_dunes roster's band 25-45, narrowed to 25-30. Pool: Wingull 18, Pelipper 6.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): a fisher on the east shore. One species line per sapling, none repeated within 1,000 blocks. Levels: the east_coast_dunes roster's band 25-45, narrowed to 25-30. Pool: Cramorant 24.",
       "entries": [
         {
-          "species": "Wingull",
-          "pokemon": "wingull",
+          "species": "Cramorant",
+          "pokemon": "cramorant",
           "types": [
-            "water",
-            "flying"
+            "flying",
+            "water"
           ],
-          "family": "wingull",
+          "family": "cramorant",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
           "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Pelipper",
-          "pokemon": "pelipper",
-          "types": [
-            "water",
-            "flying"
-          ],
-          "family": "wingull",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (25 <= 25, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
+          "weight": 24.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -37216,14 +36756,14 @@
     {
       "id": "sapling_lakeshore_arrow_lake_shores",
       "display_name": "Lakeshore sapling, arrow lake shores",
-      "intended_location": "the lakeshore sapling at (2512, 4520): a nest of 3 activated Habitat Blocks (sapling_lakeshore_arrow_lake_shores_low, sapling_lakeshore_arrow_lake_shores_mid, sapling_lakeshore_arrow_lake_shores_high in data/habitat_blocks.json) inside its trunk at (2512, y114/128/150, 4520), up to 24 of its bird alive at once",
+      "intended_location": "the lakeshore sapling at (2512, 4528): a nest of 3 activated Habitat Blocks (sapling_lakeshore_arrow_lake_shores_low, sapling_lakeshore_arrow_lake_shores_mid, sapling_lakeshore_arrow_lake_shores_top in data/habitat_blocks.json) inside its trunk at (2512, y117/140/170, 4528), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 10,
         "maximum": 15
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a water bird in a weeping tree over the lake. One species line per sapling. Levels: the arrow_lake_shores roster's band 10-22, narrowed to 10-15. Pool: Ducklett 24.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the lake duck. One species line per sapling, none repeated within 1,000 blocks. Levels: the arrow_lake_shores roster's band 10-22, narrowed to 10-15. Pool: Ducklett 24.",
       "entries": [
         {
           "species": "Ducklett",
@@ -37247,46 +36787,30 @@
     {
       "id": "sapling_lakeshore_tilpey_south_shore",
       "display_name": "Lakeshore sapling, tilpey south shore",
-      "intended_location": "the lakeshore sapling at (4976, 4944): a nest of 3 activated Habitat Blocks (sapling_lakeshore_tilpey_south_shore_low, sapling_lakeshore_tilpey_south_shore_mid, sapling_lakeshore_tilpey_south_shore_high in data/habitat_blocks.json) inside its trunk at (4976, y121/135/157, 4944), up to 24 of its bird alive at once",
+      "intended_location": "the lakeshore sapling at (5824, 4608): a nest of 3 activated Habitat Blocks (sapling_lakeshore_tilpey_south_shore_low, sapling_lakeshore_tilpey_south_shore_mid, sapling_lakeshore_tilpey_south_shore_top in data/habitat_blocks.json) inside its trunk at (5824, y95/118/148, 4608), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 42,
         "maximum": 44
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): a water bird in a weeping tree over the lake. One species line per sapling. Levels: the tilpey_south_shore roster's band 42-44. Pool: Ducklett 18, Swanna 6.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): wading in the lake's shallows. One species line per sapling, none repeated within 1,000 blocks. Levels: the tilpey_south_shore roster's band 42-44. Pool: Flamigo 24.",
       "entries": [
         {
-          "species": "Ducklett",
-          "pokemon": "ducklett",
+          "species": "Flamigo",
+          "pokemon": "flamigo",
           "types": [
-            "water",
-            "flying"
+            "flying",
+            "fighting"
           ],
-          "family": "ducklett",
+          "family": "flamigo",
           "family_priority": "anchor",
           "level": "42-44",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
           "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Swanna",
-          "pokemon": "swanna",
-          "types": [
-            "water",
-            "flying"
-          ],
-          "family": "ducklett",
-          "family_priority": "anchor",
-          "level": "42-44",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (35 <= 42, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
+          "weight": 24.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -37294,14 +36818,14 @@
     {
       "id": "sapling_scorched_great_crater",
       "display_name": "Scorched sapling, great crater",
-      "intended_location": "the scorched sapling at (5856, 5424): a nest of 3 activated Habitat Blocks (sapling_scorched_great_crater_low, sapling_scorched_great_crater_mid, sapling_scorched_great_crater_high in data/habitat_blocks.json) inside its trunk at (5856, y147/165/183, 5424), up to 24 of its bird alive at once",
+      "intended_location": "the scorched sapling at (5632, 5528): a nest of 3 activated Habitat Blocks (sapling_scorched_great_crater_low, sapling_scorched_great_crater_mid, sapling_scorched_great_crater_top in data/habitat_blocks.json) inside its trunk at (5632, y157/180/210, 5528), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 44,
-        "maximum": 52
+        "maximum": 50
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the fire bird in a charred tree in the crater country ('a scorch sapling for fire types in the south near craters'). One species line per sapling. Levels: the great_crater roster's band 44-52. Pool: Fletchinder 18, Talonflame 6.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the fire bird in the crater country, the one scorched tree. One species line per sapling, none repeated within 1,000 blocks. Levels: the great_crater roster's band 44-52; 44-50 (balance review: under Blaine's cap of 50, the tree being reached before him). Pool: Fletchinder 18, Talonflame 6.",
       "entries": [
         {
           "species": "Fletchinder",
@@ -37312,7 +36836,7 @@
           ],
           "family": "fletchinder",
           "family_priority": "anchor",
-          "level": "44-52",
+          "level": "44-50",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
@@ -37328,101 +36852,7 @@
           ],
           "family": "fletchinder",
           "family_priority": "anchor",
-          "level": "44-52",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
-        }
-      ],
-      "placement_status": "pending_or_authored_world_asset"
-    },
-    {
-      "id": "sapling_scorched_crater_rim_north_west",
-      "display_name": "Scorched sapling, crater rim north west",
-      "intended_location": "the scorched sapling at (5712, 5208): a nest of 3 activated Habitat Blocks (sapling_scorched_crater_rim_north_west_low, sapling_scorched_crater_rim_north_west_mid, sapling_scorched_crater_rim_north_west_high in data/habitat_blocks.json) inside its trunk at (5712, y132/150/168, 5208), up to 24 of its bird alive at once",
-      "mechanism": "habitat_block",
-      "replace_spawns": false,
-      "level_band": {
-        "minimum": 44,
-        "maximum": 46
-      },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the fire bird in a charred tree in the crater country ('a scorch sapling for fire types in the south near craters'). One species line per sapling. Levels: the crater_rim_north_west roster's band 44-46. Pool: Fletchinder 18, Talonflame 6.",
-      "entries": [
-        {
-          "species": "Fletchinder",
-          "pokemon": "fletchinder",
-          "types": [
-            "fire",
-            "flying"
-          ],
-          "family": "fletchinder",
-          "family_priority": "anchor",
-          "level": "44-46",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Talonflame",
-          "pokemon": "talonflame",
-          "types": [
-            "fire",
-            "flying"
-          ],
-          "family": "fletchinder",
-          "family_priority": "anchor",
-          "level": "44-46",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
-        }
-      ],
-      "placement_status": "pending_or_authored_world_asset"
-    },
-    {
-      "id": "sapling_scorched_east_cones",
-      "display_name": "Scorched sapling, east cones",
-      "intended_location": "the scorched sapling at (6504, 5472): a nest of 3 activated Habitat Blocks (sapling_scorched_east_cones_low, sapling_scorched_east_cones_mid, sapling_scorched_east_cones_high in data/habitat_blocks.json) inside its trunk at (6504, y151/169/187, 5472), up to 24 of its bird alive at once",
-      "mechanism": "habitat_block",
-      "replace_spawns": false,
-      "level_band": {
-        "minimum": 44,
-        "maximum": 52
-      },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the fire bird in a charred tree in the crater country ('a scorch sapling for fire types in the south near craters'). One species line per sapling. Levels: the east_cones roster's band 44-52. Pool: Fletchinder 18, Talonflame 6.",
-      "entries": [
-        {
-          "species": "Fletchinder",
-          "pokemon": "fletchinder",
-          "types": [
-            "fire",
-            "flying"
-          ],
-          "family": "fletchinder",
-          "family_priority": "anchor",
-          "level": "44-52",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Talonflame",
-          "pokemon": "talonflame",
-          "types": [
-            "fire",
-            "flying"
-          ],
-          "family": "fletchinder",
-          "family_priority": "anchor",
-          "level": "44-52",
+          "level": "44-50",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "level evolution eligible (35 <= 44, Cobblemon 1.8.0 jar)",
@@ -37435,45 +36865,14 @@
     {
       "id": "sapling_frost_frostpeak",
       "display_name": "Frost sapling, frostpeak",
-      "intended_location": "the frost sapling at (872, 744): a nest of 3 activated Habitat Blocks (sapling_frost_frostpeak_low, sapling_frost_frostpeak_mid, sapling_frost_frostpeak_high in data/habitat_blocks.json) inside its trunk at (872, y100/122/144, 744), up to 24 of its bird alive at once",
+      "intended_location": "the frost sapling at (824, 768): a nest of 3 activated Habitat Blocks (sapling_frost_frostpeak_low, sapling_frost_frostpeak_mid, sapling_frost_frostpeak_top in data/habitat_blocks.json) inside its trunk at (824, y98/121/151, 768), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 25,
         "maximum": 30
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the snow bird in a snow-loaded spruce. One species line per sapling. Levels: the frostpeak roster's band 25-45, narrowed to 25-30. Pool: Delibird 24.",
-      "entries": [
-        {
-          "species": "Delibird",
-          "pokemon": "delibird",
-          "types": [
-            "ice",
-            "flying"
-          ],
-          "family": "delibird",
-          "family_priority": "anchor",
-          "level": "25-30",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 24.0
-        }
-      ],
-      "placement_status": "pending_or_authored_world_asset"
-    },
-    {
-      "id": "sapling_frost_frostpeak_strand",
-      "display_name": "Frost sapling, frostpeak strand",
-      "intended_location": "the frost sapling at (1504, 536): a nest of 3 activated Habitat Blocks (sapling_frost_frostpeak_strand_low, sapling_frost_frostpeak_strand_mid, sapling_frost_frostpeak_strand_high in data/habitat_blocks.json) inside its trunk at (1504, y99/121/143, 536), up to 24 of its bird alive at once",
-      "mechanism": "habitat_block",
-      "replace_spawns": false,
-      "level_band": {
-        "minimum": 25,
-        "maximum": 30
-      },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the snow bird in a snow-loaded spruce. One species line per sapling. Levels: the frostpeak_strand roster's band 25-45, narrowed to 25-30. Pool: Delibird 24.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the snow bird. One species line per sapling, none repeated within 1,000 blocks. Levels: the frostpeak roster's band 25-45, narrowed to 25-30. Pool: Delibird 24.",
       "entries": [
         {
           "species": "Delibird",
@@ -37497,23 +36896,23 @@
     {
       "id": "sapling_frost_glacier_foot_fields",
       "display_name": "Frost sapling, glacier foot fields",
-      "intended_location": "the frost sapling at (4872, 2600): a nest of 3 activated Habitat Blocks (sapling_frost_glacier_foot_fields_low, sapling_frost_glacier_foot_fields_mid, sapling_frost_glacier_foot_fields_high in data/habitat_blocks.json) inside its trunk at (4872, y145/167/189, 2600), up to 24 of its bird alive at once",
+      "intended_location": "the frost sapling at (4736, 2640): a nest of 3 activated Habitat Blocks (sapling_frost_glacier_foot_fields_low, sapling_frost_glacier_foot_fields_mid, sapling_frost_glacier_foot_fields_top in data/habitat_blocks.json) inside its trunk at (4736, y138/161/191, 2640), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 34,
         "maximum": 36
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the snow bird in a snow-loaded spruce. One species line per sapling. Levels: the glacier_foot_fields roster's band 34-36. Pool: Delibird 24.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): cloud wings. One species line per sapling, none repeated within 1,000 blocks. Levels: the glacier_foot_fields roster's band 34-36. Pool: Swablu 24.",
       "entries": [
         {
-          "species": "Delibird",
-          "pokemon": "delibird",
+          "species": "Swablu",
+          "pokemon": "swablu",
           "types": [
-            "ice",
+            "normal",
             "flying"
           ],
-          "family": "delibird",
+          "family": "swablu",
           "family_priority": "anchor",
           "level": "34-36",
           "conditions": {},
@@ -37528,93 +36927,30 @@
     {
       "id": "sapling_storm_rift_trunk",
       "display_name": "Storm sapling, rift trunk",
-      "intended_location": "the storm sapling at (3808, 3560): a nest of 3 activated Habitat Blocks (sapling_storm_rift_trunk_low, sapling_storm_rift_trunk_mid, sapling_storm_rift_trunk_high in data/habitat_blocks.json) inside its trunk at (3808, y96/110/134, 3560), up to 24 of its bird alive at once",
+      "intended_location": "the storm sapling at (3536, 2448): a nest of 3 activated Habitat Blocks (sapling_storm_rift_trunk_low, sapling_storm_rift_trunk_mid, sapling_storm_rift_trunk_top in data/habitat_blocks.json) inside its trunk at (3536, y99/122/150, 2448), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 55,
         "maximum": 57
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the storm petrel in a lightning-struck tree under the Rift's standing thunderstorm. One species line per sapling. Levels: the rift_trunk roster's band 55-57. Pool: Wattrel 18, Kilowattrel 6.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the electric glider under the Rift's storm. One species line per sapling, none repeated within 1,000 blocks. Levels: the rift_trunk roster's band 55-57. Pool: Emolga 24.",
       "entries": [
         {
-          "species": "Wattrel",
-          "pokemon": "wattrel",
+          "species": "Emolga",
+          "pokemon": "emolga",
           "types": [
             "electric",
             "flying"
           ],
-          "family": "wattrel",
+          "family": "emolga",
           "family_priority": "anchor",
           "level": "55-57",
           "conditions": {},
           "ambient": true,
           "eligibility_reason": "base stage",
           "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Kilowattrel",
-          "pokemon": "kilowattrel",
-          "types": [
-            "electric",
-            "flying"
-          ],
-          "family": "wattrel",
-          "family_priority": "anchor",
-          "level": "55-57",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (25 <= 55, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
-        }
-      ],
-      "placement_status": "pending_or_authored_world_asset"
-    },
-    {
-      "id": "sapling_storm_rift_west_spur",
-      "display_name": "Storm sapling, rift west spur",
-      "intended_location": "the storm sapling at (3600, 3344): a nest of 3 activated Habitat Blocks (sapling_storm_rift_west_spur_low, sapling_storm_rift_west_spur_mid, sapling_storm_rift_west_spur_high in data/habitat_blocks.json) inside its trunk at (3600, y93/107/131, 3344), up to 24 of its bird alive at once",
-      "mechanism": "habitat_block",
-      "replace_spawns": false,
-      "level_band": {
-        "minimum": 56,
-        "maximum": 58
-      },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the storm petrel in a lightning-struck tree under the Rift's standing thunderstorm. One species line per sapling. Levels: the rift_west_spur roster's band 56-58. Pool: Wattrel 18, Kilowattrel 6.",
-      "entries": [
-        {
-          "species": "Wattrel",
-          "pokemon": "wattrel",
-          "types": [
-            "electric",
-            "flying"
-          ],
-          "family": "wattrel",
-          "family_priority": "anchor",
-          "level": "56-58",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 18.0
-        },
-        {
-          "species": "Kilowattrel",
-          "pokemon": "kilowattrel",
-          "types": [
-            "electric",
-            "flying"
-          ],
-          "family": "wattrel",
-          "family_priority": "anchor",
-          "level": "56-58",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "level evolution eligible (25 <= 56, Cobblemon 1.8.0 jar)",
-          "bucket": "uncommon",
-          "weight": 6.0
+          "weight": 24.0
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
@@ -37622,14 +36958,14 @@
     {
       "id": "sapling_storm_rift_foot",
       "display_name": "Storm sapling, rift foot",
-      "intended_location": "the storm sapling at (3752, 5488): a nest of 3 activated Habitat Blocks (sapling_storm_rift_foot_low, sapling_storm_rift_foot_mid, sapling_storm_rift_foot_high in data/habitat_blocks.json) inside its trunk at (3752, y129/143/167, 5488), up to 24 of its bird alive at once",
+      "intended_location": "the storm sapling at (4176, 5920): a nest of 3 activated Habitat Blocks (sapling_storm_rift_foot_low, sapling_storm_rift_foot_mid, sapling_storm_rift_foot_top in data/habitat_blocks.json) inside its trunk at (4176, y148/171/199, 5920), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 49,
         "maximum": 51
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the storm petrel in a lightning-struck tree under the Rift's standing thunderstorm. One species line per sapling. Levels: the rift_foot roster's band 49-51. Pool: Wattrel 18, Kilowattrel 6.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the storm petrel where the Rift meets the south. One species line per sapling, none repeated within 1,000 blocks. Levels: the rift_foot roster's band 49-51. Pool: Wattrel 18, Kilowattrel 6.",
       "entries": [
         {
           "species": "Wattrel",
@@ -37669,14 +37005,14 @@
     {
       "id": "sapling_crag_the_crags",
       "display_name": "Crag sapling, the crags",
-      "intended_location": "the crag sapling at (3184, 1592): a nest of 3 activated Habitat Blocks (sapling_crag_the_crags_low, sapling_crag_the_crags_mid, sapling_crag_the_crags_high in data/habitat_blocks.json) inside its trunk at (3183, y115/127/139, 1594), up to 24 of its bird alive at once",
+      "intended_location": "the crag sapling at (3520, 1600): a nest of 3 activated Habitat Blocks (sapling_crag_the_crags_low, sapling_crag_the_crags_mid, sapling_crag_the_crags_top in data/habitat_blocks.json) inside its trunk at (3520, y170/193/221, 1600), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 28,
         "maximum": 30
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the steel bird in a windswept pine on the peaks. One species line per sapling. Levels: the the_crags roster's band 28-30. Pool: Skarmory 24.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the steel bird of the crags. One species line per sapling, none repeated within 1,000 blocks. Levels: the the_crags roster's band 28-30. Pool: Skarmory 24.",
       "entries": [
         {
           "species": "Skarmory",
@@ -37700,23 +37036,23 @@
     {
       "id": "sapling_crag_mt_vessu",
       "display_name": "Crag sapling, mt vessu",
-      "intended_location": "the crag sapling at (1864, 1424): a nest of 3 activated Habitat Blocks (sapling_crag_mt_vessu_low, sapling_crag_mt_vessu_mid, sapling_crag_mt_vessu_high in data/habitat_blocks.json) inside its trunk at (1866, y255/267/279, 1425), up to 24 of its bird alive at once",
+      "intended_location": "the crag sapling at (1864, 1432): a nest of 3 activated Habitat Blocks (sapling_crag_mt_vessu_low, sapling_crag_mt_vessu_mid, sapling_crag_mt_vessu_top in data/habitat_blocks.json) inside its trunk at (1864, y256/279/307, 1432), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 24,
         "maximum": 26
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the steel bird in a windswept pine on the peaks. One species line per sapling. Levels: the mt_vessu roster's band 24-26. Pool: Skarmory 24.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): a bat roosting in a high pine. One species line per sapling, none repeated within 1,000 blocks. Levels: the mt_vessu roster's band 24-26. Pool: Noibat 24.",
       "entries": [
         {
-          "species": "Skarmory",
-          "pokemon": "skarmory",
+          "species": "Noibat",
+          "pokemon": "noibat",
           "types": [
-            "steel",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "skarmory",
+          "family": "noibat",
           "family_priority": "anchor",
           "level": "24-26",
           "conditions": {},
@@ -37729,56 +37065,25 @@
       "placement_status": "pending_or_authored_world_asset"
     },
     {
-      "id": "sapling_crag_the_tri_peaks",
-      "display_name": "Crag sapling, the tri peaks",
-      "intended_location": "the crag sapling at (1648, 1544): a nest of 3 activated Habitat Blocks (sapling_crag_the_tri_peaks_low, sapling_crag_the_tri_peaks_mid, sapling_crag_the_tri_peaks_high in data/habitat_blocks.json) inside its trunk at (1647, y151/163/175, 1546), up to 24 of its bird alive at once",
-      "mechanism": "habitat_block",
-      "replace_spawns": false,
-      "level_band": {
-        "minimum": 24,
-        "maximum": 29
-      },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the steel bird in a windswept pine on the peaks. One species line per sapling. Levels: the the_tri_peaks roster's band 24-35, narrowed to 24-29. Pool: Skarmory 24.",
-      "entries": [
-        {
-          "species": "Skarmory",
-          "pokemon": "skarmory",
-          "types": [
-            "steel",
-            "flying"
-          ],
-          "family": "skarmory",
-          "family_priority": "anchor",
-          "level": "24-29",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 24.0
-        }
-      ],
-      "placement_status": "pending_or_authored_world_asset"
-    },
-    {
       "id": "sapling_desert_south_east_dunes",
       "display_name": "Desert sapling, south east dunes",
-      "intended_location": "the desert sapling at (5896, 6032): a nest of 3 activated Habitat Blocks (sapling_desert_south_east_dunes_low, sapling_desert_south_east_dunes_mid, sapling_desert_south_east_dunes_high in data/habitat_blocks.json) inside its trunk at (5896, y146/158/168, 6032), up to 24 of its bird alive at once",
+      "intended_location": "the desert sapling at (6192, 6112): a nest of 3 activated Habitat Blocks (sapling_desert_south_east_dunes_low, sapling_desert_south_east_dunes_mid, sapling_desert_south_east_dunes_top in data/habitat_blocks.json) inside its trunk at (6192, y153/176/164, 6112), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 25,
         "maximum": 30
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the vulture in a dead, bleached tree. One species line per sapling. Levels: the south_east_dunes roster's band 25-45, narrowed to 25-30. Pool: Vullaby 24.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): the dune glider. One species line per sapling, none repeated within 1,000 blocks. Levels: the south_east_dunes roster's band 25-45, narrowed to 25-30. Pool: Gligar 24.",
       "entries": [
         {
-          "species": "Vullaby",
-          "pokemon": "vullaby",
+          "species": "Gligar",
+          "pokemon": "gligar",
           "types": [
-            "dark",
+            "ground",
             "flying"
           ],
-          "family": "vullaby",
+          "family": "gligar",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
@@ -37791,47 +37096,16 @@
       "placement_status": "pending_or_authored_world_asset"
     },
     {
-      "id": "sapling_desert_plateau_west",
-      "display_name": "Desert sapling, plateau west",
-      "intended_location": "the desert sapling at (5064, 5392): a nest of 3 activated Habitat Blocks (sapling_desert_plateau_west_low, sapling_desert_plateau_west_mid, sapling_desert_plateau_west_high in data/habitat_blocks.json) inside its trunk at (5064, y156/168/178, 5392), up to 24 of its bird alive at once",
-      "mechanism": "habitat_block",
-      "replace_spawns": false,
-      "level_band": {
-        "minimum": 47,
-        "maximum": 49
-      },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the vulture in a dead, bleached tree. One species line per sapling. Levels: the plateau_west roster's band 47-49. Pool: Vullaby 24.",
-      "entries": [
-        {
-          "species": "Vullaby",
-          "pokemon": "vullaby",
-          "types": [
-            "dark",
-            "flying"
-          ],
-          "family": "vullaby",
-          "family_priority": "anchor",
-          "level": "47-49",
-          "conditions": {},
-          "ambient": true,
-          "eligibility_reason": "base stage",
-          "bucket": "common",
-          "weight": 24.0
-        }
-      ],
-      "placement_status": "pending_or_authored_world_asset"
-    },
-    {
       "id": "sapling_desert_long_isle_north",
       "display_name": "Desert sapling, long isle north",
-      "intended_location": "the desert sapling at (7656, 4800): a nest of 3 activated Habitat Blocks (sapling_desert_long_isle_north_low, sapling_desert_long_isle_north_mid, sapling_desert_long_isle_north_high in data/habitat_blocks.json) inside its trunk at (7656, y79/91/101, 4800), up to 24 of its bird alive at once",
+      "intended_location": "the desert sapling at (7936, 4896): a nest of 3 activated Habitat Blocks (sapling_desert_long_isle_north_low, sapling_desert_long_isle_north_mid, sapling_desert_long_isle_north_top in data/habitat_blocks.json) inside its trunk at (7936, y112/135/123, 4896), up to 24 of its bird alive at once",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
         "minimum": 44,
         "maximum": 50
       },
-      "why": "A themed sapling (tools/themed_saplings.py; the owner, 2026-09-26: 'i think there should be themed saplings per region'): the vulture in a dead, bleached tree. One species line per sapling. Levels: the long_isle_north roster's band 44-50. Pool: Vullaby 24.",
+      "why": "A themed sapling (docs/world-building/SAPLING_BIRDS.md plan v2; tools/themed_saplings.py): a vulture in a dead tree. One species line per sapling, none repeated within 1,000 blocks. Levels: the long_isle_north roster's band 44-50. Pool: Vullaby 24.",
       "entries": [
         {
           "species": "Vullaby",
