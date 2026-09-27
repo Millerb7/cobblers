@@ -1,6 +1,8 @@
 """tools/blackout_pack.py: the cobblers_blackout datapack (blackout, recovery claims, the water ladder).
 
-Written by the test author, not by the session that wrote the tool (commits 562eeb6..1b9bbc1).
+Written by the test author, not by the session that wrote the tool (commits 562eeb6..5d522d7). Surface exhaustion
+(the pack's surface/* functions and tools/open_water.py) is tested in tests/test_surface_exhaustion.py, on the
+simulator defined here.
 
 Independent sources: data/blackout.json and data/water_mounts.json (the authored rules and numbers);
 data/placements.json (every Center: kind "service", id ending "_pokecenter") and data/progression.json (every town
@@ -11,9 +13,13 @@ arithmetic is 32-bit, `/=` floors, `<` is min; a `dx` volume selects an entity w
 [x, x + dx + 1); `data get ... Pos[0]` floors; the player hitbox is 0.6 wide; a player's offhand is Inventory slot -106);
 and the in-game finding of 2026-09-26 (EXP-042, staging) that Cobblemon fires only callbacks under its own namespace.
 
-The simulator runs the plain (non-macro) generated functions on a scoreboard, with stubs for what only a server knows
-(the CobbleDollars balance, the game time, health, block tests). It executes the generated text, so it tests the
-pack, not the Python that wrote it.
+The simulator runs the generated functions on a scoreboard and a command storage, expanding a macro call from the
+storage or inline compound it names, with stubs for what only a server knows (the CobbleDollars balance, the game time,
+health, block tests, a vehicle). It executes the generated text, so it tests the pack, not the Python that wrote it.
+
+The claim ledger's storage is `cobblers_recovery:ledger` (its own namespace, so Minecraft saves it to
+data/command_storage_cobblers_recovery.dat, which tools/carry_players.py carries; tests/test_carry_recovery_ledger.py);
+its function paths stay `cobblers:recovery/...`.
 
 What this does not cover, and needs a running server (EXP-042): that Cobblemon fires the callbacks and exposes the
 MoLang fields they read; that `cobbledollars query` returns the balance; that the oxygen_bonus modifier holds air; that
@@ -46,12 +52,17 @@ MOUNTS = _load("water_mounts.json")
 PLACEMENTS = _load("placements.json")
 PROGRESSION = _load("progression.json")
 NS = "cobblers"
+LEDGER = "cobblers_recovery:ledger"          # the claim ledger's storage (the coordinator, 2026-09-27)
 FN_DIR = "data/%s/function/" % NS
+# a small synthetic sea for the surface functions: row 330 (z 4256..4271) has open water in cells 10-19 and the deep
+# in cells 20-29 (x -864..-705 and -704..-545); tests/test_surface_exhaustion.py builds the real rows from the heightmap
+ROWS = {330: [(10, 19, 1), (20, 29, 2)]}
 
 
-def build(cfg=None, mounts=None, placements=None, progression=None):
+def build(cfg=None, mounts=None, placements=None, progression=None, sea_rows=ROWS):
     return BP.build(copy.deepcopy(cfg or CFG), copy.deepcopy(mounts or MOUNTS),
-                    copy.deepcopy(placements or PLACEMENTS), copy.deepcopy(progression or PROGRESSION))
+                    copy.deepcopy(placements or PLACEMENTS), copy.deepcopy(progression or PROGRESSION),
+                    copy.deepcopy(sea_rows))
 
 
 PACK = build()
@@ -87,16 +98,28 @@ def in_range(v, r):
     return (lo == "" or v >= int(lo)) and (hi == "" or v <= int(hi))
 
 
-class Sim:
-    """Runs plain generated functions against one player (@s) and fake players (#name).
+def inline_args(text):
+    """{key: value} of a flat SNBT compound such as {id:3,slot:"container.0"}; values keep their literal text."""
+    body = text.strip()
+    assert body.startswith("{") and body.endswith("}"), text
+    out = {}
+    for part in re.findall(r'(\w+):("[^"]*"|[^,}]*)', body[1:-1]):
+        out[part[0]] = part[1][1:-1] if part[1].startswith('"') else part[1]
+    return out
 
-    query(cmd) answers `store result` commands only a server can (a balance, the game time, health); cond(kind, toks)
-    answers `if block|entity|data|items|loaded` tests. Every function call is recorded; a call with no arguments to a
-    generated plain function is also executed, a macro call is only recorded (with the storage it would read)."""
+
+class Sim:
+    """Runs generated functions against one player (@s) and fake players (#name).
+
+    query(cmd) answers `store result` commands only a server can (a balance, the game time, health, a position);
+    cond(kind, toks) answers `if block|entity|data|items|loaded` tests and `on <relation>` (false: no such entity, so
+    the rest of the chain has no executor and neither runs nor stores). Every function call is recorded; a generated
+    function is executed, a macro one with its arguments substituted from the named storage or inline compound, as
+    Minecraft does. A call to a function the pack does not have is recorded in `missing` (Minecraft: an error)."""
 
     def __init__(self, fns=None, query=None, cond=None):
         self.fns = fns or FNS
-        self.score, self.storage, self.calls, self.log = {}, {}, [], []
+        self.score, self.storage, self.calls, self.log, self.missing = {}, {}, [], [], []
         self.query = query or (lambda cmd: 0)
         self.cond = cond or (lambda kind, toks: False)
 
@@ -106,14 +129,24 @@ class Sim:
     def set(self, h, o, v):
         self.score[(h, o)] = wrap32(v)
 
-    def call(self, name):
+    def call(self, name, args=None):
         for line in self.fns[name]:
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            assert not line.startswith("$"), "the simulator runs plain functions only: %s has a macro line" % name
+            if line.startswith("$"):
+                assert args is not None, "macro function %s called without arguments" % name
+                for k in MACRO_REF.findall(line):
+                    assert k in args, "macro %s needs $(%s), not in %s" % (name, k, sorted(args))
+                line = MACRO_REF.sub(lambda m: str(args[m.group(1)]), line[1:])
             if self.command(line) is RETURN:
                 return
+
+    def args_from(self, rest):
+        if rest.startswith("with storage "):
+            _, _, ns, path = rest.split(" ", 3)
+            return {p[len(path) + 1:]: v for (n, p), v in self.storage.items() if n == ns and p.startswith(path + ".")}
+        return inline_args(rest)
 
     def command(self, cmd):
         t = cmd.split(" ")
@@ -130,7 +163,11 @@ class Sim:
             name = t[1].split(":", 1)[1]
             rest = " ".join(t[2:])
             self.calls.append((name, rest, dict(self.storage)))
-            if not rest and name in self.fns:
+            if name not in self.fns:
+                self.missing.append(t[1])
+            elif any(l.startswith("$") for l in self.fns[name]):
+                self.call(name, self.args_from(rest))
+            else:
                 self.call(name)
             return None
         self.log.append(cmd)
@@ -176,6 +213,10 @@ class Sim:
                     st, i = (t[i + 1], "storage", t[i + 3], t[i + 4], t[i + 5], t[i + 6]), i + 7
             elif w in ("as", "at", "anchored", "in"):
                 i += 2
+            elif w == "on":
+                if ok and not self.cond("on", [t[i + 1]]):
+                    return None                      # no such entity: the chain has no executor left
+                i += 2
             elif w == "positioned":
                 i += 3 if t[i + 1] == "as" else 4
             elif w == "run":
@@ -215,10 +256,17 @@ class Sim:
             raise AssertionError("simulator: scoreboard players %s" % op)
 
 
+def load_functions(pack=None):
+    """The functions minecraft:load runs, in order, from the pack's own load tag."""
+    tag = json.loads((pack or PACK)["data/minecraft/tags/function/load.json"])
+    return [v.split(":", 1)[1] for v in tag["values"]]
+
+
 def loaded_sim(**kw):
-    """A simulator after blackout/load has set every constant."""
+    """A simulator after every function in the load tag has run (every constant set)."""
     s = Sim(**kw)
-    s.call("blackout/load")
+    for f in load_functions():
+        s.call(f)
     return s
 
 
@@ -234,6 +282,19 @@ def test_the_simulator_follows_minecraft_arithmetic_and_refuses_what_it_does_not
     assert (s.get("#a", "x"), s.get("#c", "x"), s.get("#d", "x"), s.get("#e", "x")) == (-4, 2, -2 ** 31, 0)
     with pytest.raises(AssertionError):
         Sim(fns={"t/b": ["execute facing 0 0 0 run say hi"]}).call("t/b")
+    # a macro call substitutes from its inline compound or its storage, and refuses a missing key
+    m = Sim(fns={"t/m": ["$scoreboard players set #m x $(v)"],
+                 "t/c": ["function cobblers:t/m {v:7}", "execute store result storage a:b s.v int 1 run scoreboard "
+                         "players get #m x", "scoreboard players add #m x 1", "function cobblers:t/m with storage a:b s",
+                         "function cobblers:t/none"]})
+    m.call("t/c")
+    assert m.get("#m", "x") == 7 and m.missing == ["cobblers:t/none"], (m.score, m.missing)
+    with pytest.raises(AssertionError):
+        Sim(fns={"t/m": ["$say $(v)"], "t/c": ["function cobblers:t/m {w:1}"]}).call("t/c")
+    # `on vehicle` with no vehicle ends the chain: nothing runs and nothing is stored
+    v = Sim(fns={"t/v": ["scoreboard players set #r x 5", "execute store success score #r x on vehicle if entity @s"]})
+    v.call("t/v")
+    assert v.get("#r", "x") == 5
 
 
 # ------------------------------------------------------------------------------------------------ pack basics
@@ -244,44 +305,86 @@ def test_pack_format_is_48():
 
 
 # Without it the pack overrides a vanilla file by accident: the only minecraft-namespace files are the deliberate
-# Respiration override and the load/tick function tags, which merge (no replace:true) rather than replace.
+# Respiration override and the load/tick function tags, which merge (no replace:true) rather than replace, and which
+# name exactly the pack's own entry points (blackout/load and surface/load; blackout/tick).
 def test_the_only_upstream_paths_are_the_respiration_override_and_merging_function_tags():
     upstream = sorted(k for k in PACK if k.startswith("data/minecraft/"))
     assert upstream == ["data/minecraft/enchantment/respiration.json", "data/minecraft/tags/function/load.json",
                         "data/minecraft/tags/function/tick.json"], upstream
-    for k in ("load", "tick"):
+    want = {"load": ["%s:blackout/load" % NS, "%s:surface/load" % NS], "tick": ["%s:blackout/tick" % NS]}
+    for k, values in want.items():
         tag = json.loads(PACK["data/minecraft/tags/function/%s.json" % k])
         assert not tag.get("replace"), tag
-        assert tag["values"] == ["%s:blackout/%s" % (NS, k)], tag
+        assert tag["values"] == values, tag
     assert not [k for k in PACK if k.startswith("data/") and k.split("/")[1] not in (NS, "minecraft", "cobblemon")]
 
 
-FUNC_REF = re.compile(r"function (%s):([a-z0-9_/]+)" % NS)
+# any namespace, so a call into the wrong one (cobblers_recovery:ledger/..., a storage id used as a function path) is
+# seen; a path runs to whitespace, a quote or the end, and may hold a macro reference
+CALL = re.compile(r"function ([a-z0-9_.-]+):((?:[a-z0-9_/.-]|\$\([a-z_]+\))*)")
 
 
-def _references():
-    """[(where, called function, the rest of the call)] across functions, callbacks, advancements and tags."""
+def _call_rest(line, end):
+    """The argument part after a function name: 'with storage ns path' or an inline compound, else ''."""
+    tail = line[end:]
+    m = re.match(r" with (?:storage|entity|block) \S+ \S+", tail)
+    if m:
+        return m.group(0).strip()
+    if tail.startswith(" {"):
+        return tail[1:tail.index("}") + 1]
+    return ""
+
+
+def _references(pack=None):
+    """[(where, namespace, called path, the rest of the call)] across functions, callbacks, advancements and tags.
+    The rest is None where the call is not a function command (a tag, an advancement reward, MoLang)."""
+    pack = pack or PACK
     out = []
-    for name, lines in FNS.items():
-        for l in lines:
-            for m in re.finditer(r"function %s:([a-z0-9_/]+)((?: with [^\n]*| \{[^\n]*\})?)" % NS, l):
-                out.append((name, m.group(1), m.group(2).strip()))
-    for k, v in PACK.items():
-        if not k.endswith(".mcfunction"):
-            for m in FUNC_REF.finditer(v):
-                out.append((k, m.group(2), None))
-        if k.endswith(".json"):
-            for m in re.finditer(r'"%s:([a-z0-9_/]+)"' % NS, v):
-                if "/tags/function/" in k or "/advancement/" in k:
-                    out.append((k, m.group(1), None))
+    for k, v in pack.items():
+        if k.endswith(".mcfunction"):
+            where = k[len(FN_DIR):-len(".mcfunction")]
+            for l in v.splitlines():
+                if l.startswith("#"):
+                    continue
+                for m in CALL.finditer(l):
+                    out.append((where, m.group(1), m.group(2), _call_rest(l, m.end())))
+        elif k.endswith(".molang"):
+            for m in CALL.finditer(v):
+                out.append((k, m.group(1), m.group(2), None))
+        elif k.endswith(".json") and ("/tags/function/" in k or "/advancement/" in k):
+            doc = json.loads(v)
+            for n in list(doc.get("values") or []) + [(doc.get("rewards") or {}).get("function")]:
+                if n:
+                    ns, path = n.split(":", 1)
+                    out.append((k, ns, path, None))
     return out
 
 
-# Without it a renamed or misspelt function fails silently at runtime: an unknown function in a datapack function
-# stops the whole file from loading, and a callback's run_command just reports an error.
+# The macro-built function names the pack may call, and what each may resolve to. A new one fails the test below until
+# it is described here: surface/row calls surface/r/$(z), z being the swimmer's 16-block cell row, whose functions exist
+# only where there is open sea (tests/test_surface_exhaustion.py checks every world row against the real heightmap).
+MACRO_NAMES = {"surface/r/$(z)": re.compile(r"surface/r/-?\d+")}
+
+
+# Without it a renamed or misspelt function fails at runtime (an unknown function in a datapack function stops the
+# whole file from loading; a callback's run_command reports an error), or a call names the wrong namespace: moving the
+# ledger's storage to cobblers_recovery:ledger once sent every claim call to cobblers_recovery:ledger/..., functions
+# that do not exist (the coordinator's own slip, fixed in 5d522d7).
 def test_every_function_the_pack_names_is_a_function_it_generates():
-    # the battle_victory callback's name ends in a MoLang concatenation (checked below), so its stem is not a function
-    missing = sorted({(w, f) for w, f, _ in _references() if f not in FNS and f != "blackout/battle_loss_"})
+    refs = _references()
+    assert len(refs) >= 80, len(refs)
+    wrong_ns = sorted({(w, ns, f) for w, ns, f, _ in refs if ns != NS})
+    assert not wrong_ns, wrong_ns
+    missing = []
+    for w, _, f, _ in refs:
+        if "$(" in f:
+            assert f in MACRO_NAMES, "an undescribed macro-built function name: %s in %s" % (f, w)
+            if not any(MACRO_NAMES[f].fullmatch(n) for n in FNS):
+                missing.append((w, f))
+        elif f == "blackout/battle_loss_" and w.endswith(".molang"):
+            continue                 # the battle_victory callback's name ends in a MoLang concatenation, see below
+        elif f not in FNS:
+            missing.append((w, f))
     assert not missing, missing
     # the battle_victory callback builds the name from t.kind: every kind it can assign must be a generated function
     mol = PACK["data/cobblemon/callbacks/battle_victory/cobblers_blackout.molang"]
@@ -289,6 +392,16 @@ def test_every_function_the_pack_names_is_a_function_it_generates():
     assert kinds == {"other", "wild", "npc"}, kinds
     assert "blackout/battle_loss_' + t.kind" in mol
     assert all("blackout/battle_loss_%s" % k in FNS for k in kinds), kinds
+
+
+# Without it the check above goes blind to the slip it exists for: a call into the ledger's storage namespace, rebuilt
+# here by hand on a copy of the pack, must be reported.
+def test_the_reference_check_sees_a_call_into_the_ledger_namespace():
+    bad = dict(PACK)
+    k = FN_DIR + "recovery/commit.mcfunction"
+    bad[k] = bad[k].replace("function %s:recovery/apply\n" % NS, "function %s/apply\n" % LEDGER)
+    assert bad[k] != PACK[k]
+    assert ("recovery/commit", "cobblers_recovery", "ledger/apply") in [(w, ns, f) for w, ns, f, _ in _references(bad)]
 
 
 # ------------------------------------------------------------------------------------------------ macros
@@ -314,7 +427,7 @@ def test_every_macro_function_is_called_with_arguments_that_cover_its_keys():
     macros = _macro_functions()
     assert len(macros) >= 20, sorted(macros)
     keys = {n: set(MACRO_REF.findall("\n".join(l for l in FNS[n] if l.startswith("$")))) for n in macros}
-    calls = [(w, f, rest) for w, f, rest in _references() if f in macros and rest is not None]
+    calls = [(w, f, rest) for w, _, f, rest in _references() if f in macros and rest is not None]
     assert calls, "no calls found: the reference scan is broken"
     bad = []
     for where, f, rest in calls:
@@ -359,17 +472,34 @@ def test_every_objective_used_is_created_in_load():
 
 
 # Without it a constant read from bo.cfg that load never sets reads as 0: a division by a zero constant does nothing
-# and a `< #max` cap takes everything to zero.
+# and a `< #max` cap takes everything to zero. The constants are set by the functions the load tag runs (blackout/load
+# and surface/load); one set twice to different values would depend on the tag's order.
 def test_every_constant_read_from_bo_cfg_is_set_in_load_from_the_data():
-    set_ = {l.split()[3]: int(l.split()[5]) for l in FNS["blackout/load"]
-            if l.startswith("scoreboard players set #") and " bo.cfg " in l}
+    loads = load_functions()
+    assert loads == ["blackout/load", "surface/load"], loads
+    set_, twice = {}, []
+    for f in loads:
+        for l in FNS[f]:
+            if l.startswith("scoreboard players set #") and " bo.cfg " in l:
+                k, v = l.split()[3], int(l.split()[5])
+                if k in set_ and set_[k] != v:
+                    twice.append((k, set_[k], v))
+                set_[k] = v
+    assert not twice, twice
     read = set()
     for n, lines in FNS.items():
-        if n == "blackout/load":
+        if n in loads:
             continue
         for l in lines:
             read |= set(re.findall(r"(#[a-z0-9-]+) bo\.cfg", l))
     assert read <= set(set_), sorted(read - set(set_))
+    s = CFG["surface"]
+    per = s["sample_ticks"]
+    assert (set_["#fgain1"], set_["#fgain2"], set_["#frec"]) == (
+        s["gain_open_per_tick"] * per, s["gain_deep_per_tick"] * per, s["recover_per_tick"] * per)
+    assert (set_["#fwarn"], set_["#fslow"], set_["#fexh"], set_["#fcol"], set_["#fpulse"], set_["#fcap"]) == (
+        s["warn_ticks"], s["slow_ticks"], s["exhausted_ticks"], s["collapse_ticks"], s["pulse_ticks"], s["cap_ticks"])
+    assert (set_["#16"], set_["#wmin"], set_["#2"]) == (16, -s["world_min"], 2)
     w, c = CFG["water"], CFG["claims"]
     assert (set_["#pct"], set_["#surf"], set_["#regen"], set_["#pulse"], set_["#grace"], set_["#dedupe"]) == (
         CFG["money"]["percent"], w["surf_bonus_ticks"], w["pulse_regen_margin"], w["pulse_ticks"],
@@ -499,12 +629,8 @@ def _selector_boxes(name):
 # and their next blackout sends them to Hometown instead of the Center they just used. Vanilla: a `dx` volume selects
 # an entity whose hitbox (0.6 wide for a player) meets the cuboid [x, x + dx + 1), and the saved point is
 # `data get entity @s Pos[0]`, which floors; so a selected player's saved x runs from x - 1 to x + dx + 1.
-@pytest.mark.parametrize("kind", [
-    pytest.param("center", marks=pytest.mark.xfail(strict=True, reason=(
-        "tools/blackout_pack.py:261 validates a Center within +-center_radius of the anchor, but healer_used (line "
-        "265) selects a player whose hitbox meets [x-r, x+r+1): a player at x+r+1.2 (or x-r-0.2) is selected and "
-        "saves floor(Pos) = x+r+1 (x-r-1), which validate refuses; waystones use twice the radius and pass"))),
-    "waystone"])
+# (Found by this suite at 1b9bbc1 for Centers; fixed in 5d522d7.)
+@pytest.mark.parametrize("kind", ["center", "waystone"])
 def test_a_point_the_set_test_accepts_always_revalidates(kind):
     fn = {"center": "blackout/checkpoint/healer_used", "waystone": "blackout/checkpoint/waystones"}[kind]
     boxes = _selector_boxes(fn)
@@ -539,22 +665,35 @@ def test_the_charge_is_the_ceiling_of_percent_of_the_balance_and_at_least_one():
             assert lost >= 1, bal
             assert len(applied) == 1 and applied[0][1] == "with storage %s:blackout charge" % NS, applied
             assert applied[0][2][("%s:blackout" % NS, "charge.amount")] == lost, (bal, applied)
+            assert s_log(bal) == ["cobbledollars remove @s %d" % lost], s_log(bal)
         else:
             assert applied == [], (bal, applied)
     assert FNS["blackout/charge_apply"] == ["$cobbledollars remove @s $(amount)"]
 
 
+def s_log(balance):
+    """The CobbleDollars commands one charge sends, the macro expanded."""
+    s = loaded_sim(query=lambda cmd: balance if cmd.startswith("cobbledollars query") else 0)
+    s.call("blackout/charge")
+    return [l for l in s.log if l.startswith("cobbledollars ")]
+
+
 # Without it a balance large enough to overflow `balance * percent` in a 32-bit score is charged a negative amount
-# (and `cobbledollars remove @s -N` either fails or pays the player).
-@pytest.mark.xfail(strict=True, reason=(
-    "tools/blackout_pack.py:223-226 multiplies the balance by #pct in a 32-bit score before dividing: a balance above "
-    "(2^31 - 1 - 99) / percent, 214,748,355 at 10%, overflows and the charge goes negative. Reachable only if a "
-    "CobbleDollars balance can exceed that; not verified"))
-def test_the_charge_is_correct_for_every_balance_a_score_can_hold():
-    pct = CFG["money"]["percent"]
-    for bal in (214_748_355, 500_000_000, 2 ** 31 - 1):
-        lost, _ = _charge(bal)
-        assert lost == math.ceil(bal * pct / 100), (bal, lost)
+# (and `cobbledollars remove @s -N` either fails or pays the player), at the data's percent or any other the owner may
+# set. (Found by this suite at 1b9bbc1: 214,748,355 and up at 10%; fixed in 5d522d7.)
+@pytest.mark.parametrize("pct", [CFG["money"]["percent"], 1, 7, 33, 100])
+def test_the_charge_is_correct_for_every_balance_a_score_can_hold(pct):
+    cfg = copy.deepcopy(CFG)
+    cfg["money"]["percent"] = pct
+    fns = functions(build(cfg))
+    for bal in (1, 99, 100, 101, 12_345, 214_748_355, 214_748_364, 500_000_000, 2 ** 31 - 100, 2 ** 31 - 1):
+        s = Sim(fns=fns, query=lambda cmd, b=bal: b if cmd.startswith("cobbledollars query") else 0)
+        for f in load_functions():
+            s.call(f)
+        s.call("blackout/charge")
+        want = -(-bal * pct // 100)
+        assert s.get("@s", "bo.lost") == want, (pct, bal, s.get("@s", "bo.lost"))
+        assert [l for l in s.log if l.startswith("cobbledollars ")] == ["cobbledollars remove @s %d" % want]
 
 
 # Without it one defeat reported twice (the battle loss, then the death it causes) is charged twice.
@@ -630,7 +769,7 @@ def test_only_the_apply_step_changes_the_inventory_and_every_clear_only_counts()
     assert changers == ["recovery/apply_one"], changers
     clears = [l for lines in FNS.values() for l in lines if re.search(r"(^|run )clear @s\b", l)]
     assert clears and all(l.rstrip().endswith(" 0") for l in clears), clears
-    callers = sorted({w for w, f, _ in _references() if f == "recovery/apply"})
+    callers = sorted({w for w, _, f, _ in _references() if f == "recovery/apply"})
     assert callers == ["recovery/apply", "recovery/commit"], callers
 
 
@@ -644,45 +783,79 @@ def _index(lines, pred, what):
 # spec: "the claim is written before anything is removed"), or the guardian is bound to a claim that never landed.
 def test_the_claim_is_appended_and_checked_before_items_are_removed_or_the_guardian_bound():
     c = FNS["recovery/commit"]
-    R = "%s:recovery" % NS
-    append = _index(c, lambda l: l == "data modify storage %s claims append from storage %s pending" % (R, R), "append")
-    check = _index(c, lambda l: l.startswith("execute unless data storage %s claims[-1].items[0] run return fail" % R),
-                   "check")
-    apply_ = _index(c, lambda l: l == "function %s/apply" % R, "apply")
-    bind = _index(c, lambda l: "run function %s/bind" % R in l, "bind")
-    assert append < check < apply_ < bind, (append, check, apply_, bind)
+    F = "%s:recovery" % NS                   # function paths
+    assert BP.LEDGER == LEDGER
+    append = _index(c, lambda l: l == "data modify storage %s claims append from storage %s pending" % (LEDGER, LEDGER),
+                    "append")
+    check = _index(c, lambda l: l == "execute store success score #ok bo.tmp run function %s/verify with storage %s "
+                                     "pending" % (F, LEDGER), "verify")
+    abort = _index(c, lambda l: l.startswith("$execute if score #ok bo.tmp matches 0 run return run "), "abort")
+    apply_ = _index(c, lambda l: l == "function %s/apply" % F, "apply")
+    bind = _index(c, lambda l: "run function %s/bind" % F in l, "bind")
+    assert append < check < abort < apply_ < bind, (append, check, abort, apply_, bind)
+    # the verify reads this claim by the id commit gave it, before the append
+    pid = _index(c, lambda l: l.startswith("execute store result storage %s pending.id " % LEDGER), "pending.id")
+    assert pid < append
     # nothing before the append touches the inventory or the victor's tags
     assert not [l for l in c[:append] if "apply" in l or "bind" in l or "item modify" in l]
     # and recovery/make hands over to commit only after the scan has planned into pending
     m = FNS["recovery/make"]
-    assert _index(m, lambda l: l == "function %s/scan" % R, "scan") < \
-        _index(m, lambda l: l.startswith("$function %s/commit " % R), "commit")
+    assert _index(m, lambda l: l == "function %s/scan" % F, "scan") < \
+        _index(m, lambda l: l.startswith("$function %s/commit " % F), "commit")
+
+
+def _verify(has_items):
+    """Run recovery/verify for claim 7 against a ledger whose claim 7 has items or not; (log, returned early)."""
+    seen = []
+    s = Sim(cond=lambda kind, toks: seen.append(toks) or (kind == "data" and has_items))
+    s.command("function %s:recovery/verify {id:7}" % NS)
+    return s.log, seen
 
 
 # Without it an aborted commit leaves an item-less claim "open" in the ledger with no guardian bound: maintenance then
-# finds no guardian for it and rebuilds one from the victor's snapshot, a second copy of a Pokemon that still exists.
-@pytest.mark.xfail(strict=True, reason=(
-    "tools/blackout_pack.py:394-396 appends the pending claim to the ledger and then aborts with `return fail` if "
-    "claims[-1].items[0] is missing, without removing it: a claim whose counted items were all outside the scanned "
-    "slots (clear counts armour, the 2x2 crafting grid and the cursor, recovery/scan does not) stays open with no "
-    "items, and recovery/check rebuilds a guardian for it. The check also cannot tell a failed append from an earlier "
-    "claim, since it reads claims[-1] rather than this claim's id"))
+# finds no guardian for it and rebuilds one from the victor's snapshot, a second copy of a Pokemon that still exists
+# (found by this suite at 1b9bbc1: clear counts armour, the crafting grid and the cursor, which the scan skips; fixed
+# in 5d522d7). The check must read this claim by its own id, not claims[-1] (which an earlier claim also satisfies).
 def test_an_aborted_commit_leaves_no_open_claim_in_the_ledger():
-    c = FNS["recovery/commit"]
-    R = "%s:recovery" % NS
-    append = _index(c, lambda l: l.startswith("data modify storage %s claims append" % R), "append")
-    guarded_before = any(re.search(r"unless data storage %s pending\.items\[0\] run return" % re.escape(R), l)
-                         for l in c[:append])
-    removed_on_abort = any(re.search(r"unless data storage %s claims\[-1\]\.items\[0\] run data remove storage %s "
-                                     r"claims\[-1\]$" % (re.escape(R), re.escape(R)), l) for l in c[append:])
-    assert guarded_before or removed_on_abort, "the abort path leaves the appended claim in the ledger"
+    log, seen = _verify(has_items=False)
+    assert seen == [["storage", LEDGER, "claims[{id:7}].items[0]"]], seen
+    assert log == ["data remove storage %s claims[{id:7}]" % LEDGER], log
+    log, seen = _verify(has_items=True)
+    assert log == [], "a claim with items must stay in the ledger"
+    assert commands("recovery/verify")[-1] == "return fail", "the abort must report failure to commit's store success"
+    assert not [l for l in PACK[FN_DIR + "recovery/commit.mcfunction"].splitlines() if "claims[-1].items" in l]
+
+
+STORAGE = re.compile(r'storage ([a-z0-9_.-]+:[a-z0-9_/.-]+)|"storage":"([^"]+)"')
+
+
+# Without it the claim ledger drifts back into the shared cobblers storage, which Minecraft saves with the re-apply's
+# own progress (data/command_storage_cobblers.dat): either open claims are lost at a re-export (the file is not
+# carried) or the re-apply's progress is carried with them. Every storage the recovery functions touch is the ledger,
+# the ledger is created at load, and no other storage holds claims.
+def test_the_claim_ledger_lives_in_its_own_storage_namespace():
+    used = {}
+    for k, v in PACK.items():
+        if k.endswith((".mcfunction", ".molang")):
+            for m in STORAGE.finditer(v):
+                used.setdefault(m.group(1) or m.group(2), set()).add(k)
+    assert set(used) == {LEDGER, "%s:blackout" % NS}, sorted(used)
+    recovery = [k for k in used[LEDGER]]
+    assert all(k.startswith(FN_DIR + "recovery/") or k == FN_DIR + "blackout/load.mcfunction" for k in recovery), \
+        sorted(k for k in recovery if not k.startswith(FN_DIR + "recovery/"))
+    assert not [k for k in used["%s:blackout" % NS] if k.startswith(FN_DIR + "recovery/")]
+    load = "\n".join(FNS["blackout/load"])
+    assert "execute unless data storage %s claims run data modify storage %s claims set value []" % (LEDGER, LEDGER) \
+        in load
+    for k, v in PACK.items():
+        assert "cobblers:recovery claims" not in v and "cobblers:blackout claims" not in v, k
 
 
 # Without it the guardian is untagged before its claims resolve (a failure part-way loses every claim it held), or a
 # Pokemon with no guardian number resolves claims numbered 0.
 def test_claims_resolve_before_the_guardian_is_released_and_a_numberless_guardian_is_refused():
     d = commands("recovery/defeated")
-    R = "%s:recovery" % NS
+    R = "%s:recovery" % NS                   # function paths
     assert d[0] == "execute unless score @s bo.g matches 1.. run return fail", d[0]
     resolve = _index(d, lambda l: l == "function %s/resolve_next" % R, "resolve")
     for what in ("tag @s remove cobblers.guardian", "function %s/unbind_tag" % R, "scoreboard players reset @s bo.g",
@@ -770,10 +943,7 @@ def test_the_surf_timer_caps_at_surf_bonus_ticks():
     assert breathing == list(range(len(breathing))), "the bonus is one continuous stretch"
 
 
-# Without it the Surf bonus is a tick short of the data (surf_bonus_ticks says 900; the pack breathes for 899).
-@pytest.mark.xfail(strict=True, reason=(
-    "tools/blackout_pack.py:568-569 adds 1 to bo.surf and then breathes only while bo.surf < #surf, so the first tick "
-    "at depth already counts 1 and the bonus lasts surf_bonus_ticks - 1 ticks (899 for 900). One tick; low impact"))
+# Without it the Surf bonus is off the data by a tick (found by this suite at 1b9bbc1: 899 for 900; fixed in 5d522d7).
 def test_the_surf_bonus_lasts_exactly_surf_bonus_ticks():
     n = CFG["water"]["surf_bonus_ticks"]
     breathing, _ = _deep_ticks([1] * (n + 50))
@@ -789,7 +959,7 @@ def test_time_under_dive_counts_against_the_surf_bonus():
     assert all(t in breathing for t in range(dive)), "Dive breathes throughout"
     surf_ticks = [t for t in breathing if t >= dive]
     assert surf == n
-    assert len(surf_ticks) <= n - dive, len(surf_ticks)
+    assert len(surf_ticks) == n - dive, len(surf_ticks)
     # and Dive is unlimited: past the Surf cap it still breathes
     breathing, _ = _deep_ticks([2] * (n + 100))
     assert len(breathing) == n + 100
