@@ -1,6 +1,12 @@
 # The Deep: a city across the rings, its lights, Hoopa's relic area, and the west door
 
-**Status: design proposal, 2026-09-25. Nothing here is built, measured in a world, or decided.** It answers EXP-035
+**Status: design proposal, 2026-09-25. The city shell and the relic area's surface are generated from it
+(2026-09-27: `tools/deep_city.py`, `data/deep_city.json`, re-apply step R9DC, offline audit `tools/deep_city_audit.py`)
+into `build/` only: not run on staging, not seen in game.** `data/deep_city.json` `decisions` records where the build
+made a call this document leaves open (owner decisions 1-4 taken by default, 5-10 not built) and where
+it departs from it: the lifts are wrapped by stair towers rather than re-housed, because a lift moves its rider at its
+own column and needed a floor at both ends; Rimside's Centre and Mart are the League's unused CobbleTowns templates;
+the step is R9DC because R9D is a retired id. It answers EXP-035
 rows 19-21 (the owner's first playtest). Sources: `data/rift_deep.json` (schema 2), `tools/rift_deep.py`,
 `data/rift_regions.json`, `data/rift_sculpt.json`, `data/rift_skin.json`, `docs/mechanics/RIFT_ZONES.md`,
 `docs/mechanics/RIFT_FRACTURE.md` section 4, `docs/story/ARC.md`, `docs/story/FACTION.md`, `data/towns.json`,
