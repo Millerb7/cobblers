@@ -748,6 +748,15 @@ vanilla rod.
 
 ## 13. Owner decisions
 
+**Decided by the owner, 2026-09-27.** The first three in the owner's words:
+1. "Trained players do NOT tire underwater. Air alone limits dives. Fatigue is the surface gate, air is the underwater
+   gate, and they should not fight. Make the change."
+2. "Boats: option C, shallows only. A boat should not defeat swimming, exhaustion and the ferry from day one."
+3. "The ferry IS the gate for players without a water mount."
+The rest (4-14), the Viltri Ravine stream and the single water export: at the recommendations below. The water build
+follows the southern Rift's. The owner also asked for a check that flags when one system's change invalidates
+another's assumptions: F1 (the swim rule breaking the Dive ladder) was caught only by reading the consequences through.
+
 1. **Does fatigue build underwater for a trained player?** Today a Surf or Dive player is knocked out after 33 s of
    continuous swimming, dives included (F1). *Recommend:* fatigue is a surface rule for trained players. While the
    eyes are at the ladder's depth and the player qualifies, fatigue neither builds nor recovers, and the air ladder

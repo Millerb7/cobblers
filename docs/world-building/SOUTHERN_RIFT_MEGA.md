@@ -518,6 +518,14 @@ faces and two Megas. The owner plays it; then the rest.
 
 ## 11. Decisions for the owner
 
+**Decided by the owner, 2026-09-27: all twelve at the recommendations below**, with three notes:
+- "PROVE THE MEGA BRACELET FIRST. Nobody has ever Mega Evolved in this pack, and everything downstream assumes it
+  works." Proof M-1 comes before anything that depends on it.
+- "the Cutters dropping the species-item requirement is right. 60 specific held items obtainable here was never
+  realistic."
+- "the gulch at badge 6 is fine."
+The build starts with section 10's prototype slice, which the owner plays before the rest.
+
 1. **Reverse the move: the gulch mine is the real one, the spur keeps only the seam and the camp.** Recommended.
 2. **The dig camp's seam:** one crystal behind the company grille, warded per player until `gym6_cleared`, then a
    small daily face. Recommended. Alternative: a view only, never minable.
