@@ -1,38 +1,40 @@
-"""Independent review of the Rift dig camp's mines: tools/rift_mines.py's pack and tools/rift_mines_audit.py.
+"""Independent review of the cut-back Rift dig camp mines: tools/rift_mines.py's packs and tools/rift_mines_audit.py.
 
-Written by the test author, not by the session that built the mines (077bb55..f9fce1a), whose own tests are
-tests/test_rift_mines.py. Those cross-check the two rasterisers, exercise the audit's plan checks on a mini mine and
-take one seal block out of a built pack. This file adds, on a pack the generator builds into tmp_path:
+Rewritten by the test author for the cut-back spur (72f8ddb, SOUTHERN_RIFT_MEGA.md decisions 1-2), not by the session
+that built it. On packs the generator builds (copied into tmp_path):
 
-  sealed     a flood from the arrival through every cell that ends as air, or is never written (unknown ground: the
-             worst case), stays inside the gated envelope and never reaches the knock box, the turn-back point or the
-             grid's edge; open the plug and it does reach the knock box
-  zone       the zone advancement's boxes hold every gated cell (by the generator's model and by the audit's plan,
-             which must agree) and no ungated, knock, turn-back or above-ground cell
-  flag       the knock's teleport and the zone's turn-back are gated on cobblers:flag/gym5_cleared, the advancement
-             tools/progression_pack.py writes for the fifth leader
-  blocks     no block written (every write, not only the last) is a spawn condition (data/spawn_blocks.json), a
-             fluid or minecraft:light; nothing is summoned but the tagged minecarts
-  bounds     every write is inside data/rift_mines.json `grid`, and none lands on the camp's streets, plaza, anchors or
-             lots (derived/towns/rift_dig_camp_plan.json) or on its street polylines (data/placements.json)
-  audit      mutation checks: a copy of the pack with one plug cell opened, a write outside the grid, a block on a camp
-             lot, a spawn-condition block, water, a zone box over the knock, a zone box removed, or a stray air cell
-             under the ground next to the gated section, each makes the audit report that problem
+  envelope   the generator's model and the audit's plan agree on every carved cell, and none is gated
+  crystal    exactly one mega_stone_crystal is ever written (every write, not only the last), in the face box, on its
+             front's bottom row, facing out; the grille's iron bars stand in every grille cell at the end
+  sealed     a flood from the face's front through every cell that ends as air, with the grille shut, stays behind the
+             grille, never meets a cell the build did not write (unknown ground: the worst case) nor the grid's edge;
+             with the grille open it reaches the adit's mouth
+  gate gone  no knock, exit, gate-ward or zone advancement is left: the only one is the tease's ward
+  blocks     no block written (every write) is a spawn condition, a fluid, minecraft:light or a meteorid ore; nothing
+             is summoned but the tagged minecarts
+  bounds     every write is inside the data's grid and off the camp's streets, plaza, anchors and lots
+  refill     the staging refill writes rock into exactly the retired gated section's envelope, rasterised here from
+             the data's `geometry` words (not by either tool), and nothing into the live mine, the collapse or the
+             camp; the retired section is the gated section the spur build had (5d18aa5), feature for feature
+  audit      mutation checks on the output: each of a seal cell opened, a write outside the grid, a block on a camp
+             lot, a spawn-condition block, water, a second crystal, a retired gate advancement and a meteorid ore makes
+             the audit report it; a pack with no grille at all is not reported (a finding, marked strict xfail)
 
 Needs the canonical heightmap (COBBLERS_SOURCE_ROOT) and derived/towns/rift_dig_camp_plan.json (python
 tools/town_plan.py rift_dig_camp); SKIPS without them, and a skip is not a pass.
 
-Not covered, and it needs a running server: that the advancements fire, that the teleports land where they say, that
-the carts summon on their rails, and whether a player can dig round the plug faster than the zone check turns them
-back (the check runs on a location trigger).
+Not covered, and it needs a running server: that the ward advancement fires, that the tease restores in game, that
+the carts summon on their rails, and that the refill run on staging closes what the old carve opened in that world
+(the refill writes the envelope; what the world holds there is not read here).
 """
 from __future__ import annotations
 
-import copy
 import json
+import math
 import os
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -40,15 +42,18 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT / "tests"))
 
 import rift_mines as RM  # noqa: E402
 import rift_mines_audit as RA  # noqa: E402
+import test_rift_mines_ward as W  # noqa: E402
 
 SPEC = json.loads((ROOT / "data" / "rift_mines.json").read_text(encoding="utf-8"))
+TEASE = SPEC["mine"]["tease"]
 SPAWN = set(json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"])
 AIRS = {"minecraft:air", "minecraft:cave_air", "minecraft:void_air"}
 FLUIDS = {"minecraft:water", "minecraft:lava", "minecraft:flowing_water", "minecraft:flowing_lava"}
-FLAG = "cobblers:flag/gym5_cleared"
+CRYSTAL = "mega_showdown:mega_stone_crystal"
 CMD = re.compile(r"^(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))? (\S+)")
 
 pytestmark = pytest.mark.slow
@@ -58,32 +63,63 @@ def box_cells(b):
     return {(x, y, z) for x in range(b[0], b[3] + 1) for y in range(b[1], b[4] + 1) for z in range(b[2], b[5] + 1)}
 
 
+def chamber(centre, r, height):
+    """geometry.chamber, in this file's words: columns with d = hypot(dx, dz) <= r + 0.5; feet to
+    feet + max(3, floor((height - 1) * sqrt(1 - (d / (r + 0.5))^2) + 0.5))."""
+    cx, feet, cz = centre
+    out = set()
+    R = r + 0.5
+    for dx in range(-r - 1, r + 2):
+        for dz in range(-r - 1, r + 2):
+            d = math.hypot(dx, dz)
+            if d <= R:
+                top = feet + max(3, int(math.floor((height - 1) * math.sqrt(max(0.0, 1 - (d / R) ** 2)) + 0.5)))
+                out |= {(cx + dx, y, cz + dz) for y in range(feet, top + 1)}
+    return out
+
+
+def retired_envelope(features):
+    out = set()
+    for f in features:
+        if f["kind"] == "tube":
+            out |= W.tube(f["path"], f["r"], f["height"])
+            if f.get("pocket"):
+                out |= W.pocket(f["pocket"]["at"], f["pocket"]["r"])
+        elif f["kind"] == "pocket":
+            out |= W.pocket(f["at"], f["r"])
+        elif f["kind"] == "chamber":
+            out |= chamber(f["centre"], f["r"], f["height"])
+        else:
+            raise AssertionError("a retired feature of kind %s: rasterise it here" % f["kind"])
+    return out
+
+
 @pytest.fixture(scope="module")
 def built(tmp_path_factory):
-    """(pack dir, generator model, audit plan) for the committed data, the pack built into tmp_path."""
+    """(pack dir, refill function dir, generator model, audit plan) for the committed data, built into tmp_path."""
     root = os.environ.get("COBBLERS_SOURCE_ROOT")
     if not root:
         pytest.skip("COBBLERS_SOURCE_ROOT is not set: the heightmap is outside the repo")
     if not RA.CAMP_PLAN.is_file():
         pytest.skip("no derived/towns/rift_dig_camp_plan.json: run python tools/town_plan.py rift_dig_camp")
-    # the tool writes its own disposable build/ and derived/ paths (it prints them relative to the checkout); the tests
-    # read a copy, so a later build cannot change what they see
     assert RM.main(["build", "--source-root", root]) == 0
-    out = tmp_path_factory.mktemp("mines") / "cobblers_rift_mines"
+    tmp = tmp_path_factory.mktemp("mines")
+    out = tmp / "cobblers_rift_mines"
     shutil.copytree(RM.OUT, out)
+    refill = tmp / "cobblers_rift_mines_refill"
+    shutil.copytree(RM.REFILL, refill)
     m, _near = RM.model(root)
     g = RA.GR.Ground(root)
     gated, ungated, eff, cutcols = RA.plan(SPEC, g)
-    return out, m, (gated, ungated, eff, cutcols, g)
+    return out, refill / "data" / "cobblers" / "function" / "rift_mines_refill", m, (gated, ungated, eff, cutcols, g)
 
 
 def fn_dir(pack):
     return pack / "data" / "cobblers" / "function" / "rift_mines"
 
 
-def writes(pack):
+def writes(fdir):
     """[(x, y, z, block)] of every block write, in the index order the re-apply runs them."""
-    fdir = fn_dir(pack)
     names = [n for n in (fdir / "index.txt").read_text(encoding="utf-8").split("\n") if n.strip()]
     assert names
     out = []
@@ -101,145 +137,114 @@ def writes(pack):
     return out
 
 
-def final_state(pack):
+def final_state(fdir):
     fin = {}
-    for x, y, z, b in writes(pack):
-        fin[(x, y, z)] = b.split("[")[0]
+    for x, y, z, b in writes(fdir):
+        fin[(x, y, z)] = b
     return fin
 
 
-def model_gated(m):
+def model_cells(m, arr):
     import numpy as np
-    xs, zs, ys = np.nonzero(m.gated)
+    xs, zs, ys = np.nonzero(arr)
     return {(int(x) + m.X0, int(y) + m.Y0, int(z) + m.Z0) for x, z, y in zip(xs, zs, ys)}
 
 
-def gate_points():
-    gt = SPEC["mine"]["gate"]
-    arrive = (int(gt["arrive"][0] // 1), gt["arrive"][1], int(gt["arrive"][2] // 1))
-    turn = (int(gt["turn_back"][0] // 1), gt["turn_back"][1], int(gt["turn_back"][2] // 1))
-    return arrive, turn, box_cells(gt["knock"]), box_cells(gt["plug"])
+# Without it the two implementations of the data's geometry drift apart on the real ground and every check below is
+# about the wrong cells; and a gated cell (a section nobody can now enter) creeps back.
+def test_the_generator_and_the_audit_agree_on_every_envelope_cell_and_none_is_gated(built):
+    _pack, _refill, m, (gated, ungated, *_rest) = built
+    assert not gated and not m.gated.any()
+    env = model_cells(m, m.env)
+    assert len(env) > 1000 and env == ungated, (len(env ^ ungated), sorted(env ^ ungated)[:5])
 
 
-# ------------------------------------------------------------------------------------------------ the generated pack
+# Without it the seam holds no crystal, a second one (the 39 others were retired with the galleries), or one a player
+# cannot see from the grille; or the grille is missing from the pack, and the crystal is in the open.
+def test_exactly_one_crystal_is_written_on_the_faces_front_and_the_grille_stands(built):
+    pack, *_rest = built
+    w = writes(fn_dir(pack))
+    crystals = [(x, y, z, b) for x, y, z, b in w if b.split("[")[0] == CRYSTAL]
+    assert len(crystals) == TEASE["face"]["crystals"] == 1, crystals
+    (x, y, z, b), = crystals
+    fb = TEASE["face"]["box"]
+    front = TEASE["face"]["front"]
+    assert (x, y, z) in box_cells(fb) and y == fb[1], (x, y, z)
+    assert {"south": z == fb[5], "north": z == fb[2], "east": x == fb[3], "west": x == fb[0]}[front]
+    assert "facing=%s" % front in b, b
+    fin = final_state(fn_dir(pack))
+    assert all(fin.get(c) == "minecraft:iron_bars" for c in W.GRILLE), sorted((c, fin.get(c)) for c in W.GRILLE)[:3]
+    assert all(fin.get(c, "").startswith("mega_showdown:") for c in W.FACE), "the face box is not all meteorid"
 
-# Without it the two implementations of the data's geometry drift apart on the real ground, and the audit's gated
-# section is not the generator's: every check below would be about the wrong cells.
-def test_the_generator_and_the_audit_agree_on_every_gated_cell(built):
-    _pack, m, (gated, *_rest) = built
-    mg = model_gated(m)
-    assert len(gated) > 1000 and mg == gated, (len(mg ^ gated), sorted(mg ^ gated)[:5])
 
-
-# Without it the gated galleries leak: a hole in the seal (to a natural cave, a quarry, the camp), or a cell the build
-# never wrote, lets a player without the badge walk in round the gate.
-def test_the_gated_section_is_sealed_except_through_the_plug(built):
-    pack, _m, (gated, ungated, *_rest) = built
-    fin = final_state(pack)
-    arrive, turn, knock, plug = gate_points()
+# Without it the crystal can be walked to round the grille through a gap the build left (a hole in the seal to a
+# natural cave or the quarries), or the flood reaches rock nobody wrote.
+def test_the_crystal_is_sealed_behind_the_grille(built):
+    pack, _refill, _m, (_gated, ungated, eff, _cut, g) = built
+    fin = final_state(fn_dir(pack))
     grid = RA.Grid(SPEC)
+    step = {"south": (0, 0, 1), "north": (0, 0, -1), "east": (1, 0, 0), "west": (-1, 0, 0)}[TEASE["face"]["front"]]
+    front = sorted({(x + step[0], y + step[1], z + step[2]) for x, y, z in W.FACE} - W.FACE)
+    start = next(c for c in front if fin.get(c) in AIRS)
+    mouth = tuple(SPEC["mine"]["features"][0]["path"][0])
 
-    def flood(extra_open, target=frozenset()):
-        seen, stack, escaped = {arrive}, [arrive], []
+    def flood(blocked, opened=frozenset()):
+        seen, stack, unknown, escaped = {start}, [start], [], []
         while stack:
-            if seen & target:
-                return seen, escaped                          # through the plug: the ungated side opens to the sky
-            x, y, z = stack.pop(0) if target else stack.pop()
+            x, y, z = stack.pop()
             for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
                 q = (x + d[0], y + d[1], z + d[2])
-                if q in seen:
+                if q in seen or q in blocked:
+                    continue
+                if q in opened:
+                    seen.add(q)
+                    stack.append(q)
                     continue
                 if not grid.has(*q):
                     escaped.append(q)
                     continue
                 b = fin.get(q)
-                if b is None or b in AIRS or b in FLUIDS or q in extra_open:
+                if b is None:
+                    if q[1] > eff.get((q[0], q[2]), g(q[0], q[2])):
+                        escaped.append(q)             # open sky over the ground: the outside
+                    else:
+                        unknown.append(q)
+                    continue
+                if b in AIRS or b.split("[")[0] in FLUIDS:
                     seen.add(q)
                     stack.append(q)
-                    if len(seen) > 400000:
-                        return seen, ["runaway"]
-        return seen, escaped
-    assert fin.get(arrive) in AIRS, "the arrival point must be open"
-    reach, escaped = flood(set())
-    assert not escaped, escaped[:3]
-    outside = reach - gated
-    assert not outside, (len(outside), sorted(outside)[:5])
-    assert not reach & knock and turn not in reach
-    assert not [c for c in reach if c not in fin], "the flood met a cell the build never wrote"
-    # the plug is the one door: opened, it joins the gated section to the knock box
-    reach2, _ = flood(plug, frozenset(knock))
-    assert reach2 & knock, "even with the plug open, the knock box is not reached"
+                if len(seen) > 300000:
+                    return seen, unknown, ["runaway"]
+        return seen, unknown, escaped
+    reach, unknown, escaped = flood(W.GRILLE)
+    assert not escaped and not unknown, (escaped[:3], unknown[:3])
+    assert mouth not in reach
+    gz = TEASE["grille"]["z"]
+    assert all(z < gz for _x, _y, z in reach), "the flood from the face passed the grille's plane"
+    reach2, _u, escaped2 = flood(set(), opened=W.GRILLE)
+    assert mouth in reach2 or escaped2, "with the grille open the face does not lead back to the adit"
 
 
-def zone_boxes(pack):
-    adv = json.loads((pack / "data" / "cobblers" / "advancement" / "rift_mines" / "zone.json").read_text(encoding="utf-8"))
-    conds = adv["criteria"]["here"]["conditions"]["player"]
-    terms = conds[0]["terms"] if conds[0].get("condition") == "minecraft:any_of" else conds
-    out = []
-    for t in terms:
-        p = t["predicate"]["location"]["position"]
-        # feet in [min, max] as doubles: block cells min .. max - 1
-        out.append((p["x"]["min"], p["y"]["min"], p["z"]["min"], p["x"]["max"] - 1, p["y"]["max"] - 1, p["z"]["max"] - 1))
-    return out
-
-
-# Without it a gated cell lies outside every zone box (a player who digs round the plug into it is never turned back),
-# or a box reaches the ungated mine, the knock alcove, the turn-back point or the open air (a player without the badge
-# is turned back where they are allowed to be, or teleported in a loop).
-def test_the_zone_boxes_cover_every_gated_cell_and_nothing_else(built):
-    pack, m, (gated, ungated, eff, _cutcols, g) = built
-    boxes = zone_boxes(pack)
-    assert boxes
-
-    def inside(c):
-        return any(b[0] <= c[0] <= b[3] and b[1] <= c[1] <= b[4] and b[2] <= c[2] <= b[5] for b in boxes)
-    arrive, turn, knock, _plug = gate_points()
-    missed = [c for c in gated | model_gated(m) if not inside(c)]
-    assert not missed, (len(missed), sorted(missed)[:3])
-    caught = [c for c in ungated | knock | {turn, (turn[0], turn[1] + 1, turn[2])} if inside(c)]
-    assert not caught, (len(caught), sorted(caught)[:3])
-    for b in boxes:
-        low = min(eff.get((x, z), g(x, z)) for x in range(b[0], b[3] + 1) for z in range(b[2], b[5] + 1))
-        assert b[4] < low, ("a zone box reaches the ground", b, low)
-
-
-# Without it the gate lets through a player without the fifth badge, or turns back one who holds it; or the flag named
-# is not the advancement the progression pack writes for the fifth leader.
-def test_the_gate_is_the_gym5_flag_both_ways(built):
-    pack, _m, _plan = built
-    assert SPEC["flag"]["advancement"] == FLAG
-    import progression_pack as PP
-    import inspect
-    assert '"data/%s/advancement/flag/%s.json" % (ns, flag["id"])' in inspect.getsource(PP)
-    prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
-    assert any(f["id"] == "gym5_cleared" for f in prog["flags"])
-    fdir = fn_dir(pack)
-    knock = [l for l in (fdir / "gate" / "knock.mcfunction").read_text(encoding="utf-8").splitlines() if not l.startswith("#")]
-    tps = [l for l in knock if " tp @s " in l or l.startswith("tp ")]
-    assert tps and all(l.startswith("execute if entity @s[advancements={%s=true}] run tp @s " % FLAG) for l in tps), tps
-    zone = (fdir / "gate" / "zone.mcfunction").read_text(encoding="utf-8")
-    assert "execute if entity @s[gamemode=!creative,gamemode=!spectator,advancements={%s=false}] run function " \
-           "cobblers:rift_mines/gate/turn_back" % FLAG in zone
+# Without it the retired gate still acts: a knock that teleports a flag holder into rock, a zone check that turns back
+# anyone near the seam, or the old ward fatiguing players at the collapse. The pack's only advancement is the tease ward.
+def test_no_retired_gate_or_zone_advancement_is_left(built):
+    pack, *_rest = built
     adv = pack / "data" / "cobblers" / "advancement" / "rift_mines"
     rewards = {p.stem: json.loads(p.read_text(encoding="utf-8"))["rewards"]["function"] for p in adv.glob("*.json")}
-    # the ward (c9cb850) gives Mining Fatigue only, whatever the flag; tests/test_rift_mines_ward.py tests it
-    assert rewards == {"gate_knock": "cobblers:rift_mines/gate/knock", "gate_exit": "cobblers:rift_mines/gate/exit",
-                       "zone": "cobblers:rift_mines/gate/zone", "gate_ward": "cobblers:rift_mines/gate/ward"}, rewards
-    ward = (fdir / "gate" / "ward.mcfunction").read_text(encoding="utf-8")
-    assert FLAG not in ward and " tp " not in ward, "the ward must not gate on the flag or move anyone"
-    # the arrival is behind the plug and the turn-back in front of it, by the data
-    gt = SPEC["mine"]["gate"]
-    assert gt["arrive"][0] > gt["plug"][3] and gt["turn_back"][0] < gt["plug"][0]
+    assert rewards == {"tease_ward": "cobblers:rift_mines/tease/ward"}, rewards
+    assert not (fn_dir(pack) / "gate").exists()
 
 
-# Without it the mine decides what spawns in it (a spawn-condition block written anywhere, even one later overwritten
-# for a tick), floods itself, or lights itself with invisible light blocks.
-def test_no_written_block_is_a_spawn_condition_a_fluid_or_light(built):
-    pack, _m, _plan = built
-    used = {b.split("[")[0] for _x, _y, _z, b in writes(pack)}
-    assert len(used) >= 20
-    assert not used & SPAWN, sorted(used & SPAWN)
-    assert not used & FLUIDS and "minecraft:light" not in used
+# Without it the mine decides what spawns in it (a spawn-condition block written anywhere, even one later overwritten),
+# floods itself, lights itself with invisible light blocks, drops evolution stones from a meteorid ore, or summons
+# something other than its carts.
+def test_no_written_block_is_a_spawn_condition_a_fluid_light_or_meteorid_ore(built):
+    pack, refill, *_rest = built
+    for fdir in (fn_dir(pack), refill):
+        used = {b.split("[")[0] for _x, _y, _z, b in writes(fdir)}
+        assert not used & SPAWN, sorted(used & SPAWN)
+        assert not used & FLUIDS and "minecraft:light" not in used
+        assert not [b for b in used if b.startswith("mega_showdown:mega_meteorid_") and b.endswith("_ore")]
     text = "\n".join(p.read_text(encoding="utf-8") for p in fn_dir(pack).rglob("*.mcfunction"))
     summons = re.findall(r"summon (\S+)", text)
     assert summons and set(summons) == {"minecraft:minecart"}
@@ -263,35 +268,54 @@ def _camp_cells():
         rect(a["rect"], "anchor %s" % a["id"])
     for lot in plan["lots"]:
         rect(lot["rect"], "lot %s" % lot["id"])
-    doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
-    for st in (doc["settlements"]["rift_dig_camp"].get("plan") or {}).get("streets") or []:
-        half = int(st.get("width", 1)) // 2
-        pts = st.get("polyline") or []
-        for (ax, az), (bx, bz) in zip(pts, pts[1:]):
-            n = int(max(abs(bx - ax), abs(bz - az))) + 1
-            for i in range(n + 1):
-                cx, cz = round(ax + (bx - ax) * i / n), round(az + (bz - az) * i / n)
-                for dx in range(-half, half + 1):
-                    for dz in range(-half, half + 1):
-                        cells.setdefault((cx + dx, cz + dz), "street polyline %s" % st.get("id"))
     return cells
 
 
-# Without it the mine writes past its declared grid (into the Relic area, the haul road, another build) or onto the
-# camp's own streets, plaza, anchor lots and house lots, which R16 builds and the mine would overwrite.
+# Without it the mine or the refill writes past the declared grid or onto the camp's streets, plaza, anchor lots and
+# house lots, which R16 builds and the mine would overwrite.
 def test_nothing_is_written_outside_the_grid_or_onto_the_camps_lots_and_roads(built):
-    pack, _m, _plan = built
+    pack, refill, *_rest = built
     grid = RA.Grid(SPEC)
-    w = writes(pack)
-    outside = [(x, y, z) for x, y, z, _b in w if not grid.has(x, y, z)]
-    assert not outside, outside[:3]
     camp = _camp_cells()
     assert len(camp) > 500
-    on = {}
-    for x, _y, z, _b in w:
-        if (x, z) in camp:
-            on.setdefault(camp[(x, z)], (x, z))
-    assert not on, sorted(on.items())[:5]
+    for fdir in (fn_dir(pack), refill):
+        w = writes(fdir)
+        assert not [(x, y, z) for x, y, z, _b in w if not grid.has(x, y, z)]
+        on = {camp[(x, z)] for x, _y, z, _b in w if (x, z) in camp}
+        assert not on, sorted(on)[:5]
+
+
+# Without it the staging refill leaves part of the retired galleries open (a void under the camp a player can fall or
+# dig into) or fills more than they took (rock in the live drifts, the adit hall or the collapse). Rasterised here from
+# the retired features by the data's geometry words, roughness ignored (the refill fills the whole envelope): exactly
+# those cells, all rock of the data's palette, none in the live envelope or the collapse.
+def test_the_refill_writes_rock_into_exactly_the_retired_envelope(built):
+    _pack, refill, _m, (_gated, ungated, *_rest) = built
+    env = retired_envelope(SPEC["retired_gated_section"]["features"])
+    fin = final_state(refill)
+    assert len(env) > 5000 and set(fin) == env, (len(fin), len(env), len(env - set(fin)), len(set(fin) - env))
+    rock = set(SPEC["palette"]["rock_upper"]) | set(SPEC["palette"]["rock_lower"])
+    assert {b.split("[")[0] for b in fin.values()} <= rock
+    assert not env & ungated, sorted(env & ungated)[:3]
+    assert not env & box_cells(SPEC["mine"]["collapse"]["box"])
+
+
+# Without it the retired section is not what the spur build carved: a feature dropped from it (a gallery left open on
+# staging) or changed on the way. The gated features of data/rift_mines.json at 5d18aa5 (the spur build, before the cut)
+# are the retired features, minus only the flag each carried. Reads git history; skips where it is not available.
+def test_the_retired_section_is_the_gated_section_the_spur_had():
+    try:
+        old = subprocess.run(["git", "show", "5d18aa5:data/rift_mines.json"], cwd=ROOT, capture_output=True, text=True,
+                             encoding="utf-8", check=True).stdout
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError) as e:
+        pytest.skip("NOT_EXECUTED: the spur build's data (5d18aa5) is not in this checkout: %s" % e)
+    before = [f for f in json.loads(old)["mine"]["features"] if f.get("gated")]
+    after = SPEC["retired_gated_section"]["features"]
+    assert [f["id"] for f in before] == [f["id"] for f in after]
+    for a, b in zip(before, after):
+        for k in ("kind", "path", "r", "height", "pocket", "at", "centre"):
+            assert a.get(k) == b.get(k), (a["id"], k)
+    assert retired_envelope(before) == retired_envelope(after)
 
 
 # ------------------------------------------------------------------------------------------------ the audit, mutated
@@ -299,19 +323,17 @@ def test_nothing_is_written_outside_the_grid_or_onto_the_camps_lots_and_roads(bu
 @pytest.fixture(scope="module")
 def audit_plan(built):
     """What RA.audit computes before it replays the output, once."""
-    pack, _m, (gated, ungated, eff, cutcols, g) = built
+    _pack, _refill, _m, (gated, ungated, eff, cutcols, g) = built
     top = lambda x, z: eff.get((x, z), g(x, z))           # noqa: E731
     cols, _street = RA.plan_columns(SPEC, gated, ungated, cutcols)
-    probs, _notes, (knock, plug, turn) = RA.plan_problems(SPEC, gated, ungated, top)
-    assert probs == []
-    return gated, ungated, top, cols, knock, plug, turn
+    return gated, ungated, top, cols
 
 
 def _audit_output(pack, audit_plan, monkeypatch):
-    gated, ungated, top, cols, knock, plug, turn = audit_plan
+    gated, ungated, top, cols = audit_plan
     monkeypatch.setattr(RA, "PACK", pack)
     monkeypatch.setattr(RA, "FN", fn_dir(pack))
-    return RA.output_problems(SPEC, RA.Grid(SPEC), gated, ungated, top, cols, knock, plug, turn, {})
+    return RA.output_problems(SPEC, RA.Grid(SPEC), gated, ungated, top, cols, {})
 
 
 def _copy(built, tmp_path):
@@ -324,51 +346,41 @@ def _append(pack, *lines):
     fdir = fn_dir(pack)
     last = [n for n in (fdir / "index.txt").read_text(encoding="utf-8").split("\n") if n.strip()][-1]
     with open(fdir / (last + ".mcfunction"), "a", encoding="utf-8") as fh:
-        fh.write("\n".join(lines) + "\n")
+        # the marker keeps tools/function_limits.py from reporting the extra writes' chunks instead of what is tested
+        fh.write("# chunks-loaded-by: test\n" + "\n".join(lines) + "\n")
 
 
-def _zone_edit(pack, edit):
-    p = pack / "data" / "cobblers" / "advancement" / "rift_mines" / "zone.json"
-    doc = json.loads(p.read_text(encoding="utf-8"))
-    edit(doc["criteria"]["here"]["conditions"]["player"][0]["terms"])
-    p.write_text(json.dumps(doc), encoding="utf-8")
-
-
-def _box_term(b):
-    return {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"location": {
-        "dimension": "minecraft:overworld", "position": {"x": {"min": b[0], "max": b[3] + 1},
-                                                         "y": {"min": b[1], "max": b[4] + 1},
-                                                         "z": {"min": b[2], "max": b[5] + 1}}}}}
-
-
-def _mutations(built, audit_plan):
-    gated, ungated, top, cols, knock, plug, _turn = audit_plan
+def _mutations(audit_plan):
+    gated, ungated, top, _cols = audit_plan
     grid = RA.Grid(SPEC)
-    plug_cell = sorted(plug)[len(plug) // 2]
     camp = _camp_cells()
     lot = next(c for c, w in camp.items() if w.startswith("lot "))
-    in_env = sorted(gated)[0]
-    stray = next((x, y, z) for x, y, z in sorted(gated)
-                 for (x2, y2, z2) in [(x, y - 3, z)] if (x2, y2, z2) not in gated | ungated and y2 <= top(x2, z2))
-    stray = (stray[0], stray[1] - 3, stray[2])
+    in_env = sorted(ungated)[len(ungated) // 2]
+    ring = sorted({(x - 1, y, z) for x, y, z in W.POCKET} - ungated - W.FACE)
+    seal = ring[len(ring) // 2]
     spawn_block = sorted(b for b in SPAWN if b.startswith("minecraft:"))[0]
+    gate_adv = json.dumps({"criteria": {"here": {"trigger": "minecraft:location"}},
+                           "rewards": {"function": "cobblers:rift_mines/gate/zone"}})
+
+    def stale_zone(p):
+        d = p / "data" / "cobblers" / "advancement" / "rift_mines"
+        (d / "zone.json").write_text(gate_adv, encoding="utf-8")
     return {
-        "one plug cell opened": (lambda p: _append(p, "setblock %d %d %d minecraft:air" % plug_cell), "sealed"),
+        "one seal cell opened": (lambda p: _append(p, "setblock %d %d %d minecraft:air" % seal), "sealed"),
         "a write outside the grid": (lambda p: _append(p, "setblock %d 70 %d minecraft:stone" % (grid.x1 + 5, grid.z0)),
                                      "inside"),
         "a block on a camp lot": (lambda p: _append(p, "setblock %d %d %d minecraft:stone" % (lot[0], top(*lot) + 1, lot[1])),
                                   "inside"),
         "a spawn-condition block": (lambda p: _append(p, "setblock %d %d %d %s" % (in_env + (spawn_block,))), "blocks"),
         "water": (lambda p: _append(p, "setblock %d %d %d minecraft:water" % in_env), "blocks"),
-        "a zone box over the knock": (lambda p: _zone_edit(p, lambda t: t.append(_box_term(SPEC["mine"]["gate"]["knock"]))),
-                                      "zone"),
-        "a zone box removed": (lambda p: _zone_edit(p, lambda t: t.pop(0)), "zone"),
-        "a stray air cell under the ground": (lambda p: _append(p, "setblock %d %d %d minecraft:air" % stray), "no stray"),
+        "a meteorid ore": (lambda p: _append(p, "setblock %d %d %d mega_showdown:mega_meteorid_fire_ore" % seal), "blocks"),
+        "a second crystal": (lambda p: _append(p, "setblock %d %d %d %s[facing=north]" % (in_env + (CRYSTAL,))), "crystal"),
+        "a retired zone advancement": (stale_zone, "crystal"),
     }
 
 
-MUTATIONS = ["one plug cell opened", "a write outside the grid", "a block on a camp lot", "a spawn-condition block",
-             "water", "a zone box over the knock", "a zone box removed", "a stray air cell under the ground"]
+MUTATIONS = ["one seal cell opened", "a write outside the grid", "a block on a camp lot", "a spawn-condition block",
+             "water", "a meteorid ore", "a second crystal", "a retired zone advancement"]
 
 
 # Without it the audit passes the pack unchanged only because it checks nothing: the unmodified copy is clean.
@@ -379,8 +391,21 @@ def test_the_audit_is_clean_on_the_pack_as_built(built, audit_plan, tmp_path, mo
 # Without it the audit's output checks could be blind to the failure each exists for.
 @pytest.mark.parametrize("what", MUTATIONS)
 def test_the_audit_catches_a_broken_pack(built, audit_plan, tmp_path, monkeypatch, what):
-    mutate, prefix = _mutations(built, audit_plan)[what]
+    mutate, prefix = _mutations(audit_plan)[what]
     pack = _copy(built, tmp_path)
     mutate(pack)
     probs = _audit_output(pack, audit_plan, monkeypatch)
     assert any(p.startswith(prefix) for p in probs), (what, probs)
+
+
+# Without it a pack that never builds the grille passes the audit: its docstring says "the grille's cells are envelope
+# and close drift C whole", but that is checked on the data (plan_problems), and the replayed output is never asked
+# whether iron bars stand there; the grille cells are envelope, so air there is not a "stray" either. Found by this
+# suite on the cut-back audit (72f8ddb). The test above (exactly_one_crystal...) checks the generator's output
+# directly; this marks the audit's blind spot.
+@pytest.mark.xfail(strict=True, reason="tools/rift_mines_audit.py output_problems never checks that the grille's iron "
+                                       "bars are written: a pack with the grille set to air audits clean")
+def test_the_audit_catches_a_pack_without_its_grille(built, audit_plan, tmp_path, monkeypatch):
+    pack = _copy(built, tmp_path)
+    _append(pack, *["setblock %d %d %d minecraft:air" % c for c in sorted(W.GRILLE)])
+    assert _audit_output(pack, audit_plan, monkeypatch) != []

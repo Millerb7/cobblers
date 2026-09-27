@@ -14,7 +14,9 @@ riding recover. Vanilla command semantics as tests/test_blackout_pack.py's simul
 given a column of water (which block offsets under the feet are water), a vehicle and OnGround, and bo.sub / bo.deep are
 set as the water ladder's water/tick sets them each tick before the sample (checked below against blackout/tick).
 
-tools/open_water.py, no longer read by the pack, is tested on its own in tests/test_open_water.py.
+tools/open_water.py is tested on its own in tests/test_open_water.py; the swim no longer reads it, and since the owner's
+water decision 2 (option C, d910046) only the boats' check does (tests/test_boats.py). Under water (decision 1): a
+trained player (bo.qual >= 1) with the eyes in water neither tires nor recovers; water/tick starts an unset bo.surf at 0.
 
 Not covered, and it needs a running server (EXP-044): that `on vehicle` sees a Cobblemon ride or a boat; that
 `@s[nbt={OnGround:1b}]` is true for a player wading on the bottom and false for one treading water at the surface; that
@@ -25,6 +27,8 @@ either way); how a waterlogged block or a kelp column reads in the #cobblers:wat
 from __future__ import annotations
 
 import copy
+import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -61,16 +65,34 @@ SHALLOW = column(1)                # one block of water over the bottom
 DEEP = column(64)                  # open water, any deep_water_blocks
 
 
+BOATS = ("minecraft:boat", "minecraft:chest_boat")      # vanilla 1.21.1 entity types (a bamboo raft is a minecraft:boat)
+PLAYER_HALF_WIDTH = 0.3                                 # vanilla: a player's hitbox is 0.6 wide, 1.8 tall
+VOLUME = re.compile(r"@s\[x=(-?\d+),y=(-?\d+),z=(-?\d+),dx=(\d+),dy=(\d+),dz=(\d+)\]")
+
+
+def _in_volume(state, m):
+    """Vanilla: `@s[x=,y=,z=,dx=,dy=,dz=]` selects an entity whose hitbox meets [x, x + dx + 1) on each axis (strictly
+    overlapping, AABB.intersects). The feet are at state x, y, z; y defaults to sea level."""
+    x0, y0, z0, dx, dy, dz = (int(v) for v in m.groups())
+    px, py, pz = state["x"], state.get("y", 62), state["z"]
+    h = PLAYER_HALF_WIDTH
+    return (px - h < x0 + dx + 1 and px + h > x0 and py < y0 + dy + 1 and py + 1.8 > y0
+            and pz - h < z0 + dz + 1 and pz + h > z0)
+
+
 def _sim(fns=None, pack=None, health=20, strict=True):
-    """A loaded simulator whose world is `s.state`: water (a set of offsets), riding, ground (OnGround), x, z.
-    Every block offset the pack tests is recorded in `s.probed`, every query in `s.queried`. Once the load functions
-    have run (they test storage the swim never touches), a test the simulator does not model fails when `strict`."""
-    state = {"water": SHALLOW, "riding": False, "ground": False, "x": 0, "z": 0, "strict": False}
+    """A loaded simulator whose world is `s.state`: water (a set of offsets), riding (anything), vehicle (its entity
+    type; a ridden Pokemon is cobblemon:pokemon), ground (OnGround), x, z (the feet, floats; `data get ... Pos` floors
+    them). `ride @s dismount` leaves the vehicle at once, as vanilla does. Every block offset the pack tests is recorded
+    in `s.probed`, every query in `s.queried`. Once the load functions have run (they test storage the swim never
+    touches), a test the simulator does not model fails when `strict`."""
+    state = {"water": SHALLOW, "riding": False, "vehicle": None, "ground": False, "x": 0, "z": 0, "strict": False}
     probed, queried = [], []
+    pack_files = pack or TB.PACK
 
     def query(cmd):
         queried.append(cmd)
-        return {"data get entity @s Pos[0]": state["x"], "data get entity @s Pos[2]": state["z"],
+        return {"data get entity @s Pos[0]": math.floor(state["x"]), "data get entity @s Pos[2]": math.floor(state["z"]),
                 "attribute @s minecraft:generic.max_health get 1": 20, "data get entity @s Health 1": health}.get(cmd, 0)
 
     def cond(kind, toks):
@@ -87,11 +109,24 @@ def _sim(fns=None, pack=None, health=20, strict=True):
             return True
         if kind == "entity" and toks[0] == "@s[nbt={OnGround:1b}]":
             return state["ground"]
+        if kind == "entity" and toks[0] == "@s[type=#%s:boats]" % NS:
+            # after `on vehicle`: is the vehicle's type in the pack's own boats tag (read from the pack's file)
+            tag = json.loads(pack_files["data/%s/tags/entity_type/boats.json" % NS])["values"]
+            return state["riding"] and (state["vehicle"] or "cobblemon:pokemon") in tag
+        if kind == "entity" and VOLUME.fullmatch(toks[0]):
+            return _in_volume(state, VOLUME.fullmatch(toks[0]))
         if state["strict"]:
             raise AssertionError("the swim simulator does not know %s %s" % (kind, toks))
         return False
 
-    s = TB.Sim(fns=fns or TB.FNS, query=query, cond=cond)
+    s = TB.Sim(fns=fns or (TB.functions(pack) if pack else TB.FNS), query=query, cond=cond)
+    orig = s.command
+
+    def command(cmd):
+        if cmd == "ride @s dismount":
+            state["riding"], state["vehicle"] = False, None
+        return orig(cmd)
+    s.command = command
     s.state, s.probed, s.queried = state, probed, queried
     for f in TB.load_functions(pack):
         s.call(f)
@@ -101,12 +136,12 @@ def _sim(fns=None, pack=None, health=20, strict=True):
 
 
 def _swim(water=SHALLOW, sub=0, deep=0, riding=False, ground=False, qual=0, fat=0, samples=1, health=20, fns=None,
-          fpt=None, x=0, z=0):
+          fpt=None, x=0, z=0, vehicle=None, pack=None):
     """Run surface/tick `samples` times as one player. bo.sub (eyes in water) and bo.deep (eyes at the ladder's depth)
     are set as water/tick leaves them; bo.fwarn starts at 0, as surface/recover leaves it for anyone who has stood on
     land; bo.fpt (the collapse clock) is left unset unless given."""
-    s = _sim(fns=fns, health=health)
-    s.state.update(water=water, riding=riding, ground=ground, x=x, z=z)
+    s = _sim(fns=fns, health=health, pack=pack)
+    s.state.update(water=water, riding=riding or vehicle is not None, vehicle=vehicle, ground=ground, x=x, z=z)
     for k, v in (("bo.sub", sub), ("bo.deep", deep), ("bo.qual", qual), ("bo.fat", fat), ("bo.fwarn", 0)):
         s.set("@s", k, v)
     if fpt is not None:
@@ -263,21 +298,67 @@ def test_the_sample_reads_this_ticks_eye_state_for_survival_and_adventure_player
     assert s.get("@s", "bo.fat") == 500 - REC
 
 
-# Without it the pack still carries (or calls) the retired distance-from-land map: 640 surface/r/<z> row functions and
-# the surface/row macro, or `python tools/blackout_pack.py` again needs the canonical heightmap (tools/open_water.py,
-# tools/ground.py) to build. The pack written by main() is exactly the pack build() returns.
-def test_the_pack_has_no_sea_map_and_builds_without_the_heightmap(tmp_path, monkeypatch):
+# Without it the swim sample consults the retired distance-from-land map again (640 surface/r/<z> row functions and the
+# surface/row macro), or build() needs the canonical heightmap. Since the owner's water decision 2 (option C, d910046)
+# the band map is back for boats only: main() reads tools/open_water.py's bands and writes the boat/r/<z> rows, and
+# nothing else it writes differs from build() without them. The boats' own rows are tested in tests/test_boats.py.
+def test_the_swim_has_no_sea_map_and_only_the_boat_rows_need_the_heightmap(tmp_path, monkeypatch):
     for mod in ("open_water", "ground", "terrain"):
         monkeypatch.setitem(sys.modules, mod, None)              # importing any of them now raises ImportError
-    out = tmp_path / "cobblers_blackout"
-    assert BP.main(["--out", str(out)]) == 0
-    written = {p.relative_to(out).as_posix(): p.read_text(encoding="utf-8") for p in out.rglob("*") if p.is_file()}
-    assert written == TB.PACK
+    assert BP.build(copy.deepcopy(CFG), copy.deepcopy(TB.MOUNTS), copy.deepcopy(TB.PLACEMENTS),
+                    copy.deepcopy(TB.PROGRESSION)) == TB.PACK
+    with pytest.raises(ImportError):
+        BP.main(["--out", str(tmp_path / "cobblers_blackout")])  # main() needs the band map for the boats
     surface = sorted(n for n in TB.FNS if n.startswith("surface/"))
     assert surface == ["surface/collapse", "surface/load", "surface/recover", "surface/tick", "surface/warn_exhausted",
                        "surface/warn_tiring"], surface
-    assert not [k for k in written if "/surface/r/" in k or k.endswith("surface/row.mcfunction")]
+    assert not [k for k in TB.PACK if "/surface/r/" in k or k.endswith("surface/row.mcfunction")]
     assert not [l for n in surface for l in TB.FNS[n] if re.search(r"surface/r(/|ow\b)", l) or "$(" in l]
+    # the one place the swim's tick reads a position is the boat check, reached only by a boat's rider
+    tick = [l for l in TB.FNS["surface/tick"] if not l.startswith("#")]
+    calls = [l for l in tick if "function %s:boat/" % NS in l]
+    assert calls == ["execute if score #boat bo.tmp matches 1 run function %s:boat/check" % NS], calls
+    assert not _swim(water=DEEP, samples=3).queried, "a swimmer's sample reads a position or a map"
+
+
+# ------------------------------------------------------------------------------------------------ under water
+
+# Without it swim fatigue cuts short what the water ladder promises under water (the owner, 2026-09-27: "Fatigue is the
+# surface gate, air is the underwater gate, and they should not fight"; WATER_BUILD_PLAN F1: the every-swim rule knocked
+# a Dive player out after 33 s): a trained player (bo.qual >= 1) with the eyes under water neither tires nor recovers,
+# in any water, whatever the fatigue; an untrained one tires as on the surface; a trained one at the surface still
+# tires, at half the rate.
+@pytest.mark.parametrize("qual", [1, 2], ids=["surf", "dive"])
+@pytest.mark.parametrize("water", [SHALLOW, DEEP, column(2)], ids=["shallow", "deep", "two blocks"])
+@pytest.mark.parametrize("fat", [0, 500, FCOL + 40])
+def test_a_trained_player_under_water_neither_tires_nor_recovers(qual, water, fat):
+    s = _swim(water=water, sub=1, deep=int(water == DEEP), qual=qual, fat=fat, samples=5, fpt=0)
+    assert s.get("@s", "bo.fat") == fat, (qual, fat, s.get("@s", "bo.fat"))
+    assert not [c for c in s.calls if c[0].startswith("surface/")], s.calls
+    assert not [l for l in s.log if l.startswith("effect give")], s.log
+
+
+@pytest.mark.parametrize("water,gain", [(SHALLOW, GAIN_SHALLOW), (DEEP, GAIN_DEEP)], ids=["shallow", "deep"])
+def test_an_untrained_player_under_water_tires_and_a_trained_one_at_the_surface_tires_at_half(water, gain):
+    assert _swim(water=water, sub=1, qual=0, samples=3).get("@s", "bo.fat") == 3 * gain
+    assert _swim(water=water, sub=0, qual=1, samples=3).get("@s", "bo.fat") == 3 * (gain // 2)
+
+
+# Without it a player who never blacked out has no Surf bonus at all: water/deep tests `bo.surf < #surf`, which fails on
+# an unset score, and blackout/arrive was its only setter (the contract check C2's finding). water/tick sets an unset
+# bo.surf to 0 and leaves a set one alone (here: eyes under water above the ladder's depth, where nothing else moves it).
+@pytest.mark.parametrize("water", [LAND, SHALLOW], ids=["on land", "eyes under shallow water"])
+def test_the_surf_counter_starts_at_zero_when_unset(water):
+    s = _sim(strict=False)
+    s.state["water"] = water
+    assert ("@s", "bo.surf") not in s.score
+    s.call("water/tick")
+    assert s.score.get(("@s", "bo.surf")) == 0
+    if water == SHALLOW:
+        assert s.get("@s", "bo.sub") == 1 and s.get("@s", "bo.deep") == 0
+        s.set("@s", "bo.surf", 37)
+        s.call("water/tick")
+        assert s.get("@s", "bo.surf") == 37
 
 
 # ------------------------------------------------------------------------------------------------ thresholds and hits

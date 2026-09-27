@@ -22,7 +22,10 @@ Models used, all test-side and independent of the generators:
     minecraft:tick tag running before the player's own tick (MinecraftServer.tickServer runs functions first), and
     Cobblemon's player_tick_pre callback in the player's tick.
   - tools/ground.py's heightmap (rounded), with Relic Island's islet and the sea town's decks laid over as ground, for
-    the ferry crossings (skipped, with the reason, when the heightmap is unavailable).
+    the ferry crossings, by swimming (C3) and by boat (C11: the pack main() writes, with its boat rows from
+    tools/open_water.py), skipped, with the reason, when the heightmap is unavailable.
+  - tests/gulch_sim.py's world model (executors, selectors, blocks, game time) for the gulch keeper's Megas (C12), and
+    the gulch's generated zone advancement and block lines against Victory Road's data (C13).
 
 What none of this covers (runtime, EXP-042 and EXP-044): the real swim speed and eye height while swimming, natural
 regeneration and the damage cooldown, that Cobblemon fires the callbacks and exposes the fields they read, and that a
@@ -497,9 +500,13 @@ def _source_blocks():
     dc = _load("deep_city.json")
     vr = _load("vr_caves.json")
     rem = _load("rematerial.json")
+    gm = _load("gulch_mine.json")
+    # a face's `resettable` list is the restore's filter (what `fill ... replace #tag` may overwrite), never a block
+    # placed; the Cutters' offers and the floor's gift are items
     out = {
         "town_dressing": (set(td["blocks"]["ids"]), []),
-        "rift_mines": (_named_ids(rm, ("minecraft", "mega_showdown"), skip=("flag",)), []),
+        "rift_mines": (_named_ids(rm, ("minecraft", "mega_showdown"), skip=("flag", "resettable")), []),
+        "gulch_mine": (_named_ids(gm, ("minecraft", "mega_showdown"), skip=("flag", "resettable", "cutters", "floor")), []),
         "rift_deep": ({rd[sec][k] for sec in ("tread", "light", "shell", "restore", "lifts")
                        for k in ("block", "fallback", "edge", "edge_fallback") if k in rd.get(sec, {})}, []),
         "deep_city": (_named_ids([dc["materials"], dc["lights"]["emitters"], dc["districts"], dc["plaza"]]), []),
@@ -634,72 +641,101 @@ def test_contract_c5_a_claim_made_before_a_reexport_is_rebuilt_and_paid_after_it
 
 
 # =================================================================================================================
-# C6. Every gate's ward keeps its plug out of a survival player's reach
+# C6. Every built ward keeps what it guards out of a survival player's reach
 # =================================================================================================================
 
-def _gates():
-    """(data file, the gate object) for every object in data/*.json with a plug and a ward margin."""
+def _wards():
+    """("file:path", the object) for every object in data/*.json with a ward_margin, outside a retired section."""
     out = []
 
-    def walk(o, f):
+    def walk(o, f, path):
         if isinstance(o, dict):
-            if "plug" in o and "ward_margin" in o:
-                out.append((f, o))
-            for v in o.values():
-                walk(v, f)
+            if "ward_margin" in o:
+                out.append(("%s:%s" % (f, ".".join(path)), o))
+            for k, v in o.items():
+                if k != "retired_gated_section":
+                    walk(v, f, path + [k])
         elif isinstance(o, list):
             for v in o:
-                walk(v, f)
+                walk(v, f, path)
     for p in sorted((ROOT / "data").glob("*.json")):
-        walk(json.loads(p.read_text(encoding="utf-8")), p.name)
+        walk(json.loads(p.read_text(encoding="utf-8")), p.name, [])
     return out
 
 
-def _rift_mines_ward(gate):
-    import rift_mines as RM
-    spec = _load("rift_mines.json")
-    spec["mine"]["gate"] = gate
-    files, _fn = RM.gate_files(types.SimpleNamespace(spec=spec), [{"min": [0, 0, 0], "max": [1, 1, 1]}])
-    adv = files["advancement/%s/gate_ward.json" % RM.FOLDER]
+def _position(adv):
     (crit,) = adv["criteria"].values()
     (cond,) = crit["conditions"]["player"]
     return cond["predicate"]["location"]["position"]
 
 
-WARD_BUILDERS = {"rift_mines.json": _rift_mines_ward}
+def _tease_ward(tease):
+    """(the generated ward's position ranges, the cells it guards: the grille and the crystal's face box)."""
+    import rift_mines as RM
+    spec = _load("rift_mines.json")
+    spec["mine"]["tease"] = tease
+    files, _fn = RM.tease_files(types.SimpleNamespace(spec=spec))
+    g = tease["grille"]
+    guard = [(x, y, g["z"]) for x in range(g["x"][0], g["x"][1] + 1) for y in range(g["y"][0], g["y"][1] + 1)]
+    return _position(files["advancement/%s/tease_ward.json" % RM.FOLDER]), guard + _cells(tease["face"]["box"])
+
+
+_GULCH_MODEL = []
+
+
+def _gulch_ward(gate):
+    """The gulch gate's generated ward, and the plug as the model builds it (every rockfall block in the plug's columns
+    up to its top) with the grille. Needs the heightmap (the plug stands on the ground)."""
+    import gulch_mine as GM
+    import terrain as T
+    if not _GULCH_MODEL:
+        try:
+            _GULCH_MODEL.append(GM.model()[0])
+        except (T.TerrainUnavailable, FileNotFoundError, OSError) as e:
+            pytest.skip("NOT_EXECUTED: the gulch's plug stands on the canonical heightmap, unavailable (%s)" % e)
+    m = _GULCH_MODEL[0]
+    spec = copy.deepcopy(m.spec)
+    spec["gate"] = gate
+    files, _fn = GM.gate_files(types.SimpleNamespace(spec=spec), [(0, 0, 0, 0)])
+    pl, g = gate["plug"], gate["grille"]
+    cols = {c for c, j in GM.band_columns(gate["band"]).items() if abs(j) <= pl["half_j"]
+            and not (c[0] > pl["max_x"] and pl["trim_z"][0] <= c[1] <= pl["trim_z"][1])}
+    rubble = set(spec["palette"]["rubble"])
+    plug = [c for c, b in m.surf.items() if (c[0], c[2]) in cols and b.split("[")[0] in rubble and c[1] <= pl["top_y"]]
+    assert len(plug) > 100, len(plug)
+    grille = [(g["x"], y, z) for y in range(g["y"][0], g["y"][1] + 1) for z in range(g["z"][0], g["z"][1] + 1)]
+    return _position(files["advancement/gulch_mine/gate_ward.json"]), plug + grille
+
+
+WARD_BUILDERS = {"rift_mines.json:mine.tease": _tease_ward, "gulch_mine.json:gate": _gulch_ward}
 
 
 def _cells(b):
     return [(x, y, z) for x in range(b[0], b[3] + 1) for y in range(b[1], b[4] + 1) for z in range(b[2], b[5] + 1)]
 
 
-# Without it a gate can be dug round or broken by a survival player standing just outside its ward (the owner,
-# 2026-09-27: "i can mine around the door"): the ward is tested at the feet, but the eyes are 1.62 higher and reach 4.5
-# blocks. Every gate the data holds (any object with a plug and a ward_margin) must have a ward builder here, and from
-# every feet position just outside the generated ward no block of its plug or grille is in reach.
-@pytest.mark.parametrize("where,gate", _params("C6", [(f, (f, g)) for f, g in _gates()]))
-def test_contract_c6_no_player_outside_a_gates_ward_can_reach_its_plug(where, gate):
-    assert where in WARD_BUILDERS, "a gate in data/%s has no ward builder in this contract" % where
-    reached = _reach_from_outside(where, gate)
+# Without it a guarded block can be dug by a survival player standing just outside its ward (the owner, 2026-09-27: "i
+# can mine around the door"): the ward is tested at the feet, but the eyes are 1.62 higher and reach 4.5 blocks. Every
+# built ward the data holds (any object with a ward_margin outside a retired section) must have a builder here, and from
+# every feet position just outside the generated ward nothing it guards is in reach.
+@pytest.mark.parametrize("where,ward", _params("C6", [(w, (w, o)) for w, o in _wards()]))
+def test_contract_c6_no_player_outside_a_ward_can_reach_what_it_guards(where, ward):
+    assert where in WARD_BUILDERS, "a ward at data/%s has no builder in this contract" % where
+    pos, guard = WARD_BUILDERS[where](ward)
+    reached = _reach_from_outside(pos, guard)
     assert not reached, sorted(reached)[:3]
 
 
-# Without it the reach check could pass whatever the ward: the margin of 4 the gate first shipped with (c9cb850) must be
-# reported as reachable, as the test author found it.
+# Without it the reach check could pass whatever the ward: the margin of 4 the spur's gate first shipped with (c9cb850)
+# must be reported as reachable on the seam's ward too.
 def test_harness_the_reach_check_catches_the_first_ward_margin():
-    (where, gate), = _gates()
-    old = dict(gate, ward_margin=4)
-    assert _reach_from_outside(where, old)
+    (tease,) = [o for w, o in _wards() if w == "rift_mines.json:mine.tease"]
+    assert not _reach_from_outside(*_tease_ward(tease))
+    assert _reach_from_outside(*_tease_ward(dict(tease, ward_margin=4)))
 
 
-def _reach_from_outside(where, gate):
-    """(distance, feet) for every feet position just outside the generated ward that reaches the plug or grille."""
-    pos = WARD_BUILDERS[where](gate)
-    protect = _cells(gate["plug"])
-    if "grille" in gate:
-        g = gate["grille"]
-        protect += [(g["x"], y, z) for y in range(g["y"][0], g["y"][1] + 1) for z in range(g["z"][0], g["z"][1] + 1)]
-
+def _reach_from_outside(pos, protect):
+    """(distance, feet) for every feet position just outside the generated ward that reaches a guarded block."""
     def dist(eye, b):
         return math.sqrt(sum(max(b[i] - eye[i], 0.0, eye[i] - (b[i] + 1)) ** 2 for i in range(3)))
 
@@ -715,36 +751,241 @@ def _reach_from_outside(where, gate):
     return reached
 
 
-# Without it the contract above passes on nothing if the gate's keys are renamed.
-def test_contract_c6_the_gate_list_is_not_empty():
-    assert [f for f, _g in _gates()] == ["rift_mines.json"], [f for f, _g in _gates()]
+# Without it the contract above passes on nothing when a ward's keys are renamed, or still tests a retired one: the
+# built wards are the gulch gate's and the seam's (the spur's company gate is retired, 72f8ddb).
+def test_contract_c6_the_ward_list_is_the_built_wards():
+    assert sorted(w for w, _o in _wards()) == ["gulch_mine.json:gate", "rift_mines.json:mine.tease"], _wards()
 
 
 # =================================================================================================================
-# C8. A gate opens on a flag the progression pack actually grants
+# C8. Every gate and ward opens on a flag the progression pack actually grants
 # =================================================================================================================
 
-# Without it the Rift mine's gate waits on an advancement nothing grants (a renamed flag, a flag the progression pack
-# no longer writes, or one only an impossible trigger sets), so the deep galleries never open; or its message names a
-# badge the flag is not (RIFT_ZONES.md and data/rift_mines.json flag: "the fifth badge, Koga's").
-def test_contract_c8_the_rift_mine_gate_opens_on_an_advancement_the_progression_pack_grants():
+# Without it the gulch's gate and zone check, or the seam's ward, wait on an advancement nothing grants (a renamed flag,
+# a flag the progression pack no longer writes, or one only an impossible trigger sets), so the gulch never opens and
+# the crystal never lifts; or the flag is not the badge its data names (the sixth, decisions 2 and 3).
+def test_contract_c8_every_gate_and_ward_opens_on_an_advancement_the_progression_pack_grants():
+    import gulch_mine as GM
     import progression_pack as PP
     import rift_mines as RM
-    spec = _load("rift_mines.json")
-    files, fn = RM.gate_files(types.SimpleNamespace(spec=spec), [{"min": [0, 0, 0], "max": [1, 1, 1]}])
-    named = set()
-    for lines in fn.values():
-        for l in lines:
-            named |= set(re.findall(r"advancements=\{([a-z0-9_]+:[a-z0-9_/]+)=", l))
-    assert named == {spec["flag"]["advancement"]}, named
     prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
-    for adv in named:
-        ns, path = adv.split(":", 1)
-        key = "data/%s/advancement/%s.json" % (ns, path)
-        assert key in prog, "%s is not an advancement tools/progression_pack.py writes" % adv
-        crit = json.loads(prog[key])["criteria"]
-        assert all(c["trigger"] != "minecraft:impossible" for c in crit.values()), crit
-    assert spec["flag"]["advancement"] == "cobblers:flag/gym%d_cleared" % spec["flag"]["badge"]
+    for name, fns in (("gulch_mine.json", GM.gate_files(types.SimpleNamespace(spec=_load("gulch_mine.json")),
+                                                        [(0, 0, 0, 0)])[1]),
+                      ("rift_mines.json", RM.tease_files(types.SimpleNamespace(spec=_load("rift_mines.json")))[1])):
+        spec = _load(name)
+        named = set()
+        for lines in fns.values():
+            for l in lines:
+                named |= set(re.findall(r"advancements=\{([a-z0-9_]+:[a-z0-9_/]+)=", l))
+        assert named == {spec["flag"]["advancement"]}, (name, named)
+        for adv in named:
+            ns, path = adv.split(":", 1)
+            key = "data/%s/advancement/%s.json" % (ns, path)
+            assert key in prog, "%s is not an advancement tools/progression_pack.py writes" % adv
+            crit = json.loads(prog[key])["criteria"]
+            assert all(c["trigger"] != "minecraft:impossible" for c in crit.values()), crit
+        assert spec["flag"]["advancement"] == "cobblers:flag/gym%d_cleared" % spec["flag"]["badge"] == \
+            "cobblers:flag/gym6_cleared", (name, spec["flag"])
+
+
+# =================================================================================================================
+# C11. Boats as shallows craft do not reopen a strait the ferry gates
+# =================================================================================================================
+
+C11 = CONTRACTS["C11"]
+
+
+@pytest.fixture(scope="module")
+def boat_pack(sea_ground, tmp_path_factory):
+    """The blackout pack main() writes on the canonical heightmap (its boat rows), as {name: lines}, and its files."""
+    import blackout_pack as BP
+    out = tmp_path_factory.mktemp("boats") / "cobblers_blackout"
+    assert BP.main(["--out", str(out)]) == 0
+    files = {p.relative_to(out).as_posix(): p.read_text(encoding="utf-8") for p in out.rglob("*") if p.is_file()}
+    return files, TB.functions(files)
+
+
+def _boat_walk(g, crossing, files, fns):
+    """Walk the crossing's line at SPEED: in a boat wherever the generated boat/check lets a rider stay (the player
+    carries boats and places one again at once, the worst case for the gate), swimming wherever it tips them, with the
+    generated surface/tick for the fatigue. The hits, in blocks along the line."""
+    import test_surface_exhaustion as TSE
+    sea = int(_load("world.json")["vertical"]["sea_level"])
+    cells, step = _line(tuple(crossing["from"]), tuple(crossing["to"]))
+    depth = [sea - g(x, z) for x, z in cells]
+    wet = [i for i, d in enumerate(depth) if d > 1]
+    cells, depth = cells[wet[0]:wet[-1] + 1], depth[wet[0]:wet[-1] + 1]
+    probe = TSE._sim(fns=fns, pack=files)
+    s = TSE._sim(fns=fns, pack=files)
+    for k, v in (("bo.sub", 0), ("bo.deep", 0), ("bo.qual", 0), ("bo.fat", 0), ("bo.fwarn", 0)):
+        s.set("@s", k, v)
+    per = SURFACE["sample_ticks"]
+    pos, hits, total, tipped_at = 0.0, [], len(depth) * step, []
+    while pos < total:
+        pos += SPEED * per / 20
+        i = min(len(depth) - 1, int(pos / step))
+        (x, z), d = cells[i], depth[i]
+        probe.log.clear()
+        probe.state.update(x=x + 0.5, z=z + 0.5, riding=True, vehicle="minecraft:boat")
+        probe.call("boat/check")
+        rough = "ride @s dismount" in probe.log
+        if rough:
+            tipped_at.append(round(pos))
+        boat = d > 1 and not rough
+        s.state.update(x=x + 0.5, z=z + 0.5, water=TSE.LAND if d <= 0 else TSE.column(d), ground=d <= 1,
+                       riding=boat, vehicle="minecraft:boat" if boat else None)
+        s.calls.clear()
+        s.call("surface/tick")
+        if any(c[0] == "water/pulse" for c in s.calls):
+            hits.append(round(pos))
+    assert not s.missing and not probe.missing, (s.missing, probe.missing)
+    return hits, tipped_at
+
+
+# Without it option C does not do what the owner chose it for ("A boat should not defeat swimming, exhaustion and the
+# ferry from day one", WATER_BUILD_PLAN.md:754): a player who boats every stretch the rule allows and swims only where it
+# tips them crosses a strait the ferry gates. Walked on the canonical heightmap with the generated boat rows and the
+# generated swim: the Sunset strait and the Northlight packet knock that player out; the Relic row (all shallows) and
+# the Sound ferry (the Sound is sheltered water, WATER_PROPOSAL.md:276) are crossed. The line is the ferry contract's
+# (C3); a coast-hugging detour is not walked.
+@pytest.mark.slow
+@pytest.mark.parametrize("crossing", _params("C11", [(c["id"], (c,)) for c in C11["crossings"]]))
+def test_contract_c11_boats_do_not_reopen_a_strait_the_ferry_gates(crossing, sea_ground, boat_pack):
+    line = next(c for c in C3["crossings"] if c["id"] == crossing["id"])
+    hits, tipped = _boat_walk(sea_ground, line, *boat_pack)
+    got = "knocked out" if len(hits) >= 2 else "crosses"
+    assert got == crossing["boat"], "%s: the plan says a boater %s; the packs give %s (tipped at %s, hit at %s)" % (
+        crossing["id"], crossing["boat"], got, tipped[:3], hits[:3])
+
+
+# Without it the walk above could hold a gate shut whatever the boat rule says: with no rough water anywhere (every boat
+# row emptied) a boater crosses the Northlight packet, the longest gated line.
+@pytest.mark.slow
+def test_harness_a_pack_without_boat_rows_lets_a_boat_cross_northlight(sea_ground, boat_pack):
+    files, fns = boat_pack
+    open_ = {k: v for k, v in fns.items()}
+    for k in open_:
+        if k.startswith("boat/r/"):
+            open_[k] = []
+    line = next(c for c in C3["crossings"] if c["id"] == "northlight_packet")
+    hits, tipped = _boat_walk(sea_ground, line, files, open_)
+    assert not tipped and not hits
+    assert len(_boat_walk(sea_ground, line, *boat_pack)[1]) > 0
+
+
+# =================================================================================================================
+# C12. A gulch Mega that blacks a player out makes no claim
+# =================================================================================================================
+
+# Without it a player blacked out by a gulch Mega loses items into a claim and the Mega becomes a guardian (decision 9:
+# "the blackout skips tagged Megas ... the mine's danger is the Megas, not a lost item"), because the tag the gulch's
+# keeper gives its Megas and the tag the blackout exempts drift apart. The keeper's generated functions spawn a Mega on
+# the gulch model; the blackout's generated loss runs with that Mega as the victor: no claim, the money still charged.
+# An untagged wild victor still claims (the control).
+def test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out():
+    import test_blackout_recovery_pid as RP
+    import test_gulch_mine as TG
+    w = TG._mine_world()
+    TG._run(w, 500)
+    megas = [e for e in w.entities if e["kind"] == "pokemon"]
+    assert len(megas) == len(_load("gulch_mine.json")["megas"]["slots"]), megas
+    for e in megas:
+        s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tuple(e["tags"]))
+        assert not RP.fn_calls(s, "recovery/make") and not (RP.ledger(s).get("claims") or []), (e["tags"], s.calls)
+        assert s.get("@s", "bo.lost") > 0, "the loss must still cost money"
+    control = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=())
+    assert RP.fn_calls(control, "recovery/make") and len(RP.ledger(control)["claims"]) == 1
+
+
+# =================================================================================================================
+# C13. The gulch's zone and build stay off Victory Road
+# =================================================================================================================
+
+def _seg_dist(p, a, b):
+    (px, pz), (ax, az), (bx, bz) = p, a, b
+    L2 = (bx - ax) ** 2 + (bz - az) ** 2
+    t = 0.0 if L2 == 0 else max(0.0, min(1.0, ((px - ax) * (bx - ax) + (pz - az) * (bz - az)) / L2))
+    return math.hypot(px - (ax + t * (bx - ax)), pz - (az + t * (bz - az)))
+
+
+def _victory_road():
+    """[(a, b, half width)] of Victory Road's corridor (data/routes.json), and [(a, b, reach)] of its caves' guide
+    (data/vr_caves.json: the network grows within guide.band of the line; caverns add up to their largest radius)."""
+    vr = next(r for r in _load("routes.json")["routes"] if r["id"] == "victory_road")
+    pts = vr["corridor"]["polyline"]
+    corridor = [((a["x"], a["z"]), (b["x"], b["z"]), max(a.get("corridor_width_blocks", vr["corridor"]["width_blocks"]),
+                                                        b.get("corridor_width_blocks", vr["corridor"]["width_blocks"])) / 2)
+                for a, b in zip(pts, pts[1:])]
+    caves = _load("vr_caves.json")
+    reach = caves["guide"]["band"] + max(caves["caverns"]["radius"])
+    g = caves["guide"]["points"]
+    return corridor, [(tuple(a), tuple(b), reach) for a, b in zip(g, g[1:])]
+
+
+def _near_victory_road(cols):
+    corridor, caves = _victory_road()
+    bad = []
+    x0, x1 = min(c[0] for c in cols), max(c[0] for c in cols)
+    z0, z1 = min(c[1] for c in cols), max(c[1] for c in cols)
+    for what, segs in (("corridor", corridor), ("caves", caves)):
+        # only a segment whose box, grown by its reach, meets the columns' box can be near any of them
+        near = [s for s in segs if min(s[0][0], s[1][0]) - s[2] <= x1 and max(s[0][0], s[1][0]) + s[2] >= x0
+                and min(s[0][1], s[1][1]) - s[2] <= z1 and max(s[0][1], s[1][1]) + s[2] >= z0]
+        for c in cols:
+            if any(_seg_dist(c, a, b) <= r for a, b, r in near):
+                bad.append((what, c))
+                break
+    return bad
+
+
+# Without it the gulch's zone check turns back players on Victory Road (a box over its corridor, the old branch-mouth
+# line's fault, SOUTHERN_RIFT.md finding 1), or the gulch's build writes into the road's corridor or its caves: the
+# generated zone boxes' columns and every column the built pack writes lie outside Victory Road's corridor (half its
+# width from its polyline) and its caves' band.
+def test_contract_c13_the_gulch_zone_stays_off_victory_road():
+    import gulch_mine as GM
+    spec = _load("gulch_mine.json")
+    files, _fn = GM.gate_files(types.SimpleNamespace(spec=spec), GM.zone_boxes(spec["zone"]["polygon"]))
+    (crit,) = files["advancement/gulch_mine/zone.json"]["criteria"].values()
+    (cond,) = crit["conditions"]["player"]
+    cols = set()
+    for t in cond["terms"]:
+        p = t["predicate"]["location"]["position"]
+        for x in range(int(p["x"]["min"]), int(p["x"]["max"])):
+            for z in range(int(p["z"]["min"]), int(p["z"]["max"])):
+                cols.add((x + 0.5, z + 0.5))
+    assert len(cols) > 70000
+    # the zone's edge only matters: a column inside the ring is further from the road than one on it
+    edge = {c for c in cols if not all((c[0] + dx, c[1] + dz) in cols for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
+    assert not _near_victory_road(edge), _near_victory_road(edge)[:3]
+
+
+@pytest.mark.slow
+def test_contract_c13_the_gulch_build_writes_nothing_on_victory_road(tmp_path):
+    import gulch_mine as GM
+    import terrain as T
+    try:
+        m, _near, _tops = GM.model()
+    except (T.TerrainUnavailable, FileNotFoundError, OSError) as e:
+        pytest.skip("NOT_EXECUTED: the canonical heightmap is unavailable (%s)" % e)
+    lns = GM.lines(m)
+    cols = set()
+    for body in lns.values():
+        for l in body:
+            t = l.split()
+            cols.add((int(t[1]) + 0.5, int(t[3]) + 0.5))
+    assert len(cols) > 10000
+    assert not _near_victory_road(cols), _near_victory_road(cols)[:3]
+
+
+# Without it the Victory Road checks above pass on nothing: the road's own corridor points are near it.
+def test_harness_victory_roads_own_points_are_near_it():
+    vr = next(r for r in _load("routes.json")["routes"] if r["id"] == "victory_road")
+    p = vr["corridor"]["polyline"][len(vr["corridor"]["polyline"]) // 2]
+    corridor, caves = _victory_road()
+    assert any(_seg_dist((p["x"] + 40, p["z"]), a, b) <= r for a, b, r in corridor)
+    g = _load("vr_caves.json")["guide"]["points"][3]
+    assert any(_seg_dist((g[0] + 60, g[1]), a, b) <= r for a, b, r in caves)
 
 
 # =================================================================================================================

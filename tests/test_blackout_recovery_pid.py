@@ -512,9 +512,14 @@ def test_the_killed_by_pokemon_advancement_fires_for_a_pokemon_killer_only():
     assert "blackout/killed" in FNS
 
 
-def _killed(attacker, wild=True, remembered=((P1, "Ash"), (P2, "Misty")), me=P1, then_death=False):
-    """Run blackout/killed as `me`; attacker: whether `on attacker` finds anyone. (sim, calls of battle_loss_wild)."""
+EXEMPT_TAG = CFG["claims"]["exempt_tag"]                 # data/blackout.json: a victor carrying it makes no claim
+
+
+def _killed(attacker, wild=True, remembered=((P1, "Ash"), (P2, "Misty")), me=P1, then_death=False, tags=()):
+    """Run blackout/killed as `me`; attacker: whether `on attacker` finds anyone; tags: the attacking Pokemon's
+    entity tags. (sim, calls of battle_loss_wild)."""
     state = {}
+    sim = []
 
     def world(kind, toks):
         if kind == "on":
@@ -527,9 +532,14 @@ def _killed(attacker, wild=True, remembered=((P1, "Ash"), (P2, "Misty")), me=P1,
             return state.get("victor", False)
         if kind == "entity" and toks[0] == "@s[tag=cobblers.named]":
             return False                                  # the name callback, before the kill
+        if kind == "entity" and toks[0] == "@s[tag=%s]" % EXEMPT_TAG:
+            # `execute as <the victor> if entity @s[tag=...]`: the victor's own tags; no victor, no executor
+            assert sim[0].as_sel == VICTOR_SEL, sim[0].as_sel
+            return state.get("victor", False) and EXEMPT_TAG in tags
         raise AssertionError("unmodelled test %s %s" % (kind, toks))
 
     s = loaded(world=world)
+    sim.append(s)
     for ints, name in remembered:
         _remember(s, ints, name)
     s.entity = lambda sel, path: me if (sel, path) == ("@s", "UUID") else None
@@ -612,10 +622,11 @@ def _ceil_pct(n, pct):
     return -(-n * pct // 100)
 
 
-def _wild_loss(slots, balance, claims=None):
-    """P1 loses a battle to the wild WILD_UUID (GUARD's Pokemon UUID), holding {slot index: (id, count)}.
-    Returns the simulator after blackout/battle_loss_wild."""
+def _wild_loss(slots, balance, claims=None, victor_tags=()):
+    """P1 loses a battle to the wild WILD_UUID (GUARD's Pokemon UUID), holding {slot index: (id, count)}; the victor
+    carries the entity tags `victor_tags`. Returns the simulator after blackout/battle_loss_wild."""
     tags = {c: set(CFG["claims"][c]) for c in ("balls", "medicine", "consumables")}
+    sim = []
 
     def category(item):
         return next(c for c, ids in tags.items() if item in ids)
@@ -637,6 +648,9 @@ def _wild_loss(slots, balance, claims=None):
     def world(kind, toks):
         if kind == "entity" and toks == [WILD_UUID]:
             return True
+        if kind == "entity" and toks[0] == "@s[tag=%s]" % EXEMPT_TAG:
+            assert sim[0].as_sel == WILD_UUID, sim[0].as_sel     # the test is on the victor, not the player
+            return EXEMPT_TAG in victor_tags
         if kind == "items":
             slot = toks[2]
             n = -106 if slot == "weapon.offhand" else int(slot.split(".")[1])
@@ -655,11 +669,47 @@ def _wild_loss(slots, balance, claims=None):
         raise AssertionError("unmodelled entity read %s %s" % (sel, path))
 
     s = loaded(query=query, world=world, entity=entity)
+    sim.append(s)
     if claims:
         ledger(s)["claims"] = copy.deepcopy(claims)
     s.command('execute as %s run function %s:blackout/battle_loss_wild {victor:"%s",name:"Ash",id:"%s"}'
               % (P1_ID, NS, WILD_UUID, P1_ID))
     return s
+
+
+GULCH_MEGAS = json.loads((ROOT / "data" / "gulch_mine.json").read_text(encoding="utf-8"))["megas"]
+
+
+# Without it a gulch Mega that blacks a player out takes their items into a claim and becomes a guardian (the owner's
+# decision 9, SOUTHERN_RIFT_MEGA.md 11: "the blackout skips tagged Megas ... the mine's danger is the Megas, not a lost
+# item"), or the exemption leaks to every wild victor, or it also waives the money and the return (data/blackout.json
+# claims.exempt_why: "The loss still costs money and the return to the checkpoint"). The tag the blackout tests is the
+# tag the gulch gives its Megas (data/gulch_mine.json megas.tag).
+@pytest.mark.parametrize("tags,claimed", [((), True), (("cobblers.other",), True),
+                                          ((GULCH_MEGAS["tag"], GULCH_MEGAS["tag"] + ".steelix"), False)],
+                         ids=["an untagged wild victor", "another tag", "a gulch Mega"])
+def test_a_tagged_gulch_mega_makes_no_claim_but_the_loss_still_costs_money(tags, claimed):
+    assert EXEMPT_TAG == GULCH_MEGAS["tag"], (EXEMPT_TAG, GULCH_MEGAS["tag"])
+    s = _wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
+    charge = _ceil_pct(1000, MONEY["percent"])
+    assert s.get("@s", "bo.lost") == charge and fn_calls(s, "blackout/charge_calc"), s.calls
+    assert "tag @s add cobblers.bo_pending" in s.log, "the return to the checkpoint must still be queued"
+    claims = ledger(s).get("claims") or []
+    if claimed:
+        assert fn_calls(s, "recovery/make") and len(claims) == 1 and claims[0]["money"] == charge, claims
+    else:
+        assert not fn_calls(s, "recovery/make") and not fn_calls(s, "recovery/hold_money"), s.calls
+        assert claims == [], claims
+        assert not [l for l in s.log if "spawnpokemon" in l or l.startswith("clear @s ")], s.log
+
+
+# Without it the exemption works in battle but not for a Mega that kills the player outside a battle (the same
+# battle_loss_wild path, reached through blackout/killed with the victor selector): a tagged killer still claims.
+@pytest.mark.parametrize("tags,claimed", [((), True), ((GULCH_MEGAS["tag"],), False)], ids=["untagged", "a gulch Mega"])
+def test_a_gulch_mega_killing_the_player_outside_battle_makes_no_claim(tags, claimed):
+    s, loss = _killed(attacker=True, tags=tags)
+    assert len(loss) == 1 and fn_calls(s, "blackout/charge_calc"), s.calls
+    assert bool(fn_calls(s, "recovery/make")) == claimed, s.calls
 
 
 def _gives(s):

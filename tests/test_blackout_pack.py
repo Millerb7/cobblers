@@ -4,7 +4,9 @@ Written by the test author, not by the session that wrote the tool (commits 562e
 pack's surface/* functions) is tested in tests/test_surface_exhaustion.py, on the simulator defined here;
 tools/open_water.py, which the pack no longer reads (2262aa3), in tests/test_open_water.py. Resolution by the guardian's
 Pokemon UUID, the MoLang callbacks run, and the out-of-battle kill (c9cb850, f08117e) are in
-tests/test_blackout_recovery_pid.py, on tests/nbt_sim.py's NBT-storage simulator built on the one here.
+tests/test_blackout_recovery_pid.py, on tests/nbt_sim.py's NBT-storage simulator built on the one here. Boats as shallows
+craft (the boat/* functions and their rows) are in tests/test_boats.py; the simulator records the selector of a chain's
+`as` (as_sel) so a test can tell whose `@s` a later condition means (the gulch Megas' exempt tag is tested on the victor).
 
 Independent sources: data/blackout.json and data/water_mounts.json (the authored rules and numbers);
 data/placements.json (every Center: kind "service", id ending "_pokecenter") and data/progression.json (every town
@@ -58,9 +60,12 @@ LEDGER = "cobblers_recovery:ledger"          # the claim ledger's storage (the c
 FN_DIR = "data/%s/function/" % NS
 
 
-def build(cfg=None, mounts=None, placements=None, progression=None):
+def build(cfg=None, mounts=None, placements=None, progression=None, boat_rows=None):
+    """The pack as tools/blackout_pack.py's build() returns it. boat_rows ({cell row: [(cx0, cx1, band)]}) is what
+    main() computes from tools/open_water.py on the heightmap; None (the default here) builds no boat/r/<z> rows."""
     return BP.build(copy.deepcopy(cfg or CFG), copy.deepcopy(mounts or MOUNTS),
-                    copy.deepcopy(placements or PLACEMENTS), copy.deepcopy(progression or PROGRESSION))
+                    copy.deepcopy(placements or PLACEMENTS), copy.deepcopy(progression or PROGRESSION),
+                    copy.deepcopy(boat_rows))
 
 
 PACK = build()
@@ -184,6 +189,9 @@ class Sim:
             self.storage[(st[2], st[3])] = int(v * float(st[5]))
 
     def execute(self, t):
+        # the selector of the chain's last `as` (None: the executor is still @s), for cond() to see whose `@s` a later
+        # test means; the simulator does not switch executors itself
+        self.as_sel = None
         ok, st, i = True, None, 0
         while i < len(t):
             w = t[i]
@@ -213,6 +221,8 @@ class Sim:
                 else:
                     st, i = (t[i + 1], "storage", t[i + 3], t[i + 4], t[i + 5], t[i + 6]), i + 7
             elif w in ("as", "at", "anchored", "in"):
+                if w == "as":
+                    self.as_sel = t[i + 1]
                 i += 2
             elif w == "on":
                 if ok and not self.cond("on", [t[i + 1]]):
@@ -367,8 +377,11 @@ def _references(pack=None):
 
 
 # The macro-built function names the pack may call, and what each may resolve to. A new one fails the test below until
-# it is described here. There are none since 2262aa3 (the sea-row lookup surface/r/$(z) went with the distance bands).
-MACRO_NAMES = {}
+# it is described here. The swim's sea-row lookup (surface/r/$(z)) went with the distance bands in 2262aa3; the boats'
+# row lookup (boat/r/$(z), a 16-block cell row of tools/open_water.py's band map) came with option C (d910046).
+MACRO_NAMES = {"boat/r/$(z)": re.compile(r"boat/r/\d+")}
+# a pack with two boat rows, so the macro-built names resolve (the default PACK is built without the heightmap's rows)
+BOATED = build(boat_rows={3: [(0, 5, 1), (9, 9, 2)], 4: [(1, 2, 2)]})
 
 
 # Without it a renamed or misspelt function fails at runtime (an unknown function in a datapack function stops the
@@ -376,7 +389,8 @@ MACRO_NAMES = {}
 # ledger's storage to cobblers_recovery:ledger once sent every claim call to cobblers_recovery:ledger/..., functions
 # that do not exist (the coordinator's own slip, fixed in 5d522d7).
 def test_every_function_the_pack_names_is_a_function_it_generates():
-    refs = _references()
+    refs = _references(BOATED)
+    fns = functions(BOATED)
     assert len(refs) >= 80, len(refs)
     wrong_ns = sorted({(w, ns, f) for w, ns, f, _ in refs if ns != NS})
     assert not wrong_ns, wrong_ns
@@ -384,11 +398,11 @@ def test_every_function_the_pack_names_is_a_function_it_generates():
     for w, _, f, _ in refs:
         if "$(" in f:
             assert f in MACRO_NAMES, "an undescribed macro-built function name: %s in %s" % (f, w)
-            if not any(MACRO_NAMES[f].fullmatch(n) for n in FNS):
+            if not any(MACRO_NAMES[f].fullmatch(n) for n in fns):
                 missing.append((w, f))
         elif f == "blackout/battle_loss_" and w.endswith(".molang"):
             continue                 # the battle_victory callback's name ends in a MoLang concatenation, see below
-        elif f not in FNS:
+        elif f not in fns:
             missing.append((w, f))
     assert not missing, missing
     # the battle_victory callback builds the name from t.kind: every kind it can assign must be a generated function
