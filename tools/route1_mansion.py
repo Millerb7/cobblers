@@ -120,7 +120,7 @@ def furnish(fill, sb):
     sb(1626, y, 5029, "minecraft:barrel[facing=up,open=false]")
     sb(1625, y, 5031, HC + "dark_oak_cupboard[facing=east,type=1]")
     for z in (5030, 5032):                                                        # chairs under dust sheets
-        sb(1632, y, z, "minecraft:light_gray_wool")
+        sb(1632, y, z, "minecraft:light_gray_terracotta")          # not wool: a spawn condition
         sb(1632, y + 1, z, "minecraft:light_gray_carpet")
     sb(1627, y, 5031, "minecraft:dark_oak_trapdoor[facing=north,half=bottom,open=false,powered=false,waterlogged=false]")
     sb(1626, y, 5034, MOSS)

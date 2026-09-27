@@ -53,13 +53,7 @@
         {"at": "docs/mechanics/WATER_MAP.md:29", "quote": "| **Dive** (training after gym 6, with a Dive-capable Pokemon) | unlimited |"},
         {"at": "docs/mechanics/WATER_BUILD_PLAN.md:71", "quote": "new rule is **knocked out at 33 s**"}
       ],
-      "tests": ["tests/test_system_contracts.py::test_contract_c1_a_dive_player_at_depth_is_never_knocked_out_by_any_system"],
-      "fails_today": {
-        "commit": "5d18aa5",
-        "cases": {
-          "*": "swim fatigue builds under water for a trained player (data/blackout.json surface.rule counts the eyes at the ladder's depth as deep water, and a trained partner only halves it): a Dive player at depth is hit at 30 s and knocked out at 33 s (WATER_BUILD_PLAN.md finding F1). Being fixed in the main session: trained players will not tire under water"
-        }
-      }
+      "tests": ["tests/test_system_contracts.py::test_contract_c1_a_dive_player_at_depth_is_never_knocked_out_by_any_system"]
     },
     {
       "id": "C2",
@@ -73,14 +67,7 @@
         {"at": "docs/mechanics/DEATH_AND_WIPE.md:280", "quote": "Hold vanilla air full for 900 bonus ticks, then allow the normal 300 ticks: about 60 seconds total"},
         {"at": "docs/mechanics/WATER_MAP.md:28", "quote": "45 s held full, then vanilla 15 s, then the same two hits: about 61 s"}
       ],
-      "tests": ["tests/test_system_contracts.py::test_contract_c2_a_surf_player_at_depth_gets_the_whole_bonus_and_nothing_hurts_them_sooner"],
-      "fails_today": {
-        "commit": "5d18aa5",
-        "cases": {
-          "fresh-*": "a player who has never blacked out gets no Surf bonus at all: bo.surf is set only by blackout/arrive (tools/blackout_pack.py:287), water/deep tests `if score @s bo.surf < #surf bo.cfg` (line 774), and vanilla fails a comparison on an unset score, so the bonus never starts; the ladder alone hits at 301 ticks, not 1200 (found by this contract; tests/test_blackout_pack.py's _deep_ticks sets bo.surf 0 first, which hides it)",
-          "blacked-out-*": "swim fatigue hits a Surf player at depth at 30 s, before surf_bonus_ticks + 300 (60 s) run out (the incident, WATER_BUILD_PLAN.md finding F1)"
-        }
-      }
+      "tests": ["tests/test_system_contracts.py::test_contract_c2_a_surf_player_at_depth_gets_the_whole_bonus_and_nothing_hurts_them_sooner"]
     },
     {
       "id": "C3",
@@ -136,12 +123,6 @@
         "town_templates.py": "checker: spawn blocks in template candidates (through tools/spawn_blocks.py)",
         "spawn_blocks.py": "not covered: it writes data/spawn_blocks.json (the scan of loaded spawn conditions)",
         "paint_maps.py": "not covered: WorldPainter plant sets, painted at export, not a datapack"
-      },
-      "fails_today": {
-        "commit": "5d18aa5",
-        "cases": {
-          "earthworks:route1_mansion": "the mansion's earthwork route1_mansion_house places minecraft:light_gray_wool (tools/route1_mansion.py:123, the foyer's dust-sheeted chairs; data/placements.json), a spawn condition for smeargle and herds (neededNearbyBlocks), and no policy entry is scoped to the mansion. The tool's docstring (line 33) says no block in it is a spawn condition; furnish() (line 99) leans on the ward stone's ReplaceSpawns instead"
-        }
       }
     },
     {

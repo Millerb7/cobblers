@@ -725,6 +725,9 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
     deep_chain = " ".join("if block ~ ~%d ~ #%s:water" % (i, NS) for i in range(1, water["deep_blocks"] + 1))
     fn("water/tick", [
         "# as and at a player in survival or adventure, every tick",
+        "# the Surf bonus counter starts at 0: unset, water/deep's `bo.surf < #surf` test fails and a player who never",
+        "# blacked out (blackout/arrive was its only setter) got no Surf bonus at all (the contract check C2's finding)",
+        "execute unless score @s bo.surf matches -2147483648.. run scoreboard players set @s bo.surf 0",
         "scoreboard players set @s bo.sub 0",
         "scoreboard players set @s bo.deep 0",
         "execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #%s:water run scoreboard players set @s bo.sub 1" % NS,
