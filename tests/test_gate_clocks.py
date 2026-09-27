@@ -35,6 +35,7 @@ Not covered, and it needs a running server: every one of those facts in play, an
 from __future__ import annotations
 
 import copy
+import itertools
 import json
 import math
 import sys
@@ -297,35 +298,83 @@ def ticks_to_break(hardness, speed=BEST_PICK_SPEED):
     return math.ceil(30 * hardness / speed)
 
 
-def milk_window():
-    """The ticks a player has with no Mining Fatigue after drinking milk just after the ward's refresh: the effect is
-    gone until the next location test."""
-    return TRIGGER_TICKS - 1
+def _position_box(adv):
+    (crit,) = adv["criteria"].values()
+    (cond,) = crit["conditions"]["player"]
+    return cond["predicate"]["location"]["position"]
+
+
+def milk_window(fns, folder, tick, ward_fn, adv, player_at, flags=()):
+    """Run the pack for 60 ticks with one survival player at `player_at` (inside the ward): every tick the pack's tick
+    function (minecraft:tick runs before the players), every 20 ticks the location advancement's reward if the feet
+    are in its box. The player finishes drinking milk in their own tick right after the location refresh at tick 20
+    (the worst phase for the guard: every effect cleared). Returns how many whole player ticks follow with no Mining
+    Fatigue applied before them: the ticks a milk-drinker can mine at full speed."""
+    import gulch_sim as GS
+    w = GS.World({"%s/%s" % (folder, k): v for k, v in fns.items()})
+    p = w.player(player_at, flags=flags)
+    pos = _position_box(adv)
+    inside = all(pos[a]["min"] <= v <= pos[a]["max"] for a, v in zip("xyz", player_at))
+    applied = {}
+    for t in range(1, 61):
+        w.gt = t
+        w.effects.clear()
+        w.call("%s/%s" % (folder, tick))
+        if t % TRIGGER_TICKS == 0 and inside:
+            w.me = p
+            w.call("%s/%s" % (folder, ward_fn))
+            w.me = None
+        applied[t] = any(e is p and "mining_fatigue" in c for e, c in w.effects)
+    milk = TRIGGER_TICKS
+    nxt = next((t for t in range(milk + 1, 61) if applied[t]), 61)
+    return nxt - milk - 1
+
+
+def _seam():
+    import rift_mines as RM
+    import types
+    spec = json.loads((ROOT / "data" / "rift_mines.json").read_text(encoding="utf-8"))
+    files, fn = RM.tease_files(types.SimpleNamespace(spec=spec))
+    g = spec["mine"]["tease"]["grille"]
+    at = ((g["x"][0] + g["x"][1]) / 2 + 0.5, g["y"][0], g["z"] + 1.5)      # in front of the grille, in the drift
+    return files, fn, at
 
 
 def seam_ward_milk(fns=None):
     """The seam's ward (data/rift_mines.json mine.tease) is its only guard: there is no zone check behind it. A player
-    without gym6_cleared who drinks milk just after the ward's refresh has milk_window() ticks at full speed; the grille
-    must take longer than that to break, or it falls."""
-    import rift_mines as RM
-    import types
-    _files, fn = RM.tease_files(types.SimpleNamespace(spec=json.loads((ROOT / "data" / "rift_mines.json").read_text(encoding="utf-8"))))
-    assert any("mining_fatigue" in l for l in fn["tease/ward"])
-    assert not any(" run function " in l and "zone" in l for l in sum(fn.values(), [])), "a zone check exists now"
+    without gym6_cleared who drinks milk just after the ward's refresh must have fewer ticks at full speed than the
+    grille's iron bars take to break with the best pickaxe, and the per-tick ward must cover the whole advancement box."""
+    files, gen, at = _seam()
+    fns = fns or gen
+    adv = files["advancement/rift_mines/tease_ward.json"]
+    free = milk_window(fns, "rift_mines", "tick", "tease/ward", adv, at)
     need = ticks_to_break(IRON_BARS_HARDNESS)
-    assert need > milk_window(), ("milk clears the ward; the grille's iron bars break in %d ticks, the ward is back after "
-                                  "%d" % (need, milk_window()))
+    assert free < need, ("milk clears the ward; the grille breaks in %d ticks, the ward is back after %d" % (need, free))
+    # with the flag the ward lifts (decision 2: per player), whatever the tick does
+    assert milk_window(fns, "rift_mines", "tick", "tease/ward", adv, at, flags=[json.loads(
+        (ROOT / "data" / "rift_mines.json").read_text(encoding="utf-8"))["flag"]["advancement"]]) == 60 - TRIGGER_TICKS
+    # every feet position the advancement's box holds is also held by the tick's (the corners and the centre)
+    pos = _position_box(adv)
+    for p in itertools.product(*[(pos[a]["min"], (pos[a]["min"] + pos[a]["max"]) / 2, pos[a]["max"] - 0.01) for a in "xyz"]):
+        assert milk_window(fns, "rift_mines", "tick", "tease/ward", adv, p) < need, p
 
 
 def gulch_ward_milk(fns=None):
-    """The gulch gate's ward falls to the same milk, but it is not the gate: whatever a milk-drinker digs through
-    the plug leads into the zone, whose check turns anyone without the flag back (the arrival and the exit box are in
-    the zone; tests/test_gulch_mine.py checks every column of the zone)."""
+    """The gulch gate's ward: the same milk, with the pack's tick re-applying the ward; and behind it the zone, whose
+    check turns anyone without the flag back (the arrival and the exit box are in the zone; tests/test_gulch_mine.py
+    checks every column of the zone)."""
     import test_gulch_mine as TG
+    kf = fns or TG.keeper()
+    adv = TG.FILES["advancement/gulch_mine/gate_ward.json"]
+    g = TG.GATE["grille"]
+    at = (g["x"] + 1.5, g["y"][0], (g["z"][0] + g["z"][1]) / 2 + 0.5)      # in the knock alcove, at the grille
+    both = dict(kf, **{"gate/ward": TG.FNS["gate/ward"]})
+    free = milk_window(both, "gulch_mine", "tick", "gate/ward", adv, at, flags=["cobblers:flag/gym6_cleared"])
+    assert free < ticks_to_break(IRON_BARS_HARDNESS), free
     ranges = TG._zone_ranges()
-    g = TG.GATE
-    assert TG._in_zone(ranges, g["arrive"][:3])
-    x0, y0, z0, x1, y1, z1 = g["exit"]
+    gt = TG.GATE
+    assert TG._in_zone(ranges, gt["arrive"][:3])
+    x0, y0, z0, x1, y1, z1 = gt["exit"]
     assert all(TG._in_zone(ranges, (x + 0.5, y0, z + 0.5)) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1))
     (zone_fn,) = [l for l in TG.FNS["gate/zone"] if l.startswith("execute")]
     assert "turn_back" in zone_fn and TG.FNS["gate/zone"][2].startswith("advancement revoke"), TG.FNS["gate/zone"]
@@ -402,7 +451,21 @@ def test_harness_the_ferry_scenario_sees_a_missing_cooldown():
 
 
 # Without it the milk arithmetic is wrong in the other direction: an unenchanted diamond pickaxe (speed 8) needs 19
-# ticks for iron bars, which the 19-tick window still allows; a block of obsidian (hardness 50) does not fall in it.
-def test_harness_the_milk_window_arithmetic():
-    assert ticks_to_break(IRON_BARS_HARDNESS, 8) == 19 and ticks_to_break(50) > milk_window()
+# ticks for iron bars; a block of obsidian (hardness 50) takes far longer than any window.
+def test_harness_the_break_arithmetic():
+    assert ticks_to_break(IRON_BARS_HARDNESS, 8) == 19 and ticks_to_break(50) > 40
     assert ticks_to_break(IRON_BARS_HARDNESS) == 5
+
+
+# Without it the milk scenarios pass whatever the pack's tick does: with the per-tick ward line taken out of the
+# seam's tick (the pack before 9a9a1fa), only the location trigger refreshes the ward, the window is 19 ticks and the
+# grille falls; the same for the gulch gate's.
+def test_harness_removing_the_per_tick_ward_brings_the_milk_exploit_back():
+    _files, fn, _at = _seam()
+    stripped = dict(fn, tick=[l for l in fn["tick"] if "mining_fatigue" not in l])
+    assert len(stripped["tick"]) < len(fn["tick"])
+    _fails_on_its_clock(seam_ward_milk, stripped)
+    import test_gulch_mine as TG
+    kf = TG.keeper()
+    kf = dict(kf, tick=[l for l in kf["tick"] if "mining_fatigue" not in l])
+    _fails_on_its_clock(gulch_ward_milk, kf)
