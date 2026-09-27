@@ -1,36 +1,34 @@
-"""Surface exhaustion (EXP-044): tools/open_water.py's sea bands and the cobblers_blackout pack's surface/* functions.
+"""Swim fatigue: the cobblers_blackout pack's surface/* functions, under the owner's rule of 2026-09-27 (2262aa3).
 
-Written by the test author, not by the session that wrote either (commits 476c4e5..5bcecec). The collapse hits run
-on their own clock, bo.fpt, since 5bcecec (EXP-044 README): the first as collapse is reached, then one every
-pulse_ticks of time, whatever the band or partner.
+Written by the test author, not by the session that wrote the pack (commits 476c4e5..5bcecec, 2a70841, 2262aa3). The
+collapse hits run on their own clock, bo.fpt, since 5bcecec (EXP-044 README): the first as collapse is reached, then one
+every pulse_ticks of time, whatever the water or partner.
 
-Independent sources: data/blackout.json "surface" (the rule and every number); tools/open_water.py's docstring rule (a
-16-block cell is land if any column in it is at or above sea level 62; the sea is the below-sea cells connected to the
-world border, so an inland basin is not sea; shallows, open and deep by Chebyshev distance from land) with the
-distances recomputed here by brute force; the owner's places: Lake Tilpey at (5964, 4135) is a lake, and the far west
-margin (-900, 4000) is 1,024 blocks of open ocean outside the heightmap (docs/STATE.md 'World facts'); vanilla command
-semantics as tests/test_blackout_pack.py's simulator runs them.
+Independent sources: data/blackout.json "surface" (the "rule", "deep_water_blocks_basis" and "feel" strings, and every
+number); the owner's rule as the coordinator relayed it: "i want fatigue on every swim, maybe it would increase once you
+pass three blocks deep, but a new player should struggle with water", made precise as: a player in survival or
+adventure, feet or eyes in water, riding nothing and not wading (eyes out of water, bo.sub 0, and on the ground) builds
+fatigue every sample_ticks; deep (zone 2) when the feet's block and the deep_water_blocks - 1 blocks under it are all
+water, or the water ladder's bo.deep is 1; otherwise shallow (zone 1); halved with bo.qual >= 1; land, wading and
+riding recover. Vanilla command semantics as tests/test_blackout_pack.py's simulator runs them; here the simulator is
+given a column of water (which block offsets under the feet are water), a vehicle and OnGround, and bo.sub / bo.deep are
+set as the water ladder's water/tick sets them each tick before the sample (checked below against blackout/tick).
 
-The band thresholds, as the tool applies them: a sea cell whose Chebyshev distance d (in cells) from the nearest land
-cell is at most shallow_blocks/16 is shallows (the gap between the two cells' facing edges, (d - 1) * 16 blocks, is under
-shallow_blocks); at most deep_blocks/16 is open; beyond is deep.
+tools/open_water.py, no longer read by the pack, is tested on its own in tests/test_open_water.py.
 
-The real-heightmap tests need the canonical heightmap (outside the repository): without it they SKIP, and a skip is not
-a pass.
-
-Not covered, and it needs a running server (EXP-044): that `on vehicle` sees a Cobblemon ride or a boat; that the
-slowness and hunger feel as the data says; the measured swim speeds the "feel" note rests on; that vanilla stores
-nothing when `on vehicle` finds no vehicle (the simulator assumes so; the pack now resets #ride first either way).
+Not covered, and it needs a running server (EXP-044): that `on vehicle` sees a Cobblemon ride or a boat; that
+`@s[nbt={OnGround:1b}]` is true for a player wading on the bottom and false for one treading water at the surface; that
+the slowness and hunger feel as the data says; the measured swim speed of 5 blocks per second the "feel" note rests on;
+that vanilla stores nothing when `on vehicle` finds no vehicle (the simulator assumes so; the pack resets #ride first
+either way); how a waterlogged block or a kelp column reads in the #cobblers:water tag at the feet.
 """
 from __future__ import annotations
 
 import copy
-import json
 import re
 import sys
 from pathlib import Path
 
-import numpy as np
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -38,254 +36,180 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tests"))
 
 import blackout_pack as BP  # noqa: E402
-import open_water as OW  # noqa: E402
 import test_blackout_pack as TB  # noqa: E402
 
 CFG = TB.CFG
 SURF = CFG["surface"]
-N_CELLS = (OW.WORLD_MAX - OW.WORLD_MIN + 1) // OW.CELL        # 640
+NS = TB.NS
+WATER_TAG = "#%s:water" % NS
+PER = SURF["sample_ticks"]
+GAIN_SHALLOW = SURF["gain_shallow_per_tick"] * PER
+GAIN_DEEP = SURF["gain_deep_per_tick"] * PER
+REC = SURF["recover_per_tick"] * PER
+N_DEEP = SURF["deep_water_blocks"]
+FCOL, FPULSE, FCAP = SURF["collapse_ticks"], SURF["pulse_ticks"], SURF["cap_ticks"]
 
 
-def cell_of(x, z):
-    return (z - OW.WORLD_MIN) // OW.CELL, (x - OW.WORLD_MIN) // OW.CELL
+def column(n, top=0):
+    """The block offsets from the feet (0 the feet's block, -1 the one under it, ...) that are water: n blocks from
+    `top` down, solid below."""
+    return frozenset(range(top, top - n, -1))
 
 
-class FakeGround:
-    """What open_water reads from tools/ground.py: the heights (z, x) and their origin."""
-
-    def __init__(self, heights, ox=0, oz=0):
-        self.heights, self.ox, self.oz = heights, ox, oz
+LAND = frozenset()
+SHALLOW = column(1)                # one block of water over the bottom
+DEEP = column(64)                  # open water, any deep_water_blocks
 
 
-# ------------------------------------------------------------------------------------------------ open_water, synthetic
-
-def _synthetic():
-    """A 1024-block heightmap at the origin, all under sea level, with: an island (x, z 512..575); a walled basin
-    (cells 70..83 square, walls land, inside at y 50) with no way out; a second walled basin (cells 104..117) whose west
-    wall has a one-cell gap at cell row 110."""
-    h = np.full((1024, 1024), 40.0)
-    h[512:576, 512:576] = 70
-
-    def basin(c0, c1, gap=None):
-        b0, b1 = c0 * 16 + OW.WORLD_MIN, (c1 + 1) * 16 + OW.WORLD_MIN
-        h[b0:b1, b0:b1] = 70
-        h[b0 + 16:b1 - 16, b0 + 16:b1 - 16] = 50
-        if gap is not None:
-            g = gap * 16 + OW.WORLD_MIN
-            h[g:g + 16, b0:b0 + 16] = 40
-
-    basin(70, 83)
-    basin(104, 117, gap=110)
-    return FakeGround(h)
-
-
-SYN = _synthetic()
-
-
-@pytest.fixture(scope="module")
-def syn_cells():
-    return OW.cells(SYN)
-
-
-# Without it a lake (a basin under sea level, ringed by land) is treated as open sea, and a swimmer in Lake Tilpey is
-# exhausted; or the flood fill stops at the first wall and misses a basin the sea reaches through a gap.
-def test_an_enclosed_basin_below_sea_level_is_not_sea_and_one_open_to_the_sea_is(syn_cells):
-    land, sea = syn_cells
-    assert land.shape == sea.shape == (N_CELLS, N_CELLS)
-    assert land[cell_of(520, 520)] and not sea[cell_of(520, 520)]
-    closed = (76, 76)                                   # inside the closed basin
-    assert not land[closed] and not sea[closed], "an enclosed basin is not sea"
-    opened = (110, 110)                                 # inside the basin whose wall has a gap
-    assert not land[opened] and sea[opened], "a basin the sea reaches is sea"
-    assert sea[0, 0] and sea[N_CELLS - 1, N_CELLS - 1], "the margin outside the heightmap is sea"
-    assert not (land & sea).any()
-
-
-def _chebyshev_from(land):
-    """Brute-force Chebyshev distance (in cells) of every cell from the nearest land cell."""
-    zz, xx = np.indices(land.shape)
-    d = np.full(land.shape, 10 ** 6)
-    for z, x in zip(*np.nonzero(land)):
-        d = np.minimum(d, np.maximum(abs(zz - z), abs(xx - x)))
-    return d
-
-
-# Without it the bands drift from the data: free swimming reaches too far out or not far enough, or the deep band (twice
-# the strain) starts too near the shore.
-@pytest.mark.parametrize("shallow,deep", [(SURF["shallow_blocks"], SURF["deep_blocks"]), (64, 160)])
-def test_the_band_thresholds_follow_the_distance_from_land(syn_cells, shallow, deep):
-    land, sea = syn_cells
-    b = OW.bands(shallow, deep, SYN)
-    d = _chebyshev_from(land)
-    s, m = shallow // OW.CELL, deep // OW.CELL
-    want_open = sea & (d > s) & (d <= m)
-    want_deep = sea & (d > m)
-    assert (b["open"] == want_open).all(), int((b["open"] != want_open).sum())
-    assert (b["deep"] == want_deep).all(), int((b["deep"] != want_deep).sum())
-    assert not (b["open"] & b["deep"]).any()
-    # not vacuous: the synthetic world has shallows, open water and deep water, and the closed basin is in none
-    assert (sea & (d <= s)).any() and want_open.any() and want_deep.any()
-    assert b["open"][97, 96 - s - 1] and not b["open"][97, 96 - s] and not b["deep"][97, 96 - s]   # west of the island
-    assert not b["open"][76, 76] and not b["deep"][76, 76]
-
-
-def _raster(boxes):
-    m = np.zeros((N_CELLS, N_CELLS), dtype=int)
-    for x0, z0, x1, z1 in boxes:
-        assert (x0 - OW.WORLD_MIN) % 16 == 0 and (x1 + 1 - OW.WORLD_MIN) % 16 == 0, (x0, x1)
-        m[(z0 - OW.WORLD_MIN) // 16:(z1 - OW.WORLD_MIN) // 16 + 1, (x0 - OW.WORLD_MIN) // 16:(x1 - OW.WORLD_MIN) // 16 + 1] += 1
-    return m
-
-
-# Without it a box leaks past its band (a swimmer in the shallows is tested as open water) or leaves a hole in it, or two
-# boxes overlap and a cell is counted twice.
-def test_the_rectangles_cover_the_mask_exactly():
-    rng = np.random.default_rng(44)
-    masks = [rng.random((N_CELLS, N_CELLS)) < 0.3, np.zeros((N_CELLS, N_CELLS), dtype=bool),
-             np.ones((N_CELLS, N_CELLS), dtype=bool)]
-    b = OW.bands(SURF["shallow_blocks"], SURF["deep_blocks"], SYN)
-    masks += [b["open"], b["deep"]]
-    for i, mask in enumerate(masks):
-        r = _raster(OW.rectangles(mask))
-        assert r.max() <= 1, (i, "overlap")
-        assert (r.astype(bool) == mask).all(), (i, int((r.astype(bool) != mask).sum()))
-
-
-# ------------------------------------------------------------------------------------------------ open_water, real
-
-@pytest.fixture(scope="module")
-def real_ground():
-    import ground as G
-    import terrain as T
-    try:
-        return G.load()
-    except (T.TerrainUnavailable, FileNotFoundError) as e:
-        pytest.skip("the canonical heightmap is unavailable: %s" % e)
-
-
-@pytest.fixture(scope="module")
-def real_bands(real_ground):
-    return OW.bands(SURF["shallow_blocks"], SURF["deep_blocks"], real_ground), OW.cells(real_ground)
-
-
-# Without it the owner's lake is exhausting to swim in, or the open ocean off the map's west edge is free.
-def test_lake_tilpey_is_no_sea_zone_and_the_far_west_margin_is_deep(real_bands):
-    b, (land, sea) = real_bands
-    tilpey = cell_of(5964, 4135)
-    assert not land[tilpey] and not sea[tilpey], "Lake Tilpey's basin is below sea level and not sea"
-    assert not b["open"][tilpey] and not b["deep"][tilpey]
-    west = cell_of(-900, 4000)
-    assert b["deep"][west] and not b["open"][west]
-    assert int(b["open"].sum()) > 1000 and int(b["deep"].sum()) > 10000
-
-
-@pytest.fixture(scope="module")
-def real_pack(real_ground, tmp_path_factory):
-    """The pack as `python tools/blackout_pack.py` writes it, heightmap rows included."""
-    out = tmp_path_factory.mktemp("cobblers_blackout")
-    assert BP.main(["--out", str(out)]) == 0
-    return {p.relative_to(out).as_posix(): p.read_text(encoding="utf-8") for p in out.rglob("*") if p.is_file()}
-
-
-# Without it a swimmer in a row with no row function sends the macro to a function that does not exist (an error every
-# 10 ticks, and no zone), or the rows the pack carries differ from the bands open_water computes.
-def test_the_real_pack_has_a_row_for_every_world_row_and_its_rows_are_the_bands(real_pack, real_bands):
-    b, _ = real_bands
-    fns = TB.functions(real_pack)
-    rows = {int(n.rsplit("/", 1)[1]): lines for n, lines in fns.items() if re.fullmatch(r"surface/r/-?\d+", n)}
-    assert set(rows) == set(range(N_CELLS)), sorted(set(range(N_CELLS)) ^ set(rows))[:10]
-    got = {1: np.zeros((N_CELLS, N_CELLS), dtype=bool), 2: np.zeros((N_CELLS, N_CELLS), dtype=bool)}
-    for z, lines in rows.items():
-        for l in lines:
-            m = re.fullmatch(r"execute if score #cx bo\.tmp matches (\d+)\.\.(\d+) run return run scoreboard players "
-                             r"set @s bo\.zone ([12])", l)
-            assert m, (z, l)
-            a, c, v = map(int, m.groups())
-            assert not got[v][z, a:c + 1].any(), (z, a, c, "overlapping runs")
-            got[v][z, a:c + 1] = True
-    assert (got[1] == b["open"]).all() and (got[2] == b["deep"]).all()
-    # and the reference check, with the macro-built names resolved against the rows that exist
-    refs = TB._references(real_pack)
-    assert not [r for r in refs if r[1] != TB.NS]
-    assert not [(w, f) for w, _, f, _ in refs if "$(" not in f and f not in fns and f != "blackout/battle_loss_"]
-
-
-def _zone(fns, x, z):
-    s = TB.Sim(fns=fns, query=lambda cmd: {"data get entity @s Pos[0]": x, "data get entity @s Pos[2]": z}.get(cmd, 0),
-               cond=lambda kind, toks: kind == "block")
-    for f in TB.load_functions():
-        s.call(f)
-    s.set("@s", "bo.zone", 9)
-    s.call("surface/tick")
-    assert not s.missing, s.missing
-    return s.get("@s", "bo.zone")
-
-
-# Without it the pack's own lookup (the cell arithmetic, the macro, the row) disagrees with the bands at the places
-# the owner named.
-def test_the_real_pack_puts_tilpey_in_no_zone_and_the_far_west_in_the_deep(real_pack):
-    fns = TB.functions(real_pack)
-    assert _zone(fns, 5964, 4135) == 0
-    assert _zone(fns, -900, 4000) == 2
-
-
-# ------------------------------------------------------------------------------------------------ the surface tick
-
-FNS = TB.FNS                       # built with TB.ROWS: row 330 (z 4256..4271), open cells 10-19, deep cells 20-29
-Z = 4260
-OPEN_X, DEEP_X, NONE_X = -860, -700, -384
-
-
-def _swim(x=OPEN_X, z=Z, water=True, sub=0, riding=False, qual=0, fat=0, samples=1, health=20, fns=None, fpt=None):
-    """Run surface/tick `samples` times as one player; returns the simulator, whose `state` (x, z, water, riding) can
-    be changed between samples. bo.fwarn starts at 0, as surface/recover leaves it for anyone who has stood on land;
-    bo.fpt (the collapse clock) is left unset unless given."""
-    state = {"x": x, "z": z, "water": water, "riding": riding}
+def _sim(fns=None, pack=None, health=20, strict=True):
+    """A loaded simulator whose world is `s.state`: water (a set of offsets), riding, ground (OnGround), x, z.
+    Every block offset the pack tests is recorded in `s.probed`, every query in `s.queried`. Once the load functions
+    have run (they test storage the swim never touches), a test the simulator does not model fails when `strict`."""
+    state = {"water": SHALLOW, "riding": False, "ground": False, "x": 0, "z": 0, "strict": False}
+    probed, queried = [], []
 
     def query(cmd):
+        queried.append(cmd)
         return {"data get entity @s Pos[0]": state["x"], "data get entity @s Pos[2]": state["z"],
                 "attribute @s minecraft:generic.max_health get 1": 20, "data get entity @s Health 1": health}.get(cmd, 0)
 
     def cond(kind, toks):
         if kind == "block":
-            return state["water"]
+            x, y, z, what = toks
+            assert x == "~" and z == "~" and y.startswith("~") and what == WATER_TAG, toks
+            dy = int(y[1:] or 0)
+            probed.append(dy)
+            return dy in state["water"]
         if kind == "on":
+            assert toks == ["vehicle"], toks
             return state["riding"]
-        if kind == "entity":
+        if kind == "entity" and toks[0] == "@s":
             return True
+        if kind == "entity" and toks[0] == "@s[nbt={OnGround:1b}]":
+            return state["ground"]
+        if state["strict"]:
+            raise AssertionError("the swim simulator does not know %s %s" % (kind, toks))
         return False
 
-    s = TB.Sim(fns=fns or FNS, query=query, cond=cond)
-    s.state = state
-    for f in TB.load_functions():
+    s = TB.Sim(fns=fns or TB.FNS, query=query, cond=cond)
+    s.state, s.probed, s.queried = state, probed, queried
+    for f in TB.load_functions(pack):
         s.call(f)
-    s.set("@s", "bo.sub", sub)
-    s.set("@s", "bo.qual", qual)
-    s.set("@s", "bo.fat", fat)
-    s.set("@s", "bo.fwarn", 0)
+    del probed[:], queried[:]
+    state["strict"] = strict
+    return s
+
+
+def _swim(water=SHALLOW, sub=0, deep=0, riding=False, ground=False, qual=0, fat=0, samples=1, health=20, fns=None,
+          fpt=None, x=0, z=0):
+    """Run surface/tick `samples` times as one player. bo.sub (eyes in water) and bo.deep (eyes at the ladder's depth)
+    are set as water/tick leaves them; bo.fwarn starts at 0, as surface/recover leaves it for anyone who has stood on
+    land; bo.fpt (the collapse clock) is left unset unless given."""
+    s = _sim(fns=fns, health=health)
+    s.state.update(water=water, riding=riding, ground=ground, x=x, z=z)
+    for k, v in (("bo.sub", sub), ("bo.deep", deep), ("bo.qual", qual), ("bo.fat", fat), ("bo.fwarn", 0)):
+        s.set("@s", k, v)
     if fpt is not None:
         s.set("@s", "bo.fpt", fpt)
     for _ in range(samples):
         s.call("surface/tick")
+    assert not s.missing, s.missing
     return s
 
 
-PER = SURF["sample_ticks"]
-GAIN_OPEN = SURF["gain_open_per_tick"] * PER
-GAIN_DEEP = SURF["gain_deep_per_tick"] * PER
-REC = SURF["recover_per_tick"] * PER
-FCOL, FPULSE, FCAP = SURF["collapse_ticks"], SURF["pulse_ticks"], SURF["cap_ticks"]
+def _pack_with(**surface):
+    cfg = copy.deepcopy(CFG)
+    cfg["surface"].update(surface)
+    return TB.build(cfg)
 
 
-# Without it a swimmer who reaches land, the shallows or a lake, or who rides a water Pokemon or a boat, stays tired
-# (or tires further), and a ride across the open sea exhausts its rider.
-@pytest.mark.parametrize("where", ["land", "riding in the deep", "shallows or lake", "feet on land, eyes in water"])
-def test_land_riding_and_the_shallows_recover(where):
-    kw = {"land": dict(water=False, sub=0), "riding in the deep": dict(x=DEEP_X, riding=True),
-          "shallows or lake": dict(x=NONE_X), "feet on land, eyes in water": dict(water=False, sub=1)}[where]
+# ------------------------------------------------------------------------------------------------ where fatigue builds
+
+# Without it swimming is free somewhere: the first rule built fatigue only 96+ blocks from land, so the owner swam from
+# Pallet to the landmass south-west of it without tiring, and Lake Tilpey (a lake, far from the sea) was free. The owner
+# (2026-09-27): "fatigue on every swim". The pack must not consult a map: the same water tires the same anywhere.
+@pytest.mark.parametrize("x,z", [(5964, 4135), (-900, 4000), (3700, 2400), (0, 0)],
+                         ids=["Lake Tilpey", "the far west ocean", "the League's oval", "the origin"])
+@pytest.mark.parametrize("water,gain", [(SHALLOW, GAIN_SHALLOW), (DEEP, GAIN_DEEP)], ids=["shallow", "deep"])
+def test_every_swim_builds_fatigue_in_any_water_wherever_it_is(x, z, water, gain):
+    assert GAIN_SHALLOW > 0, "shallow water must tire too"
+    s = _swim(water=water, x=x, z=z, fat=0, samples=3)
+    assert s.get("@s", "bo.fat") == 3 * gain, s.get("@s", "bo.fat")
+    assert not [q for q in s.queried if "Pos" in q], "the swim sample reads the player's position: a map is back"
+
+
+# Without it the deep rate starts at the wrong depth: a two-block pond counts as deep, or water must be deeper than the
+# owner's "three blocks deep" before the rate rises. Deep is the feet's block and the deep_water_blocks - 1 under it all
+# water (data "deep_water_blocks_basis"), so exactly deep_water_blocks blocks from the feet down are tested, and a
+# column of k water blocks over solid ground is deep exactly when k >= deep_water_blocks.
+@pytest.mark.parametrize("n", sorted({N_DEEP, 2, 1, 5}))
+@pytest.mark.parametrize("sub", [0, 1], ids=["floating", "head under"])
+def test_deep_is_exactly_deep_water_blocks_of_water_from_the_feet_down(n, sub):
+    fns = TB.functions(_pack_with(deep_water_blocks=n))
+    for k in range(1, n + 3):
+        s = _swim(water=column(k), sub=sub, fns=fns)
+        want = 2 if k >= n else 1
+        assert s.get("@s", "bo.zone") == want, (n, k, s.get("@s", "bo.zone"))
+        assert s.get("@s", "bo.fat") == (GAIN_DEEP if want == 2 else GAIN_SHALLOW), (n, k, s.get("@s", "bo.fat"))
+        assert set(s.probed) == set(range(-(n - 1), 1)), (n, sorted(s.probed))
+    if n >= 2:
+        # a solid block under the feet ends the column, whatever water lies below it
+        holed = column(1) | column(n + 3, top=-2)
+        assert _swim(water=holed, sub=sub, fns=fns).get("@s", "bo.zone") == 1
+
+
+# Without it the deep rate reads water under a swimmer whose feet are not in water: a swimmer whose feet are in a
+# waterlogged block (a slab, a coral fan; the #cobblers:water tag lists only water, bubble columns, kelp and seagrass)
+# and whose eyes are under water is counted deep over two water blocks under a non-water feet block, and with
+# deep_water_blocks 1 every head-under swimmer is deep, though the rule is "the feet's block and the two under it all
+# water". Low stakes (a rare position), but the pack does not say what the data says.
+@pytest.mark.xfail(strict=True, reason="2262aa3: surface/tick's deep line tests only ~-1..~-(n-1); the feet's block is "
+                                       "checked only by the gate, which also passes on bo.sub 1 (eyes in water), and "
+                                       "with deep_water_blocks 1 the line is an unconditional `set bo.zone 2`")
+@pytest.mark.parametrize("n", sorted({N_DEEP, 2, 1}))
+def test_a_swimmer_whose_feet_block_is_not_water_is_not_deep_by_the_column(n):
+    fns = TB.functions(_pack_with(deep_water_blocks=n))
+    s = _swim(water=column(n + 5, top=-1), sub=1, deep=0, fns=fns)
+    assert s.get("@s", "bo.zone") == 1, (n, s.get("@s", "bo.zone"))
+
+
+# Without it a diver in a shallow-bottomed spot at depth, or one whose eyes are at the water ladder's depth over a ledge,
+# tires at the shallow rate: the data's rule makes "the eyes at the water ladder's depth" deep, whatever the column.
+@pytest.mark.parametrize("water", [SHALLOW, LAND], ids=["one block under the feet", "feet not in water"])
+def test_eyes_at_the_ladders_depth_count_as_deep_water(water):
+    s = _swim(water=water, sub=1, deep=1, samples=2)
+    assert s.get("@s", "bo.zone") == 2
+    assert s.get("@s", "bo.fat") == 2 * GAIN_DEEP, s.get("@s", "bo.fat")
+
+
+# Without it a player walking through a stream or along a beach (feet in water, head out, on the bottom) tires as if
+# swimming, or a swimmer who stands on the bottom with the head under water, or treads water at the surface, is let off.
+@pytest.mark.parametrize("case,kw,builds", [
+    ("wading in the shallows", dict(water=SHALLOW, sub=0, ground=True), False),
+    ("wading at the edge of deep water", dict(water=column(N_DEEP), sub=0, ground=True), False),
+    ("on the bottom, head under", dict(water=column(2), sub=1, ground=True), True),
+    ("treading water at the surface", dict(water=SHALLOW, sub=0, ground=False), True),
+    ("treading water over the deep", dict(water=DEEP, sub=0, ground=False), True),
+])
+def test_wading_recovers_and_swimming_does_not(case, kw, builds):
     s = _swim(fat=500, **kw)
-    if where == "feet on land, eyes in water":
-        assert s.get("@s", "bo.fat") == 500 + GAIN_OPEN, "eyes under water in the open sea is swimming"
+    if builds:
+        assert s.get("@s", "bo.fat") > 500, (case, s.get("@s", "bo.fat"))
+    else:
+        assert s.get("@s", "bo.fat") == 500 - REC, (case, s.get("@s", "bo.fat"))
+        assert _swim(fat=REC // 2, **kw).get("@s", "bo.fat") == 0, "recovery stops at zero"
+
+
+# Without it a swimmer who reaches land, or who rides a water Pokemon or a boat, stays tired (or tires further), and a
+# ride across the sea exhausts its rider; or a player whose eyes are in water with the feet out of it is let off.
+@pytest.mark.parametrize("where", ["land", "riding in the deep", "riding in the shallows", "feet dry, eyes in water"])
+def test_land_and_riding_recover(where):
+    kw = {"land": dict(water=LAND, sub=0), "riding in the deep": dict(water=DEEP, sub=1, deep=1, riding=True),
+          "riding in the shallows": dict(water=SHALLOW, riding=True),
+          "feet dry, eyes in water": dict(water=LAND, sub=1)}[where]
+    s = _swim(fat=500, **kw)
+    if where == "feet dry, eyes in water":
+        assert s.get("@s", "bo.fat") == 500 + GAIN_SHALLOW, "eyes under water is swimming"
         return
     assert s.get("@s", "bo.fat") == 500 - REC, (where, s.get("@s", "bo.fat"))
     assert _swim(fat=REC // 2, **kw).get("@s", "bo.fat") == 0, "recovery stops at zero"
@@ -295,7 +219,7 @@ def test_land_riding_and_the_shallows_recover(where):
 # player processed in the same tick: a swimmer handled after someone on a Lapras would recover instead of tiring.
 # (Found by this suite at 5d522d7 as unverified: vanilla stores nothing when `on vehicle` finds none; fixed in 5bcecec.)
 def test_a_swimmer_processed_after_a_rider_in_the_same_tick_still_tires():
-    s = _swim(x=DEEP_X, riding=True, fat=500, samples=0)
+    s = _swim(water=DEEP, riding=True, fat=500, samples=0)
     s.call("surface/tick")                                    # the rider
     assert s.get("@s", "bo.fat") == 500 - REC and s.get("#ride", "bo.tmp") == 1
     s.state["riding"] = False                                 # the next player: same fake player, no vehicle
@@ -304,51 +228,101 @@ def test_a_swimmer_processed_after_a_rider_in_the_same_tick_still_tires():
     assert s.get("@s", "bo.fat") == 500 + GAIN_DEEP, s.get("@s", "bo.fat")
 
 
-# Without it the deep band tires no faster than open water, or a trained partner does not halve the strain.
-@pytest.mark.parametrize("x,qual,gain", [(OPEN_X, 0, GAIN_OPEN), (DEEP_X, 0, GAIN_DEEP),
-                                         (OPEN_X, 1, GAIN_OPEN // 2), (DEEP_X, 2, GAIN_DEEP // 2)])
-def test_the_deep_band_doubles_and_a_qualified_player_halves(x, qual, gain):
-    assert GAIN_DEEP == 2 * GAIN_OPEN
-    s = _swim(x=x, qual=qual, samples=7)
-    assert s.get("@s", "bo.fat") == 7 * gain, (x, qual, s.get("@s", "bo.fat"))
-    assert s.get("@s", "bo.zone") == (2 if x == DEEP_X else 1)
+# Without it deep water tires no faster than shallow, or a trained partner does not halve the strain (data
+# "trained_partner"), in either depth.
+@pytest.mark.parametrize("water,qual,gain", [(SHALLOW, 0, GAIN_SHALLOW), (DEEP, 0, GAIN_DEEP),
+                                             (SHALLOW, 1, GAIN_SHALLOW // 2), (DEEP, 2, GAIN_DEEP // 2)])
+def test_deep_water_uses_the_deep_rate_and_a_qualified_player_halves_it(water, qual, gain):
+    assert GAIN_DEEP > GAIN_SHALLOW
+    s = _swim(water=water, qual=qual, samples=7)
+    assert s.get("@s", "bo.fat") == 7 * gain, (qual, s.get("@s", "bo.fat"))
+    assert s.get("@s", "bo.zone") == (2 if water == DEEP else 1)
 
+
+# ------------------------------------------------------------------------------------------------ what it runs on
+
+# Without it the sample reads a stale bo.sub or bo.deep (last tick's, or a creative player's): a player who climbed out
+# of the water keeps tiring on land, or the sample runs for creative and spectator players. water/tick must run before
+# surface/tick in the same tick for the same players (survival and adventure), and reset both scores every tick.
+def test_the_sample_reads_this_ticks_eye_state_for_survival_and_adventure_players_only():
+    tick = TB.commands("blackout/tick")
+    iw = next(i for i, l in enumerate(tick) if l.endswith("run function %s:water/tick" % NS))
+    isf = next(i for i, l in enumerate(tick) if l.endswith("run function %s:surface/tick" % NS))
+    assert iw < isf, (iw, isf)
+    for i in (iw, isf):
+        sel = re.search(r" as (@[ae]\[[^\]]*\])", tick[i]).group(1)
+        assert "gamemode=!creative" in sel and "gamemode=!spectator" in sel, tick[i]
+        assert sel.startswith("@a") or "type=player" in sel, tick[i]
+    # a player on land with last tick's eyes-under-water scores: water/tick clears them and the sample recovers
+    s = _sim(strict=False)
+    s.state["water"] = LAND
+    for k, v in (("bo.sub", 1), ("bo.deep", 1), ("bo.fat", 500), ("bo.fwarn", 1)):
+        s.set("@s", k, v)
+    s.call("water/tick")
+    assert (s.get("@s", "bo.sub"), s.get("@s", "bo.deep")) == (0, 0)
+    s.call("surface/tick")
+    assert not s.missing, s.missing
+    assert s.get("@s", "bo.fat") == 500 - REC
+
+
+# Without it the pack still carries (or calls) the retired distance-from-land map: 640 surface/r/<z> row functions and
+# the surface/row macro, or `python tools/blackout_pack.py` again needs the canonical heightmap (tools/open_water.py,
+# tools/ground.py) to build. The pack written by main() is exactly the pack build() returns.
+def test_the_pack_has_no_sea_map_and_builds_without_the_heightmap(tmp_path, monkeypatch):
+    for mod in ("open_water", "ground", "terrain"):
+        monkeypatch.setitem(sys.modules, mod, None)              # importing any of them now raises ImportError
+    out = tmp_path / "cobblers_blackout"
+    assert BP.main(["--out", str(out)]) == 0
+    written = {p.relative_to(out).as_posix(): p.read_text(encoding="utf-8") for p in out.rglob("*") if p.is_file()}
+    assert written == TB.PACK
+    surface = sorted(n for n in TB.FNS if n.startswith("surface/"))
+    assert surface == ["surface/collapse", "surface/load", "surface/recover", "surface/tick", "surface/warn_exhausted",
+                       "surface/warn_tiring"], surface
+    assert not [k for k in written if "/surface/r/" in k or k.endswith("surface/row.mcfunction")]
+    assert not [l for n in surface for l in TB.FNS[n] if re.search(r"surface/r(/|ow\b)", l) or "$(" in l]
+
+
+# ------------------------------------------------------------------------------------------------ thresholds and hits
 
 # Without it the warnings repeat every sample or never come, the slowness starts at the wrong fatigue, or fatigue grows
 # without bound (a swimmer then needs hours on land to recover).
 def test_warnings_come_once_effects_follow_the_thresholds_and_fatigue_is_capped():
-    s = _swim(samples=SURF["exhausted_ticks"] // GAIN_OPEN + 2)
+    s = _swim(samples=SURF["exhausted_ticks"] // GAIN_SHALLOW + 2)
     tellraws = [l for l in s.log if l.startswith("tellraw")]
     assert len([l for l in tellraws if CFG["messages"]["surface_tiring"] in l]) == 1, tellraws
     assert len([l for l in tellraws if CFG["messages"]["surface_exhausted"] in l]) == 1, tellraws
-    slow = _swim(fat=SURF["slow_ticks"] - GAIN_OPEN - 1)
+    slow = _swim(fat=SURF["slow_ticks"] - GAIN_SHALLOW - 1)
     assert "effect give @s minecraft:slowness 2 0 true" not in slow.log
-    slow = _swim(fat=SURF["slow_ticks"] - GAIN_OPEN)
+    slow = _swim(fat=SURF["slow_ticks"] - GAIN_SHALLOW)
     assert "effect give @s minecraft:slowness 2 0 true" in slow.log
-    exh = _swim(fat=SURF["exhausted_ticks"] - GAIN_OPEN)
+    exh = _swim(fat=SURF["exhausted_ticks"] - GAIN_SHALLOW)
     assert {"effect give @s minecraft:slowness 2 1 true", "effect give @s minecraft:hunger 2 0 true"} <= set(exh.log)
-    cap = _swim(x=DEEP_X, fat=FCAP - 1, samples=3)
+    cap = _swim(water=DEEP, fat=FCAP - 1, samples=3)
     assert cap.get("@s", "bo.fat") == FCAP
 
 
 # Without it a collapse deals some other damage than drowning's half-health hit (the ladder's lethal-from-half rule and
 # its message would not apply), or never hits at all.
 def test_a_collapse_pulse_reuses_the_drowning_hit():
-    assert "function %s:water/pulse" % TB.NS in TB.FNS["surface/collapse"]
-    s = _swim(fat=FCOL - GAIN_OPEN)
+    assert "function %s:water/pulse" % NS in TB.FNS["surface/collapse"]
+    s = _swim(fat=FCOL - GAIN_SHALLOW)
     assert [c[0] for c in s.calls if c[0].startswith("water/")] == ["water/pulse", "water/pulse_apply"], s.calls
     assert "damage @s 10 minecraft:drown" in s.log, s.log
-    s = _swim(fat=FCOL - GAIN_OPEN, health=10 + CFG["water"]["pulse_regen_margin"])
+    s = _swim(fat=FCOL - GAIN_SHALLOW, health=10 + CFG["water"]["pulse_regen_margin"])
     assert "damage @s 1000 minecraft:drown" in s.log, s.log
-    assert not [c for c in _swim(fat=FCOL - GAIN_OPEN - 1).calls if c[0] == "water/pulse"]
+    assert not [c for c in _swim(fat=FCOL - GAIN_SHALLOW - 1).calls if c[0] == "water/pulse"]
+
+
+WHERE = {"shallow": SHALLOW, "deep": DEEP, None: LAND}
 
 
 def _hits(plan, f0, fpt=None):
-    """Run one sample per (x, qual) in `plan` from fatigue f0; ([fatigue after each sample], [samples that hit])."""
+    """Run one sample per (water, qual) in `plan` from fatigue f0 (water "shallow", "deep" or None for a sample on land
+    or a ledge); ([fatigue after each sample], [samples that hit])."""
     s = _swim(fat=f0, samples=0, fpt=fpt)
     fats, hits = [], []
-    for i, (x, qual) in enumerate(plan):
-        s.state["x"], s.state["water"] = (x, x is not None)       # x None: a sample on land (or a ledge)
+    for i, (where, qual) in enumerate(plan):
+        s.state["water"] = WHERE[where]
         s.set("@s", "bo.qual", qual)
         s.calls.clear()
         s.call("surface/tick")
@@ -360,20 +334,21 @@ def _hits(plan, f0, fpt=None):
 
 N = 48
 PLANS = {
-    "open": [(OPEN_X, 0)] * N,
-    "deep": [(DEEP_X, 0)] * N,
-    "open, trained": [(OPEN_X, 1)] * N,
-    "deep, trained": [(DEEP_X, 1)] * N,
-    "open, then the deep after collapse": [(OPEN_X, 0)] * 14 + [(DEEP_X, 0)] * (N - 14),
-    "open trained, then the deep untrained after collapse": [(OPEN_X, 1)] * 17 + [(DEEP_X, 0)] * (N - 17),
-    "deep, then open, the partner coming and going": [(DEEP_X, 0), (OPEN_X, 1), (DEEP_X, 1), (OPEN_X, 0)] * (N // 4),
+    "shallow": [("shallow", 0)] * N,
+    "deep": [("deep", 0)] * N,
+    "shallow, trained": [("shallow", 1)] * N,
+    "deep, trained": [("deep", 1)] * N,
+    "shallow, then the deep after collapse": [("shallow", 0)] * 14 + [("deep", 0)] * (N - 14),
+    "shallow trained, then the deep untrained after collapse": [("shallow", 1)] * 17 + [("deep", 0)] * (N - 17),
+    "deep, then shallow, the partner coming and going": [("deep", 0), ("shallow", 1), ("deep", 1),
+                                                         ("shallow", 0)] * (N // 4),
 }
 
 
 # Without it a collapsed swimmer is hit twice in half a second (and dies on the second) or never at all, depending on
-# the band, the partner and where the count started (found by this suite at 5d522d7; 5bcecec gave the hits a clock of
+# the depth, the partner and where the count started (found by this suite at 5d522d7; 5bcecec gave the hits a clock of
 # their own, EXP-044): the first hit lands on the sample collapse is reached, then exactly one every pulse_ticks of
-# TIME, in any band, trained or not, and across a change of band or partner after collapse.
+# TIME, in any water, trained or not, and across a change of depth or partner after collapse.
 @pytest.mark.parametrize("plan", sorted(PLANS))
 def test_past_collapse_a_hit_lands_once_per_pulse_ticks_of_time(plan):
     assert FPULSE % PER == 0, "the expectation below assumes pulse_ticks is a whole number of samples"
@@ -394,27 +369,27 @@ def test_past_collapse_a_hit_lands_once_per_pulse_ticks_of_time(plan):
 @pytest.mark.parametrize("f0", [FCOL, FCOL + 35, FCAP])
 def test_a_swimmer_already_past_collapse_is_hit_at_once_and_then_on_the_clock(f0):
     every = FPULSE // PER
-    _, hits = _hits([(DEEP_X, 0)] * N, f0)
+    _, hits = _hits([("deep", 0)] * N, f0)
     assert hits == list(range(0, N, every)), hits
 
 
 # Without it a collapsed swimmer who touches land or a ledge for one sample, or dismounts a water Pokemon, and goes
 # back in is hit at once, however recently the last hit landed: grabbing at the shore every other sample would bring a
-# hit every 20 ticks instead of every pulse_ticks. EXP-044's rule is one hit "as collapse is reached and every 3 s
-# after"; a swimmer still past collapse has not reached it again. (Found by this suite at 5bcecec: a hit every 20 ticks;
-# fixed in 2a70841.) One who recovers below collapse and comes back reaches it again, and is hit as they do.
+# hit every 20 ticks instead of every pulse_ticks. (Found by this suite at 5bcecec; fixed in 2a70841.) One who recovers
+# below collapse and comes back reaches it again, and is hit as they do.
 def test_a_touch_of_land_past_collapse_does_not_bring_the_next_hit_early():
     every = FPULSE // PER
-    fats, hits = _hits([(DEEP_X, 0), (None, 0)] * (N // 2), 1500)
+    fats, hits = _hits([("deep", 0), (None, 0)] * (N // 2), FCOL + 300)
     assert all(f >= FCOL for f in fats), "the swimmer stays past collapse throughout"
     gaps = [b - a for a, b in zip(hits, hits[1:])]
     assert hits and all(g >= every for g in gaps), (hits[:6], gaps[:6])
-    # recovered to just under collapse on land, then back into the deep: the first water sample reaches collapse again
-    # (from collapse + 10: two deep samples, three on land, then the deep again)
-    plan = [(DEEP_X, 0)] * 2 + [(None, 0)] * 3 + [(DEEP_X, 0)] * (every + 3)
-    fats, hits = _hits(plan, FCOL + 10)
-    assert fats[4] < FCOL <= fats[5], fats
-    assert hits == [0, 5, 5 + every], (hits, fats)
+    # at collapse: one deep sample (hit), then enough samples on land to drop back under collapse, then the deep again;
+    # the first deep sample after reaches collapse again and is hit as it does
+    land = GAIN_DEEP // REC + 1
+    plan = [("deep", 0)] + [(None, 0)] * land + [("deep", 0)] * (every + 3)
+    fats, hits = _hits(plan, FCOL)
+    assert fats[land] < FCOL <= fats[land + 1], fats
+    assert hits == [0, land + 1, land + 1 + every], (hits, fats)
 
 
 # Without it sample_ticks is half honoured: the gains and the collapse clock scale with it, but the tick that runs
@@ -422,11 +397,9 @@ def test_a_touch_of_land_past_collapse_does_not_bring_the_next_hit_early():
 # fixed in 5bcecec.)
 @pytest.mark.parametrize("sample", [SURF["sample_ticks"], 20])
 def test_the_surface_tick_runs_every_sample_ticks(sample):
-    cfg = copy.deepcopy(CFG)
-    cfg["surface"]["sample_ticks"] = sample
-    fns = TB.functions(TB.build(cfg))
+    fns = TB.functions(_pack_with(sample_ticks=sample))
     tick = [l for l in fns["blackout/tick"] if not l.startswith("#")]
-    i = next(i for i, l in enumerate(tick) if l.endswith("run function %s:surface/tick" % TB.NS))
+    i = next(i for i, l in enumerate(tick) if l.endswith("run function %s:surface/tick" % NS))
     holder = re.match(r"execute if score (#\w+) bo\.tmp matches 0 ", tick[i]).group(1)
     ops = [l for l in tick[:i] if l.startswith("scoreboard players operation %s bo.tmp " % holder)]
     assert ops[-2] == "scoreboard players operation %s bo.tmp = #gt bo.tmp" % holder, ops
@@ -436,3 +409,53 @@ def test_the_surface_tick_runs_every_sample_ticks(sample):
               if l.startswith("scoreboard players set #")}
     assert consts[mod] == sample, (mod, consts[mod])
 
+
+# ------------------------------------------------------------------------------------------------ the feel
+
+def _timeline(water, qual=0, samples=60):
+    """Seconds (at sample_ticks per sample, 20 ticks a second, the first sample one interval in) at which a fresh
+    swimmer is first warned, slowed, exhausted and hit, and the second hit."""
+    s = _swim(water=water, qual=qual, samples=0)
+    seen = {}
+    for i in range(samples):
+        s.log.clear()
+        s.calls.clear()
+        s.call("surface/tick")
+        t = (i + 1) * PER / 20
+        marks = {"warned": any(CFG["messages"]["surface_tiring"] in l for l in s.log),
+                 "slowed": "effect give @s minecraft:slowness 2 0 true" in s.log,
+                 "exhausted": "effect give @s minecraft:slowness 2 1 true" in s.log,
+                 "hit": any(c[0] == "water/pulse" for c in s.calls)}
+        for k, v in marks.items():
+            if v and k not in seen:
+                seen[k] = t
+            elif v and k == "hit" and "hit2" not in seen and t > seen["hit"]:
+                seen["hit2"] = t
+    return seen
+
+
+# Without it the data's "feel" note (what the owner was told a swim is like) drifts from what the pack does: "in deep
+# water an unaided swimmer is warned at 5 s, slowed at 7.5 s, exhausted at 11 s and hit from 15 s ... dead about 3 s
+# later; in shallow water each step takes four times as long. A trained swimmer with a partner gets twice as far".
+# Within one sample (the phase of the first sample is unknown in game).
+def test_the_feel_note_matches_the_pack():
+    tol = PER / 20
+    deep = _timeline(DEEP)
+    want = {"warned": 5, "slowed": 7.5, "exhausted": 11, "hit": 15, "hit2": 18}
+    assert all(abs(deep[k] - v) <= tol for k, v in want.items()), (deep, want)
+    shallow = _timeline(SHALLOW, samples=4 * 60)
+    assert abs(shallow["warned"] - 4 * deep["warned"]) <= tol, (shallow, deep)
+    trained = _timeline(DEEP, qual=1, samples=120)
+    assert abs(trained["warned"] - 2 * deep["warned"]) <= tol and abs(trained["hit"] - 2 * deep["hit"]) <= tol
+
+
+# Without it the owner's two named crossings flip: "Rivers (at most about 32 wide) stay crossable; the channel
+# south-west of Pallet (over 100 blocks of deep water) ... do[es] not, unaided", at the note's 5 blocks per second.
+# (Slowness only lengthens the channel; it is not modelled, so the channel case is the conservative one.)
+def test_a_river_is_crossable_unaided_and_the_pallet_channel_is_not():
+    speed = 5
+    for width, crossable in ((32, True), (100, False)):
+        samples = -(-width * 20 // (speed * PER))              # samples until across, rounded up
+        s = _swim(water=DEEP, samples=samples)
+        hit = any(c[0] == "water/pulse" for c in s.calls)
+        assert hit != crossable, (width, s.get("@s", "bo.fat"))
