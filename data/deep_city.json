@@ -1,0 +1,228 @@
+{
+  "schema": "cobblers.deep_city/1",
+  "status": "the Windward Deep's city shell and Hoopa's relic area surface, generated. Built into build/ only; not yet run on staging, not seen in game.",
+  "builder": "tools/deep_city.py",
+  "audit": "tools/deep_city_audit.py",
+  "design": "docs/world-building/DEEP_CITY.md",
+  "seed": 20260927,
+  "ground": "Every position comes from the pit's ring model (tools/rift_deep.py model() and lift_sites(): the owner's traced region, the canonical heightmap and data/rift_deep.json) and, for the relic area, from its traced region and tools/ground.py. Never from a world.",
+  "scope": {
+    "built": "the ring streets' dressing, riser buildings for the families on every ring, the Compact's HQ as the dominant building, stair towers round every lift bank and the Sink Gate, the Core spire and its bridges, the lighting layers L1-L7, the Centre and Mart, and the relic area's surface",
+    "not_built": [
+      "Hoopa's cradle, the cradle passage, the HQ's basement and its secure shaft: reserved volumes below, sealed rock, carved by nobody until Codex's story data exists",
+      "the confrontation and every room's dressing: the rooms are empty shells, labelled here",
+      "the relic cavern's interior: the cavern stays sealed",
+      "L8 holo-signs (text_display entities) and L9 motion: entities and a tick loop, each needing its own proof first (DEEP_CITY.md section 9)",
+      "NPCs, the Mart clerk and the Compact's people: entities, placed by their own steps",
+      "the Slip (the barrier between the dig camp and the relic area): a sculpt stroke in the heightmap and an owner decision (DEEP_CITY.md section 6); the cordon here is only the Compact's fence"
+    ]
+  },
+  "decisions": [
+    {"id": "owner_decisions", "call": "DEEP_CITY.md section 10, decisions 1-4 taken by their recommended default so the shell could be built; 5-10 left open and not built", "why": "1: built-in light for the Deep only. 2: static light, no redstone, so no Rotom in the Works. 3: no long glass span to the north promenade. 4: the HQ's sited point kept as its basement under the west riser block. 5 (adventure mode), 6 (a waystone), 7 (Hoopa after release), 8 (the barrier), 9 (the Key Stone) and 10 (the zone line) change nothing built here and are the owner's."},
+    {"id": "palette", "call": "the future from what the pack has: dressed concrete panels, waxed copper and tinted glass, lit from inside by vanilla emitters and the Rift's own violet block", "why": "Nothing in the pack is futuristic. What reads as future in Minecraft is clean monolithic surfaces, exposed engineered metal, glass and light built into the fabric instead of hung on it. Every block below exists in vanilla 1.21.1 or was already placed on staging by an audited build."},
+    {"id": "riser_buildings", "call": "every riser is lined with buildings whose ground floor is on the lower street and whose roof is flush with the street above", "why": "DEEP_CITY.md section 3: the city reads as one across all five elevations. The roofs become the upper street's outer terrace, which also gives the lumymon lifts a floor to land on (see lift_landings)."},
+    {"id": "lift_landings", "call": "each lift bank is wrapped by a stair tower sited so the up-lift lands on the tower's roof and the down-lift lands inside the tower", "why": "Read from data/rift_deep.json: a lift moves a player by yOffset at the same column. The lower lift stands against the riser, so its target 17 up is open air over the lower ring (a fall), and the upper lift's target 17 down is inside the upper ring's rock. Riding was never proven; with the towers both ends land on floor if it works, and the stairs work if it does not."},
+    {"id": "stairs_not_lifts", "call": "the walkable way between rings is a spiral stair round a light core in every tower, plus a ladder and a hand-opened copper roof hatch in every family building", "why": "An honest vanilla mechanism: stairs and ladders need no proof. Water elevators were rejected because water is a spawn condition for 84 species (DEEP_CITY.md section 7); scaffolding because a stack 17-66 tall reads as construction, not a city."},
+    {"id": "face_buildings", "call": "on the Core's floor, buildings stand against every face that rises from it (the 66 north face and the ends of rings 1-3) with their roofs flush with the ring above", "why": "The sheer side is 25,518 columns of bare floor under a 66-block face. Buildings against it make the city span every elevation there too, and give the north promenade (ring 0) a terrace over them. None within the Victory Road mouth plaza."},
+    {"id": "centre_and_mart", "call": "the League's unused re-materialed CobbleTowns Centre and Mart (MIT, committed) on ring 0 beside the Sink Gate, placed by /place template with their jigsaws replaced by their final states and their flowers cleared", "why": "DEEP_CITY.md section 1: the last Centre and Mart before the League. Deepslate tiles and cyan terracotta suit the pit; the healing machines and PCs are whitelisted for service buildings in data/spawn_block_policy.json. The flowers are cleared: a garden in the pit is not a decision anyone made."},
+    {"id": "hq_site", "call": "the HQ is the west sector of rings 0-3 and the floor below them, its tower on ring 0 over (3427, 3308)", "why": "rift_regions.json sites the HQ at (3427, 0, 3308) and DEEP_CITY.md owner decision 4 recommends keeping it as the basement under a west riser block. The HQ's sections are its public faces; the basement and shaft stay reserved rock."},
+    {"id": "cradle_location_disagreement", "call": "the cradle is taken as sited in data/rift_regions.json, under the relic area at (3357, 3306), floor y12", "why": "docs/story/FACTION.md still places the cradle beneath the League plateau at (3297, 2603). data/rift_regions.json and DEEP_CITY.md (both later) put it under the relic area. This build follows the later siting and reports the disagreement; it builds nothing at either."},
+    {"id": "no_holo_signs", "call": "district and lift signs are wall signs (blocks), not text_display entities", "why": "The brief: blocks only. L8 needs a re-apply step for entities and a proof that one survives it."},
+    {"id": "beacon", "call": "one beacon, on the spire, on a 3x3 gold base, beam turned cyan by a stained glass block", "why": "DEEP_CITY.md L6. Iron beacon bases are banned (Meltan); gold is not a spawn condition. Its beam in this pack's client is NOT VERIFIED."},
+    {"id": "relic_cordon", "call": "the relic area is ringed by the Compact's cordon (tinted glass under iron bars, copper posts with end rods), seen through, not entered; its gate faces the Deep and stays shut", "why": "DEEP_CITY.md section 5: before the finale the shrine is inside a Compact cordon, seen, not entered. The zone check (RIFT_ZONES.md section 4) is the real enforcement; the fence is the physical edge."}
+  ],
+  "materials": {
+    "panel_white": {"block": "moarconcrete:white_concrete_texture", "fallback": "minecraft:calcite", "for": "Rimside facades", "why": "a clean monolithic panel is what reads as modern; vanilla concrete draws Varoom and Revavroom in every overworld biome, Moar Concrete's byte-identical texture draws nothing (data/spawn_block_policy.json)"},
+    "panel_black": {"block": "moarconcrete:black_concrete_texture", "fallback": "minecraft:polished_blackstone", "for": "the HQ and Relay Row", "why": "the Compact's authority in the darkest panel the pack has, same spawn reason"},
+    "panel_cyan": {"block": "moarconcrete:cyan_concrete_texture", "fallback": "minecraft:warped_planks", "for": "the Works' accents and the Mart's district", "why": "the Compact's machinery colour, same spawn reason"},
+    "rib_teal": {"block": "minecraft:waxed_oxidized_copper", "for": "piers, corners and the spire's ribs everywhere", "why": "verdigris copper reads as engineered metal that has been there a while; waxed, so it never changes again, and copper conditions no spawn"},
+    "rib_teal_cut": {"block": "minecraft:waxed_oxidized_cut_copper", "for": "trim courses, stall canopies", "why": "the same metal as panelling"},
+    "grate": {"block": "minecraft:waxed_oxidized_copper_grate", "for": "the Works' cladding and sidewalks", "why": "industrial see-through grating, new in 1.21"},
+    "copper_warm": {"block": "minecraft:waxed_cut_copper", "for": "the Quarter's facades", "why": "fresh copper is warm: homes, not machinery"},
+    "tuff_stone": {"block": "minecraft:polished_tuff", "for": "the Quarter's walls and the relic shrine", "why": "a grey stone softer than blackstone; the 1.21 tuff family has bricks and chiseled forms for detail"},
+    "deep_stone": {"block": "minecraft:polished_deepslate", "for": "Core buildings and floors", "why": "the rock of the pit, dressed"},
+    "tread": {"block": "rechiseled:blackstone_polished_connecting", "fallback": "minecraft:polished_blackstone", "for": "roofs that are streets, bridge decks", "why": "the Deep's own tread block (data/rift_deep.json), so a roof reads as the street it is; placed on staging"},
+    "tread_edge": {"block": "rechiseled:basalt_bordered_polished", "fallback": "minecraft:polished_basalt", "for": "roof and bridge borders", "why": "the Deep's own edge block, placed on staging"},
+    "glass_window": {"block": "minecraft:light_blue_stained_glass", "for": "windows in homes and shops", "why": "cool daylight glass"},
+    "glass_dark": {"block": "minecraft:tinted_glass", "for": "the HQ's curtain walls and conduit casings", "why": "you can see it is glass and cannot see in: the Compact's secrecy, and it keeps the conduits' light inside the channel"},
+    "glass_conduit": {"block": "minecraft:cyan_stained_glass", "for": "light conduits", "why": "L4: the machinery colour round a sea lantern core"},
+    "glass_band": {"block": "minecraft:purple_stained_glass", "for": "the riser light band (L3)", "why": "violet is raw Rift energy (DEEP_CITY.md section 4)"},
+    "rail": {"block": "minecraft:light_blue_stained_glass_pane", "for": "every edge where a walk surface drops two or more", "why": "L2's railing: a glass balustrade, connections set explicitly so a fill never leaves a row of posts"},
+    "bars": {"block": "minecraft:iron_bars", "for": "the relic cordon, HQ grilles, signal masts", "why": "iron bars condition nothing; iron BLOCKS draw Meltan and are never used"},
+    "chain": {"block": "minecraft:chain", "for": "cables, lamp hangers", "why": "industrial detail"},
+    "hatch": {"block": "minecraft:waxed_copper_trapdoor", "for": "roof hatches over every ladder", "why": "a copper trapdoor opens by hand in 1.21 (an iron one needs redstone), and an open trapdoor over a ladder of the same facing is climbable"},
+    "door_sealed": {"block": "minecraft:iron_door", "for": "the HQ's restricted rooms", "why": "an iron door with no button is shut to everyone: sealed until the story gives it a mechanism"},
+    "seal": {"block": "minecraft:reinforced_deepslate", "for": "the relic entrance's seal and the shaft hatch", "why": "the hardest block a player can meet in survival, drops nothing: a physical seal"},
+    "ancient_stone": {"block": "minecraft:tuff_bricks", "for": "the relic shrine", "why": "older than the Compact: native masonry, not panels"},
+    "distortion": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:tuff", "for": "the relic arches", "why": "the Rift's own stone (data/rift_skin.json palette, placed on staging)"},
+    "hoopa_gold": {"block": "minecraft:raw_gold_block", "for": "the relic ring and its fragments", "why": "Hoopa's rings are gold; raw gold reads as found, not forged, and conditions no spawn"},
+    "rift_seep": {"block": "minecraft:crying_obsidian", "for": "keystones and inlays at the shrine", "why": "the Rift's seep block (data/rift_skin.json), light 10"}
+  },
+  "lights": {
+    "rule": "blocks only, never minecraft:light (docs/STATE.md: places are lit as towns, never light blocks). Built into the fabric: the Deep departs from lanterns on posts, which is DEEP_CITY.md owner decision 1.",
+    "language": {"violet": "raw Rift energy", "cyan_white": "the Compact's machinery", "warm": "homes"},
+    "emitters": {
+      "sea_lantern": {"block": "minecraft:sea_lantern", "level": 15, "colour": "cyan_white"},
+      "violet": {"block": "minecraft:pearlescent_froglight", "level": 15, "colour": "violet"},
+      "warm": {"block": "minecraft:ochre_froglight", "level": 15, "colour": "warm"},
+      "bulb": {"block": "minecraft:waxed_copper_bulb[lit=true,powered=false]", "level": 15, "colour": "warm", "why": "a copper bulb keeps its lit state with no redstone attached"},
+      "shroom": {"block": "minecraft:shroomlight", "level": 15, "colour": "warm"},
+      "end_rod": {"block": "minecraft:end_rod", "level": 14, "colour": "cyan_white"},
+      "lantern": {"block": "minecraft:lantern", "level": 15, "colour": "warm"},
+      "particle": {"block": "legendarymonuments:galar_particle_block", "fallback": "minecraft:pearlescent_froglight", "level": 15, "colour": "violet", "why": "L1, the tread grid tools/rift_deep.py already lays"},
+      "crystal": {"block": "mega_showdown:dormant_crystal", "fallback": "minecraft:end_rod", "level": 0, "colour": "violet", "why": "L5 accent on the spire; placed on staging as the skin's vein cores. Its light level is not read from the jar, so it counts for nothing in the model"},
+      "seep": {"block": "minecraft:crying_obsidian", "level": 10, "colour": "violet"}
+    },
+    "layers": {
+      "L1": "the tread grid, every 13 (tools/rift_deep.py): kept, counted in the model",
+      "L2": "contour lines: a sea lantern flush in the floor at every third railing column, under the glass railing",
+      "L3": "riser bands: at the second storey's window line of every facade, pearlescent froglight alternating with purple glass",
+      "L4": "conduits: the light core of every stair tower (sea lantern in cyan and tinted glass) rising four above its roof, and the Works' street conduit",
+      "L5": "the spire's column and its dormant-crystal crowns",
+      "L6": "one beacon on the spire",
+      "L7": "fixtures: end rods over doors, copper bulbs, lanterns and shroomlight in homes, the relic cordon's post lights"
+    },
+    "targets": {"street": 12, "roof": 8, "plaza": 8, "why": "DEEP_CITY.md section 4: 12 or more on every street and bridge (fightorflight calms Dark and Ghost at 12), 8 or more everywhere walkable. Modelled from the plan by manhattan distance with no occlusion, so optimistic next to walls: NOT a measurement."},
+    "fill_in": "where the fixtures leave a street cell under its target, a district light is set flush into the floor there, scanning in a fixed order, until every modelled cell meets it"
+  },
+  "streets": {
+    "why": "The treads are already paved (tools/rift_deep.py). A street is the band between the building fronts and the front row: a sidewalk in the district's paving along each facade, the tread between, a front row of stalls, pylons, benches or masts, and the railing at the drop.",
+    "sidewalk": 2,
+    "front_row_from": 24,
+    "front_row_every": 14,
+    "conduit_ring": 1,
+    "conduit_at": 21,
+    "conduit_why": "L4 in the Works: a flush line of sea lanterns in cyan glass along ring 1's street, the veins' channel from the sink made into the city's supply"
+  },
+  "buildings": {
+    "zone_depth": 16,
+    "depths": [11, 13, 15, 16],
+    "frontage": 16,
+    "storey": 5,
+    "pier_every": [3, 4],
+    "min_columns": 40,
+    "why": "DEEP_CITY.md section 3: a 16-block frontage and a building about as deep, leaving a street of 10-20 and a front row on a 36-wide tread. Storeys of 5 give three floors in a 17 riser. Lots are cells of seeds sown along the risers, so they follow the pit's traced curve instead of a grid."
+  },
+  "districts": {
+    "rimside": {
+      "ring": 0, "name": "Rimside", "character": "arrival, trade, the view",
+      "wall": "panel_white", "trim": "rib_teal", "window": "glass_window", "floor": "deep_stone", "roof": "tread",
+      "sidewalk": "minecraft:calcite", "interior_light": "sea_lantern", "floor_light": "sea_lantern",
+      "front_row": "stall"
+    },
+    "works": {
+      "ring": 1, "name": "The Works", "character": "the Rift's fuel made useful",
+      "wall": "grate", "wall_alt": "panel_cyan", "trim": "rib_teal", "window": "glass_conduit", "floor": "deep_stone", "roof": "tread",
+      "sidewalk": "minecraft:waxed_oxidized_copper_grate", "interior_light": "sea_lantern", "floor_light": "sea_lantern",
+      "front_row": "pylon"
+    },
+    "quarter": {
+      "ring": 2, "name": "The Quarter", "character": "where the families live; warm light only",
+      "wall": "tuff_stone", "wall_alt": "copper_warm", "trim": "rib_teal", "window": "glass_window", "floor": "minecraft:stripped_dark_oak_wood", "roof": "tread",
+      "sidewalk": "minecraft:tuff_bricks", "interior_light": "warm", "floor_light": "warm",
+      "front_row": "bench", "furnish": true
+    },
+    "relay": {
+      "ring": 3, "name": "Relay Row", "character": "the Compact's civic floor",
+      "wall": "panel_black", "trim": "rib_teal", "window": "glass_conduit", "floor": "deep_stone", "roof": "tread",
+      "sidewalk": "minecraft:polished_blackstone_bricks", "interior_light": "sea_lantern", "floor_light": "sea_lantern",
+      "front_row": "mast"
+    },
+    "core": {
+      "ring": 4, "name": "The Core", "character": "the heart and the exit",
+      "wall": "deep_stone", "wall_alt": "panel_black", "trim": "rib_teal", "window": "glass_dark", "floor": "deep_stone", "roof": "tread",
+      "sidewalk": "minecraft:deepslate_tiles", "interior_light": "violet", "floor_light": "violet",
+      "front_row": "none"
+    },
+    "stacks": {
+      "ring": "sheer floor", "name": "The Stacks", "character": "the families' tower blocks against the north face, their roofs the north promenade",
+      "wall": "tuff_stone", "wall_alt": "panel_white", "trim": "rib_teal", "window": "glass_window", "floor": "minecraft:stripped_dark_oak_wood", "roof": "tread",
+      "sidewalk": "minecraft:deepslate_tiles", "interior_light": "warm", "floor_light": "violet",
+      "front_row": "none", "furnish": true
+    },
+    "hq": {
+      "name": "The Compact's HQ", "character": "one building down the west risers",
+      "wall": "panel_black", "trim": "rib_teal", "window": "glass_dark", "floor": "deep_stone", "roof": "tread",
+      "sidewalk": "minecraft:polished_blackstone_bricks", "interior_light": "sea_lantern", "floor_light": "sea_lantern"
+    }
+  },
+  "plaza": {
+    "paving": "minecraft:polished_deepslate",
+    "grid": "rechiseled:basalt_bordered_polished",
+    "grid_fallback": "minecraft:polished_basalt",
+    "grid_every": 9,
+    "why": "The Core's floor on the sheer side is bare rock at y0 (tools/rift_deep.py lays no tread there). Paved flush at y0 in dressed deepslate with a basalt grid, so the floor reads as the city's lowest square, not the bottom of a hole."
+  },
+  "towers": {
+    "footprint": 7,
+    "pylon_above_roof": 4,
+    "why": "One stair tower round every lift bank (DEEP_CITY.md section 3): a 5x5 spiral stair round a 3x3 light core, 16 steps a turn, inside a 7x7 wall. The riser is 15 or 17, so the last step always lands on the back row, beside the wall the player steps over onto the street above."
+  },
+  "sink_gate": {
+    "toward_region": "the_sink",
+    "why": "DEEP_CITY.md finding 1: there is no way from the Rift floor (y83) down to ring 0. The Sink Gate is a stair tower from the lip to ring 0 where the approach from the sink arrives; every ring-0 building's ladder and hatch is a second way down."
+  },
+  "services": {
+    "centre": {"template": "cobblers:f4/services/towns/league_center", "file": "kits/structures/campaign/f4/services/towns/league_center.nbt", "search_degrees": 70},
+    "mart": {"template": "cobblers:f4/services/towns/league_mart", "file": "kits/structures/campaign/f4/services/towns/league_mart.nbt", "search_degrees": 70},
+    "near": "sink_gate",
+    "why": "Rimside holds the Centre and Mart by the Sink Gate (DEEP_CITY.md section 3), so an arriving player finds them first."
+  },
+  "spire": {
+    "radius": 8,
+    "top": 100,
+    "deck_every": 16,
+    "bridge_y": 15,
+    "bridge_width": 3,
+    "why": "DEEP_CITY.md section 3: 15-21 across on the floor core, a glass shell over a light column, rising to about y100 so its top shows over the lip from the Rift floor; bridges at y15 to Relay Row. Sited at the floor column furthest from every riser. The long glass span to the north promenade (owner decision 3) is not built."
+  },
+  "hq": {
+    "bearing": [244, 266],
+    "floor_bearing": [205, 262],
+    "floor_bearing_why": "On the floor the west sector is narrow: the ring-3/floor lift tower and the spire's west bridge take most of it, and the window the rings use left the HQ's lower hall 41 columns. Widened southward on the floor only, so the hall the confrontation may use is a hall.",
+    "tower": {"at": [3427, 3308], "size": 11, "top": 132},
+    "symbol": "an open ring crossed by a short bridge (docs/story/FACTION.md), in sea lanterns on the tower's face towards the city",
+    "cordon": "iron bars on a tinted-glass course round the HQ's lower door on the Core (DEEP_CITY.md section 3)",
+    "why": "The dominant building: its sections take the west sector's riser lots on every ring and the floor, all in black panel and tinted glass, and its tower rises 48 over the lip from the ring-0 section, over the sited HQ column."
+  },
+  "rooms": [
+    {"id": "hq_secure_shaft_head", "in": "hq", "ring": 0, "storey": 0, "sealed": true, "who": "the loyalists", "note": "the head of the secure shaft to the basement at (3427, 0, 3308). The shaft is reserved rock below; a reinforced-deepslate hatch in the floor marks where it will open."},
+    {"id": "hq_director_office", "in": "hq", "ring": 0, "storey": -1, "sealed": true, "who": "Director Elara Venn"},
+    {"id": "hq_briefing_hall", "in": "hq", "ring": 1, "storey": 0, "sealed": false, "who": "Captain Brann Saye's guards"},
+    {"id": "hq_archive", "in": "hq", "ring": 2, "storey": 0, "sealed": false, "who": "the Compact's records"},
+    {"id": "hq_anchor_control", "in": "hq", "ring": 3, "storey": 0, "sealed": true, "who": "Oren Pell", "note": "anchor control on the HQ's Relay Row front (DEEP_CITY.md section 3)"},
+    {"id": "hq_lower_hall", "in": "hq", "ring": 4, "storey": 0, "sealed": true, "who": "the loyalists", "note": "the HQ's lower door on the Core, inside the cordon; the likeliest stage for the confrontation, whose staging waits on Codex"},
+    {"id": "hq_tower", "in": "hq_tower", "sealed": true, "who": "the Compact", "note": "the tower's storeys, empty; no way in is built"},
+    {"id": "survey_office", "in": "lot", "ring": 3, "bearing": 185, "who": "Tomas Rill"},
+    {"id": "signal_room", "in": "lot", "ring": 3, "bearing": 150, "who": "Oren Pell"},
+    {"id": "nia_clinic", "in": "lot", "ring": 2, "bearing": 205, "who": "Nia Calder"},
+    {"id": "aster_home", "in": "lot", "ring": 2, "bearing": 170, "who": "the Aster family"},
+    {"id": "canteen", "in": "lot", "ring": 2, "bearing": 140, "who": "the Quarter"},
+    {"id": "school", "in": "lot", "ring": 2, "bearing": 115, "who": "the Quarter"},
+    {"id": "refinery_hall", "in": "lot", "ring": 1, "bearing": 100, "who": "the Works"},
+    {"id": "conduit_house", "in": "lot", "ring": 1, "bearing": 150, "who": "the Works", "note": "where the veins from the sink enter the city"}
+  ],
+  "reserved": [
+    {"id": "hoopa_cradle", "box": [3317, -12, 3266, 3397, 72, 3346], "why": "the relic cavern: Hoopa's cradle, sited at (3357, 3306) floor y12 under the relic area (data/rift_regions.json sited.hoopa_cradle), 40 either way for a chamber and the Displaced City's 24-block rock shell (tools/cavern_plan.py precedent), up to y72, 14 under the lowest relic ground. Sealed: nothing is written here."},
+    {"id": "cradle_passage", "box": [3357, -4, 3298, 3433, 24, 3318], "why": "the 70-block passage from the HQ basement to the cradle, climbing 12 (data/rift_regions.json sited.cradle_passage)"},
+    {"id": "hq_basement", "box": [3419, -4, 3296, 3445, 16, 3320], "why": "the HQ's basement at (3427, 0, 3308) (data/rift_regions.json sited.haven_compact_hq), under ring 0's rock"},
+    {"id": "hq_secure_shaft", "box": [3423, 0, 3304, 3431, 65, 3312], "why": "the secure shaft from the HQ's ring-0 front down to the basement (DEEP_CITY.md section 5), in the rock under ring 0's tread"}
+  ],
+  "keep_clear": {
+    "mouth_tunnel": {"half_width": 5, "north": 90, "south": 2, "height": 8, "why": "Victory Road's mouth tunnel (data/vr_caves.json mouth, 7 wide, floor y1): nothing written"},
+    "mouth_plaza": {"half_width": 32, "south": 60, "height": 40, "why": "the plaza before Victory Road's mouth (DEEP_CITY.md section 3): open floor, nothing standing on it"},
+    "lift_headroom": 2,
+    "why": "The Deep's floor exit is Victory Road's mouth; its other paths are the lift banks. Nothing is written in the mouth tunnel or over the plaza before it, and nothing into a lift block or the two blocks a rider stands in."
+  },
+  "relic_area": {
+    "region": "relic_area_shrine",
+    "shrine": {"centre": [3386, 3300], "radius": 16, "steps": 3, "why": "the widest ground of the traced area, on its waist, between the cradle (west) and the Deep's lip (east)"},
+    "arches": {"count": 6, "orbit": 13, "radius": 4, "why": "DEEP_CITY.md section 5: six standing ring arches 7-9 tall, Distortion stone with crying-obsidian and purple-glass inlay"},
+    "ring": {"radius": 8, "plinth": 3, "gap_degrees": 50, "why": "the relic ring on its central plinth: 17 across on a 3-block plinth, so it stands over 20 above the shrine and shows against the sky from the dig camp 250 blocks west. Broken: a gap where a fragment is missing"},
+    "sealed_entrance": {"at": [3360, 3304], "facing": "east", "depth": 4, "why": "a sunken forecourt four down to a doorway sealed with reinforced deepslate behind iron bars, on the cradle's side of the shrine. Nothing is carved behind the seal."},
+    "lookout": {"at": [3417, 3300], "why": "the terrace looking down over all five rings (DEEP_CITY.md section 5), at the traced area's east edge over the lip, with a paved processional way to it from the shrine"},
+    "stones": {"count": 8, "orbit": 24, "height": [5, 8], "fallen": 2, "why": "standing stones round the shrine, native work older than the Compact, two of them fallen: the site reads as old from the dig camp's side before the ring does"},
+    "debris": {"trenches": 7, "heaps": 9, "fragments": 5, "why": "the Compact's dig: survey trenches, spoil heaps, fallen ring fragments, crates"},
+    "cordon": {"height": 3, "post_every": 8, "gate_toward": "the_deep", "why": "the Compact's fence round the whole traced area, gate shut towards the Deep"}
+  }
+}

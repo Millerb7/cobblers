@@ -151,18 +151,17 @@ def region_mask(region_id, source_root):
     return m, (X0, Z0, X1, Z1), n
 
 
-def build(source_root, server_dir=None):
+def model(source_root, spec=None):
+    """The pit's ring model, from the owner's traced region and the canonical heightmap: which ring every column
+    belongs to, how far it is from the pit's edge, and which columns the sheer side flattened. This is the plan data
+    every build in the Deep takes its positions from (tools/deep_city.py stands its city on it), never a world."""
     import ground as G
-    spec = json.loads(SPEC.read_text(encoding="utf-8"))
-    have = installed_blocks(server_dir)
+    spec = spec or json.loads(SPEC.read_text(encoding="utf-8"))
     mask, (X0, Z0, X1, Z1), n_cols = region_mask(spec["region"].split(",")[0], source_root)
     g = G.load(source_root)
     H = g.box(X0, Z0, X1, Z1)
     if H.shape != mask.shape:
         raise DeepError("the heightmap box %s and the mask %s disagree" % (H.shape, mask.shape))
-
-    light_b = pick(spec["light"]["block"], spec["light"]["fallback"], have)
-    floor_y = spec["floor_y"]
 
     # distance from the pit's edge, which is what puts each column in its ring
     zz, xx = np.nonzero(mask)
@@ -180,22 +179,9 @@ def build(source_root, server_dir=None):
             if 0 <= nz < mask.shape[0] and 0 <= nx < mask.shape[1] and mask[nz, nx] and not inside[nz, nx]:
                 inside[nz, nx] = inside[z, x] + 1
                 q.append((nz, nx))
-    far = float(inside.max())
 
-    lines, checks, counts = [], [], {}
-
-    def count(k, v=1):
-        counts[k] = counts.get(k, 0) + v
-
-    # The pit: five rings stepping down to the floor, every column open to the sky above its own tread.
     rings = spec["rings"]
     treads, W = rings["treads"], rings["width"]
-    tread = spec["tread"]
-    tread_b = pick(tread["block"], tread["fallback"], have)
-    edge_b = pick(tread["edge"], tread["edge_fallback"], have)
-    restore_b = pick(spec["restore"]["block"], spec["restore"]["fallback"], have)
-    d = spec["shell"]["depth"]
-
     # The sheer side: towards the tunnel the pit takes ring 0's street and then falls away in one face to the
     # floor, instead of stepping all five rings round. It gives the tunnel a back wall to come out of, and stops
     # the rings wrapping the pit like a stadium (owner, 2026-09-23).
@@ -206,9 +192,8 @@ def build(source_root, server_dir=None):
         tb = json.loads(REGIONS.read_text(encoding="utf-8"))["regions"][sheer["toward"]]["bbox"]
         tx, tz = (tb[0] + tb[2]) / 2.0 - X0, (tb[1] + tb[3]) / 2.0 - Z0
         toward = math.atan2(tx - cx_, tz - cz_)
-
-    ring_of, tread_of = {}, {}
-    n_sheer = 0
+    ring = np.full(mask.shape, -1, np.int32)
+    sheer_col = np.zeros(mask.shape, bool)
     for z, x in zip(zz.tolist(), xx.tolist()):
         k = min(len(treads) - 1, int(inside[z, x]) // W)
         if toward is not None and k >= sheer["keeps_rings"]:
@@ -216,10 +201,78 @@ def build(source_root, server_dir=None):
             a = (a + math.pi) % (2 * math.pi) - math.pi
             if abs(math.degrees(a)) <= sheer["half_angle_degrees"]:
                 k = len(treads) - 1          # straight to the floor: no terraces on this side
-                n_sheer += 1
-        ring_of[(z, x)] = k
-        tread_of[(z, x)] = treads[k]
-    count("columns on the sheer side, dropped straight to the floor", n_sheer)
+                sheer_col[z, x] = True
+        ring[z, x] = k
+    tread_y = np.where(ring >= 0, np.asarray(treads)[np.maximum(ring, 0)], -9999)
+    return {"mask": mask, "box": (X0, Z0, X1, Z1), "H": H, "inside": inside, "ring": ring, "tread_y": tread_y,
+            "sheer": sheer_col, "treads": treads, "width": W, "centre": (cx_ + X0, cz_ + Z0),
+            "toward": toward, "spec": spec}
+
+
+def lift_sites(m):
+    """The lift pairs at the risers, as [(ring boundary k, (x, y, z, yOffset) lower, (x, y, z, yOffset) upper)].
+
+    A pair straddles each boundary -- one on the lower tread going up, one on the upper tread going down -- because
+    a single column belongs to exactly one ring."""
+    spec, mask, inside, ring = m["spec"], m["mask"], m["inside"], m["ring"]
+    treads, W = m["treads"], m["width"]
+    X0, Z0 = m["box"][0], m["box"][1]
+    lift = spec["lifts"]
+    per = max(2, lift["banks"] // (len(treads) - 1))
+    stepped = mask & (ring == inside // W)          # false wherever the sheer side flattened it
+    out = []
+    for k in range(len(treads) - 1):
+        edge_in = (inside >= (k + 1) * W) & (inside < (k + 1) * W + 2) & mask & stepped
+        edge_out = (inside >= (k + 1) * W - 2) & (inside < (k + 1) * W) & mask & stepped
+        ci = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_in))]
+        co = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_out))]
+        if not ci or not co:
+            raise DeepError("ring boundary %d has no columns either side: its lift would go nowhere" % k)
+        placed, tries = [], 0
+        while len(placed) < per and tries < 3000:
+            tries += 1
+            z, x = ci[int(unit(tries, k, 0, 75) * (len(ci) - 1))]
+            if any(abs(x - bx) + abs(z - bz) < lift["apart"] for bz, bx in placed):
+                continue
+            near = min(co, key=lambda c: abs(c[0] - z) + abs(c[1] - x))
+            if abs(near[0] - z) + abs(near[1] - x) > 6:
+                continue
+            placed.append((z, x))
+            out.append((k, (x + X0, treads[k + 1], z + Z0, treads[k] - treads[k + 1]),
+                        (near[1] + X0, treads[k], near[0] + Z0, treads[k + 1] - treads[k])))
+        if not placed:
+            raise DeepError("no lift placed at ring boundary %d: that ring would be unreachable" % k)
+    return out
+
+
+def build(source_root, server_dir=None):
+    spec = json.loads(SPEC.read_text(encoding="utf-8"))
+    have = installed_blocks(server_dir)
+    m = model(source_root, spec)
+    mask, (X0, Z0, X1, Z1), H = m["mask"], m["box"], m["H"]
+
+    light_b = pick(spec["light"]["block"], spec["light"]["fallback"], have)
+    floor_y = spec["floor_y"]
+
+    # distance from the pit's edge, which is what puts each column in its ring (model())
+    zz, xx = np.nonzero(mask)
+    inside = m["inside"]
+
+    lines, checks, counts = [], [], {}
+
+    def count(k, v=1):
+        counts[k] = counts.get(k, 0) + v
+
+    # The pit: five rings stepping down to the floor, every column open to the sky above its own tread.
+    treads, W = m["treads"], m["width"]
+    tread = spec["tread"]
+    tread_b = pick(tread["block"], tread["fallback"], have)
+    edge_b = pick(tread["edge"], tread["edge_fallback"], have)
+    restore_b = pick(spec["restore"]["block"], spec["restore"]["fallback"], have)
+    d = spec["shell"]["depth"]
+    ring_of = {(z, x): int(m["ring"][z, x]) for z, x in zip(zz.tolist(), xx.tolist())}
+    tread_of = {(z, x): treads[k] for (z, x), k in ring_of.items()}
+    count("columns on the sheer side, dropped straight to the floor", int(m["sheer"].sum()))
 
     # 1. everything under a tread is rock. Schema 1's sealed chamber reached y22-52, which in the outer rings is
     #    below the new tread, so without this each street would be a shelf over that void.
@@ -287,43 +340,17 @@ def build(source_root, server_dir=None):
         raise DeepError("no tread was laid: the rings are wider than the pit")
 
     # The lifts, at the risers. A 17-block riser cannot be climbed, so these are the only way between rings and
-    # so the only way down: the tunnel still matters. A pair straddles each boundary -- one on the lower tread
-    # going up, one on the upper tread going down -- because a single column belongs to exactly one ring.
+    # so the only way down: the tunnel still matters (lift_sites()).
     lift = spec["lifts"]
-    per = max(2, lift["banks"] // (len(treads) - 1))
     n_banks = 0
-    for k in range(len(treads) - 1):
-        stepped = np.zeros(mask.shape, bool)
-        for (z_, x_), kk in ring_of.items():
-            stepped[z_, x_] = (kk == int(inside[z_, x_]) // W)      # false wherever the sheer side flattened it
-        edge_in = (inside >= (k + 1) * W) & (inside < (k + 1) * W + 2) & mask & stepped
-        edge_out = (inside >= (k + 1) * W - 2) & (inside < (k + 1) * W) & mask & stepped
-        ci = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_in))]
-        co = [(int(z), int(x)) for z, x in zip(*np.nonzero(edge_out))]
-        if not ci or not co:
-            raise DeepError("ring boundary %d has no columns either side: its lift would go nowhere" % k)
-        placed, tries = [], 0
-        while len(placed) < per and tries < 3000:
-            tries += 1
-            z, x = ci[int(unit(tries, k, 0, 75) * (len(ci) - 1))]
-            if any(abs(x - bx) + abs(z - bz) < lift["apart"] for bz, bx in placed):
-                continue
-            near = min(co, key=lambda c: abs(c[0] - z) + abs(c[1] - x))
-            if abs(near[0] - z) + abs(near[1] - x) > 6:
-                continue
-            placed.append((z, x))
-            n_banks += 1
-            # on the lower tread, going up; on the upper tread, going down
-            for (cz_, cx_), y, target in ((( z, x), treads[k + 1], treads[k]),
-                                          (near, treads[k], treads[k + 1])):
-                wx, wz = cx_ + X0, cz_ + Z0
-                lines.append("setblock %d %d %d %s" % (wx, y, wz, lift["block"]))
-                lines.append('data merge block %d %d %d {yOffset:%d,requiredAdvancement:""}'
-                             % (wx, y, wz, target - y))
-                count("lift blocks")
-                checks.append((wx, y, wz, [lift["block"]], "lift"))
-        if not placed:
-            raise DeepError("no lift placed at ring boundary %d: that ring would be unreachable" % k)
+    for _k, lower, upper in lift_sites(m):
+        n_banks += 1
+        # on the lower tread, going up; on the upper tread, going down
+        for wx, y, wz, off in (lower, upper):
+            lines.append("setblock %d %d %d %s" % (wx, y, wz, lift["block"]))
+            lines.append('data merge block %d %d %d {yOffset:%d,requiredAdvancement:""}' % (wx, y, wz, off))
+            count("lift blocks")
+            checks.append((wx, y, wz, [lift["block"]], "lift"))
     count("lift pairs", n_banks)
 
     plan = {"lines": lines, "checks": checks, "counts": counts,

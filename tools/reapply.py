@@ -56,6 +56,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the Rift. Every one of these was hand-applied to the staging world and had no step here at
                 # all until 2026-09-23, so a re-export would have erased all five silently (see EXCLUDED).
                 "cobblers_rift", "cobblers_rift_biome", "cobblers_league_tunnel", "cobblers_deep",
+                # the Deep's city and the relic area's surface (tools/deep_city.py, 2026-09-27): stood on the pit R9B
+                # sinks, after Victory Road's caves (R9C) write round the mouth
+                "cobblers_deep_city",
                 # Victory Road as one cave network (2026-09-23; it replaced the spine and its regions), its Habitat
                 # Block tiles and its finds
                 "cobblers_vr_caves", "cobblers_habitats", "cobblers_rewards",
@@ -234,6 +237,10 @@ def prepare(a):
     # the Rift dig camp's mines, quarries and the mega stone mine (data/rift_mines.json); audited below, once the
     # camp's own plan exists
     py(TOOLS / "rift_mines.py", "build", *src)
+    # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
+    # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
+    py(TOOLS / "deep_city.py", "build", *src)
+    py(TOOLS / "deep_city_audit.py", *src)
     py(TOOLS / "habitat_blocks.py", "function")
     py(TOOLS / "rewards_pack.py")
     dlg = PACKS / "cobblers_dialogue"
@@ -691,6 +698,12 @@ def steps(with_spawns=False):
     out.append(("R9M", "the Rift dig camp's mines, quarries and the mega stone mine, then its carts",
                 [("fn", "cobblers:rift_mines/%s" % f) for f in indexed("cobblers_rift_mines", "rift_mines")]
                 + [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]))
+    # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
+    # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
+    # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
+    # R9D was the retired Victory Road regions step, and tests/test_reapply_vr_steps.py keeps that id retired
+    out.append(("R9DC", "the Deep's city and the relic area's surface (tools/deep_city.py)",
+                [("fn", "cobblers:deep_city/%s" % f) for f in indexed("cobblers_deep_city", "deep_city")]))
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
@@ -1022,6 +1035,11 @@ def audit(a):
                        capture_output=True, text=True)
     res["sea_town"] = {"exit": r.returncode, "tail": (r.stdout or r.stderr).strip().splitlines()[-12:]}
     print("sea town exit", r.returncode)
+    # the Deep's city and the relic area, sampled against the plan its build wrote (tools/deep_city.py verify)
+    r = subprocess.run([sys.executable, str(TOOLS / "deep_city.py"), "verify", "--world", a.world], cwd=ROOT,
+                       capture_output=True, text=True)
+    res["deep_city"] = {"exit": r.returncode, "tail": (r.stdout or r.stderr).strip().splitlines()[-12:]}
+    print("the Deep's city exit", r.returncode)
     # no walkable position under a roof, or anywhere in the cavern, at block light 0 (tools/light_plan.py check, from
     # the saved world's own light arrays)
     # every place but those whose plan says dark by design (the Scar, the jungle ruins): asking the check about one of
@@ -1041,7 +1059,8 @@ def audit(a):
     # play, and vanilla hostiles are disabled. It is evidence for builders, not a re-export gate.
     res["clean"] = (res["build_audit"]["exit"] == 0 and len(res["towns"]) == len(places()) > 0
                     and all(v["clean"] for v in res["towns"].values())
-                    and res["signposts"]["exit"] == 0 and res["sea_town"]["exit"] == 0)
+                    and res["signposts"]["exit"] == 0 and res["sea_town"]["exit"] == 0
+                    and res["deep_city"]["exit"] == 0)
     path = OUT / ("audit_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     path.write_text(json.dumps(res, indent=1), encoding="utf-8")
     print("audit %s: %s" % ("CLEAN" if res["clean"] else "NOT CLEAN", path))
