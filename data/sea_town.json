@@ -1,7 +1,7 @@
 {
  "schema": "cobblers.sea_town/1",
  "settlement": "sea_town",
- "status": "authored 2026-09-26 (the owner: \"add the sea town from hoenn\"); generated into data/placements.json by tools/sea_town.py write; not built on staging; not in the live world",
+ "status": "authored 2026-09-26 (the owner: \"add the sea town from hoenn\"); generated into data/placements.json by tools/sea_town.py write; built on staging 2026-09-26 (commit 2f1f79b: tools/sea_town.py verify --rcon 10,332 of 10,332 blocks, the Mart clerk found by tools/traders.py verify); not seen in game; not in the live world",
  "source": "docs/world-building/LONG_ISLE.md section 4 (the design), with every open decision taken at its recommended default",
  "note": "The authored layout of the raft town in the Sound. A template has no position; this file is the placement data. tools/sea_town.py translates it into the settlement record, the Centre and Mart placements and one earthwork per district in data/placements.json (so tools/place_town.py builds it as a town, re-apply step R8), refuses a raft over land or over water shallower than its rule, overlapping elements, a bridge that does not join two decks, and a deck walk cell below min_light in its lantern model. Ground is the canonical heightmap (tools/ground.py, rounded), never a world: the seabed under a post is round(h) and the deck is the world's sea level from data/world.json. Coordinates are inclusive [x0, z0, x1, z1] rectangles.",
  "decisions": [
