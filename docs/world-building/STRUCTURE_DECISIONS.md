@@ -122,7 +122,7 @@ the ruin line and the tea line.
 | Shipwrecks (sunk 5, beached 2) | | 7 | 7 | `OCEAN.md` tiers 0–1 |
 | Ocean ruins (cold 3, warm 5) | | 8 | 8 | slope content by temperature |
 | Buried treasure (3 without a heart of the sea, 2 with) | | 5 | 5 | hearts only in tier-2 sites; each one is a conduit |
-| Submerged forge ruins | | 1 | 1 | Windward Deep basin |
+| Submerged forge ruins | | 1 | 1 | Windward Sea basin |
 | **Total** | **116** | **34** | **150** | |
 
 **NAMED ocean sites are outside the 150:** the three shipwreck coves, the monument and the

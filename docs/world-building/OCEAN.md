@@ -2,6 +2,12 @@
 
 > **Note 2026-09-14.** The coastline changed with the carved terrain revision. The marine regions below are carried into `cobblers.regions/3` unchanged and have not been re-measured.
 
+> **Note 2026-09-27.** The western marine region is now named **the Windward Sea** (display name in
+> `data/regions.json`; its id stays `windward_deep`, which `data/spawns.json` names). "The Windward Deep" is the Rift's
+> terraced pit (`docs/world-building/DEEP_CITY.md`). Section 5's depth tiers are superseded by the water ladder; the
+> section says what replaced them. The water as a whole: `docs/mechanics/WATER_MAP.md` and
+> `docs/mechanics/WATER_PROPOSAL.md`.
+
 **Status: section 2 (the revised import) is applied.** Since 2026-09-13 the world
 `cobblers-10240` uses it; `REEXPORT.md` has the export and the measured seabed. Everything
 else here is still a proposal: no seabed pass, no biome painting, no content. The measurements come from the pinned heightmap
@@ -121,7 +127,7 @@ them.
 | Marine region | Tier | Where | Area km² (inside box / margin) | Temperature | Shelf | Named content |
 | --- | --- | --- | --- | --- | ---: | --- |
 | **Frostwater Shelf** | wilderness | north of z2600, under the Northern Range and the Northern Isles | 12.0 (7.5 / 4.5) | cold, frozen north of z1300 | 240 | kelp forest, iceberg habitats, shipwreck cove |
-| **Windward Deep** | wilderness | the exposed west | 5.8 (1.4 / 4.5) | temperate | 160 | ocean monument; deep water closest to shore |
+| **Windward Sea** | wilderness | the exposed west | 5.8 (1.4 / 4.5) | temperate | 160 | ocean monument; deep water closest to shore |
 | **Eastern Reach** | route | east, off the Eastern Downs | 6.5 (2.1 / 4.5) | lukewarm | 320 | sea lane; Misty's gym on the shelf if reused |
 | **Southern Shallows** | route | south of z5200 and around Jungle Isle | 14.2 (9.7 / 4.5) | warm | 400 | coral reefs, buried treasure |
 | **The Outer Deep** | destination | 512–1024 blocks beyond the landmass, to the border | 19.9 (0 / 19.9) | graded north to south | none | abyssal plain, seamounts, the trench set piece |
@@ -156,7 +162,7 @@ The planned seabed per zone, from that profile:
 | Zone | 10th pct | Median | 90th pct | Extended import (inside the box), median |
 | --- | ---: | ---: | ---: | ---: |
 | Frostwater Shelf | y20 | y42 | y57 | y23 |
-| Windward Deep | y14 | y22 | y49 | y19 |
+| Windward Sea | y14 | y22 | y49 | y19 |
 | Eastern Reach | y16 | y26 | y54 | y13 |
 | Southern Shallows | y23 | y51 | y58 | y24 |
 | Outer Deep | y8 | y8 | y8 | n/a |
@@ -190,7 +196,7 @@ The shares are area-weighted over all five zones. Each zone's own rules are in
 | --- | ---: | --- |
 | `deep_lukewarm_ocean` | 27.6% | Eastern Reach and Southern Shallows basins; south half of the Outer Deep |
 | `deep_frozen_ocean` | 20.0% | Frostwater north of z1300; north of the Outer Deep |
-| `deep_ocean` | 12.6% | Windward Deep; west-central Outer Deep |
+| `deep_ocean` | 12.6% | Windward Sea; west-central Outer Deep |
 | `warm_ocean` | 10.8% | Southern Shallows shelf within 220 blocks of land |
 | `lukewarm_ocean` | 10.8% | Eastern Reach shelf; outer Southern Shallows shelf |
 | `cold_ocean` | 6.7% | Frostwater shelf |
@@ -229,17 +235,31 @@ north of z1300 are expected to form on their own, but not verified.
 ## 5. Underwater discovery
 
 **The principle:** nothing below is visible from the surface, so the ocean rewards
-systematic search. The sea is lit, then dim, then dark, and each step down needs more
-equipment. That gates content without any authored lock.
+systematic search. The sea is lit, then dim, then dark.
 
-### Depth as gating
+### Depth as gating: the water ladder (rewritten 2026-09-27)
 
-| Tier | Depth | What the player faces | What gets them there | Earliest |
-| --- | --- | --- | --- | --- |
-| 0 Sunlit | shelf, y46–62 | one breath covers it | nothing | from the start |
-| 1 Dim | break and slope, y28–46 | the bottom is dark and air runs out on the way back | Respiration, a turtle shell, air pockets under doors or signs | early to mid game |
-| 2 Dark | basin, y8–28 | beyond one breath; sky light is gone | Water Breathing potions (Nether wart), or a conduit | after gym 7, the first Nether trip |
-| 3 Abyss | the trench, below y0 | a long descent in total darkness | Water Breathing plus light, or a conduit chain | late game |
+Depth is gated by the **water ladder**, not by equipment. It is built as `cobblers_blackout`
+(`tools/blackout_pack.py`) and measured in game (EXP-042); `docs/mechanics/DEATH_AND_WIPE.md`
+is the rule and `docs/mechanics/WATER_MAP.md` section 0 what each rung reaches:
+
+| Rung | Air at depth (eyes 5+ blocks under the surface) | Reaches |
+| --- | --- | --- |
+| No mount | vanilla 15 s, then two half-health hits, the second lethal | the shelf; about 37 deep with no time at the bottom (a sprint-swim is 5 blocks per second) |
+| **Surf** (after gym 2, Misty at Lake Viltri, with a Surf- or Dive-capable Pokemon in the party) | 45 s held full, then vanilla: about 61 s | every lake floor; the slope and any open wreck in one visit |
+| **Dive** (after gym 6, the survey diver on Tilpey's north shore, with a Dive-capable Pokemon) | unlimited, with a swim boost to about 10 blocks per second | everything: enclosed and long places, the basin, the trench |
+
+**Vanilla air items are removed** (the owner, 2026-09-26; built in `cobblers_blackout`):
+Respiration is neutralised by a data override, and Water Breathing and Conduit Power are cleared
+the tick they land. In game, a Water Breathing potion's effect was stripped and air drained at the
+vanilla rate under a Respiration III helmet (EXP-042 session 3); Conduit Power is built but not yet
+seen cleared in game.
+
+**What this section used to say** (superseded): four tiers gated by vanilla equipment. Tier 1, the
+slope, by Respiration, a turtle shell and air pockets; tier 2, the basin, by Water Breathing
+potions or a conduit after gym 7's first Nether trip; tier 3, the trench, by Water Breathing plus
+light or a conduit chain. A mount-gated ladder with a potion bypass would not be gated, so the
+items went and the ladder replaced the tiers. The tier numbers below now name depths only.
 
 **How light drops off:**
 - Water is expected to cut sky light by one level per block, so light is gone about 15
@@ -250,19 +270,22 @@ equipment. That gates content without any authored lock.
   `minY 48` (the shelf). The deep-ocean entries need `maxY 48`. The shelf break is therefore
   also the boundary between two spawn pools.
 
-**Two things could undo this gating** and need proof before relying on it:
-- **Pokémon riding.** Whether a ridden water Pokémon lets a player breathe or descend fast
-  underwater is not verified. That is a proposed EXP-015.
-- **Hearts of the sea.** A conduit gives unlimited breath in range. Hearts of the sea should
-  sit only in tier-2 sites. Every buried-treasure chest is a hand-placed loot table, so this
-  is controllable.
+**What could still undo the ladder:**
+- **A ridden submarine mount.** 10 species ride underwater (`cobblemon:liquid/submarine`,
+  EXP-038). Whether riding one keeps its rider's air is not tested (EXP-038 step 2). If it does,
+  that mount bypasses the ladder.
+- **Hearts of the sea** no longer matter: a conduit's effect is cleared (above). They can sit
+  anywhere as treasure.
 
 ### What goes down there
 
 The content per marine region adds up to 34 of the 150 scatter placements (see
-`STRUCTURE_DECISIONS.md`), plus named sites and the set piece.
+`STRUCTURE_DECISIONS.md`), plus named sites and the set piece. The tiers are depths: 0 is the
+shelf (no mount), 1 the slope and 2 the basin (Surf for an open site, Dive for an enclosed or long
+one), 3 the trench (Dive and its own gates). The named sites, by stage, are in
+`docs/mechanics/WATER_PROPOSAL.md` section 3.
 
-| Tier | Frostwater Shelf | Windward Deep | Eastern Reach | Southern Shallows | Outer Deep |
+| Tier | Frostwater Shelf | Windward Sea | Eastern Reach | Southern Shallows | Outer Deep |
 | --- | --- | --- | --- | --- | --- |
 | 0 | iceberg habitat ×2, fishing-boat wreck | fishing-boat wreck | fishing-boat wreck ×2, Misty's gym (if reused) | reef habitats ×3, beached shipwreck ×2, buried treasure ×3 (no heart) | seamount-summit kelp gardens |
 | 1 | cold ocean ruins ×3, shipwreck ×2 | shipwreck ×3, ocean ruined portal, Cobblemon underwater fissure fossil | warm ocean ruins ×2, ocean ruined portal, deep sea spire habitat | warm ocean ruins ×3, submerged-spike fossil | nothing |
@@ -289,21 +312,21 @@ curves along the border.
 **The descent:**
 - The trench walls are deepslate and dark prismarine, spiralling down.
 - Glow lichen traces a route that can only be seen from inside the trench.
-- Three sealed air-pocket chambers break the descent. Each holds a conduit frame that is
-  missing its heart.
+- Three sealed air-pocket chambers break the descent. Each holds an empty conduit frame, as
+  dressing: a conduit gives nothing in this pack (the ladder above).
 
 **The bottom (y−30 to y−40):**
 - A flooded shrine with three door locks.
 - Each lock takes a key item kept in one of the three shipwreck coves, one in each of
   three different marine regions. Finding them is the systematic search.
-- Opening the shrine gives the encounter: Lugia, if the legendary recommendation in
-  `STRUCTURE_DECISIONS.md` is accepted, otherwise the campaign's own sea guardian. It also
-  gives the last heart of the sea, so the player can build a conduit at the bottom.
+- Opening the shrine gives the encounter: **Lugia** (decided, `docs/STATE.md` "Water
+  legendaries").
 
 **What it needs:**
-- It is gated by depth (tier 3) and by the key search, not by a badge.
-- It stays after the League, but players can reach it as soon as they can breathe
-  underwater.
+- **Dive, the three keys and `champion_cleared`** (the owner, 2026-09-26: "It is the deepest
+  thing in the world and it should not be reachable before the League"). Dive alone would open it
+  at gym 6.
+- The keys can be found from gym 6, so the search starts before the League.
 - The build method follows Step 3's decision. Per EXP-013, it cannot use structure data.
   Any spawn or check keyed to structures has to be replaced with position-based conditions
   or Habitat Blocks.
@@ -317,7 +340,7 @@ pasted as blocks, and every system that reads structure data will ignore it.
 
 | Structure | Source | Built from | Hand-placeable? | What stops working |
 | --- | --- | --- | --- | --- |
-| Ocean monument | vanilla | code, no template | **Not as a template.** Capture one generated in a disposable world in structure-block tiles (it is 58 blocks wide, over the 48-block limit), or try `/place structure` (monuments sit at sea level, not on the heightmap; not tested) | guardian spawning (a structure spawn override), elder guardians unless pasted as entities, the Qwilfish and Overqwil monument entries, explorer maps |
+| Ocean monument | vanilla | code, no template | **Not as a template.** Capture one generated in a disposable world in structure-block tiles (it is 58 blocks wide, over the 48-block limit), or try `/place structure` (monuments sit at sea level, not on the heightmap; not tested) | guardian spawning (a structure spawn override), elder guardians unless pasted as entities, the Qwilfish and Overqwil monument entries, explorer maps. **And in this pack no guardian can exist at all:** MobsBeGone blacklists `minecraft:guardian` and `minecraft:elder_guardian` (`base-pack/cobbleverse/config/mobsbegone-blacklist.json`), so a monument is empty architecture (parked in `WATER_PROPOSAL.md` section 3.1) |
 | Ocean ruins, cold and warm | vanilla | templates | yes | the ocean-ruins preset (Dratini line, Relicanth entries), treasure maps in their chests |
 | Shipwrecks and beached shipwrecks | vanilla | templates | yes | Dhelmise's `#minecraft:shipwreck` entries, treasure maps |
 | Buried treasure | vanilla | code, one chest | yes, as a chest with a loot table | its treasure-map targets |
@@ -364,7 +387,8 @@ From the spawn files the server actually loads (weight above 0):
    route (section 2).
 2. How does WorldPainter extend the canvas to 10240 with the landmass kept at world
    0–8191: an import offset, padding the PNG, or shifting the world? Not verified.
-3. EXP-015 (proposed): does riding a water Pokémon grant breath or fast descent?
+3. Does riding a water Pokémon grant breath or fast descent? EXP-038 read which species ride on and under water
+   (45 and 10); whether a ridden submarine mount keeps its rider's air is its step 2, not run.
 4. Can `/place structure minecraft:monument` land correctly on painted terrain? Monuments
    use sea level, not the heightmap; not tested.
 5. Do frozen-ocean surfaces freeze in a WorldPainter export? Expected yes from biome
