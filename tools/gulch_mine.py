@@ -912,7 +912,12 @@ def keeper_files(m):
         load.append("execute unless score #%s gm.owe matches -2147483648.. run scoreboard players set #%s gm.owe 0" % (s["id"], s["id"]))
         load.append("execute unless score #%s gm.abs matches -2147483648.. run scoreboard players set #%s gm.abs 0" % (s["id"], s["id"]))
     fn["load"] = load
-    fn["tick"] = ["# every tick: two counters; the work runs only when a player is near (SOUTHERN_RIFT_MEGA.md 7.6)",
+    wd = spec["gate"]["ward"]
+    fn["tick"] = ["# the gate's ward every tick, not only when its location trigger fires (every 20 ticks): milk clears Mining",
+                  "# Fatigue at once (the test author's gate-clock sweep, contract C14)",
+                  "execute as @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,gamemode=!creative,gamemode=!spectator] run effect give @s "
+                  "minecraft:mining_fatigue 3 3 true" % (wd[0], wd[1], wd[2], wd[3] - wd[0], wd[4] - wd[1], wd[5] - wd[2]),
+                  "# every tick: two counters; the work runs only when a player is near (SOUTHERN_RIFT_MEGA.md 7.6)",
                   "scoreboard players add #clock gm.t 1",
                   "scoreboard players add #leash gm.t 1",
                   "execute if score #leash gm.t matches %d.. run function %s/leash" % (spec["megas"]["leash_every_ticks"], F),

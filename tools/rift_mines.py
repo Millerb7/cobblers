@@ -948,7 +948,13 @@ def tease_files(m):
         "load": ["scoreboard objectives add rm.t dummy",
                  "scoreboard players set #period rm.t %d" % t["period_ticks"],
                  "execute unless score #tease rm.t matches -2147483648.. run scoreboard players set #tease rm.t 0"],
-        "tick": ["scoreboard players add #clock rm.t 1",
+        "tick": ["# the ward every tick, not only when the location trigger fires (every 20 ticks): milk clears Mining",
+                 "# Fatigue at once, and 19 free ticks break the grille with a fast pickaxe (the test author's gate-clock",
+                 "# sweep, contract C14)",
+                 "execute as @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,gamemode=!creative,gamemode=!spectator,advancements={%s=false}] "
+                 "run effect give @s minecraft:mining_fatigue 3 3 true"
+                 % (lo[0], lo[1], lo[2], hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2], flag),
+                 "scoreboard players add #clock rm.t 1",
                  "execute if score #clock rm.t matches 100.. run function %s/tease/drive" % F],
         "tease/drive": [
             "# restore on approach (STONE_ECONOMY.md 5.3): only while a player is near the seam, the period has passed,",
