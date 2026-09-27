@@ -8,9 +8,8 @@ reads false and a forced canSeeSky empties every submerged and seafloor entry (/
 and Shrew Lake found nothing). Entries that stand on land or on the surface keep canSeeSky, which is what keeps land
 rosters out of caves.
 
-At 1b9bbc1 box_condition still forces canSeeSky on every entry: the fix (ad48221) is on branch fix/underwater-canseesky
-and not an ancestor of this branch. The submerged/seafloor cases are therefore strict xfails here; when the fix is
-merged they XPASS, fail the run, and the marks must come off.
+The fix (ad48221, PR #61) is merged, so the submerged/seafloor cases are ordinary tests; they were strict xfails while
+the fix was on its own branch.
 
 Not covered, and it needs a running server: whether a submerged entry without canSeeSky now spawns under a deep lake,
 and whether a cave pool of water under land picks up lake rosters it should not.
@@ -30,10 +29,6 @@ import compile_spawns as CS  # noqa: E402
 
 UNDERWATER = ("submerged", "seafloor")
 IN_THE_OPEN = ("grounded", "surface")
-NOT_ON_THIS_BRANCH = ("tools/compile_spawns.py:69 box_condition forces canSeeSky on every entry, so every submerged and "
-                      "seafloor lake, river, route and sub-region entry needs a sky column that reads false under deep "
-                      "water and never spawns (staging 2026-09-26). Fixed by ad48221 on fix/underwater-canseesky, "
-                      "which this branch does not contain")
 
 
 def _entry(position, **kw):
@@ -57,7 +52,6 @@ def test_land_and_surface_box_entries_require_the_sky(position):
 
 # Without it every submerged and seafloor entry in a lake, river, route or sub-region box is emptied by a sky test that
 # reads false under deep water.
-@pytest.mark.xfail(strict=True, reason=NOT_ON_THIS_BRANCH)
 @pytest.mark.parametrize("position", UNDERWATER)
 def test_submerged_and_seafloor_box_entries_do_not_require_the_sky(position):
     cond = CS.box_condition(0, 31, 0, 31, _entry(position, biomes=["#minecraft:is_river"]))
@@ -88,7 +82,6 @@ def _spawns(compiled, positions, marine=None):
 
 # Without it the unit test above could pass while the data re-adds canSeeSky to underwater entries through their
 # authored conditions, or a compile path that does not use box_condition forces it.
-@pytest.mark.xfail(strict=True, reason=NOT_ON_THIS_BRANCH)
 def test_no_compiled_submerged_or_seafloor_entry_requires_the_sky(compiled):
     under = list(_spawns(compiled, UNDERWATER))
     assert len(under) >= 1000, len(under)          # 3,677 + 217 on the data ad48221 was measured against, marine aside
