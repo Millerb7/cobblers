@@ -3,7 +3,10 @@
   "status": "authored 2026-09-26; generated into the cobblers_blackout pack by tools/blackout_pack.py; runtime proofs in experiments/EXP-042-blackout-and-water-ladder",
   "spec": "docs/mechanics/DEATH_AND_WIPE.md",
   "money": {
-    "percent": 10,
+    "percent": 20,
+    "percent_why": "the owner, 2026-09-27: 'the death should be more punishing ... i should want to go back and kill that thing'. Was 10 (the spec's figure)",
+    "held_by_wild_victor": true,
+    "held_by_wild_victor_why": "the money a wild Pokemon's win takes goes into its claim and comes back when it is beaten, caught or killed, so there is a reason to go back for it; an environmental death, a trainer loss and any other loss lose it outright",
     "rounding": "up; a balance above zero always loses at least 1 (ceil(balance * percent / 100))",
     "currency_symbol": "$",
     "currency_symbol_why": "CobbleDollars shows balances with $ ('has $ 712'); the spec's copy uses a yen-style sign"
@@ -54,10 +57,13 @@
   },
   "claims": {
     "categories": {
-      "balls": {"percent": 15, "max": 10},
-      "medicine": {"percent": 15, "max": 6},
-      "consumables": {"chance_percent": 35, "take": 1}
+      "balls": {"percent": 40, "max": 30},
+      "medicine": {"percent": 40, "max": 12},
+      "consumables": {"chance_percent": 100, "take": 1}
     },
+    "slain_window_ticks": 400,
+    "slain_window_why": "a guardian found gone from its loaded site counts as killed by the last player (or player's Pokemon) who hurt it if that was within this many ticks; maintenance notices within two passes (200 ticks) of the death. The owner, 2026-09-27: killing it with a sword should work like beating it",
+    "categories_why":"raised 2026-09-27 for the owner's 'more punishing' (was balls 15% max 10, medicine 15% max 6, a 35% chance of one battle or evolution item, the spec's figures)",
     "balls": [
       "cobblemon:ancient_azure_ball", "cobblemon:ancient_citrine_ball", "cobblemon:ancient_feather_ball",
       "cobblemon:ancient_gigaton_ball", "cobblemon:ancient_great_ball", "cobblemon:ancient_heavy_ball",
@@ -159,9 +165,11 @@
     "blackout": "You blacked out and returned to {place}. Lost {money}.",
     "no_items": "No items were lost.",
     "npc_no_items": "You lost the battle. No items were taken.",
-    "claim": "{victor} took {summary}. Defeat or catch it to recover everything.",
+    "claim": "{victor} took {summary}. Beat it, catch it or kill it to recover everything.",
     "claim_nothing": "{victor} defeated you, but you had no eligible supplies to lose.",
     "recovered_owner": "You recovered your supplies.",
+    "claim_money": "It has your money too. Beat it, catch it or kill it to get everything back.",
+    "recovered_money": "You got your money back:",
     "recovered_by_helper_owner": "{helper} recovered your supplies.",
     "recovered_helper": "Recovered supplies for {owner}.",
     "checkpoint_center": "Checkpoint: {place}.",
