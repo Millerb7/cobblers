@@ -115,11 +115,6 @@ def test_a_missing_build_never_deletes_the_installed_copy(tmp_path):
 
 # Without it the second of two copies retired in one second (a world-local pack's stale global copy, then its world
 # copy, both named cobblers_scenes) lands inside the first one's folder instead of a folder of its own.
-@pytest.mark.xfail(strict=True, reason=(
-    "tools/reapply.py:320 names the retired folder by the second and the pack name only; install() retires a "
-    "world-local pack's stale global copy (line 361) and then its world copy (line 363), same name, same second, so "
-    "shutil.move puts the second inside the first: <retired>/<stamp>-replaced-cobblers_scenes/cobblers_scenes/... "
-    "Nothing is lost; the second copy has no folder of its own"))
 def test_two_copies_retired_in_one_second_each_get_their_own_folder(tmp_path, monkeypatch):
     import time
     monkeypatch.setattr(time, "strftime", lambda fmt, *a: "2026-09-27-120000")
@@ -129,7 +124,7 @@ def test_two_copies_retired_in_one_second_each_get_their_own_folder(tmp_path, mo
     RA.replace_pack(glob_copy, None, tmp_path / "retired")
     RA.replace_pack(world_copy, src, tmp_path / "retired")
     kept = retired_copies(tmp_path / "retired")
-    assert sorted(tree(k) for k in kept) == [{"data/g": b"global"}, {"data/w": b"world"}], \
+    assert sorted((tree(k) for k in kept), key=lambda d: sorted(d)) == [{"data/g": b"global"}, {"data/w": b"world"}], \
         [(k.name, sorted(tree(k))) for k in kept]
 
 
