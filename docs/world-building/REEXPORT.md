@@ -96,6 +96,7 @@ and before the lights. `reapply.py prepare` generates the pack `cobblers_bridges
 continuous bank to bank, each end within one block of the heightmap ground, 3 blocks of air over the water, nothing
 written at or below a water level but the piers, each pier in one water level, lanterns on posts, and no town lot within
 16 blocks. That audit reads the function, not a world; a check of the built bridge in a stopped world is still to write.
+**The Rift dig camp's mines, added to the driver on 2026-09-27** (`data/rift_mines.json`, `tools/rift_mines.py`). **R9M**, after R9C and before R9E: the pack's shell, air, fittings and surface functions in index order, then `rift_mines/carts`, which force-loads the carts' chunks and summons them 60 ticks on (hence its 5 s wait). `cobblers_rift_mines` goes in the world's own datapacks folder: its gate and zone check are advancements that act on their own. `prepare` builds it and runs `tools/rift_mines_audit.py` (offline: no overlap with the camp, the haul road or other places; the gated galleries sealed except through the gate) and stops on any problem. There is no world verify for it yet.
 
 **The order the driver runs:** R2, R3, R4, R5, R6, then **R10 before R7 and R8** (Relic Island's house stands on the
 islet), then R7, R8 (the Displaced City and Relic Island last among the places), R9, R9G, R16, R15, R14, and a verify
