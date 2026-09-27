@@ -401,17 +401,20 @@ def test_a_swimmer_already_past_collapse_is_hit_at_once_and_then_on_the_clock(f0
 # Without it a collapsed swimmer who touches land or a ledge for one sample, or dismounts a water Pokemon, and goes
 # back in is hit at once, however recently the last hit landed: grabbing at the shore every other sample would bring a
 # hit every 20 ticks instead of every pulse_ticks. EXP-044's rule is one hit "as collapse is reached and every 3 s
-# after"; a swimmer still past collapse has not reached it again.
-@pytest.mark.xfail(strict=True, reason=(
-    "tools/blackout_pack.py:711 surface/recover primes the collapse clock (bo.fpt = #fpulse) on every recovering sample, "
-    "at any fatigue; the coordinator's design primes it only while fatigue is below collapse. A swimmer at fatigue "
-    "1500 alternating water and land samples is hit on every water sample (every 20 ticks), not every 60"))
+# after"; a swimmer still past collapse has not reached it again. (Found by this suite at 5bcecec: a hit every 20 ticks;
+# fixed in 2a70841.) One who recovers below collapse and comes back reaches it again, and is hit as they do.
 def test_a_touch_of_land_past_collapse_does_not_bring_the_next_hit_early():
     every = FPULSE // PER
     fats, hits = _hits([(DEEP_X, 0), (None, 0)] * (N // 2), 1500)
     assert all(f >= FCOL for f in fats), "the swimmer stays past collapse throughout"
     gaps = [b - a for a, b in zip(hits, hits[1:])]
     assert hits and all(g >= every for g in gaps), (hits[:6], gaps[:6])
+    # recovered to just under collapse on land, then back into the deep: the first water sample reaches collapse again
+    # (from collapse + 10: two deep samples, three on land, then the deep again)
+    plan = [(DEEP_X, 0)] * 2 + [(None, 0)] * 3 + [(DEEP_X, 0)] * (every + 3)
+    fats, hits = _hits(plan, FCOL + 10)
+    assert fats[4] < FCOL <= fats[5], fats
+    assert hits == [0, 5, 5 + every], (hits, fats)
 
 
 # Without it sample_ticks is half honoured: the gains and the collapse clock scale with it, but the tick that runs
