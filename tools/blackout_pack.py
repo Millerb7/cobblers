@@ -162,8 +162,8 @@ def build(cfg, mounts, placements, progression):
           "gamerule keepInventory true",
           "execute unless data storage cobblers_recovery:ledger claims run data modify storage cobblers_recovery:ledger claims set value []",
           "# hex digits for recovery/pid, and each claimable item's translation key for the claim message",
-          "data modify storage %s:blackout hex set value %s" % (NS, json.dumps(list("0123456789abcdef"))),
-          "data modify storage %s:blackout item_keys set value {%s}" % (NS, ",".join(
+          "data modify storage cobblers_recovery:ledger hex set value %s" % json.dumps(list("0123456789abcdef")),
+          "data modify storage cobblers_recovery:ledger item_keys set value {%s}" % (",".join(
               '"%s":"item.%s"' % (i, i.replace(":", ".")) for i in sorted(set(claims["balls"] + claims["medicine"] + claims["consumables"])))),
           "# player names by UUID, for claims made outside a battle (blackout/remember)",
           "execute unless data storage %s:blackout names run data modify storage %s:blackout names set value []" % (NS, NS)])
@@ -453,7 +453,7 @@ def build(cfg, mounts, placements, progression):
         "# the Pokemon's own UUID as text: what every resolution matches (it survives a faint, a catch and a rebuild;",
         "# the entity UUID does not)",
         "$execute as $(victor) run function %s/pid" % R,
-        "data modify storage %s pending.pid set from storage %s:blackout pid.s" % (R, NS),
+        "data modify storage %s pending.pid set from storage %s pid.s" % (R, R),
         "# persist first (spec: the claim is written before anything is removed); abort if it did not land",
         "data modify storage %s claims append from storage %s pending" % (R, R),
         "data remove storage %s claims[-1].plan" % R,
@@ -487,40 +487,40 @@ def build(cfg, mounts, placements, progression):
     # sent them to count the wrong stack)
     fn("recovery/summary", [
         "data modify storage %s summary set value []" % R,
-        "data modify storage %s:blackout sm set from storage %s pending.items" % (NS, R),
+        "data modify storage %s sm set from storage %s pending.items" % (R, R),
         "function %s/summary_next" % R])
     fn("recovery/summary_next", [
-        "execute unless data storage %s:blackout sm[0] run return 0" % NS,
-        "data modify storage %s:blackout si set value {}" % NS,
-        "data modify storage %s:blackout si.id set from storage %s:blackout sm[0].id" % (NS, NS),
-        "data modify storage %s:blackout si.key set from storage %s:blackout sm[0].id" % (NS, NS),
-        "data modify storage %s:blackout si.count set from storage %s:blackout sm[0].count" % (NS, NS),
-        "function %s/summary_key with storage %s:blackout si" % (R, NS),
-        "function %s/summary_one with storage %s:blackout si" % (R, NS),
-        "data remove storage %s:blackout sm[0]" % NS,
+        "execute unless data storage %s sm[0] run return 0" % R,
+        "data modify storage %s si set value {}" % R,
+        "data modify storage %s si.id set from storage %s sm[0].id" % (R, R),
+        "data modify storage %s si.key set from storage %s sm[0].id" % (R, R),
+        "data modify storage %s si.count set from storage %s sm[0].count" % (R, R),
+        "function %s/summary_key with storage %s si" % (R, R),
+        "function %s/summary_one with storage %s si" % (R, R),
+        "data remove storage %s sm[0]" % R,
         "function %s/summary_next" % R])
-    fn("recovery/summary_key", ['$data modify storage %s:blackout si.key set from storage %s:blackout item_keys."$(id)"' % (NS, NS)])
+    fn("recovery/summary_key", ['$data modify storage %s si.key set from storage %s item_keys."$(id)"' % (R, R)])
     fn("recovery/summary_one", ['$data modify storage %s summary append value \'[{"text":"$(count) "},{"translate":"$(key)"}]\'' % R])
 
     # a Pokemon's UUID as the text Cobblemon's MoLang `pokemon.id` gives (Java's UUID.toString of the int array):
     # each int's eight hex digits, least significant first (scoreboard %= and /= floor, so a negative int's two's
     # complement digits come out right), joined 8-4-4-4-12
-    pid = ["# as a Pokemon entity: its Pokemon UUID as text, into %s:blackout pid.s" % NS]
+    pid = ["# as a Pokemon entity: its Pokemon UUID as text, into the ledger's pid.s"]
     pid += ["execute store result score #u%d bo.tmp run data get entity @s Pokemon.UUID[%d]" % (w, w) for w in range(4)]
     for w in range(4):
         for p in range(7, -1, -1):
             pid += ["scoreboard players operation #n bo.tmp = #u%d bo.tmp" % w,
                     "scoreboard players operation #n bo.tmp %= #16 bo.cfg",
-                    "execute store result storage %s:blackout hx.i int 1 run scoreboard players get #n bo.tmp" % NS,
-                    'data modify storage %s:blackout hx.k set value "c%d%d"' % (NS, w, p),
-                    "function %s/pid_hex with storage %s:blackout hx" % (R, NS),
+                    "execute store result storage %s hx.i int 1 run scoreboard players get #n bo.tmp" % R,
+                    'data modify storage %s hx.k set value "c%d%d"' % (R, w, p),
+                    "function %s/pid_hex with storage %s hx" % (R, R),
                     "scoreboard players operation #u%d bo.tmp /= #16 bo.cfg" % w]
-    pid.append("function %s/pid_join with storage %s:blackout px" % (R, NS))
+    pid.append("function %s/pid_join with storage %s px" % (R, R))
     fn("recovery/pid", pid)
-    fn("recovery/pid_hex", ["$data modify storage %s:blackout px.$(k) set from storage %s:blackout hex[$(i)]" % (NS, NS)])
+    fn("recovery/pid_hex", ["$data modify storage %s px.$(k) set from storage %s hex[$(i)]" % (R, R)])
     d = lambda w, ps: "".join("$(c%d%d)" % (w, p) for p in ps)
-    fn("recovery/pid_join", ['$data modify storage %s:blackout pid.s set value "%s-%s-%s-%s-%s%s"' % (
-        NS, d(0, range(8)), d(1, range(4)), d(1, range(4, 8)), d(2, range(4)), d(2, range(4, 8)), d(3, range(8)))])
+    fn("recovery/pid_join", ['$data modify storage %s pid.s set value "%s-%s-%s-%s-%s%s"' % (
+        R, d(0, range(8)), d(1, range(4)), d(1, range(4, 8)), d(2, range(4)), d(2, range(4, 8)), d(3, range(8)))])
 
     # resolution by the Pokemon's UUID: a guardian fainting in battle (callbacks/battle_fainted), losing a battle, or
     # being caught (callbacks/pokemon_captured) resolves every open claim its guardian number holds. The first build
@@ -528,22 +528,24 @@ def build(cfg, mounts, placements, progression):
     # battle_victory and pokemon_captured run, and battle_victory's scriptable_losers leaves it out (2026-09-27)
     fn("recovery/resolve_pid", [
         "# $(pid) the beaten or caught Pokemon's UUID as text, $(resolver) the player's",
-        '$data modify storage %s:blackout rp set value {pid:"$(pid)",resolver:"$(resolver)"}' % NS,
+        '$data modify storage %s rp set value {pid:"$(pid)",resolver:"$(resolver)"}' % R,
         "data modify storage %s scan set from storage %s claims" % (R, R),
-        "function %s/pid_find with storage %s:blackout rp" % (R, NS),
-        "execute unless data storage %s:blackout rp.g run return fail" % NS,
+        "function %s/pid_find with storage %s rp" % (R, R),
+        "execute unless data storage %s rp.g run return fail" % R,
         "data modify storage %s r set value {}" % R,
-        "data modify storage %s r.g set from storage %s:blackout rp.g" % (R, NS),
-        "data modify storage %s r.resolver set from storage %s:blackout rp.resolver" % (R, NS),
+        "data modify storage %s r.g set from storage %s rp.g" % (R, R),
+        "data modify storage %s r.resolver set from storage %s rp.resolver" % (R, R),
         "data modify storage %s scan set from storage %s claims" % (R, R),
         "function %s/resolve_next" % R,
         "function %s/release with storage %s r" % (R, R),
         "execute as @a at @s run function %s/deliver" % R])
     fn("recovery/pid_find", [
         "execute unless data storage %s scan[0] run return 0" % R,
-        '$execute if data storage %s scan[0]{pid:"$(pid)",state:"open"} run return run data modify storage %s:blackout rp.g set from storage %s scan[0].g' % (R, NS, R),
+        "# (a filter cannot follow a list index: the element is copied to a named compound first)",
+        "data modify storage %s pcur set from storage %s scan[0]" % (R, R),
+        '$execute if data storage %s pcur{pid:"$(pid)",state:"open"} run return run data modify storage %s rp.g set from storage %s pcur.g' % (R, R, R),
         "data remove storage %s scan[0]" % R,
-        "function %s/pid_find with storage %s:blackout rp" % (R, NS)])
+        "function %s/pid_find with storage %s rp" % (R, R)])
     fn("recovery/release", [
         "# a guardian still standing for the settled claims (a rebuilt one) goes back to being an ordinary wild Pokemon",
         "$execute as @e[type=cobblemon:pokemon,tag=cobblers.g$(g)] run data merge entity @s {PersistenceRequired:0b}",
@@ -639,10 +641,10 @@ def build(cfg, mounts, placements, progression):
         "# a placeholder from Cobblemon's own spawn command, then the ledger's snapshot written over it (tested 2026-09-26).",
         "# The placeholder is the snapshot's own species and level: the client keeps the model it was spawned with, so a",
         "# Magikarp placeholder showed as a Magikarp over a level-60 Ursaring (the owner, 2026-09-27)",
-        "$data modify storage %s:blackout rb set value {x:$(x),y:$(y),z:$(z)}" % NS,
-        "$data modify storage %s:blackout rb.species set from storage %s claims[{id:$(id)}].snapshot.Species" % (NS, R),
-        "$data modify storage %s:blackout rb.level set from storage %s claims[{id:$(id)}].snapshot.Level" % (NS, R),
-        "function %s/rebuild_spawn with storage %s:blackout rb" % (R, NS),
+        "$data modify storage %s rb set value {x:$(x),y:$(y),z:$(z)}" % R,
+        "$data modify storage %s rb.species set from storage %s claims[{id:$(id)}].snapshot.Species" % (R, R),
+        "$data modify storage %s rb.level set from storage %s claims[{id:$(id)}].snapshot.Level" % (R, R),
+        "function %s/rebuild_spawn with storage %s rb" % (R, R),
         "$execute positioned $(x) $(y) $(z) as @e[type=cobblemon:pokemon,tag=!cobblers.guardian,distance=..1,limit=1,sort=nearest] run function %s/rebuild_as {g:$(g),id:$(id)}" % R])
     fn("recovery/rebuild_spawn", ["$execute positioned $(x) $(y) $(z) run spawnpokemonat ~ ~ ~ $(species) level=$(level)"])
     fn("recovery/rebuild_as", [
