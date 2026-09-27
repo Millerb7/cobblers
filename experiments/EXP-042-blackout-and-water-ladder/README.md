@@ -143,6 +143,7 @@ Pokemon and item).
 - **No display item** on the guardian (the spec's visible cue); nothing is duplicated by a catch as a result.
 - **A Pokemon knockout outside battle** (Fight or Flight) is environmental: no item claim. Vanilla does not name the
   attacker to a function (EXP-039).
-- **Vanilla air items** (Respiration, turtle shell, Water Breathing potions) still work. `docs/world-building/OCEAN.md`
-  and the spec disagree about them.
+- **Vanilla air items** are removed (the owner, 2026-09-26): Respiration by a data override, and the Water Breathing and
+  Conduit Power effects (potions, the turtle shell, conduits) cleared the tick they land. Seen working in session 3.
+  `docs/world-building/OCEAN.md` now points at the ladder.
 - **Nuzlocke handling** is not built.
