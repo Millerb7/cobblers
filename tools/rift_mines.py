@@ -934,7 +934,13 @@ def gate_files(m, boxes):
     k = g["knock"]
     e = g["exit"]
     zone = [box_cond((b["min"], b["max"])) for b in boxes]
+    # the ward: the plug, the grille and the alcove, grown by ward_margin
+    gr, pl, wm = g["grille"], g["plug"], g["ward_margin"]
+    lo = [min(pl[0], k[0], gr["x"]), min(pl[1], k[1], gr["y"][0]), min(pl[2], k[2], gr["z"][0])]
+    hi = [max(pl[3], k[3], gr["x"]), max(pl[4], k[4], gr["y"][1]), max(pl[5], k[5], gr["z"][1])]
+    ward = ([v - wm for v in lo], [v + wm for v in hi])
     files = {
+        "advancement/%s/gate_ward.json" % FOLDER: adv([box_cond(ward)], "%s:%s/gate/ward" % (NS, FOLDER)),
         "advancement/%s/gate_knock.json" % FOLDER: adv([box_cond((k[:3], k[3:]))], "%s:%s/gate/knock" % (NS, FOLDER)),
         "advancement/%s/gate_exit.json" % FOLDER: adv([box_cond((e[:3], e[3:]))], "%s:%s/gate/exit" % (NS, FOLDER)),
         "advancement/%s/zone.json" % FOLDER: adv([{"condition": "minecraft:any_of", "terms": zone}] if len(zone) > 1 else zone,
@@ -942,6 +948,11 @@ def gate_files(m, boxes):
     }
     badge = spec["flag"]["badge"]
     fn = {
+        "gate/ward": [
+            "# near the gate (data/rift_mines.json gate.ward_why): Mining Fatigue IV, refreshed each second the location",
+            "# trigger fires, so the plug and the rock round it cannot be dug through",
+            "advancement revoke @s only %s:%s/gate_ward" % (NS, FOLDER),
+            "execute if entity @s[gamemode=!creative,gamemode=!spectator] run effect give @s minecraft:mining_fatigue 3 3 true"],
         "gate/knock": [
             "# the company gate (tools/rift_mines.py): a player holding %s is put through; anyone else is told" % flag,
             "advancement revoke @s only %s:%s/gate_knock" % (NS, FOLDER),

@@ -1519,7 +1519,9 @@
         3124.5,
         90
       ],
-      "messages_are_placeholders": "the actionbar lines are plain placeholders; the voice is Codex's (docs/HANDOVER_CODEX.md)"
+      "messages_are_placeholders": "the actionbar lines are plain placeholders; the voice is Codex's (docs/HANDOVER_CODEX.md)",
+      "ward_margin": 4,
+      "ward_why": "the owner, 2026-09-27: 'i can mine around the door'. Anyone in survival or adventure within ward_margin blocks of the plug, grille and alcove has vanilla Mining Fatigue IV (the ocean-monument ward), so the gate cannot be dug round or broken; no block changes. The zone check stays the real gate for anyone who tunnels in from further away"
     },
     "guardian_modes": {
       "source": "SOUTHERN_RIFT.md section 4; EXP-036 (a spawned Mega Charizard X stayed Mega through a battle)",
