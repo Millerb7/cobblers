@@ -1,8 +1,8 @@
 """tools/blackout_pack.py: the cobblers_blackout datapack (blackout, recovery claims, the water ladder).
 
-Written by the test author, not by the session that wrote the tool (commits 562eeb6..5d522d7). Surface exhaustion
-(the pack's surface/* functions and tools/open_water.py) is tested in tests/test_surface_exhaustion.py, on the
-simulator defined here.
+Written by the test author, not by the session that wrote the tool (commits 562eeb6..5d522d7). Swim fatigue (the
+pack's surface/* functions) is tested in tests/test_surface_exhaustion.py, on the simulator defined here;
+tools/open_water.py, which the pack no longer reads (2262aa3), in tests/test_open_water.py.
 
 Independent sources: data/blackout.json and data/water_mounts.json (the authored rules and numbers);
 data/placements.json (every Center: kind "service", id ending "_pokecenter") and data/progression.json (every town
@@ -54,15 +54,11 @@ PROGRESSION = _load("progression.json")
 NS = "cobblers"
 LEDGER = "cobblers_recovery:ledger"          # the claim ledger's storage (the coordinator, 2026-09-27)
 FN_DIR = "data/%s/function/" % NS
-# a small synthetic sea for the surface functions: row 330 (z 4256..4271) has open water in cells 10-19 and the deep
-# in cells 20-29 (x -864..-705 and -704..-545); tests/test_surface_exhaustion.py builds the real rows from the heightmap
-ROWS = {330: [(10, 19, 1), (20, 29, 2)]}
 
 
-def build(cfg=None, mounts=None, placements=None, progression=None, sea_rows=ROWS):
+def build(cfg=None, mounts=None, placements=None, progression=None):
     return BP.build(copy.deepcopy(cfg or CFG), copy.deepcopy(mounts or MOUNTS),
-                    copy.deepcopy(placements or PLACEMENTS), copy.deepcopy(progression or PROGRESSION),
-                    copy.deepcopy(sea_rows))
+                    copy.deepcopy(placements or PLACEMENTS), copy.deepcopy(progression or PROGRESSION))
 
 
 PACK = build()
@@ -369,9 +365,8 @@ def _references(pack=None):
 
 
 # The macro-built function names the pack may call, and what each may resolve to. A new one fails the test below until
-# it is described here: surface/row calls surface/r/$(z), z being the swimmer's 16-block cell row, whose functions exist
-# only where there is open sea (tests/test_surface_exhaustion.py checks every world row against the real heightmap).
-MACRO_NAMES = {"surface/r/$(z)": re.compile(r"surface/r/-?\d+")}
+# it is described here. There are none since 2262aa3 (the sea-row lookup surface/r/$(z) went with the distance bands).
+MACRO_NAMES = {}
 
 
 # Without it a renamed or misspelt function fails at runtime (an unknown function in a datapack function stops the
@@ -504,10 +499,10 @@ def test_every_constant_read_from_bo_cfg_is_set_in_load_from_the_data():
     s = CFG["surface"]
     per = s["sample_ticks"]
     assert (set_["#fgain1"], set_["#fgain2"], set_["#frec"]) == (
-        s["gain_open_per_tick"] * per, s["gain_deep_per_tick"] * per, s["recover_per_tick"] * per)
+        s["gain_shallow_per_tick"] * per, s["gain_deep_per_tick"] * per, s["recover_per_tick"] * per)
     assert (set_["#fwarn"], set_["#fslow"], set_["#fexh"], set_["#fcol"], set_["#fpulse"], set_["#fcap"]) == (
         s["warn_ticks"], s["slow_ticks"], s["exhausted_ticks"], s["collapse_ticks"], s["pulse_ticks"], s["cap_ticks"])
-    assert (set_["#16"], set_["#wmin"], set_["#2"], set_["#fsample"]) == (16, -s["world_min"], 2, per)
+    assert (set_["#2"], set_["#fsample"]) == (2, per)
     w, c = CFG["water"], CFG["claims"]
     assert (set_["#pct"], set_["#surf"], set_["#regen"], set_["#pulse"], set_["#grace"], set_["#dedupe"]) == (
         CFG["money"]["percent"], w["surf_bonus_ticks"], w["pulse_regen_margin"], w["pulse_ticks"],
