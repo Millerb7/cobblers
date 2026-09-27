@@ -61,7 +61,7 @@ OBJECTIVES = {
     "bo.px": "dummy", "bo.pz": "dummy", "bo.ox": "dummy", "bo.oz": "dummy",
     "bo.mount": "dummy", "bo.raw": "dummy", "bo.qual": "dummy", "bo.grace": "dummy",
     "bo.deep": "dummy", "bo.sub": "dummy", "bo.air": "dummy", "bo.surf": "dummy", "bo.breath": "dummy",
-    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy", "bo.swim": "dummy", "bo.zone": "dummy", "bo.fat": "dummy", "bo.fwarn": "dummy",
+    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy", "bo.swim": "dummy", "bo.zone": "dummy", "bo.fat": "dummy", "bo.fwarn": "dummy", "bo.fpt": "dummy",
 }
 
 # the inventory slots a claim may take from: the hotbar and main inventory, and the offhand. Armour never.
@@ -174,8 +174,10 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "scoreboard players operation #m bo.tmp = #gt bo.tmp",
         "scoreboard players operation #m bo.tmp %= #5 bo.cfg",
         "execute if score #m bo.tmp matches 0 as @e[type=player] at @s run function %s:blackout/checkpoint/sample" % NS,
-        "# surface exhaustion, every 10 ticks, for swimmers in survival or adventure",
-        "execute if score #m10 bo.tmp matches 0 as @e[type=player,gamemode=!creative,gamemode=!spectator] at @s run function %s:surface/tick" % NS,
+        "# surface exhaustion, every surface.sample_ticks, for swimmers in survival or adventure",
+        "scoreboard players operation #ms bo.tmp = #gt bo.tmp",
+        "scoreboard players operation #ms bo.tmp %= #fsample bo.cfg",
+        "execute if score #ms bo.tmp matches 0 as @e[type=player,gamemode=!creative,gamemode=!spectator] at @s run function %s:surface/tick" % NS,
         "scoreboard players operation #m bo.tmp = #gt bo.tmp",
         "scoreboard players operation #m bo.tmp %= #maint bo.cfg",
         "execute if score #m bo.tmp matches 0 run function %s:recovery/maintain" % NS])
@@ -663,7 +665,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
     consts_s = {"#fgain1": surf["gain_open_per_tick"] * per, "#fgain2": surf["gain_deep_per_tick"] * per,
                 "#frec": surf["recover_per_tick"] * per, "#fwarn": surf["warn_ticks"], "#fslow": surf["slow_ticks"],
                 "#fexh": surf["exhausted_ticks"], "#fcol": surf["collapse_ticks"], "#fpulse": surf["pulse_ticks"],
-                "#fcap": surf["cap_ticks"], "#16": 16, "#wmin": -surf["world_min"]}
+                "#fcap": surf["cap_ticks"], "#16": 16, "#wmin": -surf["world_min"], "#fsample": per}
     files["data/%s/function/surface/load.mcfunction" % NS] = "\n".join(
         ["scoreboard players set %s bo.cfg %d" % (k, v) for k, v in consts_s.items()]) + "\n"
     load_tag = json.loads(files["data/minecraft/tags/function/load.json"])
@@ -672,6 +674,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
     fn("surface/tick", [
         "# as and at a player every %d ticks: only a swimmer, in water and riding nothing, builds fatigue" % per,
         "execute unless block ~ ~ ~ #%s:water unless score @s bo.sub matches 1 run return run function %s:surface/recover" % (NS, NS),
+        "scoreboard players set #ride bo.tmp 0",
         "execute store success score #ride bo.tmp on vehicle if entity @s",
         "execute if score #ride bo.tmp matches 1 run return run function %s:surface/recover" % NS,
         "scoreboard players set @s bo.zone 0",
@@ -688,6 +691,8 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "scoreboard players operation #g bo.tmp = #fgain1 bo.cfg",
         "execute if score @s bo.zone matches 2 run scoreboard players operation #g bo.tmp = #fgain2 bo.cfg",
         "execute if score @s bo.qual matches 1.. run scoreboard players operation #g bo.tmp /= #2 bo.cfg",
+        "# the pulse clock stays primed below collapse, so the first hit lands the sample collapse is reached",
+        "execute if score @s bo.fat < #fcol bo.cfg run scoreboard players operation @s bo.fpt = #fpulse bo.cfg",
         "scoreboard players operation @s bo.fat += #g bo.tmp",
         "scoreboard players operation @s bo.fat < #fcap bo.cfg",
         "execute if score @s bo.fat >= #fwarn bo.cfg if score @s bo.fwarn matches ..0 run function %s:surface/warn_tiring" % NS,
@@ -702,17 +707,20 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         fn("surface/r/%d" % z, ["execute if score #cx bo.tmp matches %d..%d run return run scoreboard players set @s bo.zone %d" % (a, b, v)
                                 for a, b, v in runs])
     fn("surface/recover", [
+        "# the first hit lands as collapse is reached",
+        "scoreboard players operation @s bo.fpt = #fpulse bo.cfg",
         "execute if score @s bo.fat matches 1.. run scoreboard players operation @s bo.fat -= #frec bo.cfg",
         "execute if score @s bo.fat matches ..0 run scoreboard players set @s bo.fat 0",
         "execute if score @s bo.fat < #fwarn bo.cfg run scoreboard players set @s bo.fwarn 0"])
     fn("surface/warn_tiring", ["tellraw @s %s" % text(msg["surface_tiring"], "yellow"), "scoreboard players set @s bo.fwarn 1"])
     fn("surface/warn_exhausted", ["tellraw @s %s" % text(msg["surface_exhausted"], "red"), "scoreboard players set @s bo.fwarn 2"])
     fn("surface/collapse", [
-        "# every pulse_ticks past collapse: the same half-health hit as drowning, lethal from half health",
-        "scoreboard players operation #p bo.tmp = @s bo.fat",
-        "scoreboard players operation #p bo.tmp -= #fcol bo.cfg",
-        "scoreboard players operation #p bo.tmp %= #fpulse bo.cfg",
-        "execute if score #p bo.tmp matches %d.. run return 0" % per,
+        "# past collapse, one hit every pulse_ticks of time (its own clock, bo.fpt, so the band and a partner change",
+        "# how fast fatigue grows, never how often the hits land): the same half-health hit as drowning",
+        "execute unless score @s bo.fpt matches -2147483648.. run scoreboard players operation @s bo.fpt = #fpulse bo.cfg",
+        "scoreboard players operation @s bo.fpt += #fsample bo.cfg",
+        "execute if score @s bo.fpt < #fpulse bo.cfg run return 0",
+        "scoreboard players set @s bo.fpt 0",
         "execute if score @s bo.fwarn matches ..2 run tellraw @s %s" % text(msg["surface_collapse"], "red"),
         "execute if score @s bo.fwarn matches ..2 run scoreboard players set @s bo.fwarn 3",
         "function %s:water/pulse" % NS])

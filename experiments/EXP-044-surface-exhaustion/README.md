@@ -27,7 +27,7 @@ Versions: Minecraft 1.21.1 Fabric, Cobblemon 1.8.0, staging `cobblers-dryrun11`,
 | 400 (20 s of open water) | yellow warning: "Your arms are growing heavy. The open sea is no place to swim." |
 | 600 (30 s) | Slowness I |
 | 900 (45 s) | Slowness II, Hunger, red warning: "You are exhausted. Turn back to shore, or ride a water Pokemon." |
-| 1200 (60 s) | "The sea is pulling you under.", then the water ladder's hit (half health, lethal from half health) every 3 s in open water, faster in the deep. A death is environmental: money and the checkpoint, no items |
+| 1200 (60 s) | "The sea is pulling you under.", then the water ladder's hit (half health, lethal from half health) as collapse is reached and every 3 s after, in any band: the band and a partner change how fast fatigue grows, not how often the hits land (a separate clock; the first design tied hits to fatigue steps, which the independent tests showed could double or skip them). A death is environmental: money and the checkpoint, no items |
 
 At the measured sprint-swim of 5 blocks per second (EXP-042 session 3), an unaided swimmer reaches:
 - the warning about 100 blocks past the shallows' edge;
