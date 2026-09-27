@@ -135,7 +135,7 @@
     "air_warning_why": "20% of vanilla's 300"
   },
   "surface": {
-    "status": "proposed and built 2026-09-27 (EXP-043); not yet run in game",
+    "status": "proposed and built 2026-09-27 (EXP-044); not yet run in game",
     "rule": "swimming (feet or eyes in water, riding nothing) in the open sea builds fatigue; the shallows, land, lakes and riding recover it. Bands by distance from land on the canonical heightmap (tools/open_water.py): under shallow_blocks is free, to deep_blocks is open water, beyond is the deep",
     "why": "the owner, 2026-09-26: a first-time Route 1 player 'cant swim without a surf mon'; the Route 1 ocean is reachable, only not crossable",
     "shallow_blocks": 96,

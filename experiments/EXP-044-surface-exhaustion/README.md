@@ -1,4 +1,4 @@
-# EXP-043: Surface exhaustion in the open sea
+# EXP-044: Surface exhaustion in the open sea
 
 **Objective:** a player cannot cross the sea by swimming. They can swim the shallows and a little way into open water,
 tire, and have to turn back. Riding a water Pokemon removes the limit.
