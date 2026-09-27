@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -44,6 +45,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_blackout"
 NS = "cobblers"
+# the claim ledger's storage: its own namespace, so Minecraft keeps it in its own file
+# (data/command_storage_cobblers_recovery.dat), which tools/carry_players.py carries into a re-exported world; the
+# shared cobblers storage also holds the re-apply's own progress, which must never be carried
+LEDGER = "cobblers_recovery:ledger"
 
 # every scoreboard objective the pack owns; one prefix, so nothing collides with the other packs
 OBJECTIVES = {
@@ -222,10 +227,17 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "execute store result score @s bo.bal run cobbledollars query @s",
         "execute if score @s bo.bal matches 1.. run function %s:blackout/charge_calc" % NS])
     fn("blackout/charge_calc", [
+        "# ceil(b * p / 100) as (b / 100) * p + ceil((b mod 100) * p / 100), so no step overflows a 32-bit score (the",
+        "# test author's finding: b * p overflowed from about 214 million)",
         "scoreboard players operation @s bo.lost = @s bo.bal",
-        "scoreboard players operation @s bo.lost *= #pct bo.cfg",
-        "scoreboard players add @s bo.lost 99",
         "scoreboard players operation @s bo.lost /= #100 bo.cfg",
+        "scoreboard players operation @s bo.lost *= #pct bo.cfg",
+        "scoreboard players operation #rem bo.tmp = @s bo.bal",
+        "scoreboard players operation #rem bo.tmp %= #100 bo.cfg",
+        "scoreboard players operation #rem bo.tmp *= #pct bo.cfg",
+        "scoreboard players add #rem bo.tmp 99",
+        "scoreboard players operation #rem bo.tmp /= #100 bo.cfg",
+        "scoreboard players operation @s bo.lost += #rem bo.tmp",
         "execute store result storage %s:blackout charge.amount int 1 run scoreboard players get @s bo.lost" % NS,
         "function %s:blackout/charge_apply with storage %s:blackout charge" % (NS, NS)])
     fn("blackout/charge_apply", ["$cobbledollars remove @s $(amount)"])
@@ -259,7 +271,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
               "advancement revoke @s only %s:blackout/healer_use" % NS]
     ways = ["# as a player who has just jumped a long way: travel through a town waystone lands beside it"]
     for cid, kind, name, x, y, z, r in cps:
-        vr = r if kind == "center" else r * 2
+        vr = r + 2 if kind == "center" else r * 2     # + 2: the healer area matches a hitbox, not a block
         validate.append("execute if score @s bo.cp matches %d if score @s bo.cpx matches %d..%d if score @s bo.cpz matches %d..%d run scoreboard players set @s bo.ok 1"
                         % (cid, x - vr, x + vr, z - vr, z + vr))
         names.append('execute if score @s bo.cp matches %d run data modify storage %s:blackout place set value "%s"' % (cid, NS, name))
@@ -319,7 +331,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
     # the claim ledger has a namespace of its own, so Minecraft keeps it in its own file
     # (data/command_storage_cobblers_recovery.dat), which tools/carry_players.py carries into a re-exported world;
     # the shared cobblers storage also holds the re-apply's own progress, which must never be carried
-    R = "cobblers_recovery:ledger"
+    R = "%s:recovery" % NS            # function paths; storage references are rewritten to LEDGER at the end of build()
 
     def quota(n, t, pct, mx):
         return ["scoreboard players operation @s %s = @s %s" % (t, n),
@@ -398,12 +410,19 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "# persist first (spec: the claim is written before anything is removed); abort if it did not land",
         "data modify storage %s claims append from storage %s pending" % (R, R),
         "data remove storage %s claims[-1].plan" % R,
-        "execute unless data storage %s claims[-1].items[0] run return fail" % R,
+        "execute store success score #ok bo.tmp run function %s/verify with storage %s pending" % (R, R),
+        "$execute if score #ok bo.tmp matches 0 run return run tellraw @s [{\"selector\":\"$(victor)\",\"color\":\"white\"},%s]" % text(msg["claim_nothing"].split("{victor}")[1]),
         "function %s/apply" % R,
         "$execute as $(victor) run function %s/bind" % R,
         "function %s/summary" % R,
         '$tellraw @s [{"selector":"$(victor)","color":"white"},%s,{"storage":"%s","nbt":"summary[]","interpret":true,"separator":", "},%s]'
         % (text(msg["claim"].split("{victor}")[1].split("{summary}")[0]), R, text(msg["claim"].split("{summary}")[1]))])
+    fn("recovery/verify", [
+        "# the claim just written, by its own id: it must hold items, or it is removed so maintenance never rebuilds a",
+        "# guardian for it (the test author's finding: clear also counts armour and crafting slots the scan skips)",
+        "$execute if data storage %s claims[{id:$(id)}].items[0] run return 1" % R,
+        "$data remove storage %s claims[{id:$(id)}]" % R,
+        "return fail"])
     fn("recovery/apply", [
         "execute unless data storage %s pending.plan[0] run return 0" % R,
         "function %s/apply_one with storage %s pending.plan[0]" % (R, R),
@@ -570,8 +589,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "# underwater never hands out a fresh Surf timer (spec 'Entering, swapping and leaving depth')",
         "execute if score @s bo.qual matches 2 if score @s bo.surf < #surf bo.cfg run scoreboard players add @s bo.surf 1",
         "execute if score @s bo.qual matches 2 run return run function %s:water/breathing" % NS,
-        "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run scoreboard players add @s bo.surf 1",
-        "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run return run function %s:water/breathing" % NS,
+        "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run return run function %s:water/surf_breath" % NS,
         "execute if score @s bo.air <= #airwarn bo.cfg if score @s bo.warn matches 0 run function %s:water/warn_low" % NS,
         "execute if score @s bo.air matches ..0 run function %s:water/out" % NS])
     fn("water/breathing", [
@@ -593,6 +611,10 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "attribute @s minecraft:generic.water_movement_efficiency modifier remove cobblers:dive_swim",
         "attribute @s minecraft:generic.movement_speed modifier remove cobblers:dive_swim",
         "scoreboard players set @s bo.swim 0"])
+    fn("water/surf_breath", [
+        "# counted after the test, so the bonus lasts exactly surf_bonus_ticks",
+        "scoreboard players add @s bo.surf 1",
+        "function %s:water/breathing" % NS])
     fn("water/unbreathe", [
         "attribute @s minecraft:generic.oxygen_bonus modifier remove cobblers:ladder",
         "scoreboard players set @s bo.hasmod 0"])
@@ -740,6 +762,10 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "t.e = q.pokemon.entity;",
         "q.run_command('execute as ' + t.e.uuid + ' if entity @s[tag=cobblers.guardian] run function %s:recovery/defeated {resolver:\"' + q.player.uuid + '\"}');" % NS,
         ""])
+    # the claim ledger's storage has a namespace of its own (see LEDGER); function paths keep cobblers:recovery/...
+    for k, v in files.items():
+        v = re.sub(r"storage cobblers:recovery(?=[ \n])", "storage " + LEDGER, v)
+        files[k] = v.replace('"storage":"cobblers:recovery"', '"storage":"%s"' % LEDGER)
     return files
 
 
