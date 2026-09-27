@@ -61,8 +61,7 @@
       "medicine": {"percent": 40, "max": 12},
       "consumables": {"chance_percent": 100, "take": 1}
     },
-    "slain_window_ticks": 400,
-    "slain_window_why": "a guardian found gone from its loaded site counts as killed by the last player (or player's Pokemon) who hurt it if that was within this many ticks; maintenance notices within two passes (200 ticks) of the death. The owner, 2026-09-27: killing it with a sword should work like beating it",
+    "slain_rule": "a guardian found gone from its loaded site counts as killed by the last player (or player's Pokemon) who hurt it if that blow was noted after maintenance last saw the guardian alive (claim alive_t); vanilla forgets an attacker 100 ticks after the last blow, so an old fight never counts. Replaced a 400-tick window counted from when maintenance noticed, which rebuilt the guardian if the killer left (the test author's finding). The owner, 2026-09-27: killing it with a sword should work like beating it",
     "categories_why":"raised 2026-09-27 for the owner's 'more punishing' (was balls 15% max 10, medicine 15% max 6, a 35% chance of one battle or evolution item, the spec's figures)",
     "balls": [
       "cobblemon:ancient_azure_ball", "cobblemon:ancient_citrine_ball", "cobblemon:ancient_feather_ball",

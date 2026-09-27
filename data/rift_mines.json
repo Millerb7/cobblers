@@ -1520,7 +1520,8 @@
         90
       ],
       "messages_are_placeholders": "the actionbar lines are plain placeholders; the voice is Codex's (docs/HANDOVER_CODEX.md)",
-      "ward_margin": 4,
+      "ward_margin": 7,
+      "ward_margin_why": "was 4; the test author showed a player standing just outside reached the plug (reach 4.5 from the eyes, 1.62 above the feet the box tests). 7 keeps both beyond reach from below and beside",
       "ward_why": "the owner, 2026-09-27: 'i can mine around the door'. Anyone in survival or adventure within ward_margin blocks of the plug, grille and alcove has vanilla Mining Fatigue IV (the ocean-monument ward), so the gate cannot be dug round or broken; no block changes. The zone check stays the real gate for anyone who tunnels in from further away"
     },
     "guardian_modes": {
