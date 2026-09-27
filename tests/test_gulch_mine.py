@@ -370,38 +370,52 @@ def _run(w, ticks):
 
 
 PERIOD = SPEC["faces"]["period_ticks"]
+OFFSET = (FACES["face_b"]["offset_ticks"] - FACES["face_a"]["offset_ticks"]) % PERIOD
+PASS = SPEC["driver"]["every_ticks"]              # a restore can only happen on a driver pass
+
+
+def _times(got, fid):
+    return [t for t, f in got if f == fid]
 
 
 # Without it a face restores more often than decision 6's 30 minutes (a farm), never, or while nobody is near (STONE_
-# ECONOMY.md 5.3: a fixed timer fails silently on unloaded chunks): with a player in the approach box for three periods,
-# each face restores at the first pass and then exactly once per period; with nobody near, nothing runs at all.
-def test_a_face_restores_once_per_period_and_only_on_approach():
+# ECONOMY.md 5.3: a fixed timer fails silently on unloaded chunks). The chosen rule for a hall's two faces (0f190dd:
+# a face's restore makes its sibling due exactly the offset later, never sooner than the sibling's own period; 7.6
+# "faces in a hall offset by 15"): on an old world, both overdue, the first pass restores face A only; face B follows
+# the offset later; then each face once a period, alternating. With nobody near, nothing runs at all.
+def test_a_face_restores_once_per_period_offset_from_its_sibling_and_only_on_approach():
     w = _mine_world()
-    got = _run(w, 3 * PERIOD + 200)
-    for fid in FACES:
-        times = [t for t, f in got if f == fid]
-        assert len(times) == 4, (fid, times)
-        gaps = [b - a for a, b in zip(times, times[1:])]
-        assert all(g >= PERIOD for g in gaps) and all(g <= PERIOD + 100 for g in gaps), (fid, gaps)
+    t0 = w.gt
+    got = _run(w, 3 * PERIOD + 2 * PASS)
+    a, b = _times(got, "face_a"), _times(got, "face_b")
+    assert a[0] == t0 + PASS, "the first pass must restore the first face of the hall"
+    assert len(a) == 4 and len(b) == 3, (a, b)
+    for times in (a, b):
+        gaps = [y - x for x, y in zip(times, times[1:])]
+        assert all(PERIOD <= g <= PERIOD + PASS for g in gaps), gaps
+    assert all(OFFSET <= tb - ta <= OFFSET + PASS for ta, tb in zip(a, b)), (a, b)
     far = _mine_world(near=False)
     far.calls.clear()
     assert _run(far, 2 * PERIOD) == []
     assert not [c for c in far.calls if c[0] not in ("%s/tick" % F, "%s/drive" % F, "%s/leash" % F)], far.calls[-3:]
 
 
-# Without it a restart repeats a restore (the scores reset at load) or loses one: load leaves a restore time it finds.
+# Without it a restart repeats a restore (the scores reset at load) or loses one: load leaves the restore times it
+# finds, so after a restart the next restore is the one the schedule already had (face B, the offset after face A).
 def test_a_restart_neither_repeats_nor_loses_a_restore():
     w = _mine_world()
-    first = _run(w, 200)
-    assert {f for _t, f in first} == set(FACES)
+    first = _run(w, 2 * PASS)
+    assert [f for _t, f in first] == ["face_a"], first
     w.call("%s/load" % F)                                  # a restart: minecraft:load runs again
-    again = _run(w, PERIOD - 300)
-    assert again == [], again
+    again = _run(w, PERIOD - 3 * PASS)
+    assert [f for _t, f in again] == ["face_b"], again
+    assert OFFSET <= again[0][0] - first[0][0] <= OFFSET + PASS, (first, again)
 
 
 # Without it a face is rewritten with a player or a Pokemon standing in it (a player buried in meteorid), or its fill
-# runs into an unloaded chunk and fails silently: a player or a Pokemon in the box or one block round it, or either
-# corner unloaded, holds the restore back; it runs at the first pass after they leave.
+# runs into an unloaded chunk and fails silently: a player or a Pokemon in face A's box or one block round it, or
+# either corner unloaded, holds its restore back while face B, free, restores; by the sibling rule face A is then due
+# the offset after face B (never sooner), and it restores at the first pass after that once it is free.
 @pytest.mark.parametrize("what", ["a player in the box", "a player one block outside", "a Pokemon in the box",
                                   "the far corner unloaded", "the near corner unloaded"])
 def test_a_face_does_not_restore_while_occupied_or_unloaded(what):
@@ -418,14 +432,23 @@ def test_a_face_does_not_restore_while_occupied_or_unloaded(what):
         far = what == "the far corner unloaded"
         w.loaded = lambda x, y, z: not ((x, y, z) == ((x1 + 1, y1 + 1, z1 + 1) if far else (x0 - 1, y0 - 1, z0 - 1)))
         e = None
-    got = _run(w, 400)
-    assert not [t for t, fid in got if fid == "face_a"], got
-    assert [t for t, fid in got if fid == "face_b"], "the other face, free, must still restore"
+    got = _run(w, 4 * PASS)
+    assert not _times(got, "face_a"), got
+    tb = _times(got, "face_b")
+    assert len(tb) == 1, "the other face, free, must still restore"
     if e is not None:
         w.entities = [x for x in w.entities if x is not e]
     else:
         w.loaded = lambda x, y, z: True
-    assert [t for t, fid in _run(w, 200) if fid == "face_a"]
+    later = _run(w, OFFSET + 2 * PASS)
+    ta = _times(later, "face_a")
+    assert len(ta) == 1 and OFFSET <= ta[0] - tb[0] <= OFFSET + PASS, (tb, ta)
+    # held back longer than the offset, it restores at the first pass once free
+    w2 = _mine_world()
+    blocker = w2.player((x0 + 3.5, y0, z0 + 3.5))
+    _run(w2, OFFSET + 5 * PASS)
+    w2.entities = [x for x in w2.entities if x is not blocker]
+    assert _times(_run(w2, PASS), "face_a"), "a face overdue and free must restore on the next pass"
 
 
 def _variant(fns, fid, k):
@@ -509,19 +532,25 @@ def test_a_restore_never_repeats_the_last_variant():
 
 
 # Without it the two faces of a hall come back together, not 15 minutes apart (SOUTHERN_RIFT_MEGA.md 7.6: "faces in a
-# hall offset by 15"; data face_b offset_ticks 18000). The offset is taken from game time 0 (load sets face_b's last
-# restore to -18000), and a restore happens only when a player is near: on any world older than 30 minutes of game time
-# when the pack is installed (the staging world), and after any absence longer than a period, both faces are overdue at
-# the same pass and restore together from then on. Found by this suite.
-@pytest.mark.xfail(strict=True, reason="the faces' offset is from game time 0, not kept: on a world past 36000 ticks, or "
-                                       "after an absence of a period, face_a and face_b restore at the same pass")
-def test_the_faces_of_a_hall_restore_offset_by_their_offset_ticks():
-    w = _mine_world(gt=10_000_000)
-    got = _run(w, 2 * PERIOD + 200)
-    a = [t for t, f in got if f == "face_a"]
-    b = [t for t, f in got if f == "face_b"]
-    off = FACES["face_b"]["offset_ticks"] - FACES["face_a"]["offset_ticks"]
-    assert all(abs(((tb - ta) % PERIOD) - off) <= 100 for ta, tb in zip(a, b)), (a, b)
+# hall offset by 15"; data face_b offset_ticks 18000), on a world older than 30 minutes of game time when the pack
+# is installed (the staging world) or after nobody came near for longer than a period. Found by this suite at 361c9cf
+# (both came due at the same pass and stayed in phase); fixed in 0f190dd.
+@pytest.mark.parametrize("gt", [0, 10_000_000], ids=["a new world", "an old world"])
+def test_the_faces_of_a_hall_restore_offset_by_their_offset_ticks(gt):
+    w = _mine_world(gt=gt)
+    visitor = w.entities[0]
+
+    def offset_holds(got):
+        a, b = _times(got, "face_a"), _times(got, "face_b")
+        assert a and b, got
+        return all(OFFSET - PASS <= (tb - ta) % PERIOD <= OFFSET + PASS for ta, tb in zip(a, b)), (a, b)
+    ok, seen = offset_holds(_run(w, 2 * PERIOD + 2 * PASS))
+    assert ok, seen
+    w.entities.remove(visitor)                             # an idle spell longer than a period: both faces overdue
+    _run(w, 3 * PERIOD)
+    w.entities.append(visitor)
+    ok, seen = offset_holds(_run(w, 2 * PERIOD + 2 * PASS))
+    assert ok, seen
 
 
 # ================================================================================================= the Megas

@@ -168,8 +168,8 @@
       "consumers": ["world_block_packs"],
       "statement": "Every generated pack that ships functions is run by a re-apply step or is in tools/reapply.py EXCLUDED with its reason; prepare fails closed otherwise, so no build is silently lost at a re-export.",
       "stated_in": [
-        {"at": "tools/reapply.py:100", "quote": "Anything not here and not run"},
-        {"at": "tools/reapply.py:624", "quote": "Fail closed instead."}
+        {"at": "tools/reapply.py:104", "quote": "Anything not here and not run"},
+        {"at": "tools/reapply.py:634", "quote": "Fail closed instead."}
       ],
       "tests": ["tests/test_reapply_vr_steps.py::test_every_function_pack_present_is_run_by_a_step_or_excluded_with_a_reason",
                 "tests/test_reapply_vr_steps.py::test_uncovered_sees_the_cave_pack_and_reports_it_when_its_step_is_gone",
@@ -222,7 +222,7 @@
       "constrained_by": ["terrain", "swim_fatigue"],
       "statement": "Walked on the canonical heightmap along the ferry contract's lines (C3) at 5 blocks per second, a player who rides a boat wherever the generated boat/check lets them stay (placing another at once after a tip) and swims wherever it tips them, with the generated surface/tick, is knocked out on the Sunset strait and the Northlight packet, and crosses the Relic row and the Sound ferry (the Sound is sheltered water by design).",
       "stated_in": [
-        {"at": "docs/mechanics/WATER_BUILD_PLAN.md:754", "quote": "A boat should not defeat swimming, exhaustion and the ferry from day one."},
+        {"at": "docs/mechanics/WATER_BUILD_PLAN.md:791", "quote": "A boat should not defeat swimming, exhaustion and the ferry from day one."},
         {"at": "docs/mechanics/WATER_BUILD_PLAN.md:699", "quote": "a boat still reaches Relic, Fungal and the Long Isle"},
         {"at": "docs/mechanics/WATER_PROPOSAL.md:275", "quote": "swamp a boat (decision 1)"},
         {"at": "docs/mechanics/WATER_PROPOSAL.md:276", "quote": "the Sound is sheltered water (decision 1)"}

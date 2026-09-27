@@ -18,7 +18,7 @@ that built it. On packs the generator builds (copied into tmp_path):
              camp; the retired section is the gated section the spur build had (5d18aa5), feature for feature
   audit      mutation checks on the output: each of a seal cell opened, a write outside the grid, a block on a camp
              lot, a spawn-condition block, water, a second crystal, a retired gate advancement and a meteorid ore makes
-             the audit report it; a pack with no grille at all is not reported (a finding, marked strict xfail)
+             the audit report it; so does a pack with a grille cell of air (found here at 361c9cf, fixed in 0f190dd)
 
 Needs the canonical heightmap (COBBLERS_SOURCE_ROOT) and derived/towns/rift_dig_camp_plan.json (python
 tools/town_plan.py rift_dig_camp); SKIPS without them, and a skip is not a pass.
@@ -401,11 +401,11 @@ def test_the_audit_catches_a_broken_pack(built, audit_plan, tmp_path, monkeypatc
 # Without it a pack that never builds the grille passes the audit: its docstring says "the grille's cells are envelope
 # and close drift C whole", but that is checked on the data (plan_problems), and the replayed output is never asked
 # whether iron bars stand there; the grille cells are envelope, so air there is not a "stray" either. Found by this
-# suite on the cut-back audit (72f8ddb). The test above (exactly_one_crystal...) checks the generator's output
-# directly; this marks the audit's blind spot.
-@pytest.mark.xfail(strict=True, reason="tools/rift_mines_audit.py output_problems never checks that the grille's iron "
-                                       "bars are written: a pack with the grille set to air audits clean")
-def test_the_audit_catches_a_pack_without_its_grille(built, audit_plan, tmp_path, monkeypatch):
+# suite on the cut-back audit (361c9cf); fixed in 0f190dd. One grille cell of air is enough.
+@pytest.mark.parametrize("cells", ["all", "one"])
+def test_the_audit_catches_a_pack_without_its_grille(built, audit_plan, tmp_path, monkeypatch, cells):
     pack = _copy(built, tmp_path)
-    _append(pack, *["setblock %d %d %d minecraft:air" % c for c in sorted(W.GRILLE)])
-    assert _audit_output(pack, audit_plan, monkeypatch) != []
+    gone = sorted(W.GRILLE) if cells == "all" else sorted(W.GRILLE)[:1]
+    _append(pack, *["setblock %d %d %d minecraft:air" % c for c in gone])
+    probs = _audit_output(pack, audit_plan, monkeypatch)
+    assert any(p.startswith("tease:") and "grille" in p for p in probs), probs

@@ -843,7 +843,7 @@ def _boat_walk(g, crossing, files, fns):
 
 
 # Without it option C does not do what the owner chose it for ("A boat should not defeat swimming, exhaustion and the
-# ferry from day one", WATER_BUILD_PLAN.md:754): a player who boats every stretch the rule allows and swims only where it
+# ferry from day one", WATER_BUILD_PLAN.md:791): a player who boats every stretch the rule allows and swims only where it
 # tips them crosses a strait the ferry gates. Walked on the canonical heightmap with the generated boat rows and the
 # generated swim: the Sunset strait and the Northlight packet knock that player out; the Relic row (all shallows) and
 # the Sound ferry (the Sound is sheltered water, WATER_PROPOSAL.md:276) are crossed. The line is the ferry contract's

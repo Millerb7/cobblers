@@ -5,7 +5,7 @@ data/blackout.json "boats"). It runs the generated functions on tests/test_surfa
 command simulator of tests/test_blackout_pack.py, given a vehicle, a position and a water column).
 
 Independent sources:
-  - the owner, 2026-09-27 (docs/mechanics/WATER_BUILD_PLAN.md:754): "Boats: option C, shallows only. A boat should not
+  - the owner, 2026-09-27 (docs/mechanics/WATER_BUILD_PLAN.md:791): "Boats: option C, shallows only. A boat should not
     defeat swimming, exhaustion and the ferry from day one"; WATER_PROPOSAL.md 4.4 option C: past 96 blocks from land a
     boat is swamped, its rider dismounted and swimming; sheltered water is an authored exception; coasts, lakes and
     rivers stay boat water;
@@ -236,12 +236,9 @@ def test_the_boat_check_runs_for_a_rider_whose_feet_are_dry(boated):
 
 
 # Without it the rider tipped out of a boat recovers for that sample instead of swimming (the rule: "is put out of it
-# with the message ... then the swim rule applies"). surface/tick resets #ride to 0 only at its top; after the
-# dismount it re-stores `on vehicle`, which with no vehicle stores nothing (the simulator's reading of vanilla, which
-# tests/test_surface_exhaustion.py already relies on), so #ride keeps the 1 the boat set and the sample recovers. One
-# sample of 10 ticks per tip: low stakes, but the sample the rule describes is a swimming one. Found by this suite.
-@pytest.mark.xfail(strict=True, reason="surface/tick does not reset #ride before re-reading it after the boat check's "
-                                       "dismount: the tipped rider's sample recovers (fatigue 500 -> 500 - recover)")
+# with the message ... then the swim rule applies"): after the dismount surface/tick re-stores `on vehicle`, which
+# with no vehicle stores nothing (the simulator's reading of vanilla), so #ride must be reset first or it keeps the 1
+# the boat set and the sample recovers. Found by this suite at 361c9cf; fixed in 0f190dd.
 def test_a_rider_tipped_out_swims_in_the_same_sample(boated):
     files, fns = boated
     s = ride(fns, files, *POINTS["the deep"])
