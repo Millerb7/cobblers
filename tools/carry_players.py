@@ -26,7 +26,8 @@ What is carried, per player (<uuid>), and where each mod keeps it (read from the
                                                                                  cursors (q.player.data(), EXP-022)
 
 and, world-wide but about players: data/rctmod.trainers.* (each trainer's per-player defeat counts: required,
-since rctmod writes rctmod.trainers.ver.dat on first boot) and data/scoreboard.dat (per-player scores).
+since rctmod writes rctmod.trainers.ver.dat on first boot), data/scoreboard.dat (per-player scores: required) and
+data/command_storage_cobblers_recovery.dat (the blackout claim ledger, when it exists).
 
 Not carried: region, entity and POI files (the new terrain replaces them); waystones.dat (the waystones stand in new
 places; a player's old activations, inside playerdata, name waystones the new world does not have, and the badge
@@ -78,7 +79,12 @@ PER_PLAYER = (
 # (category, glob, required in the old world)
 WORLD_WIDE = (
     ("rctmod_trainers", "data/rctmod.trainers.*", True),
-    ("scoreboard", "data/scoreboard.dat", False),
+    # required: every campaign pack keeps per-player state in scores (the blackout's checkpoints, the Surf timer,
+    # surface fatigue; the progression flags' counters), and a world without them loses it silently
+    ("scoreboard", "data/scoreboard.dat", True),
+    # the blackout claim ledger (tools/blackout_pack.py): open item claims are owed to players. Its own namespace, so
+    # the shared cobblers storage (the re-apply's progress) is never carried. Absent until the first claim is made
+    ("recovery_ledger", "data/command_storage_cobblers_recovery.dat", False),
 )
 DEFAULT_OUT = ROOT / "derived" / "reapply"
 # The live run carries from the live world as it was retired a few minutes earlier (REEXPORT step 2), never from an

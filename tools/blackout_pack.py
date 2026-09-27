@@ -18,7 +18,7 @@ What the pack does, and what each part rests on:
                not proximity). The saved point is where the player stood; it is re-validated against the data at
                every use and falls back to Hometown. The checkpoint is also the player's spawnpoint.
   claims       Only a battle lost to a wild Pokemon takes items (spec rule 5): the category quotas across the whole
-               inventory, written to the claim ledger (storage cobblers:recovery) before anything is removed. The
+               inventory, written to the claim ledger (storage cobblers_recovery:ledger) before anything is removed. The
                victor becomes the guardian: vanilla PersistenceRequired (EXP-041), a tag and a guardian number.
                Beating or catching it delivers every stack to the claim's owner as owner-only item entities at
                their feet, or on their next login. A guardian that is gone while its site is loaded, twice running,
@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -44,6 +45,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_blackout"
 NS = "cobblers"
+# the claim ledger's storage: its own namespace, so Minecraft keeps it in its own file
+# (data/command_storage_cobblers_recovery.dat), which tools/carry_players.py carries into a re-exported world; the
+# shared cobblers storage also holds the re-apply's own progress, which must never be carried
+LEDGER = "cobblers_recovery:ledger"
 
 # every scoreboard objective the pack owns; one prefix, so nothing collides with the other packs
 OBJECTIVES = {
@@ -56,7 +61,7 @@ OBJECTIVES = {
     "bo.px": "dummy", "bo.pz": "dummy", "bo.ox": "dummy", "bo.oz": "dummy",
     "bo.mount": "dummy", "bo.raw": "dummy", "bo.qual": "dummy", "bo.grace": "dummy",
     "bo.deep": "dummy", "bo.sub": "dummy", "bo.air": "dummy", "bo.surf": "dummy", "bo.breath": "dummy",
-    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy", "bo.swim": "dummy",
+    "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy", "bo.swim": "dummy", "bo.zone": "dummy", "bo.fat": "dummy", "bo.fwarn": "dummy", "bo.fpt": "dummy",
 }
 
 # the inventory slots a claim may take from: the hotbar and main inventory, and the offhand. Armour never.
@@ -110,7 +115,7 @@ def molang_or(ids):
     return " || ".join("t.id == 'cobblemon:%s'" % s for s in ids)
 
 
-def build(cfg, mounts, placements, progression):
+def build(cfg, mounts, placements, progression, sea_rows=None):
     """{relative path: file text} for the whole pack."""
     files = {}
     fn = lambda path, lines: files.__setitem__("data/%s/function/%s.mcfunction" % (NS, path), "\n".join(lines) + "\n")
@@ -155,7 +160,7 @@ def build(cfg, mounts, placements, progression):
        + ["scoreboard players set %s bo.cfg %d" % (k, v) for k, v in consts.items()]
        + ["# the ordinary inventory is always kept (spec rule 3); a claim takes only what it selects",
           "gamerule keepInventory true",
-          "execute unless data storage %s:recovery claims run data modify storage %s:recovery claims set value []" % (NS, NS)])
+          "execute unless data storage cobblers_recovery:ledger claims run data modify storage cobblers_recovery:ledger claims set value []"])
     fn("blackout/tick", [
         "execute store result score #gt bo.tmp run time query gametime",
         "scoreboard players operation #m10 bo.tmp = #gt bo.tmp",
@@ -169,6 +174,10 @@ def build(cfg, mounts, placements, progression):
         "scoreboard players operation #m bo.tmp = #gt bo.tmp",
         "scoreboard players operation #m bo.tmp %= #5 bo.cfg",
         "execute if score #m bo.tmp matches 0 as @e[type=player] at @s run function %s:blackout/checkpoint/sample" % NS,
+        "# surface exhaustion, every surface.sample_ticks, for swimmers in survival or adventure",
+        "scoreboard players operation #ms bo.tmp = #gt bo.tmp",
+        "scoreboard players operation #ms bo.tmp %= #fsample bo.cfg",
+        "execute if score #ms bo.tmp matches 0 as @e[type=player,gamemode=!creative,gamemode=!spectator] at @s run function %s:surface/tick" % NS,
         "scoreboard players operation #m bo.tmp = #gt bo.tmp",
         "scoreboard players operation #m bo.tmp %= #maint bo.cfg",
         "execute if score #m bo.tmp matches 0 run function %s:recovery/maintain" % NS])
@@ -220,10 +229,17 @@ def build(cfg, mounts, placements, progression):
         "execute store result score @s bo.bal run cobbledollars query @s",
         "execute if score @s bo.bal matches 1.. run function %s:blackout/charge_calc" % NS])
     fn("blackout/charge_calc", [
+        "# ceil(b * p / 100) as (b / 100) * p + ceil((b mod 100) * p / 100), so no step overflows a 32-bit score (the",
+        "# test author's finding: b * p overflowed from about 214 million)",
         "scoreboard players operation @s bo.lost = @s bo.bal",
-        "scoreboard players operation @s bo.lost *= #pct bo.cfg",
-        "scoreboard players add @s bo.lost 99",
         "scoreboard players operation @s bo.lost /= #100 bo.cfg",
+        "scoreboard players operation @s bo.lost *= #pct bo.cfg",
+        "scoreboard players operation #rem bo.tmp = @s bo.bal",
+        "scoreboard players operation #rem bo.tmp %= #100 bo.cfg",
+        "scoreboard players operation #rem bo.tmp *= #pct bo.cfg",
+        "scoreboard players add #rem bo.tmp 99",
+        "scoreboard players operation #rem bo.tmp /= #100 bo.cfg",
+        "scoreboard players operation @s bo.lost += #rem bo.tmp",
         "execute store result storage %s:blackout charge.amount int 1 run scoreboard players get @s bo.lost" % NS,
         "function %s:blackout/charge_apply with storage %s:blackout charge" % (NS, NS)])
     fn("blackout/charge_apply", ["$cobbledollars remove @s $(amount)"])
@@ -257,7 +273,7 @@ def build(cfg, mounts, placements, progression):
               "advancement revoke @s only %s:blackout/healer_use" % NS]
     ways = ["# as a player who has just jumped a long way: travel through a town waystone lands beside it"]
     for cid, kind, name, x, y, z, r in cps:
-        vr = r if kind == "center" else r * 2
+        vr = r + 2 if kind == "center" else r * 2     # + 2: the healer area matches a hitbox, not a block
         validate.append("execute if score @s bo.cp matches %d if score @s bo.cpx matches %d..%d if score @s bo.cpz matches %d..%d run scoreboard players set @s bo.ok 1"
                         % (cid, x - vr, x + vr, z - vr, z + vr))
         names.append('execute if score @s bo.cp matches %d run data modify storage %s:blackout place set value "%s"' % (cid, NS, name))
@@ -314,7 +330,10 @@ def build(cfg, mounts, placements, progression):
         "function %s:recovery/deliver" % NS])
 
     # ---- claims ----------------------------------------------------------------------------------------------------
-    R = "%s:recovery" % NS
+    # the claim ledger has a namespace of its own, so Minecraft keeps it in its own file
+    # (data/command_storage_cobblers_recovery.dat), which tools/carry_players.py carries into a re-exported world;
+    # the shared cobblers storage also holds the re-apply's own progress, which must never be carried
+    R = "%s:recovery" % NS            # function paths; storage references are rewritten to LEDGER at the end of build()
 
     def quota(n, t, pct, mx):
         return ["scoreboard players operation @s %s = @s %s" % (t, n),
@@ -393,12 +412,19 @@ def build(cfg, mounts, placements, progression):
         "# persist first (spec: the claim is written before anything is removed); abort if it did not land",
         "data modify storage %s claims append from storage %s pending" % (R, R),
         "data remove storage %s claims[-1].plan" % R,
-        "execute unless data storage %s claims[-1].items[0] run return fail" % R,
+        "execute store success score #ok bo.tmp run function %s/verify with storage %s pending" % (R, R),
+        "$execute if score #ok bo.tmp matches 0 run return run tellraw @s [{\"selector\":\"$(victor)\",\"color\":\"white\"},%s]" % text(msg["claim_nothing"].split("{victor}")[1]),
         "function %s/apply" % R,
         "$execute as $(victor) run function %s/bind" % R,
         "function %s/summary" % R,
         '$tellraw @s [{"selector":"$(victor)","color":"white"},%s,{"storage":"%s","nbt":"summary[]","interpret":true,"separator":", "},%s]'
         % (text(msg["claim"].split("{victor}")[1].split("{summary}")[0]), R, text(msg["claim"].split("{summary}")[1]))])
+    fn("recovery/verify", [
+        "# the claim just written, by its own id: it must hold items, or it is removed so maintenance never rebuilds a",
+        "# guardian for it (the test author's finding: clear also counts armour and crafting slots the scan skips)",
+        "$execute if data storage %s claims[{id:$(id)}].items[0] run return 1" % R,
+        "$data remove storage %s claims[{id:$(id)}]" % R,
+        "return fail"])
     fn("recovery/apply", [
         "execute unless data storage %s pending.plan[0] run return 0" % R,
         "function %s/apply_one with storage %s pending.plan[0]" % (R, R),
@@ -565,8 +591,7 @@ def build(cfg, mounts, placements, progression):
         "# underwater never hands out a fresh Surf timer (spec 'Entering, swapping and leaving depth')",
         "execute if score @s bo.qual matches 2 if score @s bo.surf < #surf bo.cfg run scoreboard players add @s bo.surf 1",
         "execute if score @s bo.qual matches 2 run return run function %s:water/breathing" % NS,
-        "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run scoreboard players add @s bo.surf 1",
-        "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run return run function %s:water/breathing" % NS,
+        "execute if score @s bo.qual matches 1 if score @s bo.surf < #surf bo.cfg run return run function %s:water/surf_breath" % NS,
         "execute if score @s bo.air <= #airwarn bo.cfg if score @s bo.warn matches 0 run function %s:water/warn_low" % NS,
         "execute if score @s bo.air matches ..0 run function %s:water/out" % NS])
     fn("water/breathing", [
@@ -588,6 +613,10 @@ def build(cfg, mounts, placements, progression):
         "attribute @s minecraft:generic.water_movement_efficiency modifier remove cobblers:dive_swim",
         "attribute @s minecraft:generic.movement_speed modifier remove cobblers:dive_swim",
         "scoreboard players set @s bo.swim 0"])
+    fn("water/surf_breath", [
+        "# counted after the test, so the bonus lasts exactly surf_bonus_ticks",
+        "scoreboard players add @s bo.surf 1",
+        "function %s:water/breathing" % NS])
     fn("water/unbreathe", [
         "attribute @s minecraft:generic.oxygen_bonus modifier remove cobblers:ladder",
         "scoreboard players set @s bo.hasmod 0"])
@@ -626,6 +655,77 @@ def build(cfg, mounts, placements, progression):
                             "tag @s add cobblers.surf"])
     fn("water/grant_dive", ["# the survey diver's training; Dive includes Surf", "tag @s add cobblers.surf", "tag @s add cobblers.dive"])
     fn("water/revoke", ["tag @s remove cobblers.surf", "tag @s remove cobblers.dive"])
+
+    # ---- surface exhaustion ----------------------------------------------------------------------------------------
+    # Swimming (not riding) in the open sea builds fatigue; land, the shallows and riding recover it. The sea's bands
+    # come from tools/open_water.py (the heightmap), one function per 16-block cell row: row z lists its open (1)
+    # and deep (2) runs of cell x, so a swimmer costs one macro call and a few checks.
+    surf = cfg["surface"]
+    per = surf["sample_ticks"]
+    consts_s = {"#fgain1": surf["gain_open_per_tick"] * per, "#fgain2": surf["gain_deep_per_tick"] * per,
+                "#frec": surf["recover_per_tick"] * per, "#fwarn": surf["warn_ticks"], "#fslow": surf["slow_ticks"],
+                "#fexh": surf["exhausted_ticks"], "#fcol": surf["collapse_ticks"], "#fpulse": surf["pulse_ticks"],
+                "#fcap": surf["cap_ticks"], "#16": 16, "#wmin": -surf["world_min"], "#fsample": per}
+    files["data/%s/function/surface/load.mcfunction" % NS] = "\n".join(
+        ["scoreboard players set %s bo.cfg %d" % (k, v) for k, v in consts_s.items()]) + "\n"
+    load_tag = json.loads(files["data/minecraft/tags/function/load.json"])
+    load_tag["values"].append("%s:surface/load" % NS)
+    files["data/minecraft/tags/function/load.json"] = json.dumps(load_tag, indent=2) + "\n"
+    fn("surface/tick", [
+        "# as and at a player every %d ticks: only a swimmer, in water and riding nothing, builds fatigue" % per,
+        "execute unless block ~ ~ ~ #%s:water unless score @s bo.sub matches 1 run return run function %s:surface/recover" % (NS, NS),
+        "scoreboard players set #ride bo.tmp 0",
+        "execute store success score #ride bo.tmp on vehicle if entity @s",
+        "execute if score #ride bo.tmp matches 1 run return run function %s:surface/recover" % NS,
+        "scoreboard players set @s bo.zone 0",
+        "execute store result score #cx bo.tmp run data get entity @s Pos[0]",
+        "execute store result score #cz bo.tmp run data get entity @s Pos[2]",
+        "scoreboard players operation #cx bo.tmp += #wmin bo.cfg",
+        "scoreboard players operation #cz bo.tmp += #wmin bo.cfg",
+        "scoreboard players operation #cx bo.tmp /= #16 bo.cfg",
+        "scoreboard players operation #cz bo.tmp /= #16 bo.cfg",
+        "execute store result storage %s:blackout sea.z int 1 run scoreboard players get #cz bo.tmp" % NS,
+        "function %s:surface/row with storage %s:blackout sea" % (NS, NS),
+        "execute if score @s bo.zone matches 0 run return run function %s:surface/recover" % NS,
+        "# a trained water partner in the party halves the strain (qualification from the water ladder)",
+        "scoreboard players operation #g bo.tmp = #fgain1 bo.cfg",
+        "execute if score @s bo.zone matches 2 run scoreboard players operation #g bo.tmp = #fgain2 bo.cfg",
+        "execute if score @s bo.qual matches 1.. run scoreboard players operation #g bo.tmp /= #2 bo.cfg",
+        "# the pulse clock stays primed below collapse, so the first hit lands the sample collapse is reached",
+        "execute if score @s bo.fat < #fcol bo.cfg run scoreboard players operation @s bo.fpt = #fpulse bo.cfg",
+        "scoreboard players operation @s bo.fat += #g bo.tmp",
+        "scoreboard players operation @s bo.fat < #fcap bo.cfg",
+        "execute if score @s bo.fat >= #fwarn bo.cfg if score @s bo.fwarn matches ..0 run function %s:surface/warn_tiring" % NS,
+        "execute if score @s bo.fat >= #fslow bo.cfg run effect give @s minecraft:slowness 2 0 true",
+        "execute if score @s bo.fat >= #fexh bo.cfg run effect give @s minecraft:slowness 2 1 true",
+        "execute if score @s bo.fat >= #fexh bo.cfg run effect give @s minecraft:hunger 2 0 true",
+        "execute if score @s bo.fat >= #fexh bo.cfg if score @s bo.fwarn matches ..1 run function %s:surface/warn_exhausted" % NS,
+        "execute if score @s bo.fat >= #fcol bo.cfg run function %s:surface/collapse" % NS])
+    fn("surface/row", ["$function %s:surface/r/$(z)" % NS])
+    rows = sea_rows or {}
+    for z, runs in sorted(rows.items()):
+        fn("surface/r/%d" % z, ["execute if score #cx bo.tmp matches %d..%d run return run scoreboard players set @s bo.zone %d" % (a, b, v)
+                                for a, b, v in runs])
+    fn("surface/recover", [
+
+        "execute if score @s bo.fat matches 1.. run scoreboard players operation @s bo.fat -= #frec bo.cfg",
+        "execute if score @s bo.fat matches ..0 run scoreboard players set @s bo.fat 0",
+        "execute if score @s bo.fat < #fwarn bo.cfg run scoreboard players set @s bo.fwarn 0",
+        "# the pulse clock is primed again only below collapse: a touch of land past collapse must not bring the next",
+        "# hit early (the test author's finding)",
+        "execute if score @s bo.fat < #fcol bo.cfg run scoreboard players operation @s bo.fpt = #fpulse bo.cfg"])
+    fn("surface/warn_tiring", ["tellraw @s %s" % text(msg["surface_tiring"], "yellow"), "scoreboard players set @s bo.fwarn 1"])
+    fn("surface/warn_exhausted", ["tellraw @s %s" % text(msg["surface_exhausted"], "red"), "scoreboard players set @s bo.fwarn 2"])
+    fn("surface/collapse", [
+        "# past collapse, one hit every pulse_ticks of time (its own clock, bo.fpt, so the band and a partner change",
+        "# how fast fatigue grows, never how often the hits land): the same half-health hit as drowning",
+        "execute unless score @s bo.fpt matches -2147483648.. run scoreboard players operation @s bo.fpt = #fpulse bo.cfg",
+        "scoreboard players operation @s bo.fpt += #fsample bo.cfg",
+        "execute if score @s bo.fpt < #fpulse bo.cfg run return 0",
+        "scoreboard players set @s bo.fpt 0",
+        "execute if score @s bo.fwarn matches ..2 run tellraw @s %s" % text(msg["surface_collapse"], "red"),
+        "execute if score @s bo.fwarn matches ..2 run scoreboard players set @s bo.fwarn 3",
+        "function %s:water/pulse" % NS])
 
     # ---- MoLang callbacks ------------------------------------------------------------------------------------------
     # Cobblemon fires only callbacks under its own namespace: a file in data/cobblers/callbacks/<event>/ registers
@@ -672,6 +772,10 @@ def build(cfg, mounts, placements, progression):
         "t.e = q.pokemon.entity;",
         "q.run_command('execute as ' + t.e.uuid + ' if entity @s[tag=cobblers.guardian] run function %s:recovery/defeated {resolver:\"' + q.player.uuid + '\"}');" % NS,
         ""])
+    # the claim ledger's storage has a namespace of its own (see LEDGER); function paths keep cobblers:recovery/...
+    for k, v in files.items():
+        v = re.sub(r"storage cobblers:recovery(?=[ \n])", "storage " + LEDGER, v)
+        files[k] = v.replace('"storage":"cobblers:recovery"', '"storage":"%s"' % LEDGER)
     return files
 
 
@@ -679,7 +783,23 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--out", default=str(DEFAULT_OUT))
     a = p.parse_args(argv)
-    files = build(load("blackout.json"), load("water_mounts.json"), load("placements.json"), load("progression.json"))
+    cfg = load("blackout.json")
+    import open_water
+    b = open_water.bands(cfg["surface"]["shallow_blocks"], cfg["surface"]["deep_blocks"])
+    sea_rows = {}
+    for code, key in ((1, "open"), (2, "deep")):
+        m = b[key]
+        for z in range(m.shape[0]):
+            x = 0
+            while x < m.shape[1]:
+                if m[z, x]:
+                    x0 = x
+                    while x < m.shape[1] and m[z, x]:
+                        x += 1
+                    sea_rows.setdefault(z, []).append((x0, x - 1, code))
+                else:
+                    x += 1
+    files = build(cfg, load("water_mounts.json"), load("placements.json"), load("progression.json"), sea_rows)
     out = Path(a.out)
     if out.exists():
         shutil.rmtree(out)

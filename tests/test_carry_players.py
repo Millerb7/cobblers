@@ -208,6 +208,8 @@ def test_carry_fails_when_badges_and_rctmod_disagree(tmp_path, flags, progress, 
     old, new = _world(tmp_path / "old", ()), _world(tmp_path / "new", ())
     _player(old, A, flags=flags, defeats=progress, memory=memory)
     (old / "data" / "rctmod.trainers.ver.dat").write_bytes(b"v")
+    # a real world always has scores (every campaign pack makes objectives), and the carry now requires them
+    (old / "data" / "scoreboard.dat").write_bytes(b"scores")
     with pytest.raises(C.CarryError, match="gym1_cleared .*" + says):
         C.carry(old, new, tmp_path / "m.json")
 

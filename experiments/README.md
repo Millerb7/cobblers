@@ -31,6 +31,13 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | EXP-033 | Does a Habitat Block replace in sealed rock at depth, give its pool's level band, and reach as a sphere or a column? | rig built on staging (3470, 20, 2880); block placed and resolved its pool (`DisplaySpecies` filled); the three questions need the owner at the stands |
 | EXP-035 | What does the first playtest (Pallet to the third gym town, staging) find? | run by the owner: 17 notes. Built or fixed on staging: Mart clerks in 13 towns, flag-driven gym waystones, our spawns and suppression, the sapling Celebi and birds, the mine's workings, rctapi 0.16.1. Open: the level-cap catch trap, blackout-to-Center, custom leaders, pacing (three gym towns inside an hour) |
 | EXP-034 | Does the scene runtime (per-player actors, props, zones, effects) carry the Gastly escort and the Route 1-3 events, and do the route trainers battle and record per player? | built and audited on staging (dryrun9): mansion, 10 events, 13 trainers, 41 props, 8 NPCs; every click, actor and battle needs the owner in game |
+| EXP-038 | Which Pokemon can carry a rider on or under water, and can a datapack read the party for it? | static: 45 Surf (boat, dolphin) and 10 Dive (submarine) species from the merged riding data; MoLang reads each party member's species (confirmed in game, EXP-042). Correction: callbacks run only under data/cobblemon/callbacks/ |
+| EXP-039 | Which events identify a full-party loss, a wild knockout and a trainer loss, with a stable victor? | static: battle_victory exposes losers, winners and their kinds and UUIDs; a direct wild knockout names no killer (the environmental default). Not run in game |
+| EXP-040 | Can the 10% blackout charge be read and taken in one transaction? | balance read verified; the macro charge verified in game by the blackout (EXP-042) |
+| EXP-041 | Can a wild guardian be kept from despawning and rebuilt? | run on staging: vanilla PersistenceRequired keeps it through unload and restart; /kill destroys it; rebuilt from the ledger in EXP-042 |
+| EXP-042 | Do the blackout, the recovery claims and the water ladder work in game? | run with the owner, three sessions: the charge, return, Center checkpoint, air, Surf, Dive, the lethal second hit, the removal of vanilla air and the Dive swim boost pass; the waystone checkpoint, a mid-dive swap, a battle loss, recovery and delivery are not run |
+| EXP-043 | Can a datapack run a Game Corner (coins, a slot machine, a prize counter) per player? | proposed in docs/research/CASINO.md (branch research/casino); not run |
+| EXP-044 | Does surface exhaustion stop a player swimming across the sea? | built, loads clean on staging; not run in game |
 
 ## Template
 
