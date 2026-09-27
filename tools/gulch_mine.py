@@ -954,7 +954,7 @@ def keeper_files(m):
         restore = ["# a variant other than the last one: random value 0..7, moved on by one if it repeats",
                    "execute store result score #v gm.t run random value 0..7",
                    "execute if score #v gm.t = #%s gm.var run scoreboard players add #v gm.t 1" % f["id"],
-                   "scoreboard players operation #v gm.t %%= #eight gm.t",
+                   "scoreboard players operation #v gm.t %= #eight gm.t",
                    "scoreboard players operation #%s gm.var = #v gm.t" % f["id"]]
         for k in range(spec["faces"]["variants"]):
             restore.append("execute if score #v gm.t matches %d run function %s/faces/%s_v%d" % (k, F, f["id"], k))
