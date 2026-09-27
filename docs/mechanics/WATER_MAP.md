@@ -59,7 +59,7 @@ never needs Dive, and nothing a no-mount player needs sits more than about 10 bl
 | **Lake rosters, with rare fish in the deep** | `docs/STATE.md:137-146` | Compiled; not seen in game | The owner: the lakes "spawn nothing or just surskits near the edges" (`:137`); Dratini is "the good find in the deep ... 'some good spawns deeper'" (`data/spawns.json:9562`). Rare Dratini, Relicanth and Dondozo are awaiting the owner's review (`STATE.md:146`) |
 | **Water in the story** | Lake Viltri: sounding, north bank and Lake Surveyor built on staging (`EARLY_ROUTES.md:138-139`; `EARLY_ROUTE_BUILD_HANDOFF.md:244`), and `SQ-G2-01` surveys its floor at y75.1 (`docs/story/SIDEQUESTS.md:82-92`). `SQ-G2-02` Viltri's Path (`:94-103`). The tarn: `SQ-G4-01` and `SQ-G4-03` (`:122-159`). Shrew Lake: `SQ-DIG-02`, a surveyor lost there (`:599-607`). Marshy Marsh: `SQ-G6-01` (`:188-198`). Tilpey: `SQ-GORGE-01` (`:445-454`). Sunset West: `SQ-SUNSET-01` (`:293-303`). The Wooper pond on Route 3 (`STATE.md:69`) | Story source, not built (except the Route 2 and Route 3 stops, on staging) | `ARC.md:664-665, 671`: Relic Island, Viltri Light and Sunset West must never gate the critical path |
 | **Other water already in use** | Rods: First Cast gives the Poké Rod and better rods go "at other waters" (`STATE.md:57, 94`). Water Stone at Viltri Light (`EVOLUTION_STONES.md:108`). The major river is a barrier crossed by bridge (`data/landmarks.json:6222-6225`; `ARC.md:484`). Victory Road's Drowned Gallery holds Milotic (`STATE.md:211`). The sea town Pacifidlog is built on staging in the Sound (`STATE.md:166`). The Weeping Elder stands on a Tilpey island (`STATE.md:74`). The Shrew Lake tea grower is parked (`FUTURE_SIDE_CONTENT.md:3-5`) | Decided or built on staging, as cited | none |
-| **Name collision** | "Windward Deep" is both the marine region (`data/regions.json:494-495`, `OCEAN.md:124`) and the Rift's terraced pit (`STATE.md:180`) | — | **Conflict:** one of the two needs renaming |
+| **Name collision** | "Windward Deep" was both the marine region (`data/regions.json`, `OCEAN.md` section 3) and the Rift's terraced pit (`docs/world-building/DEEP_CITY.md`) | **Resolved 2026-09-27:** the marine region is **the Windward Sea** (display name only; its id `windward_deep` is unchanged because `data/spawns.json` names it). "The Windward Deep" is the Rift pit | Changed: `data/regions.json` display name; `OCEAN.md` sections 3-5; `STRUCTURE_DECISIONS.md` (forge ruins row); this file. Left alone: every mention of the Rift pit (`STATE.md`, `REEXPORT.md`, `tools/rift_deep.py`, `tools/reapply.py`, `data/rift_deep.json`, `data/vr_caves.json`, `data/spawn_block_policy.json`, EXP-033) and the id in `data/spawns.json` |
 
 ## 2. The water inventory
 
@@ -99,7 +99,7 @@ means what exists or compiles; nothing underwater is built anywhere.
 |---|---|---|---|---|---|
 | **Windward shallows**, 0-96 blocks from land (`spawns.json:30303-30311`) | The shelf; 1-3 deep near Route 1 (x903 z5175, measured) | Levels 16-20: Tentacool, Wingull and others; compiled, not installed | Fishing, shore finds | Swimming; S0 | Route 1's coast |
 | **Windward open water**, 96-256 (`:30536-30544`) | The slope | Levels 20-25: Wailmer (uncommon) and others | A travel lane to Viltri Light; a sunlit fishing-boat wreck (`OCEAN.md:267`) | A surface mount (not gated in data, `STATE.md:149`); S1-S2 | Off-route |
-| **Windward deep**, 256 to the border (`:30801-30809`) | The basin; 23 deep at x431 z4943 (measured) | Levels 25-30: Wailmer, Relicanth, Dhelmise; Lapras on the surface | Shipwrecks on the slope (`regions.json:549`); the submerged forge ruin (`STRUCTURE_DECISIONS.md:125`); the ocean monument (not a template, `OCEAN.md:320`) | Distance plus a mount; the interiors need Dive; S2 surface, S6 underwater | Off-route |
+| **Windward Sea: the deep**, 256 to the border (`:30801-30809`) | The basin; 23 deep at x431 z4943 (measured) | Levels 25-30: Wailmer, Relicanth, Dhelmise; Lapras on the surface | Shipwrecks on the slope (`regions.json:549`); the submerged forge ruin (`STRUCTURE_DECISIONS.md:125`); the ocean monument (not a template, `OCEAN.md:320`) | Distance plus a mount; the interiors need Dive; S2 surface, S6 underwater | Off-route |
 | **Southern Shallows** (`regions.json:739-797`) | The warm south, including First Cast, Relic Island and the Sound | No authored roster around Pallet. Relic Island islet and First Cast jetty; Pacifidlog on staging | Coral reefs (the Corsola home, `OCEAN.md:222-224`), buried treasure, the Relic Island Dive reef | Swimming at the shore; Dive at depth; S0 to S6 | Route 1's coast; Route 7 near the Sound |
 | **Frostwater Shelf** (`regions.json:272-335`) | Cold north | Nothing authored | Iceberg habitats, cold ruins, a lush shipwreck cove (a Lugia key) | Dive; S6 onward | Off-route |
 | **Eastern Reach** (`regions.json:621-676`) | The lukewarm sea lane | Nothing authored | Wrecks, warm ruins, a submerged shipwreck cove (a Lugia key, `OCEAN.md:269`) | Dive; S6 onward | Off-route |
@@ -129,7 +129,7 @@ and at most one set piece.
 | 12 | Lake Tilpey | **Uxie's grotto**, the last of the trio, under the glacial basin. The Dive school stays on the north shore as a teaching post; the lake's own content is Uxie (the one exception to one role per body, see below) | Uxie | Surf, and 7 badges | S7 |
 | 13 | Major river and the other creeks | Barrier and scenery; nothing underwater | none | A bridge | S6-S7 |
 | 14 | Relic Island reef, Southern Shallows | **The Dive reef**: coral, Corsola, a reef cache | reef cache | Dive | S6 |
-| 15 | Windward deep | **The far water**: Lapras and Wailmer; the forge ruin | forge ruin; the only Strength room, if Strength exists | Distance; Dive inside | S2 / S6 |
+| 15 | Windward Sea, the deep | **The far water**: Lapras and Wailmer; the forge ruin | forge ruin; the only Strength room, if Strength exists | Distance; Dive inside | S2 / S6 |
 | 16 | Frostwater, Eastern Reach, Outer Deep coves | **Lugia's keys**: one cove each | three coves | Dive | S6+ |
 | 17 | Watering Hole | Fishing water: a rod find | none | none | S7-S8 |
 | 18 | The Sound (Pacifidlog) | The fishing town; base for the trench | none | none | S7 |
@@ -199,7 +199,7 @@ nothing else: no shrine, no crevice. Tilpey's floor is the Dive practice ground 
 
 ### The forge ruin and the only Strength room
 
-The planned submerged forge ruin in the windward deep (`STRUCTURE_DECISIONS.md:125`) gives the ocean bands a
+The planned submerged forge ruin in the Windward Sea's deep band (`STRUCTURE_DECISIONS.md:125`) gives the ocean bands a
 destination. **Proposal:** if and only if a Strength mechanism is found, its inner room is the one underwater
 Strength crevice in the game, holding a cache and never a legendary.
 
@@ -288,8 +288,9 @@ Strength. The trench combines Dive and keys, but the keys are its whole puzzle.
    - seven mod loot tables can still roll a now-useless Water Breathing potion.
 
    Built in `cobblers_blackout` (EXP-042).
-7. **The name collision.** *Recommend:* rename the marine region to "the Windward Sea", the display name
-   `spawns.json` already uses, and keep "the Windward Deep" for the Rift pit.
+7. **The name collision.** *Resolved 2026-09-27:* the marine region is "the Windward Sea", the display name
+   `spawns.json` already used, and "the Windward Deep" is the Rift pit. Every change is listed in section 1's "Name
+   collision" row.
 8. **Shrew Lake's floor.** *Settled by measurement:* Surf reaches it (EXP-042 run 2, 50 deep), so the surveyor's case
    can lie on the floor and `SQ-DIG-02` is Surf content. No ledge is needed.
 9. **Rosters for the southern sea.** *Recommend:* author a Southern Shallows marine zone around Pallet and Relic

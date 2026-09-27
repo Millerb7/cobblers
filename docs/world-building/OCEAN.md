@@ -2,6 +2,12 @@
 
 > **Note 2026-09-14.** The coastline changed with the carved terrain revision. The marine regions below are carried into `cobblers.regions/3` unchanged and have not been re-measured.
 
+> **Note 2026-09-27.** The western marine region is now named **the Windward Sea** (display name in
+> `data/regions.json`; its id stays `windward_deep`, which `data/spawns.json` names). "The Windward Deep" is the Rift's
+> terraced pit (`docs/world-building/DEEP_CITY.md`). Section 5's depth tiers are superseded by the water ladder; the
+> section says what replaced them. The water as a whole: `docs/mechanics/WATER_MAP.md` and
+> `docs/mechanics/WATER_PROPOSAL.md`.
+
 **Status: section 2 (the revised import) is applied.** Since 2026-09-13 the world
 `cobblers-10240` uses it; `REEXPORT.md` has the export and the measured seabed. Everything
 else here is still a proposal: no seabed pass, no biome painting, no content. The measurements come from the pinned heightmap
@@ -121,7 +127,7 @@ them.
 | Marine region | Tier | Where | Area km² (inside box / margin) | Temperature | Shelf | Named content |
 | --- | --- | --- | --- | --- | ---: | --- |
 | **Frostwater Shelf** | wilderness | north of z2600, under the Northern Range and the Northern Isles | 12.0 (7.5 / 4.5) | cold, frozen north of z1300 | 240 | kelp forest, iceberg habitats, shipwreck cove |
-| **Windward Deep** | wilderness | the exposed west | 5.8 (1.4 / 4.5) | temperate | 160 | ocean monument; deep water closest to shore |
+| **Windward Sea** | wilderness | the exposed west | 5.8 (1.4 / 4.5) | temperate | 160 | ocean monument; deep water closest to shore |
 | **Eastern Reach** | route | east, off the Eastern Downs | 6.5 (2.1 / 4.5) | lukewarm | 320 | sea lane; Misty's gym on the shelf if reused |
 | **Southern Shallows** | route | south of z5200 and around Jungle Isle | 14.2 (9.7 / 4.5) | warm | 400 | coral reefs, buried treasure |
 | **The Outer Deep** | destination | 512–1024 blocks beyond the landmass, to the border | 19.9 (0 / 19.9) | graded north to south | none | abyssal plain, seamounts, the trench set piece |
@@ -156,7 +162,7 @@ The planned seabed per zone, from that profile:
 | Zone | 10th pct | Median | 90th pct | Extended import (inside the box), median |
 | --- | ---: | ---: | ---: | ---: |
 | Frostwater Shelf | y20 | y42 | y57 | y23 |
-| Windward Deep | y14 | y22 | y49 | y19 |
+| Windward Sea | y14 | y22 | y49 | y19 |
 | Eastern Reach | y16 | y26 | y54 | y13 |
 | Southern Shallows | y23 | y51 | y58 | y24 |
 | Outer Deep | y8 | y8 | y8 | n/a |
@@ -190,7 +196,7 @@ The shares are area-weighted over all five zones. Each zone's own rules are in
 | --- | ---: | --- |
 | `deep_lukewarm_ocean` | 27.6% | Eastern Reach and Southern Shallows basins; south half of the Outer Deep |
 | `deep_frozen_ocean` | 20.0% | Frostwater north of z1300; north of the Outer Deep |
-| `deep_ocean` | 12.6% | Windward Deep; west-central Outer Deep |
+| `deep_ocean` | 12.6% | Windward Sea; west-central Outer Deep |
 | `warm_ocean` | 10.8% | Southern Shallows shelf within 220 blocks of land |
 | `lukewarm_ocean` | 10.8% | Eastern Reach shelf; outer Southern Shallows shelf |
 | `cold_ocean` | 6.7% | Frostwater shelf |
@@ -262,7 +268,7 @@ equipment. That gates content without any authored lock.
 The content per marine region adds up to 34 of the 150 scatter placements (see
 `STRUCTURE_DECISIONS.md`), plus named sites and the set piece.
 
-| Tier | Frostwater Shelf | Windward Deep | Eastern Reach | Southern Shallows | Outer Deep |
+| Tier | Frostwater Shelf | Windward Sea | Eastern Reach | Southern Shallows | Outer Deep |
 | --- | --- | --- | --- | --- | --- |
 | 0 | iceberg habitat ×2, fishing-boat wreck | fishing-boat wreck | fishing-boat wreck ×2, Misty's gym (if reused) | reef habitats ×3, beached shipwreck ×2, buried treasure ×3 (no heart) | seamount-summit kelp gardens |
 | 1 | cold ocean ruins ×3, shipwreck ×2 | shipwreck ×3, ocean ruined portal, Cobblemon underwater fissure fossil | warm ocean ruins ×2, ocean ruined portal, deep sea spire habitat | warm ocean ruins ×3, submerged-spike fossil | nothing |
