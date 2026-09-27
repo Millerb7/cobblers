@@ -989,6 +989,22 @@ def test_harness_victory_roads_own_points_are_near_it():
 
 
 # =================================================================================================================
+# C14. No repeatable player action resets an accumulating gate clock
+# =================================================================================================================
+
+import test_gate_clocks as GC  # noqa: E402
+
+
+# Without it a small timing detail defeats a whole gate again (the owner, 2026-09-27, after the tipped-rider finding:
+# "anywhere a repeatable action resets a timer that is supposed to accumulate"): each clock a gate relies on, with each
+# action a player can repeat at will, run on the generated packs by tests/test_gate_clocks.py's scenarios; the clock
+# keeps accumulating (or stays put) through the repeats.
+@pytest.mark.parametrize("case", _params("C14", [(k, (k,)) for k in sorted(GC.SCENARIOS)]))
+def test_contract_c14_no_repeatable_player_action_resets_an_accumulating_gate_clock(case):
+    GC.SCENARIOS[case]()
+
+
+# =================================================================================================================
 # The registry itself
 # =================================================================================================================
 

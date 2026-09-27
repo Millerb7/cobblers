@@ -259,22 +259,31 @@ def test_the_sheltered_volumes_are_exactly_the_datas_boxes():
     assert body.index("ride @s dismount") > first_shelter, "a rider is dismounted before the sheltered boxes are tested"
 
 
+def _block_sheltered(x, z):
+    """The block (floor x, floor z) is in one of the data's boxes."""
+    return any(b["box"][0] <= math.floor(x) <= b["box"][2] and b["box"][1] <= math.floor(z) <= b["box"][3]
+               for b in BOATS_CFG["sheltered"])
+
+
 def _edges():
     out = []
     for b in BOATS_CFG["sheltered"]:
         x0, z0, x1, z1 = b["box"]
         mx, mz = (x0 + x1) // 2 + 0.5, (z0 + z1) // 2 + 0.5
-        out += [(b["id"] + " inside, west edge", x0 + 0.5, mz, False), (b["id"] + " inside, east edge", x1 + 0.5, mz, False),
-                (b["id"] + " inside, north edge", mx, z0 + 0.5, False), (b["id"] + " inside, south edge", mx, z1 + 0.5, False),
-                (b["id"] + " one block west", x0 - 0.5, mz, True), (b["id"] + " one block east", x1 + 1.5, mz, True),
-                (b["id"] + " one block north", mx, z0 - 0.5, True), (b["id"] + " one block south", mx, z1 + 1.5, True)]
-    return out
+        out += [(b["id"] + " inside, west edge", x0 + 0.5, mz), (b["id"] + " inside, east edge", x1 + 0.5, mz),
+                (b["id"] + " inside, north edge", mx, z0 + 0.5), (b["id"] + " inside, south edge", mx, z1 + 0.5),
+                (b["id"] + " one block west", x0 - 0.5, mz), (b["id"] + " one block east", x1 + 1.5, mz),
+                (b["id"] + " one block north", mx, z0 - 0.5), (b["id"] + " one block south", mx, z1 + 1.5)]
+    # the data's own words: "the open sea west of x7040 and south of z6992 stays rough"
+    out += [("west of x7040, south of the bay", 7039.5, 6960.5), ("south of z6992", 7200.5, 6992.5)]
+    return [(w, x, z, not _block_sheltered(x, z)) for w, x, z in out]
 
 
-# Without it a boat is swamped inside the Sound's bay (Pacifidlog's boat culture, the jetty's rack; WATER_PROPOSAL 4.3:
-# "the Sound is sheltered water"), or the shelter leaks past the box into the open sea south of it ("The open sea south
-# of z6992 stays rough"). The synthetic ground puts the box far out at sea, so only the box decides: every block of
-# its edge keeps the boat, the block beyond each edge tips it.
+# Without it a boat is swamped inside Pacifidlog's bay or the water before the town's decks (the owner, 2026-09-27:
+# "Widen Pacifidlog's sheltered bay box to the whole bay so its boats keep working"), or the shelter leaks past the
+# boxes into the open sea ("the open sea west of x7040 and south of z6992 stays rough"). The synthetic ground puts the
+# boxes far out at sea, so only the boxes decide: every block of a box's edge keeps the boat; the block beyond an edge
+# tips it unless it is in the other box (where the bay meets the apron).
 @pytest.mark.parametrize("what,x,z,tips", _edges(), ids=[e[0] for e in _edges()])
 def test_a_sheltered_box_keeps_its_boats_to_its_edge(boated, what, x, z, tips):
     files, fns = boated
@@ -337,24 +346,33 @@ def test_every_cell_row_of_the_world_has_a_boat_row(real_bands):
     assert all(rough[z].any() for z in range(n)), [z for z in range(n) if not rough[z].any()][:5]
 
 
-# Without it the sheltered box misses the pocket it exists for, or shelters water the data says stays rough: the data
-# measured the Sound bay's rough pocket at cells x6976-7151 z6880-6976 on the band map; every rough cell there lies in
-# the box, and every rough cell the box's rows touch outside the box is south of it (the open sea, which stays rough).
+# Without it a boat is swamped somewhere in Pacifidlog's bay or before the town's decks, or the shelter covers the open
+# sea. The data's intent (data/blackout.json boats.sheltered, the owner's 2026-09-27 words): at rough_blocks 48 "the
+# bay's rough tongue runs from z6656 south to the open sea (band map, cells x6928-7359)", sheltered to "about z6944";
+# the water in front of the southern decks (x7040-7359 to z6991) sheltered too; "the open sea west of x7040 and south of
+# z6992 stays rough". On the real band map: every rough cell of the bay north of z6944 and of the apron lies wholly in
+# a sheltered box; rough cells south of z6992, and west of x7040 between the two, exist and are sheltered by none.
 @pytest.mark.slow
-def test_the_sheltered_box_holds_the_sounds_rough_pocket(real_bands):
+def test_the_sheltered_boxes_hold_the_bay_and_the_apron_and_not_the_open_sea(real_bands):
     rough = real_bands["open"] | real_bands["deep"]
-    (box,) = [b["box"] for b in BOATS_CFG["sheltered"] if b["id"] == "pacifidlog_bay"]
-    cx0, cz0 = cell_of(6976, 6880)
-    cx1, cz1 = cell_of(7151, 6976)
-    pocket = {(cz, cx) for cz in range(cz0, cz1 + 1) for cx in range(cx0, cx1 + 1) if rough[cz, cx]}
-    assert len(pocket) >= 10, "the measured pocket holds no rough water any more: re-measure"
-    for cz, cx in pocket:
+
+    def cells(x0, z0, x1, z1):
+        (a, b), (c, d) = cell_of(x0, z0), cell_of(x1, z1)
+        return [(cx, cz) for cz in range(b, d + 1) for cx in range(a, c + 1) if rough[cz, cx]]
+
+    def wholly_sheltered(cx, cz):
         x, z = WORLD_MIN + cx * CELL, WORLD_MIN + cz * CELL
-        assert box[0] <= x and x + CELL - 1 <= box[2] and box[1] <= z and z + CELL - 1 <= box[3], (cx, cz)
-    bx0, bz0 = cell_of(box[0], box[1])
-    bx1, bz1 = cell_of(box[2], box[3])
-    for cz in range(bz0 - 1, bz1 + 1):
-        for cx in range(bx0 - 3, bx1 + 4):
-            inside = bx0 <= cx <= bx1 and bz0 <= cz <= bz1
-            if rough[cz, cx] and not inside:
-                raise AssertionError("rough cell (%d, %d) beside the bay, outside the box" % (cx, cz))
+        return all(_block_sheltered(x + i, z + j) for i in (0, CELL - 1) for j in (0, CELL - 1)) and \
+            all(_block_sheltered(x + i, z + j) for i in range(CELL) for j in range(0, CELL, 5))
+
+    def touched(cx, cz):
+        x, z = WORLD_MIN + cx * CELL, WORLD_MIN + cz * CELL
+        return any(_block_sheltered(x + i, z + j) for i in range(CELL) for j in range(CELL))
+    bay = cells(6928, 6656, 7359, 6943)
+    apron = cells(7040, 6944, 7359, 6991)
+    assert len(bay) >= 20, "the bay's rough tongue is gone from the band map: re-measure"
+    assert not [c for c in bay + apron if not wholly_sheltered(*c)], [c for c in bay + apron if not wholly_sheltered(*c)][:5]
+    south = cells(6928, 6992, 7359, 7103)
+    west = cells(6800, 6944, 7039, 6991)
+    assert south and west, (len(south), len(west))
+    assert not [c for c in south + west if touched(*c)], [c for c in south + west if touched(*c)][:5]
