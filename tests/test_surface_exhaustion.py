@@ -162,10 +162,8 @@ def test_deep_is_exactly_deep_water_blocks_of_water_from_the_feet_down(n, sub):
 # waterlogged block (a slab, a coral fan; the #cobblers:water tag lists only water, bubble columns, kelp and seagrass)
 # and whose eyes are under water is counted deep over two water blocks under a non-water feet block, and with
 # deep_water_blocks 1 every head-under swimmer is deep, though the rule is "the feet's block and the two under it all
-# water". Low stakes (a rare position), but the pack does not say what the data says.
-@pytest.mark.xfail(strict=True, reason="2262aa3: surface/tick's deep line tests only ~-1..~-(n-1); the feet's block is "
-                                       "checked only by the gate, which also passes on bo.sub 1 (eyes in water), and "
-                                       "with deep_water_blocks 1 the line is an unconditional `set bo.zone 2`")
+# water". Low stakes (a rare position). Found by this suite at 2262aa3 (the deep line tested only ~-1..~-(n-1)); fixed
+# in c9cb850, which tests the feet's block too.
 @pytest.mark.parametrize("n", sorted({N_DEEP, 2, 1}))
 def test_a_swimmer_whose_feet_block_is_not_water_is_not_deep_by_the_column(n):
     fns = TB.functions(_pack_with(deep_water_blocks=n))

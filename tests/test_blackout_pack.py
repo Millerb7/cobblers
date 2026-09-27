@@ -2,7 +2,9 @@
 
 Written by the test author, not by the session that wrote the tool (commits 562eeb6..5d522d7). Swim fatigue (the
 pack's surface/* functions) is tested in tests/test_surface_exhaustion.py, on the simulator defined here;
-tools/open_water.py, which the pack no longer reads (2262aa3), in tests/test_open_water.py.
+tools/open_water.py, which the pack no longer reads (2262aa3), in tests/test_open_water.py. Resolution by the guardian's
+Pokemon UUID, the MoLang callbacks run, and the out-of-battle kill (c9cb850, f08117e) are in
+tests/test_blackout_recovery_pid.py, on tests/nbt_sim.py's NBT-storage simulator built on the one here.
 
 Independent sources: data/blackout.json and data/water_mounts.json (the authored rules and numbers);
 data/placements.json (every Center: kind "service", id ending "_pokecenter") and data/progression.json (every town
@@ -409,7 +411,8 @@ def test_the_reference_check_sees_a_call_into_the_ledger_namespace():
 
 # ------------------------------------------------------------------------------------------------ macros
 
-MACRO_REF = re.compile(r"\$\(([a-z_]+)\)")
+# Minecraft's macro key: letters, digits and underscores, either case (recovery/pid_join's $(c07), killed_who's $(UUID))
+MACRO_REF = re.compile(r"\$\(([A-Za-z0-9_]+)\)")
 
 
 def _macro_functions():
@@ -443,19 +446,32 @@ def test_every_macro_function_is_called_with_arguments_that_cover_its_keys():
         if not keys[f] <= given:
             bad.append((where, f, "missing %s" % sorted(keys[f] - given)))
     assert not bad, bad
-    # the callbacks call two macro functions from MoLang with an inline compound built in the string (written there as
-    # {victor:"' + ... + '",name:"...); its keys must cover the macros' keys too
-    victory = PACK["data/cobblemon/callbacks/battle_victory/cobblers_blackout.molang"]
-    captured = PACK["data/cobblemon/callbacks/pokemon_captured/cobblers_recovery.molang"]
+    # the callbacks call macro functions from MoLang with an inline compound built in the string (written there as
+    # {victor:"' + ... + '",name:"...); every such call's keys must cover the macro's keys too. Since c9cb850 the
+    # guardian resolves by its Pokemon UUID from three callbacks, and a player's name is kept by a fourth.
+    mol = {"/".join(k.split("/")[3:5]): v for k, v in PACK.items() if k.endswith(".molang")}
 
     def inline(text, fn):
-        return set(re.findall(r'[{,](\w+):"', text.split(fn, 1)[1].split("');", 1)[0]))
+        return [set(re.findall(r'[{,](\w+):"', part.split("');", 1)[0])) for part in text.split(fn)[1:]]
 
-    assert keys["blackout/battle_loss_wild"] <= inline(victory, "blackout/battle_loss_' + t.kind + '"), \
-        inline(victory, "blackout/battle_loss_' + t.kind + '")
-    assert keys["recovery/defeated"] == {"resolver"}
-    assert keys["recovery/defeated"] <= inline(victory, "recovery/defeated")
-    assert keys["recovery/defeated"] <= inline(captured, "recovery/defeated")
+    seen = {}
+    for where, text in mol.items():
+        for m in re.finditer(r"function %s:([a-z_/]+)" % NS, text):
+            f = m.group(1)
+            if f == "blackout/battle_loss_":
+                continue
+            assert f in macros, (where, f)
+            for given in inline(text, "function %s:%s " % (NS, f)):
+                assert keys[f] <= given, (where, f, sorted(keys[f] - given))
+            seen.setdefault(f, set()).add(where)
+    assert keys["recovery/resolve_pid"] == {"pid", "resolver"}
+    assert seen["recovery/resolve_pid"] == {"battle_fainted/cobblers_recovery.molang",
+                                            "battle_victory/cobblers_blackout.molang",
+                                            "pokemon_captured/cobblers_recovery.molang"}, seen
+    assert keys["recovery/remember"] == {"name", "id"}            # the names registry is in the ledger since 3e2906e
+    assert seen["recovery/remember"] == {"player_tick_pre/cobblers_names.molang"}, seen
+    loss = inline(mol["battle_victory/cobblers_blackout.molang"], "blackout/battle_loss_' + t.kind + '")
+    assert len(loss) == 1 and keys["blackout/battle_loss_wild"] <= loss[0], loss
 
 
 # ------------------------------------------------------------------------------------------------ objectives
@@ -855,7 +871,8 @@ def test_the_claim_ledger_lives_in_its_own_storage_namespace():
 
 
 # Without it the guardian is untagged before its claims resolve (a failure part-way loses every claim it held), or a
-# Pokemon with no guardian number resolves claims numbered 0.
+# Pokemon with no guardian number resolves claims numbered 0. Since c9cb850 no callback calls recovery/defeated (the
+# callbacks resolve by pid, tests/test_blackout_recovery_pid.py); it is kept pinned while the tool still generates it.
 def test_claims_resolve_before_the_guardian_is_released_and_a_numberless_guardian_is_refused():
     d = commands("recovery/defeated")
     R = "%s:recovery" % NS                   # function paths
@@ -873,13 +890,14 @@ def test_claims_resolve_before_the_guardian_is_released_and_a_numberless_guardia
 # ------------------------------------------------------------------------------------------------ callbacks
 
 # Without it a callback is written where Cobblemon registers it but never fires it (data/cobblers/callbacks/, found in
-# game 2026-09-26): battle losses, captures and the water party read would all do nothing.
+# game 2026-09-26): battle losses, faints, captures, the water party read and the name record would all do nothing.
 def test_molang_callbacks_live_under_cobblemons_own_namespace():
     mol = sorted(k for k in PACK if k.endswith(".molang"))
-    assert len(mol) == 3, mol
+    assert len(mol) == 5, mol
     for k in mol:
         assert re.fullmatch(r"data/cobblemon/callbacks/[a-z_]+/cobblers_[a-z_]+\.molang", k), k
-    assert {k.split("/")[3] for k in mol} == {"battle_victory", "player_tick_pre", "pokemon_captured"}
+    assert [k.split("/")[3] for k in mol] == ["battle_fainted", "battle_victory", "player_tick_pre", "player_tick_pre",
+                                              "pokemon_captured"], mol
     assert not [k for k in PACK if "/callbacks/" in k and not k.startswith("data/cobblemon/callbacks/")]
 
 
