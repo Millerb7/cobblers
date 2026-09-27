@@ -707,11 +707,13 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         fn("surface/r/%d" % z, ["execute if score #cx bo.tmp matches %d..%d run return run scoreboard players set @s bo.zone %d" % (a, b, v)
                                 for a, b, v in runs])
     fn("surface/recover", [
-        "# the first hit lands as collapse is reached",
-        "scoreboard players operation @s bo.fpt = #fpulse bo.cfg",
+
         "execute if score @s bo.fat matches 1.. run scoreboard players operation @s bo.fat -= #frec bo.cfg",
         "execute if score @s bo.fat matches ..0 run scoreboard players set @s bo.fat 0",
-        "execute if score @s bo.fat < #fwarn bo.cfg run scoreboard players set @s bo.fwarn 0"])
+        "execute if score @s bo.fat < #fwarn bo.cfg run scoreboard players set @s bo.fwarn 0",
+        "# the pulse clock is primed again only below collapse: a touch of land past collapse must not bring the next",
+        "# hit early (the test author's finding)",
+        "execute if score @s bo.fat < #fcol bo.cfg run scoreboard players operation @s bo.fpt = #fpulse bo.cfg"])
     fn("surface/warn_tiring", ["tellraw @s %s" % text(msg["surface_tiring"], "yellow"), "scoreboard players set @s bo.fwarn 1"])
     fn("surface/warn_exhausted", ["tellraw @s %s" % text(msg["surface_exhausted"], "red"), "scoreboard players set @s bo.fwarn 2"])
     fn("surface/collapse", [
