@@ -234,6 +234,7 @@
    "gate_why": "none: WATER_PROPOSAL decision 6 (the level-cap trap's fix covers early arrival; its fallback, a gym6_cleared gate if the fix is late, is the owner's call and not taken)",
    "swim": {
     "declared": "leak",
+    "decided": "the owner, 2026-09-27: 'Sound ferry: leave it a leak, as you recommended.' Early arrival on the Long Isle belongs to the level-cap fix (LONG_ISLE.md D5), and the bridge (D4) makes the island walkable anyway",
     "why": "the ferry's own crossing is a gate (the jetty to the town knocks out every swimmer), but the town is not behind water: Pacifidlog stands on the Long Isle's jungle shelf (data/sea_town.json D1, one island), and the Long Isle is reached at its narrows and walked, on land, wading and the town's decks, to the square (measured 2026-09-27). WATER_BUILD_PLAN 11.2 names the Long Isle's narrows as the one leak the ferry cannot close and answers it with the level-cap trap's fix (decision 12, LONG_ISLE.md D5); declared here so the audit keeps it true",
     "barriers": [
      {"id": "jetty_to_square", "from": [7092, 6711], "to": [7210, 6960], "c3": "sound_ferry_from_the_jetty",
