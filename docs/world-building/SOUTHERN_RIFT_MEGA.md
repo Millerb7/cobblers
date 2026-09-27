@@ -1,6 +1,7 @@
 # The southern Rift's mega site: the mega town, the great mine and its Megas
 
-**Status: proposal, 2026-09-27. Nothing here is built, placed or installed.** It answers the owner's request of
+**Status: decided 2026-09-27 (section 11); the prototype slice of section 10 is generated offline on the branch
+`world/gulch-prototype` (section 12): not installed, not in any world, not seen in game.** It answers the owner's request of
 2026-09-27: the mega stone mine was built in the wrong place (the dig camp's west spur); it belongs in the gulch of
 `SOUTHERN_RIFT.md`. The dig camp keeps a small seam, found early and not usable yet. The southern site has three
 parts: a mega town, a large mine and hostile roaming Megas, joined by a material chain.
@@ -551,6 +552,76 @@ The build starts with section 10's prototype slice, which the owner plays before
     letter (recommended); or rename the camp's step and give R9M back to `cobblers_mines` as ADR-003 wrote it.
 
 **Not verified anywhere in this document:** that the bracelet works for a player; a Mega spawned from a function; the
-enrage; a ball refused; any hall's volume, cover or seal (arithmetic on the heightmap, not a model); the hardness of
-meteorid blocks; every time in 7.5; villager trades as the Cutters; the Z-A Megas' client models; that the re-traced
-zone line exists on real terrain; the family links in 7.3.
+enrage; a ball refused; the hardness of meteorid blocks; every time in 7.5; villager trades as the Cutters; the Z-A
+Megas' client models; the family links in 7.3. The halls' volume, cover and seal are now modelled and audited offline
+(section 12), not measured in a world.
+
+---
+
+## 12. What was built: the prototype slice (2026-09-27, offline)
+
+Generated on the branch `world/gulch-prototype` from `data/gulch_mine.json` by `tools/gulch_mine.py`, audited by
+`tools/gulch_mine_audit.py` (clean), re-applied by `tools/reapply.py` step **R9S** (decision 12). Ground from
+`tools/ground.py` only. **Not installed, not in any world, not seen in game.** Pack `cobblers_gulch_mine`, world-local
+(it drives itself): 50 block functions, 78,850 commands, 239,444 cells written.
+
+| Part | Where | Built |
+| --- | --- | --- |
+| **The gate** | the sculpt's `gulch_mouth` gap, ring index 2680 +-44 (derived/rift_sculpt/plan.json), lip at (4360, 4706) | a rockfall along the lip across all 89 gap points (3,793 blocks, 4-6 wide, 7 over each point's ground), the plug in its middle (flat top y122) with the company grille at x4362 z4705-4707 y116-118; knock alcove x4363-4365, exit box x4353-4354, arrival (4349.5, 111, 4706.5) facing down the road, turn-back (4370.5, 119, 4706.5); the ward (Mining Fatigue IV) over x4350-4372 y103-129 z4692-4720, margin 7 |
+| **The road** | (4392, 4706) y126 to (4285, 4790) y88 | a graded 5-wide road through the gate down to the floor: the sculpt's ramp is stepped by its own rounding into ridges up to 10 blocks apart (x4300-4340), unwalkable without it |
+| **The zone** | the gulch inside the lip ring from (4351, 4600) round the south-east branch to (4195, 4929), closed by the re-traced branch-mouth line | 366 boxes, 79,749 columns, y-64 to 575, opened by `cobblers:flag/gym6_cleared` (decision 3). The rim edge runs 3 outside the lip, the gap edge 2 inside it. The split is about 100 blocks outside the line, Victory Road's corridor about 190 |
+| **The square** | 61 x 61 at (4308, 4848), y88 | paved (deepslate brick border, tuff bands, polished deepslate field), a meteorid plinth with a dormant crystal behind glass, ten lamp posts |
+| **The quarters** | a yard x4276-4340 z4880-4911 cut to y88 into the slope south of the square | the Cutters' workshop (25 x 16, counter of polished meteorid, benches), a bunkhouse, the assay counter, the adit's portal in the face at z4912 |
+| **The Cutters** | behind the counter at (4293 / 4300 / 4307, 89, 4903) | three mason villagers, NoAI, invulnerable, 20 offers each: 4 `mega_showdown:mega_stone` + 1 diamond -> the stone, `maxUses` 2147483647, no experience, no price drift; the 60 stones of 7.3, split by generation; none of the 32 |
+| **The Tally Hall** | centre (4365, 4925), about 57 across, floor y64-67, roof y80 | 26,690 cells of air, lit (lanterns hung every 7), four basalt pillars; four raw stones once per player on arrival (an advancement) |
+| **The Cutting Floor** | centre (4430, 4850), about 77 across, floor y45 (bowl to y54), roof y75 | 79,487 cells of air, unlit, 6% meteorid in its walls |
+| **The faces** | A: x4477-4483 z4847-4853 y53-57 (east alcove); B: x4427-4433 z4797-4803 y53-57 (north alcove) | 7 x 5 x 7 of meteorid, 3 crystals each (one on the front, two hidden), 8 variants; restored on approach every 36,000 ticks, B offset 18,000 |
+| **The Megas** | Steelix at (4446, 47, 4852), Excadrill at (4428, 47, 4834) | spawned by the keeper `uncatchable` at levels 54 and 53, tagged `cobblers.gm.<id>`, PersistenceRequired, leashed at 24 every 2 s while a player is near, owed again when a face of the hall restores while one is gone |
+
+Tunnels: the Cutters' adit (y89 to y67, 5 x 5, lit every 8), the drift from the Tally Hall to the Cutting Floor (y66 to
+y52, unlit), two short alcoves to the faces. 111,331 cells carved in all; a shell of 65,218 rock cells round
+everything carved and round the face boxes; least rock over the shell: Tally Hall 13, Cutting Floor 16 (minimum 4).
+
+**Where the build departs from sections 3-7, and why:**
+- The Tally Hall moved from (4350, 4905) to (4365, 4925): at the proposed point the adit from the town would have had to
+  start over the hall's own roof. The Cutting Floor moved from (4420, 4860) to (4430, 4850), to keep 30 blocks of rock
+  between the two halls.
+- The quarters are cut into the **south** slope (y89 to y97-100 within 30 blocks), not the east wall: on the heightmap
+  the east wall climbs to only y92-100 within 60 blocks of the square (section 4 says y120-128).
+- The gulch_mouth "canyon" is a broad ramp across an 89-point gap in the rim, not a 7-wide canyon: the gate is a
+  rockfall across the whole gap with the grille in its middle, and a road graded through it.
+- The zone's closing line is new: (4351, 4600) to (4195, 4929), not the old branch-mouth line (4373, 4691)-(4196, 4927).
+- Only the Cutters, the square and three houses of section 4's town are built; no Centre, Mart, Assayer, Dissenters'
+  camp or signposts yet.
+
+**Also changed for the slice:** the spur is cut back (decisions 1-2; `data/rift_mines.json`): the camp keeps its seam
+and one crystal behind the company grille at the end of drift C, warded per player until `gym6_cleared`, restored on
+approach once a day; the spur's gated galleries, chambers and Heart are retired, with a staging-only refill
+(`cobblers_rift_mines_refill`, 14,627 cells). The 92 stone recipes are raised to 4 raw stones by `tools/mega_recipes.py`
+from the server's own jar into `build/` (never committed). The blackout makes no item claim for a victor tagged
+`cobblers.gm` (decision 9, `data/blackout.json` `claims.exempt_tag`). The Fight or Flight line is proposed in
+`data/gulch_mine.json` `megas.aggression_proposal` only; the server config is unchanged.
+
+**What `tools/gulch_mine_audit.py` checks** (independent of the generator's model: its own rasterising of the data, the
+heightmap, the sculpt's gap, Victory Road's corridor and caves, `data/spawn_blocks.json`): cover over every hall
+column; nothing carved within a block of the surface outside the adit's portal; no build column within Victory Road's
+corridor (half its width + 24) or its caves' extent, nor near a settlement; the rockfall under every ring point of the
+sculpt's gap and a crag beyond each end; every write inside the grid and the plan's columns; no stray air, the carved
+space sealed by written rock; no spawn-condition block, fluid or meteorid ore; the zone boxes full height, every write
+inside them but the rockfall, the road and the gate's lamps, the knock and turn-back outside, the arrival and exit
+inside, and every basin column walked from the square (77,994) inside; the knock and zone functions gated on the flag,
+the ward holding the plug with its margin; a walk on the replayed world from the arrival to the square, both halls,
+both faces, both anchors and the three counters, and no walk from the turn-back point to the arrival; each face written
+whole with its crystals, each variant one filtered fill and guarded setblocks, each check guarded; each Mega's spawn
+line uncatchable with its aspect at a floor cell, its leash; every Cutter offer; function limits.
+
+**Proofs still open (section 10):** M-1 the bracelet (the owner's first), M-2 a Mega spawned, tagged, leashed and
+replaced from a function, M-3 the enrage (needs the config line), M-4 a ball refused, M-5 the faces (diamond pickaxe,
+the restore with P-2 to P-4, the filter's `replace #tag`), M-6 the Cutters' trades (the offer format is read from the
+vanilla 1.21.1 jar; the trade itself is not run), M-7 the Megas' client models (Excadrill is a Z-A Mega). None has run.
+
+**Install on staging** (the main session; the server stopped, the coordination lock held): `reapply.py prepare`
+(it builds and audits everything above, and needs `--server-dir` for the recipes' jar) and `install` (puts
+`cobblers_gulch_mine`, `cobblers_mega_recipes` and the pared `cobblers_rift_mines` in the world's own datapacks);
+boot; `reapply.py run --only R9M` then `--only R9S`; then, staging only, copy `build/datapacks/cobblers_rift_mines_refill`
+into the world's datapacks, `/reload`, run its functions in the order of its `index.txt`, and remove it again.

@@ -268,13 +268,20 @@ vanilla behaviour, but it is not proven here. Proof item P-3.
 
 The design survives by construction, because everything is generated from `data/mines.json`.
 
-- **The step is `R9M`, not R17.** R17 is now taken by "scene props, scene NPCs and the route
-  trainers" (`tools/reapply.py:657`). R9D is claimed by the Deep City proposal
-  (`docs/world-building/DEEP_CITY.md:225-226`). **R9M** runs after R9C (Victory Road's caves), after R9
-  (the donors) and after R2 (the Displaced City cavern). It runs before R9E, because a face's
-  optional Habitat Block sits on a finished floor. This is the third change to ADR-003.
-- `reapply.py prepare` fails closed on a pack that no step runs (`tools/reapply.py:80-81`), so
-  `cobblers_mines` needs R9M to exist before it can ship.
+- **The step is `R9O`, not R17 or R9M.** R17 is taken by "scene props, scene NPCs and the route
+  trainers". **R9M is the Rift dig camp's** (`tools/rift_mines.py`, which took the name first), and **R9S the
+  southern Rift's mega site** (`tools/gulch_mine.py`): the owner's decision 12 of
+  `docs/world-building/SOUTHERN_RIFT_MEGA.md` (2026-09-27) gives the evolution-stone faces a new letter. `R9O`
+  ("ore") is proposed here; R9D is retired and R9DC, R9E, R9F and R9G are taken. The step runs after R9C (Victory
+  Road's caves), after R9 (the donors) and after R2 (the Displaced City cavern), and before R9E, because a face's
+  optional Habitat Block sits on a finished floor. This is the third change to ADR-003 (whose amendment still says
+  R9M: to be brought in line).
+- `reapply.py prepare` fails closed on a pack that no step runs, so `cobblers_mines` needs its step to exist before it
+  can ship.
+- The mega stone faces are not this system's: the gulch's two faces (`data/gulch_mine.json`) use the same restore on
+  approach, filter and occupancy guard, with their own tick driver in `cobblers_gulch_mine`, a 30-minute period and
+  meteorid as the host. The dig camp's one crystal is a third, daily face in `cobblers_rift_mines`. Proofs P-2 to P-4
+  cover all three.
 - Faces are rebuilt at variant 0. Restore timers live in `data/scoreboard.dat`, which the carry
   treats as optional. If they are lost, every face is simply fresh, and nothing breaks.
 - The floor is advancements, **carried as required**. A player who took a floor keeps it and cannot
@@ -506,7 +513,7 @@ them:
    deep Thunder seam. Reason: verified demand is 6 families, needed from gym 4, not 1.
 2. **Faces restore on approach, not on a timer:** a 600-second minimum, checked only when a player is
    within about 64 blocks and both corners are loaded. Reason: `fill` fails on unloaded chunks.
-3. **The re-apply step is R9M, not R17.** R17 is taken.
+3. **The re-apply step is R9O (proposed), not R17 or R9M.** R17 is taken, and R9M is the dig camp's (decision 12 of SOUTHERN_RIFT_MEGA.md).
 4. **The restore is filtered** to `#cobblers:face_resettable`, so it never deletes a player's
    container.
 5. **The Mining Town carries the Exchange, which sells and never buys.** "Traded on" becomes a
@@ -571,7 +578,7 @@ This refines `EVOLUTION_STONES.md` §5. The added fields are `approach_box`, `re
     }],
     "spawn_block_policy": ["mines_displaced_city_iron"], // whitelist ids for every filler block
     "habitat_block": null,                              // optional, a data/habitat_blocks.json id
-    "reapply_step": "R9M"
+    "reapply_step": "R9O"
   }]
 }
 ```
@@ -614,7 +621,7 @@ It also adds `stock_policy.stones`:
 | `data/spawn_block_policy.json` | One whitelist entry per filler block per place, each with a `why` naming the place | `datapack-content-dev` |
 | `data/habitat_blocks.json` | Optional: a level band per face that has filler | `world-content-dev` |
 | `tools/mines.py` | New. `build`, `restore_*`, `tick`, the `face_resettable` tag, records and verify. Ground from `tools/ground.py` only (`tests/test_ground_rule.py`) | `datapack-content-dev` to implement; contract below |
-| `tools/reapply.py` | New step **R9M**, and the residents' RCON placement | `test-author` owns the file; the implementer supplies the contract |
+| `tools/reapply.py` | New step **R9O** (R9M is the dig camp's), and the residents' RCON placement | `test-author` owns the file; the implementer supplies the contract |
 | `docs/STATE.md` | Add an ownership row for `data/mines.json` when it is created | `content-architect` |
 
 ### 11.5 The validator contract (for `test-author`, never the implementer)
@@ -630,7 +637,7 @@ This is ADR-003's list, plus four checks:
 4. Every restore function fills only with the `face_resettable` filter, and every ore `setblock` is
    guarded.
 5. The Exchange stock has `buys: false`, and no stone appears in any trader's buy list.
-6. R9M exists and names every place. `prepare`'s own fail-closed check enforces the other direction.
+6. R9O exists and names every place. `prepare`'s own fail-closed check enforces the other direction.
 
 ---
 
@@ -648,7 +655,7 @@ proof face comes first; principle 20 applies.
 | P-5 | The floor | ADR-002's two-player advancement proof. It is one run shared with the badge flags and caches |
 | P-6 | The resident | An awake, uncatchable, `NoAI` Pokemon holds its post across a restart. The asleep Celebi is proven; awake is not |
 | P-7 | The Exchange | A `CobbleMerchantShop` with authored stone offers sells, and buys nothing |
-| P-8 | A re-export rehearsal | R9M rebuilds every face, and an audit counts the ore per face against the record (a verify pass, never a placement input) |
+| P-8 | A re-export rehearsal | R9O rebuilds every face, and an audit counts the ore per face against the record (a verify pass, never a placement input) |
 
 ---
 

@@ -1,30 +1,31 @@
 #!/usr/bin/env python
-"""The Rift dig camp as a mining town, and the mega stone mine in its spur, from data/rift_mines.json.
+"""The Rift dig camp as a mining town, and the mega stone seam in its spur, from data/rift_mines.json.
 
-The owner, 2026-09-27: "MEGA STONE MINES AND CAVES in the Rift dig camp's spur ... the seam visible early, gated deeper
-around badge five or six" and "THE RIFT MINING TOWN LARGER - small caving systems, quarries, worked faces". The data
-file says which town that is (the dig camp, not the Craters' mining town) and why; this tool only builds what it says.
+The owner, 2026-09-27: "THE RIFT MINING TOWN LARGER - small caving systems, quarries, worked faces". The mega stone
+mine first built here moved to the gulch the same day (docs/world-building/SOUTHERN_RIFT_MEGA.md decisions 1-2,
+data/gulch_mine.json): the camp keeps its seam, found early and not usable yet. The data file says which town this is
+(the dig camp, not the Craters' mining town) and why; this tool only builds what it says.
 
 One voxel model over the spur, ground from tools/ground.py (the canonical heightmap, rounded; never a world):
 
-  envelope   every cut (the seam cut, the quarries, the worked face), tube (adit, decline, drifts, galleries), room
-             (the adit hall), shaft, pocket (crystal faces, drift ends) and chamber, rasterised as data/rift_mines.json
-             `geometry` defines them
-  carve      the envelope, less a little rock left at the edges of the gated galleries and chambers (roughness)
+  envelope   every cut (the seam cut, the quarries, the worked face), tube (adit, decline, drifts), room (the adit
+             hall), shaft and pocket (drift ends), rasterised as data/rift_mines.json `geometry` defines them
+  carve      the envelope
   shell      every cell within 2 of the envelope, not carved, at or under the ground: written as rock, so nothing this
              build opens is bounded by anything it did not write (natural caves, the export's gravel)
-  fittings   frames, lanterns, rails (powered rail: see the data's rail_why), crystals, the gate's plug and grille
+  fittings   frames, lanterns, rails (powered rail: see the data's rail_why), the collapse at the decline's foot, the
+             company grille across drift C and the one crystal's face behind it
   surface    Forge Row, its rock houses, lamp posts, ore piles, derricks and the headframe over the shaft
 
-The gated section (every feature with "gated": true) is reached only through the company gate at the foot of the
-decline: a solid plug the build writes, faced with a grille. The pack's advancements put a player who holds the flag
-(data/rift_mines.json flag) through it, and turn back anyone without the flag found inside the gated section (the zone
-check of docs/mechanics/RIFT_ZONES.md section 4, here for one pocket). Creative and spectator players are left alone.
-
-The Mega chambers are shells. Their guardians are data only (`guardian.mode`); nothing is spawned.
+The tease (data `mine.tease`): one mega_stone_crystal in the seam at the end of the prospect drift, behind a grille.
+The pack's ward advancement gives anyone in survival or adventure who lacks the flag (data `flag`, gym6_cleared)
+Mining Fatigue IV near it; with the flag it lifts for that player. The crystal's face restores on approach once a day
+(the pack's own tick driver, STONE_ECONOMY.md 5.3).
 
   python tools/rift_mines.py report [--source-root DIR]     the model's checks and counts; nothing written
-  python tools/rift_mines.py build  [--source-root DIR]     -> build/datapacks/cobblers_rift_mines, derived/rift_mines/plan.json
+  python tools/rift_mines.py build  [--source-root DIR]     -> build/datapacks/cobblers_rift_mines, derived/rift_mines/plan.json,
+                                                            and build/datapacks/cobblers_rift_mines_refill (STAGING ONLY: rock
+                                                            back into the retired gated section, retired_gated_section)
 
 The offline audit, independent of this tool's model, is tools/rift_mines_audit.py.
 """
@@ -47,6 +48,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "rift_mines.json"
 OUT = ROOT / "build" / "datapacks" / "cobblers_rift_mines"
 PLAN = ROOT / "derived" / "rift_mines" / "plan.json"
+REFILL = ROOT / "build" / "datapacks" / "cobblers_rift_mines_refill"
 NS = "cobblers"
 FOLDER = "rift_mines"
 TAG = "cobblers_rift_mines"
@@ -235,25 +237,30 @@ def rasterise(m):
     for f in spec["mine"]["features"]:
         gated = bool(f.get("gated"))
         fid = m.add_feature({"id": f["id"], "kind": f["kind"], "gated": gated, "rec": f}, gated)
-        if f["kind"] == "tube":
-            cells = tube_cells(f["path"], f["r"], f["height"])
-            if f.get("pocket"):
-                cells |= pocket_cells(f["pocket"]["at"], f["pocket"]["r"])
-        elif f["kind"] == "room":
-            cells = room_cells(f["box"])
-        elif f["kind"] == "shaft":
-            cx, cz = f["centre"]
-            r = f["r"]
-            cells = {(x, y, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)
-                     for y in range(f["from_y"], m.ground(x, z))}
-        elif f["kind"] == "pocket":
-            cells = pocket_cells(f["at"], f["r"])
-        elif f["kind"] == "chamber":
-            cells = chamber_cells(f["centre"], f["r"], f["height"])
-        else:
-            raise MineError("feature %s: unknown kind %r" % (f["id"], f["kind"]))
-        for c in cells:
+        for c in feature_cells(f, m.ground):
             m.mark(*c, fid, gated)
+
+
+def feature_cells(f, ground):
+    """The envelope cells of one mine feature, as data/rift_mines.json geometry says; `ground(x, z)` for a shaft."""
+    if f["kind"] == "tube":
+        cells = tube_cells(f["path"], f["r"], f["height"])
+        if f.get("pocket"):
+            cells |= pocket_cells(f["pocket"]["at"], f["pocket"]["r"])
+    elif f["kind"] == "room":
+        cells = room_cells(f["box"])
+    elif f["kind"] == "shaft":
+        cx, cz = f["centre"]
+        r = f["r"]
+        cells = {(x, y, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)
+                 for y in range(f["from_y"], ground(x, z))}
+    elif f["kind"] == "pocket":
+        cells = pocket_cells(f["at"], f["r"])
+    elif f["kind"] == "chamber":
+        cells = chamber_cells(f["centre"], f["r"], f["height"])
+    else:
+        raise MineError("feature %s: unknown kind %r" % (f["id"], f["kind"]))
+    return cells
 
 
 # ------------------------------------------------------------------ carve, shell
@@ -549,26 +556,59 @@ def glints(m):
     return n
 
 
-def gate(m):
+def collapse(m):
+    """The rubble at the decline's foot: the old gate's plug, with nothing behind it (data mine.collapse)."""
     pal = m.spec["palette"]
-    g = m.spec["mine"]["gate"]
-    x0, y0, z0, x1, y1, z1 = g["plug"]
+    x0, y0, z0, x1, y1, z1 = m.spec["mine"]["collapse"]["box"]
     for x in range(x0, x1 + 1):
         for y in range(y0, y1 + 1):
             for z in range(z0, z1 + 1):
                 if m.is_carved(x, y, z):
-                    raise MineError("the plug at (%d, %d, %d) is inside a carved space" % (x, y, z))
+                    raise MineError("the collapse at (%d, %d, %d) is inside a carved space" % (x, y, z))
                 m.fit[(x, y, z)] = pick(pal["rubble"], m.spec["seed"], x, y, z, 61)
-    gr = g["grille"]
-    gx = gr["x"]
-    for z in range(gr["z"][0] - 1, gr["z"][1] + 2):
-        for y in range(gr["y"][0] - 1, gr["y"][1] + 2):
-            inner = gr["z"][0] <= z <= gr["z"][1] and gr["y"][0] <= y <= gr["y"][1]
-            m.fit[(gx, y, z)] = "minecraft:iron_bars" if inner else pal["post"] + ("[axis=y]" if gr["y"][0] <= y <= gr["y"][1] else "[axis=z]")
-    # a lantern either side of the grille, in the alcove
-    kx0, ky0, kz0, kx1, ky1, kz1 = g["knock"]
-    hang_lantern(m, kx1, ky0, kz0)
-    hang_lantern(m, kx1, ky0, kz1)
+
+
+def face_cells(spec, face, k):
+    """{(x, y, z): block} for the tease face's variant k: meteorid everywhere, `radiated` radiated cells within 1 of the
+    front, and the crystals on the front plane's bottom row (face cells ordered by h32(seed, k, x, y, z, 71))."""
+    pal = spec["palette"]
+    seed = spec["seed"]
+    x0, y0, z0, x1, y1, z1 = face["box"]
+    front = face["front"]
+
+    def depth(c):
+        return {"west": c[0] - x0, "east": x1 - c[0], "north": c[2] - z0, "south": z1 - c[2]}[front]
+    cells = [(x, y, z) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)]
+    order = sorted(cells, key=lambda c: h32(seed, k, c[0], c[1], c[2], 71))
+    out = {c: pal["meteorid"] for c in cells}
+    for c in [c for c in order if depth(c) <= 1][:face["radiated"]]:
+        out[c] = pal["meteorid_radiated"]
+    visible = [c for c in order if depth(c) == 0 and c[1] == y0]
+    if len(visible) < face["crystals"]:
+        raise MineError("the tease face has room for %d crystals, %d asked" % (len(visible), face["crystals"]))
+    for c in visible[:face["crystals"]]:
+        out[c] = "%s[facing=%s]" % (pal["mega_stone_crystal"], front)
+    return out
+
+
+def tease(m):
+    """The company grille across drift C and the crystal's face behind it (data mine.tease)."""
+    t = m.spec["mine"]["tease"]
+    g = t["grille"]
+    for x in range(g["x"][0], g["x"][1] + 1):
+        for y in range(g["y"][0], g["y"][1] + 1):
+            if not m.is_carved(x, y, g["z"]):
+                raise MineError("the grille cell (%d, %d, %d) is not in the drift" % (x, y, g["z"]))
+            m.fit[(x, y, g["z"])] = "minecraft:iron_bars"
+    x0, y0, z0, x1, y1, z1 = t["face"]["box"]
+    for x in range(x0, x1 + 1):
+        for y in range(y0, y1 + 1):
+            for z in range(z0, z1 + 1):
+                if m.is_carved(x, y, z):
+                    raise MineError("the tease face cell (%d, %d, %d) is carved" % (x, y, z))
+    for c, b in face_cells(m.spec, t["face"], 0).items():
+        m.fit[c] = b
+    return t["face"]["crystals"]
 
 
 # ------------------------------------------------------------------ the surface: street, houses, piles, posts, derricks
@@ -776,49 +816,30 @@ def walkable(m, x, y, z):
 
 def check(m, near):
     spec = m.spec
-    g = spec["mine"]["gate"]
     probs = []
-    # cover over every gated cell's shell
-    gi = np.argwhere(m.gated)
-    tops = {}
-    for i, k, j in gi:
-        tops[(i, k)] = max(tops.get((i, k), -1), j)
-    thin = [(i + m.X0, k + m.Z0) for (i, k), j in tops.items()
-            if (m.S0[i, k] if m.cut_of[i, k] < 0 else m.cut_floor[i, k]) - (j + m.Y0 + SHELL_R) < spec["cover_min"]]
-    if thin:
-        probs.append("%d gated columns with under %d of rock over the shell, e.g. %s" % (len(thin), spec["cover_min"], thin[:3]))
-    # gated and ungated envelopes kept apart by more than two shells
-    ung = m.env & ~m.gated
-    touch = dilate(m.gated, 2 * SHELL_R) & ung
-    if touch.any():
-        i, k, j = np.argwhere(touch)[0]
-        probs.append("the gated envelope comes within %d of the ungated at (%d, %d, %d)"
-                     % (2 * SHELL_R, i + m.X0, j + m.Y0, k + m.Z0))
-    # the gate: knock box walkable and ungated, arrival and exit gated, turn-back ungated and walkable
-    ax, ay, az, _ = g["arrive"]
-    if not (walkable(m, int(ax), ay, int(az)) and m.gated[m.ix(int(ax), ay, int(az))]):
-        probs.append("the gate's arrival %s is not a walkable gated cell" % g["arrive"][:3])
-    tx, ty, tz, _ = g["turn_back"]
-    if not (walkable(m, int(tx), ty, int(tz)) and not m.gated[m.ix(int(tx), ty, int(tz))]):
-        probs.append("the turn-back point %s is not a walkable ungated cell" % g["turn_back"][:3])
-    kx0, ky0, kz0, kx1, ky1, kz1 = g["knock"]
-    for x in range(kx0, kx1 + 1):
-        for z in range(kz0, kz1 + 1):
-            if not walkable(m, x, ky0, z) or m.gated[m.ix(x, ky0, z)]:
-                probs.append("the knock box's floor (%d, %d, %d) is not a walkable ungated cell" % (x, ky0, z))
-    ex0, ey0, ez0, ex1, ey1, ez1 = g["exit"]
-    for x in range(ex0, ex1 + 1):
-        for z in range(ez0, ez1 + 1):
-            if not m.gated[m.ix(x, ey0, z)]:
-                probs.append("the exit box cell (%d, %d, %d) is not gated" % (x, ey0, z))
-    # every gated envelope cell, and every carved gated cell, reachable from the arrival through its own kind
-    start = m.ix(int(ax), ay, int(az))
-    for what, cg in (("envelope", m.env & m.gated), ("carved", m.carve & m.gated)):
-        lost = cg & ~reach(cg, start)
-        if lost.any():
-            i, k, j = np.argwhere(lost)[0]
-            probs.append("%d %s gated cells not reachable from the arrival, e.g. (%d, %d, %d)"
-                         % (int(lost.sum()), what, i + m.X0, j + m.Y0, k + m.Z0))
+    # nothing is gated any more (SOUTHERN_RIFT_MEGA.md decision 1): a gated feature would be a section nobody can enter
+    if m.gated.any():
+        probs.append("%d gated cells: the spur's gated section is retired (data retired_gated_section)" % int(m.gated.sum()))
+    # the tease: the grille closes drift C whole, the face's front meets the pocket behind it, and the ward holds both
+    t = spec["mine"]["tease"]
+    g = t["grille"]
+    x0, y0, z0, x1, y1, z1 = t["face"]["box"]
+    front = {"south": [(x, y, z1 + 1) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1)],
+             "north": [(x, y, z0 - 1) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1)],
+             "east": [(x1 + 1, y, z) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)],
+             "west": [(x0 - 1, y, z) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)]}[t["face"]["front"]]
+    if not any(m.is_carved(*c) for c in front):
+        probs.append("the tease face's front meets no carved cell")
+    open_ = m.carve.copy()
+    for x in range(g["x"][0], g["x"][1] + 1):
+        for y in range(g["y"][0], g["y"][1] + 1):
+            open_[m.ix(x, y, g["z"])] = False
+    fz = z1 + 1 if t["face"]["front"] == "south" else z0 - 1
+    past = reach(open_, m.ix(x0, y0, fz))
+    adit = m.ix(spec["mine"]["features"][0]["path"][0][0], spec["mine"]["features"][0]["path"][0][1],
+                spec["mine"]["features"][0]["path"][0][2])
+    if past[adit]:
+        probs.append("the tease face can be reached from the adit without passing the grille")
     # slopes: no tube segment steeper than 0.6
     for f in spec["mine"]["features"]:
         if f["kind"] == "tube":
@@ -827,37 +848,6 @@ def check(m, near):
                 if L and abs(y1 - y0) / L > 0.6:
                     probs.append("%s: a segment climbs %.2f per block" % (f["id"], abs(y1 - y0) / L))
     # rock left in no gated cell's way on the floor: every tube's feet cells carved (roughness never takes the floor)
-    return probs
-
-
-def zone_boxes(m):
-    """The zone check's boxes: each gated feature's carved cells' bounds, one block round, feet-1 to top+1."""
-    out = []
-    for fid, f in enumerate(m.feats):
-        if not f["gated"]:
-            continue
-        cells = np.argwhere((m.own == fid) & m.env)
-        if not len(cells):
-            continue
-        (i0, k0, j0), (i1, k1, j1) = cells.min(axis=0), cells.max(axis=0)
-        out.append({"id": f["id"], "min": [int(i0 + m.X0 - 1), int(j0 + m.Y0 - 1), int(k0 + m.Z0 - 1)],
-                    "max": [int(i1 + m.X0 + 1), int(j1 + m.Y0 + 1), int(k1 + m.Z0 + 1)]})
-    return out
-
-
-def zone_problems(m, boxes):
-    """A zone box must hold no ungated carved cell and nothing over the ground: it would turn back a player standing
-    in front of the gate, or on the surface."""
-    probs = []
-    ung = m.carve & ~m.gated
-    for b in boxes:
-        (x0, y0, z0), (x1, y1, z1) = b["min"], b["max"]
-        sub = ung[x0 - m.X0:x1 - m.X0 + 1, z0 - m.Z0:z1 - m.Z0 + 1, y0 - m.Y0:y1 - m.Y0 + 1]
-        if sub.any():
-            probs.append("zone box %s holds ungated carved cells" % b["id"])
-        tops = np.minimum(m.S0, m.cut_floor)[x0 - m.X0:x1 - m.X0 + 1, z0 - m.Z0:z1 - m.Z0 + 1]
-        if y1 + 1 >= tops.min():
-            probs.append("zone box %s reaches y%d, at or over the ground (y%d) somewhere under it" % (b["id"], y1, tops.min()))
     return probs
 
 
@@ -912,66 +902,74 @@ def text(s, **style):
     return json.dumps(dict({"text": s}, **style), ensure_ascii=False)
 
 
-def gate_files(m, boxes):
+def box_cond(lo, hi):
+    (x0, y0, z0), (x1, y1, z1) = lo, hi
+    return {"condition": "minecraft:entity_properties", "entity": "this",
+            "predicate": {"location": {"dimension": "minecraft:overworld", "position": {
+                "x": {"min": x0, "max": x1 + 1}, "y": {"min": y0, "max": y1 + 1}, "z": {"min": z0, "max": z1 + 1}}}}}
+
+
+def ward_box(spec):
+    """The grille, the pocket behind it and the face box, grown by ward_margin: ([x0, y0, z0], [x1, y1, z1])."""
+    t = spec["mine"]["tease"]
+    g, fb, wm = t["grille"], t["face"]["box"], t["ward_margin"]
+    drift = next(f for f in spec["mine"]["features"] if f["id"] == t["drift"])
+    px, py, pz = drift["pocket"]["at"]
+    pr = drift["pocket"]["r"]
+    lo = [min(g["x"][0], fb[0], px - pr), min(g["y"][0], fb[1], py), min(g["z"], fb[2], pz - pr)]
+    hi = [max(g["x"][1], fb[3], px + pr), max(g["y"][1], fb[4], py + pr + 1), max(g["z"], fb[5], pz + pr)]
+    return [v - wm for v in lo], [v + wm for v in hi]
+
+
+def tease_files(m):
+    """The ward (per player: only a player lacking the flag), the tick driver and the tease face's restore."""
     spec = m.spec
-    g = spec["mine"]["gate"]
+    t = spec["mine"]["tease"]
     flag = spec["flag"]["advancement"]
-    has = "@s[advancements={%s=true}]" % flag
-    lacks = "@s[gamemode=!creative,gamemode=!spectator,advancements={%s=false}]" % flag
-    ax, ay, az, ayaw = g["arrive"]
-    tx, ty, tz, tyaw = g["turn_back"]
-
-    def box_cond(b):
-        (x0, y0, z0), (x1, y1, z1) = b
-        return {"condition": "minecraft:entity_properties", "entity": "this",
-                "predicate": {"location": {"dimension": "minecraft:overworld", "position": {
-                    "x": {"min": x0, "max": x1 + 1}, "y": {"min": y0, "max": y1 + 1}, "z": {"min": z0, "max": z1 + 1}}}}}
-
-    def adv(conds, reward):
-        return {"criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": conds}}},
-                "rewards": {"function": reward}}
-
-    k = g["knock"]
-    e = g["exit"]
-    zone = [box_cond((b["min"], b["max"])) for b in boxes]
-    # the ward: the plug, the grille and the alcove, grown by ward_margin
-    gr, pl, wm = g["grille"], g["plug"], g["ward_margin"]
-    lo = [min(pl[0], k[0], gr["x"]), min(pl[1], k[1], gr["y"][0]), min(pl[2], k[2], gr["z"][0])]
-    hi = [max(pl[3], k[3], gr["x"]), max(pl[4], k[4], gr["y"][1]), max(pl[5], k[5], gr["z"][1])]
-    ward = ([v - wm for v in lo], [v + wm for v in hi])
-    files = {
-        "advancement/%s/gate_ward.json" % FOLDER: adv([box_cond(ward)], "%s:%s/gate/ward" % (NS, FOLDER)),
-        "advancement/%s/gate_knock.json" % FOLDER: adv([box_cond((k[:3], k[3:]))], "%s:%s/gate/knock" % (NS, FOLDER)),
-        "advancement/%s/gate_exit.json" % FOLDER: adv([box_cond((e[:3], e[3:]))], "%s:%s/gate/exit" % (NS, FOLDER)),
-        "advancement/%s/zone.json" % FOLDER: adv([{"condition": "minecraft:any_of", "terms": zone}] if len(zone) > 1 else zone,
-                                                 "%s:%s/gate/zone" % (NS, FOLDER)),
-    }
-    badge = spec["flag"]["badge"]
+    F = "%s:%s" % (NS, FOLDER)
+    lo, hi = ward_box(spec)
+    files = {"advancement/%s/tease_ward.json" % FOLDER: {
+        "criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": [box_cond(lo, hi)]}}},
+        "rewards": {"function": "%s/tease/ward" % F}}}
+    x0, y0, z0, x1, y1, z1 = t["face"]["box"]
+    gx0, gy0, gz0, gx1, gy1, gz1 = x0 - 1, y0 - 1, z0 - 1, x1 + 1, y1 + 1, z1 + 1
+    vol = "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (gx0, gy0, gz0, gx1 - gx0, gy1 - gy0, gz1 - gz0)
+    ap = t["approach"]
+    near = "@a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]" % (ap[0], ap[1], ap[2], ap[3] - ap[0], ap[4] - ap[1], ap[5] - ap[2])
+    tag = "#%s:%s" % (NS, t["resettable_tag"])
     fn = {
-        "gate/ward": [
-            "# near the gate (data/rift_mines.json gate.ward_why): Mining Fatigue IV, refreshed each second the location",
-            "# trigger fires, so the plug and the rock round it cannot be dug through",
-            "advancement revoke @s only %s:%s/gate_ward" % (NS, FOLDER),
-            "execute if entity @s[gamemode=!creative,gamemode=!spectator] run effect give @s minecraft:mining_fatigue 3 3 true"],
-        "gate/knock": [
-            "# the company gate (tools/rift_mines.py): a player holding %s is put through; anyone else is told" % flag,
-            "advancement revoke @s only %s:%s/gate_knock" % (NS, FOLDER),
-            "execute if entity %s run tp @s %s %d %s %d 0" % (has, ax, ay, az, ayaw),
-            "execute if entity %s run title @s actionbar %s" % (has, text("The grille swings aside, and shuts behind you.", color="gray")),
-            "execute unless entity %s run title @s actionbar %s" % (has, text("Sealed by the company. The deep galleries open with the %s badge." % ordinal(badge), color="gold"))],
-        "gate/exit": [
-            "# the way out from behind the gate: anyone, flag or not",
-            "advancement revoke @s only %s:%s/gate_exit" % (NS, FOLDER),
-            "tp @s %s %d %s %d 0" % (tx, ty, tz, tyaw)],
-        "gate/zone": [
-            "# the zone check: anyone in the gated galleries without the flag is turned back to the front of the gate",
-            "advancement revoke @s only %s:%s/zone" % (NS, FOLDER),
-            "execute if entity %s run function %s:%s/gate/turn_back" % (lacks, NS, FOLDER)],
-        "gate/turn_back": [
-            "# a mount first, then the player (docs/mechanics/RIFT_ZONES.md section 4)",
-            "execute on vehicle run tp @s %s %d %s" % (tx, ty, tz),
-            "tp @s %s %d %s %d 0" % (tx, ty, tz, tyaw),
-            "title @s actionbar %s" % text("Turned back: the deep galleries open with the %s badge." % ordinal(badge), color="gold")],
+        "tease/ward": [
+            "# near the seam's one crystal (data/rift_mines.json mine.tease.ward_why): Mining Fatigue IV for a player in",
+            "# survival or adventure who lacks %s, refreshed each second the location trigger fires. Per player: with" % flag,
+            "# the flag it lifts, and the grille and the crystal can be taken",
+            "advancement revoke @s only %s:%s/tease_ward" % (NS, FOLDER),
+            "execute if entity @s[gamemode=!creative,gamemode=!spectator,advancements={%s=false}] run effect give @s "
+            "minecraft:mining_fatigue 3 3 true" % flag],
+        "load": ["scoreboard objectives add rm.t dummy",
+                 "scoreboard players set #period rm.t %d" % t["period_ticks"],
+                 "execute unless score #tease rm.t matches -2147483648.. run scoreboard players set #tease rm.t 0"],
+        "tick": ["scoreboard players add #clock rm.t 1",
+                 "execute if score #clock rm.t matches 100.. run function %s/tease/drive" % F],
+        "tease/drive": [
+            "# restore on approach (STONE_ECONOMY.md 5.3): only while a player is near the seam, the period has passed,",
+            "# both corners are loaded, and nobody and no Pokemon stands in the box or one block round it",
+            "scoreboard players set #clock rm.t 0",
+            "execute unless entity %s run return 0" % near,
+            "execute store result score #now rm.t run time query gametime",
+            "scoreboard players operation #d rm.t = #now rm.t",
+            "scoreboard players operation #d rm.t -= #tease rm.t",
+            "execute if score #d rm.t < #period rm.t run return 0",
+            "execute unless loaded %d %d %d run return 0" % (gx0, gy0, gz0),
+            "execute unless loaded %d %d %d run return 0" % (gx1, gy1, gz1),
+            "execute if entity @a[%s] run return 0" % vol,
+            "execute if entity @e[type=cobblemon:pokemon,%s] run return 0" % vol,
+            "function %s/tease/restore" % F,
+            "scoreboard players operation #tease rm.t = #now rm.t"],
+        "tease/restore": ["# chunks-loaded-by: %s/tease/drive (execute if loaded, both corners of the box)" % F,
+                          "fill %d %d %d %d %d %d %s replace %s" % (x0, y0, z0, x1, y1, z1, spec["palette"]["meteorid"], tag)]
+                         + ["execute if block %d %d %d %s run setblock %d %d %d %s" % (x, y, z, tag, x, y, z, b)
+                            for (x, y, z), b in sorted(face_cells(spec, t["face"], 1).items(), key=lambda kv: ("crystal" in kv[1], kv[0]))
+                            if b != spec["palette"]["meteorid"]],
     }
     return files, fn
 
@@ -1001,17 +999,16 @@ def cart_files(m):
     return head, go, carts
 
 
-def write(m, lns, boxes):
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    base = OUT / "data" / NS
-    fn = base / "function" / FOLDER
+def write_blocks(out, lns, passes, title, desc):
+    """A pack of block functions, tiled by TILE and split at PART, each holding its chunks; returns the index."""
+    if out.exists():
+        shutil.rmtree(out)
+    fn = out / "data" / NS / "function" / out.name.replace("cobblers_", "")
     fn.mkdir(parents=True)
-    (OUT / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description":
-                                     "Cobblers: the Rift dig camp's mines, quarries and the mega stone mine (tools/rift_mines.py)"}},
-                                     indent=2) + "\n", encoding="utf-8")
+    (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": desc}}, indent=2) + "\n",
+                                     encoding="utf-8")
     order = []
-    for n, pas in enumerate(PASSES):
+    for n, pas in enumerate(passes):
         tiles = {}
         for ln in lns[pas]:
             t = ln.split()
@@ -1020,27 +1017,68 @@ def write(m, lns, boxes):
             body = tiles[t]
             for j in range(0, len(body), PART):
                 name = "%d%s_%d_%d%s" % (n + 1, pas, t[0], t[1], "" if j == 0 else "_%d" % (j // PART + 1))
-                part = FL.ensure_loaded(["# Generated by tools/rift_mines.py: %s, tile %d %d" % (pas, t[0], t[1])]
-                                        + body[j:j + PART])
+                part = FL.ensure_loaded(["# Generated by %s: %s, tile %d %d" % (title, pas, t[0], t[1])] + body[j:j + PART])
                 bad = FL.check_lines(part, name)
                 if bad:
                     raise MineError("function %s would be refused: %s" % (name, bad[:3]))
                 (fn / (name + ".mcfunction")).write_text("\n".join(part) + "\n", encoding="utf-8")
                 order.append(name)
     (fn / "index.txt").write_text("\n".join(order) + "\n", encoding="utf-8")
-    files, gfn = gate_files(m, boxes)
+    return fn, order
+
+
+def write(m, lns):
+    fn, order = write_blocks(OUT, lns, PASSES, "tools/rift_mines.py",
+                             "Cobblers: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py)")
+    base = OUT / "data" / NS
+    files, tfn = tease_files(m)
     for rel, obj in files.items():
         p = base / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(obj, indent=1) + "\n", encoding="utf-8")
-    for name, body in gfn.items():
+    for name, body in tfn.items():
+        bad = FL.check_lines(body, name)
+        if bad:
+            raise MineError("function %s would be refused: %s" % (name, bad[:3]))
         p = fn / (name + ".mcfunction")
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text("\n".join(body) + "\n", encoding="utf-8")
+    tags = OUT / "data" / "minecraft" / "tags" / "function"
+    tags.mkdir(parents=True)
+    (tags / "load.json").write_text(json.dumps({"values": ["%s:%s/load" % (NS, FOLDER)]}, indent=2) + "\n", encoding="utf-8")
+    (tags / "tick.json").write_text(json.dumps({"values": ["%s:%s/tick" % (NS, FOLDER)]}, indent=2) + "\n", encoding="utf-8")
+    bt = base / "tags" / "block"
+    bt.mkdir(parents=True)
+    t = m.spec["mine"]["tease"]
+    (bt / ("%s.json" % t["resettable_tag"])).write_text(json.dumps({"values": t["resettable"]}, indent=2) + "\n", encoding="utf-8")
     head, go, carts = cart_files(m)
     (fn / "carts.mcfunction").write_text("\n".join(head) + "\n", encoding="utf-8")
     (fn / "carts_go.mcfunction").write_text("\n".join(go) + "\n", encoding="utf-8")
     return order, carts
+
+
+# ------------------------------------------------------------------ the staging refill
+
+def retired_envelope(spec, ground):
+    """Every envelope cell of the retired gated section, rasterised by the same geometry as the live features."""
+    cells = set()
+    for f in spec["retired_gated_section"]["features"]:
+        cells |= feature_cells(f, ground)
+    return cells
+
+
+def refill_lines(spec, ground):
+    """Rock back into exactly the retired gated envelope: one fill per vertical run, the rock palette by height."""
+    pal = spec["palette"]
+    seed = spec["seed"]
+    cols = {}
+    for x, y, z in retired_envelope(spec, ground):
+        b = pick(pal["rock_lower"] if y < pal["rock_split_y"] else pal["rock_upper"], seed, x, y, z, 14)
+        cols.setdefault((x, z), []).append((y, b))
+    out = []
+    for (x, z) in sorted(cols):
+        out += [cmd(x, a, c, z, b) for a, c, b in column_runs(x, z, cols[(x, z)])]
+    return {"refill": out}, sum(len(v) for v in cols.values())
 
 
 # ------------------------------------------------------------------ driver
@@ -1049,6 +1087,7 @@ def model(source_root=None, spec=None):
     spec = spec or load()
     g = G.Ground(source_root)
     m = Model(spec, g)
+    m.groundfn = g
     rasterise(m)
     carve(m)
     near = shell(m)
@@ -1056,10 +1095,10 @@ def model(source_root=None, spec=None):
     frames(m)
     n_rails = tracks(m)
     n_cryst = crystals(m)
-    gate(m)
+    collapse(m)
+    n_cryst += tease(m)
     n_glint = glints(m)
     surface(m)
-    # a fitting or a surface block never lands where the shell is not, unless it is carved or over the ground
     m.counts = {"envelope cells": int(m.env.sum()), "carved cells": int(m.carve.sum()),
                 "gated carved cells": int((m.carve & m.gated).sum()), "shell cells": len(m.blocks),
                 "rails": n_rails, "mega stone crystals": n_cryst, "dormant crystal glints": n_glint,
@@ -1067,17 +1106,18 @@ def model(source_root=None, spec=None):
     return m, near
 
 
-def summary(m, boxes):
+def summary(m):
     spec = m.spec
     feats = {f["id"]: f for f in spec["mine"]["features"]}
-    out = {"schema": "cobblers.derived.rift_mines/1", "counts": m.counts, "zone_boxes": boxes,
-           "gate": spec["mine"]["gate"], "flag": spec["flag"]["advancement"],
+    lo, hi = ward_box(spec)
+    out = {"schema": "cobblers.derived.rift_mines/2", "counts": m.counts, "flag": spec["flag"]["advancement"],
+           "collapse": spec["mine"]["collapse"]["box"],
+           "tease": {"grille": spec["mine"]["tease"]["grille"], "face": spec["mine"]["tease"]["face"]["box"],
+                     "ward": [lo, hi]},
            "seam": {"cut": spec["mine"]["seam"]["cut"], "face_z": spec["town"]["cuts"][0]["rect"][1] - 1,
                     "x": [spec["town"]["cuts"][0]["rect"][0], spec["town"]["cuts"][0]["rect"][2]]},
-           "chambers": [{"id": f["id"], "centre": f["centre"], "heart": f.get("_heart"), "guardian": f["guardian"]}
-                        for f in spec["mine"]["features"] if f["kind"] == "chamber"],
            "cuts": [{"id": c["id"], "rect": c["rect"], "floor": c["floor"]} for c in spec["town"]["cuts"]],
-           "drifts": [{"id": k, "path": v["path"]} for k, v in feats.items() if k.startswith("drift_") and not v.get("gated")],
+           "drifts": [{"id": k, "path": v["path"]} for k, v in feats.items() if k.startswith("drift_")],
            "houses": [{"id": h["id"], "rect": h["rect"]} for h in spec["town"]["houses"]]}
     return out
 
@@ -1089,11 +1129,9 @@ def main(argv=None):
     p.add_argument("--server-dir", help="accepted for tools/reapply.py prepare's sake; not read")
     a = p.parse_args(argv)
     m, near = model(a.source_root)
-    boxes = zone_boxes(m)
-    probs = check(m, near) + zone_problems(m, boxes)
+    probs = check(m, near)
     for k, v in m.counts.items():
         print("  %-26s %d" % (k, v))
-    print("  %-26s %d" % ("zone boxes", len(boxes)))
     if probs:
         for pr in probs:
             print("PROBLEM:", pr)
@@ -1101,15 +1139,20 @@ def main(argv=None):
     if a.mode == "report":
         return 0
     lns = lines(m)
-    order, carts = write(m, lns, boxes)
+    order, carts = write(m, lns)
     PLAN.parent.mkdir(parents=True, exist_ok=True)
-    s = summary(m, boxes)
+    s = summary(m)
     s["functions"] = order
     s["carts"] = carts
     s["commands"] = {p_: len(v) for p_, v in lns.items()}
+    rl, n_refill = refill_lines(m.spec, m.groundfn)
+    _fn, rorder = write_blocks(REFILL, rl, ("refill",), "tools/rift_mines.py (refill)",
+                               "Cobblers: STAGING ONLY. Rock back into the Rift spur's retired gated galleries (tools/rift_mines.py)")
+    s["refill"] = {"pack": REFILL.name, "functions": rorder, "cells": n_refill, "commands": len(rl["refill"])}
     PLAN.write_text(json.dumps(s, indent=1) + "\n", encoding="utf-8")
     print("wrote %s: %d block functions, %s commands; %d carts; plan %s"
           % (OUT.relative_to(ROOT), len(order), sum(s["commands"].values()), len(carts), PLAN.relative_to(ROOT)))
+    print("wrote %s (STAGING ONLY): %d functions, %d cells of rock" % (REFILL.relative_to(ROOT), len(rorder), n_refill))
     return 0
 
 

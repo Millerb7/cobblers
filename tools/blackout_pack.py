@@ -212,8 +212,11 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
         "function %s:blackout/dedupe" % NS,
         "execute if score #dup bo.tmp matches 1 run return 0",
         "scoreboard players set @s bo.clm 0",
+        "# a victor tagged %s (the gulch's Megas, data/blackout.json claims.exempt_why) makes no claim" % claims["exempt_tag"],
+        "scoreboard players set #exempt bo.tmp 0",
+        "$execute as $(victor) if entity @s[tag=%s] run scoreboard players set #exempt bo.tmp 1" % claims["exempt_tag"],
         "# an item claim needs the exact victor; if it cannot be found, the environmental outcome (spec: never guess)",
-        '$execute if entity $(victor) run function %s:recovery/make {victor:"$(victor)",name:"$(name)",id:"$(id)"}' % NS,
+        '$execute if score #exempt bo.tmp matches 0 if entity $(victor) run function %s:recovery/make {victor:"$(victor)",name:"$(name)",id:"$(id)"}' % NS,
         "function %s:blackout/charge" % NS]
        + (["# the money goes into the claim too (data/blackout.json money.held_by_wild_victor)",
            "execute if score @s bo.clm matches 2 run function %s:recovery/hold_money" % NS] if money.get("held_by_wild_victor") else [])
