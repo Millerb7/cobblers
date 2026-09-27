@@ -306,6 +306,28 @@ def prepare(a):
           % (time.time() - t0, len(places()), len(donors()), len(steps())))
 
 
+def replace_pack(dest, src, retired_root):
+    """Put the build `src` at `dest`. An installed copy holding files the build lacks is moved aside to a dated folder
+    under `retired_root` (outside the server tree), never deleted: on 2026-09-26 an install deleted the only copy of a
+    hand-installed template (the concrete-fixed Brock gym) that the fresh build did not have."""
+    dest = Path(dest)
+    src = Path(src) if src is not None else None
+    if dest.exists():
+        have = {p.relative_to(dest).as_posix() for p in dest.rglob("*") if p.is_file()}
+        want = {p.relative_to(src).as_posix() for p in src.rglob("*") if p.is_file()} if src and src.exists() else set()
+        extra = sorted(have - want)
+        if extra:
+            keep = Path(retired_root) / ("%s-replaced-%s" % (time.strftime("%Y-%m-%d-%H%M%S"), dest.name))
+            keep.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(dest), str(keep))
+            print("moved %s aside to %s: it held %d file(s) the build does not, e.g. %s"
+                  % (dest, keep, len(extra), ", ".join(extra[:3])))
+        else:
+            shutil.rmtree(dest)
+    if src is not None and src.exists():
+        shutil.copytree(src, dest)
+
+
 def install(a):
     import socket
     s = socket.socket()
@@ -329,22 +351,19 @@ def install(a):
         print("removed", dp / "cobblers_restore", "(disposable worlds only)")
     wdp = Path(a.world_dir) / "datapacks"
     wdp.mkdir(exist_ok=True)
+    retired = Path(a.server_dir).resolve().parent / "cobblers-server-retired"
     for name in SERVER_PACKS:
         # a pack that acts on its own (the scene runtime's tick) belongs to the world it was built for: the global
         # folder is loaded by every world this server runs, the live one included
         dest = (wdp if name in WORLD_LOCAL else dp) / name
         stale = dp / name if name in WORLD_LOCAL else None
         if stale is not None and stale.exists():
-            shutil.rmtree(stale)
+            replace_pack(stale, None, retired)
             print("removed", stale, "(it belongs in the world folder)")
-        if dest.exists():
-            shutil.rmtree(dest)
-        shutil.copytree(PACKS / name, dest)
+        replace_pack(dest, PACKS / name, retired)
         print("installed", dest)
     for src in WORLD_PACKS:
-        if (wdp / src.name).exists():
-            shutil.rmtree(wdp / src.name)
-        shutil.copytree(src, wdp / src.name)
+        replace_pack(wdp / src.name, src, retired)
         print("installed into the world folder", wdp / src.name)
     # Our wild spawns, and the suppression that makes them the only thing spawning on the routes and in the
     # sub-regions (the owner, 2026-09-24: the playtest had been Cobbleverse's defaults, a level-44 Ursaluna before
@@ -363,9 +382,7 @@ def install(a):
         src = PACKS / name
         if not (src / "pack.mcmeta").is_file():
             raise SystemExit("no %s: the spawn packs were not generated" % src)
-        if (wdp / name).exists():
-            shutil.rmtree(wdp / name)
-        shutil.copytree(src, wdp / name)
+        replace_pack(wdp / name, src, retired)
         print("installed into the world folder", wdp / name)
     # The configs, last, and fail-closed. Until 2026-09-26 nothing copied modpack/config to the server: five committed
     # overlay files had never reached it (starters.json still offered the starters dropped on 2026-09-23). Install the
