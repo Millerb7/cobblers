@@ -265,7 +265,7 @@
     "exit": [4353, 112, 4705, 4354, 116, 4707],
     "arrive": [4349.5, 111, 4706.5, 90],
     "turn_back": [4370.5, 119, 4706.5, -90],
-    "places_why": "boxes are [x0, y0, z0, x1, y1, z1], feet levels on the road's surface: the knock alcove directly outside the grille (road y115-116), the exit box inside the plug (road y111-112), the arrival 4 blocks further in and facing down the road (yaw 90, west), the turn-back point 8 outside facing away (yaw -90, east)",
+    "places_why": "boxes are [x0, y0, z0, x1, y1, z1], feet levels on the road's surface: the knock alcove directly outside the grille (road y115-116), the exit box just behind the rockfall (road y111-112), the arrival 4 blocks further in and facing down the road (yaw 90, west), the turn-back point 8 outside facing away (yaw -90, east)",
     "ward": [4350, 103, 4692, 4372, 129, 4720],
     "ward_margin": 7,
     "ward_why": "the plug's columns (x4357-4362, z4699-4713, y111-122), the grille and the knock alcove, grown by 7 on every side: the test author showed margin 4 was reachable at the spur's gate (reach 4.5 from the eyes, 1.62 over the feet the box tests); 7 keeps the plug beyond reach from beside and below. Anyone in survival or adventure inside it has Mining Fatigue IV (the spur gate's ward, the owner's 'i can mine around the door')",
