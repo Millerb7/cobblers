@@ -207,6 +207,10 @@ reef makes the start area's water pay off three times, at S0, S2 and S6.
 
 ### 4.1 Why a ferry, with the numbers
 
+> **Superseded 2026-09-27.** This section measured the first exhaustion rule (distance bands; it was EXP-044, not
+> EXP-043). The owner's rule of 2026-09-27 builds fatigue on every swim, and the crossings are re-measured against it in
+> `WATER_BUILD_PLAN.md` section 11: most straits below are now lethal to every swimmer, trained or not.
+
 Surface exhaustion is being built (EXP-043, another agent): swimming in open water (96-256 blocks from land) builds
 fatigue, a warning, then Slowness, then the harsh drown pulses after about a minute; the deep band (256+) twice as fast;
 shallows (0-96) are free; riding a Pokemon clears it; land and shallows recover it [A: the design as briefed; not yet
