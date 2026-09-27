@@ -192,12 +192,15 @@ class Sim:
             if w in ("if", "unless"):
                 kind = t[i + 1]
                 if kind == "score":
+                    # vanilla: a score that is not set fails every test on it, `matches` and comparisons alike
                     a = self.get(t[i + 2], t[i + 3])
+                    known = (t[i + 2], t[i + 3]) in self.score
                     if t[i + 4] == "matches":
-                        res, n = in_range(a, t[i + 5]), 6
+                        res, n = known and in_range(a, t[i + 5]), 6
                     else:
                         b = self.get(t[i + 5], t[i + 6])
-                        res = {"<": a < b, "<=": a <= b, "=": a == b, ">": a > b, ">=": a >= b}[t[i + 4]]
+                        known = known and (t[i + 5], t[i + 6]) in self.score
+                        res = known and {"<": a < b, "<=": a <= b, "=": a == b, ">": a > b, ">=": a >= b}[t[i + 4]]
                         n = 7
                 else:
                     n = {"entity": 3, "block": 6, "loaded": 5,
@@ -295,6 +298,11 @@ def test_the_simulator_follows_minecraft_arithmetic_and_refuses_what_it_does_not
     v = Sim(fns={"t/v": ["scoreboard players set #r x 5", "execute store success score #r x on vehicle if entity @s"]})
     v.call("t/v")
     assert v.get("#r", "x") == 5
+    # an unset score fails `if score` (so `unless` passes), whatever the range
+    u = Sim(fns={"t/u": ["execute unless score @s y matches -2147483648.. run scoreboard players set #u x 1",
+                         "execute if score @s y matches ..0 run scoreboard players set #v x 1"]})
+    u.call("t/u")
+    assert (u.get("#u", "x"), ("#v", "x") in u.score) == (1, False)
 
 
 # ------------------------------------------------------------------------------------------------ pack basics
@@ -499,7 +507,7 @@ def test_every_constant_read_from_bo_cfg_is_set_in_load_from_the_data():
         s["gain_open_per_tick"] * per, s["gain_deep_per_tick"] * per, s["recover_per_tick"] * per)
     assert (set_["#fwarn"], set_["#fslow"], set_["#fexh"], set_["#fcol"], set_["#fpulse"], set_["#fcap"]) == (
         s["warn_ticks"], s["slow_ticks"], s["exhausted_ticks"], s["collapse_ticks"], s["pulse_ticks"], s["cap_ticks"])
-    assert (set_["#16"], set_["#wmin"], set_["#2"]) == (16, -s["world_min"], 2)
+    assert (set_["#16"], set_["#wmin"], set_["#2"], set_["#fsample"]) == (16, -s["world_min"], 2, per)
     w, c = CFG["water"], CFG["claims"]
     assert (set_["#pct"], set_["#surf"], set_["#regen"], set_["#pulse"], set_["#grace"], set_["#dedupe"]) == (
         CFG["money"]["percent"], w["surf_bonus_ticks"], w["pulse_regen_margin"], w["pulse_ticks"],

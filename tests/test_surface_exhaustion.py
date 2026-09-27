@@ -1,6 +1,8 @@
 """Surface exhaustion (EXP-044): tools/open_water.py's sea bands and the cobblers_blackout pack's surface/* functions.
 
-Written by the test author, not by the session that wrote either (commits 476c4e5..5d522d7).
+Written by the test author, not by the session that wrote either (commits 476c4e5..5bcecec). The collapse hits run
+on their own clock, bo.fpt, since 5bcecec (EXP-044 README): the first as collapse is reached, then one every
+pulse_ticks of time, whatever the band or partner.
 
 Independent sources: data/blackout.json "surface" (the rule and every number); tools/open_water.py's docstring rule (a
 16-block cell is land if any column in it is at or above sea level 62; the sea is the below-sea cells connected to the
@@ -17,9 +19,8 @@ The real-heightmap tests need the canonical heightmap (outside the repository): 
 a pass.
 
 Not covered, and it needs a running server (EXP-044): that `on vehicle` sees a Cobblemon ride or a boat; that the
-slowness and hunger feel as the data says; the measured swim speeds the "feel" note rests on; whether the #ride
-fake-player score carries from one player to the next in the same tick when the second rides nothing (vanilla: an
-`execute store` whose chain forks to no executor stores nothing; unverified here).
+slowness and hunger feel as the data says; the measured swim speeds the "feel" note rests on; that vanilla stores
+nothing when `on vehicle` finds no vehicle (the simulator assumes so; the pack now resets #ride first either way).
 """
 from __future__ import annotations
 
@@ -235,26 +236,35 @@ Z = 4260
 OPEN_X, DEEP_X, NONE_X = -860, -700, -384
 
 
-def _swim(x=OPEN_X, z=Z, water=True, sub=0, riding=False, qual=0, fat=0, samples=1, health=20, fns=None):
-    """Run surface/tick `samples` times; returns the simulator."""
-    q = {"data get entity @s Pos[0]": x, "data get entity @s Pos[2]": z,
-         "attribute @s minecraft:generic.max_health get 1": 20, "data get entity @s Health 1": health}
+def _swim(x=OPEN_X, z=Z, water=True, sub=0, riding=False, qual=0, fat=0, samples=1, health=20, fns=None, fpt=None):
+    """Run surface/tick `samples` times as one player; returns the simulator, whose `state` (x, z, water, riding) can
+    be changed between samples. bo.fwarn starts at 0, as surface/recover leaves it for anyone who has stood on land;
+    bo.fpt (the collapse clock) is left unset unless given."""
+    state = {"x": x, "z": z, "water": water, "riding": riding}
+
+    def query(cmd):
+        return {"data get entity @s Pos[0]": state["x"], "data get entity @s Pos[2]": state["z"],
+                "attribute @s minecraft:generic.max_health get 1": 20, "data get entity @s Health 1": health}.get(cmd, 0)
 
     def cond(kind, toks):
         if kind == "block":
-            return water
+            return state["water"]
         if kind == "on":
-            return riding
+            return state["riding"]
         if kind == "entity":
             return True
         return False
 
-    s = TB.Sim(fns=fns or FNS, query=lambda cmd: q.get(cmd, 0), cond=cond)
+    s = TB.Sim(fns=fns or FNS, query=query, cond=cond)
+    s.state = state
     for f in TB.load_functions():
         s.call(f)
     s.set("@s", "bo.sub", sub)
     s.set("@s", "bo.qual", qual)
     s.set("@s", "bo.fat", fat)
+    s.set("@s", "bo.fwarn", 0)
+    if fpt is not None:
+        s.set("@s", "bo.fpt", fpt)
     for _ in range(samples):
         s.call("surface/tick")
     return s
@@ -264,6 +274,7 @@ PER = SURF["sample_ticks"]
 GAIN_OPEN = SURF["gain_open_per_tick"] * PER
 GAIN_DEEP = SURF["gain_deep_per_tick"] * PER
 REC = SURF["recover_per_tick"] * PER
+FCOL, FPULSE, FCAP = SURF["collapse_ticks"], SURF["pulse_ticks"], SURF["cap_ticks"]
 
 
 # Without it a swimmer who reaches land, the shallows or a lake, or who rides a water Pokemon or a boat, stays tired
@@ -278,6 +289,19 @@ def test_land_riding_and_the_shallows_recover(where):
         return
     assert s.get("@s", "bo.fat") == 500 - REC, (where, s.get("@s", "bo.fat"))
     assert _swim(fat=REC // 2, **kw).get("@s", "bo.fat") == 0, "recovery stops at zero"
+
+
+# Without it the ride flag (#ride, one fake-player score shared by every player) carries from a rider to the next
+# player processed in the same tick: a swimmer handled after someone on a Lapras would recover instead of tiring.
+# (Found by this suite at 5d522d7 as unverified: vanilla stores nothing when `on vehicle` finds none; fixed in 5bcecec.)
+def test_a_swimmer_processed_after_a_rider_in_the_same_tick_still_tires():
+    s = _swim(x=DEEP_X, riding=True, fat=500, samples=0)
+    s.call("surface/tick")                                    # the rider
+    assert s.get("@s", "bo.fat") == 500 - REC and s.get("#ride", "bo.tmp") == 1
+    s.state["riding"] = False                                 # the next player: same fake player, no vehicle
+    s.set("@s", "bo.fat", 500)
+    s.call("surface/tick")
+    assert s.get("@s", "bo.fat") == 500 + GAIN_DEEP, s.get("@s", "bo.fat")
 
 
 # Without it the deep band tires no faster than open water, or a trained partner does not halve the strain.
@@ -303,76 +327,109 @@ def test_warnings_come_once_effects_follow_the_thresholds_and_fatigue_is_capped(
     assert "effect give @s minecraft:slowness 2 0 true" in slow.log
     exh = _swim(fat=SURF["exhausted_ticks"] - GAIN_OPEN)
     assert {"effect give @s minecraft:slowness 2 1 true", "effect give @s minecraft:hunger 2 0 true"} <= set(exh.log)
-    cap = _swim(x=DEEP_X, fat=SURF["cap_ticks"] - 1, samples=3)
-    assert cap.get("@s", "bo.fat") == SURF["cap_ticks"]
+    cap = _swim(x=DEEP_X, fat=FCAP - 1, samples=3)
+    assert cap.get("@s", "bo.fat") == FCAP
 
 
 # Without it a collapse deals some other damage than drowning's half-health hit (the ladder's lethal-from-half rule and
 # its message would not apply), or never hits at all.
 def test_a_collapse_pulse_reuses_the_drowning_hit():
     assert "function %s:water/pulse" % TB.NS in TB.FNS["surface/collapse"]
-    s = _swim(fat=SURF["collapse_ticks"] - GAIN_OPEN)
+    s = _swim(fat=FCOL - GAIN_OPEN)
     assert [c[0] for c in s.calls if c[0].startswith("water/")] == ["water/pulse", "water/pulse_apply"], s.calls
     assert "damage @s 10 minecraft:drown" in s.log, s.log
-    s = _swim(fat=SURF["collapse_ticks"] - GAIN_OPEN, health=10 + CFG["water"]["pulse_regen_margin"])
+    s = _swim(fat=FCOL - GAIN_OPEN, health=10 + CFG["water"]["pulse_regen_margin"])
     assert "damage @s 1000 minecraft:drown" in s.log, s.log
-    assert not [c for c in _swim(fat=SURF["collapse_ticks"] - GAIN_OPEN - 1).calls if c[0] == "water/pulse"]
+    assert not [c for c in _swim(fat=FCOL - GAIN_OPEN - 1).calls if c[0] == "water/pulse"]
 
 
-def _pulses(x, qual, f0, samples=40):
-    """[(fatigue before, after, pulsed)] per sample from fatigue f0."""
-    s = _swim(x=x, qual=qual, fat=f0, samples=0)
-    out = []
-    for _ in range(samples):
-        before = s.get("@s", "bo.fat")
+def _hits(plan, f0, fpt=None):
+    """Run one sample per (x, qual) in `plan` from fatigue f0; ([fatigue after each sample], [samples that hit])."""
+    s = _swim(fat=f0, samples=0, fpt=fpt)
+    fats, hits = [], []
+    for i, (x, qual) in enumerate(plan):
+        s.state["x"], s.state["water"] = (x, x is not None)       # x None: a sample on land (or a ledge)
+        s.set("@s", "bo.qual", qual)
         s.calls.clear()
         s.call("surface/tick")
-        out.append((before, s.get("@s", "bo.fat"), any(c[0] == "water/pulse" for c in s.calls)))
-    return out
+        fats.append(s.get("@s", "bo.fat"))
+        if any(c[0] == "water/pulse" for c in s.calls):
+            hits.append(i)
+    return fats, hits
 
 
-CADENCE_BUG = ("tools/blackout_pack.py:715 surface/collapse pulses when (fatigue - collapse) mod pulse_ticks < "
-               "sample_ticks, which assumes a sample adds exactly sample_ticks of fatigue (10). A trained swimmer in "
-               "open water adds 5: two pulses 10 ticks apart every 120 (the second lethal from half health). In the "
-               "deep band a sample adds 20: a count that is not a multiple of 20 past collapse (an untrained swimmer "
-               "who tired in open water, at gain 10, and crossed into the deep at 1190) steps 1210, 1230, 1250, ... "
-               "and never lands in the window: a collapsed swimmer is never hurt")
+N = 48
+PLANS = {
+    "open": [(OPEN_X, 0)] * N,
+    "deep": [(DEEP_X, 0)] * N,
+    "open, trained": [(OPEN_X, 1)] * N,
+    "deep, trained": [(DEEP_X, 1)] * N,
+    "open, then the deep after collapse": [(OPEN_X, 0)] * 14 + [(DEEP_X, 0)] * (N - 14),
+    "open trained, then the deep untrained after collapse": [(OPEN_X, 1)] * 17 + [(DEEP_X, 0)] * (N - 17),
+    "deep, then open, the partner coming and going": [(DEEP_X, 0), (OPEN_X, 1), (DEEP_X, 1), (OPEN_X, 0)] * (N // 4),
+}
 
 
 # Without it a collapsed swimmer is hit twice in half a second (and dies on the second) or never at all, depending on
-# the band, the partner and where the count started: past collapse a pulse must land each time fatigue passes another
-# pulse_ticks of fatigue, once, for every gain the pack uses.
-@pytest.mark.parametrize("x,qual", [
-    (OPEN_X, 0),
-    pytest.param(DEEP_X, 0, marks=pytest.mark.xfail(strict=True, reason=CADENCE_BUG)),
-    pytest.param(OPEN_X, 1, marks=pytest.mark.xfail(strict=True, reason=CADENCE_BUG)),
-    (DEEP_X, 1),
-])
-def test_past_collapse_a_pulse_lands_once_per_pulse_ticks_of_fatigue(x, qual):
-    fcol, fp = SURF["collapse_ticks"], SURF["pulse_ticks"]
+# the band, the partner and where the count started (found by this suite at 5d522d7; 5bcecec gave the hits a clock of
+# their own, EXP-044): the first hit lands on the sample collapse is reached, then exactly one every pulse_ticks of
+# TIME, in any band, trained or not, and across a change of band or partner after collapse.
+@pytest.mark.parametrize("plan", sorted(PLANS))
+def test_past_collapse_a_hit_lands_once_per_pulse_ticks_of_time(plan):
+    assert FPULSE % PER == 0, "the expectation below assumes pulse_ticks is a whole number of samples"
+    every = FPULSE // PER
     bad = []
-    for f0 in range(fcol - 60, fcol, 5):
-        for before, after, pulsed in _pulses(x, qual, f0):
-            due = any(before < fcol + k * fp <= after for k in range(0, (after - fcol) // fp + 2))
-            if due != pulsed:
-                bad.append((f0, before, after, pulsed))
-    assert not bad, bad[:6]
+    for f0 in range(FCOL - 60, FCOL, 5):
+        for fpt in (None, 0, FPULSE):                         # the clock unset, run down, or primed
+            fats, hits = _hits(PLANS[plan], f0, fpt)
+            first = next(i for i, f in enumerate(fats) if f >= FCOL)
+            want = list(range(first, N, every))
+            if hits != want:
+                bad.append((f0, fpt, hits[:5], want[:5]))
+    assert not bad, bad[:4]
 
 
-# Without it sample_ticks is half honoured: the gains and the collapse window scale with it, but the tick that runs
-# surface/tick stays every 10 ticks, so a sample_ticks of 20 would double every rate.
+# Without it a swimmer already past collapse whose clock was never set (a player from before the clock existed) is not
+# hit until a whole pulse has passed, or a swimmer held at the fatigue cap is never hit again.
+@pytest.mark.parametrize("f0", [FCOL, FCOL + 35, FCAP])
+def test_a_swimmer_already_past_collapse_is_hit_at_once_and_then_on_the_clock(f0):
+    every = FPULSE // PER
+    _, hits = _hits([(DEEP_X, 0)] * N, f0)
+    assert hits == list(range(0, N, every)), hits
+
+
+# Without it a collapsed swimmer who touches land or a ledge for one sample, or dismounts a water Pokemon, and goes
+# back in is hit at once, however recently the last hit landed: grabbing at the shore every other sample would bring a
+# hit every 20 ticks instead of every pulse_ticks. EXP-044's rule is one hit "as collapse is reached and every 3 s
+# after"; a swimmer still past collapse has not reached it again.
 @pytest.mark.xfail(strict=True, reason=(
-    "tools/blackout_pack.py:178 runs surface/tick when gametime mod 10 is 0 (#m10, the constant #10), whatever "
-    "data/blackout.json surface.sample_ticks says; the gains (line 663) and the collapse window use sample_ticks. No "
-    "effect at today's value, 10"))
-def test_the_surface_tick_runs_every_sample_ticks():
+    "tools/blackout_pack.py:711 surface/recover primes the collapse clock (bo.fpt = #fpulse) on every recovering sample, "
+    "at any fatigue; the coordinator's design primes it only while fatigue is below collapse. A swimmer at fatigue "
+    "1500 alternating water and land samples is hit on every water sample (every 20 ticks), not every 60"))
+def test_a_touch_of_land_past_collapse_does_not_bring_the_next_hit_early():
+    every = FPULSE // PER
+    fats, hits = _hits([(DEEP_X, 0), (None, 0)] * (N // 2), 1500)
+    assert all(f >= FCOL for f in fats), "the swimmer stays past collapse throughout"
+    gaps = [b - a for a, b in zip(hits, hits[1:])]
+    assert hits and all(g >= every for g in gaps), (hits[:6], gaps[:6])
+
+
+# Without it sample_ticks is half honoured: the gains and the collapse clock scale with it, but the tick that runs
+# surface/tick stays every 10 ticks, so a sample_ticks of 20 would double every rate. (Found by this suite at 5d522d7;
+# fixed in 5bcecec.)
+@pytest.mark.parametrize("sample", [SURF["sample_ticks"], 20])
+def test_the_surface_tick_runs_every_sample_ticks(sample):
     cfg = copy.deepcopy(CFG)
-    cfg["surface"]["sample_ticks"] = 20
+    cfg["surface"]["sample_ticks"] = sample
     fns = TB.functions(TB.build(cfg))
     tick = [l for l in fns["blackout/tick"] if not l.startswith("#")]
     i = next(i for i, l in enumerate(tick) if l.endswith("run function %s:surface/tick" % TB.NS))
     holder = re.match(r"execute if score (#\w+) bo\.tmp matches 0 ", tick[i]).group(1)
-    mod = [l for l in tick[:i] if l.startswith("scoreboard players operation %s bo.tmp %%= " % holder)][-1].split()[6]
+    ops = [l for l in tick[:i] if l.startswith("scoreboard players operation %s bo.tmp " % holder)]
+    assert ops[-2] == "scoreboard players operation %s bo.tmp = #gt bo.tmp" % holder, ops
+    mod = ops[-1].split()[6]
+    assert ops[-1].split()[5] == "%="
     consts = {l.split()[3]: int(l.split()[5]) for f in ("blackout/load", "surface/load") for l in fns[f]
               if l.startswith("scoreboard players set #")}
-    assert consts[mod] == 20, (mod, consts[mod])
+    assert consts[mod] == sample, (mod, consts[mod])
+
