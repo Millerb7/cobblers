@@ -370,6 +370,24 @@ For Codex to pick up. Claude has not edited any of the files named here.
 
     **Expanded 2026-09-27:** every story-versus-build difference for both places, and 14 questions, in
     `docs/story/handoffs/DISPLACED_CITY_AND_SCAR.md`.
+## Handover, 2026-09-27 (Claude, the town-character session)
+
+28. **Town gate guards, and three purposes, need Codex.** The owner's brief said "THE GATES ARE GUARDS": a
+    town's way in is marked by the people who keep it. `docs/world-building/TOWN_CHARACTER.md` ("Gates") lists
+    all 34 gate points, taken from the plans' entries and exits. No guard is built or authored.
+
+    **Needed from Codex:**
+    - **Who guards each gate:** a name, a voice, a line or two.
+    - **Whether each guard comes from its town's trade,** as that document suggests: a mason on watch at Brock's, a
+      tracker at Koga's, a garrison soldier at Giovanni's.
+    - **The constraints:**
+      - guards gate nothing the critical path does not already gate;
+      - the Scar and the jungle ruins may stay unguarded;
+      - the Rift's five trailhead guards (item 23) may or may not be the same kind.
+    - **The Frostpeak shrine's purpose** is drafted there and marked for you: whose shrine it is, and what it keeps.
+    - **The eight gym-town trades** read out of `ARC.md`'s civic roles: masons, rescue boats, relays, gardeners,
+      trackers, record-keepers, crater researchers, garrison. Confirm or correct them. They are now built as dressing
+      in five towns (`data/town_dressing.json`).
 
 ## What Codex can resume
 
