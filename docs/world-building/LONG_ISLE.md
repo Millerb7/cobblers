@@ -246,6 +246,16 @@ island's east coast at about (8200, 7400). A town of fishers and divers is its n
 3. **D3: name.** "Pacifidlog" outright, or an original name with Pacifidlog as the inspiration.
 4. **D4: access and fast travel.** Water only (recommended) or a log causeway. The waystone: discovery, a badge flag,
    or none (the jetty is the way in).
+   **Decided by the owner, 2026-09-27: a large bridge**, "a cool bridge in the world", from the mainland to the Long
+   Isle, built as part of the island's update (not before). Not yet designed. What it changes:
+   - **Where:** the shortest crossing is the Sound's narrows, dunes to the island at z6100-6500: 111-152 blocks
+     (`docs/mechanics/WATER_PROPOSAL.md` section 4.1). A landmark bridge could take a longer, more visible line.
+   - **D5 becomes urgent:** with swim fatigue on every swim (EXP-044, rule of 2026-09-27) the island is no longer
+     swimmable unaided, so the bridge becomes the way on foot to a 44-50 band from the start. Either tie it to the
+     level-cap trap's fix, or gate the bridge (a gatehouse at the mainland end opening on a badge flag, as the Rift
+     mine's gate does on `gym5_cleared`).
+   - **Tooling:** `tools/bridges.py` (`data/bridges.json`) builds the Route 7 span (43 long, spruce and stone brick);
+     a large bridge needs its own design (arches or towers and cables, piers, a boat channel for the Sound's craft).
 5. **D5: level band and early arrival.** 44-50 as the badge-6-to-8 detour. Accept that a boat can bring a player early,
    or tie it to the level-cap trap's fix (a warning on catch, or capped spawns).
 6. **D6: rods and shops.** Which rods live here (after the research), and whether each is a find, a quest reward or
