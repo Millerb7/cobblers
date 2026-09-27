@@ -27,7 +27,7 @@ Stages: **S0** before Brock, **SN** after gym N, **L** the League, **P** postgam
 | **The ferry** | Ferrymen at docks, a dialogue, a fare in CobbleDollars, a fade and a teleport. Built from parts already proven one by one; no moving boats. Five lines and a postgame charter from Sunset West |
 | **Boats** | Recommended: boats are for shallows, lakes, rivers and the Sound. Past 96 blocks from land a boat is swamped and its rider swims (then surface exhaustion applies). The open sea is for water Pokemon and the ferry |
 | **Fishing** | Six rods at six waters (First Cast's Poke Rod, then Misty's lake, Peak Pond, Pacifidlog's Guild, the Relic reef, the Watering Hole), each water fishing at its own stage's levels. Which rod is "better" waits on research into what a rod's ball or enchantment does |
-| **Docks** | 19 in all: 8 already built or planned (First Cast, the two Viltri platforms, Misty's two piers, Sunset West's waterfront, Pacifidlog's jetty and its waterfront), 11 new small ones (the Relic landing, the Sunset isle landing, three at Tilpey, the Marsh Mouth and Northlight landings, the Peak Pond jetty, the Watering Hole stage, the Lakes' River head, the appearing island's landing) |
+| **Docks** | 19 in all: 8 already built or planned (First Cast, the two Viltri platforms, Misty's two piers, Sunset West's waterfront, Pacifidlog's jetty and its waterfront), 11 new small ones (the Relic landing, the Sunset isle landing, three at Tilpey, the north-east landing and the Northlight landing, the Peak Pond jetty, the Watering Hole stage, the Lakes' River head, the appearing island's landing) |
 | **Ocean bands** | One distance-from-land field decides four things at once: levels, surface exhaustion, where boats may go, and which content sits where |
 | **Measured surprise** | Relic Island, Fungal Isle and the Long Isle at the Sound's narrows are all **inside the shallows** (never more than 80 blocks from land). Every other island crossing but the Pine Isles has 60-90 blocks of open water: 12-18 seconds of swimming. With a one-minute exhaustion budget the ferry is comfort and safety, not the only way over (section 4.1) |
 
@@ -42,7 +42,7 @@ Stages: **S0** before Brock, **SN** after gym N, **L** the League, **P** postgam
   sea; the second rod; the windward slope wreck.
 - **S3: Mesprit** under Arrow Lake.
 - **S4: Erika's Peak Pond:** fishing, the third rod; the tarn's story.
-- **S5: Azelf** under Marshy Marsh. The Marsh Mouth packet to Northlight starts running (Northlight's content is
+- **S5: Azelf** under Marshy Marsh. The Northlight packet from the north-east coast starts running (Northlight's content is
   postgame, not locked).
 - **S6: Dive** at Tilpey. The Tilpey launch; the Relic reef's sunken fragment; the forge ruin; the key coves; the
   Sound and Pacifidlog as the S6-S8 detour, with the Guild's rod and the Sound wreck.
@@ -66,7 +66,7 @@ from a bank, so surface exhaustion never applies on them [A: it measures distanc
 | **Tilpey outflow gorge** | 352 blocks, 22-32 wide, 9 deep, a confined gravel gorge | **Barrier** between S6 and S7 | Out of Tilpey to the east coast: a scenic run, not a road | **The one required bridge**, at (6632, 3904), on Route 7. **Not built** (no placement or tool names it). The gorge hamlet's bridge-keepers keep it (`SQ-G6-02`, `SQ-GORGE-01`) |
 | **Viltri's Path** | 1,711 blocks, 4-10 wide, 1.4-2.9 deep, gravel to sand to clay | **Water road**, the first: Misty's lake to the north-west coast | Downstream by boat or mount from S2 (`SQ-G2-02`), then south along the coast (all shallows) to Viltri Light and Pallet: the first water loop | None needed: shallow and narrow |
 | **The Lakes' River** (proposed name for the Shrew Lake, Arrow Lake and Watering Hole outflows as one course) | 231 + 361 + 1,312 blocks; 8-11 wide, 2.7-3.2 deep | **Water road**: from the cherry vale down to Sunset West's harbour | Downstream by boat from Shrew Lake through Arrow Lake and the Watering Hole to the sea at Sunset West, about 1,900 blocks. Open all game; passes over Mesprit's lake | Sunset West's footbridge at the mouth (planned earthwork `sunset_footbridge`) |
-| **Marsh outflow** | 395 blocks, 6-10 wide | Scenery; ends at the Marsh Mouth landing (section 5) | Short: the marsh to the north-east coast | None |
+| **Marsh outflow** | 395 blocks, 6-10 wide | Scenery; ends on the north-east coast at (5662, 1598) | Short: the marsh to the north-east coast | None |
 | **Peak Pond outflow** | 545 blocks | Fishing creek near Erika's town | None worth taking | None |
 | **Tarn outflow, Tilpey inflow creek, Mt Clay creek** | 401, 484, 1,261 blocks; narrow and steep | Scenery | None | None |
 | **River of Shrews** | Not cut: a canal candidate, 89% clay | None: leave it uncut | — | — |
@@ -269,9 +269,9 @@ NPCs and functions, and re-applied by a `tools/reapply.py` step (`prepare` fails
 |---|---|---|---|---|
 | **The Relic row** | First Cast jetty to the Relic landing and back | Free | After First Cast | `SQ-HOME-02`'s roof across the water; the fisher who gave the rod rows you over. All shallows, so it is kindness, not a gate |
 | **The Sunset strait** | Sunset West's south pier to the Sunset isle landing | $100 each way | Always | The harbour's purpose [V: `data/towns.json` sunset_west `for`]. 73 blocks of open water [M] swamp a boat (decision 1) |
-| **The Sound ferry** | Pacifidlog's mainland jetty to the town | $150 each way | Always | "Water only" is the town's defining trait [V: `data/sea_town.json` D4]. The boats in the rack stay too (decision 6) |
+| **The Sound ferry** | Pacifidlog's mainland jetty to the town | $150 each way | Always | "Water only" is the town's defining trait [V: `data/sea_town.json` D4]. The boats in the rack stay too: the Sound is sheltered water (decision 1) |
 | **The Tilpey launch** | Sabrina's town dock to the Weeping Elder island to the south-shore landing | Free | `gym6_cleared` | `EVT-G6-SLOWPOKE-FERRY`, `SQ-G6-02` |
-| **The Northlight packet** | The Marsh Mouth landing to the Northlight landing | $400 each way | `gym5_cleared` | The only island whose crossing is really long (226 blocks of open water) [M]. Northlight's content is postgame, not locked [V: ARC.md] |
+| **The Northlight packet** | The north-east landing to the Northlight landing | $400 each way | `gym5_cleared` | The only island whose crossing is really long (226 blocks of open water) [M]. Northlight's content is postgame, not locked [V: ARC.md] |
 | **Sunset charters** (postgame) | Sunset West to the Jungle Isle ruins, the appearing island (full-moon nights), the trench's marker, Relic Island | $600 each | `champion_cleared` and `SQ-SUNSET-01` | "Chartered travel from the harbour" is `SQ-SUNSET-01`'s reward; `SQ-SUNSET-02` and `SQ-JUNGLE-02` sail to the ruins |
 
 **Fares** are proposals, for the owner. For scale: Brock's first win paid $732 and a rematch $600 [V: STATE
@@ -292,7 +292,7 @@ minute. The rule for boats therefore cannot be the fatigue clock alone. Options 
 | Option | Rule | Consequence |
 |---|---|---|
 | A | Boats go anywhere | Every island and the far sea are open from S0 by boat. The ferry is a convenience; the level-cap trap is wide open (the Long Isle at 44-50, `LONG_ISLE.md` D5) |
-| B | Boats share the swimmer's fatigue clock | In practice the same as A here: no strait takes a boat a minute |
+| B | Boats share the swimmer's fatigue clock | In practice the same as A here: no island strait takes a boat a minute |
 | **C (recommended)** | **Boats are shallows craft.** Past 96 blocks from land a boat is swamped: its rider is dismounted with a line ("Too rough for a rowboat past the shallows") and swims, and surface exhaustion takes over. **Sheltered water** is an authored exception: the Sound's bay and any harbour basin count as shallows | Boats keep the coasts, lakes, rivers and the Sound. The open sea is for water Pokemon and the ferry. One rule a player can see |
 | D | No boats on the sea at all | Breaks Pacifidlog's boat culture and Sunset West's slipway. Rejected |
 
@@ -362,7 +362,7 @@ route pools avoid [V: STATE "The level-cap trap"].
 | 9 | **The Relic landing** (new) | the islet's north shore, facing First Cast | Proposed | The Relic row |
 | 10 | **The Sunset isle landing** (new) | the isle's north shore, about (2570, 6918) [M: nearest isle land to the south pier] | Proposed | The strait ferry |
 | 11-13 | **Tilpey: Sabrina's town dock, the Weeping Elder landing, the south-shore landing** (new) | north shore at Sabrina's town; the island; the south shore | Proposed | The launch; the survey diver (the Dive school); Tilpey fishing |
-| 14 | **The Marsh Mouth landing** (new) | the north-east coast facing the Pine Isles. The shortest gap is from about (6586, 2294) to (6886, 1946) [M]; the marsh outflow's own mouth at (5662, 1598) is 871 blocks out, 205 of them deep [M], so the landing belongs on the short gap | Proposed | The Northlight packet |
+| 14 | **The north-east landing** (new) | the north-east coast facing the Pine Isles. The shortest gap is from about (6586, 2294) to (6886, 1946) [M]; the marsh outflow's own mouth at (5662, 1598) is 871 blocks out, 205 of them deep [M], so the landing belongs on the short gap | Proposed | The Northlight packet |
 | 15 | **The Northlight landing** (new) | South Pine Isle, the shore nearest the mainland | Proposed | The Northlight packet |
 | 16 | **Peak Pond jetty** (new) | the pond's town side | Proposed | Rod 3; fishing |
 | 17 | **The Watering Hole stage** (new) | the pond's shore, with a boat rack | Proposed | Rod 6; fishing; a stop on the Lakes' River |
