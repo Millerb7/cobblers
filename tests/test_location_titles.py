@@ -41,6 +41,9 @@ def test_a_display_name_wins_over_the_working_name(monkeypatch):
         if name == "towns.json":
             d = json.loads(json.dumps(d))
             next(t for t in d["towns"] if t["id"] == "gym1_town")["display_name"] = "Pewter Test"
+            # a town with no display name falls back to its working name (the hometown has a real display name
+            # since 2026-09-27, so the fallback is exercised by clearing it here rather than relying on the data)
+            next(t for t in d["towns"] if t["id"] == "hometown")["display_name"] = None
         return d
     monkeypatch.setattr(signposts, "load", fake)
     assert signposts.place_names()["gym1_town"] == "Pewter Test"
