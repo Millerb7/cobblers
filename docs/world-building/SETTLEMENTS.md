@@ -60,7 +60,7 @@ In `data/towns.json` `decisions` and
 
 | Town | Centre | Site | Off path | Nearest | Waystone |
 | --- | --- | --- | ---: | --- | --- |
-| **Sunset West** (harbour) | (1716, 7298) | 408², y104–123, ≤8° | 2,021 | Relic Island 1,873 | discovery |
+| **Sunset West** (harbour) | (2660, 6490) | 271², authored round a river mouth: a coastal plain y63–66 rising to about 75 (re-sited 2026-09-21; the isle site was (1716, 7298)) | 935 | Giovanni's town 987 | discovery |
 | **Northlight** (South Pine Isle) | (7265, 1556) | 231², y111–124, ≤8° | 2,106 | Sabrina's town 2,130 | discovery |
 | **Mining Town** (East Cones) | (6633, 5716) | 227², y132–144, ≤8° | 905 | Blaine's town 912 | none |
 | **The Displaced City** (entrance) | (2969, 1710) | 132², y117–127, ≤8° | 287 | Merian hut 628 | discovery, inside the city |
@@ -69,8 +69,10 @@ In `data/towns.json` `decisions` and
 **Sunset West: the region's harbour.**
 - **What it is for:** a fishing and boat-building port where players charter boats to the outer
   islands and the deep sea.
-- **Why there:** the best site on the map, on the largest island, 2,000 blocks from any gym. The
-  sea crossing makes it a destination. It is post-game in content, not locked.
+- **Why there:** re-sited on 2026-09-21 from the middle of the Sunset isle, which has no bay or inlet
+  and stood 576 to 884 blocks from the sea. It is now on the mainland where a river (the Watering Hole outflow, about
+  10 blocks wide and 2 to 3 deep) meets the strait, with the isle across the water as the place the boats go; 935
+  blocks off the path. It is post-game in content, not locked (`data/towns.json` `sunset_west`).
 
 **Northlight: the cold-water research town.**
 - **What it is for:** the region's weather and aurora observatory, and an ice-type field
@@ -227,7 +229,8 @@ whole point.
 | Where | Waystone | Why |
 | --- | --- | --- |
 | The ten critical towns | **flag-driven** | as designed: a gym defeat opens the town's waystone. The hometown's is still the open question in `progression.json`; the League's is proposed to open with it |
-| Sunset West, Northlight | **discovery** | islands: the waystone is what a sea crossing earns |
+| Northlight | **discovery** | an island: the waystone is what a sea crossing earns |
+| Sunset West | **discovery** | the far end of the southern coast, 935 blocks off the path: the waystone is what the journey there earns |
 | The Displaced City | **discovery, inside the city** | hard to find twice; the waystone is the reward for finding it |
 | The four rest stops | **discovery** | convenience is all they are for; walking past loses nothing |
 | Mining Town, tea town | **none** | each is about 900 blocks from a gym waystone; walking in is part of arriving |

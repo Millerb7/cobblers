@@ -146,7 +146,7 @@ the owner decides otherwise (D4).
 | Way onto the water | Status |
 |---|---|
 | Vanilla boats, chest boats, bamboo rafts | Vanilla. They are entities: a boat left somewhere is gone from the rack. A keeper function would top each rack up when fewer than N boats are inside its box, following the pattern of the Celebi keeper (`tools/sapling_celebi.py`). NOT VERIFIED |
-| Riding a water Pokémon ("Pokémon surfing") | **NOT VERIFIED.** VERIFIED only that land and air riding work on this stack: Mudsdale and Charizard (`docs/research/COBBLEVERSE_COMPATIBILITY.md:5, 221`). `tools/patch_cobbleverse_riding.py` migrates COBBLEVERSE-DP-v31's riding seats for 1.8: 51 native-locator mounts, with 182 offsets kept. Which of the 233 are water mounts, and how they behave on water, has not been read or tried. ASSUMED that Cobblemon's riding includes swimming mounts. The breath and descent question is OCEAN.md's proposed EXP-015 |
+| Riding a water Pokémon ("Pokémon surfing") | **Read from the data, not yet ridden on water.** EXP-038 (`experiments/EXP-038-riding-capability`) read the installed riding data (the Cobblemon 1.8.0 jar, COBBLEVERSE-DP v31 and Mega Showdown merged): 312 rideable species, 55 with a `LIQUID` style; **45 Surf** (`cobblemon:liquid/boat` or `liquid/dolphin`, on the surface: Lapras, Gyarados, Mantine and Milotic among them) and **10 Dive** (`liquid/submarine`, the only underwater style: Wailmer, Wailord and Relicanth among them). The water ladder (`cobblers_blackout`, EXP-042) reads a party's species against those lists, and in game a Lapras in the party qualified. VERIFIED earlier that land and air riding work on this stack: Mudsdale and Charizard (`docs/research/COBBLEVERSE_COMPATIBILITY.md:5, 221`); `tools/patch_cobbleverse_riding.py` migrates COBBLEVERSE-DP-v31's riding seats for 1.8. NOT VERIFIED: how a boat, dolphin or submarine mount behaves on the water in game (EXP-038's in-game step 2 is not run). Breath and descent are the water ladder's (EXP-042) |
 | "Real surfing" | No surfboard or wave mod is in the stack. Adding one is a new dependency (principles 5 and 9) and is not proposed. The closest vanilla feel is a current lane: a stepped raceway of flowing water at the Current Gate that carries boats and swimmers. NOT VERIFIED that it reads as surfing |
 
 ## 6. Fishing and encounters
@@ -321,7 +321,9 @@ To build it on staging alone, after `/reload`:
 whole layout is authored. Staging should still prove the deck, the boats and the fishing before the town reaches the
 live world.
 
-**NOT VERIFIED.** Nothing here has been built in a world or seen in game. The unverified points are:
+**Built on staging, not seen in game.** The town was built on staging on 2026-09-26 (commit 2f1f79b:
+`tools/sea_town.py verify --rcon` 10,332 of 10,332 blocks, and the Mart clerk found by `tools/traders.py verify`); no
+player has walked it. The unverified points are:
 - that the export's top water block is y62;
 - that the deck holds with no leak;
 - that the boats in the barrels work;

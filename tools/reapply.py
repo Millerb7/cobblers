@@ -75,7 +75,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_kits", "cobblers_spawn_tags", "cobblers_sizes",
                 # 2026-09-26: blackout, recovery claims and the water ladder (tools/blackout_pack.py, EXP-042);
                 # self-driving and it sets keepInventory, so world-local below
-                "cobblers_blackout")
+                "cobblers_blackout",
+                # 2026-09-27: the bridges (tools/bridges.py, data/bridges.json): the Route 7 crossing of Tilpey's
+                # outflow, the one required bridge; block functions run by R9G
+                "cobblers_bridges")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -120,6 +123,11 @@ UNPLACED = {"hometown"}                          # has roads, not a town plan: p
 
 def placements():
     return json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+
+
+def bridges():
+    """Every bridge data/bridges.json authors, in order (tools/bridges.py builds each as cobblers:bridges/<id>)."""
+    return json.loads((ROOT / "data" / "bridges.json").read_text(encoding="utf-8"))["bridges"]
 
 
 def scene_npcs():
@@ -243,6 +251,10 @@ def prepare(a):
     py(TOOLS / "sapling_celebi.py")
     py(TOOLS / "rift_storm.py")
     py(TOOLS / "signposts.py", "function", *src)
+    # the bridges, then their offline audit against the heightmap and the water: a bridge that would stand in the
+    # water, fall short of a bank or crowd a town stops prepare here, before anything is installed
+    py(TOOLS / "bridges.py", "function", *src)
+    py(TOOLS / "bridges.py", "audit", *src)
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     py(TOOLS / "progression_pack.py")
@@ -658,6 +670,11 @@ def steps(with_spawns=False):
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
     out.append(("R9F", "NPCs a reward is given through (data/rewards.json npc_grant)",
                 [("npc", n) for n in npcs()]))
+    # the bridges, after the towns and donors (neither may stand on one, and a donor placed whole would erase what it
+    # overlaps) and before the lights; each is one function that holds its own chunks. Named from the data, not the
+    # pack's index, so a checkout without the built pack still lists the step
+    out.append(("R9G", "bridges (data/bridges.json)",
+                [("fn", "cobblers:bridges/%s" % b["id"]) for b in bridges()]))
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))

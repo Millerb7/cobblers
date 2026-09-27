@@ -1191,7 +1191,7 @@
    "working_name": "Sunset West (harbour town, the strait)",
    "display_name": null,
    "for": "The region's harbour: a fishing and boat-building port at a river mouth on the strait, where players charter boats for the Sunset isle across the water, the outer islands and the deep sea.",
-   "why_here": "Re-sited 2026-09-21. The first site, in the middle of the Sunset isle, was 576 to 884 blocks from the sea its harbour brief needs. No bay or inlet exists anywhere on the isle: its painted shore is smooth all the way round, with an 80-block shallow shelf. The best natural harbour in the south-west is this river mouth: a three-block river crossing a broad low coastal plain (63 to 66) into the strait, which is 250 to 400 blocks wide and sheltered by the isle to the south; its only long fetch is east, out of the strait's mouth. The isle stays in view across the water as the place the boats go. It is on the mainland now, 970 blocks off the path and 1,000 from Giovanni's town.",
+   "why_here": "Re-sited 2026-09-21. The first site, in the middle of the Sunset isle, was 576 to 884 blocks from the sea its harbour brief needs. No bay or inlet exists anywhere on the isle: its painted shore is smooth all the way round, with an 80-block shallow shelf. The best natural harbour in the south-west is this river mouth: the Watering Hole outflow, about 10 blocks wide and 2 to 3 deep (graded 10-11 wide in data/rivers.json; 9 to 11 across its flow on the canonical heightmap, measured 2026-09-27), crossing a broad low coastal plain (63 to 66) into the strait, which is 250 to 400 blocks wide and sheltered by the isle to the south; its only long fetch is east, out of the strait's mouth. The isle stays in view across the water as the place the boats go. It is on the mainland now, 970 blocks off the path and 1,000 from Giovanni's town.",
    "centre": {
     "x": 2660,
     "z": 6490,
@@ -1245,7 +1245,7 @@
    "waystone": {
     "kind": "discovery",
     "unlock": "first visit activates it (Waystones' own behaviour); no flag",
-    "reason": "an island: the waystone is what a sea crossing earns"
+    "reason": "the far end of the southern coast, 935 blocks off the path on the mainland: the waystone is what the journey there earns"
    },
    "gates": [],
    "post_game_intent": true,

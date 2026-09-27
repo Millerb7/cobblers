@@ -4270,7 +4270,7 @@
         6960
       ],
       "footprint_from": "data/towns.json",
-      "status": "authored 2026-09-26 (the owner: \"add the sea town from hoenn\"); generated into data/placements.json by tools/sea_town.py write; not built on staging; not in the live world",
+      "status": "authored 2026-09-26 (the owner: \"add the sea town from hoenn\"); generated into data/placements.json by tools/sea_town.py write; built on staging 2026-09-26 (commit 2f1f79b: tools/sea_town.py verify --rcon 10,332 of 10,332 blocks, the Mart clerk found by tools/traders.py verify); not seen in game; not in the live world",
       "ground": "sea_deck",
       "ground_why": "the town stands on its decks at the sea level, not on the seabed: tools/ground.py lays every deck cell of data/sea_town.json over the heightmap at data/world.json's sea level, so tools/town_plan.py and tools/place_town.py seat the Centre and the Mart on the raft",
       "generated_by": "tools/sea_town.py write, from data/sea_town.json; edit that file, not this record",
