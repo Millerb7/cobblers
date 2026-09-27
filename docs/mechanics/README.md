@@ -12,6 +12,7 @@ capability. Each document states which experiment it rests on.
 | `DEATH_AND_WIPE.md` | Blackout, recovery claims and the Surf and Dive air ladder | EXP-038 to EXP-042; built as `cobblers_blackout` |
 | `WATER_MAP.md` | Every body of water and its one role; the trio, Lugia, the depth ladder's reach | EXP-042's measured ladder; a proposal |
 | `WATER_PROPOSAL.md` | Rivers, lakes, dive sites, the ferry, fishing and docks: the whole water picture, with the Relic Island reef and the appearing island | `WATER_MAP.md`; surface exhaustion (EXP-043, being built); a proposal, nothing built |
+| `STONE_ECONOMY.md` | The stone economy as a whole: a handful of stone places plus the Mining Town's Exchange, the faces that restore on approach, the jar-verified demand (29 per completionist) and drop and tier facts, per-player against shared costs, the Rock-type residents, and the proposed data schemas | The 1.8.0 and Mega Showdown 1.0.2 jars (hashes matched), `data/spawns.json` and `docs/story/AVAILABILITY.md`; **nothing run in game** (ADR-003, amended, Proposed) |
 | `RIFT_ZONES.md` | The Rift's zones | See the document |
 | `RIFT_FRACTURE.md` | The Rift's fracture pass (`tools/rift_fracture.py` is retired; see `docs/STATE.md`) | See the document |
 
