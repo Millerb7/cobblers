@@ -14,7 +14,7 @@ Independent sources:
     like a battle loss; a rebuilt guardian spawns as its own species and level, not a Magikarp; the claim message
     names the items taken ("10 Ultra Ball"), not their category.
   - data/blackout.json claims lists (the claimable items) and vanilla's item translation key, item.<ns>.<path>.
-  - 3e2906e's data and the owner's words it quotes: money percent, category quotas and slain_window_ticks;
+  - 3e2906e's data and the owner's words it quotes: money percent, category quotas and (4a37312) slain_rule;
     money.held_by_wild_victor (a wild victor's claim holds the money its win took and pays it back; other losses lose
     it outright); "when i killed it with a sword it did respawn though, it should work both ways whether i kill it or
     my mon does".
@@ -699,27 +699,41 @@ def test_only_a_wild_battle_loss_holds_money_and_a_claim_without_money_pays_none
     assert callers == ["blackout/battle_loss_wild"], callers
     cfg = copy.deepcopy(CFG)
     cfg["money"]["held_by_wild_victor"] = False
-    fns = TB.functions(TB.build(cfg))
-    assert not [n for n, lines in fns.items() for l in lines if "hold_money" in l and not l.startswith("#")]
+    off = TB.build(cfg)
+    fns = TB.functions(off)
+    assert not [w for w, _ns, f, _r in TB._references(off) if f == "recovery/hold_money"]
     assert not [l for l in fns["blackout/arrive"] if CFG["messages"]["claim_money"] in l]
 
 
-# Without it the loss's charge lands in another player's claim: recovery/make sets bo.clm 2 before it knows a claim
-# will be written, so a loss with nothing claimable (or an aborted commit) runs hold_money, which writes claims[-1],
-# the last claim in the ledger, someone else's. That player is paid this player's money when theirs is delivered.
-# Found by this suite at 3e2906e.
-@pytest.mark.xfail(strict=True, reason="3e2906e: bo.clm is 2 from recovery/make's first line, so a wild loss with nothing "
-                                       "claimable runs recovery/hold_money, which writes claims[-1] (another claim)")
+# Without it the loss's charge lands in another player's claim: when recovery/make set bo.clm 2 before it knew a claim
+# would be written, a loss with nothing claimable ran hold_money, which wrote claims[-1], the last claim in the ledger,
+# someone else's (found by this suite at 3e2906e; fixed in 4a37312).
 def test_a_wild_loss_with_nothing_claimable_holds_no_money_in_another_players_claim():
     other = _claim(1, 1, OTHER_ID, P2, P2_ID, name="Misty")
     s = _wild_loss({}, balance=1000, claims=[other])
     assert ledger(s)["claims"] == [other], ledger(s)["claims"]
 
 
-# Without it a player who lost with nothing claimable is told the victor "has your money too" (bo.clm 2) though no
-# claim holds it: the money is gone, and the message sends them after it. Found by this suite at 3e2906e.
-@pytest.mark.xfail(strict=True, reason="3e2906e: blackout/arrive tells claim_money on bo.clm 2, which recovery/make sets "
-                                       "before it knows a claim will be written")
+# Without it the held money goes by position ("the last claim") rather than to the claim this loss wrote (4a37312: "the
+# money goes to that claim by its own id"), or lands in a claim that is no longer open.
+def test_held_money_goes_to_the_claim_this_loss_wrote_by_its_id_and_only_if_open():
+    s = loaded()
+    ours, later = _claim(7, 3, GUARD_ID, P1, P1_ID), _claim(8, 4, OTHER_ID, P2, P2_ID, name="Misty")
+    ledger(s)["claims"] = copy.deepcopy([ours, later])
+    ledger(s)["pending"] = {"id": 7}
+    s.set("@s", "bo.lost", 150)
+    s.call("recovery/hold_money")
+    assert [c.get("money") for c in ledger(s)["claims"]] == [150, None]
+    s = loaded()
+    ledger(s)["claims"] = copy.deepcopy([dict(ours, state="deliver"), later])
+    ledger(s)["pending"] = {"id": 7}
+    s.set("@s", "bo.lost", 150)
+    s.call("recovery/hold_money")
+    assert [c.get("money") for c in ledger(s)["claims"]] == [None, None]
+
+
+# Without it a player who lost with nothing claimable is told the victor "has your money too" though no claim holds it:
+# the money is gone, and the message sends them after it (found by this suite at 3e2906e; fixed in 4a37312).
 def test_the_arrival_does_not_say_the_victor_holds_money_when_no_claim_was_made():
     s = _wild_loss({}, balance=1000)
     assert ledger(s)["claims"] == []
@@ -809,82 +823,11 @@ def test_watch_notes_the_player_hurting_a_guardian_on_its_open_claims_only(attac
         in FNS["blackout/tick"], "every tick, every guardian"
 
 
-def _vanish_sim(hit_age, now=20000):
-    s = loaded(query=strict_query({"time query gametime": now}),
-               entity=lambda sel, path: P1 if (sel, path) == ("@s", "UUID") else None,
-               world=lambda kind, toks: False)
-    c1, c2 = _claim(1, 1, GUARD_ID, P1, P1_ID), _claim(2, 1, GUARD_ID, P2, P2_ID, name="Misty")
-    if hit_age is not None:
-        for c in (c1, c2):
-            c["hit"] = {"who": P2_ID, "t": now - hit_age}
-    ledger(s)["claims"] = [c1, c2]
-    return s
-
-
-SLAIN = CFG["claims"]["slain_window_ticks"]
-
-
-# Without it a guardian killed by a player outside battle is rebuilt (the owner's complaint), one gone for another
-# reason (lava, a fall, another wild Pokemon) is settled for whoever once scratched it, or the window is off the data's
-# slain_window_ticks. Settled means every open claim of that guardian, for the player who hurt it last.
-@pytest.mark.parametrize("age", [0, 1, SLAIN, SLAIN + 1, None])
-def test_a_vanished_guardian_hurt_by_a_player_within_the_window_is_settled_else_rebuilt(age):
-    s = _vanish_sim(age)
-    s.command("function %s:recovery/vanished {g:1,x:10,y:64,z:10,id:1}" % NS)
-    spawns = [l for l in s.log if "spawnpokemonat" in l]
-    if age is not None and age <= SLAIN:
-        assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "resolved", 2: "deliver"}
-        assert all(c["resolver"] == P2_ID for c in ledger(s)["claims"])
-        assert spawns == []
-    else:
-        assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "open", 2: "open"}
-        assert spawns == ["spawnpokemonat ~ ~ ~ cobblemon:ursaring level=60"], s.log
-
-
-def _maintain(s, passes):
-    """recovery/maintain at each (gametime, site loaded), the guardian absent throughout."""
-    for gt, is_loaded in passes:
-        s.query = strict_query({"time query gametime": gt})
-        s.world = lambda kind, toks, L=is_loaded: L if kind == "loaded" else False
-        s.call("recovery/maintain")
-
-
-# Without it the maintenance passes never reach the settlement when a killed guardian's site stays loaded: the first
-# pass after the kill marks it unseen, the second settles it for the killer and nothing is rebuilt.
-def test_maintenance_settles_a_guardian_killed_by_a_player_while_its_site_stays_loaded():
-    s = _vanish_sim(None)
-    for c in ledger(s)["claims"]:
-        c["hit"] = {"who": P2_ID, "t": 10000}
-    m = CFG["claims"]["maintenance_ticks"]
-    _maintain(s, [(10000 + m // 2, True), (10000 + m // 2 + m, True)])
-    assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "resolved", 2: "deliver"}
-    assert not [l for l in s.log if "spawnpokemonat" in l]
-
-
-# Without it a guardian killed with a sword comes back if its killer leaves: the kill is settled only by maintenance,
-# on the second loaded pass after it, and only while the note is under slain_window_ticks old. A killer who teleports
-# or rides out of range, or logs off, within those seconds returns to find it rebuilt: the owner's complaint of
-# 2026-09-27 ("it should work both ways whether i kill it or my mon does"). Found by this suite at 3e2906e.
-@pytest.mark.xfail(strict=True, reason="3e2906e: a kill is settled only if its site stays loaded for two maintenance passes "
-                                       "within slain_window_ticks; unloaded, the note ages and the guardian is rebuilt")
-def test_a_guardian_killed_by_a_player_who_then_leaves_is_settled_not_rebuilt():
-    s = _vanish_sim(None)
-    for c in ledger(s)["claims"]:
-        c["hit"] = {"who": P2_ID, "t": 10000}
-    m = CFG["claims"]["maintenance_ticks"]
-    unloaded = [(10000 + m // 2 + k * m, False) for k in range(20)]
-    back = [(13000 + m // 2, True), (13000 + m // 2 + m, True)]
-    _maintain(s, unloaded + back)
-    assert not [l for l in s.log if "spawnpokemonat" in l], "rebuilt though a player killed it"
-    assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "resolved", 2: "deliver"}
-
-
 # Without it a guardian still tagged after its claims settled (a rebuilt copy that was in an unloaded chunk when
-# release ran, then came back) writes a new, malformed "open" claim when a player hits it: recovery/hit_mark's
+# release ran, then came back) writes a new, malformed "open" claim when a player hits it: a filtered
 # `claims[{g:..,state:"open"}].hit set` appends its filter as a new element when nothing matches (vanilla getOrCreate),
-# and maintenance then calls recovery/check on a claim with no id or site. Found by this suite at 3e2906e.
-@pytest.mark.xfail(strict=True, reason="3e2906e: recovery/hit_mark sets claims[{g:G,state:\"open\"}].hit, which appends "
-                                       "{g:G,state:\"open\",hit:{...}} when guardian G has no open claim")
+# and maintenance then calls recovery/check on a claim with no id or site (found by this suite at 3e2906e; fixed in
+# 4a37312).
 def test_hurting_a_guardian_with_no_open_claim_adds_nothing_to_the_ledger():
     s = _watch_sim("player")
     for c in ledger(s)["claims"]:
@@ -893,3 +836,118 @@ def test_hurting_a_guardian_with_no_open_claim_adds_nothing_to_the_ledger():
     before = copy.deepcopy(ledger(s)["claims"])
     s.call("recovery/watch")
     assert ledger(s)["claims"] == before, ledger(s)["claims"][len(before):]
+
+
+# The rule, data/blackout.json claims.slain_rule (4a37312): a guardian found gone from its loaded site counts as killed
+# by the last player (or player's Pokemon) who hurt it if that blow was noted after maintenance last saw it alive
+# (claim alive_t); vanilla forgets an attacker 100 ticks after the last blow, so an old fight never counts.
+SLAIN_RULE = CFG["claims"]["slain_rule"]
+ALIVE = 19000
+
+
+def _vanish_sim(hit_t, alive_t=ALIVE, now=20000):
+    s = loaded(query=strict_query({"time query gametime": now}),
+               entity=lambda sel, path: P1 if (sel, path) == ("@s", "UUID") else None,
+               world=lambda kind, toks: False)
+    c1, c2 = _claim(1, 1, GUARD_ID, P1, P1_ID), _claim(2, 1, GUARD_ID, P2, P2_ID, name="Misty")
+    for c in (c1, c2):
+        if hit_t is not None:
+            c["hit"] = {"who": P2_ID, "t": hit_t}
+        if alive_t is not None:
+            c["alive_t"] = alive_t
+    ledger(s)["claims"] = [c1, c2]
+    return s
+
+
+def _settled(s):
+    return {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "resolved", 2: "deliver"} \
+        and all(c["resolver"] == P2_ID for c in ledger(s)["claims"])
+
+
+def _spawns(s):
+    return [l for l in s.log if "spawnpokemonat" in l]
+
+
+# Without it a guardian killed by a player outside battle is rebuilt (the owner's complaint), or one gone for another
+# reason after an old fight (lava, a fall, another wild Pokemon) is settled for whoever once hurt it. A note after the
+# last alive sighting settles every open claim of that guardian for the player who hurt it last; a note before it, or
+# none, rebuilds. A note at the sighting's own tick counts: blackout/tick runs the watch before maintenance, so a
+# killing blow landing after the sighting leaves its last note at that tick. A claim maintenance has never seen alive
+# (killed before the first pass) has nothing to be older than.
+@pytest.mark.parametrize("hit_t,alive_t,settle", [(ALIVE + 1, ALIVE, True), (ALIVE, ALIVE, True),
+                                                  (ALIVE - 1, ALIVE, False), (None, ALIVE, False),
+                                                  (ALIVE - 5000, None, True), (None, None, False)],
+                         ids=["after", "same tick", "before", "no note", "never seen alive", "neither"])
+def test_a_vanished_guardian_is_settled_for_a_blow_noted_since_it_was_last_seen_alive(hit_t, alive_t, settle):
+    assert "after maintenance last saw the guardian alive" in SLAIN_RULE and "alive_t" in SLAIN_RULE
+    tick = FNS["blackout/tick"]
+    assert TB._index(tick, lambda l: "recovery/watch" in l, "watch") < TB._index(tick, lambda l: "recovery/maintain" in l,
+                                                                                  "maintain")
+    s = _vanish_sim(hit_t, alive_t)
+    s.command("function %s:recovery/vanished {g:1,x:10,y:64,z:10,id:1}" % NS)
+    if settle:
+        assert _settled(s) and _spawns(s) == [], (ledger(s)["claims"], s.log)
+    else:
+        assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "open", 2: "open"}
+        assert _spawns(s) == ["spawnpokemonat ~ ~ ~ cobblemon:ursaring level=60"], s.log
+
+
+def _maintain(s, passes):
+    """recovery/maintain at each (gametime, site loaded, guardian present)."""
+    for gt, is_loaded, present in passes:
+        def world(kind, toks, L=is_loaded, P=present):
+            if kind == "loaded":
+                return L
+            if kind == "entity" and toks[0].startswith("@e[type=cobblemon:pokemon,tag=cobblers.g"):
+                return P
+            if kind == "entity" and toks[0].startswith("@s[distance=.."):
+                return True                              # within the leash
+            raise AssertionError("unmodelled test %s %s" % (kind, toks))
+        s.query = strict_query({"time query gametime": gt})
+        s.world = world
+        s.call("recovery/maintain")
+
+
+M = CFG["claims"]["maintenance_ticks"]
+
+
+# Without it maintenance never records when it last saw a guardian alive, so every note ever made counts (an old fight
+# settles a guardian that later died of something else), or the record is written for another claim.
+def test_maintenance_records_when_it_last_saw_each_guardian_alive():
+    s = _vanish_sim(None, alive_t=None)
+    ledger(s)["claims"].append(_claim(3, 2, OTHER_ID, P1, P1_ID))
+    _maintain(s, [(7000, True, True)])
+    assert {c["id"]: c.get("alive_t") for c in ledger(s)["claims"]} == {1: 7000, 2: 7000, 3: 7000}
+    assert all(c["seen"] == 0 for c in ledger(s)["claims"])
+
+
+# Without it a guardian hurt and left, then dead of something else, is settled for the old attacker; or a guardian
+# killed after maintenance last saw it is rebuilt. Both through maintenance itself: seen alive, then two loaded passes
+# without it.
+@pytest.mark.parametrize("hit_t,settle", [(7000 - 100, False), (7000 + M // 2, True)], ids=["old fight", "killed"])
+def test_maintenance_settles_a_kill_after_the_last_sighting_and_rebuilds_after_an_old_fight(hit_t, settle):
+    s = _vanish_sim(None, alive_t=None)
+    _maintain(s, [(7000, True, True)])
+    for c in ledger(s)["claims"]:
+        c["hit"] = {"who": P2_ID, "t": hit_t}
+    _maintain(s, [(7000 + M, True, False), (7000 + 2 * M, True, False)])
+    if settle:
+        assert _settled(s) and _spawns(s) == []
+    else:
+        assert _spawns(s) and {c["state"] for c in ledger(s)["claims"]} == {"open"}
+
+
+# Without it a guardian killed with a sword comes back if its killer leaves: settlement waits for maintenance to find
+# the site loaded twice without it, however long that takes (the owner, 2026-09-27: "it should work both ways whether
+# i kill it or my mon does"). Found by this suite at 3e2906e, when the note had to be under 400 ticks old; fixed in
+# 4a37312.
+def test_a_guardian_killed_by_a_player_who_then_leaves_is_settled_not_rebuilt():
+    s = _vanish_sim(None, alive_t=None)
+    _maintain(s, [(9900, True, True)])                                    # seen alive before the fight
+    for c in ledger(s)["claims"]:
+        c["hit"] = {"who": P2_ID, "t": 10000}
+    unloaded = [(10000 + M // 2 + k * M, False, False) for k in range(20)]
+    back = [(13000 + M // 2, True, False), (13000 + M // 2 + M, True, False)]
+    _maintain(s, unloaded + back)
+    assert not _spawns(s), "rebuilt though a player killed it"
+    assert _settled(s)

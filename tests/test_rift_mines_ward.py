@@ -74,7 +74,7 @@ def inside(pos, p):
 # or reaches further than ward_margin (fatigue where players mine legitimately). Every block of the plug, the grille
 # and the alcove, and every block within ward_margin of them (the box they span, grown on every side), is in the ward;
 # one block further out on any axis is not.
-@pytest.mark.parametrize("margin", [GATE["ward_margin"], 0, 7])
+@pytest.mark.parametrize("margin", sorted({GATE["ward_margin"], 0, 4, 9}))
 def test_the_ward_is_the_plug_grille_and_alcove_grown_by_exactly_ward_margin(margin):
     spec = copy.deepcopy(SPEC)
     spec["mine"]["gate"]["ward_margin"] = margin
@@ -119,13 +119,10 @@ def test_the_ward_gives_mining_fatigue_iv_to_survival_and_adventure_players_only
 
 
 # Without it a player tunnelling under or beside the ward, their feet just outside it, can still reach and break the
-# plug or the grille (ward_why: "so the gate cannot be dug round or broken"). Found by this suite at c9cb850: the
-# margin is measured at the feet, but a standing player's eyes are 1.62 higher and reach 4.5 blocks, so from a tunnel
-# whose floor is just under the ward the grille's lowest blocks are about 4.4 blocks above the eyes, the plug's bottom
-# layer about 3.4, and from beside it the plug's outer layer 4.0 blocks away.
-@pytest.mark.xfail(strict=True, reason="c9cb850: ward_margin 4 at the feet is less than a survival player's reach (4.5 "
-                                       "from eyes 1.62 above the feet); from under the ward the grille and plug are "
-                                       "within reach, and the plug's outer layers from beside it")
+# plug or the grille (ward_why: "so the gate cannot be dug round or broken"). The margin is measured at the feet, but a
+# standing player's eyes are 1.62 higher and reach 4.5 blocks: found by this suite at c9cb850 with ward_margin 4 (from
+# under the ward the plug's bottom was 2.4 blocks from the eyes, the grille 3.4; from beside it the plug's outer layer
+# 4.0); fixed in 4a37312 (ward_margin 7).
 def test_no_player_outside_the_ward_can_reach_the_plug_or_the_grille():
     files, _fn = gate()
     pos = ward_position(files)
