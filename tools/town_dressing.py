@@ -549,30 +549,53 @@ def piece_beacon(spec, h):
 
 
 def piece_instrument_mast(spec, h):
-    """A crater instrument tower: a blackstone shaft, a railed deck, a copper instrument and rods pointing at the cone."""
+    """A crater instrument tower: a climbable lattice of basalt legs round a blackstone core, girdered every five
+    blocks, a railed deck, a copper dish and feed horn aimed at the cone, and a copper antenna with a light and rods.
+    (Rebuilt 2026-09-27: the first, a 3 by 3 stump twelve high, the owner found underwhelming.)"""
     p = Piece(relief=2)
     body = pal(spec, "body", "minecraft:polished_blackstone_bricks")
-    H = int(spec.get("height", 12))
-    for dy in range(H):
-        for x in (-1, 0, 1):
-            for z in (-1, 0, 1):
-                p.put(x, dy, z, "minecraft:polished_basalt[axis=y]" if (abs(x) == 1 and abs(z) == 1) else body)
-    for x in (-2, -1, 0, 1, 2):
-        for z in (-2, -1, 0, 1, 2):
-            if max(abs(x), abs(z)) == 2:
-                # a full block where a lantern stands (a lantern cannot stand on a bottom slab), a slab elsewhere
-                p.put(x, H, z, body if (abs(x) == 2 and z == -2) else "minecraft:polished_blackstone_slab[type=bottom]")
-    for x in (-1, 0, 1):
-        for z in (-1, 0, 1):
-            p.put(x, H, z, "minecraft:waxed_cut_copper")
-    p.put(0, H + 1, 0, "minecraft:waxed_copper_grate")
-    p.put(0, H + 2, 0, "minecraft:waxed_exposed_cut_copper")
-    # rods: three pointing forward (towards the cone) and one up
-    for dz in (1, 2, 3):
-        p.put(0, H + 2, -dz, "minecraft:end_rod[facing=north]")
-    p.column(0, 0, H + 3, H + 5, "minecraft:end_rod[facing=up]")
+    leg = "minecraft:polished_basalt[axis=y]"
+    girder = "minecraft:polished_blackstone_brick_slab[type=top]"
+    H = int(spec.get("height", 22))
+    ring = [(x, z) for x in range(-2, 3) for z in range(-2, 3) if max(abs(x), abs(z)) == 2]
+    for x in range(-2, 3):
+        for z in range(-2, 3):
+            p.put(x, 0, z, "minecraft:chiseled_polished_blackstone" if abs(x) == 2 and abs(z) == 2 else body)
     for x in (-2, 2):
-        p.put(x, H + 1, -2, "minecraft:lantern[hanging=false]")
+        for z in (-2, 2):
+            p.column(x, z, 1, H, leg)
+    p.column(0, 0, 1, H + 1, body)                                   # the core, up through the deck
+    for dy in range(5, H, 5):                                        # girders between the legs
+        for x, z in ring:
+            if abs(x) != 2 or abs(z) != 2:
+                p.put(x, dy, z, girder)
+    for dy in range(1, H + 2):                                       # the ladder, on the core's back face
+        p.put(0, dy, 1, "minecraft:ladder[facing=south]")
+    for x in range(-2, 3):                                           # the deck, open where the ladder comes up
+        for z in range(-2, 3):
+            if (x, z) not in ((0, 0), (0, 1)):
+                p.put(x, H + 1, z, body)
+    for x, z in ring:                                                # the rail: posts, lanterns at the back corners
+        if z == -2 and abs(x) < 2:
+            continue                                                 # the dish stands at the front
+        if z == 2 and abs(x) == 2:
+            p.put(x, H + 2, z, "minecraft:lantern[hanging=false]")
+        else:
+            p.put(x, H + 2, z, "minecraft:polished_blackstone_wall")
+    # the dish: a copper disc on the deck's front edge, the feed horn out in front, a strut back to the core
+    for x in range(-2, 3):
+        for dy in range(H + 2, H + 7):
+            r = max(abs(x), abs(dy - (H + 4)))
+            if r == 2 and abs(x) == 2 and abs(dy - (H + 4)) == 2:
+                continue                                             # round the corners off
+            p.put(x, dy, -2, "minecraft:waxed_copper_block" if r == 2 else "minecraft:waxed_exposed_copper")
+    p.put(0, H + 4, -1, "minecraft:waxed_cut_copper")
+    p.put(0, H + 4, -3, "minecraft:end_rod[facing=north]")
+    # the antenna: copper up from the core, a light, rods
+    for dy in range(H + 2, H + 7):
+        p.put(0, dy, 0, "minecraft:waxed_copper_grate" if dy % 2 else "minecraft:waxed_cut_copper")
+    p.put(0, H + 7, 0, "minecraft:pearlescent_froglight[axis=y]")
+    p.column(0, 0, H + 8, H + 10, "minecraft:end_rod[facing=up]")
     return p
 
 
@@ -622,21 +645,63 @@ def piece_fumarole(spec, h):
 
 
 def piece_spire(spec, h):
-    """A listening spire: a white shaft on a stepped plinth, amethyst at its foot and a lens and rods at its head."""
+    """A listening spire: a white shaft tapering from three by three to a cross to a single column, lit slots of purple
+    glass in its lower stage, two purple listening rings up the shaft, and a glowing purple lens with rods at its head.
+    (Rebuilt 2026-09-27: the first, a single quartz column eighteen high, the owner found underwhelming.)"""
     p = Piece(relief=2)
-    H = int(spec.get("height", 18))
-    for x in (-1, 0, 1):
-        for z in (-1, 0, 1):
+    H = int(spec.get("height", 30))
+    T1, T2 = max(6, H * 9 // 20), max(10, H * 3 // 4)             # where the 3 by 3 and the cross end
+    pillar, face = "minecraft:quartz_pillar[axis=y]", "minecraft:smooth_quartz"
+    glass = "minecraft:purple_stained_glass"
+    for x in range(-2, 3):                                          # the stepped plinth
+        for z in range(-2, 3):
             p.put(x, 0, z, pal(spec, "plinth", "minecraft:polished_diorite"))
-    for x, z in ((0, -1), (1, 0), (0, 1), (-1, 0)):
-        p.put(x, 1, z, "minecraft:calcite")
-    p.column(0, 0, 1, H, "minecraft:quartz_pillar[axis=y]")
-    p.put(0, H + 1, 0, "minecraft:tinted_glass")
-    p.column(0, 0, H + 2, H + 3, "minecraft:end_rod[facing=up]")
-    for x, z, f in ((1, 0, "east"), (-1, 0, "west"), (0, 1, "south"), (0, -1, "north")):
-        p.put(x, H + 1, z, "minecraft:end_rod[facing=%s]" % f)
-    for x, z in ((1, 1), (-1, -1)):
-        p.put(x, 1, z, "minecraft:amethyst_cluster[facing=up,waterlogged=false]")
+    for x in range(-1, 2):
+        for z in range(-1, 2):
+            p.put(x, 1, z, "minecraft:calcite")
+    for x in (-2, 2):
+        for z in (-2, 2):
+            p.put(x, 1, z, "minecraft:amethyst_cluster[facing=up,waterlogged=false]")
+    for dy in range(2, T1 + 1):                                     # the lower stage, 3 by 3
+        slot = dy % 6 in (3, 4, 5)
+        for x in range(-1, 2):
+            for z in range(-1, 2):
+                if (x, z) == (0, 0):
+                    p.put(x, dy, z, "minecraft:sea_lantern" if slot else pillar)
+                elif abs(x) == 1 and abs(z) == 1:
+                    p.put(x, dy, z, pillar)
+                else:
+                    p.put(x, dy, z, glass if slot else ("minecraft:chiseled_quartz_block" if dy % 6 == 0 else face))
+    for x in range(-1, 2):                                          # the collar
+        for z in range(-1, 2):
+            p.put(x, T1 + 1, z, "minecraft:chiseled_quartz_block")
+    arms = ((0, -1), (1, 0), (0, 1), (-1, 0))
+    for dy in range(T1 + 2, T2 + 1):                                # the middle stage, a cross
+        p.put(0, dy, 0, pillar)
+        for x, z in arms:
+            p.put(x, dy, z, "minecraft:quartz_bricks")
+    p.column(0, 0, T2 + 1, H, pillar)                               # the upper stage, one column
+
+    def listening_ring(dy, spokes):
+        for x in range(-2, 3):
+            for z in range(-2, 3):
+                if max(abs(x), abs(z)) == 2 and not (abs(x) == 2 and abs(z) == 2):
+                    p.put(x, dy, z, glass)
+        if spokes:
+            for (x, z), f in zip(arms, ("north", "east", "south", "west")):
+                p.put(x, dy, z, "minecraft:end_rod[facing=%s]" % f)
+    listening_ring((T1 + T2) // 2, False)                           # round the cross
+    listening_ring((T2 + H) // 2, True)                             # round the single column, on rods
+    for x in range(-1, 2):                                          # the lens: a lit purple orb on a calcite seat
+        for z in range(-1, 2):
+            p.put(x, H + 1, z, "minecraft:calcite")
+            for dy in (H + 2, H + 3, H + 4):
+                p.put(x, dy, z, glass)
+    p.put(0, H + 3, 0, "minecraft:sea_lantern")
+    for (x, z), f in zip(((0, -2), (2, 0), (0, 2), (-2, 0)), ("north", "east", "south", "west")):
+        p.put(x, H + 3, z, "minecraft:end_rod[facing=%s]" % f)
+    p.put(0, H + 5, 0, "minecraft:chiseled_quartz_block")
+    p.column(0, 0, H + 6, H + 8, "minecraft:end_rod[facing=up]")
     return p
 
 
