@@ -959,6 +959,16 @@ def keeper_files(m):
         for k in range(spec["faces"]["variants"]):
             restore.append("execute if score #v gm.t matches %d run function %s/faces/%s_v%d" % (k, F, f["id"], k))
         restore.append("scoreboard players operation #%s gm.last = #now gm.t" % f["id"])
+        # keep the hall's faces offset: a sibling becomes due no sooner than its offset after this restore (never
+        # earlier than its own period). Load's -offset only phases them from game time 0, and on an old world, or
+        # after an idle spell, both came due together and stayed in phase (the test author's finding)
+        for g2 in spec["mine"]["faces"]:
+            if g2["id"] == f["id"] or g2.get("hall") != f.get("hall"):
+                continue
+            delta = (g2["offset_ticks"] - f["offset_ticks"]) % period
+            restore.append("scoreboard players operation #sib gm.t = #now gm.t")
+            restore.append("scoreboard players remove #sib gm.t %d" % (period - delta))
+            restore.append("scoreboard players operation #%s gm.last > #sib gm.t" % g2["id"])
         for s in hall_slots.get(f["hall"], []):
             restore.append("# the hall's Mega comes back with the fresh face, if it is gone (SOUTHERN_RIFT_MEGA.md 6.2)")
             restore.append("execute unless entity @e[type=cobblemon:pokemon,tag=%s.%s] run scoreboard players set #%s gm.owe 1"

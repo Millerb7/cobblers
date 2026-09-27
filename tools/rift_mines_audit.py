@@ -471,6 +471,15 @@ def output_problems(spec, grid, gated, ungated, top, cols, notes):
     probs = []
     final, outside, files = replay(grid)
     notes["cells written"] = len(final)
+    # the grille itself stands in the output: its cells are envelope, so air there is not stray and nothing else would
+    # notice a pack that shut drift C with nothing (the test author's finding)
+    t = spec["mine"].get("tease")
+    if t:
+        gr = t["grille"]
+        bars = [(x, y, gr["z"]) for x in range(gr["x"][0], gr["x"][1] + 1) for y in range(gr["y"][0], gr["y"][1] + 1)]
+        missing = [c for c in bars if (final.get(c) or "").split("[")[0] != "minecraft:iron_bars"]
+        if missing:
+            probs.append("tease: %d grille cells are not iron bars in the output, e.g. %s" % (len(missing), missing[:3]))
     if outside:
         probs.append("inside: %d writes outside the data's grid, e.g. %s" % (len(outside), outside[:3]))
     stray_cols = {(x, z) for x, _y, z in final} - cols
