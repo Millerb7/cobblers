@@ -95,7 +95,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_gulch_mine",
                 # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
                 # from the server's own jar, never committed). Data only; world-local so no other world's recipes change
-                "cobblers_mega_recipes")
+                "cobblers_mega_recipes",
+                # 2026-09-27: the ferry (tools/ferries.py, data/ferries.json): the ferrymen's NPC classes and dialogues and
+                # the trips their dialogues run; the ferrymen are placed over RCON by R17F. It charges CobbleDollars and
+                # teleports players, so world-local below
+                "cobblers_ferries")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -131,7 +135,8 @@ EXCLUDED = {
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
-               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes")
+               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
+               "cobblers_ferries")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -265,6 +270,11 @@ def prepare(a):
         shutil.rmtree(dlg)
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
     py(TOOLS / "compile_dialogue.py", "--all", "--out", dlg)
+    # the ferry: its ferrymen's classes and dialogues and the trips (data/ferries.json), then its offline audit: every
+    # landing on ground or a deck, every gate a planned flag, every fare read before it is charged, and every line
+    # declared a gate still unswimmable under data/blackout.json's fatigue on the heightmap
+    py(TOOLS / "ferries.py", "build")
+    py(TOOLS / "ferries.py", "audit", *src)
     # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     py(TOOLS / "route_events.py", *src)
@@ -765,6 +775,12 @@ def steps(with_spawns=False):
     out.append(("R17", "scene props, scene NPCs and the route trainers",
                 [("props", p) for p in scene_props()] + [("npc", n) for n in scene_npcs()]
                 + [("trainer", t) for t in route_trainers.placements()]))
+    # the ferrymen (data/ferries.json): NPCs, so an export erases them, and their classes load at boot from
+    # cobblers_ferries, so they are placed over RCON after the restart, as R9F and R17 place theirs; the load function
+    # first (the pack's scores, also created by its load tag). Listed from the committed data, not the build
+    import ferries
+    out.append(("R17F", "the ferrymen at the built docks (data/ferries.json)",
+                [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
