@@ -107,38 +107,22 @@ healing machine, so this is not a result either way; rerun it.
 - **Not run: the mid-dive swap.** The owner declined.
 - The owner switched to creative now and then. Those samples (mode 1) are excluded from every speed figure.
 
-Still to run:
-- the Center and waystone checkpoints;
-- Dive;
-- swapping the water Pokemon out mid-dive;
-- the lethal second hit;
-- a wild battle loss, recovery by defeat and by capture, and delivery;
-- a timed sprint-swim down and up, for the water map's no-mount reach.
+Still to run (after session 3):
+- the town waystone checkpoint;
+- the mid-dive swap (the owner declined it);
+- a wild battle loss, recovery by defeat and by capture, and delivery, including to an offline owner and through a
+  helper;
+- a trainer loss (money and the return only; no claim).
 
-## In-game test (the owner; staging)
+Fixed after session 3, from independent tests (tests/blackout-and-water):
+- a Center checkpoint saved at the edge of its area;
+- the charge overflowing for huge balances;
+- an aborted claim left open in the ledger;
+- the Surf bonus one tick short.
 
-Setup, done over RCON before each part:
-- test items: 20 Poke Balls, 10 Potions, a Fire Stone;
-- a known balance;
-- the Surf or Dive training tag.
-
-1. **Drowning with no mount.** At Shrew Lake `(2873, 107, 3988)`, 46 deep, swim straight down.
-   - Expect the air-low warning, then out of air, then one hit to half health and "One more drowning hit...", then a
-     knockout on the second.
-   - Then: the return to the checkpoint, "Lost $X" (10% rounded up), "No items were lost.", every item still carried.
-   - Your position is logged every half-second to measure how fast a player sinks and swims.
-2. **Center checkpoint.** Use a healing machine; expect "Checkpoint: ...". Drown again; you return there.
-3. **Surf.** Grant Surf and have a Surf-capable Pokemon (Lapras) in the party. Dive at Shrew: air stays full for about
-   45 s, then vanilla air, then the harsh rule.
-4. **Dive.** Grant Dive and have a Dive-capable Pokemon (Wailmer) in the party: air never drops at the bottom.
-5. **Swap.** Underwater, move the capable Pokemon to the PC: expect the warning and, 5 s later, vanilla air (not a
-   fresh Surf timer).
-6. **Wild battle loss.** Lose a full party to a strong wild Pokemon.
-   - Expect "<Pokemon> took 3 Poke Ball(s), 2 medicine..." (and perhaps the Fire Stone), the charge once, and the
-     return.
-   - Expect the victor to stay at the site across a relog.
-7. **Recovery.** Go back and beat it, then catch it, in two runs. Every stack drops at your feet, only you can pick
-   it up, and you get "You recovered your supplies." Nothing is left guarding.
+The claim ledger also moved to its own storage, `cobblers_recovery:ledger`, so a re-export carries it (and never
+carries the re-apply's progress). The guardian rebuild was re-run on the new ledger: PASS (one guardian, the same
+Pokemon and item).
 
 ## Findings
 
