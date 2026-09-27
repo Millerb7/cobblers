@@ -15,7 +15,15 @@ southern town (section 3) is unchanged. Not installed or seen in any world yet.
 
 **Reversed, 2026-09-27 (the owner):** the spur was the wrong place; the gulch is the real mega site and the dig camp
 keeps only a small seam. The proposal is `SOUTHERN_RIFT_MEGA.md` (the mega town, a large mine, roaming Megas, the
-material chain).
+material chain); the owner took all twelve of its decisions the same day.
+
+**Built offline, 2026-09-27 (branch `world/gulch-prototype`; not installed, not in any world):** the prototype slice
+of `SOUTHERN_RIFT_MEGA.md` section 10 in the gulch (`data/gulch_mine.json`, `tools/gulch_mine.py`, step R9S): the
+gulch as its own zone at six badges behind a rockfall and grille across the `gulch_mouth` gap, the 61-square at
+(4308, 4848) with the Cutters, the Tally Hall and the Cutting Floor with two restoring faces and two roaming Megas
+(what, where and why in its section 12). The spur is cut back to the camp, the seam and one warded crystal
+(`data/rift_mines.json`); its gated galleries, chambers and Heart are retired. Sections 3 and 4 below are the 2026-09-25
+proposal; where they and section 12 of `SOUTHERN_RIFT_MEGA.md` disagree, the latter is what is built.
 
 **A wild Mega works.** EXP-036 (staging, 2026-09-25): a spawned Mega Charizard X battled and stayed Mega. The owner
 tested a wild Mega in game on staging and it worked (2026-09-27, reported by the owner; not logged). Still unproven in
@@ -61,6 +69,10 @@ reaches the Deep at about 3,816.
    (4373, 4691)-(4196, 4927). By the sign of the cross product, (4240, 4740) and the split lie on the same side
    of it, and the branch tip is on the other side. This is arithmetic on the two records, not measured on terrain.
    So as the data stands, the Gulch lookout guards a second way into Z2, and the gulch region straddles Z2 and Z3.
+   **Settled for the gulch (2026-09-27):** the gulch zone's closing line is re-traced to (4351, 4600)-(4195, 4929)
+   (`data/gulch_mine.json` `zone`), which puts the canyon's foot, the road and the town inside and the split about 100
+   blocks outside. The sculpt's `gulch_mouth` is also not a 7-wide canyon: it is an 89-point gap in the raised rim
+   with a ramp, which the rockfall now closes (`SOUTHERN_RIFT_MEGA.md` section 12).
 2. **Z2 has four entrances in the sculpt and one guard in RIFT_ZONES.** The rim post descent, wilds slip and gulch
    mouth all come down into the stem or trunk (Z2). Each needs an 8-badge guard, or the zone check alone turns
    players back.
