@@ -366,6 +366,9 @@ For Codex to pick up. Claude has not edited any of the files named here.
     - The Sun Stone faces proposed for the Scar (`docs/mechanics/EVOLUTION_STONES.md`) must not be covered by ruins;
       name where they go if they stay.
 
+    **Expanded 2026-09-27:** every story-versus-build difference for both places, and 14 questions, in
+    `docs/story/handoffs/DISPLACED_CITY_AND_SCAR.md`.
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.
