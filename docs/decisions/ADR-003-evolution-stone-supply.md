@@ -2,7 +2,9 @@
 
 - **Status:** Proposed
 - **Date:** 2026-09-23
+- **Amended:** 2026-09-27, see "Amendment" below
 - **Evidence:**
+  - `docs/mechanics/STONE_ECONOMY.md` (the jar read, the demand recount, the amendment's reasons)
   - `docs/mechanics/EVOLUTION_STONES.md` (the full design, its arithmetic and its unknowns)
   - `docs/mechanics/SPAWN_PHILOSOPHY.md:258-424` ("The rosters carry families this world cannot
     finish": the 20 stone-gated families, measured on `data/spawns.json`)
@@ -79,6 +81,46 @@ exist. Reversing this costs seven cuts and a pack, not the map. Multiplayer: the
 design and the contention it creates is bounded by demand (a party of four completionists needs
 sixteen Water Stones *in total*, `EVOLUTION_STONES.md` §6.1); the guard against a reset firing on
 an occupied box is mandatory, not optional.
+
+## Amendment, 2026-09-27 (still Proposed)
+
+`docs/mechanics/STONE_ECONOMY.md` re-checked this decision against the Cobblemon 1.8.0 and Mega
+Showdown 1.0.2 jars and the current rosters. The jars are the ones whose hashes `data/spawns.json`
+and `modpack/manifest/overlay.json:259` record. **The decision stands:** native ore in the rock,
+shared faces, the ADR-002 floor, seven places, and no town per stone. **Five parts change:**
+
+1. **Thunder: the Displaced City is added as its primary site (leg 4). The Mining Town keeps a second,
+   deep Thunder seam.** Thunder is VERIFIED from the jar's `evolutions` blocks to be needed by 6
+   families, not 1: Probopass, Raichu, Magnezone, Bellibolt, Vikavolt, and Archaludon through Metal
+   Alloy. Its first need is gym 4. At the Mining Town alone it arrived four legs late. The totals are
+   now 28 families and 29 stone uses per completionist, not 20. Decision item 3 now reads
+   "Moon and Thunder at the Displaced City, Fire and Thunder at the Mining Town". That makes 22 faces.
+2. **Faces restore on approach, not on a fixed timer.** The period is still at least 600 s, but it is
+   checked only while a player is within about 64 blocks and both corners of the box are loaded.
+   `fill` fails on an unloaded chunk, which is why the repository guards with `execute if loaded`
+   (`tools/reapply.py:771`). The driver is a `minecraft:tick`-tag function every 100 ticks, not a
+   `schedule` loop.
+3. **The re-apply step is R9M,** after R9C and before R9E. R17 has since been taken by scene props,
+   NPCs and route trainers (`tools/reapply.py:657`).
+4. **The restore is filtered** to a `#cobblers:face_resettable` tag, and every ore `setblock` is
+   guarded, so a restore never deletes a player's container.
+5. **The Mining Town carries the Exchange:** a CobbleDollars clerk that sells all ten stones and
+   **never buys**. With a buy price, an unlimited face would become a money printer. This turns "the
+   rest are traded on" into a mechanism. It is still a convenience layer, not the source.
+
+**Now VERIFIED from the jar, and no longer blocking the arithmetic:**
+
+- an ore drops one stone, with vanilla Fortune;
+- **an iron pickaxe is required** for every overworld stone ore, and the per-player floor is what
+  covers the earliest site;
+- ore smelts to stone 1:1, and a block makes 9 stones;
+- the owner's "66 recipes" are 56 that produce a stone plus 10 that compress one.
+
+`random value` loads and runs in this runtime (`tools/blackout_pack.py:334`), so variant choice need
+not be rotation.
+
+**Relaxed:** the bedrock skin goes only where a face lies within 24 blocks of an authored void. The
+export has no natural caves (`docs/world-building/REEXPORT.md:705`).
 
 ## Alternatives considered
 

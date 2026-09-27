@@ -9,6 +9,7 @@ capability. Each document states which experiment it rests on.
 | --- | --- | --- |
 | `SPAWN_PHILOSOPHY.md` | Curated / full-dex / hybrid encounter models, and the evolution-item gap that stops the rosters completing | Measured pack data and `data/spawns.json`; the runtime questions are still open |
 | `EVOLUTION_STONES.md` | Where the ten evolution stones come from: seven sites, a mine face that resets, and the rate | Measured pack data, `data/spawns.json`, `data/spawn_blocks.json` and EXP-017 A1; **every runtime question is unrun** (ADR-003, Proposed) |
+| `STONE_ECONOMY.md` | The stone economy as a whole: a handful of stone places plus the Mining Town's Exchange, the faces that restore on approach, the jar-verified demand (29 per completionist) and drop and tier facts, per-player against shared costs, the Rock-type residents, and the proposed data schemas | The 1.8.0 and Mega Showdown 1.0.2 jars (hashes matched), `data/spawns.json` and `docs/story/AVAILABILITY.md`; **nothing run in game** (ADR-003, amended, Proposed) |
 | `RIFT_ZONES.md` | The Rift's zones | See the document |
 | `RIFT_FRACTURE.md` | The Rift's fracture pass (`tools/rift_fracture.py` is retired; see `docs/STATE.md`) | See the document |
 

@@ -6,6 +6,17 @@ accepting it is the owner's call. Every claim below is labelled VERIFIED (a file
 experiment) or ASSUMED (design judgement or mainline knowledge). The runtime questions are
 listed at the end as experiment candidates; **none of them has been run.**
 
+> **Superseded in part, 2026-09-27, by `docs/mechanics/STONE_ECONOMY.md` and ADR-003's amendment.**
+>
+> - The Thunder row in §3.1 now also has the Displaced City.
+> - §4.4's timer is now a restore on approach, the step is R9M rather than R17, and the fill is
+>   filtered.
+> - §6.1's demand is now 29 stone uses in 28 families, counted from the jar.
+> - §7 items 1-2 are now answered from the jar: an iron pick is required, one stone drops per ore,
+>   and ore smelts 1:1.
+>
+> Everything else here stands.
+
 This document answers five mechanical questions the owner posed — shared or per-player, ore or
 loot, the reset, the strip-mine bound, and the rate — and one design question: which towns are
 known for a stone. It does not author content.
