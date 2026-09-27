@@ -36,6 +36,8 @@
                    "paths": ["data/gulch_mine.json", "tools/gulch_mine.py", "docs/world-building/SOUTHERN_RIFT_MEGA.md"]},
     "victory_road": {"what": "Victory Road's corridor and its cave network",
                      "paths": ["data/routes.json", "data/vr_caves.json", "tools/vr_caves.py"]},
+    "gate_clocks": {"what": "every clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the drowning pulses, the blackout dedupe, the gulch faces, the ferry cooldown, the wards' refresh",
+                    "paths": ["tools/blackout_pack.py", "tools/gulch_mine.py", "tools/rift_mines.py", "tools/ferries.py", "data/blackout.json", "data/ferries.json"]},
     "boats": {"what": "boats as shallows craft (option C): the band map at rough_blocks and the sheltered boxes",
               "paths": ["data/blackout.json", "tools/blackout_pack.py", "tools/open_water.py"]},
     "progression": {"what": "the per-player progression flags (advancements) and the waystones they unlock",
@@ -235,13 +237,7 @@
         {"id": "sound_ferry_from_the_jetty", "boat": "crosses", "at": "docs/mechanics/WATER_PROPOSAL.md:276"},
         {"id": "sunset_strait", "boat": "knocked out", "at": "docs/mechanics/WATER_PROPOSAL.md:275"},
         {"id": "northlight_packet", "boat": "knocked out", "at": "docs/mechanics/WATER_BUILD_PLAN.md:701"}
-      ],
-      "fails_today": {
-        "commit": "45cd96b",
-        "cases": {
-          "sunset_strait": "on the C3 line the band map's rough water is one stretch of 34 blocks (cells 96-111 blocks from land); a boater tipped at its edge swims it in about 7 s (warned at 5 s, first hit at 15 s) and places a boat again in the shallows beyond: the strait is crossed without a hit at S0. WATER_PROPOSAL.md 4.3 counted 73 blocks of open water on its own line, which a fresh swimmer also survives (hit from 15 s, about 75 blocks, knocked out about 90). Rough_blocks 96, the tip-then-swim rule, or the Sunset line needs the owner's look"
-        }
-      }
+      ]
     },
     {
       "id": "C12",
@@ -270,6 +266,27 @@
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c13_the_gulch_zone_stays_off_victory_road",
                 "tests/test_system_contracts.py::test_contract_c13_the_gulch_build_writes_nothing_on_victory_road"]
+    },
+    {
+      "id": "C14",
+      "title": "No repeatable player action resets an accumulating gate clock",
+      "owner": "gate_clocks",
+      "consumers": ["ferry", "gulch_mine", "rift_mine_gate", "water_sites"],
+      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch faces' restore, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
+      "stated_in": [
+        {"at": "data/blackout.json:124", "quote": "the Surf bonus resets only after the player's eyes stay in air, with full vanilla air, this long"},
+        {"at": "data/blackout.json:146", "quote": "Land, wading and riding recover it"},
+        {"at": "data/ferries.json:20", "quote": "must not pay twice"},
+        {"at": "data/rift_mines.json:983", "quote": "per player: an effect, not a block"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c14_no_repeatable_player_action_resets_an_accumulating_gate_clock",
+                "tests/test_gate_clocks.py::test_harness_each_scenario_sees_the_reset_it_exists_for"],
+      "fails_today": {
+        "commit": "3c0ec7d",
+        "cases": {
+          "seam_ward-milk": "the seam's ward is its only guard (no zone check behind it). A location advancement is tested every 20 ticks; drinking milk clears Mining Fatigue at once; a player without gym6_cleared who drinks just after a refresh has 19 ticks at full speed, and a netherite pickaxe with Efficiency V breaks iron bars in 5 (vanilla hardness 5): the grille falls. Whether the crystal behind it falls too depends on its hardness, which is in code and was not read. Vanilla facts from memory, NOT VERIFIED in game"
+        }
+      }
     }
   ]
 }
