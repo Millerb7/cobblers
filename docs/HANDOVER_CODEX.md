@@ -244,6 +244,8 @@ For Codex to pick up. Claude has not edited any of the files named here.
     needs one too. Set `display_name` in `data/towns.json` (and add `route1_mansion` there, or give it a name in
     `data/signposts.json`); then `python tools/signposts.py function` and `python tools/location_titles.py` pick it
     up, and a re-export places the new signs. Names over 15 characters wrap across sign lines.
+    **Proposed 2026-09-27:** a name for every record, 15 marked for Codex to confirm, in
+    `docs/world-building/SETTLEMENT_NAMES.md` (also written to `data/towns.json`).
 
 21. **Re-review the fail-closed fixes before the live run.** Your review of the re-export path found four fail-open
     defects; the owner has held the live run until they are fixed, rehearsed and re-reviewed. Your written report was
@@ -365,6 +367,9 @@ For Codex to pick up. Claude has not edited any of the files named here.
       Confirm or replace.
     - The Sun Stone faces proposed for the Scar (`docs/mechanics/EVOLUTION_STONES.md`) must not be covered by ruins;
       name where they go if they stay.
+
+    **Expanded 2026-09-27:** every story-versus-build difference for both places, and 14 questions, in
+    `docs/story/handoffs/DISPLACED_CITY_AND_SCAR.md`.
 
 ## What Codex can resume
 
