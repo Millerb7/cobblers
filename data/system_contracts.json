@@ -1,0 +1,226 @@
+{
+  "schema": "cobblers.system-contracts/1",
+  "status": "started 2026-09-27 by the test author at the owner's request, after the swim-fatigue rule broke the Dive rung and nothing caught it; reviewed by humans, enforced by tests/test_system_contracts.py",
+  "rule": "A contract is one system's guarantee that another system relies on. A change to any system's rule runs `python -m pytest tests/test_system_contracts.py`; a new assumption one system makes about another gets a contract here and a test there (.claude/rules/testing.md 'Cross-system contracts').",
+  "fields": {
+    "owner": "the system whose data or code provides the guarantee",
+    "consumers": "the systems that rely on it; at least one differs from the owner",
+    "constrained_by": "systems that do not rely on the guarantee but can break it with a change of their own",
+    "stated_in": "where the guarantee is written: path:line and a quote the line must still contain",
+    "tests": "the tests that enforce it (path::function); tests in tests/test_system_contracts.py are named test_contract_*",
+    "fails_today": "cases (pytest ids, fnmatch patterns) that fail on the recorded commit, each with its reason; the tests mark them strict xfail, so a fix makes the run fail until the entry is removed"
+  },
+  "systems": {
+    "water_ladder": {"what": "Surf and Dive air at depth: the ladder's qualification, the Surf bonus, Dive's unlimited air, the half-health pulses",
+                     "paths": ["data/blackout.json", "data/water_mounts.json", "tools/blackout_pack.py", "docs/mechanics/DEATH_AND_WIPE.md"]},
+    "swim_fatigue": {"what": "surface exhaustion: fatigue for every swim, its rates, thresholds and collapse hits",
+                     "paths": ["data/blackout.json", "tools/blackout_pack.py"]},
+    "water_sites": {"what": "every lake floor, wreck and Dive site sized on the ladder's rungs",
+                    "paths": ["docs/mechanics/WATER_MAP.md", "docs/mechanics/WATER_BUILD_PLAN.md"]},
+    "ferry": {"what": "the ferry lines and which of them are gates",
+              "paths": ["docs/mechanics/WATER_BUILD_PLAN.md", "docs/mechanics/WATER_PROPOSAL.md"]},
+    "terrain": {"what": "the canonical heightmap and the ground laid over it (the islet, the sea town's decks)",
+                "paths": ["data/world.json", "tools/ground.py", "data/sea_town.json"]},
+    "world_block_packs": {"what": "every generator that writes blocks into the world, through its allowed or named block list",
+                          "paths": ["tools/town_dressing.py", "tools/rift_mines.py", "tools/rift_deep.py", "tools/deep_city.py",
+                                    "tools/vr_caves.py", "tools/place_town.py", "data/placements.json", "data/rematerial.json"]},
+    "wild_spawns": {"what": "what spawns where: the loaded spawn conditions and the policy of which placed blocks may decide them",
+                    "paths": ["data/spawn_blocks.json", "data/spawn_block_policy.json", "data/spawns.json"]},
+    "recovery_claims": {"what": "the blackout's item claims and their guardians",
+                        "paths": ["tools/blackout_pack.py", "data/blackout.json"]},
+    "reexport": {"what": "the re-export: carrying players and world state into a fresh export, and re-applying every build",
+                 "paths": ["tools/carry_players.py", "tools/reapply.py"]},
+    "rift_mine_gate": {"what": "the Rift mine's company gate, its ward and its zone check",
+                       "paths": ["data/rift_mines.json", "tools/rift_mines.py"]},
+    "progression": {"what": "the per-player progression flags (advancements) and the waystones they unlock",
+                    "paths": ["data/progression.json", "tools/progression_pack.py"]},
+    "blackout_checkpoints": {"what": "where a blacked-out player returns: Centers and town waystones",
+                             "paths": ["data/blackout.json", "tools/blackout_pack.py"]},
+    "towns": {"what": "the placed towns and their Pokemon Centers",
+              "paths": ["data/placements.json", "data/towns.json"]}
+  },
+  "contracts": [
+    {
+      "id": "C1",
+      "title": "Dive is unlimited underwater",
+      "owner": "water_ladder",
+      "consumers": ["water_sites"],
+      "constrained_by": ["swim_fatigue"],
+      "statement": "A Dive-trained player with a Dive-capable Pokemon in the party, eyes at the ladder's depth, can stay under water for at least ten minutes without being hurt or knocked out by any system: the air ladder and swim fatigue together.",
+      "stated_in": [
+        {"at": "docs/mechanics/DEATH_AND_WIPE.md:36", "quote": "An unlocked Dive ability plus a qualifying Pokemon gives unlimited"},
+        {"at": "docs/mechanics/DEATH_AND_WIPE.md:281", "quote": "Keep air full while submerged"},
+        {"at": "docs/mechanics/WATER_MAP.md:29", "quote": "| **Dive** (training after gym 6, with a Dive-capable Pokemon) | unlimited |"},
+        {"at": "docs/mechanics/WATER_BUILD_PLAN.md:71", "quote": "new rule is **knocked out at 33 s**"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c1_a_dive_player_at_depth_is_never_knocked_out_by_any_system"],
+      "fails_today": {
+        "commit": "5d18aa5",
+        "cases": {
+          "*": "swim fatigue builds under water for a trained player (data/blackout.json surface.rule counts the eyes at the ladder's depth as deep water, and a trained partner only halves it): a Dive player at depth is hit at 30 s and knocked out at 33 s (WATER_BUILD_PLAN.md finding F1). Being fixed in the main session: trained players will not tire under water"
+        }
+      }
+    },
+    {
+      "id": "C2",
+      "title": "Surf gives its whole bonus at depth, and nothing hurts a Surf player sooner than the ladder does",
+      "owner": "water_ladder",
+      "consumers": ["water_sites"],
+      "constrained_by": ["swim_fatigue"],
+      "statement": "A Surf-trained player with a Surf-capable Pokemon in the party, at depth, has air held full for surf_bonus_ticks per submersion, then vanilla's 300 ticks, before any hit; no other system hurts or knocks them out sooner than the ladder alone does.",
+      "stated_in": [
+        {"at": "docs/mechanics/DEATH_AND_WIPE.md:35", "quote": "10. An unlocked Surf ability plus a qualifying Pokemon in the active party gives"},
+        {"at": "docs/mechanics/DEATH_AND_WIPE.md:280", "quote": "Hold vanilla air full for 900 bonus ticks, then allow the normal 300 ticks: about 60 seconds total"},
+        {"at": "docs/mechanics/WATER_MAP.md:28", "quote": "45 s held full, then vanilla 15 s, then the same two hits: about 61 s"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c2_a_surf_player_at_depth_gets_the_whole_bonus_and_nothing_hurts_them_sooner"],
+      "fails_today": {
+        "commit": "5d18aa5",
+        "cases": {
+          "fresh-*": "a player who has never blacked out gets no Surf bonus at all: bo.surf is set only by blackout/arrive (tools/blackout_pack.py:287), water/deep tests `if score @s bo.surf < #surf bo.cfg` (line 774), and vanilla fails a comparison on an unset score, so the bonus never starts; the ladder alone hits at 301 ticks, not 1200 (found by this contract; tests/test_blackout_pack.py's _deep_ticks sets bo.surf 0 first, which hides it)",
+          "blacked-out-*": "swim fatigue hits a Surf player at depth at 30 s, before surf_bonus_ticks + 300 (60 s) run out (the incident, WATER_BUILD_PLAN.md finding F1)"
+        }
+      }
+    },
+    {
+      "id": "C3",
+      "title": "The ferry's gated straits stay unswimmable, and the Relic row stays swimmable",
+      "owner": "swim_fatigue",
+      "consumers": ["ferry"],
+      "constrained_by": ["terrain"],
+      "statement": "Walked shore to shore on the canonical heightmap at the measured 5 blocks per second, with the generated surface/tick: the Sound ferry, the Sunset strait and the Northlight packet knock out an unaided swimmer and a trained one; the swim from Pallet's beach to Relic Island lands without a hit, unaided or trained.",
+      "stated_in": [
+        {"at": "docs/mechanics/WATER_BUILD_PLAN.md:684", "quote": "unaided swimmer cannot: the Sunset strait"},
+        {"at": "docs/mechanics/WATER_BUILD_PLAN.md:685", "quote": "Only the Relic row stays kindness"},
+        {"at": "docs/mechanics/WATER_BUILD_PLAN.md:691", "quote": "reachable at any stage."},
+        {"at": "docs/mechanics/WATER_BUILD_PLAN.md:715", "quote": "a change to the fatigue constants that makes a gated strait swimmable fails"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c3_the_ferrys_gated_straits_stay_unswimmable_and_the_relic_row_stays_swimmable"],
+      "ground_overlays": ["relic_island", "sea_town"],
+      "crossings": [
+        {"id": "relic_row_from_the_beach", "from": [1101, 5410], "to": [1092, 5532], "dry_ends": ["from", "to"],
+         "doc_swim": 71, "unaided": "no hit", "trained": "no hit", "at": "docs/mechanics/WATER_BUILD_PLAN.md:664",
+         "basis": "the plan's own start (Pallet beach) towards Relic Island's centre (data/placements.json settlements.relic_island), onto the islet"},
+        {"id": "sound_ferry_from_the_jetty", "from": [7092, 6711], "to": [7210, 6960], "dry_ends": ["from", "to"],
+         "doc_swim": 179, "unaided": "knocked out", "trained": "knocked out", "at": "docs/mechanics/WATER_BUILD_PLAN.md:672",
+         "basis": "Pacifidlog's mainland jetty (data/sea_town.json, its landward end) to the town square's centre (data/placements.json settlements.sea_town); the decks are ground"},
+        {"id": "sunset_strait", "from": [2701, 6639], "to": [2597, 6905], "dry_ends": ["to"],
+         "doc_swim": 258, "unaided": "knocked out", "trained": "knocked out", "at": "docs/mechanics/WATER_BUILD_PLAN.md:674",
+         "basis": "measured by the test author 2026-09-27: from the seaward end of Sunset West's south pier (data/placements.json sunset_pier_south, planks x2700-2702 z6590-6639; the pier is not in the heightmap, so this end is over water) to the nearest land of data/regions.json sunset_isle grown by 24 blocks; 286 long against the plan's 284"},
+        {"id": "northlight_packet", "from": [6605, 2301], "to": [6878, 1960], "dry_ends": ["from", "to"],
+         "doc_swim": 418, "unaided": "knocked out", "trained": "knocked out", "at": "docs/mechanics/WATER_BUILD_PLAN.md:676",
+         "basis": "measured by the test author 2026-09-27: the closest pair of shore cells between data/regions.json marsh_country and pine_isles, each grown by 24 blocks (the plan's appendix); 437 long, as the plan's"}
+      ]
+    },
+    {
+      "id": "C4",
+      "title": "No world pack places a spawn condition its place is not whitelisted for",
+      "owner": "world_block_packs",
+      "consumers": ["wild_spawns"],
+      "statement": "Every block a generator's allowed or named list holds (and every block an earthwork places) is either named by no loaded spawn condition, or allowed by a data/spawn_block_policy.json entry whose scope names that place.",
+      "stated_in": [
+        {"at": "docs/world-building/TOWN_CENTERS.md:74", "quote": "Spawn-neutral by default."},
+        {"at": "data/spawn_blocks.json:14", "quote": "A template that contains one decides encounters wherever it is placed"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c4_no_generated_world_pack_places_a_spawn_condition_its_place_is_not_whitelisted_for",
+                "tests/test_system_contracts.py::test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for",
+                "tests/test_system_contracts.py::test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows"],
+      "tools": {
+        "town_dressing.py": "source: town_dressing",
+        "town_dressing_audit.py": "checker: the built town_dressing functions",
+        "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
+        "vr_caves.py": "source: vr_caves",
+        "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
+        "town_audit.py": "checker: the built towns, templates and earthworks, against the policy",
+        "validate_data.py": "checker: placed structure templates, against the policy",
+        "town_templates.py": "checker: spawn blocks in template candidates (through tools/spawn_blocks.py)",
+        "spawn_blocks.py": "not covered: it writes data/spawn_blocks.json (the scan of loaded spawn conditions)",
+        "paint_maps.py": "not covered: WorldPainter plant sets, painted at export, not a datapack"
+      },
+      "fails_today": {
+        "commit": "5d18aa5",
+        "cases": {
+          "earthworks:route1_mansion": "the mansion's earthwork route1_mansion_house places minecraft:light_gray_wool (tools/route1_mansion.py:123, the foyer's dust-sheeted chairs; data/placements.json), a spawn condition for smeargle and herds (neededNearbyBlocks), and no policy entry is scoped to the mansion. The tool's docstring (line 33) says no block in it is a spawn condition; furnish() (line 99) leans on the ward stone's ReplaceSpawns instead"
+        }
+      }
+    },
+    {
+      "id": "C5",
+      "title": "Open claims survive a re-export",
+      "owner": "recovery_claims",
+      "consumers": ["reexport"],
+      "statement": "All claim state lives in the ledger storage (cobblers_recovery:ledger) and the scoreboard, both of which tools/carry_players.py carries and nothing else of which it needs; a claim made before a re-export is rebuilt from the ledger in the new world and pays its owner when its guardian is beaten.",
+      "stated_in": [
+        {"at": "docs/mechanics/DEATH_AND_WIPE.md:194", "quote": "include the recovery store in the explicit re-export"},
+        {"at": "tools/carry_players.py:85", "quote": "the blackout claim ledger (tools/blackout_pack.py): open item claims are owed to players"},
+        {"at": "tools/blackout_pack.py:49", "quote": "which tools/carry_players.py carries into a re-exported world"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c5_a_claim_made_before_a_reexport_is_rebuilt_and_paid_after_it",
+                "tests/test_carry_recovery_ledger.py::test_the_carried_ledger_file_is_the_packs_ledger_namespace"]
+    },
+    {
+      "id": "C6",
+      "title": "A gate's ward keeps its plug out of reach",
+      "owner": "rift_mine_gate",
+      "consumers": ["progression"],
+      "statement": "For every gate in the data (an object with a plug and a ward_margin), a survival player whose feet are outside the generated ward cannot reach any block of the plug or the grille: 4.5 blocks from eyes 1.62 above the feet.",
+      "stated_in": [
+        {"at": "data/rift_mines.json:1525", "quote": "so the gate cannot be dug round or broken"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c6_no_player_outside_a_gates_ward_can_reach_its_plug",
+                "tests/test_system_contracts.py::test_contract_c6_the_gate_list_is_not_empty",
+                "tests/test_rift_mines_ward.py::test_no_player_outside_the_ward_can_reach_the_plug_or_the_grille"]
+    },
+    {
+      "id": "C7",
+      "title": "The re-apply covers every generated pack",
+      "owner": "reexport",
+      "consumers": ["world_block_packs"],
+      "statement": "Every generated pack that ships functions is run by a re-apply step or is in tools/reapply.py EXCLUDED with its reason; prepare fails closed otherwise, so no build is silently lost at a re-export.",
+      "stated_in": [
+        {"at": "tools/reapply.py:92", "quote": "Anything not here and not run"},
+        {"at": "tools/reapply.py:607", "quote": "Fail closed instead."}
+      ],
+      "tests": ["tests/test_reapply_vr_steps.py::test_every_function_pack_present_is_run_by_a_step_or_excluded_with_a_reason",
+                "tests/test_reapply_vr_steps.py::test_uncovered_sees_the_cave_pack_and_reports_it_when_its_step_is_gone",
+                "tests/test_reapply_route_steps.py::test_uncovered_reports_the_pack_when_its_step_is_gone"]
+    },
+    {
+      "id": "C8",
+      "title": "A gate opens on a flag the progression pack grants",
+      "owner": "progression",
+      "consumers": ["rift_mine_gate"],
+      "statement": "Every advancement the Rift mine's generated gate tests is one tools/progression_pack.py writes, granted by a real trigger (not minecraft:impossible), and it is the badge the gate's message names.",
+      "stated_in": [
+        {"at": "data/rift_mines.json:76", "quote": "The flag is the advancement tools/progression_pack.py writes for each leader"}
+      ],
+      "tests": ["tests/test_system_contracts.py::test_contract_c8_the_rift_mine_gate_opens_on_an_advancement_the_progression_pack_grants",
+                "tests/test_rift_mines.py::test_the_gate_opens_on_a_real_progression_flag"]
+    },
+    {
+      "id": "C9",
+      "title": "Swim fatigue reads this tick's water-ladder state",
+      "owner": "water_ladder",
+      "consumers": ["swim_fatigue"],
+      "statement": "surface/tick reads bo.sub, bo.deep and bo.qual as water/tick sets them in the same tick for the same players, and a collapse hits with the ladder's own half-health pulse.",
+      "stated_in": [
+        {"at": "data/blackout.json:144", "quote": "or the eyes at the water ladder's depth"},
+        {"at": "data/blackout.json:159", "quote": "a player the water ladder qualifies"}
+      ],
+      "tests": ["tests/test_surface_exhaustion.py::test_the_sample_reads_this_ticks_eye_state_for_survival_and_adventure_players_only",
+                "tests/test_surface_exhaustion.py::test_a_collapse_pulse_reuses_the_drowning_hit"]
+    },
+    {
+      "id": "C10",
+      "title": "Every Center and town waystone is a blackout checkpoint",
+      "owner": "blackout_checkpoints",
+      "consumers": ["towns", "progression"],
+      "statement": "Every Pokemon Center in data/placements.json and every town waystone in data/progression.json has a fixed checkpoint id; the blackout pack refuses to build otherwise.",
+      "stated_in": [
+        {"at": "docs/mechanics/DEATH_AND_WIPE.md:14", "quote": "The player returns to the last Pokemon Center they successfully used"}
+      ],
+      "tests": ["tests/test_blackout_pack.py::test_every_center_and_town_waystone_has_a_checkpoint_id",
+                "tests/test_blackout_pack.py::test_the_build_fails_loudly_when_a_checkpoint_id_is_missing"]
+    }
+  ]
+}

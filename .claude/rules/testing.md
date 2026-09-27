@@ -39,3 +39,24 @@ tier you actually reached.
 - Runtime results record the exact versions (Minecraft, loader, Cobblemon,
   the mod set) and the log or observation they rest on. "Should work" is not
   a result.
+
+## Cross-system contracts
+
+A contract is one system's guarantee that another relies on: Dive's unlimited
+air, which swim fatigue must not cut short; the ferry's gates, which the
+fatigue constants and the heightmap decide together. The registry is
+`data/system_contracts.json` (owner, consumers, the lines that state it, the
+tests that enforce it); `tests/test_system_contracts.py` runs the systems
+together, as generated.
+
+- A change to any system's rule (its data, its generator, the heightmap) runs
+  `python -m pytest tests/test_system_contracts.py` before it is reported,
+  and the report names every contract it touches. A green run of the changed
+  system's own suite is not enough: on 2026-09-27 the swim-fatigue change
+  passed its own tests and knocked out Dive players after 33 s.
+- A new assumption one system makes about another gets a contract and a test
+  in the same change: an entry in the registry, a `test_contract_*` test, and
+  a citation of the line that states it.
+- A contract that fails today is recorded in the registry (`fails_today`) and
+  marked strict xfail through it, never deleted or loosened; the fix removes
+  the entry.
