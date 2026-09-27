@@ -134,6 +134,27 @@
     "air_warning": 60,
     "air_warning_why": "20% of vanilla's 300"
   },
+  "surface": {
+    "status": "proposed and built 2026-09-27 (EXP-043); not yet run in game",
+    "rule": "swimming (feet or eyes in water, riding nothing) in the open sea builds fatigue; the shallows, land, lakes and riding recover it. Bands by distance from land on the canonical heightmap (tools/open_water.py): under shallow_blocks is free, to deep_blocks is open water, beyond is the deep",
+    "why": "the owner, 2026-09-26: a first-time Route 1 player 'cant swim without a surf mon'; the Route 1 ocean is reachable, only not crossable",
+    "shallow_blocks": 96,
+    "deep_blocks": 256,
+    "sample_ticks": 10,
+    "gain_open_per_tick": 1,
+    "gain_deep_per_tick": 2,
+    "recover_per_tick": 2,
+    "warn_ticks": 400,
+    "slow_ticks": 600,
+    "exhausted_ticks": 900,
+    "collapse_ticks": 1200,
+    "pulse_ticks": 60,
+    "cap_ticks": 20000,
+    "world_min": -1024,
+    "trained_partner": "a player the water ladder qualifies (Surf or Dive training with a capable party Pokemon) builds fatigue at half the rate",
+    "feel": "at the measured sprint-swim of 5 blocks per second an unaided swimmer is warned about 100 blocks into open water (20 s), slowed at 30 s, exhausted at 45 s and collapsing at 60 s, about 300 blocks out, or sooner once in the deep band; a trained swimmer gets twice as far; riding a water Pokemon ends it",
+    "boats": "a vanilla boat is a vehicle, so riding one is exempt, and boats cross anything. Whether boats beyond the shallows should break is the owner's decision (WATER_PROPOSAL.md)"
+  },
   "messages": {
     "blackout": "You blacked out and returned to {place}. Lost {money}.",
     "no_items": "No items were lost.",
@@ -148,6 +169,9 @@
     "air_out": "You are out of air. Drowning here is lethal.",
     "one_more": "One more drowning hit will knock you out.",
     "partner_gone": "No Pokemon in your party can support you at this depth.",
-    "vanilla_air": "Potions, turtle shells and conduits do not help you breathe in this region. Only a trained water partner does."
+    "vanilla_air": "Potions, turtle shells and conduits do not help you breathe in this region. Only a trained water partner does.",
+    "surface_tiring": "Your arms are growing heavy. The open sea is no place to swim.",
+    "surface_exhausted": "You are exhausted. Turn back to shore, or ride a water Pokemon.",
+    "surface_collapse": "The sea is pulling you under."
   }
 }
