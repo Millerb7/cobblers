@@ -337,6 +337,12 @@ def replace_pack(dest, src, retired_root):
         extra = sorted(have - want)
         if extra:
             keep = Path(retired_root) / ("%s-replaced-%s" % (time.strftime("%Y-%m-%d-%H%M%S"), dest.name))
+            # two copies of one pack retired in the same second (a stale global copy, then the world copy) each get a
+            # folder of their own, never one inside the other (test-author's finding)
+            base, n = keep, 1
+            while keep.exists():
+                n += 1
+                keep = base.with_name("%s-%d" % (base.name, n))
             keep.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(dest), str(keep))
             print("moved %s aside to %s: it held %d file(s) the build does not, e.g. %s"
