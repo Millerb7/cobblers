@@ -135,14 +135,15 @@
     "air_warning_why": "20% of vanilla's 300"
   },
   "surface": {
-    "status": "proposed and built 2026-09-27 (EXP-044); not yet run in game",
-    "rule": "swimming (feet or eyes in water, riding nothing) in the open sea builds fatigue; the shallows, land, lakes and riding recover it. Bands by distance from land on the canonical heightmap (tools/open_water.py): under shallow_blocks is free, to deep_blocks is open water, beyond is the deep",
-    "why": "the owner, 2026-09-26: a first-time Route 1 player 'cant swim without a surf mon'; the Route 1 ocean is reachable, only not crossable",
-    "shallow_blocks": 96,
-    "deep_blocks": 256,
+    "status": "rule changed by the owner 2026-09-27 after EXP-044's first run; the new rule is built on staging, not yet run in game",
+    "rule": "every swim builds fatigue, in any water (sea, lakes, rivers): feet or eyes in water, riding nothing, and not wading (on the bottom with the head out). Water at least deep_water_blocks deep under the swimmer, or the eyes at the water ladder's depth, builds it gain_deep_per_tick; shallower water gain_shallow_per_tick. Land, wading and riding recover it",
+    "why": "the owner, 2026-09-26: a first-time Route 1 player 'cant swim without a surf mon'. The first rule (fatigue only 96+ blocks from land, tools/open_water.py) let the owner swim from Pallet to the landmass south-west of it without tiring (EXP-044 run 1). The owner, 2026-09-27: 'i want fatigue on every swim, maybe it would increase once you pass three blocks deep, but a new player should struggle with water'",
+    "superseded": "shallow_blocks 96 and deep_blocks 256 (distance-from-land bands); tools/open_water.py is no longer read by the pack",
+    "deep_water_blocks": 3,
+    "deep_water_blocks_basis": "the owner's 'three blocks deep': the feet's block and the two under it all water",
     "sample_ticks": 10,
-    "gain_open_per_tick": 1,
-    "gain_deep_per_tick": 2,
+    "gain_shallow_per_tick": 1,
+    "gain_deep_per_tick": 4,
     "recover_per_tick": 2,
     "warn_ticks": 400,
     "slow_ticks": 600,
@@ -150,9 +151,8 @@
     "collapse_ticks": 1200,
     "pulse_ticks": 60,
     "cap_ticks": 20000,
-    "world_min": -1024,
     "trained_partner": "a player the water ladder qualifies (Surf or Dive training with a capable party Pokemon) builds fatigue at half the rate",
-    "feel": "at the measured sprint-swim of 5 blocks per second an unaided swimmer is warned about 100 blocks into open water (20 s), slowed at 30 s, exhausted at 45 s and collapsing at 60 s, about 300 blocks out, or sooner once in the deep band; a trained swimmer gets twice as far; riding a water Pokemon ends it",
+    "feel": "at the measured sprint-swim of 5 blocks per second, in deep water an unaided swimmer is warned at 5 s (about 25 blocks), slowed at 7.5 s, exhausted at 11 s and hit from 15 s, about 70 blocks out once Slowness is counted, dead about 3 s later; in shallow water each step takes four times as long. A trained swimmer with a partner gets twice as far; riding a water Pokemon ends it. Rivers (at most about 32 wide) stay crossable; the channel south-west of Pallet (over 100 blocks of deep water) and every island strait do not, unaided",
     "boats": "a vanilla boat is a vehicle, so riding one is exempt, and boats cross anything. Whether boats beyond the shallows should break is the owner's decision (WATER_PROPOSAL.md)"
   },
   "messages": {
@@ -170,8 +170,8 @@
     "one_more": "One more drowning hit will knock you out.",
     "partner_gone": "No Pokemon in your party can support you at this depth.",
     "vanilla_air": "Potions, turtle shells and conduits do not help you breathe in this region. Only a trained water partner does.",
-    "surface_tiring": "Your arms are growing heavy. The open sea is no place to swim.",
-    "surface_exhausted": "You are exhausted. Turn back to shore, or ride a water Pokemon.",
-    "surface_collapse": "The sea is pulling you under."
+    "surface_tiring": "Your arms are growing heavy. Head for shore.",
+    "surface_exhausted": "You are exhausted. Get out of the water, or ride a water Pokemon.",
+    "surface_collapse": "The water is pulling you under."
   }
 }

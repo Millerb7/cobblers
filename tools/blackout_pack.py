@@ -115,7 +115,7 @@ def molang_or(ids):
     return " || ".join("t.id == 'cobblemon:%s'" % s for s in ids)
 
 
-def build(cfg, mounts, placements, progression, sea_rows=None):
+def build(cfg, mounts, placements, progression):
     """{relative path: file text} for the whole pack."""
     files = {}
     fn = lambda path, lines: files.__setitem__("data/%s/function/%s.mcfunction" % (NS, path), "\n".join(lines) + "\n")
@@ -656,37 +656,35 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
     fn("water/grant_dive", ["# the survey diver's training; Dive includes Surf", "tag @s add cobblers.surf", "tag @s add cobblers.dive"])
     fn("water/revoke", ["tag @s remove cobblers.surf", "tag @s remove cobblers.dive"])
 
-    # ---- surface exhaustion ----------------------------------------------------------------------------------------
-    # Swimming (not riding) in the open sea builds fatigue; land, the shallows and riding recover it. The sea's bands
-    # come from tools/open_water.py (the heightmap), one function per 16-block cell row: row z lists its open (1)
-    # and deep (2) runs of cell x, so a swimmer costs one macro call and a few checks.
+    # ---- swim fatigue ----------------------------------------------------------------------------------------------
+    # Every swim builds fatigue, in any water (the owner, 2026-09-27: "fatigue on every swim ... a new player should
+    # struggle with water"); water deeper than deep_water_blocks under the swimmer builds it faster. Land, wading
+    # (standing on the bottom, head out) and riding recover it. No map: the water under the player decides.
     surf = cfg["surface"]
     per = surf["sample_ticks"]
-    consts_s = {"#fgain1": surf["gain_open_per_tick"] * per, "#fgain2": surf["gain_deep_per_tick"] * per,
+    consts_s = {"#fgain1": surf["gain_shallow_per_tick"] * per, "#fgain2": surf["gain_deep_per_tick"] * per,
                 "#frec": surf["recover_per_tick"] * per, "#fwarn": surf["warn_ticks"], "#fslow": surf["slow_ticks"],
                 "#fexh": surf["exhausted_ticks"], "#fcol": surf["collapse_ticks"], "#fpulse": surf["pulse_ticks"],
-                "#fcap": surf["cap_ticks"], "#16": 16, "#wmin": -surf["world_min"], "#fsample": per}
+                "#fcap": surf["cap_ticks"], "#fsample": per}
+    # the feet's block and the blocks under it: deep_water_blocks of water there is deep water
+    under = " ".join("if block ~ ~%d ~ #%s:water" % (-i, NS) for i in range(1, surf["deep_water_blocks"]))
     files["data/%s/function/surface/load.mcfunction" % NS] = "\n".join(
         ["scoreboard players set %s bo.cfg %d" % (k, v) for k, v in consts_s.items()]) + "\n"
     load_tag = json.loads(files["data/minecraft/tags/function/load.json"])
     load_tag["values"].append("%s:surface/load" % NS)
     files["data/minecraft/tags/function/load.json"] = json.dumps(load_tag, indent=2) + "\n"
     fn("surface/tick", [
-        "# as and at a player every %d ticks: only a swimmer, in water and riding nothing, builds fatigue" % per,
+        "# as and at a player every %d ticks: a swimmer (in water, riding nothing, not wading) builds fatigue" % per,
         "execute unless block ~ ~ ~ #%s:water unless score @s bo.sub matches 1 run return run function %s:surface/recover" % (NS, NS),
         "scoreboard players set #ride bo.tmp 0",
         "execute store success score #ride bo.tmp on vehicle if entity @s",
         "execute if score #ride bo.tmp matches 1 run return run function %s:surface/recover" % NS,
-        "scoreboard players set @s bo.zone 0",
-        "execute store result score #cx bo.tmp run data get entity @s Pos[0]",
-        "execute store result score #cz bo.tmp run data get entity @s Pos[2]",
-        "scoreboard players operation #cx bo.tmp += #wmin bo.cfg",
-        "scoreboard players operation #cz bo.tmp += #wmin bo.cfg",
-        "scoreboard players operation #cx bo.tmp /= #16 bo.cfg",
-        "scoreboard players operation #cz bo.tmp /= #16 bo.cfg",
-        "execute store result storage %s:blackout sea.z int 1 run scoreboard players get #cz bo.tmp" % NS,
-        "function %s:surface/row with storage %s:blackout sea" % (NS, NS),
-        "execute if score @s bo.zone matches 0 run return run function %s:surface/recover" % NS,
+        "# wading: on the bottom with the head out of the water is walking, not swimming",
+        "execute if score @s bo.sub matches 0 if entity @s[nbt={OnGround:1b}] run return run function %s:surface/recover" % NS,
+        "# 1 shallow water, 2 deep water (deep_water_blocks of water from the feet down, or the eyes at depth)",
+        "scoreboard players set @s bo.zone 1",
+        "execute %s run scoreboard players set @s bo.zone 2" % under if under else "scoreboard players set @s bo.zone 2",
+        "execute if score @s bo.deep matches 1 run scoreboard players set @s bo.zone 2",
         "# a trained water partner in the party halves the strain (qualification from the water ladder)",
         "scoreboard players operation #g bo.tmp = #fgain1 bo.cfg",
         "execute if score @s bo.zone matches 2 run scoreboard players operation #g bo.tmp = #fgain2 bo.cfg",
@@ -701,11 +699,6 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "execute if score @s bo.fat >= #fexh bo.cfg run effect give @s minecraft:hunger 2 0 true",
         "execute if score @s bo.fat >= #fexh bo.cfg if score @s bo.fwarn matches ..1 run function %s:surface/warn_exhausted" % NS,
         "execute if score @s bo.fat >= #fcol bo.cfg run function %s:surface/collapse" % NS])
-    fn("surface/row", ["$function %s:surface/r/$(z)" % NS])
-    rows = sea_rows or {}
-    for z, runs in sorted(rows.items()):
-        fn("surface/r/%d" % z, ["execute if score #cx bo.tmp matches %d..%d run return run scoreboard players set @s bo.zone %d" % (a, b, v)
-                                for a, b, v in runs])
     fn("surface/recover", [
 
         "execute if score @s bo.fat matches 1.. run scoreboard players operation @s bo.fat -= #frec bo.cfg",
@@ -784,22 +777,7 @@ def main(argv=None):
     p.add_argument("--out", default=str(DEFAULT_OUT))
     a = p.parse_args(argv)
     cfg = load("blackout.json")
-    import open_water
-    b = open_water.bands(cfg["surface"]["shallow_blocks"], cfg["surface"]["deep_blocks"])
-    sea_rows = {}
-    for code, key in ((1, "open"), (2, "deep")):
-        m = b[key]
-        for z in range(m.shape[0]):
-            x = 0
-            while x < m.shape[1]:
-                if m[z, x]:
-                    x0 = x
-                    while x < m.shape[1] and m[z, x]:
-                        x += 1
-                    sea_rows.setdefault(z, []).append((x0, x - 1, code))
-                else:
-                    x += 1
-    files = build(cfg, load("water_mounts.json"), load("placements.json"), load("progression.json"), sea_rows)
+    files = build(cfg, load("water_mounts.json"), load("placements.json"), load("progression.json"))
     out = Path(a.out)
     if out.exists():
         shutil.rmtree(out)
