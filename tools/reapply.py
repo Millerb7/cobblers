@@ -75,7 +75,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_kits", "cobblers_spawn_tags", "cobblers_sizes",
                 # 2026-09-26: blackout, recovery claims and the water ladder (tools/blackout_pack.py, EXP-042);
                 # self-driving and it sets keepInventory, so world-local below
-                "cobblers_blackout")
+                "cobblers_blackout",
+                # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
+                # data/town_dressing.json), run by R16B after the donors and the lights
+                "cobblers_town_dressing")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -243,6 +246,10 @@ def prepare(a):
     py(TOOLS / "sapling_celebi.py")
     py(TOOLS / "rift_storm.py")
     py(TOOLS / "signposts.py", "function", *src)
+    # the towns' landmarks and set dressing: after the town plans, the placement reports and the signposts, which it
+    # keeps clear of; then the plan audit, which fails the prepare on any write on a lot, a road or a building
+    py(TOOLS / "town_dressing.py", "build", *src)
+    py(TOOLS / "town_dressing_audit.py", *src)
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     py(TOOLS / "progression_pack.py")
@@ -644,6 +651,12 @@ def steps(with_spawns=False):
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
+    # the towns' landmarks and set dressing (tools/town_dressing.py): after the donors, which are placed whole, and the
+    # lights, so nothing placed later erases a piece. Listed from the committed data, not the build, so the step exists
+    # whether or not the pack is built here; the prepare's audit fails if a dressed town's function is missing
+    dressed = list(json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8")).get("towns") or {})
+    out.append(("R16B", "town landmarks and set dressing (%d towns)" % len(dressed),
+                [("fn", "cobblers:town_dressing/%s" % s) for s in dressed]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))

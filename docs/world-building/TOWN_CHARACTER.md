@@ -148,6 +148,124 @@ paving cells come from `tools/town_plan.py` and are shown as "-" where the place
 The five most pasted places that are not pasted by design are, by the ranking above, **Sabrina's, Brock's, Koga's,
 Giovanni's and Blaine's towns**. They are dressed first. Erika's and Misty's (ranks 6 and 7) come next.
 
+## The dressing (built as data and functions; not yet in any world)
+
+**What it is made of:**
+- **Data:** `data/town_dressing.json` (`cobblers.town_dressing/1`). Each town has a landmark and its pieces. A
+  piece is a kind from the library in `tools/town_dressing.py`, a position, a facing and a palette.
+- **Generator:** `tools/town_dressing.py build` writes the pack `cobblers_town_dressing`, one function per town,
+  `cobblers:town_dressing/<town>`. It is re-applied by `tools/reapply.py` step **R16B**, after the donors (R9) and
+  the lights (R16), so nothing placed later erases a piece.
+- **Plan audit:** `tools/town_dressing_audit.py` reads the written functions and checks them against plan data it
+  computes itself:
+  - the plan's lots and anchor lots;
+  - the paved streets and plaza, and each street's drawn polyline at its width;
+  - every building's footprint from its template and rotation;
+  - the route event sites' recorded areas (`data/scenes.json`): Route 2's Geodude cart stands just north of
+    Brock's town, and the audit caught a rope pile on it before this was committed;
+  - the heightmap's ground.
+
+  It never uses the generator's mask. `prepare` runs it and stops on any problem. On 2026-09-27: **CLEAN, 11,669
+  writes checked, 0 problems** across the five towns.
+
+**How a piece is placed:**
+- **Ground:** the heightmap, rounded (`tools/ground.py`). A piece stands on the highest ground under it, and a
+  column on falling ground gets a foundation course in the town's own stone.
+- **Keeps off:**
+  - streets, the plaza and the one-block verge beside them;
+  - every house lot and anchor lot, with a block of margin;
+  - three blocks round every building (a town rebuild clears two);
+  - other earthworks and the lamps;
+  - the waystone, traders, signposts, scene props and route event sites (two blocks);
+  - routed legs (three blocks);
+  - painted water;
+  - four blocks round a painted tree, so no crown is left hanging over a cut trunk.
+- **Blocks:** only the 87 vanilla 1.21.1 ids in the data's allowlist, each checked against the 1.21.1 client jar's
+  block states. None is a spawn condition (`data/spawn_blocks.json`, re-checked by `tests/test_town_dressing.py`),
+  so the dressing decides no encounters.
+
+| Town | Landmark (top) | Pieces | Blocks | What the dressing says |
+| --- | --- | ---: | ---: | --- |
+| Brock (`gym1_town`) | **A timber derrick crane** at (1768, 3672), between the plaza and the gym knoll. Its jib reaches over the mason's yard, with a cut block hanging from a chain. Top y159, 20 blocks over the ground. | 18 | 285 | **The mason's yard:** a wall half built under scaffolding, cut-stone piles, a stonecutter, grindstone and anvil bench, a lime kiln smoking. More cut stone waits on the approach from Pallet and at the west lane. **The rescue depot** by the road north: the red flag, crates, rope, water barrels and shoring timber, and the coordinator's red-awninged stall by the Mart. |
+| Koga (`gym5_town`) | **A watchtower on mangrove stilts** at (4568, 2420), at the fen's edge west of the high street. It has a railed platform, a roof and a lantern, and a ladder up one leg. Top y130. | 18 | 311 | **Along the fen edge:** four reed-drying racks, bundles of reed, eel traps. **Two smoke racks.** **At the market yard:** a stall. **The trackers:** two boards of mud casts and a practice yard of four targets. |
+| Sabrina (`gym6_town`) | **A listening spire** at (6140, 3300), on the high ground by the observatory: a quartz shaft on a diorite plinth, amethyst at its foot, a tinted-glass lens and end rods at its head. Top y120, 22 blocks over the ground. | 18 | 174 | **Along the east and west rows:** seven memory stones (a diorite plinth, a quartz stone, an amethyst cluster). **Two reading stalls and two record stalls** with lecterns and shelves. **Four copper instrument stands,** on the high ground and aimed across the lake. |
+| Blaine (`gym7_town`) | **An instrument mast** on the mound's top at (6015, 4935): a blackstone shaft, a copper instrument deck, and rods pointed east at the cone. Top y128. | 14 | 331 | **On the open rim east of the square:** four fumaroles smoking in basalt rings, and two copper instruments aimed at the cone. The rim stays unbuilt, as its plan says. **By the square:** a field laboratory, core-sample racks, sample crates, obsidian and cooling rock. |
+| Giovanni (`gym8_town`) | **A signal beacon** on the dome's crown at (3625, 6555): a granite tower with terracotta bands and a signal fire, whose smoke column stands far above it. Top y128. | 17 | 258 | **At the gate square:** a palisade, sandbag walls, the supply depot and the garrison's orange colours, where the road leaves for Victory Road. **South of the square:** a quartermaster's stall. **On the dome's flank:** a training yard with targets, cover and an armoury bench. |
+
+**After the dressing, the measurement moves only a little.** Sabrina's town is 99% straight donor, Brock's and
+Giovanni's 97%, Koga's and Blaine's 96% (was 100% each). Props are small beside eighteen houses: 174 to 331 blocks
+against 7,000 to 26,000. That is the measure working, not failing. A town's volume is its houses, and its houses
+are still the villages' own.
+
+**The next lever is the brief's own palette line:** re-materialing each town's houses into its palette, as Surge's
+and the mining town's already are. The machinery exists (`data/rematerial.json` `house_sets`, `materials` on a
+placement). It would move Brock's town from 97% straight donor to about 52%; the rest is the gym, the Centre and
+the Mart, which keep their own looks. **Not done here:** it re-places every house and changes what
+`tools/town_audit.py` expects in the world, so it is for the owner to choose.
+
+## Install and run (for the orchestrator, on staging)
+
+**Build** (no server needed):
+```
+python tools/reapply.py prepare --source-root <root> --server-dir <server>
+```
+It runs `town_dressing.py build` and `town_dressing_audit.py` after the town plans and signposts, and stops if the
+audit finds anything.
+
+To build it alone, it needs:
+- `tools/town_plan.py <town>` for the five towns;
+- `tools/critical_legs.py`;
+- `tools/signposts.py function`;
+- a `build/paint` from `tools/paint_maps.py`.
+
+Then:
+```
+python tools/town_dressing.py build
+python tools/town_dressing_audit.py
+```
+
+**Install:** with the server stopped, `python tools/reapply.py install ...` installs `cobblers_town_dressing` into
+`<server>/datapacks` (a global pack, like `cobblers_towns`: it has no load or tick tag, so it does nothing until a
+function is run).
+
+**Run**, with the server up after the towns, the donors and the lights (R8, R9, R16):
+```
+python tools/reapply.py run --server-dir <server> --only R16B
+```
+
+Or by hand over RCON, in this order, with drops off (`gamerule doTileDrops false`, restored afterwards, because the
+clearing fills pop grass and flowers):
+
+1. `function cobblers:town_dressing/gym1_town`
+2. `function cobblers:town_dressing/gym5_town`
+3. `function cobblers:town_dressing/gym6_town`
+4. `function cobblers:town_dressing/gym7_town`
+5. `function cobblers:town_dressing/gym8_town`
+
+Then `save-all`.
+
+**Chunks:** no manual force-loading is needed. Each function force-loads every chunk it writes before its first
+command and releases them after its last (`tools/function_limits.py` `ensure_loaded`). The boxes are 6 to 15
+per town, all inside x1664-1807 z3536-3727 (Brock), x4544-4719 z2336-2463 (Koga), x6096-6303 z3280-3519
+(Sabrina), x6000-6143 z4928-5039 (Blaine) and x3568-3663 z6400-6559 (Giovanni).
+
+**Check in the world:** `derived/town_dressing/checks.txt` (written by the build) has one
+`execute if block x y z <block>` per piece, each answered "Test passed" when the piece stands. For the five
+landmarks:
+```
+execute if block 1768 159 3672 minecraft:lantern
+execute if block 4570 130 2422 minecraft:mangrove_slab
+execute if block 6140 120 3300 minecraft:end_rod
+execute if block 6015 128 4935 minecraft:end_rod
+execute if block 3625 128 6555 minecraft:campfire
+```
+
+**Not verified:**
+- none of this has been run in any world;
+- nobody has seen a piece in game;
+- whether the smoke columns read from the roads, and whether a stall's front posts sit well on its counter;
+- whether a ladder or a lantern survives its neighbours' updates (each is placed after the block it hangs on).
+
 ## For the owner to correct
 
 Every line of the purposes table is an agent's call. These are the ones most worth a look:
@@ -163,3 +281,10 @@ Every line of the purposes table is an agent's call. These are the ones most wor
 5. **Hometown and the League are left undressed on purpose** (pasted by design, above).
 6. **The ranking's tie-break.** Thirteen places tie at 100%. Placement count decides among them, so bigger
    all-donor towns rank as more pasted.
+7. **The dressing keeps off every anchor lot, open squares included.** Sabrina's market square and commons are
+   anchor lots, so they got no stalls. A square is where a town's market belongs; that waits on the town-centre
+   decisions in `TOWN_CENTERS.md`.
+8. **No wool, cobweb or water anywhere in the dressing.** All three are spawn conditions. So a fishing town's
+   drying nets, when one is dressed, will have to be iron bars or chains in a timber frame. No fishing town is in
+   the five.
+9. **Houses keep their village materials** (the palette lever above).
