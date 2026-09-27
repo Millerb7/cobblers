@@ -9,6 +9,9 @@ capability. Each document states which experiment it rests on.
 | --- | --- | --- |
 | `SPAWN_PHILOSOPHY.md` | Curated / full-dex / hybrid encounter models, and the evolution-item gap that stops the rosters completing | Measured pack data and `data/spawns.json`; the runtime questions are still open |
 | `EVOLUTION_STONES.md` | Where the ten evolution stones come from: seven sites, a mine face that resets, and the rate | Measured pack data, `data/spawns.json`, `data/spawn_blocks.json` and EXP-017 A1; **every runtime question is unrun** (ADR-003, Proposed) |
+| `DEATH_AND_WIPE.md` | Blackout, recovery claims and the Surf and Dive air ladder | EXP-038 to EXP-042; built as `cobblers_blackout` |
+| `WATER_MAP.md` | Every body of water and its one role; the trio, Lugia, the depth ladder's reach | EXP-042's measured ladder; a proposal |
+| `WATER_PROPOSAL.md` | Rivers, lakes, dive sites, the ferry, fishing and docks: the whole water picture, with the Relic Island reef and the appearing island | `WATER_MAP.md`; surface exhaustion (EXP-043, being built); a proposal, nothing built |
 | `RIFT_ZONES.md` | The Rift's zones | See the document |
 | `RIFT_FRACTURE.md` | The Rift's fracture pass (`tools/rift_fracture.py` is retired; see `docs/STATE.md`) | See the document |
 
