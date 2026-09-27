@@ -63,6 +63,16 @@
       "minecraft:polished_blackstone_slab",
       "minecraft:polished_diorite",
       "minecraft:diorite_wall",
+      "minecraft:polished_blackstone_brick_slab",
+      "minecraft:chiseled_polished_blackstone",
+      "minecraft:polished_blackstone_wall",
+      "minecraft:waxed_copper_block",
+      "minecraft:waxed_exposed_copper",
+      "minecraft:pearlescent_froglight",
+      "minecraft:purple_stained_glass",
+      "minecraft:sea_lantern",
+      "minecraft:smooth_quartz",
+      "minecraft:quartz_bricks",
       "minecraft:polished_granite",
       "minecraft:purple_carpet",
       "minecraft:quartz_pillar",
@@ -193,8 +203,9 @@
       "foundation": "minecraft:calcite",
       "purpose": "The region's place of study: Sabrina's people record what the Rift does to memory, perception and Pokemon.",
       "landmark": {
-        "id": "sabrina_listening_spire", "kind": "spire", "at": [6140, 3300], "facing": "south", "height": 18,
-        "why": "a white spire with a lens at its head on the town's high ground by the observatory: the instrument the town is, seen across the lake"
+        "id": "sabrina_listening_spire", "kind": "spire", "at": [6140, 3300], "facing": "south", "height": 30,
+        "why": "a white spire with a lens at its head on the town's high ground by the observatory: the instrument the town is, seen across the lake",
+        "rebuilt": "2026-09-27, the owner: 'underwhelming'. Was one quartz column 18 high; now 5 by 5, tapering from 3 by 3 to a cross to a column, lit purple slots, two listening rings and a lit purple lens, 39 blocks to the rod tips"
       },
       "pieces": [
         {"id": "sabrina_instrument_1", "kind": "instrument_stand", "at": [6130, 3316], "facing": "south", "why": "instruments on the high ground, aimed down the town"},
@@ -228,8 +239,9 @@
       "foundation": "minecraft:blackstone",
       "purpose": "A research town on the crater rim: it studies the cone's energy, and keeps the mound between itself and the fire.",
       "landmark": {
-        "id": "blaine_instrument_mast", "kind": "instrument_mast", "at": [6015, 4935], "facing": "east", "height": 12,
-        "why": "an instrument tower on the mound's top, its copper head and rods pointed east at the cone: the town is a research station"
+        "id": "blaine_instrument_mast", "kind": "instrument_mast", "at": [6015, 4935], "facing": "east", "height": 22,
+        "why": "an instrument tower on the mound's top, its copper head and rods pointed east at the cone: the town is a research station",
+        "rebuilt": "2026-09-27, the owner: 'underwhelming'. Was a 3 by 3 stump 12 high; now a climbable 5 by 5 lattice with a railed deck, a copper dish aimed at the cone and a lit antenna, 33 blocks to the rod tips"
       },
       "pieces": [
         {"id": "blaine_fumarole_1", "kind": "fumarole", "at": [6105, 4976], "facing": "east", "why": "vents smoking on the open rim east of the square, where nothing is built"},
