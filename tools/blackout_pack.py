@@ -18,7 +18,7 @@ What the pack does, and what each part rests on:
                not proximity). The saved point is where the player stood; it is re-validated against the data at
                every use and falls back to Hometown. The checkpoint is also the player's spawnpoint.
   claims       Only a battle lost to a wild Pokemon takes items (spec rule 5): the category quotas across the whole
-               inventory, written to the claim ledger (storage cobblers:recovery) before anything is removed. The
+               inventory, written to the claim ledger (storage cobblers_recovery:ledger) before anything is removed. The
                victor becomes the guardian: vanilla PersistenceRequired (EXP-041), a tag and a guardian number.
                Beating or catching it delivers every stack to the claim's owner as owner-only item entities at
                their feet, or on their next login. A guardian that is gone while its site is loaded, twice running,
@@ -155,7 +155,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
        + ["scoreboard players set %s bo.cfg %d" % (k, v) for k, v in consts.items()]
        + ["# the ordinary inventory is always kept (spec rule 3); a claim takes only what it selects",
           "gamerule keepInventory true",
-          "execute unless data storage %s:recovery claims run data modify storage %s:recovery claims set value []" % (NS, NS)])
+          "execute unless data storage cobblers_recovery:ledger claims run data modify storage cobblers_recovery:ledger claims set value []"])
     fn("blackout/tick", [
         "execute store result score #gt bo.tmp run time query gametime",
         "scoreboard players operation #m10 bo.tmp = #gt bo.tmp",
@@ -316,7 +316,10 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "function %s:recovery/deliver" % NS])
 
     # ---- claims ----------------------------------------------------------------------------------------------------
-    R = "%s:recovery" % NS
+    # the claim ledger has a namespace of its own, so Minecraft keeps it in its own file
+    # (data/command_storage_cobblers_recovery.dat), which tools/carry_players.py carries into a re-exported world;
+    # the shared cobblers storage also holds the re-apply's own progress, which must never be carried
+    R = "cobblers_recovery:ledger"
 
     def quota(n, t, pct, mx):
         return ["scoreboard players operation @s %s = @s %s" % (t, n),
