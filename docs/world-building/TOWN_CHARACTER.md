@@ -266,6 +266,79 @@ execute if block 3625 128 6555 minecraft:campfire
 - whether the smoke columns read from the roads, and whether a stall's front posts sit well on its counter;
 - whether a ladder or a lantern survives its neighbours' updates (each is placed after the block it hangs on).
 
+## Gates: where the guards would stand (not built)
+
+The original brief also said **"THE GATES ARE GUARDS"**: a town's way in is marked by the people who keep it, not
+by a structure. **No guard is built here, and none is authored.**
+
+**Where each gate would go:**
+- Every gate is a plan's own entry or exit point in `data/placements.json` (`plan.entries[].at`,
+  `plan.exits[].at`), where the street meets the town's edge.
+- Ground heights are the heightmap's, rounded. The Displaced City, Relic Island and the sea town stand on their own
+  ground, so no height is given for them.
+- **A guard stands beside the road, never on it.** The walked line and the street must stay open.
+
+**Critical path** (a gate at each end of every town on it):
+
+| Town | Gate | Faces | Position | Street |
+| --- | --- | --- | --- | --- |
+| Pallet (`hometown`) | out | Route 1 to Brock | (1461, 5226) y118 | `route_north` |
+| Brock (`gym1_town`) | in | from Pallet | (1654, 3736) y133 | `approach_sw` |
+| Brock | out | to Misty | (1756, 3520) y137 | `north_avenue` |
+| Misty (`gym2_town`) | in | from Brock | (1664, 2846) y107 | `shore_approach` |
+| Misty | out | to Surge | (1620, 2742) y105 | `north_avenue` |
+| Surge (`gym3_town`) | in | from Misty | (1674, 1437) y174 | `lip_walk` |
+| Surge | out | to Erika | (1700, 1378) y174 | `array_path` |
+| Erika (`gym4_town`) | in | from Surge | (4232, 1554) y109 | `pond_road` |
+| Erika | out | to Koga | (4392, 1554) y111 | `east_lane` |
+| Koga (`gym5_town`) | in | from Erika | (4572, 2355) y116 | `post_road` |
+| Koga | out | to Sabrina | (4751, 2524) y121 | `post_road` |
+| Sabrina (`gym6_town`) | in | from Koga | (6104, 3398) y94 | `cross_street` |
+| Sabrina | out | to Blaine | (6196, 3496) y94 | `grand_axis` |
+| Blaine (`gym7_town`) | in | from Sabrina | (6150, 4919) y105 | `rim_road` |
+| Blaine | out | to Giovanni | (6002, 5067) y109 | `rim_road` |
+| Giovanni (`gym8_town`) | in | from Blaine | (3709, 6436) y109 | `foot_street` |
+| Giovanni | out | to Victory Road and the League | (3593, 6426) y111 | `foot_street` |
+| League | in | from Victory Road (the stair's mouth on the apron) | (3656, 2486) y86 | none |
+
+**Other places** (one way in each):
+
+| Place | Faces | Position | Street |
+| --- | --- | --- | --- |
+| Merian hut | Route 4 | (2813, 1222) y107 | `cirque_path` |
+| Gorge hamlet | Route 7 | (6531, 4358) y107 | `dune_trail` |
+| Tableland stop | Route 8 | (4708, 5561) y156 | `brow_trail` |
+| Rift rim post | Victory Road | (4007, 3678) y85 | `rim_trail` |
+| Rift dig camp | the spur's mouth | (3166, 3300) y88 | `camp_track` |
+| The Scar | the south slope | (2110, 1098) y280 | `old_avenue` |
+| Northlight | the landing | (7265, 1444) y111 | `harbour_road` |
+| Mining town | the west | (6522, 5716) y137 | `ore_road` |
+| Tea town | the north | (2600, 3486) y112 | `terrace_road` |
+| Displaced City | the tunnel (cavern floor) | (3264, 1662) | `old_road` |
+| Relic Island | the sea (islet) | (1110, 5531) | `front_walk` |
+| Viltri Light | inland | (574, 4519) y75 | `keeper_track` |
+| Jungle ruins | the north shore | (5160, 7318) y122 | `causeway` |
+| Sunset West | the southern coast on foot, and the sea | (2790, 6625) y63; (2616, 6482) y66 | `strand`; `quay` |
+| Sea town | the jetty's boats (decks) | (7172, 6711) | none |
+
+**For Codex (the guards' characters), with the constraints any answer must keep:**
+- **Who each guard is.** The natural reading is that each town's guards come from its trade, as its dressing
+  does: a mason on watch at Brock's, rescue-boat crew at Misty's, a lineman at Surge's, a gardener at Erika's, a
+  tracker at Koga's, a record-keeper at Sabrina's, a researcher at Blaine's, a garrison soldier at Giovanni's.
+  Names, voices and what each says are unwritten.
+- **Guards gate nothing.** The critical path stays at ten, and nothing else gates it (`SETTLEMENTS.md`,
+  validated). A guard can greet, warn or point the way. It cannot stop a player, except where a flag already
+  gates the way:
+  - Giovanni's gym is already Victory Road's gate, on `gym8_cleared`;
+  - the League opens on `gym8_cleared` today, and the Rift-to-League handoff has no setter (`STATE.md`, mainline
+    reveal runtime).
+- **The ruins and outposts may have no guard at all.** The Scar and the jungle ruins are dark and unkept by design.
+  A guard there would contradict them.
+- **When built, guards are NPCs.** Cobblemon's NPCs are placed over RCON after a restart
+  (`reapply.py` R9F and R17), never by a function. They stand pinned beside the road, like the route trainers.
+- **The Rift already has five "guard trailhead" placeholders** (`tools/rift_skin.py`). Whether they are the same
+  kind of guard is for Codex too.
+
 ## For the owner to correct
 
 Every line of the purposes table is an agent's call. These are the ones most worth a look:
@@ -277,7 +350,7 @@ Every line of the purposes table is an agent's call. These are the ones most wor
 2. **Brock's landmark is a crane, not a tower:** a builders' town says so with the tool it builds with.
 3. **Giovanni's town as a garrison.** "Civil defender" read as soldiers, supplies and a beacon. It is not read as a
    fortress: the gym is already the gate.
-4. **Frostpeak shrine's purpose is drafted, for Codex.** No brief says whose shrine it is.
+4. **Frostpeak shrine's purpose is drafted, for Codex** (`HANDOVER_CODEX.md` item 28). No brief says whose shrine it is.
 5. **Hometown and the League are left undressed on purpose** (pasted by design, above).
 6. **The ranking's tie-break.** Thirteen places tie at 100%. Placement count decides among them, so bigger
    all-donor towns rank as more pasted.
