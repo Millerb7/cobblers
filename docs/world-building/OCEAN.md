@@ -235,17 +235,31 @@ north of z1300 are expected to form on their own, but not verified.
 ## 5. Underwater discovery
 
 **The principle:** nothing below is visible from the surface, so the ocean rewards
-systematic search. The sea is lit, then dim, then dark, and each step down needs more
-equipment. That gates content without any authored lock.
+systematic search. The sea is lit, then dim, then dark.
 
-### Depth as gating
+### Depth as gating: the water ladder (rewritten 2026-09-27)
 
-| Tier | Depth | What the player faces | What gets them there | Earliest |
-| --- | --- | --- | --- | --- |
-| 0 Sunlit | shelf, y46–62 | one breath covers it | nothing | from the start |
-| 1 Dim | break and slope, y28–46 | the bottom is dark and air runs out on the way back | Respiration, a turtle shell, air pockets under doors or signs | early to mid game |
-| 2 Dark | basin, y8–28 | beyond one breath; sky light is gone | Water Breathing potions (Nether wart), or a conduit | after gym 7, the first Nether trip |
-| 3 Abyss | the trench, below y0 | a long descent in total darkness | Water Breathing plus light, or a conduit chain | late game |
+Depth is gated by the **water ladder**, not by equipment. It is built as `cobblers_blackout`
+(`tools/blackout_pack.py`) and measured in game (EXP-042); `docs/mechanics/DEATH_AND_WIPE.md`
+is the rule and `docs/mechanics/WATER_MAP.md` section 0 what each rung reaches:
+
+| Rung | Air at depth (eyes 5+ blocks under the surface) | Reaches |
+| --- | --- | --- |
+| No mount | vanilla 15 s, then two half-health hits, the second lethal | the shelf; about 37 deep with no time at the bottom (a sprint-swim is 5 blocks per second) |
+| **Surf** (after gym 2, Misty at Lake Viltri, with a Surf- or Dive-capable Pokemon in the party) | 45 s held full, then vanilla: about 61 s | every lake floor; the slope and any open wreck in one visit |
+| **Dive** (after gym 6, the survey diver on Tilpey's north shore, with a Dive-capable Pokemon) | unlimited, with a swim boost to about 10 blocks per second | everything: enclosed and long places, the basin, the trench |
+
+**Vanilla air items are removed** (the owner, 2026-09-26; built in `cobblers_blackout`):
+Respiration is neutralised by a data override, and Water Breathing and Conduit Power are cleared
+the tick they land. In game, a Water Breathing potion's effect was stripped and air drained at the
+vanilla rate under a Respiration III helmet (EXP-042 session 3); Conduit Power is built but not yet
+seen cleared in game.
+
+**What this section used to say** (superseded): four tiers gated by vanilla equipment. Tier 1, the
+slope, by Respiration, a turtle shell and air pockets; tier 2, the basin, by Water Breathing
+potions or a conduit after gym 7's first Nether trip; tier 3, the trench, by Water Breathing plus
+light or a conduit chain. A mount-gated ladder with a potion bypass would not be gated, so the
+items went and the ladder replaced the tiers. The tier numbers below now name depths only.
 
 **How light drops off:**
 - Water is expected to cut sky light by one level per block, so light is gone about 15
@@ -256,17 +270,20 @@ equipment. That gates content without any authored lock.
   `minY 48` (the shelf). The deep-ocean entries need `maxY 48`. The shelf break is therefore
   also the boundary between two spawn pools.
 
-**Two things could undo this gating** and need proof before relying on it:
-- **Pokémon riding.** Whether a ridden water Pokémon lets a player breathe or descend fast
-  underwater is not verified. That is a proposed EXP-015.
-- **Hearts of the sea.** A conduit gives unlimited breath in range. Hearts of the sea should
-  sit only in tier-2 sites. Every buried-treasure chest is a hand-placed loot table, so this
-  is controllable.
+**What could still undo the ladder:**
+- **A ridden submarine mount.** 10 species ride underwater (`cobblemon:liquid/submarine`,
+  EXP-038). Whether riding one keeps its rider's air is not tested (EXP-038 step 2). If it does,
+  that mount bypasses the ladder.
+- **Hearts of the sea** no longer matter: a conduit's effect is cleared (above). They can sit
+  anywhere as treasure.
 
 ### What goes down there
 
 The content per marine region adds up to 34 of the 150 scatter placements (see
-`STRUCTURE_DECISIONS.md`), plus named sites and the set piece.
+`STRUCTURE_DECISIONS.md`), plus named sites and the set piece. The tiers are depths: 0 is the
+shelf (no mount), 1 the slope and 2 the basin (Surf for an open site, Dive for an enclosed or long
+one), 3 the trench (Dive and its own gates). The named sites, by stage, are in
+`docs/mechanics/WATER_PROPOSAL.md` section 3.
 
 | Tier | Frostwater Shelf | Windward Sea | Eastern Reach | Southern Shallows | Outer Deep |
 | --- | --- | --- | --- | --- | --- |
@@ -295,21 +312,21 @@ curves along the border.
 **The descent:**
 - The trench walls are deepslate and dark prismarine, spiralling down.
 - Glow lichen traces a route that can only be seen from inside the trench.
-- Three sealed air-pocket chambers break the descent. Each holds a conduit frame that is
-  missing its heart.
+- Three sealed air-pocket chambers break the descent. Each holds an empty conduit frame, as
+  dressing: a conduit gives nothing in this pack (the ladder above).
 
 **The bottom (y−30 to y−40):**
 - A flooded shrine with three door locks.
 - Each lock takes a key item kept in one of the three shipwreck coves, one in each of
   three different marine regions. Finding them is the systematic search.
-- Opening the shrine gives the encounter: Lugia, if the legendary recommendation in
-  `STRUCTURE_DECISIONS.md` is accepted, otherwise the campaign's own sea guardian. It also
-  gives the last heart of the sea, so the player can build a conduit at the bottom.
+- Opening the shrine gives the encounter: **Lugia** (decided, `docs/STATE.md` "Water
+  legendaries").
 
 **What it needs:**
-- It is gated by depth (tier 3) and by the key search, not by a badge.
-- It stays after the League, but players can reach it as soon as they can breathe
-  underwater.
+- **Dive, the three keys and `champion_cleared`** (the owner, 2026-09-26: "It is the deepest
+  thing in the world and it should not be reachable before the League"). Dive alone would open it
+  at gym 6.
+- The keys can be found from gym 6, so the search starts before the League.
 - The build method follows Step 3's decision. Per EXP-013, it cannot use structure data.
   Any spawn or check keyed to structures has to be replaced with position-based conditions
   or Habitat Blocks.
@@ -323,7 +340,7 @@ pasted as blocks, and every system that reads structure data will ignore it.
 
 | Structure | Source | Built from | Hand-placeable? | What stops working |
 | --- | --- | --- | --- | --- |
-| Ocean monument | vanilla | code, no template | **Not as a template.** Capture one generated in a disposable world in structure-block tiles (it is 58 blocks wide, over the 48-block limit), or try `/place structure` (monuments sit at sea level, not on the heightmap; not tested) | guardian spawning (a structure spawn override), elder guardians unless pasted as entities, the Qwilfish and Overqwil monument entries, explorer maps |
+| Ocean monument | vanilla | code, no template | **Not as a template.** Capture one generated in a disposable world in structure-block tiles (it is 58 blocks wide, over the 48-block limit), or try `/place structure` (monuments sit at sea level, not on the heightmap; not tested) | guardian spawning (a structure spawn override), elder guardians unless pasted as entities, the Qwilfish and Overqwil monument entries, explorer maps. **And in this pack no guardian can exist at all:** MobsBeGone blacklists `minecraft:guardian` and `minecraft:elder_guardian` (`base-pack/cobbleverse/config/mobsbegone-blacklist.json`), so a monument is empty architecture (parked in `WATER_PROPOSAL.md` section 3.1) |
 | Ocean ruins, cold and warm | vanilla | templates | yes | the ocean-ruins preset (Dratini line, Relicanth entries), treasure maps in their chests |
 | Shipwrecks and beached shipwrecks | vanilla | templates | yes | Dhelmise's `#minecraft:shipwreck` entries, treasure maps |
 | Buried treasure | vanilla | code, one chest | yes, as a chest with a loot table | its treasure-map targets |
@@ -370,7 +387,8 @@ From the spawn files the server actually loads (weight above 0):
    route (section 2).
 2. How does WorldPainter extend the canvas to 10240 with the landmass kept at world
    0–8191: an import offset, padding the PNG, or shifting the world? Not verified.
-3. EXP-015 (proposed): does riding a water Pokémon grant breath or fast descent?
+3. Does riding a water Pokémon grant breath or fast descent? EXP-038 read which species ride on and under water
+   (45 and 10); whether a ridden submarine mount keeps its rider's air is its step 2, not run.
 4. Can `/place structure minecraft:monument` land correctly on painted terrain? Monuments
    use sea level, not the heightmap; not tested.
 5. Do frozen-ocean surfaces freeze in a WorldPainter export? Expected yes from biome
