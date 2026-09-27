@@ -75,7 +75,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_kits", "cobblers_spawn_tags", "cobblers_sizes",
                 # 2026-09-26: blackout, recovery claims and the water ladder (tools/blackout_pack.py, EXP-042);
                 # self-driving and it sets keepInventory, so world-local below
-                "cobblers_blackout")
+                "cobblers_blackout",
+                # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone mine (tools/rift_mines.py): blocks
+                # run by R9M, and a gate and zone check that act on their own (advancements), so world-local below
+                "cobblers_rift_mines")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -108,7 +111,7 @@ EXCLUDED = {
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
-               "cobblers_sizes", "cobblers_blackout")
+               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -217,6 +220,9 @@ def prepare(a):
     # Victory Road: one cave network; its Habitat Block tiles and its finds are data the build checks against its
     # own model (`vr_caves.py records --write` writes them)
     py(TOOLS / "vr_caves.py", "build", *src)
+    # the Rift dig camp's mines, quarries and the mega stone mine (data/rift_mines.json); audited below, once the
+    # camp's own plan exists
+    py(TOOLS / "rift_mines.py", "build", *src)
     py(TOOLS / "habitat_blocks.py", "function")
     py(TOOLS / "rewards_pack.py")
     dlg = PACKS / "cobblers_dialogue"
@@ -238,6 +244,9 @@ def prepare(a):
     for s in places():
         py(TOOLS / "town_plan.py", s, *src)
         py(TOOLS / "place_town.py", s, *src)
+    # the mines against the camp's plan, the haul road and the other places, and the gated galleries sealed except
+    # through their gate: offline, fail-closed (tools/rift_mines_audit.py)
+    py(TOOLS / "rift_mines_audit.py", *src)
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "sapling_celebi.py")
@@ -633,6 +642,13 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:deep/%s" % f) for f in indexed("cobblers_deep", "deep")]))
     out.append(("R9C", "Victory Road's caves, from the Deep's mouth to the ravine onto the League's apron",
                 [("fn", "cobblers:vr_caves/%s" % f) for f in indexed("cobblers_vr_caves", "vr_caves")]))
+    # the Rift dig camp as a mining town and the mega stone mine in its spur (tools/rift_mines.py): after the camp's
+    # prep (R8) and tents (R9), whose cells it keeps clear, and before its lights (R16). Shell, air, fittings, then the
+    # surface; then the carts, entities summoned 60 ticks after their chunks are force-loaded (the Rift's fx pattern).
+    # The gate and the zone check are advancements in the same pack and need no step.
+    out.append(("R9M", "the Rift dig camp's mines, quarries and the mega stone mine, then its carts",
+                [("fn", "cobblers:rift_mines/%s" % f) for f in indexed("cobblers_rift_mines", "rift_mines")]
+                + [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]))
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
