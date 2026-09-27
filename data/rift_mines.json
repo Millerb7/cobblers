@@ -1524,7 +1524,7 @@
       "ward_why": "the owner, 2026-09-27: 'i can mine around the door'. Anyone in survival or adventure within ward_margin blocks of the plug, grille and alcove has vanilla Mining Fatigue IV (the ocean-monument ward), so the gate cannot be dug round or broken; no block changes. The zone check stays the real gate for anyone who tunnels in from further away"
     },
     "guardian_modes": {
-      "source": "SOUTHERN_RIFT.md section 4; EXP-036 (a spawned Mega Charizard X stayed Mega through a battle)",
+      "source": "SOUTHERN_RIFT.md section 4; EXP-036 (a spawned Mega Charizard X stayed Mega through a battle); the owner tested a wild Mega in game on staging and it worked (2026-09-27, reported by the owner; not logged)",
       "wild_mega": "a chamber Habitat Block (or spawn_pool_world entry bounded to the chamber) whose one entry carries '<species> mega_evolution=<mega|mega_x|mega_y> uncatchable', fightorflight always_aggro_aspects += mega, mega_x, mega_y; the chamber is built with no light source so it stays at 7 or less. The owner's 'all wild mega pokemon that are uncatchable and enraged'. Still to prove (EXP-036): the ball refused in play, enraged by the config line, spawning from a pool rather than a command.",
       "fallback_mode": "outlier: the species at the top of the band as a data/sizes.json notable individual, not in Mega form; used if the wild-Mega proofs fail. trainer_echo is not chosen: the owner asked for wild Pokemon.",
       "nothing_spawned": "No guardian, pool, Habitat Block or trainer is written by this build. Species and levels are trainer-balance-designer's (null here)."

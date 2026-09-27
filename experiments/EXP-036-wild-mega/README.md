@@ -24,6 +24,7 @@ cleanly, fight as the Mega and stay Mega?
 | Mega after the battle; behaviour after | not reported yet | |
 | Enraged (fightorflight `always_aggro_aspects`) | not tested: the config line is not set | |
 | From a spawn pool or Habitat Block rather than a command | not tested | |
+| A wild Mega in game, again | **yes** | the owner tested a wild Mega in game on staging and it worked (2026-09-27, reported by the owner; not logged) |
 
 ## Decision
 A wild Mega is achievable with Cobblemon's own `mega_evolution` aspect: the mega stone mine's "true wild Mega" mode is
