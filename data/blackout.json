@@ -165,11 +165,14 @@
   "boats": {
     "status": "decided by the owner 2026-09-27 (WATER_PROPOSAL decision 1, option C): 'Boats: option C, shallows only. A boat should not defeat swimming, exhaustion and the ferry from day one.' Built on staging, not run in game",
     "rule": "a player riding a boat or chest boat on sea water at least rough_blocks from land (tools/open_water.py's bands on the canonical heightmap, 16-block cells) is put out of it with the message, unless inside a sheltered box; then the swim rule applies. Coasts, lakes, rivers and the shallows stay boat water",
-    "rough_blocks": 96,
+    "rough_blocks": 48,
+    "rough_blocks_why": "the owner, 2026-09-27: 'Take 48. It is the only number that gates Sunset with real margin, and 13 blocks on the Relic row is nothing'. At 96 the Sunset strait's rough water on the ferry line was one 34-block stretch, swum in about 7 s between boats (the test author's contract C11); measured on the ferry lines: 64 gives 103 (a margin of about 13 over the unaided knock-out, 'the kind of margin that disappears'), 48 gives 142, Northlight 285, the Relic row 13",
     "deep_blocks": 256,
     "sheltered": [
-      {"id": "pacifidlog_bay", "box": [6960, 6864, 7167, 6991],
-       "why": "the only rough-water pocket in the Sound's bay, beside the raft town, whose boat culture (the jetty's boat rack) needs it; measured on the band map, cells x6976-7151 z6880-6976. The open sea south of z6992 stays rough"}
+      {"id": "pacifidlog_bay", "box": [6928, 6640, 7359, 6943],
+       "why": "the owner, 2026-09-27: 'Widen Pacifidlog's sheltered bay box to the whole bay so its boats keep working'. At rough_blocks 48 the bay's rough tongue runs from z6656 south to the open sea (band map, cells x6928-7359); the box stops where the bay meets the open sea at about z6944"},
+      {"id": "pacifidlog_apron", "box": [7040, 6944, 7359, 6991],
+       "why": "the water in front of the raft town's southern decks, between the bay box and the town, so boats at the town keep working; the open sea west of x7040 and south of z6992 stays rough"}
     ],
     "message": "The sea is too rough for a boat out here. You tip into the water."
   },
