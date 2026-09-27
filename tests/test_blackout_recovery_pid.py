@@ -1,4 +1,4 @@
-"""Guardian recovery by the Pokemon's UUID, and the claim paths added with it (c9cb850, f08117e).
+"""Guardian recovery by the Pokemon's UUID, and the claim paths added with it (c9cb850, f08117e, 3e2906e).
 
 Written by the test author, not by the session that wrote tools/blackout_pack.py. It runs the generated functions on
 tests/nbt_sim.py's NbtSim (command storage as NBT, paths by NbtPathArgument's grammar) and the generated MoLang
@@ -14,6 +14,12 @@ Independent sources:
     like a battle loss; a rebuilt guardian spawns as its own species and level, not a Magikarp; the claim message
     names the items taken ("10 Ultra Ball"), not their category.
   - data/blackout.json claims lists (the claimable items) and vanilla's item translation key, item.<ns>.<path>.
+  - 3e2906e's data and the owner's words it quotes: money percent, category quotas and slain_window_ticks;
+    money.held_by_wild_victor (a wild victor's claim holds the money its win took and pays it back; other losses lose
+    it outright); "when i killed it with a sword it did respawn though, it should work both ways whether i kill it or
+    my mon does".
+  - Vanilla NBT path semantics as tests/nbt_sim.py models them, notably getOrCreate appending a list filter's pattern
+    when nothing matches (the hit_mark finding rests on it) and `execute store` writing 0 when its command fails.
 
 Not covered, and it needs a running server (EXP-042 and the owner's staging checks): that Cobblemon fires
 battle_fainted and exposes c.pokemon.actor.is_wild, c.pokemon.pokemon.id and c.players there; that battle_victory's
@@ -21,7 +27,11 @@ player_losers carry player.party.pokemon[].current_hp after the battle; that a w
 Pokemon.PokemonOriginalTrainerType "NONE" and Pokemon.UUID as an int array, Species and Level under those names;
 that `spawnpokemonat ~ ~ ~ cobblemon:<species> level=<n>` accepts a namespaced species; that entity_killed_player
 fires before the tick's death charge and `on attacker` finds the killer; that each claimable item's translation key
-really is item.<ns>.<path> (a plain BlockItem's is block.<ns>.<path>, unchecked here).
+really is item.<ns>.<path> (a plain BlockItem's is block.<ns>.<path>, unchecked here). From 3e2906e: that `on attacker`
+finds a player or a player's Pokemon hurting a guardian and `on owner` finds a Cobblemon Pokemon's player; that a
+guardian killed in one hit is ever noted (it is removed at the hit, before the next tick's recovery/watch); that
+`cobbledollars give @s <n>` pays and accepts 0; the sword kill, the Pokemon kill and the held money in a real loss (the
+commit says none has been run with a player).
 """
 from __future__ import annotations
 
@@ -480,10 +490,10 @@ def test_the_name_record_is_kept_once_per_player_and_replaced_not_duplicated():
     s = loaded(world=lambda kind, toks: False)
     assert _remember(s, P1, "Ash", gt=101) == []
     assert _remember(s, P1, "Ash") == ["execute as %s unless entity @s[tag=cobblers.named] run function "
-                                       '%s:blackout/remember {name:"Ash",id:"%s"}' % (P1_ID, NS, P1_ID)]
+                                       '%s:recovery/remember {name:"Ash",id:"%s"}' % (P1_ID, NS, P1_ID)]
     _remember(s, P2, "Misty")
     _remember(s, P1, "Ash2")
-    names = s.nbt["%s:blackout" % NS]["names"]
+    names = ledger(s)["names"]                     # in the claim ledger since 3e2906e (it settles claims too)
     assert sorted((tuple(r["UUID"]), r["name"], r["id"]) for r in names) == sorted(
         [(tuple(P1), "Ash2", P1_ID), (tuple(P2), "Misty", P2_ID)]), names
     assert s.log.count("tag @s add cobblers.named") == 3
@@ -590,3 +600,296 @@ def test_a_rebuilt_guardian_is_spawned_as_its_own_species_and_level():
     assert names.index("recovery/rebuild_spawn") < names.index("recovery/rebuild_as")
     assert TB.inline_args(fn_calls(s, "recovery/rebuild_as")[0][1]) == {"g": "2", "id": "2"}
     assert not [(n, l) for n, lines in FNS.items() for l in lines if "magikarp" in l.lower() and not l.startswith("#")]
+
+
+# ------------------------------------------------------------------------------------------------ money held (3e2906e)
+
+WILD_UUID = WILD_W["uuid"]
+MONEY = CFG["money"]
+
+
+def _ceil_pct(n, pct):
+    return -(-n * pct // 100)
+
+
+def _wild_loss(slots, balance, claims=None):
+    """P1 loses a battle to the wild WILD_UUID (GUARD's Pokemon UUID), holding {slot index: (id, count)}.
+    Returns the simulator after blackout/battle_loss_wild."""
+    tags = {c: set(CFG["claims"][c]) for c in ("balls", "medicine", "consumables")}
+
+    def category(item):
+        return next(c for c, ids in tags.items() if item in ids)
+
+    def query(cmd):
+        m = re.fullmatch(r"clear @s #%s:claim/(\w+) 0" % NS, cmd)
+        if m:
+            return sum(n for i, n in slots.values() if category(i) == m.group(1))
+        m = re.fullmatch(r"data get entity @s Inventory\[\{Slot:(-?\d+)b\}\]\.count", cmd)
+        if m:
+            return slots[int(m.group(1))][1]
+        m = re.fullmatch(r"data get entity @s Pokemon\.UUID\[(\d)\]", cmd)
+        if m:
+            return GUARD[int(m.group(1))]
+        if cmd.startswith("data get entity %s Pos[" % WILD_UUID):
+            return 100
+        return strict_query({"cobbledollars query @s": balance})(cmd)
+
+    def world(kind, toks):
+        if kind == "entity" and toks == [WILD_UUID]:
+            return True
+        if kind == "items":
+            slot = toks[2]
+            n = -106 if slot == "weapon.offhand" else int(slot.split(".")[1])
+            return n in slots and "#%s:claim/%s" % (NS, category(slots[n][0])) == toks[3]
+        raise AssertionError("unmodelled test %s %s" % (kind, toks))
+
+    def entity(sel, path):
+        if (sel, path) == ("@s", "UUID"):
+            return P1
+        if sel == WILD_UUID and path == "Pokemon":
+            return {"Species": "cobblemon:ursaring", "Level": 60, "UUID": N.IntArray(GUARD)}
+        m = re.fullmatch(r"Inventory\[\{Slot:(-?\d+)b\}\]", path)
+        if sel == "@s" and m:
+            i, n = slots[int(m.group(1))]
+            return {"Slot": N.Byte(int(m.group(1))), "id": i, "count": n}
+        raise AssertionError("unmodelled entity read %s %s" % (sel, path))
+
+    s = loaded(query=query, world=world, entity=entity)
+    if claims:
+        ledger(s)["claims"] = copy.deepcopy(claims)
+    s.command('execute as %s run function %s:blackout/battle_loss_wild {victor:"%s",name:"Ash",id:"%s"}'
+              % (P1_ID, NS, WILD_UUID, P1_ID))
+    return s
+
+
+def _gives(s):
+    return [l for l in s.log if l.startswith("cobbledollars give ")]
+
+
+# Without it the money a wild victor's win takes is lost outright (the owner, 2026-09-27: "i should want to go back and
+# kill that thing"; data money.held_by_wild_victor), is held at a different amount from the charge, or is paid back
+# twice (a second delivery, at the next login) or to the wrong player. The charge is ceil(balance * percent / 100).
+def test_a_wild_victors_claim_holds_the_money_its_win_took_and_pays_it_back_once():
+    assert MONEY["held_by_wild_victor"] is True
+    s = _wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000)
+    (claim,) = ledger(s)["claims"]
+    charge = _ceil_pct(1000, MONEY["percent"])
+    assert claim["money"] == charge and s.get("@s", "bo.lost") == charge, (claim.get("money"), charge)
+    cat = CFG["claims"]["categories"]["balls"]
+    took = min(_ceil_pct(20, cat["percent"]), cat["max"])
+    assert [(i["id"], i["count"]) for i in claim["items"]] == [("cobblemon:ultra_ball", took)]
+    assert claim["pid"] == GUARD_ID
+    s.log.clear()
+    s.call("recovery/resolve_pid", {"pid": GUARD_ID, "resolver": P2_ID})
+    assert _gives(s) == ["cobbledollars give @s %d" % charge], s.log
+    assert _drops(s) == [("cobblemon:ultra_ball", took, tuple(P1))]
+    s.log.clear()
+    s.call("recovery/deliver")                              # the next login
+    assert _gives(s) == [] and _drops(s) == []
+
+
+# Without it a claim that holds no money pays some on delivery, or an environmental death, a trainer loss or any other
+# loss holds money in a claim (data money.held_by_wild_victor_why: they "lose it outright"), or the data's switch off
+# still holds it.
+def test_only_a_wild_battle_loss_holds_money_and_a_claim_without_money_pays_none():
+    s = _ledger_sim()
+    s.call("recovery/resolve_pid", {"pid": GUARD_ID, "resolver": P1_ID})
+    assert _drops(s) and _gives(s) == []
+    callers = sorted({w for w, _ns, f, _r in TB._references() if f == "recovery/hold_money"})
+    assert callers == ["blackout/battle_loss_wild"], callers
+    cfg = copy.deepcopy(CFG)
+    cfg["money"]["held_by_wild_victor"] = False
+    fns = TB.functions(TB.build(cfg))
+    assert not [n for n, lines in fns.items() for l in lines if "hold_money" in l and not l.startswith("#")]
+    assert not [l for l in fns["blackout/arrive"] if CFG["messages"]["claim_money"] in l]
+
+
+# Without it the loss's charge lands in another player's claim: recovery/make sets bo.clm 2 before it knows a claim
+# will be written, so a loss with nothing claimable (or an aborted commit) runs hold_money, which writes claims[-1],
+# the last claim in the ledger, someone else's. That player is paid this player's money when theirs is delivered.
+# Found by this suite at 3e2906e.
+@pytest.mark.xfail(strict=True, reason="3e2906e: bo.clm is 2 from recovery/make's first line, so a wild loss with nothing "
+                                       "claimable runs recovery/hold_money, which writes claims[-1] (another claim)")
+def test_a_wild_loss_with_nothing_claimable_holds_no_money_in_another_players_claim():
+    other = _claim(1, 1, OTHER_ID, P2, P2_ID, name="Misty")
+    s = _wild_loss({}, balance=1000, claims=[other])
+    assert ledger(s)["claims"] == [other], ledger(s)["claims"]
+
+
+# Without it a player who lost with nothing claimable is told the victor "has your money too" (bo.clm 2) though no
+# claim holds it: the money is gone, and the message sends them after it. Found by this suite at 3e2906e.
+@pytest.mark.xfail(strict=True, reason="3e2906e: blackout/arrive tells claim_money on bo.clm 2, which recovery/make sets "
+                                       "before it knows a claim will be written")
+def test_the_arrival_does_not_say_the_victor_holds_money_when_no_claim_was_made():
+    s = _wild_loss({}, balance=1000)
+    assert ledger(s)["claims"] == []
+    s.log.clear()
+    s.world = lambda kind, toks: False
+    s.call("blackout/arrive")
+    told = [l for l in s.log if l.startswith("tellraw @s")]
+    assert told, s.log
+    assert not [l for l in told if CFG["messages"]["claim_money"] in l], told
+
+
+# ------------------------------------------------------------------------------------------------ guardian slain (3e2906e)
+
+class Hurt:
+    """The guardian's last attacker for recovery/watch: None, "player", "owned" (a player's Pokemon) or "wild".
+    Each execute starts with the guardian as executor; `on attacker` and `on owner` move it as Minecraft does."""
+
+    def __init__(self, sim, attacker, slayer=P2):
+        self.attacker, self.ctx, self.tagged = attacker, "guardian", False
+        orig_execute, orig_command = sim.execute, sim.command
+
+        def execute(t):
+            self.ctx = "guardian"
+            return orig_execute(t)
+
+        def command(cmd):
+            if cmd == "tag @s add cobblers.slayer":
+                assert self.ctx == "player", self.ctx
+                self.tagged = True
+            elif cmd == "tag @a remove cobblers.slayer":
+                self.tagged = False
+            return orig_command(cmd)
+        sim.execute, sim.command = execute, command
+        sim.world = self.world
+        sim.entity = lambda sel, path: slayer if (sel, path) == ("@s", "UUID") else None
+
+    def world(self, kind, toks):
+        if kind == "on" and toks == ["attacker"]:
+            if self.ctx != "guardian" or self.attacker is None:
+                return False
+            self.ctx = {"player": "player", "owned": "pokemon_owned", "wild": "pokemon_wild"}[self.attacker]
+            return True
+        if kind == "on" and toks == ["owner"]:
+            if self.ctx != "pokemon_owned":
+                return False
+            self.ctx = "player"
+            return True
+        if kind == "entity" and toks == ["@s[type=player]"]:
+            return self.ctx == "player"
+        if kind == "entity" and toks == ["@s[type=cobblemon:pokemon]"]:
+            return self.ctx.startswith("pokemon")
+        if kind == "entity" and toks == ["@a[tag=cobblers.slayer]"]:
+            return self.tagged
+        raise AssertionError("unmodelled test %s %s" % (kind, toks))
+
+
+def _watch_sim(attacker, t=5000, remembered=((P1, "Ash"), (P2, "Misty"))):
+    s = loaded(query=strict_query({"time query gametime": t}), world=lambda kind, toks: False)
+    for ints, name in remembered:
+        _remember(s, ints, name)
+    ledger(s)["claims"] = [
+        _claim(1, 1, GUARD_ID, P1, P1_ID), _claim(2, 1, GUARD_ID, P1, P1_ID),
+        _claim(5, 1, GUARD_ID, P1, P1_ID, state="deliver"), _claim(3, 2, OTHER_ID, P1, P1_ID)]
+    Hurt(s, attacker)
+    s.log.clear()
+    s.set("@s", "bo.g", 1)                             # the guardian's number, as recovery/watch reads it
+    return s
+
+
+# Without it a guardian hurt by a player, or by a player's Pokemon, keeps no note of who (so a kill outside battle is
+# rebuilt: the owner, 2026-09-27, "when i killed it with a sword it did respawn"), the note goes on another guardian's
+# claims or a settled one, or a wild attacker, no attacker, or a player with no name record is noted.
+@pytest.mark.parametrize("attacker,noted", [("player", True), ("owned", True), ("wild", False), (None, False)])
+def test_watch_notes_the_player_hurting_a_guardian_on_its_open_claims_only(attacker, noted):
+    s = _watch_sim(attacker)
+    before = copy.deepcopy(ledger(s)["claims"])
+    s.call("recovery/watch")
+    hits = {c["id"]: c.get("hit") for c in ledger(s)["claims"]}
+    want = {"who": P2_ID, "t": 5000} if noted else None
+    assert hits == {1: want, 2: want, 5: None, 3: None}, hits
+    if not noted:
+        assert ledger(s)["claims"] == before
+    s = _watch_sim("player", remembered=((P1, "Ash"),))
+    s.call("recovery/watch")
+    assert not [c for c in ledger(s)["claims"] if "hit" in c]
+    assert "execute as @e[type=cobblemon:pokemon,tag=cobblers.guardian] run function %s:recovery/watch" % NS \
+        in FNS["blackout/tick"], "every tick, every guardian"
+
+
+def _vanish_sim(hit_age, now=20000):
+    s = loaded(query=strict_query({"time query gametime": now}),
+               entity=lambda sel, path: P1 if (sel, path) == ("@s", "UUID") else None,
+               world=lambda kind, toks: False)
+    c1, c2 = _claim(1, 1, GUARD_ID, P1, P1_ID), _claim(2, 1, GUARD_ID, P2, P2_ID, name="Misty")
+    if hit_age is not None:
+        for c in (c1, c2):
+            c["hit"] = {"who": P2_ID, "t": now - hit_age}
+    ledger(s)["claims"] = [c1, c2]
+    return s
+
+
+SLAIN = CFG["claims"]["slain_window_ticks"]
+
+
+# Without it a guardian killed by a player outside battle is rebuilt (the owner's complaint), one gone for another
+# reason (lava, a fall, another wild Pokemon) is settled for whoever once scratched it, or the window is off the data's
+# slain_window_ticks. Settled means every open claim of that guardian, for the player who hurt it last.
+@pytest.mark.parametrize("age", [0, 1, SLAIN, SLAIN + 1, None])
+def test_a_vanished_guardian_hurt_by_a_player_within_the_window_is_settled_else_rebuilt(age):
+    s = _vanish_sim(age)
+    s.command("function %s:recovery/vanished {g:1,x:10,y:64,z:10,id:1}" % NS)
+    spawns = [l for l in s.log if "spawnpokemonat" in l]
+    if age is not None and age <= SLAIN:
+        assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "resolved", 2: "deliver"}
+        assert all(c["resolver"] == P2_ID for c in ledger(s)["claims"])
+        assert spawns == []
+    else:
+        assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "open", 2: "open"}
+        assert spawns == ["spawnpokemonat ~ ~ ~ cobblemon:ursaring level=60"], s.log
+
+
+def _maintain(s, passes):
+    """recovery/maintain at each (gametime, site loaded), the guardian absent throughout."""
+    for gt, is_loaded in passes:
+        s.query = strict_query({"time query gametime": gt})
+        s.world = lambda kind, toks, L=is_loaded: L if kind == "loaded" else False
+        s.call("recovery/maintain")
+
+
+# Without it the maintenance passes never reach the settlement when a killed guardian's site stays loaded: the first
+# pass after the kill marks it unseen, the second settles it for the killer and nothing is rebuilt.
+def test_maintenance_settles_a_guardian_killed_by_a_player_while_its_site_stays_loaded():
+    s = _vanish_sim(None)
+    for c in ledger(s)["claims"]:
+        c["hit"] = {"who": P2_ID, "t": 10000}
+    m = CFG["claims"]["maintenance_ticks"]
+    _maintain(s, [(10000 + m // 2, True), (10000 + m // 2 + m, True)])
+    assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "resolved", 2: "deliver"}
+    assert not [l for l in s.log if "spawnpokemonat" in l]
+
+
+# Without it a guardian killed with a sword comes back if its killer leaves: the kill is settled only by maintenance,
+# on the second loaded pass after it, and only while the note is under slain_window_ticks old. A killer who teleports
+# or rides out of range, or logs off, within those seconds returns to find it rebuilt: the owner's complaint of
+# 2026-09-27 ("it should work both ways whether i kill it or my mon does"). Found by this suite at 3e2906e.
+@pytest.mark.xfail(strict=True, reason="3e2906e: a kill is settled only if its site stays loaded for two maintenance passes "
+                                       "within slain_window_ticks; unloaded, the note ages and the guardian is rebuilt")
+def test_a_guardian_killed_by_a_player_who_then_leaves_is_settled_not_rebuilt():
+    s = _vanish_sim(None)
+    for c in ledger(s)["claims"]:
+        c["hit"] = {"who": P2_ID, "t": 10000}
+    m = CFG["claims"]["maintenance_ticks"]
+    unloaded = [(10000 + m // 2 + k * m, False) for k in range(20)]
+    back = [(13000 + m // 2, True), (13000 + m // 2 + m, True)]
+    _maintain(s, unloaded + back)
+    assert not [l for l in s.log if "spawnpokemonat" in l], "rebuilt though a player killed it"
+    assert {c["id"]: c["state"] for c in ledger(s)["claims"]} == {1: "resolved", 2: "deliver"}
+
+
+# Without it a guardian still tagged after its claims settled (a rebuilt copy that was in an unloaded chunk when
+# release ran, then came back) writes a new, malformed "open" claim when a player hits it: recovery/hit_mark's
+# `claims[{g:..,state:"open"}].hit set` appends its filter as a new element when nothing matches (vanilla getOrCreate),
+# and maintenance then calls recovery/check on a claim with no id or site. Found by this suite at 3e2906e.
+@pytest.mark.xfail(strict=True, reason="3e2906e: recovery/hit_mark sets claims[{g:G,state:\"open\"}].hit, which appends "
+                                       "{g:G,state:\"open\",hit:{...}} when guardian G has no open claim")
+def test_hurting_a_guardian_with_no_open_claim_adds_nothing_to_the_ledger():
+    s = _watch_sim("player")
+    for c in ledger(s)["claims"]:
+        if c["g"] == 1:
+            c["state"] = "resolved"
+    before = copy.deepcopy(ledger(s)["claims"])
+    s.call("recovery/watch")
+    assert ledger(s)["claims"] == before, ledger(s)["claims"][len(before):]

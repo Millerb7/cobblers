@@ -468,8 +468,8 @@ def test_every_macro_function_is_called_with_arguments_that_cover_its_keys():
     assert seen["recovery/resolve_pid"] == {"battle_fainted/cobblers_recovery.molang",
                                             "battle_victory/cobblers_blackout.molang",
                                             "pokemon_captured/cobblers_recovery.molang"}, seen
-    assert keys["blackout/remember"] == {"name", "id"}
-    assert seen["blackout/remember"] == {"player_tick_pre/cobblers_names.molang"}, seen
+    assert keys["recovery/remember"] == {"name", "id"}            # the names registry is in the ledger since 3e2906e
+    assert seen["recovery/remember"] == {"player_tick_pre/cobblers_names.molang"}, seen
     loss = inline(mol["battle_victory/cobblers_blackout.molang"], "blackout/battle_loss_' + t.kind + '")
     assert len(loss) == 1 and keys["blackout/battle_loss_wild"] <= loss[0], loss
 

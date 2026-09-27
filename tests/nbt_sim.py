@@ -493,7 +493,9 @@ class NbtSim(TB.Sim):
             return Res(0 if r is None else r, 1)
         if t[:3] == ["data", "get", "storage"]:
             vals = self.sget(t[3], t[4])
-            assert vals, "data get of nothing: %s" % cmd
+            if not vals:                                  # the command fails: since 1.20.3 `store` then writes 0
+                self.failed.append(cmd)
+                return Res(0, 0)
             v = vals[0]
             return len(v) if isinstance(v, (dict, list, tuple, str)) else v
         return super().value(cmd)
