@@ -7,6 +7,12 @@ sections 3-4, `docs/world-building/WORLDGEN_FEATURES.md` (the Mega Showdown 1.0.
 `docs/mechanics/EVOLUTION_STONES.md` and ADR-002/ADR-003 (reward and reset-face patterns), `docs/story/ARC.md`,
 `docs/story/FACTION.md`. The Deep, Hoopa's relic area and the dig camp are in `DEEP_CITY.md`.
 
+**Moved, 2026-09-27 (the owner):** the mega stone mine of section 4 is generated in the dig camp's west spur, not in
+the gulch: "the seam visible early, gated deeper around badge five or six". Section 4's design (seam, adit hall,
+galleries with crystal faces, dead-end Mega chambers, the Heart, the three guardian modes) is what
+`data/rift_mines.json` and `tools/rift_mines.py` build there; the gulch mine is neither built nor cancelled, and the
+southern town (section 3) is unchanged. Not installed or seen in any world yet.
+
 **The wild-Mega question is open.** Another agent is researching whether a wild Pokemon can be in Mega form,
 uncatchable and aggressive. This design works either way (section 4); every place that depends on the answer is
 marked **[MEGA-DEP]**.
