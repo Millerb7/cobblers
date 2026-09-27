@@ -59,9 +59,11 @@ owning process or handle before recovery.
 - **Baseline:** Minecraft 1.21.1, Fabric loader (pack requires >= 0.18.4),
   Fabric API 0.116.14+1.21.1, Fabric Language Kotlin 1.13.13+kotlin.2.4.10,
   Cobblemon 1.7.3, Architectury 13.0.8, Java 21.
-- **Target:** Cobblemon 1.8.x on Minecraft 1.21.1 Fabric (Cobblemon 1.8.0
-  released 2026-09-06 for MC 1.21.1). Same Minecraft version, so the
-  compatibility question is addon API/data compatibility, not MC version.
+- **Target, reached:** Cobblemon 1.8.x on Minecraft 1.21.1 Fabric. The
+  server runs Cobblemon 1.8.0+1.21.1 on Fabric Loader 0.19.5 (`docs/STATE.md`
+  "Runtime"); the baseline above is the reference pack's, not the server's.
+  Same Minecraft version, so the compatibility question is addon API/data
+  compatibility, not MC version.
 - **Base-pack systems:** trainers = Radical Cobblemon Trainers (`rctmod` +
   `rctapi`, data-driven via datapack JSON); Mega Evolution = Mega Showdown;
   TMs = TMCraft (Cobblemon 1.8 also adds native TMs); badges =
@@ -124,7 +126,7 @@ concept that follows terrain and does not align to cell edges.
 | `CLAUDE.md`, `README.md`, `.gitignore`, `.gitattributes` | Root identity and repository policy |
 | `.claude/` | Assistant configuration (agents, rules, skills); see `.claude/README.md` |
 | `docs/vision/GAME_VISION.md` | The game we are making; design source of truth |
-| `docs/research/` | `COBBLEVERSE_COMPATIBILITY.md`, `CAPABILITY_MATRIX.md`, `EXPERIMENT_BACKLOG.md` — verified vs assumed facts, with sources |
+| `docs/research/` | `COBBLEVERSE_COMPATIBILITY.md`, `EXPERIMENT_BACKLOG.md`, `notes/` — verified vs assumed facts, with sources |
 | `docs/architecture/TECHNICAL_ARCHITECTURE.md` | Technical source of truth for layers and boundaries |
 | `docs/mechanics/` | Mechanic designs (level caps, encounters, rewards) before they become content |
 | `docs/decisions/` | ADRs: `README.md`, `TEMPLATE.md`, `ADR-001-modpack-base-strategy.md`, … |
@@ -132,8 +134,8 @@ concept that follows terrain and does not align to cell edges.
 | `modpack/manifest/`, `mods/`, `config/`, `resourcepacks/`, `overrides/` | Our overlay = the players' client pack |
 | `server/config/`, `scripts/`, `launch/`, `README.md` | Dedicated server; `server/scripts/boot-test.ps1` and `assemble-server.ps1` are the entry points |
 | `source/` | Heightmap, masks, Gaea project. Irreplaceable, **outside this repo**, gitignored, pinned by sha256 in `data/world.json`. See `data/notes/source_tree.md` |
-| `data/` | `world.json` (the single config), `cells.json`, `landmarks.json`, `events.json`, `placements.json`, `spawns.json`, `trainers.json`, `gyms.json`, `progression.json`, `routes.json`, `notes/` |
-| `kits/structures`, `palettes`, `biome-kits`, `schematics`, `templates` | Reusable build assets; a template has no position |
+| `data/` | `world.json` (the single config); places: `cells.json`, `regions.json`, `landmarks.json`, `towns.json`, `placements.json`, `structures.json`, `routes.json`, `rivers.json`; encounters: `spawns.json`, `habitat_blocks.json`, `trainers.json`, `route_trainers.json`; progression and story: `progression.json`, `quests.json`, `dialogue.json`, `scenes.json`, `rewards.json`; the Rift: `rift_*.json`, `vr_caves.json`; systems: `blackout.json`, `water_mounts.json`; `notes/`. Gyms are placements plus trainer records; there is no `gyms.json` or `events.json` |
+| `kits/structures`, `biome-kits`, `schematics`, `templates` | Reusable build assets; a template has no position. Palettes are documented in `docs/world-building/BUILD_PALETTE.md` |
 | `derived/` | Generated analysis: slope and aspect masks, site index, path networks, sightlines. Disposable |
 | `build/` | Generated output: datapack, world export, server bundle. Disposable, never hand-edited |
 | `experiments/` | `README.md` template plus `EXP-NNN-<slug>/README.md` per proof (`EXP-000-cobblemon-1.8-compat` first) |
