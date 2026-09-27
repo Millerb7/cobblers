@@ -242,6 +242,17 @@ def running(a, w, fn):
     return v.min(axis=1) if fn == "min" else v.mean(axis=1)
 
 
+def running_max2d(a, r):
+    """The maximum over a (2r+1)-square window, edges padded (separable)."""
+    a = np.asarray(a, np.float64)
+    if r <= 0:
+        return a.copy()
+    p = np.pad(a, ((r, r), (0, 0)), mode="edge")
+    a1 = np.lib.stride_tricks.sliding_window_view(p, 2 * r + 1, axis=0).max(axis=-1)
+    p = np.pad(a1, ((0, 0), (r, r)), mode="edge")
+    return np.lib.stride_tricks.sliding_window_view(p, 2 * r + 1, axis=1).max(axis=-1)
+
+
 def line_cells(a, b):
     """The columns of a straight line, one per step, and the step length (tests/test_system_contracts.py's walk)."""
     (x0, z0), (x1, z1) = a, b
@@ -359,6 +370,17 @@ class Ctx:
 # ---------------------------------------------------------------------------------------------------- protection
 
 
+def islet_footprint(margin):
+    """Relic Island's islet as tools/islet.py builds it (its top is not NaN), grown by `margin`, over the square of
+    half side RADIUS + margin round its centre. The square's corners beyond the outline are plain seabed."""
+    import islet as I
+    top, _ = I.island_top(None, SEA)
+    on = ~np.isnan(np.asarray(top, float))
+    out = np.zeros((on.shape[0] + 2 * margin, on.shape[1] + 2 * margin), bool)
+    out[margin:margin + on.shape[0], margin:margin + on.shape[1]] = on
+    return grow(out, margin) if margin > 0 else out
+
+
 def build_protect(ctx):
     spec = ctx.spec["protect"]
     N = ctx.N
@@ -423,9 +445,10 @@ def build_protect(ctx):
 
     import islet as I
     cx, cz = I.CENTRE
-    r = I.RADIUS + int(spec["islet"]["margin_blocks"])
+    mg = int(spec["islet"]["margin_blocks"])
+    r = I.RADIUS + mg
     box = clip_box(cx - r, cz - r, cx + r + 1, cz + r + 1, N)
-    add("islet", box, np.ones((box[3] - box[1], box[2] - box[0]), bool))
+    add("islet", box, islet_footprint(mg))
 
     for site in spec.get("event_sites", []):
         x0, z0, x1, z1 = site["box"]
@@ -718,7 +741,7 @@ def allowed_amplitude(ctx, xs, zs, nx, nz, S, hw, reaches_at, e, dflt):
     cap = float(e["max_amplitude_blocks"])
     margin = float(dflt["bank_margin_blocks"])
     pc = float(dflt["protect_clearance_blocks"])
-    rise = float(dflt.get("room_rise_blocks", 3))
+    rise = float(e.get("room_rise_blocks", dflt.get("room_rise_blocks", 3)))
     maxd = int(cap + hw.max() + margin + pc + 3)
     N = ctx.N
     free = np.full(n, float(maxd))
@@ -846,11 +869,31 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
     nx, nz = -tz, tx
     Yoff = np.zeros(n)
     rep = {"course": course["id"], "windows": []}
+    # a station whose water reaches within 3 blocks of a lake basin is the lake's: never swung, never re-stepped
+    near_lake = np.zeros(n, bool)
+    for i in range(n):
+        rr = int(width[i] / 2.0) + 3
+        zi, xi = int(round(Z[i])), int(round(X[i]))
+        near_lake[i] = bool(ctx.lake_mask[max(0, zi - rr):zi + rr + 1, max(0, xi - rr):xi + rr + 1].any())
+    # tributary mouths: a meander must pass through the column where another cut course joins this one
+    doc = load("rivers.json")
+    cut_ids = set((doc.get("cut") or {}).get("courses_cut", []))
+    junctions = []
+    for c2 in doc["courses"]:
+        if c2.get("ends_in") == course["id"] and c2["id"] in cut_ids and c2.get("graded_polyline"):
+            ex_, ez_ = c2["graded_polyline"][-1][:2]
+            junctions.append(float(C[int(np.argmin((X - ex_) ** 2 + (Z - ez_) ** 2))]))
+    rep["junctions_m"] = [round(j, 1) for j in junctions]
     for e in entries:
         if kind_of(e) != "meander":
             continue
-        win = (C >= e["from_m"]) & (C <= e["to_m"]) & ~wb
+        win = (C >= e["from_m"]) & (C <= e["to_m"]) & ~wb & ~near_lake
         ii = np.nonzero(win)[0]
+        if len(ii):
+            # the longest unbroken run: a window never swings through a lake's basin
+            cuts = np.nonzero(np.diff(ii) > 1)[0]
+            runs = np.split(ii, cuts + 1)
+            ii = max(runs, key=len)
         if len(ii) < 20:
             raise ShapeError("%s: the window %s-%s holds no river stations" % (e["id"], e["from_m"], e["to_m"]))
         a, b = C[ii[0]], C[ii[-1]]
@@ -863,8 +906,20 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
                             e["wavelength_widths"][1] * wmed))
         A = running(running(A, lam / 4.0, "min"), lam / 8.0, "mean")
         t = np.clip(np.minimum(C[ii] - a, b - C[ii]) / (lam / 2.0), 0.0, 1.0)
+        for cj in junctions:
+            t = np.minimum(t, np.clip((np.abs(C[ii] - cj) - 6.0) / (lam / 2.0), 0.0, 1.0))
         A = np.clip(A * (0.5 - 0.5 * np.cos(np.pi * t)), 0.0, float(e["max_amplitude_blocks"]))
-        Yoff[ii] = A * np.interp(((C[ii] - a) / lam + u0) % 1.0, cn_t, yn_t)
+        # no two loops alike: the wavelength wanders and the amplitude breathes along the window (a fixed sine reads
+        # as drawn, not as a river); amplitude only ever shrinks from the room allowed
+        sw = C[ii] - a
+        jl = float(e.get("wavelength_jitter", 0.3))
+        ja = float(e.get("amplitude_jitter", 0.35))
+        nl = value_noise(sw, np.zeros_like(sw), lam * 1.3, seed_of("meander_l", e["id"]))
+        na = value_noise(sw, np.full_like(sw, 17.0), lam * 0.9, seed_of("meander_a", e["id"]))
+        lam_s = lam * (1.0 + jl * (2.0 * nl - 1.0))
+        phase = u0 + np.concatenate([[0.0], np.cumsum(np.diff(sw) / lam_s[1:])])
+        A = A * (1.0 - ja * na)
+        Yoff[ii] = A * np.interp(phase % 1.0, cn_t, yn_t)
         rep["windows"].append({"id": e["id"], "kind": "meander", "from_m": float(a), "to_m": float(b),
                                "wavelength": round(lam, 1), "amplitude_median": round(float(np.median(A)), 1),
                                "amplitude_max": round(float(A.max()), 1), "omega_deg": e["omega_deg"],
@@ -897,7 +952,11 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
     for e in entries:
         kind = kind_of(e)
         jj = np.nonzero((cn >= e["from_m"]) & (cn <= e["to_m"]))[0]
-        jj = np.array([j for j in jj if not rat[min(n - 1, int(np.searchsorted(C, cn[j])))]["water_body"]], int)
+        jj = np.array([j for j in jj if not rat[min(n - 1, int(np.searchsorted(C, cn[j])))]["water_body"]
+                       and not near_lake[min(n - 1, int(np.searchsorted(C, cn[j])))]], int)
+        if len(jj):
+            runs = np.split(jj, np.nonzero(np.diff(jj) > 1)[0] + 1)
+            jj = max(runs, key=len)
         if len(jj) < 8:
             raise ShapeError("%s: fewer than 8 stations in its window" % e["id"])
         touched[jj] = True
@@ -986,7 +1045,49 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
             "zone": zone, "touched": touched, "jt": jt, "rat_new": new_rat, "rep": rep}
 
 
-def carve_course(ctx, k, r, course, corridor_half):
+def course_footprints(ctx):
+    """Every cut course's painted water (its non-lake stations, half width plus 2), as (box, mask) per course, from
+    data/rivers.json: what no other feature may fill or seal (a lake shelf across an outlet, a meander's old-channel
+    fill over a tributary's mouth)."""
+    if getattr(ctx, "course_fp", None) is not None:
+        return ctx.course_fp
+    import grade_rivers as GR
+    doc = load("rivers.json")
+    cut = set((doc.get("cut") or {}).get("courses_cut", []))
+    out = {}
+    for c in doc["courses"]:
+        if c["id"] not in cut or not c.get("graded_polyline"):
+            continue
+        pts, chain = GR.densify_chained(c["graded_polyline"])
+        xs = np.array([p[0] for p in pts])
+        zs = np.array([p[1] for p in pts])
+        hws = np.array([GR.at_chainage(c["reaches"], ch)["width"] / 2.0 + 2.0 for ch in chain])
+        keep = np.array([not GR.at_chainage(c["reaches"], ch)["water_body"] for ch in chain])
+        if not keep.any():
+            continue
+        pad = int(hws.max()) + 3
+        box = clip_box(xs.min() - pad, zs.min() - pad, xs.max() + pad + 1, zs.max() + pad + 1, ctx.N)
+        ii = np.nonzero(keep)[0]
+        best, _i, _l = stamp((xs[ii], zs[ii], np.zeros(len(ii)), np.zeros(len(ii))), box, lambda j: float(hws[ii[j]]))
+        out[c["id"]] = (box, np.isfinite(best))
+    ctx.course_fp = out
+    return out
+
+
+def footprint_in(ctx, box, skip=()):
+    """The union of the course footprints over `box`, leaving out the courses in `skip`."""
+    m = np.zeros((box[3] - box[1], box[2] - box[0]), bool)
+    for cid, (b, fm) in course_footprints(ctx).items():
+        if cid in skip:
+            continue
+        a0, a1 = max(box[1], b[1]), min(box[3], b[3])
+        c0, c1 = max(box[0], b[0]), min(box[2], b[2])
+        if a1 > a0 and c1 > c0:
+            m[a0 - box[1]:a1 - box[1], c0 - box[0]:c1 - box[0]] |= fm[a0 - b[1]:a1 - b[1], c0 - b[0]:c1 - b[0]]
+    return m
+
+
+def carve_course(ctx, k, r, course, corridor_half, entries):
     """Write a reshaped course's stretches into the ground: fill the abandoned channel, cut the new one, hold a bank
     lip at the water's level wherever the new water would spill."""
     jt = r["jt"]
@@ -998,16 +1099,20 @@ def carve_course(ctx, k, r, course, corridor_half):
     pad = int(Rj[jt].max()) + corridor_half + 4
     box = clip_box(min(xn[jt].min(), r["X"].min()) - pad, min(zn[jt].min(), r["Z"].min()) - pad,
                    max(xn[jt].max(), r["X"].max()) + pad + 1, max(zn[jt].max(), r["Z"].max()) + pad + 1, ctx.N)
-    # the audit's footprint: the original centreline, over the touched stretches, grown by corridor_half
-    cmin, cmax = r["cn"][jt].min() - 8, r["cn"][jt].max() + 8
-    oi = np.nonzero((r["C"] >= cmin) & (r["C"] <= cmax))[0]
+    # the audit's footprint: the original centreline over each window (8 blocks either side), grown by corridor_half
     corr = np.zeros((box[3] - box[1], box[2] - box[0]), bool)
-    for i in oi[::2]:
-        a0, a1 = max(0, int(r["Z"][i]) - corridor_half - box[1]), min(corr.shape[0], int(r["Z"][i]) + corridor_half + 2 - box[1])
-        b0, b1 = max(0, int(r["X"][i]) - corridor_half - box[0]), min(corr.shape[1], int(r["X"][i]) + corridor_half + 2 - box[0])
-        if a1 > a0 and b1 > b0:
-            zz, xx = np.mgrid[a0:a1, b0:b1]
-            corr[a0:a1, b0:b1] |= np.hypot(xx + box[0] - r["X"][i], zz + box[1] - r["Z"][i]) <= corridor_half
+    in_win = np.zeros(len(r["C"]), bool)
+    for e in entries:
+        in_win |= (r["C"] >= e["from_m"]) & (r["C"] <= e["to_m"])
+        oi = np.nonzero((r["C"] >= e["from_m"] - 8) & (r["C"] <= e["to_m"] + 8))[0]
+        for i in oi[::2]:
+            a0, a1 = max(0, int(r["Z"][i]) - corridor_half - box[1]), min(corr.shape[0], int(r["Z"][i]) + corridor_half + 2 - box[1])
+            b0, b1 = max(0, int(r["X"][i]) - corridor_half - box[0]), min(corr.shape[1], int(r["X"][i]) + corridor_half + 2 - box[0])
+            if a1 > a0 and b1 > b0:
+                zz, xx = np.mgrid[a0:a1, b0:b1]
+                corr[a0:a1, b0:b1] |= np.hypot(xx + box[0] - r["X"][i], zz + box[1] - r["Z"][i]) <= corridor_half
+    # the lakes are the lake pass's (P5), whatever a river window touches
+    corr &= ~ctx.lake_mask[sl(box)]
     # the new channel
     sel = jt
     stations = (xn[sel], zn[sel], r["nxn"][sel], r["nzn"][sel])
@@ -1015,23 +1120,40 @@ def carve_course(ctx, k, r, course, corridor_half):
     has = idx >= 0
     J = np.where(has, sel[np.maximum(idx, 0)], 0)
     lv = level[J].astype(float)
-    fl = floor[J]
+    # cut to the lowest level of the stations either side: a column at a step may paint with either station's level,
+    # and it must hold water under both
+    lcut = running(level.astype(float), 5, "min")
+    fl = np.minimum(floor[J], lcut[J] - 1.0)
     hw = hwn[J]
     off = r["offset"][J]
     inner = has & (best <= hw)
     e_side = np.where(lat >= off, hw, -hw)
     den = np.where(np.abs(e_side - off) < 1e-6, 1e-6, e_side - off)
     tpar = np.clip((lat - off) / den, 0.0, 1.0)
-    ts_in = np.minimum(fl + (lv - 1 - fl) * tpar ** 2, lv - 1)
+    edge = lcut[J] - 1.0
+    ts_in = np.minimum(fl + (edge - fl) * tpar ** 2, edge)
     # the bank rises from the water's edge at the reach's bank slope; ground above that line is cut back (a cut bank
     # where a bend swings into a terrace), ground below it is left alone
     ts_out = (lv - 1) + (best - hw) * bank[J]
-    target = np.floor(np.where(inner, ts_in, ts_out) + 0.5)
+    target = np.floor(np.where(has, np.where(inner, ts_in, ts_out), 0.0) + 0.5)
     cut_zone = has & (best <= hw + 2.0 / bank[J] + 1.0)
     cur = ctx.G1[sl(box)].astype(np.int32)
     new = cur.copy()
-    # the old channel, where it is abandoned
-    olds = np.nonzero((r["C"] >= cmin) & (r["C"] <= cmax) & ~r["wb"])[0]
+    # water that must stay water: the course's untouched stretches beside the windows and every other course's
+    # painted channel (a tributary's mouth) are never filled and never get a lip across them
+    tset = set(int(j) for j in jt)
+    ut = np.array([j for j in np.nonzero(~np.array([rr["water_body"] for rr in r["rat_new"]]))[0] if int(j) not in tset], int)
+    others = footprint_in(ctx, box, skip=(course["id"],))
+    if len(ut):
+        ubest, uidx, _ul = stamp((xn[ut], zn[ut], r["nxn"][ut], r["nzn"][ut]), box, lambda j: float(hwn[ut[j]] + 1.0))
+        u_any = uidx >= 0
+        u_core = u_any & (ubest <= hwn[ut[np.maximum(uidx, 0)]])
+    else:
+        u_any = u_core = np.zeros(best.shape, bool)
+    keep_wet = u_any | others
+    no_lip = u_core | others
+    # the old channel, where a window abandoned it
+    olds = np.nonzero(in_win & ~r["wb"])[0]
     if len(olds):
         Lo = np.floor(r["S"] + 0.01).astype(int)
         ox, oz = r["X"][olds], r["Z"][olds]
@@ -1044,7 +1166,7 @@ def carve_course(ctx, k, r, course, corridor_half):
         ohas = oidx >= 0
         OJ = np.where(ohas, olds[np.maximum(oidx, 0)], 0)
         old_wet = ohas & (cur < Lo[OJ])
-        fill = old_wet & ~(has & (best <= hw + 1.0))
+        fill = old_wet & ~(has & (best <= hw + 1.0)) & ~keep_wet
         new = np.where(fill, np.maximum(new, Lo[OJ] + 1), new)
     new = np.where(cut_zone, np.minimum(new, target.astype(np.int32)), new)
     # bank lip: a dry column beside new water, lower than that water's level, is raised to it
@@ -1060,23 +1182,67 @@ def carve_course(ctx, k, r, course, corridor_half):
             b = (slice(max(0, -dz), wet.shape[0] + min(0, -dz)), slice(max(0, -dx), wet.shape[1] + min(0, -dx)))
             nb_wet[a] = wet[b]
             nb_lv[a] = lvl[b]
-            raise_m = nb_wet & ~wet & (new < nb_lv) & ~standing
+            raise_m = nb_wet & ~wet & (new < nb_lv) & ~standing & ~no_lip
             new = np.where(raise_m, np.maximum(new, nb_lv).astype(np.int32), new)
-    mask = corr & (new != cur)
+    # another course's channel is changed only where this course's own new channel runs through it (a junction)
+    mask = corr & (new != cur) & ~(others & ~inner)
     ok = ctx.write(k, box, new.astype(np.int16), mask)
     return int(ok.sum())
 
 
 def revised_record(course, r):
+    import grade_rivers as GR
     rev = copy.deepcopy(course)
     sg, cn = r["sg"], r["cn"]
-    rev["graded_polyline"] = [[round(float(r["xn"][j]), 2), round(float(r["zn"][j]), 2), float(r["level"][j]),
-                               round(float(r["floor"][j]), 2)] for j in range(len(sg))]
+    # untouched stretches keep the canonical course's own stations, exactly (full precision, the original
+    # surfaces): resampled at the reshaped course's arc length they sat a fraction of a block along, and a channel
+    # whose half width is a whole number painted a column narrower on each side (the first run's new leaks)
+    opts, och = GR.densify_chained(course["graded_polyline"])
+    touched = r["touched"]
+    runs = []
+    j = 0
+    while j < len(sg):
+        if touched[j]:
+            k = j
+            while k + 1 < len(sg) and touched[k + 1]:
+                k += 1
+            runs.append((j, k))
+            j = k + 1
+        else:
+            j += 1
+    verts, oldc = [], []
+    i = 0
+    for a, b in runs:
+        ca, cb = float(cn[a]), float(cn[b])
+        while i < len(opts) and och[i] < ca:
+            p = opts[i]
+            verts.append([float(p[0]), float(p[1]), float(p[2]), float(p[3])])
+            oldc.append(float(och[i]))
+            i += 1
+        for jj_ in range(a, b + 1):
+            verts.append([round(float(r["xn"][jj_]), 3), round(float(r["zn"][jj_]), 3), float(r["level"][jj_]),
+                          round(float(r["floor"][jj_]), 2)])
+            oldc.append(float(cn[jj_]))
+        while i < len(opts) and och[i] <= cb:
+            i += 1
+    while i < len(opts):
+        p = opts[i]
+        verts.append([float(p[0]), float(p[1]), float(p[2]), float(p[3])])
+        oldc.append(float(och[i]))
+        i += 1
+    rev["graded_polyline"] = verts
+    cn = np.maximum.accumulate(np.array(oldc))
+    # the reach boundaries in the chainage the painter will measure along these vertices (chords of the rounded
+    # vertices, a little shorter than the arc length sg on a bend: over a long course sg drifts several blocks and
+    # a width change would land on the wrong stations)
+    px_ = np.array([p[0] for p in rev["graded_polyline"]])
+    pz_ = np.array([p[1] for p in rev["graded_polyline"]])
+    ch_paint = np.concatenate([[0.0], np.cumsum(np.hypot(np.diff(px_), np.diff(pz_)))])
     new_reaches = []
     for rc in course["reaches"]:
         q = dict(rc)
-        q["from_m"] = round(float(np.interp(rc["from_m"], cn, sg)))
-        q["to_m"] = round(float(np.interp(rc["to_m"], cn, sg)))
+        q["from_m"] = round(float(np.interp(rc["from_m"], cn, ch_paint)), 2)
+        q["to_m"] = round(float(np.interp(rc["to_m"], cn, ch_paint)), 2)
         new_reaches.append(q)
     rev["reaches"] = new_reaches
     names = {0: "as_before", 1: "pool", 2: "riffle", 3: "cascade", 4: "fall", 5: "plunge_pool"}
@@ -1109,7 +1275,7 @@ def rivers_pass(ctx):
         course = course_by_id(doc, cid)
         k = ctx.feature("river:" + cid, "rivers", entries=[e["id"] for e in es])
         r = reshape_course(ctx, GR, course, es, dflt, lambda e: e["_kind"])
-        written = carve_course(ctx, k, r, course, int(dflt["corridor_half_width_blocks"]))
+        written = carve_course(ctx, k, r, course, int(dflt["corridor_half_width_blocks"]), es)
         ctx.revised_courses[cid] = revised_record(course, r)
         rep = r["rep"]
         rep["columns_written"] = written
@@ -1248,9 +1414,12 @@ def stream_pass(ctx):
     J = np.maximum(idx, 0)
     lv = level[J].astype(float)
     inner = has & (best <= hw)
-    ts_in = np.minimum(floor[J] + (lv - 1 - floor[J]) * np.clip(best / hw, 0, 1) ** 2, lv - 1)
+    # cut to the lowest level of the stations either side (a column at a step paints with either station's level)
+    lcut = running(level.astype(float), 5, "min")[J]
+    fl = np.minimum(floor[J], lcut - 1.0)
+    ts_in = np.minimum(fl + (lcut - 1 - fl) * np.clip(best / hw, 0, 1) ** 2, lcut - 1)
     ts_out = lv - 1 + (best - hw) * 2.0
-    target = np.floor(np.where(inner, ts_in, ts_out) + 0.5).astype(np.int32)
+    target = np.floor(np.where(has, np.where(inner, ts_in, ts_out), 0.0) + 0.5).astype(np.int32)
     cur = ctx.G1[sl(box)].astype(np.int32)
     new = np.where(has & (best <= hw + 2.0), np.minimum(cur, target), cur)
     # the spring pool, eight blocks down the sea side of the pass
@@ -1352,7 +1521,8 @@ def lake_pass_one(ctx, body):
     H, W = g0.shape
     wet = inside & (g0 < L)
     depth0 = np.where(wet, L - g0, 0)
-    prot = ctx.P[sl(box)] | (ctx.owner[sl(box)] != 0)
+    # never shape under a river's painted channel: a shelf across an outlet would seal the lake
+    prot = ctx.P[sl(box)] | (ctx.owner[sl(box)] != 0) | footprint_in(ctx, box)
     editable = wet & (depth0 >= 2) & ~prot
     factor = 1 if H * W <= 400000 else (2 if H * W <= 2500000 else 4)
     anc = lb["landmark"]["anchor"]
@@ -1361,13 +1531,24 @@ def lake_pass_one(ctx, body):
     dshore = distance_scaled(~wet, wet, factor)
     B = 1.0 - box_mean(wet, int(dflt["bay_radius_blocks"]))
     wmin, wmax = body["shelf_width"]
-    Wsh = wmin + (wmax - wmin) * np.clip((B - 0.35) / 0.30, 0.0, 1.0)
+    # how enclosed the SHORE is, carried out over the water beside it: a column 20 blocks out takes the bayness of
+    # the shore it belongs to, not its own (its own window is mostly water, so every shelf came out at the narrow end)
+    shore = wet & dilate4(~wet)
+    rs = int(max(wmax, max((s["shelf_width"][1] for s in body.get("sectors", [])), default=0))) + 4
+    den = box_mean(shore, rs)
+    Bs = np.where(den > 1e-9, box_mean(np.where(shore, B, 0.0), rs) / np.maximum(den, 1e-9), B)
+    bay = np.clip((Bs - 0.35) / 0.30, 0.0, 1.0)
+    Wsh = wmin + (wmax - wmin) * bay
     zz, xx = np.mgrid[0:H, 0:W]
     brg = bearing_deg(xx - anchor_zx[1], zz - anchor_zx[0])
     for sec in body.get("sectors", []):
         m = in_bearing(brg, sec["bearing_from_anchor_deg"])
         a, b = sec["shelf_width"]
-        Wsh = np.where(m, a + (b - a) * np.clip((B - 0.35) / 0.30, 0.0, 1.0), Wsh)
+        Wsh = np.where(m, a + (b - a) * bay, Wsh)
+    # the shelf's edge wanders: a ring of one width reads as a swimming pool's step, not a lake's shelf
+    swn = float(dflt.get("shelf_width_noise", 0.3))
+    nsh = value_noise(xx + box[0], zz + box[1], float(dflt.get("shelf_noise_scale_blocks", 56)), seed_of("shelf", body["id"]))
+    Wsh = Wsh * (1.0 + swn * (2.0 * nsh - 1.0))
     wf = float(dflt["wade_fraction_of_shelf"])
     dd, dw = float(body["drop_depth"]), float(body["drop_width"])
     Tt = np.where(dshore <= Wsh * wf, 1.0, 2.0)
@@ -1383,7 +1564,13 @@ def lake_pass_one(ctx, body):
     nz = value_noise(xx + box[0], zz + box[1], dflt["floor_noise_scale_blocks"], seed_of("lakefloor", body["id"]))
     Tf = np.maximum(dd, Tf + (nz - 0.5) * 2.0 * float(dflt["floor_noise_blocks"]))
     Tt = np.where(floor_m, Tf, Tt)
-    zone = np.where(dshore <= Wsh, np.where(B > 0.6, 6, 1), np.where(drop, 2, 3)).astype(np.uint8)
+    # an arm or a bay that was shallow stays shallower than the main basin: the drop-off and floor never go more
+    # than local_deepen_blocks below the deepest old bed within local_radius_blocks (a narrow arm 6 deep is not
+    # dug out to the basin's drop_depth)
+    lr = int(dflt.get("local_radius_blocks", 32))
+    Dloc = running_max2d(depth0.astype(np.float64), lr)
+    Tt = np.minimum(Tt, np.maximum(2.0, Dloc + float(dflt.get("local_deepen_blocks", 2))))
+    zone = np.where(dshore <= Wsh, np.where(Bs > 0.6, 6, 1), np.where(drop, 2, 3)).astype(np.uint8)
     # keep zones and flattened zones
     keeps = {}
     keep_all = np.zeros((H, W), bool)
@@ -1396,6 +1583,13 @@ def lake_pass_one(ctx, body):
         keeps[fz["id"]] = fm
         Tt = np.where(fm, float(fz["to_depth"]), Tt)
         zone[fm] = 3
+    if keep_all.any():
+        # the plunging floor would stand deeper than a kept zone's own edge and leave the zone a plateau inside a
+        # moat; beside a keep zone the floor eases back to the old bed over keep_blend_blocks (never shallower
+        # than the design, so a walled pit stays walled)
+        kbl = float(dflt.get("keep_blend_blocks", 32))
+        wk = np.clip(distance_scaled(keep_all, None, factor) / kbl, 0.0, 1.0)
+        Tt = np.where(Tt > depth0, depth0 + (Tt - depth0) * smoothstep(wk), Tt)
     Tt = np.where(keep_all, depth0.astype(float), Tt)
     zone[keep_all & wet] = 7
     # humps
@@ -1443,15 +1637,32 @@ def lake_pass_one(ctx, body):
     # shoals: the declared ones first, then enough to bring every point within the rung's budget
     sd = dflt["shoal"]
     shoals = []
+    trend = body.get("shoal_trend_deg")
 
     def put_shoal(z, x, why):
+        """A sunken island: an irregular, elongated crest 1 deep, a short apron to 3 deep (its own little shelf),
+        then a steep flank to the floor (its own drop-off), so it reads as structure, not as a cone."""
         rc = float(sd["crest_radius"])
         fr = float(sd["flank_run_per_block"])
-        d = np.hypot(zz - z, xx - x)
-        v = np.where(d <= rc, 1.0, 1.0 + (d - rc) / fr)
+        if trend is None:
+            ang = rng.uniform(0.0, math.pi)
+        else:
+            b_ = math.radians(trend + rng.uniform(-14.0, 14.0))
+            ang = math.atan2(-math.cos(b_), math.sin(b_))
+        lo_l, hi_l = body.get("shoal_crest_length", [2.4 * rc, 4.4 * rc])
+        lo_w, hi_w = body.get("shoal_crest_width", [1.4 * rc, 2.0 * rc])
+        ea, eb = rng.uniform(lo_l, hi_l) / 2.0, rng.uniform(lo_w, hi_w) / 2.0
+        du = (xx - x) * math.cos(ang) + (zz - z) * math.sin(ang)
+        dv = -(xx - x) * math.sin(ang) + (zz - z) * math.cos(ang)
+        ring = np.hypot(du / ea, dv / eb)
+        wob = value_noise(xx + box[0], zz + box[1], 6.0, seed_of("shoal", body["id"], int(x), int(z)))
+        out = np.maximum(0.0, ring * (1.0 + 0.35 * (wob - 0.5)) - 1.0) * eb
+        apron = float(sd.get("apron_blocks", 3.0))
+        v = np.where(out <= 0, 1.0, np.where(out <= apron, 1.0 + 2.0 * out / apron, 3.0 + (out - apron) / fr))
         m = ~keep_all & (v < Tt)
-        zone[m & (d <= rc)] = 5
-        return np.where(m, v, Tt), {"at": [int(x) + box[0], int(z) + box[1]], "why": why}
+        zone[m & (out <= apron)] = 5
+        return np.where(m, v, Tt), {"at": [int(x) + box[0], int(z) + box[1]], "why": why,
+                                    "crest_axes": [round(2 * ea, 1), round(2 * eb, 1)]}
 
     excl = np.zeros((H, W), bool)
     for kid in body.get("max_to_rest_excludes", []):
@@ -1477,9 +1688,9 @@ def lake_pass_one(ctx, body):
         Tt, rec = put_shoal(zs_[i], xs_[i], s.get("why", "near %s" % s["target"]))
         shoals.append(rec)
     rung = lakes["rungs"][body["rung"]]
-    target = float(rung["max_to_rest_blocks"])
+    target = float(body.get("max_to_rest_blocks", rung["max_to_rest_blocks"]))
     auto = any(s["kind"] == "auto" for s in body.get("shoals", []))
-    for _ in range(int(sd["max_count"])):
+    for _ in range(int(body.get("max_shoals", sd["max_count"]))):
         if not auto:
             break
         rest = ~wet | (Tt <= 1.0)
@@ -1582,7 +1793,10 @@ def flats_pass(ctx, f):
     sea = sea_in_box(ctx, box)
     land = ~sea & (g >= SEA)
     if f.get("shore_region"):
-        rb, rm = ctx.region_mask(f["shore_region"], 24)
+        # the region polygons stop short of the beach (Pallet's by 25-40 blocks): grown only 24, the shore itself was
+        # not a source, the water beside it measured 200+ blocks from shore, and the first run laid bars on a
+        # sixth of the coast. The region is grown far enough to take in its own beach
+        rb, rm = ctx.region_mask(f["shore_region"], int(f.get("shore_region_grow_blocks", 96)))
         shore_src = np.zeros(g.shape, bool)
         a0, a1 = max(box[1], rb[1]), min(box[3], rb[3])
         b0, b1 = max(box[0], rb[0]), min(box[2], rb[2])
@@ -1611,12 +1825,17 @@ def flats_pass(ctx, f):
     zone &= ~ex
     bars = f["bars"]
     sig = float(bars["sigma_blocks"])
+    seed = seed_of("flats", f["id"])
     bump = np.zeros((H, W))
-    for o in bars["offsets_blocks"]:
-        bump = np.maximum(bump, np.exp(-((dl - o) / sig) ** 2))
+    # a bar wanders in and out along the shore and swells and thins: bars at fixed offsets read on the maps as
+    # contour lines drawn round the coast
+    wav = float(bars.get("wander_blocks", 6.0))
+    for i, o in enumerate(bars["offsets_blocks"]):
+        wo = (2.0 * value_noise(xx, zz, 110.0, seed + 31 + i) - 1.0) * wav
+        sg = sig * (0.65 + 0.7 * value_noise(xx, zz, 70.0, seed + 47 + i))
+        bump = np.maximum(bump, np.exp(-((dl - o - wo) / sg) ** 2))
     crest, runnel = float(bars["crest_depth"]), float(bars["runnel_depth"])
     Tt = runnel - (runnel - crest) * bump
-    seed = seed_of("flats", f["id"])
     sp = float(np.mean(bars["rip_every_blocks"]))
     nu = value_noise(xx, zz, sp, seed)
     rip = np.abs(nu - 0.5) < (bars["rip_width_blocks"] / (2.0 * sp)) * 1.5
@@ -1628,6 +1847,10 @@ def flats_pass(ctx, f):
     outer_edge = bars["offsets_blocks"][-1] + 2 * sig
     blend = np.clip((dl - outer_edge) / 8.0, 0.0, 1.0)
     Tt = Tt * (1 - blend) + depth0 * blend
+    # bars ease back into the old bed toward an exclusion or the box's edge instead of stopping square
+    edge_src = ex | ~inbox
+    wfe = np.clip(distance(edge_src, None, max_iter=16) / 12.0, 0.0, 1.0)
+    Tt = depth0 + (Tt - depth0) * smoothstep(wfe)
     lag = f.get("lagoon")
     lag_rep = None
     if lag:
@@ -1724,9 +1947,13 @@ def fungal_pass(ctx):
     lo_w, hi_w = fb["bar_width_blocks"]
     maxrun = float(fb["max_deep_run_blocks"])
     fr = float(fb["flank_run_per_block"])
-    nb = max(1, int(math.ceil(Lw / (maxrun + (lo_l + hi_l) / 2.0))))
-    result = None
-    for attempt in range(12):
+    nb0 = max(1, int(math.ceil(Lw / (maxrun + (lo_l + hi_l) / 2.0))))
+    result, best = None, None
+    # decision 7 wants the crossing made WITH warnings: too many or too long bars rest the swimmer so often that
+    # the fatigue never shows. Try the fewest bars first; take the first layout with no run over the limit, no
+    # hit and a warning; failing that, the one with no hit and the highest peak
+    plans = [(n, t) for n in range(max(1, nb0 - 1), nb0 + 6) for t in range(3)]
+    for attempt, (nb, _t) in enumerate(plans):
         bars = []
         Tt = np.full(g0.shape, 99.0)
         for i in range(nb):
@@ -1734,10 +1961,15 @@ def fungal_pass(ctx):
             ln = rng.uniform(lo_l, hi_l)
             wd = rng.uniform(lo_w, hi_w)
             off = fb["stagger_blocks"] * (1 if i % 2 else -1)
-            du = np.abs(U - c) - ln / 2.0 * 0.7
-            dv = np.abs(V - off) - wd / 2.0 * 0.7
-            out = np.hypot(np.maximum(du, 0), np.maximum(dv, 0))
-            v = np.where((du <= 0) & (dv <= 0), float(fb["crest_depth"]), float(fb["crest_depth"]) + out / fr)
+            # an elongated, lobed crest (a sand bar, not a domino): an ellipse whose rim wobbles, skewed a little
+            # across the line so no two bars sit square to it
+            skew = rng.uniform(-0.25, 0.25)
+            uu = (U - c) + skew * (V - off)
+            ring = np.hypot(uu / (ln / 2.0 * 0.7), (V - off) / (wd / 2.0 * 0.7))
+            wob = value_noise(xx, zz, 7.0, seed_of("fungal_bar", attempt, i))
+            ring = ring * (1.0 + 0.3 * (wob - 0.5))
+            out = np.maximum(0.0, ring - 1.0) * (wd / 2.0 * 0.7)
+            v = float(fb["crest_depth"]) + out / fr
             Tt = np.minimum(Tt, v)
             bars.append({"centre_along": round(c, 1), "length": round(ln, 1), "width": round(wd, 1), "offset": off,
                          "at": [round(a[0] + ux * c + vx * off), round(a[1] + uz * c + vz * off)]})
@@ -1755,11 +1987,17 @@ def fungal_pass(ctx):
             run = run + 1 if v >= 3 else 0
             mx = max(mx, run)
         hits, peak, _ = walk(d, step, 0, S) if d else ([], 0, [])
-        ok_walk = not hits and peak >= S["warn_ticks"]
-        result = (new, want, bars, mx * step, hits, peak)
+        cand = (new, want, bars, mx * step, hits, peak)
         if mx * step <= maxrun and not hits:
-            break
-        nb += 1
+            if peak >= S["warn_ticks"]:
+                result = cand
+                break
+            if best is None or peak > best[5]:
+                best = cand
+    if result is None:
+        if best is None:
+            raise ShapeError("no Fungal bar layout keeps every 3-deep run within %s blocks without a hit" % maxrun)
+        result = best
     new, want, bars, mx, hits, peak = result
     k = ctx.feature("coast:fungal_bar_chain", "coasts")
     ok = ctx.write(k, box, new.astype(np.int16), want)
@@ -1812,9 +2050,17 @@ def reef_pass(ctx):
         knolls.append((z, x, rng.uniform(*rf["knolls"]["radius"])))
     gz, gx = np.mgrid[0:g0.shape[0], 0:g0.shape[1]]
     for z, x, rk in knolls:
-        d = np.hypot(gz - z, gx - x)
+        # a patch reef is a lobed knoll, not a disc
+        ang = np.arctan2(gz - z, gx - x)
+        lobe = 1.0 + 0.35 * np.sin(3 * ang + rng.uniform(0, 6.283)) + 0.2 * np.sin(5 * ang + rng.uniform(0, 6.283))
+        d = np.hypot(gz - z, gx - x) / lobe
         Tt = np.where(plat & (d <= rk * 2), np.minimum(Tt, rf["knolls"]["top_depth"] + np.maximum(0, d - rk) / 1.0), Tt)
     Tt = np.maximum(Tt, float(rf["min_depth"]))
+    # ease down to the old bed beside protected ground (the islet's square): no cliff at its edge
+    Pb = ctx.P[sl(box)]
+    if Pb.any():
+        wp = np.clip((distance(Pb, None, max_iter=16) - 2.0) / 10.0, 0.0, 1.0)
+        Tt = np.where(Tt < depth0, depth0 - (depth0 - Tt) * smoothstep(wp), Tt)
     want = sea & (plat | wall) & (Tt < depth0) & (depth0 >= rf["min_depth"])
     new = np.where(want, SEA - np.rint(Tt).astype(np.int32), g0)
     k = ctx.feature("coast:relic_reef", "coasts")
@@ -2076,7 +2322,9 @@ def seabed_pass(ctx):
     wex_c[ex_c] = 0.0
     nsb = float(sb["near_shore_buffer_blocks"])
     wshore_c = np.clip((dl_c - nsb) / max(1.0, nsb), 0.0, 1.0)
-    wc = np.where(sea_c & np.isfinite(Pc), wex_c * wshore_c, 0.0)
+    # fade out toward the outer edge of the zones too (the full-resolution zone mask below is a hard cut)
+    wzone_c = np.clip((wsum - 0.5) * 2.0, 0.0, 1.0)
+    wc = np.where(sea_c & np.isfinite(Pc), wex_c * wshore_c * wzone_c, 0.0)
     Pc = np.where(np.isfinite(Pc), Pc, 0.0)
     print("  seabed: profile and exclusions %.1f s" % (time.time() - t0), flush=True)
     # full-resolution bounds: only inside a zone polygon, never inside an excluded box (the coarse feather alone would
@@ -2099,10 +2347,12 @@ def seabed_pass(ctx):
     for zb in range(0, N, band):
         ze = min(N, zb + band)
         a0, a1 = max(0, zb - br), min(N, ze + br)
-        g = ctx.G1[a0:a1].astype(np.float64)
+        # canyons are measured on the canonical seabed: G1 above this band is already filled, and a blur that read
+        # it drew a line along every band boundary (the first run's seabed map was striped every 256 rows)
+        g = ctx.G0[a0:a1].astype(np.float64)
         blur = box_mean(g, br)[zb - a0:zb - a0 + (ze - zb)]
         gb = ctx.G1[zb:ze].astype(np.int32)
-        inc = np.maximum(0.0, blur - gb)
+        inc = np.maximum(0.0, blur - ctx.G0[zb:ze].astype(np.float64))
         inc = np.where(inc >= minc, inc, 0.0)
         P = upsample_bilinear(Pc, f, zb, ze, N)
         w = upsample_bilinear(wc, f, zb, ze, N)
@@ -2317,6 +2567,7 @@ def maps_pass(ctx, out):
         img.save(p)
         made.append(str(p.relative_to(ROOT)))
     coast_boxes = [("southern_coast", (400, 4300, 4300, 6900), 0.25), ("pallet_and_relic", (850, 5150, 1450, 5750), 1.0),
+                   ("pallet_flats", (860, 5200, 1760, 5800), 1.0), ("south_strand", (2200, 5800, 4300, 6800), 0.5),
                    ("fungal_chain", None, 1.0), ("windward_skerries", (0, 2600, 800, 5200), 0.4),
                    ("north_west_skerries", (250, 1350, 1050, 2650), 0.5)]
     for name, box, scale in coast_boxes:
@@ -2329,14 +2580,16 @@ def maps_pass(ctx, out):
         f = max(1, int(round(1 / scale)))
         gb = ctx.G0[sl(box)][::f, ::f]
         ga = ctx.G1[sl(box)][::f, ::f]
-        img = panel([render(gb, SEA), render(ga, SEA)], ["%s before" % name, "after"], fit_scale(gb.shape[1] * 2, gb.shape[0], 1800), legend)
+        nolake = ~ctx.lake_mask[sl(box)][::f, ::f]          # lakes stand above the sea: not drawn as sea
+        img = panel([render(gb, SEA, nolake), render(ga, SEA, nolake)], ["%s before" % name, "after"], fit_scale(gb.shape[1] * 2, gb.shape[0], 1800), legend)
         p = mdir / ("coast_%s.png" % name)
         img.save(p)
         made.append(str(p.relative_to(ROOT)))
     f = 8
     gb = ctx.G0[::f, ::f]
     ga = ctx.G1[::f, ::f]
-    img = panel([render(gb, SEA), render(ga, SEA)], ["seabed before (1 px = 8 blocks)", "after"], 1.0,
+    nolake = ~ctx.lake_mask[::f, ::f]
+    img = panel([render(gb, SEA, nolake), render(ga, SEA, nolake)], ["seabed before (1 px = 8 blocks)", "after"], 1.0,
                 "depth colours as above; the margin outside 0-8191 is not in the heightmap (seamounts: owner question)")
     if getattr(ctx, "seabed_coarse", None):
         d = ImageDraw.Draw(img)
@@ -2454,9 +2707,9 @@ def verdicts(ctx):
         ok = True
         if req.get("gate"):
             ok = u == "knocked out" and t == "knocked out" and a["walk"]["unaided"]["resting_on_rest_ground"] == "knocked out" \
-                and a["walk"]["trained"]["resting_on_rest_ground"] == "knocked out"
+                and (a["walk"]["trained"]["resting_on_rest_ground"] == "knocked out" or not req.get("resting_trained_gate", True))
         if req.get("unchanged"):
-            ok = a.get("depths") == bef.get(c["id"], {}).get("depths")
+            ok = ok and a.get("depths") == bef.get(c["id"], {}).get("depths")
         if "unaided" in req and req["unaided"] == "no hit":
             ok = ok and u == "no hit"
         if req.get("unaided") == "hit or worse":
@@ -2487,8 +2740,27 @@ def verdicts(ctx):
     return out
 
 
+def feature_volumes(ctx):
+    """Fill and cut blocks per feature, from the ownership map (every changed column has one owner)."""
+    nf = len(ctx.features)
+    fill = np.zeros(nf)
+    cut = np.zeros(nf)
+    cols = np.zeros(nf)
+    for z in range(0, ctx.N, 512):
+        d = ctx.G1[z:z + 512].astype(np.int32) - ctx.G0[z:z + 512].astype(np.int32)
+        o = ctx.owner[z:z + 512].ravel()
+        dv = d.ravel()
+        fill += np.bincount(o, weights=np.maximum(dv, 0), minlength=nf)[:nf]
+        cut += np.bincount(o, weights=np.maximum(-dv, 0), minlength=nf)[:nf]
+        cols += np.bincount(o, weights=(dv != 0), minlength=nf)[:nf]
+    for k, f in enumerate(ctx.features):
+        if k:
+            f["columns_changed"], f["fill_blocks"], f["cut_blocks"] = int(cols[k]), int(fill[k]), int(cut[k])
+
+
 def write_report(ctx, out, made):
     rep = ctx.report
+    feature_volumes(ctx)
     rep["feature_table"] = [{k: v for k, v in f.items() if k not in ("family",)} | {"family": f["family"]}
                             for f in ctx.features[1:]]
     rep["verdicts"] = [{"what": a, "result": b, "ok": c} for a, b, c in verdicts(ctx)]
@@ -2506,19 +2778,21 @@ def write_report(ctx, out, made):
     for v in rep["verdicts"]:
         L.append("| %s | %s | %s |" % (v["what"], v["result"], "yes" if v["ok"] else "**NO**"))
     L += ["", "## Crossings (WATER_BUILD_PLAN 11.1), before and after", "",
-          "| Crossing | Swim before/after | 3+ deep before/after | Longest 3+ deep run after | Unaided before -> after | Trained before -> after |",
-          "|---|---|---|---|---|---|"]
+          "| Crossing | Swim before/after | 3+ deep before/after | Longest 3+ deep run after | Unaided before -> after | Trained before -> after | After, resting on rest ground (unaided / trained) | After, Slowness counted (unaided / trained) |",
+          "|---|---|---|---|---|---|---|---|"]
     for c in ctx.spec["crossings"]:
         b = rep["crossings"]["before"].get(c["id"], {})
         a = rep["crossings"]["after"].get(c["id"], {})
         if "walk" not in b or "walk" not in a:
             L.append("| %s | no swimming on the line | | | | |" % c["id"])
             continue
-        L.append("| %s | %s / %s | %s / %s | %s | %s (%s) -> %s (%s) | %s -> %s |" % (
+        L.append("| %s | %s / %s | %s / %s | %s | %s (%s) -> %s (%s) | %s -> %s | %s / %s | %s / %s |" % (
             c["id"], b["swim"], a["swim"], b["deep"], a["deep"], a["max_deep_run"],
             b["walk"]["unaided"]["outcome"], b["walk"]["unaided"]["peak_word"],
             a["walk"]["unaided"]["outcome"], a["walk"]["unaided"]["peak_word"],
-            b["walk"]["trained"]["outcome"], a["walk"]["trained"]["outcome"]))
+            b["walk"]["trained"]["outcome"], a["walk"]["trained"]["outcome"],
+            a["walk"]["unaided"]["resting_on_rest_ground"], a["walk"]["trained"]["resting_on_rest_ground"],
+            a["walk"]["unaided"]["with_slowness"], a["walk"]["trained"]["with_slowness"]))
     L += ["", "## Lakes", "", "| Lake | Wadeable before -> after | Deepest point to rest before -> after | Within 30 of rest after | 9+ deep columns before -> after | Level/1-step/steeper neighbours before -> after | Shoals | Humps | Fill / cut blocks |",
           "|---|---|---|---|---|---|---|---|---|"]
     for lid, r in rep["lakes"].items():
@@ -2548,9 +2822,13 @@ def write_report(ctx, out, made):
         for z, v in s["zones"].items():
             if "cells" in v:
                 L.append("- %s: seabed y p10/median/p90 before %s, after %s" % (z, v["before_p10_median_p90"], v["after_p10_median_p90"]))
-    L += ["", "## Cut and fill by feature", "", "| Feature | Family | Columns written | Held off (protected) | Held off (another feature) |", "|---|---|---|---|---|"]
+    L += ["", "## Cut and fill by feature", "", "| Feature | Family | Columns changed | Fill blocks | Cut blocks | Held off (protected) | Held off (another feature) |", "|---|---|---|---|---|---|---|"]
     for f in ctx.features[1:]:
-        L.append("| %s | %s | %s | %s | %s |" % (f["id"], f["family"], f.get("columns_written", ""), f["held_protected"], f["held_clash"]))
+        L.append("| %s | %s | %s | %s | %s | %s | %s |" % (f["id"], f["family"], f.get("columns_changed", ""), f.get("fill_blocks", ""),
+                                                   f.get("cut_blocks", ""), f["held_protected"], f["held_clash"]))
+    L.append("| **total** | | %d | %d | %d | | |" % (sum(f.get("columns_changed", 0) for f in ctx.features[1:]),
+                                                     sum(f.get("fill_blocks", 0) for f in ctx.features[1:]),
+                                                     sum(f.get("cut_blocks", 0) for f in ctx.features[1:])))
     L += ["", "## Maps and sections", ""] + ["- `%s`" % m for m in made]
     if rep["notes"]:
         L += ["", "## Notes", ""] + ["- %s" % n for n in rep["notes"]]

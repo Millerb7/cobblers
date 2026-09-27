@@ -529,7 +529,17 @@ def run(source_root, world_path=None):
     A.check("C6", "nothing over Victory Road's band", not (diff & vrm).any(), int((diff & vrm).sum()))
     import islet as I
     icx, icz = I.CENTRE
-    A.check("C7", "nothing under the islet", not diff[icz - I.RADIUS:icz + I.RADIUS + 1, icx - I.RADIUS:icx + I.RADIUS + 1].any())
+    # the islet's own outline (tools/islet.py island_top), grown by the design's margin: the square it is computed
+    # over has plain seabed in its corners
+    _top, _ = I.island_top(None, SEA)
+    on = ~np.isnan(np.asarray(_top, float))
+    mg = int(spec["protect"]["islet"]["margin_blocks"])
+    isl = np.zeros((on.shape[0] + 2 * mg, on.shape[1] + 2 * mg), bool)
+    isl[mg:mg + on.shape[0], mg:mg + on.shape[1]] = on
+    isl = grown(isl, mg) if mg else isl
+    R_ = I.RADIUS + mg
+    A.check("C7", "nothing under the islet (its outline grown %d)" % mg,
+            not (diff[icz - R_:icz + R_ + 1, icx - R_:icx + R_ + 1] & isl).any())
     ev = np.zeros((n, n), bool)
     for s in spec["protect"]["event_sites"]:
         x0, z0, x1, z1 = s["box"]
@@ -596,7 +606,7 @@ def run(source_root, world_path=None):
         dist = coarse_distance(~w1 | (dep1 <= 1), w1, max(1, f))
         obj = w1 & ~excl
         mx = float(dist[obj].max()) if obj.any() else 0.0
-        tgt = rungs[body["rung"]]["max_to_rest_blocks"]
+        tgt = body.get("max_to_rest_blocks", rungs[body["rung"]]["max_to_rest_blocks"])
         A.check("E6", "%s: farthest water from rest %.0f <= %s (%s rung)" % (body["id"], mx, tgt, body["rung"]), mx <= tgt + f)
         deep0, deep1 = int((dep0 >= 9).sum()), int((dep1 >= 9).sum())
         share = spec["lakes"]["defaults"]["deep_area_min_share"]
@@ -634,18 +644,27 @@ def run(source_root, world_path=None):
         maxfall = max([f["drop"] for e in windows.get(cid, []) for f in e.get("falls", [])] or [1])
         A.check("F4", "%s: steps over a block only at declared falls (%d found, %d declared, largest %s)" % (
             cid, len(big), falls_decl, max([d for _, d in big] or [0])), len(big) <= falls_decl and all(d <= maxfall for _, d in big))
-        dry = 0
-        for (x, z, s), c_ in zip(pts, ch):
-            if reach_at(r["reaches"], c_)["water_body"]:
-                continue
-            if G1[int(round(z)), int(round(x))] >= math.floor(s + 0.01):
-                dry += 1
-        A.check("F5", "%s: every station's centre column holds water" % cid, dry == 0, dry)
+        def dry_stations(G, course):
+            ps, cs = densify(course["graded_polyline"])
+            return {(int(round(x)), int(round(z)), math.floor(s + 0.01)) for (x, z, s), c_ in zip(ps, cs)
+                    if not reach_at(course["reaches"], c_)["water_body"] and G[int(round(z)), int(round(x))] >= math.floor(s + 0.01)}
+        # the canonical courses themselves have a few dry stations (a lip at an outlet): a dry station after counts
+        # unless the canonical course had a dry station at the same level within a block of it (the revised course
+        # samples one vertex a block, so an inherited dry lip may round to the next column)
+        dry0, dry1 = dry_stations(G0, c), dry_stations(G1, r)
+        new_dry = [(x, z, l) for x, z, l in dry1
+                   if not any((x + dx, z + dz, l) in dry0 for dx in (-1, 0, 1) for dz in (-1, 0, 1))]
+        A.check("F5", "%s: every station's centre column holds water (dry %d before, %d after, %d new)" % (
+            cid, len(dry0), len(dry1), len(new_dry)), not new_dry, new_dry[:5])
         end = c.get("ends_in")
+        _p0, _c0 = densify(c["graded_polyline"])
+        end0 = math.floor(_p0[-1][2] + 0.01)
         if end == "open_sea":
             A.check("F6", "%s: ends at the sea" % cid, levels[-1] == SEA, levels[-1])
-        elif end in lake_masks:
-            A.check("F6", "%s: ends at or above %s's level" % (cid, end), levels[-1] >= lake_masks[end][2], levels[-1])
+        elif end in lake_masks or end in courses:
+            # the canonical courses end a fraction under the receiving water (major_river_trunk at 76.98 into Tilpey
+            # at 77, painted 76): the end must stay where it was
+            A.check("F6", "%s: ends where it ended (y%d, into %s)" % (cid, end0, end), levels[-1] == end0, levels[-1])
         b0_, w0_, l0_, _, _ = painted(G0, c, n)
         lk0 = leaks(G0[S_(b0_)].astype(int), w0_, l0_)
         lk1 = leaks(G1[S_(b)].astype(int), wet, lv)
@@ -682,7 +701,10 @@ def run(source_root, world_path=None):
         dry = sum(1 for (x, z, sv) in pts if G1[int(round(z)), int(round(x))] >= math.floor(sv + 0.01))
         A.check("G6", "every station holds water", dry == 0, dry)
         lk = line_mask([lake_half], full, 81) if len(lake_half) >= 2 else np.zeros((n, n), bool)
-        A.check("G7", "the ravine's lake half is untouched (dry by design)", not (diff & lk).any(), int((diff & lk).sum()))
+        # the half's first stations run along Lake Viltri, whose bed is the lake pass's (checked under E)
+        lk &= ~lake_all
+        A.check("G7", "the ravine's lake half is untouched outside Lake Viltri's basin (dry by design)",
+                not (diff & lk).any(), int((diff & lk).sum()))
 
     # ------------------------------------------------------------------ seabed
     print("H seabed")
@@ -734,7 +756,10 @@ def run(source_root, world_path=None):
         d = "after: unaided %s (peak %.0f), trained %s, resting %s/%s, swim %.0f, longest 3+ run %.0f" % (
             u1, pu, t1, verdict(hur), verdict(htr), p1["swim"], p1["max_deep_run"])
         if req.get("gate"):
-            A.check("I2", "%s stays a gate" % c["id"], u1 == t1 == verdict(hur) == verdict(htr) == "knocked out", d)
+            walks = [u1, t1, verdict(hur)] + ([verdict(htr)] if req.get("resting_trained_gate", True) else [])
+            A.check("I2", "%s stays a gate%s" % (c["id"], "" if req.get("resting_trained_gate", True) else
+                                                   " (the trained resting walk exempted in the design: %s)" % req.get("why_exempt", "")),
+                    all(v == "knocked out" for v in walks), d)
         if req.get("unchanged"):
             A.check("I3", "%s unchanged" % c["id"], p0["depths"] == p1["depths"], d)
         if req.get("unaided") == "no hit":
