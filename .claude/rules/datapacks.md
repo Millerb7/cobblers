@@ -69,3 +69,21 @@ the anchors for when both land.
 - Reusable assets that content is assembled from — structure NBT, palettes,
   biome kits — live in `kits/`, not in `data/`. A template is a kit; the
   decision to put one at a coordinate is a placement and is data.
+
+## Runtime facts learned the hard way (verified on staging)
+
+- Cobblemon fires MoLang callbacks only from `data/cobblemon/callbacks/<event>/`.
+  A file under our own namespace registers (the load count rises) but never runs.
+  Add ours there with a `cobblers_` filename; never override Cobblemon's own files
+  (EXP-042).
+- `/reload` does not reload registry data: enchantments, damage types, worldgen.
+  A change there needs a server restart (EXP-042 session 3).
+- `spawnpokemonat` works inside a function, from the tick loop too.
+  `summon cobblemon:pokemon` is refused even with a full `Pokemon` compound. To
+  recreate a Pokemon, spawn a placeholder and write the saved compound over its
+  `Pokemon` data (EXP-042).
+- An NBT filter cannot follow a list index (`list[0]{k:v}` does not parse). Copy
+  the element to a named compound first, then filter that.
+- A MoLang value read off a function call does not chain
+  (`q.player.party.get_pokemon(0).species` returns the Pokemon). Assign the call
+  to a `t.` variable first.
