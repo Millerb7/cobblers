@@ -1,34 +1,45 @@
 #!/usr/bin/env python
-"""Offline plan audit of the Rift mines: nothing overlaps another build or path, and the gated galleries are sealed
-except through their gate. Independent of tools/rift_mines.py's model: it rasterises data/rift_mines.json itself, by
-the `geometry` the data file states, and takes every expectation about other builds from THEIR data (the camp's plan
-and placements, the Rift sculpt's entrance ramp, data/towns.json), never from the generated output. The generated pack
-is then replayed and checked against those expectations.
+"""Offline plan audit of the Rift mines: nothing overlaps another build or path, the seam's one crystal sits behind the
+company grille inside its per-player ward, and the staging refill fills exactly the retired gated section. Independent
+of tools/rift_mines.py's model: it rasterises data/rift_mines.json itself, by the `geometry` the data file states, and
+takes every expectation about other builds from THEIR data (the camp's plan and placements, the Rift sculpt's entrance
+ramp, data/towns.json), never from the generated output. The generated packs are then replayed and checked against
+those expectations.
+
+The gated galleries, chambers and Heart were retired on 2026-09-27 (docs/world-building/SOUTHERN_RIFT_MEGA.md decisions
+1-2: the mega stone mine is the gulch's). What was checked on them (separation, gate, zone) is gone with them; nothing
+may be gated now, and the retired envelope is checked only as the refill's target.
 
 The plan (data only):
   overlap     every column this build may write (its envelope and its shell, two round it; its houses, piles, street,
-              lamp posts, derricks, headframe, tracks) keeps `keep_clear.margin` from: the camp's streets, plaza,
-              anchors and lots (derived/towns/rift_dig_camp_plan.json), every donor and earthwork the placements
+              lamp posts, derricks, headframe, tracks, the collapse) keeps `keep_clear.margin` from: the camp's streets,
+              plaza, anchors and lots (derived/towns/rift_dig_camp_plan.json), every donor and earthwork the placements
               give the camp, the excavation haul road's path (the ramp tools/rift_skin.py paves, from the sculpt's
               ring), the data's own keep-clear boxes, and every other settlement's footprint. Forge Row may meet the
               camp track end to end; it may not overlap it
-  separation  the gated envelope never comes within 2 of the ungated envelope (the cuts, the adit, the hall, the
-              decline, the drifts): the plug is the only thing between them
-  gate        the knock box is walkable ungated floor, the arrival and exit are gated, the turn-back point walkable
-              ungated floor; open the plug and the knock box reaches the arrival; the plug is neither envelope
-  cover       at least cover_min of rock over every gated column's shell, under the ground or a cut's floor
-  connected   every gated envelope cell is reachable from the arrival inside the gated envelope
+  nothing     no live feature is gated, and none carries crystals: the seam's one crystal is the tease's
+  gated
+  tease       the grille's cells are envelope and close drift C whole (with them shut, the face's front cannot be reached
+              from the adit through the envelope); the face box is not envelope and its front meets the pocket; the ward
+              box (read from the pack's advancement) holds the grille, the pocket and the face box with ward_margin to
+              spare, and its function gives the effect only to a player lacking the flag
+  collapse    the collapse box is not envelope
 The output (build/datapacks/cobblers_rift_mines, replayed in index order):
   inside      every block write falls in a column the plan may write, inside the grid
-  no stray    no cell near the gated section ends as air unless it is gated envelope
-  sealed      every cell next to the gated envelope, and every plug cell, ends as a block this build wrote, not air,
-              not a fluid: the seal is the build's own rock, not whatever the export left there
-  zone        the zone check's boxes (read from the pack's advancement) hold every gated envelope cell, and no ungated
-              envelope cell, no knock or turn-back cell and nothing at or over the ground
-  blocks      no written block is named by a spawn condition (data/spawn_blocks.json), no water, no lava
+  no stray    no cell under the ground ends as air unless it is envelope
+  sealed      every cell next to the envelope, under the ground and not envelope, ends as a block this build wrote,
+              not air, not a fluid
+  crystal     exactly the tease's crystals are written, all in the face box; no gate, knock, exit or zone advancement
+              is left in the pack
+  blocks      no written block is named by a spawn condition (data/spawn_blocks.json), no water, no lava, no meteorid
+              ore (they drop evolution stones)
   limits      tools/function_limits.py finds nothing the server would refuse
+The refill (build/datapacks/cobblers_rift_mines_refill, staging only):
+  exact       its writes are exactly the retired gated envelope, every one rock (no air, no fluid), none in a live
+              envelope cell or the collapse
 
-Fails closed: no pack, an empty index, no camp plan or no gated cell is a failure, not a pass.
+Fails closed: no pack, an empty index, no camp plan, no tease crystal, no retired envelope or no refill is a failure,
+not a pass.
 
   python tools/rift_mines_audit.py [--source-root DIR]      writes derived/rift_mines/audit.json; exit 1 on any problem
 """
@@ -51,6 +62,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "rift_mines.json"
 PACK = ROOT / "build" / "datapacks" / "cobblers_rift_mines"
 FN = PACK / "data" / "cobblers" / "function" / "rift_mines"
+REFILL_FN = ROOT / "build" / "datapacks" / "cobblers_rift_mines_refill" / "data" / "cobblers" / "function" / "rift_mines_refill"
 CAMP_PLAN = ROOT / "derived" / "towns" / "rift_dig_camp_plan.json"
 SCULPT_PLAN = ROOT / "derived" / "rift_sculpt" / "plan.json"
 OUT = ROOT / "derived" / "rift_mines" / "audit.json"
@@ -137,6 +149,28 @@ def floor_of_cut(cut, x, z):
     return y
 
 
+def stamp(f, ground):
+    k = f["kind"]
+    if k == "tube":
+        cells = stamp_tube(f["path"], f["r"], f["height"])
+        if f.get("pocket"):
+            cells |= stamp_pocket(f["pocket"]["at"], f["pocket"]["r"])
+    elif k == "room":
+        b = f["box"]
+        cells = {(x, y, z) for x in range(b[0], b[3] + 1) for y in range(b[1], b[4] + 1) for z in range(b[2], b[5] + 1)}
+    elif k == "shaft":
+        (cx, cz), r = f["centre"], f["r"]
+        cells = {(x, y, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)
+                 for y in range(f["from_y"], ground(x, z))}
+    elif k == "pocket":
+        cells = stamp_pocket(f["at"], f["r"])
+    elif k == "chamber":
+        cells = stamp_chamber(f["centre"], f["r"], f["height"])
+    else:
+        raise SystemExit("unknown feature kind %r in %s" % (k, f["id"]))
+    return cells
+
+
 def plan(spec, ground):
     """(gated set, ungated set, effective ground {(x, z): y}, cut columns) from the data alone."""
     gated, ungated, eff, cutcols = set(), set(), {}, set()
@@ -150,25 +184,7 @@ def plan(spec, ground):
                     cutcols.add((x, z))
                     ungated.update((x, y, z) for y in range(yf + 1, g + 7))
     for f in spec["mine"]["features"]:
-        k = f["kind"]
-        if k == "tube":
-            cells = stamp_tube(f["path"], f["r"], f["height"])
-            if f.get("pocket"):
-                cells |= stamp_pocket(f["pocket"]["at"], f["pocket"]["r"])
-        elif k == "room":
-            b = f["box"]
-            cells = {(x, y, z) for x in range(b[0], b[3] + 1) for y in range(b[1], b[4] + 1) for z in range(b[2], b[5] + 1)}
-        elif k == "shaft":
-            (cx, cz), r = f["centre"], f["r"]
-            cells = {(x, y, z) for x in range(cx - r, cx + r + 1) for z in range(cz - r, cz + r + 1)
-                     for y in range(f["from_y"], ground(x, z))}
-        elif k == "pocket":
-            cells = stamp_pocket(f["at"], f["r"])
-        elif k == "chamber":
-            cells = stamp_chamber(f["centre"], f["r"], f["height"])
-        else:
-            raise SystemExit("unknown feature kind %r in %s" % (k, f["id"]))
-        (gated if f.get("gated") else ungated).update(cells)
+        (gated if f.get("gated") else ungated).update(stamp(f, ground))
     return gated, ungated - gated, eff, cutcols
 
 
@@ -267,8 +283,10 @@ def plan_columns(spec, gated, ungated, cutcols):
         cols |= {(x, z) for x in range(min(xa, xb), max(xa, xb) + 1) for z in range(min(za, zb), max(za, zb) + 1)}
     hf = spec["mine"]["headframe"]
     cols |= {(hf["at"][0] + dx, hf["at"][1] + dz) for dx in range(-3, 4) for dz in range(-3, 4)}
-    pl = spec["mine"]["gate"]["plug"]
+    pl = spec["mine"]["collapse"]["box"]
     cols |= {(x, z) for x in range(pl[0], pl[3] + 1) for z in range(pl[2], pl[5] + 1)}
+    fb = spec["mine"]["tease"]["face"]["box"]
+    cols |= {(x, z) for x in range(fb[0], fb[3] + 1) for z in range(fb[2], fb[5] + 1)}
     return cols, street
 
 
@@ -277,9 +295,10 @@ def plan_columns(spec, gated, ungated, cutcols):
 CMD = re.compile(r"^(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))? (\S+)")
 
 
-def replay(grid):
+def replay(grid, fn_dir=None):
     """(final {(x, y, z): block}, writes outside the grid, function files) from the pack, in its index order."""
-    idx = FN / "index.txt"
+    fn_dir = fn_dir or FN
+    idx = fn_dir / "index.txt"
     if not idx.is_file():
         raise SystemExit("no %s: run `python tools/rift_mines.py build` first" % idx.relative_to(ROOT))
     names = [n for n in idx.read_text(encoding="utf-8").split("\n") if n.strip()]
@@ -287,7 +306,7 @@ def replay(grid):
         raise SystemExit("%s lists no function: nothing was generated" % idx.relative_to(ROOT))
     final, outside, files = {}, [], []
     for n in names:
-        f = FN / (n + ".mcfunction")
+        f = fn_dir / (n + ".mcfunction")
         files.append(f)
         for ln in f.read_text(encoding="utf-8").splitlines():
             m = CMD.match(ln.strip())
@@ -305,19 +324,16 @@ def replay(grid):
     return final, outside, files
 
 
-def zone_boxes():
-    adv = PACK / "data" / "cobblers" / "advancement" / "rift_mines" / "zone.json"
+def adv_box(name):
+    """The one position box of an advancement in the pack, as ((x0, y0, z0), (x1, y1, z1)) of blocks, or None."""
+    adv = PACK / "data" / "cobblers" / "advancement" / "rift_mines" / name
     if not adv.is_file():
-        raise SystemExit("no zone advancement at %s" % adv.relative_to(ROOT))
+        return None
     doc = json.loads(adv.read_text(encoding="utf-8"))
     conds = doc["criteria"]["here"]["conditions"]["player"]
-    terms = conds[0]["terms"] if conds and conds[0].get("condition") == "minecraft:any_of" else conds
-    out = []
-    for t in terms:
-        p = t["predicate"]["location"]["position"]
-        # a position range reads the player's feet as a double; max is the far face of the last block
-        out.append(((p["x"]["min"], p["y"]["min"], p["z"]["min"]), (p["x"]["max"] - 1, p["y"]["max"] - 1, p["z"]["max"] - 1)))
-    return out
+    p = conds[0]["predicate"]["location"]["position"]
+    # a position range reads the player's feet as a double; max is the far face of the last block
+    return ((p["x"]["min"], p["y"]["min"], p["z"]["min"]), (p["x"]["max"] - 1, p["y"]["max"] - 1, p["z"]["max"] - 1))
 
 
 # ------------------------------------------------------------------ the audit
@@ -333,8 +349,6 @@ def audit(source_root=None):
     ground = g
     probs, notes = [], {}
     gated, ungated, eff, cutcols = plan(spec, ground)
-    if not gated:
-        probs.append("the data has no gated cell: nothing to audit")
     top = lambda x, z: eff.get((x, z), ground(x, z))
 
     # ---- overlap
@@ -378,53 +392,44 @@ def audit(source_root=None):
     notes["columns the build may write"] = len(cols)
     notes["camp cells kept clear"] = len(camp)
     notes["haul road columns kept clear"] = len(road)
-    p2, n2, gate_cells = plan_problems(spec, gated, ungated, top)
+    p2, n2 = plan_problems(spec, gated, ungated)
     probs += p2
     notes.update(n2)
-    knock, plug, (tx, ty, tz) = gate_cells
-    probs += output_problems(spec, grid, gated, ungated, top, cols, knock, plug, (tx, ty, tz), notes)
+    probs += output_problems(spec, grid, gated, ungated, top, cols, notes)
+    probs += refill_problems(spec, grid, ungated, ground, notes)
     return probs, notes
 
 
-def plan_problems(spec, gated, ungated, top):
-    """Separation, the gate, connection and cover, on the data's own envelopes. Pure: no files, no heightmap."""
+def plan_problems(spec, gated, ungated):
+    """Nothing gated, the tease and the collapse, on the data's own envelopes. Pure: no files but the ward's advancement."""
     probs, notes = [], {}
-    # ---- separation and the gate
-    near_gated = set()
-    for x, y, z in gated:
-        for dx in range(-2, 3):
-            for dy in range(-2, 3):
-                for dz in range(-2, 3):
-                    near_gated.add((x + dx, y + dy, z + dz))
-    close = near_gated & ungated
-    if close:
-        probs.append("separation: %d ungated envelope cells within 2 of the gated envelope, e.g. %s"
-                     % (len(close), sorted(close)[:3]))
-    gt = spec["mine"]["gate"]
-    px0, py0, pz0, px1, py1, pz1 = gt["plug"]
-    plug = {(x, y, z) for x in range(px0, px1 + 1) for y in range(py0, py1 + 1) for z in range(pz0, pz1 + 1)}
-    if plug & (gated | ungated):
-        probs.append("gate: the plug overlaps the envelope at %s" % sorted(plug & (gated | ungated))[:3])
-    k = gt["knock"]
-    knock = {(x, y, z) for x in range(k[0], k[3] + 1) for y in range(k[1], k[4] + 1) for z in range(k[2], k[5] + 1)}
-    for x, y, z in knock:
-        if y == k[1] and not standable(ungated, x, y, z):
-            probs.append("gate: the knock box's floor cell %s is not walkable ungated floor" % ((x, y, z),))
-    e = gt["exit"]
-    exitbox = {(x, y, z) for x in range(e[0], e[3] + 1) for y in range(e[1], e[4] + 1) for z in range(e[2], e[5] + 1)}
-    if not exitbox <= gated:
-        probs.append("gate: %d exit box cells are not gated envelope" % len(exitbox - gated))
-    ax, ay, az = int(math.floor(gt["arrive"][0])), gt["arrive"][1], int(math.floor(gt["arrive"][2]))
-    tx, ty, tz = int(math.floor(gt["turn_back"][0])), gt["turn_back"][1], int(math.floor(gt["turn_back"][2]))
-    if not standable(gated, ax, ay, az):
-        probs.append("gate: the arrival %s is not walkable gated floor" % ((ax, ay, az),))
-    if not standable(ungated, tx, ty, tz):
-        probs.append("gate: the turn-back point %s is not walkable ungated floor" % ((tx, ty, tz),))
-    if (ax, ay, az) in exitbox:
-        probs.append("gate: the arrival is inside the exit box (a player would bounce straight back out)")
-    # with the plug open, the knock box reaches the arrival; that is the gate. Separation proves it is the only way.
-    open_ = gated | ungated | plug
-    seen, stack = {min(knock)}, [min(knock)]
+    if gated:
+        probs.append("gated: %d gated envelope cells; the spur's gated section is retired (SOUTHERN_RIFT_MEGA.md decision 1)"
+                     % len(gated))
+    crys = [f["id"] for f in spec["mine"]["features"] if f.get("crystals")]
+    if crys:
+        probs.append("gated: features still carry crystals: %s (the seam's one crystal is the tease's)" % crys)
+    t = spec["mine"].get("tease")
+    if not t:
+        probs.append("tease: the data has no tease: nothing to audit")
+        return probs, notes
+    gr = t["grille"]
+    grille = {(x, y, gr["z"]) for x in range(gr["x"][0], gr["x"][1] + 1) for y in range(gr["y"][0], gr["y"][1] + 1)}
+    if not grille <= ungated:
+        probs.append("tease: %d grille cells are not in the drift" % len(grille - ungated))
+    fb = t["face"]["box"]
+    face = {(x, y, z) for x in range(fb[0], fb[3] + 1) for y in range(fb[1], fb[4] + 1) for z in range(fb[2], fb[5] + 1)}
+    if face & ungated:
+        probs.append("tease: the face box overlaps the envelope at %s" % sorted(face & ungated)[:3])
+    step = {"south": (0, 0, 1), "north": (0, 0, -1), "east": (1, 0, 0), "west": (-1, 0, 0)}[t["face"]["front"]]
+    front = {(x + step[0], y + step[1], z + step[2]) for x, y, z in face} - face
+    if not front & ungated:
+        probs.append("tease: the face's front meets no envelope cell")
+    # with the grille shut, the face's front is cut off from the adit's mouth
+    open_ = ungated - grille
+    start = next(iter(sorted(front & ungated)), None)
+    seen = {start} if start else set()
+    stack = list(seen)
     while stack:
         x, y, z = stack.pop()
         for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
@@ -432,38 +437,38 @@ def plan_problems(spec, gated, ungated, top):
             if q in open_ and q not in seen:
                 seen.add(q)
                 stack.append(q)
-    if (ax, ay, az) not in seen:
-        probs.append("gate: even with the plug open, the knock box does not reach the arrival")
+    adit = tuple(spec["mine"]["features"][0]["path"][0])
+    notes["envelope cells behind the grille"] = len(seen)
+    if adit in seen:
+        probs.append("tease: the face's front is reached from the adit's mouth %s without passing the grille" % (adit,))
+    if not seen:
+        probs.append("tease: nothing open in front of the face")
+    # the ward, from the pack's own advancement
+    ward = adv_box("tease_ward.json")
+    if ward is None:
+        probs.append("tease: no ward advancement in the pack")
+    else:
+        (wx0, wy0, wz0), (wx1, wy1, wz1) = ward
+        wm = t["ward_margin"]
+        need = grille | face | seen
+        short = [c for c in need if not (wx0 + wm <= c[0] <= wx1 - wm and wy0 + wm <= c[1] <= wy1 - wm and wz0 + wm <= c[2] <= wz1 - wm)]
+        if short:
+            probs.append("tease: %d grille, face or pocket cells are within %d of the ward's edge, e.g. %s" % (len(short), wm, sorted(short)[:3]))
+        notes["tease ward"] = [list(ward[0]), list(ward[1])]
+        wf = FN / "tease" / "ward.mcfunction"
+        body = wf.read_text(encoding="utf-8") if wf.is_file() else ""
+        if "advancements={%s=false}" % spec["flag"]["advancement"] not in body or "mining_fatigue" not in body:
+            probs.append("tease: the ward's function does not give the effect only to a player lacking %s" % spec["flag"]["advancement"])
+    cb = spec["mine"]["collapse"]["box"]
+    col = {(x, y, z) for x in range(cb[0], cb[3] + 1) for y in range(cb[1], cb[4] + 1) for z in range(cb[2], cb[5] + 1)}
+    if col & ungated:
+        probs.append("collapse: the collapse overlaps the envelope at %s" % sorted(col & ungated)[:3])
+    return probs, notes
 
-    # ---- connected
-    seen, stack = {(ax, ay, az)} & gated, [(ax, ay, az)]
-    while stack and seen:
-        x, y, z = stack.pop()
-        for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
-            q = (x + d[0], y + d[1], z + d[2])
-            if q in gated and q not in seen:
-                seen.add(q)
-                stack.append(q)
-    if len(seen) != len(gated):
-        probs.append("connected: %d gated envelope cells not reachable from the arrival" % (len(gated) - len(seen)))
 
-    # ---- cover
-    tops = {}
-    for x, y, z in gated:
-        tops[(x, z)] = max(tops.get((x, z), -999), y)
-    thin = [(c, top(*c) - y) for c, y in tops.items() if top(*c) - y < spec["cover_min"] + SHELL]
-    if thin:
-        probs.append("cover: %d gated columns with under %d of rock over the shell, e.g. %s"
-                     % (len(thin), spec["cover_min"], thin[:3]))
-    notes["least rock over a gated column (shell included)"] = min(top(*c) - y for c, y in tops.items()) if tops else None
-    return probs, notes, (knock, plug, (tx, ty, tz))
-
-
-def output_problems(spec, grid, gated, ungated, top, cols, knock, plug, turn, notes):
+def output_problems(spec, grid, gated, ungated, top, cols, notes):
     """The generated pack, replayed, against the plan."""
     probs = []
-    tx, ty, tz = turn
-    # ---- the output
     final, outside, files = replay(grid)
     notes["cells written"] = len(final)
     if outside:
@@ -471,61 +476,79 @@ def output_problems(spec, grid, gated, ungated, top, cols, knock, plug, turn, no
     stray_cols = {(x, z) for x, _y, z in final} - cols
     if stray_cols:
         probs.append("inside: %d written columns the plan does not cover, e.g. %s" % (len(stray_cols), sorted(stray_cols)[:3]))
-    xs = [c[0] for c in gated]
-    zs = [c[2] for c in gated]
-    ys = [c[1] for c in gated]
-    box = (min(xs) - 3, max(xs) + 3, min(ys) - 3, max(ys) + 3, min(zs) - 3, max(zs) + 3) if gated else None
-    stray = [c for c, b in final.items() if b in AIRS and box and box[0] <= c[0] <= box[1] and box[2] <= c[1] <= box[3]
-             and box[4] <= c[2] <= box[5] and c not in gated and c not in ungated and c[1] <= top(c[0], c[2])]
+    env = gated | ungated
+    stray = [c for c, b in final.items() if b in AIRS and c not in env and c[1] <= top(c[0], c[2])]
     if stray:
-        probs.append("no stray: %d air cells under the ground near the gated section that are not envelope, e.g. %s"
-                     % (len(stray), sorted(stray)[:3]))
+        probs.append("no stray: %d air cells under the ground that are not envelope, e.g. %s" % (len(stray), sorted(stray)[:3]))
     ring = set()
-    for x, y, z in gated:
+    for x, y, z in env:
         for d in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
             q = (x + d[0], y + d[1], z + d[2])
-            if q not in gated:
+            if q not in env and q[1] <= top(q[0], q[2]):
                 ring.add(q)
-    unsealed = [c for c in ring | plug if final.get(c) is None or final[c] in AIRS or final[c].split("[")[0] in FLUIDS]
+    unsealed = [c for c in ring if final.get(c) is None or final[c] in AIRS or final[c].split("[")[0] in FLUIDS]
     if unsealed:
-        probs.append("sealed: %d cells round the gated envelope or in the plug end unwritten, air or fluid, e.g. %s"
+        probs.append("sealed: %d cells next to the envelope under the ground end unwritten, air or fluid, e.g. %s"
                      % (len(unsealed), sorted(unsealed)[:3]))
-    notes["cells sealing the gated section"] = len(ring)
-    open_gated = sum(1 for c in gated if final.get(c) in AIRS)
-    notes["gated envelope cells left open"] = open_gated
-    if gated and open_gated < 0.8 * len(gated):
-        probs.append("sealed: only %d of %d gated envelope cells end open" % (open_gated, len(gated)))
-
-    # ---- zone
-    boxes = zone_boxes()
-    notes["zone boxes"] = len(boxes)
-
-    def in_boxes(c):
-        return any(b[0][0] <= c[0] <= b[1][0] and b[0][1] <= c[1] <= b[1][1] and b[0][2] <= c[2] <= b[1][2] for b in boxes)
-    missed = [c for c in gated if not in_boxes(c)]
-    if missed:
-        probs.append("zone: %d gated envelope cells outside every zone box, e.g. %s" % (len(missed), sorted(missed)[:3]))
-    caught = [c for c in ungated | knock | {(tx, ty, tz), (tx, ty + 1, tz)} if in_boxes(c)]
-    if caught:
-        probs.append("zone: %d ungated, knock or turn-back cells inside a zone box, e.g. %s" % (len(caught), sorted(caught)[:3]))
-    for (x0, y0, z0), (x1, y1, z1) in boxes:
-        lowest = min(top(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1))
-        if y1 >= lowest:
-            probs.append("zone: a box reaching y%d stands at or over the ground (y%d) at x%d-%d z%d-%d"
-                         % (y1, lowest, x0, x1, z0, z1))
-
+    notes["cells sealing the envelope"] = len(ring)
+    # ---- the one crystal, and nothing left of the gate
+    t = spec["mine"]["tease"]
+    fb = t["face"]["box"]
+    crystals = [c for c, b in final.items() if b.split("[")[0] == "mega_showdown:mega_stone_crystal"]
+    notes["mega stone crystals written"] = len(crystals)
+    if len(crystals) != t["face"]["crystals"]:
+        probs.append("crystal: %d mega_stone_crystal written, the tease has %d" % (len(crystals), t["face"]["crystals"]))
+    if any(not (fb[0] <= x <= fb[3] and fb[1] <= y <= fb[4] and fb[2] <= z <= fb[5]) for x, y, z in crystals):
+        probs.append("crystal: a crystal written outside the tease's face box")
+    for gone in ("gate_knock.json", "gate_exit.json", "gate_ward.json", "zone.json"):
+        if (PACK / "data" / "cobblers" / "advancement" / "rift_mines" / gone).is_file():
+            probs.append("crystal: the retired gate's advancement %s is still in the pack" % gone)
+    rest = FN / "tease" / "restore.mcfunction"
+    body = rest.read_text(encoding="utf-8") if rest.is_file() else ""
+    if "replace #cobblers:" not in body or body.count("mega_stone_crystal") != t["face"]["crystals"]:
+        probs.append("crystal: the tease's restore is not a filtered fill with %d guarded crystal setblocks" % t["face"]["crystals"])
     # ---- blocks
     sb = json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"]
     used = sorted({b.split("[")[0] for b in final.values()})
-    bad = [b for b in used if b in sb or b in FLUIDS]
+    bad = [b for b in used if b in sb or b in FLUIDS or (b.startswith("mega_showdown:mega_meteorid_") and b.endswith("_ore"))]
     if bad:
-        probs.append("blocks: written blocks that decide spawns or are fluids: %s" % bad)
+        probs.append("blocks: written blocks that decide spawns, are fluids or drop evolution stones: %s" % bad)
     notes["distinct blocks written"] = len(used)
-
     # ---- limits
     for f in sorted(FN.rglob("*.mcfunction")):
         for n, c, w in FL.check_file(f):
             probs.append("limits: %s line %d: %s" % (f.name, n, w))
+    return probs
+
+
+def refill_problems(spec, grid, ungated, ground, notes):
+    """The staging refill writes rock into exactly the retired gated envelope, and nowhere the live build uses."""
+    probs = []
+    ret = spec.get("retired_gated_section") or {}
+    env = set()
+    for f in ret.get("features") or []:
+        env |= stamp(f, ground)
+    notes["retired gated envelope cells"] = len(env)
+    if not env:
+        probs.append("refill: the data has no retired gated envelope: nothing to refill")
+        return probs
+    final, outside, _files = replay(grid, REFILL_FN)
+    if outside:
+        probs.append("refill: %d writes outside the grid" % len(outside))
+    if set(final) != env:
+        probs.append("refill: writes %d cells, the retired envelope has %d (%d missing, %d extra)"
+                     % (len(final), len(env), len(env - set(final)), len(set(final) - env)))
+    soft = [c for c, b in final.items() if b in AIRS or b.split("[")[0] in FLUIDS]
+    if soft:
+        probs.append("refill: %d cells written air or fluid" % len(soft))
+    cb = spec["mine"]["collapse"]["box"]
+    live = [c for c in final if c in ungated or (cb[0] <= c[0] <= cb[3] and cb[1] <= c[1] <= cb[4] and cb[2] <= c[2] <= cb[5])]
+    if live:
+        probs.append("refill: %d cells in the live envelope or the collapse, e.g. %s" % (len(live), sorted(live)[:3]))
+    for f in sorted(REFILL_FN.rglob("*.mcfunction")):
+        for n, c, w in FL.check_file(f):
+            probs.append("limits: %s line %d: %s" % (f.name, n, w))
+    notes["refill cells written"] = len(final)
     return probs
 
 
