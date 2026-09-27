@@ -1,0 +1,1542 @@
+{
+  "schema": "cobblers.rift_mines/1",
+  "status": "generated on the branch world/rift-mines, 2026-09-27; not installed, not built in any world, not seen in game",
+  "builder": "tools/rift_mines.py",
+  "audit": "tools/rift_mines_audit.py",
+  "which_town": {
+    "answer": "rift_dig_camp",
+    "why": "'The Rift mining town' is the Rift dig camp on the west spur (data/towns.json rift_dig_camp, data/placements.json settlements.rift_dig_camp; docs/world-building/DEEP_CITY.md section 6 'the dig camp as a mining town'; EXP-035 row 19 'The Rift's mining town (the dig camp) is far too small'). It is not mining_town, which is the Craters' mining town in the east cones (x6520-6746 z5603-5829): the owner's notes 'can't have wood houses' and 'needs mine rails, ore piles, tons of theatrics' are that town's (EXP-035 rows 23-24, built by tools/mining_works.py), and 'the southern part of rift ... town and mega stone mine' is the gulch design in docs/world-building/SOUTHERN_RIFT.md."
+  },
+  "disagreements": [
+    "SOUTHERN_RIFT.md puts the mega stone mine in the gulch (the south-east branch, x4039-4454 z4513-4958) behind an 8-badge gate at the end of the game. The owner's request of 2026-09-27 puts the mega stone mines and caves in the dig camp's spur, visible early and gated around badge five or six. This file follows the owner: the mine's design (a seam, an adit hall, galleries with crystal faces, dead-end Mega chambers, a Heart, guardian modes) is SOUTHERN_RIFT.md section 4's, sited in the west spur. The gulch mine is not built and not cancelled.",
+    "RIFT_ZONES.md makes the west spur Z1, opened at 2 badges, and data/spawns.json rift_west_spur spawns at 56-58: the band is wrong for a zone opened at 2 badges and for galleries opened at 5 (DEEP_CITY.md section 6 says so too). Not changed here: trainer-balance-designer's.",
+    "The placement plan says the camp is strung 'between walls twenty blocks high'. On the canonical heightmap the spur here is a shallow bowl: floor y87, rising about one block in five to y113-115 at z3080 (north) and y104 at z3400 (south). The quarries and worked faces are cut into those slopes to make the walls a mining town needs."
+  ],
+  "design": [
+    "docs/world-building/SOUTHERN_RIFT.md section 4 (the mine, the guardian modes, crystal faces, rewards per player)",
+    "docs/world-building/DEEP_CITY.md section 6 (the dig camp as a mining town: stone and copper, no timber; ore piles from blocks that decide nothing; carts)",
+    "docs/research/notes/wild-mega-pokemon.md and experiments/EXP-036-wild-mega/README.md (a wild Mega is achievable)",
+    "docs/mechanics/RIFT_ZONES.md section 4 (the zone check pattern)"
+  ],
+  "seed": 20260927,
+  "grid": {
+    "x": [
+      3060,
+      3290
+    ],
+    "z": [
+      3060,
+      3400
+    ],
+    "y": [
+      20,
+      128
+    ]
+  },
+  "cover_min": 4,
+  "keep_clear": {
+    "margin": 2,
+    "why": "Nothing this build writes, shell included, comes within `margin` of another build's cells or of these boxes. The camp's own cells (streets, plaza, anchors, lots, donors, lights) are read from data/placements.json and the camp's plan by the audit, not listed here.",
+    "boxes": [
+      {
+        "id": "relic_area_and_the_slip",
+        "rect": [
+          3280,
+          3150,
+          3440,
+          3440
+        ],
+        "why": "data/rift_regions.json relic_area_shrine starts at x3285, and DEEP_CITY.md proposes the Slip barrier at about x3290-3310: the spur floor east of x3280 stays untouched"
+      },
+      {
+        "id": "haul_road_and_rim",
+        "rect": [
+          2940,
+          3300,
+          3066,
+          3440
+        ],
+        "why": "the excavation haul road (data/rift_sculpt.json excavation_haul_road, ring point (2987, 3384), a landslide ramp and its dirt path) and the rim crags round it: the camp's only way in and out"
+      },
+      {
+        "id": "spur_end_guard",
+        "rect": [
+          3006,
+          3238,
+          3038,
+          3270
+        ],
+        "why": "RIFT_ZONES.md G1 stands at the spur's end (3022, 3254)"
+      }
+    ]
+  },
+  "flag": {
+    "advancement": "cobblers:flag/gym5_cleared",
+    "badge": 5,
+    "why": "'gated deeper around badge five or six' (the owner). The fifth badge, Koga's, is the earlier of the two; one field, so moving it to gym6_cleared is a one-word change. The flag is the advancement tools/progression_pack.py writes for each leader (data/progression.json gym5_cleared), per player."
+  },
+  "palette": {
+    "rock_upper": [
+      "minecraft:stone",
+      "minecraft:stone",
+      "minecraft:andesite",
+      "minecraft:tuff"
+    ],
+    "rock_lower": [
+      "minecraft:deepslate",
+      "minecraft:deepslate",
+      "minecraft:tuff",
+      "minecraft:cobbled_deepslate"
+    ],
+    "rock_split_y": 70,
+    "cut_face": [
+      "minecraft:stone",
+      "minecraft:stone",
+      "minecraft:andesite",
+      "minecraft:tuff",
+      "minecraft:stone"
+    ],
+    "cut_floor": [
+      "minecraft:gravel",
+      "minecraft:cobblestone",
+      "minecraft:andesite",
+      "minecraft:gravel"
+    ],
+    "gallery_floor": [
+      "minecraft:cobbled_deepslate",
+      "minecraft:tuff",
+      "minecraft:gravel",
+      "minecraft:cobbled_deepslate"
+    ],
+    "hall_floor": [
+      "minecraft:polished_deepslate",
+      "minecraft:polished_tuff"
+    ],
+    "chamber_floor": [
+      "minecraft:deepslate",
+      "minecraft:smooth_basalt",
+      "minecraft:deepslate"
+    ],
+    "rubble": [
+      "minecraft:cobbled_deepslate",
+      "minecraft:tuff",
+      "minecraft:andesite",
+      "minecraft:cobblestone"
+    ],
+    "meteorid": "mega_showdown:mega_meteorid_block",
+    "meteorid_radiated": "mega_showdown:mega_meteorid_radiated_block",
+    "meteorid_polished": "mega_showdown:polished_mega_meteorid_block",
+    "meteorid_chiseled": "mega_showdown:chiseled_mega_meteorid_brick",
+    "dormant_crystal": "mega_showdown:dormant_crystal",
+    "mega_stone_crystal": "mega_showdown:mega_stone_crystal",
+    "rail": "minecraft:powered_rail",
+    "post": "minecraft:polished_basalt",
+    "beam": "minecraft:waxed_cut_copper",
+    "msd_source": "read 2026-09-27 from mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar (the version modpack/manifest/overlay.json pins), a copy under the canonical-data worktree's experiments/EXP-000-cobblemon-1.8-compat/runtime/replacements/: blockstates mega_meteorid_block, mega_meteorid_radiated_block, polished_mega_meteorid_block, chiseled_mega_meteorid_brick (no properties), dormant_crystal (facing: 6 ways), mega_stone_crystal (facing: north, south, west, east); loot table mega_stone_crystal drops one mega_showdown:mega_stone (the crystal itself with Silk Touch, no Fortune bonus); tags needs_diamond_tool list mega_stone_crystal and dormant_crystal. In the mod's own mega_site template the crystal stands facing north on top of a radiated meteorid block.",
+    "rail_why": "minecraft:rail is a spawn condition (Rolycoly, Carkol, Coalossal: data/spawn_blocks.json) and SOUTHERN_RIFT.md and DEEP_CITY.md keep it out of the Rift's towns; data/spawn_block_policy.json whitelists it only inside the excavation's two archaeological sites. minecraft:powered_rail is named by no loaded spawn condition (data/spawn_blocks.json lists every block one names), so the track is powered rail, laid unpowered, straight runs only (a powered rail cannot turn a corner)."
+  },
+  "town": {
+    "street": {
+      "id": "forge_row",
+      "from": [
+        3168,
+        3300
+      ],
+      "to": [
+        3264,
+        3300
+      ],
+      "width": 3,
+      "surface": "minecraft:coarse_dirt",
+      "why": "the camp track continued east from its last cell (x3167) as the town's working street; the same surface as the camp track"
+    },
+    "lamp_posts": [
+      [
+        3184,
+        3296
+      ],
+      [
+        3214,
+        3296
+      ],
+      [
+        3246,
+        3296
+      ],
+      [
+        3199,
+        3304
+      ],
+      [
+        3232,
+        3304
+      ],
+      [
+        3260,
+        3304
+      ]
+    ],
+    "houses": [
+      {
+        "id": "forge",
+        "rect": [
+          3171,
+          3285,
+          3181,
+          3294
+        ],
+        "door": "south",
+        "walls": "minecraft:tuff_bricks",
+        "role": "forge",
+        "chimney": true
+      },
+      {
+        "id": "assay_office",
+        "rect": [
+          3187,
+          3285,
+          3195,
+          3294
+        ],
+        "door": "south",
+        "walls": "minecraft:deepslate_bricks",
+        "role": "assay"
+      },
+      {
+        "id": "bunkhouse_1",
+        "rect": [
+          3201,
+          3285,
+          3211,
+          3294
+        ],
+        "door": "south",
+        "walls": "minecraft:tuff_bricks",
+        "role": "bunkhouse"
+      },
+      {
+        "id": "canteen",
+        "rect": [
+          3217,
+          3285,
+          3227,
+          3294
+        ],
+        "door": "south",
+        "walls": "minecraft:deepslate_bricks",
+        "role": "canteen",
+        "chimney": true
+      },
+      {
+        "id": "company_store",
+        "rect": [
+          3233,
+          3285,
+          3241,
+          3294
+        ],
+        "door": "south",
+        "walls": "minecraft:tuff_bricks",
+        "role": "store"
+      },
+      {
+        "id": "bunkhouse_2",
+        "rect": [
+          3173,
+          3305,
+          3181,
+          3313
+        ],
+        "door": "north",
+        "walls": "minecraft:deepslate_bricks",
+        "role": "bunkhouse"
+      },
+      {
+        "id": "bunkhouse_3",
+        "rect": [
+          3187,
+          3305,
+          3195,
+          3313
+        ],
+        "door": "north",
+        "walls": "minecraft:tuff_bricks",
+        "role": "bunkhouse"
+      },
+      {
+        "id": "smelter",
+        "rect": [
+          3201,
+          3305,
+          3211,
+          3314
+        ],
+        "door": "north",
+        "walls": "minecraft:deepslate_bricks",
+        "role": "smelter",
+        "chimney": true
+      },
+      {
+        "id": "tool_shed",
+        "rect": [
+          3217,
+          3305,
+          3224,
+          3312
+        ],
+        "door": "north",
+        "walls": "minecraft:tuff_bricks",
+        "role": "tools"
+      },
+      {
+        "id": "tally_office",
+        "rect": [
+          3116,
+          3198,
+          3124,
+          3206
+        ],
+        "door": "east",
+        "walls": "minecraft:deepslate_bricks",
+        "role": "tally",
+        "on": "seam_cut",
+        "why": "the company's tally office in the seam cut's yard, where every cart from the adit is weighed"
+      }
+    ],
+    "ore_piles": [
+      {
+        "id": "row_iron",
+        "centre": [
+          3250,
+          3289
+        ],
+        "r": [
+          3.0,
+          2.5
+        ],
+        "h": 3.4,
+        "blocks": [
+          "minecraft:raw_iron_block",
+          "minecraft:raw_iron_block",
+          "minecraft:cobbled_deepslate",
+          "minecraft:tuff"
+        ]
+      },
+      {
+        "id": "row_copper",
+        "centre": [
+          3259,
+          3290
+        ],
+        "r": [
+          2.5,
+          2.5
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:raw_copper_block",
+          "minecraft:copper_ore",
+          "minecraft:raw_copper_block",
+          "minecraft:tuff"
+        ]
+      },
+      {
+        "id": "row_coal",
+        "centre": [
+          3236,
+          3309
+        ],
+        "r": [
+          3.0,
+          2.5
+        ],
+        "h": 3.2,
+        "blocks": [
+          "minecraft:coal_block",
+          "minecraft:coal_block",
+          "minecraft:cobbled_deepslate",
+          "minecraft:blackstone"
+        ]
+      },
+      {
+        "id": "row_gold",
+        "centre": [
+          3246,
+          3310
+        ],
+        "r": [
+          2.2,
+          2.2
+        ],
+        "h": 2.6,
+        "blocks": [
+          "minecraft:raw_gold_block",
+          "minecraft:gold_ore",
+          "minecraft:andesite"
+        ]
+      },
+      {
+        "id": "row_spoil",
+        "centre": [
+          3256,
+          3310
+        ],
+        "r": [
+          3.0,
+          2.8
+        ],
+        "h": 3.6,
+        "blocks": [
+          "minecraft:cobbled_deepslate",
+          "minecraft:tuff",
+          "minecraft:andesite",
+          "minecraft:cobblestone"
+        ]
+      },
+      {
+        "id": "yard_iron",
+        "centre": [
+          3144,
+          3212
+        ],
+        "r": [
+          2.6,
+          2.4
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:raw_iron_block",
+          "minecraft:cobbled_deepslate",
+          "minecraft:raw_iron_block",
+          "minecraft:tuff"
+        ]
+      },
+      {
+        "id": "yard_seam_spoil",
+        "centre": [
+          3122,
+          3222
+        ],
+        "r": [
+          2.6,
+          2.6
+        ],
+        "h": 3.0,
+        "blocks": [
+          "mega_showdown:mega_meteorid_block",
+          "minecraft:cobbled_deepslate",
+          "minecraft:tuff",
+          "minecraft:cobbled_deepslate"
+        ]
+      },
+      {
+        "id": "north_quarry_stone",
+        "centre": [
+          3220,
+          3226
+        ],
+        "r": [
+          3.2,
+          2.6
+        ],
+        "h": 3.6,
+        "blocks": [
+          "minecraft:cobblestone",
+          "minecraft:andesite",
+          "minecraft:stone",
+          "minecraft:tuff"
+        ]
+      },
+      {
+        "id": "north_quarry_blocks",
+        "centre": [
+          3196,
+          3228
+        ],
+        "r": [
+          2.4,
+          2.4
+        ],
+        "h": 2.4,
+        "blocks": [
+          "minecraft:stone_bricks",
+          "minecraft:smooth_stone",
+          "minecraft:stone_bricks"
+        ]
+      },
+      {
+        "id": "south_quarry_stone",
+        "centre": [
+          3216,
+          3362
+        ],
+        "r": [
+          2.6,
+          2.4
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:andesite",
+          "minecraft:diorite",
+          "minecraft:granite",
+          "minecraft:cobblestone"
+        ]
+      },
+      {
+        "id": "east_face_copper",
+        "centre": [
+          3266,
+          3226
+        ],
+        "r": [
+          2.6,
+          2.6
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:raw_copper_block",
+          "minecraft:copper_ore",
+          "minecraft:gold_ore",
+          "minecraft:tuff"
+        ]
+      }
+    ],
+    "cuts": [
+      {
+        "id": "seam_cut",
+        "kind": "hillside",
+        "rect": [
+          3114,
+          3160,
+          3150,
+          3232
+        ],
+        "floor": 87,
+        "benches": [],
+        "role": "mine",
+        "why": "the yard in front of the mega stone seam: its north face (z3159, 10-14 high) carries the seam, visible from the camp's plaza 140 blocks south; the adit opens in it"
+      },
+      {
+        "id": "north_quarry",
+        "kind": "hillside",
+        "rect": [
+          3186,
+          3176,
+          3226,
+          3240
+        ],
+        "floor": 88,
+        "benches": [
+          "east",
+          "west"
+        ],
+        "bench": {
+          "rise": 4,
+          "run": 3,
+          "levels": 4
+        },
+        "veins": [
+          "minecraft:copper_ore",
+          "minecraft:tuff"
+        ],
+        "role": "quarry",
+        "why": "a stone quarry into the north slope, stepped on its east and west sides, sheer at the back where Drift A goes in"
+      },
+      {
+        "id": "east_face",
+        "kind": "hillside",
+        "rect": [
+          3244,
+          3188,
+          3272,
+          3242
+        ],
+        "floor": 89,
+        "benches": [
+          "east"
+        ],
+        "bench": {
+          "rise": 5,
+          "run": 4,
+          "levels": 2
+        },
+        "veins": [
+          "minecraft:copper_ore",
+          "minecraft:gold_ore",
+          "minecraft:lapis_ore"
+        ],
+        "role": "face",
+        "why": "a worked face: a straight cut 10-12 high with copper, gold and lapis in it, and Drift B going in"
+      },
+      {
+        "id": "south_quarry",
+        "kind": "pit",
+        "rect": [
+          3184,
+          3328,
+          3230,
+          3378
+        ],
+        "floor": 79,
+        "bench": {
+          "rise": 3,
+          "run": 3,
+          "levels": 6
+        },
+        "ramp": {
+          "x": [
+            3205,
+            3209
+          ],
+          "z": [
+            3328,
+            3350
+          ],
+          "top": 91
+        },
+        "veins": [
+          "minecraft:diorite",
+          "minecraft:granite",
+          "minecraft:copper_ore"
+        ],
+        "role": "quarry",
+        "why": "a sunk stepped pit south of Forge Row, benches on every side and a ramp down from its north rim"
+      }
+    ],
+    "vein_share": 0.05,
+    "derricks": [
+      {
+        "id": "north_quarry_derrick",
+        "at": [
+          3190,
+          3230
+        ],
+        "on": "north_quarry",
+        "height": 15,
+        "boom": [
+          1,
+          0
+        ],
+        "reach": 7,
+        "drop": 7
+      },
+      {
+        "id": "south_quarry_derrick",
+        "at": [
+          3196,
+          3324
+        ],
+        "on": "ground",
+        "height": 13,
+        "boom": [
+          0,
+          1
+        ],
+        "reach": 8,
+        "drop": 9
+      }
+    ],
+    "tracks": [
+      {
+        "id": "seam_line",
+        "from": [
+          3132,
+          3122
+        ],
+        "to": [
+          3132,
+          3228
+        ],
+        "why": "from the adit hall out through the adit to the tally office in the yard",
+        "feet": 88
+      },
+      {
+        "id": "north_quarry_line",
+        "from": [
+          3209,
+          3150
+        ],
+        "to": [
+          3209,
+          3238
+        ],
+        "why": "from Drift A's pocket out across the north quarry's floor",
+        "feet": 89
+      },
+      {
+        "id": "east_face_line",
+        "from": [
+          3248,
+          3232
+        ],
+        "to": [
+          3266,
+          3232
+        ],
+        "feet": 90
+      },
+      {
+        "id": "drift_b_line",
+        "from": [
+          3258,
+          3170
+        ],
+        "to": [
+          3258,
+          3228
+        ],
+        "feet": 90
+      },
+      {
+        "id": "drift_c_line",
+        "from": [
+          3100,
+          3172
+        ],
+        "to": [
+          3113,
+          3172
+        ],
+        "feet": 88
+      },
+      {
+        "id": "south_quarry_line",
+        "from": [
+          3200,
+          3356
+        ],
+        "to": [
+          3214,
+          3356
+        ],
+        "feet": 80
+      }
+    ],
+    "carts": [
+      [
+        3132,
+        3131
+      ],
+      [
+        3132,
+        3150
+      ],
+      [
+        3132,
+        3196
+      ],
+      [
+        3209,
+        3163
+      ],
+      [
+        3209,
+        3218
+      ],
+      [
+        3254,
+        3232
+      ],
+      [
+        3258,
+        3180
+      ],
+      [
+        3106,
+        3172
+      ],
+      [
+        3207,
+        3356
+      ]
+    ],
+    "hall_pillars": [
+      [
+        3126,
+        3123
+      ],
+      [
+        3138,
+        3123
+      ],
+      [
+        3126,
+        3134
+      ],
+      [
+        3138,
+        3134
+      ]
+    ]
+  },
+  "mine": {
+    "why": "SOUTHERN_RIFT.md section 4's mine, sited in the west spur: an ungated adit hall any Z1 player can walk into, the company's gate, and behind it the galleries, the crystal faces, five Mega chambers and the Heart",
+    "headframe": {
+      "at": [
+        3132,
+        3128
+      ],
+      "over": "adit_shaft",
+      "height": 12
+    },
+    "seam": {
+      "cut": "seam_cut",
+      "band": {
+        "base_y": 92,
+        "per_x": 0.12,
+        "per_z": 0.0,
+        "half": 1.6
+      },
+      "radiated_share": 0.18,
+      "glint_share": 0.1,
+      "why": "a band of Mega Showdown meteorid across the seam cut's faces, dormant crystal glinting out of it: the seam an early player sees and cannot yet reach the heart of"
+    },
+    "features": [
+      {
+        "id": "adit",
+        "gated": false,
+        "kind": "tube",
+        "path": [
+          [
+            3132,
+            88,
+            3160
+          ],
+          [
+            3132,
+            88,
+            3140
+          ]
+        ],
+        "r": 2,
+        "height": 5,
+        "floor": "hall_floor",
+        "frames": 5,
+        "light_every": 5
+      },
+      {
+        "id": "adit_hall",
+        "gated": false,
+        "kind": "room",
+        "box": [
+          3120,
+          88,
+          3118,
+          3144,
+          93,
+          3139
+        ],
+        "floor": "hall_floor",
+        "pillars": 6,
+        "light_every": 6
+      },
+      {
+        "id": "adit_shaft",
+        "gated": false,
+        "kind": "shaft",
+        "centre": [
+          3132,
+          3128
+        ],
+        "r": 1,
+        "from_y": 94
+      },
+      {
+        "id": "decline",
+        "gated": false,
+        "kind": "tube",
+        "path": [
+          [
+            3145,
+            88,
+            3124
+          ],
+          [
+            3176,
+            72,
+            3124
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor",
+        "frames": 8,
+        "light_every": 8
+      },
+      {
+        "id": "drift_a",
+        "gated": false,
+        "kind": "tube",
+        "path": [
+          [
+            3209,
+            89,
+            3176
+          ],
+          [
+            3209,
+            89,
+            3152
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor",
+        "frames": 5,
+        "light_every": 6,
+        "pocket": {
+          "at": [
+            3209,
+            89,
+            3148
+          ],
+          "r": 3
+        },
+        "end_pile": "row_iron",
+        "town": true
+      },
+      {
+        "id": "drift_b",
+        "gated": false,
+        "kind": "tube",
+        "path": [
+          [
+            3258,
+            90,
+            3188
+          ],
+          [
+            3258,
+            90,
+            3168
+          ],
+          [
+            3246,
+            90,
+            3168
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor",
+        "frames": 5,
+        "light_every": 6,
+        "pocket": {
+          "at": [
+            3243,
+            90,
+            3168
+          ],
+          "r": 3
+        },
+        "town": true
+      },
+      {
+        "id": "drift_c",
+        "gated": false,
+        "kind": "tube",
+        "path": [
+          [
+            3114,
+            88,
+            3172
+          ],
+          [
+            3098,
+            88,
+            3172
+          ],
+          [
+            3098,
+            88,
+            3152
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor",
+        "frames": 5,
+        "light_every": 6,
+        "pocket": {
+          "at": [
+            3098,
+            88,
+            3148
+          ],
+          "r": 3
+        },
+        "seam_glints": true,
+        "why": "the prospect drift: the seam followed west into the hill, meteorid and dormant crystal in its pocket, open to anyone"
+      },
+      {
+        "id": "gallery_ab",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3188,
+            72,
+            3124
+          ],
+          [
+            3208,
+            68,
+            3108
+          ]
+        ],
+        "r": 2,
+        "height": 5,
+        "floor": "gallery_floor",
+        "light_every": 9
+      },
+      {
+        "id": "gallery_bc",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3208,
+            68,
+            3108
+          ],
+          [
+            3232,
+            64,
+            3098
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor",
+        "light_every": 12
+      },
+      {
+        "id": "gallery_cd",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3232,
+            64,
+            3098
+          ],
+          [
+            3248,
+            60,
+            3112
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "gallery_de",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3248,
+            60,
+            3112
+          ],
+          [
+            3250,
+            58,
+            3140
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "gallery_ef",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3250,
+            58,
+            3140
+          ],
+          [
+            3240,
+            56,
+            3166
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "gallery_fg",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3240,
+            56,
+            3166
+          ],
+          [
+            3212,
+            58,
+            3172
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "gallery_gh",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3212,
+            58,
+            3172
+          ],
+          [
+            3194,
+            64,
+            3150
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor",
+        "light_every": 12
+      },
+      {
+        "id": "gallery_ha",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3194,
+            64,
+            3150
+          ],
+          [
+            3188,
+            72,
+            3124
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor",
+        "light_every": 12
+      },
+      {
+        "id": "drift_ch1",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3208,
+            68,
+            3108
+          ],
+          [
+            3190,
+            60,
+            3100
+          ],
+          [
+            3172,
+            52,
+            3095
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "drift_ch2",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3232,
+            64,
+            3098
+          ],
+          [
+            3244,
+            57,
+            3088
+          ],
+          [
+            3234,
+            50,
+            3081
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "drift_ch3",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3248,
+            60,
+            3112
+          ],
+          [
+            3262,
+            55,
+            3114
+          ],
+          [
+            3266,
+            50,
+            3124
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "drift_ch4",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3240,
+            56,
+            3166
+          ],
+          [
+            3250,
+            50,
+            3186
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "drift_ch5",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3212,
+            58,
+            3172
+          ],
+          [
+            3196,
+            50,
+            3190
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "drift_heart",
+        "gated": true,
+        "kind": "tube",
+        "path": [
+          [
+            3194,
+            64,
+            3150
+          ],
+          [
+            3206,
+            57,
+            3140
+          ],
+          [
+            3222,
+            50,
+            3128
+          ],
+          [
+            3238,
+            44,
+            3138
+          ],
+          [
+            3230,
+            38,
+            3146
+          ]
+        ],
+        "r": 1,
+        "height": 4,
+        "floor": "gallery_floor"
+      },
+      {
+        "id": "face_b",
+        "gated": true,
+        "kind": "pocket",
+        "at": [
+          3208,
+          68,
+          3104
+        ],
+        "r": 2,
+        "crystals": 2
+      },
+      {
+        "id": "face_c",
+        "gated": true,
+        "kind": "pocket",
+        "at": [
+          3229,
+          64,
+          3095
+        ],
+        "r": 2,
+        "crystals": 2
+      },
+      {
+        "id": "face_d",
+        "gated": true,
+        "kind": "pocket",
+        "at": [
+          3244,
+          60,
+          3112
+        ],
+        "r": 2,
+        "crystals": 2
+      },
+      {
+        "id": "face_e",
+        "gated": true,
+        "kind": "pocket",
+        "at": [
+          3254,
+          58,
+          3143
+        ],
+        "r": 2,
+        "crystals": 3
+      },
+      {
+        "id": "face_f",
+        "gated": true,
+        "kind": "pocket",
+        "at": [
+          3240,
+          56,
+          3170
+        ],
+        "r": 2,
+        "crystals": 3
+      },
+      {
+        "id": "face_g",
+        "gated": true,
+        "kind": "pocket",
+        "at": [
+          3212,
+          58,
+          3176
+        ],
+        "r": 2,
+        "crystals": 2
+      },
+      {
+        "id": "chamber_1",
+        "gated": true,
+        "kind": "chamber",
+        "centre": [
+          3166,
+          52,
+          3094
+        ],
+        "r": 7,
+        "height": 8,
+        "crystals": 4,
+        "guardian": {
+          "species": null,
+          "level": null,
+          "mode": "wild_mega",
+          "fallback_mode": "outlier"
+        }
+      },
+      {
+        "id": "chamber_2",
+        "gated": true,
+        "kind": "chamber",
+        "centre": [
+          3230,
+          50,
+          3078
+        ],
+        "r": 7,
+        "height": 8,
+        "crystals": 4,
+        "guardian": {
+          "species": null,
+          "level": null,
+          "mode": "wild_mega",
+          "fallback_mode": "outlier"
+        }
+      },
+      {
+        "id": "chamber_3",
+        "gated": true,
+        "kind": "chamber",
+        "centre": [
+          3268,
+          50,
+          3128
+        ],
+        "r": 6,
+        "height": 8,
+        "crystals": 4,
+        "guardian": {
+          "species": null,
+          "level": null,
+          "mode": "wild_mega",
+          "fallback_mode": "outlier"
+        }
+      },
+      {
+        "id": "chamber_4",
+        "gated": true,
+        "kind": "chamber",
+        "centre": [
+          3252,
+          50,
+          3190
+        ],
+        "r": 7,
+        "height": 8,
+        "crystals": 4,
+        "guardian": {
+          "species": null,
+          "level": null,
+          "mode": "wild_mega",
+          "fallback_mode": "outlier"
+        }
+      },
+      {
+        "id": "chamber_5",
+        "gated": true,
+        "kind": "chamber",
+        "centre": [
+          3194,
+          50,
+          3192
+        ],
+        "r": 7,
+        "height": 8,
+        "crystals": 4,
+        "guardian": {
+          "species": null,
+          "level": null,
+          "mode": "wild_mega",
+          "fallback_mode": "outlier"
+        }
+      },
+      {
+        "id": "the_heart",
+        "gated": true,
+        "kind": "chamber",
+        "centre": [
+          3224,
+          38,
+          3150
+        ],
+        "r": 9,
+        "height": 10,
+        "crystals": 6,
+        "guardian": {
+          "species": null,
+          "level": null,
+          "mode": "wild_mega",
+          "fallback_mode": "outlier",
+          "open_question": "SOUTHERN_RIFT.md owner decision 7: the Heart as postgame (champion_cleared) or part of the main mine. Built behind the same gate as the chambers; a second gate on drift_heart is the change if the owner wants postgame."
+        }
+      }
+    ],
+    "gate": {
+      "why": "the collapsed passage at the foot of the decline, faced with the company's grille: a player holding the flag who steps into the alcove in front of it is put through; nobody else is, and the zone check turns back anyone who digs, pearls or tunnels round it",
+      "plug": [
+        3178,
+        71,
+        3121,
+        3185,
+        76,
+        3127
+      ],
+      "grille": {
+        "x": 3178,
+        "z": [
+          3123,
+          3125
+        ],
+        "y": [
+          72,
+          74
+        ]
+      },
+      "knock": [
+        3175,
+        72,
+        3123,
+        3177,
+        74,
+        3125
+      ],
+      "arrive": [
+        3190.5,
+        71,
+        3124.5,
+        -90
+      ],
+      "exit": [
+        3186,
+        72,
+        3122,
+        3186,
+        75,
+        3126
+      ],
+      "turn_back": [
+        3169.5,
+        75,
+        3124.5,
+        90
+      ],
+      "messages_are_placeholders": "the actionbar lines are plain placeholders; the voice is Codex's (docs/HANDOVER_CODEX.md)"
+    },
+    "guardian_modes": {
+      "source": "SOUTHERN_RIFT.md section 4; EXP-036 (a spawned Mega Charizard X stayed Mega through a battle)",
+      "wild_mega": "a chamber Habitat Block (or spawn_pool_world entry bounded to the chamber) whose one entry carries '<species> mega_evolution=<mega|mega_x|mega_y> uncatchable', fightorflight always_aggro_aspects += mega, mega_x, mega_y; the chamber is built with no light source so it stays at 7 or less. The owner's 'all wild mega pokemon that are uncatchable and enraged'. Still to prove (EXP-036): the ball refused in play, enraged by the config line, spawning from a pool rather than a command.",
+      "fallback_mode": "outlier: the species at the top of the band as a data/sizes.json notable individual, not in Mega form; used if the wild-Mega proofs fail. trainer_echo is not chosen: the owner asked for wild Pokemon.",
+      "nothing_spawned": "No guardian, pool, Habitat Block or trainer is written by this build. Species and levels are trainer-balance-designer's (null here)."
+    }
+  },
+  "geometry": {
+    "feet": "every y in a path, room box, pocket or chamber is the FEET level: the first air block above the floor. A cut's `floor` is the solid floor block itself (as tools/ground.py's ground is).",
+    "tube": "each segment P0->P1 is sampled at n = ceil(4 * horizontal length) + 1 evenly spaced points (one point for a zero-length segment); a point stamps the square of columns within r (Chebyshev) of (floor(x+0.5), floor(z+0.5)), from feet = floor(y+0.5) up `height` blocks",
+    "room": "the box, inclusive, feet y0 to top y1",
+    "shaft": "the columns within r (Chebyshev) of the centre, from from_y up to one under the ground, where an iron grate caps it",
+    "pocket": "columns with dx2+dz2 <= (r+0.5)^2 round the centre; feet to feet+r+1 where dx2+dz2 <= (r-0.5)^2, else feet to feet+r",
+    "chamber": "columns with d = hypot(dx, dz) <= r+0.5; feet to feet + max(3, floor((height-1) * sqrt(1 - (d/(r+0.5))^2) + 0.5))",
+    "cut": "each column of the rect gets a floor block y_f = floor + rise * level, level = max(0, levels-1 - e // run), e its distance in columns to the nearest benched side (hillside: the sides listed; pit: all four; no benches: level 0); a pit's ramp sets y_f to floor(floor + (z1-z)/(z1-z0) * (top-floor) + 0.5) inside its x/z range (a causeway down through the benches). Where the ground is above y_f the column is cut from y_f+1 to ground+6.",
+    "shell": "every cell within 2 (a 5x5x5 cube) of the envelope that is not carved and is at or under the ground is written as rock, so the cut and carved spaces are bounded only by blocks this build writes",
+    "roughness": "gated tubes, pockets and chambers only: an envelope cell on the envelope's edge, 3 or more above its column's floor, is left as rock with probability 0.3 (deterministic hash); nothing is ever carved outside the envelope"
+  }
+}

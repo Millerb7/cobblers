@@ -81,7 +81,13 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_blackout",
                 # 2026-09-27: the bridges (tools/bridges.py, data/bridges.json): the Route 7 crossing of Tilpey's
                 # outflow, the one required bridge; block functions run by R9G
-                "cobblers_bridges")
+                "cobblers_bridges",
+                # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
+                # data/town_dressing.json), run by R16B after the donors and the lights
+                "cobblers_town_dressing",
+                # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone mine (tools/rift_mines.py): blocks
+                # run by R9M, and a gate and zone check that act on their own (advancements), so world-local below
+                "cobblers_rift_mines")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -114,7 +120,7 @@ EXCLUDED = {
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
-               "cobblers_sizes", "cobblers_blackout")
+               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -228,6 +234,9 @@ def prepare(a):
     # Victory Road: one cave network; its Habitat Block tiles and its finds are data the build checks against its
     # own model (`vr_caves.py records --write` writes them)
     py(TOOLS / "vr_caves.py", "build", *src)
+    # the Rift dig camp's mines, quarries and the mega stone mine (data/rift_mines.json); audited below, once the
+    # camp's own plan exists
+    py(TOOLS / "rift_mines.py", "build", *src)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     py(TOOLS / "deep_city.py", "build", *src)
@@ -253,6 +262,9 @@ def prepare(a):
     for s in places():
         py(TOOLS / "town_plan.py", s, *src)
         py(TOOLS / "place_town.py", s, *src)
+    # the mines against the camp's plan, the haul road and the other places, and the gated galleries sealed except
+    # through their gate: offline, fail-closed (tools/rift_mines_audit.py)
+    py(TOOLS / "rift_mines_audit.py", *src)
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "sapling_celebi.py")
@@ -262,6 +274,10 @@ def prepare(a):
     # water, fall short of a bank or crowd a town stops prepare here, before anything is installed
     py(TOOLS / "bridges.py", "function", *src)
     py(TOOLS / "bridges.py", "audit", *src)
+    # the towns' landmarks and set dressing: after the town plans, the placement reports and the signposts, which it
+    # keeps clear of; then the plan audit, which fails the prepare on any write on a lot, a road or a building
+    py(TOOLS / "town_dressing.py", "build", *src)
+    py(TOOLS / "town_dressing_audit.py", *src)
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     py(TOOLS / "progression_pack.py")
@@ -675,6 +691,13 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:deep/%s" % f) for f in indexed("cobblers_deep", "deep")]))
     out.append(("R9C", "Victory Road's caves, from the Deep's mouth to the ravine onto the League's apron",
                 [("fn", "cobblers:vr_caves/%s" % f) for f in indexed("cobblers_vr_caves", "vr_caves")]))
+    # the Rift dig camp as a mining town and the mega stone mine in its spur (tools/rift_mines.py): after the camp's
+    # prep (R8) and tents (R9), whose cells it keeps clear, and before its lights (R16). Shell, air, fittings, then the
+    # surface; then the carts, entities summoned 60 ticks after their chunks are force-loaded (the Rift's fx pattern).
+    # The gate and the zone check are advancements in the same pack and need no step.
+    out.append(("R9M", "the Rift dig camp's mines, quarries and the mega stone mine, then its carts",
+                [("fn", "cobblers:rift_mines/%s" % f) for f in indexed("cobblers_rift_mines", "rift_mines")]
+                + [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
@@ -697,6 +720,12 @@ def steps(with_spawns=False):
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
+    # the towns' landmarks and set dressing (tools/town_dressing.py): after the donors, which are placed whole, and the
+    # lights, so nothing placed later erases a piece. Listed from the committed data, not the build, so the step exists
+    # whether or not the pack is built here; the prepare's audit fails if a dressed town's function is missing
+    dressed = list(json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8")).get("towns") or {})
+    out.append(("R16B", "town landmarks and set dressing (%d towns)" % len(dressed),
+                [("fn", "cobblers:town_dressing/%s" % s) for s in dressed]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
