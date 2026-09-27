@@ -89,8 +89,16 @@ anything is installed.
 
 **The Rift and Victory Road, added to the driver on 2026-09-23.** `tools/reapply.py` numbers these in its own sequence, which does not match this table's R-numbers (its R1 is the Rift skin, not the world datapacks): R1 the Rift skin, R1B the Rift biome, R8B the League's lot (after the towns, before the donors), R9B the Windward Deep, **R9C Victory Road's caves** (one cave network from the Deep's mouth to a ravine onto the League's apron; it replaced the schema 2 spine and its regions the same day), **R9E the Habitat Blocks** (this table's R11, run by the driver; the rules below still hold, and the audit's stop is the restart they need), and **R9F the NPCs a reward is given through** (`spawnnpcat` over RCON, because an NPC class loads only at boot: `cobblers_dialogue` must be installed before the server starts). `python tools/vr_caves.py verify --world <stopped copy> --source-root <root>` checks every cell of the cave. On staging only, `vr_caves.py clear` put rock back into what the retired spine and regions carved; a fresh export never had them.
 
+**The bridges, added to the driver on 2026-09-27.** **R9G** runs `/function cobblers:bridges/<id>` for each bridge in
+`data/bridges.json` (one so far: the Route 7 crossing of Tilpey's outflow at (6632, 3904)), after the towns and donors
+and before the lights. `reapply.py prepare` generates the pack `cobblers_bridges` (`python tools/bridges.py function
+--source-root <root>`) and then stops unless `python tools/bridges.py audit --source-root <root>` is clean: the deck
+continuous bank to bank, each end within one block of the heightmap ground, 3 blocks of air over the water, nothing
+written at or below a water level but the piers, each pier in one water level, lanterns on posts, and no town lot within
+16 blocks. That audit reads the function, not a world; a check of the built bridge in a stopped world is still to write.
+
 **The order the driver runs:** R2, R3, R4, R5, R6, then **R10 before R7 and R8** (Relic Island's house stands on the
-islet), then R7, R8 (the Displaced City and Relic Island last among the places), R9, R16, R15, R14, and a verify
+islet), then R7, R8 (the Displaced City and Relic Island last among the places), R9, R9G, R16, R15, R14, and a verify
 pass.
 `tools/reapply.py plan` prints it. After the run, `tools/reapply.py audit` runs `build_audit.py`, `town_audit.py`
 for every place and the signpost verify on the stopped world; any mismatch is a failed step. The light check runs

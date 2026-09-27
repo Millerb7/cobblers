@@ -1,0 +1,56 @@
+{
+ "schema": "cobblers.bridges/1",
+ "status": "source: authored crossings; tools/bridges.py turns each into one datapack function from the canonical heightmap (tools/ground.py) and the committed water (data/landmarks.json lake basins, data/rivers.json cut courses, the sea), and audits the function it wrote against the same sources",
+ "rule": "a bridge is fitted to the water it crosses, never to a world: its level deck spans every row of the band with water in any column, one dry row either side is its abutment, and ramps fall half a block a row from each abutment until they meet the heightmap ground. Nothing may be placed at or below a column's water level except the authored piers, and no water block is ever written",
+ "defaults": {
+  "clearance_air_blocks": 3,
+  "clearance_basis": "3 blocks of air over the highest water under the deck: a boat, a swimmer, or a player riding a surfing Pokemon passes under",
+  "ramp_fall_per_row": 0.5,
+  "ramp_basis": "half a block a row: slabs and full blocks alternate, every step is under the 0.6-block step a walking player climbs without jumping",
+  "headroom_blocks": 4,
+  "max_post_spacing_rows": 8,
+  "town_margin_blocks": 16
+ },
+ "bridges": [
+  {
+   "id": "route7_tilpey_outflow",
+   "working_name": "Tilpey outflow bridge",
+   "name_status": "working name; naming is yours",
+   "route": "route_07_sabrina_to_blaine",
+   "status": "planned",
+   "status_basis": "authored, generated and audited offline (tools/bridges.py audit, 2026-09-27: clean); not built on staging or the live world",
+   "why": "the one required river crossing on the critical path (docs/story/ARC.md, Act III: after gym6_cleared the player crosses the major river and Lake Tilpey's outflow gorge at about (6632, 3904)). data/routes.json pins the route through it (routing.mandatory_waypoints route_07_sabrina_to_blaine [6632, 3904]) and records two water crossings there, lake_tilpey and lake_tilpey_outflow. No placement or tool built it (docs/mechanics/WATER_PROPOSAL.md on design/water-proposal, section 2)",
+   "crossing": {
+    "waypoint": [6632, 3904],
+    "waters": ["lake_tilpey", "lake_tilpey_outflow"],
+    "reading": "the route runs south down Tilpey's east shore and crosses the lake's outlet where it narrows into the outflow channel: a low spit of shore on the north (ground y77), 29 rows of water across the band (the lake at level 77, 1 to 7 deep, then the outflow at 76), and the south bank rising from y76 to y78. The banks are flush with the water, so the deck stands on masonry abutments and ramps down to both banks"
+   },
+   "axis": "z",
+   "centre": 6632,
+   "along_from": 3880,
+   "along_to": 3960,
+   "walkway_half_width": 2,
+   "width_basis": "5 blocks to walk (x6630-6634) between two stone curbs with rails (x6629, x6635): 7 in all",
+   "piers": [
+    {"from": 3914, "to": 3915, "why": "a third of the way over, where the lake's level 77 stands on every side of it"},
+    {"from": 3930, "to": 3931, "why": "near the south bank, where the outflow's level 76 stands on every side; between the two is a 14-row opening over the deepest water (bed y70), the channel a boat takes"}
+   ],
+   "pier_basis": "a pier is placed only where every water column it touches has one level: the lake (77) and the outflow (76) meet in a one-block step that crosses the band diagonally at z3925-3929, and a block update beside that step could set the lake pouring into the channel (vanilla water flow, docs/world-building/RIVERS.md; not tested in game)",
+   "materials": {
+    "deck": "minecraft:spruce_planks",
+    "curb": "minecraft:stone_bricks",
+    "rail_deck": "minecraft:spruce_fence",
+    "rail_ramp": "minecraft:stone_brick_wall",
+    "ramp_full": "minecraft:stone_bricks",
+    "ramp_slab": "minecraft:stone_brick_slab[type=bottom]",
+    "support": "minecraft:stone_bricks",
+    "pier": "minecraft:stone_bricks",
+    "pier_wet": "minecraft:mossy_stone_bricks",
+    "pier_cap": "minecraft:chiseled_stone_bricks",
+    "post_deck": "minecraft:stripped_spruce_log[axis=y]",
+    "post_ramp": "minecraft:stone_brick_wall",
+    "lantern": "minecraft:lantern[hanging=false]"
+   }
+  }
+ ]
+}
