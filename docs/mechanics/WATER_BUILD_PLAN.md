@@ -715,6 +715,43 @@ WATER_PROPOSAL 4.2's option A stands: a ferryman, a compiled dialogue, a fare ch
 a declared gate or not, so a change to the fatigue constants that makes a gated strait swimmable fails the prepare;
 plus each ferry function's fare check before its charge, and its teleport target on heightmap ground or a deck.
 
+### 11.4 What was built (2026-09-27, offline; not run in game)
+
+The owner decided it (section 13, decision 3), and it is built for the two docks that exist; the other lines wait
+only for their docks.
+
+- **Data:** `data/ferries.json` holds all 15 docks and 9 lines of WATER_PROPOSAL 4.3: the fares of decision 5, the
+  gates of decision 6, placeholder messages for Codex's voice, and each line's swim declaration.
+- **Generator:** `tools/ferries.py build` writes the world-local pack `cobblers_ferries`. Each built dock gets a
+  ferryman: a Cobblemon NPC whose class and dialogue are compiled by `tools/compile_dialogue.py`, which gained a
+  `flag` condition and a `function` effect for this. Each trip is a function run by its dialogue option. The trip
+  refuses a second submit inside 2 s and checks the flag gates. On a paid line it reads the balance, refuses if short,
+  charges through the blackout's proven macro, and refuses to travel unless the balance fell by exactly the fare. Then
+  it dismounts the player, fades (blindness and a title) and teleports them to the far landing. A free line never
+  touches CobbleDollars.
+- **Re-apply:** `tools/reapply.py` builds the pack and runs the audit at `prepare`. It installs the pack world-local.
+  Step R17F places the ferrymen over RCON after the restart, as R9F and R17 place their NPCs.
+- **Built lines:** the Relic row (free) runs from the First Cast beach at (1061, 63, 5352) to Relic Island's front
+  walk at (1113, 63, 5534). The Sound ferry ($150 each way) runs from Pacifidlog's jetty landing at (7169, 63, 6708) to
+  the town square at (7206, 63, 6955). Those positions are the ferrymen's; the landings are beside them.
+- **The audit** (`tools/ferries.py audit`, offline, fail-closed; clean) is the swim-budget audit of 5.4 for the
+  ferry. It walks every barrier crossing with this section's method and the constants in `data/blackout.json`. From
+  each gated island's own land it then finds the nearest other land by dilation. It fails if no declared barrier
+  starts there that is no longer than that gap, so a new, shorter crossing breaks the prepare.
+
+The audit found three things 11.1 and 11.2 did not say:
+
+| Line | Measured 2026-09-27 | So |
+|---|---|---|
+| **The Sound ferry** | Pacifidlog stands on the Long Isle's jungle shelf (`data/sea_town.json` D1: one island). The Long Isle's nearest other land is the eastern dunes, 61 blocks over the narrows at z6024: no hit, unaided or trained. From there the square is walked on land, wading water and the decks | The ferry's own crossing is a gate (jetty to square: knocked out, both), but **the town is not behind water**. Declared a leak, answered by the level-cap fix (decision 12). The audit keeps the declaration true: it fails if the narrows stop being swimmable or stop joining the town |
+| **The Northlight packet** | The Pine Isles' nearest other land is Northgate Isle, 107 blocks off: a trained swimmer crosses. The nearest land to the two islands together is the north coast west of them, 388 blocks off (knocked out, both), shorter than C3's 437 from marsh country | Still a gate; the 388-block crossing is its shortest barrier |
+| **The Jungle Isle charter** | The Jungle Isle's nearest other land is the south coast, 229 blocks off (knocked out, both); 11.1 measured 322 from the eastern dunes only | Still a gate |
+
+Not proven, and needing a player on staging: a click that opens a ferryman's menu, a gated option hidden and shown,
+the charge (`cobbledollars remove` by the macro), a refusal when short, the teleport and fade, and a double click
+paying once. Also unproven: two players at once, and what a player's sent-out Pokemon does when its owner is
+teleported.
+
 ---
 
 ## 12. Fishing for prizes: can it use the casino's score currency?

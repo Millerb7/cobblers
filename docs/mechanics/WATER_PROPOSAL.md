@@ -285,6 +285,16 @@ NPCs and functions, and re-applied by a `tools/reapply.py` step (`prepare` fails
 reachable on foot along the south coast [V: `data/towns.json` sunset_west `why_here`]. Its ferry goes to the Sunset
 isle across the strait. (Its waystone record still says "an island": stale, see "Findings".)
 
+**Built, 2026-09-27 (offline, not run in game).** Option A is built for the two lines whose docks exist: the Relic
+row (First Cast to Relic Island, free) and the Sound ferry (Pacifidlog's jetty to its square, $150 each way). The
+source is `data/ferries.json` (every line above, with its fare, gates and swim declaration). The generator is
+`tools/ferries.py`, which writes the world-local `cobblers_ferries`, and `reapply.py` R17F places the ferrymen. The
+Relic row's ferryman stands on the beach at First Cast, not on the jetty, and the Fisher does not row: one NPC opens
+one conversation, and the Fisher's is the rod quest's. The Relic end is the house's front walk, not a new north-shore
+landing. Measured while building it: Pacifidlog is on the Long Isle, which is swimmable at its narrows, so the Sound
+ferry is a convenience and not a gate. `WATER_BUILD_PLAN.md` section 11.4 has the findings and what still needs a
+player.
+
 ### 4.4 Boats
 
 Vanilla boats, chest boats and bamboo rafts are in the world already: barrels of six at Pacifidlog's jetty and yard
