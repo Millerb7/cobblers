@@ -222,8 +222,11 @@ def test_the_gate_is_the_gym5_flag_both_ways(built):
            "cobblers:rift_mines/gate/turn_back" % FLAG in zone
     adv = pack / "data" / "cobblers" / "advancement" / "rift_mines"
     rewards = {p.stem: json.loads(p.read_text(encoding="utf-8"))["rewards"]["function"] for p in adv.glob("*.json")}
+    # the ward (c9cb850) gives Mining Fatigue only, whatever the flag; tests/test_rift_mines_ward.py tests it
     assert rewards == {"gate_knock": "cobblers:rift_mines/gate/knock", "gate_exit": "cobblers:rift_mines/gate/exit",
-                       "zone": "cobblers:rift_mines/gate/zone"}, rewards
+                       "zone": "cobblers:rift_mines/gate/zone", "gate_ward": "cobblers:rift_mines/gate/ward"}, rewards
+    ward = (fdir / "gate" / "ward.mcfunction").read_text(encoding="utf-8")
+    assert FLAG not in ward and " tp " not in ward, "the ward must not gate on the flag or move anyone"
     # the arrival is behind the plug and the turn-back in front of it, by the data
     gt = SPEC["mine"]["gate"]
     assert gt["arrive"][0] > gt["plug"][3] and gt["turn_back"][0] < gt["plug"][0]
