@@ -158,7 +158,18 @@
     "cap_ticks": 20000,
     "trained_partner": "a player the water ladder qualifies (Surf or Dive training with a capable party Pokemon) builds fatigue at half the rate",
     "feel": "at the measured sprint-swim of 5 blocks per second, in deep water an unaided swimmer is warned at 5 s (about 25 blocks), slowed at 7.5 s, exhausted at 11 s and hit from 15 s, about 70 blocks out once Slowness is counted, dead about 3 s later; in shallow water each step takes four times as long. A trained swimmer with a partner gets twice as far; riding a water Pokemon ends it. Rivers (at most about 32 wide) stay crossable; the channel south-west of Pallet (over 100 blocks of deep water) and every island strait do not, unaided",
-    "boats": "a vanilla boat is a vehicle, so riding one is exempt, and boats cross anything. Whether boats beyond the shallows should break is the owner's decision (WATER_PROPOSAL.md)"
+    "boats": "riding a boat is exempt from fatigue, so boats are shallows craft: see the \"boats\" section"
+  },
+  "boats": {
+    "status": "decided by the owner 2026-09-27 (WATER_PROPOSAL decision 1, option C): 'Boats: option C, shallows only. A boat should not defeat swimming, exhaustion and the ferry from day one.' Built on staging, not run in game",
+    "rule": "a player riding a boat or chest boat on sea water at least rough_blocks from land (tools/open_water.py's bands on the canonical heightmap, 16-block cells) is put out of it with the message, unless inside a sheltered box; then the swim rule applies. Coasts, lakes, rivers and the shallows stay boat water",
+    "rough_blocks": 96,
+    "deep_blocks": 256,
+    "sheltered": [
+      {"id": "pacifidlog_bay", "box": [6960, 6864, 7167, 6991],
+       "why": "the only rough-water pocket in the Sound's bay, beside the raft town, whose boat culture (the jetty's boat rack) needs it; measured on the band map, cells x6976-7151 z6880-6976. The open sea south of z6992 stays rough"}
+    ],
+    "message": "The sea is too rough for a boat out here. You tip into the water."
   },
   "messages": {
     "blackout": "You blacked out and returned to {place}. Lost {money}.",

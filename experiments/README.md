@@ -38,6 +38,7 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | EXP-042 | Do the blackout, the recovery claims and the water ladder work in game? | run with the owner, three sessions: the charge, return, Center checkpoint, air, Surf, Dive, the lethal second hit, the removal of vanilla air and the Dive swim boost pass; the waystone checkpoint, a mid-dive swap, a battle loss, recovery and delivery are not run |
 | EXP-043 | Can a datapack run a Game Corner (coins, a slot machine, a prize counter) per player? | proposed in docs/research/CASINO.md (branch research/casino); not run |
 | EXP-044 | Does surface exhaustion stop a player swimming across the sea? | built, loads clean on staging; not run in game |
+| EXP-045 | Can a player Mega Evolve with a Mega Bracelet? | proof kit installed on staging; not run by a player |
 
 ## Template
 

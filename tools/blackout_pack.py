@@ -115,7 +115,7 @@ def molang_or(ids):
     return " || ".join("t.id == 'cobblemon:%s'" % s for s in ids)
 
 
-def build(cfg, mounts, placements, progression):
+def build(cfg, mounts, placements, progression, boat_rows=None):
     """{relative path: file text} for the whole pack."""
     files = {}
     fn = lambda path, lines: files.__setitem__("data/%s/function/%s.mcfunction" % (NS, path), "\n".join(lines) + "\n")
@@ -147,7 +147,7 @@ def build(cfg, mounts, placements, progression):
         "rewards": {"function": "%s:blackout/checkpoint/healer_used" % NS}}, indent=2) + "\n"
 
     # ---- load and tick -------------------------------------------------------------------------------------------
-    consts = {"#pct": money["percent"], "#100": 100, "#2": 2, "#5": 5, "#10": 10, "#16": 16, "#-1": -1,
+    consts = {"#pct": money["percent"], "#100": 100, "#2": 2, "#5": 5, "#10": 10, "#16": 16, "#-1": -1, "#wmin": 1024,
               "#dedupe": cfg["dedupe_ticks"], "#jump": cfg["checkpoints"]["waystone_jump"],
               "#bpct": cats["balls"]["percent"], "#bmax": cats["balls"]["max"],
               "#mpct": cats["medicine"]["percent"], "#mmax": cats["medicine"]["max"],
@@ -856,12 +856,22 @@ def build(cfg, mounts, placements, progression):
     files["data/minecraft/tags/function/load.json"] = json.dumps(load_tag, indent=2) + "\n"
     fn("surface/tick", [
         "# as and at a player every %d ticks: a swimmer (in water, riding nothing, not wading) builds fatigue" % per,
-        "execute unless block ~ ~ ~ #%s:water unless score @s bo.sub matches 1 run return run function %s:surface/recover" % (NS, NS),
         "scoreboard players set #ride bo.tmp 0",
         "execute store success score #ride bo.tmp on vehicle if entity @s",
+        "# a boat on rough sea water tips its rider out (data/blackout.json boats, option C); a ridden Pokemon is not a boat.",
+        "# First, because a boat's rider sits with their feet above the water",
+        "scoreboard players set #boat bo.tmp 0",
+        "execute store success score #boat bo.tmp on vehicle if entity @s[type=#%s:boats]" % NS,
+        "execute if score #boat bo.tmp matches 1 run function %s:boat/check" % NS,
+        "execute store success score #ride bo.tmp on vehicle if entity @s",
         "execute if score #ride bo.tmp matches 1 run return run function %s:surface/recover" % NS,
+        "execute unless block ~ ~ ~ #%s:water unless score @s bo.sub matches 1 run return run function %s:surface/recover" % (NS, NS),
         "# wading: on the bottom with the head out of the water is walking, not swimming",
         "execute if score @s bo.sub matches 0 if entity @s[nbt={OnGround:1b}] run return run function %s:surface/recover" % NS,
+        "# a trained player (Surf or Dive with a capable partner) under water neither tires nor recovers: air alone limits",
+        "# dives (the owner, 2026-09-27: 'Fatigue is the surface gate, air is the underwater gate, and they should not",
+        "# fight'). The first every-swim rule knocked a Dive player out after 33 s under water (WATER_BUILD_PLAN F1)",
+        "execute if score @s bo.qual matches 1.. if score @s bo.sub matches 1 run return 0",
         "# 1 shallow water, 2 deep water (deep_water_blocks of water from the feet down, or the eyes at depth)",
         "scoreboard players set @s bo.zone 1",
         "execute %s run scoreboard players set @s bo.zone 2" % under if under else "scoreboard players set @s bo.zone 2",
@@ -880,6 +890,33 @@ def build(cfg, mounts, placements, progression):
         "execute if score @s bo.fat >= #fexh bo.cfg run effect give @s minecraft:hunger 2 0 true",
         "execute if score @s bo.fat >= #fexh bo.cfg if score @s bo.fwarn matches ..1 run function %s:surface/warn_exhausted" % NS,
         "execute if score @s bo.fat >= #fcol bo.cfg run function %s:surface/collapse" % NS])
+    # ---- boats: shallows craft (data/blackout.json boats, option C) ------------------------------------------------
+    boats = cfg.get("boats") or {}
+    files["data/%s/tags/entity_type/boats.json" % NS] = json.dumps({"values": ["minecraft:boat", "minecraft:chest_boat"]}, indent=2) + "\n"
+    check = [
+        "# as and at a player in a boat: 0 shallows or land, 1 open, 2 deep, from tools/open_water.py's bands at",
+        "# boats.rough_blocks on the canonical heightmap, one function per 16-block cell row",
+        "scoreboard players set @s bo.zone 0",
+        "execute store result score #cx bo.tmp run data get entity @s Pos[0]",
+        "execute store result score #cz bo.tmp run data get entity @s Pos[2]",
+        "scoreboard players operation #cx bo.tmp += #wmin bo.cfg",
+        "scoreboard players operation #cz bo.tmp += #wmin bo.cfg",
+        "scoreboard players operation #cx bo.tmp /= #16 bo.cfg",
+        "scoreboard players operation #cz bo.tmp /= #16 bo.cfg",
+        "execute store result storage %s:blackout sea.z int 1 run scoreboard players get #cz bo.tmp" % NS,
+        "function %s:boat/row with storage %s:blackout sea" % (NS, NS),
+        "execute if score @s bo.zone matches 0 run return 0"]
+    for s in boats.get("sheltered", []):
+        x0, z0, x1, z1 = s["box"]
+        check.append("# sheltered: %s" % s["id"])
+        check.append("execute if entity @s[x=%d,y=-64,z=%d,dx=%d,dy=640,dz=%d] run return 0" % (x0, z0, x1 - x0, z1 - z0))
+    check += ["ride @s dismount",
+              "title @s actionbar %s" % text(boats.get("message", "Too rough for a boat."), "gold")]
+    fn("boat/check", check)
+    fn("boat/row", ["$function %s:boat/r/$(z)" % NS])
+    for z, runs in sorted((boat_rows or {}).items()):
+        fn("boat/r/%d" % z, ["execute if score #cx bo.tmp matches %d..%d run return run scoreboard players set @s bo.zone %d" % (a, b, v)
+                             for a, b, v in runs])
     fn("surface/recover", [
 
         "execute if score @s bo.fat matches 1.. run scoreboard players operation @s bo.fat -= #frec bo.cfg",
@@ -993,7 +1030,25 @@ def main(argv=None):
     p.add_argument("--out", default=str(DEFAULT_OUT))
     a = p.parse_args(argv)
     cfg = load("blackout.json")
-    files = build(cfg, load("water_mounts.json"), load("placements.json"), load("progression.json"))
+    # the boats' rough water: tools/open_water.py's bands on the canonical heightmap (never a world), as row runs
+    import open_water
+    if open_water.WORLD_MIN != -1024:
+        raise SystemExit("boat/check's #wmin is 1024 but tools/open_water.py's WORLD_MIN is %d" % open_water.WORLD_MIN)
+    b = open_water.bands(cfg["boats"]["rough_blocks"], cfg["boats"]["deep_blocks"])
+    boat_rows = {}
+    for code, key in ((1, "open"), (2, "deep")):
+        m = b[key]
+        for z in range(m.shape[0]):
+            x = 0
+            while x < m.shape[1]:
+                if m[z, x]:
+                    x0 = x
+                    while x < m.shape[1] and m[z, x]:
+                        x += 1
+                    boat_rows.setdefault(z, []).append((x0, x - 1, code))
+                else:
+                    x += 1
+    files = build(cfg, load("water_mounts.json"), load("placements.json"), load("progression.json"), boat_rows)
     out = Path(a.out)
     if out.exists():
         shutil.rmtree(out)
