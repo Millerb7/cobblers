@@ -1076,7 +1076,10 @@ def test_every_contract_has_a_consumer_other_than_its_owner():
             assert (ROOT / p).exists(), (sid, p)
 
 
-# Without it a citation rots: the document moves on, the registry still points at a line that no longer says it.
+# Without it a citation rots: the document moves on and no longer says what the registry quotes. The quote is the
+# citation; the line number is a hint. A quote at its hinted line, or on exactly one line of the file, stands; a quote
+# gone from the file, or found on several lines none of which is the hint, fails. Matching the line exactly broke the
+# suite on every edit above a cited line (16 commits of re-pointing, 2026-09-26 to 09-28) without catching anything.
 def test_every_citation_still_says_what_the_registry_quotes():
     bad = []
     for c in REGISTRY["contracts"]:
@@ -1084,8 +1087,11 @@ def test_every_citation_still_says_what_the_registry_quotes():
             path, _, line = cite["at"].rpartition(":")
             lines = (ROOT / path).read_text(encoding="utf-8").splitlines()
             n = int(line)
-            if not (1 <= n <= len(lines)) or cite["quote"] not in lines[n - 1]:
-                bad.append((c["id"], cite["at"], cite["quote"]))
+            if 1 <= n <= len(lines) and cite["quote"] in lines[n - 1]:
+                continue
+            hits = [i + 1 for i, text in enumerate(lines) if cite["quote"] in text]
+            if len(hits) != 1:
+                bad.append((c["id"], cite["at"], cite["quote"], "found on lines %s" % hits if hits else "not in the file"))
     assert not bad, bad
 
 

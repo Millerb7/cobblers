@@ -271,111 +271,158 @@ def derived_inputs(a):
         py(TOOLS / "water_shape.py", *src, "--no-maps")
 
 
-def prepare(a):
+def select_jobs(names, only=None, from_job=None):
+    """The jobs to run: every one; or those --only names (comma separated, shell patterns: town:*, mines*); or
+    --from one to the end. An unknown name is an error, never an empty run."""
+    import fnmatch
+    if only and from_job:
+        raise SystemExit("--only and --from cannot be combined")
+    if from_job:
+        if from_job not in names:
+            raise SystemExit("--from %s: no such job (reapply.py prepare --list)" % from_job)
+        return set(names[names.index(from_job):])
+    if only:
+        run = set()
+        for pat in only.split(","):
+            hit = [n for n in names if fnmatch.fnmatchcase(n, pat.strip())]
+            if not hit:
+                raise SystemExit("--only %s: matches no job (reapply.py prepare --list)" % pat)
+            run.update(hit)
+        return run
+    return set(names)
+
+
+def prepare_jobs(a):
+    """prepare's work as named jobs, in order: (name, callable). `reapply.py prepare --list` prints them."""
     src = ["--source-root", a.source_root]
-    t0 = time.time()
-    derived_inputs(a)
-    py(TOOLS / "critical_legs.py", *src)
-    py(TOOLS / "cavern_plan.py", *src)
-    py(TOOLS / "world_tree.py", *src)
-    py(TOOLS / "tree_grove.py", *src, "--site", "2016,2272", "--id", "foothill_woods")
-    py(TOOLS / "tree_grove.py", *src, "--augment", "foothill_woods")
-    py(TOOLS / "elder_trees.py", *src)
-    py(TOOLS / "themed_saplings.py", *src)                            # placed from data/themed_saplings.json's pins
-    py(TOOLS / "maze_forest.py", *src)
-    py(TOOLS / "islet.py", *src)
+    J = []
+
+    def add(name, tool, *args):
+        J.append((name, lambda: py(TOOLS / tool, *args)))
+
+    J.append(("hydrate", lambda: derived_inputs(a)))
+    add("critical_legs", "critical_legs.py", *src)
+    add("cavern_plan", "cavern_plan.py", *src)
+    add("world_tree", "world_tree.py", *src)
+    add("tree_grove", "tree_grove.py", *src, "--site", "2016,2272", "--id", "foothill_woods")
+    add("tree_grove:augment", "tree_grove.py", *src, "--augment", "foothill_woods")
+    add("elder_trees", "elder_trees.py", *src)
+    add("themed_saplings", "themed_saplings.py", *src)                            # placed from data/themed_saplings.json's pins
+    add("maze_forest", "maze_forest.py", *src)
+    add("islet", "islet.py", *src)
     # the Rift, in the order the world needs it: the skin lies over the sculpted shape, the biome is painted
     # on top of it, the League's lot is levelled before the donor stamps the building on it, the Deep is sunk
     # into the Rift floor, and Victory Road runs from the Deep to the League's apron and so needs both.
-    py(TOOLS / "rift_skin.py", *src)
-    py(TOOLS / "rift_league_tunnel.py", *src)
-    py(TOOLS / "rift_deep.py", *src)
+    add("rift_skin", "rift_skin.py", *src)
+    add("rift_league_tunnel", "rift_league_tunnel.py", *src)
+    add("rift_deep", "rift_deep.py", *src)
     # Victory Road: one cave network; its Habitat Block tiles and its finds are data the build checks against its
     # own model (`vr_caves.py records --write` writes them)
-    py(TOOLS / "vr_caves.py", "build", *src)
+    add("vr_caves:build", "vr_caves.py", "build", *src)
     # the Rift dig camp's mines, quarries and the mega stone seam (data/rift_mines.json); audited below, once the
     # camp's own plan exists. It also writes the staging-only refill of the spur's retired gated section (EXCLUDED)
-    py(TOOLS / "rift_mines.py", "build", *src)
+    add("rift_mines:build", "rift_mines.py", "build", *src)
     # the southern Rift's mega site, prototype slice (data/gulch_mine.json), then its offline audit: every write inside
     # the plan and the zone, the zone sealed except through the gate, cover over the halls, the faces and the Cutters
-    py(TOOLS / "gulch_mine.py", "build", *src)
-    py(TOOLS / "gulch_mine_audit.py", *src)
+    add("gulch_mine:build", "gulch_mine.py", "build", *src)
+    add("gulch_mine_audit", "gulch_mine_audit.py", *src)
     # the Mega Showdown stone recipes raised to 4 raw stones, from the server's own jar (never committed)
-    py(TOOLS / "mega_recipes.py", "--server-dir", a.server_dir)
+    add("mega_recipes", "mega_recipes.py", "--server-dir", a.server_dir)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
-    py(TOOLS / "deep_city.py", "build", *src)
-    py(TOOLS / "deep_city_audit.py", *src)
-    py(TOOLS / "habitat_blocks.py", "function")
-    py(TOOLS / "rewards_pack.py")
-    dlg = PACKS / "cobblers_dialogue"
-    if dlg.exists():
-        shutil.rmtree(dlg)
+    add("deep_city:build", "deep_city.py", "build", *src)
+    add("deep_city_audit", "deep_city_audit.py", *src)
+    add("habitat_blocks:function", "habitat_blocks.py", "function")
+    add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
-    py(TOOLS / "compile_dialogue.py", "--all", "--out", dlg)
+    def dialogue():
+        dlg = PACKS / "cobblers_dialogue"
+        if dlg.exists():
+            shutil.rmtree(dlg)
+        py(TOOLS / "compile_dialogue.py", "--all", "--out", dlg)
+    J.append(("compile_dialogue", dialogue))
     # the ferry: its ferrymen's classes and dialogues and the trips (data/ferries.json), then its offline audit: every
     # landing on ground or a deck, every gate a planned flag, every fare read before it is charged, and every line
     # declared a gate still unswimmable under data/blackout.json's fatigue on the heightmap
-    py(TOOLS / "ferries.py", "build")
-    py(TOOLS / "ferries.py", "audit", *src)
+    add("ferries:build", "ferries.py", "build")
+    add("ferries:audit", "ferries.py", "audit", *src)
     # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
     # build, or anything stands on the walked line), then the scene runtime and the trainers
-    py(TOOLS / "route_events.py", *src)
-    py(TOOLS / "scenes_pack.py")
-    py(TOOLS / "route_trainers.py")
-    py(TOOLS / "rematerial.py")
+    add("route_events", "route_events.py", *src)
+    add("scenes_pack", "scenes_pack.py")
+    add("route_trainers", "route_trainers.py")
+    add("rematerial", "rematerial.py")
     # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
     # data/traders.json from data/sea_town.json and the heightmap; stop here if the committed records are stale. The
     # town itself is then built with every other place (R8: prep_sea_town, towns/sea_town; its clerk in R14)
-    py(TOOLS / "sea_town.py", "check", *src)
-    py(TOOLS / "place_town.py", "hometown", *src)
+    add("sea_town:check", "sea_town.py", "check", *src)
+    add("town:hometown", "place_town.py", "hometown", *src)
     for s in places():
-        py(TOOLS / "town_plan.py", s, *src)
-        py(TOOLS / "place_town.py", s, *src)
+        J.append(("town:%s" % s, lambda s=s: (py(TOOLS / "town_plan.py", s, *src), py(TOOLS / "place_town.py", s, *src))))
     # the mines against the camp's plan, the haul road and the other places, the seam's crystal behind its grille and
     # ward, and the refill exactly the retired gated section: offline, fail-closed (tools/rift_mines_audit.py)
-    py(TOOLS / "rift_mines_audit.py", *src)
-    py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
-    py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
-    py(TOOLS / "sapling_celebi.py")
-    py(TOOLS / "rift_storm.py")
-    py(TOOLS / "signposts.py", "function", *src)
+    add("rift_mines_audit", "rift_mines_audit.py", *src)
+    add("place_donor:function", "place_donor.py", "function", "--server-dir", a.server_dir)
+    add("traders:function", "traders.py", "function", "--server-dir", a.server_dir)
+    add("sapling_celebi", "sapling_celebi.py")
+    add("rift_storm", "rift_storm.py")
+    add("signposts:function", "signposts.py", "function", *src)
     # the bridges, then their offline audit against the heightmap and the water: a bridge that would stand in the
     # water, fall short of a bank or crowd a town stops prepare here, before anything is installed
-    py(TOOLS / "bridges.py", "function", *src)
-    py(TOOLS / "bridges.py", "audit", *src)
+    add("bridges:function", "bridges.py", "function", *src)
+    add("bridges:audit", "bridges.py", "audit", *src)
     # the towns' landmarks and set dressing: after the town plans, the placement reports and the signposts, which it
     # keeps clear of; then the plan audit, which fails the prepare on any write on a lot, a road or a building
-    py(TOOLS / "town_dressing.py", "build", *src)
-    py(TOOLS / "town_dressing_audit.py", *src)
+    add("town_dressing:build", "town_dressing.py", "build", *src)
+    add("town_dressing_audit", "town_dressing_audit.py", *src)
     # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
-    py(TOOLS / "ambient.py", "build", *src)
+    add("ambient:build", "ambient.py", "build", *src)
     # the evolution-stone faces: after the town plans, the signposts, the dressing and the working Pokemon, which they
     # keep clear of; then their offline audit, which recomputes every rule from other files' data and stops the prepare
     # on a face the build should not have written
-    py(TOOLS / "mines.py", "build", *src)
-    py(TOOLS / "mines_audit.py", *src)
+    add("mines:build", "mines.py", "build", *src)
+    add("mines_audit", "mines_audit.py", *src)
     # the wayside shrines, then their offline audit against the plans, the legs, the water and the other packs, which
     # fails the prepare on any write where a shrine may not stand. After every other block pack is built (the stone
     # faces included): the generator keeps clear of what they write
-    py(TOOLS / "shrines.py", "build", *src)
-    py(TOOLS / "shrines_audit.py", *src)
+    add("shrines:build", "shrines.py", "build", *src)
+    add("shrines_audit", "shrines_audit.py", *src)
     # no catching over the level cap: a callback and its check
-    py(TOOLS / "levelcap_pack.py")
-    py(TOOLS / "location_titles.py")
+    add("levelcap_pack", "levelcap_pack.py")
+    add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
-    py(TOOLS / "progression_pack.py")
+    add("progression_pack", "progression_pack.py")
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
-    py(TOOLS / "compile_spawns.py")
+    add("compile_spawns", "compile_spawns.py")
     # the structure templates the placement steps use, the spawn biome tags, and the size outliers: all three were
     # on the server only by hand, or not at all, until 2026-09-26 (install sweep)
-    py(TOOLS / "kit.py", "pack")
-    py(TOOLS / "spawn_tag_pack.py", "--check-paint", str(BUILD / "paint" / "biomes.png"))
-    py(TOOLS / "size_outliers.py")
+    add("kit:pack", "kit.py", "pack")
+    add("spawn_tag_pack", "spawn_tag_pack.py", "--check-paint", str(BUILD / "paint" / "biomes.png"))
+    add("size_outliers", "size_outliers.py")
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
-    py(TOOLS / "blackout_pack.py")
+    add("blackout_pack", "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
+
+    return J
+
+
+def prepare(a):
+    t0 = time.time()
+    jobs = prepare_jobs(a)
+    names = [n for n, _ in jobs]
+    if a.list:
+        print("\n".join(names))
+        return 0
+    run = select_jobs(names, a.only, a.from_job)
+    for name, job in jobs:
+        if name in run:
+            print("[%s]" % name, flush=True)
+            job()
+    if len(run) < len(names):
+        print("partial prepare: %d of %d jobs ran (%s); every other pack is as the last run left it"
+              % (len(run), len(names), ", ".join(n for n in names if n in run)))
+    # the checks below always run, on the whole build: a partial prepare is held to the same gate
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
     fn = REAPPLY / "data" / "cobblers" / "function" / "reapply"
@@ -1220,6 +1267,9 @@ def main(argv=None):
     q = sub.add_parser("prepare")
     q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
     q.add_argument("--server-dir", required=True)
+    q.add_argument("--only", help="run only these jobs (comma separated, shell patterns: town:*,mines*); see --list")
+    q.add_argument("--from", dest="from_job", help="run from this job to the end, after a failure")
+    q.add_argument("--list", action="store_true", help="print the job names in order and stop")
     q = sub.add_parser("hydrate", help="only the inputs a fresh checkout lacks (local kits, Rift plan, paint, water "
                        "shape); an agent's worktree runs this first. Needs the lock only with --server-dir")
     q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
@@ -1259,6 +1309,8 @@ def main(argv=None):
         return 0
     # Every subcommand but `plan` reads or writes the server or a world (prepare reads the installed packs' donor
     # templates; install writes the packs; run drives RCON; audit reads a world): the lock first, before anything.
+    if a.cmd == "prepare" and a.list:                  # printing the job names reads nothing
+        return prepare(a) or 0
     runtime_guard.require_lock("reapply %s" % a.cmd)
     if a.cmd == "run":
         require_watchdog_off(a.server_dir)             # before the first RCON command (REEXPORT.md step 5b)
