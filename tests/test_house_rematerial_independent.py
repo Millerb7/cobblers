@@ -345,11 +345,15 @@ def test_every_real_materialed_house_rewrites_to_no_mapped_block(tmp_path):
         if left:
             problems.append((q["id"], sorted(left)))
         if JAR is not None:
-            _, doc = nbt.load(dest)
-            for e in doc["palette"]:
-                if e["Name"] in m.values() and e.get("Properties"):
-                    known = jar_properties(e["Name"]) or set()
-                    extra = set(e["Properties"]) - known - {"waterlogged"}
-                    if extra:
-                        problems.append((q["id"], e["Name"], sorted(extra)))
+            # A donor entry's properties the SOURCE block's model varies on must be ones the target's model varies on
+            # too. The jar's blockstates list only model-visible properties (not powered, waterlogged, a leaf's
+            # distance), so a property invisible in both cannot be judged from them and is not flagged here.
+            _, sdoc = nbt.load(ROOT / q["file"])
+            for e in sdoc["palette"]:
+                if e["Name"] in m and e.get("Properties"):
+                    src_known = jar_properties(e["Name"]) or set()
+                    dst_known = jar_properties(m[e["Name"]]) or set()
+                    lost = (set(e["Properties"]) & src_known) - dst_known
+                    if lost:
+                        problems.append((q["id"], e["Name"], m[e["Name"]], sorted(lost)))
     assert not problems, problems[:10]
