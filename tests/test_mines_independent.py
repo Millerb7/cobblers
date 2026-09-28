@@ -726,6 +726,9 @@ def fx_root(root, monkeypatch):
     dump("derived/towns/town_a_plan.json", {"lots": [{"id": "L1", "rect": [52, 40, 60, 48]}]})
     dump("derived/signposts.json", {"posts": []})
     dump("derived/ambient/plan.json", {"workers": []})
+    # near misses of the routed legs (LEG_MARGIN 3): the written columns run x 38..50 and z 40..57
+    dump("derived/routes/critical_legs.json", {"legs": [{"polyline": [[54, 0], [54, 127]]}]})
+    dump("data/routes.json", {"routes": [{"id": "r", "corridor": {"polyline": [{"x": 0, "z": 61}, {"x": 127, "z": 61}]}}]})
     ch = np.zeros((N, N), dtype=bool)
     ch[31, 44] = True                                  # 9 north of the cut's last written row (z 40)
     (root / "derived" / "water_shape").mkdir(parents=True, exist_ok=True)
@@ -1023,15 +1026,43 @@ def test_the_audit_names_each_planted_fault(audit_root, fault, words):
     assert any(words in p for p in probs), probs
 
 
-def f_route_leg_on_the_cut(a):
+def f_critical_leg_through_the_cut(a):
     _put(a.root, "derived/routes/critical_legs.json", {"legs": [{"polyline": [[44, 0], [44, 47]]}]})
 
 
-def test_the_audit_names_a_route_leg_through_a_cut(audit_root):
-    # Without it a face cut across a road players must walk would pass the audit (the design: none on a route leg).
-    f_route_leg_on_the_cut(audit_root)
+def f_critical_leg_3_from_the_backing(a):
+    # the backing's east edge is x 50; the clean root's leg is at x 54 (4 away), this one at x 53 (3 away)
+    _put(a.root, "derived/routes/critical_legs.json", {"legs": [{"polyline": [[53, 0], [53, 127]]}]})
+
+
+def f_data_corridor_through_the_cut(a):
+    _put(a.root, "data/routes.json", {"routes": [{"id": "r", "corridor": {"polyline": [{"x": 0, "z": 45},
+                                                                                        {"x": 127, "z": 45}]}}]})
+
+
+def f_legs_file_missing(a):
+    (a.root / "derived" / "routes" / "critical_legs.json").unlink()
+
+
+LEG_FAULTS = [
+    (f_critical_leg_through_the_cut, "of a routed leg"),
+    pytest.param(f_critical_leg_3_from_the_backing, "within 3 of a routed leg", marks=pytest.mark.xfail(
+        strict=True, reason="tools/mines_audit.py:300: `seg_distance(...) < LEG_MARGIN` passes a column exactly 3 from "
+        "a leg, which its own message calls 'within 3' and the generator's Mask forbids (tools/town_dressing.py:84-92 "
+        "grow(): every cell with |dx|, |dz| <= 3); the audit is one block looser than the rule it checks")),
+    (f_data_corridor_through_the_cut, "of a routed leg"),
+    (f_legs_file_missing, "no derived/routes/critical_legs.json"),
+]
+
+
+@pytest.mark.parametrize("fault,words", LEG_FAULTS, ids=["through_the_cut", "3_from_the_backing", "data_corridor",
+                                                         "legs_file_missing"])
+def test_the_audit_names_a_route_leg_near_a_cut_and_a_missing_legs_file(audit_root, fault, words):
+    # Without it a face cut across a road players must walk would pass the audit (the design: none on a route leg),
+    # and a checkout without the legs file would pass it unchecked.
+    fault(audit_root)
     probs, _notes = audit_root.run()
-    assert any("leg" in p for p in probs), probs
+    assert any(words in p for p in probs), probs
 
 
 # ================================================================================ 5. the Exchange and R9O
