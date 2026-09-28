@@ -1,0 +1,741 @@
+{
+ "schema": "cobblers.mines/1",
+ "status": "built offline 2026-09-28 (the owner: build the stone economy into the towns that have it); not run in a game",
+ "builder": "tools/mines.py (site, author, report, build); audit tools/mines_audit.py; re-applied by tools/reapply.py step R9O",
+ "design": "docs/mechanics/STONE_ECONOMY.md (sections 3, 5, 6, 11), docs/mechanics/EVOLUTION_STONES.md, docs/decisions/ADR-003-evolution-stone-supply.md as amended",
+ "seed": 20260928,
+ "geometry": {
+  "width": 9,
+  "height": 5,
+  "depth": 6,
+  "apron_rows": 3,
+  "apron_margin": 1,
+  "ramp_max": 14,
+  "backing": 2,
+  "clear_above": 2,
+  "max_fill": 3,
+  "max_cut": 14,
+  "rules": "A face is a box `width` along the face, `depth` into the rock and `height` high, worked from its `front` (north: the front plane is the box's z0 and the rock runs +z; south z1, -z; west x0, +x; east x1, -x; along the face u runs +x on a north or south face, +z on a west or east face). The cut: row r in front of the front plane (r = 1, 2, ...) spans u = -apron_margin .. width - 1 + apron_margin. Its floor t starts at the box's y0 - 1; rows 1..apron_rows keep it; from row apron_rows + 1 on, a row whose every column's ground is within 1 of t ends the cut (it is not written), else t moves one toward the row's median ground (the lower median of the sorted columns) and the row is written; a cut longer than apron_rows + ramp_max rows is refused. A written column: host rock from ground + 1 to t - 1 (a built-up column), the floor block at t, and air from t + 1 to max(ground, t) + clear_above (and at least to the box top + 1 in the apron rows); no column dug more than max_cut or built up more than max_fill. The skin: every cell next to the cut's air (four sides and below), not otherwise written and at or under its column's ground, becomes host rock. The backing: host rock in every cell of u = -backing .. width - 1 + backing, d = 0 .. depth - 1 + backing, y = y0 - backing .. y1 + backing outside the box. The bedrock (only where the site says): the shell one further out, d from 1, never on the front plane. The ore of variant k: n = ore_min + h32(seed, face, k) mod (ore_max - ore_min + 1) cells, in the order h32(seed, face, k, x, y, z) sorts them: first visible_min on the front plane's bottom row with 1 <= u <= width - 2, then the rest at depth 2 or more under the top row (tools/mines.py ore_cells)."
+ },
+ "keep_clear": {
+  "water_changed_reach": 8,
+  "dressing_reach": 6,
+  "ambient_reach": 3,
+  "tunnel_reach": 12,
+  "tree_reach": 7,
+  "light_reach": 2,
+  "face_gap": 2,
+  "cavern_reach": 14,
+  "why": "No written column on a town's plan or outside its reach (tools/town_dressing.py Mask), on painted water or within 4 of a painted tree, within water_changed_reach of a column the pending water export changes (the owner, 2026-09-28: nothing built that the export would invalidate), or near another system's pieces (dressing, working Pokemon); in the Displaced City's cavern, clear of its trees, lights and tunnel (derived/cavern/plan.json, the cavern's 40_light function); faces face_gap apart"
+ },
+ "restore": {
+  "period_ticks": 12000,
+  "stagger_ticks": 6000,
+  "variants": 8,
+  "every_ticks": 100,
+  "approach_margin": 64,
+  "approach_up": 64,
+  "approach_down": 32,
+  "why": "STONE_ECONOMY.md 5.3 and 6.2: at least 600 s (12,000 ticks) between restores of a face, checked only on approach (fill fails on an unloaded chunk, so a fixed timer would mostly fail silently): every 100 ticks, only while a player is inside the site's approach box (the faces' bounds grown by approach_margin across, approach_down below and approach_up above); the two faces of one stone at a place kept 300 s (6,000 ticks) apart. Game time and the scores are saved with the world, so a restart neither repeats nor loses a restore",
+  "resettable_tag": "face_resettable",
+  "resettable": [
+   "minecraft:air",
+   "minecraft:cave_air",
+   "minecraft:water",
+   "minecraft:lava",
+   "minecraft:stone",
+   "minecraft:cobblestone",
+   "minecraft:deepslate",
+   "minecraft:cobbled_deepslate",
+   "minecraft:terracotta",
+   "minecraft:dripstone_block",
+   "minecraft:dirt",
+   "minecraft:gravel",
+   "minecraft:snow",
+   "minecraft:torch",
+   "minecraft:wall_torch",
+   "minecraft:soul_torch",
+   "minecraft:soul_wall_torch",
+   "cobblemon:dawn_stone_ore",
+   "cobblemon:deepslate_dawn_stone_ore",
+   "cobblemon:deepslate_dusk_stone_ore",
+   "cobblemon:deepslate_fire_stone_ore",
+   "cobblemon:deepslate_ice_stone_ore",
+   "cobblemon:deepslate_leaf_stone_ore",
+   "cobblemon:deepslate_moon_stone_ore",
+   "cobblemon:deepslate_shiny_stone_ore",
+   "cobblemon:deepslate_sun_stone_ore",
+   "cobblemon:deepslate_thunder_stone_ore",
+   "cobblemon:deepslate_water_stone_ore",
+   "cobblemon:dripstone_moon_stone_ore",
+   "cobblemon:dusk_stone_ore",
+   "cobblemon:fire_stone_ore",
+   "cobblemon:ice_stone_ore",
+   "cobblemon:leaf_stone_ore",
+   "cobblemon:moon_stone_ore",
+   "cobblemon:shiny_stone_ore",
+   "cobblemon:sun_stone_ore",
+   "cobblemon:terracotta_sun_stone_ore",
+   "cobblemon:thunder_stone_ore",
+   "cobblemon:water_stone_ore"
+  ],
+  "resettable_why": "STONE_ECONOMY.md 5.4: the restore fills host rock only over this tag and guards every ore setblock with it, so a chest a player left in a box survives with its contents (it blocks one ore cell until it is moved); the hosts, what a player digs them into, torches, fluids, snow and every stone ore are reset. That `fill ... replace #tag` takes a block tag in 1.21.1 is proof P-3, not run"
+ },
+ "stones": {
+  "water": {
+   "item": "cobblemon:water_stone",
+   "ores": [
+    "cobblemon:water_stone_ore",
+    "cobblemon:deepslate_water_stone_ore"
+   ],
+   "families_needing": 4
+  },
+  "leaf": {
+   "item": "cobblemon:leaf_stone",
+   "ores": [
+    "cobblemon:leaf_stone_ore",
+    "cobblemon:deepslate_leaf_stone_ore"
+   ],
+   "families_needing": 2
+  },
+  "shiny": {
+   "item": "cobblemon:shiny_stone",
+   "ores": [
+    "cobblemon:shiny_stone_ore",
+    "cobblemon:deepslate_shiny_stone_ore"
+   ],
+   "families_needing": 3
+  },
+  "sun": {
+   "item": "cobblemon:sun_stone",
+   "ores": [
+    "cobblemon:sun_stone_ore",
+    "cobblemon:deepslate_sun_stone_ore",
+    "cobblemon:terracotta_sun_stone_ore"
+   ],
+   "families_needing": 4
+  },
+  "moon": {
+   "item": "cobblemon:moon_stone",
+   "ores": [
+    "cobblemon:moon_stone_ore",
+    "cobblemon:deepslate_moon_stone_ore",
+    "cobblemon:dripstone_moon_stone_ore"
+   ],
+   "families_needing": 2
+  },
+  "thunder": {
+   "item": "cobblemon:thunder_stone",
+   "ores": [
+    "cobblemon:thunder_stone_ore",
+    "cobblemon:deepslate_thunder_stone_ore"
+   ],
+   "families_needing": 6
+  },
+  "ice": {
+   "item": "cobblemon:ice_stone",
+   "ores": [
+    "cobblemon:ice_stone_ore",
+    "cobblemon:deepslate_ice_stone_ore"
+   ],
+   "families_needing": 3
+  },
+  "dusk": {
+   "item": "cobblemon:dusk_stone",
+   "ores": [
+    "cobblemon:dusk_stone_ore",
+    "cobblemon:deepslate_dusk_stone_ore"
+   ],
+   "families_needing": 3
+  },
+  "dawn": {
+   "item": "cobblemon:dawn_stone",
+   "ores": [
+    "cobblemon:dawn_stone_ore",
+    "cobblemon:deepslate_dawn_stone_ore"
+   ],
+   "families_needing": 2
+  },
+  "fire": {
+   "item": "cobblemon:fire_stone",
+   "ores": [
+    "cobblemon:fire_stone_ore",
+    "cobblemon:deepslate_fire_stone_ore"
+   ],
+   "families_needing": 0
+  }
+ },
+ "filler": "none: every vanilla filler ore (coal, iron, redstone, diamond) and lava, water, magma and sand are spawn conditions (data/spawn_blocks.json); filler waits for the owner's open decision O-7",
+ "not_built": {
+  "floor": "the per-player first-arrival floor (STONE_ECONOMY.md 4, option C) waits on ADR-002's two-player advancement proof",
+  "residents": "the Rock-type resident at each face (section 9) is flavour and waits on P-6 (an awake uncatchable NoAI Pokemon holding its post)",
+  "habitat_blocks": "no filler, so no level band is needed"
+ },
+ "sites": [
+  {
+   "id": "viltri_light",
+   "settlement": "viltri_light",
+   "kind": "exposure",
+   "stage_leg": 1,
+   "reading": "A sea-cliff cut under the lighthouse, over an estuary no river uses any more: water stones where the water left. The seam repairs the rock, not your things.",
+   "faces": [
+    {
+     "id": "vl_water_a",
+     "stone": "water",
+     "ore": "cobblemon:water_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      568,
+      68,
+      4496,
+      573,
+      72,
+      4504
+     ],
+     "front": "west"
+    },
+    {
+     "id": "vl_water_b",
+     "stone": "water",
+     "ore": "cobblemon:water_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      568,
+      67,
+      4530,
+      573,
+      71,
+      4538
+     ],
+     "front": "west"
+    }
+   ],
+   "reapply_step": "R9O"
+  },
+  {
+   "id": "tea_town",
+   "settlement": "tea_town",
+   "kind": "worked",
+   "stage_leg": 2,
+   "reading": "Terrace cuttings among the tea rows: the tea houses face their walls with the polished stone, leaf on one bay and the shine on the next.",
+   "faces": [
+    {
+     "id": "tea_leaf_a",
+     "stone": "leaf",
+     "ore": "cobblemon:leaf_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      2634,
+      108,
+      3612,
+      2639,
+      112,
+      3620
+     ],
+     "front": "east"
+    },
+    {
+     "id": "tea_leaf_b",
+     "stone": "leaf",
+     "ore": "cobblemon:leaf_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      2649,
+      108,
+      3634,
+      2657,
+      112,
+      3639
+     ],
+     "front": "north"
+    },
+    {
+     "id": "tea_shiny_a",
+     "stone": "shiny",
+     "ore": "cobblemon:shiny_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      2665,
+      107,
+      3624,
+      2673,
+      111,
+      3629
+     ],
+     "front": "north"
+    },
+    {
+     "id": "tea_shiny_b",
+     "stone": "shiny",
+     "ore": "cobblemon:shiny_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      2628,
+      108,
+      3628,
+      2633,
+      112,
+      3636
+     ],
+     "front": "east"
+    }
+   ],
+   "reapply_step": "R9O"
+  },
+  {
+   "id": "the_scar",
+   "settlement": "the_scar",
+   "kind": "exposure",
+   "stage_leg": 4,
+   "reading": "A scraped summit open to the sky, among the ruins: the rock under the city's footprint is terracotta, Cobblemon's own host for the sun stone, and you chip what is exposed. The near end of the exchange.",
+   "faces": [
+    {
+     "id": "scar_sun_a",
+     "stone": "sun",
+     "ore": "cobblemon:terracotta_sun_stone_ore",
+     "host": "minecraft:terracotta",
+     "floor": "minecraft:terracotta",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      2080,
+      274,
+      964,
+      2088,
+      278,
+      969
+     ],
+     "front": "north"
+    },
+    {
+     "id": "scar_sun_b",
+     "stone": "sun",
+     "ore": "cobblemon:terracotta_sun_stone_ore",
+     "host": "minecraft:terracotta",
+     "floor": "minecraft:terracotta",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      2079,
+      274,
+      980,
+      2084,
+      278,
+      988
+     ],
+     "front": "east"
+    }
+   ],
+   "reapply_step": "R9O"
+  },
+  {
+   "id": "displaced_city",
+   "settlement": "displaced_city",
+   "kind": "city_working",
+   "stage_leg": 4,
+   "ground": "cavern_floor",
+   "bedrock_skin": true,
+   "lanterns": true,
+   "reading": "Two seams in the cavern's walls, cut into the shell past the cavern's edge: a pale one in dripstone (Cobblemon's own host for the moon stone) and a crackling one in deepslate where the Magnemite gather. The far end of the exchange; the seam ends in bedrock, near an authored void (STONE_ECONOMY.md 6.4).",
+   "faces": [
+    {
+     "id": "dc_moon_a",
+     "stone": "moon",
+     "ore": "cobblemon:dripstone_moon_stone_ore",
+     "host": "minecraft:dripstone_block",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      3330,
+      28,
+      1850,
+      3338,
+      32,
+      1855
+     ],
+     "front": "north"
+    },
+    {
+     "id": "dc_moon_b",
+     "stone": "moon",
+     "ore": "cobblemon:dripstone_moon_stone_ore",
+     "host": "minecraft:dripstone_block",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      3284,
+      23,
+      1850,
+      3292,
+      27,
+      1855
+     ],
+     "front": "north"
+    },
+    {
+     "id": "dc_thunder_a",
+     "stone": "thunder",
+     "ore": "cobblemon:deepslate_thunder_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 3,
+      "ore_max": 5,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      3390,
+      24,
+      1850,
+      3398,
+      28,
+      1855
+     ],
+     "front": "north"
+    },
+    {
+     "id": "dc_thunder_b",
+     "stone": "thunder",
+     "ore": "cobblemon:deepslate_thunder_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 3,
+      "ore_max": 5,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      3262,
+      28,
+      1850,
+      3270,
+      32,
+      1855
+     ],
+     "front": "north"
+    }
+   ],
+   "reapply_step": "R9O"
+  },
+  {
+   "id": "northlight",
+   "settlement": "northlight",
+   "kind": "worked",
+   "stage_leg": 6,
+   "reading": "The field station's cutting on the only snowy islands: ice stones worked out of the isle's rock.",
+   "faces": [
+    {
+     "id": "nl_ice_a",
+     "stone": "ice",
+     "ore": "cobblemon:ice_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      7318,
+      110,
+      1591,
+      7326,
+      114,
+      1596
+     ],
+     "front": "north"
+    },
+    {
+     "id": "nl_ice_b",
+     "stone": "ice",
+     "ore": "cobblemon:ice_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      7302,
+      110,
+      1589,
+      7310,
+      114,
+      1594
+     ],
+     "front": "north"
+    }
+   ],
+   "reapply_step": "R9O"
+  },
+  {
+   "id": "gorge_hamlet",
+   "settlement": "gorge_hamlet",
+   "kind": "exposure",
+   "stage_leg": 7,
+   "reading": "The Tilpey outflow cut the seam open: dusk in the dark deepslate, dawn in the pale stone beside it. Late on purpose (O-3).",
+   "faces": [
+    {
+     "id": "gh_dusk_a",
+     "stone": "dusk",
+     "ore": "cobblemon:deepslate_dusk_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      6802,
+      107,
+      4310,
+      6810,
+      111,
+      4315
+     ],
+     "front": "south"
+    },
+    {
+     "id": "gh_dusk_b",
+     "stone": "dusk",
+     "ore": "cobblemon:deepslate_dusk_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      6786,
+      107,
+      4308,
+      6794,
+      111,
+      4313
+     ],
+     "front": "south"
+    },
+    {
+     "id": "gh_dawn_a",
+     "stone": "dawn",
+     "ore": "cobblemon:dawn_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      6812,
+      108,
+      4288,
+      6820,
+      112,
+      4293
+     ],
+     "front": "south"
+    },
+    {
+     "id": "gh_dawn_b",
+     "stone": "dawn",
+     "ore": "cobblemon:dawn_stone_ore",
+     "host": "minecraft:stone",
+     "floor": "minecraft:cobblestone",
+     "yield": {
+      "ore_min": 2,
+      "ore_max": 4,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      6820,
+      107,
+      4312,
+      6828,
+      111,
+      4317
+     ],
+     "front": "south"
+    }
+   ],
+   "reapply_step": "R9O"
+  },
+  {
+   "id": "mining_town",
+   "settlement": "mining_town",
+   "kind": "thermal",
+   "stage_leg": 8,
+   "reading": "The only industrial mine: the thermal working on the cone's flank for fire, and the deep seam for thunder, the second source of the most-needed stone. The Exchange stands on the pithead yard (data/traders.json mining_assayer).",
+   "faces": [
+    {
+     "id": "mt_fire_a",
+     "stone": "fire",
+     "ore": "cobblemon:deepslate_fire_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 1,
+      "ore_max": 3,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      6758,
+      138,
+      5783,
+      6763,
+      142,
+      5791
+     ],
+     "front": "west"
+    },
+    {
+     "id": "mt_fire_b",
+     "stone": "fire",
+     "ore": "cobblemon:deepslate_fire_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 1,
+      "ore_max": 3,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      6760,
+      139,
+      5805,
+      6765,
+      143,
+      5813
+     ],
+     "front": "west"
+    },
+    {
+     "id": "mt_thunder_a",
+     "stone": "thunder",
+     "ore": "cobblemon:deepslate_thunder_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 3,
+      "ore_max": 5,
+      "visible_min": 1
+     },
+     "offset_ticks": 0,
+     "box": [
+      6762,
+      137,
+      5767,
+      6767,
+      141,
+      5775
+     ],
+     "front": "west"
+    },
+    {
+     "id": "mt_thunder_b",
+     "stone": "thunder",
+     "ore": "cobblemon:deepslate_thunder_stone_ore",
+     "host": "minecraft:deepslate",
+     "floor": "minecraft:cobbled_deepslate",
+     "yield": {
+      "ore_min": 3,
+      "ore_max": 5,
+      "visible_min": 1
+     },
+     "offset_ticks": 6000,
+     "box": [
+      6734,
+      135,
+      5765,
+      6742,
+      139,
+      5770
+     ],
+     "front": "north"
+    }
+   ],
+   "prefer_near": {
+    "at": [
+     6740,
+     5800
+    ],
+    "window": 60,
+    "why": "the mine head: the faces stand on the rising flank round the adit portal (placements mining_portal, rect 6728-6742 x 5802-5816) and the assay office, at the top of the mine spur, not at the town's west edge"
+   },
+   "reapply_step": "R9O"
+  }
+ ]
+}
