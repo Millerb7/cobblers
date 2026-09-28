@@ -1,9 +1,0 @@
-# Gitignored inputs copied into every worktree Claude Code creates (agents included), so an agent never fetches
-# them itself (the permission classifier refuses that; CLAUDE.md "Launching a writing agent"). Local-only kits
-# (kits/LOCAL_ONLY.json) and the derived inputs prepare rebuilds (reapply.py hydrate).
-kits/structures/incoming/townkit/**
-kits/structures/campaign/f4/services/*.nbt
-derived/rift_sculpt/**
-derived/water_shape/changed.npy
-derived/water_shape/manifest.json
-build/paint/**
