@@ -1,0 +1,220 @@
+{
+  "schema": "cobblers.shrines/1",
+  "status": "proposed 2026-09-28 at the owner's request (\"shrines near towns that people visit. Small, local, believable, not legendary shrines.\"); built as data and functions by tools/shrines.py, not yet seen in any world",
+  "note": "Wayside shrines on the approaches of towns people pass through: not every town, only where one fits the town's purpose (docs/world-building/TOWN_CHARACTER.md) and its road. Each is a few to a few dozen vanilla blocks. Their stories and dedications are Codex's: each has a neutral working name and \"story\": \"for Codex\", and nothing here says more than the look does.",
+  "fields": {
+    "id": "unique, lowercase; the function is cobblers:shrines/<id>",
+    "name": "a neutral working name, for Codex to replace",
+    "settlement": "the town whose approach it stands on (data/towns.json id)",
+    "approach": "the road it stands beside: a data/routes.json route id, or where a rest stop is reached from",
+    "kind": "cairn | lantern_stone | niche | roofed_altar (tools/shrines.py KINDS)",
+    "at": "[x, z] of the shrine's centre column; its floor is the highest heightmap ground under it plus one",
+    "facing": "the side its front (the offerings) faces: north | east | south | west, towards the road",
+    "palette": "block states per part of the kind, overriding its defaults; each block id must be in `blocks`",
+    "why": "why a shrine of this kind stands here, from the town's purpose and the road",
+    "story": "for Codex"
+  },
+  "rules": {
+    "note": "Clearances in blocks, enforced by tools/shrines.py and checked again, independently, by tools/shrines_audit.py",
+    "excluded_settlements": [
+      "sea_town",
+      "jungle_ruins"
+    ],
+    "excluded_margin": 64,
+    "building_margin": 3,
+    "leg_margin": 3,
+    "point_margin": 3,
+    "build_margin": 3,
+    "tree_reach": 4,
+    "water_change_margin": 8,
+    "max_from_town": 200
+  },
+  "blocks": {
+    "note": "Every block a shrine may write. Vanilla 1.21.1 only; tools/shrines_audit.py checks each id against the 1.21.1 client jar's blockstates and against data/spawn_blocks.json. The potted plants are their own block ids (minecraft:potted_*), none a spawn condition; the flowers themselves (minecraft:poppy and the rest) are, and are not used.",
+    "ids": [
+      "minecraft:candle",
+      "minecraft:chiseled_red_sandstone",
+      "minecraft:chiseled_stone_bricks",
+      "minecraft:chiseled_tuff",
+      "minecraft:cobbled_deepslate",
+      "minecraft:cobblestone",
+      "minecraft:cobblestone_slab",
+      "minecraft:cut_red_sandstone",
+      "minecraft:dark_prismarine",
+      "minecraft:decorated_pot",
+      "minecraft:deepslate_bricks",
+      "minecraft:deepslate_tile_stairs",
+      "minecraft:lantern",
+      "minecraft:light_blue_candle",
+      "minecraft:mangrove_stairs",
+      "minecraft:mossy_cobblestone",
+      "minecraft:mossy_cobblestone_wall",
+      "minecraft:mud_bricks",
+      "minecraft:packed_mud",
+      "minecraft:polished_andesite",
+      "minecraft:polished_tuff_slab",
+      "minecraft:potted_azure_bluet",
+      "minecraft:potted_blue_orchid",
+      "minecraft:potted_fern",
+      "minecraft:potted_spruce_sapling",
+      "minecraft:prismarine_brick_stairs",
+      "minecraft:prismarine_bricks",
+      "minecraft:red_sandstone",
+      "minecraft:red_sandstone_slab",
+      "minecraft:red_sandstone_wall",
+      "minecraft:stone",
+      "minecraft:stone_brick_slab",
+      "minecraft:stone_bricks",
+      "minecraft:tuff",
+      "minecraft:waxed_chiseled_copper"
+    ]
+  },
+  "shrines": [
+    {
+      "id": "brock_route1_cairn",
+      "name": "the Route 1 cairn (working name)",
+      "settlement": "gym1_town",
+      "approach": "route_01_pallet_to_brock",
+      "kind": "cairn",
+      "at": [
+        1609,
+        3767
+      ],
+      "facing": "east",
+      "palette": {
+        "stones": [
+          "minecraft:stone_bricks",
+          "minecraft:polished_andesite",
+          "minecraft:cobblestone",
+          "minecraft:tuff"
+        ],
+        "slab": "minecraft:stone_brick_slab[type=bottom]",
+        "cap": "minecraft:chiseled_stone_bricks",
+        "offering": "minecraft:decorated_pot[facing=north]",
+        "candle": "minecraft:candle[candles=3,lit=true]",
+        "offering_2": "minecraft:polished_tuff_slab[type=bottom]",
+        "foundation": "minecraft:cobblestone"
+      },
+      "why": "Brock's is the plateau's masons' town (docs/world-building/TOWN_CHARACTER.md). Where Route 1 comes up from the hometown and first reaches it, south-west of the town, a cairn of the masons' cut stone (stone brick, polished andesite, tuff) with a chiseled capstone, a candle, a pot and a cut slab on its front ledge, facing the road.",
+      "story": "for Codex"
+    },
+    {
+      "id": "misty_route2_lantern_stone",
+      "name": "the Route 2 lantern stone (working name)",
+      "settlement": "gym2_town",
+      "approach": "route_02_brock_to_misty",
+      "kind": "lantern_stone",
+      "at": [
+        1700,
+        2877
+      ],
+      "facing": "east",
+      "palette": {
+        "stone": "minecraft:prismarine_bricks",
+        "cap": "minecraft:dark_prismarine",
+        "stair": "minecraft:prismarine_brick_stairs[facing=north]",
+        "flowers": "minecraft:potted_blue_orchid",
+        "flowers_2": "minecraft:potted_azure_bluet",
+        "candle": "minecraft:light_blue_candle[candles=2,lit=true]",
+        "foundation": "minecraft:mud_bricks"
+      },
+      "why": "Misty's is the lake town that takes in whoever the water brings, and keeps a lantern at its lookout's head (TOWN_CHARACTER.md). Where Route 2 arrives from Brock's town, south-east of the town, a standing stone in the town's prismarine with a lit lantern on its head and potted flowers and candles at its foot, facing the road.",
+      "story": "for Codex"
+    },
+    {
+      "id": "surge_fork_niche",
+      "name": "the fork niche below Surge's town (working name)",
+      "settlement": "gym3_town",
+      "approach": "the fork below the town's shelf, where route_03_misty_to_surge comes in and route_04_surge_to_erika leaves",
+      "kind": "niche",
+      "at": [
+        1699,
+        1501
+      ],
+      "facing": "north",
+      "palette": {
+        "wall": "minecraft:deepslate_bricks",
+        "roof": "minecraft:deepslate_tile_stairs",
+        "icon": "minecraft:waxed_chiseled_copper",
+        "candle": "minecraft:candle[candles=1,lit=true]",
+        "offering": "minecraft:potted_spruce_sapling",
+        "foundation": "minecraft:cobbled_deepslate"
+      },
+      "why": "Surge's is the signal town under Mt Vessu, built in the flank's deepslate with copper for its gear (TOWN_CHARACTER.md). Below its shelf the two roads part, one to Misty's lake and one on to Erika's; in the wedge between them, a roofed niche of deepslate brick open towards the town, a chiseled copper block in its back wall, a candle and a hanging lantern inside.",
+      "story": "for Codex"
+    },
+    {
+      "id": "koga_route5_niche",
+      "name": "the Route 5 niche (working name)",
+      "settlement": "gym5_town",
+      "approach": "route_05_erika_to_koga",
+      "kind": "niche",
+      "at": [
+        4509,
+        2303
+      ],
+      "facing": "east",
+      "palette": {
+        "wall": "minecraft:mud_bricks",
+        "roof": "minecraft:mangrove_stairs",
+        "icon": "minecraft:chiseled_tuff",
+        "candle": "minecraft:candle[candles=1,lit=true]",
+        "offering": "minecraft:potted_fern",
+        "foundation": "minecraft:packed_mud"
+      },
+      "why": "Koga's is the fen-edge watch town, built in mud brick and mangrove (TOWN_CHARACTER.md). Where Route 5 arrives from Erika's town, north-west of the town, a roadside niche of mud brick under a mangrove roof, a candle and a hanging lantern in it and a potted fern beside it, open to the road.",
+      "story": "for Codex"
+    },
+    {
+      "id": "tableland_brow_altar",
+      "name": "the brow trail altar (working name)",
+      "settlement": "tableland_stop",
+      "approach": "the brow trail up from route_08_blaine_to_giovanni to the stop (derived/towns/tableland_stop_plan.json brow_trail)",
+      "kind": "roofed_altar",
+      "at": [
+        4765,
+        5622
+      ],
+      "facing": "east",
+      "palette": {
+        "floor": "minecraft:cut_red_sandstone",
+        "post": "minecraft:red_sandstone_wall",
+        "roof": "minecraft:red_sandstone_slab[type=bottom]",
+        "roof_centre": "minecraft:red_sandstone",
+        "finial": "minecraft:red_sandstone_wall",
+        "altar": "minecraft:chiseled_red_sandstone",
+        "candle": "minecraft:candle[candles=4,lit=true]",
+        "offering": "minecraft:decorated_pot[facing=north]"
+      },
+      "why": "The Tableland stop is a waystation on the badlands plateau, reached from Route 8 by the brow trail (SETTLEMENTS.md, TOWN_CHARACTER.md). Near the top of the trail, west of it and short of the stop, a small roofed altar in the stop's red sandstone, open on its four sides, candles on the altar and a pot behind it, facing the trail and the road below.",
+      "story": "for Codex"
+    },
+    {
+      "id": "merian_path_cairn",
+      "name": "the cirque path cairn (working name)",
+      "settlement": "merian_hut",
+      "approach": "the foot of the cirque path up from route_04_surge_to_erika to the hut (derived/towns/merian_hut_plan.json cirque_path)",
+      "kind": "cairn",
+      "at": [
+        2820,
+        1212
+      ],
+      "facing": "west",
+      "palette": {
+        "stones": [
+          "minecraft:cobblestone",
+          "minecraft:mossy_cobblestone",
+          "minecraft:stone"
+        ],
+        "slab": "minecraft:cobblestone_slab[type=bottom]",
+        "cap": "minecraft:mossy_cobblestone_wall",
+        "offering": "minecraft:lantern[hanging=false]",
+        "candle": "minecraft:candle[candles=2,lit=true]",
+        "offering_2": "minecraft:potted_spruce_sapling",
+        "foundation": "minecraft:cobblestone"
+      },
+      "why": "The Merian hut is the keeper's hut at the river's source, a bed kept ready at the end of a long walk (TOWN_CHARACTER.md). Where the cirque path leaves Route 4 for the hut, east of the path's foot, a cairn of the hut's cobblestone, part mossy, with a lantern, a candle and a potted spruce on its front ledge, facing the path.",
+      "story": "for Codex"
+    }
+  ]
+}

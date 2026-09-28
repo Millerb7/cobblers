@@ -88,6 +88,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: working Pokemon in the towns (tools/ambient.py, data/ambient.json): a keeper and the work
                 # loops run on their own (a tick driver), so world-local below; placed again by R16C after an export
                 "cobblers_ambient",
+                # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
+                # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
+                "cobblers_shrines",
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
@@ -314,6 +317,11 @@ def prepare(a):
     py(TOOLS / "town_dressing_audit.py", *src)
     # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
     py(TOOLS / "ambient.py", "build", *src)
+    # the wayside shrines, then their offline audit against the plans, the legs, the water and the other packs, which
+    # fails the prepare on any write where a shrine may not stand. After every other block pack is built: the
+    # generator keeps clear of what they write
+    py(TOOLS / "shrines.py", "build", *src)
+    py(TOOLS / "shrines_audit.py", *src)
     # no catching over the level cap: a callback and its check
     py(TOOLS / "levelcap_pack.py")
     py(TOOLS / "location_titles.py")
@@ -779,6 +787,12 @@ def steps(with_spawns=False):
     # its blocks, and the keeper removes a second), then all are counted
     import ambient
     out.append(("R16C", "working Pokemon in the towns (data/ambient.json)", ambient.placement_steps() + [("check", "ambient")]))
+    # the wayside shrines (tools/shrines.py): blocks beside the roads into the towns, after the dressing (R16B) and the
+    # working Pokemon (R16C) they keep clear of; each function holds its own chunks. Listed from the committed data,
+    # not the build, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
+    shrine_ids = [q["id"] for q in json.loads((ROOT / "data" / "shrines.json").read_text(encoding="utf-8")).get("shrines") or []]
+    out.append(("R16D", "wayside shrines on the town approaches (%d, data/shrines.json)" % len(shrine_ids),
+                [("fn", "cobblers:shrines/%s" % s) for s in shrine_ids]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
