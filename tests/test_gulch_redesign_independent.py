@@ -815,17 +815,19 @@ def test_only_the_keeper_moves_a_respawn_clock(which):
 
 # ============================================================================================ the drop roll
 
+DROP_FNS = ("drops/", "megas/pid", "megas/watch", "megas/hit_")
+
+
 # Without it the drop machinery is live before any farm exists (SOUTHERN_RIFT_MEGA.md 13.1: "inert until a farm den
-# exists in the data"): with the data as it is, no roll, hit or slain function is generated, the callback's function
-# has nothing to run, the watch calls nothing, the Cutting Floor's Megas are not farm-tagged, and on the interpreter a
-# player hurting and killing a Mega, and the callback fired with its UUID, summon no item.
+# exists in the data"), or missing once one does: with the data as it is, no drop function (roll, slain, hitter, give,
+# fainted, hit, watch, pid) and no battle_fainted callback is generated, the Cutting Floor's Megas are not farm-tagged,
+# and on the interpreter a player hurting and killing a Mega summons no item and writes no storage; with a synthetic
+# farm den, all of them and the callback are generated (their behaviour is the tests below).
 def test_the_drop_roll_is_inert_without_a_farm_den():
     assert not SPEC.get("farms"), "a farm is in the data now: this test's premise is gone"
     fns = GM.keeper_files(model_of(SPEC))
-    assert not [n for n in fns if n.startswith(("drops/roll_", "drops/slain_", "drops/hitter_", "megas/hit_"))]
-    assert executable(fns["drops/fainted"]) == []
-    assert not calls_of(fns["megas/watch"])
-    assert not [n for n in reachable(fns, ["tick", "load"]) if n in ("drops/give", "megas/pid")]
+    assert not [n for n in fns if n.startswith(DROP_FNS)], [n for n in fns if n.startswith(DROP_FNS)]
+    assert GM.callback_files(SPEC) == {}
     for s in SPEC["megas"]["slots"]:
         assert SPEC["megas"]["farm_tag"] not in " ".join(fns["megas/bind_%s" % s["id"]])
     w = Sim(fns)
@@ -835,10 +837,33 @@ def test_the_drop_roll_is_inert_without_a_farm_den():
     (e,) = den_megas(w, "steelix")
     e.attacker = p
     w.tick(5)
-    w.function(NS_F + "drops/fainted", w.server(), {"pid": _uuid_text(e.nbt["Pokemon"]["UUID"]), "who": p.uuid})
     e.alive = False
     w.tick(400)
     assert not [x for x in w.entities if x.type == "minecraft:item"] and not w.storage.get("cobblers:gulch_mine")
+    farm = farm_spec()
+    ffns = GM.keeper_files(model_of(farm))
+    for need in ("drops/fainted", "drops/give", "megas/pid", "megas/pid_hex", "megas/pid_join", "megas/watch"):
+        assert need in ffns, need
+    for d in ("den_outer", "den_deep"):
+        assert {"drops/roll_%s" % d, "drops/slain_%s" % d, "drops/hitter_%s" % d, "megas/hit_%s" % d} <= set(ffns), d
+    (cb,) = GM.callback_files(farm).items()
+    assert cb[0] == "data/cobblemon/callbacks/battle_fainted/cobblers_gulch_drops.molang"
+    assert "c.pokemon.actor.is_wild" in cb[1] and "function cobblers:gulch_mine/drops/fainted {pid:" in cb[1]
+
+
+# Without it a generated function calls one the build no longer writes (a function removed for having no caller, its
+# callers left behind): in game the line fails whenever it runs, and a later farm Mega would find no watch. With and
+# without a farm, every function any generated function calls is generated.
+@pytest.mark.parametrize("which", [
+    pytest.param("data", marks=pytest.mark.xfail(strict=True, reason=(
+        "tools/gulch_mine.py:1366 writes `execute as @e[...,tag=cobblers.gm.farm] run function .../megas/watch` into "
+        "the tick unconditionally, and tools/gulch_mine.py:1474-1477 no longer writes megas/watch without a farm den"))),
+    "with a farm"])
+def test_every_called_function_is_generated(which):
+    spec = SPEC if which == "data" else farm_spec()
+    fns = all_functions(spec)
+    dangling = sorted({(n, c) for n, b in fns.items() for c in calls_of(b) if c not in fns})
+    assert not dangling, dangling
 
 
 def _farm_world(respawn=400):
@@ -1026,7 +1051,9 @@ def test_no_raw_stone_is_given_anywhere_but_a_farm_roll(which):
               if re.search(r"\b(give|loot|item replace|summon minecraft:item)\b", re.sub(r"function \S+", "", l))
               and "mining_fatigue" not in l}
     assert givers <= {"drops/give"}, givers
-    assert "mega_showdown:mega_stone" in " ".join(fns["drops/give"])
+    assert ("drops/give" in fns) == (which != "data")
+    if "drops/give" in fns:
+        assert "mega_showdown:mega_stone" in " ".join(fns["drops/give"])
     callers = {n for n, b in fns.items() if "drops/give" in calls_of(b)}
     assert callers <= {n for n in fns if n.startswith(("drops/roll_", "drops/hitter_"))}, callers
     assert bool(callers) == (which != "data")
@@ -1194,9 +1221,10 @@ def src():
     if not root:
         pytest.skip("NOT_EXECUTED: COBBLERS_SOURCE_ROOT is not set (the canonical heightmap is outside the repo)")
     import ground as G
+    import terrain as T
     try:
         g = G.Ground(root)
-    except Exception as e:                       # noqa: BLE001 - a missing or unpinned heightmap: not executed
+    except T.TerrainUnavailable as e:            # tools/terrain.py: a missing or unpinned heightmap, not executed
         pytest.skip("NOT_EXECUTED: no canonical heightmap under %s (%s)" % (root, e))
     return root, g
 
