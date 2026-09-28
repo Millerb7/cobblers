@@ -13,7 +13,8 @@ The plan (data only):
   victory     no column the build may write within Victory Road's corridor (its polyline, half its width, and a
               margin) or near its caves; no settlement footprint within the margin
   gap         the rockfall's band covers every ring point of the sculpt's gulch_mouth gap, and the rim beyond each end
-              of the gap is a crag (the sculpt's raised lip)
+              of the gap is a crag (the sculpt's raised lip); the wall's crest at each end stands no more than its jag
+              below the crag there (measured on the heightmap, SOUTHERN_RIFT_MEGA.md 13: to the crag tops)
 The output (replayed in index order):
   inside      every write in the grid and in a column the plan may write
   no stray    no air under the ground except in the halls, tubes and the earthworks' own clearing
@@ -24,20 +25,26 @@ The output (replayed in index order):
               outside, the arrival and the exit box inside; every column of the gulch's basin (ground at or under
               basin_y) that a walker reaches from the square without crossing the rockfall or the zone's closing line
               is inside
-  gate        the rockfall stands at least 3 over the lip's ground at every gap ring point; the knock teleports only a
+  gate        the rockfall stands at least 3 over the lip's ground at every gap ring point, and reaches the crest line
+              between the measured crag tops (less twice the jag) there, the plug its flat top; the knock teleports only a
               player holding the flag, the zone turns back only a player lacking it, the ward's box holds the plug with
               ward_margin to spare
   walk        on the replayed world: from the gate's arrival a walker reaches the square, both halls' floors, both
               faces' fronts, the Megas' anchors and the Cutters' counters; from the turn-back point, inside the grid, a
               walker does not reach the arrival (the rockfall closes the canyon)
-  faces       each face box written whole with exactly its crystals at variant 0; each of the 8 variants a filtered
-              fill of exactly the box and guarded setblocks with exactly its crystals in the box, one on the front's
-              bottom row; each check guarded by both corners loaded, no player and no Pokemon in the box, the period
-  megas       each spawn line carries the species, the Mega aspect and `uncatchable`, at an anchor that is a walkable
-              floor cell of its hall; the leash walks it back to the same anchor at the data's radius
-  cutters     three villagers, NoAI and invulnerable, standing on the workshop's floor; every offer 4 raw stones and a
-              diamond for one stone, unlimited, no experience, no price drift; the 60 stones each exactly once, none of
-              the 32 left out
+Not checked here: the farm dens' drop roll (no farm is in the data yet; SOUTHERN_RIFT_MEGA.md 13 holds them)
+  faces       scenery (SOUTHERN_RIFT_MEGA.md 13): each face box written whole with exactly its crystals; no function
+              outside the build's passes writes into a face box (the restore is retired, and its block tag gone); the
+              tick wards each face every tick with the data's margin
+  megas       one macro line spawns every Mega (EXP-046: no plain spawnpokemonat line anywhere); each den's spawn calls
+              it with the species, the Mega aspect and the level at its anchor and claims the Mega in the same
+              function (tags, PersistenceRequired); a mine anchor is a walkable floor cell of its hall; the leash walks
+              it back to the same anchor at the data's radius; the keeper waits gm.resp from the respawn clock, with
+              nobody within spawn_clear, and every line in the pack that writes a clock is one the design allows (load
+              only when unset, the keeper's first sight of a gone Mega, a spawn)
+  cutters     three villagers, NoAI and invulnerable, standing on the workshop's floor; every offer the data's raw
+              stones and a diamond for one stone, unlimited, no experience, no price drift; the 60 stones each exactly
+              once, none of the 32 left out
   limits      tools/function_limits.py finds nothing the server would refuse
 
 Fails closed: no pack, an empty index, no sculpt plan, no zone advancement or no face is a failure, not a pass.

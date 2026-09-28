@@ -1,32 +1,34 @@
 #!/usr/bin/env python
 """The southern Rift's mega site, prototype slice, from data/gulch_mine.json (docs/world-building/SOUTHERN_RIFT_MEGA.md
-section 10 and the owner's twelve decisions of 2026-09-27, section 11).
+section 10, the owner's twelve decisions of 2026-09-27, section 11, and the owner's redesign, section 13).
 
 What it builds, all from the data file and the canonical heightmap (tools/ground.py, rounded; never a world):
 
-  the gate     the Gulch lookout's rockfall across the sculpt's gulch_mouth gap (data `gate.band`, traced from the
-               sculpt's lip ring by `trace`), a plug with the company's grille in the middle, a graded road through it,
-               and the advancements: knock (a player holding cobblers:flag/gym6_cleared is put through), exit, the
-               Mining Fatigue ward round the plug, and the zone check over the whole gulch zone (data `zone.polygon`)
+  the gate     the Gulch lookout's rockslide wall across the sculpt's gulch_mouth gap, to the crag tops (data
+               `gate.band`, traced from the sculpt's lip ring by `trace`; `band.wall` its crest and talus), a plug with
+               the company's grille at the end of a slot through it, a graded road, and the advancements: knock (a
+               player holding cobblers:flag/gym6_cleared is put through), exit, the Mining Fatigue ward round the plug,
+               and the zone check over the whole gulch zone (data `zone.polygon`)
   the town     the 61-square at (4308, 4848) paved and dressed, a yard cut into the slope south of it with the Cutters'
                workshop, a bunkhouse, the assay counter and the adit head; three Cutter villagers (vanilla trades:
-               4 raw mega stone + 1 diamond -> one keyed stone, unlimited, nothing bought)
+               cutters.offer.raw_count raw mega stones + 1 diamond -> one keyed stone, unlimited, nothing bought)
   the mine     the Cutters' adit, the Tally Hall (lit) and the Cutting Floor (dark) as caverns at real scale, joined by
                a drift; a shell of rock round everything carved, so nothing this build opens meets a natural void
-  the faces    two crystal faces in the Cutting Floor, each a 7 x 5 x 7 box of meteorid holding 3 mega_stone_crystal,
-               restored on approach every 30 minutes by the pack's own tick driver (STONE_ECONOMY.md 5.3: filtered
-               fill, guarded setblocks, both corners loaded, nobody and no Pokemon in the box)
-  the Megas    two roaming Megas for the Cutting Floor, spawned by the keeper (spawnpokemonat ... uncatchable), tagged,
-               leashed like the recovery guardians, owed again when a face of their hall restores after they fainted
-  the floor    four raw stones, once per player, on first reaching the Tally Hall (an advancement)
+  the faces    two crystal faces in the Cutting Floor, each a 7 x 5 x 7 box of meteorid holding 3 mega_stone_crystal:
+               scenery, written once by the build and warded for good every tick (the restore cycle is retired)
+  the Megas    the Cutting Floor's two roaming Megas (and any farm den's, data `farms`), spawned by the keeper through
+               the macro megas/spawn_at (EXP-046), uncatchable, claimed at once, tagged, leashed like the recovery
+               guardians; each den's respawn clock is the game time its Mega was first seen gone, and it spawns
+               respawn_ticks later with nobody near. A farm den's Mega also rolls a raw-stone drop when beaten
+               (battle_fainted callback, by its Pokemon UUID) or killed (the attacker watch); none are in the data yet
 
   python tools/gulch_mine.py trace  [--source-root DIR]   the ring-derived geometry (band, zone polygon) as JSON, for
                                                           authoring data/gulch_mine.json; nothing written
   python tools/gulch_mine.py report [--source-root DIR]   the model's checks and counts; nothing written
   python tools/gulch_mine.py build  [--source-root DIR]   -> build/datapacks/cobblers_gulch_mine, derived/gulch_mine/plan.json
 
-The offline audit, independent of this tool's model, is tools/gulch_mine_audit.py. Recipes raised to 4 raw stones are
-tools/mega_recipes.py's (generated from the local jar, never committed).
+The offline audit, independent of this tool's model, is tools/gulch_mine_audit.py. Recipes raised to the Cutters' raw
+count are tools/mega_recipes.py's (generated from the local jar, never committed).
 """
 from __future__ import annotations
 
@@ -988,9 +990,11 @@ def keeper_files(m):
             "# retired with the faces' restore and the owed Megas (SOUTHERN_RIFT_MEGA.md 13)",
             "scoreboard objectives remove gm.last", "scoreboard objectives remove gm.var",
             "scoreboard objectives remove gm.owe",
-            "scoreboard players set #16 gm.t 16",
-            "data modify storage %s hex set value %s" % (STORE, json.dumps(list("0123456789abcdef"))),
-            "execute unless data storage %s dens run data modify storage %s dens set value []" % (STORE, STORE)]
+            "scoreboard players set #16 gm.t 16"]
+    if any(s_ != "mine" for s_, _d in all_dens):
+        # the farm dens' storage (the drop roll): hex digits for megas/pid, and the dens' UUID list, kept across restarts
+        load += ["data modify storage %s hex set value %s" % (STORE, json.dumps(list("0123456789abcdef"))),
+                 "execute unless data storage %s dens run data modify storage %s dens set value []" % (STORE, STORE)]
     for site, d in all_dens:
         resp, pct = den_rules(spec, site, d)
         i = d["id"]

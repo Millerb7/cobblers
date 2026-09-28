@@ -96,7 +96,7 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # driver), so world-local below. Its gated galleries went to the gulch the same day
                 "cobblers_rift_mines",
                 # 2026-09-27: the southern Rift's mega site, prototype slice (tools/gulch_mine.py, SOUTHERN_RIFT_MEGA.md):
-                # blocks and the Cutters run by R9S; the gate, the zone check, the faces' restore and the Megas' keeper act
+                # blocks and the Cutters run by R9S; the gate, the zone check, the faces' ward and the Megas' keeper act
                 # on their own (advancements, a tick driver), so world-local below
                 "cobblers_gulch_mine",
                 # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
@@ -741,7 +741,7 @@ def steps(with_spawns=False):
     # step): after the Rift skin (R1), whose surface it paves and cuts, and before the Habitat Blocks (R9E) and the
     # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters, villagers
     # summoned 40 ticks after their chunks are force-loaded and de-duplicated 100 ticks later (tools/traders.py's
-    # pattern). The gate, the zone check, the faces' restore and the Megas act on their own and need no step.
+    # pattern). The gate, the zone check, the faces' ward and the Megas act on their own and need no step.
     out.append(("R9S", "the southern Rift's mega site: the gulch gate, the Cutters' square, the Tally Hall and the "
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]

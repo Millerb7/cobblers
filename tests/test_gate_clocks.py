@@ -18,7 +18,8 @@ The clocks, and the actions tried on each (the sweep's result is in the registry
   the Surf bonus bo.surf        bobbing the eyes up for less than breath_reset_ticks, relog mid-bonus
   the drowning pulses bo.pulse  relog out of air at depth
   the blackout dedupe bo.last   restart between two reports
-  the gulch faces gm.last       restart (tests/test_gulch_mine.py), leaving and re-entering the approach box
+  the gulch Megas gm.gone       restart, leaving and re-entering the approach box (the faces' gm.last was retired
+                                with their restore, SOUTHERN_RIFT_MEGA.md 13)
   the ferry cooldown            relog and restart inside it
   the seam's ward               drinking milk (vanilla: clears every effect) between the ward's refreshes
   the gulch gate's ward         the same, with the zone check behind it
@@ -266,25 +267,41 @@ def ferry_cooldown_relog_restart(fns=None):
     assert 1000 - t["bal"] == paid, ("charged again inside the cooldown", 1000 - t["bal"], paid)
 
 
-# ------------------------------------------------------------------------------------------------ the gulch faces
+# ------------------------------------------------------------------------------------------------ the Megas' respawn clock
 
-def gulch_faces_restart(fns=None):
+# SOUTHERN_RIFT_MEGA.md 13 retired the faces' restore (their clock gm.last is gone); the clock a gate now relies on is
+# each den's respawn clock gm.gone, the farm's rate limit ("no repeatable action may reset it").
+
+def _gone_mega_world(fns=None):
     import test_gulch_mine as TG
-    TG.test_a_restart_neither_repeats_nor_loses_a_restore()
+    w = TG._mine_world(fns)
+    TG._run(w, 500)
+    for e in TG._spawned(w, "excadrill"):
+        w.entities.remove(e)
+    return TG, w, w.gt
 
 
-def gulch_faces_reapproach(fns=None):
-    """Leaving the approach box and coming back, again and again, never brings a face back before its time."""
-    import test_gulch_mine as TG
-    w = TG._mine_world()
+def gulch_megas_restart(fns=None):
+    """A restart (minecraft:load again), every pass, never brings a gone Mega back before its respawn time."""
+    TG, w, t_gone = _gone_mega_world(fns)
+    got = []
+    while w.gt - t_gone < TG.RESPAWN - 3 * TG.PASS:
+        w.call("%s/load" % TG.F)
+        got += TG._run(w, TG.PASS)
+    assert not [d for _t, d in got if d == "excadrill"], got
+
+
+def gulch_megas_reapproach(fns=None):
+    """Leaving the approach box and coming back, again and again, never brings a gone Mega back before its time."""
+    TG, w, t_gone = _gone_mega_world(fns)
     visitor = w.entities[0]
     got = TG._run(w, 2 * TG.PASS)
-    for _ in range(20):
+    while w.gt - t_gone < TG.RESPAWN - 3 * TG.PASS:
         w.entities.remove(visitor)
         got += TG._run(w, TG.PASS)
         w.entities.append(visitor)
         got += TG._run(w, TG.PASS)
-    assert [f for _t, f in got] == ["face_a"], got
+    assert not [d for _t, d in got if d == "excadrill"], got
 
 
 # ------------------------------------------------------------------------------------------------ the wards
@@ -391,8 +408,8 @@ SCENARIOS = {
     "drowning_pulse-relog": drowning_pulse_relog,
     "blackout_dedupe-restart": dedupe_restart,
     "ferry_cooldown-relog_restart": ferry_cooldown_relog_restart,
-    "gulch_faces-restart": gulch_faces_restart,
-    "gulch_faces-reapproach": gulch_faces_reapproach,
+    "gulch_megas-restart": gulch_megas_restart,
+    "gulch_megas-reapproach": gulch_megas_reapproach,
     "seam_ward-milk": seam_ward_milk,
     "gulch_ward-milk": gulch_ward_milk,
 }
@@ -429,6 +446,19 @@ def _broken(name, line):
 ])
 def test_harness_each_scenario_sees_the_reset_it_exists_for(scenario, name, line):
     _fails_on_its_clock(SCENARIOS[scenario], _broken(name, line))
+
+
+# Without it the gulch Megas' scenarios pass on a keeper whose clock a restart or a re-approach resets: with load
+# setting every den's clock to 0 (due at once), and with the keeper forgetting a gone Mega whenever its pass finds
+# nobody, each fails.
+def test_harness_the_megas_scenarios_see_a_reset_respawn_clock():
+    import test_gulch_mine as TG
+    kf = TG.keeper()
+    load = dict(kf, load=kf["load"] + ["scoreboard players set #excadrill gm.gone 0"])
+    _fails_on_its_clock(gulch_megas_restart, load)
+    drive = dict(kf, drive=kf["drive"] + ["execute unless entity %s run scoreboard players set #excadrill gm.gone 0"
+                                          % kf["drive"][2].split(" ")[3]])
+    _fails_on_its_clock(gulch_megas_reapproach, drive)
 
 
 # Without it the boat-hop scenario passes on a pack that lets a tipped rider recover: the pre-0f190dd surface/tick,
