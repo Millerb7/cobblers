@@ -193,6 +193,18 @@ and running Minecraft instead. Agents do not spawn their own agent teams.
 Read-only agents (`repo-scout`, `qa-reviewer`, `build-doctor`) do not need a
 worktree; worktrees exist to keep concurrent writers apart.
 
+**A refusal ends the attempt (the owner, 2026-09-28).** A subagent whose action
+is refused (a permission prompt denied, a hook or safety check blocking a write,
+a guard in a tool) stops that line of work and hands back: what it tried, the
+refusal's text, and what it has so far. It never reaches the same outcome
+another way (a different tool, the shell instead of Edit, a script, another
+path). Every brief says so. On 2026-09-28 four builders hit the same worktree
+guard: three stopped and reported; one wrote its files through Bash and Python
+instead. The output was good; the workaround was still the failure. Launch a
+writing subagent with its own worktree (`isolation: "worktree"`, then
+`git merge --ff-only <the base commit>` inside it), not in a worktree this
+session made for it: the guard ties a session's writes to its own worktree.
+
 **Token budget (the owner, 2026-09-27, after 4.2 million tokens went to
 subagents in one session).** Every subagent pays a full context read before it
 does anything, so:
