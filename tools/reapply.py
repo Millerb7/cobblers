@@ -85,6 +85,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
+                # 2026-09-28: working Pokemon in the towns (tools/ambient.py, data/ambient.json): a keeper and the work
+                # loops run on their own (a tick driver), so world-local below; placed again by R16C after an export
+                "cobblers_ambient",
                 # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py): blocks
                 # run by R9M, and the seam crystal's ward and daily face that act on their own (an advancement, a tick
                 # driver), so world-local below. Its gated galleries went to the gulch the same day
@@ -136,7 +139,7 @@ EXCLUDED = {
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
-               "cobblers_ferries")
+               "cobblers_ferries", "cobblers_ambient")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -305,6 +308,8 @@ def prepare(a):
     # keeps clear of; then the plan audit, which fails the prepare on any write on a lot, a road or a building
     py(TOOLS / "town_dressing.py", "build", *src)
     py(TOOLS / "town_dressing_audit.py", *src)
+    # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
+    py(TOOLS / "ambient.py", "build", *src)
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     py(TOOLS / "progression_pack.py")
@@ -763,6 +768,11 @@ def steps(with_spawns=False):
     dressed = list(json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8")).get("towns") or {})
     out.append(("R16B", "town landmarks and set dressing (%d towns)" % len(dressed),
                 [("fn", "cobblers:town_dressing/%s" % s) for s in dressed]))
+    # the working Pokemon (tools/ambient.py): entities, so an export erases them; after the dressing they stand beside.
+    # Each station's chunk is force-loaded and its worker placed (twice: a chunk's saved entities load a moment after
+    # its blocks, and the keeper removes a second), then all are counted
+    import ambient
+    out.append(("R16C", "working Pokemon in the towns (data/ambient.json)", ambient.placement_steps() + [("check", "ambient")]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
@@ -879,6 +889,10 @@ def _run_steps(a, rc, todo, rec, path):
                 # a command a function cannot run for us (Cobblemon's spawn command does nothing inside one)
                 r = rc(v)
                 print("   %s -> %s" % (v[:100], r[:120] or "(no output)"), flush=True)
+            elif kind == "check" and v == "ambient":
+                import ambient
+                problems = ambient.verify(rc)
+                bad += ["ambient: %s" % m for m in problems]
             elif kind == "check" and v == "celebi":
                 import sapling_celebi
                 x, y, z = (int(q // 1) for q in sapling_celebi.load()["position"])

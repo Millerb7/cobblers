@@ -101,7 +101,7 @@
       "minecraft:tuff",
       "minecraft:waxed_copper_grate",
       "minecraft:waxed_cut_copper",
-      "minecraft:waxed_exposed_cut_copper"
+      "minecraft:waxed_exposed_cut_copper", "minecraft:packed_ice", "minecraft:blue_ice"
     ]
   },
   "towns": {
@@ -310,6 +310,32 @@
         {"id": "giovanni_target_4", "kind": "target_post", "at": [3606, 6546], "facing": "north", "why": "the training yard"},
         {"id": "giovanni_training_sandbags", "kind": "sandbags", "at": [3604, 6552], "facing": "north", "length": 4,
          "why": "cover in the training yard"}
+      ]
+    },
+    "northlight": {
+      "foundation": "minecraft:cobblestone",
+      "purpose": "The cold-water research town: the region's weather and aurora observatory, and an ice-type field station.",
+      "landmark": {
+        "id": "northlight_bonfire", "kind": "bonfire", "at": [7280, 1577], "facing": "north",
+        "why": "the big fire everyone in a cold town comes back to, its five columns of smoke seen over the roofs (the owner, 2026-09-28: a Timburr carrying logs between a woodpile and a big fire in the snow town); the observatory on the isle's high point stays the town's signature from afar"
+      },
+      "pieces": [
+        {"id": "northlight_woodpile", "kind": "log_pile", "at": [7266, 1577], "facing": "north", "length": 4,
+         "palette": {"log": "minecraft:spruce_log[axis=x]"},
+         "why": "the town's firewood, split and stacked by the square (2026-09-28): the Timburr's work starts here"},
+        {"id": "northlight_ice_blocks", "kind": "stone_pile", "at": [7272, 1583], "facing": "north", "length": 3,
+         "blocks": ["minecraft:packed_ice", "minecraft:blue_ice", "minecraft:packed_ice"],
+         "palette": {"slab": "minecraft:spruce_slab[type=bottom]", "stair": "minecraft:spruce_slab[type=bottom]"},
+         "why": "ice blocks cut from the lake for the field station's cold store, waiting on planks"},
+        {"id": "northlight_weather_1", "kind": "instrument_stand", "at": [7286, 1573], "facing": "north",
+         "why": "the weather station's instruments on the square, the observatory's ground readings"},
+        {"id": "northlight_weather_2", "kind": "instrument_stand", "at": [7262, 1572], "facing": "east",
+         "why": "a second instrument, aimed at the aurora's quarter"},
+        {"id": "northlight_station_crates", "kind": "crates", "at": [7284, 1583], "facing": "north",
+         "why": "the ice-type field station's stores, crated for the next trip out"},
+        {"id": "northlight_sled_rack", "kind": "rack", "at": [7260, 1583], "facing": "north", "length": 4,
+         "palette": {"wood": "spruce", "hang": "minecraft:stripped_spruce_log[axis=y]", "foot": "minecraft:spruce_slab[type=bottom]"},
+         "why": "sled runners and poles racked by the square for the ice"}
       ]
     }
   }

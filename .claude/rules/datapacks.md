@@ -78,7 +78,12 @@ the anchors for when both land.
   (EXP-042).
 - `/reload` does not reload registry data: enchantments, damage types, worldgen.
   A change there needs a server restart (EXP-042 session 3).
-- `spawnpokemonat` works inside a function, from the tick loop too.
+- `spawnpokemonat` written in a function spawns nothing when the function was
+  parsed at server start, and works after a `/reload` re-parses it; a **macro**
+  line (`$spawnpokemonat $(x) ...`) works either way, so a keeper that must run
+  after a plain restart spawns through a macro (EXP-046; EXP-042's "works" ran
+  after the driver's `/reload`). Claim the spawn in the same function: an
+  unclaimed Pokemon is despawned within a minute with no player near.
   `summon cobblemon:pokemon` is refused even with a full `Pokemon` compound. To
   recreate a Pokemon, spawn a placeholder and write the saved compound over its
   `Pokemon` data (EXP-042).
