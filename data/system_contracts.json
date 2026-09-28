@@ -248,7 +248,7 @@
       "statement": "Every Mega the gulch's generated keeper spawns carries the tag data/blackout.json claims.exempt_tag names, and the generated blackout, with that Mega as the wild victor, makes no item claim and no guardian, and still charges the money; an untagged wild victor still claims.",
       "stated_in": [
         {"at": "data/blackout.json:59", "quote": "\"exempt_tag\": \"cobblers.gm\""},
-        {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:547", "quote": "the blackout skips tagged Megas"},
+        {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:283", "quote": "the blackout skips tagged Megas"},
         {"at": "data/gulch_mine.json:507", "quote": "A Mega that blacks a player out makes no item claim"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out",
@@ -262,7 +262,7 @@
       "statement": "No column of the gulch's generated zone check, and no column its build writes, lies within Victory Road's corridor (half its width from the polyline in data/routes.json) or its caves' band (data/vr_caves.json guide.band plus the largest cavern radius from the guide line): the zone check never turns back a player on Victory Road, and the build never writes into it.",
       "stated_in": [
         {"at": "data/gulch_mine.json:65", "quote": "Victory Road's corridor (data/routes.json, 104 wide) about 190"},
-        {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:572", "quote": "Victory Road's corridor about 190"}
+        {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:574", "quote": "Victory Road's corridor about 190"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c13_the_gulch_zone_stays_off_victory_road",
                 "tests/test_system_contracts.py::test_contract_c13_the_gulch_build_writes_nothing_on_victory_road"]
