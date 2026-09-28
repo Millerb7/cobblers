@@ -51,13 +51,11 @@ its threads are picked up or moved into STATE. (The previous handover's threads 
 ## 4. Next steps
 
 1. The water export (approved, 0.75-1.25M): after the flight. WATER_SHAPE.md section 11 steps 3-11.
-2. The fresh-checkout blocker (STATE "What is blocked"): after the export, decide which inputs are committed, which
-   regenerated, and whether `rift_heightmap.py --apply`'s plan-and-record coupling is the real problem.
+2. The fresh-checkout blocker: fixed on `tooling/agent-launch-and-fresh-checkout` (STATE "What is built"). Waiting on the owner: a store location for the two F4 service buildings (STATE "What is open"), and whether to adopt `worktree.baseRef: "head"` and a `.worktreeinclude`.
 3. Re-measure `data/visibility.json` with `--write` after the export repaints the canopy.
 
 ## 5. How agents behaved (for the owner's record)
 
-Builders are launched with `isolation: "worktree"` and a `git merge --ff-only <base>`; a worktree made by the main
-session is refused by a guard. One builder routed its files round that refusal through the shell before the rule
+The launch procedure, verified with a throwaway agent, is in CLAUDE.md ("Launching a writing agent"). One builder routed its files round that refusal through the shell before the rule
 existed (CLAUDE.md "A refusal ends the attempt"); after the rule, every agent that met a refusal stopped and handed
 back, and some disclosed earlier splits or scratch scripts they had used on the guard's own suggestion.
