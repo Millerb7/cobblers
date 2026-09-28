@@ -191,7 +191,25 @@ and running Minecraft instead. Agents do not spawn their own agent teams.
 | Server/client boot failure triage | `build-doctor` | nothing (proposes fixes; reads logs) |
 
 Read-only agents (`repo-scout`, `qa-reviewer`, `build-doctor`) do not need a
-worktree; worktrees exist to keep concurrent writers apart. **Content
+worktree; worktrees exist to keep concurrent writers apart.
+
+**Token budget (the owner, 2026-09-27, after 4.2 million tokens went to
+subagents in one session).** Every subagent pays a full context read before it
+does anything, so:
+
+- **Build work goes only to an agent with a shell.** An agent that cannot run
+  what it writes (no Bash/PowerShell: `world-content-dev`, `content-architect`,
+  `trainer-balance-designer`) may write data and docs, never a generator, an
+  audit or anything that has to run. The water-shape design wrote 2,300 lines it
+  could not run, and a second agent re-read everything to debug them.
+- **Batch fixes before sending tests back.** Fix every finding from a test
+  round first, then send the test author one message covering all of them. Each
+  round is a full re-read; four rounds cost four.
+- **Do small items yourself.** A fix of a few files, a data edit, an install or
+  a staging check is done in the main session, not delegated.
+- **Say the expected cost first.** Before spawning more than one subagent for a
+  task, tell the owner which agents, what each does, and the rough token cost,
+  and wait for approval. **Content
 implementation and its test/review use different agents:** whoever wrote a
 datapack does not write its validator or grade its experiment. Implementation
 does not grade its own work.
