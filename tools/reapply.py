@@ -695,7 +695,8 @@ def unreferenced(todo):
                 rel = f.relative_to(root).parts
                 if len(rel) > 2 and rel[1] == "function":
                     names["%s:%s" % (rel[0], "/".join(rel[2:])[:-len(".mcfunction")])] = pack
-            if f.suffix in (".mcfunction", ".json"):
+            # a Cobblemon MoLang callback names functions too (q.run_command('function ...'))
+            if f.suffix in (".mcfunction", ".json", ".molang"):
                 text.append(f.read_text(encoding="utf-8", errors="replace"))
     run = {v for _s, _t, acts in todo for k, v in acts if k == "fn"}
     if any(k == "props" for _s, _t, acts in todo for k, _v in acts):
