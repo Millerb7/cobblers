@@ -288,6 +288,10 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
         "scoreboard players set @s bo.pulse 0",
         "scoreboard players set @s bo.warn 0",
         "scoreboard players set @s bo.surf 0",
+        "# a fresh start: swim fatigue survived the death, so a player who collapsed respawned past collapse and was hit",
+        "# again within seconds of re-entering the water (the owner, 2026-09-27)",
+        "scoreboard players set @s bo.fat 0",
+        "scoreboard players set @s bo.fwarn 0",
         "function %s:blackout/checkpoint/name" % NS,
         'tellraw @s [%s,{"storage":"%s:blackout","nbt":"place","color":"white"},%s,{"score":{"name":"@s","objective":"bo.lost"},"color":"white"},%s]'
         % (text(msg["blackout"].split("{place}")[0]), NS,
