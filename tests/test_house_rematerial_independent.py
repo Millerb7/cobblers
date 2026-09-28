@@ -44,9 +44,7 @@ PAIRS = [(sid, a, b) for sid, s in SETS.items() for a, b in s["map"].items()]
 # Defects found by this file (2026-09-28), strict xfail until the data changes: a full block mapped to a pillar gains
 # `axis`, so every such block lands in the default axis=y whatever the house meant. Not like for like.
 KNOWN_UNLIKE = {
-    ("brock_mason_b", "minecraft:birch_planks"): "data/rematerial.json:438 birch_planks -> stripped_birch_wood gains axis",
-    ("tea_terrace", "minecraft:yellow_terracotta"): "data/rematerial.json:605 yellow_terracotta -> stripped_cherry_wood "
-                                                    "gains axis",
+    # both fixed 2026-09-28 (birch_planks -> spruce_planks, yellow_terracotta -> cherry_planks); none open
 }
 
 

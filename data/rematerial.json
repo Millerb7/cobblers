@@ -435,7 +435,7 @@
         "minecraft:cobblestone_stairs": "minecraft:polished_andesite_stairs",
         "minecraft:cobblestone_wall": "minecraft:andesite_wall",
         "minecraft:white_terracotta": "minecraft:tuff_bricks",
-        "minecraft:birch_planks": "minecraft:stripped_birch_wood",
+        "minecraft:birch_planks": "minecraft:spruce_planks",
         "minecraft:smooth_stone_slab": "minecraft:tuff_slab"
       }
     },
@@ -602,7 +602,7 @@
       "map": {
         "minecraft:mud_bricks": "minecraft:mossy_stone_bricks",
         "minecraft:packed_mud": "minecraft:mossy_cobblestone",
-        "minecraft:yellow_terracotta": "minecraft:stripped_cherry_wood"
+        "minecraft:yellow_terracotta": "minecraft:cherry_planks"
       }
     }
   }
