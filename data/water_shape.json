@@ -1,0 +1,636 @@
+{
+  "schema": "cobblers.water_shape/1",
+  "status": "DESIGN, RUN 2026-09-27, POLISHED 2026-09-27 after the owner's review of the maps, with Part B (the owner's decision of 2026-09-27: the Jungle Isle removed to a bank, Pacifidlog re-sited onto it) and the ravine's lake half (the owner: 'make sure to add that gravel path as a river'). NOT APPLIED: the canonical heightmap is untouched. tools/water_shape.py applies this file to a COPY under derived/water_shape/ and draws the maps; tools/water_shape_audit.py checks the copy (181 checks, CLEAN on the polish run, the Viltri Ravine on hold). Every target the run could not meet on real terrain was changed here with a RUN, MEASURED or POLISH why beside it; docs/world-building/WATER_SHAPE.md has the measured numbers.",
+  "plan": "docs/mechanics/WATER_BUILD_PLAN.md (Phase B: items 1, 3 and 4's shape, one revision, one staging export)",
+  "report": "docs/world-building/WATER_SHAPE.md",
+  "generator": "tools/water_shape.py",
+  "audit": "tools/water_shape_audit.py",
+
+  "applies_to": {
+    "heightmap_path": "land_8k_16_rescaled_b145_pads_rift.png",
+    "heightmap_sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
+    "why": "the revision is one final stage on the canonical heightmap, in tools/rift_heightmap.py's pattern: it starts from the file data/world.json pins, writes a new file, and every column outside the declared features stays bit-identical. The tool refuses any other input"
+  },
+  "output": {
+    "dir": "derived/water_shape",
+    "heightmap_name": "land_8k_16_rescaled_b145_pads_rift_water.png",
+    "why": "a copy for review. Applying it (writing the file beside the canonical one and repinning data/world.json as heightmap.water_shaped_from) is a separate, owner-approved step: python tools/water_shape.py --source-root <root> --apply, which this revision does not run"
+  },
+
+  "decisions": {
+    "source": "docs/mechanics/WATER_BUILD_PLAN.md section 13, the owner, 2026-09-27",
+    "1": "Trained players do NOT tire underwater; air alone limits dives. Fatigue is the surface gate, air the underwater gate",
+    "2": "Boats: option C, shallows only",
+    "3": "The ferry IS the gate for players without a water mount",
+    "4": "The Viltri Ravine: ON HOLD (the owner, 2026-09-27: 'hold ... until I decide'). Was option B (an underfit stream down the sea half only); the owner then asked for the gravel path as a river too, and then held both. Nothing is shaped in the ravine; see viltri_ravine below",
+    "5": "One water export for all heightmap work",
+    "6": "The seabed pass at full scope (OCEAN.md section 4)",
+    "7": "Fungal Isle at S0 by a sand-bar chain, never more than about 40 blocks of 3-deep water at a time; Relic stays as it is (swimmable from the beach, the row from the jetty)",
+    "8": "Lake shelves and shoals as rest points: every lake gets a wadeable shelf, every dive site a rest point within its rung's budget",
+    "9": "Meanders on the low-grade reaches, cascades on the steep creeks, the Tilpey gorge unchanged under its bridge",
+    "10": "The trio's hooks are visible from any stage (their sites are kept as keep zones here; the hooks are blocks, Phase C)",
+    "owner_item_1": "Rivers that feel like they flow. Lakes that read as lakes, not step-down bowls: shelves, drop-offs, weed beds, silt, structure.",
+    "owner_item_3": "SHALLOWS AND SHORE WATER. The only sea a player meets before Dive at gym 6. Give it real attention: it is a third of the game and currently nothing."
+  },
+
+  "principles": [
+    {"id": "P1", "rule": "Shape only. Everything here is a height. Materials, plants, coral, drift, grottos, caves, the trench and docks are blocks (Phase C) and are not in this file", "why": "WATER_BUILD_PLAN section 2"},
+    {"id": "P2", "rule": "Bit-identical outside the features' declared footprints; the audit compares the copy with the canonical file column by column", "why": "the Rift's rule (tools/rift_heightmap.py)"},
+    {"id": "P3", "rule": "Nothing already placed moves: no column inside a town footprint, on a road, in the Rift, under Victory Road, under a bridge, under the islet or the sea town, or under a built water event site changes", "why": "the owner's list for this task, and tools/rift_heightmap.py's protect rule"},
+    {"id": "P4", "rule": "Swim-rate invariance outside the declared coast features: no column that is 3 or more deep before becomes shallower than 3, anywhere except inside a coast feature that declares it; the seabed pass never raises a column above y59", "why": "the swim rule charges 4 a tick in water 3 or more deep and 1 in shallower (data/blackout.json surface); keeping every column's rate class fixed keeps every ferry gate a gate by construction (decision 3), and the few features that do add rest ground (the Fungal chain, the flats, the skerries, the lake shelves) are walked by the audit"},
+    {"id": "P5", "rule": "Lakes keep their level and their shoreline: no lake column at or above level - 1 changes, and no lake column is raised to level or above", "why": "WATER_BUILD_PLAN 3.3; towns, routes, foliage and the basin polygons stay valid"},
+    {"id": "P6", "rule": "Every river still drains end to end: water surfaces never rise downstream and step only at declared riffles, cascades and falls", "why": "RIVERS.md's check, kept (WATER_BUILD_PLAN 3.5 audit 4)"}
+  ],
+
+  "protect": {
+    "town_margin_blocks": 8,
+    "town_margin_overrides": {"relic_island": 0},
+    "town_margin_overrides_why": "POLISH 2026-09-27: Relic Island's footprint is the islet's dry core, and the islet's own outline is protected (islet, below); its 8-block town margin kept a square of old deep seabed round the islet, which read as a moat once the reef platform met the islet",
+    "road_half_width_blocks": 6,
+    "bridge_margin_blocks": 16,
+    "rift": {"region": "the_rift", "grow_blocks": 24, "and_changed_by": "heightmap.rift_sculpted_from (every column the Rift sculpt changed, from the pinned pre-Rift file), grown by 8"},
+    "victory_road": {"guide_from": "data/vr_caves.json guide", "extra_blocks": 32},
+    "islet": {"from": "tools/islet.py island_top: the islet's outline (where its top is not NaN), grown by margin_blocks", "margin_blocks": 0, "margin_why": "POLISH 2026-09-27: 2 left a moat two blocks wide and 20 deep round the islet once the reef platform met its apron; island_top never reads the bed (below), so only the outline's own columns are protected", "why": "the islet is built over the seabed under it, so nothing under it may change. FINDING (run 2026-09-27): island_top does not read the bed at all (tools/ground.py passes it and islet.py ignores it), and the 61-block square it is computed over has plain seabed in its corners; protecting the whole square left a square pit in the Relic reef's platform, so the outline is protected instead"},
+    "release_towns": [
+      {"town": "sea_town", "why": "PART B 2026-09-27: Pacifidlog is re-sited onto the Jungle Isle's bank (data/sea_town.json resite); its Sound footprint is not protected (the re-apply builds it only at the new site), and the new site is shaped by jungle_isle_bank"},
+      {"town": "jungle_ruins", "why": "PART B 2026-09-27: the Jungle Isle is removed; the ruins move to the Long Isle's jungle half (docs/world-building/LONG_ISLE.md section 11), so their island footprint is not protected"}
+    ],
+    "event_sites": [
+      {"id": "first_cast_jetty", "box": [1046, 5344, 1060, 5354], "why": "EARLY_ROUTES.md: the 5 x 9 jetty at x1049-1057, z5347-5351, margin 3"},
+      {"id": "viltri_sounding_platform", "box": [1712, 2980, 1748, 3030], "why": "EARLY_ROUTES.md: platform x1725-1733 at the waterline, keeper at (1773, 3010), staffs 5, 6 and 7 deep. The staffs are depth marks: a shelf here would falsify them. The z range is inferred from the keeper's position and is NOT verified against tools/route_events.py"},
+      {"id": "viltri_north_bank_platform", "box": [1597, 3056, 1611, 3072], "why": "EARLY_ROUTES.md: platform x1601-1607, z3060-3068, margin 4"}
+    ]
+  },
+
+  "fatigue_model": {
+    "constants_from": "data/blackout.json surface (read at run time, never restated)",
+    "speed_blocks_per_second": 5.0,
+    "speed_basis": "EXP-042 session 3, the measured sprint-swim",
+    "rest": "land, or water 1 deep (wading)",
+    "shallow": "water 2 deep",
+    "deep": "water deep_water_blocks (3) or more",
+    "hits": "the first at collapse_ticks, then one every pulse_ticks while still at or over collapse and not resting; knocked out at the second",
+    "slowness_variants": ["not counted (the plan's reading)", "counted: 15% slower from slow_ticks, 30% from exhausted_ticks (the plan's appendix)"],
+    "resting_variant": "a second walk in which the swimmer waits on every rest stretch of 6 blocks or more until rested; a gate must knock out under both walks"
+  },
+
+  "rivers": {
+    "why": "Owner item 1 ('rivers that feel like they flow'), decision 9. Today every course is a straight canal whose surface drops one block every 20-120 blocks (WATER_BUILD_PLAN 3.1: sinuosity 1.01-1.20, a natural lowland river 1.5 or more)",
+    "chain_note": "Applied as a final stage on the canonical file, not by re-running tools/grade_rivers.py and the four stages after it. Below y145 the rescale is the identity and the sculpt kept river channels unchanged, so a river column in the canonical file is the river cut; one final pass is bit-identical everywhere else, which a re-run of four stages cannot promise. The revised courses are written to derived/water_shape/rivers_revised.json in data/rivers.json's course format for tools/paint_maps.py (whose cut-hash guard has to accept a water-shaped heightmap: a named change, not made here)",
+    "defaults": {
+      "corridor_half_width_blocks": 64,
+      "corridor_why": "the audit's footprint for a revised reach: nothing beyond this distance from the ORIGINAL graded centreline may change",
+      "bank_margin_blocks": 3,
+      "protect_clearance_blocks": 4,
+      "pools_riffles": {"spacing_widths": 6, "spacing_jitter": 0.2, "pool_depth_mult": 1.4, "riffle_depth_mult": 0.6, "step_apart_blocks": 3, "thalweg_shift_of_half_width": 0.35},
+      "pools_riffles_why": "natural pool-riffle spacing is 5-7 channel widths; the water surface steps only at riffles, two to four single steps close together, still pools between (WATER_BUILD_PLAN 3.3). The deepest water sits on the outside of each bend, the point bar on the inside"
+    },
+    "meanders": [
+      {
+        "id": "major_lower_trunk",
+        "course": "major_river_trunk",
+        "from_m": 805, "to_m": 2240,
+        "belt": "floodplain_plus_first_tread",
+        "omega_deg": 55,
+        "wavelength_widths": [5, 9],
+        "sinuosity_target": [1.2, 1.5],
+        "max_amplitude_blocks": 40,
+        "why": "the major river's lower trunk inside its graded floodplain (reaches 805-2268: width 18-26, grade 0.0074-0.018, floodplain 19-28 a side). The belt may cut the first terrace riser (5 blocks) so the loops have room: the floodplain alone allows about 1.15. Stops 28 blocks short of the course's end so the join is untouched",
+        "serves": ["9", "owner_item_1"]
+      },
+      {
+        "id": "viltris_path_coastal_flats",
+        "course": "lake_viltri_outflow",
+        "from_m": 654, "to_m": 1298,
+        "belt": "measured",
+        "omega_deg": 65,
+        "wavelength_widths": [6, 12],
+        "sinuosity_target": [1.3, 1.6],
+        "max_amplitude_blocks": 36,
+        "why": "Viltri's Path over the coastal flats: grade 0.0006-0.0092, width 7-10, the water road Misty's players boat down at S2 (WATER_PROPOSAL 1)",
+        "serves": ["9", "owner_item_1"]
+      },
+      {
+        "id": "arrow_outflow",
+        "course": "arrow_lake_outflow",
+        "from_m": 12, "to_m": 262,
+        "belt": "measured",
+        "omega_deg": 60,
+        "wavelength_widths": [6, 12],
+        "sinuosity_target": [1.3, 1.6],
+        "max_amplitude_blocks": 30,
+        "room_rise_blocks": 8,
+        "amplitude_jitter": 0.2,
+        "amplitude_jitter_why": "RUN 2026-09-27: at the default 0.35 the audit measured 1.29, just under 1.3; this short window has room for only four loops, so they breathe less",
+        "room_why": "MEASURED 2026-09-27: the ground within 3 blocks of the water reaches only 9 blocks either side of the centreline (10th percentile 7), so the default belt allowed no loop at all (amplitude median 0.3, sinuosity 1.06). Within 8 blocks the room is 41 (p10 24): the loops cut into the valley sides, leaving cut banks up to about 8 high on the outside of each bend (an entrenched meander)",
+        "why": "Arrow Lake's outflow toward the Watering Hole: grade 0.0047-0.008, width 10-11 (the Lakes' River, WATER_PROPOSAL 1)",
+        "serves": ["9", "owner_item_1"]
+      },
+      {
+        "id": "watering_hole_outflow_upper",
+        "course": "watering_hole_outflow",
+        "from_m": 8, "to_m": 134,
+        "belt": "measured",
+        "omega_deg": 55,
+        "wavelength_widths": [6, 10],
+        "sinuosity_target": [1.2, 1.5],
+        "max_amplitude_blocks": 28,
+        "room_rise_blocks": 8,
+        "room_why": "MEASURED 2026-09-27: room within 3 blocks of the water is 12 either side (p10 8), which allowed no loop (sinuosity 1.10); within 8 it is 74 (p10 67)",
+        "why": "the first low-grade stretch below the Watering Hole (grade 0.0076-0.0079, width 11)",
+        "serves": ["9"]
+      },
+      {
+        "id": "watering_hole_outflow_middle",
+        "course": "watering_hole_outflow",
+        "from_m": 325, "to_m": 453,
+        "belt": "measured",
+        "omega_deg": 55,
+        "wavelength_widths": [6, 10],
+        "sinuosity_target": [1.2, 1.5],
+        "max_amplitude_blocks": 28,
+        "why": "grade 0.0081-0.0095, width 11",
+        "serves": ["9"]
+      },
+      {
+        "id": "watering_hole_outflow_lower",
+        "course": "watering_hole_outflow",
+        "from_m": 645, "to_m": 840,
+        "belt": "measured",
+        "omega_deg": 55,
+        "wavelength_widths": [6, 10],
+        "sinuosity_target": [1.2, 1.5],
+        "max_amplitude_blocks": 22,
+        "amplitude_why": "RUN 2026-09-27: with the room raised to 6 the loops at 28 measured 1.55, over the 1.5 target",
+        "room_rise_blocks": 6,
+        "room_why": "MEASURED 2026-09-27: room within 3 blocks of the water is 17 either side (p10 11), sinuosity 1.17 at best; within 5 it is 44 (p10 33)",
+        "why": "grade 0.0107-0.0116, width 11: the lowest reach gentle enough to meander. FINDING: the plan named 'the Watering Hole outflow's lower reach' for meanders, but data/rivers.json grades its last 340 blocks (968-1308) at 0.026-0.12, too steep to meander; they get cascades instead (below)",
+        "serves": ["9"]
+      }
+    ],
+    "smooth": [
+      {
+        "id": "watering_hole_outflow_planform",
+        "course": "watering_hole_outflow",
+        "from_m": 8, "to_m": 968,
+        "sigma_blocks": 36,
+        "max_amplitude_blocks": 24,
+        "room_rise_blocks": 8,
+        "why": "OWNER QUESTION 5, ANSWERED (2026-09-27, the main session's recommendation (B), the owner has seen the maps): the stretches between the outflow's three meander windows kept the graded course's straight segments and sharp vertex kinks, a canal that meanders three times. The whole course above the steep last reach now follows a gentle curve through the kinks (the centreline smoothed with a 36-block Gaussian, the shift held inside the valley's room, at most 24 blocks, tapered to nothing at each end and at every tributary's mouth); the meander windows swing about the smoothed line. Its own one-block steps are kept where they fall",
+        "serves": ["9", "owner_item_1"]
+      }
+    ],
+    "cascades": [
+      {
+        "id": "tarn_outflow_cascades",
+        "course": "ravine_head_tarn_outflow",
+        "from_m": 8, "to_m": 399,
+        "gather_every_blocks": 14,
+        "plunge_pool_extra_depth": 1.0,
+        "falls": [{"at": "steepest", "window_blocks": 40, "drop": 3}],
+        "why": "grade 0.035-0.29, width 4: today one step every 6 blocks. Gathered into short cascades with still plunge pools between, and one 3-block fall where the course is steepest",
+        "serves": ["9", "owner_item_1"]
+      },
+      {
+        "id": "peak_pond_outflow_cascades",
+        "course": "peak_pond_outflow",
+        "from_m": 198, "to_m": 543,
+        "gather_every_blocks": 16,
+        "plunge_pool_extra_depth": 1.0,
+        "falls": [{"at": "steepest", "window_blocks": 40, "drop": 2}],
+        "why": "grade 0.04-0.2 below the pond's flat outlet; near Erika's town, the pond is S4 fishing water",
+        "serves": ["9", "owner_item_1"]
+      },
+      {
+        "id": "watering_hole_outflow_falls",
+        "course": "watering_hole_outflow",
+        "from_m": 968, "to_m": 1290,
+        "gather_every_blocks": 18,
+        "plunge_pool_extra_depth": 1.0,
+        "falls": [{"at": "steepest", "window_blocks": 48, "drop": 2}],
+        "why": "the steep last 340 blocks to Sunset West (grade 0.026-0.12). Stops short of the town's footprint, which is protected",
+        "serves": ["9"]
+      },
+      {
+        "id": "viltris_path_mouth_cascades",
+        "course": "lake_viltri_outflow",
+        "from_m": 1492, "to_m": 1706,
+        "gather_every_blocks": 16,
+        "plunge_pool_extra_depth": 1.0,
+        "falls": [{"at": "steepest", "window_blocks": 40, "drop": 3}],
+        "why": "Viltri's Path's last 220 blocks drop 0.047-0.19 to the sea: a boat run that ends in cascades and a fall at the coast (a boat goes down a step, never up: WATER_PROPOSAL 1)",
+        "serves": ["9", "owner_item_1"]
+      }
+    ],
+    "unchanged": [
+      {"course": "lake_tilpey_outflow", "why": "decision 9: the Tilpey outflow gorge stays straight under the Route 7 bridge (data/bridges.json is not re-sited)"},
+      {"course": "shrew_lake_outflow", "why": "231 blocks, grade 0.0066-0.054: a short steep link; not named by the plan"},
+      {"course": "marshy_marsh_outflow", "why": "steep (to 0.23); a cascade candidate for a later revision, not named by the plan"},
+      {"course": "pond_west_of_mt_clay_outflow", "why": "steep in its middle (0.044-0.056); a cascade candidate, not named by the plan"},
+      {"course": "river_of_shrews_from_high_end", "why": "a canal candidate, never cut (RIVERS.md); nothing to shape"},
+      {"course": "tilpey_south_west_outlet_from_high_end", "why": "not cut"},
+      {"course": "major_river_trunk 0-805", "why": "the upper trunk is a confined creek down the Glacial Tear (grade 0.012-0.07, no floodplain): pools and riffles would need a cut the valley does not want"}
+    ]
+  },
+
+  "viltri_ravine": {
+    "status": "ON HOLD, the owner, 2026-09-27: 'THE VILTRI RAVINE: hold ... stop the subagent working on the two streams until I decide.' No stream is built in either half, the earlier sea-half stream included: the ravine is exactly as on the canonical heightmap, no column changed inside its landmark polygon outside Lake Viltri's basin (the audit's G1). The owner leans towards keeping it dry and dressing it as a deliberate, old, stopped watercourse, which is block dressing (Phase C), not shape",
+    "rule": "no change inside data/landmarks.json viltri_ravine extent polygons, outside Lake Viltri's basin polygon (the lake pass owns the lake's bed)",
+    "held_designs": "the run's sea-half stream (a spring at the pass, 611 blocks to the sea) and the gravel-path design of 2026-09-27 (two streams; the lake half would join Viltri's Path at the lake's outlet, since the ravine's last 176 blocks toward the lake are the path's own channel) are described in docs/world-building/WATER_SHAPE.md section 4. tools/water_shape.py keeps its stream pass, which runs nothing without a viltri_ravine_stream block here"
+  },
+
+  "lakes": {
+    "why": "Owner item 1 ('lakes that read as lakes, not step-down bowls'), decision 8. Finding F2: every bed is a ramp of one-block terraces, 78-92% of neighbouring bed columns level, no shelf, no drop-off, no structure; wadeable 4-16%; the deepest point 47-179 blocks from anywhere to stand",
+    "profile": "littoral shelf (1 deep on its inner part, 2 on its outer), a drop-off to drop_depth over drop_width blocks, then a basin floor mapped from the old ramp with floor_gamma (the floor plunges near the drop-off and flattens toward the deepest point, which keeps its depth); low noise on the floor; humps; shoals to 1 deep as rest points; keep zones untouched",
+    "rungs": {
+      "unaided": {"first_hit_deep_blocks": 75, "max_to_rest_blocks": 30, "why": "a swimmer goes out and back: 2 x 30 = 60 deep blocks, warned and slowed, no hit (first hit at 75)"},
+      "trained": {"first_hit_deep_blocks": 150, "max_to_rest_blocks": 60, "why": "Surf or Dive training halves the rate: 2 x 60 = 120 of 150. Decision 1 keeps a trained diver from tiring underwater; this is the surface budget"}
+    },
+    "defaults": {
+      "wade_fraction_of_shelf": 0.6,
+      "bay_radius_blocks": 24,
+      "floor_gamma": 0.5,
+      "floor_noise_blocks": 2,
+      "floor_noise_scale_blocks": 64,
+      "floor_fine_blocks": 0.5,
+      "floor_fine_scale_blocks": 20,
+      "floor_noise_why": "RUN 2026-09-27: at 1 block the floor of a 40-deep lake rendered as one flat colour; 2 gives the silt floor visible undulation without touching the 9+ deep share. POLISH 2026-09-27: one octave at 24 blocks read as speckle where the floor sat on a colour band's edge; broad swells at 64 and a half-block ripple at 20 instead",
+      "keep_blend_blocks": 80,
+      "keep_blend_why": "POLISH 2026-09-27 (the owner's review): a kept pit is the old bed exactly, and the new floor round it (shallower than the old bed near a pit) left it a hard-edged dark blob. Round every keep zone the floor now eases back to the old bed over 80 blocks, both ways, so a pit sits at the bottom of its own slope",
+      "shelf_width_noise": 0.3,
+      "shelf_noise_scale_blocks": 56,
+      "shelf_noise_why": "RUN 2026-09-27: a shelf of one width all round read on the maps as a pool's step; the width wanders +-30% over about 56 blocks",
+      "shoal": {"size": [10, 22], "flank_min": 0.35, "flank_max": 0.8, "max_count": 12, "keep_margin_blocks": 40,
+                "keep_margin_why": "POLISH 2026-09-27: shoals placed for a lake-wide budget ringed each kept pit's rim and left it hard-edged; no budget shoal stands within 40 blocks of a keep zone, and a shoal's flank fades out toward one (a declared rest point beside a dive site keeps its flank)",
+                "max_count_why": "RUN 2026-09-27: shoals are only placed while the budget is unmet, so the cap is a limit, not a count. POLISH 2026-09-27: 16 lowered to 12; each shoal is now placed where it brings the most over-budget water within reach, so fewer are needed",
+                "shape_why": "POLISH 2026-09-27 (the owner's review: 'shoals everywhere are streaks; make them irregular, varied, fewer'). The run's elongated crests laid on each lake's trend read as streaks, and Tilpey's 46 as a drowned drumlin field. A shoal is now a sunken island: a warped, lobed outline (two octaves of noise on its radius, a mild elongation at any angle), sizes drawn from the lake's range with small ones commoner, a crest 1 deep with 2-deep saddles, a sand apron to 3 deep and a flank to the floor at 0.35-0.8 blocks of depth a block, different for each shoal"},
+      "hump": {"radius": [8, 14], "top_depth": [3, 6], "min_spacing_blocks": 40},
+      "zone_codes": {"1": "shelf (sand; seagrass and lily pads, Phase C)", "2": "drop-off (gravel and stone; kelp band)", "3": "basin floor (clay: silt; mud patches are blocks)", "4": "hump or ridge (gravel, stone, boulders)", "5": "shoal crest (sand)", "6": "weed bed: shelf in a bay (the densest seagrass and reeds)", "7": "kept (unchanged)"},
+      "deep_area_min_share": 0.5,
+      "deep_area_why": "the lake rosters' deep entries are cut at maxY = level - 8 (docs/STATE.md 'Every painted lake has a water roster'): each lake keeps at least half its water 9 or more deep"
+    },
+    "bodies": [
+      {
+        "id": "lake_viltri", "rung": "trained", "stage": "S1-S2",
+        "shelf_width": [8, 24], "drop_depth": 10, "drop_width": 5,
+        "keep": [{"id": "survey_floor", "core_depth": 24, "around": "anchor", "why": "SQ-G2-01 surveys the floor at y75: the deep core (y75-79) is kept exactly"}],
+        "humps": 1, "keep_blend_blocks": 24, "keep_blend_why": "POLISH 2026-09-27: at 80 the kept survey core's blend took in most of this 285-block lake and the budget then wanted 12 shoals",
+        "shoals": [{"kind": "auto"}],
+        "wadeable_target": [0.15, 0.40],
+        "why": "the Surf school: a shelf all round so the first lesson is the drop-off (S1 unaided players stand on the shelf's edge; S2 Surf reaches the floor)",
+        "serves": ["8", "owner_item_1"]
+      },
+      {
+        "id": "shrew_lake", "rung": "trained", "stage": "S2",
+        "shelf_width": [6, 14], "drop_depth": 14, "drop_width": 4,
+        "keep": [{"id": "the_pit", "core_depth": 40, "around": "anchor", "why": "the dragon's pit kept at its full 51, walled (the short drop_width makes the wall)"}],
+        "humps": 1,
+        "shoals": [{"kind": "near", "target": "the_pit", "distance_from_edge": [26, 34], "why": "the dive point for the surveyor's case, about 30 blocks off the pit's lip (WATER_BUILD_PLAN 3.3, 4.4)"}, {"kind": "auto"}],
+        "rest_scope": {"dive_sites": ["the_pit"], "why": "POLISH 2026-09-27: decision 8 read literally, as for Tilpey (question 4): every lake keeps its wadeable shelf, and the dive site gets a rest point within the trained budget (the declared shoal beside it). The run held the whole lake to the budget, which put a necklace of 10-13 shoals round the kept pit: the owner asked for fewer. The open water keeps two natural islands where the old floor stood highest. CLOSE for the owner: a trained surface swimmer can now be about 100 blocks from rest in the middle"},
+        "natural_shoals": {"count": 2, "size": [22, 38], "min_from_shore_blocks": 60, "min_spacing_blocks": 200, "min_from_kept_blocks": 50},
+        "max_to_rest_excludes": ["the_pit"],
+        "shoal_size": [22, 40],
+        "shoals_why": "RUN 2026-09-27: 13 small crests ringed the pit like beads, then 10 bars on the lake's long axis. POLISH 2026-09-27: the bars read as streaks; irregular sunken islands of 12-26 blocks, placed for the most reach each",
+        "wadeable_target": [0.10, 0.35],
+        "why": "narrow shelf, steep walls, the pit untouched",
+        "serves": ["8", "owner_item_1"]
+      },
+      {
+        "id": "arrow_lake", "rung": "trained", "stage": "S3",
+        "shelf_width": [10, 24], "drop_depth": 12, "drop_width": 5,
+        "shelf_width_why": "RUN 2026-09-27: [8, 20] gave a wadeable share of 0.107 against the 0.12 target; the shelf is widened rather than the target lowered",
+        "keep": [{"id": "mesprit_grotto_floor", "radius": 12, "around": "anchor", "why": "the grotto mouth's floor, 41-45 deep; the ring of stones and its hump are blocks"}],
+        "humps": 2,
+        "shoals": [{"kind": "near", "target": "anchor", "distance": [30, 40], "why": "a shoal within 30-40 blocks of Mesprit's grotto mouth, so the grotto is inside a trained budget without a raft (WATER_BUILD_PLAN 3.3)"}, {"kind": "auto"}],
+        "rest_scope": {"dive_sites": ["mesprit_grotto_floor"], "why": "POLISH 2026-09-27: decision 8 read literally, as for Tilpey (question 4): every lake keeps its wadeable shelf, and the dive site gets a rest point within the trained budget (the declared shoal beside it). The run held the whole lake to the budget, which put a necklace of 10-13 shoals round the kept pit: the owner asked for fewer. The open water keeps two natural islands where the old floor stood highest. CLOSE for the owner: a trained surface swimmer can now be about 100 blocks from rest in the middle"},
+        "natural_shoals": {"count": 2, "size": [20, 34], "min_from_shore_blocks": 60, "min_spacing_blocks": 180, "min_from_kept_blocks": 50},
+        "max_to_rest_excludes": ["mesprit_grotto_floor"],
+        "shoal_size": [18, 36],
+        "shoals_why": "RUN 2026-09-27: eight round crests read as a grid of cones, then bars on the lake's long axis. POLISH 2026-09-27: the bars read as streaks; irregular sunken islands of 10-24 blocks",
+        "wadeable_target": [0.12, 0.35],
+        "why": "Mesprit's grotto: the shelf, a drop-off to a deep floor, and a rest point in reach of the mouth",
+        "serves": ["8", "10", "owner_item_1"]
+      },
+      {
+        "id": "marshy_marsh", "rung": "trained", "stage": "S5",
+        "shelf_width": [12, 40], "drop_depth": 8, "drop_width": 6,
+        "keep": [{"id": "azelf_pit", "core_depth": 20, "around": "anchor", "why": "the pit kept; Azelf's grotto sits under a root tangle down its wall (blocks)"}],
+        "humps": 0,
+        "shelf_humps": {"count": 8, "radius": [3, 5], "top_depth": 1, "why": "drowned-forest humps on the shelf: standing ground for the drowned trees' root crowns (the trees are blocks)"},
+        "shoals": [{"kind": "near", "target": "azelf_pit", "distance_from_edge": [10, 30], "why": "the rest point for Azelf's pit, as Shrew's pit has its dive point"}, {"kind": "auto"}],
+        "rest_scope": {"dive_sites": ["azelf_pit"], "why": "POLISH 2026-09-27: decision 8 read literally, as for Tilpey (question 4): every lake keeps its wadeable shelf, and the dive site gets a rest point within the trained budget (the declared shoal beside it). The run held the whole lake to the budget, which put a necklace of 10-13 shoals round the kept pit: the owner asked for fewer. The open water keeps one natural islands where the old floor stood highest. CLOSE for the owner: a trained surface swimmer can now be about 80 blocks from rest in the middle"},
+        "natural_shoals": {"count": 1, "size": [18, 30], "min_from_shore_blocks": 50, "min_spacing_blocks": 180, "min_from_kept_blocks": 50},
+        "max_to_rest_excludes": ["azelf_pit"],
+        "max_to_rest_excludes_why": "RUN 2026-09-27: the farthest water was inside the kept pit, which no shoal may touch, so the greedy placement stacked six shoals round its rim and still measured 70. The pit is the dive (decision 8: a rest point within the rung's budget of every dive site), as for Shrew's pit and Mesprit's grotto floor, so it is excluded from the lake-wide measure and gets its own near shoal",
+        "wadeable_target": [0.20, 0.45],
+        "why": "already the shallowest-sided lake (15.7% wadeable): a broad marshy shelf ringing a kept pit",
+        "serves": ["8", "10", "owner_item_1"]
+      },
+      {
+        "id": "lake_tilpey", "rung": "trained", "stage": "S6-S7",
+        "shelf_width": [14, 44], "drop_depth": 10, "drop_width": 6,
+        "sectors": [{"id": "dive_school_north_shore", "bearing_from_anchor_deg": [300, 60], "shelf_width": [28, 52], "why": "a wide north-shore shelf for the Dive school's lessons, below Sabrina's town"}],
+        "flatten": [{"id": "practice_floor", "site": {"toward_anchor_from": [6196, 3398], "at_old_depth": 25}, "radius": 36, "to_depth": 25, "blend_blocks": 28,
+                     "why": "the practice floor at 25 under the Dive school's diving bell (WATER_BUILD_PLAN 3.3 and its Tilpey row: 'the practice floor's lit markers under' the bell at the school's dock). POLISH 2026-09-27: the run flattened the whole deep component round the anchor (591,398 columns, half the lake) to 25; it is now a floor 36 blocks round where the old bed first reaches 25 on the line from Sabrina's town (6196, 3398) toward the lake's anchor, below the north shore, fading into the floor over 28 blocks"}],
+        "keep": [],
+        "humps": 3,
+        "shoals": [{"kind": "near", "target": "practice_floor", "distance_from_edge": [10, 30], "size": 14, "why": "a rest point beside the practice floor, for the lessons (the school's dock and bell are blocks, Phase C)"}, {"kind": "auto"}],
+        "natural_shoals": {"count": 3, "size": [40, 70], "min_from_shore_blocks": 140, "min_spacing_blocks": 280, "min_from_kept_blocks": 80,
+                           "why": "the open lake gets a few irregular natural islands at most (the owner's review, question 4 answered by the main session's recommendation): each where the old floor stood broadly highest, far from shore and from each other"},
+        "rest_scope": {"dive_sites": ["practice_floor"], "sectors": [{"sector": "dive_school_north_shore", "within_blocks_of_shore": 80}],
+                       "why": "OWNER QUESTION 4, ANSWERED (2026-09-27, the main session's recommendation, the owner has seen the maps): option C, decision 8 read literally. The rest budget (the trained rung's 60) applies to the dive sites (the practice floor) and the Dive school's north shore (its sector's water within 80 blocks of the shore: the shelf, the drop-off and the first of the floor where the lessons are); the open lake is open deep water. A trained surface swimmer can be 100+ blocks from rest in the middle; a Dive-trained player does not tire under water (decision 1), and the Weeping Elder island is Uxie's rest point"},
+        "shoals_why": "RUN 2026-09-27: keeping the whole lake within reach took 46 long bars on one trend, a drowned drumlin field (7.05 M blocks of fill). POLISH 2026-09-27: withdrawn with the answer to question 4",
+        "wadeable_target": [0.12, 0.35],
+        "why": "the biggest lake: a wide north-shore shelf for the Dive school, the practice floor below it, a few natural islands in the open water, the Weeping Elder island (its apron comes from the shelf, since islands count as shore; Uxie's grotto is sited later under that apron, the island its rest point)",
+        "serves": ["8", "10", "owner_item_1"]
+      },
+      {
+        "id": "peak_pond", "rung": "trained", "stage": "S4",
+        "shelf_width": [8, 20], "drop_depth": 8, "drop_width": 5,
+        "keep": [], "humps": 1, "shoals": [{"kind": "auto"}], "shoal_size": [14, 26],
+        "wadeable_target": [0.15, 0.40],
+        "why": "Erika's pond, fishing water: shelf, drop-off and one hump as a fishing mark",
+        "serves": ["8", "owner_item_1"]
+      },
+      {
+        "id": "watering_hole", "rung": "trained", "stage": "S7",
+        "shelf_width": [6, 16], "drop_depth": 6, "drop_width": 4,
+        "keep": [], "humps": 1, "shoals": [{"kind": "auto"}],
+        "wadeable_target": [0.15, 0.45],
+        "why": "fishing water on the Lakes' River: shelf, drop-off and one hump",
+        "serves": ["8", "owner_item_1"]
+      },
+      {
+        "id": "pond_west_of_mt_clay", "rung": "unaided", "stage": "S2",
+        "shelf_width": [6, 18], "drop_depth": 8, "drop_width": 4,
+        "keep": [], "humps": 1, "shoals": [{"kind": "auto"}], "shoal_size": [16, 30], "max_to_rest_blocks": 34, "max_to_rest_why": "POLISH 2026-09-27: at 30 the pond needed 12 shoals (the owner asked for fewer). 34 is the unaided rung with Slowness counted and no other margin: out and back is 68 deep blocks against the first hit at about 70 once Slowness is counted (75 without; data/blackout.json surface feel), so a swimmer who goes to the farthest water and straight back is warned and slowed, never hit", "shoal_flank": [0.9, 1.3], "shoal_flank_why": "POLISH 2026-09-27: the small unaided pond keeps its whole-lake budget of 30, so its shoals stand steep-sided to keep half its 9+ deep water",
+        "wadeable_target": [0.15, 0.45],
+        "why": "the Wooper stop, met on Route 3 by players who may not have Surf yet: every point within an unaided round trip",
+        "serves": ["8", "owner_item_1"]
+      },
+      {
+        "id": "ravine_head_tarn", "rung": "trained", "stage": "S4",
+        "shelf_width": [4, 12], "drop_depth": 8, "drop_width": 3,
+        "keep": [], "humps": 1, "shoals": [{"kind": "auto"}], "shoal_size": [12, 22],
+        "wadeable_target": [0.10, 0.40],
+        "why": "a mountain tarn: a narrow shelf and a sharp drop",
+        "serves": ["8", "owner_item_1"]
+      }
+    ]
+  },
+
+  "coasts": {
+    "why": "Owner item 3: 'the only sea a player meets before Dive at gym 6 ... currently nothing'. The south coasts are a flat sheet 1 deep for 16 blocks then a ramp; the north and west drop to 4-7 at once (WATER_BUILD_PLAN 5.1)",
+    "gate_line_clearance_blocks": 48,
+    "gate_line_why": "no coast feature writes within this distance of a crossing declared a gate, so no new rest ground appears on a ferry line (decision 3)",
+    "flats": [
+      {
+        "id": "pallet_flats",
+        "box": [880, 5240, 1720, 5760],
+        "shore_region": "pallet_fields",
+        "band_blocks": 64,
+        "bars": {"offsets_blocks": [14, 32, 50], "sigma_blocks": 3.5, "crest_depth": 1, "runnel_depth": 2, "dry_crest_noise_over": 0.86, "rip_every_blocks": [70, 130], "rip_width_blocks": 5, "rip_depth": 3, "segment_scale_blocks": 70, "segment_gap_under": 0.42},
+        "exclude": ["relic_corridors", "relic_reef", "fungal_bar_chain", "first_cast_hole"],
+        "bars_why": "POLISH 2026-09-27 (the owner's review): unbroken shore-parallel bars read as contour streaks and the noise-shaped rips as wedges. A bar is now a string of crescent segments (a second, shorter wander bends each seaward and back) with gaps where the noise along the coast falls under segment_gap_under; the gaps are the rips, a block deeper than the runnel",
+        "why": "the one-block sheet off Pallet broken into shore-parallel sand bars and runnels with rip channels: wading the coast is a road, every bar is a rest point, and the runnels between are where the first water Pokemon and the kelp edge are seen (S0)",
+        "serves": ["owner_item_3"]
+      },
+      {
+        "id": "route1_west_coast_flats",
+        "box": [440, 4380, 1060, 5250],
+        "shore_region": "pallet_fields",
+        "band_blocks": 56,
+        "bars": {"offsets_blocks": [12, 30], "sigma_blocks": 3.0, "crest_depth": 1, "runnel_depth": 2, "dry_crest_noise_over": 0.9, "rip_every_blocks": [60, 110], "rip_width_blocks": 5, "rip_depth": 3, "segment_scale_blocks": 70, "segment_gap_under": 0.42},
+        "exclude": ["fungal_bar_chain"],
+        "why": "Route 1's west coast north of Pallet to Viltri Light: the same bar-and-runnel road (S0)",
+        "serves": ["owner_item_3"]
+      },
+      {
+        "id": "south_strand_flats",
+        "box": [2256, 5856, 4271, 6760],
+        "shore_region": "southern_coast",
+        "band_blocks": 64,
+        "bars": {"offsets_blocks": [14, 34, 54], "sigma_blocks": 3.5, "crest_depth": 1, "runnel_depth": 2, "dry_crest_noise_over": 0.84, "rip_every_blocks": [80, 140], "rip_width_blocks": 6, "rip_depth": 3, "segment_scale_blocks": 70, "segment_gap_under": 0.42},
+        "lagoon": {"length_blocks": 360, "barrier_offset_blocks": [44, 56], "barrier_width_blocks": 8, "barrier_crest_y": 63, "lagoon_depth": [1, 2], "inlet_width_blocks": 8, "inlet_depth": 3, "choose": "widest_flats", "why": "a lagoon behind a barrier bar: a dry sand ridge with one inlet, calm 1-2 deep water inside"},
+        "exclude": ["gate_lines"],
+        "why": "the south strand to Sunset West: bars, runnels and one lagoon (S0-S3)",
+        "serves": ["owner_item_3"]
+      }
+    ],
+    "fungal_bar_chain": {
+      "from": [985, 5233],
+      "to_region": "fungal_isle",
+      "region_grow_blocks": 24,
+      "max_deep_run_blocks": 30,
+      "max_deep_run_basis": "decision 7: never more than about 40 blocks of 3-deep water at a time; 30 leaves a margin for a line that is not walked straight",
+      "bar_length_blocks": [24, 36],
+      "bar_width_blocks": [10, 16],
+      "crest_depth": 1,
+      "flank_run_per_block": 3,
+      "stagger_blocks": 3,
+      "stagger_why": "bars sit a little left and right of the line, alternately, so the chain reads as natural; 3 keeps the straight line on every crest (a crest is at least 3.5 blocks either side of a bar's axis)",
+      "corridor_half_width_blocks": 24,
+      "require": {"unaided_walk": "no hit", "unaided_peak_at_least": "warn", "trained_walk": "no hit"},
+      "why": "Fungal Isle at S0 (decision 7): a staggered chain of sand bars from the Pallet coast, so an unaided player crosses with warnings and rests on each bar. Today the line is 198 blocks with 160 of swimming and knocks an unaided swimmer out after 124",
+      "serves": ["7", "owner_item_3"]
+    },
+    "relic_corridors": {
+      "lines": [[[1101, 5410], [1092, 5532]], [[1049, 5349], [1092, 5532]]],
+      "half_width_blocks": 16,
+      "why": "decision 7: Relic stays as it is. No coast feature writes within 16 blocks of the beach line or the jetty line"
+    },
+    "relic_reef": {
+      "centre": [1092, 5532],
+      "sector_bearing_deg": [150, 330],
+      "inner_radius": 34,
+      "outer_radius": [64, 96],
+      "top_depth_inner": 3,
+      "top_depth_outer": 12,
+      "drop_width_blocks": 5,
+      "sector_fade_deg": 40,
+      "knolls": {"scale_blocks": 16, "noise_over": 0.68, "rise_blocks": 4, "why": "patch reefs where two octaves of noise stand highest, up to 4 above the platform and never above min_depth. POLISH 2026-09-27: the run's six lobed knolls (sin 3 and 5 harmonics on a disc) read as crosses"},
+      "shape_why": "POLISH 2026-09-27 (the owner's review of the Pallet flats map: 'the sickle-shaped cut with cross-shaped blobs where the reef meets the deep basin must go'). The platform now runs from the islet's own outline (its apron stands at sea - 4) outward over outer_radius - inner_radius blocks (30-62, wandering on two octaves), shoals from 3 to 12 deep with low relief, falls to the old bed down a wall 5-13 wide, and fades out over 40 degrees past each end of its sector, so no edge is a circle or a bearing",
+      "min_depth": 3,
+      "min_depth_why": "never shallower than 3 (P4), so neither Relic line's swim changes (decision 7) and the reef is seen, not stood on",
+      "why": "WATER_PROPOSAL 3.2's reef platform on the islet's south and west apron: the sunlit edge 3-12 deep seen from the islet at S0, and a reef wall down to the seabed (y35) at S2. Coral, the dead-coral patch and the sunken Pallet fragment are blocks",
+      "serves": ["7", "owner_item_3"]
+    },
+    "skerries": [
+      {
+        "id": "windward_skerries",
+        "box": [0, 2600, 760, 5200],
+        "shore_region": null,
+        "water_depth": [3, 12],
+        "distance_from_land": [20, 100],
+        "min_spacing_blocks": 60,
+        "skerries": {"count": 10, "radius": [4, 9], "top_y": [63, 65], "flank_run_per_block": 1.5},
+        "stacks": {"count": 4, "radius": [3, 5], "top_y": [72, 86], "plateau_radius": [1, 2], "flank_run_per_block": 0.3, "skirt_radius_extra": 4, "skirt_top_y": [60, 62]},
+        "why": "sea stacks and skerries off the windward cliffs for Wingull colonies (S0). A skerry is land: a rest point, so none is placed near a gate line",
+        "serves": ["owner_item_3"]
+      },
+      {
+        "id": "north_west_skerries",
+        "box": [300, 1400, 1000, 2600],
+        "shore_region": null,
+        "water_depth": [3, 12],
+        "distance_from_land": [20, 100],
+        "min_spacing_blocks": 60,
+        "skerries": {"count": 6, "radius": [4, 8], "top_y": [63, 65], "flank_run_per_block": 1.5},
+        "stacks": {"count": 2, "radius": [3, 5], "top_y": [70, 82], "plateau_radius": [1, 2], "flank_run_per_block": 0.3, "skirt_radius_extra": 4, "skirt_top_y": [60, 62]},
+        "why": "off the north-west coast around Viltri's Path mouth",
+        "serves": ["owner_item_3"]
+      }
+    ],
+    "first_cast_hole": {
+      "centre": [1042, 5349],
+      "radius": 4,
+      "depth": 4,
+      "status": "PROPOSED ADDITION, not in the plan: drop it if unwanted",
+      "why": "EARLY_ROUTES.md: at First Cast vanilla's open-water treasure check probably fails on the one-deep flats; a scour hole 4 deep off the jetty's seaward (west) end gives the rod open water (WATER_BUILD_PLAN 8.3 wants a fishing dock over at least 3). It only deepens, so the jetty-to-Relic row stays a row",
+      "serves": ["owner_item_3"]
+    }
+  },
+
+  "seabed": {
+    "why": "Decision 6, OCEAN.md section 4 at full scope inside the heightmap: three quarters of the old seabed was a flat plain; beyond 400 blocks from land it is still a flat y10 plain (OCEAN.md 1-2)",
+    "reading": "FINDING: OCEAN.md section 4 says both 'where the planned shelf is shallower than the imported surface, the pass fills up to it' and 'where the imported surface is deeper than the profile, the pass keeps the imported surface'; read literally the two cover the same columns and contradict. Its per-zone medians (Southern Shallows y24 to y51) show filling was meant. This design fills to the profile and carries every erosion canyon through the fill as an incision of the same depth, so the canyons survive as canyons",
+    "fill_only": true,
+    "cap_y": 59,
+    "cap_why": "P4: never shallower than 3 deep, so no column's swim-rate class changes and no gate moves. OCEAN.md's shelf starts at y60 (2 deep), written before swim fatigue existed; y60 would turn a strip along every coast into shallow-rate water",
+    "min_depth_to_edit": 4,
+    "near_shore_buffer_blocks": 16,
+    "exclusion_feather_blocks": 96,
+    "zone_blend_blocks": 128,
+    "coarse_cell_blocks": 8,
+    "canyon": {"blur_radius_blocks": 32, "min_incision_blocks": 3},
+    "profile_after_shelf": {"break_to_y": 28, "break_width": 80, "slope_to_y": 18, "slope_width": 400, "basin_to_y": 10, "basin_width": 600, "then": 10},
+    "zones": [
+      {"region": "frostwater_shelf", "shelf_start_y": 58, "shelf_end_y": 46, "shelf_width": 240, "why": "a broad cold shelf, kelp forest (OCEAN.md 3)"},
+      {"region": "windward_deep", "shelf_start_y": 56, "shelf_end_y": 46, "shelf_width": 160, "why": "the narrow exposed shelf: real depth closest to shore. Starts at y56 so the windward coast keeps its 4-7-deep drop at the shore (WATER_BUILD_PLAN 5.1)"},
+      {"region": "eastern_reach", "shelf_start_y": 58, "shelf_end_y": 46, "shelf_width": 320, "why": "the sea lane's shelf"},
+      {"region": "southern_shallows", "shelf_start_y": 59, "shelf_end_y": 46, "shelf_width": 400, "why": "the warm shelf where coral lives close in"}
+    ],
+    "exclude": [
+      {"id": "lake_basins", "from": "data/landmarks.json water_body basin_polygons", "why": "a lake bed below y62 is not sea"},
+      {"id": "river_corridors", "from": "data/rivers.json courses", "grow_blocks": 24, "why": "river mouths are shaped by the river pass or kept"}
+    ],
+    "exclude_removed": [
+      {"id": "southern_home_waters", "box": [0, 5000, 1760, 5900], "why": "POLISH 2026-09-27 (the owner's review: 'remove the rectangular deep-water artefact'): the box kept its old deep water and read as a dark rectangle on the overview. The coast features now run after the sea floor and build on the filled floor, and a feature's own columns are never overwritten (ownership), so no box is needed"},
+      {"id": "coast_features", "why": "the same: the flats', skerries', reef's and Fungal chain's boxes grown 32 were rectangles too"},
+      {"id": "the_sound", "box": [6700, 4400, 7700, 7400], "why": "PART B 2026-09-27: the box kept the Sound exactly as measured for Pacifidlog's shelf and wreck; the town leaves the Sound (data/sea_town.json resite) and the box read as a dark strip. The Sound's crossings keep every column's swim rate (fill-only, capped at y59: P4), which the audit checks as rates_unchanged"},
+      {"id": "gate_straits", "why": "POLISH 2026-09-27 (the owner's review: blend the kept-deep ferry straits into the shelf so they do not read as cut channels): replaced by strait_trough below"}
+    ],
+    "strait_trough": {"depth_blocks": 12, "sigma_blocks": 110, "wander_blocks": 40, "wander_scale_blocks": 260, "end_taper_blocks": 160,
+                      "why": "each gate line's water stays deeper than the shelf round it as a soft trough, up to 12 blocks under the profile along a centreline that wanders 40 blocks, fading out over about 110 blocks either side: a strait reads as the deep way between two shores, not a channel cut with a ruler. It never matters to a swimmer (every column 3+ deep stays 3+ deep, P4: the gate is the distance) and it keeps question 2's intent (a gate reads as a gate from the shore)"},
+    "ridges": [
+      {"id": "windward_break_ridge", "zone": "windward_deep", "at_distance_from_land": "shelf_width + 40", "width_blocks": 60, "rise_blocks": [10, 20], "crest_cap_y": 50, "gap_noise_under": 0.35, "gap_noise_scale_blocks": 160, "why": "OCEAN.md: a ridge along the shelf break under the Windward Coast, 10-20 above the slope, with gaps that act as passages"},
+      {"id": "frostwater_ridge", "zone": "frostwater_shelf", "polyline": [[3000, 520], [3500, 380], [4050, 300], [4650, 360]], "width_blocks": 70, "rise_blocks": [10, 18], "crest_cap_y": 50, "gap_noise_under": 0.3, "gap_noise_scale_blocks": 140, "why": "OCEAN.md: one across the Frostwater Shelf between the range and the isles. The line is drawn from the description and the region bounds for review; NOT measured. Only sea columns deeper than the cap are raised"}
+    ],
+    "margin": {
+      "status": "OPTION A, DESIGNED 2026-09-27 (the main session's recommendation; the owner reviewed the maps): a margin relief image in the same export. Generated on the copy, not applied or exported",
+      "relief": {"image_name": "margin_relief.png", "fade_blocks": 320, "coast_slope": 0.45, "sea_cap_y": 59,
+                 "reads_in": "tools/worldpainter/export_world.js: the ocean-margin import builds a blank image the size of the canvas (heightmap + 2 x export_margin_blocks) and imports it with onlyRaise, creating only the tiles the landmass lacks; given --margin-image it imports this image there instead, through the same TransformingHeightMap offset and the same importer (the heightmap's own image-to-world line). tools/reexport.py passes it when data/world.json export.margin_relief pins it (path beside the canonical heightmap, sha256)",
+                 "why": "question 1, option A: the seamounts become shape in the same export, and the image also answers the margin join: the revised copy's edge (the new shelves where they reach the border) is carried outward, fading to the y10 floor over 320 blocks. FINDING: land touches the heightmap's edge (north 1,527 columns up to y96, west 444, east 452); today's blank margin drops it to the y10 plain in one column, a cliff of up to 86 blocks at the edge of the map inside the border; the image carries it down to the sea at 0.45 a block. The floor cannot go below y10.09 (image value 0 on the import line), so the_outer_deep's planned y8 plain is y10"},
+      "seamounts_from": "data/regions.json marine_regions the_outer_deep features.seamounts",
+      "why": "all five seamounts ((-600, 2200), (-500, 6000), (4200, -700), (9000, 1800), (1500, 8900)) lie outside the 0-8191 heightmap. tools/worldpainter/export_world.js imports the margin from a blank image (the y10 plain), so no heightmap revision can shape them. The generator previews them on the seabed overview only",
+      "options": ["A: a margin relief image beside the heightmap, pinned by sha256 in data/world.json and read by export_world.js in place of the blank image (recommended)", "B: build them as a block pass after the export (about 3 million blocks each)", "C: leave the margin a plain until postgame"],
+      "seamount_shape": {"radius_blocks": [140, 220], "summit_plateau_radius": 30, "summit_y_from_region": true}
+    },
+    "trench": {"status": "blocks, Phase C, postgame (WATER_BUILD_PLAN 6.2): below the heightmap's y10 floor and in the margin; not in this revision"}
+  },
+
+  "jungle_isle_bank": {
+    "status": "DESIGN 2026-09-27 (Part B, the owner's decision), measured on the copy; NOT APPLIED",
+    "decision": {"date": "2026-09-27", "verbatim": "pacifidlog should be on an island, it should be on the sea, jungle isle should be removed and pacifidlog should be around there."},
+    "reading": "the main session's reading, stated for the owner to correct: the Jungle Isle's land (data/regions.json jungle_isle, x4384-5928 z6880-7976) is removed down to a shallow sea bank where the island stood; Pacifidlog, the raft town, is re-sited onto that bank on the open sea (rafts on posts to the seabed, as built in the Sound: data/sea_town.json resite); the Long Isle becomes half desert, half jungle; the jungle ruins and the quests and charter that visit them move to the Long Isle's jungle half (recommended; the owner may drop them)",
+    "region": "jungle_isle",
+    "region_grow_blocks": 64,
+    "region_why": "the island's land is every column at or above the sea inside its polygons grown 64 (the polygons stop short of the beach)",
+    "apron_blocks": 160,
+    "apron_why": "the old island's underwater apron (its beach ramp) is cut on down the bank's edge slope until it meets the sea floor, so the bank has an edge and not a lip",
+    "depth": {"crest": 5, "edge": 9, "inland_ramp_blocks": 160, "relief_blocks": 2, "relief_scale_blocks": 90, "edge_slope": 0.0, "apron_max_extra": 0, "min_off_town": 4,
+              "why": "a drowned island: the bank's depth follows the old island's own relief (its high ground ranked 10th to 90th percentile becomes the crown at 5 deep, its coast the edge at 9), with two octaves of low relief. Never shallower than 4 away from the town, so the only rest ground on the bank is the town's (the ferry stays the gate); 4-11 is swimming, diving and fishing water. RUN 2026-09-27: at 6-13, with the old beach ramp cut on down a slope, the bank stood deeper than the filled shelf north of it (8-12) and read as a hollow; the edge is now 9 and the apron only takes away the old beach ramp that stood shallower than the edge (apron_max_extra 0), so the bank rises from the shelf on the north and from the deep basin on the south"},
+    "town": {"from": "data/sea_town.json resite (tools/sea_town.py resited): every element and building but the mainland jetty",
+             "shallows_for": ["stilt_quarter", "boatwrights_yard"], "shallows_grow_blocks": 12, "grow_blocks": 14, "blend_blocks": 40,
+             "raft_depth": [3, 5], "shallows_depth": [1, 2],
+             "why": "rafts over 3-5 (their posts to the sand, the raft rule is 3), sand shallows 1-2 deep under the Stilt Quarter and the boatwright's yard (stilts, the boardwalk and the wharf allow 1): the shallows round the town. Each deck cell is at least its kind's rule deep. The town's bed fades into the bank over 40 blocks"},
+    "blue_hole": {"at_walk": "fishers_row_head", "radius": 36, "depth": 34, "offset_of_radius": 0.85,
+                  "why": "Fishers' Row ran into the Sound's deepest water; on the bank it runs west to the lip of a blue hole 34 deep, the deep fishing water (Relicanth, Lanturn and Wailmer country in LONG_ISLE.md section 6)"},
+    "never_shallower_than": 1,
+    "never_why": "nothing of the island is left at or above the sea (the audit's K1); the only ground at 1 deep is the town's shallows",
+    "serves": ["owner_2026_09_27_pacifidlog"]
+  },
+
+  "crossings": [
+    {"id": "relic_row_from_the_beach", "kind": "points", "from": [1101, 5410], "to": [1092, 5532], "overlays": ["relic_island"], "contract": "C3",
+     "plan_before": {"length": 93, "swim": 71, "deep": 64, "deepest": 23, "unaided": "no hit", "trained": "no hit"},
+     "require_after": {"unaided": "no hit", "trained": "no hit"}, "why": "decision 7 and contract C3"},
+    {"id": "relic_row_from_the_jetty", "kind": "points", "from": [1049, 5349], "to": [1092, 5532], "overlays": ["relic_island"],
+     "plan_before": {"length": 154, "swim": 113, "deep": 74, "deepest": 24, "unaided": "hit", "trained": "no hit"},
+     "require_after": {"unaided": "hit or worse", "trained": "no hit"}, "why": "decision 7: the row from the jetty stays the row"},
+    {"id": "fungal_from_the_pallet_coast", "kind": "to_region", "from": [985, 5233], "to_region": "fungal_isle",
+     "plan_before": {"length": 198, "swim": 160, "deep": 122, "deepest": 7, "unaided": "knocked out", "trained": "no hit"},
+     "require_after": {"unaided": "no hit", "trained": "no hit", "max_deep_run": 40}, "why": "decision 7: the bar chain"},
+    {"id": "fungal_from_the_jetty", "kind": "to_region", "from": [1049, 5349], "to_region": "fungal_isle",
+     "plan_before": {"length": 234, "swim": 184, "deep": 133, "deepest": 5, "unaided": "knocked out", "trained": "no hit"},
+     "require_after": {"report_only": true}, "why": "not decided; reported"},
+    {"id": "sound_narrows_z6100", "kind": "row", "z": 6100, "from_region": "eastern_dunes", "to_region": "long_isle",
+     "plan_before": {"length": 103, "swim": 65, "deep": 38, "deepest": 4, "unaided": "no hit", "trained": "no hit"},
+     "require_after": {"rates_unchanged": true}, "why": "the Sound keeps every column's swim rate (the seabed fills it, capped at y59: P4); its box is gone"},
+    {"id": "sound_narrows_z6300", "kind": "row", "z": 6300, "from_region": "eastern_dunes", "to_region": "long_isle",
+     "plan_before": {"length": 148, "swim": 137, "deep": 123, "deepest": 8, "unaided": "knocked out", "trained": "no hit"},
+     "require_after": {"rates_unchanged": true}, "why": "the Sound keeps every column's swim rate (the seabed fills it, capped at y59: P4); its box is gone"},
+    {"id": "sound_narrows_z6500", "kind": "row", "z": 6500, "from_region": "eastern_dunes", "to_region": "long_isle",
+     "plan_before": {"length": 103, "swim": 96, "deep": 90, "deepest": 6, "unaided": "knocked out", "trained": "no hit"},
+     "require_after": {"rates_unchanged": true}, "why": "the Sound keeps every column's swim rate (the seabed fills it, capped at y59: P4); its box is gone"},
+    {"id": "dunes_to_long_isle_shortest", "kind": "points", "from": [7319, 6462], "to": [7397, 6503],
+     "plan_before": {"length": 88, "swim": 84, "deep": 79, "deepest": 6, "unaided": "hit", "trained": "no hit"},
+     "require_after": {"rates_unchanged": true}, "why": "the Sound keeps every column's swim rate (the seabed fills it, capped at y59: P4); its box is gone"},
+    {"id": "sound_ferry_from_the_jetty", "kind": "points", "from": [7092, 6711], "to": [7210, 6960], "overlays": ["sea_town"], "contract": "C3",
+     "plan_before": {"length": 276, "swim": 179, "deep": 184, "deepest": 27, "unaided": "knocked out", "trained": "knocked out"},
+     "retires_with": "data/sea_town.json resite: the Sound ferry line and its jetty retire when the town moves; measured until then because the staging town and contract C3 still stand on it",
+     "require_after": {"gate": true, "rates_unchanged": true, "resting_trained_gate": false,
+                       "why_exempt": "measured on the canonical heightmap (2026-09-27 run): a trained swimmer who waits on the 6+ block rest stretch the line crosses takes one hit, not two, before AND after; the line is required unchanged in swim rate column for column instead (the Sound was excluded from every pass on the run; the fill now reaches it, capped at y59), and STATE already records the Sound ferry as a declared leak (Pacifidlog is reached at 61-block narrows)"},
+     "why": "decision 3; contract C3"},
+    {"id": "pacifidlog_ferry_line", "kind": "points", "from": [5160, 6583], "to": [5160, 7380], "overlays": ["sea_town_resite"], "measure_before": false,
+     "strait_trough": false, "strait_trough_why": "RUN 2026-09-27: a trough along the line to the jetty read as a channel cut into the shelf; at 650+ blocks the line is a gate by distance alone and the bank reads as its own shallow platform",
+     "require_after": {"gate": true},
+     "why": "PART B: the new ferry's line, from the plateau beach at the new jetty's landward end to the re-sited square. On the canonical heightmap it runs over the Jungle Isle's land, so it is walked on the copy only. The ferry must be the gate for unaided and trained swimmers (decision 3)"},
+    {"id": "pacifidlog_nearest_land", "kind": "to_town", "town": "sea_town_resite", "measure_before": false,
+     "strait_trough": false, "strait_trough_why": "RUN 2026-09-27: a trough along the line to the jetty read as a channel cut into the shelf; at 650+ blocks the line is a gate by distance alone and the bank reads as its own shallow platform",
+     "require_after": {"gate": true},
+     "why": "PART B: the shortest swim to the re-sited town from any land left after the revision (the nearest pair of a dry column and a town cell: a deck, or 1-deep rest ground within the town's zone), measured on the copy by the generator and again by the audit"},
+    {"id": "sunset_strait", "kind": "points", "from": [2701, 6639], "to": [2597, 6905], "contract": "C3",
+     "plan_before": {"length": 284, "swim": 258, "deep": 223, "deepest": 26, "unaided": "knocked out", "trained": "knocked out"},
+     "require_after": {"gate": true}, "why": "decision 3; contract C3"},
+    {"id": "northgate_shortest", "kind": "shortest", "from_region": "marsh_country", "to_region": "northgate_isle",
+     "plan_before": {"length": 304, "swim": 282, "deep": 257, "deepest": 31, "unaided": "knocked out", "trained": "knocked out"},
+     "require_after": {"gate": true}, "why": "decision 3"},
+    {"id": "northlight_packet", "kind": "points", "from": [6605, 2301], "to": [6878, 1960], "contract": "C3",
+     "plan_before": {"length": 437, "swim": 418, "deep": 397, "deepest": 41, "unaided": "knocked out", "trained": "knocked out"},
+     "require_after": {"gate": true}, "why": "decision 3; contract C3"}
+  ],
+
+  "sections": [
+    {"id": "viltri_ew", "through": "lake_viltri anchor", "bearing_deg": 90, "half_length": 150},
+    {"id": "viltri_ns", "through": "lake_viltri anchor", "bearing_deg": 0, "half_length": 120},
+    {"id": "shrew_ew", "through": "shrew_lake anchor", "bearing_deg": 90, "half_length": 220},
+    {"id": "arrow_ns", "through": "arrow_lake anchor", "bearing_deg": 0, "half_length": 200},
+    {"id": "marshy_ew", "through": "marshy_marsh anchor", "bearing_deg": 90, "half_length": 200},
+    {"id": "tilpey_ns", "through": "lake_tilpey anchor", "bearing_deg": 0, "half_length": 450},
+    {"id": "tilpey_ew", "through": "lake_tilpey anchor", "bearing_deg": 90, "half_length": 650},
+    {"id": "peak_pond_ew", "through": "peak_pond anchor", "bearing_deg": 90, "half_length": 150},
+    {"id": "watering_hole_ns", "through": "watering_hole anchor", "bearing_deg": 0, "half_length": 120},
+    {"id": "mt_clay_pond_ew", "through": "pond_west_of_mt_clay anchor", "bearing_deg": 90, "half_length": 120},
+    {"id": "tarn_ns", "through": "ravine_head_tarn anchor", "bearing_deg": 0, "half_length": 120},
+    {"id": "pallet_flats_shore_normal", "from": [1101, 5380], "to": [1180, 5700]},
+    {"id": "fungal_chain_line", "crossing": "fungal_from_the_pallet_coast"},
+    {"id": "relic_reef_south", "from": [1092, 5532], "to": [1092, 5680]},
+    {"id": "relic_reef_west", "from": [1092, 5532], "to": [960, 5532]},
+    {"id": "windward_shelf_profile", "from": [700, 3600], "to": [0, 3600]},
+    {"id": "southern_shelf_profile", "from": [3200, 6500], "to": [3200, 8191]},
+    {"id": "eastern_shelf_profile", "from": [7000, 3200], "to": [8191, 3200]},
+    {"id": "jungle_bank_ns", "from": [5160, 6560], "to": [5160, 8150], "why": "PART B: the mainland beach, the channel, the bank where the Jungle Isle stood, the town's square and the bank's southern edge"},
+    {"id": "jungle_bank_ew", "from": [4200, 7380], "to": [6100, 7380], "why": "PART B: across the bank through the blue hole, Fishers' Row and the town"}
+  ]
+}

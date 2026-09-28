@@ -115,7 +115,7 @@ def molang_or(ids):
     return " || ".join("t.id == 'cobblemon:%s'" % s for s in ids)
 
 
-def build(cfg, mounts, placements, progression, sea_rows=None):
+def build(cfg, mounts, placements, progression, boat_rows=None):
     """{relative path: file text} for the whole pack."""
     files = {}
     fn = lambda path, lines: files.__setitem__("data/%s/function/%s.mcfunction" % (NS, path), "\n".join(lines) + "\n")
@@ -147,7 +147,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "rewards": {"function": "%s:blackout/checkpoint/healer_used" % NS}}, indent=2) + "\n"
 
     # ---- load and tick -------------------------------------------------------------------------------------------
-    consts = {"#pct": money["percent"], "#100": 100, "#2": 2, "#5": 5, "#10": 10, "#-1": -1,
+    consts = {"#pct": money["percent"], "#100": 100, "#2": 2, "#5": 5, "#10": 10, "#16": 16, "#-1": -1, "#wmin": 1024,
               "#dedupe": cfg["dedupe_ticks"], "#jump": cfg["checkpoints"]["waystone_jump"],
               "#bpct": cats["balls"]["percent"], "#bmax": cats["balls"]["max"],
               "#mpct": cats["medicine"]["percent"], "#mmax": cats["medicine"]["max"],
@@ -160,7 +160,13 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
        + ["scoreboard players set %s bo.cfg %d" % (k, v) for k, v in consts.items()]
        + ["# the ordinary inventory is always kept (spec rule 3); a claim takes only what it selects",
           "gamerule keepInventory true",
-          "execute unless data storage cobblers_recovery:ledger claims run data modify storage cobblers_recovery:ledger claims set value []"])
+          "execute unless data storage cobblers_recovery:ledger claims run data modify storage cobblers_recovery:ledger claims set value []",
+          "# hex digits for recovery/pid, and each claimable item's translation key for the claim message",
+          "data modify storage cobblers_recovery:ledger hex set value %s" % json.dumps(list("0123456789abcdef")),
+          "data modify storage cobblers_recovery:ledger item_keys set value {%s}" % (",".join(
+              '"%s":"item.%s"' % (i, i.replace(":", ".")) for i in sorted(set(claims["balls"] + claims["medicine"] + claims["consumables"])))),
+          "# player names by UUID, for claims made or settled outside a battle (recovery/remember)",
+          "execute unless data storage cobblers_recovery:ledger names run data modify storage cobblers_recovery:ledger names set value []"])
     fn("blackout/tick", [
         "execute store result score #gt bo.tmp run time query gametime",
         "scoreboard players operation #m10 bo.tmp = #gt bo.tmp",
@@ -171,6 +177,8 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "execute as @e[type=player,tag=cobblers.bo_pending] at @s run function %s:blackout/arrive" % NS,
         "execute as @a[scores={bo.leave=1..}] at @s run function %s:blackout/login" % NS,
         "execute as @e[type=player,gamemode=!creative,gamemode=!spectator] at @s run function %s:water/tick" % NS,
+        "# who is hurting a guardian (recovery/watch; a kill outside battle is settled from it by maintenance)",
+        "execute as @e[type=cobblemon:pokemon,tag=cobblers.guardian] run function %s:recovery/watch" % NS,
         "scoreboard players operation #m bo.tmp = #gt bo.tmp",
         "scoreboard players operation #m bo.tmp %= #5 bo.cfg",
         "execute if score #m bo.tmp matches 0 as @e[type=player] at @s run function %s:blackout/checkpoint/sample" % NS,
@@ -204,10 +212,15 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "function %s:blackout/dedupe" % NS,
         "execute if score #dup bo.tmp matches 1 run return 0",
         "scoreboard players set @s bo.clm 0",
+        "# a victor tagged %s (the gulch's Megas, data/blackout.json claims.exempt_why) makes no claim" % claims["exempt_tag"],
+        "scoreboard players set #exempt bo.tmp 0",
+        "$execute as $(victor) if entity @s[tag=%s] run scoreboard players set #exempt bo.tmp 1" % claims["exempt_tag"],
         "# an item claim needs the exact victor; if it cannot be found, the environmental outcome (spec: never guess)",
-        '$execute if entity $(victor) run function %s:recovery/make {victor:"$(victor)",name:"$(name)",id:"$(id)"}' % NS,
-        "function %s:blackout/charge" % NS,
-        "tag @s add cobblers.bo_pending"])
+        '$execute if score #exempt bo.tmp matches 0 if entity $(victor) run function %s:recovery/make {victor:"$(victor)",name:"$(name)",id:"$(id)"}' % NS,
+        "function %s:blackout/charge" % NS]
+       + (["# the money goes into the claim too (data/blackout.json money.held_by_wild_victor)",
+           "execute if score @s bo.clm matches 2 run function %s:recovery/hold_money" % NS] if money.get("held_by_wild_victor") else [])
+       + ["tag @s add cobblers.bo_pending"])
     fn("blackout/battle_loss_npc", [
         "# as a player who has just lost to an NPC trainer: trainer claims bind to the route trainers, not built yet,",
         "# so this is money and the return only",
@@ -223,6 +236,24 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "scoreboard players set @s bo.clm 0",
         "function %s:blackout/charge" % NS,
         "tag @s add cobblers.bo_pending"])
+    # killed outside a battle by a wild Pokemon (Fight or Flight): the same claim as losing a battle to it (the owner,
+    # 2026-09-27: "if it kills the player through damage the same loss of items should happen"). Vanilla's
+    # entity_killed_player trigger fires during the death, before the tick's death charge, and `on attacker` names the
+    # killer; the battle path's dedupe then stops the death being charged twice. The claim needs the player's name and
+    # UUID as text, which only MoLang gives: blackout/remember keeps them (callbacks/player_tick_pre/cobblers_names)
+    files["data/%s/advancement/blackout/killed_by_pokemon.json" % NS] = json.dumps({
+        "criteria": {"killed": {"trigger": "minecraft:entity_killed_player", "conditions": {"entity": [
+            {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"type": "cobblemon:pokemon"}}]}}},
+        "rewards": {"function": "%s:blackout/killed" % NS}}, indent=2) + "\n"
+    fn("blackout/killed", [
+        "# as a player a Pokemon has just killed, outside a battle",
+        "advancement revoke @s only %s:blackout/killed_by_pokemon" % NS,
+        "tag @e[type=cobblemon:pokemon,tag=cobblers.victor] remove cobblers.victor",
+        "# a wild one only: an owned Pokemon's original trainer is a player",
+        'execute on attacker if entity @s[type=cobblemon:pokemon,nbt={Pokemon:{PokemonOriginalTrainerType:"NONE"}}] run tag @s add cobblers.victor',
+        "execute unless entity @e[type=cobblemon:pokemon,tag=cobblers.victor] run return 0",
+        "function %s:recovery/killed" % NS,
+        "tag @e[type=cobblemon:pokemon,tag=cobblers.victor] remove cobblers.victor"])
     fn("blackout/charge", [
         "# %d%% of the balance, rounded up, so any balance above zero loses at least 1 (EXP-040: the query's result is the balance)" % money["percent"],
         "scoreboard players set @s bo.lost 0",
@@ -257,12 +288,17 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "scoreboard players set @s bo.pulse 0",
         "scoreboard players set @s bo.warn 0",
         "scoreboard players set @s bo.surf 0",
+        "# a fresh start: swim fatigue survived the death, so a player who collapsed respawned past collapse and was hit",
+        "# again within seconds of re-entering the water (the owner, 2026-09-27)",
+        "scoreboard players set @s bo.fat 0",
+        "scoreboard players set @s bo.fwarn 0",
         "function %s:blackout/checkpoint/name" % NS,
         'tellraw @s [%s,{"storage":"%s:blackout","nbt":"place","color":"white"},%s,{"score":{"name":"@s","objective":"bo.lost"},"color":"white"},%s]'
         % (text(msg["blackout"].split("{place}")[0]), NS,
            text(msg["blackout"].split("{place}")[1].split("{money}")[0] + money["currency_symbol"]),
            text(msg["blackout"].split("{money}")[1])),
         "execute if score @s bo.clm matches 0 run tellraw @s %s" % text(msg["no_items"]),
+        "execute if score @s bo.clm matches 2 run tellraw @s %s" % text(msg["claim_money"], "gold") if money.get("held_by_wild_victor") else "# (money is not held by the victor)",
         "execute if score @s bo.clm matches 3 run tellraw @s %s" % text(msg["npc_no_items"])])
 
     # ---- checkpoints -----------------------------------------------------------------------------------------------
@@ -323,6 +359,8 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
     fn("blackout/login", [
         "# as a player who has just joined: the party is re-read before any water benefit returns (spec)",
         "scoreboard players reset @s bo.leave",
+        "tag @s remove cobblers.named",
+        "tag @s remove cobblers.slayer",
         "scoreboard players set @s bo.mount 0",
         "scoreboard players set @s bo.qual 0",
         "execute store result score @s bo.ox run data get entity @s Pos[0]",
@@ -343,8 +381,9 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
                 "scoreboard players operation @s %s < %s bo.cfg" % (t, mx)]
 
     fn("recovery/make", [
-        "# as the player who lost; $(victor) is the wild victor's entity UUID, $(name) and $(id) the player's name and UUID",
-        "scoreboard players set @s bo.clm 2",
+        "# as the player who lost; $(victor) is the wild victor's entity UUID, $(name) and $(id) the player's name and UUID.",
+        "# bo.clm becomes 2 only once a claim is written (recovery/commit): with nothing claimable it stays 0, so no money",
+        "# is held and no message says the victor holds it (the test author's finding)",
         "execute store result score @s bo.nb run clear @s #%s:claim/balls 0" % NS,
         "execute store result score @s bo.nm run clear @s #%s:claim/medicine 0" % NS,
         "execute store result score @s bo.nc run clear @s #%s:claim/consumables 0" % NS]
@@ -409,11 +448,16 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "$execute store result storage %s pending.y int 1 run data get entity $(victor) Pos[1]" % R,
         "$execute store result storage %s pending.z int 1 run data get entity $(victor) Pos[2]" % R,
         "$data modify storage %s pending.snapshot set from entity $(victor) Pokemon" % R,
+        "# the Pokemon's own UUID as text: what every resolution matches (it survives a faint, a catch and a rebuild;",
+        "# the entity UUID does not)",
+        "$execute as $(victor) run function %s/pid" % R,
+        "data modify storage %s pending.pid set from storage %s pid.s" % (R, R),
         "# persist first (spec: the claim is written before anything is removed); abort if it did not land",
         "data modify storage %s claims append from storage %s pending" % (R, R),
         "data remove storage %s claims[-1].plan" % R,
         "execute store success score #ok bo.tmp run function %s/verify with storage %s pending" % (R, R),
         "$execute if score #ok bo.tmp matches 0 run return run tellraw @s [{\"selector\":\"$(victor)\",\"color\":\"white\"},%s]" % text(msg["claim_nothing"].split("{victor}")[1]),
+        "scoreboard players set @s bo.clm 2",
         "function %s/apply" % R,
         "$execute as $(victor) run function %s/bind" % R,
         "function %s/summary" % R,
@@ -438,11 +482,145 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "scoreboard players operation @s bo.g = #g bo.tmp",
         "function %s/bind_tag with storage %s pending" % (R, R)])
     fn("recovery/bind_tag", ["$tag @s add cobblers.g$(g)"])
+    # the message names each item taken ("10 Ultra Ball"), not its category (the owner, 2026-09-27: "10 Poke Ball(s)"
+    # sent them to count the wrong stack)
     fn("recovery/summary", [
         "data modify storage %s summary set value []" % R,
-        'execute if score @s bo.mb matches 1.. run data modify storage %s summary append value \'[{"score":{"name":"@s","objective":"bo.mb"}},{"text":" Poke Ball(s)"}]\'' % R,
-        'execute if score @s bo.mm matches 1.. run data modify storage %s summary append value \'[{"score":{"name":"@s","objective":"bo.mm"}},{"text":" medicine"}]\'' % R,
-        'execute if score @s bo.mc matches 1.. run data modify storage %s summary append value \'{"text":"a battle or evolution item"}\'' % R])
+        "data modify storage %s sm set from storage %s pending.items" % (R, R),
+        "function %s/summary_next" % R])
+    fn("recovery/summary_next", [
+        "execute unless data storage %s sm[0] run return 0" % R,
+        "data modify storage %s si set value {}" % R,
+        "data modify storage %s si.id set from storage %s sm[0].id" % (R, R),
+        "data modify storage %s si.key set from storage %s sm[0].id" % (R, R),
+        "data modify storage %s si.count set from storage %s sm[0].count" % (R, R),
+        "function %s/summary_key with storage %s si" % (R, R),
+        "function %s/summary_one with storage %s si" % (R, R),
+        "data remove storage %s sm[0]" % R,
+        "function %s/summary_next" % R])
+    fn("recovery/summary_key", ['$data modify storage %s si.key set from storage %s item_keys."$(id)"' % (R, R)])
+    fn("recovery/summary_one", ['$data modify storage %s summary append value \'[{"text":"$(count) "},{"translate":"$(key)"}]\'' % R])
+
+    # a Pokemon's UUID as the text Cobblemon's MoLang `pokemon.id` gives (Java's UUID.toString of the int array):
+    # each int's eight hex digits, least significant first (scoreboard %= and /= floor, so a negative int's two's
+    # complement digits come out right), joined 8-4-4-4-12
+    pid = ["# as a Pokemon entity: its Pokemon UUID as text, into the ledger's pid.s"]
+    pid += ["execute store result score #u%d bo.tmp run data get entity @s Pokemon.UUID[%d]" % (w, w) for w in range(4)]
+    for w in range(4):
+        for p in range(7, -1, -1):
+            pid += ["scoreboard players operation #n bo.tmp = #u%d bo.tmp" % w,
+                    "scoreboard players operation #n bo.tmp %= #16 bo.cfg",
+                    "execute store result storage %s hx.i int 1 run scoreboard players get #n bo.tmp" % R,
+                    'data modify storage %s hx.k set value "c%d%d"' % (R, w, p),
+                    "function %s/pid_hex with storage %s hx" % (R, R),
+                    "scoreboard players operation #u%d bo.tmp /= #16 bo.cfg" % w]
+    pid.append("function %s/pid_join with storage %s px" % (R, R))
+    fn("recovery/pid", pid)
+    fn("recovery/pid_hex", ["$data modify storage %s px.$(k) set from storage %s hex[$(i)]" % (R, R)])
+    d = lambda w, ps: "".join("$(c%d%d)" % (w, p) for p in ps)
+    fn("recovery/pid_join", ['$data modify storage %s pid.s set value "%s-%s-%s-%s-%s%s"' % (
+        R, d(0, range(8)), d(1, range(4)), d(1, range(4, 8)), d(2, range(4)), d(2, range(4, 8)), d(3, range(8)))])
+
+    # resolution by the Pokemon's UUID: a guardian fainting in battle (callbacks/battle_fainted), losing a battle, or
+    # being caught (callbacks/pokemon_captured) resolves every open claim its guardian number holds. The first build
+    # matched the entity instead, and it never fired in game: a fainted or caught Pokemon's entity is gone before
+    # battle_victory and pokemon_captured run, and battle_victory's scriptable_losers leaves it out (2026-09-27)
+    fn("recovery/resolve_pid", [
+        "# $(pid) the beaten or caught Pokemon's UUID as text, $(resolver) the player's",
+        '$data modify storage %s rp set value {pid:"$(pid)",resolver:"$(resolver)"}' % R,
+        "data modify storage %s scan set from storage %s claims" % (R, R),
+        "function %s/pid_find with storage %s rp" % (R, R),
+        "execute unless data storage %s rp.g run return fail" % R,
+        "data modify storage %s r set value {}" % R,
+        "data modify storage %s r.g set from storage %s rp.g" % (R, R),
+        "data modify storage %s r.resolver set from storage %s rp.resolver" % (R, R),
+        "data modify storage %s scan set from storage %s claims" % (R, R),
+        "function %s/resolve_next" % R,
+        "function %s/release with storage %s r" % (R, R),
+        "execute as @a at @s run function %s/deliver" % R])
+    fn("recovery/pid_find", [
+        "execute unless data storage %s scan[0] run return 0" % R,
+        "# (a filter cannot follow a list index: the element is copied to a named compound first)",
+        "data modify storage %s pcur set from storage %s scan[0]" % (R, R),
+        '$execute if data storage %s pcur{pid:"$(pid)",state:"open"} run return run data modify storage %s rp.g set from storage %s pcur.g' % (R, R, R),
+        "data remove storage %s scan[0]" % R,
+        "function %s/pid_find with storage %s rp" % (R, R)])
+    # killed outside a battle, by a player or a player's Pokemon: the same as beating it (the owner, 2026-09-27: "when i
+    # killed it with a sword it did respawn though, it should work both ways whether i kill it or my mon does"). Any
+    # other death (lava, a fall, another wild Pokemon) leaves the claim open and the guardian is rebuilt, as before
+    # Cobblemon removes a killed Pokemon the moment it dies (no dying ticks: staging, 2026-09-27), so the kill cannot be
+    # seen when it happens. Instead each guardian's claims note who last hurt it, every tick it has an attacker; when
+    # maintenance finds the guardian gone, a note younger than slain_window_ticks settles the claims for that player
+    fn("recovery/watch", [
+        "# as a guardian, every tick: its attacker, if a player or a player's Pokemon, is noted on its open claims",
+        "tag @a remove cobblers.slayer",
+        "execute on attacker if entity @s[type=player] run tag @s add cobblers.slayer",
+        "execute on attacker if entity @s[type=cobblemon:pokemon] on owner if entity @s[type=player] run tag @s add cobblers.slayer",
+        "execute unless entity @a[tag=cobblers.slayer] run return 0",
+        "data modify storage %s hit set value {}" % R,
+        "execute store result storage %s hit.g int 1 run scoreboard players get @s bo.g" % R,
+        "execute store result storage %s hit.t int 1 run time query gametime" % R,
+        "execute as @a[tag=cobblers.slayer,limit=1] run function %s/hit_who" % R,
+        "tag @a remove cobblers.slayer",
+        "execute if data storage %s hit.who run function %s/hit_mark with storage %s hit" % (R, R, R)])
+    fn("recovery/hit_who", [
+        "data modify storage %s me set value {}" % R,
+        "data modify storage %s me.UUID set from entity @s UUID" % R,
+        "function %s/hit_who_id with storage %s me" % (R, R)])
+    fn("recovery/hit_who_id", ["$data modify storage %s hit.who set from storage %s names[{UUID:$(UUID)}].id" % (R, R)])
+    # (guarded: a filtered `set` that matches nothing appends a new element, so a stale guardian with no open claim
+    # would add a malformed claim; the test author's finding)
+    fn("recovery/hit_mark", ['$execute if data storage %s claims[{g:$(g),state:"open"}] run data modify storage %s claims[{g:$(g),state:"open"}].hit set value {who:"$(who)",t:$(t)}' % (R, R)])
+    fn("recovery/vanished", [
+        "# a guardian gone from its loaded site: if a player or their Pokemon was hurting it after it was last seen alive",
+        "# (maintenance's alive_t), it was killed by them, and the claim is settled for them however long ago that was",
+        "# or wherever they went since; otherwise (lava, a fall, another wild Pokemon) it is rebuilt. A note lasts 100",
+        "# ticks past the last blow (vanilla's attacker memory), so an old fight never counts",
+        "$execute store result score #ht bo.tmp run data get storage %s claims[{id:$(id)}].hit.t" % R,
+        "$execute store result score #at bo.tmp run data get storage %s claims[{id:$(id)}].alive_t" % R,
+        "$execute if data storage %s claims[{id:$(id)}].hit if score #ht bo.tmp >= #at bo.tmp run return run function %s/slain {id:$(id)}" % (R, R),
+        "$function %s/rebuild {g:$(g),x:$(x),y:$(y),z:$(z),id:$(id)}" % R])
+    fn("recovery/slain", [
+        "data modify storage %s slain set value {}" % R,
+        "$data modify storage %s slain.pid set from storage %s claims[{id:$(id)}].pid" % (R, R),
+        "$data modify storage %s slain.resolver set from storage %s claims[{id:$(id)}].hit.who" % (R, R),
+        "function %s/resolve_pid with storage %s slain" % (R, R)])
+    # the kill path's lookup and the names registry (callbacks/player_tick_pre/cobblers_names)
+    fn("recovery/killed", [
+        "# as a player a wild Pokemon (tagged cobblers.victor) has just killed: the same claim as a battle loss to it",
+        "data modify storage %s who set value {}" % R,
+        "data modify storage %s me set value {}" % R,
+        "data modify storage %s me.UUID set from entity @s UUID" % R,
+        "function %s/killed_who with storage %s me" % (R, R),
+        "# no name kept yet (they died within five seconds of joining): the death stays environmental",
+        'execute if data storage %s who.name run data modify storage %s who.victor set value "@e[type=cobblemon:pokemon,tag=cobblers.victor,limit=1]"' % (R, R),
+        "execute if data storage %s who.name run function %s:blackout/battle_loss_wild with storage %s who" % (R, NS, R)])
+    fn("recovery/killed_who", ["$data modify storage %s who set from storage %s names[{UUID:$(UUID)}]" % (R, R)])
+    fn("recovery/remember", [
+        "# as a player: their name and UUID as text, by UUID (from the player_tick_pre callback, once per login)",
+        '$data remove storage %s names[{id:"$(id)"}]' % R,
+        "data modify storage %s rem set value {}" % R,
+        "data modify storage %s rem.UUID set from entity @s UUID" % R,
+        '$data modify storage %s rem.name set value "$(name)"' % R,
+        '$data modify storage %s rem.id set value "$(id)"' % R,
+        "data modify storage %s names append from storage %s rem" % (R, R),
+        "tag @s add cobblers.named"])
+    # the money a wild victor's win took is held in its claim and paid back with the items
+    fn("recovery/hold_money", [
+        "# as the player, just after the charge: into the claim this loss wrote, by its own id (never 'the last claim',",
+        "# which may be another player's)",
+        "function %s/hold_money_at with storage %s pending" % (R, R)])
+    fn("recovery/hold_money_at", [
+        "$execute if data storage %s claims[{id:$(id),state:\"open\"}] store result storage %s claims[{id:$(id)}].money int 1 run scoreboard players get @s bo.lost" % (R, R)])
+    fn("recovery/pay_money", ["$cobbledollars give @s $(money)",
+                              '$tellraw @s [%s,{"text":" %s$(money)","color":"white"}]' % (text(msg["recovered_money"]), money["currency_symbol"])])
+    fn("recovery/release", [
+        "# a guardian still standing for the settled claims (a rebuilt one) goes back to being an ordinary wild Pokemon",
+        "$execute as @e[type=cobblemon:pokemon,tag=cobblers.g$(g)] run data merge entity @s {PersistenceRequired:0b}",
+        "$scoreboard players reset @e[type=cobblemon:pokemon,tag=cobblers.g$(g)] bo.g",
+        "$tag @e[type=cobblemon:pokemon,tag=cobblers.g$(g)] remove cobblers.guardian",
+        "$tag @e[type=cobblemon:pokemon,tag=cobblers.g$(g)] remove cobblers.rebuilt",
+        "$tag @e[type=cobblemon:pokemon,tag=cobblers.g$(g)] remove cobblers.g$(g)"])
 
     # resolution: beating or catching the guardian resolves every open claim it holds, for their owners
     fn("recovery/defeated", [
@@ -491,6 +669,7 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "$execute unless data storage %s cur{owner:$(me)} run return 0" % R,
         "data modify storage %s drop set from storage %s cur.items" % (R, R),
         "function %s/drop_next" % R,
+        "execute if data storage %s cur.money run function %s/pay_money with storage %s cur" % (R, R, R),
         '$data modify storage %s claims[{id:$(id)}].state set value "resolved"' % R,
         '$execute if data storage %s cur{owner_id:"$(resolver)"} run tellraw @s %s' % (R, text(msg["recovered_owner"])),
         '$execute unless data storage %s cur{owner_id:"$(resolver)"} run tellraw @s [{"selector":"$(resolver)"},%s]'
@@ -520,17 +699,25 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "$execute unless loaded $(x) $(y) $(z) run return run data modify storage %s claims[{id:$(id)}].seen set value 0" % R,
         "# loaded and absent: rebuilt only on the second pass in a row (entities load a moment after their chunk)",
         "$execute if data storage %s claims[{id:$(id),seen:0}] run return run data modify storage %s claims[{id:$(id)}].seen set value 1" % (R, R),
-        "$function %s/rebuild {g:$(g),x:$(x),y:$(y),z:$(z),id:$(id)}" % R])
+        "$function %s/vanished {g:$(g),x:$(x),y:$(y),z:$(z),id:$(id)}" % R])
     fn("recovery/present", [
         "$data modify storage %s claims[{id:$(id)}].seen set value 0" % R,
+        "# when it was last seen alive: a kill is a blow noted after this (recovery/vanished)",
+        "$execute store result storage %s claims[{id:$(id)}].alive_t int 1 run time query gametime" % R,
         "$execute store result score #n bo.tmp if entity @e[type=cobblemon:pokemon,tag=cobblers.g$(g)]",
         "# a duplicate (a rebuild that raced the original's load): the rebuilt one goes",
         "$execute if score #n bo.tmp matches 2.. run kill @e[type=cobblemon:pokemon,tag=cobblers.g$(g),tag=cobblers.rebuilt,limit=1]",
         "$execute as @e[type=cobblemon:pokemon,tag=cobblers.g$(g)] positioned $(x) $(y) $(z) unless entity @s[distance=..%d] run tp @s $(x) $(y) $(z)" % claims["guardian_leash"]])
     fn("recovery/rebuild", [
-        "# a placeholder from Cobblemon's own spawn command, then the ledger's snapshot written over it (tested 2026-09-26)",
-        "$execute positioned $(x) $(y) $(z) run spawnpokemonat ~ ~ ~ magikarp level=1",
+        "# a placeholder from Cobblemon's own spawn command, then the ledger's snapshot written over it (tested 2026-09-26).",
+        "# The placeholder is the snapshot's own species and level: the client keeps the model it was spawned with, so a",
+        "# Magikarp placeholder showed as a Magikarp over a level-60 Ursaring (the owner, 2026-09-27)",
+        "$data modify storage %s rb set value {x:$(x),y:$(y),z:$(z)}" % R,
+        "$data modify storage %s rb.species set from storage %s claims[{id:$(id)}].snapshot.Species" % (R, R),
+        "$data modify storage %s rb.level set from storage %s claims[{id:$(id)}].snapshot.Level" % (R, R),
+        "function %s/rebuild_spawn with storage %s rb" % (R, R),
         "$execute positioned $(x) $(y) $(z) as @e[type=cobblemon:pokemon,tag=!cobblers.guardian,distance=..1,limit=1,sort=nearest] run function %s/rebuild_as {g:$(g),id:$(id)}" % R])
+    fn("recovery/rebuild_spawn", ["$execute positioned $(x) $(y) $(z) run spawnpokemonat ~ ~ ~ $(species) level=$(level)"])
     fn("recovery/rebuild_as", [
         "$data modify entity @s Pokemon set from storage %s claims[{id:$(id)}].snapshot" % R,
         "data merge entity @s {PersistenceRequired:1b}",
@@ -545,6 +732,9 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
     deep_chain = " ".join("if block ~ ~%d ~ #%s:water" % (i, NS) for i in range(1, water["deep_blocks"] + 1))
     fn("water/tick", [
         "# as and at a player in survival or adventure, every tick",
+        "# the Surf bonus counter starts at 0: unset, water/deep's `bo.surf < #surf` test fails and a player who never",
+        "# blacked out (blackout/arrive was its only setter) got no Surf bonus at all (the contract check C2's finding)",
+        "execute unless score @s bo.surf matches -2147483648.. run scoreboard players set @s bo.surf 0",
         "scoreboard players set @s bo.sub 0",
         "scoreboard players set @s bo.deep 0",
         "execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #%s:water run scoreboard players set @s bo.sub 1" % NS,
@@ -656,37 +846,49 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
     fn("water/grant_dive", ["# the survey diver's training; Dive includes Surf", "tag @s add cobblers.surf", "tag @s add cobblers.dive"])
     fn("water/revoke", ["tag @s remove cobblers.surf", "tag @s remove cobblers.dive"])
 
-    # ---- surface exhaustion ----------------------------------------------------------------------------------------
-    # Swimming (not riding) in the open sea builds fatigue; land, the shallows and riding recover it. The sea's bands
-    # come from tools/open_water.py (the heightmap), one function per 16-block cell row: row z lists its open (1)
-    # and deep (2) runs of cell x, so a swimmer costs one macro call and a few checks.
+    # ---- swim fatigue ----------------------------------------------------------------------------------------------
+    # Every swim builds fatigue, in any water (the owner, 2026-09-27: "fatigue on every swim ... a new player should
+    # struggle with water"); water deeper than deep_water_blocks under the swimmer builds it faster. Land, wading
+    # (standing on the bottom, head out) and riding recover it. No map: the water under the player decides.
     surf = cfg["surface"]
     per = surf["sample_ticks"]
-    consts_s = {"#fgain1": surf["gain_open_per_tick"] * per, "#fgain2": surf["gain_deep_per_tick"] * per,
+    consts_s = {"#fgain1": surf["gain_shallow_per_tick"] * per, "#fgain2": surf["gain_deep_per_tick"] * per,
                 "#frec": surf["recover_per_tick"] * per, "#fwarn": surf["warn_ticks"], "#fslow": surf["slow_ticks"],
                 "#fexh": surf["exhausted_ticks"], "#fcol": surf["collapse_ticks"], "#fpulse": surf["pulse_ticks"],
-                "#fcap": surf["cap_ticks"], "#16": 16, "#wmin": -surf["world_min"], "#fsample": per}
+                "#fcap": surf["cap_ticks"], "#fsample": per}
+    # the feet's block and the blocks under it: deep_water_blocks of water there is deep water
+    # (the feet's own block too: the first line lets a player through on their eyes alone; the test author's finding)
+    under = " ".join("if block ~ ~%d ~ #%s:water" % (-i, NS) for i in range(0, surf["deep_water_blocks"]))
     files["data/%s/function/surface/load.mcfunction" % NS] = "\n".join(
         ["scoreboard players set %s bo.cfg %d" % (k, v) for k, v in consts_s.items()]) + "\n"
     load_tag = json.loads(files["data/minecraft/tags/function/load.json"])
     load_tag["values"].append("%s:surface/load" % NS)
     files["data/minecraft/tags/function/load.json"] = json.dumps(load_tag, indent=2) + "\n"
     fn("surface/tick", [
-        "# as and at a player every %d ticks: only a swimmer, in water and riding nothing, builds fatigue" % per,
-        "execute unless block ~ ~ ~ #%s:water unless score @s bo.sub matches 1 run return run function %s:surface/recover" % (NS, NS),
+        "# as and at a player every %d ticks: a swimmer (in water, riding nothing, not wading) builds fatigue" % per,
+        "scoreboard players set #ride bo.tmp 0",
+        "execute store success score #ride bo.tmp on vehicle if entity @s",
+        "# a boat on rough sea water tips its rider out (data/blackout.json boats, option C); a ridden Pokemon is not a boat.",
+        "# First, because a boat's rider sits with their feet above the water",
+        "scoreboard players set #boat bo.tmp 0",
+        "execute store success score #boat bo.tmp on vehicle if entity @s[type=#%s:boats]" % NS,
+        "execute if score #boat bo.tmp matches 1 run function %s:boat/check" % NS,
+        "# (reset first: `store success ... on vehicle` stores nothing when there is no vehicle, so a rider just tipped",
+        "# out kept #ride 1 and recovered for one sample; the test author's finding)",
         "scoreboard players set #ride bo.tmp 0",
         "execute store success score #ride bo.tmp on vehicle if entity @s",
         "execute if score #ride bo.tmp matches 1 run return run function %s:surface/recover" % NS,
-        "scoreboard players set @s bo.zone 0",
-        "execute store result score #cx bo.tmp run data get entity @s Pos[0]",
-        "execute store result score #cz bo.tmp run data get entity @s Pos[2]",
-        "scoreboard players operation #cx bo.tmp += #wmin bo.cfg",
-        "scoreboard players operation #cz bo.tmp += #wmin bo.cfg",
-        "scoreboard players operation #cx bo.tmp /= #16 bo.cfg",
-        "scoreboard players operation #cz bo.tmp /= #16 bo.cfg",
-        "execute store result storage %s:blackout sea.z int 1 run scoreboard players get #cz bo.tmp" % NS,
-        "function %s:surface/row with storage %s:blackout sea" % (NS, NS),
-        "execute if score @s bo.zone matches 0 run return run function %s:surface/recover" % NS,
+        "execute unless block ~ ~ ~ #%s:water unless score @s bo.sub matches 1 run return run function %s:surface/recover" % (NS, NS),
+        "# wading: on the bottom with the head out of the water is walking, not swimming",
+        "execute if score @s bo.sub matches 0 if entity @s[nbt={OnGround:1b}] run return run function %s:surface/recover" % NS,
+        "# a trained player (Surf or Dive with a capable partner) under water neither tires nor recovers: air alone limits",
+        "# dives (the owner, 2026-09-27: 'Fatigue is the surface gate, air is the underwater gate, and they should not",
+        "# fight'). The first every-swim rule knocked a Dive player out after 33 s under water (WATER_BUILD_PLAN F1)",
+        "execute if score @s bo.qual matches 1.. if score @s bo.sub matches 1 run return 0",
+        "# 1 shallow water, 2 deep water (deep_water_blocks of water from the feet down, or the eyes at depth)",
+        "scoreboard players set @s bo.zone 1",
+        "execute %s run scoreboard players set @s bo.zone 2" % under if under else "scoreboard players set @s bo.zone 2",
+        "execute if score @s bo.deep matches 1 run scoreboard players set @s bo.zone 2",
         "# a trained water partner in the party halves the strain (qualification from the water ladder)",
         "scoreboard players operation #g bo.tmp = #fgain1 bo.cfg",
         "execute if score @s bo.zone matches 2 run scoreboard players operation #g bo.tmp = #fgain2 bo.cfg",
@@ -701,11 +903,33 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "execute if score @s bo.fat >= #fexh bo.cfg run effect give @s minecraft:hunger 2 0 true",
         "execute if score @s bo.fat >= #fexh bo.cfg if score @s bo.fwarn matches ..1 run function %s:surface/warn_exhausted" % NS,
         "execute if score @s bo.fat >= #fcol bo.cfg run function %s:surface/collapse" % NS])
-    fn("surface/row", ["$function %s:surface/r/$(z)" % NS])
-    rows = sea_rows or {}
-    for z, runs in sorted(rows.items()):
-        fn("surface/r/%d" % z, ["execute if score #cx bo.tmp matches %d..%d run return run scoreboard players set @s bo.zone %d" % (a, b, v)
-                                for a, b, v in runs])
+    # ---- boats: shallows craft (data/blackout.json boats, option C) ------------------------------------------------
+    boats = cfg.get("boats") or {}
+    files["data/%s/tags/entity_type/boats.json" % NS] = json.dumps({"values": ["minecraft:boat", "minecraft:chest_boat"]}, indent=2) + "\n"
+    check = [
+        "# as and at a player in a boat: 0 shallows or land, 1 open, 2 deep, from tools/open_water.py's bands at",
+        "# boats.rough_blocks on the canonical heightmap, one function per 16-block cell row",
+        "scoreboard players set @s bo.zone 0",
+        "execute store result score #cx bo.tmp run data get entity @s Pos[0]",
+        "execute store result score #cz bo.tmp run data get entity @s Pos[2]",
+        "scoreboard players operation #cx bo.tmp += #wmin bo.cfg",
+        "scoreboard players operation #cz bo.tmp += #wmin bo.cfg",
+        "scoreboard players operation #cx bo.tmp /= #16 bo.cfg",
+        "scoreboard players operation #cz bo.tmp /= #16 bo.cfg",
+        "execute store result storage %s:blackout sea.z int 1 run scoreboard players get #cz bo.tmp" % NS,
+        "function %s:boat/row with storage %s:blackout sea" % (NS, NS),
+        "execute if score @s bo.zone matches 0 run return 0"]
+    for s in boats.get("sheltered", []):
+        x0, z0, x1, z1 = s["box"]
+        check.append("# sheltered: %s" % s["id"])
+        check.append("execute if entity @s[x=%d,y=-64,z=%d,dx=%d,dy=640,dz=%d] run return 0" % (x0, z0, x1 - x0, z1 - z0))
+    check += ["ride @s dismount",
+              "title @s actionbar %s" % text(boats.get("message", "Too rough for a boat."), "gold")]
+    fn("boat/check", check)
+    fn("boat/row", ["$function %s:boat/r/$(z)" % NS])
+    for z, runs in sorted((boat_rows or {}).items()):
+        fn("boat/r/%d" % z, ["execute if score #cx bo.tmp matches %d..%d run return run scoreboard players set @s bo.zone %d" % (a, b, v)
+                             for a, b, v in runs])
     fn("surface/recover", [
 
         "execute if score @s bo.fat matches 1.. run scoreboard players operation @s bo.fat -= #frec bo.cfg",
@@ -747,7 +971,9 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "t.best == 0 ? { q.run_command('scoreboard players set ' + q.player.username + ' bo.mount 0'); };",
         ""])
     files["data/cobblemon/callbacks/battle_victory/cobblers_blackout.molang"] = "\n".join([
-        "'Generated by tools/blackout_pack.py. A player who lost runs the blackout; a guardian that lost resolves its claims.';",
+        "'Generated by tools/blackout_pack.py. A player who lost with the whole party fainted runs the blackout (running';",
+        "'away is not a blackout: the owner lost $179 and a claim for fleeing, 2026-09-27); a guardian that lost resolves';",
+        "'its claims by its Pokemon UUID (pokemon.id).';",
         "t.kind = 'other';",
         "t.victor = '';",
         "for_each(t.w, c.scriptable_winners, {",
@@ -757,20 +983,53 @@ def build(cfg, mounts, placements, progression, sea_rows=None):
         "  };",
         "});",
         "for_each(t.pl, c.player_losers, {",
-        "  q.run_command('execute as ' + t.pl.player.uuid + ' run function %s:blackout/battle_loss_' + t.kind + ' {victor:\"' + t.victor + '\",name:\"' + t.pl.player.username + '\",id:\"' + t.pl.player.uuid + '\"}');" % NS,
+        "  t.plr = t.pl.player;",
+        "  t.party = t.plr.party;",
+        "  t.alive = 0;",
+        "  for_each(t.p, t.party.pokemon, { t.p.current_hp > 0 ? { t.alive = t.alive + 1; }; });",
+        "  t.alive == 0 ? {",
+        "    q.run_command('execute as ' + t.plr.uuid + ' run function %s:blackout/battle_loss_' + t.kind + ' {victor:\"' + t.victor + '\",name:\"' + t.plr.username + '\",id:\"' + t.plr.uuid + '\"}');" % NS,
+        "  };",
         "});",
         "for_each(t.l, c.scriptable_losers, {",
         "  t.l.is_pokemon ? {",
+        "    t.lp = t.l.pokemon;",
+        "    t.lpid = t.lp.id;",
         "    for_each(t.pw, c.player_winners, {",
-        "      q.run_command('execute as ' + t.l.uuid + ' if entity @s[tag=cobblers.guardian] run function %s:recovery/defeated {resolver:\"' + t.pw.player.uuid + '\"}');" % NS,
+        "      t.pwp = t.pw.player;",
+        "      q.run_command('function %s:recovery/resolve_pid {pid:\"' + t.lpid + '\",resolver:\"' + t.pwp.uuid + '\"}');" % NS,
         "    });",
         "  };",
         "});",
         ""])
+    files["data/cobblemon/callbacks/battle_fainted/cobblers_recovery.molang"] = "\n".join([
+        "'Generated by tools/blackout_pack.py. A wild Pokemon fainting in battle resolves any claim it guards, credited to';",
+        "'the first player in the battle. This is where defeat is seen: by battle_victory the entity is gone.';",
+        "c.pokemon.actor.is_wild ? {",
+        "  t.pk = c.pokemon.pokemon;",
+        "  t.pid = t.pk.id;",
+        "  t.done = 0;",
+        "  for_each(t.a, c.players, {",
+        "    t.done == 0 ? {",
+        "      t.pl = t.a.player;",
+        "      q.run_command('function %s:recovery/resolve_pid {pid:\"' + t.pid + '\",resolver:\"' + t.pl.uuid + '\"}');" % NS,
+        "      t.done = 1;",
+        "    };",
+        "  });",
+        "};",
+        ""])
     files["data/cobblemon/callbacks/pokemon_captured/cobblers_recovery.molang"] = "\n".join([
-        "'Generated by tools/blackout_pack.py. Catching a guardian resolves its claims for their owners (spec: rescue without theft).';",
-        "t.e = q.pokemon.entity;",
-        "q.run_command('execute as ' + t.e.uuid + ' if entity @s[tag=cobblers.guardian] run function %s:recovery/defeated {resolver:\"' + q.player.uuid + '\"}');" % NS,
+        "'Generated by tools/blackout_pack.py. Catching a guardian resolves its claims for their owners (spec: rescue without';",
+        "'theft), matched by its Pokemon UUID: the entity is gone by the time this runs.';",
+        "t.pk = q.pokemon;",
+        "t.pid = t.pk.id;",
+        "q.run_command('function %s:recovery/resolve_pid {pid:\"' + t.pid + '\",resolver:\"' + q.player.uuid + '\"}');" % NS,
+        ""])
+    files["data/cobblemon/callbacks/player_tick_pre/cobblers_names.molang"] = "\n".join([
+        "'Generated by tools/blackout_pack.py. Once per login (and every 5 s until done): the player name and UUID as text,';",
+        "'for a claim made when a wild Pokemon kills them outside a battle (blackout/killed).';",
+        "math.mod(q.player.world.game_time, 100) != 0 ? { return 0; };",
+        "q.run_command('execute as ' + q.player.uuid + ' unless entity @s[tag=cobblers.named] run function %s:recovery/remember {name:\"' + q.player.username + '\",id:\"' + q.player.uuid + '\"}');" % NS,
         ""])
     # the claim ledger's storage has a namespace of its own (see LEDGER); function paths keep cobblers:recovery/...
     for k, v in files.items():
@@ -784,9 +1043,12 @@ def main(argv=None):
     p.add_argument("--out", default=str(DEFAULT_OUT))
     a = p.parse_args(argv)
     cfg = load("blackout.json")
+    # the boats' rough water: tools/open_water.py's bands on the canonical heightmap (never a world), as row runs
     import open_water
-    b = open_water.bands(cfg["surface"]["shallow_blocks"], cfg["surface"]["deep_blocks"])
-    sea_rows = {}
+    if open_water.WORLD_MIN != -1024:
+        raise SystemExit("boat/check's #wmin is 1024 but tools/open_water.py's WORLD_MIN is %d" % open_water.WORLD_MIN)
+    b = open_water.bands(cfg["boats"]["rough_blocks"], cfg["boats"]["deep_blocks"])
+    boat_rows = {}
     for code, key in ((1, "open"), (2, "deep")):
         m = b[key]
         for z in range(m.shape[0]):
@@ -796,10 +1058,10 @@ def main(argv=None):
                     x0 = x
                     while x < m.shape[1] and m[z, x]:
                         x += 1
-                    sea_rows.setdefault(z, []).append((x0, x - 1, code))
+                    boat_rows.setdefault(z, []).append((x0, x - 1, code))
                 else:
                     x += 1
-    files = build(cfg, load("water_mounts.json"), load("placements.json"), load("progression.json"), sea_rows)
+    files = build(cfg, load("water_mounts.json"), load("placements.json"), load("progression.json"), boat_rows)
     out = Path(a.out)
     if out.exists():
         shutil.rmtree(out)

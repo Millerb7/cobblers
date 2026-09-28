@@ -24,6 +24,12 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              per-player beat for this player at once, so an actor moves on the click that moved its checkpoint rather
              than up to a second later; scene_function runs one of the scene's named functions as the player (a flash,
              a controlled encounter). Both are server-sourced commands like every other.
+  flags      a condition {"kind": "flag", "flag": "<id>"} holds when the player has the progression flag's advancement
+             (cobblers:flag/<id>, tools/progression_pack.py). Advancements are not in q.player.data(), so it is probed as
+             the held items are: `execute as <uuid> if entity @s[advancements={...=true}] run tag @s add <tag>`, then
+             q.player.has_tag, in the same action (first used by the ferry, tools/ferries.py, 2026-09-27).
+  functions  an effect {"kind": "function", "function": "cobblers:<path>"} runs that function as and at the player, like
+             scene_function but for a function a generated pack owns (the ferry's trips).
   opened by  a conversation with "npc_id": null has no NPC class: a prop or an actor opens it (the scene runtime runs
              /opendialogue for the player who clicked), never an NPC's interaction.
   speakers   a conversation may name its speakers ("speakers": {"pip": "Pip", "narration": null}); a speaker mapped to
@@ -81,6 +87,13 @@ def ident(v):
     if not isinstance(v, str) or not re.fullmatch(r"[a-z0-9_]+", v):
         raise Unsupported("id %r is not [a-z0-9_]+" % (v,))
     return v
+
+
+def function_id(v):
+    """A function in our own namespace, run by the `function` effect."""
+    if not isinstance(v, str) or not re.fullmatch(r"%s:[a-z0-9_]+(/[a-z0-9_]+)*" % NS, v):
+        raise Unsupported("function %r is not %s:<path> of [a-z0-9_/]" % (v, NS))
+    return v
 TX_SCORE = "cobblers_tx"
 GIVE_FAILED = "cobblers_give_failed"
 
@@ -136,6 +149,13 @@ class Compiler:
             slot = "weapon.mainhand" if k == "held_item" else "container.*"
             probes.setdefault((slot, pred), self.probe(slot, pred))
             return "q.player.has_tag('%s')" % self.tag_for(slot, pred)
+        if k == "flag":
+            # a progression flag is an advancement (tools/progression_pack.py), not player data: probed like an item
+            sel = "@s[advancements={%s:flag/%s=true}]" % (NS, ident(c["flag"]))
+            tag = self.tag_for("flag", sel)
+            probes.setdefault(("flag", sel), run(["tag ", UUID, " remove %s" % tag]) +
+                              run(["execute as ", UUID, " if entity %s run tag @s add %s" % (sel, tag)]))
+            return "q.player.has_tag('%s')" % tag
         raise Unsupported("condition kind %s" % k)
 
     # ---------------------------------------------------------------- effects
@@ -165,6 +185,8 @@ class Compiler:
             return run(["execute as ", UUID, " at @s run function %s:scenes/%s/beat" % (NS, ident(e["scene"]))])
         if k == "scene_function":
             return run(["execute as ", UUID, " at @s run function %s:scenes/%s/fn/%s" % (NS, ident(e["scene"]), ident(e["function"]))])
+        if k == "function":
+            return run(["execute as ", UUID, " at @s run function %s" % function_id(e["function"])])
         raise Unsupported("effect kind %s" % k)
 
     def give(self, item, count):

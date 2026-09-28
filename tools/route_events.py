@@ -455,7 +455,7 @@ def geodude(g, road):
         s.ground_block(x, z, "minecraft:rooted_dirt")
     s.prop("rut", (rut[7][0], s.gy(*rut[7]), rut[7][1]), (1.0, 1.0), dy=1)
     # the split sample sack beside the rut
-    s.on_ground(1764, 3524, "minecraft:brown_wool")
+    s.on_ground(1764, 3524, "minecraft:brown_terracotta")         # not wool: a spawn condition
     for x, z in ((1765, 3524), (1764, 3525)):
         s.on_ground(x, z, "minecraft:gravel")
     s.prop("sack", (1764, s.gy(1764, 3524) + 1, 3524), (1.0, 1.1))
@@ -513,7 +513,7 @@ def sounding(g, road):
     for name, x, z in staffs:
         bed = g(x, z)
         s.fill((x, bed + 1, z), (x, VIltri_Y + 3, z), "minecraft:stripped_spruce_log[axis=y]")
-        s.set(x, VIltri_Y + 1, z, "minecraft:blue_wool")
+        s.set(x, VIltri_Y + 1, z, "minecraft:blue_terracotta")               # not wool: a spawn condition
         s.set(x, VIltri_Y + 3, z, "minecraft:spruce_trapdoor[facing=east,half=top,open=false,powered=false,waterlogged=false]")
         s.prop("staff_%s" % name, (x, VIltri_Y + 1, z), (0.8, 3.0))
         s.notes.append("staff %s at (%d, %d): bed y%d, water %d deep" % (name, x, z, bed, VIltri_Y - bed))
@@ -662,7 +662,7 @@ def swablu(g, road):
     ny = s.gy(nx, nz) + 2
     s.set(nx, ny, nz, "minecraft:hay_block[axis=y]")
     s.set(nx - 1, ny, nz, "minecraft:moss_block")
-    s.set(nx + 1, ny, nz, "minecraft:blue_wool")                                        # the flag's fibers woven in
+    s.set(nx + 1, ny, nz, "minecraft:blue_terracotta")                                  # the flag's fibers woven in (not wool: a spawn condition)
     s.prop("nest", (nx, ny, nz), (2.8, 1.2))
     # the torn route flag on its pole by the nest
     s.fill((2019, s.gy(2019, 1602) + 1, 1602), (2019, s.gy(2019, 1602) + 4, 1602), "minecraft:spruce_fence")

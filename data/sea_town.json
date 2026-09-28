@@ -23,6 +23,44 @@
   "centre": [7210, 6960],
   "why_here": "Measured on the canonical heightmap (tools/sea_town.py plan). The doc's estimate (7120, 6880) is over the bay's deep hole, 32 blocks of water, with the deepest water (36 to 39) just south-west of it; rafts there would stand on 30-block posts and nothing would reach from the shore. The jungle island's north-west shelf, 90 blocks east-south-east, is 3 to 20 deep across x7150-7250 z6900-7015 and falls into the hole on its west side, so the Old Rafts sit on the shelf, reach from the jungle shore into open water, and Fishers' Row runs west off the shelf into the Sound's deepest water (36+). The mainland jetty is on the South-East Dunes' beach at (7092, 6711), not at the doc's (7150, 6620), which is dry ground y64+ behind the beach; the town is about 190 blocks across the water from its landing. The Current Gate is at the bay's south-west mouth, off the jungle island's shore at (7094, 7230)."
  },
+ "resite": {
+  "status": "DESIGN 2026-09-27, measured on tools/water_shape.py's copy (derived/water_shape/), NOT APPLIED. The town above is the one built on staging in the Sound; this block is where it goes when the water export is applied. Until then data/placements.json, data/traders.json, data/towns.json and data/ferries.json keep the Sound site, and every check that reads the canonical heightmap keeps passing. At the apply: python tools/sea_town.py fold-resite (it refuses until data/world.json carries heightmap.water_shaped_from), then python tools/sea_town.py write and tools/measure_towns.py",
+  "owner_decision": {"date": "2026-09-27", "verbatim": "pacifidlog should be on an island, it should be on the sea, jungle isle should be removed and pacifidlog should be around there.",
+                     "reading": "the main session's reading, for the owner to correct: the Jungle Isle's land is removed down to a shallow sea bank where the island stood (data/water_shape.json jungle_isle_bank); Pacifidlog is re-sited onto that bank, on the open sea, rafts on posts to the seabed as built in the Sound; the Sound keeps nothing of the town"},
+  "shift": [-2050, 420],
+  "shift_why": "every district but the mainland jetty moves together, so the town is the same town (the rafts, the bridges, Fishers' Row, the yard, the Stilt Quarter and the Current Gate keep their places to each other). The square goes from (7210, 6960) to (5160, 7380): over the old island's high middle plateau (the jungle ruins' flat square was at (5160, 7463)), which the bank keeps as its crown, about 700 blocks of open water south of the mainland beach at (5160, 6586). Fishers' Row runs west to the lip of the bank's blue hole, the Stilt Quarter and the yard stand on the town's sand shallows, and the Current Gate lookout faces the bank's southern water",
+  "stays_on_the_mainland": ["mainland_jetty"],
+  "float_walks": ["breakwater"],
+  "float_why": "the breakwater came ashore on the old island's shelf; on the bank it is a floating boom from the gate's raft (landfall off, its min depth 2 still applies)",
+  "site": {
+   "estimate_was": [5160, 7463],
+   "estimate_basis": "the owner's 'around there': the Jungle Isle's middle, where the jungle ruins stood",
+   "centre": [5160, 7380],
+   "why_here": "the bank's crown, shaped for the town by data/water_shape.json jungle_isle_bank (measured on the copy by python tools/sea_town.py plan --resite --heightmap derived/water_shape/land_8k_16_rescaled_b145_pads_rift_water.png): 3-6 deep under the rafts, sand shallows 1-2 deep round the Stilt Quarter and the yard, the blue hole off Fishers' Row's head, and 8-14 deep bank water beyond, so the town's only rest ground is the town"
+  },
+  "mainland_jetty": {
+   "walks": [
+    {"id": "jetty", "district": "mainland_jetty", "kind": "jetty", "rect": [5159, 6582, 5161, 6653], "landfall": true, "why": "from the plateau's south beach (y62 at z6582-6585) straight out over the shallow shelf toward the bank; the old jetty on the South-East Dunes' beach retires with the Sound site"},
+    {"id": "jetty_landing", "district": "mainland_jetty", "kind": "pier", "rect": [5153, 6654, 5167, 6662], "min_depth": 3, "why": "the landing at the jetty's end, 68-76 blocks out, over 5-12 blocks of water, where the ferry puts out for the town"}
+   ],
+   "racks": [
+    {"id": "jetty_rack", "at": [5162, 6660], "along": "x", "length": 5, "boats": 6, "why": "boats for the coast (the rough-water rule tips a boat out 48 blocks from land, so they are shallows craft, not a way to the town)"}
+   ],
+   "replaces_racks": ["jetty_rack"],
+   "signs": [
+    {"id": "jetty_to_tableland", "at": [5161, 6583], "rotation": 0, "wood": "bamboo", "front": ["Redbrow", "north over", "the plateau,", "about 850"], "back": ["", "Pacifidlog", "south, by", "the ferry"]},
+    {"id": "landing_to_town", "at": [5166, 6655], "rotation": 8, "wood": "bamboo", "front": ["Pacifidlog", "south by boat,", "about 700", "blocks"], "back": ["", "", "", ""]}
+   ],
+   "replaces_signs": ["jetty_to_mining_town", "landing_to_town"],
+   "ferry_dock": {"near": [5160, 6658], "why": "the ferryman on the landing, as on the Sound jetty (data/ferries.json pacifidlog_south_jetty, planned)"}
+  },
+  "settlement_text": {
+   "reading": "Out on the open sea south of the plateau, where the Jungle Isle once stood, a town floats over the drowned island's bank: sixteen log rafts on posts to the sand, joined by bamboo bridges, a hut on each. The Centre and the Mart stand on the two largest, either side of the square with its waystone. Fishers' Row runs 120 blocks west to the lip of the bank's blue hole, a station every eight blocks, the Fishing Guild at its root. North-east over the sand shallows is the boatwright's wharf with a hull in frame; south, the Stilt Quarter's houses and the inn stand in the shallows on mangrove stilts. There is no road and no shore: the ferry puts out from a jetty on the plateau's beach 700 blocks north, and to the south-west a floating boom and a lookout watch the bank's open water.",
+   "entries": [{"from": "the sea: the ferry from the jetty on the plateau's south beach", "at": [5160, 6658], "street": null}]
+  },
+  "sheltered": {"id": "pacifidlog_bank", "box": [4946, 7256, 5254, 7682], "box_basis": "the re-sited town without its mainland jetty (x4970-5230, z7280-7658) grown 24", "why": "boats: data/blackout.json rough_blocks 48 tips a rider out 48 blocks from land, and the bank has no land, so the town's own water is the only sheltered box (round the town itself, not the crossing: the ferry stays the gate). At the apply it replaces pacifidlog_bay and pacifidlog_apron in data/blackout.json boats.sheltered"},
+  "sound_site_after": "the re-apply builds the town from data at the new site only; the Sound gets nothing (no rafts, no jetty, no ferryman). Its sheltered boxes, the Sound ferry line and the pacifidlog_jetty dock retire; the staging world's old town stays in that world until the next export rebuilds the region from the heightmap"
+ },
  "levels": {"deck": "data/world.json vertical.sea_level (y62): the deck replaces the top water layer", "walk": "deck + 1 (y63)", "stilt_floor": 64},
  "rules": {
   "min_depth": {"raft": 3, "pier": 3, "bridge": 2, "breakwater": 2, "jetty": 0, "wharf": 1, "boardwalk": 1, "landing": 1, "stilt_house": 1, "moored": 2},

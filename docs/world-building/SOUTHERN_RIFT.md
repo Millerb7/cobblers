@@ -13,9 +13,22 @@ galleries with crystal faces, dead-end Mega chambers, the Heart, the three guard
 `data/rift_mines.json` and `tools/rift_mines.py` build there; the gulch mine is neither built nor cancelled, and the
 southern town (section 3) is unchanged. Not installed or seen in any world yet.
 
-**The wild-Mega question is open.** Another agent is researching whether a wild Pokemon can be in Mega form,
-uncatchable and aggressive. This design works either way (section 4); every place that depends on the answer is
-marked **[MEGA-DEP]**.
+**Reversed, 2026-09-27 (the owner):** the spur was the wrong place; the gulch is the real mega site and the dig camp
+keeps only a small seam. The proposal is `SOUTHERN_RIFT_MEGA.md` (the mega town, a large mine, roaming Megas, the
+material chain); the owner took all twelve of its decisions the same day.
+
+**Built offline, 2026-09-27 (branch `world/gulch-prototype`; not installed, not in any world):** the prototype slice
+of `SOUTHERN_RIFT_MEGA.md` section 10 in the gulch (`data/gulch_mine.json`, `tools/gulch_mine.py`, step R9S): the
+gulch as its own zone at six badges behind a rockfall and grille across the `gulch_mouth` gap, the 61-square at
+(4308, 4848) with the Cutters, the Tally Hall and the Cutting Floor with two restoring faces and two roaming Megas
+(what, where and why in its section 12). The spur is cut back to the camp, the seam and one warded crystal
+(`data/rift_mines.json`); its gated galleries, chambers and Heart are retired. Sections 3 and 4 below are the 2026-09-25
+proposal; where they and section 12 of `SOUTHERN_RIFT_MEGA.md` disagree, the latter is what is built.
+
+**A wild Mega works.** EXP-036 (staging, 2026-09-25): a spawned Mega Charizard X battled and stayed Mega. The owner
+tested a wild Mega in game on staging and it worked (2026-09-27, reported by the owner; not logged). Still unproven in
+play: a ball refused, the enrage by fightorflight's config, a Mega spawned from a pool or a function. The places marked
+**[MEGA-DEP]** depend on those.
 
 ## 1. What the southern Rift is for
 
@@ -56,6 +69,10 @@ reaches the Deep at about 3,816.
    (4373, 4691)-(4196, 4927). By the sign of the cross product, (4240, 4740) and the split lie on the same side
    of it, and the branch tip is on the other side. This is arithmetic on the two records, not measured on terrain.
    So as the data stands, the Gulch lookout guards a second way into Z2, and the gulch region straddles Z2 and Z3.
+   **Settled for the gulch (2026-09-27):** the gulch zone's closing line is re-traced to (4351, 4600)-(4195, 4929)
+   (`data/gulch_mine.json` `zone`), which puts the canyon's foot, the road and the town inside and the split about 100
+   blocks outside. The sculpt's `gulch_mouth` is also not a 7-wide canyon: it is an 89-point gap in the raised rim
+   with a ramp, which the rockfall now closes (`SOUTHERN_RIFT_MEGA.md` section 12).
 2. **Z2 has four entrances in the sculpt and one guard in RIFT_ZONES.** The rim post descent, wilds slip and gulch
    mouth all come down into the stem or trunk (Z2). Each needs an 8-badge guard, or the zone check alone turns
    players back.
@@ -132,7 +149,7 @@ when the mode does. Species and levels are trainer-balance-designer's.
 
 | Mode | How | Uncatchable | Enraged | Depends on |
 | --- | --- | --- | --- | --- |
-| `wild_mega` | a chamber Habitat Block whose one-entry pool carries the Mega form and an uncatchable property; respawns naturally | by a property | fightorflight: aggressive wild Pokemon attack unprovoked in the dark; chamber kept at light 7 or less | **[MEGA-DEP]** a spawnable Mega form in Mega Showdown 1.0.2; an uncatchable property in Cobblemon 1.8.0; the species being aggressive in `fightorflight.json5`: all NOT VERIFIED |
+| `wild_mega` | a chamber Habitat Block whose one-entry pool carries the Mega form and an uncatchable property; respawns naturally | by a property | fightorflight: aggressive wild Pokemon attack unprovoked in the dark; chamber kept at light 7 or less | **[MEGA-DEP]** a spawnable Mega form in Mega Showdown 1.0.2 (VERIFIED in battle: EXP-036; the owner's test on staging, 2026-09-27, reported by the owner, not logged); an uncatchable property refusing a ball in Cobblemon 1.8.0; the species being aggressive in `fightorflight.json5`: NOT VERIFIED |
 | `trainer_echo` | a persistent RCT trainer styled as a crystal-bound husk, one Pokemon holding its stone; battles on sight with a sight radius tuned to the chamber (the mansion Channelers' method) | by construction: a trainer battle | battles on sight, cannot be avoided in the chamber | that an rctapi trainer Mega Evolves in battle with Mega Showdown 1.0.2: NOT VERIFIED, one experiment |
 | `outlier` | the species at the top of the band as a `data/sizes.json` notable individual, not in Mega form; the Mega is only the reward | no | darkness, as above | nothing new (floor) |
 
@@ -204,7 +221,7 @@ touches only, because it is 1,800 blocks and principle 20 applies:
 
 ## 8. Phases
 
-1. **Answers first:** the wild-Mega research; one experiment on a disposable world for a trainer echo that Mega
+1. **Answers first:** the wild-Mega research (done: a wild Mega works, EXP-036 and the owner's test of 2026-09-27); one experiment on a disposable world for a trainer echo that Mega
    Evolves; what a `mega_stone_crystal` drops and at what tier; a player rides a gated `lumymon:elevator` (the
    Deep's dependency too).
 2. **Prototype slice: one chamber.** The Mine Gate, 60-80 blocks of gallery with one crystal face, and one Mega
@@ -224,6 +241,7 @@ touches only, because it is 1,800 blocks and principle 20 applies:
 7. The Heart as postgame (`champion_cleared`) or part of the main mine.
 8. Names for the town and the regions (`HANDOVER_CODEX.md` item 26 asks too).
 
-**Not verified anywhere in this document:** any wild Mega mechanism; an uncatchable property; fightorflight's
+**Not verified anywhere in this document** (a wild Mega in battle is: EXP-036, and the owner's own test on staging,
+2026-09-27, reported by the owner, not logged): a wild Mega spawned from a pool; a ball refused in play; fightorflight's
 aggressive list; an RCT trainer Mega Evolving; `mega_stone_crystal` drops; the Distortion tree ids; any flat site
 at the junction; the cross-product finding on real terrain; every distance not quoted from a data file.

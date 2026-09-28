@@ -3,7 +3,10 @@
   "status": "authored 2026-09-26; generated into the cobblers_blackout pack by tools/blackout_pack.py; runtime proofs in experiments/EXP-042-blackout-and-water-ladder",
   "spec": "docs/mechanics/DEATH_AND_WIPE.md",
   "money": {
-    "percent": 10,
+    "percent": 20,
+    "percent_why": "the owner, 2026-09-27: 'the death should be more punishing ... i should want to go back and kill that thing'. Was 10 (the spec's figure)",
+    "held_by_wild_victor": true,
+    "held_by_wild_victor_why": "the money a wild Pokemon's win takes goes into its claim and comes back when it is beaten, caught or killed, so there is a reason to go back for it; an environmental death, a trainer loss and any other loss lose it outright",
     "rounding": "up; a balance above zero always loses at least 1 (ceil(balance * percent / 100))",
     "currency_symbol": "$",
     "currency_symbol_why": "CobbleDollars shows balances with $ ('has $ 712'); the spec's copy uses a yen-style sign"
@@ -53,11 +56,15 @@
     "ids_rule": "an id is never reused or renumbered: a player's saved checkpoint is this number. A Center or waystone the data no longer has falls back to Hometown"
   },
   "claims": {
+    "exempt_tag": "cobblers.gm",
+    "exempt_why": "docs/world-building/SOUTHERN_RIFT_MEGA.md decision 9 (the owner, 2026-09-27): a wild victor carrying this tag (the gulch's roaming Megas, tools/gulch_mine.py) makes no item claim and does not become a guardian: the mine's danger is the Megas, not a lost item, and a Mega already has its own leash. The loss still costs money and the return to the checkpoint",
     "categories": {
-      "balls": {"percent": 15, "max": 10},
-      "medicine": {"percent": 15, "max": 6},
-      "consumables": {"chance_percent": 35, "take": 1}
+      "balls": {"percent": 40, "max": 30},
+      "medicine": {"percent": 40, "max": 12},
+      "consumables": {"chance_percent": 100, "take": 1}
     },
+    "slain_rule": "a guardian found gone from its loaded site counts as killed by the last player (or player's Pokemon) who hurt it if that blow was noted after maintenance last saw the guardian alive (claim alive_t); vanilla forgets an attacker 100 ticks after the last blow, so an old fight never counts. Replaced a 400-tick window counted from when maintenance noticed, which rebuilt the guardian if the killer left (the test author's finding). The owner, 2026-09-27: killing it with a sword should work like beating it",
+    "categories_why":"raised 2026-09-27 for the owner's 'more punishing' (was balls 15% max 10, medicine 15% max 6, a 35% chance of one battle or evolution item, the spec's figures)",
     "balls": [
       "cobblemon:ancient_azure_ball", "cobblemon:ancient_citrine_ball", "cobblemon:ancient_feather_ball",
       "cobblemon:ancient_gigaton_ball", "cobblemon:ancient_great_ball", "cobblemon:ancient_heavy_ball",
@@ -135,14 +142,15 @@
     "air_warning_why": "20% of vanilla's 300"
   },
   "surface": {
-    "status": "proposed and built 2026-09-27 (EXP-044); not yet run in game",
-    "rule": "swimming (feet or eyes in water, riding nothing) in the open sea builds fatigue; the shallows, land, lakes and riding recover it. Bands by distance from land on the canonical heightmap (tools/open_water.py): under shallow_blocks is free, to deep_blocks is open water, beyond is the deep",
-    "why": "the owner, 2026-09-26: a first-time Route 1 player 'cant swim without a surf mon'; the Route 1 ocean is reachable, only not crossable",
-    "shallow_blocks": 96,
-    "deep_blocks": 256,
+    "status": "rule changed by the owner 2026-09-27 after EXP-044's first run; the new rule is built on staging, not yet run in game",
+    "rule": "every swim builds fatigue, in any water (sea, lakes, rivers): feet or eyes in water, riding nothing, and not wading (on the bottom with the head out). Water at least deep_water_blocks deep under the swimmer, or the eyes at the water ladder's depth, builds it gain_deep_per_tick; shallower water gain_shallow_per_tick. Land, wading and riding recover it",
+    "why": "the owner, 2026-09-26: a first-time Route 1 player 'cant swim without a surf mon'. The first rule (fatigue only 96+ blocks from land, tools/open_water.py) let the owner swim from Pallet to the landmass south-west of it without tiring (EXP-044 run 1). The owner, 2026-09-27: 'i want fatigue on every swim, maybe it would increase once you pass three blocks deep, but a new player should struggle with water'",
+    "superseded": "shallow_blocks 96 and deep_blocks 256 (distance-from-land bands); tools/open_water.py is no longer read by the pack",
+    "deep_water_blocks": 3,
+    "deep_water_blocks_basis": "the owner's 'three blocks deep': the feet's block and the two under it all water",
     "sample_ticks": 10,
-    "gain_open_per_tick": 1,
-    "gain_deep_per_tick": 2,
+    "gain_shallow_per_tick": 1,
+    "gain_deep_per_tick": 4,
     "recover_per_tick": 2,
     "warn_ticks": 400,
     "slow_ticks": 600,
@@ -150,18 +158,33 @@
     "collapse_ticks": 1200,
     "pulse_ticks": 60,
     "cap_ticks": 20000,
-    "world_min": -1024,
     "trained_partner": "a player the water ladder qualifies (Surf or Dive training with a capable party Pokemon) builds fatigue at half the rate",
-    "feel": "at the measured sprint-swim of 5 blocks per second an unaided swimmer is warned about 100 blocks into open water (20 s), slowed at 30 s, exhausted at 45 s and collapsing at 60 s, about 300 blocks out, or sooner once in the deep band; a trained swimmer gets twice as far; riding a water Pokemon ends it",
-    "boats": "a vanilla boat is a vehicle, so riding one is exempt, and boats cross anything. Whether boats beyond the shallows should break is the owner's decision (WATER_PROPOSAL.md)"
+    "feel": "at the measured sprint-swim of 5 blocks per second, in deep water an unaided swimmer is warned at 5 s (about 25 blocks), slowed at 7.5 s, exhausted at 11 s and hit from 15 s, about 70 blocks out once Slowness is counted, dead about 3 s later; in shallow water each step takes four times as long. A trained swimmer with a partner gets twice as far; riding a water Pokemon ends it. Rivers (at most about 32 wide) stay crossable; the channel south-west of Pallet (over 100 blocks of deep water) and every island strait do not, unaided",
+    "boats": "riding a boat is exempt from fatigue, so boats are shallows craft: see the \"boats\" section"
+  },
+  "boats": {
+    "status": "decided by the owner 2026-09-27 (WATER_PROPOSAL decision 1, option C): 'Boats: option C, shallows only. A boat should not defeat swimming, exhaustion and the ferry from day one.' Built on staging, not run in game",
+    "rule": "a player riding a boat or chest boat on sea water at least rough_blocks from land (tools/open_water.py's bands on the canonical heightmap, 16-block cells) is put out of it with the message, unless inside a sheltered box; then the swim rule applies. Coasts, lakes, rivers and the shallows stay boat water",
+    "rough_blocks": 48,
+    "rough_blocks_why": "the owner, 2026-09-27: 'Take 48. It is the only number that gates Sunset with real margin, and 13 blocks on the Relic row is nothing'. At 96 the Sunset strait's rough water on the ferry line was one 34-block stretch, swum in about 7 s between boats (the test author's contract C11); measured on the ferry lines: 64 gives 103 (a margin of about 13 over the unaided knock-out, 'the kind of margin that disappears'), 48 gives 142, Northlight 285, the Relic row 13",
+    "deep_blocks": 256,
+    "sheltered": [
+      {"id": "pacifidlog_bay", "box": [6928, 6640, 7359, 6943],
+       "why": "the owner, 2026-09-27: 'Widen Pacifidlog's sheltered bay box to the whole bay so its boats keep working'. At rough_blocks 48 the bay's rough tongue runs from z6656 south to the open sea (band map, cells x6928-7359); the box stops where the bay meets the open sea at about z6944"},
+      {"id": "pacifidlog_apron", "box": [7040, 6944, 7359, 6991],
+       "why": "the water in front of the raft town's southern decks, between the bay box and the town, so boats at the town keep working; the open sea west of x7040 and south of z6992 stays rough"}
+    ],
+    "message": "The sea is too rough for a boat out here. You tip into the water."
   },
   "messages": {
     "blackout": "You blacked out and returned to {place}. Lost {money}.",
     "no_items": "No items were lost.",
     "npc_no_items": "You lost the battle. No items were taken.",
-    "claim": "{victor} took {summary}. Defeat or catch it to recover everything.",
+    "claim": "{victor} took {summary}. Beat it, catch it or kill it to recover everything.",
     "claim_nothing": "{victor} defeated you, but you had no eligible supplies to lose.",
     "recovered_owner": "You recovered your supplies.",
+    "claim_money": "It has your money too. Beat it, catch it or kill it to get everything back.",
+    "recovered_money": "You got your money back:",
     "recovered_by_helper_owner": "{helper} recovered your supplies.",
     "recovered_helper": "Recovered supplies for {owner}.",
     "checkpoint_center": "Checkpoint: {place}.",
@@ -170,8 +193,8 @@
     "one_more": "One more drowning hit will knock you out.",
     "partner_gone": "No Pokemon in your party can support you at this depth.",
     "vanilla_air": "Potions, turtle shells and conduits do not help you breathe in this region. Only a trained water partner does.",
-    "surface_tiring": "Your arms are growing heavy. The open sea is no place to swim.",
-    "surface_exhausted": "You are exhausted. Turn back to shore, or ride a water Pokemon.",
-    "surface_collapse": "The sea is pulling you under."
+    "surface_tiring": "Your arms are growing heavy. Head for shore.",
+    "surface_exhausted": "You are exhausted. Get out of the water, or ride a water Pokemon.",
+    "surface_collapse": "The water is pulling you under."
   }
 }

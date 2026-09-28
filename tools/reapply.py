@@ -85,9 +85,21 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
-                # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone mine (tools/rift_mines.py): blocks
-                # run by R9M, and a gate and zone check that act on their own (advancements), so world-local below
-                "cobblers_rift_mines")
+                # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py): blocks
+                # run by R9M, and the seam crystal's ward and daily face that act on their own (an advancement, a tick
+                # driver), so world-local below. Its gated galleries went to the gulch the same day
+                "cobblers_rift_mines",
+                # 2026-09-27: the southern Rift's mega site, prototype slice (tools/gulch_mine.py, SOUTHERN_RIFT_MEGA.md):
+                # blocks and the Cutters run by R9S; the gate, the zone check, the faces' restore and the Megas' keeper act
+                # on their own (advancements, a tick driver), so world-local below
+                "cobblers_gulch_mine",
+                # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
+                # from the server's own jar, never committed). Data only; world-local so no other world's recipes change
+                "cobblers_mega_recipes",
+                # 2026-09-27: the ferry (tools/ferries.py, data/ferries.json): the ferrymen's NPC classes and dialogues and
+                # the trips their dialogues run; the ferrymen are placed over RCON by R17F. It charges CobbleDollars and
+                # teleports players, so world-local below
+                "cobblers_ferries")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -115,12 +127,16 @@ EXCLUDED = {
     "cobblers_victory_road": "retired: the schema 2 spine, replaced by cobblers_vr_caves (R9C)",
     "cobblers_vr_regions": "retired: schema 2's five regions, folded into cobblers_vr_caves as its zones",
     "cobblers_vr_clear": "staging only: rock back into what the retired spine and regions carved; a fresh export never had them",
+    # 2026-09-27: the spur's gated galleries, chambers and Heart are retired (SOUTHERN_RIFT_MEGA.md decisions 1-2)
+    "cobblers_rift_mines_refill": "staging only: rock back into the Rift spur's retired gated section (tools/rift_mines.py, "
+                                  "data/rift_mines.json retired_gated_section); a fresh export never had it",
 }
 # server packs installed into the target world's own datapacks folder, not the server's: they act without being called
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
-               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines")
+               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
+               "cobblers_ferries")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -234,9 +250,15 @@ def prepare(a):
     # Victory Road: one cave network; its Habitat Block tiles and its finds are data the build checks against its
     # own model (`vr_caves.py records --write` writes them)
     py(TOOLS / "vr_caves.py", "build", *src)
-    # the Rift dig camp's mines, quarries and the mega stone mine (data/rift_mines.json); audited below, once the
-    # camp's own plan exists
+    # the Rift dig camp's mines, quarries and the mega stone seam (data/rift_mines.json); audited below, once the
+    # camp's own plan exists. It also writes the staging-only refill of the spur's retired gated section (EXCLUDED)
     py(TOOLS / "rift_mines.py", "build", *src)
+    # the southern Rift's mega site, prototype slice (data/gulch_mine.json), then its offline audit: every write inside
+    # the plan and the zone, the zone sealed except through the gate, cover over the halls, the faces and the Cutters
+    py(TOOLS / "gulch_mine.py", "build", *src)
+    py(TOOLS / "gulch_mine_audit.py", *src)
+    # the Mega Showdown stone recipes raised to 4 raw stones, from the server's own jar (never committed)
+    py(TOOLS / "mega_recipes.py", "--server-dir", a.server_dir)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     py(TOOLS / "deep_city.py", "build", *src)
@@ -248,6 +270,11 @@ def prepare(a):
         shutil.rmtree(dlg)
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
     py(TOOLS / "compile_dialogue.py", "--all", "--out", dlg)
+    # the ferry: its ferrymen's classes and dialogues and the trips (data/ferries.json), then its offline audit: every
+    # landing on ground or a deck, every gate a planned flag, every fare read before it is charged, and every line
+    # declared a gate still unswimmable under data/blackout.json's fatigue on the heightmap
+    py(TOOLS / "ferries.py", "build")
+    py(TOOLS / "ferries.py", "audit", *src)
     # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     py(TOOLS / "route_events.py", *src)
@@ -262,8 +289,8 @@ def prepare(a):
     for s in places():
         py(TOOLS / "town_plan.py", s, *src)
         py(TOOLS / "place_town.py", s, *src)
-    # the mines against the camp's plan, the haul road and the other places, and the gated galleries sealed except
-    # through their gate: offline, fail-closed (tools/rift_mines_audit.py)
+    # the mines against the camp's plan, the haul road and the other places, the seam's crystal behind its grille and
+    # ward, and the refill exactly the retired gated section: offline, fail-closed (tools/rift_mines_audit.py)
     py(TOOLS / "rift_mines_audit.py", *src)
     py(TOOLS / "place_donor.py", "function", "--server-dir", a.server_dir)
     py(TOOLS / "traders.py", "function", "--server-dir", a.server_dir)
@@ -691,13 +718,22 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:deep/%s" % f) for f in indexed("cobblers_deep", "deep")]))
     out.append(("R9C", "Victory Road's caves, from the Deep's mouth to the ravine onto the League's apron",
                 [("fn", "cobblers:vr_caves/%s" % f) for f in indexed("cobblers_vr_caves", "vr_caves")]))
-    # the Rift dig camp as a mining town and the mega stone mine in its spur (tools/rift_mines.py): after the camp's
+    # the Rift dig camp as a mining town and the mega stone seam in its spur (tools/rift_mines.py): after the camp's
     # prep (R8) and tents (R9), whose cells it keeps clear, and before its lights (R16). Shell, air, fittings, then the
     # surface; then the carts, entities summoned 60 ticks after their chunks are force-loaded (the Rift's fx pattern).
-    # The gate and the zone check are advancements in the same pack and need no step.
-    out.append(("R9M", "the Rift dig camp's mines, quarries and the mega stone mine, then its carts",
+    # The seam crystal's ward and daily face drive themselves (an advancement, the pack's tick) and need no step.
+    out.append(("R9M", "the Rift dig camp's mines, quarries and the mega stone seam, then its carts",
                 [("fn", "cobblers:rift_mines/%s" % f) for f in indexed("cobblers_rift_mines", "rift_mines")]
                 + [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]))
+    # the southern Rift's mega site, prototype slice (tools/gulch_mine.py; SOUTHERN_RIFT_MEGA.md decision 12 names the
+    # step): after the Rift skin (R1), whose surface it paves and cuts, and before the Habitat Blocks (R9E) and the
+    # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters, villagers
+    # summoned 40 ticks after their chunks are force-loaded and de-duplicated 100 ticks later (tools/traders.py's
+    # pattern). The gate, the zone check, the faces' restore and the Megas act on their own and need no step.
+    out.append(("R9S", "the southern Rift's mega site: the gulch gate, the Cutters' square, the Tally Hall and the "
+                       "Cutting Floor, then the Cutters",
+                [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
+                + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
@@ -739,6 +775,12 @@ def steps(with_spawns=False):
     out.append(("R17", "scene props, scene NPCs and the route trainers",
                 [("props", p) for p in scene_props()] + [("npc", n) for n in scene_npcs()]
                 + [("trainer", t) for t in route_trainers.placements()]))
+    # the ferrymen (data/ferries.json): NPCs, so an export erases them, and their classes load at boot from
+    # cobblers_ferries, so they are placed over RCON after the restart, as R9F and R17 place theirs; the load function
+    # first (the pack's scores, also created by its load tag). Listed from the committed data, not the build
+    import ferries
+    out.append(("R17F", "the ferrymen at the built docks (data/ferries.json)",
+                [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))

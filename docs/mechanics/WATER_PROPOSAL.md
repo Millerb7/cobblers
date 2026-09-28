@@ -207,6 +207,10 @@ reef makes the start area's water pay off three times, at S0, S2 and S6.
 
 ### 4.1 Why a ferry, with the numbers
 
+> **Superseded 2026-09-27.** This section measured the first exhaustion rule (distance bands; it was EXP-044, not
+> EXP-043). The owner's rule of 2026-09-27 builds fatigue on every swim, and the crossings are re-measured against it in
+> `WATER_BUILD_PLAN.md` section 11: most straits below are now lethal to every swimmer, trained or not.
+
 Surface exhaustion is being built (EXP-043, another agent): swimming in open water (96-256 blocks from land) builds
 fatigue, a warning, then Slowness, then the harsh drown pulses after about a minute; the deep band (256+) twice as fast;
 shallows (0-96) are free; riding a Pokemon clears it; land and shallows recover it [A: the design as briefed; not yet
@@ -280,6 +284,16 @@ NPCs and functions, and re-applied by a `tools/reapply.py` step (`prepare` fails
 **Sunset West is a hub, not a destination.** It moved to the mainland on 2026-09-21, at the Lakes' River mouth,
 reachable on foot along the south coast [V: `data/towns.json` sunset_west `why_here`]. Its ferry goes to the Sunset
 isle across the strait. (Its waystone record still says "an island": stale, see "Findings".)
+
+**Built, 2026-09-27 (offline, not run in game).** Option A is built for the two lines whose docks exist: the Relic
+row (First Cast to Relic Island, free) and the Sound ferry (Pacifidlog's jetty to its square, $150 each way). The
+source is `data/ferries.json` (every line above, with its fare, gates and swim declaration). The generator is
+`tools/ferries.py`, which writes the world-local `cobblers_ferries`, and `reapply.py` R17F places the ferrymen. The
+Relic row's ferryman stands on the beach at First Cast, not on the jetty, and the Fisher does not row: one NPC opens
+one conversation, and the Fisher's is the rod quest's. The Relic end is the house's front walk, not a new north-shore
+landing. Measured while building it: Pacifidlog is on the Long Isle, which is swimmable at its narrows, so the Sound
+ferry is a convenience and not a gate. `WATER_BUILD_PLAN.md` section 11.4 has the findings and what still needs a
+player.
 
 ### 4.4 Boats
 

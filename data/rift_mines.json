@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.rift_mines/1",
-  "status": "generated on the branch world/rift-mines, 2026-09-27; not installed, not built in any world, not seen in game",
+  "status": "cut back on the branch world/gulch-prototype, 2026-09-27 (SOUTHERN_RIFT_MEGA.md decisions 1-2): the camp, the seam and one crystal behind the company grille; the gated galleries, chambers and the Heart are no longer built. Built offline; not installed",
   "builder": "tools/rift_mines.py",
   "audit": "tools/rift_mines_audit.py",
   "which_town": {
@@ -8,15 +8,14 @@
     "why": "'The Rift mining town' is the Rift dig camp on the west spur (data/towns.json rift_dig_camp, data/placements.json settlements.rift_dig_camp; docs/world-building/DEEP_CITY.md section 6 'the dig camp as a mining town'; EXP-035 row 19 'The Rift's mining town (the dig camp) is far too small'). It is not mining_town, which is the Craters' mining town in the east cones (x6520-6746 z5603-5829): the owner's notes 'can't have wood houses' and 'needs mine rails, ore piles, tons of theatrics' are that town's (EXP-035 rows 23-24, built by tools/mining_works.py), and 'the southern part of rift ... town and mega stone mine' is the gulch design in docs/world-building/SOUTHERN_RIFT.md."
   },
   "disagreements": [
-    "SOUTHERN_RIFT.md puts the mega stone mine in the gulch (the south-east branch, x4039-4454 z4513-4958) behind an 8-badge gate at the end of the game. The owner's request of 2026-09-27 puts the mega stone mines and caves in the dig camp's spur, visible early and gated around badge five or six. This file follows the owner: the mine's design (a seam, an adit hall, galleries with crystal faces, dead-end Mega chambers, a Heart, guardian modes) is SOUTHERN_RIFT.md section 4's, sited in the west spur. The gulch mine is not built and not cancelled.",
-    "RIFT_ZONES.md makes the west spur Z1, opened at 2 badges, and data/spawns.json rift_west_spur spawns at 56-58: the band is wrong for a zone opened at 2 badges and for galleries opened at 5 (DEEP_CITY.md section 6 says so too). Not changed here: trainer-balance-designer's.",
+    "Settled 2026-09-27 (SOUTHERN_RIFT_MEGA.md decisions 1-2): the mega stone mine is the gulch's (data/gulch_mine.json). The spur's gated galleries, chambers and Heart, built here first on the owner's earlier request, are retired (retired_gated_section); the camp keeps its seam and one warded crystal.",
+    "RIFT_ZONES.md makes the west spur Z1, opened at 2 badges, and data/spawns.json rift_west_spur spawns at 56-58: the band is wrong for a zone opened at 2 badges (DEEP_CITY.md section 6 says so too). Not changed here: trainer-balance-designer's.",
     "The placement plan says the camp is strung 'between walls twenty blocks high'. On the canonical heightmap the spur here is a shallow bowl: floor y87, rising about one block in five to y113-115 at z3080 (north) and y104 at z3400 (south). The quarries and worked faces are cut into those slopes to make the walls a mining town needs."
   ],
   "design": [
-    "docs/world-building/SOUTHERN_RIFT.md section 4 (the mine, the guardian modes, crystal faces, rewards per player)",
+    "docs/world-building/SOUTHERN_RIFT_MEGA.md section 8 (the seam found early, not usable yet) and section 11 decisions 1-2",
     "docs/world-building/DEEP_CITY.md section 6 (the dig camp as a mining town: stone and copper, no timber; ore piles from blocks that decide nothing; carts)",
-    "docs/research/notes/wild-mega-pokemon.md and experiments/EXP-036-wild-mega/README.md (a wild Mega is achievable)",
-    "docs/mechanics/RIFT_ZONES.md section 4 (the zone check pattern)"
+    "docs/mechanics/STONE_ECONOMY.md 5.3-5.4 (the tease crystal restores on approach, filtered)"
   ],
   "seed": 20260927,
   "grid": {
@@ -71,9 +70,9 @@
     ]
   },
   "flag": {
-    "advancement": "cobblers:flag/gym5_cleared",
-    "badge": 5,
-    "why": "'gated deeper around badge five or six' (the owner). The fifth badge, Koga's, is the earlier of the two; one field, so moving it to gym6_cleared is a one-word change. The flag is the advancement tools/progression_pack.py writes for each leader (data/progression.json gym5_cleared), per player."
+    "advancement": "cobblers:flag/gym6_cleared",
+    "badge": 6,
+    "why": "decision 2: the seam's one crystal is warded per player until the sixth badge (Sabrina's, whose first win gives the Mega Bracelet, decision 7; the gulch opens on the same flag, decision 3). Was gym5_cleared for the spur's gated galleries, which are gone"
   },
   "palette": {
     "rock_upper": [
@@ -770,7 +769,7 @@
     ]
   },
   "mine": {
-    "why": "SOUTHERN_RIFT.md section 4's mine, sited in the west spur: an ungated adit hall any Z1 player can walk into, the company's gate, and behind it the galleries, the crystal faces, five Mega chambers and the Heart",
+    "why": "the seam and its works, open to anyone: the adit, the adit hall, the decline to the collapse, drifts A, B and C. The mega stone mine is the gulch's (data/gulch_mine.json, SOUTHERN_RIFT_MEGA.md decision 1); here the prospect drift ends at the company's grille, with one crystal in the seam behind it",
     "headframe": {
       "at": [
         3132,
@@ -967,7 +966,148 @@
         },
         "seam_glints": true,
         "why": "the prospect drift: the seam followed west into the hill, meteorid and dormant crystal in its pocket, open to anyone"
+      }
+    ],
+    "collapse": {
+      "box": [
+        3178,
+        71,
+        3121,
+        3185,
+        76,
+        3127
+      ],
+      "why": "the collapsed passage at the foot of the decline: the old gate's plug, kept as rubble so the decline ends in a rockfall. No grille, knock, exit or zone check: nothing is behind it (a fresh export never had the galleries; on staging the refill puts rock back, retired_gated_section)"
+    },
+    "tease": {
+      "why": "decision 2 and SOUTHERN_RIFT_MEGA.md section 8: one mega_stone_crystal in the seam at the prospect drift's end, seen through the company's grille and out of reach: the ward gives anyone in survival or adventure without cobblers:flag/gym6_cleared Mining Fatigue IV near it. With the flag the ward lifts for that player (per player: an effect, not a block), the grille can be broken and the crystal taken; it restores on approach once a day",
+      "drift": "drift_c",
+      "grille": {
+        "x": [
+          3097,
+          3099
+        ],
+        "z": 3154,
+        "y": [
+          88,
+          91
+        ],
+        "why": "iron bars across the whole of drift C (3 wide, 4 high) four blocks short of its pocket"
       },
+      "face": {
+        "box": [
+          3097,
+          88,
+          3142,
+          3099,
+          90,
+          3144
+        ],
+        "front": "south",
+        "crystals": 1,
+        "radiated": 3,
+        "why": "a 3 x 3 x 3 box of meteorid in the pocket's north wall, its south side facing the grille; one crystal on its front plane at floor level"
+      },
+      "period_ticks": 1728000,
+      "period_why": "decision 2's 'small daily face': 24 hours of game time the server has run (1,728,000 ticks), checked on approach like the gulch's faces (STONE_ECONOMY.md 5.3). A Minecraft day (24,000 ticks, 20 minutes) would pay better per visit than a gulch face; judgement, the owner's to change",
+      "approach": [
+        3060,
+        70,
+        3100,
+        3160,
+        110,
+        3200
+      ],
+      "ward_margin": 7,
+      "ward_why": "the grille, the pocket and the face box grown by 7 (the spur gate's margin, which the test author's reach finding set: 4 was reachable). Mining Fatigue IV only for players lacking the flag",
+      "resettable_tag": "rift_mines_face_resettable",
+      "resettable": [
+        "minecraft:air",
+        "minecraft:cave_air",
+        "mega_showdown:mega_meteorid_block",
+        "mega_showdown:mega_meteorid_radiated_block",
+        "mega_showdown:mega_stone_crystal",
+        "minecraft:deepslate",
+        "minecraft:cobbled_deepslate",
+        "minecraft:tuff",
+        "minecraft:stone",
+        "minecraft:cobblestone",
+        "minecraft:gravel",
+        "minecraft:torch",
+        "minecraft:wall_torch",
+        "minecraft:water",
+        "minecraft:lava"
+      ]
+    }
+  },
+  "geometry": {
+    "feet": "every y in a path, room box, pocket or chamber is the FEET level: the first air block above the floor. A cut's `floor` is the solid floor block itself (as tools/ground.py's ground is).",
+    "tube": "each segment P0->P1 is sampled at n = ceil(4 * horizontal length) + 1 evenly spaced points (one point for a zero-length segment); a point stamps the square of columns within r (Chebyshev) of (floor(x+0.5), floor(z+0.5)), from feet = floor(y+0.5) up `height` blocks",
+    "room": "the box, inclusive, feet y0 to top y1",
+    "shaft": "the columns within r (Chebyshev) of the centre, from from_y up to one under the ground, where an iron grate caps it",
+    "pocket": "columns with dx2+dz2 <= (r+0.5)^2 round the centre; feet to feet+r+1 where dx2+dz2 <= (r-0.5)^2, else feet to feet+r",
+    "chamber": "columns with d = hypot(dx, dz) <= r+0.5; feet to feet + max(3, floor((height-1) * sqrt(1 - (d/(r+0.5))^2) + 0.5))",
+    "cut": "each column of the rect gets a floor block y_f = floor + rise * level, level = max(0, levels-1 - e // run), e its distance in columns to the nearest benched side (hillside: the sides listed; pit: all four; no benches: level 0); a pit's ramp sets y_f to floor(floor + (z1-z)/(z1-z0) * (top-floor) + 0.5) inside its x/z range (a causeway down through the benches). Where the ground is above y_f the column is cut from y_f+1 to ground+6.",
+    "shell": "every cell within 2 (a 5x5x5 cube) of the envelope that is not carved and is at or under the ground is written as rock, so the cut and carved spaces are bounded only by blocks this build writes",
+    "roughness": "gated tubes, pockets and chambers only: an envelope cell on the envelope's edge, 3 or more above its column's floor, is left as rock with probability 0.3 (deterministic hash); nothing is ever carved outside the envelope"
+  },
+  "retired_gated_section": {
+    "why": "what the spur build carved behind its company gate until 2026-09-27: the galleries, six faces, five Mega chambers and the Heart (40 crystals). Not built any more (decision 1). Kept only so tools/rift_mines.py `refill` can write rock back into exactly this envelope on the staging world, where it is carved (cobblers_rift_mines_refill, staging only, excluded in tools/reapply.py like cobblers_vr_clear). Rasterised by the same geometry as the live features, roughness ignored: the refill fills the whole envelope, which holds every cell the carve took",
+    "gate": {
+      "why": "the collapsed passage at the foot of the decline, faced with the company's grille: a player holding the flag who steps into the alcove in front of it is put through; nobody else is, and the zone check turns back anyone who digs, pearls or tunnels round it",
+      "plug": [
+        3178,
+        71,
+        3121,
+        3185,
+        76,
+        3127
+      ],
+      "grille": {
+        "x": 3178,
+        "z": [
+          3123,
+          3125
+        ],
+        "y": [
+          72,
+          74
+        ]
+      },
+      "knock": [
+        3175,
+        72,
+        3123,
+        3177,
+        74,
+        3125
+      ],
+      "arrive": [
+        3190.5,
+        71,
+        3124.5,
+        -90
+      ],
+      "exit": [
+        3186,
+        72,
+        3122,
+        3186,
+        75,
+        3126
+      ],
+      "turn_back": [
+        3169.5,
+        75,
+        3124.5,
+        90
+      ],
+      "messages_are_placeholders": "the actionbar lines are plain placeholders; the voice is Codex's (docs/HANDOVER_CODEX.md)",
+      "ward_margin": 7,
+      "ward_margin_why": "was 4; the test author showed a player standing just outside reached the plug (reach 4.5 from the eyes, 1.62 above the feet the box tests). 7 keeps both beyond reach from below and beside",
+      "ward_why": "the owner, 2026-09-27: 'i can mine around the door'. Anyone in survival or adventure within ward_margin blocks of the plug, grille and alcove has vanilla Mining Fatigue IV (the ocean-monument ward), so the gate cannot be dug round or broken; no block changes. The zone check stays the real gate for anyone who tunnels in from further away"
+    },
+    "features": [
       {
         "id": "gallery_ab",
         "gated": true,
@@ -1469,74 +1609,6 @@
           "open_question": "SOUTHERN_RIFT.md owner decision 7: the Heart as postgame (champion_cleared) or part of the main mine. Built behind the same gate as the chambers; a second gate on drift_heart is the change if the owner wants postgame."
         }
       }
-    ],
-    "gate": {
-      "why": "the collapsed passage at the foot of the decline, faced with the company's grille: a player holding the flag who steps into the alcove in front of it is put through; nobody else is, and the zone check turns back anyone who digs, pearls or tunnels round it",
-      "plug": [
-        3178,
-        71,
-        3121,
-        3185,
-        76,
-        3127
-      ],
-      "grille": {
-        "x": 3178,
-        "z": [
-          3123,
-          3125
-        ],
-        "y": [
-          72,
-          74
-        ]
-      },
-      "knock": [
-        3175,
-        72,
-        3123,
-        3177,
-        74,
-        3125
-      ],
-      "arrive": [
-        3190.5,
-        71,
-        3124.5,
-        -90
-      ],
-      "exit": [
-        3186,
-        72,
-        3122,
-        3186,
-        75,
-        3126
-      ],
-      "turn_back": [
-        3169.5,
-        75,
-        3124.5,
-        90
-      ],
-      "messages_are_placeholders": "the actionbar lines are plain placeholders; the voice is Codex's (docs/HANDOVER_CODEX.md)"
-    },
-    "guardian_modes": {
-      "source": "SOUTHERN_RIFT.md section 4; EXP-036 (a spawned Mega Charizard X stayed Mega through a battle)",
-      "wild_mega": "a chamber Habitat Block (or spawn_pool_world entry bounded to the chamber) whose one entry carries '<species> mega_evolution=<mega|mega_x|mega_y> uncatchable', fightorflight always_aggro_aspects += mega, mega_x, mega_y; the chamber is built with no light source so it stays at 7 or less. The owner's 'all wild mega pokemon that are uncatchable and enraged'. Still to prove (EXP-036): the ball refused in play, enraged by the config line, spawning from a pool rather than a command.",
-      "fallback_mode": "outlier: the species at the top of the band as a data/sizes.json notable individual, not in Mega form; used if the wild-Mega proofs fail. trainer_echo is not chosen: the owner asked for wild Pokemon.",
-      "nothing_spawned": "No guardian, pool, Habitat Block or trainer is written by this build. Species and levels are trainer-balance-designer's (null here)."
-    }
-  },
-  "geometry": {
-    "feet": "every y in a path, room box, pocket or chamber is the FEET level: the first air block above the floor. A cut's `floor` is the solid floor block itself (as tools/ground.py's ground is).",
-    "tube": "each segment P0->P1 is sampled at n = ceil(4 * horizontal length) + 1 evenly spaced points (one point for a zero-length segment); a point stamps the square of columns within r (Chebyshev) of (floor(x+0.5), floor(z+0.5)), from feet = floor(y+0.5) up `height` blocks",
-    "room": "the box, inclusive, feet y0 to top y1",
-    "shaft": "the columns within r (Chebyshev) of the centre, from from_y up to one under the ground, where an iron grate caps it",
-    "pocket": "columns with dx2+dz2 <= (r+0.5)^2 round the centre; feet to feet+r+1 where dx2+dz2 <= (r-0.5)^2, else feet to feet+r",
-    "chamber": "columns with d = hypot(dx, dz) <= r+0.5; feet to feet + max(3, floor((height-1) * sqrt(1 - (d/(r+0.5))^2) + 0.5))",
-    "cut": "each column of the rect gets a floor block y_f = floor + rise * level, level = max(0, levels-1 - e // run), e its distance in columns to the nearest benched side (hillside: the sides listed; pit: all four; no benches: level 0); a pit's ramp sets y_f to floor(floor + (z1-z)/(z1-z0) * (top-floor) + 0.5) inside its x/z range (a causeway down through the benches). Where the ground is above y_f the column is cut from y_f+1 to ground+6.",
-    "shell": "every cell within 2 (a 5x5x5 cube) of the envelope that is not carved and is at or under the ground is written as rock, so the cut and carved spaces are bounded only by blocks this build writes",
-    "roughness": "gated tubes, pockets and chambers only: an envelope cell on the envelope's edge, 3 or more above its column's floor, is left as rock with probability 0.3 (deterministic hash); nothing is ever carved outside the envelope"
+    ]
   }
 }

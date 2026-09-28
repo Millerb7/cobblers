@@ -96,7 +96,11 @@
 	],
 	// Forms that will always be aggressive
 	"always_aggro_aspects": [
-		"alpha"
+		"alpha",
+		"mega",
+		"mega_x",
+		"mega_y",
+		"mega_z"
 	],
 	// Pokemon that will always be aggressive
 	"always_aggro": [
