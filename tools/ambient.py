@@ -260,6 +260,14 @@ def plan(source_root=None):
         if s not in sites:
             sites[s] = Site(s, g, doc, dressing, water, rules)
         out.append(plan_worker(w, sites[s], rules))
+    # the owner's per-town limit (data/ambient.json rules.per_town): carriers, and stationary workers (work and blink)
+    cap = rules["per_town"]
+    for s in sorted({w["settlement"] for w in out}):
+        n_carry = sum(1 for w in out if w["settlement"] == s and w["job"] == "carry")
+        n_still = sum(1 for w in out if w["settlement"] == s and w["job"] != "carry")
+        if n_carry > cap["carriers"] or n_still > cap["stationary"]:
+            raise AmbientError("ambient: %s has %d carriers and %d stationary workers; the limit is %d and %d"
+                               % (s, n_carry, n_still, cap["carriers"], cap["stationary"]))
     return {"rules": rules, "workers": out, "water_changed_checked": water is not None}
 
 

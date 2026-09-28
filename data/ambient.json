@@ -5,7 +5,8 @@
   "rules": {
     "level": 20, "step_blocks": 0.18, "pause_ticks": 40, "keep_every": 40, "keep_radius": 96, "active_radius": 48,
     "hear_radius": 24, "volume": 0.6, "carry_height": 1.2, "box": [1.0, 1.4], "work_every": 30, "blink_every": 100,
-    "water_changed_margin": 8
+    "water_changed_margin": 8,
+    "per_town": {"carriers": 2, "stationary": 4, "why": "the owner, 2026-09-28, on the measured cost (a carrier about 25 us a tick, a stationary worker about 3 us, only near a player): the limit is how busy a town looks and what a client draws, not the tick"}
   },
   "workers": [
     {"id": "brock_stone_carrier", "settlement": "gym1_town", "species": "graveler", "level": 18, "job": "carry",
