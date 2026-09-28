@@ -227,11 +227,11 @@ offset, same importer and image-to-world line); `tools/reexport.py` passes it wh
 copies it there and writes the pin. **Not run: the export script change is untested.** The image [run]:
 10,752 × 10,752, 16-bit, zero over the heightmap's square (so the landmass tiles stay untouched), and outside it:
 
-- the copy's edge carried outward, the sea floor fading to the y10 floor over 320 blocks (it meets the edge within half
-  a block, M4);
+- the copy's edge carried outward, the sea floor fading to the y10 floor over 320 blocks (it meets the edge within a
+  block, M4), and the edge's land carried off as headlands (section 14, reworked 2026-09-28);
 - **finding:** land touches the heightmap's edge (north 1,527 columns up to y96, west 444, east 452), and today's
   blank margin drops it to a y10 plain in one column, a cliff of up to 86 blocks inside the border; the image carries it
-  down to the sea at 0.45 a block (highest margin y95.5 at the edge; nothing above y59 beyond 200 blocks, M6);
+  off as headlands that fall to the sea (highest margin y95.6 at the edge; nothing above y59 beyond 200 blocks, M6);
 - the five seamounts of `the_outer_deep`, radius 161-214, summits exactly at their region's y46-54 (M5).
 
 The floor cannot go below y10.09 (image value 0 on the import line), so the_outer_deep's planned y8 plain is y10.
@@ -399,6 +399,16 @@ Still open: **the margin's continuation** of land off the map edge (section 7). 
 (2026-09-27): the design removes today's single-column cliffs (north 86 blocks, west 67, east 58; steepest step now
 0.6-2 blocks) but copies each edge column straight outward, so the ramp reads combed (parallel streaks), not as a
 headland. To be reworked before the export.
+
+**Reworked 2026-09-28, waiting on the owner's look** (`data/water_shape.json` `seabed.margin.relief.headlands`,
+`water_shape.py` `_headland_field`). Farther from the edge the edge row is read more blurred along itself (a narrow
+ridge tapers, a broad shoulder holds) at a position that wanders, and each stretch of coast reaches out its own
+50-185 blocks, holding its height and rounding over to a tip two blocks under the sea, then falling at 0.6 a block under
+water. The sea floor is read blurred faster than the land, so a step in the heightmap's own edge (shelf to deep) no
+longer runs out as a hard line. [run] Margin land (y62 and over) 191,406 columns; the first margin column within a
+block of the edge (M4); highest ground beyond 200 blocks y54 (M6); the audit clean at 181 checks. Close-ups of the three
+edges with land (north x446-1270, west z5430-5874, east z6010-6462), before and after, were shown to the owner. Left for the owner's
+look: the east headland is the weakest of the three, and a small round hollow sits in the north headland's east end.
 
 ---
 

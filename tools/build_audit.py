@@ -13,8 +13,10 @@ had worked only where something else happened to hold the chunks. These checks a
               and the crown's top block
   islet       Relic Island's dry core: the columns the islet function raises above the sea, replayed from the
               function and compared, and nothing but air above them
+  town_dressing  every block each town's dressing function writes for certain (build/datapacks/
+              cobblers_town_dressing), replayed and compared; every town in data/town_dressing.json must have one
 
-  python tools/build_audit.py --world <stopped world copy> [--only cavern forest world_tree islet]
+  python tools/build_audit.py --world <stopped world copy> [--only cavern forest world_tree islet town_dressing]
 
 Reads region files of a stopped or saved disposable world; runtime_guard refuses the live save. Never writes.
 """
@@ -473,7 +475,45 @@ def islet(world):
             "problems": problems}
 
 
-CHECKS = {"cavern": cavern, "forest": forest, "world_tree": world_tree, "islet": islet}
+DRESSING = BUILD / "datapacks" / "cobblers_town_dressing" / "data" / "cobblers" / "function" / "town_dressing"
+
+
+def town_dressing(world):
+    """Every block the built dressing writes stands in the world, town by town (tools/town_dressing.py, R16B).
+
+    The plan audit (tools/town_dressing_audit.py) reads only the pack. On 2026-09-27 Sabrina's spire and Blaine's mast
+    were rebuilt in data and in the build while staging kept the older pack installed; nothing compared the world with
+    the build, and "rebuilt on staging" went unchecked. The towns come from data/town_dressing.json, not from the pack,
+    so a town whose function is missing or empty is a problem, not a pass."""
+    towns = sorted(json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8"))["towns"])
+    problems, per_town, n_all = [], {}, 0
+    for t in towns:
+        f = DRESSING / ("%s.mcfunction" % t)
+        if not f.is_file():
+            problems.append("town_dressing: %s has no built function (%s); run tools/town_dressing.py build" % (t, f))
+            continue
+        lines = f.read_text(encoding="utf-8").splitlines()
+        cols = set()
+        for l in lines:
+            m = SETBLOCK.match(l.strip())
+            if m:
+                cols.add((int(m.group(1)), int(m.group(3))))
+        if not cols:
+            problems.append("town_dressing: %s's function writes no block: nothing to check" % t)
+            continue
+        # replace-filtered fills (the clearing of plants and trees) are conditional on the world's own block and
+        # are dropped by the replay; what remains is what the function wrote for certain
+        n, ok, bad = compare_columns(world, replay(lines, cols))
+        n_all += n
+        per_town[t] = {"blocks_compared": n, "blocks_match": ok}
+        if n == 0:
+            problems.append("town_dressing: %s: nothing compared" % t)
+        elif ok < n:
+            problems.append("town_dressing: %s: %d of %d written blocks stand; first: %s" % (t, ok, n, "; ".join(bad)))
+    return {"towns": per_town, "blocks_compared": n_all, "problems": problems}
+
+
+CHECKS = {"cavern": cavern, "forest": forest, "world_tree": world_tree, "islet": islet, "town_dressing": town_dressing}
 
 
 def main(argv=None):

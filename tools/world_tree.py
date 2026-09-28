@@ -91,6 +91,7 @@ def main(argv=None):
     names.append("90_foundation")
     print("installed %s" % SERVER_DP)
     print("functions: %s" % ", ".join("cobblers:worldtree/%s" % n for n in names))
+    (REPO / "derived" / "sites").mkdir(parents=True, exist_ok=True)
     json.dump({"centre": CENTRE, "ground_y": GROUND, "origin": [ox, oy, oz], "height": dims["height"],
                "trunk": dims["trunk"], "crown_radius": dims["crown_radius"], "blocks": len(b.blocks),
                "top_y": oy + max(y for _, y, _ in b.blocks), "functions": names,

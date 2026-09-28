@@ -424,10 +424,11 @@ def install(a):
         # a pack that acts on its own (the scene runtime's tick) belongs to the world it was built for: the global
         # folder is loaded by every world this server runs, the live one included
         dest = (wdp if name in WORLD_LOCAL else dp) / name
-        stale = dp / name if name in WORLD_LOCAL else None
+        # and the other way round: a global pack copied into the world's folder shadows the one installed here
+        stale = dp / name if name in WORLD_LOCAL else wdp / name
         if stale is not None and stale.exists():
             replace_pack(stale, None, retired)
-            print("removed", stale, "(it belongs in the world folder)")
+            print("removed", stale, "(it belongs in the %s folder)" % ("world" if name in WORLD_LOCAL else "global"))
         replace_pack(dest, PACKS / name, retired)
         print("installed", dest)
     for src in WORLD_PACKS:

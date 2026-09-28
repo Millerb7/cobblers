@@ -3042,13 +3042,69 @@ def seabed_pass(ctx):
     print("  seabed: written %d columns in %.1f s" % (written, time.time() - t0), flush=True)
 
 
+HEADLAND_SIGMAS = (0.0, 3.0, 6.0, 12.0, 24.0, 40.0, 64.0, 96.0)
+
+
+def _blur1d(v, sigma):
+    """A 1-D Gaussian blur of an edge row, its ends held (numpy only)."""
+    if sigma <= 0:
+        return v.astype(np.float64).copy()
+    r = int(3 * sigma)
+    k = np.exp(-0.5 * (np.arange(-r, r + 1) / sigma) ** 2)
+    return np.convolve(np.pad(v.astype(np.float64), r, mode="edge"), k / k.sum(), mode="valid")
+
+
+def _headland_field(prof, s, d, X, Z, hl, side, N):
+    """Ground outside one edge of the copy, carried off as headlands instead of combed straight out (the owner's
+    close-ups, 2026-09-27: copying each edge column outward left parallel streaks). `prof` is the edge row blurred
+    along itself at each of HEADLAND_SIGMAS; `s` the position along the edge and `d` the distance off it. Farther out
+    the edge is read more blurred (a narrow ridge tapers to a point, a broad shoulder holds), at a position that
+    wanders (the outline is not a ruled line), and each stretch of coast reaches out its own distance before it rounds
+    over to the sea (a long headland here, a short one there, bays between). Returns (land ground, the edge read there
+    for the sea floor): at d = 1 both are the edge column itself, so the
+    margin meets the copy within a block (audit M4)."""
+    t = smoothstep(d / float(hl["settle_blocks"]))
+    seed = seed_of("headland", side)
+    warp = float(hl["warp_blocks"]) * t * (2.0 * value_noise(s, d, float(hl["warp_scale_blocks"]), seed) - 1.0)
+    s2 = np.clip(s + warp, 0, N - 1)
+    si = np.rint(s2).astype(np.int64)
+    raw = prof[0][np.clip(np.rint(s).astype(np.int64), 0, N - 1)]
+
+    def read(rate):
+        lev = np.interp(rate * d, HEADLAND_SIGMAS, np.arange(len(HEADLAND_SIGMAS), dtype=np.float64))
+        i0 = np.floor(lev).astype(np.int64)
+        i1 = np.minimum(i0 + 1, len(HEADLAND_SIGMAS) - 1)
+        f = lev - i0
+        return raw * (1 - t) + (prof[i0, si] * (1 - f) + prof[i1, si] * f) * t
+
+    e = read(float(hl["blur_per_block"]))
+    # the sea floor is read blurred faster than the land: a step in the heightmap's own edge (shelf to deep water) is
+    # otherwise carried outward as a hard line
+    e_sea = read(float(hl["seabed_blur_per_block"]))
+    lo, hi = hl["reach_range"]
+    L = lo + (hi - lo) * value_noise(s2, np.zeros_like(s2), float(hl["reach_scale_blocks"]), seed + 1) ** 0.7
+    u = d / L
+    # land holds its height and rounds over at its own reach to a tip two blocks under the sea (so ground barely above
+    # the sea sinks at once instead of spreading a flat skirt), then the bed falls away under water
+    tip = SEA - 2.0
+    above = np.maximum(e - tip, 0.0)
+    y = np.where(u <= 1.0, tip + above * (1.0 - np.clip(u, 0, 1) ** float(hl["tip_power"])),
+                 tip - float(hl["underwater_fall"]) * (d - L))
+    # blended, not switched, where the edge sits about the tip's height: a switch leaves a seam as long as the reach
+    w = np.clip((e - tip) / 4.0, 0.0, 1.0)
+    y = w * y + (1.0 - w) * (e - float(hl["underwater_fall"]) * d)
+    lift = np.clip((y - SEA) / 12.0, 0.0, 1.0) * t
+    y = y + float(hl["relief_blocks"]) * (2.0 * value_noise(X, Z, float(hl["relief_scale_blocks"]), seed + 2) - 1.0) * lift
+    return y, e_sea
+
+
 def margin_relief(ctx):
     """The margin relief image (owner question 1, option A, designed 2026-09-27): a 16-bit image the size of the
     export's canvas (the heightmap plus export_margin_blocks on every side), on the heightmap's own import line, that
     tools/worldpainter/export_world.js imports in place of its blank margin. Zero over the heightmap's square (the
     margin import only raises and only creates missing tiles, so the landmass is untouched); outside it the revised
-    copy's edge carried outward (the sea floor fading to the y10 floor over fade_blocks, land at the edge falling to
-    the sea at coast_slope instead of a cliff), and the five seamounts of the_outer_deep. Returns (raw uint16 image,
+    copy's edge carried outward (the sea floor fading to the y10 floor over fade_blocks, land at the edge carried off
+    as headlands that fall to the sea instead of a cliff: _headland_field), and the five seamounts of the_outer_deep. Returns (raw uint16 image,
     report, preview at 1/16)."""
     mg = ctx.spec["seabed"]["margin"]
     rel = mg["relief"]
@@ -3056,7 +3112,10 @@ def margin_relief(ctx):
     N = ctx.N
     side = N + 2 * M
     fade = float(rel["fade_blocks"])
-    coast = float(rel["coast_slope"])
+    hl = rel["headlands"]
+    G1 = ctx.G1
+    profs = {k: np.stack([_blur1d(v, sg) for sg in HEADLAND_SIGMAS])
+             for k, v in {"n": G1[0], "s": G1[-1], "w": G1[:, 0], "e": G1[:, -1]}.items()}
     floor_y = float(ctx.world["import"]["low_out"])
     cap = float(rel["sea_cap_y"])
     seam = ctx.region("the_outer_deep")["features"]["seamounts"]
@@ -3081,10 +3140,22 @@ def margin_relief(ctx):
         dz = np.maximum(np.maximum(-wz, wz - (N - 1)), 0)
         d = np.hypot(dx, dz).astype(np.float64)
         ye = ctx.G1[cz, cx].astype(np.float64)
-        y_sea = floor_y + (np.minimum(ye, cap) - floor_y) * (1.0 - smoothstep(d / fade))
-        y = np.maximum(y_sea, ye - coast * d)
-        X = wx.astype(np.float64)
-        Z = wz.astype(np.float64)
+        X = np.broadcast_to(wx, d.shape).astype(np.float64)
+        Z = np.broadcast_to(wz, d.shape).astype(np.float64)
+        # each margin column belongs to the edge it is farthest past (a corner to the side it leaves by most)
+        ns = dz >= dx
+        sides = {"n": ns & (wz < 0), "s": ns & (wz >= N), "w": ~ns & (wx < 0), "e": ~ns & (wx >= N)}
+        y_land = np.full(d.shape, floor_y)
+        y_edge = ye.copy()
+        for k, m in sides.items():
+            if not m.any():
+                continue
+            along = (np.broadcast_to(cx, d.shape) if k in "ns" else np.broadcast_to(cz, d.shape))[m].astype(np.float64)
+            yl, ee = _headland_field(profs[k], along, d[m], X[m], Z[m], hl, k, N)
+            y_land[m] = yl
+            y_edge[m] = ee
+        y_sea = floor_y + (np.minimum(y_edge, cap) - floor_y) * (1.0 - smoothstep(d / fade))
+        y = np.maximum(y_sea, y_land)
         for mx, mz, top, R, pl in mounts:
             r = np.hypot(X - mx, Z - mz)
             if r.min() > R * 1.3:
@@ -3104,7 +3175,7 @@ def margin_relief(ctx):
             if ring.any():
                 edge_err = max(edge_err, float(np.abs(y[ring] - ye[ring]).max()))
         prev[z0 // 16:(z1 + 15) // 16] = y[::16, ::16]
-    rep = {"side": side, "margin_blocks": M, "fade_blocks": fade, "coast_slope": coast,
+    rep = {"side": side, "margin_blocks": M, "fade_blocks": fade, "headlands": hl,
            "highest_margin_y": round(ymax_margin, 1), "edge_step_max_blocks": round(edge_err, 1),
            "seamounts": [{"at": [int(a), int(b)], "summit_y": t, "radius": round(R, 1)} for a, b, t, R, _pl in mounts],
            "edge_land_columns": {"north": int((ctx.G1[0] >= SEA).sum()), "south": int((ctx.G1[-1] >= SEA).sum()),

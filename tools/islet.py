@@ -105,6 +105,7 @@ def main(argv=None):
            "crown_y": int(np.nanmax(top)), "blocks": blocks,
            "seabed_y": [float(bed.min()), float(bed.max())],
            "why": "the recorded site is flat seabed 26.7 blocks under the sea; nothing within 103 blocks is an islet"}
+    (ROOT / "derived" / "sites").mkdir(parents=True, exist_ok=True)
     (ROOT / "derived" / "sites" / "relic_island.json").write_text(json.dumps(rep, indent=1), encoding="utf-8")
 
     if not a.apply:

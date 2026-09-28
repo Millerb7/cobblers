@@ -63,6 +63,12 @@ def packs(server_dir, world_dir=None):
                 problems.append("%s: in the global folder, but it belongs in the world's folder" % name)
         else:
             problems += compare(name, RA.PACKS / name, gdp / name)
+            # a copy in the world's own folder shadows the global one, and is never refreshed by install: on staging
+            # (2026-09-27) the town dressing, the Deep's city and the bridges were copied there by hand, and the
+            # dressing's copy stayed the 04:15 build after the 12:22 rebuild
+            if world_dir and (Path(world_dir) / "datapacks" / name).exists():
+                problems.append("%s: in the world's folder, but it belongs in the global folder (the world's copy "
+                                "shadows it and install never refreshes it)" % name)
     if world_dir:
         for name in RA.SPAWN_PACKS:
             if name == "cobblers_suppress":
