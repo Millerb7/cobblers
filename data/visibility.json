@@ -473,11 +473,12 @@
     },
     {
       "id": "gorge_hamlet_from_its_leg_canopy",
-      "claim": "The gorge hamlet is visible from its leg (8-block roofline, over the planned canopy).",
+      "claim": "The gorge hamlet is not visible from its leg over the planned canopy (8-block roofline): found, not seen.",
       "recorded_in": {
         "file": "docs/world-building/SETTLEMENTS.md"
       },
-      "expect": "visible",
+      "expect": "not_visible",
+      "why_changed": "Recorded visible (fragile, 1 of 129) until 2026-09-28. A trial re-measure against the current canopy (2026-09-27, not written) gave 0 of 129; the owner chose to accept it, as found, not seen, rather than move the hamlet or clear a line. The measured value is re-written with the whole file after the water export repaints the canopy.",
       "observers": {
         "type": "route",
         "route_id": "route_07_sabrina_to_blaine",

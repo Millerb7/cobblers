@@ -4625,6 +4625,7 @@
     },
     {
       "id": "gym1_house_01",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/small_farm_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_farm_1.nbt",
@@ -4652,6 +4653,7 @@
     },
     {
       "id": "gym1_house_02",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/meeting_point_5",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/meeting_point_5.nbt",
@@ -4679,6 +4681,7 @@
     },
     {
       "id": "gym1_house_03",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/animal_pen_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/animal_pen_2.nbt",
@@ -4706,6 +4709,7 @@
     },
     {
       "id": "gym1_house_04",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_7",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_7.nbt",
@@ -4733,6 +4737,7 @@
     },
     {
       "id": "gym1_house_05",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/big_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/big_house_1.nbt",
@@ -4760,6 +4765,7 @@
     },
     {
       "id": "gym1_house_06",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/fletcher_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/fletcher_house_1.nbt",
@@ -4787,6 +4793,7 @@
     },
     {
       "id": "gym1_house_07",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/masons_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/masons_house_1.nbt",
@@ -4814,6 +4821,7 @@
     },
     {
       "id": "gym1_house_08",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/tool_smith_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/tool_smith_1.nbt",
@@ -4841,6 +4849,7 @@
     },
     {
       "id": "gym1_house_09",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/butcher_shop_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/butcher_shop_1.nbt",
@@ -4868,6 +4877,7 @@
     },
     {
       "id": "gym1_house_10",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/cartographer_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/cartographer_1.nbt",
@@ -4895,6 +4905,7 @@
     },
     {
       "id": "gym1_house_11",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/armorer_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/armorer_house_1.nbt",
@@ -4922,6 +4933,7 @@
     },
     {
       "id": "gym1_house_12",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/library_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/library_2.nbt",
@@ -4949,6 +4961,7 @@
     },
     {
       "id": "gym1_house_13",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_1.nbt",
@@ -4976,6 +4989,7 @@
     },
     {
       "id": "gym1_house_14",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_5",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_5.nbt",
@@ -5003,6 +5017,7 @@
     },
     {
       "id": "gym1_house_15",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/temple_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/temple_3.nbt",
@@ -5030,6 +5045,7 @@
     },
     {
       "id": "gym1_house_16",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_3.nbt",
@@ -5057,6 +5073,7 @@
     },
     {
       "id": "gym1_house_17",
+      "materials": "brock_mason_a",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/tannery_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/tannery_1.nbt",
@@ -5084,6 +5101,7 @@
     },
     {
       "id": "gym1_house_18",
+      "materials": "brock_mason_b",
       "settlement": "gym1_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_8",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_8.nbt",
@@ -5111,6 +5129,7 @@
     },
     {
       "id": "gym2_house_01",
+      "materials": "misty_rescue_a",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/fisher_cottage_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/fisher_cottage_1.nbt",
@@ -5140,6 +5159,7 @@
     },
     {
       "id": "gym2_house_02",
+      "materials": "misty_rescue_b",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/cartographer_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/cartographer_1.nbt",
@@ -5169,6 +5189,7 @@
     },
     {
       "id": "gym2_house_03",
+      "materials": "misty_rescue_a",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/small_house_5",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/small_house_5.nbt",
@@ -5198,6 +5219,7 @@
     },
     {
       "id": "gym2_house_04",
+      "materials": "misty_rescue_b",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/masons_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/masons_house_1.nbt",
@@ -5227,6 +5249,7 @@
     },
     {
       "id": "gym2_house_05",
+      "materials": "misty_rescue_a",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/small_house_8",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/small_house_8.nbt",
@@ -5256,6 +5279,7 @@
     },
     {
       "id": "gym2_house_06",
+      "materials": "misty_rescue_b",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/library_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/library_2.nbt",
@@ -5285,6 +5309,7 @@
     },
     {
       "id": "gym2_house_07",
+      "materials": "misty_rescue_a",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/small_farm_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/small_farm_1.nbt",
@@ -5314,6 +5339,7 @@
     },
     {
       "id": "gym2_house_08",
+      "materials": "misty_rescue_b",
       "settlement": "gym2_town",
       "template": "repurposed_structures:villages/ocean/houses/tannery_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/ocean/houses/tannery_1.nbt",
@@ -5567,6 +5593,7 @@
     },
     {
       "id": "gym5_house_01",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/temple_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/temple_1.nbt",
@@ -5591,6 +5618,7 @@
     },
     {
       "id": "gym5_house_02",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/oak/houses/armorer_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/armorer_house_1.nbt",
@@ -5615,6 +5643,7 @@
     },
     {
       "id": "gym5_house_03",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/oak/houses/cartographer_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/cartographer_1.nbt",
@@ -5639,6 +5668,7 @@
     },
     {
       "id": "gym5_house_04",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/oak/houses/fisher_cottage_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/fisher_cottage_1.nbt",
@@ -5665,6 +5695,7 @@
     },
     {
       "id": "gym5_house_05",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/oak/houses/masons_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/masons_house_1.nbt",
@@ -5689,6 +5720,7 @@
     },
     {
       "id": "gym5_house_06",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/armorer_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/armorer_house_1.nbt",
@@ -5713,6 +5745,7 @@
     },
     {
       "id": "gym5_house_07",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/medium_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/medium_house_1.nbt",
@@ -5737,6 +5770,7 @@
     },
     {
       "id": "gym5_house_08",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/medium_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/medium_house_3.nbt",
@@ -5761,6 +5795,7 @@
     },
     {
       "id": "gym5_house_09",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/small_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_1.nbt",
@@ -5785,6 +5820,7 @@
     },
     {
       "id": "gym5_house_10",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/small_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_2.nbt",
@@ -5809,6 +5845,7 @@
     },
     {
       "id": "gym5_house_11",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/animal_pen_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/animal_pen_1.nbt",
@@ -5833,6 +5870,7 @@
     },
     {
       "id": "gym5_house_12",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/animal_pen_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/animal_pen_2.nbt",
@@ -5857,6 +5895,7 @@
     },
     {
       "id": "gym5_house_13",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/farm_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/farm_1.nbt",
@@ -5881,6 +5920,7 @@
     },
     {
       "id": "gym5_house_14",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/small_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_3.nbt",
@@ -5905,6 +5945,7 @@
     },
     {
       "id": "gym5_house_15",
+      "materials": "koga_fen_a",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/oak/houses/accessory_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/accessory_1.nbt",
@@ -5929,6 +5970,7 @@
     },
     {
       "id": "gym5_house_16",
+      "materials": "koga_fen_b",
       "settlement": "gym5_town",
       "template": "repurposed_structures:villages/swamp/houses/small_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/swamp/houses/small_house_4.nbt",
@@ -6129,6 +6171,7 @@
     },
     {
       "id": "gym6_house_01",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/armorer_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/armorer_2.nbt",
@@ -6153,6 +6196,7 @@
     },
     {
       "id": "gym6_house_02",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/armorer_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/armorer_house_1.nbt",
@@ -6177,6 +6221,7 @@
     },
     {
       "id": "gym6_house_03",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/armorer_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/armorer_house_2.nbt",
@@ -6201,6 +6246,7 @@
     },
     {
       "id": "gym6_house_04",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/cartographer_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/cartographer_house_1.nbt",
@@ -6225,6 +6271,7 @@
     },
     {
       "id": "gym6_house_05",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/library_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/library_2.nbt",
@@ -6249,6 +6296,7 @@
     },
     {
       "id": "gym6_house_06",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/temple_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/temple_3.nbt",
@@ -6273,6 +6321,7 @@
     },
     {
       "id": "gym6_house_07",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/armorer_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/armorer_house_1.nbt",
@@ -6297,6 +6346,7 @@
     },
     {
       "id": "gym6_house_08",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/cartographer_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/cartographer_1.nbt",
@@ -6321,6 +6371,7 @@
     },
     {
       "id": "gym6_house_09",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/fisher_cottage_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/fisher_cottage_1.nbt",
@@ -6347,6 +6398,7 @@
     },
     {
       "id": "gym6_house_10",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/masons_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/masons_house_1.nbt",
@@ -6371,6 +6423,7 @@
     },
     {
       "id": "gym6_house_11",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/tannery_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/tannery_1.nbt",
@@ -6395,6 +6448,7 @@
     },
     {
       "id": "gym6_house_12",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/accessory_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/accessory_1.nbt",
@@ -6419,6 +6473,7 @@
     },
     {
       "id": "gym6_house_13",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_1.nbt",
@@ -6443,6 +6498,7 @@
     },
     {
       "id": "gym6_house_14",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_2.nbt",
@@ -6467,6 +6523,7 @@
     },
     {
       "id": "gym6_house_15",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_3.nbt",
@@ -6491,6 +6548,7 @@
     },
     {
       "id": "gym6_house_16",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_4.nbt",
@@ -6515,6 +6573,7 @@
     },
     {
       "id": "gym6_house_17",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_5",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_5.nbt",
@@ -6539,6 +6598,7 @@
     },
     {
       "id": "gym6_house_18",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/fisher_cottage_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/fisher_cottage_1.nbt",
@@ -6565,6 +6625,7 @@
     },
     {
       "id": "gym6_house_19",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/medium_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/medium_house_1.nbt",
@@ -6589,6 +6650,7 @@
     },
     {
       "id": "gym6_house_20",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/medium_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/medium_house_2.nbt",
@@ -6613,6 +6675,7 @@
     },
     {
       "id": "gym6_house_21",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/large_farm_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/large_farm_1.nbt",
@@ -6637,6 +6700,7 @@
     },
     {
       "id": "gym6_house_22",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/large_farm_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/large_farm_2.nbt",
@@ -6661,6 +6725,7 @@
     },
     {
       "id": "gym6_house_23",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/animal_pen_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/animal_pen_1.nbt",
@@ -6685,6 +6750,7 @@
     },
     {
       "id": "gym6_house_24",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/small_farm_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_farm_1.nbt",
@@ -6709,6 +6775,7 @@
     },
     {
       "id": "gym6_house_25",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/birch/houses/small_house_6",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/birch/houses/small_house_6.nbt",
@@ -6733,6 +6800,7 @@
     },
     {
       "id": "gym6_house_26",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/small_farm_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_farm_1.nbt",
@@ -6757,6 +6825,7 @@
     },
     {
       "id": "gym6_house_27",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/medium_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/medium_house_4.nbt",
@@ -6781,6 +6850,7 @@
     },
     {
       "id": "gym6_house_28",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/small_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_1.nbt",
@@ -6805,6 +6875,7 @@
     },
     {
       "id": "gym6_house_29",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/small_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_2.nbt",
@@ -6829,6 +6900,7 @@
     },
     {
       "id": "gym6_house_30",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/small_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_3.nbt",
@@ -6853,6 +6925,7 @@
     },
     {
       "id": "gym6_house_31",
+      "materials": "sabrina_study_a",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/small_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_4.nbt",
@@ -6877,6 +6950,7 @@
     },
     {
       "id": "gym6_house_32",
+      "materials": "sabrina_study_b",
       "settlement": "gym6_town",
       "template": "repurposed_structures:villages/mountains/houses/small_house_5",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/mountains/houses/small_house_5.nbt",
@@ -6981,6 +7055,7 @@
     },
     {
       "id": "gym7_house_01",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "minecraft:village/savanna/houses/savanna_temple_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_temple_2.nbt",
@@ -7005,6 +7080,7 @@
     },
     {
       "id": "gym7_house_02",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "minecraft:village/savanna/houses/savanna_armorer_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_armorer_1.nbt",
@@ -7029,6 +7105,7 @@
     },
     {
       "id": "gym7_house_03",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "repurposed_structures:villages/badlands/houses/armorer",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/armorer.nbt",
@@ -7053,6 +7130,7 @@
     },
     {
       "id": "gym7_house_04",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "minecraft:village/savanna/houses/savanna_cartographer_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_cartographer_1.nbt",
@@ -7077,6 +7155,7 @@
     },
     {
       "id": "gym7_house_05",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "minecraft:village/savanna/houses/savanna_fisher_cottage_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_fisher_cottage_1.nbt",
@@ -7103,6 +7182,7 @@
     },
     {
       "id": "gym7_house_06",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "repurposed_structures:villages/badlands/houses/medium_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/medium_house_2.nbt",
@@ -7127,6 +7207,7 @@
     },
     {
       "id": "gym7_house_07",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "repurposed_structures:villages/badlands/houses/medium_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/medium_house_4.nbt",
@@ -7151,6 +7232,7 @@
     },
     {
       "id": "gym7_house_08",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "repurposed_structures:villages/badlands/houses/small_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/small_house_1.nbt",
@@ -7175,6 +7257,7 @@
     },
     {
       "id": "gym7_house_09",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "repurposed_structures:villages/badlands/houses/pen_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/pen_1.nbt",
@@ -7199,6 +7282,7 @@
     },
     {
       "id": "gym7_house_10",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "repurposed_structures:villages/badlands/houses/small_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/badlands/houses/small_house_2.nbt",
@@ -7223,6 +7307,7 @@
     },
     {
       "id": "gym7_house_11",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "minecraft:village/savanna/houses/savanna_animal_pen_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_animal_pen_1.nbt",
@@ -7247,6 +7332,7 @@
     },
     {
       "id": "gym7_house_12",
+      "materials": "blaine_rim",
       "settlement": "gym7_town",
       "template": "minecraft:village/savanna/houses/savanna_small_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/savanna/houses/savanna_small_house_1.nbt",
@@ -7358,6 +7444,7 @@
     },
     {
       "id": "gym8_house_01",
+      "materials": "giovanni_garrison_a",
       "settlement": "gym8_town",
       "template": "minecraft:village/taiga/houses/taiga_armorer_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_armorer_2.nbt",
@@ -7382,6 +7469,7 @@
     },
     {
       "id": "gym8_house_02",
+      "materials": "giovanni_garrison_b",
       "settlement": "gym8_town",
       "template": "minecraft:village/desert/houses/desert_armorer_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_armorer_1.nbt",
@@ -7406,6 +7494,7 @@
     },
     {
       "id": "gym8_house_03",
+      "materials": "giovanni_garrison_a",
       "settlement": "gym8_town",
       "template": "minecraft:village/taiga/houses/taiga_armorer_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_armorer_house_1.nbt",
@@ -7430,6 +7519,7 @@
     },
     {
       "id": "gym8_house_04",
+      "materials": "giovanni_garrison_b",
       "settlement": "gym8_town",
       "template": "minecraft:village/desert/houses/desert_butcher_shop_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_butcher_shop_1.nbt",
@@ -7454,6 +7544,7 @@
     },
     {
       "id": "gym8_house_05",
+      "materials": "giovanni_garrison_a",
       "settlement": "gym8_town",
       "template": "minecraft:village/desert/houses/desert_medium_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_medium_house_1.nbt",
@@ -7478,6 +7569,7 @@
     },
     {
       "id": "gym8_house_06",
+      "materials": "giovanni_garrison_b",
       "settlement": "gym8_town",
       "template": "minecraft:village/taiga/houses/taiga_medium_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_1.nbt",
@@ -7502,6 +7594,7 @@
     },
     {
       "id": "gym8_house_07",
+      "materials": "giovanni_garrison_a",
       "settlement": "gym8_town",
       "template": "minecraft:village/desert/houses/desert_small_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_small_house_1.nbt",
@@ -7526,6 +7619,7 @@
     },
     {
       "id": "gym8_house_08",
+      "materials": "giovanni_garrison_b",
       "settlement": "gym8_town",
       "template": "minecraft:village/desert/houses/desert_small_house_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_small_house_2.nbt",
@@ -7550,6 +7644,7 @@
     },
     {
       "id": "gym8_house_09",
+      "materials": "giovanni_garrison_a",
       "settlement": "gym8_town",
       "template": "minecraft:village/desert/houses/desert_animal_pen_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_animal_pen_1.nbt",
@@ -7574,6 +7669,7 @@
     },
     {
       "id": "gym8_house_10",
+      "materials": "giovanni_garrison_b",
       "settlement": "gym8_town",
       "template": "minecraft:village/desert/houses/desert_animal_pen_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/desert/houses/desert_animal_pen_2.nbt",
@@ -7598,6 +7694,7 @@
     },
     {
       "id": "gym8_house_11",
+      "materials": "giovanni_garrison_a",
       "settlement": "gym8_town",
       "template": "minecraft:village/taiga/houses/taiga_medium_house_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_2.nbt",
@@ -7622,6 +7719,7 @@
     },
     {
       "id": "gym8_house_12",
+      "materials": "giovanni_garrison_b",
       "settlement": "gym8_town",
       "template": "minecraft:village/taiga/houses/taiga_medium_house_4",
       "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_medium_house_4.nbt",
@@ -7646,6 +7744,7 @@
     },
     {
       "id": "gym8_house_13",
+      "materials": "giovanni_garrison_a",
       "settlement": "gym8_town",
       "template": "minecraft:village/taiga/houses/taiga_small_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_small_house_1.nbt",
@@ -7670,6 +7769,7 @@
     },
     {
       "id": "gym8_house_14",
+      "materials": "giovanni_garrison_b",
       "settlement": "gym8_town",
       "template": "minecraft:village/taiga/houses/taiga_small_house_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/taiga/houses/taiga_small_house_2.nbt",
@@ -7824,6 +7924,7 @@
     },
     {
       "id": "gym4_house_01",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/oak/houses/accessory_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/accessory_1.nbt",
@@ -7847,6 +7948,7 @@
     },
     {
       "id": "gym4_house_02",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/oak/houses/medium_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/oak/houses/medium_house_1.nbt",
@@ -7870,6 +7972,7 @@
     },
     {
       "id": "gym4_house_03",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/medium_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_1.nbt",
@@ -7893,6 +7996,7 @@
     },
     {
       "id": "gym4_house_04",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/medium_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_2.nbt",
@@ -7916,6 +8020,7 @@
     },
     {
       "id": "gym4_house_05",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/medium_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_3.nbt",
@@ -7939,6 +8044,7 @@
     },
     {
       "id": "gym4_house_06",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/medium_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/medium_house_4.nbt",
@@ -7962,6 +8068,7 @@
     },
     {
       "id": "gym4_house_07",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/small_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_1.nbt",
@@ -7985,6 +8092,7 @@
     },
     {
       "id": "gym4_house_08",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/small_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_2.nbt",
@@ -8008,6 +8116,7 @@
     },
     {
       "id": "gym4_house_09",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/small_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_3.nbt",
@@ -8031,6 +8140,7 @@
     },
     {
       "id": "gym4_house_10",
+      "materials": "erika_garden",
       "settlement": "gym4_town",
       "template": "repurposed_structures:villages/cherry/houses/small_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/cherry/houses/small_house_4.nbt",
@@ -8792,6 +8902,7 @@
     },
     {
       "id": "northlight_house_01",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_library_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_library_1.nbt",
@@ -8815,6 +8926,7 @@
     },
     {
       "id": "northlight_house_02",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_temple_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_temple_1.nbt",
@@ -8838,6 +8950,7 @@
     },
     {
       "id": "northlight_house_03",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_armorer_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_armorer_house_1.nbt",
@@ -8861,6 +8974,7 @@
     },
     {
       "id": "northlight_house_04",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_armorer_house_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_armorer_house_2.nbt",
@@ -8884,6 +8998,7 @@
     },
     {
       "id": "northlight_house_05",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_butchers_shop_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_butchers_shop_1.nbt",
@@ -8907,6 +9022,7 @@
     },
     {
       "id": "northlight_house_06",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_butchers_shop_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_butchers_shop_2.nbt",
@@ -8930,6 +9046,7 @@
     },
     {
       "id": "northlight_house_07",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_medium_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_medium_house_1.nbt",
@@ -8953,6 +9070,7 @@
     },
     {
       "id": "northlight_house_08",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_medium_house_3",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_medium_house_3.nbt",
@@ -8976,6 +9094,7 @@
     },
     {
       "id": "northlight_house_09",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_small_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_1.nbt",
@@ -8999,6 +9118,7 @@
     },
     {
       "id": "northlight_house_10",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_small_house_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_2.nbt",
@@ -9022,6 +9142,7 @@
     },
     {
       "id": "northlight_house_11",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_small_house_3",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_3.nbt",
@@ -9045,6 +9166,7 @@
     },
     {
       "id": "northlight_house_12",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_small_house_4",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_4.nbt",
@@ -9068,6 +9190,7 @@
     },
     {
       "id": "northlight_house_13",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_small_house_5",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_5.nbt",
@@ -9091,6 +9214,7 @@
     },
     {
       "id": "northlight_house_14",
+      "materials": "northlight_cold",
       "settlement": "northlight",
       "template": "minecraft:village/snowy/houses/snowy_small_house_6",
       "file": "kits/structures/incoming/townkit/minecraft/village/snowy/houses/snowy_small_house_6.nbt",
@@ -9621,6 +9745,7 @@
     },
     {
       "id": "tea_house_01",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/library_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/library_1.nbt",
@@ -9644,6 +9769,7 @@
     },
     {
       "id": "tea_house_02",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/temple_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/temple_2.nbt",
@@ -9667,6 +9793,7 @@
     },
     {
       "id": "tea_house_03",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/armorer_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/armorer_1.nbt",
@@ -9690,6 +9817,7 @@
     },
     {
       "id": "tea_house_04",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/butcher_shop_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/butcher_shop_1.nbt",
@@ -9713,6 +9841,7 @@
     },
     {
       "id": "tea_house_05",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/butcher_shop_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/butcher_shop_2.nbt",
@@ -9736,6 +9865,7 @@
     },
     {
       "id": "tea_house_06",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/cartographer_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/cartographer_1.nbt",
@@ -9759,6 +9889,7 @@
     },
     {
       "id": "tea_house_07",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/medium_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/medium_house_2.nbt",
@@ -9783,6 +9914,7 @@
     },
     {
       "id": "tea_house_08",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_1",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_1.nbt",
@@ -9806,6 +9938,7 @@
     },
     {
       "id": "tea_house_09",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_2",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_2.nbt",
@@ -9829,6 +9962,7 @@
     },
     {
       "id": "tea_house_10",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_3",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_3.nbt",
@@ -9852,6 +9986,7 @@
     },
     {
       "id": "tea_house_11",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_4",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_4.nbt",
@@ -9875,6 +10010,7 @@
     },
     {
       "id": "tea_house_12",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_5",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_5.nbt",
@@ -9898,6 +10034,7 @@
     },
     {
       "id": "tea_house_13",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_6",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_6.nbt",
@@ -9921,6 +10058,7 @@
     },
     {
       "id": "tea_house_14",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_7",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_7.nbt",
@@ -9944,6 +10082,7 @@
     },
     {
       "id": "tea_house_15",
+      "materials": "tea_terrace",
       "settlement": "tea_town",
       "template": "repurposed_structures:villages/bamboo/houses/small_house_8",
       "file": "kits/structures/incoming/townkit/repurposed_structures/villages/bamboo/houses/small_house_8.nbt",
@@ -12427,6 +12566,7 @@
     },
     {
       "id": "sunset_house_01",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_armorer_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_armorer_house_1.nbt",
@@ -12450,6 +12590,7 @@
     },
     {
       "id": "sunset_house_02",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_butcher_shop_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_butcher_shop_1.nbt",
@@ -12473,6 +12614,7 @@
     },
     {
       "id": "sunset_house_03",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_cartographer_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_cartographer_1.nbt",
@@ -12496,6 +12638,7 @@
     },
     {
       "id": "sunset_house_04",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_fisher_cottage_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_fisher_cottage_1.nbt",
@@ -12520,6 +12663,7 @@
     },
     {
       "id": "sunset_house_05",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_fletcher_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_fletcher_house_1.nbt",
@@ -12543,6 +12687,7 @@
     },
     {
       "id": "sunset_house_06",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_masons_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_masons_house_1.nbt",
@@ -12566,6 +12711,7 @@
     },
     {
       "id": "sunset_house_07",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_tannery_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_tannery_1.nbt",
@@ -12589,6 +12735,7 @@
     },
     {
       "id": "sunset_house_08",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_tool_smith_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_tool_smith_1.nbt",
@@ -12612,6 +12759,7 @@
     },
     {
       "id": "sunset_house_09",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_big_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_big_house_1.nbt",
@@ -12635,6 +12783,7 @@
     },
     {
       "id": "sunset_house_10",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_library_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_library_2.nbt",
@@ -12658,6 +12807,7 @@
     },
     {
       "id": "sunset_house_11",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_meeting_point_5",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_meeting_point_5.nbt",
@@ -12681,6 +12831,7 @@
     },
     {
       "id": "sunset_house_12",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_temple_3",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_temple_3.nbt",
@@ -12704,6 +12855,7 @@
     },
     {
       "id": "sunset_house_13",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_1",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_1.nbt",
@@ -12727,6 +12879,7 @@
     },
     {
       "id": "sunset_house_14",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_2",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_2.nbt",
@@ -12750,6 +12903,7 @@
     },
     {
       "id": "sunset_house_15",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_3",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_3.nbt",
@@ -12773,6 +12927,7 @@
     },
     {
       "id": "sunset_house_16",
+      "materials": "sunset_harbour_b",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_4",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_4.nbt",
@@ -12796,6 +12951,7 @@
     },
     {
       "id": "sunset_house_17",
+      "materials": "sunset_harbour_a",
       "settlement": "sunset_west",
       "template": "minecraft:village/plains/houses/plains_small_house_5",
       "file": "kits/structures/incoming/townkit/minecraft/village/plains/houses/plains_small_house_5.nbt",

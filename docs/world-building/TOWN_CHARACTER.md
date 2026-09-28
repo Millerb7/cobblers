@@ -97,42 +97,50 @@ so they are outside the owner's "every town". Both are bespoke builds already (`
 - otherwise the local Cobbleverse instance's own copy, the datapacks before the mods before the vanilla 1.21.1
   jar.
 
-Every template placement of every place (329) was read; none is unmeasured. Measured 2026-09-27 on `1b9bbc1`, before any dressing. The
+Every template placement of every place (329) was read; none is unmeasured. Measured 2026-09-28, with the dressing (`cobblers_town_dressing`, built) and with the houses of ten towns in their own palettes (`data/rematerial.json` `house_sets`, below); `measure --no-dressing` leaves the dressing out. The first measurement (2026-09-27, `1b9bbc1`, before either) had every gym town but Surge's at 100%. The
 paving cells come from `tools/town_plan.py` and are shown as "-" where the place has no town plan.
 
-| Rank | Place | Straight donor | Re-materialed | Ruined | Bespoke | Share straight donor | Placements (donor / rem. / ruin / bespoke) | Most repeated template | Paving cells |
-| ---: | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | ---: |
-| 1 | `gym6_town` (Sabrina) | 26,281 | 0 | 0 | 0 | 100% | 38 / 0 / 0 / 0 | 1 | 4,962 |
-| 2 | `gym1_town` (Brock) | 8,946 | 0 | 0 | 0 | 100% | 21 / 0 / 0 / 0 | 1 | 3,485 |
-| 3 | `gym5_town` (Koga) | 7,940 | 0 | 0 | 0 | 100% | 19 / 0 / 0 / 0 | 1 | 2,689 |
-| 4 | `gym8_town` (Giovanni) | 7,226 | 0 | 0 | 0 | 100% | 17 / 0 / 0 / 0 | 1 | 3,266 |
-| 5 | `gym7_town` (Blaine) | 7,171 | 0 | 0 | 0 | 100% | 15 / 0 / 0 / 0 | 1 | 2,882 |
-| 6 | `gym4_town` (Erika) | 7,345 | 0 | 0 | 0 | 100% | 13 / 0 / 0 / 0 | 1 | 5,133 |
-| 7 | `gym2_town` (Misty) | 21,128 | 0 | 0 | 0 | 100% | 11 / 0 / 0 / 0 | 1 | 2,417 |
-| 8 | `rift_dig_camp` | 2,680 | 0 | 0 | 0 | 100% | 11 / 0 / 0 / 0 | 4 | 699 |
-| 9 | `hometown` | 6,715 | 0 | 0 | 0 | 100% | 9 / 0 / 0 / 0 | 1 | - |
-| 10 | `jungle_ruins` | 1,968 | 0 | 0 | 0 | 100% | 6 / 0 / 0 / 0 | 1 | 1,746 |
-| 11 | `merian_hut` | 1,213 | 0 | 0 | 0 | 100% | 3 / 0 / 0 / 0 | 1 | 1,038 |
-| 12 | `tableland_stop` | 1,968 | 0 | 0 | 0 | 100% | 3 / 0 / 0 / 0 | 1 | 1,200 |
-| 13 | `league` | 159,487 | 0 | 0 | 0 | 100% | 1 / 0 / 0 / 0 | 1 | 0 |
-| 14 | `rift_rim_stop` | 1,316 | 0 | 0 | 53 | 96% | 3 / 0 / 0 / 1 | 1 | 1,597 |
-| 15 | `sunset_west` | 7,173 | 0 | 0 | 695 | 91% | 19 / 0 / 0 / 4 | 1 | 3,585 |
-| 16 | `gorge_hamlet` | 1,016 | 0 | 0 | 120 | 89% | 3 / 0 / 0 / 1 | 1 | 1,722 |
-| 17 | `gym3_town` (Surge) | 4,942 | 845 | 0 | 0 | 85% | 3 / 4 / 0 / 0 | 1 | 973 |
-| 18 | `northlight` | 7,954 | 0 | 0 | 2,060 | 79% | 17 / 0 / 0 / 1 | 1 | 2,780 |
-| 19 | `relic_island` | 448 | 0 | 0 | 280 | 62% | 1 / 0 / 0 / 1 | 1 | 19 |
-| 20 | `mining_town` | 5,377 | 3,624 | 0 | 1,630 | 51% | 3 / 14 / 0 / 2 | 1 | 2,696 |
-| 21 | `displaced_city` | 4,373 | 3,193 | 0 | 1,682 | 47% | 24 / 18 / 0 / 5 | 2 | - |
-| 22 | `tea_town` | 7,354 | 0 | 0 | 26,600 | 22% | 18 / 0 / 0 / 1 | 1 | 2,133 |
-| 23 | `viltri_light` | 0 | 0 | 0 | 1,259 | 0% | 0 / 0 / 0 / 1 | 0 | 141 |
-| 24 | `the_scar` | 0 | 0 | 6,301 | 6,571 | 0% | 0 / 0 / 33 / 4 | 2 | 5,231 |
-| 25 | `sea_town` | 0 | 3,008 | 0 | 27,197 | 0% | 0 / 2 / 0 / 6 | 1 | 289 |
-| 26-30 | `frostpeak_shrine` and the four landmark trees | 0 | 0 | 0 | 0 | n/a | nothing placed | - | - |
+| Rank | Place | Straight donor | Re-materialed | Ruined | Bespoke | Share straight donor | Placements (donor / rem. / ruin / bespoke) | Most repeated template | Paving cells | Unmeasured |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: |
+| 1 | `rift_dig_camp` | 2,680 | 0 | 0 | 0 | 100% | 11 / 0 / 0 / 0 | 4 | 699 | 0 |
+| 2 | `hometown` | 6,719 | 0 | 0 | 0 | 100% | 9 / 0 / 0 / 0 | 1 | - | 0 |
+| 3 | `jungle_ruins` | 1,968 | 0 | 0 | 0 | 100% | 6 / 0 / 0 / 0 | 1 | 1,746 | 0 |
+| 4 | `merian_hut` | 1,211 | 0 | 0 | 0 | 100% | 3 / 0 / 0 / 0 | 1 | 1,038 | 0 |
+| 5 | `tableland_stop` | 1,966 | 0 | 0 | 0 | 100% | 3 / 0 / 0 / 0 | 1 | 1,200 | 0 |
+| 6 | `league` | 159,487 | 0 | 0 | 0 | 100% | 1 / 0 / 0 / 0 | 1 | 0 | 0 |
+| 7 | `rift_rim_stop` | 1,314 | 0 | 0 | 53 | 96% | 3 / 0 / 0 / 1 | 1 | 1,597 | 0 |
+| 8 | `gorge_hamlet` | 1,014 | 0 | 0 | 120 | 89% | 3 / 0 / 0 / 1 | 1 | 1,722 | 0 |
+| 9 | `gym2_town` | 18,562 | 2,566 | 0 | 0 | 88% | 3 / 8 / 0 / 0 | 1 | 2,417 | 0 |
+| 10 | `gym3_town` | 4,942 | 845 | 0 | 0 | 85% | 3 / 4 / 0 / 0 | 1 | 973 | 0 |
+| 11 | `gym6_town` | 20,329 | 5,952 | 0 | 409 | 76% | 6 / 32 / 0 / 0 | 1 | 4,962 | 0 |
+| 12 | `gym4_town` | 5,007 | 2,338 | 0 | 0 | 68% | 3 / 10 / 0 / 0 | 1 | 5,133 | 0 |
+| 13 | `gym8_town` | 4,811 | 2,415 | 0 | 258 | 64% | 3 / 14 / 0 / 0 | 1 | 3,266 | 0 |
+| 14 | `gym7_town` | 4,799 | 2,372 | 0 | 463 | 63% | 3 / 12 / 0 / 0 | 1 | 2,882 | 0 |
+| 15 | `relic_island` | 448 | 0 | 0 | 280 | 62% | 1 / 0 / 0 / 1 | 1 | 19 | 0 |
+| 16 | `gym5_town` | 4,856 | 3,084 | 0 | 311 | 59% | 3 / 16 / 0 / 0 | 1 | 2,689 | 0 |
+| 17 | `gym1_town` | 4,819 | 4,127 | 0 | 284 | 52% | 3 / 18 / 0 / 0 | 1 | 3,485 | 0 |
+| 18 | `northlight` | 5,175 | 2,779 | 0 | 2,137 | 51% | 3 / 14 / 0 / 1 | 1 | 2,780 | 0 |
+| 19 | `mining_town` | 5,377 | 3,624 | 0 | 1,630 | 51% | 3 / 14 / 0 / 2 | 1 | 2,696 | 0 |
+| 20 | `displaced_city` | 4,373 | 3,193 | 0 | 1,682 | 47% | 24 / 18 / 0 / 5 | 2 | 5,760 | 0 |
+| 21 | `sunset_west` | 3,008 | 4,165 | 0 | 695 | 38% | 2 / 17 / 0 / 4 | 1 | 3,585 | 0 |
+| 22 | `tea_town` | 4,206 | 3,148 | 0 | 26,600 | 12% | 3 / 15 / 0 / 1 | 1 | 2,133 | 0 |
+| 23 | `viltri_light` | 0 | 0 | 0 | 1,259 | 0% | 0 / 0 / 0 / 1 | 0 | 141 | 0 |
+| 24 | `the_scar` | 0 | 0 | 6,301 | 6,571 | 0% | 0 / 0 / 33 / 4 | 2 | 5,231 | 0 |
+| 25 | `sea_town` | 0 | 3,008 | 0 | 27,197 | 0% | 0 / 2 / 0 / 6 | 1 | 289 | 0 |
+| 26 | `frostpeak_shrine` | 0 | 0 | 0 | 0 | n/a | 0 / 0 / 0 / 0 | 0 | - | 0 |
+| 27 | `great_oak_pallet` | 0 | 0 | 0 | 0 | n/a | 0 / 0 / 0 / 0 | 0 | - | 0 |
+| 28 | `sentinel_spruce_tarn` | 0 | 0 | 0 | 0 | n/a | 0 / 0 / 0 / 0 | 0 | - | 0 |
+| 29 | `patriarch_wedge` | 0 | 0 | 0 | 0 | n/a | 0 / 0 / 0 / 0 | 0 | - | 0 |
+| 30 | `cherry_elder_shrew` | 0 | 0 | 0 | 0 | n/a | 0 / 0 / 0 / 0 | 0 | - | 0 |
 
 **What it says:**
-- **Thirteen places are 100% straight donor, and every one of the eight gym towns but Surge's is among them.** The
-  gym towns are the places every player visits. They are also the ones built entirely from village and pack pieces
-  placed as they came.
+- **Six places are 100% straight donor, and no gym town is among them any more.** On 2026-09-27 thirteen were, with
+  every gym town but Surge's; the dressing and the re-materialed houses moved all seven. Of the six, the hometown and
+  the League are pasted by design (below); the dig camp, the jungle ruins, Merian's hut and the tableland stop are not
+  dressed or re-materialed yet.
+- **"Re-materialed" counts a whole house, however much of it the set changed.** The sets change 3% (Northlight,
+  whose spruce and ice houses were already in its palette) to 57% (Misty's) of a house's blocks: see the table under
+  "The houses in their town's palette".
 - **No design repeats within a town,** except the dig camp's tents, the Scar's ruins and the Displaced City's
   pairs. So
   "pasted" here means unaltered, not repeated. Brock's 18 houses are 18 different birch-village pieces; nothing in
@@ -192,16 +200,37 @@ Giovanni's and Blaine's towns**. They are dressed first. Erika's and Misty's (ra
 | Blaine (`gym7_town`) | **An instrument mast** on the mound's top at (6015, 4935): a blackstone shaft, a copper instrument deck, and rods pointed east at the cone. Top y128. | 14 | 331 | **On the open rim east of the square:** four fumaroles smoking in basalt rings, and two copper instruments aimed at the cone. The rim stays unbuilt, as its plan says. **By the square:** a field laboratory, core-sample racks, sample crates, obsidian and cooling rock. |
 | Giovanni (`gym8_town`) | **A signal beacon** on the dome's crown at (3625, 6555): a granite tower with terracotta bands and a signal fire, whose smoke column stands far above it. Top y128. | 17 | 258 | **At the gate square:** a palisade, sandbag walls, the supply depot and the garrison's orange colours, where the road leaves for Victory Road. **South of the square:** a quartermaster's stall. **On the dome's flank:** a training yard with targets, cover and an armoury bench. |
 
-**After the dressing, the measurement moves only a little.** Sabrina's town is 99% straight donor, Brock's and
-Giovanni's 97%, Koga's and Blaine's 96% (was 100% each). Props are small beside eighteen houses: 174 to 331 blocks
-against 7,000 to 26,000. That is the measure working, not failing. A town's volume is its houses, and its houses
-are still the villages' own.
+**The dressing alone moved the measurement only a little** (Sabrina's town to 99% straight donor, Brock's and
+Giovanni's 97%, Koga's and Blaine's 96%). Props are small beside eighteen houses: 174 to 331 blocks against 7,000 to
+26,000. A town's volume is its houses.
 
-**The next lever is the brief's own palette line:** re-materialing each town's houses into its palette, as Surge's
-and the mining town's already are. The machinery exists (`data/rematerial.json` `house_sets`, `materials` on a
-placement). It would move Brock's town from 97% straight donor to about 52%; the rest is the gym, the Centre and
-the Mart, which keep their own looks. **Not done here:** it re-places every house and changes what
-`tools/town_audit.py` expects in the world, so it is for the owner to choose.
+### The houses in their town's palette (2026-09-28; built, not yet in any world)
+
+The owner approved the palette lever. Every house of ten towns (156) now names a material set in `data/rematerial.json`
+`house_sets`, alternating the town's two sets where it has two, so a street is not one colour.
+`tools/place_town.py` places a copy of the house with its palette renamed like for like (stairs stay stairs, walls
+walls, logs pillars; a map entry whose block the house lacks is skipped), jigsaw final states included. The gym, the
+Centre and the Mart keep their own looks. Every target block was checked against `data/spawn_blocks.json`: none is a
+spawn condition (quartz, which Sabrina's palette names, is, and is left out).
+
+| Town | Sets | What changes | Blocks swapped | Straight donor (was) |
+| --- | --- | --- | ---: | ---: |
+| Brock (`gym1_town`) | `brock_mason_a`, `_b` | cobble to stone brick or polished andesite; white terracotta to calcite or tuff brick; birch roofs to spruce (a) | 44% | 52% (97%) |
+| Misty (`gym2_town`) | `misty_rescue_a`, `_b` | oak to dark oak (a) or spruce (b); cobble to mud brick; cyan terracotta to prismarine brick | 57% | 88% (100%) |
+| Erika (`gym4_town`) | `erika_garden` | the cherry houses keep their cherry; oak wood to stripped cherry, brick to packed mud and mud brick | 14% | 68% (100%) |
+| Koga (`gym5_town`) | `koga_fen_a`, `_b` | oak to dark oak (a) or mangrove (b), stripped logs to mangrove or bamboo, terracotta to packed mud or mud brick | 25% | 59% (96%) |
+| Sabrina (`gym6_town`) | `sabrina_study_a`, `_b` | stone brick and cobble to polished diorite, calcite or smooth stone; spruce frames to birch | 42% | 76% (99%) |
+| Blaine (`gym7_town`) | `blaine_rim` | dark oak frames to basalt and blackstone; red sandstone trim to tuff | 22% | 63% (96%) |
+| Giovanni (`gym8_town`) | `giovanni_garrison_a`, `_b` | sandstone to polished granite and terracotta, sand to coarse dirt; cobble to mud brick (b) | 42% | 64% (97%) |
+| `northlight` | `northlight_cold` | light-blue glass; cobble, diorite and smooth-stone trim to deepslate | 3% | 51% (79%) |
+| `sunset_west` | `sunset_harbour_a`, `_b` | cobble to brick (a) or polished granite (b); oak roofs to spruce (a) | 34% | 38% (91%) |
+| `tea_town` | `tea_terrace` | mud brick to mossy stone brick, packed mud to mossy cobble, yellow trim to stripped cherry | 15% | 12% (22%) |
+
+"Blocks swapped" is the share of the houses' own non-air blocks the sets rename, read from the donor templates. The
+share column counts a re-materialed house whole, so Northlight's 3% moves it as far as Brock's 44%: its spruce and
+ice houses were already in its palette, and the measure says little there. **Not verified:** how any of it looks,
+and that the houses stand in the world (the main session's `tools/town_audit.py` run after R8, which reads the
+rewritten copies).
 
 ## Install and run (for the orchestrator, on staging)
 
@@ -352,8 +381,8 @@ Every line of the purposes table is an agent's call. These are the ones most wor
    fortress: the gym is already the gate.
 4. **Frostpeak shrine's purpose is drafted, for Codex** (`HANDOVER_CODEX.md` item 28). No brief says whose shrine it is.
 5. **Hometown and the League are left undressed on purpose** (pasted by design, above).
-6. **The ranking's tie-break.** Thirteen places tie at 100%. Placement count decides among them, so bigger
-   all-donor towns rank as more pasted.
+6. **The ranking's tie-break.** Six places tie at 100% (thirteen did before the dressing and the house palettes).
+   Placement count decides among them, so bigger all-donor towns rank as more pasted.
 7. **The dressing keeps off every anchor lot, open squares included.** Sabrina's market square and commons are
    anchor lots, so they got no stalls. A square is where a town's market belongs; that waits on the town-centre
    decisions in `TOWN_CENTERS.md`.

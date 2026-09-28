@@ -11,7 +11,7 @@
     "position": "{x, y, z}: the block the trader stands in: one above the plaza paving the town plan grades, or, for a trader in a building, one above the floor of its template's shopkeeper jigsaw",
     "status": "planned (not in the campaign world), placed (re-applied by the function), verified (checked in game)",
     "chosen_because": "why this trader, in this town",
-    "stock": "regional (sells what the stock policy leaves), withdrawn (the policy leaves nothing, so the trader is not summoned and any copy standing is removed) or mart (sells exactly the policy's Mart items); tools/traders.py refuses to write a function if this disagrees with the policy",
+    "stock": "regional (sells what the stock policy leaves), withdrawn (the policy leaves nothing, so the trader is not summoned and any copy standing is removed) or mart (sells exactly the policy's Mart items); tools/traders.py refuses to write a function if this disagrees with the policy; stones (the Exchange: sells exactly stock_policy.stones's items, an authored shop that replaces the template's, and buys nothing)",
     "building": "optional: the placed building (a tools/place_town.py building id) the trader stands in; its position is that template's shopkeeper jigsaw carried through the placement",
     "facing": "optional: which way a NoAI trader looks (south, west, north, east): a Mart clerk faces its door"
   },
@@ -436,6 +436,26 @@
       "stock": "mart"
     },
     {
+      "id": "mining_assayer",
+      "settlement": "mining_town",
+      "cell": "F7",
+      "template": "bca:stores/store_workers/shopkeeper_ds_general",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/bca/structure/stores/store_workers/shopkeeper_ds_general.nbt",
+        "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
+      },
+      "position": {
+        "x": 6614,
+        "y": 138,
+        "z": 5708
+      },
+      "facing": "south",
+      "status": "planned",
+      "chosen_because": "the Exchange (docs/mechanics/STONE_ECONOMY.md section 8): the Mining Town is the region's clearing house for every evolution stone. The clerk stands on the pithead yard (plaza y137), facing the ore road, clear of the yard's ore piles and headframe and of the working Machoke's route; not in the assay office, a donor whose floor is not known offline",
+      "stock": "stones"
+    },
+    {
       "id": "northlight_mart",
       "settlement": "northlight",
       "cell": "B8",
@@ -547,6 +567,26 @@
       "name": "Poké Mart",
       "status": "owner decision 2026-09-25: basic stock in every town from the start; badge-gated stock comes later",
       "why": "A town with no balls is not a town. Every Mart sells Poké Balls, Potions and Antidotes from the first visit, at the general shopkeeper's prices (200, 200, 100); what wins battles stays withheld until the badge-gated stock replaces this policy."
+    },
+    "stones": {
+      "items": [
+        "cobblemon:water_stone",
+        "cobblemon:leaf_stone",
+        "cobblemon:shiny_stone",
+        "cobblemon:sun_stone",
+        "cobblemon:moon_stone",
+        "cobblemon:thunder_stone",
+        "cobblemon:ice_stone",
+        "cobblemon:dusk_stone",
+        "cobblemon:dawn_stone",
+        "cobblemon:fire_stone"
+      ],
+      "price": 2100,
+      "buys": false,
+      "name": "Assayer",
+      "category": "Evolution Stones",
+      "status": "built as data 2026-09-28 (the owner: build the stone economy); the price is STONE_ECONOMY.md's proposed floor, open decision O-6",
+      "why": "STONE_ECONOMY.md section 8: the Exchange sells every stone and never buys, because the faces are an unlimited supply and a stone with a sell price would make a face a money printer. It is the catch-up for a player who skipped a place, not the supply. No stone is in CobbleDollars' bank.json, so nothing else buys one back. The shop is authored (tools/traders.py stone_shop), in the offer shape the template itself carries ({Item:{count,id},Price:\"<n>\"}); that it sells in game is proof P-7, not run"
     }
   }
 }

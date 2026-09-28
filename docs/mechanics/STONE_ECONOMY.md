@@ -1,7 +1,9 @@
 # The stone economy
 
-**Status: proposed design, 2026-09-27. Design only: nothing is built, placed or installed, and no data
-file below exists yet.** This answers the owner's stone-economy brief in full. It builds on
+**Status: proposed design, 2026-09-27; built offline 2026-09-28 (the owner: "the evolution stones
+incorporated ... build them into the towns that have them"). The faces and the Exchange exist as data and a
+generated pack, audited offline; nothing has run in a game, and nothing is installed. §14 records what was built
+and where it differs from the design below.** This answers the owner's stone-economy brief in full. It builds on
 `docs/mechanics/EVOLUTION_STONES.md` and `docs/decisions/ADR-003-evolution-stone-supply.md` (both
 Proposed, 2026-09-23): ore in the rock, at seven places, in faces that a generated function resets.
 That decision stands. This document re-checks it against the jar and the rosters, and it changes
@@ -682,6 +684,80 @@ proof face comes first; principle 20 applies.
   earlier places would rely on the resident alone.
 - **O-8. Eevee.** If eeveelutions ever enter the rosters, Water, Thunder and Fire demand rise by one
   each per player, and the Exchange becomes their natural source.
+
+---
+
+## 14. What was built, 2026-09-28
+
+**Built offline, not run in a game and not installed.** All 22 faces at all seven places, and the Exchange; no
+site was skipped.
+
+**Files.**
+- `data/mines.json` (`cobblers.mines/1`): the geometry rules in words, the keep-clear rules, the restore, the ten
+  stones, and seven sites with their faces.
+- `tools/mines.py`. `site` and `author` search for boxes and write them into the data; `report` checks; `build`
+  writes `build/datapacks/cobblers_mines` and `derived/mines/plan.json`.
+- `tools/mines_audit.py`: the offline audit. It never imports the generator. It replays the pack and checks it
+  against the data and against other systems' data and output. It is CLEAN (7 sites, 22 faces, 36,693 cells written,
+  10 stones on sale). It fails on an empty pack or an empty build. It found each of four planted faults: an
+  unfiltered fill, a missing Pokemon guard, a write on the hamlet's plaza, and stray bedrock.
+- `tools/reapply.py`: step **R9O**. It runs `cobblers:mines/build_<site>` for each site, after R9S and before R9DC
+  and R9E. The step is named from the committed data. The pack is a world-local server pack. `prepare` builds the
+  pack, then audits it.
+
+**The faces (box min corner, front).** One cut per face. On the surface each cut is a 3-row apron, then a ramp that
+climbs one block a row until it meets the ground, 7 to 9 rows in all, about 300 to 460 blocks dug. It is skinned in
+the host rock. The floor is the host's cobbled form.
+
+| Place | Faces | Host / ore | Where |
+| --- | --- | --- | --- |
+| Viltri Light | Water ×2 | stone / `water_stone_ore` | x568, z4496 and z4530, both facing west, y67-68, on the rise east of the light |
+| Tea town | Leaf ×2, Shiny ×2 | stone / `leaf_`, `shiny_stone_ore` | x2628-2673, z3604-3639, y107-108, just south of the town's centre (2654, 3605) |
+| The Scar | Sun ×2 | terracotta / `terracotta_sun_stone_ore` | x2079-2088, z964-988, y274 |
+| Displaced City | Moon ×2, Thunder ×2 | dripstone / `dripstone_moon_stone_ore`; deepslate / `deepslate_thunder_stone_ore` | the cavern's south wall, box z1850-1855, x3262-3398, y23-28; no digging, the apron is the cavern floor; bedrock skin; two lanterns a face |
+| Northlight | Ice ×2 | stone / `ice_stone_ore` | x7302-7326, z1589-1596, y110 |
+| Gorge hamlet | Dusk ×2, Dawn ×2 | deepslate / `deepslate_dusk_stone_ore`; stone / `dawn_stone_ore` | x6786-6828, z4288-4317, y107-108, north of the yard |
+| Mining Town | Fire ×2, Thunder ×2 | deepslate / `deepslate_fire_`, `deepslate_thunder_stone_ore` | the mine head, round the adit portal: x6734-6767, z5765-5813, y135-139 (data hint `prefer_near`) |
+
+**Where a face may stand.** Ground comes from `tools/ground.py`. For the Displaced City it is the cavern plan's floor.
+No face writes on the town's plan (`tools/town_dressing.py` Mask). No face writes on painted water or within 4 of a
+painted trunk, or within 8 of a column in `derived/water_shape/changed.npy`. A missing map is a failure. Faces keep
+clear of dressing pieces, working Pokemon, and the cavern's trees, lights and tunnel. Viltri Light and the tea town
+passed the water rule, sited in rock back from the changing shores.
+
+**Supply as built.**
+- Yields: 2-4 ore a restore, Thunder 3-5, Fire 1-3.
+- One ore on the front plane's bottom row in every variant; the rest are at least 2 deep.
+- 8 variants. The same variant never comes twice in a row.
+- Period 12,000 ticks (600 s). The two faces of a stone at a place stay 6,000 ticks apart.
+- The drive runs every 100 ticks, and only when a player is in the site's approach box: the faces' bounds plus 64
+  across, 32 down and 64 up.
+- A restore needs:
+  - all four corners of the box, grown by one, loaded;
+  - no player and no `cobblemon:pokemon` in that grown box.
+- The restore fills host rock over `#cobblers:face_resettable` only. The tag holds air, fluids, hosts, cobble,
+  gravel, dirt, snow, torches and the 23 stone ores; it holds no container. Every ore setblock is guarded by the tag.
+- No filler ore (O-7).
+
+**The Exchange.**
+- `data/traders.json` `mining_assayer` stands on the pithead yard at (6614, 138, 5708), facing south, stock
+  `stones`.
+- `stock_policy.stones` sells the ten stones at 2,100 each (O-6), with `buys: false`.
+- `tools/traders.py` replaces the template's shop with an authored one. Each offer has the shape
+  `{Item:{count:1,id},Price:"2100"}`. That is the shape the shopkeeper template itself carries (read from
+  `COBBLEVERSE-DP-v31.zip`).
+- No stone is in `bank.json`.
+
+**Not built:** the per-player floor (waits on ADR-002's proof), the residents (P-6), filler and Habitat Blocks.
+
+**Must be proven in game:**
+- P-1: drop and tier.
+- P-2: the restore on approach and its guard, with a player and then a sent-out Pokemon standing in a box.
+- P-3: the filtered fill, with a chest left in a box; and no hitch.
+- P-4: no double restore across a restart.
+- P-7: the Assayer sells all ten stones and buys none.
+- P-8: R9O rebuilds the faces on a fresh export.
+- A look at each cut, on staging.
 
 ---
 

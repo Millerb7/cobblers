@@ -389,6 +389,9 @@ For Codex to pick up. Claude has not edited any of the files named here.
       trackers, record-keepers, crater researchers, garrison. Confirm or correct them. They are now built as dressing
       in five towns (`data/town_dressing.json`).
 
+29. **Your `.codex/config.toml` change is uncommitted, on purpose.** On 2026-09-28 a Claude session found `[shell_environment_policy]` with `inherit = "core"` and `COBBLERS_SOURCE_ROOT = 'C:\Users\wnd\Documents'` added to `.codex/config.toml` in its worktree. The owner: it is Codex's, probably deliberate (that variable's absence once hid skipped tests); leave it and do not commit it from a Claude session. Commit it from your side if you want it kept.
+30. **New story hooks from 2026-09-28, all yours to write:** the shrines near towns (built with neutral working names and `"story": "for Codex"` in `data/shrines.json` once they land), and the working Pokemon's click lines in `data/ambient.json` (townspeople's Pokemon, not gym Pokemon; rewrite freely).
+
 ## What Codex can resume
 
 - Everything in `docs/story/` and the world-building documents above, now.

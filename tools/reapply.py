@@ -85,12 +85,21 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
+                # 2026-09-28: working Pokemon in the towns (tools/ambient.py, data/ambient.json): a keeper and the work
+                # loops run on their own (a tick driver), so world-local below; placed again by R16C after an export
+                "cobblers_ambient",
+                # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
+                # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
+                "cobblers_shrines",
+                # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
+                # callback acts on its own, so world-local below
+                "cobblers_levelcap",
                 # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py): blocks
                 # run by R9M, and the seam crystal's ward and daily face that act on their own (an advancement, a tick
                 # driver), so world-local below. Its gated galleries went to the gulch the same day
                 "cobblers_rift_mines",
                 # 2026-09-27: the southern Rift's mega site, prototype slice (tools/gulch_mine.py, SOUTHERN_RIFT_MEGA.md):
-                # blocks and the Cutters run by R9S; the gate, the zone check, the faces' restore and the Megas' keeper act
+                # blocks and the Cutters run by R9S; the gate, the zone check, the faces' ward and the Megas' keeper act
                 # on their own (advancements, a tick driver), so world-local below
                 "cobblers_gulch_mine",
                 # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
@@ -99,7 +108,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: the ferry (tools/ferries.py, data/ferries.json): the ferrymen's NPC classes and dialogues and
                 # the trips their dialogues run; the ferrymen are placed over RCON by R17F. It charges CobbleDollars and
                 # teleports players, so world-local below
-                "cobblers_ferries")
+                "cobblers_ferries",
+                # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
+                # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
+                "cobblers_mines")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -114,6 +126,7 @@ EXCLUDED = {
     # these three drive themselves and write no blocks: found by the check below the moment it was added
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
+    "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
                          "it writes no blocks",
@@ -136,7 +149,7 @@ EXCLUDED = {
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
-               "cobblers_ferries")
+               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -305,6 +318,20 @@ def prepare(a):
     # keeps clear of; then the plan audit, which fails the prepare on any write on a lot, a road or a building
     py(TOOLS / "town_dressing.py", "build", *src)
     py(TOOLS / "town_dressing_audit.py", *src)
+    # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
+    py(TOOLS / "ambient.py", "build", *src)
+    # the evolution-stone faces: after the town plans, the signposts, the dressing and the working Pokemon, which they
+    # keep clear of; then their offline audit, which recomputes every rule from other files' data and stops the prepare
+    # on a face the build should not have written
+    py(TOOLS / "mines.py", "build", *src)
+    py(TOOLS / "mines_audit.py", *src)
+    # the wayside shrines, then their offline audit against the plans, the legs, the water and the other packs, which
+    # fails the prepare on any write where a shrine may not stand. After every other block pack is built (the stone
+    # faces included): the generator keeps clear of what they write
+    py(TOOLS / "shrines.py", "build", *src)
+    py(TOOLS / "shrines_audit.py", *src)
+    # no catching over the level cap: a callback and its check
+    py(TOOLS / "levelcap_pack.py")
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     py(TOOLS / "progression_pack.py")
@@ -424,10 +451,11 @@ def install(a):
         # a pack that acts on its own (the scene runtime's tick) belongs to the world it was built for: the global
         # folder is loaded by every world this server runs, the live one included
         dest = (wdp if name in WORLD_LOCAL else dp) / name
-        stale = dp / name if name in WORLD_LOCAL else None
+        # and the other way round: a global pack copied into the world's folder shadows the one installed here
+        stale = dp / name if name in WORLD_LOCAL else wdp / name
         if stale is not None and stale.exists():
             replace_pack(stale, None, retired)
-            print("removed", stale, "(it belongs in the world folder)")
+            print("removed", stale, "(it belongs in the %s folder)" % ("world" if name in WORLD_LOCAL else "global"))
         replace_pack(dest, PACKS / name, retired)
         print("installed", dest)
     for src in WORLD_PACKS:
@@ -667,7 +695,8 @@ def unreferenced(todo):
                 rel = f.relative_to(root).parts
                 if len(rel) > 2 and rel[1] == "function":
                     names["%s:%s" % (rel[0], "/".join(rel[2:])[:-len(".mcfunction")])] = pack
-            if f.suffix in (".mcfunction", ".json"):
+            # a Cobblemon MoLang callback names functions too (q.run_command('function ...'))
+            if f.suffix in (".mcfunction", ".json", ".molang"):
                 text.append(f.read_text(encoding="utf-8", errors="replace"))
     run = {v for _s, _t, acts in todo for k, v in acts if k == "fn"}
     if any(k == "props" for _s, _t, acts in todo for k, _v in acts):
@@ -729,11 +758,18 @@ def steps(with_spawns=False):
     # step): after the Rift skin (R1), whose surface it paves and cuts, and before the Habitat Blocks (R9E) and the
     # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters, villagers
     # summoned 40 ticks after their chunks are force-loaded and de-duplicated 100 ticks later (tools/traders.py's
-    # pattern). The gate, the zone check, the faces' restore and the Megas act on their own and need no step.
+    # pattern). The gate, the zone check, the faces' ward and the Megas act on their own and need no step.
     out.append(("R9S", "the southern Rift's mega site: the gulch gate, the Cutters' square, the Tally Hall and the "
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
                 + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+    # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
+    # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
+    # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
+    # committed data, not the pack's index. The faces' restore on approach drives itself and needs no step
+    import mines
+    out.append(("R9O", "the evolution-stone faces at their seven places (data/mines.json)",
+                [("fn", f) for f in mines.build_functions()]))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
@@ -762,6 +798,17 @@ def steps(with_spawns=False):
     dressed = list(json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8")).get("towns") or {})
     out.append(("R16B", "town landmarks and set dressing (%d towns)" % len(dressed),
                 [("fn", "cobblers:town_dressing/%s" % s) for s in dressed]))
+    # the working Pokemon (tools/ambient.py): entities, so an export erases them; after the dressing they stand beside.
+    # Each station's chunk is force-loaded and its worker placed (twice: a chunk's saved entities load a moment after
+    # its blocks, and the keeper removes a second), then all are counted
+    import ambient
+    out.append(("R16C", "working Pokemon in the towns (data/ambient.json)", ambient.placement_steps() + [("check", "ambient")]))
+    # the wayside shrines (tools/shrines.py): blocks beside the roads into the towns, after the dressing (R16B) and the
+    # working Pokemon (R16C) they keep clear of; each function holds its own chunks. Listed from the committed data,
+    # not the build, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
+    shrine_ids = [q["id"] for q in json.loads((ROOT / "data" / "shrines.json").read_text(encoding="utf-8")).get("shrines") or []]
+    out.append(("R16D", "wayside shrines on the town approaches (%d, data/shrines.json)" % len(shrine_ids),
+                [("fn", "cobblers:shrines/%s" % s) for s in shrine_ids]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
@@ -878,6 +925,10 @@ def _run_steps(a, rc, todo, rec, path):
                 # a command a function cannot run for us (Cobblemon's spawn command does nothing inside one)
                 r = rc(v)
                 print("   %s -> %s" % (v[:100], r[:120] or "(no output)"), flush=True)
+            elif kind == "check" and v == "ambient":
+                import ambient
+                problems = ambient.verify(rc)
+                bad += ["ambient: %s" % m for m in problems]
             elif kind == "check" and v == "celebi":
                 import sapling_celebi
                 x, y, z = (int(q // 1) for q in sapling_celebi.load()["position"])

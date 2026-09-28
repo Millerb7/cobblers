@@ -23,7 +23,8 @@
                 "paths": ["data/world.json", "tools/ground.py", "data/sea_town.json"]},
     "world_block_packs": {"what": "every generator that writes blocks into the world, through its allowed or named block list",
                           "paths": ["tools/town_dressing.py", "tools/rift_mines.py", "tools/gulch_mine.py", "tools/rift_deep.py", "tools/deep_city.py",
-                                    "tools/vr_caves.py", "tools/place_town.py", "data/placements.json", "data/rematerial.json"]},
+                                    "tools/vr_caves.py", "tools/place_town.py", "data/placements.json", "data/rematerial.json",
+                                    "tools/shrines.py", "data/shrines.json"]},
     "wild_spawns": {"what": "what spawns where: the loaded spawn conditions and the policy of which placed blocks may decide them",
                     "paths": ["data/spawn_blocks.json", "data/spawn_block_policy.json", "data/spawns.json"]},
     "recovery_claims": {"what": "the blackout's item claims and their guardians",
@@ -36,7 +37,7 @@
                    "paths": ["data/gulch_mine.json", "tools/gulch_mine.py", "docs/world-building/SOUTHERN_RIFT_MEGA.md"]},
     "victory_road": {"what": "Victory Road's corridor and its cave network",
                      "paths": ["data/routes.json", "data/vr_caves.json", "tools/vr_caves.py"]},
-    "gate_clocks": {"what": "every clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the drowning pulses, the blackout dedupe, the gulch faces, the ferry cooldown, the wards' refresh",
+    "gate_clocks": {"what": "every clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the ferry cooldown, the wards' refresh",
                     "paths": ["tools/blackout_pack.py", "tools/gulch_mine.py", "tools/rift_mines.py", "tools/ferries.py", "data/blackout.json", "data/ferries.json"]},
     "boats": {"what": "boats as shallows craft (option C): the band map at rough_blocks and the sheltered boxes",
               "paths": ["data/blackout.json", "tools/blackout_pack.py", "tools/open_water.py"]},
@@ -123,8 +124,11 @@
       "tools": {
         "town_dressing.py": "source: town_dressing",
         "town_dressing_audit.py": "checker: the built town_dressing functions",
+        "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
+        "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
+        "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
         "vr_caves.py": "source: vr_caves",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
         "town_audit.py": "checker: the built towns, templates and earthworks, against the policy",
@@ -153,10 +157,10 @@
       "title": "A ward keeps what it guards out of reach",
       "owner": "rift_mine_gate",
       "consumers": ["progression", "gulch_mine"],
-      "statement": "For every built ward in the data (an object with a ward_margin; the retired gated section excluded): the gulch gate's plug and grille, the seam's grille and crystal face. A survival player whose feet are outside the generated ward cannot reach any block it guards: 4.5 blocks from eyes 1.62 above the feet.",
+      "statement": "For every built ward in the data (an object with a ward_margin; the retired gated section excluded): the gulch gate's plug and grille, the gulch's crystal faces, the seam's grille and crystal face. A survival player whose feet are outside the generated ward cannot reach any block it guards: 4.5 blocks from eyes 1.62 above the feet.",
       "stated_in": [
         {"at": "data/rift_mines.json:1022", "quote": "the grille, the pocket and the face box grown by 7"},
-        {"at": "data/gulch_mine.json:271", "quote": "7 keeps the plug beyond reach from beside and below"}
+        {"at": "data/gulch_mine.json:282", "quote": "7 keeps the plug beyond reach from beside and below"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c6_no_player_outside_a_ward_can_reach_what_it_guards",
                 "tests/test_system_contracts.py::test_contract_c6_the_ward_list_is_the_built_wards",
@@ -170,8 +174,8 @@
       "consumers": ["world_block_packs"],
       "statement": "Every generated pack that ships functions is run by a re-apply step or is in tools/reapply.py EXCLUDED with its reason; prepare fails closed otherwise, so no build is silently lost at a re-export.",
       "stated_in": [
-        {"at": "tools/reapply.py:104", "quote": "Anything not here and not run"},
-        {"at": "tools/reapply.py:634", "quote": "Fail closed instead."}
+        {"at": "tools/reapply.py:116", "quote": "Anything not here and not run"},
+        {"at": "tools/reapply.py:662", "quote": "Fail closed instead."}
       ],
       "tests": ["tests/test_reapply_vr_steps.py::test_every_function_pack_present_is_run_by_a_step_or_excluded_with_a_reason",
                 "tests/test_reapply_vr_steps.py::test_uncovered_sees_the_cave_pack_and_reports_it_when_its_step_is_gone",
@@ -184,7 +188,7 @@
       "consumers": ["rift_mine_gate", "gulch_mine"],
       "statement": "Every advancement the gulch's generated gate and zone check and the seam's generated ward test is one tools/progression_pack.py writes, granted by a real trigger (not minecraft:impossible), and it is the badge each data file names (the sixth, for both: decisions 2 and 3).",
       "stated_in": [
-        {"at": "data/gulch_mine.json:25", "quote": "The flag is the advancement tools/progression_pack.py writes per player"},
+        {"at": "data/gulch_mine.json:26", "quote": "The flag is the advancement tools/progression_pack.py writes per player"},
         {"at": "data/rift_mines.json:75", "quote": "the seam's one crystal is warded per player until the sixth badge"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c8_every_gate_and_ward_opens_on_an_advancement_the_progression_pack_grants",
@@ -249,7 +253,7 @@
       "stated_in": [
         {"at": "data/blackout.json:59", "quote": "\"exempt_tag\": \"cobblers.gm\""},
         {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:283", "quote": "the blackout skips tagged Megas"},
-        {"at": "data/gulch_mine.json:507", "quote": "A Mega that blacks a player out makes no item claim"}
+        {"at": "data/gulch_mine.json:622", "quote": "A Mega that blacks a player out makes no item claim"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out",
                 "tests/test_blackout_recovery_pid.py::test_a_tagged_gulch_mega_makes_no_claim_but_the_loss_still_costs_money"]
@@ -261,7 +265,7 @@
       "consumers": ["victory_road"],
       "statement": "No column of the gulch's generated zone check, and no column its build writes, lies within Victory Road's corridor (half its width from the polyline in data/routes.json) or its caves' band (data/vr_caves.json guide.band plus the largest cavern radius from the guide line): the zone check never turns back a player on Victory Road, and the build never writes into it.",
       "stated_in": [
-        {"at": "data/gulch_mine.json:65", "quote": "Victory Road's corridor (data/routes.json, 104 wide) about 190"},
+        {"at": "data/gulch_mine.json:68", "quote": "Victory Road's corridor (data/routes.json, 104 wide) about 190"},
         {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:574", "quote": "Victory Road's corridor about 190"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c13_the_gulch_zone_stays_off_victory_road",
@@ -272,7 +276,7 @@
       "title": "No repeatable player action resets an accumulating gate clock",
       "owner": "gate_clocks",
       "consumers": ["ferry", "gulch_mine", "rift_mine_gate", "water_sites"],
-      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch faces' restore, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
+      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
       "stated_in": [
         {"at": "data/blackout.json:124", "quote": "the Surf bonus resets only after the player's eyes stay in air, with full vanilla air, this long"},
         {"at": "data/blackout.json:146", "quote": "Land, wading and riding recover it"},

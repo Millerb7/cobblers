@@ -644,6 +644,26 @@ def piece_fumarole(spec, h):
     return p
 
 
+def piece_bonfire(spec, h):
+    """A big open fire (a cold town's): five lit campfires in a cross inside a knee-high ring of stone, split spruce
+    log-ends on the diagonals, stone-brick slabs at the ring's corners."""
+    p = Piece(relief=1)
+    stone, log = pal(spec, "stone", "minecraft:cobblestone"), pal(spec, "log", "minecraft:spruce_log[axis=y]")
+    fire = "minecraft:campfire[lit=true,signal_fire=false,facing=north,waterlogged=false]"
+    for x in range(-2, 3):
+        for z in range(-2, 3):
+            edge = abs(x) == 2 or abs(z) == 2
+            if edge and abs(x) == 2 and abs(z) == 2:
+                p.put(x, 0, z, "minecraft:stone_brick_slab[type=bottom,waterlogged=false]")
+            elif edge:
+                p.put(x, 0, z, stone)
+            elif x == 0 or z == 0:
+                p.put(x, 0, z, fire)
+            else:
+                p.put(x, 0, z, log)
+    return p
+
+
 def piece_spire(spec, h):
     """A listening spire: a white shaft tapering from three by three to a cross to a single column, lit slots of purple
     glass in its lower stage, two purple listening rings up the shaft, and a glowing purple lens with rods at its head.
@@ -778,7 +798,7 @@ PIECES = {
     "instrument_mast": piece_instrument_mast, "core_rack": piece_core_rack, "field_lab": piece_field_lab,
     "fumarole": piece_fumarole, "spire": piece_spire, "memory_stone": piece_memory_stone,
     "reading_stall": piece_reading_stall, "instrument_stand": piece_instrument_stand, "palisade": piece_palisade,
-    "sandbags": piece_sandbags,
+    "sandbags": piece_sandbags, "bonfire": piece_bonfire,
 }
 
 

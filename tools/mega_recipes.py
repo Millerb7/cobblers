@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-"""Mega Showdown's stone recipes raised to 4 raw mega stones (docs/world-building/SOUTHERN_RIFT_MEGA.md decision 5A).
+"""Mega Showdown's stone recipes raised to the Cutters' count of raw mega stones (docs/world-building/SOUTHERN_RIFT_MEGA.md
+decision 5A; section 13 sets the count to 2).
 
 Every Mega Stone recipe in Mega Showdown 1.0.2 (81) and ZAMegas 1.7.7 (11) is a shaped craft with one raw
 `mega_showdown:mega_stone` in the middle of a 3 x 3 pattern whose four corners are empty (read from the jars,
-2026-09-27). This writes each recipe back at its own path with the raw stone's key also in three corners (top left, top
-right, bottom left: the first three empty cells in reading order), so a crafted stone takes 4 raw stones, like the
-Cutters' trade (data/gulch_mine.json cutters.offer). Everything else in the recipe is the jar's own.
+2026-09-27). This writes each recipe back at its own path with the raw stone's key also in the first RAW_COUNT - 1
+empty cells in reading order (at 2: the top left corner), so a crafted stone takes as many raw stones as the Cutters'
+trade (data/gulch_mine.json cutters.offer.raw_count). Everything else in the recipe is the jar's own.
 
 The recipes are the jar's content, and Mega Showdown's licence (MEGA SHOWDOWN LICENSE v2.1) is not MIT-style: nothing
 here is committed. The pack is generated at `tools/reapply.py prepare` from the jar the server runs, into
@@ -34,7 +35,9 @@ OVERLAY = ROOT / "modpack" / "manifest" / "overlay.json"
 GULCH = ROOT / "data" / "gulch_mine.json"
 JARS = (("cobblemon_mega_showdown", "mega_showdown"), ("zamega", "zamega"))
 RAW = "mega_showdown:mega_stone"
-RAW_COUNT = 4
+# the price is data (SOUTHERN_RIFT_MEGA.md 13: 2 raw stones a keyed stone, 4 before the owner's redesign): crafting
+# takes what the Cutters' trade takes
+RAW_COUNT = json.loads(GULCH.read_text(encoding="utf-8"))["cutters"]["offer"]["raw_count"]
 
 
 class RecipeError(Exception):

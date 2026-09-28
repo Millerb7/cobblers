@@ -153,7 +153,7 @@ leg points every 16 blocks; re-measured by `tools/validate_data.py`):
 | Rest stop | Over bare terrain | Over the planned canopy |
 | --- | --- | --- |
 | Merian hut | 86 of 216 points (visibility:merian_hut_from_its_leg_terrain) | 35 of 216 points (visibility:merian_hut_from_its_leg_canopy) |
-| Gorge hamlet | 55 of 129 points (visibility:gorge_hamlet_from_its_leg_terrain) | **fragile:** 1 of 129 points (visibility:gorge_hamlet_from_its_leg_canopy) |
+| Gorge hamlet | 55 of 129 points (visibility:gorge_hamlet_from_its_leg_terrain) | **not visible over the canopy, accepted** (the owner, 2026-09-28: found, not seen; was fragile at 1 of 129, a trial re-measure gives 0; visibility:gorge_hamlet_from_its_leg_canopy) |
 | Tableland stop | 88 of 191 points (visibility:tableland_stop_from_its_leg_terrain) | **fragile:** 5 of 191 points (visibility:tableland_stop_from_its_leg_canopy) |
 | Rift rim post | 50 of 272 points (visibility:rift_rim_stop_from_its_leg_terrain) | 42 of 272 points (visibility:rift_rim_stop_from_its_leg_canopy) — both restored by moving the post 178 blocks to (3814, 3791) on 2026-09-23, after the sculpt left the old site at 0 of 272 and a marker was ruled out at every buildable height |
 

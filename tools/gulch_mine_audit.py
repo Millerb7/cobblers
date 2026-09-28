@@ -13,7 +13,8 @@ The plan (data only):
   victory     no column the build may write within Victory Road's corridor (its polyline, half its width, and a
               margin) or near its caves; no settlement footprint within the margin
   gap         the rockfall's band covers every ring point of the sculpt's gulch_mouth gap, and the rim beyond each end
-              of the gap is a crag (the sculpt's raised lip)
+              of the gap is a crag (the sculpt's raised lip); the wall's crest at each end stands no more than its jag
+              below the crag there (measured on the heightmap, SOUTHERN_RIFT_MEGA.md 13: to the crag tops)
 The output (replayed in index order):
   inside      every write in the grid and in a column the plan may write
   no stray    no air under the ground except in the halls, tubes and the earthworks' own clearing
@@ -24,20 +25,30 @@ The output (replayed in index order):
               outside, the arrival and the exit box inside; every column of the gulch's basin (ground at or under
               basin_y) that a walker reaches from the square without crossing the rockfall or the zone's closing line
               is inside
-  gate        the rockfall stands at least 3 over the lip's ground at every gap ring point; the knock teleports only a
+  gate        the rockfall stands at least 3 over the lip's ground at every gap ring point, and reaches the crest line
+              between the measured crag tops (less twice the jag) there, the plug its flat top; the knock teleports only a
               player holding the flag, the zone turns back only a player lacking it, the ward's box holds the plug with
               ward_margin to spare
   walk        on the replayed world: from the gate's arrival a walker reaches the square, both halls' floors, both
               faces' fronts, the Megas' anchors and the Cutters' counters; from the turn-back point, inside the grid, a
               walker does not reach the arrival (the rockfall closes the canyon)
-  faces       each face box written whole with exactly its crystals at variant 0; each of the 8 variants a filtered
-              fill of exactly the box and guarded setblocks with exactly its crystals in the box, one on the front's
-              bottom row; each check guarded by both corners loaded, no player and no Pokemon in the box, the period
-  megas       each spawn line carries the species, the Mega aspect and `uncatchable`, at an anchor that is a walkable
-              floor cell of its hall; the leash walks it back to the same anchor at the data's radius
-  cutters     three villagers, NoAI and invulnerable, standing on the workshop's floor; every offer 4 raw stones and a
-              diamond for one stone, unlimited, no experience, no price drift; the 60 stones each exactly once, none of
-              the 32 left out
+  cove        each cove building (and a house's steps) inside the zone, off the square, the yard, the road, the
+              cutting, the portal and the gate's wall; its ground within the data's limits (the heightmap); no two
+              closer than the alley; the cutting a floor at its y with air over it; the walk above reaches every
+              house's doorway from the gate's arrival
+Not checked here: the farm dens' drop roll (no farm is in the data yet; SOUTHERN_RIFT_MEGA.md 13 holds them)
+  faces       scenery (SOUTHERN_RIFT_MEGA.md 13): each face box written whole with exactly its crystals; no function
+              outside the build's passes writes into a face box (the restore is retired, and its block tag gone); the
+              tick wards each face every tick with the data's margin
+  megas       one macro line spawns every Mega (EXP-046: no plain spawnpokemonat line anywhere); each den's spawn calls
+              it with the species, the Mega aspect and the level at its anchor and claims the Mega in the same
+              function (tags, PersistenceRequired); a mine anchor is a walkable floor cell of its hall; the leash walks
+              it back to the same anchor at the data's radius; the keeper waits gm.resp from the respawn clock, with
+              nobody within spawn_clear, and every line in the pack that writes a clock is one the design allows (load
+              only when unset, the keeper's first sight of a gone Mega, a spawn)
+  cutters     three villagers, NoAI and invulnerable, standing on the workshop's floor; every offer the data's raw
+              stones and a diamond for one stone, unlimited, no experience, no price drift; the 60 stones each exactly
+              once, none of the 32 left out
   limits      tools/function_limits.py finds nothing the server would refuse
 
 Fails closed: no pack, an empty index, no sculpt plan, no zone advancement or no face is a failure, not a pass.
@@ -145,13 +156,19 @@ def road(rd):
 
 
 def band(b):
-    out = {}
+    """{(x, z): j}: data geometry.band, each ring point moved d = -spread_out .. spread_in along its normal, the columns
+    within 1 of each; a column keeps the claim with the least talus drop max(0, -d - core), the first among equals."""
+    w = b["wall"]
+    out, drop = {}, {}
     for j, x, z, nx, nz in b["points"]:
-        for d in (-1, 0, 1):
+        for d in range(-w["spread_out"], w["spread_in"] + 1):
+            dr = max(0, -d - w["core"])
             cx, cz = half_up(x + nx * d), half_up(z + nz * d)
             for a in (-1, 0, 1):
                 for c in (-1, 0, 1):
-                    out.setdefault((cx + a, cz + c), j)
+                    k = (cx + a, cz + c)
+                    if k not in out or dr < drop[k]:
+                        out[k], drop[k] = j, dr
     return out
 
 
@@ -252,6 +269,12 @@ def audit(source_root=None):
     rd = road(spec["gate"]["road"])
     for c, y in rd.items():
         surface.setdefault(c, (y, spec["gate"]["road"]["clear_above"]))
+    cove = spec.get("cove") or {"paths": [], "buildings": [], "lamp_posts": []}
+    path_cols = set()
+    for p in cove["paths"]:
+        for c, y in road(p).items():
+            surface.setdefault(c, (y, p["clear_above"]))
+            path_cols.add(c)
     bnd = band(spec["gate"]["band"])
 
     def top(x, z):
@@ -277,7 +300,29 @@ def audit(source_root=None):
         cols.add((x, z))
     gr = spec["gate"]["grille"]
     cols |= {(gr["x"], z) for z in range(gr["z"][0] - 1, gr["z"][1] + 2)}
+    # the cove town (data geometry.cove, in this file's words): a building's rect; a house's door is the middle of its
+    # door side, and its steps the 3 columns across it at 1, 2 and 3 out; a lamp post its column
+    out_dir = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}
+    houses = [b for b in cove["buildings"] if "door" in b]
+
+    def rect_of(r):
+        return {(x, z) for x in range(r[0], r[2] + 1) for z in range(r[1], r[3] + 1)}
+
+    def door_of(b):
+        x0, z0, x1, z1 = b["rect"]
+        return {"north": ((x0 + x1) // 2, z0), "south": ((x0 + x1) // 2, z1), "west": (x0, (z0 + z1) // 2),
+                "east": (x1, (z0 + z1) // 2)}[b["door"]]
+
+    def steps_of(b):
+        (dx, dz), (x, z) = out_dir[b["door"]], door_of(b)
+        return {(x + dx * k + (s if dz else 0), z + dz * k + (s if dx else 0)) for k in (1, 2, 3) for s in (-1, 0, 1)}
+    cove_cols = set()
+    for b in cove["buildings"]:
+        cove_cols |= rect_of(b["rect"]) | (steps_of(b) if "door" in b else set())
+    cove_cols |= {tuple(p) for p in cove["lamp_posts"]}
+    cols |= cove_cols | path_cols
     notes["columns the build may write"] = len(cols)
+    notes["cove buildings (houses)"] = [len(cove["buildings"]), len(houses)]
 
     # ---- Victory Road and the settlements
     routes = json.loads((ROOT / "data" / "routes.json").read_text(encoding="utf-8"))["routes"]
@@ -331,6 +376,7 @@ def audit(source_root=None):
     missing = [(j, ring[(e["ring"] + j) % T]) for j in range(-e["gap"], e["gap"] + 1) if tuple(ring[(e["ring"] + j) % T]) not in bnd]
     if missing:
         probs.append("gap: %d ring points of the sculpt's %s gap are not under the rockfall, e.g. %s" % (len(missing), e["id"], missing[:3]))
+    crag = {}
     for side in (-1, 1):
         for jj in range(e["gap"] + 1, e["gap"] + 4):
             k = (e["ring"] + side * jj) % T
@@ -338,6 +384,16 @@ def audit(source_root=None):
             hi = max(ground(half_up(x + nx * d), half_up(z + nz * d)) for d in range(-16, 1))
             if hi < 135:
                 probs.append("gap: the rim at ring point %d (%d, %d), beyond the gap, rises only to y%d" % (k, x, z, hi))
+            if jj == e["gap"] + 1:
+                crag[side] = hi
+    notes["crag tops beyond the gap's ends (heightmap)"] = [crag.get(-1), crag.get(1)]
+    # SOUTHERN_RIFT_MEGA.md 13: the wall fills the mouth to the crag tops. Measured here, not taken from the data: the
+    # data's crest at each end may not stand more than its jag below the crag beside it
+    wall = spec["gate"]["band"]["wall"]
+    for side, ctop in zip((-1, 1), wall["top"]):
+        if side in crag and ctop < crag[side] - wall["jag"]:
+            probs.append("gap: the wall's crest at the %s end (y%d) stands below the crag there (y%d)"
+                         % ("j-" if side < 0 else "j+", ctop, crag[side]))
 
     # ---- the output
     idx = FN / "index.txt"
@@ -443,6 +499,40 @@ def audit(source_root=None):
     if uncovered:
         probs.append("zone: %d basin columns reached from the square lie outside the zone, e.g. %s" % (len(uncovered), uncovered[:3]))
 
+    # ---- the cove town (SOUTHERN_RIFT_MEGA.md 13): in the zone, on the cove's floor, off the ways and the square, apart
+    if cove["buildings"]:
+        t_ = spec["town"]
+        keep_off = rect_of(t_["square"]["rect"]) | rect_of(t_["yard"]["rect"]) | set(rd) | path_cols \
+            | rect_of([pr[0], pr[1], pr[2], pr[3]]) | set(bnd)
+        for h in t_["houses"]:
+            keep_off |= rect_of(h["rect"])
+        rects = []
+        for b in cove["buildings"]:
+            rc = rect_of(b["rect"])
+            reach_ = rc | (steps_of(b) if "door" in b else set())
+            if reach_ - zcols:
+                probs.append("cove: %s reaches %d columns outside the zone" % (b["id"], len(reach_ - zcols)))
+            if reach_ & keep_off:
+                probs.append("cove: %s stands on the square, the yard, a way, the portal or the gate" % b["id"])
+            gs = [ground(*c) for c in rc]
+            lim = cove["max_range"] if "door" in b else cove["max_range_open"]
+            if max(gs) - min(gs) > lim or max(gs) > cove["max_ground"]:
+                probs.append("cove: %s stands on ground y%d-%d (at most %d apart, at most y%d)"
+                             % (b["id"], min(gs), max(gs), lim, cove["max_ground"]))
+            rects.append((b["id"], b["rect"]))
+        a0 = cove["alley"][0]
+        for i in range(len(rects)):
+            for k_ in range(i + 1, len(rects)):
+                (ia, ra), (ib, rb) = rects[i], rects[k_]
+                if ra[0] - a0 <= rb[2] and rb[0] - a0 <= ra[2] and ra[1] - a0 <= rb[3] and rb[1] - a0 <= ra[3]:
+                    probs.append("cove: %s and %s stand closer than the alley (%d)" % (ia, ib, a0))
+        # the cutting is a way, not a wall: level with its rasterised y along every column
+        for c in path_cols:
+            y = surface[c][0]
+            if final.get((c[0], y, c[1]), "minecraft:air") in AIRS or final.get((c[0], y + 1, c[1])) not in AIRS + (None,):
+                probs.append("cove: the cutting at %s is not a floor at y%d with air over it" % (c, y))
+                break
+
     # ---- the gate's rockfall and advancements
     lowrise = []
     for j, x, z, _nx, _nz in g["band"]["points"]:
@@ -452,6 +542,24 @@ def audit(source_root=None):
             lowrise.append((j, c))
     if lowrise:
         probs.append("gate: the rockfall is under 3 high over %d ring points of the gap, e.g. %s" % (len(lowrise), lowrise[:3]))
+    # every ring point of the gap stands under rock to the crest (the crest line between the measured crag tops, less
+    # the jag); the plug's to its flat top
+    js = [p[0] for p in g["band"]["points"]]
+    lowwall = []
+    for j, x, z, _nx, _nz in g["band"]["points"]:
+        c = (half_up(x), half_up(z))
+        jc = bnd.get(c, j)                     # the ring point whose claim the column keeps (geometry.band)
+        if abs(jc) <= g["plug"]["half_j"]:
+            want = g["plug"]["top_y"]
+        else:
+            lo, hi = crag.get(-1, 0), crag.get(1, 0)
+            want = lo + (hi - lo) * (jc - min(js)) / float(max(js) - min(js)) - 2 * wall["jag"]
+        if top(*c) >= want:
+            continue
+        if any(final.get((c[0], y, c[1]), "minecraft:air") in AIRS for y in range(top(*c) + 1, int(want) + 1)):
+            lowwall.append((j, c))
+    if lowwall:
+        probs.append("gate: the wall does not reach the crest over %d ring points of the gap, e.g. %s" % (len(lowwall), lowwall[:3]))
     flag = spec["flag"]["advancement"]
     knock = fn_text("gate/knock")
     if not re.search(r"execute if entity @s\[advancements=\{%s=true\}\] run tp @s " % re.escape(flag), knock) \
@@ -522,6 +630,10 @@ def audit(source_root=None):
         targets["%s's front" % f["id"]] = tuple(f["stand"])
     for bn in spec["cutters"]["benches"]:
         targets["the counter before %s" % bn["id"]] = tuple(bn["customer"])
+    # every cove house's doorway, its floor the highest ground under its rect (the heightmap)
+    for b in houses:
+        x, z = door_of(b)
+        targets["%s's doorway" % b["id"]] = (x, max(top(*c) for c in rect_of(b["rect"])) + 1, z)
     anchors = {}
     for s in spec["megas"]["slots"]:
         x, z = s["anchor"]
@@ -541,15 +653,12 @@ def audit(source_root=None):
     if (ax - X0, az - Z0, ay - Y0) in reach_out:
         probs.append("walk: from the turn-back point a walker reaches the arrival: the rockfall does not close the canyon")
 
-    # ---- the faces
-    tagname = "#cobblers:%s" % spec["faces"]["resettable_tag"]
-    tagfile = PACK / "data" / "cobblers" / "tags" / "block" / ("%s.json" % spec["faces"]["resettable_tag"])
-    tagvals = json.loads(tagfile.read_text(encoding="utf-8"))["values"] if tagfile.is_file() else []
-    if "minecraft:air" not in tagvals or spec["palette"]["meteorid"] not in tagvals or any("chest" in v or "barrel" in v for v in tagvals):
-        probs.append("faces: the resettable tag is missing, lacks air or the host, or would reset a container")
+    # ---- the faces: scenery, written once by the build, warded for good (SOUTHERN_RIFT_MEGA.md 13)
+    fbox = {}
     for f in spec["mine"]["faces"]:
         x0, y0, z0, x1, y1, z1 = f["box"]
         box = {(x, y, z) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)}
+        fbox[f["id"]] = box
         written = [final.get(c) for c in box]
         if None in written:
             probs.append("faces: %s's box is not written whole" % f["id"])
@@ -558,62 +667,104 @@ def audit(source_root=None):
             probs.append("faces: %s is built with %d crystals, the data says %d" % (f["id"], n0, f["crystals"]))
         if box & carved:
             probs.append("faces: %s's box is carved" % f["id"])
-        front = {"west": lambda c: c[0] == x0, "east": lambda c: c[0] == x1, "north": lambda c: c[2] == z0,
-                 "south": lambda c: c[2] == z1}[f["front"]]
-        for kk in range(spec["faces"]["variants"]):
-            body = fn_text("faces/%s_v%d" % (f["id"], kk)).splitlines()
-            fills = [ln for ln in body if ln.startswith("fill ")]
-            if fills != ["fill %d %d %d %d %d %d %s replace %s" % (x0, y0, z0, x1, y1, z1, spec["palette"]["meteorid"], tagname)]:
-                probs.append("faces: %s v%d is not one filtered fill of exactly its box" % (f["id"], kk))
-            sets = [ln for ln in body if "setblock" in ln]
-            unguarded = [ln for ln in sets if not ln.startswith("execute if block ") or tagname not in ln]
-            if unguarded:
-                probs.append("faces: %s v%d has %d unguarded setblocks" % (f["id"], kk, len(unguarded)))
-            cr = []
-            for ln in sets:
-                mm = re.search(r"run setblock (-?\d+) (-?\d+) (-?\d+) (\S+)", ln)
-                c = tuple(int(v) for v in mm.groups()[:3])
-                if c not in box:
-                    probs.append("faces: %s v%d writes outside its box at %s" % (f["id"], kk, c))
-                if "mega_stone_crystal" in mm.group(4):
-                    cr.append(c)
-            if len(cr) != f["crystals"] or sum(1 for c in cr if front(c) and c[1] == y0) != 1:
-                probs.append("faces: %s v%d has %d crystals, %d on the front's bottom row (want %d and 1)"
-                             % (f["id"], kk, len(cr), sum(1 for c in cr if front(c) and c[1] == y0), f["crystals"]))
-        chk = fn_text("faces/check_%s" % f["id"])
-        need = ["execute unless loaded %d %d %d run return 0" % (x0 - 1, y0 - 1, z0 - 1),
-                "execute unless loaded %d %d %d run return 0" % (x1 + 1, y1 + 1, z1 + 1),
-                "execute if entity @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d] run return 0" % (x0 - 1, y0 - 1, z0 - 1, x1 - x0 + 2, y1 - y0 + 2, z1 - z0 + 2),
-                "execute if entity @e[type=cobblemon:pokemon,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d] run return 0" % (x0 - 1, y0 - 1, z0 - 1, x1 - x0 + 2, y1 - y0 + 2, z1 - z0 + 2),
-                "execute if score #d gm.t < #period gm.t run return 0"]
-        for n_ in need:
-            if n_ not in chk:
-                probs.append("faces: %s's check lacks `%s`" % (f["id"], n_))
-    if "scoreboard players set #period gm.t %d" % spec["faces"]["period_ticks"] not in fn_text("load"):
-        probs.append("faces: the load function does not set the period to %d ticks" % spec["faces"]["period_ticks"])
+    # nothing outside the build's own passes writes a face: the restore cycle is retired
+    idx_files = {FN / (n + ".mcfunction") for n in names}
+    rewrites = []
+    for p_ in sorted(FN.rglob("*.mcfunction")):
+        if p_ in idx_files:
+            continue
+        for ln in p_.read_text(encoding="utf-8").splitlines():
+            mm = re.search(r"\b(fill|setblock|clone) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))?", ln)
+            if not mm:
+                continue
+            a = [int(v) for v in mm.groups()[1:4]]
+            b = [int(v) for v in mm.groups()[4:7]] if mm.group(5) else a
+            for fid, box in fbox.items():
+                xs = [c[0] for c in box]; ys = [c[1] for c in box]; zs = [c[2] for c in box]
+                if min(a[0], b[0]) <= max(xs) and max(a[0], b[0]) >= min(xs) and min(a[1], b[1]) <= max(ys) \
+                        and max(a[1], b[1]) >= min(ys) and min(a[2], b[2]) <= max(zs) and max(a[2], b[2]) >= min(zs):
+                    rewrites.append((p_.name, fid))
+    if rewrites:
+        probs.append("faces: functions outside the build write a face (the restore is retired): %s" % rewrites[:3])
+    tick_text = fn_text("tick")
+    wm = spec["faces"]["ward_margin"]
+    for f in spec["mine"]["faces"]:
+        x0, y0, z0, x1, y1, z1 = f["box"]
+        want = ("execute as @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,gamemode=!creative,gamemode=!spectator] run effect give @s "
+                "minecraft:mining_fatigue 3 3 true" % (x0 - wm, y0 - wm, z0 - wm, x1 - x0 + 2 * wm, y1 - y0 + 2 * wm, z1 - z0 + 2 * wm))
+        if want not in tick_text.splitlines():
+            probs.append("faces: %s is not warded every tick with margin %d" % (f["id"], wm))
+    if (PACK / "data" / "cobblers" / "tags" / "block").is_dir():
+        probs.append("faces: the retired restore's block tag is still in the pack")
     tick = json.loads((PACK / "data" / "minecraft" / "tags" / "function" / "tick.json").read_text(encoding="utf-8")) \
         if (PACK / "data" / "minecraft" / "tags" / "function" / "tick.json").is_file() else {"values": []}
     if "cobblers:gulch_mine/tick" not in tick["values"]:
         probs.append("faces: the pack's tick tag does not run the driver")
 
-    # ---- the Megas
-    leash = fn_text("leash")
-    for s in spec["megas"]["slots"]:
-        if s["id"] not in anchors:
-            continue
-        x, y, z = anchors[s["id"]]
-        sp = fn_text("megas/spawn_%s" % s["id"])
-        line = "spawnpokemonat %d %d %d %s %s uncatchable level=%d" % (x, y, z, s["species"], s["aspect"], s["level"])
-        if line not in sp:
-            probs.append("megas: %s's spawn is not `%s`" % (s["id"], line))
-        if "PersistenceRequired:1b" not in fn_text("megas/bind_%s" % s["id"]):
-            probs.append("megas: %s is not kept from the despawner" % s["id"])
+    # ---- the Megas: the mine's slots and the farms' dens, one keeper
+    mg = spec["megas"]
+    all_dens = [("mine", s) for s in mg["slots"]] + [(fa["id"], dn) for fa in spec.get("farms", []) for dn in fa["dens"]]
+    sa = fn_text("megas/spawn_at").strip().splitlines()
+    if sa != ["$spawnpokemonat $(x) $(y) $(z) $(species) $(aspect) uncatchable level=$(level)"]:
+        probs.append("megas: megas/spawn_at is not the one macro line (EXP-046: a plain spawn line does nothing after a restart)")
+    plain = [p_.name for p_ in FN.rglob("*.mcfunction")
+             if any(ln.startswith("spawnpokemonat ") or " run spawnpokemonat " in ln for ln in p_.read_text(encoding="utf-8").splitlines())]
+    if plain:
+        probs.append("megas: a plain spawnpokemonat line (parsed at start, it spawns nothing until /reload): %s" % plain[:3])
+    for site, s in all_dens:
+        if site == "mine":
+            if s["id"] not in anchors:
+                continue
+            x, y, z = anchors[s["id"]]
+        else:
+            x, y, z = s["anchor"]
+        i = s["id"]
+        sp = fn_text("megas/spawn_%s" % i)
+        call = "function cobblers:gulch_mine/megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\",aspect:\"%s\",level:%d}" % (
+            x, y, z, s["species"], s["aspect"], s["level"])
+        if call not in sp.splitlines():
+            probs.append("megas: %s's spawn is not `%s`" % (i, call))
+        if "execute positioned %d %d %d as @e[type=cobblemon:pokemon,tag=!%s,distance=..2,limit=1,sort=nearest] run function " \
+           "cobblers:gulch_mine/megas/bind_%s" % (x, y, z, mg["tag"], i) not in sp:
+            probs.append("megas: %s is not claimed in the function that spawns it" % i)
+        bind = fn_text("megas/bind_%s" % i)
+        if "PersistenceRequired:1b" not in bind or ("tag @s add %s.%s" % (mg["tag"], i)) not in bind \
+                or ("tag @s add %s" % mg["tag"]) not in bind.splitlines():
+            probs.append("megas: %s is not tagged and kept from the despawner" % i)
         want = "positioned %d %d %d unless entity @s[distance=..%d] run tp @s %d %d %d" % (x, y, z, s["leash"], x, y, z)
-        if want not in leash:
-            probs.append("megas: %s's leash is not `%s`" % (s["id"], want))
-        i0 = (x - X0, z - Z0, y - Y0)
-        if not stand[i0]:
-            probs.append("megas: %s's anchor %s is not a floor cell to stand on" % (s["id"], (x, y, z)))
+        if want not in fn_text("leash_%s" % site):
+            probs.append("megas: %s's leash is not `%s`" % (i, want))
+        if site == "mine":
+            i0 = (x - X0, z - Z0, y - Y0)
+            if not stand[i0]:
+                probs.append("megas: %s's anchor %s is not a floor cell to stand on" % (i, (x, y, z)))
+        # the respawn clock: gm.gone is written only by load when unset, by the keeper when a Mega is seen (-1) or first
+        # seen gone (the game time), and by the spawn (-1); the spawn waits gm.resp from it with nobody near
+        keep = fn_text("megas/keep_%s" % i).splitlines()
+        for need in ("execute if score #d gm.t < #%s gm.resp run return 0" % i,
+                     "execute if entity @a[x=%d,y=%d,z=%d,distance=..%d] run return 0" % (x, y, z, mg["spawn_clear"]),
+                     "execute if score #%s gm.gone matches -1 run function cobblers:gulch_mine/megas/gone_%s" % (i, i),
+                     "execute unless loaded %d %d %d run return 0" % (x, y, z)):
+            if need not in keep:
+                probs.append("megas: %s's keeper lacks `%s`" % (i, need))
+    allowed_gone = re.compile(r"^(execute unless score #(\w+) gm\.gone matches -2147483648\.\. run scoreboard players set #\2 gm\.gone 0"
+                              r"|execute if score #n gm\.t matches 1\.\. run scoreboard players set #\w+ gm\.gone -1"
+                              r"|scoreboard players operation #\w+ gm\.gone = #now gm\.t"
+                              r"|scoreboard players set #\w+ gm\.gone -1"
+                              r"|execute if score #\w+ gm\.gone matches -1 run function cobblers:gulch_mine/megas/gone_\w+"
+                              r"|scoreboard players operation #d gm\.t -= #\w+ gm\.gone"
+                              r"|scoreboard objectives add gm\.gone dummy)$")
+    for p_ in sorted(FN.rglob("*.mcfunction")):
+        rel = p_.relative_to(FN).as_posix()[:-len(".mcfunction")]
+        for ln in p_.read_text(encoding="utf-8").splitlines():
+            if "gm.gone" not in ln or ln.startswith("#"):
+                continue
+            if not allowed_gone.match(ln):
+                probs.append("megas: %s moves a respawn clock in a way the design does not allow: `%s`" % (rel, ln))
+            elif ln.startswith("scoreboard players set #") and ln.endswith("gm.gone -1") and not rel.startswith("megas/spawn_"):
+                probs.append("megas: %s clears a respawn clock outside a spawn: `%s`" % (rel, ln))
+            elif "= #now gm.t" in ln and not rel.startswith("megas/gone_"):
+                probs.append("megas: %s starts a respawn clock outside the keeper's first sight of a gone Mega: `%s`" % (rel, ln))
 
     # ---- the Cutters
     cu = spec["cutters"]

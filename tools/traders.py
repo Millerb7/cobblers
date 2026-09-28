@@ -62,7 +62,13 @@ LOAD_WAIT = 40      # ticks from forceload to summon: saved entities load within
 DEDUPE_WAIT = 100   # ticks from summon to the de-duplication and release
 SPOT_RADIUS = 3     # a trader wanders a little; further than this from its spot is not standing there
 PLAZA_MARGIN = 48    # force-loaded round the plaza, so strays that walked off are found too
-STOCKS = ("regional", "withdrawn", "mart")
+STOCKS = ("regional", "withdrawn", "mart", "stones")
+# The Exchange (docs/mechanics/STONE_ECONOMY.md section 8): a clerk whose shop is authored here, not filtered from its
+# template, selling the ten evolution stones at one price and buying nothing. The offer's shape, {Item:{count,id},
+# Price:"<n>"} with the price as a string, is the shape the shopkeeper templates themselves carry
+# (bca:stores/store_workers/shopkeeper_ds_general in COBBLEVERSE-DP-v31.zip, read 2026-09-28); that a shop authored
+# from scratch sells in game is proof P-7, not run.
+STONE_ITEM = re.compile(r"cobblemon:[a-z]+_stone")
 YAW = {"south": 0.0, "west": 90.0, "north": 180.0, "east": -90.0}
 
 
@@ -143,6 +149,17 @@ def mart_items(policy):
     return set(((policy or {}).get("mart") or {}).get("items") or [])
 
 
+def stone_items(policy):
+    return list(((policy or {}).get("stones") or {}).get("items") or [])
+
+
+def stone_shop(policy):
+    """The Exchange's CobbleMerchantShop: one category, every stone once at the policy's price, unlimited."""
+    st = policy["stones"]
+    return [{"Category": st["category"],
+             "Offers": [{"Item": {"count": 1, "id": iid}, "Price": str(int(st["price"]))} for iid in st["items"]]}]
+
+
 def apply_stock_policy(data, policy, stock=None):
     """(data with the shop filtered, kept item ids, withheld item ids).
 
@@ -152,6 +169,14 @@ def apply_stock_policy(data, policy, stock=None):
     (stock "mart") is the other way round: it sells only the policy's basic Mart items, whatever else the
     template carries."""
     shop = data.get("CobbleMerchantShop")
+    if stock == "stones":
+        # the Exchange: the template's whole shop is replaced by the authored one (nothing of it is kept)
+        if not stone_items(policy):
+            return data, [], []
+        held = [_v(_v(_v(off).get("Item")).get("id")) for cat in _v(shop or []) for off in _v(_v(cat).get("Offers")) or []]
+        out = dict(data)
+        out["CobbleMerchantShop"] = stone_shop(policy)
+        return out, stone_items(policy), held
     if shop is None or not policy:
         return data, None, []                      # nothing to filter: not "nothing left"
     cats_out, kept, held = [], [], []
@@ -238,6 +263,8 @@ def town_functions(town, recs, entity, policy=None):
         if rec.get("stock") == "mart":
             # the clerk is named for the shop, not for the template it was read from
             data["CustomName"] = json.dumps({"text": policy["mart"]["name"]}, ensure_ascii=False)
+        if rec.get("stock") == "stones":
+            data["CustomName"] = json.dumps({"text": policy["stones"]["name"]}, ensure_ascii=False)
         if rec.get("facing"):
             # NoAI never turns its head: a clerk summoned without a rotation stares at the wall behind the counter
             data["Rotation"] = [YAW[rec["facing"]], 0.0]
@@ -297,6 +324,23 @@ def static_problems(doc, placements_doc=None, plans_dir=None):
             out.append((rid, "facing must be one of %s" % ", ".join(YAW)))
         if r.get("stock") == "mart" and not mart_items(doc.get("stock_policy")):
             out.append((rid, "a Mart clerk, but stock_policy.mart lists no items"))
+        if r.get("stock") == "stones":
+            st = (doc.get("stock_policy") or {}).get("stones") or {}
+            items = st.get("items") or []
+            if not items:
+                out.append((rid, "the Exchange, but stock_policy.stones lists no items"))
+            bad = [i for i in items if not (isinstance(i, str) and STONE_ITEM.fullmatch(i))]
+            if bad:
+                out.append((rid, "stock_policy.stones sells %s, which is not an evolution stone id" % ", ".join(map(str, bad))))
+            if len(set(items)) != len(items):
+                out.append((rid, "stock_policy.stones lists an item twice"))
+            if st.get("buys") is not False:
+                out.append((rid, "stock_policy.stones must say buys: false: a face is an unlimited supply, so a stone "
+                                 "with a sell price makes it a money printer (STONE_ECONOMY.md section 8)"))
+            if not (isinstance(st.get("price"), int) and not isinstance(st.get("price"), bool) and st["price"] > 0):
+                out.append((rid, "stock_policy.stones.price must be a positive integer"))
+            if not (isinstance(st.get("name"), str) and st["name"] and isinstance(st.get("category"), str) and st["category"]):
+                out.append((rid, "stock_policy.stones needs a name and a category"))
         if r.get("status") not in STATUSES:
             out.append((rid, "status must be one of %s" % ", ".join(STATUSES)))
         if towns and r.get("settlement") not in towns:
@@ -359,9 +403,9 @@ def rcon_counts(server_dir, recs, settle=(4, 30), policy=None, leaks=None):
                     shop = run("data get entity @e[tag=%s,limit=1] CobbleMerchantShop" % tag_of(r["id"]))
                     ids = set(re.findall(r'id: "([^"]+)"', shop))
                     cats = set(re.findall(r'Category: "([^"]+)"', shop))
-                    if r.get("stock") == "mart":
-                        # a Mart sells the basic items and nothing else, and all of them
-                        want = mart_items(policy)
+                    if r.get("stock") in ("mart", "stones"):
+                        # a Mart sells the basic items and nothing else, and all of them; the Exchange the stones
+                        want = mart_items(policy) if r.get("stock") == "mart" else set(stone_items(policy))
                         bad = sorted(ids - want) + sorted("missing " + i for i in want - ids)
                     else:
                         bad = sorted(ids & held) + sorted("category " + c for c in cats & set(policy.get("withhold_categories") or []))
@@ -470,6 +514,8 @@ def main(argv=None):
                     raise SystemExit("%s: a Mart clerk read from %s, which does not sell %s"
                                      % (r["id"], r["template"], ", ".join(sorted(missing))))
                 continue
+            if r.get("stock") == "stones":
+                continue                                   # authored, not filtered: static_problems checked it
             want = "withdrawn" if kept == [] else "regional"
             if r.get("stock") != want:
                 raise SystemExit("%s: data/traders.json says stock %r, but the stock policy leaves it %s (%d kept, %d "

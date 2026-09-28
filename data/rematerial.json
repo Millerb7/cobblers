@@ -414,6 +414,196 @@
         "minecraft:dark_oak_stairs": "minecraft:tuff_brick_stairs",
         "minecraft:dark_oak_slab": "minecraft:tuff_brick_slab"
       }
+    },
+    "brock_mason_a": {
+      "why": "Brock's masons build in the plateau's stone (TOWN_CHARACTER.md palette: stone, polished andesite, cobblestone, tuff, calcite; stripped birch and spruce timber): the plains houses' cobblestone becomes stone brick, the white terracotta calcite, the birch roofs spruce",
+      "map": {
+        "minecraft:cobblestone": "minecraft:stone_bricks",
+        "minecraft:cobblestone_stairs": "minecraft:stone_brick_stairs",
+        "minecraft:cobblestone_wall": "minecraft:stone_brick_wall",
+        "minecraft:white_terracotta": "minecraft:calcite",
+        "minecraft:birch_stairs": "minecraft:spruce_stairs",
+        "minecraft:birch_slab": "minecraft:spruce_slab",
+        "minecraft:birch_fence": "minecraft:spruce_fence",
+        "minecraft:smooth_stone_slab": "minecraft:polished_andesite_slab"
+      }
+    },
+    "brock_mason_b": {
+      "why": "the second mason's house: polished andesite walls and tuff trim, the birch kept, so the street is not one stone",
+      "map": {
+        "minecraft:cobblestone": "minecraft:polished_andesite",
+        "minecraft:cobblestone_stairs": "minecraft:polished_andesite_stairs",
+        "minecraft:cobblestone_wall": "minecraft:andesite_wall",
+        "minecraft:white_terracotta": "minecraft:tuff_bricks",
+        "minecraft:birch_planks": "minecraft:spruce_planks",
+        "minecraft:smooth_stone_slab": "minecraft:tuff_slab"
+      }
+    },
+    "misty_rescue_a": {
+      "why": "Misty's lake town (palette: prismarine and mud brick streets, dark oak, spruce): the oak houses in dark oak on mud brick, cyan terracotta prismarine brick",
+      "map": {
+        "minecraft:oak_stairs": "minecraft:dark_oak_stairs",
+        "minecraft:oak_planks": "minecraft:dark_oak_planks",
+        "minecraft:oak_slab": "minecraft:dark_oak_slab",
+        "minecraft:oak_fence": "minecraft:dark_oak_fence",
+        "minecraft:oak_trapdoor": "minecraft:dark_oak_trapdoor",
+        "minecraft:stripped_oak_log": "minecraft:stripped_dark_oak_log",
+        "minecraft:cobblestone": "minecraft:mud_bricks",
+        "minecraft:cobblestone_stairs": "minecraft:mud_brick_stairs",
+        "minecraft:cyan_terracotta": "minecraft:prismarine_bricks"
+      }
+    },
+    "misty_rescue_b": {
+      "why": "the second lake house: spruce, the other timber of Misty's palette, on the same mud brick and prismarine, so the shore is not one wood",
+      "map": {
+        "minecraft:oak_stairs": "minecraft:spruce_stairs",
+        "minecraft:oak_planks": "minecraft:spruce_planks",
+        "minecraft:oak_slab": "minecraft:spruce_slab",
+        "minecraft:oak_fence": "minecraft:spruce_fence",
+        "minecraft:oak_trapdoor": "minecraft:spruce_trapdoor",
+        "minecraft:stripped_oak_log": "minecraft:stripped_spruce_log",
+        "minecraft:cobblestone": "minecraft:mud_bricks",
+        "minecraft:cobblestone_stairs": "minecraft:mud_brick_stairs",
+        "minecraft:cyan_terracotta": "minecraft:prismarine_bricks"
+      }
+    },
+    "erika_garden": {
+      "why": "Erika's garden town (palette: moss, packed mud, cherry and oak): the cherry houses keep their cherry; brick becomes packed mud and mud brick, the oak mossy",
+      "map": {
+        "minecraft:bricks": "minecraft:packed_mud",
+        "minecraft:brick_stairs": "minecraft:mud_brick_stairs",
+        "minecraft:brick_wall": "minecraft:mud_brick_wall",
+        "minecraft:oak_wood": "minecraft:stripped_cherry_wood",
+        "minecraft:stripped_oak_log": "minecraft:stripped_cherry_log"
+      }
+    },
+    "koga_fen_a": {
+      "why": "Koga's fen-edge watch town (palette: mangrove, mud brick, packed mud, bamboo, dark oak): oak becomes dark oak and mangrove, terracotta packed mud",
+      "map": {
+        "minecraft:oak_stairs": "minecraft:dark_oak_stairs",
+        "minecraft:oak_wood": "minecraft:dark_oak_wood",
+        "minecraft:stripped_oak_log": "minecraft:stripped_mangrove_log",
+        "minecraft:stripped_oak_wood": "minecraft:stripped_mangrove_wood",
+        "minecraft:terracotta": "minecraft:packed_mud",
+        "minecraft:spruce_stairs": "minecraft:mangrove_stairs",
+        "minecraft:oak_trapdoor": "minecraft:mangrove_trapdoor",
+        "minecraft:oak_slab": "minecraft:dark_oak_slab"
+      }
+    },
+    "koga_fen_b": {
+      "why": "the second fen house: mangrove stairs and bamboo trim, so the watch town is not one timber",
+      "map": {
+        "minecraft:oak_stairs": "minecraft:mangrove_stairs",
+        "minecraft:oak_wood": "minecraft:mangrove_wood",
+        "minecraft:stripped_oak_log": "minecraft:stripped_bamboo_block",
+        "minecraft:terracotta": "minecraft:mud_bricks",
+        "minecraft:spruce_stairs": "minecraft:bamboo_stairs",
+        "minecraft:oak_trapdoor": "minecraft:bamboo_trapdoor",
+        "minecraft:oak_slab": "minecraft:mangrove_slab"
+      }
+    },
+    "sabrina_study_a": {
+      "why": "Sabrina's place of study (palette: calcite, polished diorite, birch; no quartz, a spawn condition): the stone and cobble in polished diorite and calcite, the spruce frames birch",
+      "map": {
+        "minecraft:stone_bricks": "minecraft:polished_diorite",
+        "minecraft:stone_brick_stairs": "minecraft:polished_diorite_stairs",
+        "minecraft:stone_brick_wall": "minecraft:diorite_wall",
+        "minecraft:cobblestone": "minecraft:polished_diorite",
+        "minecraft:cobblestone_stairs": "minecraft:polished_diorite_stairs",
+        "minecraft:stone": "minecraft:calcite",
+        "minecraft:white_terracotta": "minecraft:calcite",
+        "minecraft:spruce_log": "minecraft:birch_log",
+        "minecraft:spruce_trapdoor": "minecraft:birch_trapdoor"
+      }
+    },
+    "sabrina_study_b": {
+      "why": "the second study house: calcite and smooth stone, stripped birch frames",
+      "map": {
+        "minecraft:stone_bricks": "minecraft:smooth_stone",
+        "minecraft:stone_brick_stairs": "minecraft:diorite_stairs",
+        "minecraft:stone_brick_wall": "minecraft:diorite_wall",
+        "minecraft:cobblestone": "minecraft:calcite",
+        "minecraft:cobblestone_stairs": "minecraft:diorite_stairs",
+        "minecraft:stone": "minecraft:calcite",
+        "minecraft:spruce_log": "minecraft:stripped_birch_log",
+        "minecraft:spruce_trapdoor": "minecraft:birch_trapdoor"
+      }
+    },
+    "blaine_rim": {
+      "why": "Blaine's crater-rim research town (palette: blackstone, basalt, tuff, terracotta; acacia houses): dark oak frames become basalt and blackstone, the smooth red sandstone tuff",
+      "map": {
+        "minecraft:dark_oak_log": "minecraft:basalt",
+        "minecraft:dark_oak_stairs": "minecraft:blackstone_stairs",
+        "minecraft:dark_oak_planks": "minecraft:polished_blackstone",
+        "minecraft:smooth_red_sandstone_stairs": "minecraft:tuff_stairs",
+        "minecraft:smooth_red_sandstone_slab": "minecraft:tuff_slab",
+        "minecraft:smooth_red_sandstone": "minecraft:tuff"
+      }
+    },
+    "giovanni_garrison_a": {
+      "why": "Giovanni's garrison (palette: terracotta, polished granite, spruce, coarse dirt): the desert houses' sandstone becomes polished granite and terracotta, their sand coarse dirt",
+      "map": {
+        "minecraft:smooth_sandstone": "minecraft:polished_granite",
+        "minecraft:cut_sandstone": "minecraft:terracotta",
+        "minecraft:smooth_sandstone_slab": "minecraft:polished_granite_slab",
+        "minecraft:smooth_sandstone_stairs": "minecraft:polished_granite_stairs",
+        "minecraft:sandstone_wall": "minecraft:granite_wall",
+        "minecraft:sandstone_slab": "minecraft:granite_slab",
+        "minecraft:sand": "minecraft:coarse_dirt"
+      }
+    },
+    "giovanni_garrison_b": {
+      "why": "the second garrison house: terracotta walls on granite and its cobble footings in mud brick (the palette's sandbag brick), so the garrison is not one colour",
+      "map": {
+        "minecraft:smooth_sandstone": "minecraft:terracotta",
+        "minecraft:cut_sandstone": "minecraft:polished_granite",
+        "minecraft:smooth_sandstone_slab": "minecraft:granite_slab",
+        "minecraft:smooth_sandstone_stairs": "minecraft:granite_stairs",
+        "minecraft:sandstone_wall": "minecraft:granite_wall",
+        "minecraft:sandstone_slab": "minecraft:polished_granite_slab",
+        "minecraft:sand": "minecraft:coarse_dirt",
+        "minecraft:cobblestone": "minecraft:mud_bricks",
+        "minecraft:cobblestone_stairs": "minecraft:mud_brick_stairs",
+        "minecraft:cobblestone_wall": "minecraft:mud_brick_wall"
+      }
+    },
+    "northlight_cold": {
+      "why": "Northlight (palette: deepslate, spruce, packed ice, light-blue glass): the snowy spruce houses keep their spruce and ice; light-blue glass, and their cobble, diorite and smooth stone trim in deepslate",
+      "map": {
+        "minecraft:glass_pane": "minecraft:light_blue_stained_glass_pane",
+        "minecraft:cobblestone_wall": "minecraft:cobbled_deepslate_wall",
+        "minecraft:diorite": "minecraft:polished_deepslate",
+        "minecraft:cobblestone": "minecraft:cobbled_deepslate",
+        "minecraft:smooth_stone_slab": "minecraft:polished_deepslate_slab"
+      }
+    },
+    "sunset_harbour_a": {
+      "why": "Sunset West's harbour (palette: brick streets, polished granite, spruce, oak): the cobble becomes brick, the oak roofs spruce",
+      "map": {
+        "minecraft:cobblestone": "minecraft:bricks",
+        "minecraft:cobblestone_stairs": "minecraft:brick_stairs",
+        "minecraft:oak_stairs": "minecraft:spruce_stairs",
+        "minecraft:oak_slab": "minecraft:spruce_slab",
+        "minecraft:white_terracotta": "minecraft:polished_granite",
+        "minecraft:cobblestone_wall": "minecraft:brick_wall"
+      }
+    },
+    "sunset_harbour_b": {
+      "why": "the second harbour house: polished granite footings, the oak kept",
+      "map": {
+        "minecraft:cobblestone": "minecraft:polished_granite",
+        "minecraft:cobblestone_stairs": "minecraft:polished_granite_stairs",
+        "minecraft:white_terracotta": "minecraft:bricks",
+        "minecraft:cobblestone_wall": "minecraft:granite_wall"
+      }
+    },
+    "tea_terrace": {
+      "why": "the tea town (palette: mossy stone brick, bamboo, cherry): the bamboo houses keep their bamboo; mud brick becomes mossy stone brick, packed mud mossy cobble, the yellow trim cherry",
+      "map": {
+        "minecraft:mud_bricks": "minecraft:mossy_stone_bricks",
+        "minecraft:packed_mud": "minecraft:mossy_cobblestone",
+        "minecraft:yellow_terracotta": "minecraft:cherry_planks"
+      }
     }
   }
 }
