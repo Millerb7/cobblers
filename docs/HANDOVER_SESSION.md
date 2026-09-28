@@ -8,12 +8,12 @@ file once its threads are picked up or moved into STATE.
 
 - **`session/morning-tests` is the whole batch**: every commit since main's `b5bb9bb` (PR #82), about 77 commits. It
   merged in its topic branches as it went: `tests/gulch-and-boats`, `design/water-shape-run` and
-  `design/water-shape-polish`. **No PR is open.** The owner's rule is one draft PR per batch, not a stack
-  (memory `one-big-pr-per-batch`). Open it from this branch with the `open-pr` skill, and report its full head SHA
-  with `gh pr merge <N> --match-head-commit <sha>`.
-- **Main does not have any of this batch.** A new session that starts from `origin/main` starts without the blackout
-  recovery, the swim rules, the gulch prototype, the ferries, the water-shape design and this file. Either merge the
-  batch's PR first, or start the new session on `session/morning-tests`.
+  `design/water-shape-polish`. It is handed over as one draft PR, **Millerb7/cobblers#83**, per the owner's rule
+  of one PR per batch (memory `one-big-pr-per-batch`). The branch is now frozen: push nothing more to it. New work
+  goes on a new branch from main after #83 merges.
+- **Main has none of this batch until #83 merges.** A new session that starts from `origin/main` before that has
+  none of the blackout recovery, the swim rules, the gulch prototype, the ferries, the water-shape design or this file.
+  Confirm first with `git fetch` and `git merge-base --is-ancestor <#83's head> origin/main`.
 - **Other remote branches not merged into main:**
 
   | Branch | What it has | Action |
