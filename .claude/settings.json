@@ -1,7 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
-    "COBBLERS_SOURCE_ROOT": "C:\\Users\\wnd\\Documents"
+    "COBBLERS_SOURCE_ROOT": "C:\\Users\\wnd\\Documents",
+    "COBBLERS_LOCAL_STORE": "C:\\Users\\wnd\\Documents\\cobblers-local"
+  },
+  "worktree": {
+    "baseRef": "head"
   },
   "permissions": {
     "allow": [
