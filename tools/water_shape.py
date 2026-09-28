@@ -55,7 +55,7 @@ Image.MAX_IMAGE_PIXELS = None
 ROOT = T.ROOT
 SPEC = ROOT / "data" / "water_shape.json"
 SEA = 62
-FAMILIES = ("rivers", "stream", "lakes", "coasts", "seabed")
+FAMILIES = ("rivers", "stream", "lakes", "seabed", "bank", "coasts")
 WORLD_READS = ()          # heightmap and data only; never a world
 
 SQ2, SQ5 = math.sqrt(2.0), math.sqrt(5.0)
@@ -325,14 +325,18 @@ class Ctx:
         self.features.append({"id": fid, "family": family, "held_protected": 0, "held_clash": 0, **info})
         return len(self.features) - 1
 
-    def write(self, k, box, new, mask):
+    def write(self, k, box, new, mask, over=()):
         """Propose ground `new` (over the box) where `mask`. Protected columns and columns another feature already
-        owns are held off and counted; the rest are written and owned by feature k."""
+        owns are held off and counted, except a declared family's in `over` (the bank reshapes the sea floor's fill
+        round the removed island); the rest are written and owned by feature k."""
         s = sl(box)
         cur, own, prot = self.G1[s], self.owner[s], self.P[s]
         want = mask & (new != cur)
         held = want & prot
         clash = want & ~prot & (own != 0) & (own != k)
+        if over:
+            idx = [i for i, f in enumerate(self.features) if f.get("family") in over]
+            clash &= ~np.isin(own, idx)
         ok = want & ~prot & ~clash
         np.copyto(cur, np.asarray(new, np.int16), where=ok)
         own[ok] = k
@@ -392,11 +396,13 @@ def build_protect(ctx):
 
     towns = load("towns.json")["towns"]
     m = int(spec["town_margin_blocks"])
+    released = {r["town"] for r in spec.get("release_towns", [])}
     for t in towns:
         fp = t.get("footprint") or {}
-        if fp.get("min_x") is None:
+        if fp.get("min_x") is None or t["id"] in released:
             continue
-        box = clip_box(fp["min_x"] - m, fp["min_z"] - m, fp["max_x"] + m + 1, fp["max_z"] + m + 1, N)
+        mt = int(spec.get("town_margin_overrides", {}).get(t["id"], m))
+        box = clip_box(fp["min_x"] - mt, fp["min_z"] - mt, fp["max_x"] + mt + 1, fp["max_z"] + mt + 1, N)
         add("towns", box, np.ones((box[3] - box[1], box[2] - box[0]), bool))
 
     lines = []
@@ -566,7 +572,51 @@ def overlay_ground(ctx, G, names):
         level, deck = sea_town.deck_ground(ctx.world)
         for x, z in deck:
             out[(int(x), int(z))] = int(level)
+    if "sea_town_resite" in names:
+        import sea_town
+        level, deck = sea_town.deck_ground(ctx.world, resite=True)
+        for x, z in deck:
+            out[(int(x), int(z))] = int(level)
     return out
+
+
+def land_mask(ctx, G, when):
+    """Dry ground for a crossing's endpoints: before the revision the Jungle Isle's land is left out (it is removed,
+    so it cannot be the far shore of a crossing measured for after)."""
+    m = G >= SEA
+    if when == "before" and ctx.spec.get("jungle_isle_bank"):
+        bbox, isl = bank_island(ctx)
+        m = m.copy()
+        m[sl(bbox)] &= ~isl
+    return m
+
+
+def to_town_endpoints(ctx, c, G, when):
+    """The nearest pair of a dry column (anywhere, the removed island left out) and a cell of the re-sited town: a
+    deck cell, or, after the revision, 1-deep rest ground within the town's zone."""
+    deck = resited_town(ctx)["deck"]            # the town itself: its mainland jetty is on the far shore
+    xs = np.array([p[0] for p in deck])
+    zs = np.array([p[1] for p in deck])
+    pad = 1600
+    box = clip_box(xs.min() - pad, zs.min() - pad, xs.max() + pad + 1, zs.max() + pad + 1, ctx.N)
+    tm = np.zeros((box[3] - box[1], box[2] - box[0]), bool)
+    tm[zs - box[1], xs - box[0]] = True
+    if when == "after" and getattr(ctx, "bank_run", None) is not None:
+        br = ctx.bank_run
+        bb = br["box"]
+        a0, a1 = max(box[1], bb[1]), min(box[3], bb[3])
+        b0, b1 = max(box[0], bb[0]), min(box[2], bb[2])
+        tz = br["town_zone"][a0 - bb[1]:a1 - bb[1], b0 - bb[0]:b1 - bb[0]]
+        rest = (G[a0:a1, b0:b1] >= SEA - 1)
+        tm[a0 - box[1]:a1 - box[1], b0 - box[0]:b1 - box[0]] |= tz & rest
+    land = land_mask(ctx, G, when)[sl(box)] & ~tm
+    d = distance_scaled(tm, None, 4)
+    dl = np.where(land, d, np.inf)
+    iz, ix = np.unravel_index(int(np.argmin(dl)), dl.shape)
+    lx, lz = ix + box[0], iz + box[1]
+    tz_, tx_ = np.nonzero(tm)
+    j = int(np.argmin((tx_ + box[0] - lx) ** 2 + (tz_ + box[1] - lz) ** 2))
+    return (int(lx), int(lz)), (int(tx_[j] + box[0]), int(tz_[j] + box[1]))
 
 
 def region_land_cells(ctx, G, rid, grow_by=24):
@@ -670,11 +720,18 @@ def crossings_pass(ctx, when, G):
     res = {}
     for c in ctx.spec["crossings"]:
         over = overlay_ground(ctx, G, c.get("overlays", []))
-        if when == "before":
+        if c["kind"] == "to_town":
+            a, b = to_town_endpoints(ctx, c, G, when)
+            ctx.crossing_lines[c["id"]] = (a, b)
+        elif when == "before":
             a, b = crossing_endpoints(ctx, c, G)
             ctx.crossing_lines[c["id"]] = (a, b)
         else:
             a, b = ctx.crossing_lines[c["id"]]
+        if when == "before" and c.get("measure_before") is False:
+            res[c["id"]] = {"from": list(a), "to": list(b),
+                            "not_measured": "the line runs over the Jungle Isle's land before the revision"}
+            continue
         m = measure_line(G, over, a, b)
         entry = {"from": list(a), "to": list(b)}
         if m["depths"]:
@@ -699,11 +756,15 @@ def crossings_pass(ctx, when, G):
     return res
 
 
-def gate_lines(ctx):
+def gate_lines(ctx, only_gates=False):
     out = []
     for c in ctx.spec["crossings"]:
-        if (c.get("require_after") or {}).get("gate") or (c.get("require_after") or {}).get("unchanged"):
-            out.append(ctx.crossing_lines[c["id"]])
+        req = c.get("require_after") or {}
+        if req.get("gate") or (not only_gates and (req.get("unchanged") or req.get("rates_unchanged"))):
+            if only_gates and c.get("strait_trough") is False:
+                continue
+            if c["id"] in ctx.crossing_lines:
+                out.append(ctx.crossing_lines[c["id"]])
     return out
 
 
@@ -884,6 +945,36 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
             ex_, ez_ = c2["graded_polyline"][-1][:2]
             junctions.append(float(C[int(np.argmin((X - ex_) ** 2 + (Z - ez_) ** 2))]))
     rep["junctions_m"] = [round(j, 1) for j in junctions]
+    # planform smoothing: a gentle curve through the graded course's vertex kinks (no loops), inside the room the
+    # valley gives; the meander windows then swing about the smoothed line
+    for e in entries:
+        if kind_of(e) != "smooth":
+            continue
+        win = (C >= e["from_m"]) & (C <= e["to_m"]) & ~wb & ~near_lake
+        ii = np.nonzero(win)[0]
+        if len(ii) < 20:
+            raise ShapeError("%s: the window %s-%s holds no river stations" % (e["id"], e["from_m"], e["to_m"]))
+        sig = float(e["sigma_blocks"])
+        k = np.arange(-int(3 * sig), int(3 * sig) + 1)
+        ker = np.exp(-0.5 * (k / sig) ** 2)
+        ker /= ker.sum()
+        Xs = np.convolve(np.pad(X[ii], len(k) // 2, mode="edge"), ker, mode="valid")
+        Zs = np.convolve(np.pad(Z[ii], len(k) // 2, mode="edge"), ker, mode="valid")
+        Ys = (Xs - X[ii]) * nx[ii] + (Zs - Z[ii]) * nz[ii]
+        a, b = C[ii[0]], C[ii[-1]]
+        t = np.clip(np.minimum(C[ii] - a, b - C[ii]) / (2.0 * sig), 0.0, 1.0)
+        for cj in junctions:
+            t = np.minimum(t, np.clip((np.abs(C[ii] - cj) - 6.0) / (2.0 * sig), 0.0, 1.0))
+        Ys = Ys * (0.5 - 0.5 * np.cos(np.pi * t))
+        A = allowed_amplitude(ctx, X[ii], Z[ii], nx[ii], nz[ii], S[ii], width[ii] / 2.0, [rat[i] for i in ii],
+                              dict(e, belt="measured"), dflt)
+        Ys = np.clip(Ys, -A, A)
+        Ys = running(Ys, int(sig), "mean")
+        Yoff[ii] += Ys
+        rep["windows"].append({"id": e["id"], "kind": "smooth", "from_m": float(a), "to_m": float(b),
+                               "sigma": sig, "offset_max": round(float(np.abs(Ys).max()), 1),
+                               "offset_median": round(float(np.median(np.abs(Ys))), 1),
+                               "kink_before_deg": round(float(np.degrees(np.abs(np.diff(np.unwrap(np.arctan2(np.diff(Z[ii]), np.diff(X[ii])))))).max()), 1)})
     for e in entries:
         if kind_of(e) != "meander":
             continue
@@ -898,7 +989,8 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
             raise ShapeError("%s: the window %s-%s holds no river stations" % (e["id"], e["from_m"], e["to_m"]))
         a, b = C[ii[0]], C[ii[-1]]
         hw = width[ii] / 2.0
-        A = allowed_amplitude(ctx, X[ii], Z[ii], nx[ii], nz[ii], S[ii], hw, [rat[i] for i in ii], e, dflt)
+        Xb, Zb = X[ii] + nx[ii] * Yoff[ii], Z[ii] + nz[ii] * Yoff[ii]
+        A = allowed_amplitude(ctx, Xb, Zb, nx[ii], nz[ii], S[ii], hw, [rat[i] for i in ii], e, dflt)
         omega = math.radians(e["omega_deg"])
         cn_t, yn_t, ratio, sin_nom, u0 = shape_table(omega)
         wmed = float(np.median(width[ii]))
@@ -919,7 +1011,7 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
         lam_s = lam * (1.0 + jl * (2.0 * nl - 1.0))
         phase = u0 + np.concatenate([[0.0], np.cumsum(np.diff(sw) / lam_s[1:])])
         A = A * (1.0 - ja * na)
-        Yoff[ii] = A * np.interp(phase % 1.0, cn_t, yn_t)
+        Yoff[ii] = Yoff[ii] + A * np.interp(phase % 1.0, cn_t, yn_t)
         rep["windows"].append({"id": e["id"], "kind": "meander", "from_m": float(a), "to_m": float(b),
                                "wavelength": round(lam, 1), "amplitude_median": round(float(np.median(A)), 1),
                                "amplitude_max": round(float(A.max()), 1), "omega_deg": e["omega_deg"],
@@ -960,6 +1052,8 @@ def reshape_course(ctx, GR, course, entries, dflt, kind_of):
         if len(jj) < 8:
             raise ShapeError("%s: fewer than 8 stations in its window" % e["id"])
         touched[jj] = True
+        if kind == "smooth":
+            continue
         rng = rng_for("rivers", e["id"])
         if kind == "meander":
             pr = dict(dflt["pools_riffles"])
@@ -1267,7 +1361,8 @@ def rivers_pass(ctx):
     spec = ctx.spec["rivers"]
     dflt = spec["defaults"]
     doc = load("rivers.json")
-    entries = [dict(e, _kind="meander") for e in spec["meanders"]] + [dict(e, _kind="cascades") for e in spec["cascades"]]
+    entries = [dict(e, _kind="smooth") for e in spec.get("smooth", [])] + \
+        [dict(e, _kind="meander") for e in spec["meanders"]] + [dict(e, _kind="cascades") for e in spec["cascades"]]
     by_course = {}
     for e in entries:
         by_course.setdefault(e["course"], []).append(e)
@@ -1291,12 +1386,12 @@ def rivers_pass(ctx):
 # ---------------------------------------------------------------------------------------------------- the stream
 
 
-def stream_pass(ctx):
-    st = ctx.spec["viltri_ravine_stream"]
+def ravine_axis(st):
+    """(pass, sea half polyline, lake half polyline) of the Viltri Ravine: its channel axis in data/landmarks.json split
+    at the pass, each half running away from the pass."""
     lm = next(l for l in load("landmarks.json")["landmarks"] if l["id"] == "viltri_ravine")
     axis = next(a for a in lm["axes"] if a["id"] == "channel")["polyline"]
     px, pz = st["pass"]
-    # the sea half: from the pass along the axis to its low end
     best, bi = None, 0
     for i in range(len(axis) - 1):
         (ax, az), (bx, bz) = axis[i], axis[i + 1]
@@ -1307,7 +1402,12 @@ def stream_pass(ctx):
             best, bi = d, i
     if best > 40:
         raise ShapeError("the pass (%d, %d) is %.0f blocks off the ravine's axis" % (px, pz, best))
-    poly = [(px, pz)] + [tuple(p) for p in axis[bi + 1:]]
+    sea = [(px, pz)] + [tuple(p) for p in axis[bi + 1:]]
+    lake = [(px, pz)] + [tuple(p) for p in axis[:bi + 1][::-1]]
+    return (px, pz), sea, lake
+
+
+def _densify(poly, step):
     xs, zs = [], []
     for (ax, az), (bx, bz) in zip(poly, poly[1:]):
         kk = max(1, int(math.ceil(math.hypot(bx - ax, bz - az))))
@@ -1316,16 +1416,28 @@ def stream_pass(ctx):
             zs.append(az + (bz - az) * s / kk)
     xs.append(poly[-1][0])
     zs.append(poly[-1][1])
-    xs, zs = np.array(xs), np.array(zs)
-    step = int(st["station_step_blocks"])
-    xs, zs = xs[::step], zs[::step]
+    return np.array(xs)[::step], np.array(zs)[::step]
+
+
+def stream_half(ctx, st, hf):
+    """One of the Viltri Ravine's two streams, rising at a spring beside the pass and running away from it: the sea
+    half to the Mouth of Viltri, the lake half to Lake Viltri. The surface never rises downstream and is never held
+    above ground it could spill over; where the floor dips below the surface the water stands as a pool (the lake
+    half's counter-rises), deepest at the dips and no deeper than max_pool_depth below the lowest floor upstream,
+    except where the lake itself holds it; where a rise would hold more, the lip is cut."""
+    cfg = dict(st)
+    cfg.update(hf)
+    (px, pz), sea_poly, lake_poly = ravine_axis(st)
+    poly = sea_poly if hf["direction"] == "to_sea" else lake_poly
+    step = int(cfg["station_step_blocks"])
+    xs, zs = _densify(poly, step)
     n = len(xs)
     tx, tz = np.gradient(xs), np.gradient(zs)
     tl = np.hypot(tx, tz)
     tl[tl == 0] = 1
     nx, nz = -tz / tl, tx / tl
     G = ctx.G0
-    reach = int(st["thalweg_search_blocks"])
+    reach = int(cfg["thalweg_search_blocks"])
     tx_, tz_ = [], []
     for i in range(n):
         cand = []
@@ -1337,33 +1449,64 @@ def stream_pass(ctx):
         tz_.append(cand[0][3])
     sx = running(np.array(tx_, float), 5, "mean")
     sz = running(np.array(tz_, float), 5, "mean")
-    # to the sea: steepest non-rising ground from the low end
     ext = []
-    cx, cz = int(round(sx[-1])), int(round(sz[-1]))
-    seen = {(cx, cz)}
-    for _ in range(int(st["to_sea"]["max_extension_blocks"])):
-        if G[cz, cx] < SEA and not ctx.lake_mask[cz, cx]:
-            break
-        opts = []
-        for dz in (-1, 0, 1):
-            for dx in (-1, 0, 1):
-                if dx == 0 and dz == 0:
-                    continue
-                x, z = cx + dx, cz + dz
-                if (x, z) in seen or ctx.P[z, x]:
-                    continue
-                opts.append((int(G[z, x]), abs(dx) + abs(dz), x, z))
-        if not opts:
-            break
-        opts.sort()
-        if opts[0][0] > G[cz, cx] + 1:
-            break
-        cx, cz = opts[0][2], opts[0][3]
-        seen.add((cx, cz))
-        ext.append((cx, cz))
-    if G[cz, cx] >= SEA:
-        raise ShapeError("the Viltri Ravine stream does not reach the sea within %d blocks of the axis's low end "
-                         "(stopped at (%d, %d), ground y%d)" % (st["to_sea"]["max_extension_blocks"], cx, cz, G[cz, cx]))
+    end_level = SEA
+    if hf["direction"] == "to_sea":
+        # to the sea: steepest non-rising ground from the low end
+        cx, cz = int(round(sx[-1])), int(round(sz[-1]))
+        seen = {(cx, cz)}
+        for _ in range(int(cfg["to_sea"]["max_extension_blocks"])):
+            if G[cz, cx] < SEA and not ctx.lake_mask[cz, cx]:
+                break
+            opts = []
+            for dz in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    if dx == 0 and dz == 0:
+                        continue
+                    x, z = cx + dx, cz + dz
+                    if (x, z) in seen or ctx.P[z, x]:
+                        continue
+                    opts.append((int(G[z, x]), abs(dx) + abs(dz), x, z))
+            if not opts:
+                break
+            opts.sort()
+            if opts[0][0] > G[cz, cx] + 1:
+                break
+            cx, cz = opts[0][2], opts[0][3]
+            seen.add((cx, cz))
+            ext.append((cx, cz))
+        if G[cz, cx] >= SEA:
+            raise ShapeError("the Viltri Ravine stream does not reach the sea within %d blocks of the axis's low end "
+                             "(stopped at (%d, %d), ground y%d)" % (cfg["to_sea"]["max_extension_blocks"], cx, cz, G[cz, cx]))
+    else:
+        # toward the lake: stop at the first station in the lake's own water, or in the painted channel of the course
+        # the stream joins before it (join_course: the ravine's lake end is Viltri's Path's own channel, which flows
+        # out of the lake), and end at that water's level
+        lb = ctx.lake_bodies[hf["lake"]]
+        end_level = int(lb["level"])
+        join = hf.get("join_course")
+        jfp = course_footprints(ctx).get(join) if join else None
+        if jfp is not None:
+            # the joined course's water as the painter lays it (its footprint is two blocks wider than its water)
+            jc = ctx.revised_courses.get(join) or ctx.revised_courses_original[join]
+            jb = jfp[0]
+            jw, jlv = paint_water(ctx.G1, jc, jb)
+        cut = None
+        for i in range(n):
+            zi, xi = int(round(sz[i])), int(round(sx[i]))
+            if ctx.lake_mask[zi, xi] and G[zi, xi] < end_level:
+                cut = i
+                break
+            if jfp is not None and jb[0] <= xi < jb[2] and jb[1] <= zi < jb[3] and jw[zi - jb[1], xi - jb[0]]:
+                end_level = int(jlv[zi - jb[1], xi - jb[0]])
+                cut = i
+                break
+        if cut is None:
+            raise ShapeError("the ravine's lake half never reaches %s's water" % hf["lake"])
+        sx, sz = sx[:cut + 1], sz[:cut + 1]
+        ctx.stream_join = getattr(ctx, "stream_join", {})
+        ctx.stream_join[hf["id"]] = {"joins": join if jfp is not None and not ctx.lake_mask[int(round(sz[-1])), int(round(sx[-1]))] else hf["lake"],
+                                     "at": [int(round(sx[-1])), int(round(sz[-1]))], "level": end_level}
     ex = np.array([p[0] for p in ext], float)
     ez = np.array([p[1] for p in ext], float)
     X = np.concatenate([sx, running(ex, 5, "mean") if len(ex) else ex])
@@ -1375,62 +1518,115 @@ def stream_pass(ctx):
     m = len(sg)
     flo = np.array([int(G[max(0, int(round(z)) - 2):int(round(z)) + 3, max(0, int(round(x)) - 2):int(round(x)) + 3].min())
                     for x, z in zip(xn, zn)], float)
-    surf = np.minimum.accumulate(flo - float(st["incision_blocks"]))
-    surf = np.maximum(surf, SEA)
+    inc = float(cfg["incision_blocks"])
+    if hf["direction"] == "to_sea":
+        surf = np.minimum.accumulate(flo - inc)
+        surf = np.maximum(surf, SEA)
+    else:
+        # pools: fill every dip to its downstream lip (from the lake up), but never more than max_pool_depth over the
+        # lowest floor upstream (the rest of a rise is cut), and never below the lake the stream feeds
+        Lf = flo - inc
+        Lf[-1] = end_level
+        for i in range(m - 2, -1, -1):
+            Lf[i] = max(Lf[i], Lf[i + 1])
+        M = np.minimum.accumulate(flo - inc)
+        surf = np.minimum(Lf, M + float(cfg["max_pool_depth_blocks"]))
+        surf = np.minimum.accumulate(surf)
+        surf = np.maximum(surf, end_level)
     Lold = np.floor(surf + 0.01).astype(int)
-    Lold[-1] = SEA
+    Lold[-1] = end_level
     Lold = np.minimum.accumulate(Lold)
     jj = np.arange(m)
-    rng = rng_for("stream")
-    spacing = float(st["gather_every_blocks"])
+    rng = rng_for("stream", hf["id"])
+    spacing = float(cfg["gather_every_blocks"])
     gathers = [0.0]
     while gathers[-1] < sg[-1]:
         gathers.append(gathers[-1] + spacing * (1.0 + 0.15 * (2 * rng.random() - 1)))
     gathers = np.array(gathers)
-    placed = step_plan(sg, Lold, jj, gathers, 1, st.get("falls", []), rng)
+    placed = step_plan(sg, Lold, jj, gathers, 1, cfg.get("falls", []), rng)
     L0 = int(Lold[0])
     pos = np.array([p[0] for p in placed]) if placed else np.zeros(0)
     amt = np.array([p[1] for p in placed]) if placed else np.zeros(0)
     level = np.array([L0 - int(amt[pos <= v].sum()) for v in sg]) if len(pos) else np.full(m, L0)
     level = np.minimum(level, Lold)
+    level = np.maximum(level, end_level)
+    level[-1] = end_level
+    # no step over one block but at a declared fall: where the end's level would make one (the mouth), the stations
+    # above it come down a block a station (a short staircase of riffles; the water is only ever let down)
+    allow = np.ones(m)
+    for p, a_, kd in placed:
+        if kd == "fall":
+            jf = int(np.searchsorted(sg, p))
+            for jj_ in (jf - 2, jf - 1, jf, jf + 1):
+                if 0 <= jj_ < m:
+                    allow[jj_] = max(allow[jj_], float(a_))
+    once = False
+    for j in range(m - 2, -1, -1):
+        cap_ = allow[j]
+        if cap_ > 1 and level[j] - level[j + 1] > 1:
+            if once:
+                cap_ = 1.0          # one fall a declared fall, however many stations it spans
+            once = True
+        level[j] = min(level[j], level[j + 1] + cap_)
     extra = np.zeros(m)
     zone = np.full(m, 3, np.int8)
     for p, a_, kd in placed:
         j = int(np.searchsorted(sg, p))
-        extra[j:j + 5] = np.maximum(extra[j:j + 5], float(st["plunge_pool_extra_depth"]))
+        extra[j:j + 5] = np.maximum(extra[j:j + 5], float(cfg["plunge_pool_extra_depth"]))
         zone[j:j + 5] = 5
         if kd == "fall" and j < m:
             zone[j] = 4
-    floor = level - np.maximum(1.0, np.minimum(float(st["max_depth_blocks"]) + extra, 1.5 + extra))
-    hw = float(st["width_blocks"]) / 2.0
+    # width grows downstream; pools take the width of the water the dip holds (never wider than the corridor)
+    w0, w1 = cfg["width_blocks"] if isinstance(cfg["width_blocks"], list) else (cfg["width_blocks"], cfg["width_blocks"])
+    width = w0 + (w1 - w0) * (sg / max(1.0, sg[-1]))
     ang = np.arctan2(np.gradient(zn), np.gradient(xn))
     nxn, nzn = -np.sin(ang), np.cos(ang)
-    k = ctx.feature("stream:viltri_ravine", "stream")
-    corridor = int(st["corridor_half_width_blocks"])
+    pool = (level - flo) >= 1.0
+    cap = float(cfg.get("pool_max_width_blocks", 2 * cfg["corridor_half_width_blocks"]))
+    for j in np.nonzero(pool)[0]:
+        span = []
+        for sgn in (1, -1):
+            k = 0
+            while k < cap / 2:
+                x, z = int(round(xn[j] + sgn * nxn[j] * (k + 1))), int(round(zn[j] + sgn * nzn[j] * (k + 1)))
+                if G[z, x] >= level[j]:
+                    break
+                k += 1
+            span.append(k)
+        width[j] = max(width[j], 2 * max(span) + 1)
+        zone[j] = 1
+    width = running(running(width, 9, "min"), 9, "mean") if len(width) > 9 else width
+    width = np.maximum(width, w0 + (w1 - w0) * (sg / max(1.0, sg[-1])))
+    hw = width / 2.0
+    dmax = float(cfg["max_depth_blocks"])
+    floor = level - np.maximum(1.0, np.minimum(dmax + extra, dmax + extra))
+    floor = np.minimum(floor, np.where(pool, flo, floor))
+    k = ctx.feature("stream:viltri_ravine_%s" % hf["id"], "stream")
+    corridor = int(cfg["corridor_half_width_blocks"])
     pad = corridor + 12
     box = clip_box(xn.min() - pad, zn.min() - pad, xn.max() + pad + 1, zn.max() + pad + 1, ctx.N)
-    best, idx, lat = stamp((xn, zn, nxn, nzn), box, lambda j: hw + 4.0)
+    best, idx, lat = stamp((xn, zn, nxn, nzn), box, lambda j: hw[j] + 4.0)
     has = idx >= 0
     J = np.maximum(idx, 0)
     lv = level[J].astype(float)
-    inner = has & (best <= hw)
-    # cut to the lowest level of the stations either side (a column at a step paints with either station's level)
+    hwJ = hw[J]
+    inner = has & (best <= hwJ)
     lcut = running(level.astype(float), 5, "min")[J]
     fl = np.minimum(floor[J], lcut - 1.0)
-    ts_in = np.minimum(fl + (lcut - 1 - fl) * np.clip(best / hw, 0, 1) ** 2, lcut - 1)
-    ts_out = lv - 1 + (best - hw) * 2.0
+    ts_in = np.minimum(fl + (lcut - 1 - fl) * np.clip(best / np.maximum(hwJ, 0.5), 0, 1) ** 2, lcut - 1)
+    ts_out = lv - 1 + (best - hwJ) * 2.0
     target = np.floor(np.where(has, np.where(inner, ts_in, ts_out), 0.0) + 0.5).astype(np.int32)
     cur = ctx.G1[sl(box)].astype(np.int32)
-    new = np.where(has & (best <= hw + 2.0), np.minimum(cur, target), cur)
-    # the spring pool, eight blocks down the sea side of the pass
-    sp = st["spring_pool"]
+    new = np.where(has & (best <= hwJ + 2.0), np.minimum(cur, target), cur)
+    # the spring pool, eight blocks down from the pass
+    sp = cfg["spring_pool"]
     j0 = min(m - 1, 8)
     zz, xx = np.mgrid[box[1]:box[3], box[0]:box[2]]
     rr = np.hypot(xx - xn[j0], zz - zn[j0])
-    pool = rr <= float(sp["radius"])
-    new = np.where(pool, np.minimum(new, (level[j0] - sp["depth"] + (rr / float(sp["radius"])) ** 2).astype(np.int32)), new)
-    wet = (inner | pool) & (new < np.where(pool, level[j0], lv))
-    lvl = np.where(pool, float(level[j0]), np.where(has, lv, -1e9))
+    spool = rr <= float(sp["radius"])
+    new = np.where(spool, np.minimum(new, (level[j0] - sp["depth"] + (rr / float(sp["radius"])) ** 2).astype(np.int32)), new)
+    wet = (inner | spool) & (new < np.where(spool, level[j0], lv))
+    lvl = np.where(spool, float(level[j0]), np.where(has, lv, -1e9))
     standing = (cur < SEA) | ctx.lake_mask[sl(box)]
     for _ in range(2):
         for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
@@ -1442,37 +1638,112 @@ def stream_pass(ctx):
             nb_lv[a] = lvl[b]
             raise_m = nb_wet & ~wet & (new < nb_lv) & ~standing
             new = np.where(raise_m, np.maximum(new, nb_lv).astype(np.int32), new)
-    ok = ctx.write(k, box, new.astype(np.int16), new != cur)
-    names = {3: "cascade", 4: "fall", 5: "plunge_pool"}
+    # a lake's own columns are the lake pass's (P5) and another course's painted channel is that course's: the stream
+    # stops at their water and writes nothing inside them
+    # (their painted water, not their footprint's two-block margin: the lake half meets Viltri's Path across it)
+    others = np.zeros(cur.shape, bool)
+    for cid, (fb_, _fm) in course_footprints(ctx).items():
+        if fb_[0] < box[2] and box[0] < fb_[2] and fb_[1] < box[3] and box[1] < fb_[3]:
+            crs = ctx.revised_courses.get(cid) or ctx.revised_courses_original.get(cid)
+            if crs is not None:
+                others |= paint_water(ctx.G1, crs, box)[0]
+    ok = ctx.write(k, box, new.astype(np.int16), (new != cur) & ~ctx.lake_mask[sl(box)] & ~others)
+    names = {1: "pool", 3: "cascade", 4: "fall", 5: "plunge_pool"}
+    # reaches: one per run of equal (rounded) width, so the painter lays each pool as wide as its water
+    # the course starts at the spring: the stations above it stand on the divide itself, dry by nature
+    wr = np.rint(width).astype(int)
+    s0 = float(sg[j0])
+    reaches = []
+    a0 = j0
+    for j in range(j0 + 1, m + 1):
+        if j == m or wr[j] != wr[a0]:
+            reaches.append({"from_m": round(float(sg[a0]) - s0, 2), "to_m": round(float(sg[j - 1]) - s0, 2) if j < m else int(math.ceil(sg[-1] - s0)),
+                            "catchment_km2": None, "grade": None, "water_body": False, "bank_slope": 2.0,
+                            "bed": cfg["bed"], "width": int(wr[a0]), "depth": dmax, "incision": inc})
+            a0 = j
+    for r0, r1 in zip(reaches, reaches[1:]):
+        r0["to_m"] = r1["from_m"]
     rec = {
-        "id": st["course_id"], "river": "viltri_ravine", "kind": "stream", "valid": True,
+        "id": hf["course_id"], "river": "viltri_ravine", "kind": "stream", "valid": True,
         "source": {"kind": "spring", "at": [round(float(xn[j0]), 1), round(float(zn[j0]), 1)], "level_y": int(level[j0]),
                    "pool": sp},
-        "ends_in": "open_sea", "end_at": {"x": int(round(xn[-1])), "z": int(round(zn[-1]))},
+        "ends_in": "open_sea" if hf["direction"] == "to_sea" else hf["lake"],
+        "end_at": {"x": int(round(xn[-1])), "z": int(round(zn[-1]))},
         "graded_polyline": [[round(float(xn[j]), 2), round(float(zn[j]), 2), float(level[j]), round(float(floor[j]), 2)]
-                            for j in range(m)],
+                            for j in range(j0, m)],
         "graded_polyline_fields": ["x", "z", "surface_y", "floor_y"],
-        "reaches": [{"from_m": 0, "to_m": int(math.ceil(sg[-1])), "catchment_km2": None, "grade": None,
-                     "water_body": False, "bank_slope": 2.0, "bed": st["bed"], "width": int(st["width_blocks"]),
-                     "depth": float(st["max_depth_blocks"]), "incision": float(st["incision_blocks"])}],
-        "water_shape": {"generator": "tools/water_shape.py", "steps": [{"s": round(p, 1), "drop": int(a), "kind": kd}
-                                                                     for p, a, kd in placed],
+        "reaches": reaches,
+        "water_shape": {"generator": "tools/water_shape.py", "half": hf["id"],
+                        "steps": [{"s": round(p, 1), "drop": int(a), "kind": kd} for p, a, kd in placed],
                         "zones": [{"at_m": round(float(sg[j]), 1), "zone": names.get(int(zone[j]), "cascade")}
                                   for j in range(0, m, 10)],
-                        "falls_declared": st.get("falls", [])},
+                        "falls_declared": cfg.get("falls", [])},
     }
-    ctx.revised_courses[st["course_id"]] = rec
-    ctx.report["stream"] = {"length": round(float(sg[-1]), 1), "from_level": int(level[0]), "to_level": int(level[-1]),
-                            "spring_at": rec["source"]["at"], "extension_to_sea_blocks": len(ext),
-                            "steps": len(placed), "falls": [p for p in placed if p[2] == "fall"],
-                            "columns_written": int(ok.sum())}
-    ctx.stream_run = {"xn": xn, "zn": zn, "sg": sg, "level": level, "floor": floor, "flo": flo}
+    ctx.revised_courses[hf["course_id"]] = rec
+    # seal: the water as tools/paint_maps.py lays it (the reach widths, rounded) must not stand beside lower dry ground;
+    # each such column is raised to the water's level (a bank), a few passes until none is left
+    sealed = 0
+    for _ in range(5):
+        pw, plv = paint_water(ctx.G1, rec, box)
+        g_ = ctx.G1[sl(box)].astype(np.int32)
+        nl = np.zeros(g_.shape)
+        for dz, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            a = (slice(max(0, dz), g_.shape[0] + min(0, dz)), slice(max(0, dx), g_.shape[1] + min(0, dx)))
+            b = (slice(max(0, -dz), g_.shape[0] + min(0, -dz)), slice(max(0, -dx), g_.shape[1] + min(0, -dx)))
+            sh = np.zeros(g_.shape)
+            sh[a] = plv[b]
+            nl = np.maximum(nl, sh)
+        leak = ~pw & (g_ < nl) & (g_ >= SEA) & ~ctx.lake_mask[sl(box)] & ~others
+        if not leak.any():
+            break
+        okl = ctx.write(k, box, np.where(leak, nl, g_).astype(np.int16), leak)
+        sealed += int(okl.sum())
+        if not okl.any():
+            break
+    pools = []
+    j = 0
+    while j < m:
+        if pool[j]:
+            e = j
+            while e < m and pool[e]:
+                e += 1
+            pools.append({"from_m": round(float(sg[j]), 1), "to_m": round(float(sg[e - 1]), 1),
+                          "level": int(level[j]), "deepest": int((level[j:e] - flo[j:e]).max()),
+                          "widest": int(width[j:e].max())})
+            j = e
+        else:
+            j += 1
+    cutlip = np.maximum(0, flo - inc - surf)
+    rep = {"course_id": hf["course_id"], "direction": hf["direction"], "length": round(float(sg[-1]), 1),
+           "from_level": int(level[0]), "to_level": int(level[-1]), "spring_at": rec["source"]["at"],
+           "extension_to_sea_blocks": len(ext), "steps": len(placed), "falls": [p for p in placed if p[2] == "fall"],
+           "width": [round(float(width.min()), 1), round(float(np.median(width)), 1), round(float(width.max()), 1)],
+           "pools": pools, "lip_cut_max_blocks": round(float(cutlip.max()), 1), "sealed_bank_columns": sealed,
+           "ends": (getattr(ctx, "stream_join", {}) or {}).get(hf["id"]),
+           "columns_written": int(ok.sum()), "held_protected": ctx.features[k]["held_protected"]}
+    run = {"xn": xn, "zn": zn, "sg": sg, "level": level, "floor": floor, "flo": flo, "width": width}
+    return rep, run
+
+
+def stream_pass(ctx):
+    ctx.report["stream"] = {}
+    ctx.stream_run = {}
+    st = ctx.spec.get("viltri_ravine_stream")
+    if not st:
+        # the ravine is on hold (data/water_shape.json viltri_ravine): nothing is shaped there
+        ctx.report["stream"] = {}
+        ctx.report["notes"].append("the Viltri Ravine is on hold: no stream is shaped (data/water_shape.json viltri_ravine)")
+        return
+    for hf in st["halves"]:
+        rep, run = stream_half(ctx, st, hf)
+        ctx.report["stream"][hf["id"]] = rep
+        ctx.stream_run[hf["id"]] = run
 
 
 # ---------------------------------------------------------------------------------------------------- lakes
 
 
-def lake_measure(g, L, inside, factor, exclude=None):
+def lake_measure(g, L, inside, factor, exclude=None, scope=None):
     wet = inside & (g < L)
     if not wet.any():
         return None
@@ -1480,6 +1751,8 @@ def lake_measure(g, L, inside, factor, exclude=None):
     rest = ~wet | (depth <= 1)
     dist = distance_scaled(rest, wet, factor)
     obj = wet & ~(exclude if exclude is not None else np.zeros_like(wet))
+    if scope is not None:
+        obj &= scope
     lv = []
     for a, b in (((slice(None), slice(1, None)), (slice(None), slice(None, -1))),
                  ((slice(1, None), slice(None)), (slice(None, -1), slice(None)))):
@@ -1500,12 +1773,53 @@ def lake_measure(g, L, inside, factor, exclude=None):
                                                     "11-20": (11, 20), "21-35": (21, 35), "36+": (36, 999)}.items()}}
 
 
-def keep_zone(kz, depth0, wet, anchor_zx, box_shape):
+def site_toward_anchor(site, depth0, wet, anchor_zx, box):
+    """(z, x) in the box of a site given by rule: the old water nearest to `toward_anchor_from` (a world point on the
+    shore side), then along the line from there toward the lake's anchor until the old bed is `at_old_depth` deep."""
+    fx, fz = site["toward_anchor_from"]
+    zs, xs = np.nonzero(wet)
+    i = int(np.argmin((xs + box[0] - fx) ** 2 + (zs + box[1] - fz) ** 2))
+    z0, x0 = float(zs[i]), float(xs[i])
     az, ax = anchor_zx
+    L = max(1.0, math.hypot(az - z0, ax - x0))
+    for s in range(int(L) + 1):
+        z = int(round(z0 + (az - z0) * s / L))
+        x = int(round(x0 + (ax - x0) * s / L))
+        if wet[z, x] and depth0[z, x] >= float(site["at_old_depth"]):
+            return z, x
+    return int(az), int(ax)
+
+
+def keep_zone(kz, depth0, wet, anchor_zx, box_shape, box=None):
+    az, ax = anchor_zx
+    if "site" in kz:
+        az, ax = site_toward_anchor(kz["site"], depth0, wet, anchor_zx, box)
     if "core_depth" in kz:
         return component_near(wet & (depth0 >= kz["core_depth"]), az, ax)
     zz, xx = np.mgrid[0:box_shape[0], 0:box_shape[1]]
     return np.hypot(zz - az, xx - ax) <= float(kz["radius"])
+
+
+def rest_scope(body, wet, dshore0, brg, keeps):
+    """Where a lake's rest budget applies as a farthest-point limit: the whole lake, or (a body's rest_scope, decision 8
+    read literally) the water within `within_blocks_of_shore` of the shore in named bearing sectors. A rest_scope's
+    dive_sites are held to the budget differently: each needs a rest point within the budget (dive_site_reach)."""
+    sc = body.get("rest_scope")
+    if not sc:
+        return wet.copy()
+    m = np.zeros(wet.shape, bool)
+    secs = {s["id"]: s for s in body.get("sectors", [])}
+    for s in sc.get("sectors", []):
+        m |= in_bearing(brg, secs[s["sector"]]["bearing_from_anchor_deg"]) & (dshore0 <= float(s["within_blocks_of_shore"]))
+    return m & wet
+
+
+def dive_site_reach(zone, rest, wet, factor):
+    """Blocks from a dive site's edge to the nearest ground a swimmer can stand on (through water)."""
+    if not zone.any():
+        return None
+    d = distance_scaled(rest, wet | rest, factor)
+    return float(d[zone].min())
 
 
 def lake_pass_one(ctx, body):
@@ -1561,8 +1875,12 @@ def lake_pass_one(ctx, body):
     tt = np.clip((depth0 - d_edge) / max(1.0, Dmax - d_edge), 0.0, 1.0)
     gamma = float(dflt["floor_gamma"])
     Tf = dd + (Dmax - dd) * tt ** gamma
+    # two octaves: broad swells and a little fine ripple (one octave at 24 read as speckle where the floor sat on a
+    # colour band's edge)
     nz = value_noise(xx + box[0], zz + box[1], dflt["floor_noise_scale_blocks"], seed_of("lakefloor", body["id"]))
-    Tf = np.maximum(dd, Tf + (nz - 0.5) * 2.0 * float(dflt["floor_noise_blocks"]))
+    nz2 = value_noise(xx + box[0], zz + box[1], float(dflt.get("floor_fine_scale_blocks", 20)), seed_of("lakefloor2", body["id"]))
+    Tf = np.maximum(dd, Tf + (nz - 0.5) * 2.0 * float(dflt["floor_noise_blocks"])
+                    + (nz2 - 0.5) * 2.0 * float(dflt.get("floor_fine_blocks", 0.5)))
     Tt = np.where(floor_m, Tf, Tt)
     # an arm or a bay that was shallow stays shallower than the main basin: the drop-off and floor never go more
     # than local_deepen_blocks below the deepest old bed within local_radius_blocks (a narrow arm 6 deep is not
@@ -1575,23 +1893,27 @@ def lake_pass_one(ctx, body):
     keeps = {}
     keep_all = np.zeros((H, W), bool)
     for kz in body.get("keep", []):
-        km = keep_zone(kz, depth0, wet, anchor_zx, (H, W))
+        km = keep_zone(kz, depth0, wet, anchor_zx, (H, W), box)
         keeps[kz["id"]] = km
         keep_all |= km
-    for fz in body.get("flatten", []):
-        fm = keep_zone(fz, depth0, wet, anchor_zx, (H, W))
-        keeps[fz["id"]] = fm
-        Tt = np.where(fm, float(fz["to_depth"]), Tt)
-        zone[fm] = 3
     if keep_all.any():
-        # the plunging floor would stand deeper than a kept zone's own edge and leave the zone a plateau inside a
-        # moat; beside a keep zone the floor eases back to the old bed over keep_blend_blocks (never shallower
-        # than the design, so a walled pit stays walled)
-        kbl = float(dflt.get("keep_blend_blocks", 32))
+        # a kept pit is the old bed exactly; round it the floor eases back to the old bed over keep_blend_blocks,
+        # both ways (the first run eased only where the design was deeper, so a pit ringed by a shallower new floor
+        # read as a hard-edged dark blob). The pit keeps its walls because the old bed round it is its own slope
+        kbl = float(body.get("keep_blend_blocks", dflt.get("keep_blend_blocks", 32)))
         wk = np.clip(distance_scaled(keep_all, None, factor) / kbl, 0.0, 1.0)
-        Tt = np.where(Tt > depth0, depth0 + (Tt - depth0) * smoothstep(wk), Tt)
+        Tt = np.where(floor_m | drop, depth0 + (Tt - depth0) * smoothstep(wk), Tt)
     Tt = np.where(keep_all, depth0.astype(float), Tt)
     zone[keep_all & wet] = 7
+    for fz in body.get("flatten", []):
+        fm = keep_zone(fz, depth0, wet, anchor_zx, (H, W), box)
+        keeps[fz["id"]] = fm
+        # a flattened floor fades into the floor round it over its blend (a disc set to one depth read as a stamp)
+        fbl = float(fz.get("blend_blocks", 24))
+        wf = 1.0 - smoothstep(distance_scaled(fm, None, factor) / fbl)
+        wf = np.where(fm, 1.0, wf) * (floor_m | drop)
+        Tt = Tt + (float(fz["to_depth"]) - Tt) * wf * ~keep_all
+        zone[fm & ~keep_all] = 3
     # humps
     hs = dflt["hump"]
     placed_h = []
@@ -1610,10 +1932,13 @@ def lake_pass_one(ctx, body):
             if len(placed_h) >= int(body["humps"]):
                 break
     for z, x, r, top in placed_h:
-        d = np.hypot(zz - z, xx - x)
-        mound = top + (Tt - top) * (d / r) ** 2
+        # a hump is an irregular swell, not a cone: its radius wobbles with the bearing
+        ang = np.arctan2(zz - z, xx - x)
+        wob = 1.0 + 0.3 * (value_noise(np.cos(ang) * 2.0 + x, np.sin(ang) * 2.0 + z, 1.3, seed_of("hump", body["id"], x, z)) - 0.5)
+        d = np.hypot(zz - z, xx - x) / wob
+        mound = top + (Tt - top) * smoothstep(d / r)
         m = (d <= r) & ~keep_all
-        zone[m & (mound < Tt)] = 4
+        zone[m & (mound < Tt - 0.5)] = 4
         Tt = np.where(m, np.minimum(Tt, mound), Tt)
     sh_h = body.get("shelf_humps")
     placed_sh = []
@@ -1634,35 +1959,54 @@ def lake_pass_one(ctx, body):
             v = float(sh_h["top_depth"]) + np.maximum(0.0, d - r) / 1.5
             zone[m & (d <= r)] = 5
             Tt = np.where(m, np.minimum(Tt, v), Tt)
-    # shoals: the declared ones first, then enough to bring every point within the rung's budget
+    # shoals: sunken islands. The declared ones first (a rest point by a dive site), then the lake's natural ones
+    # (where the old floor was already highest), then only as many as the rest budget still needs
     sd = dflt["shoal"]
     shoals = []
-    trend = body.get("shoal_trend_deg")
+    size_lo, size_hi = body.get("shoal_size", sd.get("size", [8, 20]))
 
-    def put_shoal(z, x, why):
-        """A sunken island: an irregular, elongated crest 1 deep, a short apron to 3 deep (its own little shelf),
-        then a steep flank to the floor (its own drop-off), so it reads as structure, not as a cone."""
-        rc = float(sd["crest_radius"])
-        fr = float(sd["flank_run_per_block"])
-        if trend is None:
-            ang = rng.uniform(0.0, math.pi)
-        else:
-            b_ = math.radians(trend + rng.uniform(-14.0, 14.0))
-            ang = math.atan2(-math.cos(b_), math.sin(b_))
-        lo_l, hi_l = body.get("shoal_crest_length", [2.4 * rc, 4.4 * rc])
-        lo_w, hi_w = body.get("shoal_crest_width", [1.4 * rc, 2.0 * rc])
-        ea, eb = rng.uniform(lo_l, hi_l) / 2.0, rng.uniform(lo_w, hi_w) / 2.0
+    def shoal_profile(z, x, R, rs):
+        """An irregular sunken island round (z, x), about R blocks across its crest: a warped, lobed outline (two
+        octaves of noise on the radius, a mild random elongation at any angle), a crest 1 deep with 2-deep saddles, a
+        sand apron to 3 deep and a flank to the floor whose steepness varies from shoal to shoal. The first run's
+        elongated crests on one trend read as streaks; these read as islands that did not quite reach the surface."""
+        ang = rs.uniform(0.0, math.pi)
+        asp = rs.uniform(1.0, 1.7)
         du = (xx - x) * math.cos(ang) + (zz - z) * math.sin(ang)
         dv = -(xx - x) * math.sin(ang) + (zz - z) * math.cos(ang)
-        ring = np.hypot(du / ea, dv / eb)
-        wob = value_noise(xx + box[0], zz + box[1], 6.0, seed_of("shoal", body["id"], int(x), int(z)))
-        out = np.maximum(0.0, ring * (1.0 + 0.35 * (wob - 0.5)) - 1.0) * eb
-        apron = float(sd.get("apron_blocks", 3.0))
-        v = np.where(out <= 0, 1.0, np.where(out <= apron, 1.0 + 2.0 * out / apron, 3.0 + (out - apron) / fr))
-        m = ~keep_all & (v < Tt)
-        zone[m & (out <= apron)] = 5
-        return np.where(m, v, Tt), {"at": [int(x) + box[0], int(z) + box[1]], "why": why,
-                                    "crest_axes": [round(2 * ea, 1), round(2 * eb, 1)]}
+        rho = np.hypot(du / (R * math.sqrt(asp)), dv / (R / math.sqrt(asp)))
+        s0 = seed_of("shoal", body["id"], int(x), int(z))
+        n1 = value_noise(xx + box[0], zz + box[1], max(4.0, R * 0.9), s0)
+        n2 = value_noise(xx + box[0], zz + box[1], max(3.0, R * 0.35), s0 + 1)
+        rho = rho * (1.0 + 0.55 * (n1 - 0.5) + 0.3 * (n2 - 0.5))
+        c = rs.uniform(0.4, 0.65)
+        out = np.maximum(0.0, rho - c) * R
+        sa = rs.uniform(0.45, 0.8)
+        fl_lo, fl_hi = body.get("shoal_flank", [sd.get("flank_min", 0.35), sd.get("flank_max", 0.8)])
+        sf = rs.uniform(float(fl_lo), float(fl_hi))
+        run_a = 2.0 / sa
+        v = np.where(out <= run_a, 1.0 + out * sa, 3.0 + (out - run_a) * sf)
+        n3 = value_noise(xx + box[0], zz + box[1], max(3.0, R * 0.3), s0 + 2)
+        v = np.where((out <= 0) & (rho > c * 0.55) & (n3 > 0.62), 2.0, v)
+        return v, out, run_a
+
+    # a shoal's flank fades out beside a kept pit (a ring of shoals round the pit's rim left it hard-edged); only a
+    # declared shoal, a rest point placed there on purpose, keeps its full flank
+    kmargin = float(sd.get("keep_margin_blocks", 40))
+    kdist = distance_scaled(keep_all, None, factor) if keep_all.any() else np.full((H, W), 1e9, np.float32)
+    kfade = smoothstep(kdist / max(1.0, kmargin))
+    kfade_declared = smoothstep(kdist / 16.0)
+
+    def put_shoal(z, x, why, R=None, declared=False):
+        rs = rng_for("shoal", body["id"], int(x), int(z))
+        R = float(R if R is not None else size_lo + (size_hi - size_lo) * rs.random() ** 1.5)
+        v, out, run_a = shoal_profile(z, x, R, rs)
+        v = np.where(v < Tt, Tt + (v - Tt) * (kfade_declared if declared else kfade), v)
+        m = ~keep_all & (v < Tt) & wet
+        zone[m & (out <= run_a)] = 5
+        crest = int((m & (v <= 1.0)).sum())
+        return np.where(m, np.minimum(Tt, v), Tt), {"at": [int(x) + box[0], int(z) + box[1]], "why": why,
+                                                    "size": round(R, 1), "crest_columns": crest}
 
     excl = np.zeros((H, W), bool)
     for kid in body.get("max_to_rest_excludes", []):
@@ -1685,30 +2029,96 @@ def lake_pass_one(ctx, body):
             continue
         zs_, xs_ = np.nonzero(ok)
         i = int(np.argmin(dshore[zs_, xs_]))
-        Tt, rec = put_shoal(zs_[i], xs_[i], s.get("why", "near %s" % s["target"]))
+        Tt, rec = put_shoal(zs_[i], xs_[i], s.get("why", "near %s" % s["target"]), R=s.get("size"), declared=True)
         shoals.append(rec)
+    nat = body.get("natural_shoals")
+    if nat:
+        # the open water's own islands: where the old floor stood highest (broadly, not a single column), far from
+        # the shore and from each other
+        hi_ground = box_mean(np.where(wet, depth0, 0.0), 12) / np.maximum(box_mean(wet, 12), 1e-6)
+        okn = editable & ~keep_all & floor_m & (dshore >= float(nat["min_from_shore_blocks"]))
+        kd = distance_scaled(keep_all | excl, None, factor) if (keep_all | excl).any() else np.full((H, W), 1e9)
+        okn &= kd >= float(nat.get("min_from_kept_blocks", 60))
+        taken = []
+        for _ in range(int(nat["count"])):
+            if not okn.any():
+                break
+            vals = np.where(okn, hi_ground, 1e9)
+            z, x = np.unravel_index(int(np.argmin(vals)), vals.shape)
+            R = rng.uniform(*nat["size"])
+            Tt, rec = put_shoal(z, x, "a natural island of the open lake: the old floor's broad high at %.0f deep" % depth0[z, x], R=R)
+            rec["natural"] = True
+            shoals.append(rec)
+            taken.append((z, x))
+            okn &= np.hypot(zz - z, xx - x) >= float(nat["min_spacing_blocks"])
     rung = lakes["rungs"][body["rung"]]
     target = float(body.get("max_to_rest_blocks", rung["max_to_rest_blocks"]))
     auto = any(s["kind"] == "auto" for s in body.get("shoals", []))
-    for _ in range(int(body.get("max_shoals", sd["max_count"]))):
+    scope = rest_scope(body, wet, dshore, brg, keeps)
+    site_reach = {}
+    for sid in (body.get("rest_scope") or {}).get("dive_sites", []):
+        zm = keeps.get(sid)
+        if zm is None or not zm.any():
+            raise ShapeError("%s: dive site %s is not a declared zone" % (body["id"], sid))
+        r0 = dive_site_reach(zm, ~wet | (Tt <= 1.0), wet, factor)
+        if r0 is not None and r0 > target:
+            dz_ = distance_scaled(zm, None, factor)
+            okd = editable & ~keep_all & (dz_ >= 10) & (dz_ <= 30)
+            if okd.any():
+                zs_, xs_ = np.nonzero(okd)
+                i = int(np.argmin(dshore[zs_, xs_]))
+                Tt, rec = put_shoal(zs_[i], xs_[i], "rest point for the dive site %s (it was %.0f from rest)" % (sid, r0),
+                                    declared=True)
+                shoals.append(rec)
+        site_reach[sid] = dive_site_reach(zm, ~wet | (Tt <= 1.0), wet, factor)
+    fcoarse = max(2, factor)
+    for it in range(int(body.get("max_shoals", sd["max_count"]))):
         if not auto:
             break
         rest = ~wet | (Tt <= 1.0)
-        dist = distance_scaled(rest, wet, max(2, factor))
-        obj = wet & ~excl
+        dist = distance_scaled(rest, wet, fcoarse)
+        obj = scope & ~excl
         if not obj.any() or float(dist[obj].max()) <= target:
             break
-        vals = np.where(obj, dist, -1.0)
-        z, x = np.unravel_index(int(np.argmax(vals)), vals.shape)
-        if not (editable[z, x] and not keep_all[z, x]):
-            okm = editable & ~keep_all
-            if not okm.any():
+        over = obj & (dist > target)
+        # fewer, better-placed shoals: of a sample of candidates in the far water, take the one that brings the most
+        # over-budget water within reach (the farthest-point rule the first run used needed many more)
+        rs = rng_for("shoal_pick", body["id"], it)
+        R = size_lo + (size_hi - size_lo) * rs.random() ** 1.5
+        oz, ox = np.nonzero(over[::4, ::4])
+        oz, ox = oz * 4, ox * 4
+        best, bz, bx = -1.0, None, None
+        reach = target + R * 0.6
+        near_kept = False
+        # away from the kept pits first; only if nothing there reaches the far water, anywhere editable (and then the
+        # shoal keeps its full flank, or it would not reach the surface)
+        for pass_i, okc in enumerate((editable & ~keep_all & (dist > target * 0.5) & (kdist >= kmargin),
+                                      editable & ~keep_all & (dist > target * 0.5))):
+            if not okc.any():
+                continue
+            cz, cx = np.nonzero(okc)
+            pick = [rs.randrange(len(cz)) for _ in range(min(160, len(cz)))]
+            for i in pick:
+                z, x = int(cz[i]), int(cx[i])
+                cover = float(((oz - z) ** 2 + (ox - x) ** 2 <= reach * reach).sum())
+                natural = 1.0 - min(1.0, depth0[z, x] / max(1.0, Dmax))
+                score = cover * (1.0 + 0.5 * natural)
+                if score > best:
+                    best, bz, bx = score, z, x
+            if best > 0:
+                near_kept = pass_i == 1
                 break
-            zs_, xs_ = np.nonzero(okm)
-            i = int(np.argmin((zs_ - z) ** 2 + (xs_ - x) ** 2))
-            z, x = zs_[i], xs_[i]
-        Tt, rec = put_shoal(z, x, "rest point: the farthest water from anywhere to stand was %.0f blocks" % dist[obj].max())
+        if bz is None:
+            break
+        Tt, rec = put_shoal(bz, bx, "rest point: the farthest water in scope from anywhere to stand was %.0f blocks"
+                            % dist[obj].max(), R=R, declared=near_kept)
         shoals.append(rec)
+    # ease back to the old bed toward protected ground (a platform's box, a river's channel): the run left each
+    # event site's box a sharp rectangle of old bed in the new floor
+    if prot.any():
+        wpb = smoothstep(distance(prot, None, max_iter=int(dflt.get("protect_blend_blocks", 12)) + 2)
+                         / float(dflt.get("protect_blend_blocks", 12)))
+        Tt = np.where(editable, depth0 + (Tt - depth0) * wpb, Tt)
     Ti = np.clip(np.rint(Tt), 1, None).astype(np.int32)
     new = np.where(editable, L - Ti, g0)
     new = np.minimum(new, np.where(wet, L - 1, new))
@@ -1716,13 +2126,18 @@ def lake_pass_one(ctx, body):
     before = lake_measure(g0, L, inside, factor)
     ok = ctx.write(k, box, new.astype(np.int16), editable)
     g1 = ctx.G1[sl(box)].astype(np.int32)
-    after = lake_measure(g1, L, inside, factor, exclude=excl)
+    after = lake_measure(g1, L, inside, factor, exclude=excl, scope=scope if body.get("rest_scope") else None)
+    if body.get("rest_scope"):
+        whole = lake_measure(g1, L, inside, factor, exclude=excl)
+        after["whole_lake_max_to_rest"] = whole["max_to_rest"]
     dv = g1 - g0
     zone[~wet] = 0
     ctx.zone_maps["lake_" + body["id"]] = {"box": box, "zones": zone}
     ctx.report["lakes"][body["id"]] = {
         "level": L, "rung": body["rung"], "stage": body["stage"], "box": list(box),
         "before": before, "after": after,
+        "rest_scope": body.get("rest_scope") or "the whole lake", "scope_columns": int(scope.sum()),
+        "dive_site_to_rest": {k: (round(v, 1) if v is not None else None) for k, v in site_reach.items()},
         "targets": {"max_to_rest": target, "wadeable": body["wadeable_target"],
                     "deep_area_min_share": dflt["deep_area_min_share"]},
         "shoals": shoals, "humps": [{"at": [x + box[0], z + box[1]], "radius": round(r, 1), "top_depth": round(t, 1)}
@@ -1830,16 +2245,37 @@ def flats_pass(ctx, f):
     # a bar wanders in and out along the shore and swells and thins: bars at fixed offsets read on the maps as
     # contour lines drawn round the coast
     wav = float(bars.get("wander_blocks", 6.0))
+    seg_scale = float(bars.get("segment_scale_blocks", 0.0))
     for i, o in enumerate(bars["offsets_blocks"]):
         wo = (2.0 * value_noise(xx, zz, 110.0, seed + 31 + i) - 1.0) * wav
+        # crescents: a second, shorter wander bends each bar seaward and back between its gaps
+        wo = wo + (2.0 * value_noise(xx, zz, 45.0, seed + 61 + i) - 1.0) * wav * 0.6
         sg = sig * (0.65 + 0.7 * value_noise(xx, zz, 70.0, seed + 47 + i))
-        bump = np.maximum(bump, np.exp(-((dl - o - wo) / sg) ** 2))
+        b_i = np.exp(-((dl - o - wo) / sg) ** 2)
+        if seg_scale > 0:
+            # a bar is a string of segments, each ending in a rounded tip, with gaps where the rip current runs: a
+            # noise along the coast switches it on and off (the run's unbroken bars read as contour streaks)
+            on = value_noise(xx, zz, seg_scale * (1.0 + 0.25 * i), seed + 73 + i)
+            b_i = b_i * smoothstep((on - float(bars.get("segment_gap_under", 0.42))) / 0.16)
+        bump = np.maximum(bump, b_i)
     crest, runnel = float(bars["crest_depth"]), float(bars["runnel_depth"])
     Tt = runnel - (runnel - crest) * bump
-    sp = float(np.mean(bars["rip_every_blocks"]))
-    nu = value_noise(xx, zz, sp, seed)
-    rip = np.abs(nu - 0.5) < (bars["rip_width_blocks"] / (2.0 * sp)) * 1.5
-    Tt = np.where(rip & (dl > bars["offsets_blocks"][0] - 2 * sig), float(bars["rip_depth"]), Tt)
+    if seg_scale > 0:
+        # the rips are the gaps: water runs out through them, a block deeper than the runnel, and fades out seaward
+        # soft-edged: strongest in the middle of a gap and across the bar's own line, fading out on every side (the
+        # first cut of this made hard-cornered patches of 3-deep water)
+        strength = np.zeros(bump.shape)
+        for i, o in enumerate(bars["offsets_blocks"]):
+            on = value_noise(xx, zz, seg_scale * (1.0 + 0.25 * i), seed + 73 + i)
+            g_ = smoothstep((float(bars.get("segment_gap_under", 0.42)) - 0.02 - on) / 0.12)
+            strength = np.maximum(strength, g_ * np.exp(-((dl - o) / (2.2 * sig)) ** 2))
+        rip = strength > 0.5
+        Tt = Tt + (np.maximum(Tt, float(bars["rip_depth"])) - Tt) * strength
+    else:
+        sp = float(np.mean(bars["rip_every_blocks"]))
+        nu = value_noise(xx, zz, sp, seed)
+        rip = np.abs(nu - 0.5) < (bars["rip_width_blocks"] / (2.0 * sp)) * 1.5
+        Tt = np.where(rip & (dl > bars["offsets_blocks"][0] - 2 * sig), float(bars["rip_depth"]), Tt)
     dry = (value_noise(xx, zz, 40.0, seed + 1) > bars["dry_crest_noise_over"]) & (bump > 0.85) & ~rip
     Tt = np.where(dry, 0.0, Tt)
     inner = dl < bars["offsets_blocks"][0] - 2 * sig
@@ -1848,8 +2284,10 @@ def flats_pass(ctx, f):
     blend = np.clip((dl - outer_edge) / 8.0, 0.0, 1.0)
     Tt = Tt * (1 - blend) + depth0 * blend
     # bars ease back into the old bed toward an exclusion or the box's edge instead of stopping square
-    edge_src = ex | ~inbox
-    wfe = np.clip(distance(edge_src, None, max_iter=16) / 12.0, 0.0, 1.0)
+    edge_src = ex | ~inbox | ctx.P[sl(box)]
+    # over 48 blocks with a wandering reach (12 still read as the box's straight edge on the south strand's east end)
+    ew = 48.0 * (0.6 + 0.8 * value_noise(xx, zz, 40.0, seed + 91))
+    wfe = np.clip(distance(edge_src, None, max_iter=80) / ew, 0.0, 1.0)
     Tt = depth0 + (Tt - depth0) * smoothstep(wfe)
     lag = f.get("lagoon")
     lag_rep = None
@@ -1861,7 +2299,7 @@ def flats_pass(ctx, f):
         new = np.where(lag_rep["_barrier"], np.maximum(new, SEA - np.rint(Tt).astype(np.int32)), new)
         lag_rep.pop("_barrier")
     k = ctx.feature("coast:" + f["id"], "coasts")
-    ok = ctx.write(k, box, new.astype(np.int16), zone)
+    ok = ctx.write(k, box, new.astype(np.int16), zone, over=("seabed",))
     g1 = ctx.G1[sl(box)].astype(np.int32)
     wet0 = zone & (depth0 >= 1)
     rep = {"box": f["box"], "columns_written": int(ok.sum()),
@@ -2000,7 +2438,7 @@ def fungal_pass(ctx):
         result = best
     new, want, bars, mx, hits, peak = result
     k = ctx.feature("coast:fungal_bar_chain", "coasts")
-    ok = ctx.write(k, box, new.astype(np.int16), want)
+    ok = ctx.write(k, box, new.astype(np.int16), want, over=("seabed",))
     g1 = ctx.G1[sl(box)].astype(np.int32)
     ctx.report["coasts"]["fungal_bar_chain"] = {
         "line": [list(a), list(b)], "bars": bars, "bar_count": len(bars), "max_deep_run_planned": round(mx, 1),
@@ -2012,64 +2450,73 @@ def fungal_pass(ctx):
 
 
 def reef_pass(ctx):
+    """The Relic reef platform on the islet's south and west apron, as ground that grew there: it starts at the islet's
+    own edge (its apron stands at sea - 4, so the platform meets it with no moat), shoals gently outward to an
+    irregular outer rim, falls to the old bed down a reef wall of varying width, fades out over the sector's ends
+    instead of stopping on a bearing, and carries patch reefs where two octaves of noise stand highest. The run's
+    platform started at a fixed radius 34 and read as a sickle cut against the deep basin, its knolls as crosses."""
     rf = ctx.spec["coasts"]["relic_reef"]
     cx, cz = rf["centre"]
-    R = rf["outer_radius"][1] + rf["drop_width_blocks"] + 8
+    R = rf["outer_radius"][1] + rf["drop_width_blocks"] * 3 + 24
     box = clip_box(cx - R, cz - R, cx + R + 1, cz + R + 1, ctx.N)
     zz, xx = np.mgrid[box[1]:box[3], box[0]:box[2]]
-    r = np.hypot(xx - cx, zz - cz)
     b = bearing_deg(xx - cx, zz - cz)
     lo, hi = rf["sector_bearing_deg"]
-    span = (hi - lo) % 360
-    rel = ((b - lo) % 360) / max(1.0, span)
-    in_sec = in_bearing(b, rf["sector_bearing_deg"])
-    edge = np.clip(np.minimum(rel, 1 - rel) * span / 20.0, 0.0, 1.0)
-    nzv = value_noise(xx, zz, 36.0, seed_of("reef"))
-    ro = rf["outer_radius"][0] + (rf["outer_radius"][1] - rf["outer_radius"][0]) * nzv
-    ri = float(rf["inner_radius"])
-    ro = ri + (ro - ri) * smoothstep(edge)
+    fade_deg = float(rf.get("sector_fade_deg", 40))
+    # inside the sector the weight is 1; it falls to 0 over fade_deg beyond each end (the end wobbles with distance)
+    beyond = np.minimum(((lo - b) % 360), ((b - hi) % 360))
+    inside = in_bearing(b, rf["sector_bearing_deg"])
+    wob = (value_noise(xx, zz, 50.0, seed_of("reef_end")) - 0.5) * fade_deg * 0.6
+    w_ang = np.where(inside, 1.0, 1.0 - smoothstep((beyond + wob) / fade_deg))
     g0 = ctx.G1[sl(box)].astype(np.int32)
     depth0 = SEA - g0
     sea = sea_in_box(ctx, box)
-    plat = in_sec & (r >= ri) & (r <= ro)
-    t = np.clip((r - ri) / np.maximum(1.0, ro - ri), 0, 1)
-    Tt = np.where(plat, rf["top_depth_inner"] + (rf["top_depth_outer"] - rf["top_depth_inner"]) * t, 99.0)
-    dw = float(rf["drop_width_blocks"])
-    wall = in_sec & (r > ro) & (r <= ro + dw)
-    Tt = np.where(wall, rf["top_depth_outer"] + (depth0 - rf["top_depth_outer"]) * np.clip((r - ro) / dw, 0, 1), Tt)
-    rng = rng_for("reef")
-    knolls = []
-    zs, xs = np.nonzero(plat & sea)
-    for _ in range(int(rf["knolls"]["count"]) * 20):
-        if len(knolls) >= rf["knolls"]["count"] or not len(zs):
-            break
-        i = rng.randrange(len(zs))
-        z, x = int(zs[i]), int(xs[i])
-        if any(math.hypot(z - a, x - b_) < 16 for a, b_, _ in knolls):
-            continue
-        knolls.append((z, x, rng.uniform(*rf["knolls"]["radius"])))
-    gz, gx = np.mgrid[0:g0.shape[0], 0:g0.shape[1]]
-    for z, x, rk in knolls:
-        # a patch reef is a lobed knoll, not a disc
-        ang = np.arctan2(gz - z, gx - x)
-        lobe = 1.0 + 0.35 * np.sin(3 * ang + rng.uniform(0, 6.283)) + 0.2 * np.sin(5 * ang + rng.uniform(0, 6.283))
-        d = np.hypot(gz - z, gx - x) / lobe
-        Tt = np.where(plat & (d <= rk * 2), np.minimum(Tt, rf["knolls"]["top_depth"] + np.maximum(0, d - rk) / 1.0), Tt)
+    # distance from the islet's own outline (tools/islet.py), not from its centre
+    import islet as I
+    top, _ = I.island_top(None, SEA)
+    on = ~np.isnan(np.asarray(top, float))
+    isl = np.zeros(g0.shape, bool)
+    ix0, iz0 = I.CENTRE[0] - I.RADIUS - box[0], I.CENTRE[1] - I.RADIUS - box[1]
+    isl[iz0:iz0 + on.shape[0], ix0:ix0 + on.shape[1]] = on
+    di = distance(isl, None, max_iter=R + 10)
+    nzv = value_noise(xx, zz, 36.0, seed_of("reef"))
+    nz2 = value_noise(xx, zz, 13.0, seed_of("reef2"))
+    ro = (rf["outer_radius"][0] - rf["inner_radius"]) + (rf["outer_radius"][1] - rf["outer_radius"][0]) * (0.75 * nzv + 0.25 * nz2)
+    t = np.clip(di / np.maximum(1.0, ro), 0.0, 1.0)
+    top_in, top_out = float(rf["top_depth_inner"]), float(rf["top_depth_outer"])
+    Tp = top_in + (top_out - top_in) * smoothstep(t) ** 0.8 + (value_noise(xx, zz, 22.0, seed_of("reef3")) - 0.5) * 2.0
+    plat = sea & (di <= ro) & (w_ang > 0)
+    dw = float(rf["drop_width_blocks"]) * (1.0 + 1.6 * value_noise(xx, zz, 28.0, seed_of("reef_wall")))
+    wall = sea & (di > ro) & (di <= ro + dw) & (w_ang > 0)
+    tw = np.clip((di - ro) / np.maximum(1.0, dw), 0.0, 1.0)
+    Tt = np.where(plat, Tp, np.where(wall, top_out + (depth0 - top_out) * smoothstep(tw), 99.0))
+    # patch reefs: where two octaves of noise stand highest on the platform, rising up to rise_blocks above it
+    pr = rf["knolls"]
+    pn = 0.65 * value_noise(xx, zz, float(pr.get("scale_blocks", 16)), seed_of("patch")) + \
+        0.35 * value_noise(xx, zz, 6.0, seed_of("patch2"))
+    thr = float(pr.get("noise_over", 0.68))
+    rise = np.clip((pn - thr) / max(1e-6, 1.0 - thr), 0.0, 1.0) * float(pr.get("rise_blocks", 4))
+    Tt = np.where(plat, Tt - rise, Tt)
     Tt = np.maximum(Tt, float(rf["min_depth"]))
-    # ease down to the old bed beside protected ground (the islet's square): no cliff at its edge
+    # the sector's ends ease back into the old bed; so does the ground beside protected columns, except at the islet
+    # itself, whose apron the platform is meant to meet
+    Tt = np.where(Tt < depth0, depth0 - (depth0 - Tt) * w_ang, Tt)
     Pb = ctx.P[sl(box)]
     if Pb.any():
-        wp = np.clip((distance(Pb, None, max_iter=16) - 2.0) / 10.0, 0.0, 1.0)
+        wp = np.clip((distance(Pb, None, max_iter=16) - 1.0) / 8.0, 0.0, 1.0)
+        near_islet = distance(isl, None, max_iter=8) <= 5
+        wp = np.where(near_islet, 1.0, wp)
         Tt = np.where(Tt < depth0, depth0 - (depth0 - Tt) * smoothstep(wp), Tt)
     want = sea & (plat | wall) & (Tt < depth0) & (depth0 >= rf["min_depth"])
     new = np.where(want, SEA - np.rint(Tt).astype(np.int32), g0)
     k = ctx.feature("coast:relic_reef", "coasts")
-    ok = ctx.write(k, box, new.astype(np.int16), want)
+    ok = ctx.write(k, box, new.astype(np.int16), want, over=("seabed",))
     g1 = ctx.G1[sl(box)].astype(np.int32)
+    patches = plat & (rise >= 1.0)
     ctx.report["coasts"]["relic_reef"] = {
         "platform_columns": int((plat & sea).sum()), "columns_written": int(ok.sum()),
         "fill_blocks": int((g1 - g0)[ok].sum()), "shallowest_depth_after": int((SEA - g1)[ok].min()) if ok.any() else None,
-        "knolls": [{"at": [x + box[0], z + box[1]], "radius": round(rk, 1)} for z, x, rk in knolls],
+        "patch_reef_columns": int(patches.sum()),
         "held_protected": ctx.features[k]["held_protected"]}
     ctx.features[k]["columns_written"] = int(ok.sum())
 
@@ -2130,7 +2577,7 @@ def skerry_pass(ctx, sk):
     want_m = sea & (prof > g0) & ~ex & inbox
     new = np.where(want_m, np.rint(prof).astype(np.int32), g0)
     k = ctx.feature("coast:" + sk["id"], "coasts")
-    ok = ctx.write(k, box, new.astype(np.int16), want_m)
+    ok = ctx.write(k, box, new.astype(np.int16), want_m, over=("seabed",))
     g1 = ctx.G1[sl(box)].astype(np.int32)
     ctx.report["coasts"][sk["id"]] = {"placed": recs, "columns_written": int(ok.sum()),
                                       "new_land_columns": int((ok & (g1 >= SEA)).sum()),
@@ -2153,7 +2600,7 @@ def hole_pass(ctx):
     want = sea & (d <= r) & (np.rint(tgt) < g0)
     new = np.where(want, np.rint(tgt).astype(np.int32), g0)
     k = ctx.feature("coast:first_cast_hole", "coasts")
-    ok = ctx.write(k, box, new.astype(np.int16), want)
+    ok = ctx.write(k, box, new.astype(np.int16), want, over=("seabed",))
     ctx.report["coasts"]["first_cast_hole"] = {"columns_written": int(ok.sum()), "status": h["status"],
                                               "held_protected": ctx.features[k]["held_protected"]}
     ctx.features[k]["columns_written"] = int(ok.sum())
@@ -2172,6 +2619,183 @@ def coasts_pass(ctx):
         skerry_pass(ctx, sk)
     print("  coasts %.1f s" % (time.time() - t0), flush=True)
     return fb
+
+
+# ---------------------------------------------------------------------------------------------------- the bank
+
+
+def bank_island(ctx):
+    """(box, island mask) of the land data/water_shape.json jungle_isle_bank removes: the region's polygons grown
+    region_grow_blocks, where the canonical ground stands at or above the sea. Cached."""
+    if getattr(ctx, "_bank_island", None) is not None:
+        return ctx._bank_island
+    bk = ctx.spec["jungle_isle_bank"]
+    pad = int(bk["apron_blocks"]) + 48
+    rb, rm = ctx.region_mask(bk["region"], int(bk["region_grow_blocks"]))
+    box = clip_box(rb[0] - pad, rb[1] - pad, rb[2] + pad, rb[3] + pad, ctx.N)
+    m = np.zeros((box[3] - box[1], box[2] - box[0]), bool)
+    m[rb[1] - box[1]:rb[3] - box[1], rb[0] - box[0]:rb[2] - box[0]] = rm
+    island = m & (ctx.G0[sl(box)] >= SEA)
+    ctx._bank_island = (box, island)
+    return ctx._bank_island
+
+
+def bank_footprint(ctx):
+    """The bank's footprint over bank_island's box: the island grown by its apron."""
+    if getattr(ctx, "_bank_fp", None) is not None:
+        return ctx._bank_fp
+    bk = ctx.spec["jungle_isle_bank"]
+    box, I = bank_island(ctx)
+    ctx._bank_fp = distance_scaled(I, None, 2) <= float(bk["apron_blocks"])
+    return ctx._bank_fp
+
+
+def resited_town(ctx):
+    """The re-sited sea town's elements and buildings (data/sea_town.json resite, translated by tools/sea_town.py),
+    by district: {district: [rects]}, and the deck cells. Pure geometry; cached."""
+    if getattr(ctx, "_town", None) is not None:
+        return ctx._town
+    import sea_town as ST
+    plan = ST.load(resite=True)
+    by_d = {}
+    deck = set()
+    for e in ST.elements(plan):
+        if e["district"] == "mainland_jetty":
+            continue
+        by_d.setdefault(e["district"], []).append((e["kind"], e["rect"], e["min_depth"]))
+        if not e["decor"]:
+            deck |= ST.cells(e["rect"])
+    for b in plan["buildings"]:
+        by_d.setdefault(b["district"], []).append((b["type"], b["rect"], 1))
+    ctx._town = {"plan": plan, "by_district": by_d, "deck": deck}
+    return ctx._town
+
+
+def bank_pass(ctx):
+    """The Jungle Isle removed to a shallow sea bank, with Pacifidlog's shallows and its blue hole (the owner's
+    decision of 2026-09-27; data/water_shape.json jungle_isle_bank). The island's land goes down to a bank whose
+    depth follows the old island's own relief (its high ground the bank's crown, its coast the bank's edge), the old
+    shore apron is cut to continue the bank's edge out to the sea floor, the town's footprint is shaped for its posts
+    (rafts over 3-5, sand shallows 1-2 round the Stilt Quarter and the yard) and fades into the bank, and a blue hole
+    opens off Fishers' Row's head. Nothing is left at or above the sea."""
+    bk = ctx.spec["jungle_isle_bank"]
+    box, I = bank_island(ctx)
+    g0 = ctx.G1[sl(box)].astype(np.float64)
+    G0b = ctx.G0[sl(box)].astype(np.float64)
+    H, W = I.shape
+    zz, xx = np.mgrid[box[1]:box[3], box[0]:box[2]]
+    d0 = SEA - g0
+    dp = bk["depth"]
+    crest, edge = float(dp["crest"]), float(dp["edge"])
+    # inland distance from the old coast, and seaward distance from it
+    din = distance_scaled(~I, I, 4)
+    dout = distance_scaled(I, ~I, 2)
+    # the old island's relief, smoothed and ranked: high ground becomes the crown
+    hs = box_mean(np.where(I, G0b, 0.0), 24) / np.maximum(box_mean(I.astype(float), 24), 1e-6)
+    lo_h, hi_h = np.percentile(hs[I], 10), np.percentile(hs[I], 90)
+    rel = np.clip((hs - lo_h) / max(1.0, hi_h - lo_h), 0.0, 1.0)
+    ramp = smoothstep(din / float(dp["inland_ramp_blocks"]))
+    rn = value_noise(xx, zz, float(dp["relief_scale_blocks"]), seed_of("bank_relief"))
+    rn2 = value_noise(xx, zz, float(dp["relief_scale_blocks"]) * 0.35, seed_of("bank_relief2"))
+    relief = ((rn - 0.5) * 2.0 * 0.75 + (rn2 - 0.5) * 2.0 * 0.25) * float(dp["relief_blocks"])
+    d_in = edge - (edge - crest) * (rel ** 0.8) * ramp + relief * ramp
+    d_in = np.clip(d_in, float(dp["min_off_town"]), None)
+    # the old shore apron: continue the bank's edge outward at edge_slope until it meets the (filled) sea floor
+    sw = value_noise(xx, zz, 60.0, seed_of("bank_edge")) * 0.6 + 0.7
+    # capped a few blocks under the edge: it only takes away the old island's beach ramp (shallower than the bank),
+    # never digs a moat into the sea floor's fill round it
+    d_out = edge + np.minimum(dout * float(dp["edge_slope"]) * sw, float(dp.get("apron_max_extra", 4))) + relief * 0.5
+    T = np.where(I, d_in, np.maximum(d_out, d0))
+    apron = ~I & (dout <= float(bk["apron_blocks"])) & (d0 < d_out)
+    # the town: rafts over raft_depth, the shallows under the Stilt Quarter and the yard, faded into the bank
+    tw = bk["town"]
+    town = resited_town(ctx)
+    raft_m = np.zeros((H, W), bool)
+    shal_m = np.zeros((H, W), bool)
+    need = np.zeros((H, W))                              # the least depth each deck cell's kind allows
+    for dist_, items in town["by_district"].items():
+        for kind, (x0, z0, x1, z1), mind in items:
+            a0, a1 = max(0, z0 - box[1]), min(H, z1 - box[1] + 1)
+            b0, b1 = max(0, x0 - box[0]), min(W, x1 - box[0] + 1)
+            if a1 <= a0 or b1 <= b0:
+                continue
+            if dist_ in tw["shallows_for"]:
+                shal_m[a0:a1, b0:b1] = True
+            else:
+                raft_m[a0:a1, b0:b1] = True
+            need[a0:a1, b0:b1] = np.maximum(need[a0:a1, b0:b1], float(mind))
+    # the shallows are a sand flat of their own shape, not the buildings' outline grown: their reach wanders on noise
+    sgw = float(tw["shallows_grow_blocks"])
+    sn = value_noise(xx, zz, 24.0, seed_of("town_shallows")) * 0.7 + value_noise(xx, zz, 8.0, seed_of("town_shallows2")) * 0.3
+    shal_zone = distance(shal_m, None, max_iter=int(sgw * 1.8) + 2) <= sgw * (0.35 + 1.4 * sn)
+    shal_zone |= shal_m
+    # the boatwright's slipway steps down a block a block into the water (tools/sea_town.py): under it, and a short
+    # dredged slip beyond its foot, the bed stands a block under each step (the Sound's deep water gave it that)
+    sw_ = (town["plan"].get("yard") or {}).get("slipway")
+    slip = np.zeros((H, W), bool)
+    if sw_:
+        sx0, sz0, sx1, sz1 = sw_["rect"]
+        run_ = int(tw.get("slip_basin_blocks", 10))
+        for x in range(sx0 - run_, sx1 + 1):
+            k_ = sx1 - x
+            dneed = min(k_, sx1 - sx0) + 2
+            a0, a1 = max(0, sz0 - 2 - box[1]), min(H, sz1 + 3 - box[1])
+            b_ = x - box[0]
+            if 0 <= b_ < W and a1 > a0:
+                need[a0:a1, b_] = np.maximum(need[a0:a1, b_], float(dneed))
+                slip[a0:a1, b_] = True
+        shal_zone &= ~slip
+    town_zone = distance(raft_m | shal_m, None, max_iter=int(tw["grow_blocks"]) + 2) <= float(tw["grow_blocks"])
+    rd0, rd1 = tw["raft_depth"]
+    sd0, sd1 = tw["shallows_depth"]
+    tn = value_noise(xx, zz, 18.0, seed_of("town_bed"))
+    Ttown = np.where(shal_zone, sd0 + (sd1 - sd0) * (tn > 0.5), rd0 + (rd1 - rd0) * tn)
+    Ttown = np.maximum(Ttown, need)
+    wt = 1.0 - smoothstep(distance(town_zone, None, max_iter=int(tw["blend_blocks"]) + 2) / float(tw["blend_blocks"]))
+    wt = np.where(town_zone, 1.0, wt)
+    T = np.where(I | apron, T + (Ttown - T) * wt, T)
+    # the blue hole off Fishers' Row's head
+    bh = bk["blue_hole"]
+    head = next(w for w in town["plan"]["walks"] if w["id"] == bh["at_walk"])
+    hx = head["rect"][0] - float(bh["radius"]) * float(bh.get("offset_of_radius", 0.85))
+    hz = (head["rect"][1] + head["rect"][3]) / 2.0
+    ang = np.arctan2(zz - hz, xx - hx)
+    wob = 1.0 + 0.35 * (value_noise(np.cos(ang) * 2.0 + hx, np.sin(ang) * 2.0 + hz, 1.2, seed_of("blue_hole")) - 0.5) \
+        + 0.2 * (value_noise(xx, zz, 9.0, seed_of("blue_hole2")) - 0.5)
+    rr = np.hypot(xx - hx, zz - hz) / (float(bh["radius"]) * wob)
+    # a sand lip, a steep wall with a ledge part way down, and a bowl floor
+    shape = np.where(rr <= 0.45, 1.0, np.where(rr <= 0.7, 0.62 + 0.38 * smoothstep((0.7 - rr) / 0.25),
+                                                 0.62 * smoothstep((1.0 - rr) / 0.3)))
+    hole = T + (float(bh["depth"]) - T) * shape
+    in_hole = rr <= 1.0
+    T = np.where(in_hole & (I | apron), np.maximum(T, hole), T)
+    T = np.maximum(T, float(bk["never_shallower_than"]))
+    want = I | apron | (in_hole & (T > d0))
+    new = np.where(want, SEA - np.rint(T), g0).astype(np.int32)
+    new = np.minimum(new, SEA - 1)
+    mask = want & (new != g0.astype(np.int32))
+    k = ctx.feature("bank:jungle_isle", "bank")
+    ok = ctx.write(k, box, new.astype(np.int16), mask, over=("seabed",))
+    g1 = ctx.G1[sl(box)].astype(np.int32)
+    dep = SEA - g1
+    town_band = wt > 0.0                                   # the town's zone and the band its bed fades over
+    off_town = I & ~town_band & ~in_hole
+    ctx.report["bank"] = {
+        "island_columns_removed": int(I.sum()), "apron_columns_cut": int((ok & apron).sum()),
+        "columns_written": int(ok.sum()), "cut_blocks": int((g0.astype(np.int32) - g1)[ok & (g1 < g0)].sum()),
+        "fill_blocks": int((g1 - g0.astype(np.int32))[ok & (g1 > g0)].sum()),
+        "held_protected": ctx.features[k]["held_protected"], "held_clash": ctx.features[k]["held_clash"],
+        "left_at_or_above_sea": int((I & (g1 >= SEA)).sum()),
+        "bank_depth_off_town": {"min": int(dep[off_town].min()), "p10": float(np.percentile(dep[off_town], 10)),
+                                "median": float(np.median(dep[off_town])), "p90": float(np.percentile(dep[off_town], 90)),
+                                "max": int(dep[off_town].max())},
+        "town_zone_depth": {"min": int(dep[town_zone & I].min()), "max": int(dep[town_zone & I].max())},
+        "rest_ground_columns": int((I & (dep <= 1)).sum()),
+        "rest_ground_outside_town": int((I & (dep <= 1) & ~town_band).sum()),
+        "blue_hole": {"centre": [round(hx), round(hz)], "deepest": int(dep[in_hole].max())},
+        "town_footprint_depth_under_decks": None}
+    ctx.bank_run = {"box": box, "I": I, "town_zone": town_zone, "town_band": town_band, "hole_centre": (hx, hz)}
+    ctx.features[k]["columns_written"] = int(ok.sum())
 
 
 # ---------------------------------------------------------------------------------------------------- seabed
@@ -2232,8 +2856,13 @@ def seabed_pass(ctx):
     n = N // f
     t0 = time.time()
     G0 = ctx.G0
-    cmax = G0[:n * f, :n * f].reshape(n, f, n, f).max(axis=(1, 3))
-    land_c = cmax >= SEA
+    land_full = G0 >= SEA
+    if ctx.spec.get("jungle_isle_bank"):
+        # the Jungle Isle is removed by the bank pass: it is not land for the sea floor's profile
+        bbox, isl = bank_island(ctx)
+        land_full[sl(bbox)] &= ~isl
+    land_c = land_full[:n * f, :n * f].reshape(n, f, n, f).any(axis=(1, 3))
+    del land_full
     lake_c = ctx.lake_mask[:n * f, :n * f].reshape(n, f, n, f).any(axis=(1, 3))
     sea_c = flood_border(~land_c & ~lake_c)
     dl_c = distance(land_c, ~land_c) * f
@@ -2277,6 +2906,31 @@ def seabed_pass(ctx):
         raise_c = np.where(zmask & ~gap & sea_c, prof * hgt, 0.0)
         Pc = np.where(raise_c > 0, np.maximum(Pc, np.minimum(Pc + raise_c, float(rd["crest_cap_y"]))), Pc)
         ridge_rep.append({"id": rd["id"], "coarse_cells_raised": int((raise_c > 0.5).sum())})
+    # the ferry's straits: a soft trough under each gate line instead of an excluded channel (the run kept each strait
+    # at its old depth, and on the overview they read as cut channels across the new shelf). The target sinks by up to
+    # depth_blocks along a wandering centreline and fades out over sigma_blocks either side; the fill is fill-only and
+    # capped at y59, so no column's swim rate changes and every gate stays a gate (P4)
+    st_rep = []
+    tr = sb.get("strait_trough")
+    if tr:
+        cz_, cx_ = np.mgrid[0:n, 0:n]
+        px_, pz_ = (cx_ + 0.5) * f, (cz_ + 0.5) * f
+        sink = np.zeros((n, n))
+        for (ax, az), (bx, bz) in gate_lines(ctx, only_gates=True):
+            vx, vz = bx - ax, bz - az
+            L2 = max(1e-9, vx * vx + vz * vz)
+            t_ = np.clip(((px_ - ax) * vx + (pz_ - az) * vz) / L2, 0.0, 1.0)
+            ox_, oz_ = ax + vx * t_, az + vz * t_
+            L = math.sqrt(L2)
+            nxl, nzl = -vz / L, vx / L
+            wob = (value_noise(px_, pz_, float(tr["wander_scale_blocks"]), seed_of("strait", ax, az)) - 0.5) * 2.0 * float(tr["wander_blocks"])
+            dd = (px_ - ox_) * nxl + (pz_ - oz_) * nzl - wob
+            sg_ = float(tr["sigma_blocks"]) * (0.8 + 0.4 * value_noise(px_, pz_, 300.0, seed_of("strait_w", ax, az)))
+            # the trough fades out toward each shore (the run cut a notch into the beach at a line's end)
+            ends = smoothstep(np.minimum(t_, 1.0 - t_) * L / float(tr.get("end_taper_blocks", 160)))
+            sink = np.maximum(sink, float(tr["depth_blocks"]) * np.exp(-(dd / sg_) ** 2) * ends)
+            st_rep.append({"line": [[ax, az], [bx, bz]]})
+        Pc = np.where(np.isfinite(Pc), Pc - sink, Pc)
     # exclusions, with a feather
     ex_c = np.zeros((n, n), bool)
     ex_rep = {}
@@ -2316,6 +2970,7 @@ def seabed_pass(ctx):
         ex_c |= m
     Pm = ctx.P[:n * f, :n * f].reshape(n, f, n, f).any(axis=(1, 3))
     ex_c |= Pm
+
     feather = float(sb["exclusion_feather_blocks"])
     dex = distance(ex_c, None, max_iter=int(feather / f) + 3) * f
     wex_c = np.clip(dex / feather, 0.0, 1.0)
@@ -2332,6 +2987,7 @@ def seabed_pass(ctx):
     zone_full = raster_polygons([ring for z in sb["zones"] for ring in (ctx.region(z["region"]).get("polygons") or [])],
                                 (0, 0, N, N))
     excl_full = np.zeros((N, N), bool)
+
     for e in sb["exclude"]:
         if "box" in e:
             x0, z0, x1, z1 = e["box"]
@@ -2353,6 +3009,7 @@ def seabed_pass(ctx):
         blur = box_mean(g, br)[zb - a0:zb - a0 + (ze - zb)]
         gb = ctx.G1[zb:ze].astype(np.int32)
         inc = np.maximum(0.0, blur - ctx.G0[zb:ze].astype(np.float64))
+        inc = box_mean(np.where(inc >= minc, inc, 0.0), 3)
         inc = np.where(inc >= minc, inc, 0.0)
         P = upsample_bilinear(Pc, f, zb, ze, N)
         w = upsample_bilinear(wc, f, zb, ze, N)
@@ -2377,12 +3034,82 @@ def seabed_pass(ctx):
                          "after_p10_median_p90": [float(np.percentile(ca, q)) for q in (10, 50, 90)],
                          "cells": int(sel.sum())}
     ctx.report["seabed"] = {"columns_written": written, "fill_blocks": fill, "zones": zone_stats, "ridges": ridge_rep,
-                            "excluded_coarse_cells": ex_rep, "held_protected": ctx.features[k]["held_protected"],
+                            "excluded_coarse_cells": ex_rep, "strait_troughs": st_rep, "held_protected": ctx.features[k]["held_protected"],
                             "held_clash": ctx.features[k]["held_clash"],
                             "margin": {"status": sb["margin"]["status"], "seamounts": ctx.region("the_outer_deep")["features"]["seamounts"]}}
     ctx.features[k]["columns_written"] = written
     ctx.seabed_coarse = {"sea": sea_c, "dl": dl_c, "P": Pc, "w": wc, "ex": ex_c, "f": f}
     print("  seabed: written %d columns in %.1f s" % (written, time.time() - t0), flush=True)
+
+
+def margin_relief(ctx):
+    """The margin relief image (owner question 1, option A, designed 2026-09-27): a 16-bit image the size of the
+    export's canvas (the heightmap plus export_margin_blocks on every side), on the heightmap's own import line, that
+    tools/worldpainter/export_world.js imports in place of its blank margin. Zero over the heightmap's square (the
+    margin import only raises and only creates missing tiles, so the landmass is untouched); outside it the revised
+    copy's edge carried outward (the sea floor fading to the y10 floor over fade_blocks, land at the edge falling to
+    the sea at coast_slope instead of a cliff), and the five seamounts of the_outer_deep. Returns (raw uint16 image,
+    report, preview at 1/16)."""
+    mg = ctx.spec["seabed"]["margin"]
+    rel = mg["relief"]
+    M = int(ctx.world["export"]["export_margin_blocks"])
+    N = ctx.N
+    side = N + 2 * M
+    fade = float(rel["fade_blocks"])
+    coast = float(rel["coast_slope"])
+    floor_y = float(ctx.world["import"]["low_out"])
+    cap = float(rel["sea_cap_y"])
+    seam = ctx.region("the_outer_deep")["features"]["seamounts"]
+    shape = mg["seamount_shape"]
+    rng = rng_for("seamounts")
+    mounts = []
+    for s_ in seam:
+        R = rng.uniform(*shape["radius_blocks"])
+        mounts.append((float(s_["x"]), float(s_["z"]), float(s_["summit_y"]), R, float(shape["summit_plateau_radius"])))
+    out = np.zeros((side, side), np.uint16)
+    prev = np.zeros((-(-side // 16), -(-side // 16)), np.float32)
+    ymax_margin = 0.0
+    edge_err = 0.0
+    for z0 in range(0, side, 512):
+        z1 = min(side, z0 + 512)
+        wz = np.arange(z0, z1)[:, None] - M
+        wx = np.arange(0, side)[None, :] - M
+        cz = np.clip(wz, 0, N - 1)
+        cx = np.clip(wx, 0, N - 1)
+        outside = (wz < 0) | (wz >= N) | (wx < 0) | (wx >= N)
+        dx = np.maximum(np.maximum(-wx, wx - (N - 1)), 0)
+        dz = np.maximum(np.maximum(-wz, wz - (N - 1)), 0)
+        d = np.hypot(dx, dz).astype(np.float64)
+        ye = ctx.G1[cz, cx].astype(np.float64)
+        y_sea = floor_y + (np.minimum(ye, cap) - floor_y) * (1.0 - smoothstep(d / fade))
+        y = np.maximum(y_sea, ye - coast * d)
+        X = wx.astype(np.float64)
+        Z = wz.astype(np.float64)
+        for mx, mz, top, R, pl in mounts:
+            r = np.hypot(X - mx, Z - mz)
+            if r.min() > R * 1.3:
+                continue
+            ang = np.arctan2(Z - mz, X - mx)
+            wob = 1.0 + 0.25 * (value_noise(np.cos(ang) * 2.5 + mx, np.sin(ang) * 2.5 + mz, 1.1, seed_of("seamount", mx, mz)) - 0.5)
+            t = np.clip((r / wob - pl) / max(1.0, R - pl), 0.0, 1.0)
+            ym = top - (top - floor_y) * smoothstep(t) ** 0.7
+            y = np.maximum(y, np.where(r <= R * 1.3, ym, floor_y))
+        y = np.where(outside, y, floor_y)
+        raw = np.where(outside, raw_of_ground(y, ctx.world), 0).astype(np.uint16)
+        out[z0:z1] = raw
+        if outside.any():
+            ymax_margin = max(ymax_margin, float(y[outside & (d > 0)].max()) if (outside & (d > 0)).any() else 0.0)
+            # continuity: the first margin column against the copy's edge column
+            ring = outside & (d <= 1.0)
+            if ring.any():
+                edge_err = max(edge_err, float(np.abs(y[ring] - ye[ring]).max()))
+        prev[z0 // 16:(z1 + 15) // 16] = y[::16, ::16]
+    rep = {"side": side, "margin_blocks": M, "fade_blocks": fade, "coast_slope": coast,
+           "highest_margin_y": round(ymax_margin, 1), "edge_step_max_blocks": round(edge_err, 1),
+           "seamounts": [{"at": [int(a), int(b)], "summit_y": t, "radius": round(R, 1)} for a, b, t, R, _pl in mounts],
+           "edge_land_columns": {"north": int((ctx.G1[0] >= SEA).sum()), "south": int((ctx.G1[-1] >= SEA).sum()),
+                                 "west": int((ctx.G1[:, 0] >= SEA).sum()), "east": int((ctx.G1[:, -1] >= SEA).sum())}}
+    return out, rep, prev
 
 
 # ---------------------------------------------------------------------------------------------------- maps
@@ -2505,6 +3232,76 @@ def section_samples(G, a, b):
     return dist, ys, cells
 
 
+def with_overlay(ctx, G, box, names):
+    """The integer ground over a box with the islet's top (or a town's decks) laid over."""
+    g = G[sl(box)].copy()
+    for (x, z), y in overlay_ground(ctx, G, names).items():
+        if box[0] <= x < box[2] and box[1] <= z < box[3]:
+            g[z - box[1], x - box[0]] = y
+    return g
+
+
+def bank_maps(ctx, mdir, legend):
+    """The Jungle Isle before and after, with the re-sited town's decks, the blue hole, the new jetty and the ferry
+    line drawn; and the town's own close-up."""
+    made = []
+    import sea_town as ST
+    plan = ST.load(resite=True)
+    _lv, deck = ST.deck_ground(ctx.world, resite=True)
+    for name, box, f in (("jungle_isle_bank", (4000, 6300, 6300, 8191), 2), ("pacifidlog_bank_town", (4880, 7200, 5320, 7720), 1)):
+        box = clip_box(*box, ctx.N)
+        gb = ctx.G0[sl(box)][::f, ::f]
+        ga = ctx.G1[sl(box)][::f, ::f]
+        b = render(gb, SEA)
+        a = render(ga, SEA)
+        d = ImageDraw.Draw(a)
+        for x, z in deck:
+            if box[0] <= x < box[2] and box[1] <= z < box[3]:
+                d.point(((x - box[0]) // f, (z - box[1]) // f), fill=(150, 90, 40))
+        for bd in plan["buildings"]:
+            x0, z0, x1, z1 = bd["rect"]
+            d.rectangle([(x0 - box[0]) // f, (z0 - box[1]) // f, (x1 - box[0]) // f, (z1 - box[1]) // f], fill=(110, 60, 30))
+        line = next((v for k, v in ctx.crossing_lines.items() if k == "pacifidlog_ferry_line"), None)
+        if line:
+            (ax, az), (bx, bz) = line
+            d.line([((ax - box[0]) / f, (az - box[1]) / f), ((bx - box[0]) / f, (bz - box[1]) / f)], fill=(220, 40, 40), width=1)
+        img = panel([b, a], ["%s before: the Jungle Isle" % name if f == 2 else "%s before" % name,
+                             "after: the bank, Pacifidlog's decks (brown), the new jetty, the ferry line (red)"],
+                    fit_scale(gb.shape[1] * 2, gb.shape[0], 1800), legend)
+        p = mdir / ("%s.png" % name)
+        img.save(p)
+        made.append(str(p.relative_to(ROOT)))
+    # the Long Isle's new split (the owner, 2026-09-27: 'half jungle half desert'): paint, not shape, drawn here with
+    # the rest of Part B. The desert sub-regions tinted sand, the jungle green; the old line red, the new one white
+    subs = {s["id"]: s for s in load("regions.json")["subregions"]}
+    box = clip_box(6700, 4300, 8192, 8100, ctx.N)
+    f = 4
+    base = render(ctx.G1[sl(box)][::f, ::f], SEA)
+    tint = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(tint)
+    lines = {}
+    for sid, col in (("long_isle_north", (230, 200, 90, 90)), ("long_isle_middle", (230, 200, 90, 90)),
+                     ("long_isle_south", (40, 150, 60, 110))):
+        for ring in subs[sid]["polygons"]:
+            d.polygon([((x - box[0]) / f, (z - box[1]) / f) for x, z in ring], fill=col)
+        for b in subs[sid].get("boundaries", []):
+            if b.get("line"):
+                lines["new"], lines["old"] = b["line"], b.get("previous_line")
+    img = Image.alpha_composite(base.convert("RGBA"), tint).convert("RGB")
+    d = ImageDraw.Draw(img)
+    if lines.get("old"):
+        d.line([((x - box[0]) / f, (z - box[1]) / f) for x, z in lines["old"]], fill=(220, 40, 40), width=2)
+    if lines.get("new"):
+        d.line([((x - box[0]) / f, (z - box[1]) / f) for x, z in lines["new"]], fill=(255, 255, 255), width=2)
+    area = {sid: subs[sid]["measured"]["area_km2"] for sid in ("long_isle_north", "long_isle_middle", "long_isle_south")}
+    img = panel([img], ["Long Isle: desert (north + middle) %.3f km2, jungle (south) %.3f km2; old line red, new white" % (
+        area["long_isle_north"] + area["long_isle_middle"], area["long_isle_south"])], 2.0, None)
+    p = mdir / "long_isle_split.png"
+    img.save(p)
+    made.append(str(p.relative_to(ROOT)))
+    return made
+
+
 def maps_pass(ctx, out):
     mdir = out / "maps"
     sdir = out / "sections"
@@ -2548,22 +3345,29 @@ def maps_pass(ctx, out):
         p = sdir / ("river_%s_long_profile.png" % cid)
         ch.save(p)
         made.append(str(p.relative_to(ROOT)))
-    if getattr(ctx, "stream_run", None):
-        r = ctx.stream_run
+    for hid, r in (getattr(ctx, "stream_run", None) or {}).items():
+        cid = ctx.report["stream"][hid]["course_id"]
         ch = chart([(r["sg"], r["flo"], (140, 140, 140), "ravine floor (lowest within 2)"),
                     (r["sg"], r["level"], (20, 90, 200), "stream surface"),
                     (r["sg"], r["floor"], (160, 100, 40), "stream bed")],
-                   [(SEA, (0, 160, 200))], "Viltri Ravine stream, pass to sea", "blocks from the pass", "y")
-        p = sdir / "viltri_ravine_stream_long_profile.png"
+                   [(SEA, (0, 160, 200))], "Viltri Ravine %s half, pass to %s" % (hid, "sea" if hid == "sea" else "Lake Viltri"),
+                   "blocks from the pass", "y")
+        p = sdir / ("viltri_ravine_%s_long_profile.png" % hid)
         ch.save(p)
         made.append(str(p.relative_to(ROOT)))
         pad = 60
         box = clip_box(r["xn"].min() - pad, r["zn"].min() - pad, r["xn"].max() + pad, r["zn"].max() + pad, ctx.N)
-        wa_ = paint_water(ctx.G1, ctx.revised_courses["viltri_ravine_stream"], box)
-        lvmap = np.where(wa_[0], wa_[1], float(SEA))
-        img = panel([render(ctx.G0[sl(box)], SEA), render(ctx.G1[sl(box)], lvmap, wa_[0] | (ctx.G1[sl(box)] < SEA))],
-                    ["Viltri Ravine sea half before", "after: spring, stream, cascades"], fit_scale((box[2] - box[0]) * 2, box[3] - box[1], 1800), legend)
-        p = mdir / "viltri_ravine_stream.png"
+        wb_ = paint_water(ctx.G0, ctx.revised_courses_original[cid], box) if cid in ctx.revised_courses_original else None
+        wa_ = paint_water(ctx.G1, ctx.revised_courses[cid], box)
+        lvl = float(ctx.lake_bodies["lake_viltri"]["level"])
+        lake_or_sea = (ctx.G1[sl(box)] < SEA) | (ctx.lake_mask[sl(box)] & (ctx.G1[sl(box)] < lvl))
+        lvmap = np.where(wa_[0], wa_[1], np.where(ctx.lake_mask[sl(box)], lvl, float(SEA)))
+        lv0 = np.where(ctx.lake_mask[sl(box)], lvl, float(SEA))
+        img = panel([render(ctx.G0[sl(box)], lv0, (ctx.G0[sl(box)] < SEA) | ctx.lake_mask[sl(box)]),
+                     render(ctx.G1[sl(box)], lvmap, wa_[0] | lake_or_sea)],
+                    ["Viltri Ravine %s half before (dry)" % hid, "after: spring, stream, pools and riffles, cascades"],
+                    fit_scale((box[2] - box[0]) * 2, box[3] - box[1], 1800), legend)
+        p = mdir / ("viltri_ravine_%s.png" % hid)
         img.save(p)
         made.append(str(p.relative_to(ROOT)))
     coast_boxes = [("southern_coast", (400, 4300, 4300, 6900), 0.25), ("pallet_and_relic", (850, 5150, 1450, 5750), 1.0),
@@ -2578,12 +3382,31 @@ def maps_pass(ctx, out):
             box = (min(ax, bx) - 80, min(az, bz) - 80, max(ax, bx) + 80, max(az, bz) + 80)
         box = clip_box(*box, ctx.N)
         f = max(1, int(round(1 / scale)))
-        gb = ctx.G0[sl(box)][::f, ::f]
-        ga = ctx.G1[sl(box)][::f, ::f]
+        # Relic Island's islet is built over the seabed, not in the heightmap: drawn over both so the map shows what
+        # a player sees (the run's maps showed its column of seabed as a dark hole in the reef)
+        gb = with_overlay(ctx, ctx.G0, box, ["relic_island"])[::f, ::f]
+        ga = with_overlay(ctx, ctx.G1, box, ["relic_island"])[::f, ::f]
         nolake = ~ctx.lake_mask[sl(box)][::f, ::f]          # lakes stand above the sea: not drawn as sea
         img = panel([render(gb, SEA, nolake), render(ga, SEA, nolake)], ["%s before" % name, "after"], fit_scale(gb.shape[1] * 2, gb.shape[0], 1800), legend)
         p = mdir / ("coast_%s.png" % name)
         img.save(p)
+        made.append(str(p.relative_to(ROOT)))
+    if getattr(ctx, "bank_run", None) is not None:
+        made += bank_maps(ctx, mdir, legend)
+    if getattr(ctx, "margin", None) is not None:
+        prev = ctx.margin[2]
+        M = ctx.margin[1]["margin_blocks"]
+        img = render(np.rint(prev), SEA)
+        d = ImageDraw.Draw(img)
+        d.rectangle([M // 16, M // 16, (M + ctx.N) // 16, (M + ctx.N) // 16], outline=(255, 140, 0))
+        for sm in ctx.margin[1]["seamounts"]:
+            x, z = (sm["at"][0] + M) // 16, (sm["at"][1] + M) // 16
+            d.ellipse([x - 3, z - 3, x + 3, z + 3], outline=(220, 40, 40))
+        big = img.resize((img.width * 2, img.height * 2), Image.NEAREST)
+        ImageDraw.Draw(big).text((6, 6), "margin relief (1 px = 8 blocks): the heightmap square outlined (drawn flat: "
+                                          "the image is zero there); seamounts circled", fill=(255, 255, 255))
+        p = mdir / "margin_relief.png"
+        big.save(p)
         made.append(str(p.relative_to(ROOT)))
     f = 8
     gb = ctx.G0[::f, ::f]
@@ -2643,13 +3466,14 @@ def maps_pass(ctx, out):
     S = fatigue_constants()
     for cid, after in ctx.report["crossings"].get("after", {}).items():
         before = ctx.report["crossings"]["before"].get(cid, {})
-        if "walk" not in after or "walk" not in before:
+        if "walk" not in after:
             continue
         series = []
         for who, col_b, col_a in (("unaided", (200, 150, 150), (200, 30, 30)), ("trained", (150, 150, 200), (30, 30, 200))):
-            tb = before["walk"][who]["trace"]
+            if "walk" in before:
+                tb = before["walk"][who]["trace"]
+                series.append(([t[0] for t in tb], [t[1] for t in tb], col_b, "%s before" % who))
             ta = after["walk"][who]["trace"]
-            series.append(([t[0] for t in tb], [t[1] for t in tb], col_b, "%s before" % who))
             series.append(([t[0] for t in ta], [t[1] for t in ta], col_a, "%s after" % who))
         ch = chart(series, [(S["warn_ticks"], (230, 200, 0)), (S["exhausted_ticks"], (230, 120, 0)),
                             (S["collapse_ticks"], (200, 0, 0))],
@@ -2710,6 +3534,9 @@ def verdicts(ctx):
                 and (a["walk"]["trained"]["resting_on_rest_ground"] == "knocked out" or not req.get("resting_trained_gate", True))
         if req.get("unchanged"):
             ok = ok and a.get("depths") == bef.get(c["id"], {}).get("depths")
+        if req.get("rates_unchanged"):
+            cls = lambda d: [0 if v <= 1 else (1 if v < S["deep_water_blocks"] else 2) for v in d]  # noqa: E731
+            ok = ok and cls(a.get("depths", [])) == cls(bef.get(c["id"], {}).get("depths", []))
         if "unaided" in req and req["unaided"] == "no hit":
             ok = ok and u == "no hit"
         if req.get("unaided") == "hit or worse":
@@ -2728,6 +3555,11 @@ def verdicts(ctx):
             and af["deep_9_plus_columns"] >= tg["deep_area_min_share"] * max(1, r["before"]["deep_9_plus_columns"])
         out.append(("lake " + lid, "max to rest %s (target %s), wadeable %s (target %s)" % (
             af["max_to_rest"] if af else None, tg["max_to_rest"], af["wadeable_share"] if af else None, tg["wadeable"]), ok))
+    if ctx.report.get("bank"):
+        bk = ctx.report["bank"]
+        out.append(("bank jungle_isle", "left at or above the sea %d; bank depth off the town %s; rest ground outside the town %d" % (
+            bk["left_at_or_above_sea"], bk["bank_depth_off_town"], bk["rest_ground_outside_town"]),
+            bk["left_at_or_above_sea"] == 0 and bk["bank_depth_off_town"]["min"] >= ctx.spec["jungle_isle_bank"]["depth"]["min_off_town"]))
     for e in ctx.spec["rivers"]["meanders"]:
         rep = ctx.report["rivers"].get(e["course"], {})
         w = next((x for x in rep.get("windows", []) if x["id"] == e["id"]), None)
@@ -2810,9 +3642,14 @@ def write_report(ctx, out, made):
                 w.get("wavelength", ""), w.get("amplitude_median", ""), w.get("amplitude_max", ""), w.get("steps_placed"),
                 len(w.get("falls", []))))
     if "stream" in rep:
-        s = rep["stream"]
-        L += ["", "## The Viltri Ravine stream", "", "%s blocks from the spring (level y%s) to the sea (y%s); %s steps, falls %s; %s blocks of extension beyond the axis to reach the sea." % (
-            s["length"], s["from_level"], s["to_level"], s["steps"], s["falls"], s["extension_to_sea_blocks"])]
+        L += ["", "## The Viltri Ravine's two streams", ""]
+        for hid, st_ in rep["stream"].items():
+            L.append("- **%s half** (`%s`): %s blocks from the spring (level y%s) to y%s; width %s; %s steps, falls %s; "
+                     "pools %s; lip cut at most %s blocks; %s blocks of extension beyond the axis; held off by protected ground %s." % (
+                         hid, st_["course_id"], st_["length"], st_["from_level"], st_["to_level"], st_["width"], st_["steps"],
+                         st_["falls"], st_["pools"], st_["lip_cut_max_blocks"], st_["extension_to_sea_blocks"], st_["held_protected"]))
+    if rep.get("bank"):
+        L += ["", "## The Jungle Isle's bank and Pacifidlog's site", "", "```", json.dumps(rep["bank"], indent=1, default=str), "```"]
     L += ["", "## Coasts", ""]
     for cid, r in rep["coasts"].items():
         L.append("- **%s**: %s" % (cid, json.dumps({k: v for k, v in r.items() if k not in ("bars", "placed", "knolls")}, default=str)))
@@ -2873,14 +3710,24 @@ def build(source_root, only=None, world_path=None, maps=True):
     if "lakes" in fams:
         lakes_pass(ctx)
         print("lakes done (%.1f s)" % (time.time() - t0), flush=True)
-    if "coasts" in fams:
-        coasts_pass(ctx)
-        print("coasts done (%.1f s)" % (time.time() - t0), flush=True)
+    # the sea floor first, then the bank (its edge runs down to the filled floor), then the coast features, which
+    # build on the filled floor (the run filled round them afterwards and had to keep boxes of old deep water about
+    # them: the Southern home waters' rectangle)
     if "seabed" in fams:
         seabed_pass(ctx)
         print("seabed done (%.1f s)" % (time.time() - t0), flush=True)
+    if "bank" in fams:
+        bank_pass(ctx)
+        print("bank done (%.1f s)" % (time.time() - t0), flush=True)
+    if "coasts" in fams:
+        coasts_pass(ctx)
+        print("coasts done (%.1f s)" % (time.time() - t0), flush=True)
     ctx.report["crossings"]["after"] = crossings_pass(ctx, "after", ctx.G1)
     ctx.families = fams
+    if (spec["seabed"].get("margin") or {}).get("relief") and "seabed" in fams:
+        ctx.margin = margin_relief(ctx)
+        ctx.report["margin_relief"] = ctx.margin[1]
+        print("margin relief done (%.1f s)" % (time.time() - t0), flush=True)
     return ctx
 
 
@@ -2917,6 +3764,14 @@ def write_outputs(ctx, maps=True):
     ctx.report["input_sha256"] = ctx.world["heightmap"]["sha256"]
     ctx.report["output_name"] = dest.name
     ctx.report["output_sha256"] = sha
+    margin_man = None
+    if getattr(ctx, "margin", None) is not None:
+        mimg, mrep, _prev = ctx.margin
+        mdest = out / spec["seabed"]["margin"]["relief"]["image_name"]
+        Image.fromarray(mimg, mode="I;16").save(mdest)
+        margin_man = {"path": mdest.name, "sha256": sha256_file(mdest), "side": int(mimg.shape[0]),
+                      "margin_blocks": mrep["margin_blocks"], "zero_inside_heightmap": True}
+        ctx.report["margin_relief"]["image"] = margin_man
     made = maps_pass(ctx, out) if maps else []
     write_report(ctx, out, made)
     manifest = {
@@ -2925,7 +3780,7 @@ def write_outputs(ctx, maps=True):
         "output": {"path": dest.name, "sha256": sha}, "families": list(ctx.families),
         "complete": tuple(ctx.families) == FAMILIES, "columns_changed": int(changed.sum()),
         "features": [{"index": i, "id": f["id"], "family": f["family"]} for i, f in enumerate(ctx.features) if i],
-        "zones": zman, "maps": made,
+        "zones": zman, "maps": made, "margin_relief": margin_man,
         "blocks_moved": int(np.abs(ctx.G1.astype(np.int32) - ctx.G0.astype(np.int32)).sum()),
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
@@ -2977,7 +3832,23 @@ def apply(source_root, world_path=None):
             if depth == 0:
                 break
         i += 1
-    world_path.write_text(text[:brace] + json.dumps(hm, indent=2) + text[i + 1:], encoding="utf-8")
+    text = text[:brace] + json.dumps(hm, indent=2) + text[i + 1:]
+    mr = man.get("margin_relief")
+    if mr:
+        # the margin relief goes beside the heightmap and is pinned where tools/reexport.py reads it
+        msrc = out / mr["path"]
+        if sha256_file(msrc) != mr["sha256"]:
+            raise ShapeError("the margin relief changed since it was audited")
+        mdest = current.parent / mr["path"]
+        if mdest.exists():
+            raise ShapeError("%s exists; refusing to overwrite a source file" % mdest)
+        mdest.write_bytes(msrc.read_bytes())
+        start = text.index('"export"')
+        brace = text.index("{", start)
+        text = text[:brace + 1] + '\n  "margin_relief": %s,' % json.dumps(
+            {"path": mr["path"], "sha256": mr["sha256"], "side": mr["side"], "generator": "python tools/water_shape.py --apply",
+             "note": "owner question 1, option A: read by tools/worldpainter/export_world.js in place of the blank margin"}) + text[brace + 1:]
+    world_path.write_text(text, encoding="utf-8")
     print("applied: %s is canonical; data/world.json repinned. Next: data/rivers.json from derived/water_shape/"
           "rivers_revised.json, the paint, the dependents (WATER_SHAPE.md 'After the apply')." % dest.name)
     return 0

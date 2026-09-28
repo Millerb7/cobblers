@@ -1,20 +1,30 @@
 # The water's shape: the heightmap revision for the water export (Phase B)
 
-**Status: DESIGN, RUN 2026-09-27, for the owner's review. Nothing is applied and nothing is exported.** The canonical
-heightmap (`0d9b5f1e…`) and everything under the source root are untouched. The design (`data/water_shape.json`) was
-applied to a copy by `tools/water_shape.py` and checked by `tools/water_shape_audit.py`: **167 checks, CLEAN**. Every
-"after" number below is **[run]**, measured on that copy (`derived/water_shape/report.json`, `audit.json`); **[plan]**
-marks values from `docs/mechanics/WATER_BUILD_PLAN.md`. The first run found the tools' bugs and several targets real
-terrain could not meet; section 12 lists every target changed and why. Nothing here has been seen in a world: the maps
-are renders of heights, and the in-world water check (section 9) is not written.
+**Status: DESIGN, RUN AND POLISHED 2026-09-27, for the owner's review. Nothing is applied and nothing is exported.**
+The canonical heightmap (`0d9b5f1e…`) and everything under the source root are untouched. The design
+(`data/water_shape.json`) was applied to a copy by `tools/water_shape.py` and checked by `tools/water_shape_audit.py`:
+**181 checks, CLEAN**. Every "after" number below is **[run]**, measured on that copy (`derived/water_shape/report.json`,
+`audit.json`); **[plan]** marks values from `docs/mechanics/WATER_BUILD_PLAN.md`. Nothing here has been seen in a world:
+the maps are renders of heights, and the in-world water check (section 11) is not written.
+
+This revision carries three things since the first run:
+
+- **the polish** the owner asked for after reviewing the first maps ("nothing may look machine-made": sections 3, 5, 6,
+  7 and 14);
+- **the Viltri Ravine on hold** (the owner, 2026-09-27, after asking for the gravel path as a river: *"hold ... until I
+  decide"*): no stream in either half, the ravine exactly as on the canonical heightmap (section 4);
+- **Part B** (the owner, 2026-09-27: *"pacifidlog should be on an island, it should be on the sea, jungle isle should
+  be removed and pacifidlog should be around there."*, section 15): the Jungle Isle removed down to a bank, Pacifidlog
+  re-sited onto it, the margin's seamounts and the Long Isle's new desert/jungle split.
 
 The plan this carries out is `WATER_BUILD_PLAN.md` Phase B: items 1, 3 and 4's *shape* (rivers and lake terrain, the
 shallows, the seabed) as **one** heightmap revision and **one** staging export (decision 5). Materials, plants, coral,
 grottos, caves, wrecks and docks are blocks (Phase C) and are not here.
 
-**The revision in one line [run]:** 15,709,036 columns changed (of 67.1 M), 286,990,256 blocks filled and 2,638,647
-cut; 14,096,247 of those columns and 277 M of the fill are the seabed. The copy is
-`derived/water_shape/land_8k_16_rescaled_b145_pads_rift_water.png`.
+**The revision in one line [run]:** 19,027,615 columns changed (of 67.1 M), 364.6 M blocks moved. The seabed fill is
+15,994,530 columns and 295.2 M blocks; the Jungle Isle's removal is 1,611,482 columns and 63.4 M blocks cut. The copy is
+`derived/water_shape/land_8k_16_rescaled_b145_pads_rift_water.png`; the margin relief beside it is
+`derived/water_shape/margin_relief.png`.
 
 ---
 
@@ -22,20 +32,22 @@ cut; 14,096,247 of those columns and 277 M of the fill are the seabed. The copy 
 
 | Family | Where | What the player gets | Serves | Layer |
 |---|---|---|---|---|
-| **Meanders** | the major river's lower trunk (806-2213 m), Viltri's Path over the coastal flats (655-1298), Arrow Lake's outflow (32-262), three low-grade stretches of the Watering Hole outflow | loops of varying length and size, pools on the outside of bends, point bars inside, cut banks where a loop swings into the valley side; the surface steps only at riffles | decision 9, the owner's item 1 | heightmap |
-| **Cascades and falls** | the tarn outflow, Peak Pond outflow, the Watering Hole outflow's last 320 blocks, Viltri's Path's last 213 blocks | the one-block steps gathered into short cascades with plunge pools, one 2-3 block fall each | decision 9, item 1 | heightmap |
-| **The Viltri Ravine stream** | from a spring pool below the pass down the sea half, 611 blocks to the sea | an underfit stream 3 wide in a bed far too wide for it, 70 steps and one 3-block fall; the lake half stays dry | decision 4 (option B) | heightmap |
-| **Lake beds** | all nine lakes | a wadeable shelf whose width wanders and widens in bays, a drop-off, a silt floor with relief, humps, sunken islands (bars) as rest points, arms that stay shallower than the basin, keep zones exactly as they were | decision 8, item 1 | heightmap (bed zones handed to the paint and the skin) |
-| **Tidal flats** | off Pallet, Route 1's west coast, the south strand | wandering shore-parallel bars and runnels with rip channels; a lagoon behind a dry barrier bar on the south strand | the owner's item 3 | heightmap |
-| **The Fungal bar chain** | Pallet coast (985, 5233) to Fungal Isle | two lobed sand bars; the longest 3-deep run 26 blocks; an unaided swimmer is warned and never hit | decision 7 | heightmap |
-| **The Relic reef platform** | Relic Island's south and west apron | a platform 3 deep grading to 12, six lobed patch-reef knolls, a reef wall to the old seabed | decision 7, item 3 | heightmap (coral is blocks) |
-| **Skerries and sea stacks** | windward cliffs (10 skerries, 4 stacks), north-west coast (6, 2) | low rocks at y63-65 and stacks to y73-81 with a boulder skirt | item 3 | heightmap |
-| **First Cast's scour hole** | off the jetty's west end | a hole 4 deep under the rod (48 columns) | item 3; a **proposed addition** | heightmap |
-| **The seabed** | the four marine zones inside 0-8191 | OCEAN.md's shelf, break, slope and basin, filled up to the profile with the canyons carried through; two ridges | decision 6 | heightmap |
-| **The margin's seamounts** | outside the heightmap | not shaped: **owner question 1** | decision 6 | needs a decision |
+| **Meanders** | the major river's lower trunk, Viltri's Path over the coastal flats, Arrow Lake's outflow, three low-grade stretches of the Watering Hole outflow | loops of varying length and size, pools on the outside of bends, point bars inside, cut banks | decision 9, owner item 1 | heightmap |
+| **Planform smoothing** | the Watering Hole outflow above its steep last reach | a gentle curve through the graded course's kinks, the meanders swinging about it | question 5 (B) | heightmap |
+| **Cascades and falls** | the tarn and Peak Pond outflows, the Watering Hole outflow's last 320 blocks, Viltri's Path's last 213 | steps gathered into short cascades with plunge pools, one 2-3 block fall each | decision 9 | heightmap |
+| **The Viltri Ravine** | the whole ravine | **ON HOLD**: nothing; the ravine stays dry and exactly as it is | decision 4, held by the owner 2026-09-27 | none |
+| **Lake beds** | all nine lakes | a wandering wadeable shelf, a drop-off, a silt floor, irregular sunken islands, kept pits sitting at the bottom of their own slopes | decision 8 | heightmap (zones for paint and skin) |
+| **Tidal flats** | off Pallet, Route 1's west coast, the south strand | crescent bar segments and runnels, rips in the gaps, a lagoon on the south strand | owner item 3 | heightmap |
+| **The Fungal bar chain** | Pallet coast to Fungal Isle | two lobed sand bars; the longest 3-deep run 26 | decision 7 | heightmap |
+| **The Relic reef** | Relic Island's south and west apron | a platform from the islet's own edge, 3 to 12 deep, patch reefs, a reef wall | decision 7 | heightmap (coral is blocks) |
+| **Skerries and stacks** | windward cliffs, the north-west coast | low rocks and stacks with a boulder skirt | owner item 3 | heightmap |
+| **First Cast's scour hole** | off the jetty's west end | a hole 4 deep under the rod | item 3 (question 3) | heightmap |
+| **The seabed** | the four marine zones | OCEAN.md's shelf, break, slope and basin, filled to the profile with the canyons carried through, soft troughs under the ferry straits, two ridges; no exclusion boxes | decision 6 | heightmap |
+| **The Jungle Isle's bank** | x4382-5951, z6860-7996 | the island gone: a drowned bank 4-9 deep, Pacifidlog's shallows and its blue hole | Part B | heightmap |
+| **The margin relief** | the 1,280-block margin round the heightmap | the five seamounts; the map's edge carried outward (no cliff where land meets the edge) | question 1 (A) | a second export image |
 
-Unchanged on purpose: the Tilpey outflow gorge under the Route 7 bridge, the Sound and everything Pacifidlog stands on,
-every ferry strait, the islet, the towns, the roads, the Rift and Victory Road.
+Unchanged on purpose: the Viltri Ravine (on hold), the Tilpey outflow gorge under the Route 7 bridge, the islet, the towns (but Pacifidlog's Sound
+footprint and the jungle ruins, section 15), the roads, the Rift and Victory Road.
 
 ---
 
@@ -43,363 +55,436 @@ every ferry strait, the islet, the towns, the roads, the Rift and Victory Road.
 
 1. **Shape only (P1).** Everything here is a height; nothing is a block.
 2. **Bit-identical outside the declared footprints (P2)**, column by column: B1, 0 stray columns.
-3. **Nothing already placed moves (P3).** Never written: every town footprint plus 8, every route line plus 6, the
-   Rift's region grown 24 and every column the Rift sculpt changed, Victory Road's band plus 32, the bridges plus 16,
-   **the islet's outline plus 2** (section 12), the sea town, the First Cast jetty and Viltri's two platforms; and, new
-   from the run, **every cut river's painted channel** (a lake shelf sealed four outlets on the first run).
+3. **Nothing already placed moves (P3).** Never written: every town footprint plus 8 (Relic Island's plus 0, because
+   its islet's outline is protected on its own), every route line plus 6, the Rift and every column its sculpt changed,
+   Victory Road's band plus 32, the bridges plus 16, **the islet's outline**, the built water event sites, and every cut
+   river's painted water. Released by the design (section 15): Pacifidlog's Sound footprint and the jungle ruins'.
 4. **Swim-rate invariance (P4).** No sea column 3+ deep became shallower than 3 outside the declared rest-ground coast
    features (D1: 0 columns); the seabed never rises above y59.
 5. **Lakes keep their level and shoreline (P5):** E1 and E2 pass on all nine lakes.
-6. **Every river still drains end to end (P6):** no surface rises downstream; steps over one block only at the
-   declared falls; no station dried out that was wet; no new leak (F3-F7 on every revised course).
+6. **Every river drains end to end (P6):** no surface rises downstream; steps over one block only at declared falls; no
+   station dried that was wet; no new leak.
 
 ---
 
 ## 3. Rivers (item 1: "rivers that feel like they flow")
 
-**Today [plan]:** straight canals, sinuosity 1.01-1.20; one-block drops every 20-120 blocks.
+**Sinuosity per meander window [run]** (channel length over the chord; targets unchanged):
 
-**The design.** Sine-generated meanders over the old centreline, inside the room the valley gives, tapered to nothing at
-each end of a window and at every tributary's mouth (the run added the mouths: the first run swung Viltri's Path off
-the Mt Clay pond outflow's junction and filled it). **The run added variation**: a fixed sine read on the map as drawn,
-so the wavelength wanders ±30% and the amplitude breathes (it only ever shrinks from the room allowed). The abandoned
-channel is filled to one block above the old water; the new channel is cut to the reach's cross-section with the
-thalweg on the outside of each bend. Steps are gathered upstream into riffles (meanders) or cascades (steep creeks).
+| Window | Before | After | Target |
+|---|---:|---:|---|
+| `major_lower_trunk` | 1.02 | **1.29** | 1.2-1.5 |
+| `viltris_path_coastal_flats` | 1.11 | **1.56** | 1.3-1.6 |
+| `arrow_outflow` | 1.06 | **1.37** | 1.3-1.6 |
+| `watering_hole_outflow_upper` | 1.06 | **1.28** | 1.2-1.5 |
+| `watering_hole_outflow_middle` | 1.00 | **1.26** | 1.2-1.5 |
+| `watering_hole_outflow_lower` | 1.07 | **1.37** | 1.2-1.5 |
 
-**Sinuosity per window, measured by the audit on the copy [run]** (channel length over the chord):
+**The Watering Hole outflow between its meanders (question 5, answered (B)).** The graded course above the steep last
+reach (0-968) now follows its centreline smoothed with a 36-block Gaussian, the shift held inside the valley's room
+(at most 24, measured at most 7.4 [run]) and tapered to nothing at each end and at every tributary mouth; the graded
+course's sharpest kink there was 45°. The meander windows swing about the smoothed line; the course's own one-block
+steps are kept where they fall. The last 340 blocks (graded 0.026-0.12) stay a straight cascading creek.
 
-| Window | Course | Before | After | Target | Wavelength / amplitude median, max |
-|---|---|---:|---:|---|---|
-| `major_lower_trunk` | major_river_trunk | 1.02 | **1.29** | 1.2-1.5 | 216 / 29.5, 39.5 |
-| `viltris_path_coastal_flats` | lake_viltri_outflow | 1.11 | **1.56** | 1.3-1.6 | 79 / 10.8, 32.6 |
-| `arrow_outflow` | arrow_lake_outflow | 1.07 | **1.34** | 1.3-1.6 | 120 / 20.1, 27.1 |
-| `watering_hole_outflow_upper` | watering_hole_outflow | 1.06 | **1.32** | 1.2-1.5 | 110 / 10.7, 20.0 |
-| `watering_hole_outflow_middle` | watering_hole_outflow | 1.00 | **1.24** | 1.2-1.5 | 110 / 13.0, 24.6 |
-| `watering_hole_outflow_lower` | watering_hole_outflow | 1.07 | **1.41** | 1.2-1.5 | 110 / 18.0, 21.0 |
-
-The cascade windows keep their planform (sinuosity 1.00-1.03) and gather the steps: tarn outflow 64 steps and a 3-block
-fall; Peak Pond outflow 42 and a 2-block fall; Watering Hole outflow's last reach 19 and a 2-block fall (1,697 columns
-held off by Sunset West's protected footprint); Viltri's Path mouth 24 and a 3-block fall.
-
-**Checks [run]:** every revised course: surface never rises, big steps only at declared falls, 0 new dry stations,
-and fewer leaks than before (dry columns below the water beside it, before -> after: major 318 -> 56, Viltri's Path
-298 -> 180, Arrow outflow 22 -> 20, Watering Hole outflow 178 -> 85, Peak Pond outflow 305 -> 262, tarn outflow
-214 -> 20). The five unchanged cut courses (the Tilpey, Marshy Marsh, Shrew Lake and Mt Clay pond outflows and Tilpey's
-south-west outlet) paint exactly as before (F2).
-
-**Finding (the plan said "the Watering Hole outflow's lower reach").** Its last 340 blocks are graded 0.026-0.12, too
-steep to meander; the meanders are on its three low-grade stretches and the last reach gets cascades.
-
-**Chain order (a deliberate change from WATER_BUILD_PLAN 3.4).** The river change is a final stage on the canonical file,
-like the lakes (below y145 the rescale is the identity and the sculpt kept river channels unchanged), so one pass is
-bit-identical everywhere else. The cost: `tools/paint_maps.py`'s cut-hash guard must accept a water-shaped heightmap and
-read `derived/water_shape/rivers_revised.json` (a named change for the apply step). The revised courses keep the
-canonical stations exactly outside the windows (full precision), and their reach boundaries are in the chainage the
-painter measures, so a width change lands on the same stations as before.
-
-**Seen on the maps.** The major river, Viltri's Path and Arrow's outflow read as rivers. The Watering Hole outflow reads
-as a canal that meanders three times: the stretches between its windows keep the graded course's straight segments and
-sharp vertex kinks (owner question 5).
+The cascade windows are unchanged in design; all six revised courses pass F3-F7 (never rising, big steps only at
+falls, no new dry station, ending where they ended, no new leak), and the five unchanged cut courses paint as before.
 
 ---
 
-## 4. The Viltri Ravine stream (decision 4, option B)
+## 4. The Viltri Ravine: ON HOLD (the owner, 2026-09-27)
 
-**[run]:** the spring pool at (870, 3846), level y134; the stream runs 611 blocks to the sea at y62, 21 of them beyond
-the axis's low end; 70 steps, one 3-block fall 512 blocks down; 3,517 columns cut (10,266 blocks), none filled. Every
-station holds water; the lake half is untouched outside Lake Viltri's basin (G1-G7). When applied,
-`data/landmarks.json` `viltri_ravine` `water: never` becomes `partial`, and **Codex checks `SQ-G1-01`'s wording**.
+**Nothing is shaped in the ravine.** The owner first asked for the gravel path (the ravine's dry bed on the lake side of
+the pass, seen near (1008, 3789)) as a river (*"water export looks good, make sure to add that gravel path as a
+river"*), then held the whole ravine: *"THE VILTRI RAVINE — hold ... stop the subagent working on the two streams until
+I decide."* The run's sea-half stream is withdrawn too. The copy leaves every column inside the ravine's landmark polygon
+(outside Lake Viltri's basin, which the lake pass owns) exactly as on the canonical heightmap, and the audit checks it
+(G1, G2). The owner leans towards keeping it dry and dressing it so it reads as a deliberate, old, stopped watercourse:
+block dressing, Phase C, not shape. `data/landmarks.json` `viltri_ravine` stays `water: never`.
+
+**What was designed, for the owner's decision (measured on the copy before the hold; not in the copy now):**
+
+- **The sea half** (the run's decision 4, option B): a spring pool at (870, 3846), y134, and a stream 611 blocks to the
+  sea, 70 steps and one 3-block fall, widened from 3 to 4-6.
+- **The lake half** (the gravel path): a spring at y133 on the lake side of the pass and a stream 1,084 blocks long, 5-9
+  wide, 31 steps and one 2-block fall, with a pond at y133 below the spring (161 blocks, 3 deep) and a lakeside pond at
+  y103 where the ravine floor dips to y95, below Lake Viltri's own level (189 blocks, 7 deep); the counter-rises (about
+  26 blocks in all) were filled to their lips, the rest of a rise cut (at most 3).
+- **Finding:** the lake half cannot reach the lake. The ravine's last 176 blocks toward Lake Viltri are Viltri's Path's
+  own channel (`lake_viltri_outflow` leaves the lake at (1490, 3014) and runs west down the ravine to a fork at about
+  (1314, 3022)), and Viltri's Path flows out of the lake there; a lake-side stream would join Viltri's Path 90 blocks
+  below the outlet, at its level (y102), and reach the sea by it.
+- **If water is chosen**, `SQ-G1-01` "Where Viltri Used to Run" and Brock's town's name Stoneford ("a river that no
+  longer runs", `SETTLEMENT_NAMES.md`) would need Codex's rewrite; neither is touched here.
+
+`tools/water_shape.py` keeps its stream pass (both halves, the join, the pools and the banks it raises), which runs
+nothing while `data/water_shape.json` holds no `viltri_ravine_stream` block.
 
 ---
 
 ## 5. Lakes (item 1: "lakes that read as lakes, not step-down bowls")
 
-**The profile [run].** Shelf width comes from how enclosed the **shore** is, carried out over the water beside it (the
-first run measured each column's own surroundings, so every shelf came out at the narrow end), and wanders ±30% over
-about 56 blocks. Inner 60% of the shelf 1 deep, outer 40% 2 deep; the drop-off; a basin floor mapped from the old ramp
-(plunging near the drop-off, flattening toward the deepest point) with ±2 blocks of silt relief. **Added by the run:**
-arms and bays that were shallow stay within 2 blocks of their own deepest old bed (Shrew's south-west arm was dug from
-about 6 deep to the basin's 14), and the floor eases back to the old bed over 32 blocks beside a keep zone (the first
-run left Azelf's pit a plateau inside a moat). Rest points are **sunken islands**: an elongated, irregular crest 1 deep,
-a 3-block apron to 3 deep, then a 1-in-1 flank (the first run's round crests on 1-in-2 flanks rendered as a grid of
-cones). On Shrew, Arrow and Tilpey they lie on the lake's own trend, so they read as the valley's grain.
+**The polish.** The owner's review: shoals everywhere read as streaks, Tilpey's 46 bars as a drowned drumlin field,
+and the kept pits as hard-edged blobs. Now:
 
-**Measured [run]** (farthest water from anywhere to stand; before is the whole lake, after leaves out each lake's
-declared dive zone):
+- **A shoal is a sunken island**: a warped, lobed outline (two octaves of noise on its radius, a mild elongation at any
+  angle), a size drawn from the lake's range with small ones commoner, a crest 1 deep with 2-deep saddles, a sand apron
+  to 3 deep and a flank at 0.35-0.8 blocks of depth a block, different for each.
+- **Fewer.** Budget shoals are placed where each brings the most over-budget water within reach, none within 40 blocks
+  of a kept pit.
+- **Decision 8 read literally on the big lakes**: every lake keeps its wadeable shelf, and each **dive site** (Shrew's
+  pit, Mesprit's grotto floor, Azelf's pit, Tilpey's practice floor) gets a rest point within the trained budget. The
+  open water keeps one to three **natural islands** where the old floor stood broadly highest.
+- **Kept pits blend**: round every keep zone the floor eases back to the old bed over 80 blocks, both ways, so a pit
+  sits at the bottom of its own slope (Viltri's small lake over 24).
+- Protected event-site boxes (Viltri's platforms) and river channels are faded into over 12 blocks, not cut square;
+  the floor's noise is broad swells at 64 and a half-block ripple at 20 (one octave at 24 read as speckle).
 
-| Lake | Rung, budget | Wadeable before -> after (target) | Farthest from rest before -> after | Shoals | 9+ deep columns before -> after | Fill / cut blocks |
-|---|---|---|---:|---:|---|---|
-| Viltri | trained, 60 | 6.9% -> **18.5%** (15-40) | 80 -> **58** | 1 | 18,913 -> 19,549 | 36,311 / 53,946 |
-| Shrew | trained, 60 | 6.6% -> **11.1%** (10-35) | 162 -> **58** (pit excluded) | 10 | 112,881 -> 112,533 | 818,792 / 628,396 |
-| Arrow | trained, 60 | 4.2% -> **13.6%** (12-35) | 147 -> **57** (grotto floor excluded) | 6 | 82,579 -> 73,786 | 1,019,029 / 320,679 |
-| Marshy Marsh | trained, 60 | 15.7% -> **25.0%** (20-45) | 124 -> **60** (Azelf's pit excluded) | 5 + 8 root crowns | 54,344 -> 60,182 | 117,187 / 223,471 |
-| Tilpey | trained, **75** | 3.6% -> **15.0%** (12-35) | 242 -> **72** | 46 bars | 869,076 -> 677,341 | 7,054,270 / 695,555 |
-| Peak Pond | trained, 60 | 15.9% -> **19.2%** (15-40) | 97 -> **53** | 2 | 15,635 -> 27,680 | 34,545 / 157,802 |
-| Watering Hole | trained, 60 | 14.2% -> **20.3%** (15-45) | 65 -> **38** | 1 | 5,250 -> 9,161 | 11,568 / 34,398 |
-| Mt Clay pond | **unaided**, 30 | 8.8% -> **18.9%** (15-45) | 82 -> **29** | 7 | 15,644 -> 12,504 | 128,067 / 41,578 |
-| Ravine Head Tarn | trained, 60 | 10.5% -> **13.3%** (10-40) | 79 -> **47** | 1 | 12,649 -> 17,813 | 32,204 / 96,407 |
+**Measured [run]:**
 
-Every lake keeps at least half its 9+ deep water (the rosters' deep entries), its level and its wet area; every keep
-zone is untouched (E1-E7). Neighbouring bed columns: level 78-92% before, 63-84% after, with 1.5-7% now two or more
-apart (drop-offs and flanks) where there were none.
+| Lake | Rest rule | Wadeable before -> after (target) | Farthest from rest before -> after | Dive site to rest | Shoals (natural) | 9+ deep before -> after | Fill / cut blocks |
+|---|---|---|---|---|---|---|---|
+| Viltri | whole lake, 60 | 6.9% -> **19.1%** (15-40) | 80 -> **57** | | 3 | 18,913 -> 16,531 | 57,756 / 25,566 |
+| Shrew | dive site, 60 | 6.6% -> **10.8%** (10-35) | 162 -> 95 (open water) | pit **20** | 3 (2) | 112,881 -> 119,917 | 286,097 / 669,435 |
+| Arrow | dive site, 60 | 4.2% -> **13.4%** (12-35) | 147 -> 95 | grotto **18** | 3 (2) | 82,579 -> 79,070 | 455,405 / 378,252 |
+| Marshy Marsh | dive site, 60 | 15.7% -> **24.9%** (20-45) | 124 -> 105 | pit **12** | 2 (1) + 8 root crowns | 54,344 -> 63,860 | 70,137 / 181,164 |
+| Tilpey | dive site + north shore band, 60 | 3.6% -> **12.9%** (12-35) | 242 -> 229 (open water); **60** in the north shore band | practice floor **0** | 5 (3) | 869,076 -> 825,590 | 1,633,159 / 1,066,883 |
+| Peak Pond | whole lake, 60 | 15.9% -> **20.4%** | 97 -> **56** | | 3 | 15,635 -> 23,747 | 72,204 / 135,814 |
+| Watering Hole | whole lake, 60 | 14.2% -> **20.7%** | 65 -> **53** | | 1 | 5,250 -> 8,511 | 8,849 / 25,730 |
+| Mt Clay pond | whole lake, unaided **34** | 8.8% -> **20.5%** | 82 -> **34** | | 4 | 15,644 -> 15,490 | 89,497 / 73,256 |
+| Ravine Head Tarn | whole lake, 60 | 10.5% -> **14.3%** | 79 -> **59** | | 2 | 12,649 -> 15,815 | 26,683 / 76,475 |
 
-**Tilpey (owner question 4).** At about 1,300 by 900 blocks, keeping every point within the trained rung's 60 of rest
-needed **81** bars [run]; at the rung's no-margin figure of 75 (75 out and 75 back is the 150 deep blocks before a
-trained swimmer's first hit) it needs **46**, laid as long bars on the north-west arm's line: a drowned drumlin field.
-Its fill is 7.05 M blocks, almost three quarters of all fill outside the seabed (9.84 M).
+Shoal counts were 1 / 10 / 6 / 5 / 46 / 2 / 1 / 7 / 1 on the first run; now 3 / 3 / 3 / 2 / 5 / 3 / 1 / 4 / 2.
 
-**Bed zones for the paint and the skin.** Per lake, `derived/water_shape/zones/lake_<id>.png`: 1 shelf, 6 shelf in a bay
-(weed beds), 2 drop-off, 3 basin floor (silt), 4 hump, 5 shoal crest and apron, 7 kept.
+**Tilpey (question 4, answered (C), the main session's recommendation; the owner has seen the maps).** The rest
+budget applies to the dive sites and the Dive school's north shore only: the practice floor (now a floor 36 blocks
+round, at 25 deep, where the old bed first reaches 25 on the line from Sabrina's town toward the lake's anchor, below
+the north shore; the run had flattened 591,398 columns, half the lake) with a rest point beside it, and the north
+sector's water within 80 blocks of the shore. The open lake gets three natural islands (sizes 41-56) and is otherwise
+open deep water: a trained surface swimmer can be about 230 blocks from rest in the middle; a Dive-trained player does
+not tire under water (decision 1), and the Weeping Elder island is Uxie's rest point. Tilpey's fill fell from 7.05 M
+blocks to 1.63 M. Its shelf widened from 10-40 to 14-44 (28-52 on the north shore) to keep the wadeable share.
 
-**Finding.** Viltri's sounding platform's staffs read 5, 6 and 7 deep (`EARLY_ROUTES.md:138`), so the platform's water
-is protected; its z range is inferred from the keeper's position and **not verified** against `tools/route_events.py`.
+**Mt Clay pond (the unaided Wooper stop).** At 30 blocks from rest it needed 12 shoals; its budget is now 34, the
+unaided rung with Slowness counted and no other margin (out and back 68 deep blocks against the first hit at about 70).
+
+**Close for the owner:** Shrew, Arrow and Marshy Marsh now hold only their dive sites to the budget, as Tilpey does.
+A trained surface swimmer can be 95-105 blocks from rest in their open water; the first run held the whole lake to 60
+with a necklace of 10-13 shoals round each pit.
 
 ---
 
-## 6. The shallows (item 3: "give it real attention")
-
-**Today [plan]:** off Pallet and the south coast the water is one block deep for 16 blocks, then a ramp; the north and
-west drop to 4-7 deep at once.
-
-**Finding (run).** The region polygons stop 25-40 blocks short of their own beach, and the design measured distance
-from the region's land: the water beside Pallet's shore measured 200+ blocks from shore and the first run laid bars on
-about a sixth of the coast. The shore is now the region grown 96, which takes in its beach.
+## 6. The shallows (item 3)
 
 | Feature | Measured [run] |
 |---|---|
-| **Pallet flats** | 17,514 columns; wadeable share in the 64-block band 27.8% -> 34.0% (29,777 wet columns); 261 new dry bar crests; fill 18,967 / cut 4,378 |
-| **Route 1 west coast flats** | 10,225 columns; wadeable 29.5% -> 28.9% (the runnels deepen as much as the bars raise); 114 dry crests; fill 9,111 / cut 3,956 |
-| **South strand flats and lagoon** | 31,278 columns (7,911 held off by protected ground); wadeable 32.4% -> 44.4%; 1,634 new dry columns; fill 47,247 / cut 6,853. The lagoon: shore centre (2504, 6496), a barrier of 3,037 columns, 19,662 columns of calm water behind it, the inlet at (2476, 6533) |
-| **The Fungal bar chain** | 2 lobed bars, 2,616 columns, 5,334 blocks filled; the line (985, 5233) -> (812, 5347) (section 8) |
-| **The Relic reef** | 6,930 platform columns, 7,102 written, 110,517 blocks filled, shallowest 3 deep; knolls at (1021, 5521), (1037, 5578), (1113, 5600), (1054, 5555), (1054, 5593), (1040, 5534) |
-| **Windward skerries and stacks** | 4 stacks (tops y78-81) at (419, 5140), (463, 2700), (404, 3056), (504, 4358); 10 skerries (y63-65); 2,586 new land columns; 183,617 blocks filled |
-| **North-west skerries** | 2 stacks (y73-77) at (653, 1635), (721, 1518); 6 skerries; 1,396 new land columns; 59,936 blocks |
-| **First Cast's hole** | 48 columns, 98 blocks cut; one column held off by the jetty's box |
+| **Pallet flats** | 14,007 columns; wadeable in the 64-block band 27.8% -> 20.5% (the gaps between bar segments are rips); 57 new dry crests; fill 11,568 / cut 5,136 |
+| **Route 1 west coast flats** | 8,434 columns; wadeable 29.5% -> 23.4%; 6 dry crests |
+| **South strand flats and lagoon** | 27,334 columns (7,169 held off by protected ground); wadeable 32.4% -> 35.7%; 1,599 new dry columns; the lagoon as before: shore centre (2504, 6496), barrier 3,037 columns, 19,662 of calm water, inlet (2476, 6533) |
+| **The Fungal bar chain** | 2 lobed bars; longest 3-deep run 26; the line (985, 5233) -> (812, 5347) |
+| **The Relic reef** | 12,258 platform columns, 10,261 written, 116,873 blocks filled, shallowest 3; 385 columns of patch reef |
+| **Skerries, stacks, First Cast's hole** | as the run |
 
-**Seen on the maps and changed by the run:** bars at fixed offsets drew contour lines round the coast, so they now
-wander ±6 blocks and swell and thin; they ease into the old bed toward every exclusion and box edge instead of stopping
-square; the Fungal bars were dominoes and are now lobed; the reef's knolls were discs and are now lobed; the islet was
-protected as a 65-block square, which left a square pit in the reef, and is now protected by its own outline (section
-12). Still visible: the rip channels are noise-shaped, and one near the reef reads as a wedge.
+**The polish.** Unbroken bars read as contour streaks: a bar is now a string of crescent segments (a second, shorter
+wander bends each seaward and back) and the gaps are the rips, a block deeper than the runnel, soft-edged on every side.
+Bars ease into the old bed over about 48 blocks (wandering) toward a box edge, an exclusion or protected ground (12 read
+as the box's straight edge). **The Pallet sickle is gone:** the reef platform started at a fixed radius 34 from Relic's
+centre and read as a sickle cut against the deep basin, its knolls (three- and five-lobed discs) as crosses. The platform
+now runs from the islet's own outline (its apron stands at sea - 4, so they meet with no moat; the islet's protection is
+its outline, margin 0), shoals from 3 to 12 deep over 30-62 blocks, falls to the floor down a wall 5-13 wide, and fades
+out over 40° past each end of its sector; patch reefs stand where two octaves of noise are highest. The coast maps now
+draw the islet over its seabed.
 
 ---
 
-## 7. The seabed (decision 6, OCEAN.md section 4)
+## 7. The seabed (decision 6) and the margin (question 1)
 
-**The profile [design]:** a shelf from `shelf_start_y` to y46, the break to y28 over 80, the slope to y18 over 400, the
-basin to y10 over 600. Shelf starts: Frostwater y58 (240 wide), Windward y56 (160), Eastern Reach y58 (320), Southern
-Shallows y59 (400). Fill only, never above y59, never a column under 4 deep, canyons carried through the fill.
-
-**Measured [run]:** 14,096,247 columns filled, 277,151,889 blocks. Seabed y (p10 / median / p90, excluded water left out):
+**Measured [run]:** 15,994,530 columns filled, 295,181,699 blocks. Seabed y (p10 / median / p90):
 
 | Zone | Before | After |
 |---|---|---|
-| Frostwater Shelf | 11 / 22 / 56 | 21 / 48 / 56 |
-| Eastern Reach | 10 / 12 / 46 | 17 / 30 / 54 |
-| Southern Shallows | 10 / 18 / 58 | 25 / 51 / 58 |
+| Frostwater Shelf | 11 / 22 / 56 | 22 / 48 / 56 |
+| Windward Deep | 12 / 17 / 52 | 17 / 36 / 52 |
+| Eastern Reach | 10 / 12 / 46 | 17 / 32 / 54 |
+| Southern Shallows | 10 / 26 / 71 | 23 / 53 / 71 |
 
-The windward deep band keeps its water at y36 or below wherever it was (H5). Ridges raised 1,644 coarse cells
-(windward break) and 2,005 (Frostwater; the line is drawn, not measured).
+**The polish (the owner's review: "remove the rectangular deep-water artefact").** No box is excluded any more: the
+Southern home waters (x0-1760 z5000-5900), the coast features' boxes and the Sound (x6700-7700 z4400-7400) all read as
+dark rectangles. The coast features now run **after** the sea floor and build on the fill (they may reshape the fill's
+columns; nothing else may), the bank runs after it too, and only lake basins, river mouths and protected ground are kept
+out, with the 96-block feather. The Sound's crossings keep every column's swim rate (I3b).
 
-**Fixed by the run.** The canyon blur read the copy while it was being filled, band by band, and drew a line across the
-sea every 256 rows; it now reads the canonical bed. The fill also fades out over the last 64 blocks of the zones' outer
-edge.
+**The ferry straits (question 2)** are no longer kept at their old depth as cut channels: each gate line has a soft
+trough, up to 12 blocks under the profile along a centreline that wanders 40 blocks, fading out over about 110 either
+side and over 160 toward each shore (four straits: the Sound ferry, Sunset, Northgate, Northlight). The swim rates are
+the fill's (P4), so every gate stays a gate (section 8); a strait still reads deeper than the shelf. The Pacifidlog lines
+take no trough (section 15).
 
-**Findings.**
-- **OCEAN.md contradicts itself** on filling versus keeping the imported surface; its per-zone medians show filling was
-  meant, and this design fills.
-- **OCEAN.md's shelf starts at y60, 2 deep**, written before swim fatigue; this design starts at y59 or deeper.
-- **The excluded boxes show.** The Southern home waters box (x0-1760, z5000-5900) keeps its old deep water, so on the
-  overview it is a dark rectangle with a 96-block feathered edge; the ferry straits (owner question 2) are dark channels
-  across the new shelf. Both are 20-40 deep, seen only from a boat or under water.
-- **The margin join (new).** Where a shelf reaches the map's edge (the northern isles), the fill now fades over 64
-  blocks, but the export fills the margin as a y10 plain, so a slope of up to about 40 blocks remains at the border
-  (owner question 1's option A would answer both).
-- **Every seamount is outside the heightmap** (owner question 1), and the trench is blocks, postgame.
+**The margin relief (question 1, option A, designed).** `tools/worldpainter/export_world.js` fills the margin by
+importing a blank canvas-sized image through a `TransformingHeightMap` offset by the margin, with onlyRaise, creating
+only the tiles the landmass lacks. It now takes `--margin-image=<png>` and imports that image there instead (same
+offset, same importer and image-to-world line); `tools/reexport.py` passes it when `data/world.json`
+`export.margin_relief` pins it (path beside the heightmap, sha256, checked like the heightmap); `water_shape.py --apply`
+copies it there and writes the pin. **Not run: the export script change is untested.** The image [run]:
+10,752 × 10,752, 16-bit, zero over the heightmap's square (so the landmass tiles stay untouched), and outside it:
+
+- the copy's edge carried outward, the sea floor fading to the y10 floor over 320 blocks (it meets the edge within half
+  a block, M4);
+- **finding:** land touches the heightmap's edge (north 1,527 columns up to y96, west 444, east 452), and today's
+  blank margin drops it to a y10 plain in one column, a cliff of up to 86 blocks inside the border; the image carries it
+  down to the sea at 0.45 a block (highest margin y95.5 at the edge; nothing above y59 beyond 200 blocks, M6);
+- the five seamounts of `the_outer_deep`, radius 161-214, summits exactly at their region's y46-54 (M5).
+
+The floor cannot go below y10.09 (image value 0 on the import line), so the_outer_deep's planned y8 plain is y10.
 
 ---
 
-## 8. The crossings (WATER_BUILD_PLAN 11.1), measured [run]
+## 8. The crossings, measured [run]
 
-Walked on the copy with `data/blackout.json`'s constants at 5 blocks a second: plain, with Slowness counted, and resting
-on every rest stretch of 6+ blocks. The audit first reproduces the plan on the canonical heightmap: the four contract C3
-lines match (Relic beach 71, Sound ferry 179, Sunset strait 257 against the plan's 258, Northlight 418).
+Walked on the copy with `data/blackout.json`'s constants at 5 blocks a second: plain, with Slowness counted, and
+resting on every rest stretch of 6+ blocks. The four contract C3 lines reproduce the plan on the canonical heightmap.
 
 | Crossing | Swim before -> after | Longest 3-deep run after | Unaided before -> after | Trained before -> after | Resting after (unaided / trained) | Required |
 |---|---|---:|---|---|---|---|
-| Relic, from the beach (C3) | 71 -> 71 | 62 | no hit -> no hit (exhausted) | no hit -> no hit | no hit / no hit | no hit: **met** |
+| Relic, from the beach (C3) | 71 -> 71 | 62 | no hit -> no hit | no hit -> no hit | no hit / no hit | no hit: **met** |
 | Relic, from the jetty | 117 -> 117 | 75 | hit -> hit | no hit -> no hit | hit / no hit | still a row: **met** |
-| Pallet coast to Fungal Isle | 159 -> **53** | **26** | knocked out -> **no hit (warned)** | no hit -> no hit | no hit / no hit | no hit, warnings, run <= 40: **met** |
-| First Cast jetty to Fungal Isle | 142 -> 113 | 83 | knocked out -> knocked out | no hit -> no hit | knocked out / no hit | reported |
-| Sound narrows z6100 / z6300 / z6500 | 65 / 137 / 96, unchanged | 38 / 123 / 90 | no hit / KO / KO, unchanged | no hit | as before | unchanged depth for depth: **met** |
-| Dunes to the Long Isle | 84 -> 84 | 78 | hit -> hit | no hit | hit / no hit | unchanged: **met** |
-| Pacifidlog jetty to the square (C3) | 179 -> 179 | 160 | KO -> KO | KO -> KO | KO / **hit** | gate, unchanged: **met** (see below) |
-| Eastern dunes to the Jungle Isle | 307 -> 307 | 275 | KO -> KO | KO -> KO | KO / KO | gate: **met** |
+| Pallet coast to Fungal Isle | 159 -> **53** | **26** | KO -> **no hit (warned)** | no hit | no hit / no hit | **met** |
+| First Cast jetty to Fungal Isle | 142 -> 142 | 83 | KO -> KO | no hit | KO / no hit | reported |
+| Sound narrows z6100 / z6300 / z6500 | 65 / 137 / 96, unchanged | 38 / 123 / 90 | no hit / KO / KO | no hit | as before | rates unchanged: **met** |
+| Dunes to the Long Isle | 84 -> 84 | 78 | hit -> hit | no hit | hit / no hit | rates unchanged: **met** |
+| Pacifidlog's Sound jetty to the square (C3) | 179 -> 179 | 160 | KO -> KO | KO -> KO | KO / hit | gate, rates unchanged: **met** (retires, section 15) |
+| **Pacifidlog ferry: new jetty to the re-sited square** | (over land) -> **659** | 659 | -> **KO** | -> **KO** | KO / KO | gate: **met** |
+| **Pacifidlog: nearest land to the town** | (over land) -> **686** | 655 | -> **KO** | -> **KO** | KO / KO | gate: **met** |
 | Sunset strait (C3) | 257 -> 257 | 223 | KO -> KO | KO -> KO | KO / KO | gate: **met** |
 | Marsh country to Northgate | 280 -> 280 | 256 | KO -> KO | KO -> KO | KO / KO | gate: **met** |
 | The Northlight packet (C3) | 418 -> 418 | 397 | KO -> KO | KO -> KO | KO / KO | gate: **met** |
 
-With Slowness counted every gate still knocks both swimmers out, and the jetty-to-Relic row knocks the unaided out.
-
-- **The Sound ferry's trained resting walk** takes one hit, not two, **on the canonical heightmap as well**: the line
-  crosses a rest stretch. The Sound is excluded from every pass, so the design now requires this line unchanged depth
-  for depth instead (it is), and STATE already records the Sound ferry as a declared leak.
-- **First Cast jetty to Fungal Isle** walks 142 blocks of swimming today, not the plan's 184: the audit's endpoint is the
-  nearest land of the isle's region grown 24. The Pallet flats' bars now give it rest (113); unaided is still knocked out.
-- The ferry is still the gate for unaided **and** trained swimmers on every gate line, under all three walks except the
-  one noted.
+The Jungle Isle's own crossing (eastern dunes to the isle, 307 swim, a gate) is gone with the island. The nearest land to
+the re-sited town is the plateau's south beach at (5202, 6580), 686 blocks of swimming to the town's first deck at
+(5217, 7282). Every ferry gate stays a gate under the plain, Slowness and resting walks, including the new Pacifidlog line.
 
 ---
 
 ## 9. How to make the maps and numbers (one command each)
 
-With the canonical heightmap at the source root (`C:/Users/wnd/Documents`), no server, nothing written outside
-`derived/` (about 3 minutes, then 1 for the audit):
+With the canonical heightmap at the source root, no server, nothing written outside `derived/` (about 6 minutes, then 5
+for the audit):
 
 ```
 python tools/water_shape.py --source-root C:/Users/wnd/Documents
 python tools/water_shape_audit.py --source-root C:/Users/wnd/Documents
+python tools/sea_town.py plan --resite --heightmap derived/water_shape/land_8k_16_rescaled_b145_pads_rift_water.png
 ```
 
-Written under `derived/water_shape/` (gitignored, reproducible):
+Written under `derived/water_shape/` (gitignored, reproducible): the copy, `margin_relief.png`, `manifest.json`,
+`changed.npy`, `owner.npy`, `rivers_revised.json`, `zones/lake_<id>.png`, `REPORT.md`, `report.json`, `audit.json`;
+**maps**: `lake_<lake>.png` (9), `river_<course>.png` (6),
+`coast_*.png` (7), `seabed_overview.png`, `margin_relief.png`, `jungle_isle_bank.png` (the Jungle Isle before and the bank
+after, with Pacifidlog's decks, the new jetty and the ferry line), `pacifidlog_bank_town.png` (the town's close-up), and
+`long_isle_split.png` (the Long Isle's desert and jungle, the old line and the new); **sections**: the lake and shelf
+sections, `jungle_bank_ns.png`, `jungle_bank_ew.png`, the six river long profiles, `crossing_<id>.png` (15 fatigue
+traces) and
+`sections.csv`. `derived/sea_town/plan_resite.json` is the town's plan on the copy.
 
-- the copy `land_8k_16_rescaled_b145_pads_rift_water.png`, `manifest.json`, `changed.npy`, `owner.npy`,
-  `rivers_revised.json`, `zones/lake_<id>.png`;
-- `REPORT.md`, `report.json` (every number here), `audit.json`;
-- **maps** (before, after, and for lakes the bed zones): `maps/lake_lake_viltri.png`, `lake_shrew_lake.png`,
-  `lake_arrow_lake.png`, `lake_marshy_marsh.png`, `lake_lake_tilpey.png`, `lake_peak_pond.png`,
-  `lake_watering_hole.png`, `lake_pond_west_of_mt_clay.png`, `lake_ravine_head_tarn.png`;
-  `maps/river_major_river_trunk.png`, `river_lake_viltri_outflow.png`, `river_arrow_lake_outflow.png`,
-  `river_watering_hole_outflow.png`, `river_ravine_head_tarn_outflow.png`, `river_peak_pond_outflow.png`;
-  `maps/viltri_ravine_stream.png`; `maps/coast_southern_coast.png`, `coast_pallet_and_relic.png`,
-  `coast_pallet_flats.png`, `coast_south_strand.png`, `coast_fungal_chain.png`, `coast_windward_skerries.png`,
-  `coast_north_west_skerries.png`; `maps/seabed_overview.png` (1 px = 8 blocks);
-- **sections**: `sections/<id>.png` for the 18 cross-sections in `data/water_shape.json` `sections`,
-  `sections/river_<course>_long_profile.png` (6), `sections/viltri_ravine_stream_long_profile.png`,
-  `sections/crossing_<id>.png` (13 fatigue traces, before and after), and `sections/sections.csv`.
-
-**Scripts still needed** (none is written): `tools/paint_maps.py` reading the lake zones and the revised river courses
-and accepting a water-shaped heightmap in its guard; paint classes for the new land (skerries, stacks, barrier and bar
-crests); a world verify for the water after a staging export; the independent tests of this audit (a test author's).
+**Scripts still needed** (none is written): `tools/paint_maps.py` reading the lake zones and the revised courses and
+accepting a water-shaped heightmap in its guard; paint classes for the new land and for the bank; a world verify for the water after a staging export; the independent tests of this audit (a test author's).
 
 ---
 
 ## 10. What the audit checks (`tools/water_shape_audit.py`)
 
 It never reads the generator's plan or report; it derives every footprint and expectation from the design file and the
-committed data, and compares the copy with the canonical file.
+committed data (and, for the re-sited town, from `data/sea_town.json` through `tools/sea_town.py`'s own translation),
+and compares the copy with the canonical file.
 
 | Code | Check |
 |---|---|
-| A | the canonical file hashes to `data/world.json`; the copy to its manifest; the manifest is complete; the design file is the one used; no sample rewritten without changing its ground |
-| B | every changed column is inside a declared footprint |
-| C | nothing changed in a town footprint, on a road, on a bridge span, in the Rift (region and sculpted columns), over Victory Road, under the islet's outline, or under a built water event site |
+| A | the canonical file hashes to `data/world.json`; the copy to its manifest; the manifest is complete; the design file is the one used |
+| B | every changed column is inside a declared footprint (the bank's is the island grown by its apron) |
+| C | nothing changed in a town footprint (but the released ones), on a road, a bridge, in the Rift, over Victory Road, under the islet or a built water event site |
 | D | swim-rate invariance outside the rest-ground coast features; the reef never under 3 |
-| E | per lake: wet area and level; wadeable share, farthest from rest (the lake's budget) and deep area; keep zones untouched |
+| E | per lake: wet area and level; wadeable share; the rest budget (whole lake, or the scoped shore band, and each dive site's rest point, E6b); deep area; keep zones untouched |
 | F | every course present; unchanged courses paint identically; revised courses never rise, step big only at falls, dry no new station, end where they ended, add no leak; each meander's sinuosity |
-| G | the stream starts at the pass, ends at the sea, drains, steps big only at its fall, holds water, and the ravine's lake half is untouched outside Lake Viltri's basin |
+| G | the Viltri Ravine on hold: no column changed inside its polygon outside Lake Viltri's basin, and no ravine stream among the revised courses |
 | H | seabed fill only, never above y59, never on a column shallower than 4; the windward deep band keeps its deep water |
-| I | the walk calibrated against the plan (hard on the C3 lines); every gate knocks out under the plain and resting walks (one declared exemption); Relic as decided; Fungal crossed with no hit and with warnings; the Sound unchanged |
-| J | something changed; every family, flat, skerry field, the reef and the chain changed something |
+| I | the walk calibrated on the canonical heightmap (hard on the C3 lines); every gate knocks out under the plain and resting walks (one declared exemption); rates unchanged on the Sound lines (I3b); the new Pacifidlog lines walked on the copy only |
+| J | something changed; every family (the bank's too), flat, skerry field, the reef and the chain changed something |
+| K | the Jungle Isle: nothing of its land left at or above the sea; the bank 4-11 deep away from the town; rest ground only at the town; every re-sited deck over its kind's least depth; the new jetty ashore on the beach, its landing over 3; the blue hole 33+ deep |
+| M | the margin relief: present and hashed, the canvas's size, zero over the heightmap, meeting the copy's edge, the seamounts' summits, nothing above y59 beyond 200 blocks of the edge |
 
-Three checks were recalibrated against the canonical data after the first run, none relaxed for the copy: F5 (the
-canonical courses have a few dry outlet lips, so a dry station counts unless the canonical course had one within a
-block at the same level), F6 (the canonical major river ends at 76.98 into Tilpey at 77 and paints 76, so a course must
-end where it ended), G7 (Lake Viltri's bed is the E checks'). This is the implementer's audit; its independent tests come
-later from a different agent.
+The ravine's stream checks of the first run are replaced by "the ravine untouched" while it is on hold. This is the implementer's audit;
+its independent tests come later from a different agent.
 
 ---
 
 ## 11. What needs the export: all of it
 
-Every piece here is shape and reaches the world only through an export; nothing is worked around with blocks.
+Every piece here is shape and reaches the world only through an export. **The staging export, `cobblers-dryrun12`**
+(REEXPORT.md "Dry run"; the owner approves step 4; nothing touches the live world):
 
-**The staging export, `cobblers-dryrun12`** (REEXPORT.md "Dry run"; the owner approves step 4; nothing touches the live
-world):
-
-1. The owner reviews the maps and `REPORT.md`, and answers section 13.
-2. `python tools/water_shape.py --source-root C:/Users/wnd/Documents`, then `python tools/water_shape_audit.py
-   --source-root C:/Users/wnd/Documents`: CLEAN.
+1. The owner reviews the maps and `REPORT.md`, and answers section 14.
+2. The three commands of section 9: CLEAN, and the town's plan passing on the copy.
 3. `python -m pytest tests/test_system_contracts.py` (C3 before and after).
 4. **On a branch, owner-approved:** `python tools/water_shape.py --source-root C:/Users/wnd/Documents --apply`. It refuses
-   unless the audit passed this exact copy; it copies the file beside the canonical one and repins `data/world.json`
-   with `heightmap.water_shaped_from`.
-5. After the apply: `data/rivers.json` from `derived/water_shape/rivers_revised.json`; `data/landmarks.json`
-   `viltri_ravine` `water: partial`; the paint change (section 9) and `python tools/paint_maps.py`; then, as
+   unless the audit passed this exact copy; it copies the heightmap and the margin relief beside the canonical file and
+   repins `data/world.json` (`heightmap.water_shaped_from`, `export.margin_relief`).
+5. After the apply: `data/rivers.json` from `derived/water_shape/rivers_revised.json`; **Part B's records (section 15.4)**, starting with
+   `python tools/sea_town.py fold-resite` then `write`; the paint change and `python tools/paint_maps.py`; then, as
    WATER_BUILD_PLAN 3.4 lists, `cell_stats.py --write-cells`, `region_measure.py --write`, `measure_towns.py`,
    `build_routes.py`, `waterways.py`, `compile_spawns.py`, the visibility re-measure, and
    `python -m pytest tests/test_system_contracts.py` on the new heightmap.
 6. `python tools/heightmap_check.py C:/Users/wnd/Documents/land_8k_16_rescaled_b145_pads_rift_water.png`: 0 tears.
-7. `python tools/reapply.py prepare --source-root C:/Users/wnd/Documents --server-dir C:/Users/wnd/Documents/github/cobblers-server`: 0 problems.
-8. Process and port check, then take the coordination lock, server stopped.
-9. `python tools/reexport.py --source-root C:/Users/wnd/Documents --old-world <cobblers-dryrun11> --out-dir <staging dir>
-   --name cobblers-dryrun12 --world-file <a staging .world path, never cobblers-10240.world> --paint
-   build/paint/manifest.json`; check 484 region files and `seed_match: true`.
-10. `python tools/reapply.py carry --rehearsal …`, `install`, boot at `-Xmx16G` with the watchdog off, `reapply.py run`,
-    stop, copy, `reapply.py audit`, watchdog back on.
+7. `python tools/reapply.py prepare …`: 0 problems.
+8. Process and port check, then the coordination lock, server stopped.
+9. `python tools/reexport.py … --name cobblers-dryrun12 …`; check 484 region files, `seed_match: true`, **and the margin
+   (the seamounts and the edge) in the new world**: the first run of the margin image.
+10. `reapply.py carry --rehearsal …`, `install`, boot at `-Xmx16G`, `reapply.py run`, stop, copy, `reapply.py audit`.
 11. The water verify (to be written) on the stopped copy; then the owner's flight.
-
-The live world gets it only at the live re-export, which stays blocked on STATE's three items.
 
 ---
 
-## 12. What the run changed in the design (each with its why in `data/water_shape.json`)
+## 12. What changed in the design since the first run (each with its why in `data/water_shape.json`)
 
-| Target | Was | Now | Why (measured) |
+| Target | Was | Now | Why |
 |---|---|---|---|
-| Arrow outflow, room | within 3 blocks of the water | within 8; amplitude jitter 0.2 | room 9 either side (p10 7): no loop at all, sinuosity 1.06. Within 8 the room is 41: entrenched loops with cut banks up to ~8 high |
-| Watering Hole outflow upper, room | 3 | 8 | room 12 (p10 8), sinuosity 1.10 |
-| Watering Hole outflow lower, room and amplitude | 3, 28 | 6, 22 | room 17 (p10 11), 1.17; at 28 with the new room it measured 1.55 |
-| Lake floor relief | ±1 | ±2 | a 40-deep floor rendered as one flat colour |
-| Shelf width | fixed by bayness | ±30% wander over 56 blocks | a ring of one width read as a pool's step |
-| Shoals | round crest, 1-in-2 flank, 8 at most | elongated crest, 3-block apron, 1-in-1 flank, 16 at most | a grid of cones; 8 left Shrew, Marshy Marsh and Tilpey over budget |
-| Arrow shelf | 8-20 | 10-24 | wadeable 10.7% against 12% |
-| Marshy Marsh | pit counted in the budget | pit excluded, its own near shoal | the far point was inside the kept pit; six shoals stacked on its rim and it still measured 70 |
-| Shrew, Arrow, Tilpey shoals | random angles | on each lake's trend | Tilpey read as scattered seeds |
-| Tilpey budget | 60 | **75** | 81 bars for 60, 46 for 75 (owner question 4) |
-| Sound ferry | gate under every walk | gate, and unchanged depth for depth; the trained resting walk exempt | it takes one hit on the canonical heightmap too; the Sound is never written |
-| Islet protection | 65-block square | its outline plus 2 | `island_top` ignores the bed (it is passed and unused); the square's corners are plain seabed and left a square pit in the reef |
-
-The tools' bugs the run fixed are in the commit messages; the ones that changed what the owner would see: four lake
-outlets sealed by the shelf, rivers' old-channel fill running past their windows (656 dry stations on the Watering Hole
-outflow) and over a tributary's mouth, river windows writing into lake basins, new leaks from resampled stations,
-shelves at the narrow end everywhere, the flats on a sixth of Pallet's coast, and the seabed's 256-row stripes.
+| Shoal shape and placement | elongated crests on a trend, farthest-point placement, up to 16 | irregular sunken islands, most-reach placement, up to 12, none within 40 of a kept pit | the owner: streaks; fewer |
+| Big lakes' rest budget | whole lake | the dive sites (and Tilpey's north shore band); natural islands in the open water | question 4 answered (C), and the necklaces round the pits |
+| Tilpey | 46 bars, budget 75, practice floor = half the lake | 5 shoals (3 natural), budget 60 in scope, practice floor a 36-block floor below the north shore | question 4 |
+| Mt Clay pond | budget 30 | 34 | 12 shoals at 30 |
+| Keep zones | eased only where the design was deeper, over 32 | both ways, over 80 (Viltri 24) | pits read as hard-edged blobs |
+| Floor noise | one octave at 24 | 64 and a ripple at 20 | speckle |
+| Flats | unbroken bars, noise rips, 12-block ease | crescent segments, gap rips, 48-block wandering ease | streaks and wedges |
+| Relic reef | from radius 34, lobed knolls; islet margin 2, Relic town margin 8 | from the islet's outline, patch reefs, 40° fades; margins 0 | the sickle and the crosses; the moat |
+| Seabed exclusions | Southern home waters, the Sound, coast-feature boxes, gate straits | none but lakes, river mouths and protected ground; troughs under the gate straits | the rectangles; cut channels |
+| Order | coasts, then seabed | seabed, bank, then coasts | features build on the fill |
+| Watering Hole outflow | kinks between meanders | smoothed planform | question 5 answered (B) |
+| Viltri Ravine | a stream down the sea half | nothing: on hold | the owner, 2026-09-27 |
+| Margin | not in the heightmap | a margin relief image | question 1 (A) |
+| Jungle Isle, Pacifidlog, Long Isle | as they were | section 15 | the owner's Part B decision |
 
 ---
 
 ## 13. Risks
 
-- **Nothing has been in a world.** The maps are renders of heights; water, paint, flowing water on riffles and the
-  new land's materials are unseen.
+- **Nothing has been in a world.** The maps are renders of heights; water, paint and the new land's materials are
+  unseen. The margin image path through WorldPainter is written, not run.
 - **Every placed thing that seats on water ground moves with it** at the re-apply: the First Cast jetty and Viltri's
-  platforms are protected, but lake docks and any Phase C site must be sited on the revised ground.
-- **Paint.** New land (skerries, stacks, the barrier bar, 1,634 dry columns on the south strand, 261 off Pallet) has no
-  coast class and would paint as the preset's default until the paint change.
-- **Tilpey's volume.** 7 M blocks of fill for 46 bars; the export handles it, but the lake's look is the owner's call.
+  platforms are protected; lake docks and any Phase C site must be sited on the revised ground.
+- **Part B moves many records at the apply** (section 15.4); until then every record keeps the Sound town and the
+  island, so staging and the contracts stay consistent.
+- **Paint.** The bank and the new land (skerries, stacks, the barrier bar) have no paint classes yet.
+- **The margin's edge continuation is crude**: land at the map's edge is carried straight outward, so the margin's
+  first 80 blocks off each headland read as a ramp perpendicular to the edge.
 - **The Frostwater ridge line and the Viltri sounding box are drawn, not measured.**
-- **Distant Horizons and the client cache** must be cleared after the export.
 
 ---
 
-## 14. Owner questions (only where it is genuinely close)
+## 14. Owner questions
 
-1. **The margin's seamounts.** All five sites are outside the 0-8191 heightmap; the export fills the margin from a
-   blank image. (A) a margin relief image beside the heightmap, pinned in `data/world.json` and read by
-   `tools/worldpainter/export_world.js` in place of the blank (recommended: still shape, same export, and it would also
-   meet the new shelves at the border, section 7); (B) a block pass after the export; (C) leave the margin a plain until
-   the postgame.
-2. **The ferry straits: keep them deep, or fill them with the shelf?** Filling would take the Sunset strait and the
-   Jungle Isle's water from 20-37 deep to about 5-8; the swim rates would not change (P4). The design keeps them deep;
-   on the overview they are dark channels across the new shelf.
-3. **First Cast's scour hole.** Not in the plan (48 columns, 4 deep); it gives the rod open water. Keep or drop.
-4. **Tilpey: the whole lake within reach of rest, or only its dive sites?** (A) the whole lake within 75 of rest: 46
-   long bars on one trend, a drowned drumlin field, 7 M blocks (what the copy has); (B) within 60 as the rung says: 81
-   bars; (C) decision 8 read literally, "every dive site a rest point within its budget": a handful of bars near the
-   Dive school, the practice floor and the Weeping Elder island, and open deep water elsewhere, which reads most like a
-   big lake but leaves a trained surface swimmer 100+ blocks from rest in the middle (a Dive-trained player does not tire
-   under water, decision 1). Recommended: (C) if the Dive school's lessons cover the open water, else (A).
-5. **The Watering Hole outflow between its meanders.** Its three meander windows are separated by the graded course's
-   straight segments with sharp vertex kinks, so it reads as a canal that meanders three times. (A) leave it (the
-   stretches between are steeper and the plan named only the low-grade reaches); (B) smooth the whole course's planform
-   (a gentle curve through the kinks, no loops) in this same revision, re-cutting the channel between the windows (not
-   written or measured). Recommended: (B).
+Answered on 2026-09-27 (the main session's recommendations; the owner reviewed the maps): **1** (A, the margin relief),
+**4** (C, dive sites only), **5** (B, smooth the whole course). **2** (straits) is resolved by the troughs, which keep
+a strait reading deeper without cutting a channel. Still open, and close:
+
+1. **First Cast's scour hole** (question 3, unchanged): keep or drop (48 columns, 4 deep).
+2. **Shrew, Arrow and Marshy Marsh by the dive-site rule too** (section 5): 95-105 blocks from rest in their open water;
+   the alternative is the whole-lake budget with 10-13 shoals round each pit.
+3. **The Viltri Ravine** (section 4): dry and dressed (the owner's leaning), the sea-half stream, or both halves (the
+   lake half would join Viltri's Path at the lake's outlet: it cannot flow into the lake).
+4. **Part B's reading** (section 15.1).
+5. **The Pacifidlog ferry's length**: 686 blocks of swimming from the nearest land; the town could sit nearer the
+   bank's north edge (ESTIMATE, not walked: about 350 blocks of deep water from the mainland would still knock out a trained swimmer) if the owner wants it closer
+   to the plateau.
+
+---
+
+## 15. Part B: the Jungle Isle removed, Pacifidlog on the sea, the Long Isle split
+
+### 15.1 The decision and its reading
+
+The owner, 2026-09-27, verbatim: *"pacifidlog should be on an island, it should be on the sea, jungle isle should be
+removed and pacifidlog should be around there."* and of the Long Isle's south: *"it should be half jungle half desert"*.
+
+**The main session's reading, stated so the owner can correct it:** the Jungle Isle's land (`data/regions.json`
+`jungle_isle`, x4384-5928 z6880-7976) is removed down to a shallow sea bank where the island stood; Pacifidlog, the raft
+town, is re-sited onto that bank on the open sea (rafts on posts to the seabed, as built in the Sound); the Long Isle
+becomes half desert, half jungle; the jungle ruins and the quests and charter that visit them move to the Long Isle's
+jungle half (recommended; the owner may drop them). "On an island" is read as "a place of its own out on the sea": no
+land is kept (a small sand cay under the Stilt Quarter would be the alternative, and would add rest ground only at the
+town).
+
+### 15.2 The bank (`data/water_shape.json` `jungle_isle_bank`) [run]
+
+- **Removed:** the island's 1,321,739 land columns (its polygons grown 64, at or above the sea), and the old beach ramp
+  where it stood shallower than the bank's edge (289,818 columns): 63.4 M blocks cut, nothing filled. **Nothing is left
+  at or above the sea** (K1).
+- **A drowned island:** the bank's depth follows the old island's own relief (its high ground, ranked, the crown at 5
+  deep; its coast the edge at 9), with two octaves of low relief. Away from the town it is **4-9 deep** (p10 5, median 7,
+  p90 9): swimming, diving and fishing water with no rest ground. It rises from the filled shelf on the north (8-12) and
+  from the deep basin on the south.
+- **The town's bed:** rafts over 3-5, sand shallows 1-2 deep of their own wandering shape under the Stilt Quarter and the
+  boatwright's yard (the only rest ground on the bank: 3,073 columns, all at the town, K3), a dredged slip under the
+  yard's slipway, all fading into the bank over 40 blocks.
+- **The blue hole** off Fishers' Row's head, centre (4939, 7378), 34 deep: a sand lip, a wall with a ledge, a bowl floor.
+
+### 15.3 Pacifidlog's new site (`data/sea_town.json` `resite`), measured on the copy
+
+`python tools/sea_town.py plan --resite --heightmap derived/water_shape/…_water.png` (new: `--resite` translates the
+layout by the resite; `--heightmap` measures on the copy, checked against its manifest; `write` and `check` never use
+it, and a new `fold-resite` makes the resite the layout, refusing until `data/world.json` carries
+`heightmap.water_shaped_from`). **Passes every rule of the plan on the copy [run]:**
+
+- The whole town but its mainland jetty moves by (-2050, +420): the square from (7210, 6960) to **(5160, 7380)**, over the
+  old island's high middle (the ruins' flat square was at (5160, 7463)); 55 elements, 8,149 deck cells, 451 posts, 246
+  outdoor lanterns, every open deck cell lit to at least 5.
+- Depths under the decks: rafts 3-5, the square 3-4, Fishers' Row and its head 3-11 (the head at the blue hole's lip),
+  bridges 2-5, the breakwater 3-5 (it now floats: its landfall is off), the wharf, boardwalk and landings 1-2, the
+  moored rafts 2.
+- The Centre's door at (5160, 7360), the Mart's clerk at (5189, 63, 7378), the waystone at (5160, 7384).
+- **The new mainland jetty** on the plateau's south beach: a bamboo jetty x5159-5161 z6582-6653 (ashore on y62 sand) to a
+  landing x5153-5167 z6654-6662 over 6-7 blocks of water, its boat rack, a sign to Redbrow (the Tableland stop, 850 north)
+  and one to Pacifidlog, "south by boat, about 700 blocks".
+- **The ferry is the gate** (section 8): the ferry line swims 659, the nearest land 686; both knock out unaided and
+  trained swimmers under every walk. **Boats:** at `rough_blocks` 48 the bank, with no land, is rough water everywhere, so
+  the only sheltered box is the town's own, x4946-5254 z7256-7682 (the town grown 24): boats work round the town and
+  tip their riders on the crossing. The Sound's bay and apron boxes retire.
+- **The Sound's old town:** the re-apply builds the town from data, so at the next export it is built only at the new
+  site and **the Sound gets nothing** (no rafts, no jetty, no ferryman). The staging world's Sound town stays in that
+  world until an export rebuilds the region from the heightmap.
+
+### 15.4 Every record that names the Jungle Isle or Pacifidlog's Sound site
+
+**Changed in this design (committed):**
+
+| Record | Change |
+|---|---|
+| `data/water_shape.json` | `jungle_isle_bank`; `release_towns` (sea_town, jungle_ruins); the Pacifidlog crossings; the Jungle Isle crossing removed; the Sound lines to rates-unchanged |
+| `data/sea_town.json` | `resite` (shift, the new jetty, rack and signs, the floating breakwater, site, reading, sheltered box) |
+| `data/ferries.json` | dock `pacifidlog_south_jetty` (planned); line `pacifidlog_ferry` ($150, swim `unsited` until the apply, with its designed barriers); `sound_ferry` marked to retire; `jungle_ruins_landing` to be sited on the Long Isle or dropped |
+| `data/regions.json` | the Long Isle's desert/jungle line (15.5) |
+| `tools/sea_town.py`, `tools/water_shape.py`, `tools/water_shape_audit.py`, `tools/reexport.py`, `tools/worldpainter/export_world.js` | as above |
+
+**At the apply (not changed now: the canonical heightmap still has the island, and staging and contract C3 stand on the
+Sound town):**
+
+| Record | Change | Owner |
+|---|---|---|
+| `data/sea_town.json`, `data/placements.json` (settlement and six earthworks), `data/traders.json` (`sea_town_mart`), `data/towns.json` `sea_town` | `sea_town.py fold-resite`, `write`, then `measure_towns.py`; the town's `for`/`why_here` text | world-content-dev |
+| `data/blackout.json` `boats.sheltered` | `pacifidlog_bay` and `pacifidlog_apron` replaced by `pacifidlog_bank` | minecraft-systems-dev |
+| `data/ferries.json` | `pacifidlog_ferry` declared a gate (island seed (5160, 7380), barriers from section 8); the new dock built; `sound_ferry` and `pacifidlog_jetty` retired; `pacifidlog_square` moves with the square | minecraft-systems-dev |
+| `data/system_contracts.json` C3 and C11, `tests/test_sea_town.py`, `tests/test_system_contracts.py`, `tests/test_boats.py` | the Sound ferry line replaced by the new one; the breakwater no longer comes ashore | test-author |
+| `data/regions.json` `jungle_isle`, `jungle_west`, `jungle_east` | retired (or a marine sub-area for the bank) | world-content-dev |
+| `data/spawns.json` `jungle_west`, `jungle_east` rosters | retired; the bank needs a marine and fishing roster round the town (LONG_ISLE.md section 6's Sound and Current Gate candidates) | datapack-content-dev, trainer-balance-designer |
+| `data/foliage.json` jungle overlays (`jungle_west`, `jungle_east`), `tests/test_foliage_overlays.py` (its jungle window) | retired; the overlays' intent moves to `long_isle_south` | world-content-dev, test-author |
+| `data/elder_trees.json` `elder_jungle_east_1`, `_2`, `elder_jungle_west_1`, `_2` and their 16 nests in `data/habitat_blocks.json` | retired or moved to the Long Isle's jungle half (they would seat on the seabed) | world-content-dev |
+| `data/towns.json` `jungle_ruins`, `data/placements.json` (its settlement and six ruin pieces), `data/signposts.json` ("Jungle Isle ruins") | moved to the Long Isle's jungle half (recommended) or dropped | world-content-dev |
+| `data/structures.json` (8 records naming `jungle_isle`), `data/sculpt.json` (`jungle_isle` in the coast's soft regions) | drop `jungle_isle` | world-content-dev |
+| `docs/mechanics/WATER_BUILD_PLAN.md` 11.1-11.3, `WATER_PROPOSAL.md` (the Sound ferry, the jungle ruins charter), `WATER_MAP.md`, `docs/world-building/OCEAN.md`, `REGIONS.md`, `SETTLEMENTS.md`, `SETTLEMENT_NAMES.md`, `FOLIAGE*.md`, `BIOME_COVERAGE*.md`, `SAPLING_BIRDS.md`, `STRUCTURE_*.md` | the island's removal and the town's move | content-architect, world-content-dev |
+| **Codex (story text, not edited here):** `SQ-SUNSET-02` (sails to the ruins at (5160, 7463)), `SQ-JUNGLE-01`, `SQ-JUNGLE-02` (the ruins, "the harbour and jungle island"), `docs/story/ENCOUNTERS.md` (the Jungle Isle's section), `docs/HANDOVER_CODEX.md` items 17-18 (the ruins' cache), the Pacifidlog display text ("in the Sound"); and, from section 4, `SQ-G1-01` and Stoneford | new coordinates or a rewrite | Codex |
+
+### 15.5 The Long Isle, half desert and half jungle (paint, `data/regions.json`)
+
+The desert/jungle line (the cover change between `long_isle_middle`, sandstone uplands, and `long_isle_south`, jungle)
+moves about 220 blocks north, from about z6880 to a wandering line at z6632-6672 from (7345, 6650) to (8161, 6640),
+824 blocks long. Re-measured by `tools/region_measure.py --write` (only these two records changed): **desert (north and
+middle) 1.284 km², jungle (south) 1.285 km²** (they were 1.48 and 1.08). The map is
+`derived/water_shape/maps/long_isle_split.png`. It is paint and lands at the next WorldPainter export; the rosters and
+foliage follow the polygons. See `docs/world-building/LONG_ISLE.md` section 11.

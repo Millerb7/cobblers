@@ -1,5 +1,11 @@
 # The Long Isle: a desert island, a jungle island and a sea town
 
+**2026-09-27, the owner's new decision (section 11):** *"pacifidlog should be on an island, it should be on the sea,
+jungle isle should be removed and pacifidlog should be around there."* and of the Long Isle's south: *"it should be
+half jungle half desert"*. Pacifidlog leaves the Sound for a bank where the Jungle Isle stood (designed on the water
+export's copy, not applied), and the desert/jungle line moves north so the two halves are equal (in the data, paint
+only). Sections 1-10 below describe the Sound design they supersede where section 11 says so.
+
 **Status: design proposal, 2026-09-25. Phase 2's data was authored on 2026-09-26, and every open decision here took
 its recommended default** (the owner: "go and update the isles and add the sea town from hoenn").
 - **D1 and D2:** paint only. The north is `desert_isle`, the middle is `sandstone_uplands` (sandstone above y128 and on
@@ -71,6 +77,10 @@ south-west arm reaches H7.
 
 ## 3. The split: a desert island and a jungle island
 
+**Superseded 2026-09-27 (section 11.3): the line is now a wandering cover change at z6632-6672, 824 blocks from
+(7345, 6650) to (8161, 6640), so desert and jungle are 1.284 and 1.285 km² of land.** The text below is the first
+design's line.
+
 **Recommended line: the existing cover boundary between the middle and the south.** It is 928 blocks long, runs from
 (7304, 6856) on the west coast to about (8128, 6920) on the east, and both sides have a median of y119.
 
@@ -104,6 +114,9 @@ only the low north (0.64 km²), with a jungle three times its size. That is an o
   later build on it would be re-seated on the new ground.
 
 ## 4. The sea town ("Pacifidlog", working name)
+
+**Superseded site (section 11):** the town moves to the Jungle Isle's bank; the layout below moves with it unchanged
+but for the mainland jetty.
 
 **Site (ESTIMATE):** in the Sound's bay, off the jungle island's north-west shore. The centre is about (7120, 6880):
 about 240 blocks from the dunes' coast, 170 from the jungle shore to the east, and 300 from the Mining Town's side of the
@@ -270,6 +283,9 @@ island's east coast at about (8200, 7400). A town of fishers and divers is its n
 
 ## 10. The sea town as authored (2026-09-26)
 
+**Section 11 re-sites it.** This section records the Sound build, which stands on staging and which every record keeps
+until the water export is applied.
+
 The owner (2026-09-26): *"add the sea town from hoenn"*. Every open decision took its recommended default, recorded
 in `data/sea_town.json` `decisions` as "owner approved; recommended default taken". For the sea town that means water
 only, one discovery waystone, the Mart only (D6), no current lane (D7), no reef (D9) and survival (D11). D3 keeps
@@ -338,3 +354,58 @@ player has walked it. The unverified points are:
 - that the deck holds with no leak;
 - that the boats in the barrels work;
 - that the clerk trades.
+
+## 11. Pacifidlog on the sea, the Jungle Isle removed, the Long Isle split (2026-09-27)
+
+**The owner, verbatim:** *"pacifidlog should be on an island, it should be on the sea, jungle isle should be removed
+and pacifidlog should be around there."* and, of the Long Isle's south, *"it should be half jungle half desert"*.
+
+**The main session's reading, for the owner to correct:** the Jungle Isle's land (`data/regions.json` `jungle_isle`,
+x4384-5928 z6880-7976) is removed down to a shallow sea bank where the island stood; Pacifidlog is re-sited onto that
+bank, on the open sea, rafts on posts to the seabed as in the Sound; the Long Isle becomes half desert, half jungle; the
+jungle ruins and the quests and charter that visit them move to the Long Isle's jungle half (recommended; the owner may
+drop them). No land is kept at the town ("on an island" read as a place of its own on the sea); a small sand cay under
+the Stilt Quarter is the alternative.
+
+**Status: DESIGNED on the water export's copy, not applied.** Every record keeps the Sound town until the water export
+is applied, because the new site is over the Jungle Isle's land on the canonical heightmap and the Sound town stands on
+staging. The full measurements, the crossings and the list of every record that changes are in
+`docs/world-building/WATER_SHAPE.md` section 15; in short:
+
+### 11.1 The bank
+
+The island (1,321,739 land columns) and its old beach ramp are cut away, 63.4 M blocks, nothing left at or above the
+sea. The bank follows the drowned island's own relief: 4-9 deep away from the town (median 7), rising from the filled
+shelf on the north and the deep basin on the south, with no rest ground but the town's. The town's bed: rafts over
+3-5, sand shallows 1-2 deep under the Stilt Quarter and the yard, a dredged slip under the slipway, and a **blue hole**
+34 deep at the head of Fishers' Row (centre (4939, 7378)): the deep fishing water that the Sound's hole was.
+
+### 11.2 The town
+
+The layout moves whole by (-2050, +420) (`data/sea_town.json` `resite`): the square from (7210, 6960) to (5160, 7380),
+about 700 blocks of open water south of the plateau's beach. `python tools/sea_town.py plan --resite --heightmap …` passes
+every rule on the copy: rafts over 3-5, the square 3-4, Fishers' Row 3-11 to the blue hole's lip, the stilts and wharf
+over 1-2, the breakwater floating (its landfall is off: there is no shore), every open deck cell lit to 5. The Current
+Gate lookout faces the bank's southern water rather than a bay mouth.
+
+- **The way in:** a new bamboo jetty on the plateau's south beach at (5160, 6582), its landing over 6-7 blocks of water,
+  a boat rack and signs (Redbrow, the Tableland stop, 850 north; Pacifidlog, 700 south by boat).
+- **The ferry is the gate** (`data/ferries.json` `pacifidlog_ferry`, $150, designed, `unsited` until the apply): the
+  ferry line is 659 blocks of swimming and the nearest land 686; both knock out unaided and trained swimmers.
+- **Boats** (`rough_blocks` 48): the bank has no land, so only the town's own water is sheltered (x4946-5254
+  z7256-7682); boats cannot make the crossing.
+- **The Sound's old town:** the re-apply builds the town from data, so at the next export the Sound gets nothing.
+
+### 11.3 The Long Isle's split (paint; in the data now)
+
+The line between `long_isle_middle` (sandstone uplands, desert) and `long_isle_south` (jungle) moves about 220 blocks
+north to a wandering cover change at z6632-6672, (7345, 6650) to (8161, 6640), 824 blocks. Land areas
+(`tools/region_measure.py`): **desert 1.284 km², jungle 1.285 km²** (they were 1.48 and 1.08). It lands with the next
+WorldPainter export (paint), like the rest of section 3.
+
+### 11.4 The jungle ruins and their quests (recommended, not done)
+
+The ruins (`data/towns.json` `jungle_ruins`, six ruined pieces in `data/placements.json`), the four jungle elders and
+their nests, and the Jungle Isle charter's landing move to the Long Isle's jungle half, or are dropped: the owner's
+call. The quests that visit them (`SQ-SUNSET-02`, `SQ-JUNGLE-01`, `SQ-JUNGLE-02`) are Codex's text; their coordinates
+change with the ruins' site. `WATER_SHAPE.md` 15.4 lists every record and its owner.

@@ -86,6 +86,19 @@ def main(argv=None):
             "--margin=%d" % exp["export_margin_blocks"],
             "--spawn-x=%d" % exp["spawn"][0], "--spawn-z=%d" % exp["spawn"][1],
             "--border-centre=%d" % exp["border"]["centre"], "--border-size=%d" % exp["border"]["size"]]
+    mr = exp.get("margin_relief")
+    if mr:
+        # the margin relief (tools/water_shape.py, owner question 1 option A): pinned beside the heightmap, checked
+        # here like the heightmap itself; without the pin the export keeps its blank margin
+        mp = heightmap.parent / mr["path"]
+        import hashlib
+        h = hashlib.sha256()
+        with open(mp, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        if h.hexdigest() != mr["sha256"]:
+            raise SystemExit("the margin relief %s does not hash to data/world.json export.margin_relief" % mp)
+        args += ["--margin-image=%s" % mp]
     if a.paint:
         args += ["--paint=%s" % Path(a.paint).resolve(), "--paint-script=%s" % (ROOT / "tools" / "worldpainter" / "paint.js")]
     print("levels:", json.dumps(levels))

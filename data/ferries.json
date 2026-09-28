@@ -115,6 +115,15 @@
    "why": "the Sound ferry's town end. The town has no dock of its own for the ferry; the square is where the town's plan lets a visitor in"
   },
   {
+   "id": "pacifidlog_south_jetty",
+   "name": "Pacifidlog jetty",
+   "status": "planned",
+   "near": [5160, 6658],
+   "near_basis": "the landing of the new mainland jetty in data/sea_town.json resite (x5153-5167 z6654-6662, 68-76 blocks out from the plateau's south beach at (5160, 6586)); the ferryman stands on it as on the Sound jetty",
+   "blocked_by": "the water export: Pacifidlog moves onto the Jungle Isle's bank (the owner, 2026-09-27; data/water_shape.json jungle_isle_bank), and its new jetty is built with it (tools/sea_town.py fold-resite, then write). Until the export is applied the site is the Jungle Isle's channel shore and the town is on the Sound",
+   "why": "the new Pacifidlog ferry's mainland end; it replaces pacifidlog_jetty, which retires with the Sound site"
+  },
+  {
    "id": "sunset_south_pier",
    "name": "Sunset West",
    "status": "planned",
@@ -188,7 +197,7 @@
    "name": "the Jungle Isle ruins",
    "status": "planned",
    "near": null,
-   "blocked_by": "not sited: the ruins stand inland at (5160, 7463); the charter's landing on the isle's shore is unchosen",
+   "blocked_by": "not sited: the ruins stand inland at (5160, 7463); the charter's landing on the isle's shore is unchosen. PART B 2026-09-27: the Jungle Isle is removed by the water export (data/water_shape.json jungle_isle_bank) and the ruins are proposed to move to the Long Isle's jungle half (docs/world-building/LONG_ISLE.md section 11), so this landing is to be sited on the Long Isle's shore, or dropped with the ruins (the owner's call)",
    "why": "a charter's far end (SQ-SUNSET-02, SQ-JUNGLE-02 sail to the ruins)"
   },
   {
@@ -245,7 +254,30 @@
       "basis": "the Long Isle's nearest other land (tools/ferries.py measure from the square, 2026-09-27): 61 blocks at z6024, the eastern dunes to the Long Isle; from its far end the square is reached on land, wading water and decks"}
     ]
    },
+   "retires": "PART B 2026-09-27 (the owner: Pacifidlog on the sea where the Jungle Isle stood): the line retires when the water export is applied and the town is re-sited (data/sea_town.json resite); pacifidlog_ferry replaces it. Kept, and audited, until then: the staging town and contract C3 stand on it",
    "why": "the second line, at the second built dock (WATER_BUILD_PLAN 11.3). 'Water only' is the town's defining trait (data/sea_town.json D4)"
+  },
+  {
+   "id": "pacifidlog_ferry",
+   "name": "Pacifidlog ferry",
+   "stops": [
+    "pacifidlog_south_jetty",
+    "pacifidlog_square"
+   ],
+   "fare": 150,
+   "fare_why": "the Sound ferry's $150 each way (WATER_PROPOSAL decision 5), carried to the new line; the crossing is longer (about 700 blocks against 190) but it is the same town's one way in",
+   "gates": [],
+   "gate_why": "none, as for the Sound ferry: WATER_PROPOSAL decision 6 (early arrival is the level-cap trap's fix's)",
+   "swim": {
+    "declared": "unsited",
+    "why": "DESIGNED, NOT SITED ON THE CANONICAL HEIGHTMAP: until the water export is applied the line runs over the Jungle Isle's land, so tools/ferries.py cannot walk it. It is walked on tools/water_shape.py's copy by data/water_shape.json crossings pacifidlog_ferry_line and pacifidlog_nearest_land (and again by tools/water_shape_audit.py). At the apply it is declared a gate with the island seed at the square and these barriers, and the sheltered box moves (data/sea_town.json resite sheltered)",
+    "designed_barriers": [
+     {"id": "jetty_to_square", "from": [5160, 6583], "to": [5160, 7380], "basis": "the new jetty's landward end to the re-sited square (water_shape crossing pacifidlog_ferry_line)"},
+     {"id": "nearest_land", "from": "measured", "to": "measured", "basis": "the shortest swim to the town from any land left after the revision (water_shape crossing pacifidlog_nearest_land; the numbers are in docs/world-building/WATER_SHAPE.md section 15)"}
+    ],
+    "island_seed_after": [5160, 7380]
+   },
+   "why": "PART B 2026-09-27: the owner's 'pacifidlog should be on an island, it should be on the sea, jungle isle should be removed and pacifidlog should be around there'. The ferry is the gate for players without a water mount (decision 3): the town has no land within reach of any swimmer"
   },
   {
    "id": "sunset_strait",
