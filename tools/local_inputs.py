@@ -145,7 +145,8 @@ def record(a):
                    "`hydrate --server-dir`; store: copied from a folder the owner keeps, by sha256.",
            "files": files}
     body = ",\n".join("  " + json.dumps(f) for f in files)
-    MANIFEST.write_text('{"note": %s,\n "files": [\n%s\n]}\n' % (json.dumps(doc["note"]), body), encoding="utf-8")
+    MANIFEST.write_text('{"note": %s,\n "files": [\n%s\n]}\n' % (json.dumps(doc["note"]), body), encoding="utf-8",
+                        newline="\n")
     kinds = {}
     for f in files:
         kinds[f["source"]["kind"]] = kinds.get(f["source"]["kind"], 0) + 1

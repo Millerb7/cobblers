@@ -395,7 +395,8 @@ def write_prefab(name, b, extra):
                  "entrance": None, "grade_layer": None, "trunk_origin": [int(v) for v in shift],
                  "notes": "the trunk centre's base is builder (0, 0, 0), template trunk_origin; nest `at` is in builder "
                           "coordinates (add trunk_origin for template coordinates)"}, **extra)
-    (PREFABS / (name + ".json")).write_text(json.dumps(side, indent=1) + "\n", encoding="utf-8")
+    (PREFABS / (name + ".json")).write_text(json.dumps(side, indent=1) + "\n", encoding="utf-8",
+                                            newline="\n")
     return side
 
 
