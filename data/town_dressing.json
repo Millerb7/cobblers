@@ -320,9 +320,9 @@
         "why": "the big fire everyone in a cold town comes back to, its five columns of smoke seen over the roofs (the owner, 2026-09-28: a Timburr carrying logs between a woodpile and a big fire in the snow town); the observatory on the isle's high point stays the town's signature from afar"
       },
       "pieces": [
-        {"id": "northlight_woodpile", "kind": "log_pile", "at": [7266, 1577], "facing": "north", "length": 4,
+        {"id": "northlight_woodpile", "kind": "log_pile", "at": [7268, 1602], "facing": "north", "length": 4,
          "palette": {"log": "minecraft:spruce_log[axis=x]"},
-         "why": "the town's firewood, split and stacked by the square (2026-09-28): the Timburr's work starts here"},
+         "why": "the town's firewood, stacked 26 blocks north of the fire (the owner, 2026-09-28: make the path longer): the Timburr's work starts here"},
         {"id": "northlight_ice_blocks", "kind": "stone_pile", "at": [7272, 1583], "facing": "north", "length": 3,
          "blocks": ["minecraft:packed_ice", "minecraft:blue_ice", "minecraft:packed_ice"],
          "palette": {"slab": "minecraft:spruce_slab[type=bottom]", "stair": "minecraft:spruce_slab[type=bottom]"},

@@ -191,7 +191,10 @@ def plan_worker(w, site, rules):
                 raise AmbientError("ambient/%s: %s cell (%d, %d) is not free: %s" % (wid, what, x, z, why))
 
     p = {"id": wid, "settlement": w["settlement"], "species": w["species"], "level": level, "job": w["job"],
-         "interact": w["interact"], "box": w.get("box", rules["box"])}
+         "interact": w["interact"], "box": w.get("box", rules["box"]), "clear": list(w.get("clear") or [])}
+    for b in p["clear"]:
+        if not ITEM.fullmatch(b):
+            raise AmbientError("ambient/%s: clear %r" % (wid, b))
     if w["job"] == "carry":
         route = [tuple(c) for c in w["route"]]
         if len(route) < 2:
@@ -357,25 +360,62 @@ def functions(pl):
         fn["w/%s/claim" % wid] = [
             "tag @s add %s" % TAG, "tag @s add %s" % t,
             "data merge entity @s {PersistenceRequired:1b,Invulnerable:1b,Unbattleable:1b,DeathLootTable:\"minecraft:empty\"}"]
-        # the re-application: the station's chunk loaded by the driver first, then placed whether or not anyone is near
+        # the re-application: the station's chunk loaded by the driver first, then placed whether or not anyone is near.
+        # A worker with `clear` treads its track first: the export paints snow over the heightmap's ground (Northlight:
+        # deep enough to hide a Timburr standing in it, the owner, 2026-09-28), so those blocks are taken out of every
+        # cell it stands on and the one above, and it walks on the ground its y was measured from
+        # (its own function, holding its own chunks: run by R16C before the station is force-loaded, because a
+        # `forceload remove` is not counted and would release the station the driver holds)
+        if w["clear"]:
+            import function_limits
+            clear = []
+            for bname in w["clear"]:
+                for (cx, cy, cz) in stand_cells(w):
+                    clear.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (cx, cy, cz, cx, cy + 1, cz, bname))
+            fn["w/%s/tread" % wid] = function_limits.ensure_loaded(clear)
         fn["w/%s/place" % wid] = ["function %s/w/%s/hold" % (F, wid)]
         lines = w["interact"].replace("\\", "\\\\").replace('"', '\\"')
         fn["w/%s/click" % wid] = [
             "execute on target run tellraw @s {\"text\":\"%s\",\"color\":\"gray\",\"italic\":true}" % lines,
             "execute at %s run particle minecraft:heart ~ ~%s ~ 0.3 0.2 0.3 0 3" % (w1, num(box_h)),
             "data remove entity @s interaction"]
-        fn["w/%s/step" % wid] = step(w, rules, w_sel, tc, ti)
+        fn["w/%s/step" % wid] = step(w, rules, w_sel, tc, ti, fn)
+        if w["job"] == "carry":
+            fn["load"].append("function %s/w/%s/route" % (F, wid))
     fn["tick"] = tick
     fn["keep_all"] = keep_all
     fn["click"] = click
     return fn
 
 
-def step(w, rules, w_sel, tc, ti):
-    """The per-tick clock and the moves of one worker's job."""
+def stand_cells(w):
+    """Every (x, y, z) block a worker stands in: its route's cells, its spots, or its station."""
+    if w["job"] == "carry":
+        pts = [(math.floor(x), y, math.floor(z)) for x, y, z in w["points"]]
+    elif w["job"] == "blink":
+        pts = [(math.floor(x), y, math.floor(z)) for x, y, z, _yaw in w["spots"]]
+    else:
+        x, y, z = w["start"]
+        pts = [(math.floor(x), y, math.floor(z))]
+    seen, out = set(), []
+    for c in pts:
+        if c not in seen:
+            seen.add(c)
+            out.append(c)
+    return out
+
+
+STORE = "%s:ambient" % NS
+
+
+def step(w, rules, w_sel, tc, ti, fn=None):
+    """The per-tick clock and the moves of one worker's job. A carrier's route is not one line per point (a carrier
+    cost 0.41 ms a tick that way, measured on staging 2026-09-28, most of it failed score tests): the route is data in
+    storage, and each tick one macro looks up the point for the clock. `fn` receives the helper functions."""
     clk = "#%s_t" % w["id"]
     out = ["scoreboard players add %s %s 1" % (clk, OBJ)]
     move = []                                   # (tick, [commands])
+    walk = []                                   # the carrier's two dispatch lines, after the wrap
     if w["job"] == "carry":
         pts, pause = w["points"], w["pause"]
         n = len(pts)
@@ -392,13 +432,24 @@ def step(w, rules, w_sel, tc, ti):
             return out
         back = list(reversed(pts))
         period = 2 * (pause + n)
-        seq = [(pause + i, p, y) for i, (p, y) in enumerate(zip(pts, heading(pts)))] + \
-              [(2 * pause + n + i, p, y) for i, (p, y) in enumerate(zip(back, heading(back)))]
-        for tk, (x, y, z), yaw in seq:
-            move.append((tk, ["execute as %s run tp @s %s %s %s %s 0" % (w_sel, num(x), y, num(z), num(yaw)),
-                              "execute as @e[type=minecraft:interaction,tag=%s] run tp @s %s %s %s" % (ti, num(x), y, num(z)),
-                              "execute as @e[type=minecraft:item_display,tag=%s] run tp @s %s %s %s %s 0"
-                              % (tc, num(x), num(y + w["carry_height"]), num(z), num(yaw))]))
+        wid = w["id"]
+
+        def entries(seq_pts):
+            return "[%s]" % ",".join('{x:"%s",y:"%s",z:"%s",h:"%s",r:"%s"}' % (num(x), y, num(z), num(y + w["carry_height"]), num(yaw))
+                                     for (x, y, z), yaw in zip(seq_pts, heading(seq_pts)))
+        fn["w/%s/route" % wid] = ["data modify storage %s p.%s set value {out:%s,back:%s}" % (STORE, wid, entries(pts), entries(back))]
+        fn["w/%s/tp" % wid] = ["$tp %s $(x) $(y) $(z) $(r) 0" % w_sel,
+                               "$tp @e[type=minecraft:interaction,tag=%s] $(x) $(y) $(z)" % ti,
+                               "$tp @e[type=minecraft:item_display,tag=%s] $(x) $(h) $(z) $(r) 0" % tc]
+        for leg, start in (("out", pause), ("back", 2 * pause + n)):
+            fn["w/%s/walk_%s" % (wid, leg)] = [
+                "scoreboard players operation #i %s = %s %s" % (OBJ, clk, OBJ),
+                "scoreboard players remove #i %s %d" % (OBJ, start),
+                "execute store result storage %s arg.i int 1 run scoreboard players get #i %s" % (STORE, OBJ),
+                "function %s/w/%s/go_%s with storage %s arg" % (F, wid, leg, STORE)]
+            fn["w/%s/go_%s" % (wid, leg)] = ["$function %s/w/%s/tp with storage %s p.%s.%s[$(i)]" % (F, wid, STORE, wid, leg)]
+            walk.append("execute if score %s %s matches %d..%d run function %s/w/%s/walk_%s"
+                        % (clk, OBJ, start, start + n - 1, F, wid, leg))
         ax, ay, az = pts[0]
         bx, by, bz = pts[-1]
         up = pause - 6
@@ -440,6 +491,7 @@ def step(w, rules, w_sel, tc, ti):
                               "particle minecraft:reverse_portal %s %s %s 0.3 0.6 0.3 0.05 30" % (num(x), num(y + 0.6), num(z)),
                               sound("minecraft:entity.enderman.teleport", x, y, z, rules, 1.6)]))
     out.append("execute if score %s %s matches %d.. run scoreboard players set %s %s 0" % (clk, OBJ, period, clk, OBJ))
+    out += walk
     for tk, cmds in sorted(move, key=lambda m: m[0]):
         for c in cmds:
             out.append("execute if score %s %s matches %d run %s" % (clk, OBJ, tk % period, c))
@@ -474,20 +526,27 @@ def write(pl):
 
 
 def placement_steps():
-    """reapply.py R16C: for each worker, its station's chunk loaded, the worker placed, the chunk let go."""
+    """reapply.py R16C: for each worker, its track trodden (if it has one), its station's chunk loaded, the worker
+    placed, the chunk let go."""
     out = []
-    for w in plan_positions():
-        x, z = int(math.floor(w[1])), int(math.floor(w[3]))
-        out += [("cmd", "forceload add %d %d" % (x, z)), ("wait", 3), ("fn", "%s/w/%s/place" % (F, w[0])), ("wait", 2),
-                ("fn", "%s/w/%s/place" % (F, w[0])), ("cmd", "forceload remove %d %d" % (x, z))]
+    for w in plan_workers():
+        x, z = int(math.floor(w["start"][0])), int(math.floor(w["start"][2]))
+        if w.get("clear"):
+            out.append(("fn", "%s/w/%s/tread" % (F, w["id"])))
+        out += [("cmd", "forceload add %d %d" % (x, z)), ("wait", 3), ("fn", "%s/w/%s/place" % (F, w["id"])), ("wait", 2),
+                ("fn", "%s/w/%s/place" % (F, w["id"])), ("cmd", "forceload remove %d %d" % (x, z))]
     return out
+
+
+def plan_workers():
+    if not PLAN.is_file():
+        raise AmbientError("no %s: run python tools/ambient.py build" % PLAN)
+    return json.loads(PLAN.read_text(encoding="utf-8"))["workers"]
 
 
 def plan_positions():
     """[(id, x, y, z)] of each worker's start, from the last build's plan."""
-    if not PLAN.is_file():
-        raise AmbientError("no %s: run python tools/ambient.py build" % PLAN)
-    return [(w["id"], w["start"][0], w["start"][1], w["start"][2]) for w in json.loads(PLAN.read_text(encoding="utf-8"))["workers"]]
+    return [(w["id"], w["start"][0], w["start"][1], w["start"][2]) for w in plan_workers()]
 
 
 def verify(rc):

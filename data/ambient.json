@@ -8,11 +8,11 @@
     "water_changed_margin": 8
   },
   "workers": [
-    {"id": "brock_stone_carrier", "settlement": "gym1_town", "species": "timburr", "level": 18, "job": "carry",
+    {"id": "brock_stone_carrier", "settlement": "gym1_town", "species": "graveler", "level": 18, "job": "carry",
      "route": [[1781, 3669], [1752, 3689]], "carry": "minecraft:stone_bricks", "carry_height": 1.0,
      "pickup": {"sound": "minecraft:block.stone.hit"},
      "drop": {"sound": "minecraft:block.stone.place", "block": "minecraft:stone_bricks", "count": 12},
-     "interact": "The Timburr sets its block against the new wall and looks at it for a moment before going back for another."},
+     "interact": "The masons' Graveler sets its block against the new wall with two of its hands and brushes off the dust with the other two. A mason calls it back to the pile."},
     {"id": "brock_bench_machop", "settlement": "gym1_town", "species": "machop", "level": 17, "job": "work",
      "at": [1786, 3689], "face": [1786, 3690], "every": 24, "look_around": [1768, 3672],
      "effect": {"block": "minecraft:stone", "count": 14, "sound": "minecraft:block.stone.hit", "pitch": 0.8},
@@ -64,7 +64,8 @@
      "drop": {"sound": "minecraft:block.chain.place", "block": "minecraft:raw_iron_block", "count": 10},
      "interact": "The Machoke hauls broken ore to the headframe. It nods at you on its way past."},
     {"id": "northlight_log_carrier", "settlement": "northlight", "species": "timburr", "level": 50, "job": "carry",
-     "route": [[7270, 1577], [7276, 1577]], "carry": "minecraft:spruce_log", "carry_height": 1.0,
+     "route": [[7272, 1602], [7277, 1577]], "carry": "minecraft:spruce_log", "carry_height": 1.0,
+     "clear": ["minecraft:snow"],
      "pickup": {"sound": "minecraft:block.wood.hit"},
      "drop": {"sound": "minecraft:block.wood.place", "particle": "minecraft:flame", "count": 14, "spread": 0.4, "speed": 0.02},
      "interact": "The Timburr drops another log on the fire and warms its hands at it before going back for the next."}

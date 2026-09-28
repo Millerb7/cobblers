@@ -28,6 +28,22 @@ riding along by `tp`) from the cut-stone pile to the wall in progress, 32 blocks
 | 6 | Chunk unload and restart | The worker, its display, tags, flags, position and the loop's clock survived a full stop and boot; all 13 generated workers were present with their flags after a restart (verify: 0 problems) |
 | 7 | The generated set | 13 workers built and placed on staging, `tools/ambient.py verify --rcon`: one of each, `PersistenceRequired`, `Invulnerable`, `Unbattleable`, `NoAI` and a box each, 0 problems; a worker killed at a fresh boot was put back by its keeper through the macro |
 
+## Cost (measured 2026-09-28, staging, the server's own `/tick query`)
+
+A benchmark pack ran 40 worker steps every tick; readings alternated with idle, medians of 5-10 each: idle 5.70 ms,
++40 carrier steps 6.70 ms, +40 station steps 5.80 ms. So a carrier costs about 25 us a tick and a station worker
+about 3 us (inside the noise), only while a player is within 48 of it; with nobody near a worker costs one keeper
+check every 2 s. The first figure given (0.41 ms a carrier) was timed over RCON and was round-trip noise: the same
+method gave negative costs on a rerun. The carrier's step reads its route from storage by one macro lookup a tick;
+the first build tested every point of the route every tick (about 1,200 score tests for Brock's).
+
+## The owner's flight (2026-09-28)
+
+Both of Brock's workers work in game and the Timburr showed its block. Changed after it: Brock's carrier is a Graveler
+(the owner); Northlight's Timburr stood inside the export's snow (the heightmap's ground is stone at y116, the paint
+lays snow at y117 deep enough to hide it), so a worker can `clear` blocks from its cells (`tread`, run by R16C before
+the station is held) and Northlight's route is 25 blocks from a woodpile moved north. Sabrina's Abra seen and liked.
+
 ## Not verified (the owner's flight)
 
 - The walk animation of a `tp`-moved worker; the carried block's look over each species.
