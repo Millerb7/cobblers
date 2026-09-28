@@ -3,17 +3,13 @@
 For a cold start: read CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before starting. STATE holds the
 durable facts; this holds where work stopped. Rewrite it at the end of every session (CLAUDE.md "Session length").
 
-## 1. Branches and PRs (the owner merges; every branch below is frozen)
+## 1. Branches and PRs
 
-| PR | Branch | Base | Holds |
-|---|---|---|---|
-| #84 | `claude/cobblers-cobblemon-session-start-531d15` | `main` | The overnight batch: working Pokemon, re-material, shrines, stone places, the southern Rift redesign |
-| #85 | `tooling/agent-launch-and-fresh-checkout` (head `482754f`) | #84's branch | A fresh checkout prepares; the local-only kits manifest; `reapply.py hydrate` |
-| #86 | `tooling/cost-rules-and-prepare-speed` (head: the commit adding this file) | #85's branch | The local store and `worktree.baseRef`; `prepare --only/--from`; the gulch 30x speedup; shared reach walk; quote-matched citations; `tools/session_cost.py`; CLAUDE.md cost and session-length rules |
-
+- #84 (the overnight batch) and #85 (a fresh checkout prepares) are **merged**; both heads verified on main (2026-09-28).
+- `tooling/cost-rules-and-prepare-speed` (head: the commit adding this file), draft PR against `main`, frozen once reported: the local store and `worktree.baseRef`; `prepare --only/--from`; the gulch build 30x faster; the shared reach walk; quote-matched citations; `tools/session_cost.py`; the CLAUDE.md cost and session-length rules.
 - `.codex/config.toml` is modified in this worktree and **never committed** (Codex's; HANDOVER_CODEX item 29).
   `git commit -a` sweeps it in: stage files by name.
-- Once #84 merges: the `worktree-agent-*` branches and `.claude/worktrees/agent-*` can go, and
+- #84 has merged, so the `worktree-agent-*` branches and `.claude/worktrees/agent-*` can go, and
   `.claude/worktrees/night-towns-shrines` (builder A's re-material, already applied) can be removed.
 
 ## 2. Where the job stopped
