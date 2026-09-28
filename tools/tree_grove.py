@@ -182,7 +182,14 @@ def write_prefab(kind, variant, b, dims, tier="giant"):
             "tier": tier, "habitat": dims,
             "notes": "trunk base at template (trunk_origin); the %dx%d trunk spans +0..+%d in x and z from it"
                      % (dims["trunk"][0], dims["trunk"][1], dims["trunk"][0] - 1)}
-    (d / (name + ".json")).write_text(json.dumps(side, indent=1) + "\n", encoding="utf-8")
+    # a rerun that generates the same tree keeps the recorded date, so prepare does not rewrite committed files daily
+    path = d / (name + ".json")
+    if path.is_file():
+        old = json.loads(path.read_text(encoding="utf-8"))
+        was = (old.get("source") or {}).get("imported")
+        if was and json.loads(json.dumps(dict(side, source=dict(side["source"], imported=was)))) == old:
+            side["source"]["imported"] = was
+    path.write_text(json.dumps(side, indent=1) + "\n", encoding="utf-8", newline="\n")
     return side
 
 

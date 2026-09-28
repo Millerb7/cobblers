@@ -127,6 +127,15 @@
     "spec": "data/rift_sculpt.json",
     "blocks_moved": 12811417,
     "columns_changed": 512952,
+    "footprints": [
+      ["gym5_town", 4532, 4761, 2332, 2561],
+      ["league", 3486, 3666, 2585, 2765],
+      ["rift_rim_stop", 3673, 3795, 3890, 4012],
+      ["rift_dig_camp", 3046, 3166, 3254, 3374],
+      ["patriarch_wedge", 4242, 4302, 3570, 3630],
+      ["cherry_elder_shrew", 3380, 3436, 3812, 3868]
+    ],
+    "footprints_note": "[id, min_x, max_x, min_z, max_z] of the town footprints this sculpt left untouched, as data/towns.json had them at the apply (5c82e98); rift_heightmap.py --plan sculpts with these, not today's towns, so it reproduces this heightmap after a town moves (the League and the rim post did).",
     "note": "The Rift's shape: the lip of the low-ground basin, a cut band inside it, and the upthrust rim outside. Columns outside the Rift's box are bit-identical."
   }
 },

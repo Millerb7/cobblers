@@ -12,7 +12,7 @@ around the observer:
   paint_margin     the same line over build/paint/canopy.npz (tools/paint_maps.py), the planned canopy top
   near_m           distance to --near points (e.g. a built tree trunk), to keep it outside the clearing
 
-Reads build/routes/paths.json (tools/build_routes.py, the dense paths data/routes.json is simplified from).
+Reads data/route_paths.json (tools/build_routes.py, the dense paths data/routes.json is simplified from).
 
   python tools/nosepass_sightline.py --source-root <root> [--from 1440 --to 1530] [--near 2236,1622] [--mast 20]
 """
@@ -96,7 +96,7 @@ def margins(heights, model, paint, grid, x, z, ax, az, top_y, clearing):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
-    p.add_argument("--paths", default=str(ROOT / "build" / "routes" / "paths.json"))
+    p.add_argument("--paths", default=str(ROOT / "data" / "route_paths.json"))
     p.add_argument("--canopy", default=str(ROOT / "build" / "paint" / "canopy.npz"))
     p.add_argument("--from", dest="lo", type=float, default=1440)
     p.add_argument("--to", dest="hi", type=float, default=1530)

@@ -242,9 +242,39 @@ def py(*args, cwd=ROOT):
     return r.stdout
 
 
+def derived_inputs(a):
+    """Rebuild the derived inputs prepare reads that a checkout without them lacks (a fresh clone, an agent's
+    worktree). Each is reproducible from the heightmap and committed data, bit for bit, and each is rebuilt only when
+    missing, or for the Rift plan when it names another heightmap:
+
+      derived/rift_sculpt/   the Rift's lip ring, entrances and masks   rift_heightmap.py --plan    ~15 s
+      build/paint/           the region paint (biomes, forests, frost)  paint_maps.py               ~2 min
+      derived/water_shape/   the pending water export's changed columns water_shape.py --no-maps   ~5 min
+
+    --plan refuses unless the sculpt it computes is the heightmap data/world.json names, pixel for pixel.
+
+    First the local-only kit files git does not carry (kits/LOCAL_ONLY.json): extracted from the server's own jars,
+    or, for the two that no jar reproduces, copied from COBBLERS_LOCAL_STORE by sha256 (tools/local_inputs.py)."""
+    src = ["--source-root", a.source_root]
+    store = getattr(a, "store", None) or os.environ.get("COBBLERS_LOCAL_STORE")
+    py(TOOLS / "local_inputs.py", "hydrate", *(["--server-dir", a.server_dir] if a.server_dir else []),
+       *(["--store", store] if store else []))
+    world = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
+    plan = ROOT / "derived" / "rift_sculpt" / "plan.json"
+    have = json.loads(plan.read_text(encoding="utf-8")).get("sha256") if plan.is_file() else None
+    if have != world["heightmap"]["sha256"] or not (plan.parent / "basin.npy").is_file():
+        py(TOOLS / "rift_heightmap.py", *src, "--plan")
+    if not (BUILD / "paint" / "manifest.json").is_file():
+        py(TOOLS / "paint_maps.py", *src, "--out", BUILD / "paint")
+    water = ROOT / "derived" / "water_shape"
+    if not (water / "changed.npy").is_file() or not (water / "manifest.json").is_file():
+        py(TOOLS / "water_shape.py", *src, "--no-maps")
+
+
 def prepare(a):
     src = ["--source-root", a.source_root]
     t0 = time.time()
+    derived_inputs(a)
     py(TOOLS / "critical_legs.py", *src)
     py(TOOLS / "cavern_plan.py", *src)
     py(TOOLS / "world_tree.py", *src)
@@ -1190,6 +1220,11 @@ def main(argv=None):
     q = sub.add_parser("prepare")
     q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
     q.add_argument("--server-dir", required=True)
+    q = sub.add_parser("hydrate", help="only the inputs a fresh checkout lacks (local kits, Rift plan, paint, water "
+                       "shape); an agent's worktree runs this first. Needs the lock only with --server-dir")
+    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--server-dir", help="extract the jar-sourced kit files from this server's jars (takes the lock)")
+    q.add_argument("--store", help="a folder holding the local-only kit files (default: COBBLERS_LOCAL_STORE)")
     q = sub.add_parser("install")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world-dir", required=True)
@@ -1216,6 +1251,11 @@ def main(argv=None):
         for sid, title, actions in steps():
             print("%-4s %-60s %4d functions" % (sid, title, sum(1 for k, _ in actions if k == "fn")))
         print("places:", ", ".join(places()))
+        return 0
+    if a.cmd == "hydrate":
+        if a.server_dir:
+            runtime_guard.require_lock("reapply hydrate --server-dir")
+        derived_inputs(a)
         return 0
     # Every subcommand but `plan` reads or writes the server or a world (prepare reads the installed packs' donor
     # templates; install writes the packs; run drives RCON; audit reads a world): the lock first, before anything.

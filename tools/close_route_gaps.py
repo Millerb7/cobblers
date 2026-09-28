@@ -13,7 +13,7 @@ coordinate-box spawns cannot be compiled for it. This tool fills only the sliver
 
 Existing polygons are never moved or removed. Every run is recorded in regions.json geometry.gap_closures.
 
-  python tools/close_route_gaps.py --source-root <root> --paths build/routes/paths.json [--write]
+  python tools/close_route_gaps.py --source-root <root> --paths data/route_paths.json [--write]
 """
 from __future__ import annotations
 
@@ -79,7 +79,7 @@ def rects_from_mask(mask):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
-    p.add_argument("--paths", default=str(ROOT / "build" / "routes" / "paths.json"), help="dense route paths from build_routes.py")
+    p.add_argument("--paths", default=str(ROOT / "data" / "route_paths.json"), help="dense route paths from build_routes.py")
     p.add_argument("--routes", default=str(ROOT / "data" / "routes.json"), help="for corridor widths")
     p.add_argument("--regions", default=str(ROOT / "data" / "regions.json"))
     p.add_argument("--band", type=int, default=16,

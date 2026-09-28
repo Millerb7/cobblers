@@ -18,7 +18,7 @@ and four finds off the path. Built on staging (`cobblers-dryrun9`) only; nothing
 
 `route_events.py` writes each scene's positions into `data/scenes.json` and each trainer's seat into
 `data/route_trainers.json` (`--write-scenes`); without the flag it fails when they disagree with the build, and when
-anything it builds stands within a block of the walked line (`build/routes/paths.json`), so the scene and the build
+anything it builds stands within a block of the walked line (`data/route_paths.json`), so the scene and the build
 cannot drift apart and no scene narrows the road.
 
 ## The scene runtime
