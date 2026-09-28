@@ -32,6 +32,10 @@ The output (replayed in index order):
   walk        on the replayed world: from the gate's arrival a walker reaches the square, both halls' floors, both
               faces' fronts, the Megas' anchors and the Cutters' counters; from the turn-back point, inside the grid, a
               walker does not reach the arrival (the rockfall closes the canyon)
+  cove        each cove building (and a house's steps) inside the zone, off the square, the yard, the road, the
+              cutting, the portal and the gate's wall; its ground within the data's limits (the heightmap); no two
+              closer than the alley; the cutting a floor at its y with air over it; the walk above reaches every
+              house's doorway from the gate's arrival
 Not checked here: the farm dens' drop roll (no farm is in the data yet; SOUTHERN_RIFT_MEGA.md 13 holds them)
   faces       scenery (SOUTHERN_RIFT_MEGA.md 13): each face box written whole with exactly its crystals; no function
               outside the build's passes writes into a face box (the restore is retired, and its block tag gone); the
@@ -265,6 +269,12 @@ def audit(source_root=None):
     rd = road(spec["gate"]["road"])
     for c, y in rd.items():
         surface.setdefault(c, (y, spec["gate"]["road"]["clear_above"]))
+    cove = spec.get("cove") or {"paths": [], "buildings": [], "lamp_posts": []}
+    path_cols = set()
+    for p in cove["paths"]:
+        for c, y in road(p).items():
+            surface.setdefault(c, (y, p["clear_above"]))
+            path_cols.add(c)
     bnd = band(spec["gate"]["band"])
 
     def top(x, z):
@@ -290,7 +300,29 @@ def audit(source_root=None):
         cols.add((x, z))
     gr = spec["gate"]["grille"]
     cols |= {(gr["x"], z) for z in range(gr["z"][0] - 1, gr["z"][1] + 2)}
+    # the cove town (data geometry.cove, in this file's words): a building's rect; a house's door is the middle of its
+    # door side, and its steps the 3 columns across it at 1, 2 and 3 out; a lamp post its column
+    out_dir = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}
+    houses = [b for b in cove["buildings"] if "door" in b]
+
+    def rect_of(r):
+        return {(x, z) for x in range(r[0], r[2] + 1) for z in range(r[1], r[3] + 1)}
+
+    def door_of(b):
+        x0, z0, x1, z1 = b["rect"]
+        return {"north": ((x0 + x1) // 2, z0), "south": ((x0 + x1) // 2, z1), "west": (x0, (z0 + z1) // 2),
+                "east": (x1, (z0 + z1) // 2)}[b["door"]]
+
+    def steps_of(b):
+        (dx, dz), (x, z) = out_dir[b["door"]], door_of(b)
+        return {(x + dx * k + (s if dz else 0), z + dz * k + (s if dx else 0)) for k in (1, 2, 3) for s in (-1, 0, 1)}
+    cove_cols = set()
+    for b in cove["buildings"]:
+        cove_cols |= rect_of(b["rect"]) | (steps_of(b) if "door" in b else set())
+    cove_cols |= {tuple(p) for p in cove["lamp_posts"]}
+    cols |= cove_cols | path_cols
     notes["columns the build may write"] = len(cols)
+    notes["cove buildings (houses)"] = [len(cove["buildings"]), len(houses)]
 
     # ---- Victory Road and the settlements
     routes = json.loads((ROOT / "data" / "routes.json").read_text(encoding="utf-8"))["routes"]
@@ -467,6 +499,40 @@ def audit(source_root=None):
     if uncovered:
         probs.append("zone: %d basin columns reached from the square lie outside the zone, e.g. %s" % (len(uncovered), uncovered[:3]))
 
+    # ---- the cove town (SOUTHERN_RIFT_MEGA.md 13): in the zone, on the cove's floor, off the ways and the square, apart
+    if cove["buildings"]:
+        t_ = spec["town"]
+        keep_off = rect_of(t_["square"]["rect"]) | rect_of(t_["yard"]["rect"]) | set(rd) | path_cols \
+            | rect_of([pr[0], pr[1], pr[2], pr[3]]) | set(bnd)
+        for h in t_["houses"]:
+            keep_off |= rect_of(h["rect"])
+        rects = []
+        for b in cove["buildings"]:
+            rc = rect_of(b["rect"])
+            reach_ = rc | (steps_of(b) if "door" in b else set())
+            if reach_ - zcols:
+                probs.append("cove: %s reaches %d columns outside the zone" % (b["id"], len(reach_ - zcols)))
+            if reach_ & keep_off:
+                probs.append("cove: %s stands on the square, the yard, a way, the portal or the gate" % b["id"])
+            gs = [ground(*c) for c in rc]
+            lim = cove["max_range"] if "door" in b else cove["max_range_open"]
+            if max(gs) - min(gs) > lim or max(gs) > cove["max_ground"]:
+                probs.append("cove: %s stands on ground y%d-%d (at most %d apart, at most y%d)"
+                             % (b["id"], min(gs), max(gs), lim, cove["max_ground"]))
+            rects.append((b["id"], b["rect"]))
+        a0 = cove["alley"][0]
+        for i in range(len(rects)):
+            for k_ in range(i + 1, len(rects)):
+                (ia, ra), (ib, rb) = rects[i], rects[k_]
+                if ra[0] - a0 <= rb[2] and rb[0] - a0 <= ra[2] and ra[1] - a0 <= rb[3] and rb[1] - a0 <= ra[3]:
+                    probs.append("cove: %s and %s stand closer than the alley (%d)" % (ia, ib, a0))
+        # the cutting is a way, not a wall: level with its rasterised y along every column
+        for c in path_cols:
+            y = surface[c][0]
+            if final.get((c[0], y, c[1]), "minecraft:air") in AIRS or final.get((c[0], y + 1, c[1])) not in AIRS + (None,):
+                probs.append("cove: the cutting at %s is not a floor at y%d with air over it" % (c, y))
+                break
+
     # ---- the gate's rockfall and advancements
     lowrise = []
     for j, x, z, _nx, _nz in g["band"]["points"]:
@@ -564,6 +630,10 @@ def audit(source_root=None):
         targets["%s's front" % f["id"]] = tuple(f["stand"])
     for bn in spec["cutters"]["benches"]:
         targets["the counter before %s" % bn["id"]] = tuple(bn["customer"])
+    # every cove house's doorway, its floor the highest ground under its rect (the heightmap)
+    for b in houses:
+        x, z = door_of(b)
+        targets["%s's doorway" % b["id"]] = (x, max(top(*c) for c in rect_of(b["rect"])) + 1, z)
     anchors = {}
     for s in spec["megas"]["slots"]:
         x, z = s["anchor"]

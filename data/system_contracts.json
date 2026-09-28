@@ -156,7 +156,7 @@
       "statement": "For every built ward in the data (an object with a ward_margin; the retired gated section excluded): the gulch gate's plug and grille, the gulch's crystal faces, the seam's grille and crystal face. A survival player whose feet are outside the generated ward cannot reach any block it guards: 4.5 blocks from eyes 1.62 above the feet.",
       "stated_in": [
         {"at": "data/rift_mines.json:1022", "quote": "the grille, the pocket and the face box grown by 7"},
-        {"at": "data/gulch_mine.json:280", "quote": "7 keeps the plug beyond reach from beside and below"}
+        {"at": "data/gulch_mine.json:282", "quote": "7 keeps the plug beyond reach from beside and below"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c6_no_player_outside_a_ward_can_reach_what_it_guards",
                 "tests/test_system_contracts.py::test_contract_c6_the_ward_list_is_the_built_wards",
@@ -249,7 +249,7 @@
       "stated_in": [
         {"at": "data/blackout.json:59", "quote": "\"exempt_tag\": \"cobblers.gm\""},
         {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:283", "quote": "the blackout skips tagged Megas"},
-        {"at": "data/gulch_mine.json:508", "quote": "A Mega that blacks a player out makes no item claim"}
+        {"at": "data/gulch_mine.json:622", "quote": "A Mega that blacks a player out makes no item claim"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out",
                 "tests/test_blackout_recovery_pid.py::test_a_tagged_gulch_mega_makes_no_claim_but_the_loss_still_costs_money"]
@@ -261,7 +261,7 @@
       "consumers": ["victory_road"],
       "statement": "No column of the gulch's generated zone check, and no column its build writes, lies within Victory Road's corridor (half its width from the polyline in data/routes.json) or its caves' band (data/vr_caves.json guide.band plus the largest cavern radius from the guide line): the zone check never turns back a player on Victory Road, and the build never writes into it.",
       "stated_in": [
-        {"at": "data/gulch_mine.json:66", "quote": "Victory Road's corridor (data/routes.json, 104 wide) about 190"},
+        {"at": "data/gulch_mine.json:68", "quote": "Victory Road's corridor (data/routes.json, 104 wide) about 190"},
         {"at": "docs/world-building/SOUTHERN_RIFT_MEGA.md:574", "quote": "Victory Road's corridor about 190"}
       ],
       "tests": ["tests/test_system_contracts.py::test_contract_c13_the_gulch_zone_stays_off_victory_road",

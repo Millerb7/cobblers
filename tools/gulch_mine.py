@@ -11,7 +11,10 @@ What it builds, all from the data file and the canonical heightmap (tools/ground
                and the zone check over the whole gulch zone (data `zone.polygon`)
   the town     the 61-square at (4308, 4848) paved and dressed, a yard cut into the slope south of it with the Cutters'
                workshop, a bunkhouse, the assay counter and the adit head; three Cutter villagers (vanilla trades:
-               cutters.offer.raw_count raw mega stones + 1 diamond -> one keyed stone, unlimited, nothing bought)
+               cutters.offer.raw_count raw mega stones + 1 diamond -> one keyed stone, unlimited, nothing bought);
+               the cove town round it (data `cove`: lapidaries, the workers' quarter, the miners' camp, the extraction
+               works), grown by accretion in `layout` and read from the data by `build`, and a cutting into the
+               sunken east floor
   the mine     the Cutters' adit, the Tally Hall (lit) and the Cutting Floor (dark) as caverns at real scale, joined by
                a drift; a shell of rock round everything carved, so nothing this build opens meets a natural void
   the faces    two crystal faces in the Cutting Floor, each a 7 x 5 x 7 box of meteorid holding 3 mega_stone_crystal:
@@ -24,7 +27,11 @@ What it builds, all from the data file and the canonical heightmap (tools/ground
 
   python tools/gulch_mine.py trace  [--source-root DIR]   the ring-derived geometry (band, zone polygon) as JSON, for
                                                           authoring data/gulch_mine.json; nothing written
-  python tools/gulch_mine.py report [--source-root DIR]   the model's checks and counts; nothing written
+  python tools/gulch_mine.py layout [--map]               the cove town's accretion, printed for data cove.buildings
+                                                          and cove.lamp_posts (--map: a picture on stderr); nothing
+                                                          written
+  python tools/gulch_mine.py report [--fresh-layout]      the model's checks and counts (with a fresh layout in
+                                                          place of the data's); nothing written
   python tools/gulch_mine.py build  [--source-root DIR]   -> build/datapacks/cobblers_gulch_mine, derived/gulch_mine/plan.json
 
 The offline audit, independent of this tool's model, is tools/gulch_mine_audit.py. Recipes raised to the Cutters' raw
@@ -266,6 +273,13 @@ def earthworks(m):
         if c not in m.surface:
             m.surface[c] = y
             m.earth_kind[c] = "road"
+    # the cove's cuttings (data cove.paths, rasterised as the road is): a graded way through the rim of the sunken
+    # east floor, which no walker could otherwise enter or leave
+    for p in (m.spec.get("cove") or {}).get("paths", []):
+        for c, y in road_columns(p).items():
+            if c not in m.surface:
+                m.surface[c] = y
+                m.earth_kind[c] = "path:" + p["id"]
     for (x, z), y in m.surface.items():
         if not (m.X0 <= x <= m.X1 and m.Z0 <= z <= m.Z1):
             raise GulchError("earthwork column (%d, %d) outside the grid" % (x, z))
@@ -467,7 +481,8 @@ def surface_build(m):
     for (x, z), ys in sorted(m.surface.items()):
         g = m.ground(x, z)
         kind = m.earth_kind[(x, z)]
-        rec = t["square"] if kind == "square" else t["yard"] if kind == "yard" else m.spec["gate"]["road"]
+        rec = t["square"] if kind == "square" else t["yard"] if kind == "yard" else m.spec["gate"]["road"] \
+            if kind == "road" else next(p for p in m.spec["cove"]["paths"] if "path:" + p["id"] == kind)
         for y in range(g + 1, ys):
             m.earth[(x, y, z)] = pick(pal["fill"], seed, x, y, z, 71)
         m.earth[(x, ys, z)] = surface_block(m, kind, rec, x, z)
@@ -496,6 +511,7 @@ def surface_build(m):
         m.surf[(x, yy + 3, z)] = LANTERN_STAND
     for hrec in t["houses"]:
         house(m, hrec)
+    cove_build(m)
     gate_build(m)
 
 
@@ -584,6 +600,324 @@ def house(m, hrec):
         for z in range(z0 + 2, z1 - 1, step):
             m.surf[(x, top - 1, z)] = LANTERN_HANG
     m.surf[(cx, top - 1, cz)] = LANTERN_HANG
+
+
+# ------------------------------------------------------------------ the cove town (SOUTHERN_RIFT_MEGA.md 13)
+
+COVE_ROLES = {
+    "dwelling": ["minecraft:barrel[facing=up]", "minecraft:crafting_table", "minecraft:polished_deepslate_slab[type=bottom,waterlogged=false]",
+                 "minecraft:chest[facing=north,type=single,waterlogged=false]"],
+    "canteen": ["minecraft:smoker[facing=north,lit=false]", "minecraft:barrel[facing=up]", "minecraft:cauldron",
+                "minecraft:smoker[facing=north,lit=false]", "minecraft:barrel[facing=up]", "minecraft:barrel[facing=up]",
+                "minecraft:polished_deepslate_slab[type=bottom,waterlogged=false]", "minecraft:polished_deepslate_slab[type=bottom,waterlogged=false]"],
+    "washhouse": ["minecraft:water_cauldron[level=3]", "minecraft:water_cauldron[level=3]", "minecraft:cauldron",
+                  "minecraft:barrel[facing=up]"],
+    "winch": ["minecraft:grindstone[face=floor,facing=north]", "minecraft:chain[axis=x]", "minecraft:chain[axis=x]",
+              "minecraft:barrel[facing=up]", "minecraft:anvil[facing=east]"],
+    "toolshed": ["minecraft:smithing_table", "minecraft:grindstone[face=floor,facing=north]", "minecraft:barrel[facing=up]",
+                 "minecraft:anvil[facing=east]", "minecraft:barrel[facing=up]"],
+    "crusher": ["minecraft:piston[facing=down,extended=false]", "minecraft:grindstone[face=floor,facing=north]",
+                "minecraft:piston[facing=down,extended=false]", "minecraft:anvil[facing=east]",
+                "minecraft:piston[facing=down,extended=false]", "minecraft:grindstone[face=floor,facing=north]",
+                "minecraft:barrel[facing=up]"],
+    "sorting": ["minecraft:stonecutter[facing=north]", "minecraft:barrel[facing=up]", "minecraft:stonecutter[facing=north]",
+                "minecraft:barrel[facing=up]", "minecraft:chest[facing=north,type=single,waterlogged=false]"],
+    "lapidary": ["minecraft:stonecutter[facing=north]", "minecraft:grindstone[face=floor,facing=north]",
+                 "minecraft:stonecutter[facing=north]", "minecraft:smithing_table", "minecraft:barrel[facing=up]"],
+}
+COVE_HOUSES = ("dwelling", "canteen", "washhouse", "winch", "toolshed", "crusher", "sorting", "lapidary")
+ROLE_FITTINGS.update(COVE_ROLES)
+OUT_DIR = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}
+
+
+def door_cell(rect, side):
+    """The door's column of a house rect (tools/gulch_mine.py house(): the middle of the door side)."""
+    x0, z0, x1, z1 = rect
+    cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
+    return {"south": (cx, z1), "north": (cx, z0), "east": (x1, cz), "west": (x0, cz)}[side]
+
+
+def rect_cols(r):
+    return [(x, z) for x in range(r[0], r[2] + 1) for z in range(r[1], r[3] + 1)]
+
+
+def cove_reach(b):
+    """The columns a cove record may write (data geometry.cove): a house its rect and its door's landing steps (up to 3
+    out); a headframe, a heap, a pile or a sluice its rect."""
+    cols = set(rect_cols(b["rect"]))
+    if b["kind"] in COVE_HOUSES:
+        dx, dz = OUT_DIR[b["door"]]
+        x, z = door_cell(b["rect"], b["door"])
+        for k in range(1, 4):
+            for s in (-1, 0, 1):
+                cols.add((x + dx * k + (s if dz else 0), z + dz * k + (s if dx else 0)))
+    return cols
+
+
+def cove_blocked(m):
+    """Columns no cove building may take: the square, the yard, the road, the adit's portal, the gate's wall and ward,
+    the lamp posts, each grown by the data's clearances (cove.clear)."""
+    spec = m.spec
+    cl = spec["cove"]["clear"]
+    out = set()
+
+    def grow(cols, r):
+        for x, z in cols:
+            for a in range(-r, r + 1):
+                for b in range(-r, r + 1):
+                    out.add((x + a, z + b))
+    t = spec["town"]
+    grow(rect_cols(t["square"]["rect"]), cl["square"])
+    grow(rect_cols(t["yard"]["rect"]), cl["square"])
+    grow(road_columns(spec["gate"]["road"]), cl["road"])
+    for p in spec["cove"].get("paths", []):
+        grow(road_columns(p), cl["road"])
+    grow(rect_cols(spec["mine"]["portal"]["open_rect"]), cl["square"])
+    grow(band_columns(spec["gate"]["band"]), cl["square"])
+    w = spec["gate"]["ward"]
+    grow(rect_cols([w[0], w[2], w[3], w[5]]), 0)
+    grow([tuple(p) for p in t["lamp_posts"] + spec["gate"]["lamp_posts"]], 1)
+    return out
+
+
+def cove_layout(m):
+    """The cove town's buildings grown by accretion (SOUTHERN_RIFT_MEGA.md 13: "The layout follows the cove's shape and
+    grows by accretion, not a grid"): each section starts at its seeds and adds one building at a time beside one
+    already placed, across an alley of alley[0]..alley[1], at a random offset along the side, of a size in its kind's
+    range, turned at random, kept only where every column is in the cove (inside the zone by zone_margin, ground at or
+    under max_ground, nothing blocked) and, for a house, its ground spans at most max_range. Deterministic from
+    cove.seed. An authoring step (like `trace`): its output is pasted into data cove.buildings, which `build` reads."""
+    import random
+    spec = m.spec
+    cv = spec["cove"]
+    rng = random.Random(cv["seed"])
+    boxes = zone_boxes(spec["zone"]["polygon"])
+    zc = set()
+    for b in boxes:
+        for x in range(b[0], b[2] + 1):
+            for z in range(b[1], b[3] + 1):
+                zc.add((x, z))
+    zm = cv["zone_margin"]
+    inner = {c for c in zc if all((c[0] + a, c[1] + b) in zc for a in (-zm, 0, zm) for b in (-zm, 0, zm))}
+    blocked = cove_blocked(m)
+    for h in spec["town"]["houses"]:
+        blocked |= set(rect_cols(h["rect"]))
+
+    def ok_col(c):
+        return (c in inner and c not in blocked and m.X0 + 2 <= c[0] <= m.X1 - 2 and m.Z0 + 2 <= c[1] <= m.Z1 - 2
+                and m.ground(*c) <= cv["max_ground"])
+    taken = set()
+    out = []
+    for sec in cv["sections"]:
+        kinds = []
+        for k in sec["kinds"]:
+            kinds += [k] * k["count"]
+        placed = []
+        n_by_kind = {}
+        for k in kinds:
+            for _attempt in range(600):
+                w = rng.randint(k["size"][0], k["size"][1])
+                d = rng.randint(k["size"][2], k["size"][3])
+                if rng.random() < 0.5:
+                    w, d = d, w
+                if placed and rng.random() < (0.25 if k.get("scatter") else 0.9):
+                    p = rng.choice(placed)["rect"]
+                    side = rng.choice(("north", "south", "east", "west"))
+                    gap = rng.randint(cv["alley"][0], cv["alley"][1])
+                    if side in ("north", "south"):
+                        x0 = rng.randint(p[0] - w + 3, p[2] - 2)
+                        z0 = p[1] - gap - d if side == "north" else p[3] + gap + 1
+                    else:
+                        z0 = rng.randint(p[1] - d + 3, p[3] - 2)
+                        x0 = p[0] - gap - w if side == "west" else p[2] + gap + 1
+                    toward = {"north": "south", "south": "north", "east": "west", "west": "east"}[side]
+                else:
+                    sx, sz = rng.choice(sec["seeds"])
+                    x0, z0 = sx - w // 2 + rng.randint(-4, 4), sz - d // 2 + rng.randint(-4, 4)
+                    toward = None
+                rect = [x0, z0, x0 + w - 1, z0 + d - 1]
+                cols = rect_cols(rect)
+                if not all(ok_col(c) for c in cols):
+                    continue
+                g = [m.ground(*c) for c in cols]
+                if max(g) - min(g) > (cv["max_range"] if k["kind"] in COVE_HOUSES else cv["max_range_open"]):
+                    continue
+                pad = cv["alley"][0]
+                if any((x + a, z + b) in taken for x, z in cols for a in (-pad, 0, pad) for b in (-pad, 0, pad)):
+                    continue
+                rec = {"id": "%s_%s_%d" % (sec["id"], k["kind"], n_by_kind.get(k["kind"], 0) + 1),
+                       "section": sec["id"], "kind": k["kind"], "rect": rect}
+                if k["kind"] in COVE_HOUSES:
+                    if toward is None:
+                        sq = spec["town"]["square"]["centre"]
+                        cx, cz = (rect[0] + rect[2]) / 2.0, (rect[1] + rect[3]) / 2.0
+                        dx, dz = sq[0] - cx, sq[1] - cz
+                        toward = ("east" if dx > 0 else "west") if abs(dx) > abs(dz) else ("south" if dz > 0 else "north")
+                    # the door and its landing must be free cove ground too
+                    rec["door"] = toward
+                    reach = cove_reach(rec) - set(cols)
+                    if not all(ok_col(c) and c not in taken for c in reach):
+                        continue
+                    # the ground just past the steps is no more than 3 under the floor: the last step (floor - 2)
+                    # is then one step up from it
+                    ddx, ddz = OUT_DIR[toward]
+                    dcx, dcz = door_cell(rect, toward)
+                    beyond = [(dcx + ddx * 4 + (s if ddz else 0), dcz + ddz * 4 + (s if ddx else 0)) for s in (-1, 0, 1)]
+                    if not all(ok_col(c) and c not in taken and m.top(*c) >= max(g) - 3 for c in beyond):
+                        continue
+                    rec["walls"] = rng.choice(cv["walls"])
+                    rec["wall_height"] = rng.randint(k.get("wall_height", [4, 5])[0], k.get("wall_height", [4, 5])[1])
+                if k["kind"] == "headframe":
+                    rec["height"] = rng.randint(k["height"][0], k["height"][1])
+                if k["kind"] in ("spoil_heap", "ore_pile"):
+                    rec["height"] = rng.randint(k["height"][0], k["height"][1])
+                if k["kind"] == "sluice":
+                    rec["head"] = rng.choice(("low", "high"))
+                taken |= cove_reach(rec)
+                n_by_kind[k["kind"]] = n_by_kind.get(k["kind"], 0) + 1
+                placed.append(rec)
+                out.append(rec)
+                break
+    # a lamp post at each house door's side, two out and three along (clear of its steps), where the column is free
+    # cove ground with nothing taken round it
+    lamps = []
+    for b in out:
+        if b["kind"] not in COVE_HOUSES:
+            continue
+        dx, dz = OUT_DIR[b["door"]]
+        x, z = door_cell(b["rect"], b["door"])
+        c = (x + dx * 2 + (3 if dz else 0), z + dz * 2 + (3 if dx else 0))
+        if ok_col(c) and not any((c[0] + a, c[1] + e) in taken for a in (-1, 0, 1) for e in (-1, 0, 1)):
+            lamps.append(list(c))
+            taken.add(c)
+    return out, lamps
+
+
+def cove_house(m, b):
+    """A cove house: tools/gulch_mine.py's rock house, and a landing of steps from its door down to the ground outside."""
+    hrec = {"rect": b["rect"], "door": b["door"], "walls": b["walls"], "role": b["kind"], "wall_height": b["wall_height"]}
+    house(m, hrec)
+    cols = rect_cols(b["rect"])
+    floor = max(m.top(x, z) for x, z in cols)
+    dx, dz = OUT_DIR[b["door"]]
+    x, z = door_cell(b["rect"], b["door"])
+    for k in range(1, 4):
+        lvl = floor - (k - 1)
+        for s in (-1, 0, 1):
+            c = (x + dx * k + (s if dz else 0), z + dz * k + (s if dx else 0))
+            g = m.top(*c)
+            for y in range(g + 1, lvl + 1):
+                m.surf[(c[0], y, c[1])] = "minecraft:cobbled_deepslate" if y < lvl else "minecraft:polished_deepslate"
+
+
+def headframe(m, b):
+    """A pit headframe (no timber: the rock town): basalt legs at the rect's corners to `height`, copper girts every 4,
+    a copper head with a sheave of iron bars round a copper hub, chains to a capped shaft collar on the ground."""
+    x0, z0, x1, z1 = b["rect"]
+    cols = rect_cols(b["rect"])
+    g0 = max(m.top(x, z) for x, z in cols)
+    top = g0 + b["height"]
+    for x, z in cols:
+        for y in range(m.top(x, z) + 1, g0 + 1):
+            m.surf[(x, y, z)] = "minecraft:cobbled_deepslate"
+    for x, z in ((x0, z0), (x0, z1), (x1, z0), (x1, z1)):
+        for y in range(g0 + 1, top + 1):
+            m.surf[(x, y, z)] = "minecraft:polished_basalt[axis=y]"
+    for y in range(g0 + 4, top + 1, 4):
+        for x in range(x0 + 1, x1):
+            m.surf[(x, y, z0)] = "minecraft:waxed_cut_copper"
+            m.surf[(x, y, z1)] = "minecraft:waxed_cut_copper"
+        for z in range(z0 + 1, z1):
+            m.surf[(x0, y, z)] = "minecraft:waxed_cut_copper"
+            m.surf[(x1, y, z)] = "minecraft:waxed_cut_copper"
+    for x, z in cols:
+        m.surf[(x, top + 1, z)] = "minecraft:waxed_cut_copper_slab[type=bottom,waterlogged=false]"
+    cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
+    along_x = (x1 - x0) >= (z1 - z0)
+    for a in (-1, 0, 1):
+        for h in (1, 2, 3):
+            c = (cx + a, top + 1 + h, cz) if along_x else (cx, top + 1 + h, cz + a)
+            m.surf[c] = "minecraft:waxed_copper_block" if (a == 0 and h == 2) else "minecraft:iron_bars"
+    for y in range(g0 + 2, top + 1):
+        m.surf[(cx, y, cz)] = "minecraft:chain[axis=y]"
+    for a in (-1, 0, 1):
+        for e in (-1, 0, 1):
+            if a or e:
+                m.surf[(cx + a, g0 + 1, cz + e)] = "minecraft:stone_bricks"
+    m.surf[(cx, g0 + 1, cz)] = "minecraft:iron_trapdoor[facing=north,half=top,open=false,powered=false,waterlogged=false]"
+
+
+def heap(m, b, palette_key):
+    """A spoil heap or an ore pile: a cone over the rect's centre, height `height` at the middle falling to 0 at the
+    rect's inscribed circle, one block of h32 noise; blocks from the data's palette."""
+    pal = m.spec["palette"]
+    seed = m.spec["seed"]
+    x0, z0, x1, z1 = b["rect"]
+    cx, cz = (x0 + x1) / 2.0, (z0 + z1) / 2.0
+    r = min(x1 - x0, z1 - z0) / 2.0 + 0.5
+    for x, z in rect_cols(b["rect"]):
+        q = math.hypot(x - cx, z - cz) / r
+        if q > 1:
+            continue
+        hgt = int(math.floor(b["height"] * (1 - q) + 0.5)) + (h32(seed, x, z, 91) % 2 if q < 0.8 else 0)
+        g = m.top(x, z)
+        for y in range(g + 1, g + hgt + 1):
+            m.surf[(x, y, z)] = pick(pal[palette_key], seed, x, y, z, 92)
+
+
+def sluice(m, b):
+    """A dry sluice (no fluid: the audit forbids one): a trough along the rect's long axis on basalt trestles, stone
+    brick sides, a smooth floor with iron-trapdoor riffles every 2, a water cauldron at its head."""
+    x0, z0, x1, z1 = b["rect"]
+    along_x = (x1 - x0) >= (z1 - z0)
+    L = (x1 - x0 + 1) if along_x else (z1 - z0 + 1)
+    cols = rect_cols(b["rect"])
+    base = max(m.top(x, z) for x, z in cols)
+    for i in range(L):
+        t = i if b["head"] == "low" else L - 1 - i
+        rise = 1 + (t * 2) // max(1, L - 1)             # the head stands 2 higher than the foot
+        for j in range(3):
+            x, z = (x0 + i, z0 + j) if along_x else (x0 + j, z0 + i)
+            g = m.top(x, z)
+            fl = base + rise
+            if i % 4 == 0 or i == L - 1:
+                for y in range(g + 1, fl):
+                    m.surf[(x, y, z)] = "minecraft:polished_basalt[axis=y]"
+            if j == 1:
+                m.surf[(x, fl, z)] = "minecraft:smooth_stone"
+                if i % 2 == 1:
+                    m.surf[(x, fl + 1, z)] = "minecraft:iron_trapdoor[facing=north,half=bottom,open=false,powered=false,waterlogged=false]"
+            else:
+                m.surf[(x, fl, z)] = "minecraft:stone_bricks"
+                m.surf[(x, fl + 1, z)] = "minecraft:stone_brick_wall"
+    hx, hz = ((x1 if b["head"] == "low" else x0), z0 + 1) if along_x else (x0 + 1, (z1 if b["head"] == "low" else z0))
+    top_head = base + 3
+    m.surf[(hx, top_head + 1, hz)] = "minecraft:water_cauldron[level=3]"
+
+
+def cove_build(m):
+    cv = m.spec.get("cove")
+    if not cv:
+        return
+    for b in cv["buildings"]:
+        k = b["kind"]
+        if k in COVE_HOUSES:
+            cove_house(m, b)
+        elif k == "headframe":
+            headframe(m, b)
+        elif k == "spoil_heap":
+            heap(m, b, "spoil")
+        elif k == "ore_pile":
+            heap(m, b, "ore")
+        elif k == "sluice":
+            sluice(m, b)
+        else:
+            raise GulchError("cove: %s is of no kind the builder knows (%s)" % (b["id"], k))
+    for x, z in cv["lamp_posts"]:
+        yy = m.top(x, z)
+        m.surf[(x, yy + 1, z)] = "minecraft:cobbled_deepslate_wall"
+        m.surf[(x, yy + 2, z)] = "minecraft:cobbled_deepslate_wall"
+        m.surf[(x, yy + 3, z)] = LANTERN_STAND
 
 
 def wall_top(g, x, z, j, d, seed):
@@ -731,6 +1065,10 @@ def check(m, near, tops):
         must["%s's anchor" % s["id"]] = [tuple(s["_anchor"])]
     for c in spec["cutters"]["benches"]:
         must["the counter before %s" % c["id"]] = [tuple(c["customer"])]
+    for b in spec.get("cove", {}).get("buildings", []):
+        if b["kind"] in COVE_HOUSES:
+            x, z = door_cell(b["rect"], b["door"])
+            must["%s's door" % b["id"]] = [(x, max(m.top(*c) for c in rect_cols(b["rect"])) + 1, z)]
     for what, cells in must.items():
         pool = reach_gate if what.startswith("the square") else reach
         for c in cells:
@@ -1339,14 +1677,66 @@ def model(source_root=None, spec=None):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("mode", choices=("trace", "report", "build"))
+    p.add_argument("mode", choices=("trace", "layout", "report", "build"))
     p.add_argument("--source-root")
+    p.add_argument("--map", action="store_true", help="layout: draw the cove's layout on stderr")
+    p.add_argument("--fresh-layout", action="store_true", help="report: check a fresh `layout` instead of the data's")
     p.add_argument("--server-dir", help="accepted for tools/reapply.py prepare's sake; not read")
     a = p.parse_args(argv)
     spec = load()
     if a.mode == "trace":
         print(json.dumps(trace(spec, a.source_root)))
         return 0
+    if a.mode == "layout":
+        m = Model(spec, G.Ground(a.source_root))
+        earthworks(m)
+        out, lamps = cove_layout(m)
+        by = {}
+        for b in out:
+            by[(b["section"], b["kind"])] = by.get((b["section"], b["kind"]), 0) + 1
+        for k, v in sorted(by.items()):
+            print("#  %-12s %-12s %d" % (k[0], k[1], v), file=sys.stderr)
+        if a.map:
+            # a picture of the layout, 2 blocks a character: letters buildings, o the square and yard, = the road,
+            # - the cove's floor left free, blank anything else
+            letter = {"dwelling": "d", "canteen": "C", "washhouse": "w", "winch": "W", "toolshed": "t", "crusher": "X",
+                      "sorting": "S", "lapidary": "L", "headframe": "H", "spoil_heap": "h", "ore_pile": "p", "sluice": "s"}
+            cell = {}
+            for b in out:
+                for c in rect_cols(b["rect"]):
+                    cell[c] = letter[b["kind"]]
+            for x, z in lamps:
+                cell[(x, z)] = "*"
+            t = spec["town"]
+            for r in (t["square"]["rect"], t["yard"]["rect"]):
+                for c in rect_cols(r):
+                    cell[c] = "o"
+            for c in road_columns(spec["gate"]["road"]):
+                cell[c] = "="
+            boxes = zone_boxes(spec["zone"]["polygon"])
+            for z in range(m.Z0, m.Z1 + 1, 2):
+                row = []
+                for x in range(m.X0, m.X1 + 1, 2):
+                    ch = cell.get((x, z)) or cell.get((x + 1, z)) or cell.get((x, z + 1))
+                    if ch is None:
+                        inz = any(b[0] <= x <= b[2] and b[1] <= z <= b[3] for b in boxes)
+                        gy = m.ground(x, z)
+                        # free cove floor as its ground's last digit, so a scarp shows
+                        # and zone ground above the cove as a letter, a for y97-98, b for y99-100, ...
+                        ch = str(gy % 10) if inz and gy <= spec["cove"]["max_ground"] else (
+                            chr(ord("a") + min(25, (gy - 97) // 2)) if inz else " ")
+                    row.append(ch)
+                print("%4d %s" % (z, "".join(row)), file=sys.stderr)
+        # printed as data/gulch_mine.json keeps it: a building a line, under cove
+        print('    "buildings": [\n' + ",\n".join("      " + json.dumps(b) for b in out) + "\n    ],")
+        print('    "lamp_posts": ' + json.dumps(lamps))
+        return 0
+    if a.fresh_layout:
+        if a.mode != "report":
+            raise SystemExit("--fresh-layout is for report only: build reads the data's cove.buildings")
+        lm = Model(spec, G.Ground(a.source_root))
+        earthworks(lm)
+        spec["cove"]["buildings"], spec["cove"]["lamp_posts"] = cove_layout(lm)
     m, near, tops = model(a.source_root, spec)
     boxes = zone_boxes(spec["zone"]["polygon"])
     probs = check(m, near, tops) + zone_problems(m, boxes)
