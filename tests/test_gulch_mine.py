@@ -780,18 +780,10 @@ def test_no_player_outside_the_ward_can_reach_the_plug_or_the_grille(built):
 
 
 def _reach(pos, blocks):
-    def dist(eye, b):
-        return math.sqrt(sum(max(b[i] - eye[i], 0.0, eye[i] - (b[i] + 1)) ** 2 for i in range(3)))
-    lattice = {a: [pos[a]["min"] + k for k in range(int(pos[a]["max"] - pos[a]["min"]) + 1)] for a in "xyz"}
-    near = sorted(blocks)
-    out = []
-    for a in "xyz":
-        for o in (pos[a]["min"] - 1e-3, pos[a]["max"] + 1e-3):
-            for p in itertools.product(*[lattice[b] if b != a else [o] for b in "xyz"]):
-                eye = (p[0], p[1] + EYE, p[2])
-                if min(dist(eye, b) for b in near) <= REACH:
-                    out.append(p)
-    return out
+    """Every feet position just outside the ward whose eyes reach a block (tests/reach.py, shared with contract C6;
+    identical to the loop it replaced on the real ward and on margin 4, 75 s -> 2 s)."""
+    from reach import reach_from_outside
+    return [p for _d, p in reach_from_outside(pos, blocks, EYE, REACH)]
 
 
 def _hall_feet(h, x, z):

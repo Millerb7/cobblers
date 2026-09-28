@@ -40,7 +40,6 @@ from __future__ import annotations
 import ast
 import copy
 import fnmatch
-import itertools
 import json
 import math
 import os
@@ -762,20 +761,10 @@ def test_harness_the_reach_check_catches_the_first_ward_margin():
 
 
 def _reach_from_outside(pos, protect):
-    """(distance, feet) for every feet position just outside the generated ward that reaches a guarded block."""
-    def dist(eye, b):
-        return math.sqrt(sum(max(b[i] - eye[i], 0.0, eye[i] - (b[i] + 1)) ** 2 for i in range(3)))
-
-    lattice = {a: [pos[a]["min"] + k for k in range(int(pos[a]["max"] - pos[a]["min"]) + 1)] for a in "xyz"}
-    reached = []
-    for a in "xyz":
-        for out in (pos[a]["min"] - 1e-3, pos[a]["max"] + 1e-3):
-            for p in itertools.product(*[lattice[b] if b != a else [out] for b in "xyz"]):
-                eye = (p[0], p[1] + EYE, p[2])
-                d = min(dist(eye, b) for b in protect)
-                if d <= REACH:
-                    reached.append((round(d, 2), p))
-    return reached
+    """(distance, feet) for every feet position just outside the generated ward that reaches a guarded block
+    (tests/reach.py, shared with tests/test_gulch_mine.py; identical to the loop it replaced on every ward, 120 s -> 4 s)."""
+    from reach import reach_from_outside
+    return [(round(d, 2), p) for d, p in reach_from_outside(pos, protect, EYE, REACH)]
 
 
 # Without it the contract above passes on nothing when a ward's keys are renamed, or still tests a retired one: the
@@ -1076,7 +1065,10 @@ def test_every_contract_has_a_consumer_other_than_its_owner():
             assert (ROOT / p).exists(), (sid, p)
 
 
-# Without it a citation rots: the document moves on, the registry still points at a line that no longer says it.
+# Without it a citation rots: the document moves on and no longer says what the registry quotes. The quote is the
+# citation; the line number is a hint. A quote at its hinted line, or on exactly one line of the file, stands; a quote
+# gone from the file, or found on several lines none of which is the hint, fails. Matching the line exactly broke the
+# suite on every edit above a cited line (16 commits of re-pointing, 2026-09-26 to 09-28) without catching anything.
 def test_every_citation_still_says_what_the_registry_quotes():
     bad = []
     for c in REGISTRY["contracts"]:
@@ -1084,8 +1076,11 @@ def test_every_citation_still_says_what_the_registry_quotes():
             path, _, line = cite["at"].rpartition(":")
             lines = (ROOT / path).read_text(encoding="utf-8").splitlines()
             n = int(line)
-            if not (1 <= n <= len(lines)) or cite["quote"] not in lines[n - 1]:
-                bad.append((c["id"], cite["at"], cite["quote"]))
+            if 1 <= n <= len(lines) and cite["quote"] in lines[n - 1]:
+                continue
+            hits = [i + 1 for i, text in enumerate(lines) if cite["quote"] in text]
+            if len(hits) != 1:
+                bad.append((c["id"], cite["at"], cite["quote"], "found on lines %s" % hits if hits else "not in the file"))
     assert not bad, bad
 
 
