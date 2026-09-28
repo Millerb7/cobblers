@@ -40,7 +40,6 @@ from __future__ import annotations
 import ast
 import copy
 import fnmatch
-import itertools
 import json
 import math
 import os
