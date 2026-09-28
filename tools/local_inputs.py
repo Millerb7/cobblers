@@ -11,7 +11,8 @@ kits/LOCAL_ONLY.json lists each by path and sha256, with where it comes from:
   jar     the file is byte-identical to an entry in a jar the server already has; `hydrate` extracts it from
           --server-dir (mods/, and versions/<mc>/server-<mc>.jar for minecraft). Nothing is copied between checkouts.
   store   not reproducible from any jar; `hydrate` copies it from --store (a folder the owner keeps, or a checkout
-          that has the file), and only when its sha256 matches.
+          that has the file), and only when its sha256 matches. A store that holds the jar files as well lets
+          `hydrate --store` run without --server-dir, so without touching the server folder or its lock.
 
     python tools/local_inputs.py check                                  # what is present, missing or wrong
     python tools/local_inputs.py hydrate --server-dir <server> [--store <dir>]
@@ -88,9 +89,12 @@ def hydrate(a):
             kept += 1
             continue
         src = f["source"]
-        if src["kind"] == "jar":
+        stored = Path(a.store) / f["path"] if a.store else None
+        if src["kind"] == "jar" and not a.server_dir and stored and stored.is_file():
+            data = stored.read_bytes()             # a store may hold the jar files too: no server folder needed
+        elif src["kind"] == "jar":
             if not a.server_dir:
-                raise SystemExit("%s comes from a jar: pass --server-dir" % f["path"])
+                raise SystemExit("%s comes from a jar: pass --server-dir, or --store holding it" % f["path"])
             ns = src["namespace"]
             if ns not in zips:
                 zips[ns] = zipfile.ZipFile(jar_for(a.server_dir, ns))

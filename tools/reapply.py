@@ -256,8 +256,9 @@ def derived_inputs(a):
     First the local-only kit files git does not carry (kits/LOCAL_ONLY.json): extracted from the server's own jars,
     or, for the two that no jar reproduces, copied from COBBLERS_LOCAL_STORE by sha256 (tools/local_inputs.py)."""
     src = ["--source-root", a.source_root]
-    store = os.environ.get("COBBLERS_LOCAL_STORE")
-    py(TOOLS / "local_inputs.py", "hydrate", "--server-dir", a.server_dir, *(["--store", store] if store else []))
+    store = getattr(a, "store", None) or os.environ.get("COBBLERS_LOCAL_STORE")
+    py(TOOLS / "local_inputs.py", "hydrate", *(["--server-dir", a.server_dir] if a.server_dir else []),
+       *(["--store", store] if store else []))
     world = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
     plan = ROOT / "derived" / "rift_sculpt" / "plan.json"
     have = json.loads(plan.read_text(encoding="utf-8")).get("sha256") if plan.is_file() else None
@@ -1219,6 +1220,11 @@ def main(argv=None):
     q = sub.add_parser("prepare")
     q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
     q.add_argument("--server-dir", required=True)
+    q = sub.add_parser("hydrate", help="only the inputs a fresh checkout lacks (local kits, Rift plan, paint, water "
+                       "shape); an agent's worktree runs this first. Needs the lock only with --server-dir")
+    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--server-dir", help="extract the jar-sourced kit files from this server's jars (takes the lock)")
+    q.add_argument("--store", help="a folder holding the local-only kit files (default: COBBLERS_LOCAL_STORE)")
     q = sub.add_parser("install")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world-dir", required=True)
@@ -1245,6 +1251,11 @@ def main(argv=None):
         for sid, title, actions in steps():
             print("%-4s %-60s %4d functions" % (sid, title, sum(1 for k, _ in actions if k == "fn")))
         print("places:", ", ".join(places()))
+        return 0
+    if a.cmd == "hydrate":
+        if a.server_dir:
+            runtime_guard.require_lock("reapply hydrate --server-dir")
+        derived_inputs(a)
         return 0
     # Every subcommand but `plan` reads or writes the server or a world (prepare reads the installed packs' donor
     # templates; install writes the packs; run drives RCON; audit reads a world): the lock first, before anything.
