@@ -8,7 +8,7 @@ and checked against it otherwise, so the scene and the build cannot drift apart)
 data/route_trainers.json the same way, for tools/route_trainers.py.
 
   ground     tools/ground.py, rounded: the top solid block of each column. Feet stand one above.
-  the road   the walked line is build/routes/paths.json (the dense A* path of each leg; data/routes.json holds its
+  the road   the walked line is data/route_paths.json (the dense A* path of each leg; data/routes.json holds its
              simplified polyline). Where Codex's listed point is ON the walked line (most of them: the handoff
              measured distance to the simplified polyline's vertices, and the dense path runs through the point),
              the scene stands on the shoulder instead, and the record says by how much. Nothing built stands within
@@ -39,7 +39,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import ground as G  # noqa: E402
 
 OUT = ROOT / "build" / "datapacks" / "cobblers_route_events"
-PATHS = ROOT / "build" / "routes" / "paths.json"
+PATHS = ROOT / "data" / "route_paths.json"
 SCENES = ROOT / "data" / "scenes.json"
 SEATS = ROOT / "data" / "route_trainers.json"
 ROAD_CLEAR = 2                      # no built block within this many blocks of a walked-line cell (surface work aside)
@@ -76,7 +76,7 @@ REGION = (1000, 1200, 2400, 5450)          # x0, z0, x1, z1: every Route 1-3 pat
 def check_paths_heightmap(source_root=None):
     """The walked lines must have been routed on the ground these sites stand on.
 
-    build/routes/paths.json records the heightmap it was routed on. When that is the current one, fine. When it is the
+    data/route_paths.json records the heightmap it was routed on. When that is the current one, fine. When it is the
     one the Rift sculpt was pressed into (data/world.json heightmap.rift_sculpted_from), the two files are compared bit
     for bit over this whole region: the sculpt only changes columns inside the Rift's box, and if that ever stops being
     true here the routes must be routed again (tools/build_routes.py) before these sites can trust them."""
@@ -91,7 +91,7 @@ def check_paths_heightmap(source_root=None):
         return "routed on the current heightmap"
     base = world["heightmap"].get("rift_sculpted_from") or {}
     if have != base.get("sha256"):
-        raise SystemExit("build/routes/paths.json was routed on heightmap %s, neither the current one nor the one the Rift "
+        raise SystemExit("data/route_paths.json was routed on heightmap %s, neither the current one nor the one the Rift "
                          "sculpt was pressed into: route again (tools/build_routes.py)" % have[:8])
     cur = T.resolve_heightmap(world, world_path, source_root)
     old = cur.parent / base["path"]
@@ -979,7 +979,7 @@ def main(argv=None):
             r.update(pos)
     seat_doc ={"schema": "cobblers.route-trainers/1", "generated_by": "tools/route_events.py --write-scenes",
                 "note": "Where each Route 1-3 trainer stands (docs/story/EARLY_ROUTE_BUILD_HANDOFF.md): the listed point, or "
-                        "the nearest shoulder off the walked line (build/routes/paths.json) when the point is on it. "
+                        "the nearest shoulder off the walked line (data/route_paths.json) when the point is on it. "
                         "tools/route_trainers.py generates the RCT data and reapply places each with summon_persistent.",
                 "trainers": seats}
     if a.write_scenes:

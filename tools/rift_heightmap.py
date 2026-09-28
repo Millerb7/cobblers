@@ -19,6 +19,12 @@ it twice never sculpts a sculpt.
 
     python tools/rift_heightmap.py --source-root <root>            # measure and report, write nothing
     python tools/rift_heightmap.py --source-root <root> --apply    # write the heightmap and data/world.json
+    python tools/rift_heightmap.py --source-root <root> --plan     # write only derived/rift_sculpt/
+
+--plan rebuilds the plan and masks the block passes read (rift_skin, gulch_mine, the audits) in a checkout that has
+the heightmap but not derived/, such as a fresh clone or an agent's worktree. It never writes the heightmap or
+data/world.json, and it refuses unless the sculpt it computes is, pixel for pixel, the heightmap data/world.json
+names: a plan for a different heightmap would be worse than none.
 """
 from __future__ import annotations
 
@@ -299,7 +305,16 @@ def peak_indices(spec, ring, segs, total, seed, ent):
 # ---------------------------------------------------------------- the sculpt
 
 
-def build(source_root, world_path=None):
+def town_footprints():
+    """[id, min_x, max_x, min_z, max_z] of every town in data/towns.json with a footprint: what --apply protects."""
+    towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
+    return [[t["id"], *(int(t["footprint"][k]) for k in ("min_x", "max_x", "min_z", "max_z"))]
+            for t in towns if (t.get("footprint") or {}).get("min_x") is not None]
+
+
+def build(source_root, world_path=None, footprints=None):
+    """The sculpt. `footprints` are the town footprints it leaves untouched: data/towns.json's today when None (what
+    --apply would write now), or the list the last --apply recorded (what the heightmap holds; --plan)."""
     world = T.load_world(world_path or str(ROOT / "data" / "world.json"))
     current = T.resolve_heightmap(world, Path(world_path or str(ROOT / "data" / "world.json")), source_root)
     base = world["heightmap"].get("rift_sculpted_from")
@@ -464,28 +479,26 @@ def build(source_root, world_path=None):
     # blocks before this guard existed.
     protect = np.zeros(shape, bool)
     margin = spec.get("protect_margin", 8)
-    towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
-    kept = []
-    for t in towns:
-        fp = t.get("footprint") or {}
-        if fp.get("min_x") is None:
-            continue
-        a = max(0, int(fp["min_z"]) - margin - Z0)
-        b = min(shape[0], int(fp["max_z"]) + margin + 1 - Z0)
-        c = max(0, int(fp["min_x"]) - margin - X0)
-        d = min(shape[1], int(fp["max_x"]) + margin + 1 - X0)
+    kept, footprints_used = [], []
+    for tid, fx0, fx1, fz0, fz1 in (town_footprints() if footprints is None else footprints):
+        a = max(0, fz0 - margin - Z0)
+        b = min(shape[0], fz1 + margin + 1 - Z0)
+        c = max(0, fx0 - margin - X0)
+        d = min(shape[1], fx1 + margin + 1 - X0)
         if a < b and c < d:
             n = int((newY[a:b, c:d] != Y[a:b, c:d]).sum())
             if n:
-                kept.append((t["id"], n))
+                kept.append((tid, n))
             protect[a:b, c:d] = True
+            footprints_used.append([tid, fx0, fx1, fz0, fz1])
     newY = np.where(protect, Y, newY)
     changed = newY != Y
     return {"world": world, "src": src, "current": current, "base_ref": base_ref, "raw": raw, "Y": Y, "newY": newY,
             "changed": changed, "box": (X0, X1, Z0, Z1), "shape": shape, "basin": basin, "ring": ring,
             "segs": segs, "ent": ent, "peaks": peaks, "spec": spec, "imp": imp, "hi_out": hi_out,
             "ox": ox, "oz": oz, "n_basin": n_basin, "top": top, "width": width, "plateau": plateau,
-            "floor": floor, "nrm": nrm, "ramps": ramps, "protected": kept}
+            "floor": floor, "nrm": nrm, "ramps": ramps, "protected": kept,
+            "footprints": footprints_used}
 
 
 def report(b):
@@ -521,27 +534,19 @@ def report(b):
     return blocks
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--source-root")
-    ap.add_argument("--world", default=str(ROOT / "data" / "world.json"))
-    ap.add_argument("--apply", action="store_true")
-    a = ap.parse_args(argv)
-    b = build(a.source_root, a.world)
-    blocks = report(b)
-    if not a.apply:
-        print("(dry run -- pass --apply)")
-        return 0
-
+def sculpted(b):
+    """The whole heightmap with the Rift's changed columns written in."""
     X0, X1, Z0, Z1 = b["box"]
     out = b["raw"].copy()
     h = np.clip(np.rint(RS.h_of_y(b["newY"], b["imp"], b["hi_out"])), 0, RS.FULL).astype(np.uint16)
     region = out[Z0 - b["oz"]:Z1 - b["oz"] + 1, X0 - b["ox"]:X1 - b["ox"] + 1]
     region[b["changed"]] = h[b["changed"]]
-    dest = b["current"].parent / OUT_NAME
-    Image.fromarray(out, mode="I;16").save(dest)
-    sha = hashlib.sha256(dest.read_bytes()).hexdigest()
+    return out
 
+
+def write_plan(b, sha, blocks):
+    """derived/rift_sculpt/: the plan (ring, segments, entrances) and the changed and basin masks."""
+    X0, X1, Z0, Z1 = b["box"]
     MASK.mkdir(parents=True, exist_ok=True)
     np.save(MASK / "changed.npy", b["changed"])
     np.save(MASK / "basin.npy", b["basin"])
@@ -557,8 +562,62 @@ def main(argv=None):
         "width": [round(float(v), 1) for v in b["width"]],
         "floor": [round(float(v), 1) for v in b["floor"]],
         "plateau": [round(float(v), 1) for v in b["plateau"]],
-        "heightmap": OUT_NAME, "sha256": sha, "blocks_moved": blocks,
+        "heightmap": OUT_NAME, "sha256": sha, "blocks_moved": blocks, "footprints": b["footprints"],
     }), encoding="utf-8")
+
+
+def plan_only(source_root, world_path):
+    """Write the plan for the heightmap data/world.json already names, after proving the sculpt reproduces it.
+
+    It sculpts with the town footprints the last --apply recorded, not today's data/towns.json: a town sited or moved
+    since (the rim post moved 178 blocks after the sculpt) would otherwise change the answer."""
+    world = T.load_world(world_path)
+    rec = world["heightmap"].get("rift_sculpted_from") or {}
+    if "footprints" not in rec:
+        raise SculptError("data/world.json heightmap.rift_sculpted_from records no footprints: the sculpt cannot be "
+                          "reproduced from it")
+    b = build(source_root, world_path, footprints=rec["footprints"])
+    blocks = report(b)
+    hm = b["world"]["heightmap"]
+    if b["current"].name != OUT_NAME:
+        raise SculptError("data/world.json names %s, not the sculpt %s: --plan only describes an applied sculpt"
+                          % (b["current"].name, OUT_NAME))
+    out = sculpted(b)
+    have = np.array(Image.open(b["current"])).astype(np.uint16)
+    if have.shape != out.shape:
+        raise SculptError("%s is %s, the sculpt %s" % (b["current"].name, have.shape, out.shape))
+    differ = int((have != out).sum())
+    if differ:
+        raise SculptError("the sculpt computed from data/rift_sculpt.json differs from %s in %d columns: the spec or "
+                          "a tool changed since the last --apply, and that is a decision for --apply, not --plan"
+                          % (b["current"].name, differ))
+    write_plan(b, hm["sha256"], blocks)
+    print("wrote %s for %s (%s); the heightmap and data/world.json are untouched"
+          % (PLAN.relative_to(ROOT), OUT_NAME, hm["sha256"][:12]))
+    return 0
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--source-root")
+    ap.add_argument("--world", default=str(ROOT / "data" / "world.json"))
+    mode = ap.add_mutually_exclusive_group()
+    mode.add_argument("--apply", action="store_true", help="write the heightmap, the plan and data/world.json")
+    mode.add_argument("--plan", action="store_true",
+                      help="write only derived/rift_sculpt/, for the heightmap data/world.json already names")
+    a = ap.parse_args(argv)
+    if a.plan:
+        return plan_only(a.source_root, a.world)
+    b = build(a.source_root, a.world)
+    blocks = report(b)
+    if not a.apply:
+        print("(dry run -- pass --apply, or --plan)")
+        return 0
+
+    dest = b["current"].parent / OUT_NAME
+    Image.fromarray(sculpted(b), mode="I;16").save(dest)
+    sha = hashlib.sha256(dest.read_bytes()).hexdigest()
+    write_plan(b, sha, blocks)
 
     wpath = Path(a.world)
     text = wpath.read_text(encoding="utf-8")
@@ -568,7 +627,7 @@ def main(argv=None):
     hm["path"], hm["sha256"] = OUT_NAME, sha
     hm["rift_sculpted_from"] = {**b["base_ref"], "generator": "python tools/rift_heightmap.py --apply",
                            "spec": "data/rift_sculpt.json", "blocks_moved": blocks,
-                           "columns_changed": int(b["changed"].sum()),
+                           "columns_changed": int(b["changed"].sum()), "footprints": b["footprints"],
                            "note": "The Rift's shape: the lip of the low-ground basin, a cut band inside it, and the "
                                    "upthrust rim outside. Columns outside the Rift's box are bit-identical."}
     if old_sha != sha and old_sha not in hm.get("previous_sha256", []):

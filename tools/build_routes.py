@@ -16,7 +16,7 @@ What changed, and why:
     apex). The one-off read them from the previous output's simplified polyline, so every rerun would have pinned the
     route to its own last path.
   - Corridor widths and waypoints are read from data, not constants in the script.
-  - Dense paths are cached (build/routes/paths.json) so --geography-only can recompute sub-region membership and holes
+  - Dense paths are cached (data/route_paths.json) so --geography-only can recompute sub-region membership and holes
     after data/regions.json changes without re-running A*.
 
   python tools/build_routes.py --source-root C:/Users/wnd/Documents              # write data/routes.json and towns
@@ -39,7 +39,7 @@ import terrain as T
 import route_path as RP
 
 ROOT = T.ROOT
-CACHE = ROOT / "build" / "routes" / "paths.json"
+CACHE = ROOT / "data" / "route_paths.json"
 
 
 def sha256_file(p):
@@ -177,7 +177,7 @@ def corridor_mask(path, width, W, H):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     T.add_common_args(p)
-    p.add_argument("--geography-only", action="store_true", help="reuse build/routes/paths.json; recompute membership")
+    p.add_argument("--geography-only", action="store_true", help="reuse data/route_paths.json; recompute membership")
     p.add_argument("--reroute", nargs="*", default=None, metavar="ROUTE_ID",
                    help="route only these legs again and reuse the cached paths for the rest (same heightmap required)")
     p.add_argument("--date", default=datetime.date.today().isoformat())

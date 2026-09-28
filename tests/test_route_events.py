@@ -3,9 +3,9 @@
 Written by the test author, not by the session that wrote the tool, the scene data or the seats.
 
 The sites are built from the canonical heightmap (tools/ground.py) and the dense walked line
-build/routes/paths.json. Tests that need them SKIP, naming what is absent: COBBLERS_SOURCE_ROOT unset or the
-heightmap unusable, or build/routes/paths.json not built in this checkout (python tools/build_routes.py). A skip is
-not a pass.
+data/route_paths.json (committed: the routes in data/routes.json were adjusted after routing, so a re-route does not
+reproduce them). Tests that need the heightmap SKIP when COBBLERS_SOURCE_ROOT is unset or it is unusable; a missing
+data/route_paths.json fails. A skip is not a pass.
 
 What is asserted: the tool as run by `reapply.py prepare` exits 0 (no drift between the build and data/scenes.json /
 data/route_trainers.json, nothing built on the walked line); the ground the walked lines were routed on equals the
@@ -38,7 +38,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import route_events as RE  # noqa: E402
 
-PATHS = ROOT / "build" / "routes" / "paths.json"
+PATHS = ROOT / "data" / "route_paths.json"
 WORLD = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
 SCENES = {s["id"]: s for s in json.loads((ROOT / "data" / "scenes.json").read_text(encoding="utf-8"))["scenes"]}
 SEATS = json.loads((ROOT / "data" / "route_trainers.json").read_text(encoding="utf-8"))["trainers"]
@@ -64,7 +64,7 @@ def solid(b):
 
 def need_paths():
     if not PATHS.is_file():
-        pytest.skip("build/routes/paths.json is not built in this checkout (python tools/build_routes.py)")
+        pytest.fail("data/route_paths.json is missing; it is committed data, the walked line data/routes.json simplifies")
 
 
 @pytest.fixture(scope="module")
