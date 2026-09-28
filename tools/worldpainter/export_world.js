@@ -10,6 +10,7 @@
 //   --image-high=<double>      image level mapped to --world-high
 //   --world-low=<int> --world-high=<int> --water=<int>
 //   --margin=<blocks>          ocean tiles added around the image on every side
+//   --margin-image=<png>       optional: the margin relief (16-bit, the canvas's size, zero over the heightmap)
 //   --spawn-x=<int> --spawn-z=<int>
 //   --border-centre=<int> --border-size=<int>
 //   --paint=<manifest.json>    optional: paint biomes, terrain, vegetation and water (tools/worldpainter/paint.js)
@@ -104,9 +105,24 @@ print("imported landmass: " + dim.getTileCount() + " tiles in " + ((System.curre
 
 // Ocean margin: a zero-valued image covering the canvas, only creating tiles where none exist.
 // Existing tiles are untouched because onlyRaise never lowers and the margin level equals the lowest landmass level.
+// With --margin-image (the margin relief, tools/water_shape.py; pinned in data/world.json export.margin_relief and
+// passed by tools/reexport.py) that image is imported in the blank's place, through the same offset and the same
+// importer (the heightmap's image-to-world line). It is zero over the heightmap's square, so the landmass tiles stay
+// untouched for the same reason. NOT RUN: written 2026-09-27 as the design of owner question 1, option A.
 var side = heightMap.getWidth() + 2 * margin;
-var blank = new BufferedImage(side, side, BufferedImage.TYPE_USHORT_GRAY);
-var marginMap = new TransformingHeightMap("margin", BitmapHeightMap.build().withName("margin").withImage(blank).now(), 1.0, 1.0, -margin, -margin, 0.0);
+var marginSource;
+if (params.get("margin-image") != null) {
+    marginSource = wp.getHeightMap().fromFile(param("margin-image")).go();
+    if (marginSource.getWidth() != side || marginSource.getHeight() != side || marginSource.getBitDepth() != 16) {
+        throw "the margin image must be " + side + "x" + side + " at 16 bits, got " + marginSource.getWidth() + "x"
+            + marginSource.getHeight() + " at " + marginSource.getBitDepth();
+    }
+    print("margin relief: " + marginSource.getName());
+} else {
+    var blank = new BufferedImage(side, side, BufferedImage.TYPE_USHORT_GRAY);
+    marginSource = BitmapHeightMap.build().withName("margin").withImage(blank).now();
+}
+var marginMap = new TransformingHeightMap("margin", marginSource, 1.0, 1.0, -margin, -margin, 0.0);
 t0 = System.currentTimeMillis();
 importer(marginMap, true).importToDimension(dim, true, null);
 print("with margin: " + dim.getTileCount() + " tiles in " + ((System.currentTimeMillis() - t0) / 1000) + " s; extent in tiles x "
