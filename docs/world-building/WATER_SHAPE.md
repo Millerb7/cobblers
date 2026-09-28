@@ -384,15 +384,21 @@ Answered on 2026-09-27 (the main session's recommendations; the owner reviewed t
 **4** (C, dive sites only), **5** (B, smooth the whole course). **2** (straits) is resolved by the troughs, which keep
 a strait reading deeper without cutting a channel. Still open, and close:
 
-1. **First Cast's scour hole** (question 3, unchanged): keep or drop (48 columns, 4 deep).
-2. **Shrew, Arrow and Marshy Marsh by the dive-site rule too** (section 5): 95-105 blocks from rest in their open water;
-   the alternative is the whole-lake budget with 10-13 shoals round each pit.
-3. **The Viltri Ravine** (section 4): dry and dressed (the owner's leaning), the sea-half stream, or both halves (the
-   lake half would join Viltri's Path at the lake's outlet: it cannot flow into the lake).
-4. **Part B's reading** (section 15.1).
-5. **The Pacifidlog ferry's length**: 686 blocks of swimming from the nearest land; the town could sit nearer the
-   bank's north edge (ESTIMATE, not walked: about 350 blocks of deep water from the mainland would still knock out a trained swimmer) if the owner wants it closer
-   to the plateau.
+**Decided by the owner, 2026-09-27** ("All of them choose 'reads real' over 'convenient', which is right"):
+1. **First Cast's scour hole:** kept.
+2. **Shrew, Arrow and Marshy Marsh by the dive-site rule:** kept (open water 95-105 blocks from rest).
+3. **The Viltri Ravine: dry, both halves, and dressed** so it reads as a deliberate, old watercourse that stopped:
+   braided channels, bleached bars, the dry falls lip at the pass, the ford at Stoneford, the silted dead arm at the
+   lake end. "Your finding that a lake-side stream could never have reached Lake Viltri settles it — it is honest as
+   well as the better story." The bed pattern goes into the export (paint); the boulders, driftwood, falls lip, ford and
+   dead arm are blocks after it. SQ-G1-01 and Stoneford stand as written.
+4. **Part B's reading** (section 15.1): not corrected by the owner.
+5. **The Pacifidlog ferry's length:** 686 blocks, kept.
+6. **The Pallet flats at 20% wadeable** (the gaps between bars are rips): kept.
+Still open: **the margin's continuation** of land off the map edge (section 7). The main session's close-ups
+(2026-09-27): the design removes today's single-column cliffs (north 86 blocks, west 67, east 58; steepest step now
+0.6-2 blocks) but copies each edge column straight outward, so the ramp reads combed (parallel streaks), not as a
+headland. To be reworked before the export.
 
 ---
 

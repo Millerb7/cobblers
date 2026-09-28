@@ -209,7 +209,12 @@ does anything, so:
   a staging check is done in the main session, not delegated.
 - **Say the expected cost first.** Before spawning more than one subagent for a
   task, tell the owner which agents, what each does, and the rough token cost,
-  and wait for approval. **Content
+  and wait for approval.
+- **Say up front when a task will iterate on something expensive.** A subagent
+  that will re-run a heavy pipeline (the whole heightmap, a full re-apply, the
+  full test suite) says so before it starts, with how many passes it expects,
+  so the owner can choose fewer, bigger passes. One water-shape agent spent
+  812,000 tokens over three hours, mostly re-running the full pipeline. **Content
 implementation and its test/review use different agents:** whoever wrote a
 datapack does not write its validator or grade its experiment. Implementation
 does not grade its own work.
