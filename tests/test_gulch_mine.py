@@ -6,12 +6,13 @@ without the heightmap, on tests/gulch_sim.py's world model (executors, selectors
 
 Independent sources:
   - docs/world-building/SOUTHERN_RIFT_MEGA.md: 7.1 (the jars' stones; ZAMegas' eleven), 7.3 (the sixty stones the
-    Cutters offer and the thirty-two left out, by name), 7.2 and decision 5A (4 raw + 1 diamond, unlimited, nothing
-    bought back; crafting kept at 4 raw), 7.6 (faces restored on approach, filtered, both corners loaded, nobody and
-    no Pokemon in the box, faces in a hall offset by 15 minutes), 6.2 (the Megas uncatchable, tagged, leashed, back
-    with the material), decisions 3 (the gulch at six badges), 9 (no claim for a Mega) and 12 (step R9S);
+    Cutters offer and the thirty-two left out, by name), 7.2 and decision 5A (raw + 1 diamond, unlimited, nothing
+    bought back), 6.2 (the Megas uncatchable, tagged, leashed), decisions 3 (the gulch at six badges), 9 (no claim for
+    a Mega) and 12 (step R9S); section 13, the owner's redesign (2 raw stones a keyed stone, crafting too; the faces
+    unmineable scenery, warded for good, the restore retired; Megas back in their dens on a respawn timer no
+    repeatable action resets);
   - data/gulch_mine.json: the flag, the gate's boxes and points, the zone polygon (tested here by its own words: a
-    column is in when its centre is inside, even-odd), the offer, the benches, the faces, the Megas, the period;
+    column is in when its centre is inside, even-odd), the offer, the benches, the faces' ward, the Megas, the clock;
   - the pinned jars (read with zipfile, skipped without them): Mega Showdown 1.0.2 and ZAMegas 1.7.7, their mega
     definitions and recipes;
   - vanilla 1.21.1: the villager's MerchantOffer codec fields; a location predicate tests the feet; an effect's level
@@ -23,8 +24,7 @@ allows outside; the ward keeps the plug and the grille out of reach; each Mega's
 room, in its hall.
 
 Not covered, and it needs a running server (SOUTHERN_RIFT_MEGA.md section 10): M-1 the bracelet, M-2 a Mega spawned,
-tagged and leashed from a function, M-3 the enrage, M-4 a ball refused, M-5 a face restored in game (`fill ... replace
-#tag`, P-3) and mined with a diamond pickaxe, M-6 a Cutter trading as written (the offer format is the codec's; the
+tagged and leashed from a function, M-3 the enrage, M-4 a ball refused, M-5 a face's ward holding in game, M-6 a Cutter trading as written (the offer format is the codec's; the
 trade is not run), M-7 the client models; that the location advancements fire; that a villager keeps its trades.
 """
 from __future__ import annotations
@@ -279,16 +279,17 @@ def _cutters():
 
 # Without it a Cutter asks for something else (a species item, one raw stone, no diamond), sells more than one stone,
 # pays experience or levels (and so changes), locks after some uses (a NoAI villager never restocks), drifts in price
-# with demand or reputation, or buys stones back (decision 5A: "4 raw mega stones + 1 diamond -> one keyed stone,
-# unlimited uses ... Nothing is bought back"). Every offer, read as vanilla's MerchantOffer fields.
-def test_every_cutter_offer_is_four_raw_and_a_diamond_for_one_stone_unlimited_without_xp():
+# with demand or reputation, or buys stones back (decision 5A: "raw mega stones + 1 diamond -> one keyed stone,
+# unlimited uses ... Nothing is bought back"; the count is SOUTHERN_RIFT_MEGA.md 13's: "The keyed-stone recipe therefore
+# takes 2 raw stones", 4 before the owner's redesign). Every offer, read as vanilla's MerchantOffer fields.
+def test_every_cutter_offer_is_two_raw_and_a_diamond_for_one_stone_unlimited_without_xp():
     _fns, cut = _cutters()
     assert len(cut) == 3, sorted(cut)
     for bench, (_at, nbt) in cut.items():
         recipes = nbt["Offers"]["Recipes"]
         assert len(recipes) == 20, (bench, len(recipes))
         for r in recipes:
-            assert r["buy"] == {"id": "mega_showdown:mega_stone", "count": 4}, r
+            assert r["buy"] == {"id": "mega_showdown:mega_stone", "count": 2}, r
             assert r["buyB"] == {"id": "minecraft:diamond", "count": 1}, r
             assert r["sell"]["count"] == 1 and r["sell"]["id"] != "mega_showdown:mega_stone", r
             assert r["maxUses"] == 2 ** 31 - 1 and r["uses"] == 0, r
@@ -338,9 +339,10 @@ def test_each_cutter_is_a_fixed_master_mason_at_its_bench_and_the_reapply_keeps_
 
 # ================================================================================================= the faces
 
-TAG = "#%s:%s" % (NS, SPEC["faces"]["resettable_tag"])
+# SOUTHERN_RIFT_MEGA.md 13 (the owner's redesign, 2026-09-27): "The crystal faces are unmineable scenery. They keep
+# their look; the ward holds them permanently and the restore cycle is retired." The prototype slice's restore tests
+# (period, offset, restart, occupancy, variants, the chest filter) were retired with it; the ward test replaces them.
 FACES = {f["id"]: f for f in SPEC["mine"]["faces"]}
-METEORID = {SPEC["palette"]["meteorid"], SPEC["palette"]["meteorid_radiated"]}
 CRYSTAL = SPEC["palette"]["mega_stone_crystal"]
 
 
@@ -350,207 +352,57 @@ def keeper(anchors=None):
 
 def _mine_world(fns=None, near=True, gt=10_000_000, seed=7):
     fns = fns or keeper()
-    w = world(fns, tags={TAG: set(SPEC["faces"]["resettable"])}, seed=seed)
+    w = world(fns, seed=seed)
     w.gt = gt
     w.call("%s/load" % F)
     if near:
-        w.player((4300.5, 89, 4850.5))                   # in the town square: inside the approach box
+        w.player((4300.5, 89, 4850.5))                   # in the town square: inside the mine's approach box
     return w
 
 
-
 def _run(w, ticks):
-    """Tick, recording (game time, face) for every restore."""
+    """Tick, recording (game time, den) for every Mega spawn."""
     out = []
     for _ in range(ticks):
         w.calls.clear()
         w.tick()
-        out += [(w.gt, c[0].split("restore_")[1]) for c in w.calls if "/faces/restore_" in c[0]]
+        out += [(w.gt, c[0].split("/megas/spawn_")[1]) for c in w.calls
+                if "/megas/spawn_" in c[0] and not c[0].endswith("/megas/spawn_at")]
     return out
 
 
-PERIOD = SPEC["faces"]["period_ticks"]
-OFFSET = (FACES["face_b"]["offset_ticks"] - FACES["face_a"]["offset_ticks"]) % PERIOD
-PASS = SPEC["driver"]["every_ticks"]              # a restore can only happen on a driver pass
+PASS = SPEC["driver"]["every_ticks"]              # the keeper runs only on a driver pass
+RESPAWN = SPEC["megas"]["respawn_ticks"]
 
 
-def _times(got, fid):
-    return [t for t, f in got if f == fid]
-
-
-# Without it a face restores more often than decision 6's 30 minutes (a farm), never, or while nobody is near (STONE_
-# ECONOMY.md 5.3: a fixed timer fails silently on unloaded chunks). The chosen rule for a hall's two faces (0f190dd:
-# a face's restore makes its sibling due exactly the offset later, never sooner than the sibling's own period; 7.6
-# "faces in a hall offset by 15"): on an old world, both overdue, the first pass restores face A only; face B follows
-# the offset later; then each face once a period, alternating. With nobody near, nothing runs at all.
-def test_a_face_restores_once_per_period_offset_from_its_sibling_and_only_on_approach():
-    w = _mine_world()
-    t0 = w.gt
-    got = _run(w, 3 * PERIOD + 2 * PASS)
-    a, b = _times(got, "face_a"), _times(got, "face_b")
-    assert a[0] == t0 + PASS, "the first pass must restore the first face of the hall"
-    assert len(a) == 4 and len(b) == 3, (a, b)
-    for times in (a, b):
-        gaps = [y - x for x, y in zip(times, times[1:])]
-        assert all(PERIOD <= g <= PERIOD + PASS for g in gaps), gaps
-    assert all(OFFSET <= tb - ta <= OFFSET + PASS for ta, tb in zip(a, b)), (a, b)
-    far = _mine_world(near=False)
-    far.calls.clear()
-    assert _run(far, 2 * PERIOD) == []
-    assert not [c for c in far.calls if c[0] not in ("%s/tick" % F, "%s/drive" % F, "%s/leash" % F)], far.calls[-3:]
-
-
-# Without it a restart repeats a restore (the scores reset at load) or loses one: load leaves the restore times it
-# finds, so after a restart the next restore is the one the schedule already had (face B, the offset after face A).
-def test_a_restart_neither_repeats_nor_loses_a_restore():
-    w = _mine_world()
-    first = _run(w, 2 * PASS)
-    assert [f for _t, f in first] == ["face_a"], first
-    w.call("%s/load" % F)                                  # a restart: minecraft:load runs again
-    again = _run(w, PERIOD - 3 * PASS)
-    assert [f for _t, f in again] == ["face_b"], again
-    assert OFFSET <= again[0][0] - first[0][0] <= OFFSET + PASS, (first, again)
-
-
-# Without it a face is rewritten with a player or a Pokemon standing in it (a player buried in meteorid), or its fill
-# runs into an unloaded chunk and fails silently: a player or a Pokemon in face A's box or one block round it, or
-# either corner unloaded, holds its restore back while face B, free, restores; by the sibling rule face A is then due
-# the offset after face B (never sooner), and it restores at the first pass after that once it is free.
-@pytest.mark.parametrize("what", ["a player in the box", "a player one block outside", "a Pokemon in the box",
-                                  "the far corner unloaded", "the near corner unloaded"])
-def test_a_face_does_not_restore_while_occupied_or_unloaded(what):
-    f = FACES["face_a"]
-    x0, y0, z0, x1, y1, z1 = f["box"]
-    w = _mine_world()
-    if what == "a player in the box":
-        e = w.player((x0 + 3.5, y0, z0 + 3.5))
-    elif what == "a player one block outside":
-        e = w.player((x1 + 1.5, y0, z0 + 3.5))
-    elif what == "a Pokemon in the box":
-        e = w.pokemon((x0 + 1.5, y0, z0 + 1.5))
-    else:
-        far = what == "the far corner unloaded"
-        w.loaded = lambda x, y, z: not ((x, y, z) == ((x1 + 1, y1 + 1, z1 + 1) if far else (x0 - 1, y0 - 1, z0 - 1)))
-        e = None
-    got = _run(w, 4 * PASS)
-    assert not _times(got, "face_a"), got
-    tb = _times(got, "face_b")
-    assert len(tb) == 1, "the other face, free, must still restore"
-    if e is not None:
-        w.entities = [x for x in w.entities if x is not e]
-    else:
-        w.loaded = lambda x, y, z: True
-    later = _run(w, OFFSET + 2 * PASS)
-    ta = _times(later, "face_a")
-    assert len(ta) == 1 and OFFSET <= ta[0] - tb[0] <= OFFSET + PASS, (tb, ta)
-    # held back longer than the offset, it restores at the first pass once free
-    w2 = _mine_world()
-    blocker = w2.player((x0 + 3.5, y0, z0 + 3.5))
-    _run(w2, OFFSET + 5 * PASS)
-    w2.entities = [x for x in w2.entities if x is not blocker]
-    assert _times(_run(w2, PASS), "face_a"), "a face overdue and free must restore on the next pass"
-
-
-def _variant(fns, fid, k):
-    return [l for l in fns["faces/%s_v%d" % (fid, k)] if not l.startswith("#")]
-
-
-# Without it a restore overwrites what a player left in the box (STONE_ECONOMY.md 5.4: a chest survives with its
-# contents), writes the wrong number of crystals, hides every one (a face nobody can start), or buries none: every
-# variant is one fill filtered to the tag and setblocks each guarded by it; three crystals, one on the front plane's
-# bottom row facing out, two at least two deep (data faces.crystal_rule); the tag is the data's list, with no container.
+# Without it a face can be mined after all (a survival or adventure player beside it with no Mining Fatigue), or the
+# retired restore still rewrites it: every tick anyone in survival or adventure within ward_margin of a face's box
+# gets Mining Fatigue IV (amplifier 3), creative and spectator are left alone, and no generated keeper function
+# writes a block inside a face's box.
 @pytest.mark.parametrize("fid", sorted(FACES))
-def test_every_variant_is_a_filtered_fill_with_three_crystals_one_showing(fid):
-    fns = keeper()
+@pytest.mark.parametrize("mode", ["survival", "adventure", "creative", "spectator"])
+def test_a_face_is_warded_every_tick_for_good(fid, mode):
     f = FACES[fid]
     x0, y0, z0, x1, y1, z1 = f["box"]
-    front = f["front"]
-
-    def depth(c):
-        return {"west": c[0] - x0, "east": x1 - c[0], "north": c[2] - z0, "south": z1 - c[2]}[front]
-    shown = set()
-    for k in range(SPEC["faces"]["variants"]):
-        body = _variant(fns, fid, k)
-        assert body[0] == "fill %d %d %d %d %d %d %s replace %s" % (x0, y0, z0, x1, y1, z1, SPEC["palette"]["meteorid"], TAG)
-        crys = []
-        for l in body[1:]:
-            m = re.fullmatch(r"execute if block (-?\d+) (-?\d+) (-?\d+) (\S+) run setblock (-?\d+) (-?\d+) (-?\d+) (\S+)", l)
-            assert m and m.group(4) == TAG and m.groups()[:3] == m.groups()[4:7], l
-            c = tuple(int(v) for v in m.groups()[:3])
-            assert x0 <= c[0] <= x1 and y0 <= c[1] <= y1 and z0 <= c[2] <= z1, l
-            if m.group(8).startswith(CRYSTAL):
-                crys.append((c, m.group(8)))
-            else:
-                assert m.group(8) in METEORID, l
-        assert len(crys) == f["crystals"] == 3, (k, crys)
-        showing = [c for c, b in crys if depth(c) == 0]
-        (s,) = showing
-        assert s[1] == y0 and "facing=%s" % front in dict(crys)[s], crys
-        assert all(depth(c) >= 2 for c, _b in crys if c != s), crys
-        shown.add(s)
-    assert len(shown) > 1, "every variant shows its crystal in the same place"
-    tagfile = [v for v in SPEC["faces"]["resettable"]]
-    assert not [b for b in tagfile if any(k in b for k in ("chest", "barrel", "shulker", "hopper", "furnace"))]
-
-
-# Without it the filter does not spare a player's chest after all (the fill's replace or a crystal's guard missing in
-# what runs): a chest left on a crystal's cell stays a chest through a restore, and the rest of the box is fresh.
-def test_a_restore_spares_a_players_chest_in_the_box():
+    m = SPEC["faces"]["ward_margin"]
     fns = keeper()
-    w = _mine_world(fns)
-    f = FACES["face_a"]
-    x0, y0, z0, x1, y1, z1 = f["box"]
-    cells = [(x, y, z) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)]
-    for c in cells:
-        w.blocks[c] = "minecraft:cobblestone"             # dug out and back-filled with cobble
-    chests = set()
-    for k in range(SPEC["faces"]["variants"]):
-        for l in _variant(fns, "face_a", k)[1:]:
-            if CRYSTAL in l:
-                chests.add(tuple(int(v) for v in l.split()[3:6]))
-    for c in chests:
-        w.blocks[c] = "minecraft:chest[facing=north]"
-    _run(w, 200)
-    assert all(w.blocks[c] == "minecraft:chest[facing=north]" for c in chests)
-    assert all(w.blocks[c].split("[")[0] in METEORID | {CRYSTAL} for c in cells if c not in chests)
-
-
-# Without it the variant repeats (a face that comes back the same every time is learnt by heart), or runs no variant at
-# all when the random value lands on the last one used.
-def test_a_restore_never_repeats_the_last_variant():
-    for seed in range(6):
-        w = _mine_world(seed=seed)
-        seq = []
-        for _ in range(12):
-            w.calls.clear()
-            w.gt += PERIOD
-            w.call("%s/drive" % F)
-            vs = [int(c[0][-1]) for c in w.calls if re.fullmatch(r"%s/faces/face_a_v\d" % F, c[0])]
-            assert len(vs) == 1, w.calls
-            seq.append(vs[0])
-        assert all(a != b for a, b in zip(seq, seq[1:])), (seed, seq)
-
-
-# Without it the two faces of a hall come back together, not 15 minutes apart (SOUTHERN_RIFT_MEGA.md 7.6: "faces in a
-# hall offset by 15"; data face_b offset_ticks 18000), on a world older than 30 minutes of game time when the pack
-# is installed (the staging world) or after nobody came near for longer than a period. Found by this suite at 361c9cf
-# (both came due at the same pass and stayed in phase); fixed in 0f190dd.
-@pytest.mark.parametrize("gt", [0, 10_000_000], ids=["a new world", "an old world"])
-def test_the_faces_of_a_hall_restore_offset_by_their_offset_ticks(gt):
-    w = _mine_world(gt=gt)
-    visitor = w.entities[0]
-
-    def offset_holds(got):
-        a, b = _times(got, "face_a"), _times(got, "face_b")
-        assert a and b, got
-        return all(OFFSET - PASS <= (tb - ta) % PERIOD <= OFFSET + PASS for ta, tb in zip(a, b)), (a, b)
-    ok, seen = offset_holds(_run(w, 2 * PERIOD + 2 * PASS))
-    assert ok, seen
-    w.entities.remove(visitor)                             # an idle spell longer than a period: both faces overdue
-    _run(w, 3 * PERIOD)
-    w.entities.append(visitor)
-    ok, seen = offset_holds(_run(w, 2 * PERIOD + 2 * PASS))
-    assert ok, seen
+    for at, inside in (((x0 - m + 0.5, y0, z0 + 0.5), True), ((x1 + 0.5, y0, z1 + m + 0.5), True),
+                       ((x0 - m - 1.5, y0, z0 + 0.5), False)):
+        w = world(fns)
+        p = w.player(at, mode=mode)
+        w.gt = 5
+        w.call("%s/tick" % F)
+        got = [c for e, c in w.effects if e is p]
+        want = inside and mode in ("survival", "adventure")
+        assert bool(got) == want, (fid, mode, at, got)
+        if got:
+            assert got[0].endswith("minecraft:mining_fatigue 3 3 true"), got
+    for name, body in fns.items():
+        for ln in body:
+            mm = re.search(r"\b(?:fill|setblock) (-?\d+) (-?\d+) (-?\d+)", ln)
+            if mm:
+                c = tuple(int(v) for v in mm.groups())
+                assert not (x0 <= c[0] <= x1 and y0 <= c[1] <= y1 and z0 <= c[2] <= z1), (name, ln)
 
 
 # ================================================================================================= the Megas
@@ -565,13 +417,19 @@ def _spawned(w, sid):
 
 # Without it a Mega is catchable, comes out as the plain species, at another level, or without the tags the leash, the
 # keeper and the blackout's exemption find it by (decision 9: data/blackout.json claims.exempt_tag is this tag), or
-# despawns: after a face restores with the Megas gone, the keeper spawns each once, uncatchable, in Mega form, tagged,
-# persistent, at its anchor.
+# despawns, or spawns through a plain spawnpokemonat line (parsed at server start, it spawns nothing until a /reload:
+# EXP-046, .claude/rules/datapacks.md): on a fresh install the keeper spawns each once, through the macro spawn_at,
+# uncatchable, in Mega form, tagged, persistent, at its anchor.
 def test_each_mega_is_spawned_once_uncatchable_tagged_and_persistent_at_its_anchor():
     assert BLACKOUT["claims"]["exempt_tag"] == MTAG
-    w = _mine_world()
+    fns = keeper()
+    assert [l for l in fns["megas/spawn_at"] if not l.startswith("#")] == \
+        ["$spawnpokemonat $(x) $(y) $(z) $(species) $(aspect) uncatchable level=$(level)"]
+    assert not [(n, l) for n, b in fns.items() for l in b if l.startswith("spawnpokemonat") or " run spawnpokemonat" in l]
+    w = _mine_world(fns)
     _run(w, 500)
     for sid, s in SLOTS.items():
+        assert "%s:%s/megas/spawn_at {" % (NS, F) in "\n".join(fns["megas/spawn_%s" % sid])
         got = _spawned(w, sid)
         assert len(got) == 1, (sid, got)
         (e,) = got
@@ -598,23 +456,53 @@ def test_the_leash_walks_a_mega_back_only_past_its_radius(dist, back):
     assert (e["pos"] == (float(x), float(y), float(z))) == back, e["pos"]
 
 
-# Without it a Mega pops into being beside a player (spawn_clear), or never comes back after it fainted (6.2: "they come
-# back with the material"): a Mega gone when its hall's face restores is owed, and spawned once nobody is within
-# spawn_clear of its anchor.
-def test_a_fainted_mega_comes_back_with_the_next_restore_when_nobody_is_near_its_anchor():
+# Without it a gone Mega comes back at once (the farm's rate limit gone), never, beside a player (spawn_clear), or while
+# nobody is near (SOUTHERN_RIFT_MEGA.md 13: "respawn in their dens on a timer"; the clock is the game time it was first
+# seen gone, and it spawns respawn_ticks later): gone, it stays gone for respawn_ticks, then waits for nobody within
+# spawn_clear of its anchor; with nobody in the approach box nothing runs but the tick, the drive and the leash.
+def test_a_gone_mega_comes_back_respawn_ticks_after_it_was_first_seen_gone_when_nobody_is_near():
     w = _mine_world()
     _run(w, 500)
     for e in _spawned(w, "steelix"):
         w.entities.remove(e)
+    t_gone = w.gt
     s = SLOTS["steelix"]
     watcher = w.player((s["anchor"][0] + 5.5, 47, s["anchor"][1] + 0.5))
-    _run(w, 1000)
-    assert not _spawned(w, "steelix"), "back before the face restored"
-    _run(w, PERIOD)
+    got = _run(w, RESPAWN - 3 * PASS)
+    assert not _spawned(w, "steelix") and not got, "back before its respawn time"
+    _run(w, 6 * PASS)
     assert not _spawned(w, "steelix"), "spawned beside a player"
     w.entities.remove(watcher)
-    _run(w, 400)
-    assert len(_spawned(w, "steelix")) == 1
+    got = _run(w, 3 * PASS)
+    assert [d for _t, d in got] == ["steelix"], got
+    assert RESPAWN <= got[0][0] - t_gone <= RESPAWN + 12 * PASS, (got, t_gone)
+    far = _mine_world(near=False)
+    far.calls.clear()
+    _run(far, 3 * PASS)
+    assert not [c for c in far.calls if c[0] not in ("%s/tick" % F, "%s/drive" % F, "%s/leash" % F)], far.calls[-3:]
+
+
+# Without it the respawn clock is a farm after all: a restart, or leaving the approach box and coming back, brings a gone
+# Mega back early (contract C14: no action a player can repeat moves a clock a gate relies on). Load sets a den's clock
+# only when it has never been set; only the keeper starts it and only a spawn or a Mega seen in the den clears it.
+def test_neither_a_restart_nor_a_reapproach_brings_a_gone_mega_back_early():
+    w = _mine_world()
+    _run(w, 500)
+    for e in _spawned(w, "excadrill"):
+        w.entities.remove(e)
+    visitor = w.entities[0]
+    t_gone = w.gt
+    got = _run(w, 3 * PASS)
+    for _ in range(10):
+        w.call("%s/load" % F)                                     # a restart: minecraft:load runs again
+        w.entities.remove(visitor)
+        got += _run(w, PASS)
+        w.entities.append(visitor)
+        got += _run(w, PASS)
+    got += _run(w, RESPAWN - (w.gt - t_gone) - 3 * PASS)
+    assert not [d for _t, d in got if d == "excadrill"], got
+    got = _run(w, 8 * PASS)
+    assert [d for _t, d in got] == ["excadrill"], got
 
 
 # Without it two copies of a Mega roam at once (a spawn that raced a slow entity load): the keeper kills the extra.
@@ -694,12 +582,13 @@ def test_the_offered_and_left_out_stones_are_the_jars_ninety_two(jar_dir):
     assert offered <= set(stones)
 
 
-# Without it crafting stays at one raw stone (decision 5A: "a crafted stone takes 4 raw stones, the species item, iron
-# and a diamond"), a recipe loses its species item or its diamond on the way, or its result changes: every one of the
-# 92 recipes, written at the jar's own path, holds the raw stone 4 times and everything else exactly as the jar has it.
+# Without it crafting stays at one raw stone (decision 5A: "a crafted stone takes [the Cutters' count of] raw stones,
+# the species item, iron and a diamond"; SOUTHERN_RIFT_MEGA.md 13: "The keyed-stone recipe therefore takes 2 raw
+# stones"), a recipe loses its species item or its diamond on the way, or its result changes: every one of the 92
+# recipes, written at the jar's own path, holds the raw stone twice and everything else exactly as the jar has it.
 # And the generator writes nothing outside build/datapacks/cobblers_mega_recipes (the jar's content is not
 # MIT-style: never committed), which git ignores.
-def test_the_recipe_generator_raises_every_stone_to_four_raw_and_writes_only_under_build(jar_dir, monkeypatch):
+def test_the_recipe_generator_raises_every_stone_to_two_raw_and_writes_only_under_build(jar_dir, monkeypatch):
     import mega_recipes as MR
     written = []
     real_write, real_mkdir, real_rmtree = Path.write_text, Path.mkdir, shutil.rmtree
@@ -741,7 +630,7 @@ def test_the_recipe_generator_raises_every_stone_to_four_raw_and_writes_only_und
             return out_
         want = counts(jar)
         assert want.get("mega_showdown:mega_stone") == 1, (sid, want)
-        want["mega_showdown:mega_stone"] = 4
+        want["mega_showdown:mega_stone"] = 2
         assert counts(got) == want, (sid, counts(got), want)
         assert got["result"] == jar["result"] and got["type"] == jar["type"] == "minecraft:crafting_shaped", sid
         assert len(got["pattern"]) == 3 and all(len(r) == 3 for r in got["pattern"]), sid
@@ -939,4 +828,4 @@ def test_each_megas_anchor_is_a_floor_cell_with_its_head_room_in_its_hall(built)
         assert all(fin.get((x, yy, z)) == "minecraft:air" for yy in range(y, y + s["head_room"])), s["id"]
         under = fin.get((x, y - 1, z))
         assert under is not None and under != "minecraft:air", (s["id"], under)
-        assert "spawnpokemonat %d %d %d %s" % (x, y, z, s["species"]) in "\n".join(fns["megas/spawn_%s" % s["id"]])
+        assert "megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\"," % (x, y, z, s["species"]) in "\n".join(fns["megas/spawn_%s" % s["id"]])

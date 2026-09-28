@@ -707,7 +707,33 @@ def _gulch_ward(gate):
     return _position(files["advancement/gulch_mine/gate_ward.json"]), plug + grille
 
 
-WARD_BUILDERS = {"rift_mines.json:mine.tease": _tease_ward, "gulch_mine.json:gate": _gulch_ward}
+def _gulch_faces_ward(faces):
+    """[(each face's generated ward, its box)]: the per-tick Mining Fatigue selector of the keeper's tick (SOUTHERN_RIFT_
+    MEGA.md 13: the faces are scenery, warded for good), read as the block cuboid the player's feet are tested in."""
+    import gulch_mine as GM
+    spec = _load("gulch_mine.json")
+    spec["faces"] = faces
+    for s in spec["megas"]["slots"]:
+        s["_anchor"] = [s["anchor"][0], 47, s["anchor"][1]]
+    tick = GM.keeper_files(types.SimpleNamespace(spec=spec))["tick"]
+    out = []
+    for f in spec["mine"]["faces"]:
+        b = f["box"]
+        hits = []
+        for ln in tick:
+            m = re.match(r"execute as @a\[x=(-?\d+),y=(-?\d+),z=(-?\d+),dx=(\d+),dy=(\d+),dz=(\d+),.*mining_fatigue", ln)
+            if m:
+                x, y, z, dx, dy, dz = (int(v) for v in m.groups())
+                if x <= b[0] and b[3] <= x + dx and y <= b[1] and b[4] <= y + dy and z <= b[2] and b[5] <= z + dz:
+                    hits.append({"x": {"min": x, "max": x + dx + 1}, "y": {"min": y, "max": y + dy + 1},
+                                 "z": {"min": z, "max": z + dz + 1}})
+        assert hits, "face %s has no ward in the tick" % f["id"]
+        out.append((min(hits, key=lambda p: p["x"]["max"] - p["x"]["min"]), _cells(b)))
+    return out
+
+
+WARD_BUILDERS = {"rift_mines.json:mine.tease": _tease_ward, "gulch_mine.json:gate": _gulch_ward,
+                 "gulch_mine.json:faces": _gulch_faces_ward}
 
 
 def _cells(b):
@@ -721,9 +747,10 @@ def _cells(b):
 @pytest.mark.parametrize("where,ward", _params("C6", [(w, (w, o)) for w, o in _wards()]))
 def test_contract_c6_no_player_outside_a_ward_can_reach_what_it_guards(where, ward):
     assert where in WARD_BUILDERS, "a ward at data/%s has no builder in this contract" % where
-    pos, guard = WARD_BUILDERS[where](ward)
-    reached = _reach_from_outside(pos, guard)
-    assert not reached, sorted(reached)[:3]
+    built = WARD_BUILDERS[where](ward)
+    for pos, guard in (built if isinstance(built, list) else [built]):
+        reached = _reach_from_outside(pos, guard)
+        assert not reached, sorted(reached)[:3]
 
 
 # Without it the reach check could pass whatever the ward: the margin of 4 the spur's gate first shipped with (c9cb850)
@@ -752,9 +779,11 @@ def _reach_from_outside(pos, protect):
 
 
 # Without it the contract above passes on nothing when a ward's keys are renamed, or still tests a retired one: the
-# built wards are the gulch gate's and the seam's (the spur's company gate is retired, 72f8ddb).
+# built wards are the gulch gate's, the gulch's crystal faces' (scenery warded for good, SOUTHERN_RIFT_MEGA.md 13) and
+# the seam's (the spur's company gate is retired, 72f8ddb).
 def test_contract_c6_the_ward_list_is_the_built_wards():
-    assert sorted(w for w, _o in _wards()) == ["gulch_mine.json:gate", "rift_mines.json:mine.tease"], _wards()
+    assert sorted(w for w, _o in _wards()) == ["gulch_mine.json:faces", "gulch_mine.json:gate",
+                                               "rift_mines.json:mine.tease"], _wards()
 
 
 # =================================================================================================================

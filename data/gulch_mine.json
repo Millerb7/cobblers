@@ -1,21 +1,22 @@
 {
   "schema": "cobblers.gulch_mine/1",
-  "status": "generated on the branch world/gulch-prototype, 2026-09-27; built offline only: not installed, not in any world, not seen in game",
+  "status": "generated offline; the prototype slice (2026-09-27) redesigned to the owner's section 13 (2026-09-28): the rockslide wall, the Mega farms and their drop roll, the 2-stone price, the faces as warded scenery, the cove town. Built offline only: not installed, not in any world, not seen in game",
   "builder": "tools/gulch_mine.py",
   "audit": "tools/gulch_mine_audit.py",
-  "recipes": "tools/mega_recipes.py (the 92 stone recipes raised to 4 raw stones, generated from the local jar into build/, never committed: the Mega Showdown licence is not MIT-style)",
+  "recipes": "tools/mega_recipes.py (the 92 stone recipes raised to cutters.offer.raw_count raw stones, generated from the local jar into build/, never committed: the Mega Showdown licence is not MIT-style)",
   "design": [
     "docs/world-building/SOUTHERN_RIFT_MEGA.md section 10 (the prototype slice) and section 11 (the owner's twelve decisions, 2026-09-27, all at the recommendations)",
     "docs/mechanics/STONE_ECONOMY.md 5.3-5.4 (restoring faces: on approach, filtered fill, guarded setblocks, occupancy guard)",
     "docs/mechanics/RIFT_ZONES.md section 4 (the zone check)",
-    "tools/rift_mines.py (the gate, the ward, the rock house and the shell, whose pattern this follows)"
+    "tools/rift_mines.py (the gate, the ward, the rock house and the shell, whose pattern this follows)",
+    "docs/world-building/SOUTHERN_RIFT_MEGA.md section 13 (the owner's redesign, 2026-09-27): the gate to the crag tops, the Megas as the currency's source, 2 raw stones, the faces unmineable, the cove town"
   ],
   "seed": 20260928,
   "grid": {
-    "x": [4250, 4500],
+    "x": [4228, 4500],
     "z": [4640, 4970],
-    "y": [36, 140],
-    "why": "every block this build writes: the gate at the gulch_mouth gap (x4355-4395), the road down to the floor, the square and yard, the Tally Hall and the Cutting Floor with its two faces (to x4483); y from under the Cutting Floor's shell to over the rockfall"
+    "y": [36, 205],
+    "why": "every block this build writes: the rockslide wall at the gulch_mouth gap (x4345-4400, up to its crest at the crag tops, y194), the road down to the floor, the cove town, the Tally Hall and the Cutting Floor with its two faces (to x4483); y from under the Cutting Floor's shell to over the wall"
   },
   "cover_min": 4,
   "cover_why": "the repo's minimum rock over a cavern's shell (data/rift_mines.json cover_min, tools/vr_caves.py); SOUTHERN_RIFT_MEGA.md 5 wants 9 under the gulch floor, which both halls exceed (the generator's report)",
@@ -45,6 +46,8 @@
     "meteorid_brick": "mega_showdown:mega_meteorid_brick",
     "dormant_crystal": "mega_showdown:dormant_crystal",
     "mega_stone_crystal": "mega_showdown:mega_stone_crystal",
+    "spoil": ["minecraft:gravel", "minecraft:tuff", "minecraft:cobbled_deepslate", "minecraft:gravel", "minecraft:andesite", "minecraft:cobblestone"],
+    "ore": ["minecraft:raw_iron_block", "minecraft:raw_copper_block", "minecraft:coal_block", "minecraft:gravel", "minecraft:tuff"],
     "post": "minecraft:polished_basalt",
     "beam": "minecraft:waxed_cut_copper",
     "msd_source": "read 2026-09-27 with Python zipfile from mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar, SHA-1 50b2012b5207706fd93d42dfad73f94aa294c7a2 (the hash modpack/manifest/overlay.json pins), a client profile copy: blockstates mega_meteorid_block, mega_meteorid_radiated_block, polished_mega_meteorid_block, chiseled_mega_meteorid_brick, mega_meteorid_brick (no properties), dormant_crystal (facing: 6 ways), mega_stone_crystal (facing: north, south, west, east)",
@@ -147,8 +150,16 @@
     "why": "decision 3: the gulch is entered through the gulch_mouth canyon (data/rift_sculpt.json). The sculpt left a 89-point gap in the raised rim there (ring index +-44 round the entrance) with a ramp down to the floor; a rockfall now fills the gap along the lip, and the Gulch lookout's grille stands in its middle. A player holding the flag who steps into the alcove in front of the grille is put through; nobody else is, and the zone check turns back anyone without the flag found anywhere in the gulch zone: over the rockfall, down a cliff, or up the stem from Victory Road",
     "band": {
       "entrance": "gulch_mouth",
-      "height": 7,
-      "min_rise": 3,
+      "wall": {
+        "top": [194, 186],
+        "core": 2,
+        "spread_out": 8,
+        "spread_in": 1,
+        "batter": 3,
+        "jag": 4,
+        "min_rise": 3,
+        "why": "SOUTHERN_RIFT_MEGA.md 13, the owner after the gate test: the rockfall read as passable at y122, below the gap's walls, so it becomes a rockslide wall filling the gulch mouth to the crag tops. `top` is the crest at the gap's two ends, j = -44 and +44: the rim's highest ground within 16 outward of the first ring point beyond each end (j -45: y194; j +45: y186; derived/rift_sculpt/plan.json and the canonical heightmap, 2026-09-28), joined in a line across the gap. Each ring point claims the columns within 1 of its point moved d = -spread_out .. spread_in along its inward normal; a column's top is the crest less a jag of 0..jag-1, less `batter` per block outward past `core` (the talus on the plateau side); the inward side stays steep, so the road, the arrival and the exit box behind it stay clear. A crag column already higher is left alone; any other stands at least min_rise over its ground"
+      },
       "why": "every ring point of the sculpt's gap (j = -44..44 from the entrance's ring index), with its inward normal, as `trace` prints it from derived/rift_sculpt/plan.json. Each claims the columns within 1 of its point moved -1, 0 and +1 along the normal (geometry.band): a band 4 to 6 wide along the lip. The rockfall stands on each column's ground (or the road) up to its ring point's ground + height, and at least min_rise over the column's own ground; outside the gap the sculpt raised the rim into crags (rift_heightmap.py, `open_at`), which are the barrier there",
       "points": [
         [-44, 4357, 4662, -0.9854, 0.1705],
@@ -246,8 +257,8 @@
       "half_j": 6,
       "max_x": 4362,
       "trim_z": [4703, 4709],
-      "top_y": 122,
-      "why": "the band's columns with |j| <= 6 are the plug, the gatehouse's solid rock: flat topped at y122 (the road's surface at the grille, y115, + 7), and, in the rows z4703-4709 round the grille, trimmed to x <= 4362 so its outer face is one plane and the grille stands in it (the band is still 4 wide there). Elsewhere the band keeps its full width, so every ring point of the gap stays under rock. A band column whose own ground already stands higher than its ring point's rock (a crag) is left alone"
+      "top_y": 190,
+      "why": "the wall's columns with |j| <= 6 are the plug, the gatehouse's solid rock, flat topped at the crest there (y190, the wall's crest line at j = 0); in the rows z4703-4709 round the grille every plug column east of x4362 is left out, so the grille stands in the plug's one flat face at the end of a 7-wide slot through the outer talus, the road and the knock alcove in it. Elsewhere the wall keeps its full width, so every ring point of the gap stays under rock"
     },
     "grille": {
       "x": 4362,
@@ -266,9 +277,9 @@
     "arrive": [4349.5, 111, 4706.5, 90],
     "turn_back": [4370.5, 119, 4706.5, -90],
     "places_why": "boxes are [x0, y0, z0, x1, y1, z1], feet levels on the road's surface: the knock alcove directly outside the grille (road y115-116), the exit box just behind the rockfall (road y111-112), the arrival 4 blocks further in and facing down the road (yaw 90, west), the turn-back point 8 outside facing away (yaw -90, east)",
-    "ward": [4350, 103, 4692, 4372, 129, 4720],
+    "ward": [4350, 106, 4689, 4377, 197, 4720],
     "ward_margin": 7,
-    "ward_why": "the plug's columns (x4357-4362, z4699-4713, y111-122), the grille and the knock alcove, grown by 7 on every side: the test author showed margin 4 was reachable at the spur's gate (reach 4.5 from the eyes, 1.62 over the feet the box tests); 7 keeps the plug beyond reach from beside and below. Anyone in survival or adventure inside it has Mining Fatigue IV (the spur gate's ward, the owner's 'i can mine around the door')",
+    "ward_why": "the plug's columns (x4358-4370, z4696-4713, y114 over their lowest ground to the wall's crest at y190), the grille and the knock alcove, grown by 7 on every side: the test author showed margin 4 was reachable at the spur's gate (reach 4.5 from the eyes, 1.62 over the feet the box tests); 7 keeps the plug beyond reach from beside and below. Anyone in survival or adventure inside it has Mining Fatigue IV (the spur gate's ward, the owner's 'i can mine around the door'). The arrival (x4349.5) stands just outside it",
     "lamp_posts": [[4367, 4703], [4367, 4709], [4351, 4703], [4351, 4709]],
     "outside_ok": [4340, 4650, 4400, 4760],
     "outside_why": "the only built columns allowed outside the zone: the rockfall, the plug's outer face, the grille, the road above the gate and its lamp posts (the generator's zone check; the audit checks the same list block by block)",
@@ -322,8 +333,120 @@
       }
     ]
   },
+  "cove": {
+    "why": "SOUTHERN_RIFT_MEGA.md 13, the owner: the town fills the whole cove, in sections of workers, miners and extractors (a workers' quarter; a miners' camp with headframes, winches and spoil heaps; an extraction works with ore piles, sluices and crushers), the Cutters' workshop at its heart (the square and the yard's three houses, unchanged), laid out by accretion following the cove's shape, not a grid. A rock town as section 4 asks: no timber (basalt, deepslate, tuff, copper). `buildings` and `lamp_posts` are written by `python tools/gulch_mine.py layout` from the rest of this record (deterministic from `seed`) and pasted here; `build` reads only them",
+    "seed": 20260929,
+    "max_ground": 96,
+    "max_range": 3,
+    "max_range_open": 5,
+    "zone_margin": 3,
+    "alley": [2, 4],
+    "clear": {"square": 2, "road": 3},
+    "limits_why": "the cove is the gulch floor: zone columns (by zone_margin inside the zone) whose ground is at or under y96, less the square, the yard, the adit's portal, the gate's wall and ward and the lamp posts (grown by clear.square), and the road (grown by clear.road). A house stands on ground spanning at most max_range (its floor at the highest, a footing under it, steps down from its door); an open work (a headframe, a heap, a pile, a sluice) at most max_range_open. Buildings keep an alley of alley[0]..alley[1] between them",
+    "paths": [
+      {"id": "crater_cutting", "path": [[4337, 4830, 88], [4372, 4829, 88], [4408, 4822, 88]], "half": 2, "clear_above": 3,
+       "why": "the east of the cove is a sunken floor at y88-89 inside a rim that stands at y97-102 on the square's side and drops 14 in a block or two to the floor (the heightmap, 2026-09-28): no walker climbs out, none steps in. A level cutting 5 wide at y88 from the square's east edge through the rim onto the floor, as the gate's road is rasterised (geometry.road); its walls are the rim's own rock. It stays clear of the Cutting Floor (43 from its centre where it meets the floor, the hall's reach 41)"}
+    ],
+    "walls": ["minecraft:deepslate_bricks", "minecraft:tuff_bricks", "minecraft:polished_tuff", "minecraft:cobbled_deepslate", "minecraft:stone_bricks", "minecraft:polished_andesite"],
+    "sections": [
+      {"id": "heart", "name": "the Cutters' lapidaries", "seeds": [[4352, 4842], [4262, 4858]],
+       "kinds": [{"kind": "lapidary", "count": 4, "size": [8, 10, 11, 14], "wall_height": [5, 6]}],
+       "why": "round the square and the Cutters' workshop: the bench masters' own shops"},
+      {"id": "workers", "name": "the workers' quarter", "seeds": [[4246, 4884], [4300, 4800], [4250, 4830], [4262, 4775]],
+       "kinds": [{"kind": "canteen", "count": 1, "size": [11, 13, 15, 19], "wall_height": [5, 6]},
+                 {"kind": "washhouse", "count": 2, "size": [7, 8, 9, 11]},
+                 {"kind": "dwelling", "count": 24, "size": [7, 9, 9, 12]}],
+       "why": "the west of the cove and the road's foot: where the company's people live"},
+      {"id": "miners", "name": "the miners' camp", "seeds": [[4392, 4790], [4432, 4800], [4414, 4826], [4456, 4815]],
+       "kinds": [{"kind": "headframe", "count": 4, "size": [5, 5, 5, 5], "height": [14, 19], "scatter": true},
+                 {"kind": "winch", "count": 4, "size": [7, 8, 8, 10]},
+                 {"kind": "spoil_heap", "count": 6, "size": [9, 13, 9, 13], "height": [4, 7]},
+                 {"kind": "toolshed", "count": 3, "size": [7, 9, 9, 11]},
+                 {"kind": "dwelling", "count": 7, "size": [7, 9, 9, 12]}],
+       "why": "the sunken east floor of the cove, over the Cutting Floor (its roof 13 under the ground there), entered by the cutting (paths). The narrow floor north of the gate is left alone: no walker reaches it from the town"},
+      {"id": "extraction", "name": "the extraction works", "seeds": [[4382, 4886], [4420, 4880], [4452, 4860], [4412, 4840]],
+       "kinds": [{"kind": "crusher", "count": 3, "size": [11, 13, 13, 17], "wall_height": [6, 7]},
+                 {"kind": "sorting", "count": 3, "size": [9, 11, 11, 14]},
+                 {"kind": "sluice", "count": 4, "size": [3, 3, 13, 19]},
+                 {"kind": "ore_pile", "count": 10, "size": [5, 7, 5, 7], "height": [2, 4]},
+                 {"kind": "spoil_heap", "count": 3, "size": [9, 11, 9, 11], "height": [4, 6]}],
+       "why": "the south-east floor by the adit's end: where the stone that comes up is crushed, washed and sorted"}
+    ],
+    "buildings": [
+      {"id": "heart_lapidary_1", "section": "heart", "kind": "lapidary", "rect": [4262, 4854, 4270, 4867], "door": "east", "walls": "minecraft:polished_andesite", "wall_height": 5},
+      {"id": "heart_lapidary_2", "section": "heart", "kind": "lapidary", "rect": [4256, 4841, 4264, 4851], "door": "south", "walls": "minecraft:tuff_bricks", "wall_height": 6},
+      {"id": "heart_lapidary_3", "section": "heart", "kind": "lapidary", "rect": [4347, 4836, 4358, 4844], "door": "west", "walls": "minecraft:stone_bricks", "wall_height": 5},
+      {"id": "heart_lapidary_4", "section": "heart", "kind": "lapidary", "rect": [4343, 4849, 4350, 4861], "door": "north", "walls": "minecraft:tuff_bricks", "wall_height": 5},
+      {"id": "workers_canteen_1", "section": "workers", "kind": "canteen", "rect": [4292, 4794, 4302, 4811], "door": "south", "walls": "minecraft:polished_andesite", "wall_height": 6},
+      {"id": "workers_washhouse_1", "section": "workers", "kind": "washhouse", "rect": [4277, 4801, 4287, 4807], "door": "east", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "workers_washhouse_2", "section": "workers", "kind": "washhouse", "rect": [4307, 4804, 4316, 4811], "door": "west", "walls": "minecraft:tuff_bricks", "wall_height": 4},
+      {"id": "workers_dwelling_1", "section": "workers", "kind": "dwelling", "rect": [4306, 4788, 4314, 4796], "door": "west", "walls": "minecraft:polished_andesite", "wall_height": 4},
+      {"id": "workers_dwelling_2", "section": "workers", "kind": "dwelling", "rect": [4264, 4796, 4274, 4803], "door": "east", "walls": "minecraft:cobbled_deepslate", "wall_height": 5},
+      {"id": "workers_dwelling_3", "section": "workers", "kind": "dwelling", "rect": [4272, 4781, 4278, 4791], "door": "south", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
+      {"id": "workers_dwelling_4", "section": "workers", "kind": "dwelling", "rect": [4259, 4808, 4267, 4816], "door": "north", "walls": "minecraft:polished_andesite", "wall_height": 5},
+      {"id": "workers_dwelling_5", "section": "workers", "kind": "dwelling", "rect": [4319, 4797, 4325, 4808], "door": "west", "walls": "minecraft:tuff_bricks", "wall_height": 4},
+      {"id": "workers_dwelling_6", "section": "workers", "kind": "dwelling", "rect": [4263, 4821, 4270, 4829], "door": "north", "walls": "minecraft:polished_tuff", "wall_height": 4},
+      {"id": "workers_dwelling_7", "section": "workers", "kind": "dwelling", "rect": [4250, 4824, 4258, 4833], "door": "east", "walls": "minecraft:polished_tuff", "wall_height": 4},
+      {"id": "workers_dwelling_8", "section": "workers", "kind": "dwelling", "rect": [4330, 4799, 4339, 4807], "door": "west", "walls": "minecraft:polished_tuff", "wall_height": 4},
+      {"id": "workers_dwelling_9", "section": "workers", "kind": "dwelling", "rect": [4344, 4801, 4352, 4812], "door": "west", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "workers_dwelling_10", "section": "workers", "kind": "dwelling", "rect": [4267, 4834, 4275, 4842], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "workers_dwelling_11", "section": "workers", "kind": "dwelling", "rect": [4327, 4786, 4334, 4794], "door": "south", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "workers_dwelling_12", "section": "workers", "kind": "dwelling", "rect": [4349, 4815, 4360, 4822], "door": "north", "walls": "minecraft:stone_bricks", "wall_height": 5},
+      {"id": "workers_dwelling_13", "section": "workers", "kind": "dwelling", "rect": [4292, 4783, 4300, 4789], "door": "south", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "workers_dwelling_14", "section": "workers", "kind": "dwelling", "rect": [4305, 4779, 4313, 4785], "door": "west", "walls": "minecraft:polished_andesite", "wall_height": 4},
+      {"id": "workers_dwelling_15", "section": "workers", "kind": "dwelling", "rect": [4295, 4770, 4301, 4778], "door": "south", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
+      {"id": "miners_headframe_1", "section": "miners", "kind": "headframe", "rect": [4393, 4785, 4397, 4789], "height": 18},
+      {"id": "miners_headframe_2", "section": "miners", "kind": "headframe", "rect": [4426, 4797, 4430, 4801], "height": 19},
+      {"id": "miners_headframe_3", "section": "miners", "kind": "headframe", "rect": [4456, 4810, 4460, 4814], "height": 16},
+      {"id": "miners_headframe_4", "section": "miners", "kind": "headframe", "rect": [4393, 4778, 4397, 4782], "height": 15},
+      {"id": "miners_winch_1", "section": "miners", "kind": "winch", "rect": [4380, 4780, 4388, 4787], "door": "east", "walls": "minecraft:polished_andesite", "wall_height": 5},
+      {"id": "miners_winch_2", "section": "miners", "kind": "winch", "rect": [4388, 4768, 4395, 4775], "door": "south", "walls": "minecraft:cobbled_deepslate", "wall_height": 5},
+      {"id": "miners_winch_3", "section": "miners", "kind": "winch", "rect": [4386, 4794, 4395, 4801], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "miners_winch_4", "section": "miners", "kind": "winch", "rect": [4402, 4781, 4409, 4789], "door": "west", "walls": "minecraft:deepslate_bricks", "wall_height": 4},
+      {"id": "miners_spoil_heap_1", "section": "miners", "kind": "spoil_heap", "rect": [4407, 4794, 4416, 4803], "height": 7},
+      {"id": "miners_spoil_heap_2", "section": "miners", "kind": "spoil_heap", "rect": [4424, 4805, 4435, 4816], "height": 4},
+      {"id": "miners_spoil_heap_3", "section": "miners", "kind": "spoil_heap", "rect": [4439, 4812, 4451, 4823], "height": 4},
+      {"id": "miners_spoil_heap_4", "section": "miners", "kind": "spoil_heap", "rect": [4373, 4767, 4385, 4777], "height": 5},
+      {"id": "miners_spoil_heap_5", "section": "miners", "kind": "spoil_heap", "rect": [4368, 4782, 4376, 4792], "height": 4},
+      {"id": "miners_spoil_heap_6", "section": "miners", "kind": "spoil_heap", "rect": [4455, 4817, 4466, 4827], "height": 4},
+      {"id": "miners_toolshed_1", "section": "miners", "kind": "toolshed", "rect": [4461, 4832, 4469, 4841], "door": "north", "walls": "minecraft:tuff_bricks", "wall_height": 4},
+      {"id": "miners_toolshed_2", "section": "miners", "kind": "toolshed", "rect": [4415, 4813, 4421, 4823], "door": "east", "walls": "minecraft:stone_bricks", "wall_height": 4},
+      {"id": "miners_toolshed_3", "section": "miners", "kind": "toolshed", "rect": [4419, 4827, 4427, 4835], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "miners_dwelling_1", "section": "miners", "kind": "dwelling", "rect": [4447, 4830, 4457, 4838], "door": "north", "walls": "minecraft:deepslate_bricks", "wall_height": 4},
+      {"id": "miners_dwelling_2", "section": "miners", "kind": "dwelling", "rect": [4467, 4845, 4478, 4852], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
+      {"id": "miners_dwelling_3", "section": "miners", "kind": "dwelling", "rect": [4456, 4850, 4464, 4858], "door": "east", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
+      {"id": "miners_dwelling_4", "section": "miners", "kind": "dwelling", "rect": [4412, 4773, 4420, 4784], "door": "west", "walls": "minecraft:stone_bricks", "wall_height": 4},
+      {"id": "miners_dwelling_5", "section": "miners", "kind": "dwelling", "rect": [4450, 4800, 4458, 4807], "door": "south", "walls": "minecraft:tuff_bricks", "wall_height": 5},
+      {"id": "miners_dwelling_6", "section": "miners", "kind": "dwelling", "rect": [4370, 4795, 4381, 4801], "door": "east", "walls": "minecraft:stone_bricks", "wall_height": 5},
+      {"id": "miners_dwelling_7", "section": "miners", "kind": "dwelling", "rect": [4482, 4839, 4488, 4847], "door": "west", "walls": "minecraft:polished_andesite", "wall_height": 4},
+      {"id": "extraction_crusher_1", "section": "extraction", "kind": "crusher", "rect": [4378, 4880, 4388, 4896], "door": "west", "walls": "minecraft:stone_bricks", "wall_height": 7},
+      {"id": "extraction_crusher_2", "section": "extraction", "kind": "crusher", "rect": [4382, 4901, 4398, 4912], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 6},
+      {"id": "extraction_crusher_3", "section": "extraction", "kind": "crusher", "rect": [4393, 4874, 4405, 4886], "door": "west", "walls": "minecraft:polished_tuff", "wall_height": 7},
+      {"id": "extraction_sorting_1", "section": "extraction", "kind": "sorting", "rect": [4394, 4915, 4407, 4925], "door": "north", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
+      {"id": "extraction_sorting_2", "section": "extraction", "kind": "sorting", "rect": [4381, 4922, 4391, 4933], "door": "east", "walls": "minecraft:stone_bricks", "wall_height": 5},
+      {"id": "extraction_sorting_3", "section": "extraction", "kind": "sorting", "rect": [4364, 4893, 4374, 4904], "door": "east", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
+      {"id": "extraction_sluice_1", "section": "extraction", "kind": "sluice", "rect": [4377, 4915, 4390, 4917], "head": "low"},
+      {"id": "extraction_sluice_2", "section": "extraction", "kind": "sluice", "rect": [4394, 4857, 4396, 4869], "head": "high"},
+      {"id": "extraction_sluice_3", "section": "extraction", "kind": "sluice", "rect": [4370, 4908, 4372, 4921], "head": "low"},
+      {"id": "extraction_sluice_4", "section": "extraction", "kind": "sluice", "rect": [4403, 4889, 4419, 4891], "head": "high"},
+      {"id": "extraction_ore_pile_1", "section": "extraction", "kind": "ore_pile", "rect": [4380, 4938, 4384, 4942], "height": 3},
+      {"id": "extraction_ore_pile_2", "section": "extraction", "kind": "ore_pile", "rect": [4395, 4889, 4400, 4893], "height": 4},
+      {"id": "extraction_ore_pile_3", "section": "extraction", "kind": "ore_pile", "rect": [4369, 4878, 4374, 4882], "height": 3},
+      {"id": "extraction_ore_pile_4", "section": "extraction", "kind": "ore_pile", "rect": [4367, 4924, 4373, 4930], "height": 3},
+      {"id": "extraction_ore_pile_5", "section": "extraction", "kind": "ore_pile", "rect": [4415, 4874, 4419, 4880], "height": 3},
+      {"id": "extraction_ore_pile_6", "section": "extraction", "kind": "ore_pile", "rect": [4378, 4872, 4382, 4877], "height": 2},
+      {"id": "extraction_ore_pile_7", "section": "extraction", "kind": "ore_pile", "rect": [4417, 4895, 4421, 4899], "height": 4},
+      {"id": "extraction_ore_pile_8", "section": "extraction", "kind": "ore_pile", "rect": [4354, 4901, 4359, 4906], "height": 2},
+      {"id": "extraction_ore_pile_9", "section": "extraction", "kind": "ore_pile", "rect": [4408, 4894, 4412, 4900], "height": 3},
+      {"id": "extraction_ore_pile_10", "section": "extraction", "kind": "ore_pile", "rect": [4355, 4910, 4360, 4915], "height": 3},
+      {"id": "extraction_spoil_heap_1", "section": "extraction", "kind": "spoil_heap", "rect": [4410, 4905, 4420, 4915], "height": 5},
+      {"id": "extraction_spoil_heap_2", "section": "extraction", "kind": "spoil_heap", "rect": [4424, 4885, 4433, 4894], "height": 4},
+      {"id": "extraction_spoil_heap_3", "section": "extraction", "kind": "spoil_heap", "rect": [4380, 4861, 4389, 4869], "height": 6}
+    ],
+    "lamp_posts": [[4272, 4863], [4345, 4843], [4349, 4847], [4300, 4813], [4289, 4807], [4305, 4810], [4304, 4795], [4278, 4793], [4266, 4806], [4269, 4819], [4260, 4831], [4328, 4806], [4342, 4809], [4274, 4832], [4333, 4796], [4357, 4813], [4299, 4791], [4303, 4785], [4390, 4786], [4393, 4792], [4400, 4788], [4468, 4830], [4423, 4821], [4426, 4825], [4475, 4843], [4466, 4857], [4383, 4801], [4480, 4846], [4376, 4891], [4393, 4899], [4391, 4883], [4403, 4913], [4393, 4930], [4376, 4901]]
+  },
   "cutters": {
-    "why": "decision 5A: three bench masters whose trades turn 4 raw mega stones and a diamond into a keyed stone, unlimited, nothing bought back; decision 11: only the 60 stones whose Pokemon can be had here (SOUTHERN_RIFT_MEGA.md 7.3), split by generation so no list is unreadably long. Vanilla villagers placed the way tools/traders.py places the clerks (force-load, wait 40 ticks, summon tagged, keep one per spot 100 ticks later), NoAI, invulnerable, masons at master level so they neither level nor lose their trade",
+    "why": "decision 5A: three bench masters whose trades turn raw mega stones (cutters.offer.raw_count) and a diamond into a keyed stone, unlimited, nothing bought back; decision 11: only the 60 stones whose Pokemon can be had here (SOUTHERN_RIFT_MEGA.md 7.3), split by generation so no list is unreadably long. Vanilla villagers placed the way tools/traders.py places the clerks (force-load, wait 40 ticks, summon tagged, keep one per spot 100 ticks later), NoAI, invulnerable, masons at master level so they neither level nor lose their trade",
     "format_source": "the villager's saved trade list read from the vanilla 1.21.1 jar (version.json id 1.21.1, data pack format 48; a client copy with Python zipfile, 2026-09-27): the villager saves Offers, Xp and VillagerData; Offers holds Recipes (a list); each offer's codec fields are buy, buyB, sell, uses, maxUses (int), rewardExp (bool), specialPrice, demand, priceMultiplier (float), xp; buy and buyB are an item cost {id, count, components}. The format is read from the jar; that a placed villager trades with it in game is proof M-6, not run",
     "hero_note": "vanilla's Hero of the Village discount lowers a trade's first cost by at least one whatever priceMultiplier says; it comes only from defending a village raid, and the pack's MobsBeGone removes every raider (docs/STATE.md, No vanilla hostiles), so it cannot arise here. ASSUMED, not tested",
     "tag": "cobblers_cutter",
@@ -331,11 +454,11 @@
     "villager_type": "minecraft:plains",
     "offer": {
       "raw": "mega_showdown:mega_stone",
-      "raw_count": 4,
+      "raw_count": 2,
       "fee": "minecraft:diamond",
       "fee_count": 1,
       "max_uses": 2147483647,
-      "why": "decision 6: 4 raw per stone (SOUTHERN_RIFT_MEGA.md 7.5); the diamond is the recipe's own; max_uses is the largest int, so a trade never locks (a NoAI villager never restocks)"
+      "why": "SOUTHERN_RIFT_MEGA.md 13, the owner: \"a player should take an hour to get a mega mon ish\": about 12 Mega wins an hour at 15% is 1.8 raw stones, so a keyed stone takes 2 raw stones (4 before); the diamond is the recipe's own; max_uses is the largest int, so a trade never locks (a NoAI villager never restocks). Both numbers are data, re-set once a real fight is timed"
     },
     "benches": [
       {
@@ -346,9 +469,9 @@
         "customer": [4293, 89, 4901],
         "stones": ["mega_showdown:venusaurite", "mega_showdown:charizardite_x", "mega_showdown:charizardite_y", "mega_showdown:blastoisinite",
                    "mega_showdown:beedrillite", "mega_showdown:pidgeotite", "mega_showdown:raichunite_x", "mega_showdown:raichunite_y",
-                   "mega_showdown:gengarite", "mega_showdown:starminite", "mega_showdown:gyaradosite", "mega_showdown:dragoninite",
-                   "mega_showdown:meganiumite", "mega_showdown:feraligite", "mega_showdown:ampharosite", "mega_showdown:scizorite",
-                   "mega_showdown:heracronite", "mega_showdown:steelixite", "mega_showdown:houndoominite", "mega_showdown:skarmorite"]
+                   "mega_showdown:gengarite", "mega_showdown:starminite", "mega_showdown:gyaradosite", "mega_showdown:dragoninite", "mega_showdown:meganiumite",
+                   "mega_showdown:feraligite", "mega_showdown:ampharosite", "mega_showdown:scizorite", "mega_showdown:heracronite", "mega_showdown:steelixite",
+                   "mega_showdown:houndoominite", "mega_showdown:skarmorite"]
       },
       {
         "id": "bench_2",
@@ -357,10 +480,10 @@
         "yaw": 180,
         "customer": [4300, 89, 4901],
         "stones": ["mega_showdown:sceptilite", "mega_showdown:blazikenite", "mega_showdown:swampertite", "mega_showdown:gardevoirite",
-                   "mega_showdown:sablenite", "mega_showdown:aggronite", "mega_showdown:medichamite", "mega_showdown:sharpedonite",
-                   "mega_showdown:cameruptite", "mega_showdown:altarianite", "mega_showdown:banettite", "mega_showdown:absolite",
-                   "mega_showdown:glalitite", "mega_showdown:metagrossite", "mega_showdown:lopunnite", "mega_showdown:garchompite",
-                   "mega_showdown:galladite", "mega_showdown:froslassite", "mega_showdown:abomasite", "mega_showdown:staraptite"]
+                   "mega_showdown:sablenite", "mega_showdown:aggronite", "mega_showdown:medichamite", "mega_showdown:sharpedonite", "mega_showdown:cameruptite",
+                   "mega_showdown:altarianite", "mega_showdown:banettite", "mega_showdown:absolite", "mega_showdown:glalitite", "mega_showdown:metagrossite",
+                   "mega_showdown:lopunnite", "mega_showdown:garchompite", "mega_showdown:galladite", "mega_showdown:froslassite", "mega_showdown:abomasite",
+                   "mega_showdown:staraptite"]
       },
       {
         "id": "bench_3",
@@ -368,21 +491,20 @@
         "at": [4307, 89, 4903],
         "yaw": 180,
         "customer": [4307, 89, 4901],
-        "stones": ["mega_showdown:audinite", "mega_showdown:excadrite", "mega_showdown:scraftinite", "mega_showdown:chandelurite",
-                   "mega_showdown:golurkite", "mega_showdown:emboarite", "mega_showdown:chesnaughtite", "mega_showdown:delphoxite",
-                   "mega_showdown:greninjite", "mega_showdown:pyroarite", "mega_showdown:meowsticite", "mega_showdown:malamarite",
-                   "mega_showdown:barbaracite", "mega_showdown:hawluchanite", "mega_showdown:crabominite", "mega_showdown:drampanite",
-                   "zamega:golisopite", "mega_showdown:glimmoranite", "zamega:absolitez", "zamega:garchompitez"]
+        "stones": ["mega_showdown:audinite", "mega_showdown:excadrite", "mega_showdown:scraftinite", "mega_showdown:chandelurite", "mega_showdown:golurkite",
+                   "mega_showdown:emboarite", "mega_showdown:chesnaughtite", "mega_showdown:delphoxite", "mega_showdown:greninjite", "mega_showdown:pyroarite",
+                   "mega_showdown:meowsticite", "mega_showdown:malamarite", "mega_showdown:barbaracite", "mega_showdown:hawluchanite",
+                   "mega_showdown:crabominite", "mega_showdown:drampanite", "zamega:golisopite", "mega_showdown:glimmoranite", "zamega:absolitez",
+                   "zamega:garchompitez"]
       }
     ],
     "offered_why": "the 60 of SOUTHERN_RIFT_MEGA.md 7.3: 50 whose line is caught in data/spawns.json at a weight above zero and 10 on the starter screen (modpack/config/cobblemon/starters.json); family links are mainline knowledge (ASSUMED). Each id is a stone in the pinned jars (tools/mega_recipes.py refuses the build if one is not)",
-    "left_out": ["mega_showdown:aerodactylite", "mega_showdown:alakazite", "mega_showdown:chimechite", "mega_showdown:clefablite",
-                 "mega_showdown:diancite", "mega_showdown:dragalgite", "mega_showdown:eelektrossite", "mega_showdown:falinksite",
-                 "mega_showdown:floettite", "mega_showdown:kangaskhanite", "mega_showdown:latiasite", "mega_showdown:latiosite",
-                 "mega_showdown:lucarionite", "mega_showdown:manectite", "mega_showdown:mawilite", "mega_showdown:mewtwonite_x",
-                 "mega_showdown:mewtwonite_y", "mega_showdown:pinsirite", "mega_showdown:salamencite", "mega_showdown:scolipite",
-                 "mega_showdown:scovillainite", "mega_showdown:slowbronite", "mega_showdown:tyranitarite", "mega_showdown:victreebelite",
-                 "zamega:baxcalibrite", "zamega:darkranite", "zamega:heatranite", "zamega:lucarionitez", "zamega:magearnite",
+    "left_out": ["mega_showdown:aerodactylite", "mega_showdown:alakazite", "mega_showdown:chimechite", "mega_showdown:clefablite", "mega_showdown:diancite",
+                 "mega_showdown:dragalgite", "mega_showdown:eelektrossite", "mega_showdown:falinksite", "mega_showdown:floettite",
+                 "mega_showdown:kangaskhanite", "mega_showdown:latiasite", "mega_showdown:latiosite", "mega_showdown:lucarionite", "mega_showdown:manectite",
+                 "mega_showdown:mawilite", "mega_showdown:mewtwonite_x", "mega_showdown:mewtwonite_y", "mega_showdown:pinsirite", "mega_showdown:salamencite",
+                 "mega_showdown:scolipite", "mega_showdown:scovillainite", "mega_showdown:slowbronite", "mega_showdown:tyranitarite",
+                 "mega_showdown:victreebelite", "zamega:baxcalibrite", "zamega:darkranite", "zamega:heatranite", "zamega:lucarionitez", "zamega:magearnite",
                  "zamega:tatsugirinite", "zamega:zeraorite", "zamega:zygardite"],
     "left_out_why": "the 32 of 7.3 for Pokemon nobody can catch here; the Cutters offer none of them (their recipes stay, raised)"
   },
@@ -472,7 +594,6 @@
         "stand": [4475, 53, 4850],
         "crystals": 3,
         "radiated": 8,
-        "offset_ticks": 0,
         "why": "a 7 x 5 x 7 box (245 blocks) of meteorid at the end of its alcove, its west side the face"
       },
       {
@@ -483,28 +604,22 @@
         "stand": [4430, 53, 4805],
         "crystals": 3,
         "radiated": 8,
-        "offset_ticks": 18000,
-        "why": "the same at the north alcove, its south side the face; offset 15 minutes from face A (SOUTHERN_RIFT_MEGA.md 7.6: faces in a hall offset by 15)"
+        "why": "the same at the north alcove, its south side the face"
       }
     ]
   },
   "faces": {
-    "period_ticks": 36000,
-    "period_why": "decision 6: a 30-minute restore (36,000 game ticks), checked only on approach (STONE_ECONOMY.md 5.3: fill fails on unloaded chunks, so a fixed timer would mostly fail silently). Game time is saved with the world, so a restart neither repeats nor loses a restore",
-    "variants": 8,
-    "resettable_tag": "gulch_face_resettable",
-    "resettable": ["minecraft:air", "minecraft:cave_air", "mega_showdown:mega_meteorid_block", "mega_showdown:mega_meteorid_radiated_block",
-                   "mega_showdown:mega_stone_crystal", "minecraft:deepslate", "minecraft:cobbled_deepslate", "minecraft:tuff",
-                   "minecraft:stone", "minecraft:cobblestone", "minecraft:andesite", "minecraft:gravel", "minecraft:torch",
-                   "minecraft:wall_torch", "minecraft:water", "minecraft:lava"],
-    "resettable_why": "STONE_ECONOMY.md 5.4: the restore fills only over this tag and guards every crystal setblock with it, so a chest a player left in the box survives with its contents; the host rock, what a player digs it into (cobble, gravel), torches and fluids are reset. That `fill ... replace #tag` takes a block tag in 1.21.1 is proof P-3, not run",
+    "ward_margin": 7,
+    "why": "SOUTHERN_RIFT_MEGA.md 13: the crystal faces are unmineable scenery. They keep their look (variant 0 of the old restore, built once by the faces pass), the ward holds them permanently (Mining Fatigue IV every tick to any survival or adventure player within ward_margin of a face's box, the gate ward's margin, for the same reach reason) and the restore cycle is retired: no function writes a face after the build",
     "crystal_rule": "3 crystals per restore (decision 6): one on the face's front plane at floor level, facing out, and two hidden at least 2 deep; plus 8 radiated meteorid blocks within 1 of the front. Which cells is a hash of the face, the variant and the cell (geometry.face)"
   },
   "megas": {
     "tag": "cobblers.gm",
+    "farm_tag": "cobblers.gm.farm",
     "leash_every_ticks": 40,
     "spawn_clear": 24,
-    "why": "decision 8: two roaming Megas per worked hall; the Cutting Floor's two are Steelix and Excadrill (SOUTHERN_RIFT_MEGA.md 6.1, lines caught here and clear of the client's broken Mega models). Spawned by the keeper (a function, EXP-042; the Mega string, EXP-036), uncatchable, tagged, PersistenceRequired; leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near); a fainted or killed one is owed again when a face of its hall restores (6.2: they come back with the material) and spawns once nobody stands within spawn_clear of its anchor. Levels are ASSUMED (trainer-balance-designer's): 52-56 for the roaming Megas at a six-badge cap of 50. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
+    "respawn_ticks": 18000,
+    "why": "The Cutting Floor's two Megas (decision 8) and the farms' dens (farms[].dens) share one keeper: spawned through the macro spawn_at (EXP-046: a plain spawnpokemonat line parsed at server start does nothing), uncatchable, claimed at once (tagged, PersistenceRequired), leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near). SOUTHERN_RIFT_MEGA.md 13 retires the faces' restore, so a Mega no longer comes back with a face: each den keeps a respawn clock, the game time its Mega was first seen gone, and spawns the next respawn_ticks later with nobody within spawn_clear of the anchor; nothing a player can repeat moves the clock. The mine's two drop nothing (the farms are the currency's source); their respawn_ticks is 15 minutes. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
     "slots": [
       {
         "id": "steelix",
@@ -529,29 +644,34 @@
         "why": "Mega Excadrill, excadrite (a Legends Z-A Mega Mega Showdown adds; its client model is NOT VERIFIED, M-7); Drilbur at the fossil levels 42-50. Anchored toward face B"
       }
     ],
-    "aggression_proposal": "server config, NOT changed by this build (proposed only; the owner or the main session applies it): server/config/mods/fightorflight.json5 `always_aggro_aspects` from [\"alpha\"] to [\"alpha\", \"mega\", \"mega_x\", \"mega_y\", \"mega_z\"] (SOUTHERN_RIFT_MEGA.md 6.2; docs/research/notes/wild-mega-pokemon.md section 3). With it, a wild Mega attacks unprovoked in the dark at level 25 or more; the Cutting Floor carries no light for that reason. A player's own Mega is excluded by the mod (!isPlayerOwned). Proof M-3, not run"
+    "aggression_proposal": "applied on staging 2026-09-27 (SOUTHERN_RIFT_MEGA.md 13): Fight or Flight's always_aggro_aspects [\"alpha\", \"mega\", \"mega_x\", \"mega_y\", \"mega_z\"]. Whether an always-aggressive aspect overrides light_dependent_unprovoked_attack is proof M-3"
   },
   "driver": {
     "every_ticks": 100,
     "approach": [4250, 30, 4640, 4520, 150, 4990],
-    "why": "the tick driver works only while a player is inside the approach box (the gate, the town and the mine with a margin): one selector every 5 s when nobody is near. Every 100 ticks it checks each face and each Mega slot; the leash every 40"
-  },
-  "floor": {
-    "box": [4345, 64, 4905, 4385, 80, 4945],
-    "item": "mega_showdown:mega_stone",
-    "count": 4,
-    "message": "The tally clerk hands you four raw stones: enough for one cut.",
-    "why": "SOUTHERN_RIFT_MEGA.md 7.5: on first reaching the Tally Hall each player is handed 4 raw stones, one keyed stone's worth, so a player without a diamond pickaxe can still have one cut (the stone economy's floor, STONE_ECONOMY.md 4). An advancement, granted once per player and never revoked. Droppable if the two-player advancement proof fails (P-5). The message is a placeholder"
+    "why": "the tick driver works only while a player is inside a site's approach box (the gate, the town and the mine with a margin; each farm its own): one selector a site every 5 s when nobody is near. Every 100 ticks it keeps each den's Mega (the respawn clock); every 40 ticks the leash"
   },
   "geometry": {
     "feet": "every y in a path or a hall is the FEET level: the first air block above the floor",
     "tube": "as data/rift_mines.json geometry.tube: each segment sampled at n = ceil(4 * horizontal length) + 1 points, each stamping the (2r+1)^2 columns round (floor(x+0.5), floor(z+0.5)) from feet floor(y+0.5) up `height` blocks",
     "hall": "for each column within R(1+ragged)+1 of the centre: d = hypot(dx, dz), theta = atan2(dz, dx), n = 0.5 sin(3 theta + p0) + 0.3 sin(5 theta + p1) + 0.2 sin(7 theta + p2) with p_k = h32(seed, len(id), sum of the id's code points, k) / 2^32 * 2 pi (h32 as tools/rift_mines.py), Rt = radius (1 + ragged n) + 0.5; the column is in when d <= Rt; q = d / Rt; feet = hall feet + floor(bowl q^2 + 0.5); top = max(feet + 3, hall feet + floor(height sqrt(1 - q^2) + 0.5)); carved from feet to top inclusive",
-    "face": "the box is never carved; it is written whole: the host (meteorid) everywhere, then for variant k the cells sorted by h32(seed, sum of the face id's code points, k, x, y, z): the first `radiated` cells within 1 of the front become radiated meteorid, the first remaining front cell on the bottom row (not on the box's side columns) is the visible crystal facing out, and the next crystals-1 cells at least 2 deep and under the top row are the hidden ones. The build writes variant 0; the restore writes variant k",
-    "road": "each segment of [x, z, y] points sampled as a tube; every column within `half` (Chebyshev) of a sample's rounded point takes the rounded y of the nearest sample (Euclidean, to the unrounded point); ties keep the first",
-    "band": "each listed point [j, x, z, nx, nz] claims the columns within 1 (Chebyshev) of (floor(x + nx d + 0.5), floor(z + nz d + 0.5)) for d = -1, 0, 1; the first point in the list that claims a column keeps it",
-    "earthworks": "square, yard and road columns (in that order of precedence) get their surface block at the stated y, fill under it down to the ground, and air from y+1 to max(ground, y) + clear_above",
+    "face": "the box is never carved; it is written whole: the host (meteorid) everywhere, then for variant k the cells sorted by h32(seed, sum of the face id's code points, k, x, y, z): the first `radiated` cells within 1 of the front become radiated meteorid, the first remaining front cell on the bottom row (not on the box's side columns) is the visible crystal facing out, and the next crystals-1 cells at least 2 deep and under the top row are the hidden ones. The build writes variant 0 once (the restore, and its other variants, are retired: SOUTHERN_RIFT_MEGA.md 13)",
+    "road": "each segment of [x, z, y] points sampled as a tube; every column within `half` (Chebyshev) of a sample's rounded point takes the rounded y of the nearest sample (Euclidean, to the unrounded point); ties keep the first. The cove's paths are rasterised the same way",
+    "band": "each listed point [j, x, z, nx, nz] claims the columns within 1 (Chebyshev) of (floor(x + nx d + 0.5), floor(z + nz d + 0.5)) for d = -wall.spread_out .. wall.spread_in; a column keeps the claim with the least talus drop, max(0, -d - wall.core), the first among equals (points in list order, d ascending). Its top: in the plug's columns (|j| <= plug.half_j) plug.top_y; elsewhere the crest (wall.top[0] at the first point to wall.top[1] at the last, linear in j, rounded half up) less h32(seed, x, z, 63) mod wall.jag, less wall.batter * max(0, -d - wall.core); rock from the column's top + 1 up to max(that, top + wall.min_rise), unless the column already stands at or over it",
+    "earthworks": "square, yard, road and cove path columns (in that order of precedence) get their surface block at the stated y, fill under it down to the ground, and air from y+1 to max(ground, y) + clear_above",
+    "cove": "a cove building writes its rect's columns; a house's floor is the highest top under its rect, its door the middle of its door side (x0..x1 or z0..z1 halved, rounded down), and its steps the 3 columns across the door's line at 1, 2 and 3 out, standing at the floor, floor - 1 and floor - 2; a headframe's legs stand at the rect's corners, its shaft collar round the centre; a heap or a pile is a cone over the rect's inscribed circle; a sluice runs along its rect's long side; a lamp post writes its column",
     "shell": "every cell within 2 (a 5x5x5 cube) of the carved space or a face box, not carved, not a face box, and at or under its column's top (an earthwork's surface where there is one, else the ground) is written as rock",
     "zone": "a column is in the zone when its centre (x + 0.5, z + 0.5) is inside the polygon (even-odd rule); each z row's runs are merged down the rows while identical, and every box runs y -64 to 575"
+  },
+  "drops": {
+    "item": "mega_showdown:mega_stone",
+    "count": 1,
+    "message": "The Mega leaves a raw stone behind.",
+    "why": "SOUTHERN_RIFT_MEGA.md 13: a defeated farm Mega drops a raw stone at the victor's feet, owner-only (an item entity whose Owner is the victor: only they can pick it up, vanilla 1.21.1 ItemEntity), never a finished stone. The roll is the den's drop_percent (farm_tiers). A battle win is seen by the battle_fainted callback, matched by the Pokemon UUID stored at spawn; a kill outside a battle by the keeper, from the last player to hurt it after it was last seen alive. One roll per Mega: the roll spends its UUID. The message is a placeholder (the voice is Codex's)"
+  },
+  "farm_tiers": {
+    "outer": {"level": 60, "drop_percent": 15, "respawn_ticks": 12000},
+    "deeper": {"level": 67, "drop_percent": 30, "respawn_ticks": 18000},
+    "why": "SOUTHERN_RIFT_MEGA.md 13: outer about level 60 (the owner: a cap of 50 after gym 5, \"lvl 60 or so, so it takes a team\"), 15% a defeat; deeper 65-70 at 25-35% (ASSUMED: the owner said \"more frequently\"). respawn_ticks is the farm's rate limit per den: 10 minutes outer, 15 deeper, so four outer dens give at most 24 fights an hour between them, about 3.6 raw stones at 15%. All ASSUMED until a fight is timed"
   }
 }
