@@ -125,6 +125,7 @@
         "town_dressing_audit.py": "checker: the built town_dressing functions",
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
+        "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
         "vr_caves.py": "source: vr_caves",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
         "town_audit.py": "checker: the built towns, templates and earthworks, against the policy",
@@ -170,8 +171,8 @@
       "consumers": ["world_block_packs"],
       "statement": "Every generated pack that ships functions is run by a re-apply step or is in tools/reapply.py EXCLUDED with its reason; prepare fails closed otherwise, so no build is silently lost at a re-export.",
       "stated_in": [
-        {"at": "tools/reapply.py:110", "quote": "Anything not here and not run"},
-        {"at": "tools/reapply.py:646", "quote": "Fail closed instead."}
+        {"at": "tools/reapply.py:113", "quote": "Anything not here and not run"},
+        {"at": "tools/reapply.py:654", "quote": "Fail closed instead."}
       ],
       "tests": ["tests/test_reapply_vr_steps.py::test_every_function_pack_present_is_run_by_a_step_or_excluded_with_a_reason",
                 "tests/test_reapply_vr_steps.py::test_uncovered_sees_the_cave_pack_and_reports_it_when_its_step_is_gone",

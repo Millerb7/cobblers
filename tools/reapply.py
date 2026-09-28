@@ -105,7 +105,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: the ferry (tools/ferries.py, data/ferries.json): the ferrymen's NPC classes and dialogues and
                 # the trips their dialogues run; the ferrymen are placed over RCON by R17F. It charges CobbleDollars and
                 # teleports players, so world-local below
-                "cobblers_ferries")
+                "cobblers_ferries",
+                # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
+                # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
+                "cobblers_mines")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -143,7 +146,7 @@ EXCLUDED = {
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
-               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap")
+               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -314,6 +317,11 @@ def prepare(a):
     py(TOOLS / "town_dressing_audit.py", *src)
     # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
     py(TOOLS / "ambient.py", "build", *src)
+    # the evolution-stone faces: after the town plans, the signposts, the dressing and the working Pokemon, which they
+    # keep clear of; then their offline audit, which recomputes every rule from other files' data and stops the prepare
+    # on a face the build should not have written
+    py(TOOLS / "mines.py", "build", *src)
+    py(TOOLS / "mines_audit.py", *src)
     # no catching over the level cap: a callback and its check
     py(TOOLS / "levelcap_pack.py")
     py(TOOLS / "location_titles.py")
@@ -746,6 +754,13 @@ def steps(with_spawns=False):
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
                 + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+    # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
+    # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
+    # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
+    # committed data, not the pack's index. The faces' restore on approach drives itself and needs no step
+    import mines
+    out.append(("R9O", "the evolution-stone faces at their seven places (data/mines.json)",
+                [("fn", f) for f in mines.build_functions()]))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
