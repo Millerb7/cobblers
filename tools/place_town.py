@@ -185,6 +185,17 @@ def rewrite_template(src, dest, dry=False, materials=None):
             if nm in materials:
                 e["Name"] = (L.STRING, materials[nm])
                 dried += 1
+        # a jigsaw's final state too: the placement function sets it through the same map, and tools/town_audit.py
+        # reads its expectation from this copy, so an unmapped final state here was a block the audit expected in the
+        # donor's material where the town put the set's
+        for b in keep:
+            if names[L.plain(b["state"])] != "minecraft:jigsaw" or "nbt" not in b:
+                continue
+            tag = b["nbt"][1]
+            fs = L.plain(tag["final_state"]) if "final_state" in tag else ""
+            base = fs.split("[")[0].split("{")[0]
+            if base in materials:
+                tag["final_state"] = (L.STRING, materials[base] + fs[len(base):])
     Path(dest).parent.mkdir(parents=True, exist_ok=True)
     Path(dest).write_bytes(L.dumps(name, root))
     return len(blocks) - len(keep), dried
