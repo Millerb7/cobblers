@@ -43,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from collections import deque
@@ -127,6 +128,29 @@ def bottom_front(box, front):
 def in_box(c, box):
     x0, y0, z0, x1, y1, z1 = box
     return x0 <= c[0] <= x1 and y0 <= c[1] <= y1 and z0 <= c[2] <= z1
+
+
+LEG_MARGIN = 3        # tools/town_dressing.py LEG_MARGIN: the generator's own clearance from a routed leg
+
+
+def seg_distance(px, pz, ax, az, bx, bz):
+    vx, vz = bx - ax, bz - az
+    L = vx * vx + vz * vz
+    t = 0.0 if L == 0 else max(0.0, min(1.0, ((px - ax) * vx + (pz - az) * vz) / L))
+    return math.hypot(px - (ax + t * vx), pz - (az + t * vz))
+
+
+def route_legs():
+    """([polyline], critical legs present): derived/routes/critical_legs.json's legs and data/routes.json's corridors."""
+    out = []
+    p = ROOT / "derived" / "routes" / "critical_legs.json"
+    if p.is_file():
+        out += [[tuple(q) for q in leg.get("polyline") or []] for leg in json.loads(p.read_text(encoding="utf-8"))["legs"]]
+    rp = ROOT / "data" / "routes.json"
+    if rp.is_file():
+        for r in json.loads(rp.read_text(encoding="utf-8")).get("routes") or []:
+            out.append([(q["x"], q["z"]) for q in (r.get("corridor") or {}).get("polyline") or []])
+    return [l for l in out if len(l) > 1], p.is_file()
 
 
 def audit(source_root=None):
@@ -227,6 +251,9 @@ def audit(source_root=None):
     else:
         probs.append("plan: no derived/ambient/plan.json (tools/ambient.py build)")
 
+    legs, have_critical = route_legs()
+    if not have_critical:
+        probs.append("legs: no derived/routes/critical_legs.json: the critical legs cannot be checked (fail closed)")
     total_writes, total_faces = 0, 0
     for site in sites:
         sid = site["id"]
@@ -267,6 +294,13 @@ def audit(source_root=None):
                     hit.setdefault(why[c], []).append(c)
             for w, cs in sorted(hit.items()):
                 probs.append("%s: %d written column(s) on %s, e.g. %s" % (sid, len(cs), w, sorted(cs)[0]))
+        # the routed legs: no face on a road players must walk (the generator's Mask keeps LEG_MARGIN off them; this
+        # measures every written column against every leg's segments itself: the independent tests, 2026-09-28)
+        near = [(x, z) for x, z in cols for leg in legs for a, b in zip(leg, leg[1:])
+                if seg_distance(x, z, a[0], a[1], b[0], b[1]) < LEG_MARGIN]
+        if near:
+            probs.append("%s: %d written column(s) within %d of a routed leg, e.g. %s" % (sid, len(set(near)), LEG_MARGIN,
+                                                                                          sorted(set(near))[0]))
         for t in traders.get("traders") or []:
             p = t.get("position") or {}
             if any(abs(x - p.get("x", 10 ** 9)) <= 1 and abs(z - p.get("z", 10 ** 9)) <= 1 for x, z in cols):

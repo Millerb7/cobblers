@@ -1027,10 +1027,6 @@ def f_route_leg_on_the_cut(a):
     _put(a.root, "derived/routes/critical_legs.json", {"legs": [{"polyline": [[44, 0], [44, 47]]}]})
 
 
-@pytest.mark.xfail(strict=True, reason="tools/mines_audit.py:246-263: the plan check recomputes lots, streets, the "
-                   "plaza, buildings, event sites, earthworks and lamps, but no route leg (derived/routes/"
-                   "critical_legs.json or data/routes.json); the generator's Mask (tools/town_dressing.py:212) keeps "
-                   "routed legs clear, so a face on a leg would pass the independent audit")
 def test_the_audit_names_a_route_leg_through_a_cut(audit_root):
     # Without it a face cut across a road players must walk would pass the audit (the design: none on a route leg).
     f_route_leg_on_the_cut(audit_root)

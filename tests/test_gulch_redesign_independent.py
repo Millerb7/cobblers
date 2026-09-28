@@ -938,8 +938,6 @@ def test_a_kill_pays_only_the_player_who_hurt_it_since_it_was_last_seen_alive(ca
 
 # Without it a farm den of a tier gets some other level than its tier's: data farm_tiers gives each tier a level (outer
 # 60, deeper 67; SOUTHERN_RIFT_MEGA.md 13's table), and a den that names only its tier should spawn at that level.
-@pytest.mark.xfail(strict=True, reason="tools/gulch_mine.py:1422 spawns a farm den at d['level'] only (KeyError without "
-                                       "it): data/gulch_mine.json:673-674 farm_tiers[].level is never read")
 def test_a_farm_den_without_its_own_level_spawns_at_its_tiers_level():
     spec = farm_spec()
     for d in spec["farms"][0]["dens"]:

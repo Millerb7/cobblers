@@ -1273,6 +1273,14 @@ def cutter_files(m):
 STORE = "cobblers:gulch_mine"          # the dens' Pokemon UUIDs and the hitters' UUIDs (farm dens only)
 
 
+def den_level(spec, site, d):
+    """A den's Mega's level: its own, else its farm tier's (data farm_tiers[].level; the mine's slots state their own)."""
+    if "level" in d:
+        return d["level"]
+    farm = next(f for f in spec["farms"] if f["id"] == site)
+    return spec["farm_tiers"][d.get("tier", farm["tier"])]["level"]
+
+
 def dens(spec):
     """[(site, den)]: the mine's slots (site "mine"), then each farm's dens (site = the farm's id)."""
     out = [("mine", s) for s in spec["megas"]["slots"]]
@@ -1419,7 +1427,7 @@ def keeper_files(m):
         fn["megas/spawn_%s" % i] = [
             "# a wild Mega: its species, the Mega aspect, uncatchable, through the macro (EXP-046), claimed at once",
             "function %s/megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\",aspect:\"%s\",level:%d}"
-            % (F, x, y, z, d["species"], d["aspect"], d["level"]),
+            % (F, x, y, z, d["species"], d["aspect"], den_level(spec, site, d)),
             "execute positioned %d %d %d as @e[type=cobblemon:pokemon,tag=!%s,distance=..2,limit=1,sort=nearest] run function %s/megas/bind_%s"
             % (x, y, z, tag, F, i),
             "scoreboard players set #%s gm.gone -1" % i,
