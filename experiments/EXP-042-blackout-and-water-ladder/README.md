@@ -107,6 +107,8 @@ healing machine, so this is not a result either way; rerun it.
 - **Not run: the mid-dive swap.** The owner declined.
 - The owner switched to creative now and then. Those samples (mode 1) are excluded from every speed figure.
 
+**Session 5 (the owner, staging, 2026-09-27, after the recovery fixes): PASS.** A guardian killed with a sword settles its claim (items and money back, no rebuild); one killed by the owner's Pokemon outside battle likewise; a real loss holds the money in the claim and beating the guardian returns it with the items; catching a guardian returns them; running from a battle is not a blackout (the owner: 'it all works'). Cobblemon itself still prints its battle text '<player> is out of usable Pokémon!' when the player runs (lang key cobblemon.battle.lose; Showdown ends a fled battle as a loss for that side); nothing in our packs prints it, and no blackout follows. Left as it is: an override would also change the line after a real loss.
+
 Still to run (after session 3):
 - the town waystone checkpoint;
 - the mid-dive swap (the owner declined it);
