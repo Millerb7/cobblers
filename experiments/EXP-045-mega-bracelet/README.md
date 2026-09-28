@@ -41,9 +41,23 @@ A staging-only proof pack, `pack/` here, installed as `cobblers_proof_mega` in t
 ## Results
 
 - 2026-09-27: the kit installed and loads with no error; the opponent function spawns the Blissey where stated
-  (checked over RCON, then removed). Not yet run by a player.
+  (checked over RCON, then removed).
+- **2026-09-27, the owner in game on staging (`cobblers-dryrun11`; Minecraft 1.21.1 Fabric, Cobblemon 1.8.0, Mega
+  Showdown 1.0.2, Accessories): PASS.** The kit gave the items and both Pokemon (`pokegive` from a function run as the
+  player works). With the bracelet worn in its Accessories slot before the battle, the move screen shows a
+  "Mega Evolve!" option (a button under the moves, beside the back button); Charizard holding Charizardite X Mega
+  Evolved, and reverted after the battle (the owner: "it works, it reverts after battle"). With the bracelet held in the
+  hand the option does not show ("not there if mega ring in hand"), and equipping it mid-battle does not bring it
+  ("not there if mega ring equipped mid battle"). Screenshots in the session; not logged.
+
+## Decision
+
+The Mega Bracelet works for a player in this pack, worn in the Accessories slot and equipped before the battle. The
+southern Rift's mega site stands on a working mechanic (SOUTHERN_RIFT_MEGA.md proof M-1). Sabrina's reward (decision 7)
+must reach the player as a bracelet with a clear line to wear it before battles.
 
 ## Limits
 
-- `pokegive` from a function run as the player is not yet seen to give the Pokemon (it loads).
-- The Mega option's exact place in Cobblemon's battle UI is not documented here; the owner records it.
+- Lucario and Lucarionite were not recorded Mega Evolving (the owner's Lucario screen was the in-hand case); Charizard X
+  is the one seen.
+- Only a wild battle was used; a trainer battle is EXP-000's own check and is still open.

@@ -386,9 +386,11 @@ the same flag (3.3).
 - **A second source, for a lost bracelet or another colour:** the megaroid crater in the Crystal Garden
   (`SOUTHERN_RIFT.md:103-106`), its single `keystone_ore` as a restoring face with a long period (a day, ASSUMED). One
   Key Stone per restore, shared, diamond pickaxe.
-- **NOT VERIFIED, and a precondition for the whole site:** that a player holding or wearing a bracelet can Mega Evolve
-  in battle on this stack. EXP-000's Mega check is still "NOT TESTED" (`experiments/EXP-000-cobblemon-1.8-compat/results.md:60`),
-  and whether the bracelet must sit in an Accessories slot was not read (it is in code, not data).
+- **VERIFIED in game, 2026-09-27 (proof M-1, EXP-045, the owner on staging):** a player Mega Evolves in battle with the
+  bracelet WORN in its Accessories slot (the "Mega Evolve!" option shows on the Pokemon's move screen; Charizard with
+  Charizardite X). It reverts after the battle. Held in the hand, the option does not show; equipped mid-battle, it does
+  not show either: the bracelet must be worn before the battle starts. So Sabrina's reward must reach the player as a
+  wearable they are told to equip.
 
 ### 7.5 How much mining, and how long for one stone
 
