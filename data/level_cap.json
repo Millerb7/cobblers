@@ -1,0 +1,8 @@
+{
+  "schema": "cobblers.level_cap/1",
+  "status": "built 2026-09-28 (tools/levelcap_pack.py); not run in game: the proof is the owner's (docs/research/notes/level-cap-catch-block.md, 'Smallest proof')",
+  "decision": "The owner, 2026-09-28: block catching above the cap entirely. A Pokemon over the thrower's RCT level cap breaks free from any ball, a Master Ball included, in battle or out; one at the cap is caught (rctmod refuses a battle only when a party member is strictly over the cap).",
+  "mechanism": "Cobblemon 1.8.0's poke_ball_capture_calculated callback, after the ball's own maths: it tags the target, asks cobblers:levelcap/check (run as the thrower, at the thrower) to compare the target's Pokemon.Level with `rctmod player get level_cap`, reads the answer back as a tag on the thrower and sets the shakes to 0. A cap it cannot read (0, RCT still loading) or a level it cannot read (0) lets the catch through.",
+  "message": "Over your level cap: it breaks free. The next gym would not battle you with it in your party.",
+  "message_color": "red"
+}

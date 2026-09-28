@@ -88,6 +88,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: working Pokemon in the towns (tools/ambient.py, data/ambient.json): a keeper and the work
                 # loops run on their own (a tick driver), so world-local below; placed again by R16C after an export
                 "cobblers_ambient",
+                # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
+                # callback acts on its own, so world-local below
+                "cobblers_levelcap",
                 # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py): blocks
                 # run by R9M, and the seam crystal's ward and daily face that act on their own (an advancement, a tick
                 # driver), so world-local below. Its gated galleries went to the gulch the same day
@@ -117,6 +120,7 @@ EXCLUDED = {
     # these three drive themselves and write no blocks: found by the check below the moment it was added
     "cobblers_progression": "self-driving: its own minecraft load and tick tags run it",
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
+    "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
                          "it writes no blocks",
@@ -139,7 +143,7 @@ EXCLUDED = {
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
-               "cobblers_ferries", "cobblers_ambient")
+               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -310,6 +314,8 @@ def prepare(a):
     py(TOOLS / "town_dressing_audit.py", *src)
     # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
     py(TOOLS / "ambient.py", "build", *src)
+    # no catching over the level cap: a callback and its check
+    py(TOOLS / "levelcap_pack.py")
     py(TOOLS / "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     py(TOOLS / "progression_pack.py")
