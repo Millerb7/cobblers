@@ -41,10 +41,13 @@ standing on a deck (a leak), and flowing water under or beside the town.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import sys
 from pathlib import Path
+
+import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
@@ -66,10 +69,137 @@ WORLD_READS = {"main", "verify_world"}
 
 # ----------------------------------------------------------------------------------------------------------- helpers
 
-def load(path=PLAN):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+def load(path=PLAN, resite=False):
+    plan = json.loads(Path(path).read_text(encoding="utf-8"))
+    return resited(plan) if resite else plan
 
 
+# ------------------------------------------------------------------------------------------------------------ re-site
+
+def _shift_rect(r, dx, dz):
+    return [r[0] + dx, r[1] + dz, r[2] + dx, r[3] + dz]
+
+
+def _shift_pt(p, dx, dz):
+    return [p[0] + dx, p[1] + dz]
+
+
+def resited(plan):
+    """The plan moved to data/sea_town.json `resite` (the owner's decision of 2026-09-27: Pacifidlog on the sea where
+    the Jungle Isle stood). Every district but the mainland jetty moves by `shift`; the mainland jetty, its rack and
+    its signs are replaced by the resite's own; the landfall walks that met the old island's shore float; the site,
+    signs' text and the settlement's reading come from the resite. A translation of the authored layout: nothing is
+    decided here that the resite block does not say. Raises SystemExit when the plan has no resite."""
+    rs = plan.get("resite")
+    if not rs:
+        raise SystemExit("data/sea_town.json has no resite block")
+    dx, dz = rs["shift"]
+    out = copy.deepcopy(plan)
+    stay = set(rs.get("stays_on_the_mainland", ["mainland_jetty"]))
+    moved = lambda rec: rec.get("district") not in stay  # noqa: E731
+    by_id = {r["id"]: r for r in plan["rafts"]}
+    by_id.update({w["id"]: w for w in plan["walks"]})
+    for r in out["rafts"]:
+        if moved(r):
+            r["rect"] = _shift_rect(r["rect"], dx, dz)
+            if r.get("lamps"):
+                r["lamps"] = [_shift_pt(p, dx, dz) for p in r["lamps"]]
+            if r.get("extra_lamps"):
+                r["extra_lamps"] = [_shift_pt(p, dx, dz) for p in r["extra_lamps"]]
+    for b in out["bridges"]:
+        if b.get("at") is not None:
+            _rect, axis = bridge_rect(by_id[b["between"][0]]["rect"], by_id[b["between"][1]]["rect"],
+                                      plan["rules"]["bridge_width"], b["at"])
+            b["at"] = b["at"] + (dz if axis == "x" else dx)
+    walks = []
+    for w in out["walks"]:
+        if not moved(w):
+            continue
+        w["rect"] = _shift_rect(w["rect"], dx, dz)
+        if w["id"] in set(rs.get("float_walks", [])):
+            w["landfall"] = False
+            w["why"] = (w.get("why", "") + "; re-sited: it floats on the bank (no shore to meet)").lstrip("; ")
+        walks.append(w)
+    out["walks"] = walks + copy.deepcopy(rs["mainland_jetty"]["walks"])
+    for b in out["buildings"]:
+        if moved(b):
+            b["rect"] = _shift_rect(b["rect"], dx, dz)
+            for side, v in list((b.get("door_at") or {}).items()):
+                b["door_at"][side] = v + (dx if side in ("north", "south") else dz)
+    for s in out["services"]:
+        s["position"] = _shift_pt(s["position"], dx, dz)
+    st = out.get("stations") or {}
+    for run in st.get("runs") or []:
+        walk = next(w for w in plan["walks"] if w["id"] == run["walk"])
+        if long_axis(walk["rect"]) != "x":
+            raise SystemExit("station run on %s: runs follow a walk along x" % run["walk"])
+        run["from"] += dx
+        run["to"] += dx
+    for a in st.get("at") or []:
+        a["at"] = _shift_pt(a["at"], dx, dz)
+    yard = out.get("yard") or {}
+    if yard.get("slipway"):
+        yard["slipway"]["rect"] = _shift_rect(yard["slipway"]["rect"], dx, dz)
+    if yard.get("hull"):
+        yard["hull"]["keel"] = [_shift_pt(p, dx, dz) for p in yard["hull"]["keel"]]
+    racks = [r for r in out["racks"] if r["id"] not in set(rs["mainland_jetty"].get("replaces_racks", []))]
+    for r in racks:
+        r["at"] = _shift_pt(r["at"], dx, dz)
+    out["racks"] = racks + copy.deepcopy(rs["mainland_jetty"]["racks"])
+    gone = set(rs["mainland_jetty"].get("replaces_signs", []))
+    signs = []
+    for s in out["signs"]:
+        if s["id"] in gone:
+            continue
+        s["at"] = _shift_pt(s["at"], dx, dz)
+        signs.append(s)
+    out["signs"] = signs + copy.deepcopy(rs["mainland_jetty"]["signs"])
+    out["waystone"]["position"] = _shift_pt(out["waystone"]["position"], dx, dz)
+    out["site"] = copy.deepcopy(rs["site"])
+    out["settlement_text"] = copy.deepcopy(rs["settlement_text"])
+    out["rules"] = dict(out["rules"], **(rs.get("rules") or {}))
+    out.pop("resite", None)
+    out["resited_from"] = {"shift": [dx, dz], "note": "data/sea_town.json resite, translated by tools/sea_town.py"}
+    return out
+
+
+class CopyGround:
+    """(x, z) -> ground Y from a heightmap COPY that tools/water_shape.py wrote under derived/water_shape/, verified
+    against that tool's manifest (its output sha256) and against data/world.json's pin of the canonical file the copy
+    was made from. For measuring a design on the revised ground before it is applied; `write` and `check` never use
+    it (they build from the canonical heightmap only)."""
+
+    def __init__(self, path):
+        import hashlib
+        import terrain as T
+        path = Path(path)
+        self.world = T.load_world(ROOT / "data" / "world.json")
+        man_p = path.parent / "manifest.json"
+        if not man_p.is_file():
+            raise SystemExit("%s has no manifest.json beside it: not a tools/water_shape.py copy" % path)
+        man = json.loads(man_p.read_text(encoding="utf-8"))
+        h = hashlib.sha256()
+        with open(path, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        if man["output"]["path"] != path.name or man["output"]["sha256"] != h.hexdigest():
+            raise SystemExit("%s does not hash to its manifest's output: refusing to measure on it" % path)
+        if man["input"]["sha256"] != self.world["heightmap"]["sha256"]:
+            raise SystemExit("the copy was made from %s, but data/world.json pins %s" % (
+                man["input"]["sha256"][:12], self.world["heightmap"]["sha256"][:12]))
+        self.heights = T.read_heights(path, self.world).astype(np.float32)
+        self.ox = self.world["grid"]["origin_x"]
+        self.oz = self.world["grid"]["origin_z"]
+        self.kind = "water_shape_copy"
+        self.ceiling = None
+        self.source = {"path": str(path), "sha256": man["output"]["sha256"]}
+
+    def __call__(self, x, z):
+        return int(np.round(self.heights[int(z) - self.oz, int(x) - self.ox]))
+
+    def box(self, x0, z0, x1, z1):
+        h = self.heights[int(z0) - self.oz:int(z1) - self.oz + 1, int(x0) - self.ox:int(x1) - self.ox + 1]
+        return np.round(h).astype(int)
 def sea_level(world):
     import terrain as T
     return int(T.sea_level(world))
@@ -216,10 +346,11 @@ def elements(plan):
     return out
 
 
-def deck_ground(world):
-    """(deck y, set of (x, z)) for tools/ground.py's "sea_deck" ground: every deck cell of the plan. Pure geometry
-    from data/sea_town.json and the sea level in data/world.json; no heightmap and no world."""
-    plan = load()
+def deck_ground(world, resite=False):
+    """(deck y, set of (x, z)) for tools/ground.py's "sea_deck" ground: every deck cell of the plan (or of its resite,
+    for measuring the design on tools/water_shape.py's copy). Pure geometry from data/sea_town.json and the sea level
+    in data/world.json; no heightmap and no world."""
+    plan = load(resite=True) if resite else load()
     out = set()
     for e in elements(plan):
         if not e["decor"]:
@@ -915,7 +1046,7 @@ def settlement_record(plan, services, report, footprint):
                       "and tools/place_town.py seat the Centre and the Mart on the raft",
         "generated_by": "tools/sea_town.py write, from data/sea_town.json; edit that file, not this record",
         "plan": {
-            "reading": "Out in the Sound, where the desert shore and the jungle island meet across the water, a town floats: "
+            "reading": (plan.get("settlement_text") or {}).get("reading") or "Out in the Sound, where the desert shore and the jungle island meet across the water, a town floats: "
                        "sixteen log rafts on the jungle island's shelf, joined by bamboo bridges, a hut on each. The Centre "
                        "and the Mart stand on the two largest, either side of the square with its waystone. Fishers' Row "
                        "runs 120 blocks west off the shelf into the deepest water, a station every eight blocks, the "
@@ -923,7 +1054,8 @@ def settlement_record(plan, services, report, footprint):
                        "in frame; south along the shore the Stilt Quarter's houses and the inn stand in the shallows on "
                        "mangrove stilts. There is no road in: boats put out from a jetty on the dunes' beach to the north, "
                        "and far to the south-west a breakwater and a lookout watch the bay's mouth.",
-            "entries": [{"from": "the sea: a boat from the mainland jetty on the South-East Dunes' beach",
+            "entries": (plan.get("settlement_text") or {}).get("entries") or
+                       [{"from": "the sea: a boat from the mainland jetty on the South-East Dunes' beach",
                          "at": [7172, 6711], "street": None}],
             "exits": [],
             "footprint": {"rect": footprint, "why": "every district: the jetty's landing in the north, the rafts, the "
@@ -1011,10 +1143,10 @@ def footprint_of(writers, services, plan):
     return [min(xs), min(zs), max(xs), max(zs)]
 
 
-def generate(source_root=None):
+def generate(source_root=None, resite=False, heightmap=None):
     import ground as G
-    plan = load()
-    g = G.Ground(source_root)
+    plan = load(resite=True) if resite else load()
+    g = CopyGround(heightmap) if heightmap else G.Ground(source_root)
     writers, services, report, model = build(plan, g, g.world)
     fp = footprint_of(writers, services, plan)
     report["footprint"] = fp
@@ -1156,19 +1288,44 @@ def verify_rcon(server_dir, writers, model, sample_every=5):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
-    for name in ("plan", "write", "check", "verify"):
+    for name in ("plan", "write", "check", "verify", "fold-resite"):
         q = sub.add_parser(name)
         q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"),
                        help="heightmap root: the only source of ground (tools/ground.py)")
+        if name == "plan":
+            q.add_argument("--resite", action="store_true",
+                           help="plan the town at data/sea_town.json's resite (the design; nothing is written)")
+            q.add_argument("--heightmap", help="measure on tools/water_shape.py's copy (derived/water_shape/<name>.png, "
+                                               "checked against its manifest) instead of the canonical heightmap")
         if name == "verify":
             g = q.add_mutually_exclusive_group(required=True)
             g.add_argument("--world", help="a STOPPED world copy (never the live save)")
             g.add_argument("--rcon", metavar="SERVER_DIR", help="a running server, under the coordination lock")
     a = p.parse_args(argv)
-    plan, settlement, recs, clerk, report, writers, model = generate(a.source_root)
+    if a.cmd == "fold-resite":
+        # the apply step's one data edit: the resite becomes the layout. Only once the water-shaped heightmap is the
+        # canonical one (data/world.json heightmap.water_shaped_from), because the new site is over the Jungle Isle's
+        # land on any earlier heightmap
+        import terrain as T
+        world = T.load_world(ROOT / "data" / "world.json")
+        if not (world.get("heightmap") or {}).get("water_shaped_from"):
+            print("refusing: data/world.json has no heightmap.water_shaped_from, so the water export is not applied and "
+                  "the resite would stand on the Jungle Isle's land")
+            return 1
+        folded = resited(load())
+        folded.pop("resited_from", None)
+        PLAN.write_text(json.dumps(folded, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        print("folded the resite into data/sea_town.json; now run python tools/sea_town.py write")
+        return 0
+    resite = bool(getattr(a, "resite", False))
+    heightmap = getattr(a, "heightmap", None)
+    plan, settlement, recs, clerk, report, writers, model = generate(a.source_root, resite=resite, heightmap=heightmap)
     DERIVED.mkdir(parents=True, exist_ok=True)
     if a.cmd == "plan":
-        (DERIVED / "plan.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+        name = "plan_resite.json" if resite else "plan.json"
+        report["measured_on"] = {"heightmap_copy": heightmap} if heightmap else "canonical"
+        report["resite"] = resite
+        (DERIVED / name).write_text(json.dumps(report, indent=1), encoding="utf-8")
         print(json.dumps({k: v for k, v in report.items() if k != "depths"}, indent=1))
         for i, d in report["depths"].items():
             print("  %-28s %-10s depth %2d..%2d  seabed y%d..y%d" % (i, d["kind"], d["depth"][0], d["depth"][1],
