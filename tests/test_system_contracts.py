@@ -762,20 +762,10 @@ def test_harness_the_reach_check_catches_the_first_ward_margin():
 
 
 def _reach_from_outside(pos, protect):
-    """(distance, feet) for every feet position just outside the generated ward that reaches a guarded block."""
-    def dist(eye, b):
-        return math.sqrt(sum(max(b[i] - eye[i], 0.0, eye[i] - (b[i] + 1)) ** 2 for i in range(3)))
-
-    lattice = {a: [pos[a]["min"] + k for k in range(int(pos[a]["max"] - pos[a]["min"]) + 1)] for a in "xyz"}
-    reached = []
-    for a in "xyz":
-        for out in (pos[a]["min"] - 1e-3, pos[a]["max"] + 1e-3):
-            for p in itertools.product(*[lattice[b] if b != a else [out] for b in "xyz"]):
-                eye = (p[0], p[1] + EYE, p[2])
-                d = min(dist(eye, b) for b in protect)
-                if d <= REACH:
-                    reached.append((round(d, 2), p))
-    return reached
+    """(distance, feet) for every feet position just outside the generated ward that reaches a guarded block
+    (tests/reach.py, shared with tests/test_gulch_mine.py; identical to the loop it replaced on every ward, 120 s -> 4 s)."""
+    from reach import reach_from_outside
+    return [(round(d, 2), p) for d, p in reach_from_outside(pos, protect, EYE, REACH)]
 
 
 # Without it the contract above passes on nothing when a ward's keys are renamed, or still tests a retired one: the

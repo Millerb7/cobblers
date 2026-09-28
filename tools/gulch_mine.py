@@ -1110,7 +1110,8 @@ def zone_problems(m, boxes):
         probs.append("zone: the turn-back point is inside the zone")
     # every carved cell and every town write inside
     cols = {(int(i + m.X0), int(k + m.Z0)) for i, k in np.argwhere(m.carve.any(axis=2))}
-    cols |= {(x, z) for x, _y, z in list(m.surf) + list(m.fit) if m.spec["town"]["square"] and (x, z) not in band_columns(g["band"])}
+    band = band_columns(g["band"])      # once: inside the comprehension it was rebuilt per cell, 260 of the build's 270 s
+    cols |= {(x, z) for x, _y, z in list(m.surf) + list(m.fit) if m.spec["town"]["square"] and (x, z) not in band}
     out = sorted(c for c in cols if not inz(*c) and not (g["outside_ok"][0] <= c[0] <= g["outside_ok"][2]
                                                             and g["outside_ok"][1] <= c[1] <= g["outside_ok"][3]))
     if out:
