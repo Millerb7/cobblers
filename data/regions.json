@@ -6173,23 +6173,23 @@
    "display_name": "Long Isle Middle",
    "parent": "long_isle",
    "measured": {
-    "area_km2": 0.836,
+    "area_km2": 0.64,
     "bounds": {
-     "min_x": 7304,
+     "min_x": 7344,
      "min_z": 5576,
      "max_x": 8191,
-     "max_z": 6919
+     "max_z": 6679
     },
     "elevation": {
-     "p10": 70.6,
-     "median": 118.8,
-     "p90": 143.8,
-     "max": 148.1
+     "p10": 69.7,
+     "median": 117.2,
+     "p90": 140.9,
+     "max": 147.5
     },
     "slope_degrees": {
-     "mean": 13.6,
-     "p90": 24.2,
-     "flat_under_5_pct": 16.6
+     "mean": 14.0,
+     "p90": 24.5,
+     "flat_under_5_pct": 12.6
     }
    },
    "boundaries": [
@@ -6200,10 +6200,51 @@
     },
     {
      "basis": "painted change of cover (treeline, snowline or ground)",
-     "length_blocks": 928,
+     "length_blocks": 824,
      "channel_share": 0.0,
      "ridge_share": 0.0,
-     "neighbour": "long_isle_south"
+     "neighbour": "long_isle_south",
+     "moved": "the owner, 2026-09-27: the Long Isle's south 'should be half jungle half desert'. The desert/jungle line (the cover change between long_isle_middle, sandstone uplands, and long_isle_south, jungle) moves about 220 blocks north, from about z6880 to a wandering line at z6632-6672 (7345, 6650) to (8161, 6640), so desert (north and middle) and jungle (south) are about equal: polygon areas 1.266 and 1.270 km2 (they were 1.458 and 1.073). docs/world-building/LONG_ISLE.md section 3",
+     "previous_line": [
+      [
+       7304,
+       6856
+      ],
+      [
+       7528,
+       6896
+      ],
+      [
+       7840,
+       6880
+      ],
+      [
+       8128,
+       6912
+      ]
+     ],
+     "line": [
+      [
+       7345,
+       6650
+      ],
+      [
+       7560,
+       6672
+      ],
+      [
+       7790,
+       6632
+      ],
+      [
+       7990,
+       6662
+      ],
+      [
+       8161,
+       6640
+      ]
+     ]
     },
     {
      "basis": "painted change of cover (treeline, snowline or ground)",
@@ -6248,20 +6289,24 @@
       6456
      ],
      [
-      8128,
-      6912
+      8161,
+      6640
      ],
      [
-      7840,
-      6880
+      7990,
+      6662
      ],
      [
-      7528,
-      6896
+      7790,
+      6632
      ],
      [
-      7304,
-      6856
+      7560,
+      6672
+     ],
+     [
+      7345,
+      6650
      ],
      [
       7360,
@@ -6279,23 +6324,23 @@
    "display_name": "Long Isle South",
    "parent": "long_isle",
    "measured": {
-    "area_km2": 1.082,
+    "area_km2": 1.285,
     "bounds": {
      "min_x": 6832,
-     "min_z": 6856,
-     "max_x": 8135,
+     "min_z": 6632,
+     "max_x": 8167,
      "max_z": 8023
     },
     "elevation": {
-     "p10": 70.9,
-     "median": 118.6,
-     "p90": 143.7,
+     "p10": 71.4,
+     "median": 119.5,
+     "p90": 144.6,
      "max": 149.3
     },
     "slope_degrees": {
      "mean": 12.1,
-     "p90": 22.5,
-     "flat_under_5_pct": 22.2
+     "p90": 22.6,
+     "flat_under_5_pct": 23.3
     }
    },
    "boundaries": [
@@ -6306,10 +6351,51 @@
     },
     {
      "basis": "painted change of cover (treeline, snowline or ground)",
-     "length_blocks": 928,
+     "length_blocks": 824,
      "channel_share": 0.0,
      "ridge_share": 0.0,
-     "neighbour": "long_isle_middle"
+     "neighbour": "long_isle_middle",
+     "moved": "the owner, 2026-09-27: the Long Isle's south 'should be half jungle half desert'. The desert/jungle line (the cover change between long_isle_middle, sandstone uplands, and long_isle_south, jungle) moves about 220 blocks north, from about z6880 to a wandering line at z6632-6672 (7345, 6650) to (8161, 6640), so desert (north and middle) and jungle (south) are about equal: polygon areas 1.266 and 1.270 km2 (they were 1.458 and 1.073). docs/world-building/LONG_ISLE.md section 3",
+     "previous_line": [
+      [
+       7304,
+       6856
+      ],
+      [
+       7528,
+       6896
+      ],
+      [
+       7840,
+       6880
+      ],
+      [
+       8128,
+       6912
+      ]
+     ],
+     "line": [
+      [
+       7345,
+       6650
+      ],
+      [
+       7560,
+       6672
+      ],
+      [
+       7790,
+       6632
+      ],
+      [
+       7990,
+       6662
+      ],
+      [
+       8161,
+       6640
+      ]
+     ]
     }
    ],
    "encounters": {
@@ -6327,12 +6413,28 @@
       6856
      ],
      [
-      7528,
-      6904
+      7304,
+      6856
      ],
      [
-      7840,
-      6888
+      7345,
+      6650
+     ],
+     [
+      7560,
+      6672
+     ],
+     [
+      7790,
+      6632
+     ],
+     [
+      7990,
+      6662
+     ],
+     [
+      8161,
+      6640
      ],
      [
       8128,
