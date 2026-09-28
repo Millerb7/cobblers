@@ -59,11 +59,9 @@ def pair_params():
 
 # --------------------------------------------------------------------------------------------- the jar's properties
 def _jar():
-    try:
-        import town_character as TC
-        jar = TC.default_vanilla_jar()
-    except Exception:  # noqa: BLE001 - no jar is a skip, reported as such
-        return None
+    # no jar is None from default_vanilla_jar (a glob), and a skip reported as such; any other fault fails loudly
+    import town_character as TC
+    jar = TC.default_vanilla_jar()
     return zipfile.ZipFile(jar) if jar and Path(jar).is_file() else None
 
 

@@ -523,11 +523,9 @@ def test_every_block_a_shrine_writes_is_listed_and_none_is_a_spawn_condition(sid
 
 
 def _jar():
-    try:
-        import town_character as TC
-        jar = TC.default_vanilla_jar()
-    except Exception:  # noqa: BLE001
-        return None
+    # no jar is None from default_vanilla_jar (a glob), and a skip reported as such; any other fault fails loudly
+    import town_character as TC
+    jar = TC.default_vanilla_jar()
     return zipfile.ZipFile(jar) if jar and Path(jar).is_file() else None
 
 
