@@ -215,11 +215,17 @@ def plan_worker(w, site, rules):
                  carry=w["carry"], pause=int(w.get("pause_ticks", rules["pause_ticks"])),
                  carry_height=float(w.get("carry_height", rules["carry_height"])),
                  pickup=w.get("pickup") or {}, drop=w.get("drop") or {})
+        if p["pause"] < 1:
+            raise AmbientError("ambient/%s: pause_ticks must be 1 or more (the load is picked up and set down in the pauses)" % wid)
         p["start"] = p["points"][0]
     elif w["job"] == "work":
         (x, z), (fx, fz) = w["at"], w["face"]
         check([(x, z)], "station")
         y = site.y(x, z)
+        hx, hz = x + 0.5 + (fx - x) * 0.12, z + 0.5 + (fz - z) * 0.12
+        if (math.floor(hx), math.floor(hz)) != (x, z) and site.blocked(math.floor(hx), math.floor(hz)):
+            hx, hz = x + 0.5, z + 0.5                  # the hop's cell is not free (a lot, an anchor): it hops in place
+        p["hop"] = (hx, hz)
         p.update(start=(x + 0.5, y, z + 0.5), yaw=yaw_to(x + 0.5, z + 0.5, fx + 0.5, fz + 0.5),
                  face=(fx + 0.5, site.y(fx, fz) if not site.blocked(fx, fz) else y, fz + 0.5),
                  every=int(w.get("every", rules["work_every"])), effect=w["effect"])
@@ -291,8 +297,10 @@ def particle(effect, x, y, z):
 def sound(name, x, y, z, rules, pitch=1.0):
     if not SOUND.fullmatch(name):
         raise AmbientError("ambient: sound %r" % name)
-    return "playsound %s neutral @a[distance=..%d] %s %s %s %s %s" % (name, rules["hear_radius"], num(x), num(y), num(z),
-                                                                     num(rules["volume"]), num(pitch))
+    # the selector carries the position: a tick function runs at the world spawn, where `distance` would measure from
+    # (the test author, 2026-09-28: no player heard a worker)
+    return "playsound %s neutral @a[x=%s,y=%s,z=%s,distance=..%d] %s %s %s %s %s" % (
+        name, num(x), num(y), num(z), rules["hear_radius"], num(x), num(y), num(z), num(rules["volume"]), num(pitch))
 
 
 def functions(pl):
@@ -319,6 +327,8 @@ def functions(pl):
         clk = "#%s_t" % wid
         tick.append("execute if score %s %s matches 1 run function %s/w/%s/step" % (on, OBJ, F, wid))
         keep_all.append("execute if loaded %d %d %d run function %s/w/%s/keep" % (math.floor(sx), sy, math.floor(sz), F, wid))
+        # the keeper resets the step flag only where it runs: a chunk that unloaded with the flag on would step for ever
+        keep_all.append("execute unless loaded %d %d %d run scoreboard players set %s %s 0" % (math.floor(sx), sy, math.floor(sz), on, OBJ))
         click.append("execute if entity @s[tag=%s] run function %s/w/%s/click" % (ti, F, wid))
         near = "@a[x=%s,y=%s,z=%s,distance=..%%d]" % (num(sx), sy, num(sz))
         w_sel = "@e[type=cobblemon:pokemon,tag=%s]" % t
@@ -350,7 +360,10 @@ def functions(pl):
                      "execute if score #n %s matches 0 at %s run summon minecraft:item_display ~ ~%s ~ {Tags:[\"%s.c\",\"%s\"],"
                      "teleport_duration:2,item:{id:\"%s\",count:1},transformation:{left_rotation:[0f,0f,0f,1f],"
                      "right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.55f,0.55f,0.55f]}}"
-                     % (OBJ, w1, num(w["carry_height"]), TAG, tc, w["carry"])]
+                     % (OBJ, w1, num(w["carry_height"]), TAG, tc, w["carry"]),
+                     "# a new display starts empty (an item_display cannot be summoned holding air): the load shows at the pickup",
+                     "execute if score #n %s matches 0 run item replace entity @e[type=minecraft:item_display,tag=%s] contents with minecraft:air"
+                     % (OBJ, tc)]
         else:
             # a station worker stands where it works: anything that moved it (a push, a stray tp) is undone here
             yaw = w.get("yaw", 0.0)
@@ -460,8 +473,8 @@ def step(w, rules, w_sel, tc, ti, fn=None):
                         % (clk, OBJ, start, start + n - 1, F, wid, leg))
         ax, ay, az = pts[0]
         bx, by, bz = pts[-1]
-        up = pause - 6
-        down = pause + n + 4
+        up = pause - min(6, pause)                # in the pause before the walk out, never wrapped onto the walk back
+        down = pause + n + min(4, pause - 1)      # in the pause at the far end, before the walk back starts
         move.append((up, ["item replace entity @e[type=minecraft:item_display,tag=%s] contents with %s" % (tc, w["carry"])]
                      + ([sound(w["pickup"]["sound"], ax, ay, az, rules)] if w["pickup"].get("sound") else [])))
         move.append((down, ["item replace entity @e[type=minecraft:item_display,tag=%s] contents with minecraft:air" % tc]
@@ -474,7 +487,7 @@ def step(w, rules, w_sel, tc, ti, fn=None):
         period = w["every"]
         yaw = w["yaw"]
         # a hop towards the work, the strike, and back
-        hx, hz = x + (fx - x) * 0.12, z + (fz - z) * 0.12
+        hx, hz = w.get("hop", (x + (fx - x) * 0.12, z + (fz - z) * 0.12))
         move.append((1, ["execute as %s run tp @s %s %s %s %s 0" % (w_sel, num(hx), num(y + 0.35), num(hz), num(yaw))]))
         strike = [particle(e, fx, fy + e.get("dy", 0.6), fz)]
         if e.get("sound"):

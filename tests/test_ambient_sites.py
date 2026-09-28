@@ -172,14 +172,9 @@ def water():
 
 # Without it a worker could stand in a house, on a lot a house is coming to, on a lamp, inside a dressing piece or an
 # earthwork's blocks, or on ground the pending water export will change (the owner, 2026-09-28).
-HOP_ON_ANCHOR = pytest.mark.xfail(strict=True, reason=(
-    "tools/ambient.py:469-470 hops a work worker 0.12 of the way to its face and plan_worker (tools/ambient.py:221) "
-    "checks only the station cell: the rangers' Growlithe (data/ambient.json:97, face 10 blocks off) hops into cell "
-    "(3774, 3946), inside anchor rimpost_overlook"))
-
-
-@pytest.mark.parametrize("wid", [pytest.param(w, marks=HOP_ON_ANCHOR) if w == "rim_growlithe_watch" else w
-                                 for w in WORKERS])
+# (The hop cells are included: every tp in the step. The rangers' Growlithe hopped into anchor rimpost_overlook until
+# 2026-09-28.)
+@pytest.mark.parametrize("wid", list(WORKERS))
 def test_every_cell_a_worker_stands_on_is_free_by_the_plan(wid, water):
     fns = pack()
     w = WORKERS[wid]

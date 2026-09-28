@@ -188,9 +188,6 @@ def test_step_runs_only_while_a_player_is_within_active_radius(wid):
 
 # Without it a town whose chunk unloads before the next keeper (a player who teleports away) keeps its worker's step
 # running every tick until someone comes back.
-@pytest.mark.xfail(strict=True, reason="tools/ambient.py:313: the keeper, the only thing that resets #<id>_on, runs "
-                                       "only under `execute if loaded`, so a chunk that unloads while the flag is 1 "
-                                       "leaves the step running every tick (chunk unload timing not measured in game)")
 def test_step_stops_when_the_players_leave_and_the_chunk_unloads():
     wid = WORKS[0]
     loaded = {"yes": True}
@@ -200,9 +197,11 @@ def test_step_stops_when_the_players_leave_and_the_chunk_unloads():
     w.tick(2 * RULES["keep_every"])
     p.alive = False                                                  # logs off or teleports away
     loaded["yes"] = False
-    n0 = len([c for c in w.calls if c[1] == "%s/w/%s/step" % (F, wid)])
+    t0 = w.tick_no
     w.tick(3 * RULES["keep_every"])
-    assert len([c for c in w.calls if c[1] == "%s/w/%s/step" % (F, wid)]) == n0
+    late = [t for t, f in w.calls if f == "%s/w/%s/step" % (F, wid) and t > t0]
+    # it may run until the next keeper (as when the chunk stays loaded), and never after
+    assert late and max(late) <= t0 + RULES["keep_every"], (len(late), max(late) - t0)
 
 
 # ------------------------------------------------------------------------------------------------ carriers
@@ -290,8 +289,12 @@ def test_carried_item_shows_from_pickup_at_the_start_to_drop_at_the_end(wid):
     w, out, trace = run_carrier(wid)
     a = (float(out[0]["x"]), float(out[0]["z"]))
     b = (float(out[-1]["x"]), float(out[-1]["z"]))
-    picks = [e for e in w.log if e[1] == "item"]
-    assert picks and picks[0][2][1] == spec["carry"]
+    # the step's own item changes are the pickups and drops (the keeper's emptying of a new display is not one), and
+    # they alternate, starting with a pickup
+    (disp,) = displays(w, wid)
+    moves = [(t, d[1]) for t, d in w.logged("item", "%s/w/%s/step" % (F, wid)) if d[0] is disp]
+    assert len(moves) >= 4
+    assert [m[1] for m in moves] == [spec["carry"], "minecraft:air"] * (len(moves) // 2) + [spec["carry"]] * (len(moves) % 2)
     start = next(i for i, t in enumerate(trace) if t[0] == "out")
     seen_out = seen_back = False
     for i in range(start, len(trace)):
@@ -310,22 +313,24 @@ def test_carried_item_shows_from_pickup_at_the_start_to_drop_at_the_end(wid):
                 assert math.dist(at, b) < 0.011, "set down away from the end"
     assert seen_out and seen_back
     # the pickup's and the drop's sounds sound where they happen (a neighbouring worker may share a sound name)
-    (disp,) = displays(w, wid)
-    for t, _k, (e, item) in [x for x in w.log if x[1] == "item" and x[2][0] is disp]:
+    for t, item in moves:
         name, where = (spec["pickup"]["sound"], a) if item == spec["carry"] else (spec["drop"]["sound"], b)
         same = [d for tt, k, d in w.log if tt == t and k == "playsound" and d[0] == name]
         assert any(math.dist((pos[0], pos[2]), where) < 0.011 for _n, pos, _who in same), (t, name)
 
 
 # Without it every R16C placement (and any re-made display) shows the load before the carrier has picked it up.
-@pytest.mark.xfail(strict=True, reason="tools/ambient.py:342-345: the keeper summons the display already showing "
-                                       "the carried item, and the spawn resets the clock to 0, so a new carrier holds "
-                                       "it for pause-6 ticks at the start before its pickup")
-@pytest.mark.parametrize("wid", CARRIERS[:1])
+@pytest.mark.parametrize("wid", CARRIERS)
 def test_a_newly_placed_carrier_holds_nothing_before_its_first_pickup(wid):
     w = placed(wid)
     (disp,) = displays(w, wid)
     assert disp.item in (None, "minecraft:air")
+    for _ in range(400):
+        w.tick()
+        if w.logged("item", "%s/w/%s/step" % (F, wid)):
+            break
+        assert disp.item in (None, "minecraft:air"), "the load shows before the pickup"
+    assert disp.item == WORKERS[wid]["carry"], "no pickup within 400 ticks"
 
 
 # ------------------------------------------------------------------------------------------------ station and blink jobs
@@ -393,10 +398,7 @@ def test_a_click_on_the_box_tells_the_clicker_the_workers_line_once(wid):
 
 
 # Without it the sound of the work is played to players near the world spawn instead of the player watching.
-@pytest.mark.xfail(strict=True, reason="tools/ambient.py:286: `playsound ... @a[distance=..24] x y z` selects players "
-                                       "within 24 of the command's own position, which for a tick function is the "
-                                       "world spawn, not the worker; no worker is within 24 of the spawn")
-@pytest.mark.parametrize("wid", [WORKS[0]])
+@pytest.mark.parametrize("wid", [WORKS[0], BLINKS[0], CARRIERS[0]])
 def test_a_player_beside_the_worker_hears_its_work(wid):
     w = placed(wid)
     p = [e for e in w.entities if e.type == "minecraft:player"][0]
@@ -474,9 +476,14 @@ def test_item_on_the_out_leg_only_for_pauses_of_six_ticks_or_more(pause):
 
 
 # Without it a worker authored with a short pause shows its load on the walk back (the pickup tick wraps round the loop).
-@pytest.mark.xfail(strict=True, reason="tools/ambient.py:455-456: `up = pause - 6` is negative below 6 ticks and wraps "
-                                       "(tk % period) onto the back leg, and `down = pause + n + 4` falls on the back "
-                                       "leg below 4; plan_worker does not refuse pause_ticks < 6")
-@pytest.mark.parametrize("pause", [1, 3, 5])
+@pytest.mark.parametrize("pause", [1, 2, 3, 4, 5])
 def test_item_on_the_out_leg_only_for_short_pauses(pause):
     assert _item_by_leg(pause) == []
+
+
+# Without it a pause of 0 (no tick to pick up or set down in) would build a carrier whose load never shows.
+@pytest.mark.parametrize("pause", [0, -3])
+def test_a_carrier_without_a_pause_is_refused(pause):
+    import ambient
+    with pytest.raises(ambient.AmbientError, match="pause_ticks"):
+        synthetic(pause)
