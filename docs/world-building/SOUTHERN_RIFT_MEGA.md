@@ -602,7 +602,7 @@ approach once a day; the spur's gated galleries, chambers and Heart are retired,
 (`cobblers_rift_mines_refill`, 14,627 cells). The 92 stone recipes are raised to 4 raw stones by `tools/mega_recipes.py`
 from the server's own jar into `build/` (never committed). The blackout makes no item claim for a victor tagged
 `cobblers.gm` (decision 9, `data/blackout.json` `claims.exempt_tag`). The Fight or Flight line is proposed in
-`data/gulch_mine.json` `megas.aggression_proposal` only; the server config is unchanged.
+`data/gulch_mine.json` `megas.aggression_proposal`; the owner approved it and it was applied on staging (section 13).
 
 **What `tools/gulch_mine_audit.py` checks** (independent of the generator's model: its own rasterising of the data, the
 heightmap, the sculpt's gap, Victory Road's corridor and caves, `data/spawn_blocks.json`): cover over every hall
@@ -627,3 +627,62 @@ vanilla 1.21.1 jar; the trade itself is not run), M-7 the Megas' client models (
 `cobblers_gulch_mine`, `cobblers_mega_recipes` and the pared `cobblers_rift_mines` in the world's own datapacks);
 boot; `reapply.py run --only R9M` then `--only R9S`; then, staging only, copy `build/datapacks/cobblers_rift_mines_refill`
 into the world's datapacks, `/reload`, run its functions in the order of its `index.txt`, and remove it again.
+
+## 13. The owner's redesign (2026-09-27, after the gate test)
+
+The owner played the gate on staging: it opens with the sixth badge. Then the design changed. These decisions supersede
+sections 4 to 7 where they disagree; nothing here is built yet.
+
+**The gate goes higher.** The zone check already turns back a player without the badge at any height (the zone boxes
+are full height, section 12), so a flier cannot get in. But the rockfall plug stops at y122, below the gap's walls, and
+reads as passable. It is raised to fill the gulch mouth to the crag tops as a rockslide wall.
+
+**The town fills the whole cove**, in sections of workers, miners and extractors: a workers' quarter; a miners' camp
+(headframes, winches, spoil heaps); an extraction works (ore piles, sluices, crushers); the Cutters' workshop at its
+heart. The layout follows the cove's shape and grows by accretion, not a grid (the same rule as the dig camp below).
+
+**Megas are the source of the currency, not mining.** The owner: "a player will fight the mega mons I have roaming for
+resources, that they will then use to buy mega stones".
+- The currency is the raw `mega_showdown:mega_stone`. The owner declined free stones ("I don't want mega stones being
+  free, I want this to be a sort of late game farm"). A finished stone is never dropped, and the arrival floor of 4 raw
+  stones (section 7.5) is dropped.
+- **Where:** the southern Rift's two western zones, around **(4090, 116, 5289)** and **(3738, 87, 5164)** (the owner's
+  coordinates). They look as if a world broke there and something powerful moved in: caves, Mega dens, broken houses
+  half sunk, debris.
+- **Levels and drops:**
+
+  | Tier | Level | Drop chance per defeat |
+  | --- | --- | --- |
+  | Outer | about 60 (the owner: "if cap after gym 5 is 50 … lvl 60 or so, so it takes a team") | 15% |
+  | Deeper | 65-70, harder evolved lines | higher, 25-35% (ASSUMED; the owner said "more frequently") |
+
+  The drop falls at the victor's feet, owner-only. The mechanism is the `battle_fainted` and kill paths the recovery
+  claims already use (`tools/blackout_pack.py`), for Megas carrying the farm's tag. Megas stay uncatchable, respawn in
+  their dens on a timer, and make no blackout item claim (decision 9). The respawn timer is the farm's rate limit, so no
+  repeatable action may reset it (the lesson recorded with the swim-fatigue fix).
+- **The price.** The owner: "a player should take an hour to get a mega mon ish". A team fight with a level-60 Mega plus
+  finding the next is about 5 minutes (ASSUMED; to be timed), so about 12 wins an hour, and 1.8 raw stones at 15%. The
+  keyed-stone recipe therefore takes **2 raw stones** (it is 4 today, `tools/mega_recipes.py`). The deeper tier pays
+  faster, at a higher risk. Both numbers are data, and are re-set once a real fight is timed.
+- **The crystal faces are unmineable scenery.** They keep their look; the ward holds them permanently and the restore
+  cycle is retired.
+
+**Hostility.** The owner wants Megas to attack on sight unless the player is 20 or more levels above them.
+- **Applied on staging, 2026-09-27:** Fight or Flight's `always_aggro_aspects` became
+  `["alpha", "mega", "mega_x", "mega_y", "mega_z"]` in the server's `config/fightorflight.json5` (recorded in
+  `server/config/mods/`).
+  - The config folder is the server's, shared by the staging and live worlds. The live world has no wild Megas, and the
+    mod exempts a player's own, so the change has no effect there.
+- **Not a config setting: the 20-level exemption.** Fight or Flight 0.11.0's config (read in full on the server) has no
+  key relative to the player's level; aggression is a property of the wild Pokemon alone. Nobody can be 20 levels
+  above a level-60 Mega before the cap passes 80, so the rule matters only after the League. It is recorded as proof
+  M-3b; the route would be the datapack reading the party's top level (the water ladder already reads the party).
+- **Open (M-3):** `light_dependent_unprovoked_attack` is `true` server-wide, so unprovoked attacks may happen only in
+  the dark. Whether an always-aggressive aspect overrides the light rule is not known. The zones are outdoors, and the
+  in-game proof decides it.
+
+**The West Spur Dig (the north Rift dig camp) is reshaped too.** The owner, on the map of the camp: it "should also
+conform to the shape of the pocket it is in, the quarry should be large and a little deep taking half of the area
+probably, with the strip mines and stuff on top. have the camp seem chaotic in its planning not just a pasted town with
+perfect lines in a grid pattern." Today it is a straight forge row, three rectangular yards and a small stepped pit
+(`tools/rift_mines.py`, `data/rift_mines.json`).
