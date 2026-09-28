@@ -854,11 +854,7 @@ def test_the_drop_roll_is_inert_without_a_farm_den():
 # Without it a generated function calls one the build no longer writes (a function removed for having no caller, its
 # callers left behind): in game the line fails whenever it runs, and a later farm Mega would find no watch. With and
 # without a farm, every function any generated function calls is generated.
-@pytest.mark.parametrize("which", [
-    pytest.param("data", marks=pytest.mark.xfail(strict=True, reason=(
-        "tools/gulch_mine.py:1366 writes `execute as @e[...,tag=cobblers.gm.farm] run function .../megas/watch` into "
-        "the tick unconditionally, and tools/gulch_mine.py:1474-1477 no longer writes megas/watch without a farm den"))),
-    "with a farm"])
+@pytest.mark.parametrize("which", ["data", "with a farm"])   # "data" was a strict xfail until the tick's watch line was gated
 def test_every_called_function_is_generated(which):
     spec = SPEC if which == "data" else farm_spec()
     fns = all_functions(spec)

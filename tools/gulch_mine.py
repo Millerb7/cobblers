@@ -1362,9 +1362,12 @@ def keeper_files(m):
         b = face_ward_box(spec, f)
         tick.append("execute as @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,gamemode=!creative,gamemode=!spectator] run effect give @s "
                     "minecraft:mining_fatigue 3 3 true" % (b[0], b[1], b[2], b[3] - b[0], b[4] - b[1], b[5] - b[2]))
-    tick += ["# who is hurting a farm Mega (megas/watch; a kill outside a battle is settled from it by the keeper)",
-             "execute as @e[type=cobblemon:pokemon,tag=%s] run function %s/megas/watch" % (farm_tag, F),
-             "# two counters; the keeper and the leash run only where a player is near (SOUTHERN_RIFT_MEGA.md 6.2)",
+    if any(s_ != "mine" for s_, _d in dens(spec)):
+        # only with a farm den: megas/watch is generated only then, and a tick naming a missing function fails to load
+        # whole (the gate, the keeper and the ward with it)
+        tick += ["# who is hurting a farm Mega (megas/watch; a kill outside a battle is settled from it by the keeper)",
+                 "execute as @e[type=cobblemon:pokemon,tag=%s] run function %s/megas/watch" % (farm_tag, F)]
+    tick += ["# two counters; the keeper and the leash run only where a player is near (SOUTHERN_RIFT_MEGA.md 6.2)",
              "scoreboard players add #clock gm.t 1",
              "scoreboard players add #leash gm.t 1",
              "execute if score #leash gm.t matches %d.. run function %s/leash" % (mg["leash_every_ticks"], F),
