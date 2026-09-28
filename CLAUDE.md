@@ -200,14 +200,44 @@ refusal's text, and what it has so far. It never reaches the same outcome
 another way (a different tool, the shell instead of Edit, a script, another
 path). Every brief says so. On 2026-09-28 four builders hit the same worktree
 guard: three stopped and reported; one wrote its files through Bash and Python
-instead. The output was good; the workaround was still the failure. Launch a
-writing subagent with its own worktree (`isolation: "worktree"`, then
-`git merge --ff-only <the base commit>` inside it), not in a worktree this
-session made for it: the guard ties a session's writes to its own worktree.
+instead. The output was good; the workaround was still the failure.
+
+**Launching a writing agent (verified 2026-09-28 with a throwaway agent).** Two
+gates stand between an agent and a file, and both are the harness's, not ours:
+the worktree isolation checks (deterministic: no write, working directory or git
+redirect into the main checkout, and every other worktree lies inside the main
+checkout's folder) and the permission classifier (a judgment on each command; it
+refused a hydrate that read another checkout, and `rift_heightmap.py --plan`,
+although `Bash(python tools/:*)` is allowed). So:
+
+1. Commit what the agent needs on this session's branch; take the full sha.
+2. Launch with `isolation: "worktree"`. The harness makes the worktree from
+   `origin/main` under `.claude/worktrees/agent-*`. Never prepare a worktree for
+   an agent: it cannot write there.
+3. The brief's first command, alone: `git merge --ff-only <sha>`.
+4. The agent does not hydrate, read other checkouts, or run `reapply.py
+   prepare`, the full test suite, or anything reading `derived/`, `build/paint`
+   or the local-only kits: a fresh worktree has none of them
+   (`python tools/local_inputs.py check` lists the kits) and fetching them is what the
+   classifier refuses. It edits, runs the unit's own generator where that needs
+   only committed data and the heightmap, and runs that unit's tests. The main
+   session merges its branch and runs prepare, the integration and the full
+   suite, once for all agents.
+5. No waits: no `sleep`, no polling a background task, no command expected to
+   run longer than about four minutes. Past the prompt cache's lifetime every
+   turn re-sends the whole context; one builder's four ten-minute waits cost 1.6
+   million weighted tokens. Read files by range, not whole.
+
+**Measuring cost.** The harness's per-agent `totalTokens` and
+`subagent_tokens` are the final context size, not the spend. Spend is the sum of
+every turn's context: `turns x average context`, with cache reads at a tenth of
+the price. Report it from the agent's transcript under
+`~/.claude/projects/<project>/<session>/subagents/`, never from that figure.
 
 **Token budget (the owner, 2026-09-27, after 4.2 million tokens went to
-subagents in one session).** Every subagent pays a full context read before it
-does anything, so:
+subagents in one session).** A subagent starts at about 15,000 tokens; its cost
+is how large its context grows and how many turns it carries that context
+through, so:
 
 - **Build work goes only to an agent with a shell.** An agent that cannot run
   what it writes (no Bash/PowerShell: `world-content-dev`, `content-architect`,
@@ -226,8 +256,9 @@ does anything, so:
   that will re-run a heavy pipeline (the whole heightmap, a full re-apply, the
   full test suite) says so before it starts, with how many passes it expects,
   so the owner can choose fewer, bigger passes. One water-shape agent spent
-  812,000 tokens over three hours, mostly re-running the full pipeline. **Content
-implementation and its test/review use different agents:** whoever wrote a
+  812,000 tokens over three hours, mostly re-running the full pipeline.
+
+**Content implementation and its test/review use different agents:** whoever wrote a
 datapack does not write its validator or grade its experiment. Implementation
 does not grade its own work.
 

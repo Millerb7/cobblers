@@ -175,7 +175,7 @@
       "statement": "Every generated pack that ships functions is run by a re-apply step or is in tools/reapply.py EXCLUDED with its reason; prepare fails closed otherwise, so no build is silently lost at a re-export.",
       "stated_in": [
         {"at": "tools/reapply.py:116", "quote": "Anything not here and not run"},
-        {"at": "tools/reapply.py:662", "quote": "Fail closed instead."}
+        {"at": "tools/reapply.py:692", "quote": "Fail closed instead."}
       ],
       "tests": ["tests/test_reapply_vr_steps.py::test_every_function_pack_present_is_run_by_a_step_or_excluded_with_a_reason",
                 "tests/test_reapply_vr_steps.py::test_uncovered_sees_the_cave_pack_and_reports_it_when_its_step_is_gone",
