@@ -297,7 +297,7 @@ def audit(source_root=None):
         # the routed legs: no face on a road players must walk (the generator's Mask keeps LEG_MARGIN off them; this
         # measures every written column against every leg's segments itself: the independent tests, 2026-09-28)
         near = [(x, z) for x, z in cols for leg in legs for a, b in zip(leg, leg[1:])
-                if seg_distance(x, z, a[0], a[1], b[0], b[1]) < LEG_MARGIN]
+                if seg_distance(x, z, a[0], a[1], b[0], b[1]) <= LEG_MARGIN]
         if near:
             probs.append("%s: %d written column(s) within %d of a routed leg, e.g. %s" % (sid, len(set(near)), LEG_MARGIN,
                                                                                           sorted(set(near))[0]))

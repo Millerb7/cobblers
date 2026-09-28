@@ -1046,10 +1046,7 @@ def f_legs_file_missing(a):
 
 LEG_FAULTS = [
     (f_critical_leg_through_the_cut, "of a routed leg"),
-    pytest.param(f_critical_leg_3_from_the_backing, "within 3 of a routed leg", marks=pytest.mark.xfail(
-        strict=True, reason="tools/mines_audit.py:300: `seg_distance(...) < LEG_MARGIN` passes a column exactly 3 from "
-        "a leg, which its own message calls 'within 3' and the generator's Mask forbids (tools/town_dressing.py:84-92 "
-        "grow(): every cell with |dx|, |dz| <= 3); the audit is one block looser than the rule it checks")),
+    (f_critical_leg_3_from_the_backing, "within 3 of a routed leg"),   # a strict xfail until the audit took <=
     (f_data_corridor_through_the_cut, "of a routed leg"),
     (f_legs_file_missing, "no derived/routes/critical_legs.json"),
 ]
