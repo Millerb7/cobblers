@@ -27,7 +27,6 @@ buys nothing in game, that R9O rebuilds on a fresh export, and how any cut looks
 """
 from __future__ import annotations
 
-import inspect
 import json
 import math
 import os
@@ -1115,7 +1114,9 @@ def test_the_mines_pack_is_world_local_and_prepare_builds_it_then_audits_it():
     import reapply
     assert "cobblers_mines" in reapply.SERVER_PACKS and "cobblers_mines" in reapply.WORLD_LOCAL
     assert "cobblers_mines" not in reapply.EXCLUDED
-    calls = re.findall(r'py\(TOOLS / "([a-z_]+\.py)"(?:, "([a-z]+)")?', inspect.getsource(reapply.prepare))
+    # prepare's work is its named job list (reapply.prepare_jobs, run in order): "mines:build" is mines.py build
+    jobs = [n for n, _f in reapply.prepare_jobs(types.SimpleNamespace(source_root="x", server_dir="x"))]
+    calls = [(n.split(":")[0] + ".py", n.split(":")[1] if ":" in n else "") for n in jobs]
     order = [c[0] for c in calls]
     assert ("mines.py", "build") in calls
     assert order.index("mines.py") < order.index("mines_audit.py")

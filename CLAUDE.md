@@ -15,7 +15,7 @@ verify reality and correct the state rather than rediscovering the question.
 Before ending every session, reconcile every affected line in `docs/STATE.md`
 without adding history; if no state category changed, report that it was
 reviewed and remains current. Follow its file-ownership table when making the
-update.
+update. Then write the handover ("Session length").
 
 At session start, after the live-server safety checks below, run
 `python tools/install_check.py --server-dir <server>`, adding
@@ -202,65 +202,104 @@ path). Every brief says so. On 2026-09-28 four builders hit the same worktree
 guard: three stopped and reported; one wrote its files through Bash and Python
 instead. The output was good; the workaround was still the failure.
 
-**Launching a writing agent (verified 2026-09-28 with a throwaway agent).** Two
-gates stand between an agent and a file, and both are the harness's, not ours:
-the worktree isolation checks (deterministic: no write, working directory or git
-redirect into the main checkout, and every other worktree lies inside the main
-checkout's folder) and the permission classifier (a judgment on each command; it
-refused a hydrate that read another checkout, and `rift_heightmap.py --plan`,
-although `Bash(python tools/:*)` is allowed). So:
+**Launching a writing agent (verified 2026-09-28 with three throwaway agents).**
+Two gates stand between an agent and a file, and both are the harness's: the
+worktree isolation checks (no write, working directory or git redirect into the
+main checkout, and every other worktree lies inside the main checkout's folder)
+and the permission classifier (a judgment on each command; it refused a copy
+from another checkout, and `rift_heightmap.py --plan` twice, although
+`Bash(python tools/:*)` is allowed). So:
 
-1. Commit what the agent needs on this session's branch; take the full sha.
-2. Launch with `isolation: "worktree"`. The harness makes the worktree from
-   `origin/main` under `.claude/worktrees/agent-*`. Never prepare a worktree for
-   an agent: it cannot write there.
-3. The brief's first command, alone: `git merge --ff-only <sha>`.
-4. The agent does not hydrate, read other checkouts, or run `reapply.py
-   prepare`, the full test suite, or anything reading `derived/`, `build/paint`
-   or the local-only kits: a fresh worktree has none of them
-   (`python tools/local_inputs.py check` lists the kits) and fetching them is what the
-   classifier refuses. It edits, runs the unit's own generator where that needs
-   only committed data and the heightmap, and runs that unit's tests. The main
-   session merges its branch and runs prepare, the integration and the full
-   suite, once for all agents.
-5. No waits: no `sleep`, no polling a background task, no command expected to
-   run longer than about four minutes. Past the prompt cache's lifetime every
-   turn re-sends the whole context; one builder's four ten-minute waits cost 1.6
-   million weighted tokens. Read files by range, not whole.
+1. Commit what the agent needs; its worktree starts from this session's
+   committed HEAD (`worktree.baseRef: "head"` in `.claude/settings.json`).
+   Never prepare a worktree for an agent: it cannot write there.
+2. Launch with `isolation: "worktree"`. First command, alone:
+   `git rev-parse HEAD`; if it is not the commit you named, `git merge --ff-only
+   <sha>`.
+3. Kits: `python tools/local_inputs.py hydrate --store
+   C:/Users/wnd/Documents/cobblers-local` (allowed: all 338 files, verified).
+   Derived inputs (the Rift plan, the paint, the water shape) are refused to an
+   agent, and `.worktreeinclude` copied none of them: give the agent work that
+   does not need them, or run it in the main session.
+4. The agent edits, runs its unit's own generator and its unit's tests. It never
+   runs prepare, the full suite or staging.
+5. Every brief carries the refusal rule above and the cost rules below.
 
 **Measuring cost.** The harness's per-agent `totalTokens` and
-`subagent_tokens` are the final context size, not the spend. Spend is the sum of
-every turn's context: `turns x average context`, with cache reads at a tenth of
-the price. Report it from the agent's transcript under
-`~/.claude/projects/<project>/<session>/subagents/`, never from that figure.
+`subagent_tokens` are the agent's FINAL CONTEXT, not its spend; reports built on
+them were off by roughly 20x (2026-09-28: "3.0M" was 26.5M). Spend is every
+turn's context added up: context x turns, cache reads at a tenth.
+`python tools/session_cost.py` reports the real figure for a session and each
+of its agents; quote that, never the harness's.
 
-**Token budget (the owner, 2026-09-27, after 4.2 million tokens went to
-subagents in one session).** A subagent starts at about 15,000 tokens; its cost
-is how large its context grows and how many turns it carries that context
-through, so:
+**Cost rules (the owner, 2026-09-28, from the measured night), each with its
+reason:**
 
+- **Never wait inside an agent**: no `sleep`, no polling, no command expected to
+  run past about four minutes. *Past the prompt cache's lifetime the whole
+  context is re-written; one builder's four ten-minute sleeps cost 1.6M.*
+- **Never resume a finished agent for a small follow-up**; do it in the main
+  session. *A resume re-sends the agent's whole context: about 0.4M to restart a
+  300k agent before it does anything.*
+- **Prefer more, smaller agents to fewer, larger ones.** *Cost is context x
+  turns: carrying 350k through 157 more turns costs about 5M more than starting
+  fresh at 15k. A split costs little; a long agent costs a lot.*
+- **Integration is never delegated**: prepare, the full suite, staging, the
+  merges. *They need inputs an agent cannot fetch and waits an agent must not
+  make, and they run once for every agent's work.*
+- **Research is worth delegating.** *The level-cap and model-route research
+  agents cost 0.57M and 0.66M and each settled a question.*
 - **Build work goes only to an agent with a shell.** An agent that cannot run
   what it writes (no Bash/PowerShell: `world-content-dev`, `content-architect`,
   `trainer-balance-designer`) may write data and docs, never a generator, an
-  audit or anything that has to run. The water-shape design wrote 2,300 lines it
-  could not run, and a second agent re-read everything to debug them.
-- **Batch fixes before sending tests back.** Fix every finding from a test
-  round first, then send the test author one message covering all of them. Each
-  round is a full re-read; four rounds cost four.
+  audit or anything that has to run. *The water-shape design wrote 2,300 lines it
+  could not run, and a second agent re-read everything to debug them.*
+- **Batch fixes before sending tests back**, in one message. *Each round is a
+  full re-read.*
 - **Do small items yourself.** A fix of a few files, a data edit, an install or
   a staging check is done in the main session, not delegated.
-- **Say the expected cost first.** Before spawning more than one subagent for a
-  task, tell the owner which agents, what each does, and the rough token cost,
+- **Say the expected cost first**, measured as above: before spawning more than
+  one subagent, tell the owner which agents, what each does and the rough cost,
   and wait for approval.
-- **Say up front when a task will iterate on something expensive.** A subagent
-  that will re-run a heavy pipeline (the whole heightmap, a full re-apply, the
-  full test suite) says so before it starts, with how many passes it expects,
-  so the owner can choose fewer, bigger passes. One water-shape agent spent
-  812,000 tokens over three hours, mostly re-running the full pipeline.
+- **Say up front when a task will iterate on something expensive** (the whole
+  heightmap, a full re-apply, the full suite), with how many passes, so the
+  owner can choose fewer. *One water-shape agent spent 812,000 tokens over three
+  hours re-running the full pipeline.*
 
 **Content implementation and its test/review use different agents:** whoever wrote a
 datapack does not write its validator or grade its experiment. Implementation
 does not grade its own work.
+
+## Session length (the owner, 2026-09-28)
+
+A long session is the single most expensive thing we do. The 2026-09-28 main
+session cost 32.9M on its own, more than its thirteen agents together, at an
+average 517k of context per turn: every turn re-sends everything before it.
+
+- **One session per job.** The water export is a session; the Rift build is a
+  session. When the job ends, hand over and stop, even if the session still
+  feels useful: it carries the cost of everything before it.
+- **The signal is context per turn, not elapsed time.** Check with
+  `python tools/session_cost.py` ("context now") at every unit boundary.
+  Under 200k: carry on. 200k to 300k: compact if the job goes on, hand over if
+  it is done. Over 300k: hand over. A cold session restarts at about 70k
+  (docs/STATE.md alone is 29k of it: keep it to current state, never history).
+- **Compact early, not at the end.** Compacting costs one pass; carrying 500k
+  for fifty more turns costs 2.5M. Compact at a unit boundary with the
+  handover already written, so nothing lives only in the conversation.
+- **The handover is part of ending a session, not something the owner asks
+  for.** Before a session stops (job done, or over the threshold), it rewrites
+  `docs/HANDOVER_SESSION.md` so a cold session starts for almost nothing:
+  1. the branch, its head sha, its PR and whether that PR is frozen;
+  2. where the job stopped: the last thing done and verified, the next step as a
+     command, and anything half-done (a branch, a worktree, a running server,
+     a held lock);
+  3. what waits on the owner: decisions, and in-game checks with coordinates;
+  4. what a cold start must not rediscover: findings, refusals and dead ends
+     from this session, one line each with the file or commit;
+  5. what the session cost (`tools/session_cost.py`).
+  Durable facts go to `docs/STATE.md`, not the handover. The cold session
+  reads CLAUDE.md, STATE and the handover, and nothing else, before it starts.
 
 ## Git and commit hygiene
 
