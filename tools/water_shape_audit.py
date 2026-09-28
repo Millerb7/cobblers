@@ -18,12 +18,18 @@ the committed data, never from the generator's plan or report:
   F  rivers      every course in data/rivers.json is in the revised courses; painted as tools/paint_maps.py paints,
                  surfaces never rise, steps over a block only at declared falls, every station is wet, each course ends
                  where it should, no new leak; each meander window's sinuosity inside its target, measured on the result
-  G  the stream  starts at the pass, reaches the sea, drains; the ravine's lake half untouched
+  G  the ravine  the Viltri Ravine is on hold (the owner, 2026-09-27): no column changed inside its landmark polygon
+                 outside Lake Viltri's basin, so the ravine is exactly as on the canonical heightmap
   H  seabed      fill only, never above y59, never a column shallower than 4 before; the windward deep band keeps its
                  deep-spawn water (y36 or below wherever it was)
   I  crossings   the fatigue walk (data/blackout.json's constants) calibrated on the canonical heightmap against
                  WATER_BUILD_PLAN 11.1 (hard for contract C3's lines); then every requirement after
   J  nonempty    each declared feature changed something; nothing changed at all is a failure
+  K  the bank    the Jungle Isle removed (nothing of its land left at or above the sea), the bank's depth range away
+                 from the town, rest ground only at the town, every re-sited deck over its kind's least depth, the new
+                 mainland jetty's landfall and landing, the blue hole's depth
+  M  margin      the margin relief image: its size, zero over the heightmap, continuous with the copy's edge, the
+                 seamounts' summits, never above the sea except where land meets the edge
 
     python tools/water_shape_audit.py --source-root <root>
 """
@@ -258,7 +264,43 @@ def overlays(world, G, names):
         level, deck = sea_town.deck_ground(world)
         for x, z in deck:
             out[(int(x), int(z))] = int(level)
+    if "sea_town_resite" in names:
+        import sea_town
+        level, deck = sea_town.deck_ground(world, resite=True)
+        for x, z in deck:
+            out[(int(x), int(z))] = int(level)
     return out
+
+
+def town_resite():
+    """(plan, elements of the re-sited town but its mainland jetty, their deck cells), from data/sea_town.json."""
+    import sea_town
+    plan = sea_town.load(resite=True)
+    els = [e for e in sea_town.elements(plan) if e["district"] != "mainland_jetty"]
+    deck = set()
+    for e in els:
+        if not e["decor"]:
+            deck |= sea_town.cells(e["rect"])
+    return plan, els, deck
+
+
+def to_town(G, deck, n, near_blocks=60):
+    """The nearest pair of dry ground and the town (its decks, and rest ground within near_blocks of them)."""
+    xs = np.array([p[0] for p in deck])
+    zs = np.array([p[1] for p in deck])
+    b = cbox(xs.min() - 1600, zs.min() - 1600, xs.max() + 1601, zs.max() + 1601, n)
+    tm = np.zeros((b[3] - b[1], b[2] - b[0]), bool)
+    tm[zs - b[1], xs - b[0]] = True
+    g = G[S_(b)]
+    near = coarse_distance(tm, np.ones_like(tm), 2) <= near_blocks
+    tm |= near & (g >= SEA - 1) & (g < SEA)
+    land = (g >= SEA) & ~tm
+    d = coarse_distance(tm, np.ones_like(tm), 4)
+    dl = np.where(land, d, np.inf)
+    iz, ix = np.unravel_index(int(np.argmin(dl)), dl.shape)
+    tz, tx = np.nonzero(tm)
+    j = int(np.argmin((tx - ix) ** 2 + (tz - iz) ** 2))
+    return (int(ix + b[0]), int(iz + b[1])), (int(tx[j] + b[0]), int(tz[j] + b[1]))
 
 
 def endpoints(c, G, reg, n):
@@ -412,23 +454,14 @@ def run(source_root, world_path=None):
     rv = spec["rivers"]
     ch_half = int(rv["defaults"]["corridor_half_width_blocks"])
     m = np.zeros((n, n), bool)
-    for e in rv["meanders"] + rv["cascades"]:
+    for e in rv.get("smooth", []) + rv["meanders"] + rv["cascades"]:
         pts, ch = densify(courses[e["course"]]["graded_polyline"])
         sel = [(p[0], p[1]) for p, c in zip(pts, ch) if e["from_m"] - 8 <= c <= e["to_m"] + 8]
         if len(sel) >= 2:
             m |= line_mask([sel], full, 2 * ch_half + 1)
     fp["rivers"] = m
-    st = spec["viltri_ravine_stream"]
-    axis = next(a for a in lms["viltri_ravine"]["axes"] if a["id"] == "channel")["polyline"]
-    px, pz = st["pass"]
-    k = int(np.argmin([math.hypot(p[0] - px, p[1] - pz) for p in axis]))
-    sea_half = [(px, pz)] + [tuple(p) for p in axis[k + 1:]]
-    lake_half = [tuple(p) for p in axis[:max(1, k - 1)]]
-    m = line_mask([sea_half], full, 2 * st["corridor_half_width_blocks"] + 1)
-    ex = st["to_sea"]["max_extension_blocks"] + st["corridor_half_width_blocks"]
-    lx, lz = sea_half[-1]
-    m |= line_mask([[(lx, lz), (lx, lz)]], full, 2 * ex + 1)
-    fp["stream"] = m
+    # the Viltri Ravine is on hold: no stream footprint (data/water_shape.json viltri_ravine)
+    fp["stream"] = np.zeros((n, n), bool)
     lake_masks = {}
     m = np.zeros((n, n), bool)
     for lm in lms.values():
@@ -482,6 +515,18 @@ def run(source_root, world_path=None):
             zm[max(0, z0):z1 + 1, max(0, x0):x1 + 1] = False
     zm &= ~lake_all & (G0 < SEA)
     fp["seabed"] = zm
+    bk = spec.get("jungle_isle_bank")
+    if bk:
+        rbb, rmm = region_grown(reg, bk["region"], int(bk["region_grow_blocks"]), n)
+        isl_box = cbox(rbb[0] - bk["apron_blocks"] - 48, rbb[1] - bk["apron_blocks"] - 48,
+                       rbb[2] + bk["apron_blocks"] + 48, rbb[3] + bk["apron_blocks"] + 48, n)
+        bisl = np.zeros((isl_box[3] - isl_box[1], isl_box[2] - isl_box[0]), bool)
+        bisl[rbb[1] - isl_box[1]:rbb[3] - isl_box[1], rbb[0] - isl_box[0]:rbb[2] - isl_box[0]] = rmm
+        bisl &= G0[S_(isl_box)] >= SEA
+        bm_ = np.zeros((n, n), bool)
+        # the island grown by its apron and 4 blocks for the chamfer's rounding
+        bm_[S_(isl_box)] = coarse_distance(bisl, np.ones_like(bisl), 2) <= bk["apron_blocks"] + 4
+        fp["bank"] = bm_
     union = np.zeros((n, n), bool)
     for v in fp.values():
         union |= v
@@ -494,9 +539,12 @@ def run(source_root, world_path=None):
     print("C protected")
     towns = load("towns.json")["towns"]
     pm = np.zeros((n, n), bool)
+    released = {r["town"] for r in spec["protect"].get("release_towns", [])}
+    if released:
+        print("        released by the design (re-sited or removed): %s" % sorted(released))
     for t in towns:
         f = t.get("footprint") or {}
-        if f.get("min_x") is not None:
+        if f.get("min_x") is not None and t["id"] not in released:
             pm[max(0, f["min_z"]):f["max_z"] + 1, max(0, f["min_x"]):f["max_x"] + 1] = True
     A.check("C1", "no town footprint changed", not (diff & pm).any(), int((diff & pm).sum()))
     lines = []
@@ -600,14 +648,57 @@ def run(source_root, world_path=None):
                 keeps[kz["id"]] = np.hypot(zz - az, xx - ax) <= kz["radius"]
         for kid, km in keeps.items():
             A.check("E5", "%s: keep zone %s untouched" % (body["id"], kid), not (d_ & km).any(), int((d_ & km).sum()))
+        # flattened zones (the practice floor) placed by their own rule, derived here from the design and the bed
+        zz_, xx_ = np.mgrid[0:w1.shape[0], 0:w1.shape[1]]
+        for fz in body.get("flatten", []):
+            if "site" in fz:
+                fx, fz_ = fz["site"]["toward_anchor_from"]
+                zs, xs = np.nonzero(w0)
+                i = int(np.argmin((xs + b[0] - fx) ** 2 + (zs + b[1] - fz_) ** 2))
+                z0_, x0_ = float(zs[i]), float(xs[i])
+                Ls = max(1.0, math.hypot(az - z0_, ax - x0_))
+                cz_, cx_ = az, ax
+                for st_ in range(int(Ls) + 1):
+                    zq = int(round(z0_ + (az - z0_) * st_ / Ls))
+                    xq = int(round(x0_ + (ax - x0_) * st_ / Ls))
+                    if w0[zq, xq] and dep0[zq, xq] >= fz["site"]["at_old_depth"]:
+                        cz_, cx_ = zq, xq
+                        break
+                keeps[fz["id"]] = np.hypot(zz_ - cz_, xx_ - cx_) <= fz["radius"]
         for kid in body.get("max_to_rest_excludes", []):
             excl |= keeps.get(kid, np.zeros_like(excl))
         f = 1 if w1.size <= 400000 else (2 if w1.size <= 2500000 else 4)
         dist = coarse_distance(~w1 | (dep1 <= 1), w1, max(1, f))
-        obj = w1 & ~excl
-        mx = float(dist[obj].max()) if obj.any() else 0.0
         tgt = body.get("max_to_rest_blocks", rungs[body["rung"]]["max_to_rest_blocks"])
-        A.check("E6", "%s: farthest water from rest %.0f <= %s (%s rung)" % (body["id"], mx, tgt, body["rung"]), mx <= tgt + f)
+        sc = body.get("rest_scope")
+        if sc:
+            # decision 8 read literally: the budget as a farthest-point limit only over the named sectors' shore
+            # band, and each dive site needs a rest point within the budget
+            obj = np.zeros_like(w1)
+            dsh = coarse_distance(~w0, w0, max(1, f))
+            brg = np.degrees(np.arctan2(xx_ - ax, -(zz_ - az))) % 360.0
+            secs = {x["id"]: x for x in body.get("sectors", [])}
+            for sct in sc.get("sectors", []):
+                lo_, hi_ = secs[sct["sector"]]["bearing_from_anchor_deg"]
+                inb = ((brg >= lo_) & (brg <= hi_)) if lo_ <= hi_ else ((brg >= lo_) | (brg <= hi_))
+                obj |= inb & (dsh <= sct["within_blocks_of_shore"])
+            obj &= w1 & ~excl
+            mx = float(dist[obj].max()) if obj.any() else 0.0
+            A.check("E6", "%s: farthest water from rest in the scoped shore band %.0f <= %s (%s rung; the open lake is "
+                    "open water by design)" % (body["id"], mx, tgt, body["rung"]), mx <= tgt + f)
+            rest = ~w1 | (dep1 <= 1)
+            dsite = coarse_distance(rest, np.ones_like(rest), max(1, f))
+            for sid in sc.get("dive_sites", []):
+                zm = keeps.get(sid)
+                if zm is None or not zm.any():
+                    A.check("E6b", "%s: dive site %s derived" % (body["id"], sid), False)
+                    continue
+                r0 = float(dsite[zm].min())
+                A.check("E6b", "%s: dive site %s has rest within %.0f <= %s" % (body["id"], sid, r0, tgt), r0 <= tgt + f)
+        else:
+            obj = w1 & ~excl
+            mx = float(dist[obj].max()) if obj.any() else 0.0
+            A.check("E6", "%s: farthest water from rest %.0f <= %s (%s rung)" % (body["id"], mx, tgt, body["rung"]), mx <= tgt + f)
         deep0, deep1 = int((dep0 >= 9).sum()), int((dep1 >= 9).sum())
         share = spec["lakes"]["defaults"]["deep_area_min_share"]
         A.check("E7", "%s: deep water (9+) %d of %d kept (at least %.0f%%)" % (body["id"], deep1, deep0, share * 100),
@@ -686,29 +777,18 @@ def run(source_root, world_path=None):
             lo, hi = e["sinuosity_target"]
             A.check("F8", "%s: sinuosity %.2f (before %.2f) in %s" % (e["id"], sn, s0, e["sinuosity_target"]), lo <= sn <= hi)
 
-    # ------------------------------------------------------------------ the stream
-    print("G stream")
-    s = rev.get(st["course_id"])
-    if A.check("G1", "the Viltri Ravine stream is a revised course", s is not None):
-        b, wet, lv, pts, ch = painted(G1, s, n)
-        levels = [math.floor(p[2] + 0.01) for p in pts]
-        A.check("G2", "it starts within 40 blocks of the pass", math.hypot(pts[0][0] - px, pts[0][1] - pz) <= 40)
-        A.check("G3", "it ends at the sea", levels[-1] == SEA and G1[int(round(pts[-1][1])), int(round(pts[-1][0]))] < SEA)
-        A.check("G4", "its surface never rises", all(b_ <= a_ for a_, b_ in zip(levels, levels[1:])))
-        big = [levels[i - 1] - levels[i] for i in range(1, len(levels)) if levels[i - 1] - levels[i] > 1]
-        A.check("G5", "steps over a block only at its declared falls", len(big) <= len(st.get("falls", [])) and
-                all(d <= max(f["drop"] for f in st["falls"]) for d in big), big)
-        dry = sum(1 for (x, z, sv) in pts if G1[int(round(z)), int(round(x))] >= math.floor(sv + 0.01))
-        A.check("G6", "every station holds water", dry == 0, dry)
-        lk = line_mask([lake_half], full, 81) if len(lake_half) >= 2 else np.zeros((n, n), bool)
-        # the half's first stations run along Lake Viltri, whose bed is the lake pass's (checked under E)
-        lk &= ~lake_all
-        A.check("G7", "the ravine's lake half is untouched outside Lake Viltri's basin (dry by design)",
-                not (diff & lk).any(), int((diff & lk).sum()))
+    # ------------------------------------------------------------------ the ravine (on hold)
+    print("G the Viltri Ravine")
+    rv_ = lms["viltri_ravine"]["extent"]["polygons"]
+    rm_ = poly_mask(rv_, full) & ~lake_all
+    A.check("G1", "the Viltri Ravine is untouched (on hold: no change inside its polygon outside Lake Viltri's basin)",
+            not (diff & rm_).any(), int((diff & rm_).sum()))
+    A.check("G2", "no Viltri Ravine stream among the revised courses",
+            not any(c in rev for c in ("viltri_ravine_stream", "viltri_ravine_lake_stream")))
 
     # ------------------------------------------------------------------ seabed
     print("H seabed")
-    only_seabed = diff & fp["seabed"] & ~(fp["rivers"] | fp["stream"] | fp["lakes"] | fp["coasts"])
+    only_seabed = diff & fp["seabed"] & ~(fp["rivers"] | fp["stream"] | fp["lakes"] | fp["coasts"] | fp.get("bank", False))
     A.check("H1", "seabed changes fill only", not (only_seabed & (G1 < G0)).any(), int((only_seabed & (G1 < G0)).sum()))
     A.check("H2", "seabed never above y%d" % sb["cap_y"], not (only_seabed & (G1 > sb["cap_y"])).any())
     A.check("H3", "seabed never touches a column shallower than %d" % sb["min_depth_to_edit"],
@@ -728,25 +808,38 @@ def run(source_root, world_path=None):
     # ------------------------------------------------------------------ crossings
     print("I crossings")
     K = load("blackout.json")["surface"]
+    _tplan, _tels, tdeck = town_resite() if any(c["kind"] == "to_town" for c in spec["crossings"]) else (None, None, None)
     for c in spec["crossings"]:
-        a, b = endpoints(c, G0, reg, n)
+        if c["kind"] == "to_town":
+            a, b = to_town(G1, tdeck, n)
+        else:
+            a, b = endpoints(c, G0, reg, n)
         ov0 = overlays(world, G0, c.get("overlays", []))
         ov1 = overlays(world, G1, c.get("overlays", []))
-        p0, p1 = profile(G0, ov0, a, b), profile(G1, ov1, a, b)
-        if p0 is None or p1 is None:
-            A.check("I0", "%s: there is water on the line" % c["id"], False, (a, b))
-            continue
-        pb = c["plan_before"]
-        u0 = verdict(swim(p0["depths"], p0["step"], False, K)[0])
-        t0 = verdict(swim(p0["depths"], p0["step"], True, K)[0])
-        calib = abs(p0["swim"] - pb["swim"]) <= 0.1 * pb["swim"] + 2 and u0 == pb["unaided"] and t0 == pb["trained"]
-        detail = "swim %.0f (plan %s), unaided %s (plan %s), trained %s (plan %s)" % (
-            p0["swim"], pb["swim"], u0, pb["unaided"], t0, pb["trained"])
-        if c.get("contract"):
-            A.check("I1", "%s: the walk reproduces the plan on the canonical heightmap (contract %s)" % (c["id"], c["contract"]),
-                    calib, detail)
-        elif not calib:
-            print("        note %s: the walk differs from the plan's measurement: %s" % (c["id"], detail))
+        p1 = profile(G1, ov1, a, b)
+        if c.get("measure_before") is False:
+            if not A.check("I0", "%s: there is water on the line after (%s -> %s)" % (c["id"], a, b), p1 is not None):
+                continue
+            p0 = None
+        else:
+            p0 = profile(G0, ov0, a, b)
+            if p0 is None or p1 is None:
+                A.check("I0", "%s: there is water on the line" % c["id"], False, (a, b))
+                continue
+        pb = c.get("plan_before")
+        if p0 is None or pb is None:
+            pb = None
+        u0 = verdict(swim(p0["depths"], p0["step"], False, K)[0]) if p0 else None
+        if pb is not None:
+            t0 = verdict(swim(p0["depths"], p0["step"], True, K)[0])
+            calib = abs(p0["swim"] - pb["swim"]) <= 0.1 * pb["swim"] + 2 and u0 == pb["unaided"] and t0 == pb["trained"]
+            detail = "swim %.0f (plan %s), unaided %s (plan %s), trained %s (plan %s)" % (
+                p0["swim"], pb["swim"], u0, pb["unaided"], t0, pb["trained"])
+            if c.get("contract"):
+                A.check("I1", "%s: the walk reproduces the plan on the canonical heightmap (contract %s)" % (c["id"], c["contract"]),
+                        calib, detail)
+            elif not calib:
+                print("        note %s: the walk differs from the plan's measurement: %s" % (c["id"], detail))
         req = c.get("require_after") or {}
         hu, pu = swim(p1["depths"], p1["step"], False, K)
         ht, _ = swim(p1["depths"], p1["step"], True, K)
@@ -762,6 +855,10 @@ def run(source_root, world_path=None):
                     all(v == "knocked out" for v in walks), d)
         if req.get("unchanged"):
             A.check("I3", "%s unchanged" % c["id"], p0["depths"] == p1["depths"], d)
+        if req.get("rates_unchanged"):
+            cls = lambda ds: [0 if v <= 1 else (1 if v < K["deep_water_blocks"] else 2) for v in ds]  # noqa: E731
+            A.check("I3b", "%s: every column's swim rate unchanged (rest, shallow, deep)" % c["id"],
+                    cls(p0["depths"]) == cls(p1["depths"]), d)
         if req.get("unaided") == "no hit":
             A.check("I4", "%s: unaided, no hit" % c["id"], u1 == "no hit", d)
         if req.get("unaided") == "hit or worse":
@@ -781,7 +878,7 @@ def run(source_root, world_path=None):
 
     # ------------------------------------------------------------------ nonempty
     print("J nonempty")
-    for fam in ("rivers", "stream", "lakes", "coasts", "seabed"):
+    for fam in ("rivers", "lakes", "coasts", "seabed") + (("bank",) if "bank" in fp else ()):
         A.check("J1", "%s changed something" % fam, (diff & fp[fam]).any(), int((diff & fp[fam]).sum()))
     for f in co["flats"]:
         x0, z0, x1, z1 = f["box"]
@@ -792,6 +889,89 @@ def run(source_root, world_path=None):
                 ((G1 >= SEA) & (G0 < SEA))[max(0, z0):z1 + 1, max(0, x0):x1 + 1].any())
     A.check("J4", "the reef changed", diff[S_(reef_box)].any())
     A.check("J5", "the Fungal chain changed", (diff & fm).any())
+
+    # ------------------------------------------------------------------ the bank
+    if bk:
+        print("K the Jungle Isle's bank and the re-sited town")
+        g1b = G1[S_(isl_box)].astype(int)
+        A.check("K1", "nothing of the Jungle Isle's land is left at or above the sea (%d columns were land)" % int(bisl.sum()),
+                not (bisl & (g1b >= SEA)).any(), int((bisl & (g1b >= SEA)).sum()))
+        plan, els, deck = town_resite()
+        tm = np.zeros(bisl.shape, bool)
+        for x, z in deck:
+            if isl_box[0] <= x < isl_box[2] and isl_box[1] <= z < isl_box[3]:
+                tm[z - isl_box[1], x - isl_box[0]] = True
+        tw_ = bk["town"]
+        near_town = coarse_distance(tm, np.ones_like(tm), 2) <= tw_["grow_blocks"] + tw_["blend_blocks"] + 8
+        bh = bk["blue_hole"]
+        head = next(w for w in plan["walks"] if w["id"] == bh["at_walk"])
+        hx = head["rect"][0] - bh["radius"] * bh.get("offset_of_radius", 0.85)
+        hz = (head["rect"][1] + head["rect"][3]) / 2.0
+        zz_, xx_ = np.mgrid[isl_box[1]:isl_box[3], isl_box[0]:isl_box[2]]
+        hole = np.hypot(xx_ - hx, zz_ - hz) <= bh["radius"] * 1.4
+        dep = SEA - g1b
+        off = bisl & ~near_town & ~hole
+        dp = bk["depth"]
+        lo_, hi_ = dp["min_off_town"], dp["edge"] + dp["relief_blocks"] + 1
+        A.check("K2", "the bank away from the town is %d-%d deep (measured %d-%d, median %.0f)" % (
+            lo_, hi_, int(dep[off].min()), int(dep[off].max()), float(np.median(dep[off]))),
+            dep[off].min() >= lo_ and dep[off].max() <= hi_)
+        rest = bisl & (dep <= 1)
+        A.check("K3", "rest ground on the bank only at the town (%d rest columns, %d away from it)" % (
+            int(rest.sum()), int((rest & ~near_town).sum())), not (rest & ~near_town).any())
+        bad = []
+        for e in els:
+            x0, z0, x1, z1 = e["rect"]
+            dd = SEA - G1[z0:z1 + 1, x0:x1 + 1]
+            if e["landfall"]:
+                if (SEA - dd).max() > plan["rules"]["landfall_max_ground"]:
+                    bad.append((e["id"], "ashore above the deck"))
+            elif dd.min() < e["min_depth"]:
+                bad.append((e["id"], int(dd.min()), e["min_depth"]))
+        A.check("K4", "every re-sited raft, bridge and walk over at least its kind's depth (%d elements)" % len(els), not bad, bad[:5])
+        import sea_town
+        jet = [e for e in sea_town.elements(plan) if e["district"] == "mainland_jetty"]
+        jbad = []
+        for e in jet:
+            x0, z0, x1, z1 = e["rect"]
+            gg = G1[z0:z1 + 1, x0:x1 + 1]
+            if e["landfall"] and gg.max() > plan["rules"]["landfall_max_ground"]:
+                jbad.append((e["id"], "ashore above the deck"))
+            if e["landfall"] and gg.max() < SEA:
+                jbad.append((e["id"], "never reaches dry ground"))
+            if not e["landfall"] and (SEA - gg).min() < e["min_depth"]:
+                jbad.append((e["id"], int((SEA - gg).min())))
+        A.check("K5", "the new mainland jetty comes ashore on the beach and its landing floats over its depth", not jbad, jbad)
+        A.check("K6", "the blue hole reaches %d deep" % bh["depth"], int(dep[hole].max()) >= bh["depth"] - 1, int(dep[hole].max()))
+
+    # ------------------------------------------------------------------ the margin relief
+    mr = (spec["seabed"].get("margin") or {}).get("relief")
+    if mr:
+        print("M margin relief")
+        mi = man.get("margin_relief") or {}
+        mp = out / (mi.get("path") or mr["image_name"])
+        if A.check("M1", "the margin relief image is present and hashes to the manifest", mp.is_file() and sha(mp) == mi.get("sha256")):
+            img = np.array(Image.open(mp))
+            M = int(world["export"]["export_margin_blocks"])
+            A.check("M2", "its size is the export canvas (%d)" % (n + 2 * M), img.shape == (n + 2 * M, n + 2 * M) and img.dtype == np.uint16)
+            A.check("M3", "it is zero over the heightmap (the landmass tiles untouched by the only-raise import)",
+                    not img[M:M + n, M:M + n].any())
+            ym = ground(img, world)
+            ring = np.concatenate([ym[M - 1, M:M + n], ym[M + n, M:M + n], ym[M:M + n, M - 1], ym[M:M + n, M + n]])
+            edge = np.concatenate([G1[0], G1[-1], G1[:, 0], G1[:, -1]])
+            A.check("M4", "it meets the copy's edge within a block (largest step %d)" % int(np.abs(ring.astype(int) - edge).max()),
+                    int(np.abs(ring.astype(int) - edge).max()) <= 1)
+            sm = []
+            for s_ in reg["the_outer_deep"]["features"]["seamounts"]:
+                sm.append((s_["x"], s_["z"], s_["summit_y"], int(ym[s_["z"] + M, s_["x"] + M])))
+            A.check("M5", "every seamount's summit stands at its region's summit_y (within a block)",
+                    all(abs(a_ - b_) <= 1 for _x, _z, a_, b_ in sm), sm)
+            outside = np.ones(ym.shape, bool)
+            outside[M:M + n, M:M + n] = False
+            far = outside.copy()
+            far[max(0, M - 200):M + n + 200, max(0, M - 200):M + n + 200] = False
+            A.check("M6", "beyond 200 blocks of the heightmap's edge nothing stands above y%d" % mr["sea_cap_y"],
+                    int(ym[far].max()) <= mr["sea_cap_y"], int(ym[far].max()))
     return A, copy_sha
 
 
