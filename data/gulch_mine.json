@@ -1,21 +1,22 @@
 {
   "schema": "cobblers.gulch_mine/1",
-  "status": "generated on the branch world/gulch-prototype, 2026-09-27; built offline only: not installed, not in any world, not seen in game",
+  "status": "generated offline; the prototype slice (2026-09-27) redesigned to the owner's section 13 (2026-09-28): the rockslide wall, the Mega farms and their drop roll, the 2-stone price, the faces as warded scenery, the cove town. Built offline only: not installed, not in any world, not seen in game",
   "builder": "tools/gulch_mine.py",
   "audit": "tools/gulch_mine_audit.py",
-  "recipes": "tools/mega_recipes.py (the 92 stone recipes raised to 4 raw stones, generated from the local jar into build/, never committed: the Mega Showdown licence is not MIT-style)",
+  "recipes": "tools/mega_recipes.py (the 92 stone recipes raised to cutters.offer.raw_count raw stones, generated from the local jar into build/, never committed: the Mega Showdown licence is not MIT-style)",
   "design": [
     "docs/world-building/SOUTHERN_RIFT_MEGA.md section 10 (the prototype slice) and section 11 (the owner's twelve decisions, 2026-09-27, all at the recommendations)",
     "docs/mechanics/STONE_ECONOMY.md 5.3-5.4 (restoring faces: on approach, filtered fill, guarded setblocks, occupancy guard)",
     "docs/mechanics/RIFT_ZONES.md section 4 (the zone check)",
-    "tools/rift_mines.py (the gate, the ward, the rock house and the shell, whose pattern this follows)"
+    "tools/rift_mines.py (the gate, the ward, the rock house and the shell, whose pattern this follows)",
+    "docs/world-building/SOUTHERN_RIFT_MEGA.md section 13 (the owner's redesign, 2026-09-27): the gate to the crag tops, the Megas as the currency's source, 2 raw stones, the faces unmineable, the cove town"
   ],
   "seed": 20260928,
   "grid": {
     "x": [4250, 4500],
     "z": [4640, 4970],
-    "y": [36, 140],
-    "why": "every block this build writes: the gate at the gulch_mouth gap (x4355-4395), the road down to the floor, the square and yard, the Tally Hall and the Cutting Floor with its two faces (to x4483); y from under the Cutting Floor's shell to over the rockfall"
+    "y": [36, 205],
+    "why": "every block this build writes: the rockslide wall at the gulch_mouth gap (x4345-4400, up to its crest at the crag tops, y194), the road down to the floor, the cove town, the Tally Hall and the Cutting Floor with its two faces (to x4483); y from under the Cutting Floor's shell to over the wall"
   },
   "cover_min": 4,
   "cover_why": "the repo's minimum rock over a cavern's shell (data/rift_mines.json cover_min, tools/vr_caves.py); SOUTHERN_RIFT_MEGA.md 5 wants 9 under the gulch floor, which both halls exceed (the generator's report)",
@@ -147,8 +148,16 @@
     "why": "decision 3: the gulch is entered through the gulch_mouth canyon (data/rift_sculpt.json). The sculpt left a 89-point gap in the raised rim there (ring index +-44 round the entrance) with a ramp down to the floor; a rockfall now fills the gap along the lip, and the Gulch lookout's grille stands in its middle. A player holding the flag who steps into the alcove in front of the grille is put through; nobody else is, and the zone check turns back anyone without the flag found anywhere in the gulch zone: over the rockfall, down a cliff, or up the stem from Victory Road",
     "band": {
       "entrance": "gulch_mouth",
-      "height": 7,
-      "min_rise": 3,
+      "wall": {
+        "top": [194, 186],
+        "core": 2,
+        "spread_out": 8,
+        "spread_in": 1,
+        "batter": 3,
+        "jag": 4,
+        "min_rise": 3,
+        "why": "SOUTHERN_RIFT_MEGA.md 13, the owner after the gate test: the rockfall read as passable at y122, below the gap's walls, so it becomes a rockslide wall filling the gulch mouth to the crag tops. `top` is the crest at the gap's two ends, j = -44 and +44: the rim's highest ground within 16 outward of the first ring point beyond each end (j -45: y194; j +45: y186; derived/rift_sculpt/plan.json and the canonical heightmap, 2026-09-28), joined in a line across the gap. Each ring point claims the columns within 1 of its point moved d = -spread_out .. spread_in along its inward normal; a column's top is the crest less a jag of 0..jag-1, less `batter` per block outward past `core` (the talus on the plateau side); the inward side stays steep, so the road, the arrival and the exit box behind it stay clear. A crag column already higher is left alone; any other stands at least min_rise over its ground"
+      },
       "why": "every ring point of the sculpt's gap (j = -44..44 from the entrance's ring index), with its inward normal, as `trace` prints it from derived/rift_sculpt/plan.json. Each claims the columns within 1 of its point moved -1, 0 and +1 along the normal (geometry.band): a band 4 to 6 wide along the lip. The rockfall stands on each column's ground (or the road) up to its ring point's ground + height, and at least min_rise over the column's own ground; outside the gap the sculpt raised the rim into crags (rift_heightmap.py, `open_at`), which are the barrier there",
       "points": [
         [-44, 4357, 4662, -0.9854, 0.1705],
@@ -246,8 +255,8 @@
       "half_j": 6,
       "max_x": 4362,
       "trim_z": [4703, 4709],
-      "top_y": 122,
-      "why": "the band's columns with |j| <= 6 are the plug, the gatehouse's solid rock: flat topped at y122 (the road's surface at the grille, y115, + 7), and, in the rows z4703-4709 round the grille, trimmed to x <= 4362 so its outer face is one plane and the grille stands in it (the band is still 4 wide there). Elsewhere the band keeps its full width, so every ring point of the gap stays under rock. A band column whose own ground already stands higher than its ring point's rock (a crag) is left alone"
+      "top_y": 190,
+      "why": "the wall's columns with |j| <= 6 are the plug, the gatehouse's solid rock, flat topped at the crest there (y190, the wall's crest line at j = 0); in the rows z4703-4709 round the grille every plug column east of x4362 is left out, so the grille stands in the plug's one flat face at the end of a 7-wide slot through the outer talus, the road and the knock alcove in it. Elsewhere the wall keeps its full width, so every ring point of the gap stays under rock"
     },
     "grille": {
       "x": 4362,
@@ -266,9 +275,9 @@
     "arrive": [4349.5, 111, 4706.5, 90],
     "turn_back": [4370.5, 119, 4706.5, -90],
     "places_why": "boxes are [x0, y0, z0, x1, y1, z1], feet levels on the road's surface: the knock alcove directly outside the grille (road y115-116), the exit box just behind the rockfall (road y111-112), the arrival 4 blocks further in and facing down the road (yaw 90, west), the turn-back point 8 outside facing away (yaw -90, east)",
-    "ward": [4350, 103, 4692, 4372, 129, 4720],
+    "ward": [4350, 106, 4689, 4377, 197, 4720],
     "ward_margin": 7,
-    "ward_why": "the plug's columns (x4357-4362, z4699-4713, y111-122), the grille and the knock alcove, grown by 7 on every side: the test author showed margin 4 was reachable at the spur's gate (reach 4.5 from the eyes, 1.62 over the feet the box tests); 7 keeps the plug beyond reach from beside and below. Anyone in survival or adventure inside it has Mining Fatigue IV (the spur gate's ward, the owner's 'i can mine around the door')",
+    "ward_why": "the plug's columns (x4358-4370, z4696-4713, y114 over their lowest ground to the wall's crest at y190), the grille and the knock alcove, grown by 7 on every side: the test author showed margin 4 was reachable at the spur's gate (reach 4.5 from the eyes, 1.62 over the feet the box tests); 7 keeps the plug beyond reach from beside and below. Anyone in survival or adventure inside it has Mining Fatigue IV (the spur gate's ward, the owner's 'i can mine around the door'). The arrival (x4349.5) stands just outside it",
     "lamp_posts": [[4367, 4703], [4367, 4709], [4351, 4703], [4351, 4709]],
     "outside_ok": [4340, 4650, 4400, 4760],
     "outside_why": "the only built columns allowed outside the zone: the rockfall, the plug's outer face, the grille, the road above the gate and its lamp posts (the generator's zone check; the audit checks the same list block by block)",
@@ -323,7 +332,7 @@
     ]
   },
   "cutters": {
-    "why": "decision 5A: three bench masters whose trades turn 4 raw mega stones and a diamond into a keyed stone, unlimited, nothing bought back; decision 11: only the 60 stones whose Pokemon can be had here (SOUTHERN_RIFT_MEGA.md 7.3), split by generation so no list is unreadably long. Vanilla villagers placed the way tools/traders.py places the clerks (force-load, wait 40 ticks, summon tagged, keep one per spot 100 ticks later), NoAI, invulnerable, masons at master level so they neither level nor lose their trade",
+    "why": "decision 5A: three bench masters whose trades turn raw mega stones (cutters.offer.raw_count) and a diamond into a keyed stone, unlimited, nothing bought back; decision 11: only the 60 stones whose Pokemon can be had here (SOUTHERN_RIFT_MEGA.md 7.3), split by generation so no list is unreadably long. Vanilla villagers placed the way tools/traders.py places the clerks (force-load, wait 40 ticks, summon tagged, keep one per spot 100 ticks later), NoAI, invulnerable, masons at master level so they neither level nor lose their trade",
     "format_source": "the villager's saved trade list read from the vanilla 1.21.1 jar (version.json id 1.21.1, data pack format 48; a client copy with Python zipfile, 2026-09-27): the villager saves Offers, Xp and VillagerData; Offers holds Recipes (a list); each offer's codec fields are buy, buyB, sell, uses, maxUses (int), rewardExp (bool), specialPrice, demand, priceMultiplier (float), xp; buy and buyB are an item cost {id, count, components}. The format is read from the jar; that a placed villager trades with it in game is proof M-6, not run",
     "hero_note": "vanilla's Hero of the Village discount lowers a trade's first cost by at least one whatever priceMultiplier says; it comes only from defending a village raid, and the pack's MobsBeGone removes every raider (docs/STATE.md, No vanilla hostiles), so it cannot arise here. ASSUMED, not tested",
     "tag": "cobblers_cutter",
@@ -331,11 +340,11 @@
     "villager_type": "minecraft:plains",
     "offer": {
       "raw": "mega_showdown:mega_stone",
-      "raw_count": 4,
+      "raw_count": 2,
       "fee": "minecraft:diamond",
       "fee_count": 1,
       "max_uses": 2147483647,
-      "why": "decision 6: 4 raw per stone (SOUTHERN_RIFT_MEGA.md 7.5); the diamond is the recipe's own; max_uses is the largest int, so a trade never locks (a NoAI villager never restocks)"
+      "why": "SOUTHERN_RIFT_MEGA.md 13, the owner: \"a player should take an hour to get a mega mon ish\": about 12 Mega wins an hour at 15% is 1.8 raw stones, so a keyed stone takes 2 raw stones (4 before); the diamond is the recipe's own; max_uses is the largest int, so a trade never locks (a NoAI villager never restocks). Both numbers are data, re-set once a real fight is timed"
     },
     "benches": [
       {
@@ -346,9 +355,9 @@
         "customer": [4293, 89, 4901],
         "stones": ["mega_showdown:venusaurite", "mega_showdown:charizardite_x", "mega_showdown:charizardite_y", "mega_showdown:blastoisinite",
                    "mega_showdown:beedrillite", "mega_showdown:pidgeotite", "mega_showdown:raichunite_x", "mega_showdown:raichunite_y",
-                   "mega_showdown:gengarite", "mega_showdown:starminite", "mega_showdown:gyaradosite", "mega_showdown:dragoninite",
-                   "mega_showdown:meganiumite", "mega_showdown:feraligite", "mega_showdown:ampharosite", "mega_showdown:scizorite",
-                   "mega_showdown:heracronite", "mega_showdown:steelixite", "mega_showdown:houndoominite", "mega_showdown:skarmorite"]
+                   "mega_showdown:gengarite", "mega_showdown:starminite", "mega_showdown:gyaradosite", "mega_showdown:dragoninite", "mega_showdown:meganiumite",
+                   "mega_showdown:feraligite", "mega_showdown:ampharosite", "mega_showdown:scizorite", "mega_showdown:heracronite", "mega_showdown:steelixite",
+                   "mega_showdown:houndoominite", "mega_showdown:skarmorite"]
       },
       {
         "id": "bench_2",
@@ -357,10 +366,10 @@
         "yaw": 180,
         "customer": [4300, 89, 4901],
         "stones": ["mega_showdown:sceptilite", "mega_showdown:blazikenite", "mega_showdown:swampertite", "mega_showdown:gardevoirite",
-                   "mega_showdown:sablenite", "mega_showdown:aggronite", "mega_showdown:medichamite", "mega_showdown:sharpedonite",
-                   "mega_showdown:cameruptite", "mega_showdown:altarianite", "mega_showdown:banettite", "mega_showdown:absolite",
-                   "mega_showdown:glalitite", "mega_showdown:metagrossite", "mega_showdown:lopunnite", "mega_showdown:garchompite",
-                   "mega_showdown:galladite", "mega_showdown:froslassite", "mega_showdown:abomasite", "mega_showdown:staraptite"]
+                   "mega_showdown:sablenite", "mega_showdown:aggronite", "mega_showdown:medichamite", "mega_showdown:sharpedonite", "mega_showdown:cameruptite",
+                   "mega_showdown:altarianite", "mega_showdown:banettite", "mega_showdown:absolite", "mega_showdown:glalitite", "mega_showdown:metagrossite",
+                   "mega_showdown:lopunnite", "mega_showdown:garchompite", "mega_showdown:galladite", "mega_showdown:froslassite", "mega_showdown:abomasite",
+                   "mega_showdown:staraptite"]
       },
       {
         "id": "bench_3",
@@ -368,21 +377,20 @@
         "at": [4307, 89, 4903],
         "yaw": 180,
         "customer": [4307, 89, 4901],
-        "stones": ["mega_showdown:audinite", "mega_showdown:excadrite", "mega_showdown:scraftinite", "mega_showdown:chandelurite",
-                   "mega_showdown:golurkite", "mega_showdown:emboarite", "mega_showdown:chesnaughtite", "mega_showdown:delphoxite",
-                   "mega_showdown:greninjite", "mega_showdown:pyroarite", "mega_showdown:meowsticite", "mega_showdown:malamarite",
-                   "mega_showdown:barbaracite", "mega_showdown:hawluchanite", "mega_showdown:crabominite", "mega_showdown:drampanite",
-                   "zamega:golisopite", "mega_showdown:glimmoranite", "zamega:absolitez", "zamega:garchompitez"]
+        "stones": ["mega_showdown:audinite", "mega_showdown:excadrite", "mega_showdown:scraftinite", "mega_showdown:chandelurite", "mega_showdown:golurkite",
+                   "mega_showdown:emboarite", "mega_showdown:chesnaughtite", "mega_showdown:delphoxite", "mega_showdown:greninjite", "mega_showdown:pyroarite",
+                   "mega_showdown:meowsticite", "mega_showdown:malamarite", "mega_showdown:barbaracite", "mega_showdown:hawluchanite",
+                   "mega_showdown:crabominite", "mega_showdown:drampanite", "zamega:golisopite", "mega_showdown:glimmoranite", "zamega:absolitez",
+                   "zamega:garchompitez"]
       }
     ],
     "offered_why": "the 60 of SOUTHERN_RIFT_MEGA.md 7.3: 50 whose line is caught in data/spawns.json at a weight above zero and 10 on the starter screen (modpack/config/cobblemon/starters.json); family links are mainline knowledge (ASSUMED). Each id is a stone in the pinned jars (tools/mega_recipes.py refuses the build if one is not)",
-    "left_out": ["mega_showdown:aerodactylite", "mega_showdown:alakazite", "mega_showdown:chimechite", "mega_showdown:clefablite",
-                 "mega_showdown:diancite", "mega_showdown:dragalgite", "mega_showdown:eelektrossite", "mega_showdown:falinksite",
-                 "mega_showdown:floettite", "mega_showdown:kangaskhanite", "mega_showdown:latiasite", "mega_showdown:latiosite",
-                 "mega_showdown:lucarionite", "mega_showdown:manectite", "mega_showdown:mawilite", "mega_showdown:mewtwonite_x",
-                 "mega_showdown:mewtwonite_y", "mega_showdown:pinsirite", "mega_showdown:salamencite", "mega_showdown:scolipite",
-                 "mega_showdown:scovillainite", "mega_showdown:slowbronite", "mega_showdown:tyranitarite", "mega_showdown:victreebelite",
-                 "zamega:baxcalibrite", "zamega:darkranite", "zamega:heatranite", "zamega:lucarionitez", "zamega:magearnite",
+    "left_out": ["mega_showdown:aerodactylite", "mega_showdown:alakazite", "mega_showdown:chimechite", "mega_showdown:clefablite", "mega_showdown:diancite",
+                 "mega_showdown:dragalgite", "mega_showdown:eelektrossite", "mega_showdown:falinksite", "mega_showdown:floettite",
+                 "mega_showdown:kangaskhanite", "mega_showdown:latiasite", "mega_showdown:latiosite", "mega_showdown:lucarionite", "mega_showdown:manectite",
+                 "mega_showdown:mawilite", "mega_showdown:mewtwonite_x", "mega_showdown:mewtwonite_y", "mega_showdown:pinsirite", "mega_showdown:salamencite",
+                 "mega_showdown:scolipite", "mega_showdown:scovillainite", "mega_showdown:slowbronite", "mega_showdown:tyranitarite",
+                 "mega_showdown:victreebelite", "zamega:baxcalibrite", "zamega:darkranite", "zamega:heatranite", "zamega:lucarionitez", "zamega:magearnite",
                  "zamega:tatsugirinite", "zamega:zeraorite", "zamega:zygardite"],
     "left_out_why": "the 32 of 7.3 for Pokemon nobody can catch here; the Cutters offer none of them (their recipes stay, raised)"
   },
@@ -472,7 +480,6 @@
         "stand": [4475, 53, 4850],
         "crystals": 3,
         "radiated": 8,
-        "offset_ticks": 0,
         "why": "a 7 x 5 x 7 box (245 blocks) of meteorid at the end of its alcove, its west side the face"
       },
       {
@@ -483,28 +490,22 @@
         "stand": [4430, 53, 4805],
         "crystals": 3,
         "radiated": 8,
-        "offset_ticks": 18000,
-        "why": "the same at the north alcove, its south side the face; offset 15 minutes from face A (SOUTHERN_RIFT_MEGA.md 7.6: faces in a hall offset by 15)"
+        "why": "the same at the north alcove, its south side the face"
       }
     ]
   },
   "faces": {
-    "period_ticks": 36000,
-    "period_why": "decision 6: a 30-minute restore (36,000 game ticks), checked only on approach (STONE_ECONOMY.md 5.3: fill fails on unloaded chunks, so a fixed timer would mostly fail silently). Game time is saved with the world, so a restart neither repeats nor loses a restore",
-    "variants": 8,
-    "resettable_tag": "gulch_face_resettable",
-    "resettable": ["minecraft:air", "minecraft:cave_air", "mega_showdown:mega_meteorid_block", "mega_showdown:mega_meteorid_radiated_block",
-                   "mega_showdown:mega_stone_crystal", "minecraft:deepslate", "minecraft:cobbled_deepslate", "minecraft:tuff",
-                   "minecraft:stone", "minecraft:cobblestone", "minecraft:andesite", "minecraft:gravel", "minecraft:torch",
-                   "minecraft:wall_torch", "minecraft:water", "minecraft:lava"],
-    "resettable_why": "STONE_ECONOMY.md 5.4: the restore fills only over this tag and guards every crystal setblock with it, so a chest a player left in the box survives with its contents; the host rock, what a player digs it into (cobble, gravel), torches and fluids are reset. That `fill ... replace #tag` takes a block tag in 1.21.1 is proof P-3, not run",
+    "ward_margin": 7,
+    "why": "SOUTHERN_RIFT_MEGA.md 13: the crystal faces are unmineable scenery. They keep their look (variant 0 of the old restore, built once by the faces pass), the ward holds them permanently (Mining Fatigue IV every tick to any survival or adventure player within ward_margin of a face's box, the gate ward's margin, for the same reach reason) and the restore cycle is retired: no function writes a face after the build",
     "crystal_rule": "3 crystals per restore (decision 6): one on the face's front plane at floor level, facing out, and two hidden at least 2 deep; plus 8 radiated meteorid blocks within 1 of the front. Which cells is a hash of the face, the variant and the cell (geometry.face)"
   },
   "megas": {
     "tag": "cobblers.gm",
+    "farm_tag": "cobblers.gm.farm",
     "leash_every_ticks": 40,
     "spawn_clear": 24,
-    "why": "decision 8: two roaming Megas per worked hall; the Cutting Floor's two are Steelix and Excadrill (SOUTHERN_RIFT_MEGA.md 6.1, lines caught here and clear of the client's broken Mega models). Spawned by the keeper (a function, EXP-042; the Mega string, EXP-036), uncatchable, tagged, PersistenceRequired; leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near); a fainted or killed one is owed again when a face of its hall restores (6.2: they come back with the material) and spawns once nobody stands within spawn_clear of its anchor. Levels are ASSUMED (trainer-balance-designer's): 52-56 for the roaming Megas at a six-badge cap of 50. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
+    "respawn_ticks": 18000,
+    "why": "The Cutting Floor's two Megas (decision 8) and the farms' dens (farms[].dens) share one keeper: spawned through the macro spawn_at (EXP-046: a plain spawnpokemonat line parsed at server start does nothing), uncatchable, claimed at once (tagged, PersistenceRequired), leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near). SOUTHERN_RIFT_MEGA.md 13 retires the faces' restore, so a Mega no longer comes back with a face: each den keeps a respawn clock, the game time its Mega was first seen gone, and spawns the next respawn_ticks later with nobody within spawn_clear of the anchor; nothing a player can repeat moves the clock. The mine's two drop nothing (the farms are the currency's source); their respawn_ticks is 15 minutes. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
     "slots": [
       {
         "id": "steelix",
@@ -529,19 +530,12 @@
         "why": "Mega Excadrill, excadrite (a Legends Z-A Mega Mega Showdown adds; its client model is NOT VERIFIED, M-7); Drilbur at the fossil levels 42-50. Anchored toward face B"
       }
     ],
-    "aggression_proposal": "server config, NOT changed by this build (proposed only; the owner or the main session applies it): server/config/mods/fightorflight.json5 `always_aggro_aspects` from [\"alpha\"] to [\"alpha\", \"mega\", \"mega_x\", \"mega_y\", \"mega_z\"] (SOUTHERN_RIFT_MEGA.md 6.2; docs/research/notes/wild-mega-pokemon.md section 3). With it, a wild Mega attacks unprovoked in the dark at level 25 or more; the Cutting Floor carries no light for that reason. A player's own Mega is excluded by the mod (!isPlayerOwned). Proof M-3, not run"
+    "aggression_proposal": "applied on staging 2026-09-27 (SOUTHERN_RIFT_MEGA.md 13): Fight or Flight's always_aggro_aspects [\"alpha\", \"mega\", \"mega_x\", \"mega_y\", \"mega_z\"]. Whether an always-aggressive aspect overrides light_dependent_unprovoked_attack is proof M-3"
   },
   "driver": {
     "every_ticks": 100,
     "approach": [4250, 30, 4640, 4520, 150, 4990],
-    "why": "the tick driver works only while a player is inside the approach box (the gate, the town and the mine with a margin): one selector every 5 s when nobody is near. Every 100 ticks it checks each face and each Mega slot; the leash every 40"
-  },
-  "floor": {
-    "box": [4345, 64, 4905, 4385, 80, 4945],
-    "item": "mega_showdown:mega_stone",
-    "count": 4,
-    "message": "The tally clerk hands you four raw stones: enough for one cut.",
-    "why": "SOUTHERN_RIFT_MEGA.md 7.5: on first reaching the Tally Hall each player is handed 4 raw stones, one keyed stone's worth, so a player without a diamond pickaxe can still have one cut (the stone economy's floor, STONE_ECONOMY.md 4). An advancement, granted once per player and never revoked. Droppable if the two-player advancement proof fails (P-5). The message is a placeholder"
+    "why": "the tick driver works only while a player is inside a site's approach box (the gate, the town and the mine with a margin; each farm its own): one selector a site every 5 s when nobody is near. Every 100 ticks it keeps each den's Mega (the respawn clock); every 40 ticks the leash"
   },
   "geometry": {
     "feet": "every y in a path or a hall is the FEET level: the first air block above the floor",
@@ -553,5 +547,16 @@
     "earthworks": "square, yard and road columns (in that order of precedence) get their surface block at the stated y, fill under it down to the ground, and air from y+1 to max(ground, y) + clear_above",
     "shell": "every cell within 2 (a 5x5x5 cube) of the carved space or a face box, not carved, not a face box, and at or under its column's top (an earthwork's surface where there is one, else the ground) is written as rock",
     "zone": "a column is in the zone when its centre (x + 0.5, z + 0.5) is inside the polygon (even-odd rule); each z row's runs are merged down the rows while identical, and every box runs y -64 to 575"
+  },
+  "drops": {
+    "item": "mega_showdown:mega_stone",
+    "count": 1,
+    "message": "The Mega leaves a raw stone behind.",
+    "why": "SOUTHERN_RIFT_MEGA.md 13: a defeated farm Mega drops a raw stone at the victor's feet, owner-only (an item entity whose Owner is the victor: only they can pick it up, vanilla 1.21.1 ItemEntity), never a finished stone. The roll is the den's drop_percent (farm_tiers). A battle win is seen by the battle_fainted callback, matched by the Pokemon UUID stored at spawn; a kill outside a battle by the keeper, from the last player to hurt it after it was last seen alive. One roll per Mega: the roll spends its UUID. The message is a placeholder (the voice is Codex's)"
+  },
+  "farm_tiers": {
+    "outer": {"level": 60, "drop_percent": 15, "respawn_ticks": 12000},
+    "deeper": {"level": 67, "drop_percent": 30, "respawn_ticks": 18000},
+    "why": "SOUTHERN_RIFT_MEGA.md 13: outer about level 60 (the owner: a cap of 50 after gym 5, \"lvl 60 or so, so it takes a team\"), 15% a defeat; deeper 65-70 at 25-35% (ASSUMED: the owner said \"more frequently\"). respawn_ticks is the farm's rate limit per den: 10 minutes outer, 15 deeper, so four outer dens give at most 24 fights an hour between them, about 3.6 raw stones at 15%. All ASSUMED until a fight is timed"
   }
 }

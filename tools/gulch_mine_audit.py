@@ -145,13 +145,19 @@ def road(rd):
 
 
 def band(b):
-    out = {}
+    """{(x, z): j}: data geometry.band, each ring point moved d = -spread_out .. spread_in along its normal, the columns
+    within 1 of each; a column keeps the claim with the least talus drop max(0, -d - core), the first among equals."""
+    w = b["wall"]
+    out, drop = {}, {}
     for j, x, z, nx, nz in b["points"]:
-        for d in (-1, 0, 1):
+        for d in range(-w["spread_out"], w["spread_in"] + 1):
+            dr = max(0, -d - w["core"])
             cx, cz = half_up(x + nx * d), half_up(z + nz * d)
             for a in (-1, 0, 1):
                 for c in (-1, 0, 1):
-                    out.setdefault((cx + a, cz + c), j)
+                    k = (cx + a, cz + c)
+                    if k not in out or dr < drop[k]:
+                        out[k], drop[k] = j, dr
     return out
 
 
@@ -331,6 +337,7 @@ def audit(source_root=None):
     missing = [(j, ring[(e["ring"] + j) % T]) for j in range(-e["gap"], e["gap"] + 1) if tuple(ring[(e["ring"] + j) % T]) not in bnd]
     if missing:
         probs.append("gap: %d ring points of the sculpt's %s gap are not under the rockfall, e.g. %s" % (len(missing), e["id"], missing[:3]))
+    crag = {}
     for side in (-1, 1):
         for jj in range(e["gap"] + 1, e["gap"] + 4):
             k = (e["ring"] + side * jj) % T
@@ -338,6 +345,16 @@ def audit(source_root=None):
             hi = max(ground(half_up(x + nx * d), half_up(z + nz * d)) for d in range(-16, 1))
             if hi < 135:
                 probs.append("gap: the rim at ring point %d (%d, %d), beyond the gap, rises only to y%d" % (k, x, z, hi))
+            if jj == e["gap"] + 1:
+                crag[side] = hi
+    notes["crag tops beyond the gap's ends (heightmap)"] = [crag.get(-1), crag.get(1)]
+    # SOUTHERN_RIFT_MEGA.md 13: the wall fills the mouth to the crag tops. Measured here, not taken from the data: the
+    # data's crest at each end may not stand more than its jag below the crag beside it
+    wall = spec["gate"]["band"]["wall"]
+    for side, ctop in zip((-1, 1), wall["top"]):
+        if side in crag and ctop < crag[side] - wall["jag"]:
+            probs.append("gap: the wall's crest at the %s end (y%d) stands below the crag there (y%d)"
+                         % ("j-" if side < 0 else "j+", ctop, crag[side]))
 
     # ---- the output
     idx = FN / "index.txt"
@@ -452,6 +469,24 @@ def audit(source_root=None):
             lowrise.append((j, c))
     if lowrise:
         probs.append("gate: the rockfall is under 3 high over %d ring points of the gap, e.g. %s" % (len(lowrise), lowrise[:3]))
+    # every ring point of the gap stands under rock to the crest (the crest line between the measured crag tops, less
+    # the jag); the plug's to its flat top
+    js = [p[0] for p in g["band"]["points"]]
+    lowwall = []
+    for j, x, z, _nx, _nz in g["band"]["points"]:
+        c = (half_up(x), half_up(z))
+        jc = bnd.get(c, j)                     # the ring point whose claim the column keeps (geometry.band)
+        if abs(jc) <= g["plug"]["half_j"]:
+            want = g["plug"]["top_y"]
+        else:
+            lo, hi = crag.get(-1, 0), crag.get(1, 0)
+            want = lo + (hi - lo) * (jc - min(js)) / float(max(js) - min(js)) - 2 * wall["jag"]
+        if top(*c) >= want:
+            continue
+        if any(final.get((c[0], y, c[1]), "minecraft:air") in AIRS for y in range(top(*c) + 1, int(want) + 1)):
+            lowwall.append((j, c))
+    if lowwall:
+        probs.append("gate: the wall does not reach the crest over %d ring points of the gap, e.g. %s" % (len(lowwall), lowwall[:3]))
     flag = spec["flag"]["advancement"]
     knock = fn_text("gate/knock")
     if not re.search(r"execute if entity @s\[advancements=\{%s=true\}\] run tp @s " % re.escape(flag), knock) \
@@ -541,15 +576,12 @@ def audit(source_root=None):
     if (ax - X0, az - Z0, ay - Y0) in reach_out:
         probs.append("walk: from the turn-back point a walker reaches the arrival: the rockfall does not close the canyon")
 
-    # ---- the faces
-    tagname = "#cobblers:%s" % spec["faces"]["resettable_tag"]
-    tagfile = PACK / "data" / "cobblers" / "tags" / "block" / ("%s.json" % spec["faces"]["resettable_tag"])
-    tagvals = json.loads(tagfile.read_text(encoding="utf-8"))["values"] if tagfile.is_file() else []
-    if "minecraft:air" not in tagvals or spec["palette"]["meteorid"] not in tagvals or any("chest" in v or "barrel" in v for v in tagvals):
-        probs.append("faces: the resettable tag is missing, lacks air or the host, or would reset a container")
+    # ---- the faces: scenery, written once by the build, warded for good (SOUTHERN_RIFT_MEGA.md 13)
+    fbox = {}
     for f in spec["mine"]["faces"]:
         x0, y0, z0, x1, y1, z1 = f["box"]
         box = {(x, y, z) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)}
+        fbox[f["id"]] = box
         written = [final.get(c) for c in box]
         if None in written:
             probs.append("faces: %s's box is not written whole" % f["id"])
@@ -558,62 +590,104 @@ def audit(source_root=None):
             probs.append("faces: %s is built with %d crystals, the data says %d" % (f["id"], n0, f["crystals"]))
         if box & carved:
             probs.append("faces: %s's box is carved" % f["id"])
-        front = {"west": lambda c: c[0] == x0, "east": lambda c: c[0] == x1, "north": lambda c: c[2] == z0,
-                 "south": lambda c: c[2] == z1}[f["front"]]
-        for kk in range(spec["faces"]["variants"]):
-            body = fn_text("faces/%s_v%d" % (f["id"], kk)).splitlines()
-            fills = [ln for ln in body if ln.startswith("fill ")]
-            if fills != ["fill %d %d %d %d %d %d %s replace %s" % (x0, y0, z0, x1, y1, z1, spec["palette"]["meteorid"], tagname)]:
-                probs.append("faces: %s v%d is not one filtered fill of exactly its box" % (f["id"], kk))
-            sets = [ln for ln in body if "setblock" in ln]
-            unguarded = [ln for ln in sets if not ln.startswith("execute if block ") or tagname not in ln]
-            if unguarded:
-                probs.append("faces: %s v%d has %d unguarded setblocks" % (f["id"], kk, len(unguarded)))
-            cr = []
-            for ln in sets:
-                mm = re.search(r"run setblock (-?\d+) (-?\d+) (-?\d+) (\S+)", ln)
-                c = tuple(int(v) for v in mm.groups()[:3])
-                if c not in box:
-                    probs.append("faces: %s v%d writes outside its box at %s" % (f["id"], kk, c))
-                if "mega_stone_crystal" in mm.group(4):
-                    cr.append(c)
-            if len(cr) != f["crystals"] or sum(1 for c in cr if front(c) and c[1] == y0) != 1:
-                probs.append("faces: %s v%d has %d crystals, %d on the front's bottom row (want %d and 1)"
-                             % (f["id"], kk, len(cr), sum(1 for c in cr if front(c) and c[1] == y0), f["crystals"]))
-        chk = fn_text("faces/check_%s" % f["id"])
-        need = ["execute unless loaded %d %d %d run return 0" % (x0 - 1, y0 - 1, z0 - 1),
-                "execute unless loaded %d %d %d run return 0" % (x1 + 1, y1 + 1, z1 + 1),
-                "execute if entity @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d] run return 0" % (x0 - 1, y0 - 1, z0 - 1, x1 - x0 + 2, y1 - y0 + 2, z1 - z0 + 2),
-                "execute if entity @e[type=cobblemon:pokemon,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d] run return 0" % (x0 - 1, y0 - 1, z0 - 1, x1 - x0 + 2, y1 - y0 + 2, z1 - z0 + 2),
-                "execute if score #d gm.t < #period gm.t run return 0"]
-        for n_ in need:
-            if n_ not in chk:
-                probs.append("faces: %s's check lacks `%s`" % (f["id"], n_))
-    if "scoreboard players set #period gm.t %d" % spec["faces"]["period_ticks"] not in fn_text("load"):
-        probs.append("faces: the load function does not set the period to %d ticks" % spec["faces"]["period_ticks"])
+    # nothing outside the build's own passes writes a face: the restore cycle is retired
+    idx_files = {FN / (n + ".mcfunction") for n in names}
+    rewrites = []
+    for p_ in sorted(FN.rglob("*.mcfunction")):
+        if p_ in idx_files:
+            continue
+        for ln in p_.read_text(encoding="utf-8").splitlines():
+            mm = re.search(r"\b(fill|setblock|clone) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))?", ln)
+            if not mm:
+                continue
+            a = [int(v) for v in mm.groups()[1:4]]
+            b = [int(v) for v in mm.groups()[4:7]] if mm.group(5) else a
+            for fid, box in fbox.items():
+                xs = [c[0] for c in box]; ys = [c[1] for c in box]; zs = [c[2] for c in box]
+                if min(a[0], b[0]) <= max(xs) and max(a[0], b[0]) >= min(xs) and min(a[1], b[1]) <= max(ys) \
+                        and max(a[1], b[1]) >= min(ys) and min(a[2], b[2]) <= max(zs) and max(a[2], b[2]) >= min(zs):
+                    rewrites.append((p_.name, fid))
+    if rewrites:
+        probs.append("faces: functions outside the build write a face (the restore is retired): %s" % rewrites[:3])
+    tick_text = fn_text("tick")
+    wm = spec["faces"]["ward_margin"]
+    for f in spec["mine"]["faces"]:
+        x0, y0, z0, x1, y1, z1 = f["box"]
+        want = ("execute as @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,gamemode=!creative,gamemode=!spectator] run effect give @s "
+                "minecraft:mining_fatigue 3 3 true" % (x0 - wm, y0 - wm, z0 - wm, x1 - x0 + 2 * wm, y1 - y0 + 2 * wm, z1 - z0 + 2 * wm))
+        if want not in tick_text.splitlines():
+            probs.append("faces: %s is not warded every tick with margin %d" % (f["id"], wm))
+    if (PACK / "data" / "cobblers" / "tags" / "block").is_dir():
+        probs.append("faces: the retired restore's block tag is still in the pack")
     tick = json.loads((PACK / "data" / "minecraft" / "tags" / "function" / "tick.json").read_text(encoding="utf-8")) \
         if (PACK / "data" / "minecraft" / "tags" / "function" / "tick.json").is_file() else {"values": []}
     if "cobblers:gulch_mine/tick" not in tick["values"]:
         probs.append("faces: the pack's tick tag does not run the driver")
 
-    # ---- the Megas
-    leash = fn_text("leash")
-    for s in spec["megas"]["slots"]:
-        if s["id"] not in anchors:
-            continue
-        x, y, z = anchors[s["id"]]
-        sp = fn_text("megas/spawn_%s" % s["id"])
-        line = "spawnpokemonat %d %d %d %s %s uncatchable level=%d" % (x, y, z, s["species"], s["aspect"], s["level"])
-        if line not in sp:
-            probs.append("megas: %s's spawn is not `%s`" % (s["id"], line))
-        if "PersistenceRequired:1b" not in fn_text("megas/bind_%s" % s["id"]):
-            probs.append("megas: %s is not kept from the despawner" % s["id"])
+    # ---- the Megas: the mine's slots and the farms' dens, one keeper
+    mg = spec["megas"]
+    all_dens = [("mine", s) for s in mg["slots"]] + [(fa["id"], dn) for fa in spec.get("farms", []) for dn in fa["dens"]]
+    sa = fn_text("megas/spawn_at").strip().splitlines()
+    if sa != ["$spawnpokemonat $(x) $(y) $(z) $(species) $(aspect) uncatchable level=$(level)"]:
+        probs.append("megas: megas/spawn_at is not the one macro line (EXP-046: a plain spawn line does nothing after a restart)")
+    plain = [p_.name for p_ in FN.rglob("*.mcfunction")
+             if any(ln.startswith("spawnpokemonat ") or " run spawnpokemonat " in ln for ln in p_.read_text(encoding="utf-8").splitlines())]
+    if plain:
+        probs.append("megas: a plain spawnpokemonat line (parsed at start, it spawns nothing until /reload): %s" % plain[:3])
+    for site, s in all_dens:
+        if site == "mine":
+            if s["id"] not in anchors:
+                continue
+            x, y, z = anchors[s["id"]]
+        else:
+            x, y, z = s["anchor"]
+        i = s["id"]
+        sp = fn_text("megas/spawn_%s" % i)
+        call = "function cobblers:gulch_mine/megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\",aspect:\"%s\",level:%d}" % (
+            x, y, z, s["species"], s["aspect"], s["level"])
+        if call not in sp.splitlines():
+            probs.append("megas: %s's spawn is not `%s`" % (i, call))
+        if "execute positioned %d %d %d as @e[type=cobblemon:pokemon,tag=!%s,distance=..2,limit=1,sort=nearest] run function " \
+           "cobblers:gulch_mine/megas/bind_%s" % (x, y, z, mg["tag"], i) not in sp:
+            probs.append("megas: %s is not claimed in the function that spawns it" % i)
+        bind = fn_text("megas/bind_%s" % i)
+        if "PersistenceRequired:1b" not in bind or ("tag @s add %s.%s" % (mg["tag"], i)) not in bind \
+                or ("tag @s add %s" % mg["tag"]) not in bind.splitlines():
+            probs.append("megas: %s is not tagged and kept from the despawner" % i)
         want = "positioned %d %d %d unless entity @s[distance=..%d] run tp @s %d %d %d" % (x, y, z, s["leash"], x, y, z)
-        if want not in leash:
-            probs.append("megas: %s's leash is not `%s`" % (s["id"], want))
-        i0 = (x - X0, z - Z0, y - Y0)
-        if not stand[i0]:
-            probs.append("megas: %s's anchor %s is not a floor cell to stand on" % (s["id"], (x, y, z)))
+        if want not in fn_text("leash_%s" % site):
+            probs.append("megas: %s's leash is not `%s`" % (i, want))
+        if site == "mine":
+            i0 = (x - X0, z - Z0, y - Y0)
+            if not stand[i0]:
+                probs.append("megas: %s's anchor %s is not a floor cell to stand on" % (i, (x, y, z)))
+        # the respawn clock: gm.gone is written only by load when unset, by the keeper when a Mega is seen (-1) or first
+        # seen gone (the game time), and by the spawn (-1); the spawn waits gm.resp from it with nobody near
+        keep = fn_text("megas/keep_%s" % i).splitlines()
+        for need in ("execute if score #d gm.t < #%s gm.resp run return 0" % i,
+                     "execute if entity @a[x=%d,y=%d,z=%d,distance=..%d] run return 0" % (x, y, z, mg["spawn_clear"]),
+                     "execute if score #%s gm.gone matches -1 run function cobblers:gulch_mine/megas/gone_%s" % (i, i),
+                     "execute unless loaded %d %d %d run return 0" % (x, y, z)):
+            if need not in keep:
+                probs.append("megas: %s's keeper lacks `%s`" % (i, need))
+    allowed_gone = re.compile(r"^(execute unless score #(\w+) gm\.gone matches -2147483648\.\. run scoreboard players set #\2 gm\.gone 0"
+                              r"|execute if score #n gm\.t matches 1\.\. run scoreboard players set #\w+ gm\.gone -1"
+                              r"|scoreboard players operation #\w+ gm\.gone = #now gm\.t"
+                              r"|scoreboard players set #\w+ gm\.gone -1"
+                              r"|execute if score #\w+ gm\.gone matches -1 run function cobblers:gulch_mine/megas/gone_\w+"
+                              r"|scoreboard players operation #d gm\.t -= #\w+ gm\.gone"
+                              r"|scoreboard objectives add gm\.gone dummy)$")
+    for p_ in sorted(FN.rglob("*.mcfunction")):
+        rel = p_.relative_to(FN).as_posix()[:-len(".mcfunction")]
+        for ln in p_.read_text(encoding="utf-8").splitlines():
+            if "gm.gone" not in ln or ln.startswith("#"):
+                continue
+            if not allowed_gone.match(ln):
+                probs.append("megas: %s moves a respawn clock in a way the design does not allow: `%s`" % (rel, ln))
+            elif ln.startswith("scoreboard players set #") and ln.endswith("gm.gone -1") and not rel.startswith("megas/spawn_"):
+                probs.append("megas: %s clears a respawn clock outside a spawn: `%s`" % (rel, ln))
+            elif "= #now gm.t" in ln and not rel.startswith("megas/gone_"):
+                probs.append("megas: %s starts a respawn clock outside the keeper's first sight of a gone Mega: `%s`" % (rel, ln))
 
     # ---- the Cutters
     cu = spec["cutters"]
