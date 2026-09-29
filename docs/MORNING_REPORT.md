@@ -51,7 +51,12 @@ Written through the night as things landed. `docs/NIGHT_REVIEW.md` holds every d
 - **Prepare's whole-build gate passed**: 4,468 function files, 0 problems, 26 places, 32 pack donors, 35 steps,
   every function pack covered.
 - **Install is clean**: every pack and config the repo builds is installed and current.
-- The re-application over RCON, the audit and the Distant Horizons pregen follow.
+- **The re-application ran 35 steps with 0 problems** (238 s), the world was audited on a stopped copy, and the
+  **Distant Horizons pregen completed over the whole border**.
+- **The region question closed itself exactly as predicted.** 454 files after the export; after the pregen, 477, and
+  **all 400 border regions are present, 0 missing**. The empty far-north ocean strip was indeed the pregen's to fill.
+- The watchdog was turned off for the run as the runbook requires and **has been restored to `max-tick-time=60000`**
+  (backup at `server.properties.watchdog-backup`).
 
 **Region count, explained rather than waved through.** 454 files where the old world has 491 and the runbook names
 484. Inside the border 390 of 400 are present; the 10 absent are the far-north sea strip beyond the authored
@@ -95,14 +100,22 @@ and everything player-gated in EXP-047.
 | agent | turns | weighted |
 |---|---|---|
 | Legendary placements and gates | 114 | 3.21M |
-| Stone faces survey and redesign | 116 | 2.60M |
-| Gym interiors data and gym 1 | 89 | 2.07M |
+| Stone faces survey and redesign | 134 | 3.14M |
+| Gym interiors data and gym 1 | 104 | 2.49M |
 | Design eight gym interiors | 39 | 1.11M |
 | Town tick-cost inventory and plan | 69 | 0.90M |
 | Water ladder early exit | 49 | 0.64M |
 | Failing test for the rematch fault | 21 | 0.23M |
+| **agents together** | | **11.7M** |
+| **this session** | 464 | **23.2M** |
 
-The main session is the expensive one, as always.
+The main session is the expensive one, as always — 435k of context per turn on average, and 728k by the end. Seven
+agents did the parallel work for half what the session itself cost.
+
+## The state of the server right now
+
+`cobblers-dryrun12` is **booted and running**, saved, pregenerated, with the coordination lock still held by this
+session. Log in and fly whenever you like — but read the carry note first, because you will arrive as a new player.
 
 ## Where to fly, most important first
 
