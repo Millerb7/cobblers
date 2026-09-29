@@ -235,7 +235,13 @@ def donors(doc=None):
 
 def py(*args, cwd=ROOT):
     print("  $ python %s" % " ".join(str(a) for a in args), flush=True)
-    r = subprocess.run([sys.executable] + [str(a) for a in args], cwd=cwd, capture_output=True, text=True)
+    # PYTHONHASHSEED is pinned for every tool the build runs: a set of strings iterates in hash order, so an
+    # unpinned build can write the same data in a different order and look like a regression. It did:
+    # derived/deep_city/plan.json varied run to run (one `for k in set(feats)`, fixed at its source 2026-09-28), and
+    # a sweep read the change as damage from an unrelated edit. The seed only orders what is otherwise unordered;
+    # no output depends on its value (checked by rebuilding every job under two seeds).
+    env = dict(os.environ, PYTHONHASHSEED="0")
+    r = subprocess.run([sys.executable] + [str(a) for a in args], cwd=cwd, capture_output=True, text=True, env=env)
     if r.returncode:
         print(r.stdout[-2000:], r.stderr[-3000:])
         raise SystemExit("failed: %s" % " ".join(str(a) for a in args[:2]))

@@ -66,19 +66,25 @@ def covered_by(cells, x0, z0, grid, boxes, whole_cell=False):
     river inside a 32-block cell never contains the centre, so on 2026-09-20 forty-six sub-region
     boxes still covered the creek and its roster was diluted by the forest around it.
     """
+    # every cell against every box at once, a block of cells at a time (cell by cell in Python it was about 2 of
+    # compile_spawns' 6.5 s); the same comparisons on the same numbers
+    import numpy as np
+    if not cells or not boxes:
+        return set()
+    cl = list(cells)
+    ci = np.array(cl, dtype=np.int64)
+    b = np.array([bx[:4] for bx in boxes], dtype=np.float64)
     out = set()
-    for ix, iz in cells:
-        cx0, cz0 = x0 + ix * grid, z0 + iz * grid
-        cx1, cz1 = cx0 + grid - 1, cz0 + grid - 1
-        mx, mz = cx0 + grid / 2.0, cz0 + grid / 2.0
-        for b in boxes:
-            if whole_cell:
-                hit = not (b[1] < cx0 or cx1 < b[0] or b[3] < cz0 or cz1 < b[2])
-            else:
-                hit = b[0] <= mx <= b[1] and b[2] <= mz <= b[3]
-            if hit:
-                out.add((ix, iz))
-                break
+    for s in range(0, len(cl), 2048):
+        cx0 = (x0 + ci[s:s + 2048, 0] * grid)[:, None]
+        cz0 = (z0 + ci[s:s + 2048, 1] * grid)[:, None]
+        if whole_cell:
+            cx1, cz1 = cx0 + grid - 1, cz0 + grid - 1
+            hit = ~((b[:, 1] < cx0) | (cx1 < b[:, 0]) | (b[:, 3] < cz0) | (cz1 < b[:, 2]))
+        else:
+            mx, mz = cx0 + grid / 2.0, cz0 + grid / 2.0
+            hit = (b[:, 0] <= mx) & (mx <= b[:, 1]) & (b[:, 2] <= mz) & (mz <= b[:, 3])
+        out.update(cl[s + k] for k in np.nonzero(hit.any(axis=1))[0].tolist())
     return out
 
 

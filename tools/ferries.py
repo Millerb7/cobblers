@@ -558,17 +558,41 @@ class Land:
         if not (0 <= s[0] < seen.shape[0] and 0 <= s[1] < seen.shape[1]) or not self.walk[s]:
             return None if stop_at is None else False
         want = self.cell(*stop_at) if stop_at else None
-        seen[s] = True
-        q = deque([s])
+        # a flood over each row's runs of land, not cell by cell (a cell-by-cell walk was 30 of the audit's 47 s): two
+        # runs in neighbouring rows are 4-connected exactly when their columns overlap
+        rows, starts, ends = self.runs()
+        first = np.searchsorted(rows, np.arange(seen.shape[0] + 1)).tolist()      # each row's first run
+        run_of = lambda r, c: first[r] + int(np.searchsorted(ends[first[r]:first[r + 1]], c, "right"))
+        start = run_of(*s)
+        got = {start}
+        q = deque([start])
         while q:
-            a, b = q.popleft()
-            if want is not None and (a, b) == want:
-                return True
-            for c, d in ((a + 1, b), (a - 1, b), (a, b + 1), (a, b - 1)):
-                if 0 <= c < seen.shape[0] and 0 <= d < seen.shape[1] and self.walk[c, d] and not seen[c, d]:
-                    seen[c, d] = True
-                    q.append((c, d))
-        return False if want is not None else seen
+            i = q.popleft()
+            r = int(rows[i])
+            for r2 in (r - 1, r + 1):
+                if 0 <= r2 < seen.shape[0]:
+                    lo, hi = first[r2], first[r2 + 1]
+                    for j in range(lo + int(np.searchsorted(ends[lo:hi], starts[i], "right")),
+                                   lo + int(np.searchsorted(starts[lo:hi], ends[i], "left"))):
+                        if j not in got:
+                            got.add(j)
+                            q.append(j)
+        if want is not None:
+            a, b = want
+            return bool(0 <= a < seen.shape[0] and 0 <= b < seen.shape[1] and self.walk[a, b] and run_of(a, b) in got)
+        for i in got:
+            seen[rows[i], starts[i]:ends[i]] = True
+        return seen
+
+    def runs(self):
+        """(row, start, end) arrays of every run of walkable cells, row by row, ends exclusive; computed once."""
+        if getattr(self, "_runs", None) is None:
+            np = self.np
+            edge = np.diff(np.pad(self.walk.astype(np.int8), ((0, 0), (1, 1))), axis=1)
+            rows, starts = np.nonzero(edge == 1)
+            _r, ends = np.nonzero(edge == -1)
+            self._runs = (rows, starts, ends)
+        return self._runs
 
     def touches_edge(self, mask, lo=0, hi=8191):
         """Whether the land reaches an edge of the box that is not the heightmap's own edge (x/z 0..8191, the

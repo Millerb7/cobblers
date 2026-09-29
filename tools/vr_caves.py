@@ -449,14 +449,23 @@ def plan2d(spec, source_root, have, rest_node=None):
 def reach_bounds(net, mask, h, cap=110):
     """(h - d, h + d) for d the steps through the footprint from mask: what a flat at height h forces round it."""
     BIG = 10 ** 6
-    d = np.where(mask, 0, BIG)
-    for _ in range(cap):
-        a, b, c, e = shifts(d, BIG)
-        nd = np.where(net.foot, np.minimum(d, np.minimum(np.minimum(a, b), np.minimum(c, e)) + 1), BIG)
-        if (nd == d).all():
-            break
-        d = nd
-    return h - d, h + d
+    full = np.full(mask.shape, BIG, dtype=np.int64)
+    ii, kk = np.nonzero(mask)
+    if len(ii):
+        # a path of at most cap steps stays within cap of the mask, so the walk runs only in that window (the whole
+        # grid, 69 walks of up to 110 passes, was 24 of the build's 57 s); outside it every cell stays BIG either way
+        i0, i1 = max(ii.min() - cap - 1, 0), min(ii.max() + cap + 2, mask.shape[0])
+        k0, k1 = max(kk.min() - cap - 1, 0), min(kk.max() + cap + 2, mask.shape[1])
+        foot = net.foot[i0:i1, k0:k1]
+        d = np.where(mask[i0:i1, k0:k1], 0, BIG)
+        for _ in range(cap):
+            a, b, c, e = shifts(d, BIG)
+            nd = np.where(foot, np.minimum(d, np.minimum(np.minimum(a, b), np.minimum(c, e)) + 1), BIG)
+            if (nd == d).all():
+                break
+            d = nd
+        full[i0:i1, k0:k1] = d
+    return h - full, h + full
 
 
 def lock_flats(net, spec):

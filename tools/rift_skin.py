@@ -153,17 +153,20 @@ def build(source_root, server_dir=None):
     bottom = np.maximum(low[zz, xx] + 1, top - sk["face_depth"])
     bottom = np.minimum(bottom, top - sk["depth"] + 1)
     band = sk["band"]
-    n_fill = 0
+    segs = []
     for lo, hi, wxi, wzi in zip(bottom.tolist(), top.tolist(), wx.tolist(), wz.tolist()):
         y = lo
         while y <= hi:
             y2 = min(hi, y + band - 1 - (y % band))
-            u = unit(wxi, y // band, wzi, 11)
-            b = streak if unit(wxi, y // band, wzi, 12) < 1.0 / pal["streak"]["one_in"] \
-                else rock[min(len(rock) - 1, int(u * len(rock)))]
-            plan.lines.append("fill %d %d %d %d %d %d %s" % (wxi, y, wzi, wxi, y2, wzi, b))
-            n_fill += 1
+            segs.append((wxi, y, wzi, y2))
             y = y2 + 1
+    # the hash once over every band, not twice per band on scalars (1.9 million calls, 12 s); the same integer maths
+    sx, sy, sz = (np.array([s[k] for s in segs], np.int64) for k in range(3))
+    u11, u12 = unit(sx, sy // band, sz, 11).tolist(), unit(sx, sy // band, sz, 12).tolist()
+    for (wxi, y, wzi, y2), u, s in zip(segs, u11, u12):
+        b = streak if s < 1.0 / pal["streak"]["one_in"] else rock[min(len(rock) - 1, int(u * len(rock)))]
+        plan.lines.append("fill %d %d %d %d %d %d %s" % (wxi, y, wzi, wxi, y2, wzi, b))
+    n_fill = len(segs)
     plan.count("skin columns", len(wx))
     plan.count("skin fills", n_fill)
 

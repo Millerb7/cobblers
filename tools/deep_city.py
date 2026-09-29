@@ -686,6 +686,25 @@ def build(source_root, server_dir=None):
     def t_at(x, z):
         return int(T[z - Z0, x - X0]) if inpit(x, z) else None
 
+    def claimed_grid():
+        taken = np.zeros(mask.shape, bool)
+        for xq, zq in claimed:
+            if 0 <= zq - Z0 < NZ and 0 <= xq - X0 < NX:
+                taken[zq - Z0, xq - X0] = True
+        return taken
+
+    def free_boxes(ok):
+        """(x0, z0, x1, z1) -> whether every cell of that box is in the pit and `ok`: a summed table built once, where
+        the site searches tested every cell of every candidate box (7.8 million tests for the Centre and Mart)."""
+        bad = np.zeros((NZ + 1, NX + 1), np.int64)
+        bad[1:, 1:] = (~(ok & mask)).cumsum(0).cumsum(1)
+
+        def free(x0, z0, x1, z1):
+            a0, a1, b0, b1 = z0 - Z0, z1 - Z0, x0 - X0, x1 - X0
+            return bool(0 <= a0 and a1 < NZ and 0 <= b0 and b1 < NX
+                        and bad[a1 + 1, b1 + 1] - bad[a0, b1 + 1] - bad[a1 + 1, b0] + bad[a0, b0] == 0)
+        return free
+
     cv = Canvas()
     claimed = set()
     M["claimed"] = claimed
@@ -815,6 +834,7 @@ def build(source_root, server_dir=None):
         s = spec["services"][key]
         info = PT.template_info(ROOT / s["file"])
         best = None
+        free = free_boxes(mask & (T == rings[0]) & ~claimed_grid() & (dist < 26))
         zz, xx = np.nonzero(mask & (T == rings[0]) & (dist <= 1))
         for z, x in zip(zz.tolist(), xx.tolist()):
             wx, wz = x + X0, z + Z0
@@ -835,9 +855,7 @@ def build(source_root, server_dir=None):
                     z0 = wz if f[1] > 0 else wz - fd + 1
                     x0 = wx - off
                 x1, z1 = x0 + fw - 1, z0 + fd - 1
-                okc = all(t_at(xq, zq) == rings[0] and (xq, zq) not in claimed and dist[zq - Z0, xq - X0] < 26
-                          for xq in range(x0, x1 + 1) for zq in range(z0, z1 + 1))
-                if not okc:
+                if not free(x0, z0, x1, z1):
                     continue
                 # the street in front of the entrance: two rows of ring 0, nobody's
                 if f[0]:
@@ -867,14 +885,13 @@ def build(source_root, server_dir=None):
     rad = sp["radius"]
     floor_lifts = [lo for k, lo, up in M["lifts"] if lo[1] == rings[-1]]
     best = None
+    free = free_boxes(mask & (T == rings[-1]) & ~claimed_grid())
     zz, xx = np.nonzero(mask & (T == rings[-1]) & ~M["sheer"])
     for z, x in zip(zz.tolist(), xx.tolist()):
         wx, wz = x + X0, z + Z0
         if any(abs(wx - lx) + abs(wz - lz) < rad + 12 for lx, _ly, lz, _o in floor_lifts):
             continue
-        okc = all(t_at(wx + dx, wz + dz) == rings[-1] and (wx + dx, wz + dz) not in claimed
-                  for dx in range(-rad - 1, rad + 2) for dz in range(-rad - 1, rad + 2))
-        if not okc:
+        if not free(wx - rad - 1, wz - rad - 1, wx + rad + 1, wz + rad + 1):
             continue
         cand = (int(dist[z, x]), -abs(wx - cx) - abs(wz - cz))
         if best is None or cand > best[0]:
@@ -1384,8 +1401,8 @@ def build(source_root, server_dir=None):
         taken.setdefault(gk, []).append((x, z, y))
         _feature(cv, P, kind, x, y, z)
         feats.append(kind)
-    for k_ in set(feats):
-        count("front row: %s" % k_, feats.count(k_))
+    for k_ in sorted(set(feats)):       # sorted: a set of strings iterates in PYTHONHASHSEED order, and this is the
+        count("front row: %s" % k_, feats.count(k_))     # only thing that made derived/deep_city/plan.json vary
 
     # ---- the relic area
     relic = build_relic(cv, P, spec, source_root, count, checks)

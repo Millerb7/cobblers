@@ -167,7 +167,19 @@ def load(world_path=None, source_root=None, heightmap=None):
         path = verify_file(heightmap, world, world_path)
     else:
         path = resolve_heightmap(world, world_path, source_root)
-    return read_heights(path, world).astype(np.float32), world
+    # decoded once per process: many tools load it twice or more (town_plan twice per town, ferries four times), at
+    # 1.4 s a decode. Keyed by the verified file and everything that maps samples to heights; each caller gets its
+    # own copy, so one that edits its array cannot change another's
+    key = (str(Path(path).resolve()), (world.get("heightmap") or {}).get("sha256"),
+           json.dumps(world.get("import"), sort_keys=True),
+           json.dumps((world.get("heightmap") or {}).get("channel")), (world.get("heightmap") or {}).get("bit_depth"))
+    if key not in _DECODED:
+        _DECODED.clear()
+        _DECODED[key] = read_heights(path, world).astype(np.float32)
+    return _DECODED[key].copy(), world
+
+
+_DECODED = {}
 
 
 # ------------------------------------------------------------------ analysis
