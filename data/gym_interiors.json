@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.gym-interiors/1",
-  "status": "gyms 1, 2, 3, 4, 5 and 7 authored and generated offline; nothing here has been seen in a running game. Gym 6 (Sabrina) waits on EXP-034 and gym 8 (Giovanni) on its own unit",
+  "status": "SUPERSEDED at gyms 1, 3, 4, 5 and 7 (the owner, 2026-09-29, docs/world-building/GYM_BUILDINGS_BRIEF.md): the carve under those five is filled in and their donor shells come down (tools/gym_demolish.py), and an authored hall with its puzzle inside it is built on each lot (data/gym_buildings/, tools/gym_buildings.py). Their records are kept because the demolition is driven by them - `dig` and `shell.expect_box` are what it fills and removes - and `built` is false so tools/gym_interiors.py no longer emits them and re-apply step R16E no longer runs them. GYM 2 IS UNCHANGED and still built: Misty's well is the way up and the owner kept it. Gym 6 (Sabrina) waits on EXP-034 and gym 8 (Giovanni) on its own unit. Nothing here has been seen in a running game.",
   "design": "docs/mechanics/GYM_INTERIORS.md (accepted in principle, docs/STATE.md); its Q1 section holds the measured template geometry this file rests on",
   "note": "Shell geometry is NEVER authored here. Every gym's shell box, and therefore every world coordinate below, is derived from that gym's donor record in data/placements.json (position, size, rotation, anchor_mode) through the same transform tools/place_donor.py box() and tools/place_town.py rotate() use. The only measured numbers copied into this file are the template-relative cells recorded by the Q1 read (the healing machine and the trainer spawner); they are recorded as expectations and the healer removal does not depend on them.",
 
@@ -150,7 +150,8 @@
       "settlement": "gym1_town",
       "donor": "gym1_brock_gym",
       "leader_name": "Brock",
-      "built": true,
+      "built": false,
+      "superseded_by": "data/gym_buildings/gym1.json (the Stoneworks Hall). The works below are filled in and the donor shell taken down by tools/gym_demolish.py; the leader's spawner moves into the new building.",
       "title": "the works under the wall",
       "why": "docs/world-building/TOWN_CHARACTER.md: Brock's town is the plateau's builders. The gym stands on the knoll; under it the masons cut and stack the stone, and the wall they are building is the only way up.",
 
@@ -391,7 +392,8 @@
     },
 
     {
-      "id": "gym3", "settlement": "gym3_town", "donor": "gym3_gym_building", "leader_name": "Lt Surge", "built": true,
+      "id": "gym3", "settlement": "gym3_town", "donor": "gym3_gym_building", "leader_name": "Lt Surge", "built": false,
+      "superseded_by": "data/gym_buildings/gym3.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
       "title": "the adit into Vessu",
       "why": "docs/world-building/TOWN_CHARACTER.md: the signal town keeps the power and the relays running. The cable from the array on the Vessu shoulder comes down into the hill behind the gym, and the run that carries it is the gym.",
       "site": "this is the one gym cut into a hillside. The heightmap under its own footprint runs y174 at the west face and y197 at the east, and 30 blocks east of it the ridge is at y250. So the works do not go down, they go east into rock that is already 20 blocks thick over them, and the gallery can be 15 blocks tall where Erika's and Koga's cannot be six.",
@@ -500,7 +502,8 @@
       ]
     },
     {
-      "id": "gym4", "settlement": "gym4_town", "donor": "gym4_gym_building", "leader_name": "Erika", "built": true,
+      "id": "gym4", "settlement": "gym4_town", "donor": "gym4_gym_building", "leader_name": "Erika", "built": false,
+      "superseded_by": "data/gym_buildings/gym4.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
       "title": "the beds below the glasshouse",
       "why": "docs/world-building/TOWN_CHARACTER.md: Peak Pond Hollow's garden town, where Erika keeps the peace between the residents and the arrivals. Under the glasshouse are the beds it grows in, the drains that water them and the cistern they drain to.",
       "site": "Erika's lot is the flattest of the six. The heightmap is y110 across the whole footprint and y109-111 for forty blocks around it, so the ceiling of anything carved here can be no higher than y107 and there is no relief at all to build against. What the site gives is area, not height: this is the widest and lowest of the six interiors, a cellar four blocks tall under a flat garden, and the way on is not ahead but underneath.",
@@ -617,7 +620,8 @@
     },
 
     {
-      "id": "gym5", "settlement": "gym5_town", "donor": "gym5_gym_building", "leader_name": "Koga", "built": true,
+      "id": "gym5", "settlement": "gym5_town", "donor": "gym5_gym_building", "leader_name": "Koga", "built": false,
+      "superseded_by": "data/gym_buildings/gym5.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
       "title": "the sump under the watch",
       "why": "docs/world-building/TOWN_CHARACTER.md: a fen-edge watch town whose trackers read the marsh for anyone passing unseen, and whose signature set dressing is a board of cast prints. Under the gym is the fen itself, and the trackers' own way across it.",
       "site": "Koga's is the most confined lot of the six. Its spawn-free box leaves four blocks east of the shell and three north, and the heightmap is y115-117 across the whole of it, so the works can be neither deep-roofed like Surge's nor spread like Erika's: they are one room the size of the lot, with the pit dug into its floor. The fen is the reason - the water table is at the town's feet - and the mud is why a fall into it costs time and not a life.",
@@ -733,7 +737,8 @@
     {"id": "gym6", "settlement": "gym6_town", "donor": "gym6_gym_building", "leader_name": "Sabrina", "built": false,
      "why_not": "docs/STATE.md: Sabrina's gym is not built until EXP-034 has actually run, being the only per-player puzzle and standing on machinery two players have never tested."},
     {
-      "id": "gym7", "settlement": "gym7_town", "donor": "gym7_gym_building", "leader_name": "Blaine", "built": true,
+      "id": "gym7", "settlement": "gym7_town", "donor": "gym7_gym_building", "leader_name": "Blaine", "built": false,
+      "superseded_by": "data/gym_buildings/gym7.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
       "title": "the throat",
       "why": "docs/world-building/TOWN_CHARACTER.md: a research town on the crater rim that studies the cone's energy and keeps the mound between itself and the fire. Under the gym is the vent it studies: four throats, one of them cooled and quenched, and the sample galleries at its foot.",
       "site": "Blaine's lot is as flat as Erika's - y106 across the footprint - so the site gives nothing horizontally and everything vertically: there is no cover to spend and no ridge to run into, but there are 35 blocks of rock under the hall before the world floor is anywhere near. This is the only one of the six that is mostly vertical, and the only route in the six that asks a player to jump off something on purpose.",
