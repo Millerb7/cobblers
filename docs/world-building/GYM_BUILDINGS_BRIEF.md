@@ -29,27 +29,34 @@ With the inside off-limits there was nowhere for a puzzle but below.
 4. Gyms 6 and 8 are not in scope. Sabrina's (8) is out by earlier
    instruction.
 
-## The measured envelope
+## The envelope — CORRECTED 2026-09-29
 
-Ground from `tools/ground.py` (the canonical heightmap, rounded), never
-from a world. The envelope is the largest square centred on the donor
-that holds ground spread <= 5 and stays >= 6 blocks clear of the nearest
-neighbouring placement anchor in `data/placements.json`.
+**The first version of this table was wrong and is replaced.** It gave
+the largest flat square the raw heightmap allows around each donor, and
+called Surge's site "23x23, hillside, cannot grow". That is not the
+envelope. Every gym has an **authored, levelled lot** in
+`data/placements.json` under its settlement's `plan.anchors.<gym>_gym`,
+with a `rect` and a `level`. The town build levels that pad, so the
+building sits on flat ground at `level` whatever the raw terrain does.
 
-| gym | leader | donor footprint | buildable | ground | note |
+| gym | leader | donor | **lot (the envelope)** | **pad y** | raw ground under it |
 |---|---|---|---|---|---|
-| gym1 | Brock | 27x24 | **89x89** | y139, spread 3 | open, flat |
-| gym3 | Surge | 23x27 | **23x23 only** | y174..197 | **hillside, 23 blocks of fall** |
-| gym4 | Erika | 27x23 | **47x47** | y109, spread 2 | flat |
-| gym5 | Koga | 27x24 | **61x61** | y114, spread 3 | flat |
-| gym7 | Blaine | 23x27 | **89x89** | y106, spread 4 | open, flat |
+| gym1 | Brock | 27x24 | **40 x 48** | y141 | y140..142 |
+| gym3 | Surge | 23x27 | **31 x 45** | y174 | y174..212 |
+| gym4 | Erika | 27x23 | **45 x 43** | y110 | y109..110 |
+| gym5 | Koga | 27x24 | **33 x 33** | y116 | y114..116 |
+| gym7 | Blaine | 23x27 | **33 x 31** | y106 | y106 |
 
-89x89 is what the terrain and the neighbours allow, not a target. A gym
-that size would dwarf its town; the number is there so a designer knows
-what the limit is not.
+Build inside the lot rect, on the levelled pad, and leave a margin so
+the building does not sit hard against the lot edge (Brock's hall is
+33x36 in a 40x48 lot, margins 4/3/8/4).
 
-**Surge's site cannot grow.** His building has to step down the slope.
-That is a different building, not a smaller one.
+**Surge's site does not step down a slope.** Its raw ground rises 38
+blocks across the lot, but the pad is levelled to y174, so what the hill
+gives him is a cut rock face on the uphill side, not a staircase
+building. `data/placements.json` says of his lot: *"an electric gym
+should read as workings in the rock, not a hall on a lawn"* — that is
+the character to build into, on flat ground.
 
 ## What every gym building must still carry
 
