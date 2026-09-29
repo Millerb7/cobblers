@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.legendaries/1",
-  "status": "authored 2026-09-29; 6 of 10 encounters sited and emitted, 4 blocked with named reasons. Nothing is built in any world.",
+  "status": "authored 2026-09-29; 6 of 10 encounters sited and emitted, 4 blocked with named reasons. The six sited chambers ARE built in cobblers-dryrun12: reapply step R14L ran 14 commands with 0 problems at 2026-09-29T02:51 (derived/reapply/run_20260929_023305.json). Uxie, Registeel, Lugia and Celebi's wake remain unbuilt and blocked.",
   "notes": [
     "The authored legendary encounters: the lake trio (docs/mechanics/WATER_MAP.md section 5), the four bespoke concepts (docs/world-building/STRUCTURE_DECISIONS.md section 4, docs/story/ENCOUNTERS.md:392-395) and the wake of the sleeping Celebi (data/sapling_celebi.json, EXP-023). Every other legendary is Tier B: paste a structure into a fitting biome and gate it by badge count, and none of that is here.",
     "A legendary is an ENTITY, so a re-export erases it and it is summoned over RCON by tools/reapply.py (step R14L), never by a pack: `spawnpokemonat` inside a function spawns nothing until a /reload (EXP-046 question 1). The pack does what functions can: the chamber's blocks, the gate, the keeper.",
