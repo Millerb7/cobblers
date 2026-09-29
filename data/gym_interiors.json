@@ -697,8 +697,8 @@
       "spawn_suppression": {
         "record": "gym_brock",
         "box": [
-          1808,
-          3664,
+          1807,
+          3657,
           1847,
           3711
         ],
@@ -1558,9 +1558,9 @@
         "record": "gym_surge",
         "box": [
           1720,
-          1392,
-          1751,
-          1431
+          1389,
+          1752,
+          1432
         ],
         "why": "contract G1, unchanged. Its east edge at x1751 is a real constraint on this gym and the reason the gallery stops at x1748 rather than running further into the ridge, where the cover is 60 blocks."
       },
@@ -1967,8 +1967,8 @@
         "box": [
           4288,
           1472,
-          4327,
-          1511
+          4329,
+          1513
         ],
         "why": "contract G1, unchanged: the dig sits inside it with three to nine blocks to spare on every side."
       },
@@ -2400,7 +2400,7 @@
         "record": "gym_koga",
         "box": [
           4568,
-          2464,
+          2463,
           4607,
           2495
         ],
@@ -2891,7 +2891,7 @@
         "box": [
           6152,
           4976,
-          6183,
+          6184,
           5015
         ],
         "why": "contract G1, unchanged: the dig is inside it with one block to spare on the east, which is why the geyser stands at x6178 and not further out."
