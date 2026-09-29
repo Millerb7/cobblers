@@ -53,7 +53,7 @@ def measured(gym):
 
 # ------------------------------------------------------------------------------- the authored record itself
 def test_the_six_built_gyms_are_the_ones_this_unit_claims():
-    assert BUILT_IDS == ["gym1", "gym2", "gym3", "gym4", "gym5", "gym7"]
+    assert BUILT_IDS == ["gym2"], "gyms 1, 3, 4, 5 and 7 were retired 2026-09-29 for the authored buildings"
     assert "gym6" not in BUILT_IDS, "Sabrina's gym waits on EXP-034 and is out of scope"
     assert "gym8" not in BUILT_IDS
 
