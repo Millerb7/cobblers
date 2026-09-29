@@ -6,16 +6,23 @@ mine first built here moved to the gulch the same day (docs/world-building/SOUTH
 data/gulch_mine.json): the camp keeps its seam, found early and not usable yet. The data file says which town this is
 (the dig camp, not the Craters' mining town) and why; this tool only builds what it says.
 
+Reshaped 2026-09-29 (SOUTHERN_RIFT_MEGA.md section 13, the owner on the map of the camp: it "should also conform to
+the shape of the pocket it is in, the quarry should be large and a little deep taking half of the area probably, with
+the strip mines and stuff on top. have the camp seem chaotic in its planning not just a pasted town with perfect
+lines in a grid pattern"). So a cut is no longer only a rectangle: a `traced` cut takes its footprint from an outline
+drawn on the pocket the heightmap has (data `pocket`), a `trench` follows a polyline and keeps the slope it is dug
+into, and a ramp is a graded haul road down a path rather than a slot through a rect. The streets are polylines too.
+
 One voxel model over the spur, ground from tools/ground.py (the canonical heightmap, rounded; never a world):
 
-  envelope   every cut (the seam cut, the quarries, the worked face), tube (adit, decline, drifts), room (the adit
-             hall), shaft and pocket (drift ends), rasterised as data/rift_mines.json `geometry` defines them
+  envelope   every cut (the seam yard, the two quarries, the worked face, the strip mines), tube (adit, decline,
+             drifts), room (the adit hall), shaft and pocket (drift ends), rasterised as `geometry` defines them
   carve      the envelope
   shell      every cell within 2 of the envelope, not carved, at or under the ground: written as rock, so nothing this
              build opens is bounded by anything it did not write (natural caves, the export's gravel)
   fittings   frames, lanterns, rails (powered rail: see the data's rail_why), the collapse at the decline's foot, the
              company grille across drift C and the one crystal's face behind it
-  surface    Forge Row, its rock houses, lamp posts, ore piles, derricks and the headframe over the shaft
+  surface    the two streets, the rock houses, lamp posts, ore piles and spoil heaps, derricks, the headframe
 
 The tease (data `mine.tease`): one mega_stone_crystal in the seam at the end of the prospect drift, behind a grille.
 The pack's ward advancement gives anyone in survival or adventure who lacks the flag (data `flag`, gym6_cleared)
@@ -199,41 +206,147 @@ def chamber_cells(centre, r, height):
     return out
 
 
-def cut_floor(cut, x, z):
-    x0, z0, x1, z1 = cut["rect"]
+def poly_inside(outline, x, z):
+    """A column belongs to a traced footprint when its centre (x + 0.5, z + 0.5) is inside the ring by the
+    even-odd rule (data/rift_mines.json geometry `traced`)."""
+    px, pz = x + 0.5, z + 0.5
+    n = len(outline)
+    inside = False
+    for i in range(n):
+        ax, az = outline[i]
+        bx, bz = outline[(i + 1) % n]
+        if (az > pz) != (bz > pz):
+            if px < ax + (pz - az) / (bz - az) * (bx - ax):
+                inside = not inside
+    return inside
+
+
+def swathe(path, width):
+    """The columns of a swathe `width` wide about a 2-D polyline: each segment sampled at n = ceil(4 * length) + 1
+    points, each sample stamping the square of Chebyshev radius width // 2 round its rounded centre. The same
+    sampling as a tube (geometry `tube`), in two dimensions."""
+    r = width // 2
+    out = set()
+    for (x0, z0), (x1, z1) in zip(path, path[1:]):
+        L = math.hypot(x1 - x0, z1 - z0)
+        n = int(math.ceil(4 * L)) + 1 if L > 0 else 1
+        for s in range(n):
+            t = s / (n - 1) if n > 1 else 0.0
+            cx, cz = rnd(x0 + (x1 - x0) * t), rnd(z0 + (z1 - z0) * t)
+            for dx in range(-r, r + 1):
+                for dz in range(-r, r + 1):
+                    out.add((cx + dx, cz + dz))
+    return out
+
+
+def cut_columns(cut):
+    """The footprint of one cut, by its kind (data/rift_mines.json geometry `cut`)."""
+    kind = cut["kind"]
+    if kind in ("pit", "hillside"):
+        x0, z0, x1, z1 = cut["rect"]
+        return {(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)}
+    if kind == "traced":
+        out = cut["outline"]
+        xs, zs = [p[0] for p in out], [p[1] for p in out]
+        return {(x, z) for x in range(min(xs) - 1, max(xs) + 2) for z in range(min(zs) - 1, max(zs) + 2)
+                if poly_inside(out, x, z)}
+    if kind == "trench":
+        return swathe(cut["path"], cut["width"])
+    raise MineError("%s: unknown cut kind %r" % (cut["id"], kind))
+
+
+def edge_levels(cols):
+    """{(x, z): e} the steps from each column to the nearest column outside the footprint, less one, by
+    4-neighbour steps: a column on the footprint's edge has e = 0, exactly as a rect's min(x - x0, ...)."""
+    from collections import deque
+    e, q = {}, deque()
+    for (x, z) in cols:
+        if any((x + dx, z + dz) not in cols for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            e[(x, z)] = 0
+            q.append((x, z))
+    while q:
+        x, z = q.popleft()
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            c = (x + dx, z + dz)
+            if c in cols and c not in e:
+                e[c] = e[(x, z)] + 1
+                q.append(c)
+    return e
+
+
+def ramp_ys(ramp, floor):
+    """{(x, z): y} the graded haul road down into a cut: the path is sampled as a swathe is, y runs from `top`
+    at the path's start to the cut's `floor` at its end by the fraction of the path's length covered, and each
+    column takes the y of its nearest sample (ties to the earlier sample)."""
+    if not ramp:
+        return {}
+    path, width = ramp["path"], ramp["width"]
+    r = width // 2
+    segs = [(p, q, math.hypot(q[0] - p[0], q[1] - p[1])) for p, q in zip(path, path[1:])]
+    total = sum(s[2] for s in segs) or 1.0
+    best, out = {}, {}
+    done = 0.0
+    for (x0, z0), (x1, z1), L in segs:
+        n = int(math.ceil(4 * L)) + 1 if L > 0 else 1
+        for s in range(n):
+            t = s / (n - 1) if n > 1 else 0.0
+            cx, cz = x0 + (x1 - x0) * t, z0 + (z1 - z0) * t
+            frac = (done + L * t) / total
+            y = rnd(ramp["top"] + (floor - ramp["top"]) * frac)
+            ix, iz = rnd(cx), rnd(cz)
+            for dx in range(-r, r + 1):
+                for dz in range(-r, r + 1):
+                    c = (ix + dx, iz + dz)
+                    d = math.hypot(c[0] - cx, c[1] - cz)
+                    if c not in best or d < best[c]:
+                        best[c], out[c] = d, y
+        done += L
+    return out
+
+
+def cut_plan(cut, ground):
+    """{(x, z): y_f} the floor one cut gives each column of its footprint (geometry `cut`). The bench level is
+    the same for every kind: e // run steps in from the edge, `levels` of them, `rise` apart. A trench keeps the
+    slope it is dug into: its floor is `depth` under the ground at each column. A ramp overrides the benches."""
+    cols = cut_columns(cut)
+    if cut["kind"] == "trench":
+        return {(x, z): ground(x, z) - cut["depth"] for (x, z) in cols}
     b = cut.get("bench") or {}
     rise, run, levels = b.get("rise", 0), b.get("run", 1), b.get("levels", 1)
-    if cut["kind"] == "pit":
-        e = min(x - x0, x1 - x, z - z0, z1 - z)
-    else:
-        sides = {"west": x - x0, "east": x1 - x, "north": z - z0, "south": z1 - z}
-        e = min([sides[s] for s in cut.get("benches") or []], default=None)
-    level = 0 if e is None else max(0, levels - 1 - e // run)
-    yf = cut["floor"] + rise * level
-    ramp = cut.get("ramp")
-    if ramp and ramp["x"][0] <= x <= ramp["x"][1] and ramp["z"][0] <= z <= ramp["z"][1]:
-        za, zb = ramp["z"]
-        ry = rnd(cut["floor"] + (zb - z) / (zb - za) * (ramp["top"] - cut["floor"]))
-        yf = ry                      # the ramp is a causeway down through the benches, never a staircase of them
-    return yf
+    lev = edge_levels(cols) if cut["kind"] == "traced" else None
+    out = {}
+    for (x, z) in cols:
+        if cut["kind"] == "traced":
+            e = lev[(x, z)]
+        elif cut["kind"] == "pit":
+            x0, z0, x1, z1 = cut["rect"]
+            e = min(x - x0, x1 - x, z - z0, z1 - z)
+        else:
+            x0, z0, x1, z1 = cut["rect"]
+            sides = {"west": x - x0, "east": x1 - x, "north": z - z0, "south": z1 - z}
+            e = min([sides[s] for s in cut.get("benches") or []], default=None)
+        level = 0 if e is None else max(0, levels - 1 - e // run)
+        out[(x, z)] = cut["floor"] + rise * level
+    # the ramp is a causeway down through the benches, never a staircase of them
+    for c, y in ramp_ys(cut.get("ramp"), cut["floor"]).items():
+        if c in out:
+            out[c] = y
+    return out
 
 
 def rasterise(m):
     spec = m.spec
     for cut in spec["town"]["cuts"]:
         fid = m.add_feature({"id": cut["id"], "kind": "cut", "gated": False, "rec": cut}, False)
-        x0, z0, x1, z1 = cut["rect"]
-        for x in range(x0, x1 + 1):
-            for z in range(z0, z1 + 1):
-                yf = cut_floor(cut, x, z)
-                g = m.ground(x, z)
-                if g <= yf:
-                    continue
-                i, k = x - m.X0, z - m.Z0
-                m.cut_floor[i, k] = min(m.cut_floor[i, k], yf)
-                m.cut_of[i, k] = fid
-                for y in range(yf + 1, g + CLEAR_ABOVE + 1):
-                    m.mark(x, y, z, fid, False)
+        for (x, z), yf in sorted(cut_plan(cut, m.ground).items()):
+            g = m.ground(x, z)
+            if g <= yf:
+                continue
+            i, k = x - m.X0, z - m.Z0
+            m.cut_floor[i, k] = min(m.cut_floor[i, k], yf)
+            m.cut_of[i, k] = fid
+            for y in range(yf + 1, g + CLEAR_ABOVE + 1):
+                m.mark(x, y, z, fid, False)
     for f in spec["mine"]["features"]:
         gated = bool(f.get("gated"))
         fid = m.add_feature({"id": f["id"], "kind": f["kind"], "gated": gated, "rec": f}, gated)
@@ -617,12 +730,9 @@ def surface(m):
     s = m.spec["town"]
     pal = m.spec["palette"]
     seed = m.spec["seed"]
-    st = s["street"]
-    (xa, za), (xb, zb) = st["from"], st["to"]
-    half = st["width"] // 2
-    for x in range(xa, xb + 1):
-        for z in range(za - half, za + half + 1):
-            y = m.ground(x, z)
+    for st in s["streets"]:
+        for x, z in sorted(swathe(st["polyline"], st["width"])):
+            y = m.top(x, z)
             m.surf[(x, y, z)] = st["surface"]
             for yy in range(y + 1, y + 4):
                 m.surf[(x, yy, z)] = AIR
@@ -1115,14 +1225,18 @@ def model(source_root=None, spec=None):
 def summary(m):
     spec = m.spec
     feats = {f["id"]: f for f in spec["mine"]["features"]}
+    seam_cut = next(c for c in spec["town"]["cuts"] if c["id"] == spec["mine"]["seam"]["cut"])
     lo, hi = ward_box(spec)
     out = {"schema": "cobblers.derived.rift_mines/2", "counts": m.counts, "flag": spec["flag"]["advancement"],
            "collapse": spec["mine"]["collapse"]["box"],
            "tease": {"grille": spec["mine"]["tease"]["grille"], "face": spec["mine"]["tease"]["face"]["box"],
                      "ward": [lo, hi]},
-           "seam": {"cut": spec["mine"]["seam"]["cut"], "face_z": spec["town"]["cuts"][0]["rect"][1] - 1,
-                    "x": [spec["town"]["cuts"][0]["rect"][0], spec["town"]["cuts"][0]["rect"][2]]},
-           "cuts": [{"id": c["id"], "rect": c["rect"], "floor": c["floor"]} for c in spec["town"]["cuts"]],
+           "seam": {"cut": spec["mine"]["seam"]["cut"], "face_z": seam_cut["rect"][1] - 1,
+                    "x": [seam_cut["rect"][0], seam_cut["rect"][2]]},
+           "cuts": [dict({"id": c["id"], "kind": c["kind"], "floor": c.get("floor"),
+                          "columns": len(cut_columns(c))},
+                         **({"rect": c["rect"]} if "rect" in c else {}))
+                    for c in spec["town"]["cuts"]],
            "drifts": [{"id": k, "path": v["path"]} for k, v in feats.items() if k.startswith("drift_")],
            "houses": [{"id": h["id"], "rect": h["rect"]} for h in spec["town"]["houses"]]}
     return out
