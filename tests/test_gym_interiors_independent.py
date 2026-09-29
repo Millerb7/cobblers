@@ -1,5 +1,16 @@
 """Independent tests of the gym interiors, written by an agent that did not build them.
 
+NARROWED 2026-09-29, and by a different agent again. The owner's redesign (docs/world-building/GYM_BUILDINGS_BRIEF.md)
+replaced the works under gyms 1, 3, 4, 5 and 7 with authored buildings; those records are `built: false` and
+tools/gym_interiors.py no longer emits them. **Misty's gym 2 is still built and keeps its coverage here** - the suite
+now parametrises on tools/gym_interiors_independent.GYM_NUMBERS, which reads the `built` flags, so nothing is asserted
+about content that no longer exists and nothing silently stops being checked when a gym comes back.
+
+The mutations that could only be made against a demolished interior (Blaine's pool, Brock's masons' ladder, the rim
+wall, the geyser's soul sand, Erika's drain, two interiors colliding) were NOT deleted: every one of them is carried
+across to tests/test_gym_buildings_independent.py against tools/gym_buildings_independent.py, which audits what
+replaced them. The synthetic model tests below are unchanged and are the shared physics both audits rest on.
+
 The incumbent's tests (tests/test_gym_interiors.py) and audit (tools/gym_interiors_audit.py) were written by the agent
 that wrote tools/gym_interiors.py, and they take their expectations from data/gym_interiors.json, which is what the
 generator read: they show the generator ran. These tests hold the emitted functions against things the generator does
@@ -42,25 +53,21 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import gym_interiors_independent as A  # noqa: E402
 
-GYMS = (1, 2, 3, 4, 5, 7)
+GYMS = A.GYM_NUMBERS
 
 # (gym, code) -> the finding. Each is a defect in the built content, seen by this audit and confirmed by hand; see
 # docs/world-building/GYM_INTERIORS_REVIEW.md. Delete an entry when the content is fixed (the test tells you to).
+# The entries for gyms 1, 3, 4, 5 and 7 went with those interiors when they were demolished.
 KNOWN_DEFECTS = {
-    (1, "step"): "F1 the chute back (c3_return) is one block too low: the cutting room's ceiling is y135, the chute floor's standing level is y135, so the head cell at x1824 y136 is rock and nobody can walk off it onto the straw",
-    (1, "guard"): "F2 the dead-end walkway is a two-block sprint jump from the low ledge, so the pit, the yard hand, the ramp and the east ladders can be skipped",
-    (4, "waypoint"): "F3 the drain cannot be entered: it is a one-high flooded hole entered from a dry mouth",
-    (4, "crawl"): "F3 the drain cannot be entered: it is a one-high flooded hole entered from a dry mouth",
-    (4, "leaves"): "F7 the azalea hedge is unpersistent leaves with no log near: it decays away, and it is the wall the first gardener guards",
-    (4, "leak"): "F4 the cistern store and the drain's outfall are open-topped sources that spread across the floor",
-    (7, "leak"): "F4 the geyser's two lowest water cells spread across the rack room floor",
-    (5, "guard"): "F5 the false causeway stubs sit one block from the true one, so they can be hopped and the second tracker skipped",
     (2, "lantern"): "F6 lanterns hang one block below the ceiling or stand a block above the floor, in the air",
-    (3, "lantern"): "F6 lanterns hang one block below the ceiling or stand a block above the floor, in the air",
-    (4, "lantern"): "F6 lanterns hang one block below the ceiling or stand a block above the floor, in the air",
-    (5, "lantern"): "F6 lanterns hang one block below the ceiling or stand a block above the floor, in the air",
-    (7, "lantern"): "F6 lanterns hang one block below the ceiling or stand a block above the floor, in the air",
 }
+
+
+def test_the_suite_audits_every_interior_that_is_still_built():
+    # breaks if: an interior comes back (or the last one goes) and the parametrised tests silently stop covering it
+    built = {g["id"] for g in json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]
+             if g.get("built")}
+    assert {"gym%d" % n for n in GYMS} == built and built, built
 
 
 # ---------------------------------------------------------------------------------------------------- the fixtures
@@ -242,37 +249,6 @@ def test_every_problem_the_audit_raises_has_a_code(baseline):
     assert "unknown" not in baseline[0].codes()
 
 
-def test_blaines_leap_lands_in_six_blocks_of_water_and_costs_nothing(baseline):
-    # breaks if: the pool under the open throat is shallower than the fall needs (the incumbent's own worry, checked independently)
-    rep, sites, worlds, extras = baseline
-    mv, adj, start = extras[7]
-    landings = [(k, v) for k, v in mv.lands.items() if v[2] >= 17]
-    assert landings, "no 17-block-or-longer fall was found in gym 7: the leap is not in the emitted blocks"
-    w = worlds[7]
-    for (a, b), (kind, depth, dist) in landings:
-        assert kind == "water" and depth == 6, (a, b, kind, depth, dist)
-        assert w.supports((b[0], 72, b[2])) and all(w.water((b[0], y, b[2])) for y in range(73, 79)), "the pool under %s is not six of water on a floor" % (b,)
-
-
-def test_the_geyser_cannot_be_swum_down_so_the_leap_cannot_be_skipped(baseline):
-    # breaks if: the rack room can be reached from the rim without the leap into the pool (the shortcut the incumbent found)
-    rep, sites, worlds, extras = baseline
-    mv, adj, start = extras[7]
-    rack = (6175, 86, 5003)
-    assert rack in adj
-    # every route from the hall to the rack room passes through the pool
-    seen, frontier = {start}, [start]
-    pool = lambda c: 6165 <= c[0] <= 6170 and 73 <= c[1] <= 78 and 4999 <= c[2] <= 5003
-    while frontier:
-        c = frontier.pop()
-        for d, how in adj[c]:
-            if d not in seen and not pool(d):
-                seen.add(d)
-                frontier.append(d)
-    assert rack not in seen
-
-
-# ---------------------------------------------------------------------------------------------------- mutations
 @pytest.mark.parametrize("gym", GYMS)
 @pytest.mark.parametrize("axis", ("x", "z"))
 def test_an_interior_moved_eight_blocks_is_caught(emitted, design, placements, ground, gym, axis):
@@ -294,121 +270,33 @@ def test_an_interior_raised_twelve_blocks_breaks_the_surface_and_is_caught(emitt
     assert (after.codes(gym) - before.codes(gym)) & {"cover", "breach", "above_ground", "shell_column", "shaft_top"}
 
 
-def test_deleting_the_water_at_blaines_landing_is_caught(emitted, design, placements, ground):
-    # breaks if: an eighteen-block fall can land on stone without the audit noticing
-    texts, _, _ = emitted
-    t = texts[7]
-    water = [i for i in fills(t, "minecraft:water")]
-    pool = max(water, key=lambda i: volume(t.splitlines()[i]))
-    assert "6165 73 4999 6170 78 5003" in t.splitlines()[pool]
-    before = run_only(7, t, emitted, design, placements, ground)
-    after = run_only(7, without(t, pool), emitted, design, placements, ground)
-    new = after.codes(7) - before.codes(7)
-    # the pool was never carved: without the water fill the throat ends on rock at y78, so the fall is feet y96 to y79, 17 blocks
-    assert "harsh" in new, sorted(after.codes(7))
-    assert any("14" in text for g, c, text in after.items if c == "harsh"), "seventeen blocks onto stone cost fourteen"
-
-
-def test_making_blaines_pool_one_block_deep_is_caught(emitted, design, placements, ground):
-    # breaks if: shallow water under a long fall is accepted
-    texts, _, _ = emitted
-    t = texts[7]
-    pool = max(fills(t, "minecraft:water"), key=lambda i: volume(t.splitlines()[i]))
-    line = t.splitlines()[pool].split()
-    line[2] = "78"     # y0 73 -> 78: one deep
-    after = run_only(7, replaced(t, pool, " ".join(line)), emitted, design, placements, ground)
-    assert "landing" in after.codes(7) or "harsh" in after.codes(7)
-
-
-def test_opening_a_wall_between_the_cutting_floor_and_the_pit_is_caught(emitted, design, placements, ground):
-    # breaks if: a room joined to another by a hole the design does not have goes unnoticed
-    texts, _, _ = emitted
-    before = run_only(1, texts[1], emitted, design, placements, ground)
-    after = run_only(1, appended(texts[1], "fill 1815 131 3690 1816 133 3691 minecraft:air"), emitted, design, placements, ground)
-    assert "room_join" in after.codes(1) and "room_join" not in before.codes(1)
-    assert "skip_room" in after.codes(1)
-
-
-def test_opening_a_wall_between_the_rim_and_the_galleries_is_caught(emitted, design, placements, ground):
-    # breaks if: a drop from the rim gallery straight to the sample landing is not seen as a skipped puzzle
-    texts, _, _ = emitted
-    before = run_only(7, texts[7], emitted, design, placements, ground)
-    # a shaft from the rim chamber's floor down onto the landing, beside the pool, through rock
-    cut = "fill 6172 79 4997 6172 95 4997 minecraft:air"
-    after = run_only(7, appended(texts[7], cut), emitted, design, placements, ground)
-    new = after.codes(7) - before.codes(7)
-    assert new & {"room_join", "skip_room"}, sorted(after.codes(7))
-
-
-def test_making_the_geyser_an_ordinary_water_column_is_caught(emitted, design, placements, ground):
-    # breaks if: a bubble column is treated as ordinary water, so swimming down it (the incumbent's shortcut) goes unseen
-    texts, _, _ = emitted
-    t = texts[7]
-    idx = [i for i in fills(t, "minecraft:soul_sand")]
-    assert len(idx) == 1
-    before = run_only(7, t, emitted, design, placements, ground)
-    after = run_only(7, replaced(t, idx[0], t.splitlines()[idx[0]].replace("soul_sand", "basalt")), emitted, design, placements, ground)
-    new = after.codes(7) - before.codes(7)
-    assert new & {"skip_room", "room_join"}, sorted(after.codes(7))
-
-
-def test_removing_the_masons_ladder_traps_the_pit_and_is_caught(emitted, design, placements, ground):
-    # breaks if: a pit with no way out is accepted
-    texts, _, _ = emitted
-    t = texts[1]
-    idx = [i for i in fills(t, "ladder[facing=east]") if t.splitlines()[i].startswith("fill 1814 119 3692")]
-    assert len(idx) == 1
-    before = run_only(1, t, emitted, design, placements, ground)
-    after = run_only(1, without(t, idx[0]), emitted, design, placements, ground)
-    assert "trap" in after.codes(1) and "trap" not in before.codes(1)
-
-
-def test_a_ladder_turned_to_face_the_open_air_is_caught(emitted, design, placements, ground):
-    # breaks if: a ladder with nothing behind it (which pops off on its first update) is accepted
-    texts, _, _ = emitted
-    t = texts[1]
-    idx = [i for i in fills(t, "ladder[facing=east]") if t.splitlines()[i].startswith("fill 1814 119 3692")]
-    after = run_only(1, replaced(t, idx[0], t.splitlines()[idx[0]].replace("facing=east", "facing=west")), emitted, design, placements, ground)
-    assert "ladder" in after.codes(1)
-
-
-def test_a_shaft_that_stops_a_block_short_of_the_hall_floor_is_caught(emitted, design, placements, ground):
+@pytest.mark.parametrize("gym", GYMS)
+def test_a_shaft_that_stops_a_block_short_of_the_hall_floor_is_caught(emitted, design, placements, ground, baseline, gym):
     # breaks if: the way into the works ends where a player cannot step off it
     texts, _, _ = emitted
-    t = texts[1]
-    assert t.count(" 1817 142 3685 ") == 2      # the healer's cell cleared, and the scaffolding that stands in it
-    after = run_only(1, t.replace(" 1817 142 3685 ", " 1817 141 3685 "), emitted, design, placements, ground)
-    assert "shell_column" in after.codes(1)
+    site = baseline[1][gym]
+    top, stand = baseline[2][gym].hall_col, site.hall_stand
+    assert top is not None, "gym%d has no column into the shell to move" % gym
+    needle, lower = " %d %d %d " % (top[0], stand, top[1]), " %d %d %d " % (top[0], stand - 1, top[1])
+    t = texts[gym]
+    assert needle in t, "gym%d's shaft top %s is not written literally; this mutation cannot be made" % (gym, needle)
+    after = run_only(gym, t.replace(needle, lower), emitted, design, placements, ground)
+    assert "shell_column" in after.codes(gym)
 
 
-def test_flooding_the_drains_mouth_two_deep_makes_it_enterable(emitted, design, placements, ground):
-    # breaks if: the one-high-hole rule is applied to every water cell instead of to holes entered from shallow water (a control)
-    texts, _, _ = emitted
-    before = run_only(4, texts[4], emitted, design, placements, ground)
-    assert "waypoint" in before.codes(4) and "crawl" in before.codes(4)
-    after = run_only(4, appended(texts[4], "fill 4310 99 1489 4310 100 1493 minecraft:water"), emitted, design, placements, ground)
-    assert "waypoint" not in after.codes(4) and "crawl" not in after.codes(4), [t for g, c, t in after.items if c in ("waypoint", "crawl")]
-
-
-def test_two_interiors_writing_the_same_cells_is_caught(emitted, design, placements, ground):
-    # breaks if: cross-gym collisions are not compared at cell level
-    texts, healers, _ = emitted
-    t = dict(texts)
-    t[2] = texts[1]
-    rep, *_ = A.run(t, "", design, placements, ground, only={1, 2})
-    assert "gym_cells" in rep.codes()
-
-
-def test_a_data_file_naming_a_gyms_columns_is_caught(baseline):
+@pytest.mark.parametrize("gym", GYMS)
+def test_a_data_file_naming_a_gyms_columns_is_caught(baseline, gym):
     # breaks if: the search of the other data files matches nothing, so a scene or portal on a dig is invisible
     rep, sites, worlds, extras = baseline
-    xs = [c[0] for c in worlds[3].cells]
-    zs = [c[2] for c in worlds[3].cells]
-    ys = [c[1] for c in worlds[3].cells]
-    boxes = {3: (min(xs), min(ys), min(zs), max(xs), max(ys), max(zs))}
-    hit = A.scan_claims({"scenes": [{"id": "s", "at": {"x": 1741, "y": 160, "z": 1410}}]}, boxes)
-    assert hit and hit[0][0] == 3
-    assert not A.scan_claims({"scenes": [{"at": {"x": 1741, "y": 400, "z": 1410}}]}, boxes), "a point far above the dig is not a claim on it"
+    cells = worlds[gym].cells
+    xs, ys, zs = [c[0] for c in cells], [c[1] for c in cells], [c[2] for c in cells]
+    box = (min(xs), min(ys), min(zs), max(xs), max(ys), max(zs))
+    boxes = {gym: box}
+    mid = {"x": (box[0] + box[3]) // 2, "y": (box[1] + box[4]) // 2, "z": (box[2] + box[5]) // 2}
+    hit = A.scan_claims({"scenes": [dict(id="s", at=mid)]}, boxes)
+    assert hit and hit[0][0] == gym
+    far = dict(mid, y=400)
+    assert not A.scan_claims({"scenes": [{"at": far}]}, boxes), "a point far above the dig is not a claim on it"
     assert not A.scan_claims({"a": [0, 0, 9000, 9000]}, boxes), "a map-sized region is not a claim on one dig"
 
 
