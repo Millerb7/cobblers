@@ -90,3 +90,30 @@ it here myself rather than take the agent's word: same result.
    everyone in it, and the first catch takes the legendary for the server. Per player would need the scene runtime
    and EXP-034. Also, once open, a woken legendary can be killed with a sword (EXP-023) and the keeper cannot
    re-summon it.
+
+## Routes 1-3's water events are stale, and I did not force them through
+
+`route_events.py` refused to build: its guard compares the current heightmap against the one the routes were routed
+on, over the whole Routes 1-3 region, and the water shape changed **68,761 columns** there.
+
+I first suspected the guard was over-broad, because the water audit's check C2 proves **no road corridor changed**
+(0 columns within 4 blocks of every route line). So I measured what actually matters instead of arguing: **6 of the
+40 scene props now stand on ground the export moved** — `route1_first_cast`, both `route2_viltri_sounding` props and
+all three `route3_creek_wooper` props. Every one of them is a **water** event, sitting on exactly the features the
+water shape re-cut. *(My parallel check of the route path points themselves found 0 points to check — my reader did
+not match `route_paths.json`'s shape — so that half is inconclusive, not clean. C2 is the evidence that the roads
+are fine, not my script.)*
+
+**So the guard is right and I left it alone.** `route_events.py --write-scenes` would re-site the props, but it runs
+*after* the guard, and defeating a fail-closed guard to reach the fixer is the exact move the standing constraints
+forbid. Rewriting `scenes.json` wholesale also risks overwriting hand-authored anchors and dialogue positions, which
+is not a call to make while you are asleep.
+
+**Consequence, stated plainly:** the rest of the build carried on from the next job, so the new world gets everything
+else, and **Routes 1-3 keep their previous event positions**. Six water props will sit on ground that has moved —
+First Cast on the old coastline, the Viltri sounding and the creek Wooper on the old water. They will look wrong
+until re-sited.
+
+**The fix, for a session with you awake:** run `python tools/route_events.py --source-root <root> --write-scenes`
+once the guard is satisfied, then diff `data/scenes.json` and check the change is confined to those six positions.
+It is a morning's work, not a night's.
