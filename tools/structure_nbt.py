@@ -99,13 +99,14 @@ class Builder:
         self.blocks = {}
 
     def set(self, x, y, z, name, props=None):
-        self.blocks[(int(x), int(y), int(z))] = (name, tuple(sorted((props or {}).items())))
+        # most blocks carry no properties, and sorting an empty dict 2.5 million times was 1.5 s of the world tree
+        self.blocks[(int(x), int(y), int(z))] = (name, tuple(sorted(props.items())) if props else ())
 
     def setdefault(self, x, y, z, name, props=None):
         """Set only where nothing is yet: leaves never overwrite a trunk."""
         key = (int(x), int(y), int(z))
         if key not in self.blocks:
-            self.blocks[key] = (name, tuple(sorted((props or {}).items())))
+            self.blocks[key] = (name, tuple(sorted(props.items())) if props else ())
 
     def get(self, x, y, z):
         v = self.blocks.get((int(x), int(y), int(z)))

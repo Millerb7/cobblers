@@ -247,9 +247,10 @@ def built_rects(skip=("cobblers_shrines",)):
     for pack in sorted(p for p in base.iterdir() if p.is_dir() and p.name not in skip):
         for f in pack.rglob("*.mcfunction"):
             for m in WRITE.finditer(f.read_text(encoding="utf-8", errors="replace")):
-                x, z = int(math.floor(float(m.group(2)))), int(math.floor(float(m.group(4))))
-                if m.group(1) in ("fill", "clone") and m.group(5) is not None:
-                    xb, zb = int(m.group(5)), int(m.group(7))
+                g = m.groups()          # once: seven .group() calls a match over ~4M writes was 1.2 s
+                x, z = int(math.floor(float(g[1]))), int(math.floor(float(g[3])))
+                if g[0] in ("fill", "clone") and g[4] is not None:
+                    xb, zb = int(g[4]), int(g[6])
                     rows.append((min(x, xb), min(z, zb), max(x, xb), max(z, zb)))
                 else:
                     rows.append((x, z, x, z))

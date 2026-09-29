@@ -55,6 +55,18 @@ WRITE = re.compile(r"(?:^|\brun\s+)(fill|setblock|clone|place\s+template\s+\S+)\
                    % ((NUM,) * 6))
 
 
+# every pattern compiled once: formatted and looked up again per line, they were a large part of a big build's check
+# (rift_skin's 1,005 functions: 13.7 million re.match calls)
+LOADED_BY = re.compile(r"#\s*chunks-loaded-by:")
+FORCELOAD = re.compile(r"forceload\s+(add|remove)\s+(all|%s\s+%s(?:\s+%s\s+%s)?)\s*$" % ((NUM,) * 4))
+FORCELOAD_ADD = re.compile(r"forceload\s+add\s+%s\s+%s(?:\s+%s\s+%s)?\s*$" % ((NUM,) * 4))
+FORCELOAD_REMOVE = re.compile(r"forceload\s+remove\b")
+FORCELOAD_LINE = re.compile(r"\s*forceload\s+(add|remove)\b")
+FILL_LINE = re.compile(r"(\s*)fill\s+%s\s+%s\s+%s\s+%s\s+%s\s+%s(\s.*)$" % ((NUM,) * 6))
+FILL = re.compile(r"fill\s+%s\s+%s\s+%s\s+%s\s+%s\s+%s\b" % ((NUM,) * 6))
+CLONE = re.compile(r"clone\s+%s\s+%s\s+%s\s+%s\s+%s\s+%s\b" % ((NUM,) * 6))
+
+
 def _chunks(x0, z0, x1, z1):
     return {(cx, cz) for cx in range(min(x0, x1) // 16, max(x0, x1) // 16 + 1)
             for cz in range(min(z0, z1) // 16, max(z0, z1) // 16 + 1)}
@@ -62,14 +74,14 @@ def _chunks(x0, z0, x1, z1):
 
 def unloaded_writes(lines):
     """[(line number, command, chunk)] for block writes into chunks not force-loaded at that point."""
-    if any(re.match(r"#\s*chunks-loaded-by:", l.strip()) for l in lines):
+    if any(LOADED_BY.match(l.strip()) for l in lines):
         return []
     forced, out = set(), []
     for n, raw in enumerate(lines, start=1):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
-        m = re.match(r"forceload\s+(add|remove)\s+(all|%s\s+%s(?:\s+%s\s+%s)?)\s*$" % ((NUM,) * 4), line)
+        m = FORCELOAD.match(line)
         if m:
             verb, _all, x0, z0, x1, z1 = m.groups()
             if _all == "all":
@@ -83,13 +95,13 @@ def unloaded_writes(lines):
             continue
         what, x0, _y0, z0, x1, _y1, z1 = m.groups()
         x0, z0 = int(x0), int(z0)
-        if what in ("fill", "clone") and x1 is not None:
-            need = _chunks(x0, z0, int(x1), int(z1))
-        else:
-            need = _chunks(x0, z0, x0, z0)
-        missing = sorted(need - forced)
-        if missing:
-            out.append((n, line[:90], missing[0]))
+        c = (x0 // 16, z0 // 16)
+        if what in ("fill", "clone") and x1 is not None and (int(x1) // 16, int(z1) // 16) != c:
+            missing = sorted(_chunks(x0, z0, int(x1), int(z1)) - forced)
+            if missing:
+                out.append((n, line[:90], missing[0]))
+        elif c not in forced:           # one chunk (a setblock, a column fill): no set to build and sort per line
+            out.append((n, line[:90], c))
     return out
 
 
@@ -105,7 +117,7 @@ def written_chunks(lines):
         line = raw.strip()
         if line.startswith("#"):
             continue
-        m = re.match(r"forceload\s+add\s+%s\s+%s(?:\s+%s\s+%s)?\s*$" % ((NUM,) * 4), line)
+        m = FORCELOAD_ADD.match(line)
         if m:
             x0, z0, x1, z1 = m.groups()
             out |= _chunks(int(x0), int(z0), int(x1 if x1 is not None else x0), int(z1 if z1 is not None else z0))
@@ -115,12 +127,12 @@ def written_chunks(lines):
             continue
         what, x0, _y0, z0, x1, _y1, z1 = m.groups()
         x0, z0 = int(x0), int(z0)
-        if what in ("fill", "clone") and x1 is not None:
+        if what in ("fill", "clone") and x1 is not None and (int(x1) // 16, int(z1) // 16) != (x0 // 16, z0 // 16):
             out |= _chunks(x0, z0, int(x1), int(z1))
         elif what.startswith("place"):
             out |= _chunks(x0 - TEMPLATE_REACH, z0 - TEMPLATE_REACH, x0 + TEMPLATE_REACH, z0 + TEMPLATE_REACH)
         else:
-            out |= _chunks(x0, z0, x0, z0)
+            out.add((x0 // 16, z0 // 16))
     return out
 
 
@@ -141,7 +153,7 @@ def split_fills(lines):
     (block, mode, filter) kept. A town lot levelled for the League came to 83,205 blocks in one fill."""
     out = []
     for raw in lines:
-        m = re.match(r"(\s*)fill\s+%s\s+%s\s+%s\s+%s\s+%s\s+%s(\s.*)$" % ((NUM,) * 6), raw)
+        m = FILL_LINE.match(raw)
         if m and _volume(*m.groups()[1:7]) > FILL_LIMIT:
             ind, rest = m.group(1), m.group(8)
             out += ["%sfill %d %d %d %d %d %d%s" % ((ind,) + b + (rest,)) for b in _fill_boxes(*map(int, m.groups()[1:7]))]
@@ -164,7 +176,7 @@ def releases_mid_run(lines):
     released = False
     for raw in lines:
         line = raw.strip()
-        if re.match(r"forceload\s+remove\b", line):
+        if FORCELOAD_REMOVE.match(line):
             released = True
         elif released and WRITES.match(line):
             return True
@@ -199,7 +211,7 @@ def ensure_loaded(lines):
             boxes.append("%d %d %d %d" % (start * 16, cz * 16, prev * 16 + 15, cz * 16 + 15))
             if cx is not None:
                 start = prev = cx
-    body = [l for l in lines if not re.match(r"\s*forceload\s+(add|remove)\b", l)]
+    body = [l for l in lines if not FORCELOAD_LINE.match(l)]
     head = 0
     while head < len(body) and (not body[head].strip() or body[head].strip().startswith("#")):
         head += 1
@@ -226,20 +238,20 @@ def check_lines(lines, where="<lines>"):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
-        m = re.match(r"fill\s+%s\s+%s\s+%s\s+%s\s+%s\s+%s\b" % ((NUM,) * 6), line)
+        m = FILL.match(line)
         if m:
             v = _volume(*m.groups())
             if v > FILL_LIMIT:
                 out.append((n, line[:90], "fill of %d blocks, over the %d limit: the server refuses the "
                                          "whole command and nothing is placed" % (v, FILL_LIMIT)))
             continue
-        m = re.match(r"clone\s+%s\s+%s\s+%s\s+%s\s+%s\s+%s\b" % ((NUM,) * 6), line)
+        m = CLONE.match(line)
         if m:
             v = _volume(*m.groups())
             if v > CLONE_LIMIT:
                 out.append((n, line[:90], "clone of %d blocks, over the %d limit" % (v, CLONE_LIMIT)))
             continue
-        m = re.match(r"forceload\s+add\s+%s\s+%s(?:\s+%s\s+%s)?\s*$" % ((NUM,) * 4), line)
+        m = FORCELOAD_ADD.match(line)
         if m:
             x0, z0, x1, z1 = m.groups()
             if x1 is None:
