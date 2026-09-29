@@ -209,7 +209,7 @@ advancement, a callback or a zone entry is not a per-tick cost.**
 | `cobblers_ambient` keeper (`tools/ambient.py:311,341-343`) | no | every **40** ticks (`keep_every`) | 1 + 2 lines per worker in `keep_all`; each worker's 5-line `keep` runs only where its station chunk is loaded, then returns immediately unless a player is within `keep_radius` 96 | 41 lines / 40 ticks ≈ **1.0 line/tick** | CALIBRATED 1–4 us/tick |
 | `cobblers_ambient` worker step (`tools/ambient.py:328`, `:432`) | **yes**, while a player is within 48 | every tick | the worker's own tagged selector | 1 carrier + 1 stationary (gym1_town); cap 2 + 4 | **MEASURED** 25 us / 3 us each |
 | `cobblers_blackout` driver (`tools/blackout_pack.py:170-191`) | **yes** | every tick | 17 lines, including `@e[type=cobblemon:pokemon,tag=cobblers.guardian]` — a **global Pokemon entity scan every tick** | server-wide **17 lines/tick** | CALIBRATED 17–68 us/tick |
-| `cobblers_blackout` water ladder (`tools/blackout_pack.py:733-754` + `water/qualify`, `water/surfaced`, `water/strip_vanilla`) | **yes** | every tick, **per player**, in survival/adventure | `@e[type=player,gamemode=!creative,gamemode=!spectator]`, then ~39 lines as that player | **~39 lines per player per tick** | CALIBRATED **39–156 us per player**. The largest single datapack term in the game. |
+| `cobblers_blackout` water ladder (`tools/blackout_pack.py:733-754` + `water/qualify`, `water/surfaced`, `water/strip_vanilla`) | **yes** | every tick, **per player**, in survival/adventure | `@e[type=player,gamemode=!creative,gamemode=!spectator]`, then ~39 lines as that player | **~39 lines per player per tick** | CALIBRATED **39–156 us per player**. The largest single datapack term in the game. **Superseded 2026-09-29** by the early exit below: 7 lines on the dry path. |
 | `cobblers_blackout` checkpoint sample | no | every **5** ticks per player | ~12 lines | ≈ 2.4 lines/tick/player | CALIBRATED 2–10 us |
 | `cobblers_blackout` surface tick | no | every `surface.sample_ticks` per swimmer | ~27 lines | 0 on land | CALIBRATED, 0 in a town |
 | `cobblers_blackout` blackout/claims/recovery | **no — event** | a death, a `battle_victory` callback, an `any_block_use` on a healing machine or waystone | — | 0 | not a tick cost |
@@ -238,7 +238,7 @@ ambient 24 + ambient keeper 1.0 + blackout 17 + trainers 9.4 + scenes 0.7 + prog
 
 Two things in that floor deserve the owner's attention before trainers do:
 
-1. **The water ladder is ~39 command lines per player per tick, everywhere, forever** — four times the whole trainer cycle, and it runs on dry land in the middle of a town. `water/tick` sets three scores and runs `water/qualify` (12 lines), `water/surfaced`, `water/strip_vanilla` (7 lines) before it ever discovers the player is not in water (`tools/blackout_pack.py:737-754`). An early `return` on "not in water and no modifier held" would cut most of it. That is a finding, not a request; it is not this document's job to change it.
+1. **The water ladder is ~39 command lines per player per tick, everywhere, forever** — four times the whole trainer cycle, and it runs on dry land in the middle of a town. `water/tick` sets three scores and runs `water/qualify` (12 lines), `water/surfaced`, `water/strip_vanilla` (7 lines) before it ever discovers the player is not in water (`tools/blackout_pack.py:737-754`). An early `return` on "not in water and no modifier held" would cut most of it. That is a finding, not a request; it is not this document's job to change it. **Done 2026-09-29** — see "The water ladder on dry land" below: the dry path is now 7 lines.
 2. **`cobblers_ambient`'s driver costs 24 lines/tick with the server empty**, because the 20 per-worker score tests and the two global interaction scans are unconditional (`tools/ambient.py:309-313,328`). It is the one place where adding workers raises the *idle* cost, at +1 line/tick per worker forever.
 
 ---
@@ -618,13 +618,19 @@ touched the running server, RCON, the coordination lock or any world.*
 The offline inventory flagged this as the largest per-player datapack cost in the game. Traced through the generated
 functions, for a player **standing on grass in the middle of a town**:
 
-| function | lines run | why it runs on dry land |
-|---|---|---|
-| `water/tick` | 17 | the driver; its water tests fail but the lines are still evaluated |
-| `water/qualify` | 10 | **called unconditionally**, line 10 of `water/tick` |
-| `water/surfaced` | 3 | called *because* `bo.sub == 0`, i.e. precisely because the player is dry |
-| `water/strip_vanilla` | 5 | **called unconditionally**, the last line of `water/tick` |
-| **total** | **35** | plus the tick-tag and driver overhead the inventory counted, giving its ~39 |
+| function | lines run before | lines run after (2026-09-29) | why it runs on dry land |
+|---|---:|---:|---|
+| `water/tick` | 17 | **5** | the driver; before, its water tests failed but the lines were still evaluated. Now it returns at line 5 |
+| `water/qualify` | 10 | **0** | was **called unconditionally**, line 10 of `water/tick`; now on the wet path only |
+| `water/surfaced` | 3 | **0** | was called *because* `bo.sub == 0`; its two resets moved into `water/left`, its Surf decay into `water/dry` |
+| `water/strip_vanilla` | 5 | **0** | was **called unconditionally**, the last line of `water/tick`; now the wet path plus an advancement trigger |
+| `water/dry` (new) | — | **2** | the whole dry path: settle-once on leaving the water, and the Surf bonus's decay clock |
+| **total** | **35** | **7** | plus the tick-tag and driver overhead the inventory counted, giving its ~39 before |
+
+Counted from the generated functions (`build/datapacks/cobblers_blackout/data/cobblers/function/water/`), non-comment
+lines, for a player standing on grass with no Surf bonus left, no swim modifier and no air modifier. Two paths cost
+more than 7 and both are bounded: the single tick a player leaves the water runs `water/left` (5 more), and while a
+Surf bonus is decaying `water/breathe` runs (5 more) until `breath_reset_ticks` of full air have passed.
 
 **Where the waste actually is** (`tools/blackout_pack.py`, generated into `cobblers_blackout`):
 
@@ -640,21 +646,36 @@ functions, for a player **standing on grass in the middle of a town**:
    the same as a scoreboard line, so this term is probably worth more than its line count suggests. **Unmeasured.**
 3. `water/surfaced` is 3 lines and is the one part that legitimately belongs on the dry path.
 
-**What it could cost.** An early exit after the two block tests: if the player is not in water, has no Surf bonus left
-to decay and carries no air modifier, return. That is about **6 lines instead of 35** on the dry path, which is where
-every player spends nearly all of their time.
+**What it cost, and what it costs now.** The early exit sits after the eye test: no water at the eyes and none at the
+feet, return into `water/dry`. `surface/tick`'s own guard is the same pair of block tests at the same position in the
+same tick, so the two agree on which ticks are dry, and nothing downstream ever reads a `bo.qual` the exit skipped.
 
 | | lines/player/tick | at 1.0-3.8 us a line (CALIBRATED, and the per-line constant is step 0 of the plan) |
 |---|---|---|
-| today, dry | 35 | 35-133 us |
-| with an early exit | ~6 | 6-23 us |
-| saved | ~29 | **29-110 us per player per tick** |
+| before, dry | 35 | 35-133 us |
+| after, dry (idle) | **7** | 7-27 us |
+| saved | **28** | **28-106 us per player per tick** |
 
-At `max-players` 8 that is up to about **0.9 ms a tick, roughly 1.8% of the budget**, paid constantly by players doing
-nothing near water. The `effect clear` pair may make it larger.
+At `max-players` 8 that is up to about **0.85 ms a tick, roughly 1.7% of the budget**, paid constantly by players doing
+nothing near water. The two `effect clear` commands are gone from the dry path entirely, and they are the one term
+likely to cost more than a scoreboard line, so the real saving is probably larger. **All of this is CALIBRATED from
+the 1.0-3.8 us line constant; none of it has been measured on a server.** The measurement in section 4 should include
+a before/after of this path.
 
-**Not changed here, deliberately.** `cobblers_blackout` owns contracts C1 and C2 (`data/system_contracts.json`), and a
-swim-rule change has broken the Dive ladder once before (2026-09-27, players knocked out after 33 s). Any early exit
-must keep `tests/test_system_contracts.py` green and wants its own test from a test-author, not from whoever writes
-the exit. The measurement in section 4 should include a before/after of this path, since it is the cheapest large win
-on the board.
+**What the exit had to preserve**, because `cobblers_blackout` owns contracts C1 and C2
+(`data/system_contracts.json`) and a swim-rule change broke the Dive ladder once before (2026-09-27, players knocked
+out after 33 s):
+
+- `bo.surf`'s initialiser stays the first line of `water/tick`, before the exit (C2's finding).
+- The Surf bonus's decay still runs while dry (`water/dry` calls `water/breathe` whenever `bo.surf >= 1`).
+- `bo.pulse` and `bo.warn` only ever change under water, so `water/left` resets them once on leaving instead of every
+  dry tick. The swim-speed modifier and the ladder's `oxygen_bonus` modifier come off there too, and `blackout/login`
+  sets `bo.wet` so a player who logged out swimming is settled on their first dry tick.
+- Water Breathing and Conduit Power are still removed, and the player still told once via `cobblers.air_told`: the
+  wet path clears unconditionally every tick as before, and off the water a `minecraft:effects_changed` advancement
+  (`cobblers:blackout/vanilla_air`) clears them the tick they land. **Not verified in game** — the trigger's firing
+  is EXP-042 work.
+
+`tests/test_system_contracts.py` (82) and the blackout, surface, boat, gate-clock, open-water, water-mount and
+recovery suites (255) are green after the change; none of them asserted the dry-path line count before, and a
+test-author still owes one.

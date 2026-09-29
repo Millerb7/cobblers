@@ -62,6 +62,7 @@ OBJECTIVES = {
     "bo.mount": "dummy", "bo.raw": "dummy", "bo.qual": "dummy", "bo.grace": "dummy",
     "bo.deep": "dummy", "bo.sub": "dummy", "bo.air": "dummy", "bo.surf": "dummy", "bo.breath": "dummy",
     "bo.pulse": "dummy", "bo.warn": "dummy", "bo.mh": "dummy", "bo.g": "dummy", "bo.brth": "dummy", "bo.hasmod": "dummy", "bo.swim": "dummy", "bo.zone": "dummy", "bo.fat": "dummy", "bo.fwarn": "dummy", "bo.fpt": "dummy",
+    "bo.wet": "dummy",
 }
 
 # the inventory slots a claim may take from: the hotbar and main inventory, and the offhand. Armour never.
@@ -363,6 +364,9 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
         "tag @s remove cobblers.slayer",
         "scoreboard players set @s bo.mount 0",
         "scoreboard players set @s bo.qual 0",
+        "# treat a fresh login as leaving the water: water/left then settles the swim and air modifiers once, even for a",
+        "# player who logged out swimming and logged back in on dry land (the attribute modifiers outlive the session)",
+        "scoreboard players set @s bo.wet 1",
         "execute store result score @s bo.ox run data get entity @s Pos[0]",
         "execute store result score @s bo.oz run data get entity @s Pos[2]",
         "function %s:recovery/deliver" % NS])
@@ -738,6 +742,13 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
         "scoreboard players set @s bo.sub 0",
         "scoreboard players set @s bo.deep 0",
         "execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #%s:water run scoreboard players set @s bo.sub 1" % NS,
+        "# the dry path leaves here. No water at the eyes and none at the feet: every test below fails, and the ladder",
+        "# still cost 35 command lines a tick for a player standing on grass (docs/mechanics/TOWN_TICK_BUDGET.md,",
+        "# 'The water ladder on dry land, traced line by line'). surface/tick's own guard is the same pair of tests, so",
+        "# it returns to surface/recover on exactly the ticks this returns here, and never reads a stale bo.qual",
+        "execute if score @s bo.sub matches 0 unless block ~ ~ ~ #%s:water run return run function %s:water/dry" % (NS, NS),
+        "# from here the player is in water; bo.wet records it, so leaving is a transition water/dry can settle once",
+        "scoreboard players set @s bo.wet 1",
         "execute if score @s bo.sub matches 1 anchored eyes positioned ^ ^ ^ %s run scoreboard players set @s bo.deep 1" % deep_chain,
         "scoreboard players set @s bo.brth 0",
         "function %s:water/qualify" % NS,
@@ -752,6 +763,29 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
         "execute if score @s bo.sub matches 1 if score @s bo.deep matches 1 run function %s:water/deep" % NS,
         "execute if score @s bo.brth matches 0 if score @s bo.hasmod matches 1 run function %s:water/unbreathe" % NS,
         "function %s:water/strip_vanilla" % NS])
+    fn("water/dry", [
+        "# as and at a player with no water at the eyes and none at the feet: the whole cost of the ladder on land.",
+        "# Nothing the wet path settles can change while dry, so it is settled once, on the tick the player leaves the",
+        "# water (water/left). Only the Surf bonus's decay is a clock that has to keep running (water/breathe, and",
+        "# water/surfaced's two resets moved into water/left with it). Deliberately absent, and why:",
+        "#   water/qualify    its only dry reader was the swim-speed test, itself gated on being in water, and its one",
+        "#                    message on bo.deep, which is 0 on land. bo.qual keeps its last value and is recomputed on",
+        "#                    the first tick back in water, before anything reads it. bo.grace is not reset: a dry gap",
+        "#                    can only shorten the partner debounce, never lengthen it, and only while the partner is",
+        "#                    really gone (raw >= qual resets it anyway)",
+        "#   water/strip_vanilla  two `effect clear` commands per player per tick, forever. Water Breathing and Conduit",
+        "#                    Power are still cleared the tick they land, by the minecraft:effects_changed advancement",
+        "#                    below (blackout/vanilla_air), and the wet path still clears unconditionally every tick",
+        "execute if score @s bo.wet matches 1 run function %s:water/left" % NS,
+        "execute if score @s bo.surf matches 1.. run function %s:water/breathe" % NS])
+    fn("water/left", [
+        "# the tick a player leaves the water, once: what water/surfaced, the swim test and the air modifier test did",
+        "# every tick. bo.pulse and bo.warn only ever change under water, so resetting them here is the same rule",
+        "scoreboard players set @s bo.wet 0",
+        "scoreboard players set @s bo.pulse 0",
+        "scoreboard players set @s bo.warn 0",
+        "execute if score @s bo.swim matches 1 run function %s:water/swim_off" % NS,
+        "execute if score @s bo.hasmod matches 1 run function %s:water/unbreathe" % NS])
     fn("water/qualify", [
         "# bo.raw: what the training and the party support now; bo.qual: what applies, lowered only after a grace",
         "scoreboard players set @s bo.raw 0",
@@ -810,6 +844,24 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
     fn("water/unbreathe", [
         "attribute @s minecraft:generic.oxygen_bonus modifier remove cobblers:ladder",
         "scoreboard players set @s bo.hasmod 0"])
+    # the clear off the tick loop: vanilla's own effects_changed trigger fires the tick an effect is added, refreshed or
+    # removed on a player, anywhere, in or out of water. The `effects` map is vanilla's MobEffectsPredicate, read from
+    # the 1.21 client jar's own data/minecraft/advancement/nether/all_effects.json (same pack_format 48 as 1.21.1):
+    # {"minecraft:<effect>":{}} matches the effect with any amplifier or duration. One requirement group of two criteria,
+    # so either effect completes it; the reward revokes it so it can fire again. The wet path still clears every tick,
+    # so even a trigger that missed cannot carry vanilla air into the water for a single tick
+    files["data/%s/advancement/blackout/vanilla_air.json" % NS] = json.dumps({
+        "criteria": {
+            "water_breathing": {"trigger": "minecraft:effects_changed",
+                                "conditions": {"effects": {"minecraft:water_breathing": {}}}},
+            "conduit_power": {"trigger": "minecraft:effects_changed",
+                              "conditions": {"effects": {"minecraft:conduit_power": {}}}}},
+        "requirements": [["water_breathing", "conduit_power"]],
+        "rewards": {"function": "%s:water/vanilla_air" % NS}}, indent=2) + "\n"
+    fn("water/vanilla_air", [
+        "# as a player who has just gained Water Breathing or Conduit Power, anywhere (blackout/vanilla_air)",
+        "advancement revoke @s only %s:blackout/vanilla_air" % NS,
+        "function %s:water/strip_vanilla" % NS])
     fn("water/strip_vanilla", [
         "# vanilla air is not a way round the ladder: Water Breathing (potions, turtle shells) and Conduit Power are",
         "# cleared the tick they land; Respiration is neutralised by the enchantment override in this pack",
