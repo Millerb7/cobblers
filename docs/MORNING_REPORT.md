@@ -63,6 +63,27 @@ Pacifidlog docks and the Sound ferry (retired per the plan STATE already recorde
 canopy (re-anchored), and the Route 2 shrine (moved clear of both the new shore and the new trees). A fourth, the
 now-orphaned ferry charge macro, was caught by prepare's own orphan gate.
 
+## The world audit
+
+Every settlement clean except two, and one of those is expected:
+
+- **`jungle_ruins`** — 469 causeway cells with water on the road, the great hall 59.8% standing. **That is the sea.**
+  The ruins stood on the Jungle Isle your 2026-09-27 decision removed. Not a build fault; it surfaces exactly where
+  it should, and it stays until the ruins are re-sited or removed.
+- **The Displaced City cavern shell has 12 voids** (`shell_columns: 60992, shell_voids: {"in the walls, air": 12}`)
+  where the last export measured **0**. They are described as in the walls rather than reaching the surface, so they
+  may be isolated pockets rather than a way in — the audit cannot tell, and neither can I from outside. I did not
+  re-run the seal: it had already run once in this world and would write identical blocks. Worth a look before the
+  city is played.
+
+## Where the work is
+
+**PR [#95](https://github.com/Millerb7/cobblers/pull/95)**, branch `night/2026-09-29-water-export`, 39 commits.
+
+**A mistake to know about:** those commits were first pushed to `docs/gym-q1-interiors` **after PR #93 on that branch
+had already merged** — the exact failure the repo's rules warn about, and the second time I have done it. They are on
+a clean branch now and nothing is lost, but merging #93 brought none of this.
+
 ## What was cut, and why
 
 See `docs/NIGHT_REVIEW.md`. In short: the Viltri Ravine (held by you, never in the audited design), `build_routes`
