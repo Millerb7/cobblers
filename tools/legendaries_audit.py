@@ -15,6 +15,14 @@ FAIL CLOSED means, here, five things:
      of them.
   5. the gate is parsed, not assumed: every line that can open a chamber must carry the full advancement
      predicate, and a line that opens one without it fails (WATER_BUILD_PLAN 4.5 audit 4).
+  6. a gate nobody can ever satisfy fails unless the record admits it. `legendary/<id>/met` is granted by one
+     command, emitted only for a SITED encounter, so a sited chamber that requires the met of an unsited one
+     is built and permanently shut. That is allowed only where gate.unsatisfiable_until names exactly those
+     prerequisites, so a new dead end cannot appear silently and a stale admission fails too.
+  7. a lake grotto's mouth is checked against the lake, not against the chamber: data/landmarks.json's basin
+     outline and water level say whether the mouth is really in deep water in its own lake, and its
+     water_export block must say whether the mouth was measured BEFORE the export (a keep zone protects it)
+     or AFTER it (data/world.json's heightmap sha must still be the one it was measured on). Neither fails.
 
   python tools/legendaries_audit.py [--pack build/datapacks/cobblers_legendaries] [--source-root DIR]
 """
@@ -37,6 +45,7 @@ MIN_BATTLE_AREA = 100      # walkable columns in the outer chamber: a legendary 
 MIN_HEADROOM = 5           # the air chamber is a room, not a crawl
 MAX_LAKE_PASSAGE = 20      # WATER_BUILD_PLAN 3.3: "a passage of no more than 20 blocks"
 GRID = 8                   # the spawn-box grid the route boxes share
+MIN_GROTTO_DEPTH = 18      # a grotto mouth is deep water, not a paddle: 18 below the lake's own level
 
 NUM = r"(-?\d+)"
 FILL = re.compile(r"^fill %s %s %s %s %s %s\s+(\S+)" % ((NUM,) * 6))
@@ -66,7 +75,109 @@ def _margin_ok(void, envelope, m):
             and envelope[3] - void[3] >= m and envelope[4] - void[4] >= m and envelope[5] - void[5] >= m)
 
 
-def audit(doc, ground, pack, water=None, progression=None, landmarks=None):
+def _in_polygons(polys, x, z):
+    """Even-odd point in polygon over a list of block-coordinate rings."""
+    for ring in polys or []:
+        hit = False
+        n = len(ring)
+        j = n - 1
+        for i in range(n):
+            xi, zi = ring[i]
+            xj, zj = ring[j]
+            if (zi > z) != (zj > z) and x < (xj - xi) * (z - zi) / float(zj - zi) + xi:
+                hit = not hit
+            j = i
+        if hit:
+            return True
+    return False
+
+
+def _in_the_lake(rec, g, landmarks, rep):
+    """The mouth of a lake grotto is really in its lake, and really in deep water.
+
+    Independent of everything this repo generates: the basin outline and the water level come from
+    data/landmarks.json, which is surveyed from the heightmap, and the mouth's Y from tools/ground.py.
+    A mouth that drifted onto a shelf, onto an island or outside the lake fails here even when its
+    envelope arithmetic is perfect.
+    """
+    rid = rec["id"]
+    lm = next((l for l in (landmarks or {}).get("landmarks") or [] if l.get("id") == rec.get("site")), None)
+    if lm is None:
+        rep.errors.append("%s: data/landmarks.json has no landmark %r for this grotto's site" % (rid, rec.get("site")))
+        return False
+    wb = lm.get("water_body") or {}
+    level = wb.get("level_y")
+    if not isinstance(level, int):
+        rep.errors.append("%s: landmark %s has no water_body.level_y, so the mouth's depth cannot be checked"
+                          % (rid, lm["id"]))
+        return False
+    mx, mz = g["anchor"]
+    if not _in_polygons(wb.get("basin_polygons") or [], mx, mz):
+        rep.errors.append("%s: the mouth (%d, %d) is outside %s's basin outline" % (rid, mx, mz, lm["id"]))
+        return False
+    depth = level - g["mouth_y"]
+    if depth < MIN_GROTTO_DEPTH:
+        rep.errors.append("%s: the mouth stands %d blocks under %s's water level y%d, under the %d a grotto needs"
+                          % (rid, depth, lm["id"], level, MIN_GROTTO_DEPTH))
+        return False
+    return True
+
+
+def _export_provenance(rec, g, doc, water, landmarks, ground, world, rep):
+    """A lake grotto's mouth is either protected from the water export or measured after it. Never neither.
+
+    Two honest forms, and nothing else:
+      keep_zone   the mouth was measured on the OLD bed, so data/water_shape.json must keep that patch of
+                  bed unchanged (Mesprit, Azelf).
+      applied     the mouth was measured on the bed the export already wrote, so it needs no keep zone --
+                  but then the heightmap it was measured on must still be the canonical one (Uxie).
+    """
+    rid = rec["id"]
+    we = rec.get("water_export") or {}
+    if we.get("keep_zone"):
+        return _keep_covers(rec, g, doc, water, landmarks, ground, rep)
+    if not we.get("applied"):
+        rep.errors.append("%s: water_export declares neither a keep_zone (mouth measured before the export) "
+                          "nor applied + measured_on_sha256 (mouth measured after it)" % rid)
+        return False
+    want = ((world or {}).get("heightmap") or {}).get("sha256")
+    got = we.get("measured_on_sha256")
+    if not want:
+        rep.errors.append("%s: data/world.json declares no heightmap sha256 to check the mouth against" % rid)
+        return False
+    if got != want:
+        rep.errors.append("%s: measured on heightmap %s, but data/world.json's canonical heightmap is %s: the bed "
+                          "under the mouth is not the bed it was sited on" % (rid, str(got)[:12], str(want)[:12]))
+        return False
+    return True
+
+
+def _met_is_reachable(rec, doc, rep):
+    """A sited chamber must not depend on a `met` no player can ever earn.
+
+    `legendary/<id>/met` is granted by one command, in the met function of a SITED encounter. A sited
+    record that requires the met of a record which is not sited is therefore built and permanently shut,
+    and nothing in the world says so. That is allowed only when the record admits it in
+    gate.unsatisfiable_until, which names exactly the prerequisites that are still unbuilt -- so the
+    dead end is a written decision, and a NEW one cannot be introduced silently. A stale admission (an
+    id that is sited after all, or one that is not a prerequisite) fails too.
+    """
+    rid = rec["id"]
+    by_id = {r["id"]: r for r in doc["encounters"]}
+    unbuilt = sorted(m for m in rec["gate"].get("requires_met") or []
+                     if (by_id.get(m) or {}).get("status") != "sited")
+    admitted = sorted(rec["gate"].get("unsatisfiable_until") or [])
+    if unbuilt != admitted:
+        rep.errors.append(
+            "%s: its gate cannot be satisfied until %s %s built, because nothing grants the met of a record "
+            "that is not sited; gate.unsatisfiable_until says %s"
+            % (rid, ", ".join(unbuilt) or "(nothing)", "is" if len(unbuilt) == 1 else "are",
+               admitted or "(nothing)"))
+        return False
+    return True
+
+
+def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world=None):
     rep = Report()
     d = doc["defaults"]
     m = int(d["shell_margin"])
@@ -223,10 +334,16 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None):
                       "%s: the spawn-free zone %s does not cover the chamber footprint (%d, %d)-(%d, %d)"
                       % (rid, zone, ch[0], ch[2], ch[3], ch[5]))
 
-        # ---- the pending water export ---------------------------------------
+        # ---- the water export, and the lake the mouth is supposed to be in ---
         if lake:
-            rep.check(_keep_covers(rec, g, doc, water, landmarks, ground, rep),
-                      "%s: its declared keep zone does not actually protect the mouth" % rid)
+            rep.check(_export_provenance(rec, g, doc, water, landmarks, ground, world, rep),
+                      "%s: the mouth is neither protected from the water export nor measured after it" % rid)
+            rep.check(_in_the_lake(rec, g, landmarks, rep),
+                      "%s: the mouth is not in deep water inside its own lake" % rid)
+
+        # ---- a gate nobody can ever satisfy ---------------------------------
+        rep.check(_met_is_reachable(rec, doc, rep),
+                  "%s: a sited chamber whose gate can never open, unadmitted" % rid)
 
     rep.check(checked_writes > 0, "NOTHING TO CHECK: no block write was tested")
     rep.check(checked_gates > 0, "NOTHING TO CHECK: no gate line was tested")
@@ -317,7 +434,8 @@ def main(argv=None):
     water = json.loads((ROOT / "data" / "water_shape.json").read_text(encoding="utf-8"))
     prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
     lms = json.loads((ROOT / "data" / "landmarks.json").read_text(encoding="utf-8"))
-    rep = audit(doc, G.load(a.source_root), Path(a.pack), water, prog, lms)
+    world = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
+    rep = audit(doc, G.load(a.source_root), Path(a.pack), water, prog, lms, world)
     for e in rep.errors:
         print("FAIL %s" % e)
     print("legendaries audit: %d checks, %d failures" % (rep.checks, len(rep.errors)))
