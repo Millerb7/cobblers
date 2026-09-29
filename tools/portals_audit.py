@@ -180,7 +180,12 @@ def audit(a):
                     bad.append("%s: the footing under %s is open at y%d" % (pid, c, y))
                     break
         above = Counter(name_of(b) for (bx, by, bz), b in wb.items() if by > ay)
-        want = Counter({name_of(pal["frame"]): 9, name_of(pal["sheet"]): 9, name_of(pal["lamp"]): 2})
+        # built by addition, not as a dict literal: a palette may give two roles the same block
+        # (the owner's 2026-09-29 skins do), and duplicate keys in a literal silently keep the last
+        want = Counter()
+        want[name_of(pal["frame"])] += 9
+        want[name_of(pal["sheet"])] += 9
+        want[name_of(pal["lamp"])] += 2
         if above != want:
             bad.append("%s: the arch above the apron is %s, expected %s" % (pid, dict(above), dict(want)))
         for b in set(name_of(v) for v in wb.values()):
