@@ -246,9 +246,13 @@ def build(doc):
     fn = lambda rel: "data/%s/function/ferries/%s.mcfunction" % (NS, rel)
     files[fn("load")] = ["# the ferry's scores: the balance read, and each player's cooldown after a click",
                          "scoreboard objectives add %s dummy" % SCORE, "scoreboard objectives add %s dummy" % COOLDOWN]
-    # the blackout charge's macro, proven in game (EXP-042 run 1: $725 to $652)
-    files[fn("charge")] = ["$cobbledollars remove @s $(amount)"]
     lines = emitted_lines(doc)
+    # the blackout charge's macro, proven in game (EXP-042 run 1: $725 to $652). Emitted only when a built line
+    # actually charges a fare: with the Sound ferry retired on 2026-09-29 the one paid line went with it, the
+    # remaining built line is free, and an unreferenced function fails prepare's orphan gate. Generating it anyway
+    # would be dead code that the gate is right to refuse.
+    if any(int(t.get("fare") or 0) > 0 for ln in lines for t in (ln.get("trips") or [ln])):
+        files[fn("charge")] = ["$cobbledollars remove @s $(amount)"]
     docks = by_id(doc["docks"])
     npcs = []
     for ln in lines:
@@ -851,8 +855,15 @@ def output_problems(doc, files):
             verify = where(lambda c: c.startswith("execute unless score #after %s = #want" % SCORE))
             if not (verify and query[1] < verify[0] < tp[0]):
                 out.append("%s: the charge is not verified before the teleport" % path)
+    # the charge macro is only generated when a built line actually charges a fare (the generator does the same),
+    # so its absence is correct when every built line is free -- as it is since the Sound ferry retired. When it is
+    # there it must still be the blackout's proven form, and when a paid trip exists it must be there.
     charge = files.get(fn("charge"))
-    if charge != ["$cobbledollars remove @s $(amount)"]:
+    paid = any(any(c.startswith("function %s:ferries/charge" % NS) for c in v)
+               for k, v in files.items() if k.endswith(".mcfunction") and k != fn("charge"))
+    if paid and charge is None:
+        out.append("a trip charges a fare but the charge macro was not generated")
+    elif charge is not None and charge != ["$cobbledollars remove @s $(amount)"]:
         out.append("the charge macro is %r, not the blackout's proven form" % charge)
     for rel, body in files.items():
         if rel.endswith(".mcfunction"):
