@@ -1,5 +1,9 @@
 # Trainer themes and difficulty modes
 
+> **Superseded for Gym Challenge rosters, Oak selection, and Victory Road:** see
+> `docs/story/CHALLENGE_GYM_DESIGN.md`. The route curriculum and reference-hack notes below remain useful;
+> its older proportional Challenge gym tables do not.
+
 **Status:** authored as generated campaign data; Normal is the generated default. Runtime mode selection and the revised leader installation are not implemented or proven.
 
 ## The two modes
@@ -7,7 +11,7 @@
 Both modes use the same level caps: `20 / 25 / 30 / 35 / 40 / 45 / 50 / 55`. Challenge never gains levels merely to inflate damage.
 
 - **Normal** teaches one readable interaction at a time. Teams are shorter, items mostly sustain, and every gym has at least two plausible answer lines from the established availability curve.
-- **Challenge** keeps the same lead, ace, level ceiling, and answer classes. It adds one extra member or one disclosed threshold and uses more selective AI. It may delay an obvious answer; it may not erase every answer to the same Pokémon.
+- **Challenge** now uses the six-member contract in `CHALLENGE_GYM_DESIGN.md`; the older proportional rule below is retained only as design history for the route curriculum.
 - Route trainers use the same local species in both modes. Challenge gives the final teaching roles a fuller team and gives one Pokémon a modest held item. Trainer density does not increase.
 - Each route teaches the next gym's engine in pieces. The gym combines those pieces once; it does not reveal an unrelated ruleset.
 
@@ -27,7 +31,7 @@ The target shape is **one engine plus one answer-check**. Weather, speed control
 | 8 — Blaine to Giovanni | **Fault Lines** | Break Ground cores through split Water/Grass offense, immunity, Fighting, and priority. | Sand changes thresholds and final teams gain one member; no trapping or doubles. | Giovanni's sand and visible Rock Polish turn. |
 | Victory Road | **League Examination** | Short fights test one known tool apiece before a final examiner. | Same density and caps; sharper teams rather than more attrition. | League-wide review. |
 
-Routes 4–8 now use explicit teams rather than allowing generic pool rotation to claim lessons the teams do not demonstrate. Victory Road's mode theme is settled, but its records remain preserved from the old surface-route proposal until the ten cave stands replace those stale pins.
+Routes 4–8 use explicit teams rather than allowing generic pool rotation to claim lessons the teams do not demonstrate. Victory Road now uses ten fixed cave stands in a four/rest/six sequence; see `CHALLENGE_GYM_DESIGN.md`.
 
 ## Gym 1 — Brock: Fault Line
 
@@ -130,7 +134,7 @@ The local workbooks in `docs/rom_hack_docs/` are reference material, not roster 
 ## Runtime and data boundary
 
 - `docs/story/TRAINER_RULES.json` is the editable source. `data/trainers.json` is generated.
-- Every active gym and Route 1–8 trainer contains `modes.normal` and `modes.challenge`. The legacy top-level `team` and `rct` mirror Normal so existing placement tooling remains safe.
+- Every active gym and Route 1–9 trainer contains `modes.normal` and `modes.challenge`. The legacy top-level `team` and `rct` mirror Normal so existing placement tooling remains safe.
 - Challenge selection is intended to be one server-wide campaign setting. No selector or RCT sidecar compiler currently switches variants.
 - AI switching, weather/support move choice, held-item activation, Trick Room sequencing, and two-player isolation remain runtime tests. No design here depends on successful pivot loops.
-- Victory Road is deliberately preserved from the prior generated data because its old surface pins disagree with the built ten-fight cave network. Its theme is decided; its roster topology is blocked.
+- Victory Road's generated records now use the built ten-fight cave network. World placement and per-player defeat-state integration remain unimplemented.

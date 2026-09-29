@@ -67,6 +67,15 @@ def test_gym_modes_preserve_the_configured_ace_ceilings():
         assert _ceiling(trainer["modes"]["challenge"]["team"]) == ceiling, trainer["id"]
 
 
+# Without it the defining Full-Team rule can regress while every mode and cap check still passes.
+def test_every_challenge_gym_has_six_members_and_a_six_member_answer_line():
+    for trainer in ACTIVE_GYMS:
+        challenge = trainer["modes"]["challenge"]
+        assert len(challenge["team"]) == 6, trainer["id"]
+        assert len(challenge["open_line"]) == 6, trainer["id"]
+        assert len(set(challenge["open_line"])) == 6, trainer["id"]
+
+
 # Without it Challenge can exceed Normal's cap, making a roster change into undisclosed level inflation.
 def test_challenge_never_exceeds_the_normal_level_cap_for_an_active_trainer():
     for trainer in ACTIVE_TRAINERS:
@@ -112,8 +121,8 @@ def test_giovanni_is_a_level_55_singles_fight_without_mewtwo_in_either_mode():
         assert {member["species"] for member in variant["team"]}.isdisjoint({"mewtwo"})
 
 
-# Without it a full active regeneration can rewrite Victory Road's blocked records while still appearing fresh.
-def test_check_active_succeeds_and_explicitly_preserves_victory_road():
+# Without it regeneration can silently revive the retired surface pins or drop one cave examination.
+def test_check_active_succeeds_and_generates_the_ten_victory_road_cave_fights():
     result = subprocess.run(
         [sys.executable, "docs/story/generate_trainers.py", "--check-active"],
         cwd=ROOT,
@@ -122,7 +131,11 @@ def test_check_active_succeeds_and_explicitly_preserves_victory_road():
         check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert "Victory Road preserved" in result.stdout
-    assert TRAINERS_DOC["generation_contract"]["preserved_blocked_route_orders"] == [9]
-    preserved = [trainer for trainer in TRAINERS_DOC["trainers"] if trainer.get("route_order") == 9]
-    assert preserved and all("modes" not in trainer for trainer in preserved)
+    assert "Victory Road uses ten cave stands" in result.stdout
+    assert TRAINERS_DOC["generation_contract"]["preserved_blocked_route_orders"] == []
+    victory_road = [trainer for trainer in TRAINERS_DOC["trainers"] if trainer.get("route_order") == 9]
+    assert [trainer["id"] for trainer in victory_road] == [
+        f"route_09_trainer_{index:02d}" for index in range(1, 11)
+    ]
+    assert all(set(trainer["modes"]) == {"normal", "challenge"} for trainer in victory_road)
+    assert all(trainer["placement"]["placement_authority"].endswith("trainer stand") for trainer in victory_road)

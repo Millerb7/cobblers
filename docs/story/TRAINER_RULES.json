@@ -34,13 +34,15 @@
         "level_offset": 0
       },
       "challenge": {
-        "intent": "Same cap and answer classes; one extra interaction or threshold, never a hard-counter pile.",
+        "intent": "Six-member Gym teams at the same caps, with complete engines and held items. Each fight preserves one prepared line but does not preserve an unprepared sweep.",
         "level_offset": 0
       }
     },
     "selection": {
       "scope": "server-wide campaign setting",
-      "status": "not implemented or runtime-proven",
+      "offered_by": "Professor Oak before the first sendoff",
+      "lock": "first accepted choice is permanent for the world",
+      "status": "authored contract; selector and variant placement are not implemented or runtime-proven",
       "generated_default": "normal"
     }
   },
@@ -840,34 +842,47 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "Cranidos converts the speed tax into pressure; Weakness Policy Onix turns the obvious hit into a damage race.",
-          "ace_math_change": "Sturdy plus Weakness Policy rewards preserving a second answer instead of relying on one knockout.",
+          "strategy": "Six Rock roles convert Rock Tomb's speed tax into setup and breaking pressure; Lileep interrupts Water once without closing Grass.",
+          "ace_math_change": "Sturdy plus Weakness Policy gives Onix one dangerous turn, so the player must preserve a fresh finisher.",
           "members": [
             {
               "species": "geodude",
-              "level_offset": -2,
+              "level_offset": -1,
               "moveset": [
-                "rockthrow",
                 "rocktomb",
                 "bulldoze",
-                "protect"
+                "rockthrow",
+                "thunderpunch"
               ],
-              "ability": "rockhead",
-              "heldItem": "oran_berry",
+              "ability": "sturdy",
+              "heldItem": "berry_juice",
               "nature": "impish"
             },
             {
-              "species": "bonsly",
-              "level_offset": -2,
+              "species": "lileep",
+              "level_offset": -1,
               "moveset": [
-                "rocktomb",
-                "bulldoze",
-                "lowkick",
-                "tearfullook"
+                "megadrain",
+                "ancientpower",
+                "recover",
+                "rocktomb"
               ],
-              "ability": "rockhead",
-              "heldItem": "oran_berry",
-              "nature": "careful"
+              "ability": "suctioncups",
+              "heldItem": "eviolite",
+              "nature": "calm"
+            },
+            {
+              "species": "dwebble",
+              "level_offset": -1,
+              "moveset": [
+                "shellsmash",
+                "smackdown",
+                "bugbite",
+                "bulldoze"
+              ],
+              "ability": "sturdy",
+              "heldItem": "white_herb",
+              "nature": "adamant"
             },
             {
               "species": "cranidos",
@@ -883,6 +898,19 @@
               "nature": "adamant"
             },
             {
+              "species": "bonsly",
+              "level_offset": 0,
+              "moveset": [
+                "rocktomb",
+                "bulldoze",
+                "lowkick",
+                "tearfullook"
+              ],
+              "ability": "rockhead",
+              "heldItem": "oran_berry",
+              "nature": "careful"
+            },
+            {
               "species": "onix",
               "level_offset": 0,
               "moveset": [
@@ -896,7 +924,16 @@
               "nature": "impish",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "eldegoss",
+            "krabby",
+            "staryu",
+            "wingull",
+            "surskit",
+            "buizel"
+          ],
+          "line_obviousness": "moderate: Route 1 teaches Rock Tomb and supplies both Grass and Water; Lileep visibly signals that Water alone is insufficient."
         }
       }
     },
@@ -1019,25 +1056,25 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "Lightning Rod Goldeen interrupts an Electric-only sweep while every Grass answer remains live.",
-          "ace_math_change": "Lightning Rod changes one matchup without covering the independent Grass plan.",
+          "strategy": "Rain, speed control, and two different Electric interruptions force a split Grass/Electric/Bug plan rather than one-type sweeping.",
+          "ace_math_change": "Drizzle accelerates the middle of the roster while Starmie's sustain asks the player to retain one fast attacker.",
           "members": [
             {
-              "species": "horsea",
-              "level_offset": -3,
+              "species": "pelipper",
+              "level_offset": -2,
               "moveset": [
-                "raindance",
                 "waterpulse",
-                "dragonbreath",
-                "smokescreen"
+                "airslash",
+                "icywind",
+                "roost"
               ],
-              "ability": "swiftswim",
-              "heldItem": "oran_berry",
-              "nature": "timid"
+              "ability": "drizzle",
+              "heldItem": "damp_rock",
+              "nature": "bold"
             },
             {
               "species": "lombre",
-              "level_offset": -2,
+              "level_offset": -1,
               "moveset": [
                 "fakeout",
                 "megadrain",
@@ -1058,7 +1095,33 @@
                 "agility"
               ],
               "ability": "lightningrod",
-              "heldItem": "oran_berry",
+              "heldItem": "eviolite",
+              "nature": "jolly"
+            },
+            {
+              "species": "barboach",
+              "level_offset": -1,
+              "moveset": [
+                "mudshot",
+                "waterpulse",
+                "icywind",
+                "rest"
+              ],
+              "ability": "hydration",
+              "heldItem": "eviolite",
+              "nature": "calm"
+            },
+            {
+              "species": "floatzel",
+              "level_offset": 0,
+              "moveset": [
+                "waterfall",
+                "icywind",
+                "brickbreak",
+                "quickattack"
+              ],
+              "ability": "swiftswim",
+              "heldItem": "muscle_band",
               "nature": "jolly"
             },
             {
@@ -1066,7 +1129,7 @@
               "level_offset": 0,
               "moveset": [
                 "waterpulse",
-                "psybeam",
+                "thunderbolt",
                 "icywind",
                 "recover"
               ],
@@ -1075,7 +1138,16 @@
               "nature": "timid",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "kilowattrel",
+            "deerling",
+            "illumise",
+            "eldegoss",
+            "lombre",
+            "pawmo"
+          ],
+          "line_obviousness": "clear after scouting: Goldeen and Barboach advertise Electric immunity while both remain vulnerable to Grass."
         }
       }
     },
@@ -1226,12 +1298,12 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "Light Screen taxes special offense and Air Balloon delays Ground for one disclosed turn, without Grass Knot.",
-          "ace_math_change": "Air Balloon asks for one neutral or priority hit before the player's earned Ground answer takes over.",
+          "strategy": "Paralysis and mixed pressure set the clock; Vikavolt is the single Ground-immunity interruption before Ground can close.",
+          "ace_math_change": "Raichu can set up but deliberately has no Ground coverage, leaving the prepared Ground endgame intact.",
           "members": [
             {
               "species": "electabuzz",
-              "level_offset": -3,
+              "level_offset": -2,
               "moveset": [
                 "thunderwave",
                 "lightscreen",
@@ -1243,16 +1315,29 @@
               "nature": "timid"
             },
             {
-              "species": "magneton",
+              "species": "vikavolt",
               "level_offset": -2,
+              "moveset": [
+                "voltswitch",
+                "energyball",
+                "bugbuzz",
+                "roost"
+              ],
+              "ability": "levitate",
+              "heldItem": "occa_berry",
+              "nature": "modest"
+            },
+            {
+              "species": "magneton",
+              "level_offset": -1,
               "moveset": [
                 "flashcannon",
                 "discharge",
                 "screech",
                 "triattack"
               ],
-              "ability": "magnetpull",
-              "heldItem": "magnet",
+              "ability": "sturdy",
+              "heldItem": "eviolite",
               "nature": "modest"
             },
             {
@@ -1269,6 +1354,19 @@
               "nature": "jolly"
             },
             {
+              "species": "pawmot",
+              "level_offset": 0,
+              "moveset": [
+                "thunderpunch",
+                "drainpunch",
+                "machpunch",
+                "knockoff"
+              ],
+              "ability": "ironfist",
+              "heldItem": "expert_belt",
+              "nature": "jolly"
+            },
+            {
               "species": "raichu",
               "level_offset": 0,
               "moveset": [
@@ -1278,11 +1376,20 @@
                 "quickattack"
               ],
               "ability": "static",
-              "heldItem": "air_balloon",
+              "heldItem": "sitrus_berry",
               "nature": "timid",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "lycanroc",
+            "hariyama",
+            "heracross",
+            "clodsire",
+            "quagsire",
+            "diggersby"
+          ],
+          "line_obviousness": "clear from preview and Route 3: remove the flying Ground immunity, break the Steel core, then use Ground."
         }
       }
     },
@@ -1432,8 +1539,8 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "Tangrowth adds a bulky sun beneficiary and Heat Rock lengthens the same public plan.",
-          "ace_math_change": "The extra member extends the sun puzzle without adding sleep, hazards, or another counter berry.",
+          "strategy": "Sun is the engine; Cradily and Tangrowth interrupt Flying long enough for the Chlorophyll breakers to demand mixed answers.",
+          "ace_math_change": "Coba Berry buys Vileplume one turn against Flying while Ice and Fire remain unblocked.",
           "members": [
             {
               "species": "bellossom",
@@ -1441,7 +1548,7 @@
               "moveset": [
                 "sunnyday",
                 "gigadrain",
-                "moonblast",
+                "weatherball",
                 "synthesis"
               ],
               "ability": "chlorophyll",
@@ -1450,7 +1557,7 @@
             },
             {
               "species": "roserade",
-              "level_offset": -2,
+              "level_offset": -1,
               "moveset": [
                 "gigadrain",
                 "sludgebomb",
@@ -1458,8 +1565,21 @@
                 "stunspore"
               ],
               "ability": "naturalcure",
-              "heldItem": "sitrus_berry",
+              "heldItem": "black_sludge",
               "nature": "timid"
+            },
+            {
+              "species": "cradily",
+              "level_offset": -1,
+              "moveset": [
+                "gigadrain",
+                "powergem",
+                "recover",
+                "rocktomb"
+              ],
+              "ability": "suctioncups",
+              "heldItem": "leftovers",
+              "nature": "calm"
             },
             {
               "species": "tangrowth",
@@ -1468,15 +1588,15 @@
                 "gigadrain",
                 "knockoff",
                 "ancientpower",
-                "synthesis"
+                "sludgebomb"
               ],
-              "ability": "chlorophyll",
-              "heldItem": "sitrus_berry",
+              "ability": "regenerator",
+              "heldItem": "assault_vest",
               "nature": "relaxed"
             },
             {
               "species": "victreebel",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
                 "leafblade",
                 "poisonjab",
@@ -1484,7 +1604,7 @@
                 "suckerpunch"
               ],
               "ability": "chlorophyll",
-              "heldItem": "miracle_seed",
+              "heldItem": "life_orb",
               "nature": "adamant"
             },
             {
@@ -1501,7 +1621,16 @@
               "nature": "modest",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "talonflame",
+            "skarmory",
+            "cryogonal",
+            "jynx",
+            "scyther",
+            "noctowl"
+          ],
+          "line_obviousness": "moderate: the route teaches sun and exposes Rock coverage; the answer is a mixed Fire/Flying/Ice line, not six copies of one weakness."
         }
       }
     },
@@ -1677,89 +1806,98 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "Dragalge adds one more poison payoff, but Ground and split Psychic plans remain unchanged.",
-          "ace_math_change": "A sixth payoff user tests endurance without adding hazards, Tailwind, or setup snowballing.",
+          "strategy": "Poison establishes a clock, Levitate and Drapion split Ground/Psychic answers, and Venomoth converts the final turn into a priority check.",
+          "ace_math_change": "Focus Sash guarantees Venomoth's setup turn, so the player must keep Rock pressure or priority for the finish.",
           "members": [
             {
               "species": "crobat",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "toxic",
+                "venoshock",
                 "airslash",
-                "bite",
                 "roost"
               ],
               "ability": "infiltrator",
-              "heldItem": "sitrus_berry",
+              "heldItem": "black_sludge",
               "nature": "timid"
             },
             {
               "species": "weezing",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "willowisp",
-                "sludgebomb",
+                "venoshock",
                 "flamethrower",
                 "painsplit"
               ],
-              "ability": "neutralizinggas",
+              "ability": "levitate",
               "heldItem": "rocky_helmet",
               "nature": "bold"
             },
             {
               "species": "toxtricity",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
-                "venoshock",
                 "overdrive",
-                "snarl",
-                "acid"
+                "boomburst",
+                "venoshock",
+                "snarl"
               ],
               "ability": "punkrock",
-              "heldItem": "magnet",
+              "heldItem": "throat_spray",
               "nature": "modest"
             },
             {
               "species": "dragalge",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
-                "venoshock",
+                "sludgewave",
                 "dragonpulse",
-                "waterpulse",
-                "toxic"
+                "hydropump",
+                "thunderbolt"
               ],
               "ability": "adaptability",
-              "heldItem": "sitrus_berry",
+              "heldItem": "assault_vest",
               "nature": "modest"
             },
             {
               "species": "drapion",
               "level_offset": 0,
               "moveset": [
-                "toxic",
                 "knockoff",
                 "poisonjab",
-                "bulldoze"
+                "earthquake",
+                "aquatail"
               ],
               "ability": "battlearmor",
-              "heldItem": "black_sludge",
+              "heldItem": "shuca_berry",
               "nature": "adamant"
             },
             {
               "species": "venomoth",
               "level_offset": 0,
               "moveset": [
+                "quiverdance",
                 "venoshock",
                 "bugbuzz",
-                "psychic",
-                "roost"
+                "psychic"
               ],
               "ability": "tintedlens",
-              "heldItem": "black_sludge",
+              "heldItem": "focus_sash",
               "nature": "timid",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "ampharos",
+            "jynx",
+            "diggersby",
+            "bronzong",
+            "quagsire",
+            "lycanroc"
+          ],
+          "line_obviousness": "moderate: Route 5 teaches Levitate and mixed Poison typings, but the player must assign a different answer to each role."
         }
       }
     },
@@ -1935,12 +2073,12 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "Reuniclus adds a durable slow beneficiary while Dark and Bug remain the intended answers.",
-          "ace_math_change": "The extra slow attacker deepens room management; it does not add terrain, doubles, or a second Dark check.",
+          "strategy": "Two Trick Room setters support a slow phase; Alakazam then closes after the clock returns to normal.",
+          "ace_math_change": "Focus Sash gives Alakazam one setup turn, preserving Sucker Punch and retained priority as the intended fast-phase answer.",
           "members": [
             {
               "species": "hatterene",
-              "level_offset": -3,
+              "level_offset": 0,
               "moveset": [
                 "trickroom",
                 "psychic",
@@ -1948,25 +2086,25 @@
                 "drainingkiss"
               ],
               "ability": "magicbounce",
-              "heldItem": "colbur_berry",
+              "heldItem": "focus_sash",
               "nature": "quiet"
             },
             {
               "species": "slowbro",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "psychic",
                 "surf",
-                "yawn",
-                "slackoff"
+                "slackoff",
+                "icebeam"
               ],
               "ability": "regenerator",
-              "heldItem": "sitrus_berry",
+              "heldItem": "colbur_berry",
               "nature": "relaxed"
             },
             {
               "species": "bronzong",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "trickroom",
                 "gyroball",
@@ -1979,11 +2117,11 @@
             },
             {
               "species": "exeggutor",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
                 "psychic",
                 "gigadrain",
-                "stunspore",
+                "sleeppowder",
                 "ancientpower"
               ],
               "ability": "harvest",
@@ -1992,32 +2130,41 @@
             },
             {
               "species": "reuniclus",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
                 "psychic",
-                "recover",
                 "energyball",
-                "shadowball"
+                "shadowball",
+                "recover"
               ],
               "ability": "magicguard",
-              "heldItem": "sitrus_berry",
+              "heldItem": "life_orb",
               "nature": "quiet"
             },
             {
               "species": "alakazam",
               "level_offset": 0,
               "moveset": [
+                "nastyplot",
                 "psychic",
                 "shadowball",
-                "recover",
-                "encore"
+                "recover"
               ],
               "ability": "magicguard",
-              "heldItem": "life_orb",
+              "heldItem": "focus_sash",
               "nature": "timid",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "bronzong",
+            "scyther",
+            "heracross",
+            "skuntank",
+            "toxtricity",
+            "quagsire"
+          ],
+          "line_obviousness": "clear after Route 6: Dark offense, priority, and surviving the Trick Room clock are all taught before the leader."
         }
       }
     },
@@ -2192,14 +2339,14 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "Magmortar becomes the sole Water check and Magcargo gains one visible setup turn.",
-          "ace_math_change": "Shell Smash plus White Herb is the added threat; no hazards, Scarf Eruption, or surprise Solar Beam.",
+          "strategy": "Drought creates a six-member damage race; Magmortar is the sole direct Water check while Ground, Rock, and weather replacement stay open.",
+          "ace_math_change": "Solar Power plus Life Orb makes Charizard the closing race, but the ace deliberately lacks Solar Beam.",
           "members": [
             {
               "species": "torkoal",
-              "level_offset": -3,
+              "level_offset": 0,
               "moveset": [
-                "sunnyday",
+                "stealthrock",
                 "lavaplume",
                 "bodypress",
                 "yawn"
@@ -2210,38 +2357,38 @@
             },
             {
               "species": "arcanine",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "flareblitz",
-                "crunch",
                 "closecombat",
+                "crunch",
                 "extremespeed"
               ],
               "ability": "intimidate",
-              "heldItem": "sitrus_berry",
+              "heldItem": "choice_band",
               "nature": "jolly"
             },
             {
               "species": "magcargo",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "shellsmash",
-                "flamethrower",
-                "ancientpower",
+                "fireblast",
+                "powergem",
                 "earthpower"
               ],
-              "ability": "flamebody",
+              "ability": "weakarmor",
               "heldItem": "white_herb",
               "nature": "modest"
             },
             {
               "species": "magmortar",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
-                "flamethrower",
+                "fireblast",
                 "thunderbolt",
                 "psychic",
-                "smokescreen"
+                "focusblast"
               ],
               "ability": "vitalspirit",
               "heldItem": "assault_vest",
@@ -2249,15 +2396,15 @@
             },
             {
               "species": "typhlosion",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
                 "eruption",
                 "flamethrower",
                 "focusblast",
-                "quickattack"
+                "extrasensory"
               ],
               "ability": "blaze",
-              "heldItem": "charcoal",
+              "heldItem": "choice_scarf",
               "nature": "timid"
             },
             {
@@ -2270,11 +2417,20 @@
                 "roost"
               ],
               "ability": "solarpower",
-              "heldItem": "sitrus_berry",
+              "heldItem": "life_orb",
               "nature": "timid",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "dondozo",
+            "pelipper",
+            "floatzel",
+            "whiscash",
+            "crawdaunt",
+            "lycanroc"
+          ],
+          "line_obviousness": "moderate: Route 7 teaches bulky Water, weather replacement, fast Water, Ground and Rock pressure; the winning order still needs scouting."
         }
       }
     },
@@ -2480,15 +2636,15 @@
         },
         "challenge": {
           "ai_profile": "gym_challenge",
-          "strategy": "The same six become sharper through Smooth Rock, Taunt, and one Rindo Berry rather than doubles or hidden counters.",
-          "ace_math_change": "Rindo Berry delays one Grass knockout; Water, Fighting, immunity, and priority lines remain open.",
+          "strategy": "Sand changes thresholds while Persian disrupts setup, Nidoqueen breaks one-answer cores, and Krookodile threatens a late snowball.",
+          "ace_math_change": "Rindo Berry delays Grass once on Rhyperior while Water remains open and the Rock Polish turn remains visible.",
           "members": [
             {
               "species": "hippowdon",
-              "level_offset": -3,
+              "level_offset": 0,
               "moveset": [
                 "earthquake",
-                "rocktomb",
+                "rockslide",
                 "yawn",
                 "slackoff"
               ],
@@ -2498,54 +2654,54 @@
             },
             {
               "species": "persian",
-              "level_offset": -3,
+              "level_offset": 0,
               "moveset": [
                 "fakeout",
-                "slash",
-                "bite",
-                "taunt"
+                "doublehit",
+                "taunt",
+                "uturn"
               ],
               "ability": "technician",
-              "heldItem": "silk_scarf",
+              "heldItem": "focus_sash",
               "nature": "jolly"
             },
             {
               "species": "mudsdale",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "highhorsepower",
                 "rockslide",
                 "bodypress",
-                "heavy_slam"
+                "heavyslam"
               ],
               "ability": "stamina",
-              "heldItem": "leftovers",
+              "heldItem": "assault_vest",
               "nature": "careful"
             },
             {
               "species": "nidoqueen",
-              "level_offset": -2,
+              "level_offset": 0,
               "moveset": [
                 "earthpower",
-                "sludgebomb",
-                "flamethrower",
-                "icebeam"
+                "sludgewave",
+                "icebeam",
+                "flamethrower"
               ],
               "ability": "sheerforce",
-              "heldItem": "expert_belt",
+              "heldItem": "life_orb",
               "nature": "modest"
             },
             {
               "species": "krookodile",
-              "level_offset": -1,
+              "level_offset": 0,
               "moveset": [
                 "earthquake",
                 "crunch",
-                "brickbreak",
-                "taunt"
+                "closecombat",
+                "stoneedge"
               ],
-              "ability": "intimidate",
-              "heldItem": "black_glasses",
+              "ability": "moxie",
+              "heldItem": "choice_scarf",
               "nature": "jolly"
             },
             {
@@ -2562,7 +2718,16 @@
               "nature": "adamant",
               "ace": true
             }
-          ]
+          ],
+          "open_line": [
+            "swanna",
+            "seismitoad",
+            "gogoat",
+            "hariyama",
+            "heracross",
+            "cacturne"
+          ],
+          "line_obviousness": "moderate: Route 8 teaches immunity, Fighting, Grass, priority, and Tailwind, but Nidoqueen forces the player to rotate them."
         }
       }
     },
@@ -5090,7 +5255,9 @@
     {
       "id": "victory_road",
       "order": 9,
-      "expected_count": 9,
+      "expected_count": 10,
+      "placement_route_length": 713,
+      "theme": "League Examination",
       "pool_rotation": 8,
       "ambient_pool": [
         "boldore",
@@ -5105,96 +5272,788 @@
         "heracross",
         "gligar"
       ],
+      "normal": {
+        "intent": "Ten short cave examinations revisit one learned tool each across a 4 / rest / 6 ascent."
+      },
+      "challenge": {
+        "intent": "The same ten cave fights and caps, with one item threshold per fight and a five-member final examiner."
+      },
       "placements": [
         {
-          "at_distance_blocks": 307,
-          "expected_coordinate": [
-            3643,
-            6214
+          "id": "route_09_trainer_01",
+          "at_distance_blocks": 60,
+          "fixed_coordinate_xyz": [
+            3563,
+            2,
+            3009
           ],
-          "role": "one_pokemon",
-          "name": "League Applicant",
-          "lesson": "A strong solo attacker sets the new baseline."
-        },
-        {
-          "at_distance_blocks": 950,
           "expected_coordinate": [
-            3601,
-            5591
+            3563,
+            3009
           ],
-          "role": "observer",
-          "name": "Rift Hiker",
-          "lesson": "Hazards and removal introduce resource carryover thinking."
-        },
-        {
-          "at_distance_blocks": 1773,
-          "expected_coordinate": [
-            3839,
-            4895
-          ],
-          "role": "specialist",
-          "name": "Steel Specialist",
-          "lesson": "Steel resistance checks shallow coverage."
-        },
-        {
-          "at_distance_blocks": 2310,
-          "expected_coordinate": [
-            4174,
-            4496
-          ],
-          "role": "strategist",
-          "name": "Rift Cartographer",
-          "lesson": "Speed control and pivoting punish static play."
-        },
-        {
-          "at_distance_blocks": 2780,
-          "expected_coordinate": [
-            4293,
-            4076
-          ],
-          "role": "observer",
-          "name": "Trench Climber",
-          "lesson": "Priority exposes fragile sweepers."
-        },
-        {
-          "at_distance_blocks": 3375,
-          "expected_coordinate": [
-            3952,
-            3623
-          ],
-          "role": "strategist",
-          "name": "Field Medic",
-          "lesson": "Recovery denial tests long-fight planning."
-        },
-        {
-          "at_distance_blocks": 3885,
-          "expected_coordinate": [
-            3615,
-            3259
-          ],
+          "sampled_y": 2,
           "role": "gym_prep",
-          "name": "Veteran Tactician",
-          "lesson": "A three-member strategy demands role recognition."
+          "name": "League Applicant",
+          "lesson": "Priority after a speed tax.",
+          "zone": "Mouth / The Dark",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "lycanroc",
+                "level": 56,
+                "moveset": [
+                  "rockslide",
+                  "bulldoze",
+                  "quickattack",
+                  "howl"
+                ]
+              },
+              {
+                "species": "heracross",
+                "level": 57,
+                "moveset": [
+                  "brickbreak",
+                  "megahorn",
+                  "aerialace",
+                  "bulldoze"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "lycanroc",
+                "level": 56,
+                "moveset": [
+                  "rockslide",
+                  "bulldoze",
+                  "quickattack",
+                  "howl"
+                ],
+                "heldItem": "sitrus_berry"
+              },
+              {
+                "species": "heracross",
+                "level": 57,
+                "moveset": [
+                  "brickbreak",
+                  "megahorn",
+                  "aerialace",
+                  "bulldoze"
+                ]
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "The cave takes speed before it takes strength. Keep something quick in reserve.",
+            "player_win": "You kept a second pace. That is the lesson.",
+            "player_loss": "Return when your plan has a second line."
+          }
         },
         {
-          "at_distance_blocks": 4408,
+          "id": "route_09_trainer_02",
+          "at_distance_blocks": 105,
+          "fixed_coordinate_xyz": [
+            3597,
+            8,
+            2985
+          ],
           "expected_coordinate": [
-            3541,
+            3597,
+            2985
+          ],
+          "sampled_y": 8,
+          "role": "gym_prep",
+          "name": "Rift Hiker",
+          "lesson": "Direct poison into payoff.",
+          "zone": "Lower gallery / The Dark",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "drapion",
+                "level": 56,
+                "moveset": [
+                  "toxic",
+                  "knockoff",
+                  "poisonjab",
+                  "bulldoze"
+                ]
+              },
+              {
+                "species": "toxapex",
+                "level": 57,
+                "moveset": [
+                  "venoshock",
+                  "recover",
+                  "liquidation",
+                  "haze"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "drapion",
+                "level": 56,
+                "moveset": [
+                  "toxic",
+                  "knockoff",
+                  "poisonjab",
+                  "bulldoze"
+                ]
+              },
+              {
+                "species": "toxapex",
+                "level": 57,
+                "moveset": [
+                  "venoshock",
+                  "recover",
+                  "liquidation",
+                  "haze"
+                ],
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "A bad condition becomes a worse hit down here. Do not let the clock start.",
+            "player_win": "You broke the clock before it owned the fight.",
+            "player_loss": "Return when your plan has a second line."
+          }
+        },
+        {
+          "id": "route_09_trainer_03",
+          "at_distance_blocks": 165,
+          "fixed_coordinate_xyz": [
+            3604,
+            17,
+            2928
+          ],
+          "expected_coordinate": [
+            3604,
+            2928
+          ],
+          "sampled_y": 17,
+          "role": "gym_prep",
+          "name": "Slagworks Keeper",
+          "lesson": "Sun pressure.",
+          "zone": "Slagworks approach",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "torkoal",
+                "level": 57,
+                "moveset": [
+                  "lavaplume",
+                  "bodypress",
+                  "yawn",
+                  "protect"
+                ],
+                "ability": "drought"
+              },
+              {
+                "species": "coalossal",
+                "level": 58,
+                "moveset": [
+                  "flamethrower",
+                  "rockslide",
+                  "bodypress",
+                  "rapidspin"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "torkoal",
+                "level": 57,
+                "moveset": [
+                  "lavaplume",
+                  "bodypress",
+                  "yawn",
+                  "protect"
+                ],
+                "ability": "drought",
+                "heldItem": "heat_rock"
+              },
+              {
+                "species": "coalossal",
+                "level": 58,
+                "moveset": [
+                  "flamethrower",
+                  "rockslide",
+                  "bodypress",
+                  "rapidspin"
+                ]
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "The old works still hold heat. My lead makes sure you feel all of it.",
+            "player_win": "You found an answer that did not care about the sun.",
+            "player_loss": "Return when your plan has a second line."
+          }
+        },
+        {
+          "id": "route_09_trainer_04",
+          "at_distance_blocks": 220,
+          "fixed_coordinate_xyz": [
+            3620,
+            19,
+            2880
+          ],
+          "expected_coordinate": [
+            3620,
+            2880
+          ],
+          "sampled_y": 19,
+          "role": "gym_prep",
+          "name": "Rift Cartographer",
+          "lesson": "Burn and damage split.",
+          "zone": "Lower examination end / Slagworks",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "weezing",
+                "level": 57,
+                "moveset": [
+                  "willowisp",
+                  "sludgebomb",
+                  "flamethrower",
+                  "painsplit"
+                ]
+              },
+              {
+                "species": "mudsdale",
+                "level": 58,
+                "moveset": [
+                  "highhorsepower",
+                  "rockslide",
+                  "bodypress",
+                  "heavyslam"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "weezing",
+                "level": 57,
+                "moveset": [
+                  "willowisp",
+                  "sludgebomb",
+                  "flamethrower",
+                  "painsplit"
+                ]
+              },
+              {
+                "species": "mudsdale",
+                "level": 58,
+                "moveset": [
+                  "highhorsepower",
+                  "rockslide",
+                  "bodypress",
+                  "heavyslam"
+                ],
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "One mark ruins muscle. The next target asks whether you brought another kind of force.",
+            "player_win": "Good. You changed tools when the map changed.",
+            "player_loss": "Return when your plan has a second line."
+          }
+        },
+        {
+          "id": "route_09_trainer_05",
+          "at_distance_blocks": 285,
+          "fixed_coordinate_xyz": [
+            3616,
+            25,
+            2822
+          ],
+          "expected_coordinate": [
+            3616,
+            2822
+          ],
+          "sampled_y": 25,
+          "role": "gym_prep",
+          "name": "Trench Climber",
+          "lesson": "Sand thresholds.",
+          "zone": "Post-rest threshold / Slagworks edge",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "gigalith",
+                "level": 57,
+                "moveset": [
+                  "rockslide",
+                  "bodypress",
+                  "protect",
+                  "stealthrock"
+                ],
+                "ability": "sandstream"
+              },
+              {
+                "species": "excadrill",
+                "level": 58,
+                "moveset": [
+                  "earthquake",
+                  "ironhead",
+                  "rockslide",
+                  "rapidspin"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "gigalith",
+                "level": 57,
+                "moveset": [
+                  "rockslide",
+                  "bodypress",
+                  "protect",
+                  "stealthrock"
+                ],
+                "ability": "sandstream",
+                "heldItem": "smooth_rock"
+              },
+              {
+                "species": "excadrill",
+                "level": 58,
+                "moveset": [
+                  "earthquake",
+                  "ironhead",
+                  "rockslide",
+                  "rapidspin"
+                ]
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "Rest is over. Sand changes what survives the next hit.",
+            "player_win": "You did not trust yesterday's damage numbers.",
+            "player_loss": "Return when your plan has a second line."
+          }
+        },
+        {
+          "id": "route_09_trainer_06",
+          "at_distance_blocks": 350,
+          "fixed_coordinate_xyz": [
+            3607,
+            31,
             2766
           ],
+          "expected_coordinate": [
+            3607,
+            2766
+          ],
+          "sampled_y": 31,
           "role": "gym_prep",
-          "name": "Ace Trainer",
-          "lesson": "A four-member balanced team checks roster depth."
+          "name": "Field Medic",
+          "lesson": "Trick Room reversal.",
+          "zone": "Middle ascent / The Dark",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "bronzong",
+                "level": 57,
+                "moveset": [
+                  "trickroom",
+                  "gyroball",
+                  "bodypress",
+                  "hypnosis"
+                ]
+              },
+              {
+                "species": "hariyama",
+                "level": 58,
+                "moveset": [
+                  "fakeout",
+                  "closecombat",
+                  "knockoff",
+                  "heavyslam"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "bronzong",
+                "level": 57,
+                "moveset": [
+                  "trickroom",
+                  "gyroball",
+                  "bodypress",
+                  "hypnosis"
+                ]
+              },
+              {
+                "species": "hariyama",
+                "level": 58,
+                "moveset": [
+                  "fakeout",
+                  "closecombat",
+                  "knockoff",
+                  "heavyslam"
+                ],
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "Speed means something different for the next few turns. Survive the room, then move.",
+            "player_win": "You knew when not to race.",
+            "player_loss": "Return when your plan has a second line."
+          }
         },
         {
-          "at_distance_blocks": 4623,
-          "expected_coordinate": [
-            3598,
-            2575
+          "id": "route_09_trainer_07",
+          "at_distance_blocks": 420,
+          "fixed_coordinate_xyz": [
+            3621,
+            42,
+            2716
           ],
+          "expected_coordinate": [
+            3621,
+            2716
+          ],
+          "sampled_y": 42,
+          "role": "gym_prep",
+          "name": "Veteran Tactician",
+          "lesson": "Rain tempo.",
+          "zone": "Upper ascent / The Dark",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "politoed",
+                "level": 58,
+                "moveset": [
+                  "surf",
+                  "icywind",
+                  "encore",
+                  "protect"
+                ],
+                "ability": "drizzle"
+              },
+              {
+                "species": "lanturn",
+                "level": 59,
+                "moveset": [
+                  "discharge",
+                  "surf",
+                  "icebeam",
+                  "confuseray"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "politoed",
+                "level": 58,
+                "moveset": [
+                  "surf",
+                  "icywind",
+                  "encore",
+                  "protect"
+                ],
+                "ability": "drizzle",
+                "heldItem": "mystic_water"
+              },
+              {
+                "species": "lanturn",
+                "level": 59,
+                "moveset": [
+                  "discharge",
+                  "surf",
+                  "icebeam",
+                  "confuseray"
+                ]
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "Rain makes both halves of my team faster at their jobs. Split them apart.",
+            "player_win": "You found the seam between weather and coverage.",
+            "player_loss": "Return when your plan has a second line."
+          }
+        },
+        {
+          "id": "route_09_trainer_08",
+          "at_distance_blocks": 485,
+          "fixed_coordinate_xyz": [
+            3642,
+            48,
+            2673
+          ],
+          "expected_coordinate": [
+            3642,
+            2673
+          ],
+          "sampled_y": 48,
+          "role": "gym_prep",
+          "name": "Cut Foreman",
+          "lesson": "Switch cost and immunity.",
+          "zone": "Cut approach / Abandoned Cut",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "aggron",
+                "level": 58,
+                "moveset": [
+                  "stealthrock",
+                  "heavyslam",
+                  "rockslide",
+                  "bodypress"
+                ]
+              },
+              {
+                "species": "crobat",
+                "level": 59,
+                "moveset": [
+                  "toxic",
+                  "airslash",
+                  "bite",
+                  "roost"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "aggron",
+                "level": 58,
+                "moveset": [
+                  "stealthrock",
+                  "heavyslam",
+                  "rockslide",
+                  "bodypress"
+                ],
+                "heldItem": "sitrus_berry"
+              },
+              {
+                "species": "crobat",
+                "level": 59,
+                "moveset": [
+                  "toxic",
+                  "airslash",
+                  "bite",
+                  "roost"
+                ]
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "The cut punishes every careless change. Choose what stays in before you move.",
+            "player_win": "You paid for no change you did not need.",
+            "player_loss": "Return when your plan has a second line."
+          }
+        },
+        {
+          "id": "route_09_trainer_09",
+          "at_distance_blocks": 550,
+          "fixed_coordinate_xyz": [
+            3641,
+            55,
+            2614
+          ],
+          "expected_coordinate": [
+            3641,
+            2614
+          ],
+          "sampled_y": 55,
+          "role": "gym_prep",
+          "name": "League Veteran",
+          "lesson": "Setup denial and setup race.",
+          "zone": "Cut workings / Abandoned Cut",
+          "normal_ai_profile": "route_normal",
+          "challenge_ai_profile": "route_challenge",
+          "teams": {
+            "normal": [
+              {
+                "species": "mismagius",
+                "level": 59,
+                "moveset": [
+                  "taunt",
+                  "willowisp",
+                  "hex",
+                  "painsplit"
+                ]
+              },
+              {
+                "species": "klinklang",
+                "level": 59,
+                "moveset": [
+                  "shiftgear",
+                  "geargrind",
+                  "chargebeam",
+                  "thunderwave"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "mismagius",
+                "level": 59,
+                "moveset": [
+                  "taunt",
+                  "willowisp",
+                  "hex",
+                  "painsplit"
+                ],
+                "heldItem": "colbur_berry"
+              },
+              {
+                "species": "klinklang",
+                "level": 59,
+                "moveset": [
+                  "shiftgear",
+                  "geargrind",
+                  "chargebeam",
+                  "thunderwave"
+                ]
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "I stop your plan, then begin mine. Show me you brought a second plan.",
+            "player_win": "That answer was ready before mine started.",
+            "player_loss": "Return when your plan has a second line."
+          }
+        },
+        {
+          "id": "route_09_trainer_10",
+          "at_distance_blocks": 638,
+          "fixed_coordinate_xyz": [
+            3655,
+            65,
+            2564
+          ],
+          "expected_coordinate": [
+            3655,
+            2564
+          ],
+          "sampled_y": 65,
           "role": "gym_prep",
           "name": "League Examiner",
-          "lesson": "The final exam combines hazards, speed and an item-bearing closer."
+          "lesson": "Tailwind final examination.",
+          "zone": "Ravine foot / The Dark",
+          "normal_ai_profile": "league_standard",
+          "challenge_ai_profile": "league_aggressive",
+          "teams": {
+            "normal": [
+              {
+                "species": "crobat",
+                "level": 58,
+                "moveset": [
+                  "tailwind",
+                  "airslash",
+                  "toxic",
+                  "uturn"
+                ]
+              },
+              {
+                "species": "mudsdale",
+                "level": 59,
+                "moveset": [
+                  "highhorsepower",
+                  "rockslide",
+                  "bodypress",
+                  "heavyslam"
+                ]
+              },
+              {
+                "species": "starmie",
+                "level": 59,
+                "moveset": [
+                  "surf",
+                  "psychic",
+                  "icywind",
+                  "recover"
+                ]
+              },
+              {
+                "species": "heracross",
+                "level": 60,
+                "moveset": [
+                  "closecombat",
+                  "megahorn",
+                  "stoneedge",
+                  "earthquake"
+                ]
+              }
+            ],
+            "challenge": [
+              {
+                "species": "crobat",
+                "level": 58,
+                "moveset": [
+                  "tailwind",
+                  "airslash",
+                  "toxic",
+                  "uturn"
+                ],
+                "heldItem": "focus_sash"
+              },
+              {
+                "species": "mudsdale",
+                "level": 59,
+                "moveset": [
+                  "highhorsepower",
+                  "rockslide",
+                  "bodypress",
+                  "heavyslam"
+                ]
+              },
+              {
+                "species": "starmie",
+                "level": 59,
+                "moveset": [
+                  "surf",
+                  "psychic",
+                  "icywind",
+                  "recover"
+                ]
+              },
+              {
+                "species": "cacturne",
+                "level": 59,
+                "moveset": [
+                  "needlearm",
+                  "suckerpunch",
+                  "knockoff",
+                  "leechseed"
+                ]
+              },
+              {
+                "species": "heracross",
+                "level": 60,
+                "moveset": [
+                  "closecombat",
+                  "megahorn",
+                  "stoneedge",
+                  "earthquake"
+                ]
+              }
+            ]
+          },
+          "dialogue_text": {
+            "pre": "My Crobat carries a Focus Sash. It will get the wind up. The exam is what you do after that.",
+            "player_win": "You did not need the first turn. You needed the right six.",
+            "player_loss": "Return when your plan has a second line."
+          }
         }
       ]
     }
