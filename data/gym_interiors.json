@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.gym-interiors/1",
-  "status": "gym 1 authored and generated offline; nothing here has been seen in a running game",
+  "status": "gyms 1, 2, 3, 4, 5 and 7 authored and generated offline; nothing here has been seen in a running game. Gym 6 (Sabrina) waits on EXP-034 and gym 8 (Giovanni) on its own unit",
   "design": "docs/mechanics/GYM_INTERIORS.md (accepted in principle, docs/STATE.md); its Q1 section holds the measured template geometry this file rests on",
   "note": "Shell geometry is NEVER authored here. Every gym's shell box, and therefore every world coordinate below, is derived from that gym's donor record in data/placements.json (position, size, rotation, anchor_mode) through the same transform tools/place_donor.py box() and tools/place_town.py rotate() use. The only measured numbers copied into this file are the template-relative cells recorded by the Q1 read (the healing machine and the trainer spawner); they are recorded as expectations and the healer removal does not depend on them.",
 
@@ -49,11 +49,19 @@
     "max_fall": 12,
     "max_fall_why": "contract G3: no gym route may kill. A fall longer than this must land on minecraft:hay_block, which takes 80% off the damage",
     "sight_margin": 0.75,
-    "sight_margin_why": "docs/mechanics/GYM_INTERIORS.md section 3, from data/mansion_guardians.json: a trainer's forceBattleMaxDistance must reach no standable cell outside its own room, less this margin"
+    "sight_margin_why": "docs/mechanics/GYM_INTERIORS.md section 3, from data/mansion_guardians.json: a trainer's forceBattleMaxDistance must reach no standable cell outside its own room, less this margin",
+    "max_submerged_run": 14,
+    "max_submerged_run_why": "contract G2. Blocks travelled along the route with the head under water before a surface or a floor. Gym 2 is the second badge, so no player crossing it has Surf or Dive (docs/mechanics/WATER_MAP.md: Surf and Dive are trained later), and vanilla air is 300 ticks. Fourteen blocks is about six seconds at unaided swim speed, and every flooded stretch in gyms 2, 4 and 7 is shorter than that or is crossed at the surface"
+  },
+
+  "spawn_condition_blocks": {
+    "why": "a block that IS a spawn condition in data/spawn_blocks.json, written anyway, inside one gym only. The rule: it must be declared in that gym's own `spawn_condition_blocks` and every cell of it must lie inside that gym's data/spawn_suppression.json box in x/z, which is contract G1 - the zone takes every cell it touches out of every compiled spawn file (tools/compile_spawns.py spawn_free_zones), all y, so no condition inside it can draw anything. docs/mechanics/GYM_INTERIORS.md section 2 says the same of Koga's carpet, and Q8 asked for exactly this test.",
+    "only": "minecraft:water, in gyms 2, 4 and 7. minecraft:sand, minecraft:magma_block and every carpet stay out: none of the three is needed, and magma hurts a standing player, which contract G3 forbids.",
+    "audited_by": "tools/gym_interiors_audit.py (`blocks`): an undeclared spawn condition is a problem, and a declared one written outside the gym's spawn-free box is a problem."
   },
 
   "blocks": {
-    "why": "every block any gym generator may write. Vanilla 1.21.1 only; none is a spawn condition in data/spawn_blocks.json (the audit checks that, reading spawn_blocks.json itself). minecraft:water and minecraft:sand are deliberately absent: both are spawn conditions.",
+    "why": "every block any gym generator may write. Vanilla 1.21.1 only. None is a spawn condition in data/spawn_blocks.json except minecraft:water, which is declared per gym under `spawn_condition_blocks` and checked cell by cell against the gym's spawn-free box (the audit reads spawn_blocks.json itself). minecraft:sand is deliberately absent: it is a spawn condition and nothing here needs it.",
     "ids": [
       "minecraft:air",
       "minecraft:stone_bricks",
@@ -83,7 +91,56 @@
       "minecraft:mud_bricks",
       "minecraft:polished_diorite",
       "minecraft:polished_blackstone_bricks",
-      "minecraft:polished_granite"
+      "minecraft:polished_granite",
+
+      "minecraft:water",
+      "minecraft:soul_sand",
+      "minecraft:prismarine",
+      "minecraft:dark_prismarine",
+      "minecraft:sea_lantern",
+      "minecraft:dark_oak_planks",
+      "minecraft:dark_oak_slab",
+      "minecraft:dark_oak_fence",
+      "minecraft:barrel",
+      "minecraft:lectern",
+
+      "minecraft:polished_deepslate",
+      "minecraft:deepslate_tiles",
+      "minecraft:deepslate_bricks",
+      "minecraft:waxed_copper_block",
+      "minecraft:waxed_cut_copper_slab",
+      "minecraft:waxed_cut_copper_stairs",
+      "minecraft:copper_grate",
+
+      "minecraft:moss_block",
+      "minecraft:mossy_cobblestone",
+      "minecraft:azalea_leaves",
+      "minecraft:cherry_planks",
+      "minecraft:cherry_slab",
+      "minecraft:rooted_dirt",
+      "minecraft:coarse_dirt",
+      "minecraft:composter",
+      "minecraft:glass",
+
+      "minecraft:mud",
+      "minecraft:packed_mud",
+      "minecraft:mud_brick_stairs",
+      "minecraft:mud_brick_slab",
+      "minecraft:mangrove_planks",
+      "minecraft:mangrove_slab",
+      "minecraft:mangrove_fence",
+      "minecraft:sculk",
+      "minecraft:sculk_sensor",
+
+      "minecraft:blackstone",
+      "minecraft:polished_blackstone",
+      "minecraft:basalt",
+      "minecraft:smooth_basalt",
+      "minecraft:terracotta",
+      "minecraft:acacia_planks",
+      "minecraft:acacia_slab",
+      "minecraft:brewing_stand",
+      "minecraft:cartography_table"
     ]
   },
 
@@ -116,7 +173,7 @@
       "shell_penetration_why": "the only cells of the standing building this gym's build writes: the healer's cell, the floor course under it and the base course under that, cut to air so the shaft is open. One block of the base course beside it (1817,140,3684) is set to stone brick to carry the top ladder rung; it is under the floor and invisible.",
 
       "rooms": [
-        {"id": "shaft", "role": "hall", "box": [1817, 131, 3685, 1817, 142, 3685], "why": "the works shaft: a one-block scaffolding well from the gym floor down to the cutting floor. Its top three cells are the shell penetration; its lower half stands inside the cutting floor's own air"},
+        {"id": "shaft", "role": "shaft", "box": [1817, 131, 3685, 1817, 142, 3685], "why": "the works shaft: a one-block scaffolding well from the gym floor down to the cutting floor. Its top three cells are the shell penetration; its lower half stands inside the cutting floor's own air"},
         {"id": "r1_cutting", "role": "hall", "box": [1814, 131, 3679, 1824, 135, 3689], "why": "the cutting floor: where the stone is squared before it goes up the wall. The first room, and the one the way out returns to"},
         {"id": "c1_door", "role": "door", "box": [1822, 131, 3690, 1823, 133, 3691], "belongs_to": "r1_cutting", "why": "the only opening out of the cutting floor. A doorway counts as part of the room it opens from, for the sight rule"},
         {"id": "r2_wall", "role": "puzzle", "box": [1814, 119, 3692, 1836, 136, 3701], "why": "the unfinished wall: a pit 18 deep with the half-built wall along its south side. The puzzle is the climb"},
@@ -215,15 +272,589 @@
       ]
     },
 
-    {"id": "gym2", "settlement": "gym2_town", "donor": "gym2_misty_gym", "leader_name": "Misty", "built": false,
-     "why_not": "docs/STATE.md: gym 1 only, built and playtested (EXP-005), before the other seven. Only its healing machine is removed."},
-    {"id": "gym3", "settlement": "gym3_town", "donor": "gym3_gym_building", "leader_name": "Lt Surge", "built": false,
-     "why_not": "as gym2. Note: this is the one gym whose healing machine was a working blackout checkpoint (see healers.known_consequence)."},
-    {"id": "gym4", "settlement": "gym4_town", "donor": "gym4_gym_building", "leader_name": "Erika", "built": false, "why_not": "as gym2"},
-    {"id": "gym5", "settlement": "gym5_town", "donor": "gym5_gym_building", "leader_name": "Koga", "built": false, "why_not": "as gym2"},
+    {
+      "id": "gym2", "settlement": "gym2_town", "donor": "gym2_misty_gym", "leader_name": "Misty", "built": true,
+      "title": "the cistern under the lake",
+      "why": "docs/world-building/TOWN_CHARACTER.md: the lake town takes in whoever the water brings, and keeps a record of every arrival. Under its gym is the cistern the town draws from, the race that feeds it, and the ledger room the water reaches before anyone else does.",
+      "site": "Misty's is the one gym that is not the 27x17 shell: 36x40x32, and its hall stands at y133 on 26 courses of the template's own rock (the Q1 read: interior floor y 26, floor course 25). The ground under the lot is y104-108, so her hall is 26 blocks above grade and everything carved below it is 30 to 45 blocks down - the deepest descent of the six, and the reason her works are a well rather than a stair.",
+
+      "shell": {
+        "derived_from": "data/placements.json gym2_misty_gym",
+        "expect_box": [1594, 107, 2859, 1629, 146, 2890],
+        "expect_floor_course_y": 132,
+        "expect_stand_y": 133,
+        "not_touched": "everything in the shell except the healing machine's cell and the one-column well below it. The trainer spawner at [1605, 132, 2874] is left standing: Misty still battles in her hall."
+      },
+
+      "entrance": [1620, 133, 2867],
+      "entrance_why": "the cell the healing machine stood in, the one interior cell of this shell whose position is measured (data/gym_interiors.json measured.misty_relative). It is the only place a hole can be cut without a floor plan.",
+
+      "dig": [1598, 84, 2861, 1626, 106, 2881],
+      "dig_why": "under the gym lot and wholly below the shell's lowest course at y107, inside the gym_misty spawn-free box. Its footprint is the northern two thirds of the lot, where the heightmap is y106-108; the south-east corner of the lot falls away to y104 towards the lake and is left alone so no room comes within three blocks of the lake bed.",
+      "shell_penetration": [1620, 107, 2867, 1620, 133, 2867],
+      "shell_penetration_why": "one column, and it is long because this shell is: the healer's cell at y133, the floor course under it, and the 25 courses of template rock the building stands on. Nothing else of the standing building is written.",
+
+      "rooms": [
+        {"id": "shaft", "role": "shaft", "box": [1620, 92, 2867, 1620, 133, 2867], "why": "the well: a scaffolding column from the gym floor to the cistern's basin, 42 cells. Scaffolding, not a ladder, because a column standing on its own foot needs no wall behind it, and its foot stands in water"},
+        {"id": "r1_cistern", "role": "hall", "box": [1610, 95, 2862, 1626, 99, 2876], "why": "the cistern: the drawing floor at y95 with the basin sunk into it, where the well comes down. The first room and the one the way out returns to"},
+        {"id": "c1_fall", "role": "door", "box": [1613, 92, 2874, 1614, 94, 2875], "belongs_to": "r1_cistern", "why": "the overflow: a dry hole in the cistern's floor that drops eight into the race. One way - eight blocks of smooth shaft cannot be climbed"},
+        {"id": "r2_race", "role": "puzzle", "box": [1604, 86, 2872, 1620, 89, 2876], "why": "the race that feeds the cistern: a canal swum at the surface, water to y87 and air above it, so nothing here asks a player to hold their breath"},
+        {"id": "p2_mouths", "role": "puzzle", "box": [1601, 86, 2871, 1603, 94, 2877], "why": "the three mouths at the race's head, cut in rock: two are sumps that stop after five, one is the shaft that goes up. Which is which is read from the light in the water - the true one has a sea lantern at its head"},
+        {"id": "c3_mouth", "role": "door", "box": [1602, 95, 2874, 1602, 98, 2874], "belongs_to": "r3_gallery", "why": "the true mouth's last four blocks, counted as the gallery it opens into so that the lifeguard above is not looking down a shaft into another room"},
+        {"id": "r3_gallery", "role": "guard", "box": [1598, 99, 2872, 1607, 102, 2876], "why": "the ledger gallery: where the town's record of arrivals is kept, dry, above the race and below the street"},
+        {"id": "c2_return", "role": "door", "box": [1608, 95, 2870, 1610, 100, 2872], "belongs_to": "r1_cistern", "why": "the way out: a four-block step down from the gallery's sill onto the cistern's floor, at the far end from the well, so it cannot be climbed back and no trainer is re-passed"}
+      ],
+
+      "route": [
+        {"at": [1620, 133, 2867], "room": "shaft", "what": "the hole where the healing machine stood"},
+        {"at": [1620, 95, 2867], "room": "r1_cistern", "what": "thirty-eight down the well's scaffolding, onto the cistern floor beside the basin"},
+        {"at": [1616, 95, 2870], "room": "r1_cistern", "what": "the drawing floor"},
+        {"at": [1615, 95, 2875], "room": "r1_cistern", "what": "the lip of the overflow"},
+        {"at": [1614, 87, 2875], "room": "r2_race", "posture": "swim", "what": "eight down into the race; the water takes the fall"},
+        {"at": [1610, 87, 2876], "room": "r2_race", "posture": "swim", "what": "the open lane past the swimmer's island"},
+        {"at": [1605, 87, 2874], "room": "r2_race", "posture": "swim", "what": "the race's head, and the three mouths"},
+        {"at": [1602, 88, 2874], "room": "p2_mouths", "posture": "swim", "what": "into the middle mouth, the one with light in it"},
+        {"at": [1602, 94, 2874], "room": "p2_mouths", "posture": "swim", "what": "up the shaft, six blocks under"},
+        {"at": [1602, 98, 2874], "room": "c3_mouth", "posture": "swim", "what": "the water's surface under the gallery's floor"},
+        {"at": [1603, 99, 2874], "room": "r3_gallery", "what": "out onto the ledger floor"},
+        {"at": [1604, 99, 2874], "room": "r3_gallery", "what": "the lifeguard, across the gallery"},
+        {"at": [1607, 99, 2872], "room": "r3_gallery", "what": "the ledger of arrivals, and the sill beside it"},
+        {"at": [1608, 95, 2871], "room": "c2_return", "what": "four down the sill"},
+        {"at": [1611, 95, 2871], "room": "r1_cistern", "what": "back on the drawing floor, at the far end from the overflow"},
+        {"at": [1620, 95, 2867], "room": "r1_cistern", "what": "back to the well"},
+        {"at": [1620, 133, 2867], "room": "shaft", "what": "up into the hall, and Misty"}
+      ],
+
+      "mechanism": {
+        "tier": "free",
+        "kind": "current",
+        "what_the_player_sees": "a cistern, a hole in its floor with water eight below, a canal you swim at the surface, and three identical mouths at its head. One has light in it. The other two stop after five blocks and you swim back out. There is no switch and nothing to flip: the only reading is of the water and the light in it.",
+        "why_this_one": "docs/mechanics/GYM_INTERIORS.md section 4: Misty's first draft was three sluice levers, which is Surge's breaker board again, so it was replaced with a current the player rides and cannot switch. What is built here is that current, made out of geometry: a one-way fall in, a surface swim across, and a choice of three shafts out.",
+        "deviation": "the design's soul-sand up-columns are not built. A bubble column is one-way upward, and a one-way upward shaft at the race's head would let a player who took a wrong mouth get stuck at its top. The true mouth is a plain water shaft swum up in six blocks, and the false ones are sumps. Gym 7's geyser is the one bubble column in the six, where being unable to swim back down is the point."
+      },
+
+      "state_scope": "shared_permanent",
+      "state_scope_why": "nothing is switched, so there is nothing for a second player to solve for the first and nothing to reset. Every one of the five interiors in this unit takes the same contract for the same reason: they are made of rock and water, not of state.",
+      "reset": null,
+
+      "doors": [
+        {"id": "c1_fall", "at": [1613, 94, 2874], "opens_on": null, "guarded_by": null, "vestibule_depth": null,
+         "why": "an open hole, not a gate: one way by a drop of eight into water."},
+        {"id": "c3_mouth", "at": [1602, 96, 2874], "opens_on": null, "guarded_by": null, "vestibule_depth": null,
+         "why": "the true mouth's head. Nothing gates it; choosing it is the puzzle."},
+        {"id": "c2_return", "at": [1608, 99, 2871], "opens_on": null, "guarded_by": "gym2_lifeguard_01", "vestibule_depth": null,
+         "why": "one way only, by a four-block step down that cannot be climbed back. The lifeguard stands at its sill."}
+      ],
+
+      "trainers": [
+        {"id": "gym2_swimmer_01", "working_name": "Rescue Swimmer", "seat": [1609, 88, 2874], "yaw": 90,
+         "sight_distance": 3.5, "room": "r2_race", "passed_at": 5,
+         "why_unavoidable": "she stands on the one dry island in the race, which spans four of the canal's five lanes; the open lane runs within 2.3 of her and her reach closes the canal's whole width for seven blocks",
+         "sight_check": "the nearest standable cell outside r2_race and its own hole is in p2_mouths, six west; the cistern is eight above"},
+        {"id": "gym2_lifeguard_01", "working_name": "Lifeguard", "seat": [1604, 99, 2874], "yaw": 90,
+         "sight_distance": 3.0, "room": "r3_gallery", "passed_at": 11,
+         "why_unavoidable": "the gallery is five wide and he stands across it between the mouth you climb out of and the sill you leave by; there is no other way off the ledger floor",
+         "sight_check": "the true mouth's water below him is c3_mouth, which belongs to this gallery; the nearest cell of p2_mouths is 5.4 away and the nearest of c2_return 4.7"}
+      ],
+      "trainers_handoff": "seats, yaw and sight distance only, as gym 1. Rosters, levels, skins and dialogue are trainer-balance-designer's.",
+
+      "leader": {
+        "id": "kanto_misty",
+        "room": "shell",
+        "seat_from": "template spawner",
+        "expect_spawner_at": [1605, 132, 2874],
+        "gate": null,
+        "gate_why": "not gated, for gym 1's reason: a gate needs the shell's door cell and the Q1 read did not measure it."
+      },
+
+      "no_build": [
+        {"box": [1598, 84, 2861, 1626, 106, 2881], "why": "contract G4: the whole dig. Authored, not yet wired - the scene runtime's adventure-mode box needs a scene record in data/scenes.json."}
+      ],
+
+      "spawn_suppression": {
+        "record": "gym_misty",
+        "box": [1592, 2856, 1631, 2895],
+        "why": "contract G1, and unchanged: the dig's footprint x1598-1626, z2861-2881 is wholly inside the standing box, so nothing had to be widened."
+      },
+
+      "spawn_condition_blocks": [
+        {"id": "minecraft:water", "why": "a water gym's works are water. Every cell of it is inside gym_misty's spawn-free box, which takes the whole column out of every compiled spawn file (contract G1), so no water condition here can draw anything.", "where": "the basin, the race, the three mouths"}
+      ],
+
+      "blocks": [
+        "minecraft:air", "minecraft:water", "minecraft:prismarine_bricks", "minecraft:prismarine",
+        "minecraft:dark_prismarine", "minecraft:sea_lantern", "minecraft:stone_bricks", "minecraft:mud_bricks",
+        "minecraft:dark_oak_planks", "minecraft:dark_oak_slab", "minecraft:dark_oak_fence", "minecraft:scaffolding",
+        "minecraft:ladder", "minecraft:lantern", "minecraft:chain", "minecraft:barrel", "minecraft:lectern",
+        "minecraft:chest", "minecraft:hay_block"
+      ]
+    },
+
+    {
+      "id": "gym3", "settlement": "gym3_town", "donor": "gym3_gym_building", "leader_name": "Lt Surge", "built": true,
+      "title": "the adit into Vessu",
+      "why": "docs/world-building/TOWN_CHARACTER.md: the signal town keeps the power and the relays running. The cable from the array on the Vessu shoulder comes down into the hill behind the gym, and the run that carries it is the gym.",
+      "site": "this is the one gym cut into a hillside. The heightmap under its own footprint runs y174 at the west face and y197 at the east, and 30 blocks east of it the ridge is at y250. So the works do not go down, they go east into rock that is already 20 blocks thick over them, and the gallery can be 15 blocks tall where Erika's and Koga's cannot be six.",
+      "note_on_the_healer": "this is the one gym whose healing machine was a working blackout checkpoint (healers.known_consequence). Nothing in this record depends on it.",
+
+      "shell": {
+        "derived_from": "data/placements.json gym3_gym_building",
+        "expect_box": [1726, 173, 1397, 1748, 189, 1423],
+        "expect_floor_course_y": 174,
+        "expect_stand_y": 175,
+        "not_touched": "everything but the healer's cell and the riser under it. The trainer spawner at [1736, 174, 1403] is left standing."
+      },
+
+      "entrance": [1743, 175, 1418],
+      "entrance_why": "the healer's cell, mapped through this placement's clockwise_90 rotation. It sits in the shell's south-east corner, the corner buried deepest in the hill, which is why the riser drops straight onto the catwalk.",
+
+      "dig": [1732, 150, 1400, 1750, 172, 1427],
+      "dig_why": "east and south of the shell's footprint and wholly below its lowest course at y173, inside the gym_surge spawn-free box (whose east edge at x1751 is what stops the gallery going further into the ridge).",
+      "shell_penetration": [1743, 173, 1418, 1743, 175, 1418],
+      "shell_penetration_why": "three cells: the healer's, the floor course under it, the base course under that.",
+
+      "rooms": [
+        {"id": "shaft", "role": "shaft", "box": [1743, 167, 1418, 1743, 175, 1418], "why": "the cable riser: a ladder on a built pier from the hall down to the catwalk, eight rungs. Short, because the hill has already put the gym's floor ten blocks underground at this corner"},
+        {"id": "r1_run", "role": "puzzle", "box": [1735, 157, 1402, 1748, 171, 1418], "why": "the run, and it is one room fifteen blocks tall because the ridge over it allows one: four cable trenches at x1738, 1741, 1744 and 1747 cut nine deep in its floor, a crosscut joining their north heads, a west aisle with the ladder in it, and the catwalk at y167 along the south end. From the catwalk, over a copper grate you cannot step through, all four lines are visible end to end and the fall of rock that plugs three of them is visible with them. Standing in a trench you can see nothing but the trench"},
+        {"id": "c2_door", "role": "door", "box": [1741, 157, 1419, 1741, 160, 1420], "belongs_to": "r3_relay", "why": "the south end of the true line, where the cable leaves the run for the relay chamber"},
+        {"id": "r3_relay", "role": "guard", "box": [1736, 157, 1421, 1748, 170, 1427], "why": "the relay chamber: the breaker board on its wall, the cable drums, the store, and the stair up its east end to the sill. Thirteen blocks tall, which only this site allows"},
+        {"id": "c3_return", "role": "door", "box": [1746, 169, 1419, 1748, 171, 1421], "belongs_to": "r1_run", "why": "the way out: the relay's top sill, stepping down two onto the catwalk's east end, seven blocks clear of the lineman. Two is enough - a player can step up one, never two - so the run cannot be re-entered from the catwalk and no beaten trainer is walked back past"}
+      ],
+
+      "route": [
+        {"at": [1743, 175, 1418], "room": "shaft", "what": "the hole where the healing machine stood"},
+        {"at": [1743, 167, 1418], "room": "r1_run", "what": "eight down the riser, onto the catwalk"},
+        {"at": [1740, 167, 1416], "room": "r1_run", "what": "the lineman, across the catwalk; from here the four lines are read"},
+        {"at": [1736, 167, 1417], "room": "r1_run", "what": "the catwalk's west end"},
+        {"at": [1735, 167, 1417], "room": "r1_run", "what": "the ladder head in the aisle"},
+        {"at": [1735, 157, 1417], "room": "r1_run", "what": "down onto the aisle floor, ten rungs"},
+        {"at": [1735, 157, 1404], "room": "r1_run", "what": "north up the aisle to the crosscut"},
+        {"at": [1741, 157, 1404], "room": "r1_run", "what": "the crosscut, where all four lines begin"},
+        {"at": [1741, 157, 1410], "room": "r1_run", "what": "the second line, the one that is not plugged"},
+        {"at": [1741, 157, 1415], "room": "r1_run", "what": "the second lineman, at the line's end under the catwalk"},
+        {"at": [1741, 157, 1420], "room": "c2_door", "what": "out of the run"},
+        {"at": [1743, 157, 1424], "room": "r3_relay", "what": "the relay floor: the board, the drums and the store"},
+        {"at": [1747, 169, 1420], "room": "c3_return", "what": "the stair to the top sill"},
+        {"at": [1747, 167, 1418], "room": "r1_run", "what": "two down onto the catwalk's east end"},
+        {"at": [1743, 167, 1418], "room": "r1_run", "what": "back to the riser"},
+        {"at": [1743, 175, 1418], "room": "shaft", "what": "up into the hall, and Surge"}
+      ],
+
+      "mechanism": {
+        "tier": "free",
+        "kind": "trace",
+        "what_the_player_sees": "four copper cable lines running north to south in trenches too deep to see out of, and a catwalk above them from which all four are visible at once. Three are plugged by a fall of rock. You read which line runs clear from the catwalk, then go down and walk it.",
+        "why_this_one": "the design's breaker board is a redstone logic puzzle, and nothing in this repository can check a redstone circuit offline: the audit replays blocks, not signals. The verb the design asks for - trace a line to its end - is kept, and made out of the trench geometry instead of out of wiring, so the whole of it can be checked before it is built. The board itself is built, on the relay chamber's wall, as what the run ends at.",
+        "deviation": "no redstone is placed anywhere in this gym. If the owner wants the circuit, it is an addition to a room that already exists, not a rebuild."
+      },
+
+      "state_scope": "shared_permanent",
+      "state_scope_why": "as gym 2: nothing is switched.",
+      "reset": null,
+
+      "doors": [
+        {"id": "c2_door", "at": [1741, 157, 1419], "opens_on": null, "guarded_by": "gym3_lineman_02", "vestibule_depth": null,
+         "why": "the true line's end; the second lineman stands in the trench in front of it, and the trench is one wide."},
+        
+        {"id": "c3_return", "at": [1747, 169, 1419], "opens_on": null, "guarded_by": null, "vestibule_depth": null,
+         "why": "one way only, by a two-block step down."}
+      ],
+
+      "trainers": [
+        {"id": "gym3_lineman_01", "working_name": "Lineman", "seat": [1740, 167, 1416], "yaw": 180,
+         "sight_distance": 3.0, "room": "r1_run", "passed_at": 2,
+         "why_unavoidable": "the catwalk is five wide and his reach is three: it closes the whole of it, and the catwalk is the only way from the riser to the ladder down",
+         "sight_check": "the riser's own cells above the catwalk are 3.6 away and everything in the trench hall is at least five below"},
+        {"id": "gym3_lineman_02", "working_name": "Relay Lineman", "seat": [1741, 157, 1415], "yaw": 0,
+         "sight_distance": 2.5, "room": "r1_run", "passed_at": 9,
+         "why_unavoidable": "he stands in the true line itself, which is one block wide between solid walls; there is no cell of it to pass him in",
+         "sight_check": "the nearest cell outside the run is c2_door, five south of him, and the catwalk is ten above"}
+      ],
+      "trainers_handoff": "seats, yaw and sight distance only.",
+
+      "leader": {
+        "id": "kanto_ltsurge",
+        "room": "shell",
+        "seat_from": "template spawner",
+        "expect_spawner_at": [1736, 174, 1403],
+        "gate": null,
+        "gate_why": "as gym 1 and gym 2."
+      },
+
+      "no_build": [
+        {"box": [1732, 150, 1400, 1750, 172, 1427], "why": "contract G4: the whole dig. Not yet wired."}
+      ],
+
+      "spawn_suppression": {
+        "record": "gym_surge",
+        "box": [1720, 1392, 1751, 1431],
+        "why": "contract G1, unchanged. Its east edge at x1751 is a real constraint on this gym and the reason the gallery stops at x1748 rather than running further into the ridge, where the cover is 60 blocks."
+      },
+
+      "blocks": [
+        "minecraft:air", "minecraft:polished_deepslate", "minecraft:deepslate_tiles", "minecraft:deepslate_bricks",
+        "minecraft:tuff", "minecraft:waxed_cut_copper", "minecraft:waxed_cut_copper_slab",
+        "minecraft:waxed_cut_copper_stairs", "minecraft:waxed_copper_block", "minecraft:copper_grate",
+        "minecraft:stone_bricks", "minecraft:ladder", "minecraft:scaffolding", "minecraft:lantern",
+        "minecraft:chain", "minecraft:oak_planks", "minecraft:barrel", "minecraft:chest", "minecraft:hay_block"
+      ]
+    },
+    {
+      "id": "gym4", "settlement": "gym4_town", "donor": "gym4_gym_building", "leader_name": "Erika", "built": true,
+      "title": "the beds below the glasshouse",
+      "why": "docs/world-building/TOWN_CHARACTER.md: Peak Pond Hollow's garden town, where Erika keeps the peace between the residents and the arrivals. Under the glasshouse are the beds it grows in, the drains that water them and the cistern they drain to.",
+      "site": "Erika's lot is the flattest of the six. The heightmap is y110 across the whole footprint and y109-111 for forty blocks around it, so the ceiling of anything carved here can be no higher than y107 and there is no relief at all to build against. What the site gives is area, not height: this is the widest and lowest of the six interiors, a cellar four blocks tall under a flat garden, and the way on is not ahead but underneath.",
+
+      "shell": {
+        "derived_from": "data/placements.json gym4_gym_building",
+        "expect_box": [4297, 109, 1480, 4323, 125, 1502],
+        "expect_floor_course_y": 110,
+        "expect_stand_y": 111,
+        "not_touched": "everything but the healer's cell and the ladder under it. The trainer spawner at [4303, 110, 1492] is left standing."
+      },
+
+      "entrance": [4318, 111, 1485],
+      "entrance_why": "the healer's cell; this placement is unrotated, so it is the template's own [21, 2, 5].",
+
+      "dig": [4296, 94, 1478, 4324, 106, 1506],
+      "dig_why": "under the lot and below the shell's lowest course at y109, inside the gym_erika spawn-free box. The ceiling of every room is at or under y106, which is the most this flat site allows with three blocks of cover.",
+      "shell_penetration": [4318, 109, 1485, 4318, 111, 1485],
+      "shell_penetration_why": "three cells, as gym 1.",
+
+      "rooms": [
+        {"id": "shaft", "role": "shaft", "box": [4318, 99, 1485, 4318, 111, 1485], "why": "the trellis ladder from the glasshouse floor down into the beds, twelve rungs"},
+        {"id": "r1_beds", "role": "puzzle", "box": [4306, 99, 1481, 4322, 103, 1493], "why": "the beds: planters on legs, soil at y100 and a hand's width of water running under them at y99, with aisles between. A hedge of azalea crosses the cellar with one gap in it. Every standing aisle ends in a wall; the only way south is the drain under the middle bed"},
+        {"id": "c1_drain", "role": "door", "box": [4310, 99, 1494, 4310, 99, 1497], "belongs_to": "r2_cistern", "why": "the drain: one block high and five long, flooded. A walking player does not fit and a swimming one does - five blocks, about two seconds, and it comes out three above the cistern floor so it cannot be swum back"},
+        {"id": "r2_cistern", "role": "guard", "box": [4306, 96, 1497, 4316, 100, 1504], "why": "the cistern the beds drain to: the water store, the potting floor and the second gardener at the gap in its partition"},
+        {"id": "c2_climb", "role": "door", "box": [4315, 96, 1503, 4315, 103, 1503], "belongs_to": "r3_return", "why": "the ladder out of the cistern up to the potting passage"},
+        {"id": "r3_return", "role": "hall", "box": [4312, 103, 1493, 4316, 105, 1503], "why": "the potting passage over the cellar's south wall, and the hatch at its north end that drops four into the beds' east aisle - past the hedge, so nothing is walked back through"}
+      ],
+
+      "route": [
+        {"at": [4318, 111, 1485], "room": "shaft", "what": "the hole where the healing machine stood"},
+        {"at": [4318, 99, 1485], "room": "r1_beds", "what": "twelve down, into the beds"},
+        {"at": [4316, 99, 1488], "room": "r1_beds", "what": "the east aisle"},
+        {"at": [4314, 99, 1488], "room": "r1_beds", "what": "the gap in the hedge, and the gardener standing in it"},
+        {"at": [4310, 99, 1491], "room": "r1_beds", "what": "the middle bed, and the one drain with water moving in it"},
+        {"at": [4310, 99, 1494], "room": "c1_drain", "posture": "swim", "what": "into the drain, on your front"},
+        {"at": [4310, 99, 1497], "room": "c1_drain", "posture": "swim", "what": "out the far end, four blocks"},
+        {"at": [4310, 96, 1499], "room": "r2_cistern", "what": "three down onto the cistern floor"},
+        {"at": [4313, 96, 1500], "room": "r2_cistern", "what": "the gap in the partition, and the second gardener"},
+        {"at": [4315, 96, 1503], "room": "c2_climb", "what": "the ladder out"},
+        {"at": [4315, 103, 1503], "room": "r3_return", "what": "the potting passage"},
+        {"at": [4316, 103, 1494], "room": "r3_return", "what": "the hatch over the east aisle"},
+        {"at": [4316, 99, 1493], "room": "r1_beds", "what": "four down into the aisle, east of the hedge"},
+        {"at": [4318, 99, 1485], "room": "r1_beds", "what": "back to the ladder"},
+        {"at": [4318, 111, 1485], "room": "shaft", "what": "up into the glasshouse, and Erika"}
+      ],
+
+      "mechanism": {
+        "tier": "free",
+        "kind": "crawl",
+        "what_the_player_sees": "a cellar of planting beds whose aisles all end in walls, and under one bed a hand's width of water running away south. The way on is the drain: you go in on your front. Which bed is the open one is shown by the water - the other drains are dry and stopped with soil.",
+        "why_this_one": "the design's item-frame dials need a comparator circuit and an unanswered question about adventure mode (Q4). The verb the design asks for - look at the beds, see which one drains - is kept, and answered by going where the water goes instead of by turning a dial at it. It is also the one verb this site can carry: four blocks of headroom under a dead-flat garden.",
+        "deviation": "no item frames, no comparators and no gate. The trellis and the beds are built; the dials are not.",
+        "assumed": "that a player can swim a one-block-high flooded channel. The swimming pose is 0.6 blocks tall in vanilla and this is how a flooded 1-high tunnel is passed, but it has not been tried in this pack: it is the one behaviour in these five interiors that a playtest must confirm, and if it fails the drain is a two-high tunnel with one command changed."
+      },
+
+      "state_scope": "shared_permanent",
+      "state_scope_why": "as gym 2.",
+      "reset": null,
+
+      "doors": [
+        {"id": "c1_drain", "at": [4310, 99, 1494], "opens_on": null, "guarded_by": "gym4_gardener_01", "vestibule_depth": null,
+         "why": "an open drain. Its guard stands in the hedge gap that is the only way to the bed it runs under."},
+        {"id": "c2_climb", "at": [4315, 96, 1503], "opens_on": null, "guarded_by": "gym4_gardener_02", "vestibule_depth": null,
+         "why": "an open ladder; the second gardener stands in the partition's only gap in front of it."},
+        {"id": "r3_return", "at": [4316, 103, 1494], "opens_on": null, "guarded_by": null, "vestibule_depth": null,
+         "why": "one way only, by a four-block drop through the hatch."}
+      ],
+
+      "trainers": [
+        {"id": "gym4_gardener_01", "working_name": "Gardener", "seat": [4314, 99, 1488], "yaw": 90,
+         "sight_distance": 2.5, "room": "r1_beds", "passed_at": 3,
+         "why_unavoidable": "the azalea hedge crosses the cellar wall to wall with a single gap, and he stands in the gap",
+         "sight_check": "the ladder's cells are five east of him and every other room is at least seven away"},
+        {"id": "gym4_gardener_02", "working_name": "Potting Gardener", "seat": [4313, 96, 1500], "yaw": 180,
+         "sight_distance": 2.5, "room": "r2_cistern", "passed_at": 8,
+         "why_unavoidable": "the cistern's partition has one gap and he stands across it, between where the drain puts you down and the ladder out",
+         "sight_check": "the ladder cells are 3.6 away, the drain's mouth 5.2"}
+      ],
+      "trainers_handoff": "seats, yaw and sight distance only.",
+
+      "leader": {
+        "id": "kanto_erika",
+        "room": "shell",
+        "seat_from": "template spawner",
+        "expect_spawner_at": [4303, 110, 1492],
+        "gate": null,
+        "gate_why": "as gym 1."
+      },
+
+      "no_build": [
+        {"box": [4296, 94, 1478, 4324, 106, 1506], "why": "contract G4: the whole dig. Not yet wired."}
+      ],
+
+      "spawn_suppression": {
+        "record": "gym_erika",
+        "box": [4288, 1472, 4327, 1511],
+        "why": "contract G1, unchanged: the dig sits inside it with three to nine blocks to spare on every side."
+      },
+
+      "spawn_condition_blocks": [
+        {"id": "minecraft:water", "why": "the drain is the puzzle and the drain is water. Every cell of it is inside gym_erika's spawn-free box (contract G1).", "where": "the drain under the middle bed, and the cistern's store"}
+      ],
+
+      "blocks": [
+        "minecraft:air", "minecraft:water", "minecraft:mossy_stone_bricks", "minecraft:mossy_cobblestone",
+        "minecraft:moss_block", "minecraft:azalea_leaves", "minecraft:rooted_dirt", "minecraft:coarse_dirt",
+        "minecraft:mud", "minecraft:packed_mud", "minecraft:cherry_planks", "minecraft:cherry_slab",
+        "minecraft:oak_planks", "minecraft:oak_slab", "minecraft:oak_fence", "minecraft:glass",
+        "minecraft:composter", "minecraft:barrel", "minecraft:chest", "minecraft:ladder",
+        "minecraft:scaffolding", "minecraft:lantern",
+        "minecraft:stone_bricks", "minecraft:hay_block"
+      ]
+    },
+
+    {
+      "id": "gym5", "settlement": "gym5_town", "donor": "gym5_gym_building", "leader_name": "Koga", "built": true,
+      "title": "the sump under the watch",
+      "why": "docs/world-building/TOWN_CHARACTER.md: a fen-edge watch town whose trackers read the marsh for anyone passing unseen, and whose signature set dressing is a board of cast prints. Under the gym is the fen itself, and the trackers' own way across it.",
+      "site": "Koga's is the most confined lot of the six. Its spawn-free box leaves four blocks east of the shell and three north, and the heightmap is y115-117 across the whole of it, so the works can be neither deep-roofed like Surge's nor spread like Erika's: they are one room the size of the lot, with the pit dug into its floor. The fen is the reason - the water table is at the town's feet - and the mud is why a fall into it costs time and not a life.",
+
+      "shell": {
+        "derived_from": "data/placements.json gym5_gym_building",
+        "expect_box": [4577, 115, 2467, 4603, 131, 2490],
+        "expect_floor_course_y": 116,
+        "expect_stand_y": 117,
+        "not_touched": "everything but the healer's cell and the ladder under it. The trainer spawner at [4597, 116, 2478] is left standing."
+      },
+
+      "entrance": [4582, 117, 2485],
+      "entrance_why": "the healer's cell, mapped through this placement's 180 rotation.",
+
+      "dig": [4572, 94, 2466, 4605, 111, 2494],
+      "dig_why": "under the lot and below the shell's lowest course at y115, inside the gym_koga spawn-free box, whose edges the sump reaches to within two blocks on the east and west.",
+      "shell_penetration": [4582, 115, 2485, 4582, 117, 2485],
+      "shell_penetration_why": "three cells, as gym 1.",
+
+      "rooms": [
+        {"id": "shaft", "role": "shaft", "box": [4582, 103, 2485, 4582, 117, 2485], "why": "the ladder from the hall down onto the entrance staging, fourteen rungs"},
+        {"id": "r1_sump", "role": "puzzle", "box": [4574, 96, 2474, 4602, 108, 2492], "why": "the sump: a mud fen six blocks below a web of mud-brick causeways one block wide. The causeways branch and most of them stop; the trackers' board of cast prints on the staging wall shows which turns hold. Step wrong and you are in the mud, which costs a wade and a climb and nothing else"},
+        {"id": "c1_gate", "role": "door", "box": [4593, 103, 2471, 4594, 106, 2473], "belongs_to": "r2_hide", "why": "the hide's door at the causeway's north end, two wide"},
+        {"id": "r2_hide", "role": "guard", "box": [4588, 103, 2466, 4598, 109, 2470], "why": "the trackers' hide: the reed racks, the eel traps and the watch's store, over the fen and out of it"},
+        {"id": "c2_chute", "role": "door", "box": [4589, 97, 2467, 4589, 103, 2474], "belongs_to": "r1_sump", "why": "the way out: a hole in the hide's west floor dropping six into the mud, and a crawl south under the sump's north wall. One way - six blocks of mud cannot be climbed - and it puts you in the fen, not on the causeways, so no tracker is re-passed"}
+      ],
+
+      "route": [
+        {"at": [4582, 117, 2485], "room": "shaft", "what": "the hole where the healing machine stood"},
+        {"at": [4582, 103, 2485], "room": "r1_sump", "what": "fourteen down onto the staging, where the board of prints hangs"},
+        {"at": [4585, 103, 2485], "room": "r1_sump", "what": "the causeway's mouth, and the first tracker across it"},
+        {"at": [4589, 103, 2483], "room": "r1_sump", "what": "the first turn the board shows"},
+        {"at": [4593, 103, 2480], "room": "r1_sump", "what": "the middle of the fen"},
+        {"at": [4597, 103, 2480], "room": "r1_sump", "what": "the last span"},
+        {"at": [4599, 103, 2480], "room": "r1_sump", "what": "the far staging, and the second tracker"},
+        {"at": [4595, 103, 2476], "room": "r1_sump", "what": "north along the causeway to the hide"},
+        {"at": [4593, 103, 2473], "room": "c1_gate", "what": "the hide's door, and the third tracker in it"},
+        {"at": [4593, 103, 2468], "room": "r2_hide", "what": "the hide: the racks, the traps and the store"},
+        {"at": [4590, 103, 2467], "room": "r2_hide", "what": "the lip of the hole in the hide's floor"},
+        {"at": [4589, 97, 2467], "room": "c2_chute", "what": "six down into the chute"},
+        {"at": [4589, 97, 2473], "room": "c2_chute", "what": "south under the sump's north wall"},
+        {"at": [4584, 97, 2480], "room": "r1_sump", "what": "the wade back under the causeways"},
+        {"at": [4575, 97, 2485], "room": "r1_sump", "what": "the fen ladder at the sump's west wall"},
+        {"at": [4575, 103, 2485], "room": "r1_sump", "what": "up onto the staging again"},
+        {"at": [4582, 103, 2485], "room": "r1_sump", "what": "back to the ladder"},
+        {"at": [4582, 117, 2485], "room": "shaft", "what": "up into the hall, and Koga"}
+      ],
+
+      "mechanism": {
+        "tier": "free",
+        "kind": "footing",
+        "what_the_player_sees": "a fen six blocks below, and causeways one block wide over it that branch four times and mostly stop. On the staging wall is the trackers' board: a pattern of cast prints that is the route, read before you start. Getting it wrong is a fall into mud and a wade to the ladder, never a death.",
+        "why_this_one": "the design's sculk-sensor alarm needs a latch and a reset, which is the only new wiring in the eight and the one thing that cannot be checked offline. The verb - move where the ground allows and read the trackers' own sign for it - is kept. The sensors are built, unwired, as the trackers' listening posts, which is what they are in the fiction.",
+        "deviation": "no redstone, no alarm, no gate. The carpet the design wanted for muffling is not placed either: carpets are spawn conditions and nothing here needs one."
+      },
+
+      "state_scope": "shared_permanent",
+      "state_scope_why": "as gym 2.",
+      "reset": null,
+
+      "doors": [
+        {"id": "c1_gate", "at": [4593, 103, 2471], "opens_on": null, "guarded_by": "gym5_tracker_03", "vestibule_depth": null,
+         "why": "an open door two wide, with the third tracker standing in it."},
+        {"id": "c2_chute", "at": [4589, 103, 2467], "opens_on": null, "guarded_by": null, "vestibule_depth": null,
+         "why": "one way only, by a six-block drop into mud."}
+      ],
+
+      "trainers": [
+        {"id": "gym5_tracker_01", "working_name": "Fen Tracker", "seat": [4585, 103, 2485], "yaw": 90,
+         "sight_distance": 2.5, "room": "r1_sump", "passed_at": 2,
+         "why_unavoidable": "he stands on the causeway's first span, which is one block wide with six of air either side",
+         "sight_check": "the ladder's cells are three west of him and no other room is within fourteen"},
+        {"id": "gym5_tracker_02", "working_name": "Reed Tracker", "seat": [4599, 103, 2480], "yaw": 270,
+         "sight_distance": 3.0, "room": "r1_sump", "passed_at": 6,
+         "why_unavoidable": "the far staging is three wide and he stands across it where the last span lands; the causeway north to the hide starts behind him",
+         "sight_check": "the hide's door is nine away and the hide itself ten"},
+        {"id": "gym5_tracker_03", "working_name": "Watch Tracker", "seat": [4593, 103, 2471], "yaw": 180,
+         "sight_distance": 2.0, "room": "c1_gate", "passed_at": 8,
+         "why_unavoidable": "he stands in the hide's door, which is two wide and the only way in",
+         "sight_check": "the door belongs to the hide, so the hide's own floor is his room; the nearest causeway cell of the sump is three south of him"}
+      ],
+      "trainers_handoff": "seats, yaw and sight distance only.",
+
+      "leader": {
+        "id": "kanto_koga",
+        "room": "shell",
+        "seat_from": "template spawner",
+        "expect_spawner_at": [4597, 116, 2478],
+        "gate": null,
+        "gate_why": "as gym 1."
+      },
+
+      "no_build": [
+        {"box": [4572, 94, 2466, 4605, 111, 2494], "why": "contract G4: the whole dig. Not yet wired."}
+      ],
+
+      "spawn_suppression": {
+        "record": "gym_koga",
+        "box": [4568, 2464, 4607, 2495],
+        "why": "contract G1, unchanged - and it is what sizes this gym: the box leaves the sump four blocks on the east and two on the south, so the fen is the lot and nothing more."
+      },
+
+      "blocks": [
+        "minecraft:air", "minecraft:mud", "minecraft:packed_mud", "minecraft:mud_bricks",
+        "minecraft:mud_brick_stairs", "minecraft:mud_brick_slab", "minecraft:mangrove_planks",
+        "minecraft:mangrove_slab", "minecraft:mangrove_fence", "minecraft:sculk", "minecraft:sculk_sensor",
+        "minecraft:dark_oak_planks", "minecraft:scaffolding", "minecraft:ladder", "minecraft:lantern", "minecraft:chain",
+        "minecraft:barrel", "minecraft:chest", "minecraft:stone_bricks", "minecraft:hay_block"
+      ]
+    },
+
     {"id": "gym6", "settlement": "gym6_town", "donor": "gym6_gym_building", "leader_name": "Sabrina", "built": false,
      "why_not": "docs/STATE.md: Sabrina's gym is not built until EXP-034 has actually run, being the only per-player puzzle and standing on machinery two players have never tested."},
-    {"id": "gym7", "settlement": "gym7_town", "donor": "gym7_gym_building", "leader_name": "Blaine", "built": false, "why_not": "as gym2"},
+    {
+      "id": "gym7", "settlement": "gym7_town", "donor": "gym7_gym_building", "leader_name": "Blaine", "built": true,
+      "title": "the throat",
+      "why": "docs/world-building/TOWN_CHARACTER.md: a research town on the crater rim that studies the cone's energy and keeps the mound between itself and the fire. Under the gym is the vent it studies: four throats, one of them cooled and quenched, and the sample galleries at its foot.",
+      "site": "Blaine's lot is as flat as Erika's - y106 across the footprint - so the site gives nothing horizontally and everything vertically: there is no cover to spend and no ridge to run into, but there are 35 blocks of rock under the hall before the world floor is anywhere near. This is the only one of the six that is mostly vertical, and the only route in the six that asks a player to jump off something on purpose.",
+
+      "shell": {
+        "derived_from": "data/placements.json gym7_gym_building",
+        "expect_box": [6159, 105, 4982, 6181, 121, 5008],
+        "expect_floor_course_y": 106,
+        "expect_stand_y": 107,
+        "not_touched": "everything but the healer's cell and the ladder under it. The trainer spawner at [6169, 106, 4988] is left standing."
+      },
+
+      "entrance": [6176, 107, 5003],
+      "entrance_why": "the healer's cell, mapped through this placement's clockwise_90 rotation.",
+
+      "dig": [6156, 70, 4980, 6182, 102, 5012],
+      "dig_why": "under the lot, below the shell's lowest course at y105, inside the gym_blaine spawn-free box - whose east edge at x6183 is two blocks from the shell, so the whole of this gym is under its own footprint and below it.",
+      "shell_penetration": [6176, 105, 5003, 6176, 107, 5003],
+      "shell_penetration_why": "three cells, as gym 1.",
+
+      "rooms": [
+        {"id": "shaft", "role": "shaft", "box": [6176, 96, 5003, 6176, 107, 5003], "why": "the instrument ladder from the hall down to the rim gallery, eleven rungs"},
+        {"id": "r1_rim", "role": "hall", "box": [6173, 96, 4997, 6178, 101, 5006], "why": "the rim gallery: the researchers' walk around the vent's head, with the ladder at one end, the geyser's mouth at the other, and the way into the throat chamber three wide in its west wall"},
+        {"id": "r2_throats", "role": "puzzle", "box": [6164, 96, 4993, 6172, 101, 5006], "why": "the throat chamber: four two-by-two holes in its floor. Three are dry and stop five below on a plug of cooled rock, with a ladder back out. The fourth is open all the way to the quench pool, and you can tell because there is light in it and steam off it"},
+        {"id": "r3_throat", "role": "puzzle", "box": [6165, 72, 4999, 6170, 95, 5003], "why": "the cooled throat and the quench pool at its foot: eighteen blocks of fall into six of water, which is the only way down that does not stop"},
+        {"id": "c1_landing", "role": "door", "box": [6169, 79, 4996, 6172, 83, 4999], "belongs_to": "r4_galleries", "why": "the sample landing at the pool's north lip, where you climb out"},
+        {"id": "r4_galleries", "role": "guard", "box": [6168, 79, 4990, 6177, 83, 4996], "why": "the sample galleries: a three-wide working passage along the vent's foot, with the core racks in its walls"},
+        {"id": "c3_stair", "role": "door", "box": [6175, 79, 4993, 6177, 87, 4998], "belongs_to": "r5_rack", "why": "the stair from the galleries up to the rack room, seven"},
+        {"id": "r5_rack", "role": "guard", "box": [6173, 86, 4998, 6178, 91, 5006], "why": "the rack room: where the cores are logged, and where the geyser is tapped"},
+        {"id": "c2_geyser", "role": "door", "box": [6178, 86, 5006, 6178, 95, 5006], "belongs_to": "r1_rim", "why": "the geyser: a water column standing on soul sand, so it carries you up ten and cannot be swum down. This is the only one-way-upward thing in the six interiors, and it is what stops a player reaching the galleries without taking the leap"}
+      ],
+
+      "route": [
+        {"at": [6176, 107, 5003], "room": "shaft", "what": "the hole where the healing machine stood"},
+        {"at": [6176, 96, 5003], "room": "r1_rim", "what": "eleven down onto the rim gallery"},
+        {"at": [6175, 96, 4999], "room": "r1_rim", "what": "the researcher at the lip, across the way into the chamber"},
+        {"at": [6173, 96, 4999], "room": "r1_rim", "what": "the three-wide gap in the chamber's wall"},
+        {"at": [6170, 96, 5000], "room": "r2_throats", "what": "the four throats; three are dark and dry, one has light in it"},
+        {"at": [6168, 78, 5002], "room": "r3_throat", "posture": "swim", "what": "the leap: eighteen down the cooled throat into the quench pool"},
+        {"at": [6169, 79, 4998], "room": "c1_landing", "what": "out of the pool onto the sample landing"},
+        {"at": [6169, 79, 4995], "room": "r4_galleries", "what": "through the galleries' doorway"},
+        {"at": [6171, 79, 4994], "room": "r4_galleries", "what": "the second researcher, across the working passage"},
+        {"at": [6176, 79, 4997], "room": "c3_stair", "what": "the ladder at the galleries' east end"},
+        {"at": [6176, 86, 4997], "room": "c3_stair", "what": "seven up, into the rack room"},
+        {"at": [6175, 86, 5003], "room": "r5_rack", "what": "the gap in the rack wall, and the third researcher in it"},
+        {"at": [6178, 86, 5006], "room": "c2_geyser", "posture": "swim", "what": "into the geyser"},
+        {"at": [6178, 94, 5006], "room": "c2_geyser", "posture": "swim", "what": "it carries you up"},
+        {"at": [6177, 96, 5006], "room": "r1_rim", "what": "out onto the rim gallery, east of the researcher"},
+        {"at": [6176, 96, 5003], "room": "r1_rim", "what": "back to the ladder"},
+        {"at": [6176, 107, 5003], "room": "shaft", "what": "up into the hall, and Blaine"}
+      ],
+
+      "mechanism": {
+        "tier": "free",
+        "kind": "leap",
+        "what_the_player_sees": "four throats in a floor, and eighteen blocks of dark under one of them. Three end on rock five down and put you on a ladder back; the fourth is lit from below and ends in water. The only way on is to choose one and step off. The way back is the geyser, which goes up and will not let you down it.",
+        "why_this_one": "the design's retracting bridges need a piston clock, which is redstone and cannot be checked offline. This site has no relief to build a timed crossing on anyway, and 35 blocks of rock under it: so the verb became the one the vent actually offers. It is also the one verb not used by another gym - Brock climbs, Misty rides, Surge traces, Erika crawls, Koga steps, Blaine jumps.",
+        "deviation": "no pistons, no clock and no moving bridge. The fumaroles are built as vents in the chamber's floor; nothing in them moves."
+      },
+
+      "state_scope": "shared_permanent",
+      "state_scope_why": "as gym 2.",
+      "reset": null,
+
+      "doors": [
+        {"id": "c1_landing", "at": [6169, 79, 4998], "opens_on": null, "guarded_by": null, "vestibule_depth": null,
+         "why": "the pool's lip; nothing gates it."},
+        {"id": "c3_stair", "at": [6176, 82, 4997], "opens_on": null, "guarded_by": "gym7_researcher_02", "vestibule_depth": null,
+         "why": "an open stair; the second researcher stands across the galleries that lead to it."},
+        {"id": "c2_geyser", "at": [6178, 90, 5006], "opens_on": null, "guarded_by": "gym7_researcher_03", "vestibule_depth": null,
+         "why": "one way only, and upward: a bubble column cannot be swum down, so the galleries cannot be entered from the rim."}
+      ],
+
+      "trainers": [
+        {"id": "gym7_researcher_01", "working_name": "Rim Researcher", "seat": [6175, 96, 4999], "yaw": 270,
+         "sight_distance": 2.5, "room": "r1_rim", "passed_at": 2,
+         "why_unavoidable": "the way into the throat chamber is three cells wide and he stands two blocks from all three of them; the geyser that returns you comes up seven blocks behind him, so a beaten player never passes him again",
+         "sight_check": "the nearest cell of the throat chamber is three west of him and the ladder's own cells above the gallery are seven away"},
+        {"id": "gym7_researcher_02", "working_name": "Core Researcher", "seat": [6171, 79, 4994], "yaw": 90,
+         "sight_distance": 2.5, "room": "r4_galleries", "passed_at": 8,
+         "why_unavoidable": "the galleries are three wide at his stand and his reach closes all three; the stair up is past him and the pool behind",
+         "sight_check": "the stair's cells are three east of him and the landing's four north"},
+        {"id": "gym7_researcher_03", "working_name": "Vent Researcher", "seat": [6175, 86, 5003], "yaw": 0,
+         "sight_distance": 2.5, "room": "r5_rack", "passed_at": 11,
+         "why_unavoidable": "the rack room's working aisle is three wide where he stands, between the stair head and the tap; the geyser is the only way on and it is behind him",
+         "sight_check": "the geyser's cells are 5.4 away and the stair's three"}
+      ],
+      "trainers_handoff": "seats, yaw and sight distance only.",
+
+      "leader": {
+        "id": "kanto_blaine",
+        "room": "shell",
+        "seat_from": "template spawner",
+        "expect_spawner_at": [6169, 106, 4988],
+        "gate": null,
+        "gate_why": "as gym 1."
+      },
+
+      "no_build": [
+        {"box": [6156, 70, 4980, 6182, 102, 5012], "why": "contract G4: the whole dig. Not yet wired."}
+      ],
+
+      "spawn_suppression": {
+        "record": "gym_blaine",
+        "box": [6152, 4976, 6183, 5015],
+        "why": "contract G1, unchanged: the dig is inside it with one block to spare on the east, which is why the geyser stands at x6178 and not further out."
+      },
+
+      "spawn_condition_blocks": [
+        {"id": "minecraft:water", "why": "the quench pool is what makes an eighteen-block fall survivable (contract G3) and the geyser is what makes the way back one-way. Every cell of both is inside gym_blaine's spawn-free box (contract G1).", "where": "the quench pool at the throat's foot, and the geyser column"}
+      ],
+
+      "blocks": [
+        "minecraft:air", "minecraft:water", "minecraft:soul_sand", "minecraft:polished_blackstone_bricks",
+        "minecraft:polished_blackstone", "minecraft:blackstone", "minecraft:basalt", "minecraft:smooth_basalt",
+        "minecraft:tuff", "minecraft:terracotta", "minecraft:acacia_planks", "minecraft:acacia_slab",
+        "minecraft:waxed_copper_block", "minecraft:ladder", "minecraft:scaffolding", "minecraft:lantern",
+        "minecraft:chain", "minecraft:barrel", "minecraft:chest", "minecraft:brewing_stand", "minecraft:cartography_table",
+        "minecraft:stone_bricks", "minecraft:hay_block"
+      ]
+    },
     {"id": "gym8", "settlement": "gym8_town", "donor": "gym8_gym_building", "leader_name": "Giovanni", "built": false, "why_not": "as gym2"}
   ]
 }
