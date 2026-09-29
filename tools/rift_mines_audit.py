@@ -11,7 +11,12 @@ The gated galleries, chambers and Heart were retired on 2026-09-27 (docs/world-b
 may be gated now, and the retired envelope is checked only as the refill's target.
 
 The plan (data only):
-  overlap     every column this build may write (its envelope and its shell, two round it; its houses, piles, street,
+  pocket      the spur pocket is re-measured from the canonical heightmap by the data's own words (`pocket`: every
+              column at or under floor_y 4-connected to a seed): every traced quarry lies inside it and keeps `inset`
+              clear of its edge, the columns each quarry takes are counted against it, no street or house stands in a
+              quarry, no house stands on more than 3 blocks of relief, and the camp track's end still reaches the seam
+              yard and the adit's mouth on foot without crossing one (the causeway between the two quarries)
+  overlap     every column this build may write (its envelope and its shell, two round it; its houses, piles, streets,
               lamp posts, derricks, headframe, tracks, the collapse) keeps `keep_clear.margin` from: the camp's streets,
               plaza, anchors and lots (derived/towns/rift_dig_camp_plan.json), every donor and earthwork the placements
               give the camp, the excavation haul road's path (the ramp tools/rift_skin.py paves, from the sculpt's
@@ -133,20 +138,114 @@ def stamp_chamber(c, r, height):
     return cells
 
 
-def floor_of_cut(cut, x, z):
-    x0, z0, x1, z1 = cut["rect"]
+def in_ring(ring, x, z):
+    """Per the data (geometry `traced`): the column's centre inside the ring by the even-odd rule."""
+    px, pz, hit = x + 0.5, z + 0.5, False
+    for i in range(len(ring)):
+        ax, az = ring[i]
+        bx, bz = ring[(i + 1) % len(ring)]
+        if (az > pz) != (bz > pz) and px < ax + (pz - az) / (bz - az) * (bx - ax):
+            hit = not hit
+    return hit
+
+
+def stamp_swathe(path, width):
+    """Per the data (geometry `swathe`): n = ceil(4 * length) + 1 samples a segment, each stamping the square of
+    Chebyshev radius width // 2 round its rounded centre."""
+    r, cols = width // 2, set()
+    for (x0, z0), (x1, z1) in zip(path, path[1:]):
+        L = math.hypot(x1 - x0, z1 - z0)
+        n = int(math.ceil(4 * L)) + 1 if L > 0 else 1
+        for s in range(n):
+            t = s / (n - 1) if n > 1 else 0.0
+            cx, cz = half_up(x0 + (x1 - x0) * t), half_up(z0 + (z1 - z0) * t)
+            cols |= {(cx + dx, cz + dz) for dx in range(-r, r + 1) for dz in range(-r, r + 1)}
+    return cols
+
+
+def columns_of_cut(cut):
+    """Per the data (geometry `cut`): the footprint of one cut, by its kind."""
+    k = cut["kind"]
+    if k in ("pit", "hillside"):
+        x0, z0, x1, z1 = cut["rect"]
+        return {(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)}
+    if k == "traced":
+        ring = cut["outline"]
+        xs, zs = [p[0] for p in ring], [p[1] for p in ring]
+        return {(x, z) for x in range(min(xs) - 1, max(xs) + 2) for z in range(min(zs) - 1, max(zs) + 2)
+                if in_ring(ring, x, z)}
+    if k == "trench":
+        return stamp_swathe(cut["path"], cut["width"])
+    raise SystemExit("unknown cut kind %r in %s" % (k, cut["id"]))
+
+
+def edge_steps(cols):
+    """Per the data: the 4-neighbour steps to the nearest column outside the footprint, less one."""
+    from collections import deque
+    e, q = {}, deque()
+    for (x, z) in cols:
+        if any((x + dx, z + dz) not in cols for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            e[(x, z)] = 0
+            q.append((x, z))
+    while q:
+        x, z = q.popleft()
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            c = (x + dx, z + dz)
+            if c in cols and c not in e:
+                e[c] = e[(x, z)] + 1
+                q.append(c)
+    return e
+
+
+def ramp_floor(rp, floor):
+    """Per the data (geometry `ramp`): y from `top` at the path's start to `floor` at its end, by the fraction of the
+    path's length; each column takes its nearest sample's y, ties to the earlier sample."""
+    if not rp:
+        return {}
+    r = rp["width"] // 2
+    segs = [(p, q, math.hypot(q[0] - p[0], q[1] - p[1])) for p, q in zip(rp["path"], rp["path"][1:])]
+    total = sum(s[2] for s in segs) or 1.0
+    near, ys, run = {}, {}, 0.0
+    for (x0, z0), (x1, z1), L in segs:
+        n = int(math.ceil(4 * L)) + 1 if L > 0 else 1
+        for s in range(n):
+            t = s / (n - 1) if n > 1 else 0.0
+            cx, cz = x0 + (x1 - x0) * t, z0 + (z1 - z0) * t
+            y = half_up(rp["top"] + (floor - rp["top"]) * ((run + L * t) / total))
+            for dx in range(-r, r + 1):
+                for dz in range(-r, r + 1):
+                    c = (half_up(cx) + dx, half_up(cz) + dz)
+                    dd = math.hypot(c[0] - cx, c[1] - cz)
+                    if c not in near or dd < near[c]:
+                        near[c], ys[c] = dd, y
+        run += L
+    return ys
+
+
+def floors_of_cut(cut, ground):
+    """{(x, z): y_f} for one cut, from the data's `geometry` words alone."""
+    cols = columns_of_cut(cut)
+    if cut["kind"] == "trench":
+        return {(x, z): ground(x, z) - cut["depth"] for (x, z) in cols}
     b = cut.get("bench") or {}
-    if cut["kind"] == "pit":
-        dists = [x - x0, x1 - x, z - z0, z1 - z]
-    else:
-        side = {"west": x - x0, "east": x1 - x, "north": z - z0, "south": z1 - z}
-        dists = [side[s] for s in cut.get("benches") or []]
-    lvl = max(0, b.get("levels", 1) - 1 - min(dists) // b.get("run", 1)) if dists else 0
-    y = cut["floor"] + b.get("rise", 0) * lvl
-    rp = cut.get("ramp")
-    if rp and rp["x"][0] <= x <= rp["x"][1] and rp["z"][0] <= z <= rp["z"][1]:
-        y = half_up(cut["floor"] + (rp["z"][1] - z) / (rp["z"][1] - rp["z"][0]) * (rp["top"] - cut["floor"]))
-    return y
+    steps = edge_steps(cols) if cut["kind"] == "traced" else None
+    out = {}
+    for (x, z) in cols:
+        if cut["kind"] == "traced":
+            dists = [steps[(x, z)]]
+        elif cut["kind"] == "pit":
+            x0, z0, x1, z1 = cut["rect"]
+            dists = [x - x0, x1 - x, z - z0, z1 - z]
+        else:
+            x0, z0, x1, z1 = cut["rect"]
+            side = {"west": x - x0, "east": x1 - x, "north": z - z0, "south": z1 - z}
+            dists = [side[s] for s in cut.get("benches") or []]
+        lvl = max(0, b.get("levels", 1) - 1 - min(dists) // b.get("run", 1)) if dists else 0
+        out[(x, z)] = cut["floor"] + b.get("rise", 0) * lvl
+    for c, y in ramp_floor(cut.get("ramp"), cut["floor"]).items():
+        if c in out:
+            out[c] = y
+    return out
 
 
 def stamp(f, ground):
@@ -175,14 +274,12 @@ def plan(spec, ground):
     """(gated set, ungated set, effective ground {(x, z): y}, cut columns) from the data alone."""
     gated, ungated, eff, cutcols = set(), set(), {}, set()
     for cut in spec["town"]["cuts"]:
-        x0, z0, x1, z1 = cut["rect"]
-        for x in range(x0, x1 + 1):
-            for z in range(z0, z1 + 1):
-                yf, g = floor_of_cut(cut, x, z), ground(x, z)
-                if g > yf:
-                    eff[(x, z)] = min(eff.get((x, z), g), yf)
-                    cutcols.add((x, z))
-                    ungated.update((x, y, z) for y in range(yf + 1, g + 7))
+        for (x, z), yf in floors_of_cut(cut, ground).items():
+            g = ground(x, z)
+            if g > yf:
+                eff[(x, z)] = min(eff.get((x, z), g), yf)
+                cutcols.add((x, z))
+                ungated.update((x, y, z) for y in range(yf + 1, g + 7))
     for f in spec["mine"]["features"]:
         (gated if f.get("gated") else ungated).update(stamp(f, ground))
     return gated, ungated - gated, eff, cutcols
@@ -262,9 +359,9 @@ def plan_columns(spec, gated, ungated, cutcols):
             for dz in range(-SHELL, SHELL + 1):
                 cols.add((x + dx, z + dz))
     t = spec["town"]
-    st = t["street"]
-    street = {(x, z) for x in range(st["from"][0], st["to"][0] + 1)
-              for z in range(st["from"][1] - st["width"] // 2, st["from"][1] + st["width"] // 2 + 1)}
+    street = set()
+    for st in t["streets"]:
+        street |= stamp_swathe(st["polyline"], st["width"])
     cols |= street
     for h in t["houses"]:
         x0, z0, x1, z1 = h["rect"]
@@ -392,12 +489,106 @@ def audit(source_root=None):
     notes["columns the build may write"] = len(cols)
     notes["camp cells kept clear"] = len(camp)
     notes["haul road columns kept clear"] = len(road)
+    probs += pocket_problems(spec, grid, ground, notes)
     p2, n2 = plan_problems(spec, gated, ungated)
     probs += p2
     notes.update(n2)
     probs += output_problems(spec, grid, gated, ungated, top, cols, notes)
     probs += refill_problems(spec, grid, ungated, ground, notes)
     return probs, notes
+
+
+def measure_pocket(spec, grid, ground):
+    """The spur pocket, re-measured from the canonical heightmap by the data's own words: every column of the grid at
+    or under `floor_y`, 4-connected to `seed`. Independent of anything this build emits."""
+    from collections import deque
+    pk = spec["pocket"]
+    sx, sz = pk["seed"]
+    if ground(sx, sz) > pk["floor_y"]:
+        raise SystemExit("the pocket's seed (%d, %d) is above floor_y %d on this heightmap" % (sx, sz, pk["floor_y"]))
+    seen = {(sx, sz)}
+    q = deque(seen)
+    while q:
+        x, z = q.popleft()
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            c = (x + dx, z + dz)
+            if c in seen or not (grid.x0 <= c[0] <= grid.x1 and grid.z0 <= c[1] <= grid.z1):
+                continue
+            if ground(c[0], c[1]) <= pk["floor_y"]:
+                seen.add(c)
+                q.append(c)
+    return seen
+
+
+def pocket_problems(spec, grid, ground, notes):
+    """The reshape's own claim: the traced quarries are cut from the pocket the heightmap has, they keep `inset` clear
+    of its edge, and the camp can still walk from the track's end to the seam yard without crossing a quarry."""
+    pk = spec["pocket"]
+    probs = []
+    pocket = measure_pocket(spec, grid, ground)
+    notes["pocket columns measured"] = len(pocket)
+    if len(pocket) != pk["measured"]["columns"]:
+        probs.append("pocket: the heightmap gives %d columns, data/rift_mines.json records %d"
+                     % (len(pocket), pk["measured"]["columns"]))
+    inset, allcut, traced = pk["inset"], set(), {}
+    for cut in spec["town"]["cuts"]:
+        cols = columns_of_cut(cut)
+        allcut |= cols
+        if cut["kind"] != "traced":
+            continue
+        traced[cut["id"]] = cols
+        out = cols - pocket
+        if out:
+            probs.append("pocket: %s has %d columns outside the pocket, e.g. %s"
+                         % (cut["id"], len(out), sorted(out)[0]))
+        near = [c for c in cols
+                if any((c[0] + dx, c[1] + dz) not in pocket for dx in range(-inset, inset + 1)
+                       for dz in range(-inset, inset + 1) if abs(dx) + abs(dz) <= inset)]
+        if near:
+            probs.append("pocket: %s has %d columns within %d of the pocket's edge, e.g. %s"
+                         % (cut["id"], len(near), inset, sorted(near)[0]))
+        notes["%s columns" % cut["id"]] = len(cols)
+    notes["traced share of the pocket"] = round(100.0 * len(set().union(*traced.values())) / len(pocket), 1) if traced else 0
+    notes["every cut's share of the pocket"] = round(100.0 * len(allcut & pocket) / len(pocket), 1)
+    # on foot from the camp track's end to the seam yard, over ground no cut but the seam yard's own has taken
+    seam = columns_of_cut(next(c for c in spec["town"]["cuts"] if c["id"] == spec["mine"]["seam"]["cut"]))
+    land = (pocket - allcut) | seam
+    start = tuple(spec["town"]["streets"][0]["polyline"][0])
+    if start not in land:
+        probs.append("pocket: Forge Row starts at %s, which is not open ground" % (start,))
+    else:
+        from collections import deque
+        saw, q = {start}, deque([start])
+        while q:
+            x, z = q.popleft()
+            for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                c = (x + dx, z + dz)
+                if c in land and c not in saw:
+                    saw.add(c)
+                    q.append(c)
+        yard = tuple(spec["town"]["streets"][0]["polyline"][-1])
+        adit = (spec["mine"]["features"][0]["path"][0][0], spec["mine"]["features"][0]["path"][0][2])
+        for name, c in (("the street's end at the seam yard", yard), ("the adit's mouth", adit)):
+            if c not in saw:
+                probs.append("pocket: %s %s cannot be reached on foot from Forge Row's start without crossing a quarry"
+                             % (name, c))
+        notes["ground walkable from Forge Row's start"] = len(saw)
+    # the streets and the town stand on ground, not in a quarry
+    for st in spec["town"]["streets"]:
+        inside = stamp_swathe(st["polyline"], st["width"]) & (allcut - seam)
+        if inside:
+            probs.append("pocket: street %s runs through a quarry at %s (%d columns)"
+                         % (st["id"], sorted(inside)[0], len(inside)))
+    for h in spec["town"]["houses"]:
+        x0, z0, x1, z1 = h["rect"]
+        rect = {(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)}
+        inside = rect & (allcut - seam)
+        if inside:
+            probs.append("pocket: house %s stands in a quarry at %s" % (h["id"], sorted(inside)[0]))
+        hs = [ground(x, z) for (x, z) in rect]
+        if max(hs) - min(hs) > 3:
+            probs.append("pocket: house %s stands on %d blocks of relief" % (h["id"], max(hs) - min(hs)))
+    return probs
 
 
 def plan_problems(spec, gated, ungated):

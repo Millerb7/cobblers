@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.rift_mines/1",
-  "status": "cut back on the branch world/gulch-prototype, 2026-09-27 (SOUTHERN_RIFT_MEGA.md decisions 1-2): the camp, the seam and one crystal behind the company grille; the gated galleries, chambers and the Heart are no longer built. Built offline; not installed",
+  "status": "reshaped 2026-09-29 (SOUTHERN_RIFT_MEGA.md section 13 and DEEP_CITY.md section 6): the camp fitted to its pocket, one large stepped quarry traced from the pocket's own outline with a second older cut beside it, strip mines on the shoulders above, and an unplanned town of rock houses along two streets. Earlier: cut back 2026-09-27 (SOUTHERN_RIFT_MEGA.md decisions 1-2) to the camp, the seam and one crystal behind the company grille. Built offline; not installed, not in any world",
   "builder": "tools/rift_mines.py",
   "audit": "tools/rift_mines_audit.py",
   "which_town": {
@@ -10,12 +10,16 @@
   "disagreements": [
     "Settled 2026-09-27 (SOUTHERN_RIFT_MEGA.md decisions 1-2): the mega stone mine is the gulch's (data/gulch_mine.json). The spur's gated galleries, chambers and Heart, built here first on the owner's earlier request, are retired (retired_gated_section); the camp keeps its seam and one warded crystal.",
     "RIFT_ZONES.md makes the west spur Z1, opened at 2 badges, and data/spawns.json rift_west_spur spawns at 56-58: the band is wrong for a zone opened at 2 badges (DEEP_CITY.md section 6 says so too). Not changed here: trainer-balance-designer's.",
-    "The placement plan says the camp is strung 'between walls twenty blocks high'. On the canonical heightmap the spur here is a shallow bowl: floor y87, rising about one block in five to y113-115 at z3080 (north) and y104 at z3400 (south). The quarries and worked faces are cut into those slopes to make the walls a mining town needs."
+    "The placement plan says the camp is strung 'between walls twenty blocks high'. On the canonical heightmap the spur here is a shallow bowl: floor y87, rising about one block in five to y113-115 at z3080 (north) and y102 at z3400 (south). The quarries and worked faces are cut into those slopes to make the walls a mining town needs. Re-measured 2026-09-29 after the water export: y114 at (3120, 3080), y112 at (3120, 3100), y102 at (3120, 3400), floor y89 at (3120, 3300); the recorded figures stand but for the south rim, which is y102, not y104. No cut floor here is above the ground the export now has, except 40 columns at the north quarry north-west corner, where the ground has always been at its floor (y88) and nothing is cut.",
+    "DEEP_CITY.md section 6 wants \"one street about 300 long\". Measured on this layout: Forge Row 90 blocks, the south rim street 147, the camp track 90 (data/placements.json) = 327 of street along the spur floor, but in three legs round the quarry rather than one line. No single straight street of 300 fits: the floor a street can use runs from the excavation (x3050) to the relic keep-clear box (x3280), 230 blocks, and the quarry is in the middle of it.",
+    "DEEP_CITY.md section 6 also asks for five adits on ADR-003's reset-face pattern (coal, iron, the relic seam, the particle drift, a fossil bed), the Z-Ring and Mega Bracelet chain and a Habitat Block band per ore face. Not built here: the LumyMon and legendarymonuments ore block ids are marked NOT READ in that document, each adit needs a spawn-policy whitelist (data/spawn_block_policy.json) and a Habitat Block that are other owners' files, and DEEP_CITY.md owner decision 9 (where the Key Stone lives) is still open. The three drifts and the seam that were already here are unchanged.",
+    "DEEP_CITY.md section 6's barrier, the Slip, is not built: it is marked 'recommended' and is owner decision 8 (the Slip with one-way lifts or a Compact checkpoint, and what opens it upward), with decision 10 (the Z1/Z2 line moved to the ridge) behind it. It is also a stroke in data/rift_sculpt.json, which lands with a heightmap export, not with this pack."
   ],
   "design": [
     "docs/world-building/SOUTHERN_RIFT_MEGA.md section 8 (the seam found early, not usable yet) and section 11 decisions 1-2",
     "docs/world-building/DEEP_CITY.md section 6 (the dig camp as a mining town: stone and copper, no timber; ore piles from blocks that decide nothing; carts)",
-    "docs/mechanics/STONE_ECONOMY.md 5.3-5.4 (the tease crystal restores on approach, filtered)"
+    "docs/mechanics/STONE_ECONOMY.md 5.3-5.4 (the tease crystal restores on approach, filtered)",
+    "docs/world-building/SOUTHERN_RIFT_MEGA.md section 13, the owner on the map of the camp: it 'should also conform to the shape of the pocket it is in, the quarry should be large and a little deep taking half of the area probably, with the strip mines and stuff on top. have the camp seem chaotic in its planning not just a pasted town with perfect lines in a grid pattern.'"
   ],
   "seed": 20260927,
   "grid": {
@@ -135,54 +139,56 @@
     "rail_why": "minecraft:rail is a spawn condition (Rolycoly, Carkol, Coalossal: data/spawn_blocks.json) and SOUTHERN_RIFT.md and DEEP_CITY.md keep it out of the Rift's towns; data/spawn_block_policy.json whitelists it only inside the excavation's two archaeological sites. minecraft:powered_rail is named by no loaded spawn condition (data/spawn_blocks.json lists every block one names), so the track is powered rail, laid unpowered, straight runs only (a powered rail cannot turn a corner)."
   },
   "town": {
-    "street": {
-      "id": "forge_row",
-      "from": [
-        3168,
-        3300
-      ],
-      "to": [
-        3264,
-        3300
-      ],
-      "width": 3,
-      "surface": "minecraft:coarse_dirt",
-      "why": "the camp track continued east from its last cell (x3167) as the town's working street; the same surface as the camp track"
-    },
     "lamp_posts": [
       [
-        3184,
+        3166,
         3296
       ],
       [
-        3214,
-        3296
+        3160,
+        3283
+      ],
+      [
+        3147,
+        3275
+      ],
+      [
+        3132,
+        3267
+      ],
+      [
+        3122,
+        3249
+      ],
+      [
+        3122,
+        3238
+      ],
+      [
+        3140,
+        3328
+      ],
+      [
+        3172,
+        3336
+      ],
+      [
+        3208,
+        3342
       ],
       [
         3246,
-        3296
-      ],
-      [
-        3199,
-        3304
-      ],
-      [
-        3232,
-        3304
-      ],
-      [
-        3260,
-        3304
+        3341
       ]
     ],
     "houses": [
       {
         "id": "forge",
         "rect": [
-          3171,
-          3285,
-          3181,
-          3294
+          3104,
+          3272,
+          3115,
+          3282
         ],
         "door": "south",
         "walls": "minecraft:tuff_bricks",
@@ -192,100 +198,39 @@
       {
         "id": "assay_office",
         "rect": [
-          3187,
-          3285,
-          3195,
-          3294
+          3086,
+          3270,
+          3094,
+          3278
         ],
-        "door": "south",
+        "door": "east",
         "walls": "minecraft:deepslate_bricks",
         "role": "assay"
       },
       {
-        "id": "bunkhouse_1",
-        "rect": [
-          3201,
-          3285,
-          3211,
-          3294
-        ],
-        "door": "south",
-        "walls": "minecraft:tuff_bricks",
-        "role": "bunkhouse"
-      },
-      {
-        "id": "canteen",
-        "rect": [
-          3217,
-          3285,
-          3227,
-          3294
-        ],
-        "door": "south",
-        "walls": "minecraft:deepslate_bricks",
-        "role": "canteen",
-        "chimney": true
-      },
-      {
         "id": "company_store",
         "rect": [
-          3233,
-          3285,
-          3241,
-          3294
+          3130,
+          3234,
+          3139,
+          3243
         ],
         "door": "south",
         "walls": "minecraft:tuff_bricks",
         "role": "store"
       },
       {
-        "id": "bunkhouse_2",
-        "rect": [
-          3173,
-          3305,
-          3181,
-          3313
-        ],
-        "door": "north",
-        "walls": "minecraft:deepslate_bricks",
-        "role": "bunkhouse"
-      },
-      {
-        "id": "bunkhouse_3",
-        "rect": [
-          3187,
-          3305,
-          3195,
-          3313
-        ],
-        "door": "north",
-        "walls": "minecraft:tuff_bricks",
-        "role": "bunkhouse"
-      },
-      {
         "id": "smelter",
         "rect": [
-          3201,
-          3305,
-          3211,
-          3314
+          3143,
+          3234,
+          3154,
+          3243
         ],
-        "door": "north",
+        "door": "west",
         "walls": "minecraft:deepslate_bricks",
         "role": "smelter",
         "chimney": true
-      },
-      {
-        "id": "tool_shed",
-        "rect": [
-          3217,
-          3305,
-          3224,
-          3312
-        ],
-        "door": "north",
-        "walls": "minecraft:tuff_bricks",
-        "role": "tools"
       },
       {
         "id": "tally_office",
@@ -297,101 +242,71 @@
         ],
         "door": "east",
         "walls": "minecraft:deepslate_bricks",
-        "role": "tally",
-        "on": "seam_cut",
-        "why": "the company's tally office in the seam cut's yard, where every cart from the adit is weighed"
+        "role": "tally"
+      },
+      {
+        "id": "bunkhouse_3",
+        "rect": [
+          3132,
+          3334,
+          3141,
+          3343
+        ],
+        "door": "east",
+        "walls": "minecraft:tuff_bricks",
+        "role": "bunkhouse"
+      },
+      {
+        "id": "canteen",
+        "rect": [
+          3158,
+          3345,
+          3167,
+          3352
+        ],
+        "door": "north",
+        "walls": "minecraft:deepslate_bricks",
+        "role": "canteen",
+        "chimney": true
+      },
+      {
+        "id": "bunkhouse_1",
+        "rect": [
+          3196,
+          3348,
+          3205,
+          3357
+        ],
+        "door": "west",
+        "walls": "minecraft:tuff_bricks",
+        "role": "bunkhouse"
+      },
+      {
+        "id": "bunkhouse_2",
+        "rect": [
+          3228,
+          3346,
+          3236,
+          3354
+        ],
+        "door": "north",
+        "walls": "minecraft:deepslate_bricks",
+        "role": "bunkhouse"
+      },
+      {
+        "id": "tool_shed",
+        "rect": [
+          3258,
+          3347,
+          3266,
+          3355
+        ],
+        "door": "north",
+        "walls": "minecraft:tuff_bricks",
+        "role": "tools"
       }
     ],
     "ore_piles": [
-      {
-        "id": "row_iron",
-        "centre": [
-          3250,
-          3289
-        ],
-        "r": [
-          3.0,
-          2.5
-        ],
-        "h": 3.4,
-        "blocks": [
-          "minecraft:raw_iron_block",
-          "minecraft:raw_iron_block",
-          "minecraft:cobbled_deepslate",
-          "minecraft:tuff"
-        ]
-      },
-      {
-        "id": "row_copper",
-        "centre": [
-          3259,
-          3290
-        ],
-        "r": [
-          2.5,
-          2.5
-        ],
-        "h": 3.0,
-        "blocks": [
-          "minecraft:raw_copper_block",
-          "minecraft:copper_ore",
-          "minecraft:raw_copper_block",
-          "minecraft:tuff"
-        ]
-      },
-      {
-        "id": "row_coal",
-        "centre": [
-          3236,
-          3309
-        ],
-        "r": [
-          3.0,
-          2.5
-        ],
-        "h": 3.2,
-        "blocks": [
-          "minecraft:coal_block",
-          "minecraft:coal_block",
-          "minecraft:cobbled_deepslate",
-          "minecraft:blackstone"
-        ]
-      },
-      {
-        "id": "row_gold",
-        "centre": [
-          3246,
-          3310
-        ],
-        "r": [
-          2.2,
-          2.2
-        ],
-        "h": 2.6,
-        "blocks": [
-          "minecraft:raw_gold_block",
-          "minecraft:gold_ore",
-          "minecraft:andesite"
-        ]
-      },
-      {
-        "id": "row_spoil",
-        "centre": [
-          3256,
-          3310
-        ],
-        "r": [
-          3.0,
-          2.8
-        ],
-        "h": 3.6,
-        "blocks": [
-          "minecraft:cobbled_deepslate",
-          "minecraft:tuff",
-          "minecraft:andesite",
-          "minecraft:cobblestone"
-        ]
-      },
       {
         "id": "yard_iron",
         "centre": [
@@ -464,24 +379,6 @@
         ]
       },
       {
-        "id": "south_quarry_stone",
-        "centre": [
-          3216,
-          3362
-        ],
-        "r": [
-          2.6,
-          2.4
-        ],
-        "h": 3.0,
-        "blocks": [
-          "minecraft:andesite",
-          "minecraft:diorite",
-          "minecraft:granite",
-          "minecraft:cobblestone"
-        ]
-      },
-      {
         "id": "east_face_copper",
         "centre": [
           3266,
@@ -496,6 +393,165 @@
           "minecraft:raw_copper_block",
           "minecraft:copper_ore",
           "minecraft:gold_ore",
+          "minecraft:tuff"
+        ]
+      },
+      {
+        "id": "row_iron",
+        "centre": [
+          3120,
+          3268
+        ],
+        "r": [
+          2.6,
+          2.4
+        ],
+        "h": 3.4,
+        "blocks": [
+          "minecraft:raw_iron_block",
+          "minecraft:raw_iron_block",
+          "minecraft:cobbled_deepslate",
+          "minecraft:tuff"
+        ]
+      },
+      {
+        "id": "row_coal",
+        "centre": [
+          3190,
+          3332
+        ],
+        "r": [
+          2.5,
+          2.5
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:coal_block",
+          "minecraft:coal_block",
+          "minecraft:cobbled_deepslate",
+          "minecraft:blackstone"
+        ]
+      },
+      {
+        "id": "bench_spoil",
+        "centre": [
+          3186,
+          3290
+        ],
+        "r": [
+          2.6,
+          2.4
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:cobbled_deepslate",
+          "minecraft:tuff",
+          "minecraft:andesite",
+          "minecraft:cobblestone"
+        ]
+      },
+      {
+        "id": "south_rim_copper",
+        "centre": [
+          3154,
+          3339
+        ],
+        "r": [
+          2.6,
+          2.4
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:raw_copper_block",
+          "minecraft:copper_ore",
+          "minecraft:tuff",
+          "minecraft:cobbled_deepslate"
+        ]
+      },
+      {
+        "id": "south_rim_spoil",
+        "centre": [
+          3176,
+          3348
+        ],
+        "r": [
+          3.2,
+          2.8
+        ],
+        "h": 3.6,
+        "blocks": [
+          "minecraft:cobbled_deepslate",
+          "minecraft:tuff",
+          "minecraft:gravel",
+          "minecraft:cobblestone"
+        ]
+      },
+      {
+        "id": "strip_north_spoil",
+        "centre": [
+          3169,
+          3199
+        ],
+        "r": [
+          2.0,
+          2.0
+        ],
+        "h": 2.6,
+        "blocks": [
+          "minecraft:gravel",
+          "minecraft:tuff",
+          "minecraft:cobbled_deepslate"
+        ]
+      },
+      {
+        "id": "strip_west_spoil",
+        "centre": [
+          3088,
+          3204
+        ],
+        "r": [
+          2.4,
+          2.4
+        ],
+        "h": 2.6,
+        "blocks": [
+          "minecraft:gravel",
+          "minecraft:cobbled_deepslate",
+          "minecraft:tuff"
+        ]
+      },
+      {
+        "id": "strip_south_spoil",
+        "centre": [
+          3204,
+          3364
+        ],
+        "r": [
+          2.8,
+          2.4
+        ],
+        "h": 3.0,
+        "blocks": [
+          "minecraft:gravel",
+          "minecraft:tuff",
+          "minecraft:andesite",
+          "minecraft:cobbled_deepslate"
+        ]
+      },
+      {
+        "id": "strip_east_spoil",
+        "centre": [
+          3242,
+          3170
+        ],
+        "r": [
+          2.4,
+          2.4
+        ],
+        "h": 2.6,
+        "blocks": [
+          "minecraft:gravel",
+          "minecraft:cobbled_deepslate",
           "minecraft:tuff"
         ]
       }
@@ -568,38 +624,390 @@
         "why": "a worked face: a straight cut 10-12 high with copper, gold and lapis in it, and Drift B going in"
       },
       {
-        "id": "south_quarry",
-        "kind": "pit",
-        "rect": [
-          3184,
-          3328,
-          3230,
-          3378
+        "id": "the_great_cut",
+        "kind": "traced",
+        "outline": [
+          [
+            3134,
+            3248
+          ],
+          [
+            3146,
+            3250
+          ],
+          [
+            3158,
+            3246
+          ],
+          [
+            3162,
+            3216
+          ],
+          [
+            3174,
+            3214
+          ],
+          [
+            3176,
+            3248
+          ],
+          [
+            3206,
+            3256
+          ],
+          [
+            3232,
+            3256
+          ],
+          [
+            3252,
+            3254
+          ],
+          [
+            3270,
+            3262
+          ],
+          [
+            3272,
+            3294
+          ],
+          [
+            3270,
+            3316
+          ],
+          [
+            3260,
+            3328
+          ],
+          [
+            3238,
+            3332
+          ],
+          [
+            3210,
+            3330
+          ],
+          [
+            3190,
+            3326
+          ],
+          [
+            3178,
+            3314
+          ],
+          [
+            3176,
+            3296
+          ],
+          [
+            3172,
+            3282
+          ],
+          [
+            3150,
+            3268
+          ],
+          [
+            3132,
+            3264
+          ],
+          [
+            3130,
+            3252
+          ]
+        ],
+        "floor": 74,
+        "bench": {
+          "rise": 3,
+          "run": 6,
+          "levels": 5
+        },
+        "ramp": {
+          "path": [
+            [
+              3140,
+              3269
+            ],
+            [
+              3152,
+              3274
+            ],
+            [
+              3164,
+              3280
+            ],
+            [
+              3176,
+              3289
+            ],
+            [
+              3181,
+              3300
+            ],
+            [
+              3184,
+              3313
+            ],
+            [
+              3196,
+              3322
+            ],
+            [
+              3216,
+              3325
+            ],
+            [
+              3240,
+              3325
+            ],
+            [
+              3258,
+              3314
+            ],
+            [
+              3264,
+              3300
+            ],
+            [
+              3262,
+              3286
+            ]
+          ],
+          "width": 5,
+          "top": 87,
+          "why": "the haul road in from the town's end of Forge Row, down round the pit's own rim at about 8 in 100, five benches deep; measured ground at its head (3140, 3269) is y87"
+        },
+        "veins": [
+          "minecraft:copper_ore",
+          "minecraft:lapis_ore",
+          "minecraft:tuff",
+          "minecraft:andesite"
+        ],
+        "role": "quarry",
+        "why": "the owner, SOUTHERN_RIFT_MEGA.md section 13: 'the quarry should be large and a little deep taking half of the area'. Its outline is traced from the spur pocket itself (see `pocket`), never a rectangle: it keeps 8 clear of the pocket's edge and 6 of the camp, the haul road and the older works. 13 below the rim at the centre, five benches of 3 up its sides."
+      },
+      {
+        "id": "the_west_cut",
+        "kind": "traced",
+        "outline": [
+          [
+            3088,
+            3220
+          ],
+          [
+            3100,
+            3206
+          ],
+          [
+            3106,
+            3228
+          ],
+          [
+            3110,
+            3240
+          ],
+          [
+            3118,
+            3252
+          ],
+          [
+            3116,
+            3264
+          ],
+          [
+            3100,
+            3268
+          ],
+          [
+            3086,
+            3250
+          ]
         ],
         "floor": 79,
         "bench": {
           "rise": 3,
-          "run": 3,
-          "levels": 6
-        },
-        "ramp": {
-          "x": [
-            3205,
-            3209
-          ],
-          "z": [
-            3328,
-            3350
-          ],
-          "top": 91
+          "run": 5,
+          "levels": 4
         },
         "veins": [
-          "minecraft:diorite",
-          "minecraft:granite",
-          "minecraft:copper_ore"
+          "minecraft:copper_ore",
+          "minecraft:tuff",
+          "minecraft:cobbled_deepslate"
         ],
         "role": "quarry",
-        "why": "a sunk stepped pit south of Forge Row, benches on every side and a ramp down from its north rim"
+        "why": "the older, shallower cut the great cut ran up against: it leaves an 11-wide causeway (x3119-3129) between them so the camp still reaches the seam yard on foot. Unplanned, not aligned to anything, as the owner asked."
+      },
+      {
+        "id": "strip_north_a",
+        "kind": "trench",
+        "path": [
+          [
+            3162,
+            3208
+          ],
+          [
+            3166,
+            3190
+          ],
+          [
+            3172,
+            3172
+          ]
+        ],
+        "width": 3,
+        "depth": 3,
+        "role": "strip",
+        "why": "a strip worked up the north shoulder above the pit, between the seam yard and the north quarry"
+      },
+      {
+        "id": "strip_north_b",
+        "kind": "trench",
+        "path": [
+          [
+            3172,
+            3204
+          ],
+          [
+            3177,
+            3186
+          ],
+          [
+            3175,
+            3168
+          ]
+        ],
+        "width": 3,
+        "depth": 2,
+        "role": "strip",
+        "why": "the second strip of the north shoulder, abandoned shallower than the first"
+      },
+      {
+        "id": "strip_west_a",
+        "kind": "trench",
+        "path": [
+          [
+            3078,
+            3214
+          ],
+          [
+            3083,
+            3198
+          ],
+          [
+            3092,
+            3186
+          ]
+        ],
+        "width": 3,
+        "depth": 3,
+        "role": "strip",
+        "why": "a strip above the west cut, cut across the slope rather than along it"
+      },
+      {
+        "id": "strip_west_b",
+        "kind": "trench",
+        "path": [
+          [
+            3094,
+            3200
+          ],
+          [
+            3102,
+            3190
+          ]
+        ],
+        "width": 3,
+        "depth": 2,
+        "role": "strip",
+        "why": "a short second strip on the west shoulder, at an angle to the first"
+      },
+      {
+        "id": "strip_south_a",
+        "kind": "trench",
+        "path": [
+          [
+            3186,
+            3348
+          ],
+          [
+            3192,
+            3360
+          ],
+          [
+            3186,
+            3372
+          ]
+        ],
+        "width": 4,
+        "depth": 3,
+        "role": "strip",
+        "why": "a strip up the south shoulder above the pit's south rim"
+      },
+      {
+        "id": "strip_south_b",
+        "kind": "trench",
+        "path": [
+          [
+            3212,
+            3348
+          ],
+          [
+            3222,
+            3358
+          ],
+          [
+            3218,
+            3370
+          ]
+        ],
+        "width": 3,
+        "depth": 2,
+        "role": "strip",
+        "why": "the second south strip, crossing the first's line"
+      },
+      {
+        "id": "strip_south_c",
+        "kind": "trench",
+        "path": [
+          [
+            3240,
+            3346
+          ],
+          [
+            3252,
+            3356
+          ],
+          [
+            3250,
+            3366
+          ]
+        ],
+        "width": 4,
+        "depth": 3,
+        "role": "strip",
+        "why": "the third south strip, the deepest of them"
+      },
+      {
+        "id": "strip_east_a",
+        "kind": "trench",
+        "path": [
+          [
+            3248,
+            3178
+          ],
+          [
+            3256,
+            3164
+          ],
+          [
+            3266,
+            3154
+          ]
+        ],
+        "width": 3,
+        "depth": 3,
+        "role": "strip",
+        "why": "a strip up the steep north-east shoulder over the worked face"
       }
     ],
     "vein_share": 0.05,
@@ -620,18 +1028,18 @@
         "drop": 7
       },
       {
-        "id": "south_quarry_derrick",
+        "id": "pit_head_derrick",
         "at": [
-          3196,
-          3324
+          3175,
+          3293
         ],
-        "on": "ground",
-        "height": 13,
+        "on": "the_great_cut",
+        "height": 14,
         "boom": [
-          0,
-          1
+          1,
+          0
         ],
-        "reach": 8,
+        "reach": 6,
         "drop": 9
       }
     ],
@@ -699,16 +1107,17 @@
         "feet": 88
       },
       {
-        "id": "south_quarry_line",
+        "id": "pit_floor_line",
         "from": [
-          3200,
-          3356
+          3204,
+          3300
         ],
         "to": [
-          3214,
-          3356
+          3244,
+          3300
         ],
-        "feet": 80
+        "why": "the rail across the great cut's deepest floor, from the ramp's foot east",
+        "feet": 75
       }
     ],
     "carts": [
@@ -745,8 +1154,8 @@
         3172
       ],
       [
-        3207,
-        3356
+        3220,
+        3300
       ]
     ],
     "hall_pillars": [
@@ -766,6 +1175,84 @@
         3138,
         3134
       ]
+    ],
+    "streets": [
+      {
+        "id": "forge_row",
+        "polyline": [
+          [
+            3172,
+            3300
+          ],
+          [
+            3170,
+            3292
+          ],
+          [
+            3161,
+            3284
+          ],
+          [
+            3152,
+            3277
+          ],
+          [
+            3140,
+            3271
+          ],
+          [
+            3128,
+            3265
+          ],
+          [
+            3124,
+            3253
+          ],
+          [
+            3120,
+            3243
+          ],
+          [
+            3124,
+            3236
+          ]
+        ],
+        "width": 5,
+        "surface": "minecraft:coarse_dirt",
+        "why": "the camp track continued from its last cell (3167, 3300) as the working street: it follows the great cut's north-west shore, crosses the causeway between the two quarries and ends at the seam yard's south edge. It bends where the pit's rim bends, not in straight blocks"
+      },
+      {
+        "id": "south_rim",
+        "polyline": [
+          [
+            3122,
+            3322
+          ],
+          [
+            3150,
+            3330
+          ],
+          [
+            3182,
+            3338
+          ],
+          [
+            3216,
+            3341
+          ],
+          [
+            3244,
+            3340
+          ],
+          [
+            3266,
+            3334
+          ]
+        ],
+        "width": 5,
+        "surface": "minecraft:coarse_dirt",
+        "why": "the haul street along the pit south rim, from the camp plaza corner east to the spur end. Measured: Forge Row is 90 blocks and this 147; with the camp track (90, data/placements.json) the town has 327 blocks of street along the spur floor, against DEEP_CITY.md section 6 one street about 300 long, but in three legs round the quarry, not one"
+      }
     ]
   },
   "mine": {
@@ -1047,9 +1534,11 @@
     "shaft": "the columns within r (Chebyshev) of the centre, from from_y up to one under the ground, where an iron grate caps it",
     "pocket": "columns with dx2+dz2 <= (r+0.5)^2 round the centre; feet to feet+r+1 where dx2+dz2 <= (r-0.5)^2, else feet to feet+r",
     "chamber": "columns with d = hypot(dx, dz) <= r+0.5; feet to feet + max(3, floor((height-1) * sqrt(1 - (d/(r+0.5))^2) + 0.5))",
-    "cut": "each column of the rect gets a floor block y_f = floor + rise * level, level = max(0, levels-1 - e // run), e its distance in columns to the nearest benched side (hillside: the sides listed; pit: all four; no benches: level 0); a pit's ramp sets y_f to floor(floor + (z1-z)/(z1-z0) * (top-floor) + 0.5) inside its x/z range (a causeway down through the benches). Where the ground is above y_f the column is cut from y_f+1 to ground+6.",
+    "cut": "a cut's footprint depends on its kind. `pit` and `hillside`: every column of `rect`. `traced`: every column whose centre (x + 0.5, z + 0.5) is inside the `outline` ring by the even-odd rule. `trench`: the columns of a swathe `width` wide about the 2-D polyline `path`, sampled as a tube is. Each column of the footprint gets a floor y_f. For `trench` that is ground(x, z) - `depth`, so the trench keeps the slope it is dug into. Otherwise y_f = floor + rise * level, level = max(0, levels - 1 - e // run), where e is the column's steps in from the footprint's edge: for `pit` min(x - x0, x1 - x, z - z0, z1 - z); for `hillside` the same over the named `benches` sides only (no benches: level 0 everywhere); for `traced` the 4-neighbour distance to the nearest column outside the footprint, less one, so an edge column has e = 0 exactly as a rect's does. A `ramp` then overrides those columns: it is a causeway down through the benches, never a staircase of them. Columns whose ground is already at or under y_f are not cut.",
     "shell": "every cell within 2 (a 5x5x5 cube) of the envelope that is not carved and is at or under the ground is written as rock, so the cut and carved spaces are bounded only by blocks this build writes",
-    "roughness": "gated tubes, pockets and chambers only: an envelope cell on the envelope's edge, 3 or more above its column's floor, is left as rock with probability 0.3 (deterministic hash); nothing is ever carved outside the envelope"
+    "roughness": "gated tubes, pockets and chambers only: an envelope cell on the envelope's edge, 3 or more above its column's floor, is left as rock with probability 0.3 (deterministic hash); nothing is ever carved outside the envelope",
+    "swathe": "the columns of a swathe `width` wide about a 2-D polyline (a street, a trench, a ramp): each segment is sampled at n = ceil(4 * length) + 1 evenly spaced points, and each sample stamps the square of Chebyshev radius width // 2 round its rounded centre. The same sampling as `tube`, in two dimensions.",
+    "ramp": "`path`, `width`, `top`: the columns of the swathe about `path` take a y that runs from `top` at the path's start to the cut's `floor` at its end, by the fraction of the path's total length covered at each sample; a column takes the y of its nearest sample, ties to the earlier sample."
   },
   "retired_gated_section": {
     "why": "what the spur build carved behind its company gate until 2026-09-27: the galleries, six faces, five Mega chambers and the Heart (40 crystals). Not built any more (decision 1). Kept only so tools/rift_mines.py `refill` can write rock back into exactly this envelope on the staging world, where it is carved (cobblers_rift_mines_refill, staging only, excluded in tools/reapply.py like cobblers_vr_clear). Rasterised by the same geometry as the live features, roughness ignored: the refill fills the whole envelope, which holds every cell the carve took",
@@ -1610,5 +2099,21 @@
         }
       }
     ]
+  },
+  "pocket": {
+    "why": "the owner, SOUTHERN_RIFT_MEGA.md section 13: the camp 'should also conform to the shape of the pocket it is in'. The pocket is measured here from the canonical heightmap (tools/ground.py), never from a world, and tools/rift_mines_audit.py re-measures it the same way and checks the traced cuts against it.",
+    "method": "every column of the grid whose rounded heightmap ground is at or under `floor_y`, 4-connected to `seed`",
+    "seed": [
+      3108,
+      3303
+    ],
+    "floor_y": 92,
+    "measured": {
+      "columns": 29625,
+      "on": "the heightmap data/world.json pins, after the water export, 2026-09-29"
+    },
+    "inset": 8,
+    "clear_of_other_builds": 6,
+    "share": "measured on the heightmap by tools/rift_mines_audit.py, not assumed: the_great_cut takes 8,444 of the pocket's 29,625 columns and the_west_cut 1,165, 32.4 per cent between them; every cut together, the seam yard, the north quarry, the worked face and the parts of the strips that fall inside it, takes 42.8 per cent. The owner's 'half of the area' is met by the workings together rather than by one quarry: the camp, its track, the two streets, the causeway between the quarries and an 8-block margin off the pocket's edge take the rest, and the strips climb the shoulders above the pocket where their columns do not count towards it."
   }
 }

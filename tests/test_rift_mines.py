@@ -69,33 +69,58 @@ def test_generator_and_audit_rasterise_every_pocket_alike(f):
     assert a and a == RA.stamp_pocket(f["at"], f["r"])
 
 
+def _fake_ground(x, z):
+    """A sloping, slightly rough ground, so a trench's floor is compared on something that is not flat."""
+    return 90 + (x - 3000) // 8 - (z - 3200) // 6 + ((x * 7 + z * 3) % 3)
+
+
 @pytest.mark.parametrize("cut", SPEC["town"]["cuts"], ids=lambda c: c["id"])
 def test_generator_and_audit_agree_on_every_cut_floor(cut):
-    x0, z0, x1, z1 = cut["rect"]
-    for x in range(x0, x1 + 1):
-        for z in range(z0, z1 + 1):
-            assert RM.cut_floor(cut, x, z) == RA.floor_of_cut(cut, x, z)
+    a = RM.cut_plan(cut, _fake_ground)
+    b = RA.floors_of_cut(cut, _fake_ground)
+    assert a and a == b
 
 
-# Without it a pit's benches step the wrong way or its ramp becomes a staircase a cart cannot use.
-def test_a_pit_steps_up_to_its_rim_and_its_ramp_runs_down_to_the_floor():
-    cut = next(c for c in SPEC["town"]["cuts"] if c["kind"] == "pit")
-    x0, z0, x1, z1 = cut["rect"]
-    b = cut["bench"]
-    assert RM.cut_floor(cut, (x0 + x1) // 2, (z0 + z1) // 2) == cut["floor"]
-    assert RM.cut_floor(cut, x0 + 1, (z0 + z1) // 2) == cut["floor"] + b["rise"] * (b["levels"] - 1)
+# Without it the great cut's benches step the wrong way, or its haul road becomes a staircase a cart cannot use.
+def test_the_traced_quarry_steps_up_to_its_rim_and_its_ramp_runs_down_to_the_floor():
+    cut = next(c for c in SPEC["town"]["cuts"] if c["id"] == "the_great_cut")
+    b, plan = cut["bench"], RM.cut_plan(cut, _fake_ground)
+    cols = RM.cut_columns(cut)
+    rim = [c for c in cols if any((c[0] + dx, c[1] + dz) not in cols
+                                  for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)))]
+    ramp = set(RM.ramp_ys(cut["ramp"], cut["floor"]))
+    assert rim and all(plan[c] == cut["floor"] + b["rise"] * (b["levels"] - 1) for c in rim if c not in ramp)
+    assert min(plan.values()) == cut["floor"], "nothing reaches the quarry's floor"
     rp = cut["ramp"]
-    xs = rp["x"][0]
-    assert RM.cut_floor(cut, xs, rp["z"][1]) == cut["floor"]
-    down = [RM.cut_floor(cut, xs, z) for z in range(rp["z"][0], rp["z"][1] + 1)]
-    assert all(a >= b_ for a, b_ in zip(down, down[1:])), "the ramp climbs somewhere on the way down"
-    assert all(a - b_ <= 1 for a, b_ in zip(down, down[1:])), "the ramp drops more than a block in a step"
+    down = []
+    for (x0, z0), (x1, z1) in zip(rp["path"], rp["path"][1:]):
+        for s in range(41):
+            t = s / 40.0
+            c = (RM.rnd(x0 + (x1 - x0) * t), RM.rnd(z0 + (z1 - z0) * t))
+            if c in plan:
+                down.append(plan[c])
+    assert down[0] > down[-1] == cut["floor"]
+    assert all(a >= b_ for a, b_ in zip(down, down[1:])), "the haul road climbs somewhere on the way down"
+    assert all(a - b_ <= 1 for a, b_ in zip(down, down[1:])), "the haul road drops more than a block in a step"
 
 
 def test_a_hillside_with_no_benches_is_one_floor():
     cut = next(c for c in SPEC["town"]["cuts"] if c["id"] == "seam_cut")
     x0, z0, x1, z1 = cut["rect"]
-    assert {RM.cut_floor(cut, x, z) for x in (x0, x1) for z in (z0, z1)} == {cut["floor"]}
+    plan = RM.cut_plan(cut, _fake_ground)
+    assert {plan[(x, z)] for x in (x0, x1) for z in (z0, z1)} == {cut["floor"]}
+
+
+# Without it a strip mine is cut to one flat y and becomes a rectangular hole in a hillside, not a trench.
+@pytest.mark.parametrize("cut", [c for c in SPEC["town"]["cuts"] if c["kind"] == "trench"], ids=lambda c: c["id"])
+def test_a_strip_mine_keeps_the_slope_it_is_dug_into(cut):
+    plan = RM.cut_plan(cut, _fake_ground)
+    assert plan and all(y == _fake_ground(x, z) - cut["depth"] for (x, z), y in plan.items())
+    assert len(set(plan.values())) > 1, "the strip is level: it is not following the shoulder"
+    r = cut["width"] // 2
+    for (x, z) in plan:
+        assert min(max(abs(x - px), abs(z - pz)) for px, pz in cut["path"]) <= r + max(
+            abs(a[0] - b[0]) + abs(a[1] - b[1]) for a, b in zip(cut["path"], cut["path"][1:]))
 
 
 # ------------------------------------------------------------------ the audit's plan checks, on a small made-up mine
