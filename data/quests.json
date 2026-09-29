@@ -4809,6 +4809,44 @@
       "progression_field_refs": [
         "quest.route_03_trainer_05.defeated"
       ]
+    },
+    {
+      "id": "ambient_stone_tips",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_stone_tip_viltri_light",
+        "dlg_stone_tip_tea_town",
+        "dlg_stone_tip_the_scar",
+        "dlg_stone_tip_displaced_city",
+        "dlg_stone_tip_northlight",
+        "dlg_stone_tip_gorge_hamlet",
+        "dlg_stone_tip_mining_town"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversations set no story, reward, or completion state",
+      "readers": "the seven ore-tip conversations only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own tip cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_stone_tips.viltri_light_cursor",
+        "quest.ambient_stone_tips.tea_town_cursor",
+        "quest.ambient_stone_tips.the_scar_cursor",
+        "quest.ambient_stone_tips.displaced_city_cursor",
+        "quest.ambient_stone_tips.northlight_cursor",
+        "quest.ambient_stone_tips.gorge_hamlet_cursor",
+        "quest.ambient_stone_tips.mining_town_cursor"
+      ]
     }
   ]
 }

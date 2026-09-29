@@ -89,6 +89,49 @@ def boss_level(ace_level, offset):
     return ace_level + offset
 
 
+def build_boss_mode(slot, mode_name, rules):
+    """Build one boss mode. Normal inherits the slot; Challenge overlays it."""
+    mode = deepcopy(slot.get("modes", {}).get(mode_name, {}))
+    members = mode.get("members", slot.get("members", []))
+    if not members:
+        return None
+    team = []
+    ace_count = 0
+    ace_species = None
+    for member in members:
+        pokemon = deepcopy(member)
+        pokemon["level"] = boss_level(slot["ace_level"], pokemon.pop("level_offset"))
+        if pokemon.pop("ace", False):
+            ace_count += 1
+            ace_species = pokemon["species"]
+        team.append(pokemon)
+    if ace_count != 1:
+        raise ValueError(f"{slot['id']} {mode_name}: expected exactly one ace, found {ace_count}")
+    if max(member["level"] for member in team) != slot["ace_level"]:
+        raise ValueError(f"{slot['id']} {mode_name}: ace level is not the team ceiling")
+    ai_profile = mode.get("ai_profile", slot["ai_profile"])
+    source = {
+        "id": slot["id"],
+        "name": slot["name"],
+        "ai_profile": ai_profile,
+        "battle_format": mode.get("battle_format", slot.get("battle_format", "GEN_9_SINGLES")),
+        "max_item_uses": mode.get("max_item_uses", slot.get("max_item_uses", 0)),
+        "bag": mode.get("bag", slot.get("bag", [])),
+        "team": team,
+    }
+    return {
+        "strategy": mode.get("strategy", slot["strategy"]),
+        "ace_species": ace_species,
+        "ace_math_change": mode.get("ace_math_change", slot["ace_math_change"]),
+        "member_count": len(team),
+        "ai_profile": ai_profile,
+        "team": deepcopy(team),
+        "rct": make_rct(source, rules),
+        "open_line": deepcopy(mode.get("open_line", [])),
+        "line_obviousness": mode.get("line_obviousness"),
+    }
+
+
 def build_bosses(rules):
     result = []
     expected_aces = rules["difficulty"]["gym_ace_levels"]
@@ -112,38 +155,20 @@ def build_bosses(rules):
             entry["blocked_by"] = slot["blocked_by"]
             result.append(entry)
             continue
-        team = []
-        ace_count = 0
-        ace_species = None
-        for member in slot["members"]:
-            pokemon = deepcopy(member)
-            pokemon["level"] = boss_level(slot["ace_level"], pokemon.pop("level_offset"))
-            if pokemon.pop("ace", False):
-                ace_count += 1
-                ace_species = pokemon["species"]
-            team.append(pokemon)
-        if ace_count != 1:
-            raise ValueError(f"{slot['id']}: expected exactly one ace, found {ace_count}")
-        if max(member["level"] for member in team) != slot["ace_level"]:
-            raise ValueError(f"{slot['id']}: ace level is not the team ceiling")
-        source = {
-            "id": slot["id"],
-            "name": slot["name"],
-            "ai_profile": slot["ai_profile"],
-            "battle_format": slot.get("battle_format", "GEN_9_SINGLES"),
-            "max_item_uses": slot.get("max_item_uses", 0),
-            "bag": slot.get("bag", []),
-            "team": team,
-        }
+        normal = build_boss_mode(slot, "normal", rules)
+        challenge = build_boss_mode(slot, "challenge", rules)
+        if challenge is None:
+            challenge = deepcopy(normal)
         entry.update(
             {
                 "ace_level": slot["ace_level"],
-                "ace_species": ace_species,
-                "ace_math_change": slot["ace_math_change"],
-                "member_count": len(team),
-                "team": deepcopy(team),
+                "ace_species": normal["ace_species"],
+                "ace_math_change": normal["ace_math_change"],
+                "member_count": normal["member_count"],
+                "team": deepcopy(normal["team"]),
                 "availability_contract": deepcopy(slot["availability_contract"]),
-                "rct": make_rct(source, rules),
+                "rct": deepcopy(normal["rct"]),
+                "modes": {"normal": normal, "challenge": challenge},
             }
         )
         result.append(entry)
@@ -170,6 +195,35 @@ def choose_team(placement_index, role, route, rules):
     return selected
 
 
+def build_route_mode(base_team, placement, route_rule, mode_name, rules):
+    """Create a route-trainer mode without changing its level ceiling."""
+    team = deepcopy(base_team)
+    if mode_name == "challenge":
+        config = route_rule.get("challenge", {})
+        if placement["role"] in config.get("extra_member_roles", []):
+            pool = route_rule.get(config.get("extra_member_pool", "ambient_pool"), [])
+            used = {member["species"] for member in team}
+            extra_key = next((key for key in pool if rules["species_kits"][key]["species"] not in used), None)
+            if extra_key:
+                extra = deepcopy(rules["species_kits"][extra_key])
+                extra["level"] = max(member["level"] for member in team) - 1
+                team.insert(-1 if len(team) > 1 else len(team), extra)
+        item = placement.get("challenge_held_item", config.get("held_item"))
+        if item and team:
+            team[-1]["heldItem"] = item
+        overrides = placement.get("challenge_movesets")
+        if overrides is not None:
+            if len(overrides) != len(team):
+                raise ValueError(f"{route_rule['id']} {placement['name']}: challenge_movesets must match challenge team")
+            for pokemon, moveset in zip(team, overrides):
+                pokemon["moveset"] = deepcopy(moveset)
+    ai_profile = placement.get(
+        f"{mode_name}_ai_profile",
+        route_rule.get(mode_name, {}).get("ai_profile", "route_standard" if mode_name == "normal" else "route_challenge"),
+    )
+    return team, ai_profile
+
+
 def build_route_trainers(rules, routes_doc, route_orders=None):
     route_index = {route["id"]: route for route in routes_doc["routes"]}
     generated = []
@@ -188,7 +242,15 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
             if distance <= previous_distance:
                 raise ValueError(f"{route_rule['id']}: placements must be ordered")
             previous_distance = distance
-            vertex_index, point, measured_total = nearest_vertex(polyline, distance)
+            fixed_xyz = placement.get("fixed_coordinate_xyz")
+            if fixed_xyz is not None:
+                if len(fixed_xyz) != 3:
+                    raise ValueError(f"{route_rule['id']} placement {index}: fixed_coordinate_xyz must be x/y/z")
+                point = {"x": fixed_xyz[0], "y": fixed_xyz[1], "z": fixed_xyz[2]}
+                vertex_index = None
+                measured_total = route_rule["placement_route_length"]
+            else:
+                vertex_index, point, measured_total = nearest_vertex(polyline, distance)
             expected = placement["expected_coordinate"]
             route_anchor = placement.get("route_anchor_coordinate", expected)
             if [point["x"], point["z"]] != route_anchor:
@@ -208,29 +270,46 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
                         f"{route_rule['id']} placement {index}: off-route gap "
                         f"{measured_gap:.1f} != configured {expected_gap}"
                     )
-            progress = distance / route["distance"]["computed_walked_blocks"]
+            progress = distance / measured_total
             base_level = round(band["minimum"] + progress * (band["maximum"] - band["minimum"] - 1))
-            selected = choose_team(index - 1, placement["role"], route_rule, rules)
-            move_overrides = placement.get("movesets")
-            if move_overrides is not None and len(move_overrides) != len(selected):
-                raise ValueError(
-                    f"{route_rule['id']} placement {index}: movesets must match team_species"
-                )
-            team = []
-            for team_index, species_key in enumerate(selected):
-                kit = deepcopy(rules["species_kits"][species_key])
-                if move_overrides is not None:
-                    kit["moveset"] = deepcopy(move_overrides[team_index])
-                kit["level"] = max(band["minimum"], base_level - (len(selected) - team_index - 1))
-                team.append(kit)
+            explicit_modes = placement.get("teams")
+            if explicit_modes is not None:
+                if set(explicit_modes) != {"normal", "challenge"}:
+                    raise ValueError(f"{route_rule['id']} placement {index}: teams must define normal and challenge")
+                normal_team = deepcopy(explicit_modes["normal"])
+                challenge_team = deepcopy(explicit_modes["challenge"])
+                normal_ai = placement.get("normal_ai_profile", "route_normal")
+                challenge_ai = placement.get("challenge_ai_profile", "route_challenge")
+            else:
+                selected = choose_team(index - 1, placement["role"], route_rule, rules)
+                move_overrides = placement.get("movesets")
+                if move_overrides is not None and len(move_overrides) != len(selected):
+                    raise ValueError(
+                        f"{route_rule['id']} placement {index}: movesets must match team_species"
+                    )
+                team = []
+                for team_index, species_key in enumerate(selected):
+                    kit = deepcopy(rules["species_kits"][species_key])
+                    if move_overrides is not None:
+                        kit["moveset"] = deepcopy(move_overrides[team_index])
+                    kit["level"] = max(band["minimum"], base_level - (len(selected) - team_index - 1))
+                    team.append(kit)
+                normal_team, normal_ai = build_route_mode(team, placement, route_rule, "normal", rules)
+                challenge_team, challenge_ai = build_route_mode(team, placement, route_rule, "challenge", rules)
             trainer_id = placement.get(
                 "id", f"route_{route_rule['order']:02d}_trainer_{index:02d}"
             )
             source = {
                 "id": trainer_id,
                 "name": placement["name"],
-                "ai_profile": placement.get("ai_profile", "route_standard"),
-                "team": team,
+                "ai_profile": normal_ai,
+                "team": normal_team,
+            }
+            challenge_source = {
+                "id": trainer_id,
+                "name": placement["name"],
+                "ai_profile": challenge_ai,
+                "team": challenge_team,
             }
             placement_payload = {
                 "status": "proposed",
@@ -242,6 +321,8 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
                 "sampled_y": placement.get("sampled_y", point.get("y")),
                 "route_measured_blocks": measured_total,
             }
+            if fixed_xyz is not None:
+                placement_payload["placement_authority"] = "data/vr_caves.json trainer stand"
             if off_route:
                 placement_payload.update(
                     {
@@ -257,10 +338,15 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
                     "display_name": placement["name"],
                     "class": "optional_route" if off_route else "route",
                     "format": "GEN_9_SINGLES",
-                    "team": deepcopy(team),
+                    "team": deepcopy(normal_team),
                     "route_id": route_rule["id"],
                     "route_order": route_rule["order"],
                     "trainer_order": index,
+                    "route_theme": route_rule.get("theme"),
+                    "mode_intent": {
+                        "normal": route_rule.get("normal", {}).get("intent"),
+                        "challenge": route_rule.get("challenge", {}).get("intent"),
+                    },
                     "archetype": placement["role"],
                     "lesson": placement["lesson"],
                     "placement": placement_payload,
@@ -271,6 +357,18 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
                     },
                     "dialogue_text": deepcopy(placement.get("dialogue_text", {})),
                     "rct": make_rct(source, rules),
+                    "modes": {
+                        "normal": {
+                            "team": deepcopy(normal_team),
+                            "ai_profile": normal_ai,
+                            "rct": make_rct(source, rules),
+                        },
+                        "challenge": {
+                            "team": deepcopy(challenge_team),
+                            "ai_profile": challenge_ai,
+                            "rct": make_rct(challenge_source, rules),
+                        },
+                    },
                 }
             )
     return generated
@@ -288,7 +386,7 @@ def build_document(rules, routes):
             "minecraft": "1.21.1",
             "cobblemon": "1.8.x",
             "rctmod": "0.19.0-beta",
-            "rctapi": "0.16.0-beta",
+            "rctapi": "0.16.1-beta",
         },
         "generation_contract": {
             "relative_level_cap": rules["difficulty"]["relative_level_cap"],
@@ -299,6 +397,8 @@ def build_document(rules, routes):
             "route_trainers": len(route_trainers),
             "placement_status": "proposal_only",
             "dialogue_ids": "campaign metadata; RCT sidecars require a future compiler",
+            "difficulty_modes": ["normal", "challenge"],
+            "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
         },
         "trainers": bosses + route_trainers,
     }
@@ -319,10 +419,60 @@ def main():
         action="store_true",
         help="check only route 1-3 trainer records without evaluating later routes",
     )
+    mode.add_argument(
+        "--write-active",
+        action="store_true",
+        help="replace bosses and routes 1-9 from the current authored rules",
+    )
+    mode.add_argument(
+        "--check-active",
+        action="store_true",
+        help="check bosses and routes 1-9 from the current authored rules",
+    )
     args = parser.parse_args()
 
     rules = load_json(RULES_PATH)
     routes = load_json(ROUTES_PATH)
+    if args.write_active or args.check_active:
+        current_document = load_json(OUTPUT_PATH)
+        active = build_bosses(rules) + build_route_trainers(
+            rules, routes, route_orders=set(range(1, 10))
+        )
+        rebuilt = active
+        expected = deepcopy(current_document)
+        expected["trainers"] = rebuilt
+        expected["target"]["rctapi"] = "0.16.1-beta"
+        expected["generation_contract"].update(
+            {
+                "difficulty_modes": ["normal", "challenge"],
+                "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
+                "authored_boss_rosters": sum(
+                    trainer.get("class") in {"gym_leader", "elite_four", "champion"}
+                    and trainer.get("status") != "held"
+                    for trainer in rebuilt
+                ),
+                "held_boss_slots": sum(
+                    trainer.get("class") in {"gym_leader", "elite_four", "champion"}
+                    and trainer.get("status") == "held"
+                    for trainer in rebuilt
+                ),
+                "route_trainers": sum(
+                    trainer.get("class") in {"route", "optional_route"}
+                    for trainer in rebuilt
+                ),
+                "preserved_blocked_route_orders": [],
+            }
+        )
+        rendered = json.dumps(expected, indent=2, ensure_ascii=False) + "\n"
+        if args.check_active:
+            if OUTPUT_PATH.read_text(encoding="utf-8") != rendered:
+                print("stale active trainer modes: run --write-active", file=sys.stderr)
+                return 1
+            print(f"ok: {len(active)} active boss/route records; Victory Road uses ten cave stands")
+            return 0
+        OUTPUT_PATH.write_text(rendered, encoding="utf-8", newline="\n")
+        print(f"updated {len(active)} active boss/route records; Victory Road uses ten cave stands")
+        return 0
     if args.write_early or args.check_early:
         early = build_route_trainers(rules, routes, route_orders={1, 2, 3})
         current_document = load_json(OUTPUT_PATH)
