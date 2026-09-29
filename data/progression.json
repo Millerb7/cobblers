@@ -384,6 +384,106 @@
   },
   "quest_fields": [
     {
+      "id": "quest.legendary_mesprit.met",
+      "quest_id": "legendary_mesprit",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/mesprit/met in cobblers_legendaries (tools/legendaries.py), NOT Cobblemon player data: the gate is an mcfunction and a function cannot read q.player.data()",
+      "why": "data/legendaries.json: this player has met the legendary. Declared here because data/progression.json is the sole registry for per-player campaign state."
+    },
+    {
+      "id": "quest.legendary_azelf.met",
+      "quest_id": "legendary_azelf",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/azelf/met in cobblers_legendaries",
+      "why": "data/legendaries.json"
+    },
+    {
+      "id": "quest.legendary_uxie.met",
+      "quest_id": "legendary_uxie",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/uxie/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Its chamber is blocked on the water export; the advancement exists so a gate naming it is not a command error."
+    },
+    {
+      "id": "quest.legendary_regirock.met",
+      "quest_id": "legendary_regirock",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/regirock/met in cobblers_legendaries",
+      "why": "data/legendaries.json. One of the three keys to Regigigas's chamber."
+    },
+    {
+      "id": "quest.legendary_regice.met",
+      "quest_id": "legendary_regice",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/regice/met in cobblers_legendaries",
+      "why": "data/legendaries.json. One of the three keys to Regigigas's chamber."
+    },
+    {
+      "id": "quest.legendary_registeel.met",
+      "quest_id": "legendary_registeel",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/registeel/met in cobblers_legendaries",
+      "why": "data/legendaries.json. One of the three keys to Regigigas's chamber; its own chamber is blocked on the Rift plan, so until it is sited Regigigas's gate can never be satisfied."
+    },
+    {
+      "id": "quest.legendary_regigigas.met",
+      "quest_id": "legendary_regigigas",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/regigigas/met in cobblers_legendaries",
+      "why": "data/legendaries.json"
+    },
+    {
+      "id": "quest.legendary_groudon.met",
+      "quest_id": "legendary_groudon",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/groudon/met in cobblers_legendaries",
+      "why": "data/legendaries.json"
+    },
+    {
+      "id": "quest.legendary_lugia.met",
+      "quest_id": "legendary_lugia",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/lugia/met in cobblers_legendaries",
+      "why": "data/legendaries.json. Blocked: the trench has no seabed."
+    },
+    {
+      "id": "quest.legendary_celebi_wake.met",
+      "quest_id": "legendary_celebi_wake",
+      "field": "met",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "carrier": "the advancement cobblers:legendary/celebi_wake/met in cobblers_legendaries",
+      "why": "data/legendaries.json. The gate function exists; the trigger that calls it is an open question."
+    },
+    {
       "id": "quest.evt_route1_thirsty_stranger.started",
       "quest_id": "evt_route1_thirsty_stranger",
       "field": "started",

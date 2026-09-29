@@ -69,6 +69,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_route_events", "cobblers_scenes", "cobblers_trainers",
                 # the sleeping Celebi in the Route 1 sapling and its keeper (2026-09-25)
                 "cobblers_celebi",
+                # the authored legendary encounters and their chambers (2026-09-29, tools/legendaries.py):
+                # blocks plus the per-chamber gate; the legendaries themselves are summoned over RCON by R14L,
+                # and the pack's own tick drives the gates, so it is world-local below
+                "cobblers_legendaries",
                 # the Rift's own storm: thunder and lightning for players inside the Rift (2026-09-25)
                 "cobblers_rift_storm",
                 # 2026-09-26, the install sweep: three packs the game needs that were only ever copied by hand, or
@@ -149,7 +153,8 @@ EXCLUDED = {
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
-               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines")
+               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
+               "cobblers_legendaries")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -371,6 +376,11 @@ def prepare_jobs(a):
     add("place_donor:function", "place_donor.py", "function", "--server-dir", a.server_dir)
     add("traders:function", "traders.py", "function", "--server-dir", a.server_dir)
     add("sapling_celebi", "sapling_celebi.py")
+    # the authored legendary chambers, then their offline audit: a chamber whose roof would break a lake bed,
+    # whose shell is not sealed, whose gate line lacks its badge flag or whose mouth falls outside the water
+    # export's keep zone stops prepare here, before anything is installed
+    add("legendaries", "legendaries.py")
+    add("legendaries:audit", "legendaries_audit.py")
     add("rift_storm", "rift_storm.py")
     add("signposts:function", "signposts.py", "function", *src)
     # the bridges, then their offline audit against the heightmap and the water: a bridge that would stand in the
@@ -919,6 +929,12 @@ def steps(with_spawns=False):
     import sapling_celebi
     out.append(("R14C", "the Celebi in the Route 1 sapling", sapling_celebi.placement_steps(sapling_celebi.load())
                 + [("check", "celebi")]))
+    # the authored legendaries: the chambers are blocks, but each legendary is an entity that an export erases,
+    # so it is summoned over RCON here for the same reason as the Celebi (spawnpokemonat in a function spawns
+    # nothing until a /reload, EXP-046). Only the sited encounters are placed; a blocked one writes nothing.
+    import legendaries
+    out.append(("R14L", "the authored legendary chambers and their legendaries (data/legendaries.json)",
+                legendaries.placement_steps(legendaries.load())))
     out.append(("V", "floor verify and trader verify", [("check", "verify")]))
     return out
 
