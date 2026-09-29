@@ -270,6 +270,28 @@ reason:**
 datapack does not write its validator or grade its experiment. Implementation
 does not grade its own work.
 
+## Context cost (the owner, 2026-09-29, after the overnight run)
+
+Context is the bill. A session pays for its whole context on every turn, so anything that enters it is paid for
+again by every turn that follows. The 2026-09-29 night averaged 431k a turn over 464 turns and cost 23.2M; most of
+that was not thinking, it was tool output that arrived once and was then re-sent hundreds of times.
+
+- **Tool output: pipe it.** `tail`, `grep`, `head`, or a one-line summary. A `prepare` that touched 4,468 files
+  needs its **verdict** in context, not its listing. A test run needs its failures, not its passes: `-q --tb=line`
+  and `| tail`. Never let a tool print a path list, a JSON dump or a full audit body into the transcript.
+- **Audits: write the result to a file, read back only the failures.** A 35-step audit that passed is one line. If
+  it failed, read the failing entries, not the document. `> <file> 2>&1` then `grep -E "PROBLEM|FAIL|mismatch"`.
+- **Subagents: brief them to report in under 500 words**, with the detail written to a file the main session reads
+  only if it needs it. Their full findings belong in the repo, not in the orchestrator's context.
+- **Do not re-read what you just wrote.** The Edit or Write result already says what changed. Re-reading a file to
+  "check" an edit that did not error buys nothing and is paid for on every later turn.
+- **Compact between phases, not at the end.** This is the big one. Tonight carried phase 1's tool output all the way
+  into phase 4. Compact at each phase boundary with the handover already written, so the next phase starts near the
+  cold-start floor instead of on top of everything before it.
+
+The ranking matters, because the discipline is not free: **compacting between phases is worth more than the other
+four together.** Trimming output slows the growth within a phase; compaction resets it.
+
 ## Session length (the owner, 2026-09-28)
 
 A long session is the single most expensive thing we do. The 2026-09-28 main
