@@ -679,3 +679,37 @@ out after 33 s):
 `tests/test_system_contracts.py` (82) and the blackout, surface, boat, gate-clock, open-water, water-mount and
 recovery suites (255) are green after the change; none of them asserted the dry-path line count before, and a
 test-author still owes one.
+
+---
+
+## MEASURED, 2026-09-29: the villager, and what `/tick query` can actually see
+
+Run on staging with **0 players online**, in the throwaway pocket dimension of EXP-047 — flat, forceloaded, holding
+nothing else, so it isolates the entity from every town system. Sweep 0, 8, 16, 32, 64; median of 5 P50 readings at
+each step, 6 s apart so the 100-tick window turns over.
+
+**The instrument, confirmed:** `/tick query` prints to **0.1 ms**, i.e. 100 us. A 3 us worker is two orders below
+resolution, so every single-entity figure here is multiply-and-divide, never a direct read.
+
+| n | P50 | implied per villager |
+|---|---|---|
+| 0 | 0.90 ms | baseline |
+| 8 | 1.40 ms | 62.5 us |
+| 16 | 1.40 ms | 31.2 us |
+| 32 | 1.70 ms | 25.0 us |
+| 64 | 2.30 ms | 21.9 us |
+
+**`V` = about 20 us a villager** (least squares over all five points; the per-step figures fall as the fixed step of
+the first reading is amortised, which is why the slope is the honest number and 62.5 is not).
+
+These are **unemployed villagers with no POI**, which is the floor the inventory asked for. The second sweep it
+wanted — with beds, job sites and a bell — was **not run**, so any employed-villager cost is still unknown.
+
+**What this settles.** At the inventory's 5 ms (10%) line, `n_v x V = 4400 us` gives **about 220 villagers**. A town
+of the 40-50 the old proposal imagined would cost about **0.8-1.0 ms, ~2% of a tick**. Villagers are affordable and
+are not the constraint.
+
+**`T` (the rctmod trainer) is still UNMEASURED.** `rctmod:trainer` cannot be created by a plain `/summon` — the sweep
+counted 0 present and stopped rather than report a number from an empty pen. It needs rctmod's own placement path
+(`summon_persistent`, as `reapply.py` uses). That is the one number still standing between the inventory and a firm
+ceiling, and the inventory's arithmetic is ready for it: `n_t x T + n_v x V = 4400 us`.
