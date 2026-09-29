@@ -20,8 +20,31 @@ refusal ends the attempt. Ground never read from a built world. Commit per unit.
 
 ## Cuts
 
-(Filled in as they happen.)
+| What | Why | State |
+|---|---|---|
+| **The Viltri Ravine** | Held by the owner on 2026-09-27 and never in the audited water design (audit check G1 proves it untouched). Tonight's list called for "the ravine bed paint"; there is no shape to paint | Unchanged, still held. Addable later without a re-export |
+| **`build_routes` not re-run** | Audit C2 proves no road corridor changed (0 columns, 4 blocks either side of every route line), and STATE records that `routes.json` was hand-adjusted after routing so a re-route does not reproduce it | Routes untouched, deliberately |
+| **The employed-villager sweep** | The floor (unemployed, no POI) was measured at ~20 us; the with-beds-and-job-sites sweep was not run | `V` known for the floor only |
+| **`T`, the rctmod trainer cost** | `rctmod:trainer` cannot be plain-`summon`ed; the sweep counted 0 present and stopped rather than report a number from an empty pen | Still the one unmeasured number in the budget |
+| **Both two-player measurements** | Blocked on the second account, as recorded before the night began. Not faked | Waiting on the owner |
+| **Everything player-gated in EXP-047** | Spawning, habitat-pool resolution and the Cobblemon callbacks are player-driven; with nobody online they are structurally unobservable | Recorded as untested, not assumed |
 
 ## Review list for the owner
+
+1. **`jungle_ruins` is now at or below sea level.** It measured y119-134 and now measures **y55-61**: it stood on the
+   Jungle Isle, which the water shape removes by design. This is `WATER_SHAPE.md` 15.4's known consequence, but it is
+   not fixed — the ruins need re-siting or removing, and until then they are drowned.
+2. **The gorge hamlet's canopy claim flipped back to visible** at 1 of 129 points (0.8%, fragile). Its own record
+   predicted this would happen when the export repainted the canopy. You may prefer to clear or plant the single line
+   rather than keep a claim that flips with the paint.
+3. **`derived/rift_sculpt/plan.json` was repinned** to the new heightmap sha rather than regenerated, because
+   `rift_heightmap.py --plan` only describes an applied sculpt and refuses the water heightmap. Sound because audit C5
+   measured 0 Rift columns changed, but it is a pin I moved by hand and you should know it moved.
+4. **The water ladder's early exit changed behaviour on land.** Vanilla air removal on dry land now runs from a new
+   `minecraft:effects_changed` advancement instead of two `effect clear` commands every tick. The wet path still
+   clears unconditionally, so the rule cannot break in water, but the **land** clear is unverified in game.
+5. **The trainer hold-off interim is live.** A player who has beaten a trainer is protected from a forced rematch; the
+   partner who has not may have to start the fight by interacting. Reversible, and the proper per-player fix is still
+   gated on EXP-034.
 
 (Filled in as they happen.)
