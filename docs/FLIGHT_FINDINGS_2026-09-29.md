@@ -140,3 +140,52 @@ Recorded because it will recur, not because it broke anything permanently.
 **The rule this establishes: an agent's audit result is provisional until integration re-runs it against a
 full checkout.** Both directions cost real work today. `.worktreeinclude` carries no derived inputs and
 `local_inputs.py hydrate` brings kits only (338 files).
+
+## F9 — a guarded summon never re-levels an entity that is already there
+
+Found applying the re-level to dryrun12, 2026-09-29.
+
+`tools/legendaries.py` `placement_steps` emits the summon as
+
+```
+execute unless entity @e[tag=cobblers_leg_<id>] positioned <at>
+  unless entity @e[type=cobblemon:pokemon,distance=..3]
+  run spawnpokemonat <at> <species> level=<N> no_ai
+```
+
+The level is **not in the datapack**. It is baked into this one RCON
+command at re-apply time, read from `data/legendaries.json`. The
+`unless entity` guard exists so a re-apply does not stack duplicates,
+and it does its job — which means re-running R14L after changing a
+level is a no-op for every chamber whose legendary is still standing.
+
+Five were: azelf, regirock, regice, regigigas, groudon. Each was
+killed inside a forceload of its own chamber bbox before R14L re-ran,
+and each then re-summoned at its new level. Uxie was absent, because
+it was only sited today. `data/sapling_celebi.json` and R14C have the
+same shape and the same trap: the Celebi read level 70 in the world
+after R14C reported success, and needed the same kill.
+
+**The rule this gives us:** changing a level, a species or any other
+argument of a guarded summon is not applied by re-running its step.
+The entity has to be removed first. A step that reports 0 problems has
+only told you the guard held.
+
+## F10 — four of Erika's lanterns stand on water and pop
+
+`cobblers_gym_interiors/.../gym_interiors/gym4.mcfunction:84` sets
+`minecraft:lantern[hanging=false]` at (4314, 97, 1498). The cell
+directly below, (4314, 96, 1498), is water — it is over the cistern.
+
+`setblock` does not check support, so the command succeeds and the
+step reports no problem; the block then pops on the next update. The
+cell reads air in dryrun12 now. Four lanterns in gym 4 are placed
+`hanging=false`, and the class of defect is "a block that needs
+support, placed over water or air".
+
+This is the only miss in an 18-block sample taken from the portals,
+gym interiors and rift mines packs and read back out of the world
+(17/18 matched). It was found by probing the world, not by any audit:
+the gym interiors audit compares the emitted functions with
+`data/gym_interiors.json`, and by that comparison the lantern is
+correct.
