@@ -508,8 +508,14 @@ def sounding(g, road):
                 s.fill((x, g(x, z) + 1, z), (x, deck - 1, z), "minecraft:spruce_log[axis=y]")
     for z in range(3008, 3015, 2):
         s.set(1725, deck + 1, z, "minecraft:spruce_fence")
-    # three depth staffs at three shelves: posts from the bed to above the water, a band at the water line
-    staffs = [("shallow", 1722, 3006), ("middle", 1716, 3012), ("deep", 1708, 3018)]
+    # three depth staffs at three shelves: posts from the bed to above the water, a band at the water line.
+    # The shelves are the scene, not decoration: shallow 5, middle 6, deep 7 blocks of water, so the three read
+    # differently from the platform and dlg_route2_staff_deep's "goes down past where you can see" is true of the
+    # third one only. The 2026-09-28 water shape re-graded Viltri's bed: it raised (1708, 3018) from y96 to y97, so
+    # the deep staff read 6 -- the same as the middle -- and the progression collapsed to 5/6/6. (1710, 3016) is the
+    # nearest column on the same WSW bearing out from the platform that still reads 7, so the three shelves are
+    # 5/6/7 again. Measured from the canonical heightmap; data/checks/water_props.json records the expectation.
+    staffs = [("shallow", 1722, 3006), ("middle", 1716, 3012), ("deep", 1710, 3016)]
     for name, x, z in staffs:
         bed = g(x, z)
         s.fill((x, bed + 1, z), (x, VIltri_Y + 3, z), "minecraft:stripped_spruce_log[axis=y]")
@@ -809,6 +815,79 @@ def caches(g, road):
 
 SITES = [mansion_junction, picnic, stranger_hut, first_cast, geodude, sounding, north_bank, nosepass, creek_wooper, mast, swablu]
 
+WATER_CHECKS = ROOT / "data" / "checks" / "water_props.json"
+WATER_SEARCH = 48                   # how far a prop may look for the waterline before it counts as inland
+
+
+def water_metrics(g, x, z, level, search=WATER_SEARCH):
+    """(depth, waterline_distance) at a column: depth = level - ground (0 or less on dry land), and the distance to
+    the nearest column the water covers (0 when the prop's own column is wet, None when none is within `search`).
+
+    Water is where the rounded ground is below the level, as WorldPainter paints it, so this is the same test
+    tools/route_events.py builds the jetties and staffs against. Ground comes from tools/ground.py; no world is
+    read."""
+    import numpy as np
+    box = g.box(x - search, z - search, x + search, z + search)
+    depth = int(level) - int(g(x, z))
+    wet = box < int(level)
+    if not wet.any():
+        return depth, None
+    zz, xx = np.nonzero(wet)
+    return depth, round(float(np.hypot(zz - search, xx - search).min()), 2)
+
+
+def water_prop_problems(g, patch=None, checks_path=WATER_CHECKS):
+    """Every water prop still expresses the relationship to the water it was sited for, or a list of what drifted.
+
+    A water event's prop means something only in relation to the water beside it: a jetty rack stands over the
+    flats, a depth staff stands on a named shelf, an approach ends at the shore. A reshaped heightmap can leave the
+    prop's coordinates valid and the meaning wrong, which is exactly what the 2026-09-28 water shape did to
+    route2_viltri_sounding's deep staff. data/checks/water_props.json records what each one must read; this
+    recomputes it from the canonical heightmap and reports the difference.
+
+    `patch` is scene_patch()'s output, so the check runs against the positions this build produces. Without it the
+    positions in data/scenes.json are checked instead."""
+    doc = json.loads(checks_path.read_text(encoding="utf-8"))
+    bodies, tol = doc["bodies"], doc["tolerance"]
+    if patch is None:
+        scenes = {s["id"]: s for s in json.loads(SCENES.read_text(encoding="utf-8"))["scenes"]}
+        built = {sid: {p["id"]: p for p in (s.get("props") or [])} for sid, s in scenes.items()}
+    else:
+        built = {sid: e["props"] for sid, e in patch.items()}
+    out = []
+    for want in doc["props"]:
+        sid, pid = want["scene"], want["prop"]
+        p = (built.get(sid) or {}).get(pid)
+        if p is None:
+            out.append("water prop %s/%s is expected but nothing builds it" % (sid, pid))
+            continue
+        level = bodies[want["body"]]
+        x, _, z = p["on"]
+        depth, dist = water_metrics(g, x, z, level)
+        if depth != want["depth"] and abs(depth - want["depth"]) > tol["depth"]:
+            out.append("%s/%s: %s is %d deep under it, not the %d it is sited for (%s)"
+                       % (sid, pid, want["body"], depth, want["depth"], want["relationship"]))
+        if dist is None:
+            out.append("%s/%s: no %s within %d blocks; it is not a water prop any more"
+                       % (sid, pid, want["body"], WATER_SEARCH))
+        elif abs(dist - want["waterline_distance"]) > tol["waterline_distance"]:
+            out.append("%s/%s: the %s waterline is %.2f blocks away, not the %.2f it is sited for (%s)"
+                       % (sid, pid, want["body"], dist, want["waterline_distance"], want["relationship"]))
+    for want in doc["props"]:
+        for other in want.get("deeper_than", []):
+            a = next(q for q in doc["props"] if q["scene"] == want["scene"] and q["prop"] == want["prop"])
+            b = next(q for q in doc["props"] if q["scene"] == want["scene"] and q["prop"] == other)
+            pa = (built.get(a["scene"]) or {}).get(a["prop"])
+            pb = (built.get(b["scene"]) or {}).get(b["prop"])
+            if pa is None or pb is None:
+                continue
+            da = water_metrics(g, pa["on"][0], pa["on"][2], bodies[a["body"]])[0]
+            db = water_metrics(g, pb["on"][0], pb["on"][2], bodies[b["body"]])[0]
+            if da <= db:
+                out.append("%s/%s reads %d deep and %s reads %d: the shelves no longer read differently"
+                           % (a["scene"], a["prop"], da, b["prop"], db))
+    return out
+
 
 def build(g, road):
     seats = trainer_seats(g, road)
@@ -962,6 +1041,8 @@ def main(argv=None):
         for yy in (y, y + 1):
             if (x, yy, z) in built:
                 probs.append("%s stands at %s inside %s's %s" % (who, (x, y, z), *built[(x, yy, z)]))
+    # every water event's prop still reads the water it was sited for (data/checks/water_props.json)
+    probs += water_prop_problems(g, scene_patch(sites))
     for s in sites:
         for n in s.notes:
             print("  %s: %s" % (s.id, n))

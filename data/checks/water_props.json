@@ -1,0 +1,160 @@
+{
+  "schema": "cobblers.checks.water-props/1",
+  "status": "measured",
+  "note": "What each Routes 1-3 water-event prop must still read of the water beside it. A water event's prop means something only in relation to its water: a jetty rack stands over the flats, a depth staff stands on a named shelf, an approach stops short of the shore. A reshaped heightmap can leave a prop's coordinates valid and its meaning wrong -- the 2026-09-28 water shape raised Viltri's bed under route2_viltri_sounding's deep staff by one block, so it read the same depth as the middle staff and the three shelves stopped reading differently. depth = level - rounded ground at the prop's own column (0 or less on dry land); waterline_distance = blocks to the nearest column the water covers, 0 when the prop's own column is wet. Both come from tools/ground.py, the canonical heightmap, never from a world. tools/route_events.py water_prop_problems() enforces this on every build; column is recorded so a drift report can name where the prop was sited.",
+  "bodies": {
+    "sea": 62,
+    "lake_viltri": 103,
+    "mt_clay_pond": 119
+  },
+  "bodies_note": "Water is where the rounded ground is below the level, as WorldPainter paints it. The levels are the ones tools/route_events.py builds against (SEA_Y, VIltri_Y, POND_Y) and data/rivers.json lakes records.",
+  "tolerance": {
+    "depth": 0,
+    "waterline_distance": 0.5
+  },
+  "tolerance_note": "Deliberately tight. A single block of bed movement under a water prop is the failure this check exists to catch, and the answer is to re-site the prop and re-measure here, never to widen the tolerance.",
+  "measured_against": {
+    "heightmap": "d1bc68d33705a4bb87784630d3107847f9a061436789d3b84fd1a7b1ae5dfe56",
+    "on": "2026-09-29"
+  },
+  "props": [
+    {
+      "scene": "route1_first_cast",
+      "prop": "rack",
+      "body": "sea",
+      "column": [
+        1053,
+        5351
+      ],
+      "depth": 1,
+      "waterline_distance": 0.0,
+      "relationship": "the rod rack on the jetty deck at y65, three above the sea, standing out over the tidal flat the jetty is piled into; its column is sea floor, not shore"
+    },
+    {
+      "scene": "route2_viltri_sounding",
+      "prop": "staff_shallow",
+      "body": "lake_viltri",
+      "column": [
+        1722,
+        3006
+      ],
+      "depth": 5,
+      "waterline_distance": 0.0,
+      "relationship": "the first depth staff, on the shallowest of the three shelves the station sounds"
+    },
+    {
+      "scene": "route2_viltri_sounding",
+      "prop": "staff_middle",
+      "body": "lake_viltri",
+      "column": [
+        1716,
+        3012
+      ],
+      "depth": 6,
+      "waterline_distance": 0.0,
+      "relationship": "the second depth staff, on a shelf that must read deeper than the shallow one",
+      "deeper_than": [
+        "staff_shallow"
+      ]
+    },
+    {
+      "scene": "route2_viltri_sounding",
+      "prop": "staff_deep",
+      "body": "lake_viltri",
+      "column": [
+        1710,
+        3016
+      ],
+      "depth": 7,
+      "waterline_distance": 0.0,
+      "relationship": "the third depth staff, on the deepest shelf: dlg_route2_staff_deep says it goes down past where you can see, so it must read deeper than the middle one",
+      "deeper_than": [
+        "staff_middle"
+      ]
+    },
+    {
+      "scene": "route2_viltri_sounding",
+      "prop": "gauge",
+      "body": "lake_viltri",
+      "column": [
+        1721,
+        3016
+      ],
+      "depth": 3,
+      "waterline_distance": 0.0,
+      "relationship": "the floating gauge on its tether, riding the lake surface off the platform's south-west corner"
+    },
+    {
+      "scene": "route2_viltri_sounding",
+      "prop": "claw_post",
+      "body": "lake_viltri",
+      "column": [
+        1725,
+        3015
+      ],
+      "depth": 2,
+      "waterline_distance": 0.0,
+      "relationship": "the post the tether was clawed off, at the platform's edge where the deck meets the water"
+    },
+    {
+      "scene": "viltri_north_bank",
+      "prop": "tackle",
+      "body": "lake_viltri",
+      "column": [
+        1597,
+        3068
+      ],
+      "depth": -2,
+      "waterline_distance": 5.1,
+      "relationship": "the tackle box beside the beached skiff: on the bank above the water line, a few blocks back from it"
+    },
+    {
+      "scene": "route3_creek_wooper",
+      "prop": "approach_feeding",
+      "body": "mt_clay_pond",
+      "column": [
+        2184,
+        1626
+      ],
+      "depth": 0,
+      "waterline_distance": 4.47,
+      "relationship": "the soft muddy approach on the west side, on dry shore a few blocks short of the pond edge"
+    },
+    {
+      "scene": "route3_creek_wooper",
+      "prop": "approach_mud",
+      "body": "mt_clay_pond",
+      "column": [
+        2188,
+        1628
+      ],
+      "depth": 0,
+      "waterline_distance": 4.12,
+      "relationship": "the deep-mud approach on the south side, on dry shore a few blocks short of the pond edge"
+    },
+    {
+      "scene": "route3_creek_wooper",
+      "prop": "approach_stones",
+      "body": "mt_clay_pond",
+      "column": [
+        2191,
+        1627
+      ],
+      "depth": -1,
+      "waterline_distance": 6.32,
+      "relationship": "the dry lichen stones on the east side, the driest of the three approaches and the farthest from the water"
+    },
+    {
+      "scene": "route3_creek_wooper",
+      "prop": "crate",
+      "body": "mt_clay_pond",
+      "column": [
+        2182,
+        1632
+      ],
+      "depth": 1,
+      "waterline_distance": 0.0,
+      "relationship": "the courier's crate standing in the shallows, its column under the pond surface"
+    }
+  ]
+}
